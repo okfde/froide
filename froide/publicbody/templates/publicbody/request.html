@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block body %}
+<h2>{% blocktrans with name=obj.name %}Write a request to {{ name }}{% endblocktrans %}</h2>
+ {% with obj as publicbody %}
+    {% include "foirequest/_request_form.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block extra_footer %}
+  <script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
+{% endblock %}
+

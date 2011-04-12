@@ -1,0 +1,29 @@
+{% extends custom_base %}
+{% load url from future %}
+{% load i18n %}
+
+{% block body %}
+{% if user.is_authenticated %}
+<h2>{% blocktrans %}You are now logged in.{% endblocktrans %}</h2>
+{% if simple %}
+  <script>
+    if (window.opener && window.opener.loggedInCallback){
+      window.opener.loggedInCallback({
+        "email": '{{ user.email|escapejs }}',
+        'name': '{{ user.first_name|escapejs }}',
+        'last_name': '{{ user.last_name|escapejs }}'
+      });
+    }
+    window.close();
+  </script>
+{% endif %}
+{% else %}
+<h2>{% blocktrans %}Please Login{% endblocktrans %}</h2>
+<form method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <p><input type="submit" value="{% blocktrans %}Login{% endblocktrans %}"/></p>
+</form>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% load i18n %}
+{% load searchtags %}
+
+{% block extra_footer %}
+<script type="text/javascript">
+  var Froide = Froide || {};
+  Froide.url = Froide.url || {};
+  Froide.url.searchPublicBody = "{% url 'publicbody-search' %}";
+  Froide.url.showPublicBody = "{% url 'publicbody-show-json' pk=0 format='json' %}";
+
+  Froide.template = Froide.template || {};
+Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "More Info" %}</a>';
+Froide.template.searchInternet = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information" %} </a></li>';
+
+Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search Public Body Website" %}</a></li>';
+
+  Froide.template.searchEngineUrl = '{% search_engine_query %}';
+</script>
+<script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block body %}
+<div class="span-18">
+  <h2>Write a request</h2>
+  {% if public_body %}
+  <form method="post" action="{% url 'foirequest-submit_request' public_body=public_body.slug %}" class="foirequest">
+  {% else %}
+  <form method="post" action="{% url 'foirequest-submit_request' %}" class="foirequest">
+  {% endif %}
+    {% csrf_token %}
+    <fieldset id="public-body" class="active">
+      <legend>{% blocktrans %}Step 1 - Find the Public Body{% endblocktrans %}</legend>
+      {% if public_body %}
+      <input type="hidden" name="public_body" value="{{ public_body.pk }}"/>
+      <p><strong>{% trans "To:" %}</strong> {{ public_body }}</p>
+      {% else %}
+      <div id="step-public_body">
+        <div id="public_body-chooser">
+          <label for="search-public_bodies">{% blocktrans %}Search for a topic or the public body that is responsible:{% endblocktrans %}</label>
+          <input type="search" value="{{ topic }}" id="search-public_bodies" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
+        <ul id="search-results" style="display:none">
+          <li id="empty-result" style="display:none">{% blocktrans %}No Public Bodies found for this query{% endblocktrans %}</li>
+        </ul>
+      </div>
+      {% if request_form.public_body_object %}
+      <label>
+        <input type="radio" name="public_body" value="{{ request_form.public_body_object.pk }}" checked="checked"/>
+        {{ request_form.public_body_object }}
+      </label>
+      {% endif %}
+      {% if froide.publicbody_empty %}
+      <label>
+        <input type="radio" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
+        {% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
+      </label>
+      {% endif %}
+      {% if froide.create_new_publicbody %}
+        <label>
+          <input id="option-newpublicbody" type="radio" name="public_body" value="new" {% if request_form.public_body.value == "new" %}checked="checked"{% endif %}/>
+          {% blocktrans %}Create a new public body on the fly.{% endblocktrans %}
+        </label>
+        <div id="new-public_body" style="display:none">
+          {{ public_body_form.as_p }}
+        </div>
+      {% endif %}
+      <span class="help">{% blocktrans %}Please select one of the above options to proceed.{% endblocktrans %}</span>
+    </div>
+    {% endif %}
+  </fieldset>
+  <fieldset id="write-request">
+    <legend>{% blocktrans %}Step 2 - Write the Request{% endblocktrans %}</legend>
+    <div class="hidden" id="step-message">
+      <div class="check-information">
+        <p>{% blocktrans %}Please have a look if the information you are looking for is already available online.{% endblocktrans %}</p>
+        <ul id="check-list">
+          {% if topic %}
+          <li><a class="target-new" href="#">{% blocktrans with topic=topic %}Search this site for {{ topic }}{% endblocktrans %}</a></li>
+          {% endif %}
+          {% if public_body %}
+          <li><a class="target-new" href="#">{% blocktrans %}Explore other requests made to this Public Body{% endblocktrans %}</a></li>
+          {% endif %}
+          {% if public_body and topic %}
+          <li><a class="target-new" href="{% search_engine_query topic public_body.domain %}">{% blocktrans %}Try a Google Search for your topic{% endblocktrans %}</a></li>
+          {% endif %}
+        </ul>
+        <p>{% blocktrans %}If you could not find the information you are looking for, write a request below.{% endblocktrans %}</p>
+      </div>
+      {{ request_form.non_field_errors }}
+      <label for="id_subject">{% trans "Request Subject" %}:</label>
+      {{ request_form.subject.errors }}
+      {{ request_form.subject }}
+      <div class="clearfix" style="margin-top:1em;">
+        <div class="span-10">
+          <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
+         {{ request_form.body.errors }}
+         <div class="message">
+           <div class="text">{% with law="" %}{% include "foirequest/mail_header.txt" %}{% endwith %}</div>
+            {{ request_form.body }}
+            <div class="text"><em>{% blocktrans %}Your name will be automatically inserted at the end of the message.{% endblocktrans %}</em>
+            </div>
+          </div>
+        </div>
+        <div class="span-7 last request-notes">
+          <h4>{% blocktrans %}Important Notes:{% endblocktrans %}</h4>
+          <ul>
+            <li>{% blocktrans %}Write your request in <strong>simple, precise language</strong>.{% endblocktrans %}</li>
+            <li>{% blocktrans %}Ask for <strong>specific</strong> documents or information.{% endblocktrans %}</li>
+            <li>{% blocktrans %}Keep it <strong>focused and concise</strong>.{% endblocktrans %}</li>
+            <li>{% blocktrans %}This site is <strong>public</strong>. Everything you type and any response will be published.{% endblocktrans %}</li>
+            <li>{% blocktrans %}Do <strong>not include</strong> personal information in your request.{% endblocktrans %}</li>
+            <li>{% blocktrans %}Do <strong>not ask</strong> for personal information.{% endblocktrans %}</li>
+
+          </ul>
+        </div>
+      </div>
+      {% if user.is_authenticated %}
+      <p>{{ user.get_full_name }}</p>
+      <p>Your Email Address: {{ user.email }}</p>
+      {% else %}
+      <div id="user_data_form">
+      <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> and 
+      <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
+      {{ user_form.first_name.errors }}
+      {{ user_form.last_name.errors }}
+      <p>
+        {{ user_form.first_name }}
+        {{ user_form.last_name }}
+     </p>
+     <label for="id_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
+     {{ user_form.email.errors }}
+      <p>
+        {{ user_form.email }}
+        </p>
+      </div>
+      {% endif %}
+      <br/><input type="button" id="review-button" value="Review and Submit"/>
+      </div>
+    </fieldset>
+    <fieldset id="review-and-submit">
+      <legend>{% blocktrans %}Step 3 - Review your Request and Submit{% endblocktrans %}</legend>
+      <div class="hidden" id="step-review">
+        <p>{% blocktrans %}Please review your request before sending it.{% endblocktrans %}</p>
+        
+
+
+        <input type="submit" value="{% trans "Submit Request" %}">
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="prepend-1 span-5 last">
+  <h4>{% blocktrans %}Similar Requests{% endblocktrans %}</h4>
+  <ul>
+    <li></li>
+  </ul>
+</div>
+{% endblock %}
+

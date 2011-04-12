@@ -1,0 +1,98 @@
+{% load url from future %}{% load i18n %}<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{% trans "Freedom of Information Requests" %}</title>
+  {% if debug %}
+    <style type="text/css" media="screen">
+      @font-face {
+        font-family: 'Kreon';
+        font-style: normal;
+        font-weight: 700;
+        src: local('Kreon bold'), local('Kreon-bold'), url('{{ STATIC_URL }}font/Kreon-Bold.woff') format('woff');
+        src: local('Kreon regular'), local('Kreon-regular'), url('{{ STATIC_URL }}font/Kreon-Regular.woff') format('woff');
+      }
+    </style>
+  {% else %}
+  <link href='http://fonts.googleapis.com/css?family=Kreon:bold' rel='stylesheet' type='text/css'>
+  {% endif %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />	
+  <!--[if lt IE 8]><link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+
+
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
+  <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png">
+
+  <script src="{{ STATIC_URL }}js/libs/modernizr-1.6.min.js"></script>
+  {% block extra_head %}
+  {% endblock %}
+</head>
+
+<body>
+    <header id="header">
+      <div id="header-content" class="container">
+        <h1 class="span-8">
+          <a href="{% url 'index' %}">
+            {%blocktrans%}FroIde{% endblocktrans %}
+          </a>
+        </h1>
+        <nav id="nav" class="prepend-1 span-15 last">
+          <ul>
+            <li><a class="active" href="/">Home</a></li>
+            <li><a href="">{% blocktrans %}Requests{% endblocktrans %}</a></li>
+            <li><a href="">{% blocktrans %}Public Bodies{% endblocktrans %}</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'account-show' %}">{% blocktrans %}Account{% endblocktrans %}</a></li>
+            {% else %}
+            <li><a href="{% url 'account-login' %}">{% blocktrans %}Log In/Sign Up{% endblocktrans %}</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </header>
+    {% block subhead %}{% endblock %}
+    <div id="main" class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% block body %}
+    {% endblock %}
+  </div>
+  <footer id="footer" class="container">
+    <ul>
+      <li><a href="">{% trans "About" %}</a></li>
+      <li><a href="">{% trans "Contact" %}</a></li>
+      <li><a href="">Open Knowledge Foundation</a></li>
+    </ul>
+  </footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery-1.4.2.js"%3E%3C/script%3E'))</script>
+  <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
+  
+  
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="{{ STATIC_URL }}js/script.js"></script>
+  <!-- end concatenated and minified scripts-->
+  
+  
+  <!--[if lt IE 7 ]>
+    <script src="{{ STATIC_URL }}js/libs/dd_belatedpng.js"></script>
+    <script> DD_belatedPNG.fix('img, .png_bg'); </script>
+  <![endif]-->
+  {% block extra_footer %}
+  {% endblock %}
+
+</body>
+</html>

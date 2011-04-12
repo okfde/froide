@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load markup %}
+
+{% block body %}
+<h2>{{ object.title }}</h2>
+
+<div class="span-18">
+{% for message in foimessages %}
+  <div class="message">
+    <h3>{{ message.subject }}</h3>
+    <div class="content">
+      {{ message.content|markdown }}
+    </div>
+  </div>
+{% empty %}
+<p>{% blocktrans %}No messages yet{% endblocktrans %}
+{% endfor %}
+</div>
+
+{% endblock %}

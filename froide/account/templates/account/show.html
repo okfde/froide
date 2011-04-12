@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% load i18n %}
+{% load markup %}
+
+{% block body %}
+<h2>{% blocktrans %}Your account{% endblocktrans %}</h2>
+<p>{% blocktrans %}Your name: {% endblocktrans %}{{ user.get_full_name }}</p>
+{% if not user.is_active %}
+<p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>
+{% else %}
+<div class="span-18">
+  <table>
+    <caption>{% blocktrans %}Your Freedom of Information Requests{% endblocktrans %}</caption>
+    <thead>
+      <tr>
+        <th>{% blocktrans %}Title{% endblocktrans %}</th>
+        <th>{% blocktrans %}Status{% endblocktrans %}</th>
+        <th>{% blocktrans %}Last Message{% endblocktrans %}</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for foirequest in foirequests %}
+    <tr>
+      <td>
+        <a href="{% url 'foirequest-show' slug=foirequest.slug %}">{{ foirequest.title }}</a>
+      </td>
+      <td></td>
+      <td></td>
+    </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}
+

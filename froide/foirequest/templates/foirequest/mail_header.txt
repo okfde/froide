@@ -1,0 +1,3 @@
+{% load i18n %}{% blocktrans %}Dear Sir or Madam,
+
+I'd like to make a request under the {{ law }}.{% endblocktrans %}
