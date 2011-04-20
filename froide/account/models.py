@@ -84,7 +84,7 @@ class AccountManager(object):
     def create_user(cls, **data):
         user = User(first_name=data['first_name'],
                 last_name=data['last_name'],
-                email=data['email'])
+                email=data['user_email'])
         username_base = cls.get_username_base(user.first_name, user.last_name)
         count = 0
         while True:

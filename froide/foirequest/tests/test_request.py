@@ -64,9 +64,38 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}),
                 {"subject": "Test-Subject", "body": "This is a test body",
-                    "email": "test@example.com"})
+                    "user_email": "test@example.com"})
         self.assertEqual(response.status_code, 400)
         self.assertFormError(response, 'user_form', 'first_name',
                 [u'This field is required.'])
         self.assertFormError(response, 'user_form', 'last_name',
                 [u'This field is required.'])
+
+    def test_logged_in_request_new_public_body_missing(self):
+        self.client.login(username="dummy", password="froide")
+        response = self.client.post(reverse('foirequest-submit_request'),
+                {"subject": "Test-Subject", "body": "This is a test body",
+                "public_body": "new"})
+        self.assertEqual(response.status_code, 400)
+        self.assertFormError(response, 'public_body_form', 'name',
+                [u'This field is required.'])
+        self.assertFormError(response, 'public_body_form', 'email',
+                [u'This field is required.'])
+        self.assertFormError(response, 'public_body_form', 'url',
+                [u'This field is required.'])
+
+    def test_logged_in_request_new_public_body(self):
+        self.client.login(username="dummy", password="froide")
+        post = {"subject": "Another Test-Subject",
+                "body": "This is a test body",
+                "public_body": "new",
+                "name": "Some New Public Body",
+                "email": "public.body@example.com",
+                "url": "http://example.com/public/body/"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        pb = PublicBody.objects.filter(name=post['name']).get()
+        self.assertEqual(pb.url, post['url'])
+        req = FoiRequest.objects.filter(public_body=pb).get()
+        self.assertEqual(req.status, "awaiting_publicbody_confirmation")

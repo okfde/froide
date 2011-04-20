@@ -128,10 +128,10 @@ Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvaria
         {{ user_form.first_name }}
         {{ user_form.last_name }}
      </p>
-     <label for="id_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
-     {{ user_form.email.errors }}
+     <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
+     {{ user_form.user_email.errors }}
       <p>
-        {{ user_form.email }}
+        {{ user_form.user_email }}
         </p>
       </div>
       {% endif %}

@@ -10,7 +10,7 @@ class NewUserForm(forms.Form):
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': _('First Name'), 'class': 'inline'}))
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(
         attrs={'placeholder': _('Last Name'), 'class': 'inline'}))
-    email = forms.EmailField(widget=EmailInput(
+    user_email = forms.EmailField(widget=EmailInput(
         attrs={'placeholder': _('mail@ddress.net')}))
 
     def clean_first_name(self):
@@ -19,8 +19,8 @@ class NewUserForm(forms.Form):
     def clean_last_name(self):
         return self.cleaned_data['last_name'].strip()
 
-    def clean_email(self):
-        email = self.cleaned_data['email']
+    def clean_user_email(self):
+        email = self.cleaned_data['user_email']
         try:
             User.objects.get(email=email)
         except User.DoesNotExist:
