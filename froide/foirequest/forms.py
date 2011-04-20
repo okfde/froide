@@ -3,15 +3,17 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from publicbody.models import PublicBody
-from foirequest.models import FoiMessage
+from foirequest.models import FoiRequest, FoiMessage, FoiLaw
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
         'create_new_publicbody', False)
 publicbody_empty = settings.FROIDE_CONFIG.get('publicbody_empty', True)
+payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(forms.Form):
     public_body = forms.CharField(required=False)
+    law = forms.IntegerField(widget=forms.HiddenInput, required=False)
     subject = forms.CharField(widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
     body = forms.CharField(widget=forms.Textarea(
             attrs={'placeholder': _("Specify your request here...")}))
@@ -39,31 +41,21 @@ class RequestForm(forms.Form):
             self.public_body_object = public_body
         return pb
 
-    def clean_new_public_body(self, **data):
-        errors = {}
-        if data['name'] == '':
-            errors['name'] = _("Please specify a name")
-        if data['email'] == '':
-            errors['email'] = _("Please specify an email")
-        if data['url'] == '':
-            errors['url'] = _("Please specify an url")
-        return data, errors
+    def clean_law_for_public_body(self, public_body):
+        law = self.cleaned_data['law']
+        try:
+            foi_law = public_body.laws.filter(pk=law).get()
+        except FoiLaw.DoesNotExist:
+            raise forms.ValidationError(_("Invalid value"))
+        self.foi_law_object = foi_law
+        return law
 
     def clean(self):
         cleaned = self.cleaned_data
-        # public_body = cleaned.get("public_body")
-        # if public_body == "new":
-        #     data, errors = self.clean_new_public_body(
-        #             name=cleaned.get('name'),
-        #             description=cleaned.get('name'),
-        #             email=cleaned.get('name'),
-        #             url=cleaned.get('name'))
-        #     if not errors:
-        #         cleaned['public_body'] = data
-        #     else:
-        #         for field, err in errors.items():
-        #             self._errors[field] = self.error_class([err])
-        #             del cleaned[field]
+        public_body = cleaned.get("public_body")
+        if public_body != "new" and public_body != "":
+            if hasattr(self, "public_body_object"):
+                self.clean_law_for_public_body(self.public_body_object)
         return cleaned
 
 class SendMessageForm(forms.Form):

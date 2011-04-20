@@ -87,6 +87,7 @@ Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvaria
         </ul>
         <p>{% blocktrans %}If you could not find the information you are looking for, write a request below.{% endblocktrans %}</p>
       </div>
+      {# Insert Law Choice here #}
       {{ request_form.non_field_errors }}
       <label for="id_subject">{% trans "Request Subject" %}:</label>
       {{ request_form.subject.errors }}
