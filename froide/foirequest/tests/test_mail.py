@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import with_statement
 
 from django.test import TestCase
@@ -14,7 +15,14 @@ class MailTest(TestCase):
             _process_mail(f.read())
         request = FoiRequest.objects.get_by_secret_mail("s.wehrmeyer+axb4afh@fragdenstaat.de")
         messages = request.foimessage_set.all()
-        assert len(messages) == 2
+        self.assertEqual(len(messages), 2)
 
-
+    def test_working_with_attachment(self):
+        with file("foirequest/tests/test_mail_02.txt") as f:
+            _process_mail(f.read())
+        request = FoiRequest.objects.get_by_secret_mail("s.wehrmeyer+axb4afh@fragdenstaat.de")
+        messages = request.foimessage_set.all()
+        self.assertEqual(len(messages), 2)
+        self.assertEqual(messages[1].subject, u"Fwd: Informationsfreiheitsgesetz des Bundes, Antragsvordruck für Open Data")
+        self.assertEqual(len(message[1].attachments), 1)
 
