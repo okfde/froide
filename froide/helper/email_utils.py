@@ -48,8 +48,10 @@ class EmailParser(object):
 
                 for param in dispositions[1:]:
                     name,value = param.split("=")
-                    name = name.lower()
-
+                    name = name.lower().strip()
+                    value = value.strip()
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
                     if name == "filename":
                         attachment.name = value
                     elif name == "create-date":
