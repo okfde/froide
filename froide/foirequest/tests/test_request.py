@@ -21,12 +21,14 @@ class RequestTest(TestCase):
         self.assertTrue(ok)
 
         pb = PublicBody.objects.all()[0]
-        post = {"subject": "Test-Subject", "body": "This is a test body"}
+        post = {"subject": "Test-Subject", "body": "This is a test body",
+                "law": pb.laws.all()[0].pk}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.filter(user=user, public_body=pb).get()
         self.assertIsNotNone(req)
+        self.assertEqual(req.status, "awaiting_response")
         self.assertEqual(req.title, post['subject'])
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
@@ -37,18 +39,20 @@ class RequestTest(TestCase):
         post = {"subject": "Test-Subject With New User",
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
-                "email": "sw@example.com"}
+                "user_email": "sw@example.com",
+                "law": pb.laws.all()[0].pk}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
-        user = User.objects.filter(email=post['email']).get()
+        user = User.objects.filter(email=post['user_email']).get()
         self.assertFalse(user.is_active)
         req = FoiRequest.objects.filter(user=user, public_body=pb).get()
         self.assertIsNotNone(req)
         self.assertEqual(req.title, post['subject'])
+        self.assertEqual(req.status, "awaiting_user_confirmation")
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
-        message = Message.objects.filter(to_address=post['email']).get()
+        message = Message.objects.filter(to_address=post['user_email']).get()
         match = re.search('/%d/%d/(\w+)/' % (user.pk, req.pk),
                 message.message_body)
         self.assertIsNotNone(match)
@@ -56,7 +60,11 @@ class RequestTest(TestCase):
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': secret, 'request_id': req.pk}))
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.status, "awaiting_response")
         message = Message.objects.filter(from_address=req.secret_address).get()
+        self.assertEqual(message.to_address, req.public_body.email)
+        self.assertEqual(message.subject, req.title)
 
     def test_public_body_not_logged_in_request(self):
         self.client.logout()
