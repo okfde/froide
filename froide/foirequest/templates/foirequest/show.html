@@ -1,21 +1,113 @@
 {% extends 'base.html' %}
+{% load url from future %}
 {% load i18n %}
 {% load markup %}
 
 {% block body %}
 <h2>{{ object.title }}</h2>
+<dl>
+  <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
+  <dd>{% if object.public_body %}{{ object.public_body }}{% else %}{% blocktrans %}Not yet set{% endblocktrans %}{% endif %}</dd>
+  <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
+  <dd>{{ object.readable_status }}</dd>
+  <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
+  <dd>{% if object.law %}{{ object.law }}{% else %}{% blocktrans %}Not yet set{% endblocktrans %}{% endif %}</dd>
+{% if object.costs > 0 %}
+  <dt>{% blocktrans %}Cost of information:{% endblocktrans %}</dt>
+  <dd>{{ object.costs }} {{ froide.currency }}</dd>
+{% endif %}
+</dl>
+{# Public Body Needed #}
+{% if object.status == "publicbody_needed" %}
+<div class="notice">
+  {% blocktrans %}This request still needs a Public Body as a recipient.{% endblocktrans %}
+</div>
+{% if object.user == user %}
+{% with suggestions_form=object.public_body_suggestions_form %}
+    {% if suggestions_form %}
+    {% blocktrans %}Choose from one of the suggestions from other users:{% endblocktrans %}
+    <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
+      {% csrf_token %}
+      {{ suggestions_form }}
+      <input type="submit" value="{% blocktrans %}Set Public Body{% endblocktrans %}"/>
+    </form>
+    {% endif %}
+  {% endwith %}
+  {% else %}
+  {% blocktrans %}You can suggest a public body for this request:{% endblocktrans %}
+    {% include "publicbody/_chooser.html" %}
+  {% endif %}
+{% endif %}
+{# End Public Body Needed #}
+{# Unconfirmed Public Body #}
+{% if object.public_body and not object.public_body.confirmed %}
+<div class="notice">
+  {% blocktrans %}The recipient of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
+</div>
+{% endif %}
+{# End Unconfirmed Public Body #}
 
 <div class="span-18">
-{% for message in foimessages %}
-  <div class="message">
-    <h3>{{ message.subject }}</h3>
-    <div class="content">
-      {{ message.content|markdown }}
-    </div>
-  </div>
+{% for message in object.messages %}
+<div class="message{% if not message.sender_user %} message-received{% endif %}">
+  <table>
+    <tbody>
+    <tr>
+      <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+      <td>{{ message.sender }}</td>
+    </tr>
+    <tr>
+      <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
+      <td><strong>{{ message.subject }}</strong></td>
+    </tr>
+    <tr>
+      <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
+      <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
+    </tr>
+    {% if message.attachments %}
+    <tr>
+      <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
+    <td>
+      <ul>
+    {% for attachment in message.attachments %}
+    <li>
+    <a href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>
+    </li>
+    {% endfor %}
+      </ul>
+    </td>
+  </tr>
+  {% endif %}
+  </tbody>
+  </table>
+  <hr/>
+  <div class="message-content">{{ message.get_content|urlize }}</div>
+</div>
 {% empty %}
-<p>{% blocktrans %}No messages yet{% endblocktrans %}
+<p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
 {% endfor %}
+
+{# Set status #}
+{% if object.user == user and object.status_settable %}
+<form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}">{% csrf_token %}
+  <label id="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
+  {{ object.status_form.status }}<br/>
+  {% if froide.payment_possible %}
+  <div class="status-payment">{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
+    <label id="id_costs">{% blocktrans %}Costs: {% endblocktrans %}</label>{{ object.status_form.costs }} {{ froide.currency }}
+  </div>
+  {% endif %}
+  <div class="status-refusal">
+{% blocktrans %}When you are denied information, the Public Body should always state on what grounds.{% endblocktrans %}<br/>
+    <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
+    {{ object.status_form.refusal_reason }}
+  </div>
+  <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
+  </p>
+  </form>
+{% endif %}
+{# Set status #}
+
 </div>
 
 {% endblock %}

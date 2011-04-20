@@ -3,12 +3,10 @@ import logging
 
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
-from django.http import (HttpResponseRedirect, Http404, HttpResponse,
+from django.http import (HttpResponseRedirect, HttpResponse,
         HttpResponseForbidden, HttpResponseBadRequest)
 from django.conf import settings
-from django.views.generic import DetailView
 from django.contrib import messages
 
 from foirequest.forms import RequestForm
@@ -18,7 +16,7 @@ from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest
 from foirequest.tasks import process_mail
-from foirequest.forms import SendMessageForm
+from foirequest.forms import SendMessageForm, get_status_form_class
 from froide.helper.utils import get_next
 
 
@@ -30,14 +28,11 @@ def index(request):
             'foi_requests': foi_requests
         })
 
-class FoiRequestDetailView(DetailView):
-    model = FoiRequest
-    template_name = "foirequest/show.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(DetailView, self).get_context_data(**kwargs)
-        context['foimessages'] = context['object'].foimessage_set.select_related()
-        return context
+def show(request, slug, template_name="foirequest/show.html"):
+    obj = get_object_or_404(FoiRequest, slug=slug)
+    if not obj.is_visible(request.user):
+        return HttpResponseForbidden()
+    return render(request, template_name, {"object": obj})
 
 def success(request):
     return render(request, 'index.html')
@@ -45,7 +40,8 @@ def success(request):
 def make_request(request, public_body=None):
     public_body_form = None
     if public_body is not None:
-        public_body = get_object_or_404(PublicBody, slug=public_body)
+        public_body = get_object_or_404(PublicBody,
+                slug=public_body)
     else:
         public_body_form = PublicBodyForm()
     rq_form = RequestForm()
@@ -64,7 +60,8 @@ def make_request(request, public_body=None):
 def submit_request(request, public_body=None):
     error = False
     if public_body is not None:
-        public_body = get_object_or_404(PublicBody, slug=public_body)
+        public_body = get_object_or_404(PublicBody,
+                slug=public_body)
 
     context = {"public_body": public_body}
     request_form = RequestForm(request.POST)
@@ -75,7 +72,9 @@ def submit_request(request, public_body=None):
             pb_form = PublicBodyForm(request.POST)
             context["public_body_form"] = pb_form
             if pb_form.is_valid():
-                public_body = PublicBody(**pb_form.cleaned_data)
+                data = pb_form.cleaned_data
+                data['confirmed'] = False
+                public_body = PublicBody(**data)
             else:
                 error = True
     if not request_form.is_valid():
@@ -89,14 +88,22 @@ def submit_request(request, public_body=None):
             error = True
     else:
         user = request.user
+
     if not error:
         password = None
         if user is None:
             user, password = AccountManager.create_user(**user_form.cleaned_data)
-        if public_body.pk:
+        if public_body is not None and public_body.pk is None:
             public_body._created_by = user
             public_body.save()
-        foi_request = FoiRequest.from_request_form(user, public_body, **request_form.cleaned_data)
+
+        try:
+            foilaw = request_form.foi_law_object
+        except AttributeError:
+            foilaw = None
+        
+        foi_request = FoiRequest.from_request_form(user, public_body,
+                foilaw, **request_form.cleaned_data)
         if user.is_active:
             messages.add_message(request, messages.INFO, 
                     _('Your request has been sent.'))
@@ -132,6 +139,42 @@ def message(request):
         return HttpResponse('', status=400)
     process_mail.delay(email_string)
     return HttpResponse('')
+
+@require_POST
+def set_public_body(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or request.user != foirequest.user:
+        return HttpResponseForbidden()
+    try:
+        public_body_pk = int(request.POST.get('public_body', None))
+    except ValueError:
+        return HttpResponseBadRequest()
+    try:
+        public_body = PublicBody.objects.get(pk=public_body_pk)
+    except PublicBody.DoesNotExist:
+        return HttpResponseBadRequest()
+    if foirequest.status != "publicbody_needed":
+        return HttpResponseBadRequest()
+    # FIXME: make foilaw dynamic
+    foilaw = public_body.default_law
+    foirequest.set_public_body(public_body, foilaw)
+    return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
+def set_status(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or request.user != foirequest.user:
+        return HttpResponseForbidden()
+    form = get_status_form_class(foirequest)(request.POST)
+    if form.is_valid():
+        foirequest.set_status(form.cleaned_data)
+        messages.add_message(request, messages.SUCCESS,
+                _('Status of request has been updated.'))
+    else:
+        messages.add_message(request, messages.ERROR,
+        _('Invalid value for form submission!'))
+    return HttpResponseRedirect(foirequest.get_absolute_url())
+
 
 @require_POST
 def sent_message(request):

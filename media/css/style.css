@@ -148,6 +148,7 @@ strong {
     display: block;
     font-size: 12px;
     text-align: center;
+    margin: 2em auto 1em;
 }
 
 #footer ul{
@@ -216,6 +217,8 @@ form.foirequest fieldset > div {
     list-style-type:none;
 }
 
+
+
 #search-public_bodies {
     width:60%;
     margin:2em;
@@ -239,9 +242,11 @@ span.help {
 }
 
 #public_body-chooser {
-    overflow-y:auto;
-    width:80%;
-    max-height:8em;
+}
+
+#search-results {
+    max-height: 12em;
+    overflow-y: auto;
 }
 
 #public_body-chooser ul {
@@ -283,6 +288,10 @@ form.foirequest label {
     display:block;
 }
 
+form.foirequest .selected-result label {
+    display:inline;
+}
+
 form.foirequest label.inline {
     display:inline;
 }
@@ -314,7 +323,7 @@ form.foirequest #id_subject {
     margin:0;
 }
 
-form.foirequest .message textarea {
+form.foirequest .letter textarea {
     margin: 0;
     font-size:14px;
 }
@@ -339,3 +348,51 @@ form.foirequest p {
 .foirequest-info h2{
     margin:0;
 }
+
+
+.message {
+    border: 1px solid #ccc;
+    /* -moz-box-shadow: 0px 0px 15px #ccc;*/
+    /* -webkit-box-shadow: 0px 0px 15px #ccc;*/
+    /* box-shadow: 0px 0px 15px #ccc;*/
+    padding:10px;
+    margin: 0 0 2em;
+}
+
+.message-received {
+    background-color: #FFF9DC;
+}
+
+.message table {
+    border-spacing: 0px;
+}
+
+.message td.key {
+    text-align:right;
+    color: #999;
+    vertical-align:top;
+    font-weight: bold;
+}
+
+.message td.key:after {
+    content: ":";
+}
+
+.message tbody tr:nth-child(even) td, .message tbody tr.even td {
+    background: transparent;
+}
+
+.message td {
+    padding: 0px 0px 2px 0.5em;
+}
+
+.message table, .message td ul {
+    margin-bottom: 0.4em;
+}
+
+.message-content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+

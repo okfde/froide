@@ -186,7 +186,9 @@ DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
 
 FROIDE_CONFIG = {
     "create_new_publicbody": True,
-    "publicbody_empty": True
+    "publicbody_empty": True,
+    "payment_possible": True,
+    "currency": "Euro"
 }
 
 SITE_NAME = 'FroIde'
@@ -216,6 +218,8 @@ CELERY_IMPORTS = ("foirequest.tasks", )
 
 CELERY_RESULT_BACKEND = "database"
 CELERY_RESULT_DBURI = "sqlite:///dev.db"
+
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 
 BROKER_BACKEND = 'django'
 BROKER_HOST = "localhost"

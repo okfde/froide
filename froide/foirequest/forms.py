@@ -68,3 +68,29 @@ class SendMessageForm(forms.Form):
         except FoiMessage.DoesNotExist:
             raise forms.ValidationError(_("Message not found"))
         return foimessage_id
+
+def get_public_body_suggestions_form_class(queryset):
+    if len(queryset):
+        class PublicBodySuggestionsForm(forms.Form):
+            suggestions = forms.ChoiceField(
+                    widget=forms.RadioSelect,
+                    choices=((s.pk, s.public_body) for s in queryset))
+
+        return PublicBodySuggestionsForm
+    return None
+
+def get_status_form_class(foirequest):
+    class FoiRequestStatusForm(forms.Form):
+        status = forms.ChoiceField(
+                # widget=forms.RadioSelect,
+                choices=(('', '-------'),) + FoiRequest.USER_SET_CHOICES)
+        if payment_possible:
+            costs = forms.FloatField(required=False, min_value=0.0,
+                    localize=True,
+                    widget=forms.TextInput(attrs={"size": "3"}))
+
+        refusal_reason = forms.ChoiceField(
+                choices=(('', '-------'),) + 
+                foirequest.law.get_refusal_reason_choices())
+
+    return FoiRequestStatusForm
