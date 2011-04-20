@@ -1,5 +1,6 @@
-{% load i18n %}{% with law=message.request.law %}{% include "foirequest/mail_header.txt" %}{% endwith %}
+{{ message.request.law.letter_start }}
 {{ body }}
+{{ message.request.law.letter_end }}
 {{ message.sender_name }}
 
 {% include "foirequest/mail_footer.txt" %}

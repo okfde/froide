@@ -96,11 +96,18 @@ Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvaria
         <div class="span-10">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
          {{ request_form.body.errors }}
-         <div class="message">
-           <div class="text">{% with law="" %}{% include "foirequest/mail_header.txt" %}{% endwith %}</div>
-            {{ request_form.body }}
-            <div class="text"><em>{% blocktrans %}Your name will be automatically inserted at the end of the message.{% endblocktrans %}</em>
-            </div>
+         <div class="letter">
+           {% if public_body %}
+           <div id="letter_start" class="text">{{ public_body.default_law.letter_start|markdown }}</div>
+           {% else %}
+           <div id="letter_start" class="text">{% include "foirequest/dummy_mail_start.txt" %}</div>
+           {% endif %}
+           {{ request_form.body }}
+           {% if public_body %}
+           <div id="letter_end" class="text">{{ public_body.default_law.letter_end|markdown }}</div>
+           {% else %}
+           <div id="letter_end" class="text">{% include "foirequest/dummy_mail_end.txt" %}</div>
+           {% endif %}
           </div>
         </div>
         <div class="span-7 last request-notes">
