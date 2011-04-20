@@ -3,7 +3,9 @@ from froide.publicbody.models import PublicBody, FoiLaw
 
 class PublicBodyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("geography", "name",)}
-    list_display = ('name', 'geography')
+    list_display = ('name', 'classification', 'geography')
+    list_filter = ('classification',)
+    search_fields = ['name', "description"]
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("jurisdiction", "name",)}
