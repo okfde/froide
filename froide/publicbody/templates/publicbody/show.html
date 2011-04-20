@@ -1,37 +1,46 @@
 {% extends 'base.html' %}
 {% load url from future %}
 {% load i18n %}
+{% load markup %}
 
 {% block body %}
 <h2>{{ object.name }}</h2>
-<p><a href="{% url 'publicbody-request' slug=object.slug %}">{% blocktrans %}Make a Freedom of Information Request to this entity!{% endblocktrans %}</a></p>
-<dl>
-  <dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
-  <dd>{{ object.description|linebreaksbr }}</dd>
-  <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-  <dd>{{ object.contact|linebreaksbr }}</dd>
-  <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
-  <dd>{{ object.email }} (<a href="{% url 'publicbody-request' slug=object.slug %}">
-    {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
-  <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
-  <dd>{{ object.address|linebreaksbr }}</dd>
-  <dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
-  <dd>{{ object.geography }}</dd>
-</dl>
+<div class="span-18">
+  <p><a href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Freedom of Information Request to this entity!{% endblocktrans %}</a></p>
+  <dl>
+    <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
+    <dd>{{ object.classification }}</dd>
+    <dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
+    <dd>{{ object.description|markdown }}</dd>
+    <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
+    <dd>{{ object.contact|linebreaksbr }}</dd>
+    <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
+    <dd>{{ object.email }} (<a href="{% url 'foirequest-make_request' public_body=object.slug %}">
+      {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
+    <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
+    <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
+    <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
+    <dd>{{ object.address|linebreaksbr }}</dd>
+    <dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
+    <dd>{{ object.geography }}</dd>
+  </dl>
 
-<h3>{% blocktrans %}Latest Freedom of Information Requests for this entity{% endblocktrans %}</h3>
-<ul>
-  {% for foirequest in foi_requests %}
-  <li>
-    <a href="{[ foirequest.get_absolute_url ]}">{{ foirequest.title }}</a>
-  </li>
-  {% empty %}
-  <li>{% blocktrans %}No requests so far.{% endblocktrans %} 
-  <a href="{% url 'foirequest-make_request' public_body=object.slug %}">
-    {% blocktrans %}Make a request now!{% endblocktrans %}</a></li>
-  {% endfor %}
-</ul>
+  <h3>{% blocktrans %}Latest Freedom of Information Requests for this entity{% endblocktrans %}</h3>
+  <ul>
+    {% for foirequest in foi_requests %}
+    <li>
+      <a href="{[ foirequest.get_absolute_url ]}">{{ foirequest.title }}</a>
+    </li>
+    {% empty %}
+    <li>{% blocktrans %}No requests so far.{% endblocktrans %} 
+    <a href="{% url 'foirequest-make_request' public_body=object.slug %}">
+      {% blocktrans %}Make a request now!{% endblocktrans %}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+<div class="span-6">
 
+</div>
 {% endblock %}
 
 {% block extra_footer %}
