@@ -21,14 +21,10 @@ class PublicBodyDetailView(JSONResponseDetailView):
             context['foi_requests'] = [] #FIXME: PublicBody.foirequest_set.latest()
         return context
 
-def request_view(request, slug):
-    public_body = get_object_or_404(PublicBody, slug=slug)
-    return render(request, "publicbody/request.html", {"obj": public_body})
-
 def search(request):
     query = request.GET.get("q","")
-    query = " OR ".join(query.split())
-    result = SearchQuerySet().filter(content=query).models(PublicBody)
+    # query = " OR ".join(query.split())
+    result = SearchQuerySet().models(PublicBody).auto_query(query)
     result = [{"name": x.name, "id": x.pk, "url": x.url} for x in result]
     return HttpResponse(json.dumps(result), content_type="application/json")
 
