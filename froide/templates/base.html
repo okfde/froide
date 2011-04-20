@@ -45,13 +45,13 @@
         </h1>
         <nav id="nav" class="prepend-1 span-15 last">
           <ul>
-            <li><a class="active" href="/">Home</a></li>
+            <li><a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a></li>
             <li><a href="">{% blocktrans %}Requests{% endblocktrans %}</a></li>
             <li><a href="">{% blocktrans %}Public Bodies{% endblocktrans %}</a></li>
             {% if user.is_authenticated %}
             <li><a href="{% url 'account-show' %}">{% blocktrans %}Account{% endblocktrans %}</a></li>
             {% else %}
-            <li><a href="{% url 'account-login' %}">{% blocktrans %}Log In/Sign Up{% endblocktrans %}</a></li>
+            <li><a href="{% url 'account-login' %}">{% blocktrans %}Log In{% endblocktrans %}</a></li>
             {% endif %}
           </ul>
         </nav>
