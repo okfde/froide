@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans %}Hello {{ name }},
+
+your request has been sent. We will notify you when you get a response.
+
+{% endblocktrans %}

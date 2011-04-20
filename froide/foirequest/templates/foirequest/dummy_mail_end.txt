@@ -1,0 +1,5 @@
+{% load i18n %}{% blocktrans %}
+Please be advised that this request is made under the following laws and conditions
+... 
+
+Sincerely yours,{% endblocktrans %}
