@@ -1,42 +1,35 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block subhead %}
-<div class="subhead">
-  <div class="container">
-    <div class="span-11">
-      <h2 class="special-heading">{% blocktrans %}Find the information you are looking for!{% endblocktrans %}</h2>
-      <form class="big-search" action="/search/" method="get">
-        <input type="search" placeholder="{% trans "Your Request Topic" %}"/>
-        <small>{% blocktrans %}Examples: {% endblocktrans %}<a href="/search/?q=">{%trans "Locations of all Playing Grounds" %}</a></small>
-      </form>
-    </div>
-    <div class="prepend-1 span-12 last">
-      <ol class="main-guide">
-        <li>
-          <h3>{% blocktrans %}Find the Public Body{% endblocktrans %}</h3>
-          <p>{% blocktrans %}We help you <strong>search and find</strong> the right entity for your request.{% endblocktrans %}</p>
-        </li>
-        <li>
-          <h3>{% blocktrans %}Write a Request{% endblocktrans %}</h3>
-          <p>{% blocktrans %}We help you <strong>write and send</strong> a proper request to the right address.{% endblocktrans %}</p>
-          </li>
-          <li>
-            <h3>{% blocktrans %}Receive a Reply{% endblocktrans %}</h3>
-            <p>{% blocktrans %}We <strong>publish all requests</strong> along with the replies for others to explore.{% endblocktrans %}</p>
-            </li>
-      </ol>
-    </div>
-  </div>
-</div>
-{% endblock %}
-
 {% block body %}
+<div class="span-11">
+  <h2 class="special-heading">{% blocktrans %}Find the information you are looking for!{% endblocktrans %}</h2>
+  <form class="big-search" action="/search/" method="get">
+    <input type="search" placeholder="{% trans "Your Request Topic" %}"/>
+    <small>{% blocktrans %}Examples: {% endblocktrans %}<a href="/search/?q=">{%trans "Locations of all Playing Grounds" %}</a></small>
+  </form>
+</div>
+<div class="prepend-1 span-12 last">
+  <ol class="main-guide">
+    <li>
+      <h3>{% blocktrans %}Find the Public Body{% endblocktrans %}</h3>
+      <p>{% blocktrans %}We help you <strong>search and find</strong> the right entity for your request.{% endblocktrans %}</p>
+    </li>
+    <li>
+      <h3>{% blocktrans %}Write a Request{% endblocktrans %}</h3>
+      <p>{% blocktrans %}We help you <strong>write and send</strong> a proper request to the right address.{% endblocktrans %}</p>
+      </li>
+      <li>
+        <h3>{% blocktrans %}Receive a Reply{% endblocktrans %}</h3>
+        <p>{% blocktrans %}We <strong>publish all requests</strong> along with the replies for others to explore.{% endblocktrans %}</p>
+        </li>
+  </ol>
+</div>
 <div class="span-12">
-  <h3>{% blocktrans %}Latest FoI Requests{% endblocktrans %}</h3>
+  <h3>{% blocktrans %}Latest Freedom of Information Requests{% endblocktrans %}</h3>
     <ul>
       {% for obj in foi_requests %}
-      <li>{{ obj.title }}</li>
+      <li><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
       {% empty %}
         <li>{% blocktrans %}No requests yet{% endblocktrans %}
       {% endfor %}

@@ -46,8 +46,8 @@
         <nav id="nav" class="prepend-1 span-15 last">
           <ul>
             <li><a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a></li>
-            <li><a href="">{% blocktrans %}Requests{% endblocktrans %}</a></li>
-            <li><a href="">{% blocktrans %}Public Bodies{% endblocktrans %}</a></li>
+            <li><a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a></li>
+            <li><a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a></li>
             {% if user.is_authenticated %}
             <li><a href="{% url 'account-show' %}">{% blocktrans %}Account{% endblocktrans %}</a></li>
             {% else %}
@@ -57,7 +57,6 @@
         </nav>
       </div>
     </header>
-    {% block subhead %}{% endblock %}
     <div id="main" class="container">
     {% if messages %}
     <ul class="messages">
@@ -73,7 +72,6 @@
     <ul>
       <li><a href="">{% trans "About" %}</a></li>
       <li><a href="">{% trans "Contact" %}</a></li>
-      <li><a href="">Open Knowledge Foundation</a></li>
     </ul>
   </footer>
 
