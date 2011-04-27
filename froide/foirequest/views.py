@@ -180,18 +180,50 @@ def set_public_body(request, slug):
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return HttpResponseForbidden()
     try:
-        public_body_pk = int(request.POST.get('public_body', None))
+        public_body_pk = int(request.POST.get('public_body', ''))
+    except ValueError:
+        messages.add_message(request, messages.ERROR,
+            _('Missing or invalid input!'))
+        return HttpResponseRedirect(foirequest.get_absolute_url())
+    try:
+        public_body = PublicBody.objects.get(pk=public_body_pk)
+    except PublicBody.DoesNotExist:
+        messages.add_message(request, messages.ERROR,
+            _('Missing or invalid input!'))
+        return HttpResponseBadRequest()
+    if not foirequest.needs_public_body():
+        messages.add_message(request, messages.ERROR,
+            _("This request doesn't need a Public Body!"))
+        return HttpResponseBadRequest()
+    # FIXME: make foilaw dynamic
+    foilaw = public_body.default_law
+    foirequest.set_public_body(public_body, foilaw)
+    messages.add_message(request, messages.ERROR,
+        _("Request was sent to %(name)s." % public_body.name))
+    return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
+def suggest_public_body(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not foirequest.needs_public_body():
+        return HttpResponseBadRequest()
+    try:
+        public_body_pk = int(request.POST.get('public_body', ''))
     except ValueError:
         return HttpResponseBadRequest()
     try:
         public_body = PublicBody.objects.get(pk=public_body_pk)
     except PublicBody.DoesNotExist:
         return HttpResponseBadRequest()
-    if foirequest.status != "publicbody_needed":
-        return HttpResponseBadRequest()
     # FIXME: make foilaw dynamic
-    foilaw = public_body.default_law
-    foirequest.set_public_body(public_body, foilaw)
+    # foilaw = public_body.default_law
+    user = None
+    if request.user.is_authenticated():
+        user = request.user
+    foirequest.publicbodysuggestion_set.create(public_body=public_body,
+            user=user)
+    messages.add_message(request, messages.SUCCESS,
+        _('Your suggestion has been added'))
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 @require_POST
@@ -199,6 +231,8 @@ def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return HttpResponseForbidden()
+    if not foirequest.status_settable:
+        return HttpResponseBadRequest()
     form = get_status_form_class(foirequest)(request.POST)
     if form.is_valid():
         foirequest.set_status(form.cleaned_data)
@@ -207,8 +241,8 @@ def set_status(request, slug):
     else:
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
+        return HttpResponseBadRequest()
     return HttpResponseRedirect(foirequest.get_absolute_url())
-
 
 @require_POST
 def sent_message(request):
