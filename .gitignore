@@ -2,3 +2,8 @@
 .DS_Store
 *.vim
 *.db
+local_*.py
+data/
+solr/
+files/
+artwork/
