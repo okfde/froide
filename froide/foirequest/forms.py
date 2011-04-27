@@ -9,15 +9,21 @@ new_publicbody_allowed = settings.FROIDE_CONFIG.get(
         'create_new_publicbody', False)
 publicbody_empty = settings.FROIDE_CONFIG.get('publicbody_empty', True)
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
+payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(forms.Form):
-    public_body = forms.CharField(required=False)
-    law = forms.IntegerField(widget=forms.HiddenInput, required=False)
-    subject = forms.CharField(widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
-    body = forms.CharField(widget=forms.Textarea(
+    public_body = forms.CharField(label=_("Public Body"), required=False)
+    law = forms.IntegerField(label=_("FOI Law"), widget=forms.HiddenInput,
+            required=False)
+    subject = forms.CharField(label=_("Subject"),
+            widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
+    body = forms.CharField(label=_("Body"), 
+            widget=forms.Textarea(
             attrs={'placeholder': _("Specify your request here...")}))
-    
+    public = forms.BooleanField(required=False, initial=True,
+            label=_("This request will be public immediately."))
+
     def clean_public_body(self):
         pb = self.cleaned_data['public_body']
         if pb == "new":
@@ -39,7 +45,10 @@ class RequestForm(forms.Form):
             except PublicBody.DoesNotExist:
                 raise forms.ValidationError(_("Invalid value"))
             self.public_body_object = public_body
+            self.foi_law_object = public_body.default_law
         return pb
+    
+    foi_law_object = None
 
     def clean_law_for_public_body(self, public_body):
         law = self.cleaned_data['law']
@@ -53,9 +62,9 @@ class RequestForm(forms.Form):
     def clean(self):
         cleaned = self.cleaned_data
         public_body = cleaned.get("public_body")
-        if public_body != "new" and public_body != "":
-            if hasattr(self, "public_body_object"):
-                self.clean_law_for_public_body(self.public_body_object)
+        if public_body is not None and (public_body != "new"
+                and public_body != ""):
+            self.clean_law_for_public_body(self.public_body_object)
         return cleaned
 
 class SendMessageForm(forms.Form):
@@ -72,7 +81,7 @@ class SendMessageForm(forms.Form):
 def get_public_body_suggestions_form_class(queryset):
     if len(queryset):
         class PublicBodySuggestionsForm(forms.Form):
-            suggestions = forms.ChoiceField(
+            suggestions = forms.ChoiceField(label=_("Suggestions"),
                     widget=forms.RadioSelect,
                     choices=((s.pk, s.public_body) for s in queryset))
 
@@ -81,16 +90,17 @@ def get_public_body_suggestions_form_class(queryset):
 
 def get_status_form_class(foirequest):
     class FoiRequestStatusForm(forms.Form):
-        status = forms.ChoiceField(
+        status = forms.ChoiceField(label=_("Status"),
                 # widget=forms.RadioSelect,
                 choices=(('', '-------'),) + FoiRequest.USER_SET_CHOICES)
         if payment_possible:
-            costs = forms.FloatField(required=False, min_value=0.0,
+            costs = forms.FloatField(label=_("Costs"),
+                    required=False, min_value=0.0,
                     localize=True,
-                    widget=forms.TextInput(attrs={"size": "3"}))
+                    widget=forms.TextInput(attrs={"size": "4"}))
 
-        refusal_reason = forms.ChoiceField(
+        refusal_reason = forms.ChoiceField(label=_("Refusal Reason"),
                 choices=(('', '-------'),) + 
-                foirequest.law.get_refusal_reason_choices())
+                foirequest.law.get_refusal_reason_choices(),required=False)
 
     return FoiRequestStatusForm
