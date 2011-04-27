@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.http import (HttpResponseRedirect, HttpResponse,
-        HttpResponseForbidden, HttpResponseBadRequest)
+        HttpResponseForbidden, HttpResponseBadRequest, Http404)
 from django.conf import settings
 from django.contrib import messages
 
@@ -14,7 +14,7 @@ from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody
-from foirequest.models import FoiRequest
+from foirequest.models import FoiRequest, FoiEvent, FoiAttachment
 from foirequest.tasks import process_mail
 from foirequest.forms import SendMessageForm, get_status_form_class
 from froide.helper.utils import get_next
@@ -81,9 +81,11 @@ def make_request(request, public_body=None):
 @require_POST
 def submit_request(request, public_body=None):
     error = False
+    foilaw = None
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
+        foilaw = public_body.default_law
 
     context = {"public_body": public_body}
     request_form = RequestForm(request.POST)
@@ -115,19 +117,29 @@ def submit_request(request, public_body=None):
         password = None
         if user is None:
             user, password = AccountManager.create_user(**user_form.cleaned_data)
+        sent_to_pb = 1
         if public_body is not None and public_body.pk is None:
             public_body._created_by = user
             public_body.save()
-
-        try:
+            sent_to_pb = 2
+        elif public_body is None:
+            sent_to_pb = 0
+        
+        if foilaw is None:
             foilaw = request_form.foi_law_object
-        except AttributeError:
-            foilaw = None
         
         foi_request = FoiRequest.from_request_form(user, public_body,
                 foilaw, **request_form.cleaned_data)
         if user.is_active:
-            messages.add_message(request, messages.INFO, 
+            if sent_to_pb == 0:
+                messages.add_message(request, messages.INFO, 
+                    _('Others can now suggest the Public Bodies for your request.'))
+            elif sent_to_pb == 2:
+                messages.add_message(request, messages.INFO, 
+                    _('Your request will be sent as soon as the newly created Public Body was confirmed by an administrator.'))
+
+            else:
+                messages.add_message(request, messages.INFO, 
                     _('Your request has been sent.'))
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
