@@ -176,6 +176,8 @@ class FoiRequest(models.Model):
             self.costs = data['costs']
         if self.status == "refused":
             self.refusal_reason = data['refusal_reason']
+        else:
+            self.refusal_reason = u""
         self.save()
         status = data.pop("status")
         self.status_changed.send(sender=self, status=status, data=data)
@@ -229,11 +231,13 @@ class FoiRequest(models.Model):
         return self.STATUS_CHOICES_DICT.get(self.status, _("Unknown"))
 
     @classmethod
-    def from_request_form(cls, user, public_body_object, foi_law, **request_form):
+    def from_request_form(cls, user, public_body_object, foi_law,
+            **request_form):
         now = datetime.now()
         request = FoiRequest(title=request_form['subject'],
                 public_body=public_body_object,
                 user=user,
+                public=request_form['public'],
                 site=Site.objects.get_current(),
                 first_message=now,
                 last_message=now)
@@ -242,10 +246,7 @@ class FoiRequest(models.Model):
             request.status = 'awaiting_user_confirmation'
             request.visibility = 0
         else:
-            if request.public:
-                request.visibility = 2
-            else:
-                request.visibility = 1
+            request.determine_visibility()
             if public_body_object is None:
                 request.status = 'publicbody_needed'
             elif not public_body_object.confirmed:
@@ -271,6 +272,7 @@ class FoiRequest(models.Model):
                 subject=request.title)
         if public_body_object is not None:
             message.recipient = public_body_object.email
+            cls.request_to_public_body.send(sender=request)
         message.plaintext = cls.construct_message_body(message,
                 request_form['body'])
         message.original = message.plaintext
@@ -285,17 +287,35 @@ class FoiRequest(models.Model):
         return render_to_string("foirequest/foi_request_mail.txt",
                 {"message": message, "body": body})
 
+    def determine_visibility(self):
+        if self.public:
+            self.visibility = 2
+        else:
+            self.visibility = 1
+
     def set_status_after_change(self):
         if not self.user.is_active:
             self.status = "awaiting_user_confirmation"
-        if self.public_body is None:
-            self.status = 'publicbody_needed'
-        elif not self.public_body.confirmed:
-            self.status = 'awaiting_publicbody_confirmation'
         else:
-            self.status = 'awaiting_response'
-            return True
+            self.determine_visibility()
+            if self.public_body is None:
+                self.status = 'publicbody_needed'
+            elif not self.public_body.confirmed:
+                self.status = 'awaiting_publicbody_confirmation'
+            else:
+                self.status = 'awaiting_response'
+                return True
         return False
+
+    def safe_send_first_message(self):
+        messages = self.foimessage_set.all()
+        if not len(messages) == 1:
+            return None
+        message = messages[0]
+        if message.sent:
+            return None
+        message.send()
+        return self
 
     @classmethod
     def confirmed_request(cls, user, request_id):
@@ -305,17 +325,17 @@ class FoiRequest(models.Model):
             return None
         if not request.user == user:
             return None
-        sent_now = request.set_status_after_change()
+        send_now = request.set_status_after_change()
         request.save()
-        messages = request.foimessage_set.all()
-        if not len(messages) == 1:
-            return None
-        message = messages[0]
-        if message.sent:
-            return None
-        if sent_now:
-            message.send()
-            return request
+        if send_now:
+            return request.safe_send_first_message()
+        return None
+
+    def confirmed_public_body(self):
+        send_now = self.set_status_after_change()
+        self.save()
+        if send_now:
+            return self.safe_send_first_message()
         return None
 
     def set_public_body(self, public_body, law):
