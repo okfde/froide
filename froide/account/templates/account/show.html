@@ -5,7 +5,9 @@
 
 {% block body %}
 <h2>{% blocktrans %}Your account{% endblocktrans %}</h2>
-<p>{% blocktrans %}Your name: {% endblocktrans %}{{ user.get_full_name }}</p>
+<p>{% blocktrans %}Your name:{% endblocktrans %} {{ user.get_full_name }}<br/>
+{% blocktrans %}Your email address:{% endblocktrans %} {{ user.email }}</p>
+
 {% if not user.is_active %}
 <p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>
 {% else %}
