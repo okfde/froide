@@ -192,7 +192,7 @@ FROIDE_CONFIG = {
 }
 
 SITE_NAME = 'FroIde'
-SITE_URL = 'http://www.fragdenstaat.de'
+SITE_URL = 'http://localhost:8000'
 
 AUTH_PROFILE_MODULE = 'account.Profile'
 
