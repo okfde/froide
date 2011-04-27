@@ -493,20 +493,33 @@ class FoiEvent(models.Model):
 
     }
 
+    class Meta:
+        ordering = ('timestamp',)
+        # order_with_respect_to = 'belongs_to'
+        verbose_name = _('Request Event')
+        verbose_name_plural = _('Request Events')
+
+    def __unicode__(self):
+        return u"%s - %s" % (self.event_name, self.request)
+
     def get_context(self):
         context = getattr(self, "_context", None)
         if context is not None:
             return context
         context = json.loads(self.context_json)
-        context.update({"user": self.user, "public_body": self.public_body,
+        user = ""
+        if self.user:
+            user = self.user.get_full_name()
+        pb = ""
+        if self.public_body:
+            pb = self.public_body.name
+        context.update({"user": user, "public_body": pb,
             "since": timesince(self.timestamp), "date": self.timestamp})
         self._context = context
         return context
     
-    @property
-    def html(self):
+    def as_html(self):
         return self.html_events[self.event_name] % self.get_context()
     
-    @property
-    def get_text(self):
-        return self.html_events[self.event_name] % self.get_context()
+    def as_text(self):
+        return self.plaintext_events[self.event_name] % self.get_context()
