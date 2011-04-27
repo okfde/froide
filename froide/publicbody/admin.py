@@ -6,6 +6,7 @@ class PublicBodyAdmin(admin.ModelAdmin):
     list_display = ('name', 'classification', 'geography')
     list_filter = ('classification',)
     search_fields = ['name', "description"]
+    exclude = ('confirmed',)
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("jurisdiction", "name",)}
