@@ -421,8 +421,9 @@ class FoiMessage(models.Model):
         return self.plaintext
 
     def __unicode__(self):
-        return u"Message in '%s' at %s" % (self.request,
-                self.timestamp)
+        return _(u"Message in '%(request)s' at %(time)s"
+                ) % {"request": self.request,
+                    "time": self.timestamp}
 
     @property
     def sender(self):
