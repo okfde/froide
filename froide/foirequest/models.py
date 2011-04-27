@@ -155,6 +155,9 @@ class FoiRequest(models.Model):
             return True
         return False
 
+    def needs_public_body(self):
+        return self.status == 'publicbody_needed'
+
     def status_form_klass(self):
         from foirequest.forms import get_status_form_class
         return get_status_form_class(self)
