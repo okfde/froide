@@ -24,5 +24,6 @@ class MailTest(TestCase):
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         self.assertEqual(messages[1].subject, u"Fwd: Informationsfreiheitsgesetz des Bundes, Antragsvordruck für Open Data")
-        self.assertEqual(len(message[1].attachments), 1)
+        self.assertEqual(len(messages[1].attachments), 1)
+        self.assertEqual(messages[1].attachments[0].name, u"TI  - IFG-Antrag, Vordruck.docx")
 
