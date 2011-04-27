@@ -85,27 +85,33 @@ class FoiRequest(models.Model):
 
     public = models.BooleanField(_("published?"), default=True)
 
-    status = models.CharField(max_length=25, choices=STATUS_CHOICES)
-    visibility = models.SmallIntegerField(default=0, choices=VISIBILITY_CHOICES)
+    status = models.CharField(_("Status"), max_length=25, choices=STATUS_CHOICES)
+    visibility = models.SmallIntegerField(_("Visibility"), default=0, choices=VISIBILITY_CHOICES)
     
     user = models.ForeignKey(User, null=True,
-            on_delete=models.SET_NULL)
+            on_delete=models.SET_NULL,
+            verbose_name=_("User"))
 
-    first_message = models.DateTimeField(blank=True, null=True)
-    last_message = models.DateTimeField(blank=True, null=True)
-    resolved_on = models.DateTimeField(blank=True, null=True)
+    first_message = models.DateTimeField(_("Date of first message"),
+            blank=True, null=True)
+    last_message = models.DateTimeField(_("Date of last message"),
+            blank=True, null=True)
+    resolved_on = models.DateTimeField(_("Resolution date"),
+            blank=True, null=True)
     
-    secret_address = models.CharField(max_length=255,
+    secret_address = models.CharField(_("Secret address"), max_length=255,
             db_index=True, unique=True)
-    secret = models.CharField(blank=True, max_length=100)
+    secret = models.CharField(_("Secret"), blank=True, max_length=100)
 
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
-            on_delete=models.SET_NULL)
+            on_delete=models.SET_NULL, 
+            verbose_name=_("Freedom of Information Law"))
     costs = models.FloatField(_("Cost of Information"), default=0.0)
-    refusal_reason = models.CharField(max_length=255, blank=True)
+    refusal_reason = models.CharField(_("Refusal reason"), max_length=255,
+            blank=True)
     
     site = models.ForeignKey(Site, null=True,
-            on_delete=models.SET_NULL)
+            on_delete=models.SET_NULL, verbose_name=_("Site"))
     
     objects = FoiRequestManager()
 
@@ -118,6 +124,7 @@ class FoiRequest(models.Model):
     # Custom Signals
     message_received = django.dispatch.Signal(providing_args=["message"])
     request_created = django.dispatch.Signal(providing_args=[])
+    request_to_public_body = django.dispatch.Signal(providing_args=[])
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
 
     def __unicode__(self):
@@ -313,9 +320,10 @@ class FoiRequest(models.Model):
         assert self.status == "publicbody_needed"
         self.public_body = public_body
         self.law = law
-        sent_now = self.set_status_after_change()
+        send_now = self.set_status_after_change()
         self.save()
-        if sent_now:
+        self.request_to_public_body.send(sender=self)
+        if send_now:
             messages = self.foimessage_set.all()
             assert len(messages) == 1
             message = messages[0]
@@ -323,32 +331,52 @@ class FoiRequest(models.Model):
             assert message.sent == False
             message.send() # saves message
 
+@receiver(FoiRequest.request_to_public_body,
+        dispatch_uid="foirequest_increment_request_count")
+def increment_request_count(sender, **kwargs):
+    sender.public_body.number_of_requests += 1
+    sender.public_body.save()
+
 
 class PublicBodySuggestion(models.Model):
-    request = models.ForeignKey(FoiRequest)
-    public_body = models.ForeignKey(PublicBody)
+    request = models.ForeignKey(FoiRequest,
+            verbose_name=_("Freedom of Information Request"))
+    public_body = models.ForeignKey(PublicBody,
+            verbose_name=_("Public Body"))
     user = models.ForeignKey(User, null=True,
-            on_delete=models.SET_NULL)
-    timestamp = models.DateTimeField(auto_now_add=True)
+            on_delete=models.SET_NULL,
+            verbose_name=_("User"))
+    timestamp = models.DateTimeField(_("Timestamp of Suggestion"),
+            auto_now_add=True)
 
+    class Meta:
+        get_latest_by = 'timestamp'
+        ordering = ('timestamp',)
+        verbose_name = _('Public Body Suggestion')
+        verbose_name_plural = _('Public Body Suggestions')
 
 class FoiMessage(models.Model):
-    request = models.ForeignKey(FoiRequest)
-    sent = models.BooleanField(default=True)
-    is_response = models.BooleanField(default=True)
+    request = models.ForeignKey(FoiRequest,
+            verbose_name=_("Freedom of Information Request"))
+    sent = models.BooleanField(_("has message been sent?"), default=True)
+    is_response = models.BooleanField(_("Is this message a response?"), default=True)
     sender_user = models.ForeignKey(User, blank=True, null=True,
-            on_delete=models.SET_NULL)
-    sender_email = models.CharField(blank=True, max_length=255)
-    sender_name = models.CharField(blank=True, max_length=255)
+            on_delete=models.SET_NULL,
+            verbose_name=_("From User"))
+    sender_email = models.CharField(_("From Email"),
+            blank=True, max_length=255)
+    sender_name = models.CharField(_("From Name"),
+            blank=True, max_length=255)
     sender_public_body = models.ForeignKey(PublicBody, blank=True,
-            null=True, on_delete=models.SET_NULL)
-    recipient = models.CharField(max_length=255, blank=True)
-    timestamp = models.DateTimeField(blank=True)
-    subject = models.CharField(blank=True, max_length=255)
-    plaintext = models.TextField(blank=True, null=True)
-    html = models.TextField(blank=True, null=True)
-    original = models.TextField(blank=True)
-    redacted = models.BooleanField(default=False)
+            null=True, on_delete=models.SET_NULL,
+            verbose_name=_("From Public Body"))
+    recipient = models.CharField(_("Recipient"), max_length=255, blank=True)
+    timestamp = models.DateTimeField(_("Timestamp"), blank=True)
+    subject = models.CharField(_("Subject"), blank=True, max_length=255)
+    plaintext = models.TextField(_("plain text"), blank=True, null=True)
+    html = models.TextField(_("HTML"), blank=True, null=True)
+    original = models.TextField(_("Original"), blank=True)
+    redacted = models.BooleanField(_("Was Redacted?"), default=False)
 
     _status = models.SmallIntegerField(null=True, default=None, blank=True)
     _resolution = models.SmallIntegerField(null=True, default=None, blank=True)
@@ -422,12 +450,13 @@ def upload_to(instance, filename):
 
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(FoiMessage, null=True,
-            on_delete=models.SET_NULL)
-    name = models.CharField(max_length=255)
-    file = models.FileField(upload_to=upload_to)
-    size = models.IntegerField(blank=True, null=True)
-    filetype = models.CharField(blank=True, max_length=100)
-    format = models.CharField(blank=True, max_length=100)
+            on_delete=models.SET_NULL,
+            verbose_name=_("Belongs to request"))
+    name = models.CharField(_("Name"), max_length=255)
+    file = models.FileField(_("File"), upload_to=upload_to)
+    size = models.IntegerField(_("Size"), blank=True, null=True)
+    filetype = models.CharField(_("File type"), blank=True, max_length=100)
+    format = models.CharField(_("Format"), blank=True, max_length=100)
     
     class Meta:
         ordering = ('name',)
@@ -443,14 +472,17 @@ class FoiAttachment(models.Model):
 
 
 class FoiEvent(models.Model):
-    request = models.ForeignKey(FoiRequest)
+    request = models.ForeignKey(FoiRequest,
+            verbose_name=_("Freedom of Information Request"))
     user = models.ForeignKey(User, null=True,
-            on_delete=models.SET_NULL)
+            on_delete=models.SET_NULL, blank=True,
+            verbose_name=_("User"))
     public_body = models.ForeignKey(PublicBody, null=True,
-            on_delete=models.SET_NULL)
-    event_name = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    context_json = models.TextField()
+            on_delete=models.SET_NULL, blank=True,
+            verbose_name=_("Public Body"))
+    event_name = models.CharField(_("Event Name"), max_length=255)
+    timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
+    context_json = models.TextField(_("Context JSON"))
 
     html_events = {
         "reported_costs": _(
