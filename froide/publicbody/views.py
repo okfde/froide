@@ -39,3 +39,24 @@ def autocomplete(request):
     # l.extend([x.get_stored_fields()['name_auto'] for x in result])
     return HttpResponse(json.dumps(list(set(l))), content_type="application/json")
 
+def confirm(request):
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden()
+    if not request.user.is_staff and not request.user.is_superuser:
+        return HttpResponseForbidden()
+    try:
+        pb = get_object_or_404(PublicBody, pk=int(request.POST.get('public_body', '')))
+    except ValueError:
+        return HttpResponseBadRequest()
+    result = pb.confirm()
+    if result is None:
+        messages.add_message(request, messages.ERROR,
+            _('This request was already confirmed.'))
+    else:
+        messages.add_message(request, messages.ERROR,
+                ungettext('%(count)d message was sent.', 
+                    '%(count)d messages were sent', result
+                    ) % {"count": result})
+    return HttpResponseRedirect(
+        urlresolvers.reverse('admin:publicbody_publicbody_change',
+            args=(pb.id,)))
