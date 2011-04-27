@@ -416,8 +416,8 @@ class FoiMessage(models.Model):
     def get_content(self):
         content = self.content
         # content = remove_quote(content, replacement=_(u"Quoted part removed"))
-        content = replace_email_name(content)
-        content = replace_email(content)
+        content = replace_email_name(content, _("<<name and email address>>"))
+        content = replace_email(content, _("<<email address>>"))
         content = remove_signature(content)
         content = remove_quote(content)
         return content
