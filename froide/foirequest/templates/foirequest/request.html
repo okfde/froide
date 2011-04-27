@@ -11,13 +11,17 @@
   Froide.template.searchInternet = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information" %} </a></li>';
   Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search Public Body Website" %}</a></li>';
   Froide.template.searchEngineUrl = '{% search_engine_query %}';
+  Froide.template.foundEmail = "{% blocktrans %}We found an email address in your text {{email}}. Do not sent personal data to the Public Body.{% endblocktrans %}";
+  Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}";
+  Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}";
+
 </script>
 <script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block body %}
 <div class="span-18">
-  <h2>Write a request</h2>
+  <h2>{% blocktrans %}Write a request{% endblocktrans %}</h2>
   {% if public_body %}
   <form method="post" action="{% url 'foirequest-submit_request' public_body=public_body.slug %}" class="foirequest">
   {% else %}
@@ -28,7 +32,8 @@
       <legend>{% blocktrans %}Step 1 - Find the Public Body{% endblocktrans %}</legend>
       {% if public_body %}
       <input type="hidden" name="public_body" value="{{ public_body.pk }}"/>
-      <p><strong>{% trans "To:" %}</strong> {{ public_body }}</p>
+      <input type="hidden" name="law" value="{{ public_body.default_law.pk }}"/>
+      <p><strong>{% trans "To:" %}</strong> <span id="review-publicbody">{{ public_body.name }}</span></p>
       {% else %}
       <div id="step-public_body">
         {% include 'publicbody/_chooser.html' %}
@@ -112,8 +117,8 @@
         </div>
       </div>
       {% if user.is_authenticated %}
-      <p>{{ user.get_full_name }}</p>
-      <p>Your Email Address: {{ user.email }}</p>
+      <p id="fullname">{{ user.get_full_name }}</p>
+      <p>Your Email Address: <span id="email_address">{{ user.email }}</span></p>
       {% else %}
       <div id="user_data_form">
       <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> and 
@@ -131,22 +136,61 @@
         </p>
       </div>
       {% endif %}
+      <div class="section">
+      {{ request_form.public }}
+      <label class="inline" for="id_public">{% blocktrans %}This request will be public
+        immediately.{% endblocktrans %}</label><br/>
+      <span class="help">
+        {% blocktrans %}If you don't want your request to be immediately public, uncheck this. We will automatically publish the request some time after the last message or you can decide to publish the request yourself before that.{% endblocktrans %}
+      </span>
+      </div>
       <br/><input type="button" id="review-button" value="Review and Submit"/>
       </div>
     </fieldset>
     <fieldset id="review-and-submit">
       <legend>{% blocktrans %}Step 3 - Review your Request and Submit{% endblocktrans %}</legend>
-      <div class="hidden" id="step-review">
-        <p>{% blocktrans %}Please review your request before sending it.{% endblocktrans %}</p>
-        
+      <div class="hidden lightbox" id="step-review">
+        <a href="#" class="close"><span class="close-button">{% blocktrans %}Close{% endblocktrans %}</span></a>
+        <h3>{% blocktrans %}Review your Request and Submit{% endblocktrans %}</h3>
+        <table class="message-table">
+          <tbody>
+          <tr>
+            <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
+            <td id="review-to"></td>
+          </tr>
+          <tr>
+            <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+            <td id="review-from"></td>
+          </tr>
+          <tr>
+            <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
+            <td><strong id="review-subject"></strong></td>
+          </tr>
+          </tbody>
+        </table>
+       <div class="span-17">
+          <div id="review-text"></div>
+       </div>
+        <div class="span-6 last request-notes">
+          <ul id="review-warnings" class="notice">
+          </ul>
+          <ul>
+            <li>{% blocktrans %}Please use proper spelling.{% endblocktrans %}</li>
+            <li>{% blocktrans %}Please stay polite{% endblocktrans %}</li>
+          </ul>
+        </div>
+        <div class="clear">
+          <p>{% blocktrans %}If you want to <a href="#" class="close">edit your request, click here</a>{% endblocktrans %}</p>
+          <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
 
-
-        <input type="submit" value="{% trans "Submit Request" %}">
+          <input type="submit" value="{% trans "Submit Request" %}">
+        </div>
       </div>
     </fieldset>
   </form>
 </div>
-<div class="prepend-1 span-5 last">
+<div id="lightbox-background"></div>
+<div class="prepend-1 span-5 last" style="visibility:hidden">
   <h4>{% blocktrans %}Similar Requests{% endblocktrans %}</h4>
   <ul>
     <li></li>

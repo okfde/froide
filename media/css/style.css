@@ -46,14 +46,14 @@ body {
 #nav ul li a {
     display: inline;
     float:left;
-    margin-right: 1em;
+    margin-right: 1.5em;
     font-weight: normal;
-    padding: 5px 10px;
     -moz-border-radius: 5px;
     border-radius: 5px;
     text-decoration: none;
     letter-spacing: 0.1em;
     color: #666;
+    text-decoration: underline;
 }
 
 
@@ -89,6 +89,10 @@ h2 {
 
 .messages {
     list-style-type:none;
+}
+
+.notice > ul {
+    margin-bottom:0;
 }
 
 .special-heading {
@@ -345,13 +349,78 @@ form.foirequest p {
     display:none;
 }
 
+#step-review {
+    width: 960px;
+    background-color: #FFE9EE;
+}
+
+#lightbox-background {
+    display: none;
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    opacity: .80;
+    z-index: 9999;
+}
+.lightbox {
+    display: none;
+    background: #fff;
+    padding: 20px;
+    border: 20px solid #fff;
+    float: left;
+    position: fixed;
+    top: 50%; left: 50%;
+    z-index: 99999;
+    -webkit-box-shadow: 0px 0px 20px #000;
+    -moz-box-shadow: 0px 0px 20px #000;
+    box-shadow: 0px 0px 20px #000;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+.close-button {
+    float: right;
+    margin: 1em;
+}
+
+*html #lightbox-background {
+	position: absolute;
+}
+*html .lightbox {
+	position: absolute;
+}
+
+#review-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: "Times New Roman", Times, serif;
+    color: #000;
+    background-color: #fff;
+    padding: 0.25em;
+    border: 1px solid #ccc;
+    height: 14em;
+    max-height: 14em;
+    overflow: auto;
+}
+
+#review-warnings {
+    padding-left: 1.5em;
+}
+
+#review-warnings li {
+
+}
+
 .foirequest-info h2{
     margin:0;
 }
 
 
 .message {
-    border: 1px solid #ccc;
+    border: 2px solid #aaa;
     /* -moz-box-shadow: 0px 0px 15px #ccc;*/
     /* -webkit-box-shadow: 0px 0px 15px #ccc;*/
     /* box-shadow: 0px 0px 15px #ccc;*/
@@ -363,30 +432,31 @@ form.foirequest p {
     background-color: #FFF9DC;
 }
 
-.message table {
+.message-table {
     border-spacing: 0px;
 }
 
-.message td.key {
+.message-table td.key {
     text-align:right;
     color: #999;
     vertical-align:top;
     font-weight: bold;
+    width: 10%;
 }
 
-.message td.key:after {
+.message-table td.key:after {
     content: ":";
 }
 
-.message tbody tr:nth-child(even) td, .message tbody tr.even td {
+.message-table tbody tr:nth-child(even) td, .message tbody tr.even td {
     background: transparent;
 }
 
-.message td {
+.message-table  td {
     padding: 0px 0px 2px 0.5em;
 }
 
-.message table, .message td ul {
+.message-table, .message-table td ul {
     margin-bottom: 0.4em;
 }
 
@@ -395,4 +465,16 @@ form.foirequest p {
     word-wrap: break-word;
 }
 
+.section {
+    padding: 1em;
+    margin: 0 0.5em 1em 0;
+    border: 1px solid #ccc;
+}
 
+.js .status-section {
+    display:none;
+}
+
+.js .comment-container {
+    display:none;
+}
