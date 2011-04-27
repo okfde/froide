@@ -1,6 +1,7 @@
 from __future__ import with_statement
 
 import re
+from datetime import datetime
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -54,6 +55,7 @@ class RequestTest(TestCase):
         self.assertIsNotNone(req)
         self.assertEqual(req.title, post['subject'])
         self.assertEqual(req.status, "awaiting_user_confirmation")
+        self.assertEqual(req.visibility, 0)
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
         message = Message.objects.filter(to_address=post['user_email']).get()
@@ -66,9 +68,45 @@ class RequestTest(TestCase):
                 'secret': secret, 'request_id': req.pk}))
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.status, "awaiting_response")
+        self.assertEqual(req.visibility, 1)
         message = Message.objects.filter(from_address=req.secret_address).get()
         self.assertEqual(message.to_address, req.public_body.email)
         self.assertEqual(message.subject, req.title)
+        resp = self.client.post(reverse('foirequest-set_status',
+            kwargs={"slug": req.slug}))
+        self.assertEqual(resp.status_code, 400)
+        req.add_message_from_email({
+            'msgobj': None,
+            'date': (datetime.now(),0),
+            'subject': u"Re: %s" % req.title,
+            'body': u"""Message""",
+            'html': None,
+            'from': (pb.name, pb.email),
+            'to': [(req.user.get_full_name(), req.secret_address)],
+            'cc': [],
+            'resent_to': [],
+            'resent_cc': [],
+            'attachments': []
+        }, "FAKE_ORIGINAL")
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(len(req.messages), 2)
+        self.assertEqual(req.messages[1].sender_email, pb.email)
+        response = self.client.get(reverse('foirequest-show',
+            kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(req.status_settable)
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": "invalid_status_settings_now"})
+        self.assertEqual(response.status_code, 400)
+        costs = "123.45"
+        status = "requires_payment"
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": costs})
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.costs, float(costs))
+        self.assertEqual(req.status, status)
 
     def test_public_body_not_logged_in_request(self):
         self.client.logout()
