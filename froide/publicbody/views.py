@@ -1,11 +1,25 @@
 import json
 
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.http import (HttpResponse, HttpResponseForbidden,
+        HttpResponseRedirect, HttpResponseBadRequest)
+from django.core import urlresolvers
+from django.utils.translation import ugettext as _, ungettext
+from django.contrib import messages
+
 from haystack.query import SearchQuerySet, SQ
 
 from publicbody.models import PublicBody
-from froide.helper.json_view import JSONResponseDetailView
+from froide.helper.json_view import (JSONResponseDetailView,
+        JSONResponseListView)
+
+class PublicBodyListView(JSONResponseListView):
+    model = PublicBody
+    template_name = "publicbody/list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(JSONResponseListView, self).get_context_data(**kwargs)
+        return context
 
 
 class PublicBodyDetailView(JSONResponseDetailView):
@@ -13,12 +27,9 @@ class PublicBodyDetailView(JSONResponseDetailView):
     template_name = "publicbody/show.html"
 
     def get_context_data(self, **kwargs):
-        context = super(JSONResponseDetailView, self).get_context_data(**kwargs)
-        self.format = "html"
-        if "format" in self.kwargs:
-            self.format = self.kwargs['format']
+        context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
         if self.format == "html":
-            context['foi_requests'] = [] #FIXME: PublicBody.foirequest_set.latest()
+            context['foi_requests'] = context['object'].foirequest_set.order_by('last_message')[:10]
         return context
 
 def search(request):
