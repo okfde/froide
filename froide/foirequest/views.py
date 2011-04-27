@@ -28,10 +28,32 @@ def index(request):
             'foi_requests': foi_requests
         })
 
+def list_requests(request):
+    foi_requests = FoiRequest.objects.all()
+    return render(request, 'foirequest/list.html', {
+            'object_list': foi_requests
+        })
+
 def show(request, slug, template_name="foirequest/show.html"):
-    obj = get_object_or_404(FoiRequest, slug=slug)
+    try:
+        obj = FoiRequest.objects.select_related("public_body",
+                "user", "law").get(slug=slug)
+    except FoiRequest.DoesNotExist:
+        raise Http404
     if not obj.is_visible(request.user):
         return HttpResponseForbidden()
+
+    all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
+    for message in obj.messages:
+        message._attachments = filter(lambda x: x.belongs_to_id == message.id, all_attachments)
+
+    events = FoiEvent.objects.filter(request=obj).select_related("user",
+            "public_body").order_by("timestamp")
+    event_count = len(events)
+    last_index = event_count
+    for message in reversed(obj.messages):
+        message.events = [ev for ev in events[:last_index] if ev.timestamp >= message.timestamp]
+        last_index = event_count - len(message.events)
     return render(request, template_name, {"object": obj})
 
 def success(request):

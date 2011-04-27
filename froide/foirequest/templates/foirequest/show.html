@@ -2,55 +2,49 @@
 {% load url from future %}
 {% load i18n %}
 {% load markup %}
+{% load comments %}
 
 {% block body %}
 <h2>{{ object.title }}</h2>
 <dl>
   <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
-  <dd>{% if object.public_body %}{{ object.public_body }}{% else %}{% blocktrans %}Not yet set{% endblocktrans %}{% endif %}</dd>
-  <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
-  <dd>{{ object.readable_status }}</dd>
+  <dd>{% if object.public_body %}{{ object.public_body.name }}{% else %}{% blocktrans %}Not yet known{% endblocktrans %}{% endif %}</dd>
   <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
   <dd>{% if object.law %}{{ object.law }}{% else %}{% blocktrans %}Not yet set{% endblocktrans %}{% endif %}</dd>
+  <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
+  <dd>{{ object.readable_status }}</dd>
+{% if object.refusal_reason %}
+  <dt>{% blocktrans %}Refusal Reason{% endblocktrans %}</dt>
+  <dd>{{ object.refusal_reason }}</dd>
+{% endif %}
 {% if object.costs > 0 %}
   <dt>{% blocktrans %}Cost of information:{% endblocktrans %}</dt>
-  <dd>{{ object.costs }} {{ froide.currency }}</dd>
+  <dd>{{ object.costs|floatformat:2 }} {{ froide.currency }}</dd>
 {% endif %}
 </dl>
+<div class="span-18">
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
-<div class="notice">
-  {% blocktrans %}This request still needs a Public Body as a recipient.{% endblocktrans %}
+<div class="info">
+  {% blocktrans %}This request was not sent yet, because it still needs a Public Body as a recipient.{% endblocktrans %}
 </div>
-{% if object.user == user %}
-{% with suggestions_form=object.public_body_suggestions_form %}
-    {% if suggestions_form %}
-    {% blocktrans %}Choose from one of the suggestions from other users:{% endblocktrans %}
-    <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
-      {% csrf_token %}
-      {{ suggestions_form }}
-      <input type="submit" value="{% blocktrans %}Set Public Body{% endblocktrans %}"/>
-    </form>
-    {% endif %}
-  {% endwith %}
-  {% else %}
-  {% blocktrans %}You can suggest a public body for this request:{% endblocktrans %}
-    {% include "publicbody/_chooser.html" %}
-  {% endif %}
+{% if not object.public %}
+<div class="notice">
+  {% blocktrans %}This request is not public and will not receive suggestions for public bodies from users!{% endblocktrans %}
+</div>
 {% endif %}
-{# End Public Body Needed #}
+{% endif %}
 {# Unconfirmed Public Body #}
 {% if object.public_body and not object.public_body.confirmed %}
 <div class="notice">
-  {% blocktrans %}The recipient of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
+  {% blocktrans %}The public body of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
 </div>
 {% endif %}
 {# End Unconfirmed Public Body #}
 
-<div class="span-18">
 {% for message in object.messages %}
 <div class="message{% if not message.sender_user %} message-received{% endif %}">
-  <table>
+  <table class="message-table">
     <tbody>
     <tr>
       <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
@@ -83,21 +77,71 @@
   <hr/>
   <div class="message-content">{{ message.get_content|urlize }}</div>
 </div>
+{% if message.events %}
+<div class="events">
+  <ol>
+  {% for event in message.events %}
+    <li>{{ event.as_html }}</li>
+  {% endfor %}
+  </ol>
+</div>
+{% endif %}
+<div class="comments">
+{% get_comment_count for message as comment_count %}
+<a href="#comments-{{ message.id }}">{% blocktrans count count=comment_count %}{{ count }} comment{% plural %}{{ count }} comments{% endblocktrans %}</a>
+<div id="comments-{{ message.id }}" class="comment-container">
+  {% render_comment_list for message %}
+  {% if user.is_authenticated %}
+  {% with next=object.get_absolute_url %}
+    {% render_comment_form for message %}
+  {% endwith %}
+  {% endif %}
+</div>
+</div>
 {% empty %}
 <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
 {% endfor %}
 
+{# Public Body Needed #}
+{% if object.status == "publicbody_needed" %}
+<div class="section">
+  <p>{% blocktrans %}You can suggest a public body for this request:{% endblocktrans %}</p>
+<form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
+    {% csrf_token %}
+    {% include "publicbody/_chooser.html" %}
+    <input type="submit" value="{% blocktrans %}Suggest this Public Body{% endblocktrans%}"/>
+  </form>
+</div>
+
+{% if object.user == user %}
+<div class="section">
+{% with suggestions_form=object.public_body_suggestions_form %}
+{% if suggestions_form %}
+  <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
+    <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
+      {% csrf_token %}
+      {{ suggestions_form }}
+      <input type="submit" value="{% blocktrans %}Choose selected Public Body{% endblocktrans %}"/>
+    </form>
+    {% endif %}
+{% endwith %}
+</div>
+{% endif %}
+{% endif %}
+{# End Public Body Needed #}
+
 {# Set status #}
 {% if object.user == user and object.status_settable %}
 <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}">{% csrf_token %}
-  <label id="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
+  <label for="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
   {{ object.status_form.status }}<br/>
   {% if froide.payment_possible %}
-  <div class="status-payment">{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
-    <label id="id_costs">{% blocktrans %}Costs: {% endblocktrans %}</label>{{ object.status_form.costs }} {{ froide.currency }}
+  <div class="status-payment status-section">{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
+    <label id="id_costs">{% blocktrans %}Costs:{% endblocktrans %} </label>
+    {{ object.status_form.costs }} {{ froide.currency }}
   </div>
   {% endif %}
-  <div class="status-refusal">
+  <div class="status-refusal status-section">
 {% blocktrans %}When you are denied information, the Public Body should always state on what grounds.{% endblocktrans %}<br/>
     <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
     {{ object.status_form.refusal_reason }}
@@ -106,8 +150,22 @@
   </p>
   </form>
 {% endif %}
-{# Set status #}
+{# End Set status #}
 
 </div>
-
 {% endblock %}
+
+{% block extra_footer %}
+<script type="text/javascript">
+  $(function(){
+    $("#public_body-chooser input[name='public_body']").live("change", function(e){
+      Froide.app.publicBodyChosen($("#public_body-chooser input[name='public_body']:checked").val());
+    });
+    $("#id_status").change(function(){
+      Froide.app.statusSet();
+    });
+    Froide.app.statusSet();
+  });
+</script>
+{% endblock %}
+
