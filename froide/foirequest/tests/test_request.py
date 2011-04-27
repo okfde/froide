@@ -139,6 +139,7 @@ class RequestTest(TestCase):
         post = {"subject": "Another Test-Subject",
                 "body": "This is a test body",
                 "public_body": "new",
+                "public": "on",
                 "name": "Some New Public Body",
                 "email": "public.body@example.com",
                 "url": "http://example.com/public/body/"}
@@ -147,5 +148,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         pb = PublicBody.objects.filter(name=post['name']).get()
         self.assertEqual(pb.url, post['url'])
-        req = FoiRequest.objects.filter(public_body=pb).get()
+        req = FoiRequest.objects.get(public_body=pb)
         self.assertEqual(req.status, "awaiting_publicbody_confirmation")
+        self.assertEqual(req.visibility, 2)
+        self.assertTrue(req.public)
