@@ -21,6 +21,7 @@ class RequestTest(TestCase):
         self.assertTrue(ok)
 
         pb = PublicBody.objects.all()[0]
+        old_number = pb.number_of_requests
         post = {"subject": "Test-Subject", "body": "This is a test body",
                 "law": pb.laws.all()[0].pk}
         response = self.client.post(reverse('foirequest-submit_request',
@@ -29,6 +30,9 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.filter(user=user, public_body=pb).get()
         self.assertIsNotNone(req)
         self.assertEqual(req.status, "awaiting_response")
+        self.assertEqual(req.visibility, 1)
+        self.assertEqual(old_number + 1, req.public_body.number_of_requests)
+        self.assertEqual(req.public, False)
         self.assertEqual(req.title, post['subject'])
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
