@@ -11,7 +11,6 @@ from django.conf import settings
 from django.utils.text import truncate_words
 
 
-
 class PublicBodyManager(CurrentSiteManager):
     def get_for_homepage(self, count=5):
         return self.get_query_set()[:count]
@@ -115,6 +114,15 @@ class PublicBody(models.Model):
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
 
+    def confirm(self):
+        if self.confirmed:
+            return None
+        counter = 0
+        for request in self.foirequest_set.all():
+            if request.confirmed_public_body():
+                counter += 1
+        return counter
+
     def as_json(self):
         d = {}
         for field in self.serializable_fields:
@@ -148,4 +156,3 @@ class PublicBody(models.Model):
             writer.writerow(d)
         s.seek(0)
         return s.read()
-
