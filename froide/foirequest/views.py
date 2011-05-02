@@ -86,7 +86,6 @@ def submit_request(request, public_body=None):
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
         foilaw = public_body.default_law
-
     context = {"public_body": public_body}
     request_form = RequestForm(request.POST)
     context['request_form'] = request_form
@@ -101,8 +100,15 @@ def submit_request(request, public_body=None):
                 public_body = PublicBody(**data)
             else:
                 error = True
+
     if not request_form.is_valid():
         error = True
+    else:
+        if public_body is None and \
+                request_form.cleaned_data['public_body'] != '' and \
+                request_form.cleaned_data['public_body'] != 'new':
+            public_body = request_form.public_body_object
+
     context['user_form'] = None
     user = None
     if not request.user.is_authenticated():

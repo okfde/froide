@@ -48,6 +48,7 @@ class RequestForm(forms.Form):
             self.foi_law_object = public_body.default_law
         return pb
     
+    public_body_object = None
     foi_law_object = None
 
     def clean_law_for_public_body(self, public_body):
