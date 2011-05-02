@@ -18,6 +18,8 @@ databrowse.site.register(FoiLaw)
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'froide.foirequest.views.index', name='index'),
+    # Translators: request URL
+    (r'^%s/$' % _('make-request'), 'foirequest.views.make_request', {}, 'foirequest-make_request'),
     # Translators: URL part
     url(r'^%s/' % _('request'), include('froide.foirequest.urls')),
     # Translators: URL part
