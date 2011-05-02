@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponseForbidden
 from django.contrib import auth
 from django.contrib import messages
 from django.utils.translation import ugettext as _
@@ -32,7 +32,7 @@ def confirm(request, user_id, secret, request_id=None):
 
 def show(request):
     if not request.user.is_authenticated():
-        raise Http404
+        return HttpResponseForbidden()
     my_requests = FoiRequest.objects.filter(user=request.user)
     return render(request, 'account/show.html', {'foirequests': my_requests})
 
