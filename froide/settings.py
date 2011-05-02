@@ -186,6 +186,20 @@ LOGGING = {
 
 DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
 
+HOLIDAYS = [
+    (1, 1), # New Year's Day
+    (5, 1), # Labour Day
+    (10, 3), # German Unity Day
+    (12, 25), # Christmas
+    (12, 26) # Second day of Christmas
+]
+
+# Weekends are non-working days
+HOLIDAYS_WEEKENDS = True
+
+# Calculates other German holidays based on easter sunday
+HOLIDAYS_FOR_EASTER = (0, -2, 1, 39, 50, 60)
+
 FROIDE_CONFIG = {
     "create_new_publicbody": True,
     "publicbody_empty": True,
