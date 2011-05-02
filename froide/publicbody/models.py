@@ -137,6 +137,8 @@ class PublicBody(models.Model):
     def confirm(self):
         if self.confirmed:
             return None
+        self.confirmed = True
+        self.save()
         counter = 0
         for request in self.foirequest_set.all():
             if request.confirmed_public_body():
