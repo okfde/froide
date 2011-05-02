@@ -24,7 +24,7 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         old_number = pb.number_of_requests
         post = {"subject": "Test-Subject", "body": "This is a test body",
-                "law": pb.laws.all()[0].pk}
+                "law": pb.default_law.pk}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -41,6 +41,15 @@ class RequestTest(TestCase):
     def test_public_body_new_user_request(self):
         self.client.logout()
         pb = PublicBody.objects.all()[0]
+        post = {"subject": "Test-Subject With New User",
+                "body": "This is a test body with new user",
+                "first_name": "Stefan", "last_name": "Wehrmeyer",
+                "user_email": "dummy@example.com", # already exists in fixture
+                "law": pb.laws.all()[0].pk}
+        response = self.client.post(reverse('foirequest-submit_request',
+                kwargs={"public_body": pb.slug}), post)
+        self.assertTrue(response.context['user_form']['user_email'].errors)
+        self.assertEqual(response.status_code, 400)
         post = {"subject": "Test-Subject With New User",
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
@@ -107,6 +116,11 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.costs, float(costs))
         self.assertEqual(req.status, status)
+        self.client.logout()
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": costs})
+        self.assertEqual(response.status_code, 403)
 
     def test_public_body_not_logged_in_request(self):
         self.client.logout()
@@ -152,3 +166,158 @@ class RequestTest(TestCase):
         self.assertEqual(req.status, "awaiting_publicbody_confirmation")
         self.assertEqual(req.visibility, 2)
         self.assertTrue(req.public)
+        self.assertFalse(req.messages[0].sent)
+        self.client.logout()
+        # Confirm public body via admin interface
+        response = self.client.post(reverse('publicbody-confirm'),
+                {"public_body": pb.pk})
+        self.assertEqual(response.status_code, 403)
+        # login as not staff
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('publicbody-confirm'),
+                {"public_body": pb.pk})
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('publicbody-confirm'),
+                {"public_body": "argh"})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('publicbody-confirm'))
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('publicbody-confirm'),
+                {"public_body": "9" * 10})
+        self.assertEqual(response.status_code, 404)
+        response = self.client.post(reverse('publicbody-confirm'),
+                {"public_body": pb.pk})
+        self.assertEqual(response.status_code, 302)
+        pb = PublicBody.objects.get(id=pb.id)
+        req = FoiRequest.objects.get(id=req.id)
+        self.assertTrue(pb.confirmed)
+        self.assertTrue(req.messages[0].sent)
+        message_count = Message.objects.filter(from_address=req.secret_address).count()
+        self.assertEqual(message_count, 1)
+        # resent
+        response = self.client.post(reverse('publicbody-confirm'),
+                {"public_body": pb.pk})
+        self.assertEqual(response.status_code, 302)
+        message_count = Message.objects.filter(from_address=req.secret_address).count()
+        self.assertEqual(message_count, 1)
+
+
+    def test_logged_in_request_with_public_body(self):
+        pb = PublicBody.objects.all()[0]
+        self.client.login(username="dummy", password="froide")
+        post = {"subject": "Another Third Test-Subject",
+                "body": "This is another test body",
+                "public_body": 'bs',
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 400)
+        post['law'] = str(pb.default_law.pk)
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 400)
+        post['public_body'] = '9' * 10 # not that many in fixture
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 400)
+        post['public_body'] = str(pb.pk)
+        post['law'] = '9' * 10
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 400)
+        post['law'] = str(pb.default_law.pk)
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        self.assertEqual(req.public_body.pk, pb.pk)
+        self.assertTrue(req.messages[0].sent)
+        self.assertEqual(req.law, pb.default_law)
+        message = Message.objects.filter(from_address=req.secret_address).get()
+        self.assertEqual(message.to_address, pb.email)
+        self.assertEqual(message.subject, req.title)
+
+
+    def test_logged_in_request_no_public_body(self):
+        self.client.login(username="dummy", password="froide")
+        post = {"subject": "An Empty Public Body Request",
+                "body": "This is another test body",
+                "public_body": '',
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        response = self.client.get(req.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+
+        # suggest public body
+        other_req = FoiRequest.objects.filter(public_body__isnull=False)[0]
+        pb = PublicBody.objects.all()[0]
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": req.slug + "garbage"}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 404)
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": other_req.slug}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": req.slug}),
+                {})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": "9" * 10})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(req.publicbodysuggestion_set.all()[0].public_body, pb)
+
+        # set public body
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug + "garbage"}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 404)
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug}),
+                {})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        self.assertIsNone(req.public_body)
+
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": "9" * 10})
+        self.assertEqual(response.status_code, 400)
+        self.client.logout()
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username="dummy", password="froide")
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        self.assertEqual(req.public_body, pb)
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": str(pb.pk)})
+        self.assertEqual(response.status_code, 400)
+
