@@ -4,6 +4,10 @@
 {% load markup %}
 {% load comments %}
 
+{% block extra_head %}
+<link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
+{% endblock %}
+
 {% block body %}
 <h2>{{ object.title }}</h2>
 <dl>
