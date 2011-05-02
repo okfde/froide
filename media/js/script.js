@@ -179,6 +179,8 @@ Froide.app.publicBodyChosen = (function(){
                                 Froide.template.searchEngineUrl, 
                                 {query: query, domain: result.domain})}
                         ));
+                        // TODO: Create law chooser here
+                        $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
                         $('#letter_start').text(result.laws[0].letter_start);
                         $('#letter_end').text(result.laws[0].letter_end);
                 });
