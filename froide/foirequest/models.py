@@ -549,13 +549,15 @@ class FoiEvent(models.Model):
     timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
     context_json = models.TextField(_("Context JSON"))
 
-    html_events = {
+    event_texts = {
         "reported_costs": _(
-            u"%(user)s reported costs of %(amount)s for this request.")
-    }
-
-    plaintext_events = {
-
+            u"%(user)s reported costs of %(amount)s for this request."),
+        "message_received": _(
+            u"Received an email from %(public_body)s."),
+        "message_sent": _(
+            u"%(user)s sent a message to %(public_body)s."),
+        "set_status": _(
+            u"%(user)s set status to '%(status)s'.")
     }
 
     class Meta:
@@ -566,6 +568,14 @@ class FoiEvent(models.Model):
 
     def __unicode__(self):
         return u"%s - %s" % (self.event_name, self.request)
+
+    def get_html_id(self):
+        # Translators: Hash part of Event URL
+        return "%s-%d" % (_("event"), self.id)
+
+    def get_absolute_url(self):
+        return "%s#%s" % (self.request.get_absolute_url(),
+                self.get_html_id())
 
     def get_context(self):
         context = getattr(self, "_context", None)
@@ -584,7 +594,7 @@ class FoiEvent(models.Model):
         return context
     
     def as_html(self):
-        return self.html_events[self.event_name] % self.get_context()
+        return self.event_texts[self.event_name] % self.get_context()
     
     def as_text(self):
-        return self.plaintext_events[self.event_name] % self.get_context()
+        return self.event_texts[self.event_name] % self.get_context()
