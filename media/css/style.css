@@ -418,6 +418,12 @@ form.foirequest p {
     margin:0;
 }
 
+.message-container {
+    border-bottom: 1px solid #ddd;
+    padding: 0 0 0.75em;
+    margin: 0 0 0.75em;
+}
+
 
 .message {
     border: 2px solid #aaa;
@@ -425,7 +431,7 @@ form.foirequest p {
     /* -webkit-box-shadow: 0px 0px 15px #ccc;*/
     /* box-shadow: 0px 0px 15px #ccc;*/
     padding:10px;
-    margin: 0 0 2em;
+    margin: 0;
 }
 
 .message-received {
@@ -465,6 +471,33 @@ form.foirequest p {
     word-wrap: break-word;
 }
 
+.events {
+    color: #999;
+    font-size: 0.8em;
+    margin: 0.5em 0 0;
+}
+
+.events ol {
+    margin-bottom: 0;
+    list-style-type: none;
+}
+
+.comments-container {
+    margin: 0.5em 0 0;
+}
+
+.comments-container > a {
+    font-size:0.9em;
+}
+
+.js .comments {
+    display:none;
+}
+
+.comments:target {
+    display:block !important;
+}
+
 .section {
     padding: 1em;
     margin: 0 0.5em 1em 0;
@@ -472,9 +505,5 @@ form.foirequest p {
 }
 
 .js .status-section {
-    display:none;
-}
-
-.js .comment-container {
     display:none;
 }
