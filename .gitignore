@@ -2,9 +2,11 @@
 .DS_Store
 *.vim
 *.db
+*.mo
 local_*.py
 data/
 solr/
 files/
 artwork/
+.coverage
 froide/htmlcov/
