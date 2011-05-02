@@ -109,6 +109,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
     'froide.helper.context_processors.froide',
+    'froide.helper.context_processors.site_settings'
 )
 
 # List of callables that know how to import templates from various sources.
