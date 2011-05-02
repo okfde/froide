@@ -39,6 +39,9 @@ class FoiRequestManager(CurrentSiteManager):
     def get_for_search_index(self):
         return self.get_query_set().filter(visibility=2)
 
+    def get_for_latest_feed(self):
+        return self.get_query_set()[:15]
+
 
 class FoiRequest(models.Model):
     ADMIN_SET_CHOICES = (
