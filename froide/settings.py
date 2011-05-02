@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django.contrib.databrowse',
+    'django.contrib.comments',
 
     # external
     'mailer',
