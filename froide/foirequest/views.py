@@ -205,7 +205,7 @@ def set_public_body(request, slug):
     foilaw = public_body.default_law
     foirequest.set_public_body(public_body, foilaw)
     messages.add_message(request, messages.ERROR,
-        _("Request was sent to %(name)s." % public_body.name))
+            _("Request was sent to: %(name)s.") % {"name": public_body.name})
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 @require_POST
