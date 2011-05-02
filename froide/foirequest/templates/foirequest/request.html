@@ -121,7 +121,7 @@
       <p>Your Email Address: <span id="email_address">{{ user.email }}</span></p>
       {% else %}
       <div id="user_data_form">
-      <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> and 
+        <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
       <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
       {{ user_form.first_name.errors }}
       {{ user_form.last_name.errors }}
