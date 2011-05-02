@@ -65,7 +65,7 @@
       <ul>
     {% for attachment in message.attachments %}
     <li>
-    <a href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>
+    <a href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
     </li>
     {% endfor %}
       </ul>

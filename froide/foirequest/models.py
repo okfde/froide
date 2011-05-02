@@ -15,6 +15,8 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
+from django.utils.http import urlquote
+
 
 from mailer import send_mail
 
@@ -522,9 +524,11 @@ class FoiAttachment(models.Model):
     def __unicode__(self):
         return u"%s (%s) of %s" % (self.name, self.size, self.belongs_to)
 
-    def viewable(self):
-        return False
+    def can_preview(self):
+        return True
 
+    def get_preview_url(self):
+        return "http://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL, urlquote(self.file.url))
 
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
