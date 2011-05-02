@@ -34,6 +34,8 @@ urlpatterns = patterns('',
     (r'^%s/' % _('account'), include('account.urls')),
     # Translators: URL part
     (r'^%s/' % _('search'), include('haystack.urls')),
+    # Translators: URL part
+    (r'^%s/' % _('help'), include('help_urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
     (r'^databrowse/(.*)', user_passes_test(lambda u: u.is_superuser, login_url="/account/login/")(databrowse.site.root)),
 )
