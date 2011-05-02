@@ -216,8 +216,15 @@ $(function(){
                 'height=500,width=800,resizable=yes,scrollbars=yes');
         win.focus();
     });
-
-
+    $("a.toggle").live("click", function(e){
+        e.preventDefault();
+        var obj = $($(this).attr("href"));
+        if (obj.css("display") === "none"){
+            obj.slideDown();
+        } else {
+            obj.slideUp();
+        }
+    });
     $("#search-public_bodies").keydown(function(e){
         if(e.keyCode === 13){
             e.preventDefault();
