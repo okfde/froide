@@ -258,12 +258,33 @@ class FoiRequest(models.Model):
                 request.status = 'awaiting_response'
                 send_now = True
 
-        #TODO: ensure uniqueness of address
-        request.secret_address = cls.generate_secret_address(user)
+        # ensure uniqueness of address
+        while True:
+            request.secret_address = cls.generate_secret_address(user)
+            try:
+                FoiRequest.objects.get(secret_address=request.secret_address)
+            except FoiRequest.DoesNotExist:
+                break
+
         #TODO: add right law
         request.law = foi_law
-        #TODO: ensure slug unique
+
+        # ensure slug is unique
         request.slug = slugify(request.title)
+        count = 0
+        postfix = ""
+        while True:
+            if count:
+                postfix = "-%d" % count
+            try:
+                FoiRequest.objects.get(slug=request.slug+postfix)
+            except FoiRequest.DoesNotExist:
+                break
+            count += 1
+        request.slug += postfix
+
+        if send_now:
+            request.due_date = request.law.calculate_due_date()
         request.save()
         message = FoiMessage(request=request,
                 sent=False,
