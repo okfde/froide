@@ -492,6 +492,9 @@ class FoiMessage(models.Model):
                     'Message may not be from user and public body')
 
     def send(self):
+        if settings.FROIDE_DRYRUN:
+            recp = self.recipient.replace("@", "+")
+            self.recipient = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
         send_mail(self.subject, self.plaintext,
                 self.request.secret_address, [self.recipient])
         self.sent = True

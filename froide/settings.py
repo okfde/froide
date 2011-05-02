@@ -194,6 +194,9 @@ FROIDE_CONFIG = {
 SITE_NAME = 'FroIde'
 SITE_URL = 'http://localhost:8000'
 
+FROIDE_DRYRUN = True
+FROIDE_DRYRUN_DOMAIN = "fragdenstaat.stefanwehrmeyer.com"
+
 AUTH_PROFILE_MODULE = 'account.Profile'
 
 SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=de&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"

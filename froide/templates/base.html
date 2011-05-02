@@ -36,12 +36,13 @@
 </head>
 
 <body>
+  {% if FROIDE_DRYRUN %}
+  <div style="position:absolute;top:0;left:0;text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ FROIDE_DRYRUN_DOMAIN }}</div>
+  {% endif %}
     <header id="header">
       <div id="header-content" class="container">
         <h1 class="span-8">
-          <a href="{% url 'index' %}">
-            {%blocktrans%}FroIde{% endblocktrans %}
-          </a>
+          <a href="{% url 'index' %}">{{ SITE_NAME }}</a>
         </h1>
         <nav id="nav" class="prepend-1 span-15 last">
           <ul>
