@@ -148,6 +148,12 @@ class FoiRequest(models.Model):
     def status_settable(self):
         return len(self.messages) > 1
 
+    @property
+    def description(self):
+        if self.messages:
+            return self.messages[0].get_content()
+        return u""
+
     def get_absolute_url(self):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
