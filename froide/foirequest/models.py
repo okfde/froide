@@ -98,6 +98,8 @@ class FoiRequest(models.Model):
             blank=True, null=True)
     resolved_on = models.DateTimeField(_("Resolution date"),
             blank=True, null=True)
+    due_date = models.DateTimeField(_("Due Date"),
+            blank=True, null=True)
     
     secret_address = models.CharField(_("Secret address"), max_length=255,
             db_index=True, unique=True)
@@ -327,6 +329,8 @@ class FoiRequest(models.Model):
         if not request.user == user:
             return None
         send_now = request.set_status_after_change()
+        if send_now:
+            request.due_date = request.law.calculate_due_date()
         request.save()
         if send_now:
             return request.safe_send_first_message()
@@ -345,6 +349,8 @@ class FoiRequest(models.Model):
         self.public_body = public_body
         self.law = law
         send_now = self.set_status_after_change()
+        if send_now:
+            self.due_date = self.law.calculate_due_date()
         self.save()
         self.request_to_public_body.send(sender=self)
         if send_now:

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from datetime import timedelta, datetime
 
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -9,6 +10,9 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.text import truncate_words
+
+from froide.helper.date_utils import (calculate_workingday_range,
+        calculate_month_range_de)
 
 
 class PublicBodyManager(CurrentSiteManager):
@@ -26,8 +30,14 @@ class FoiLaw(models.Model):
     letter_start = models.TextField(blank=True)
     letter_end = models.TextField(blank=True)
     jurisdiction = models.CharField(max_length=255)
-    max_response_time = models.IntegerField(null=True, blank=True, default=30) # in days
-    refusal_reasons = models.TextField(_(u"Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"))
+    max_response_time = models.IntegerField(null=True, blank=True)
+    max_response_time_unit = models.CharField(blank=True, max_length=32,
+            choices=(('day', _('Day(s)')),
+                ('working_day', _('Working Day(s)')),
+                ('month_de', _('Month(s) (DE)')),
+            ))
+    refusal_reasons = models.TextField(
+            _(u"Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"))
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL,
             default=settings.SITE_ID)
@@ -41,6 +51,16 @@ class FoiLaw(models.Model):
 
     def get_refusal_reason_choices(self):
         return tuple([(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()])
+
+    def calculate_due_date(self, date=None):
+        if date is None:
+            date = datetime.now()
+        if self.max_response_time_unit == "month_de":
+            return calculate_month_range_de(date, self.max_response_time)
+        elif self.max_response_time_unit == "day":
+            return date + timedelta(days=self.max_response_time)
+        elif self.max_response_time_unit == "working_day":
+            return calculate_workingday_range(date, self.max_response_time)
 
 
 class PublicBody(models.Model):
