@@ -49,7 +49,9 @@ def login(request, base="base.html"):
         simple = True
     if request.method == "GET":
         form = UserLoginForm()
+        status = 200
     elif request.method == "POST":
+        status = 400 # if ok, we are going to redirect anyways
         form = UserLoginForm(request.POST)
         if form.is_valid():
             user = auth.authenticate(username=form.cleaned_data['email'], 
@@ -73,4 +75,4 @@ def login(request, base="base.html"):
     return render(request, 'account/login.html',
             {"form": form,
             "custom_base": base,
-            "simple": simple})
+            "simple": simple}, status=status)
