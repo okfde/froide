@@ -221,9 +221,6 @@ HAYSTACK_SITECONF = 'froide.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
 HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
 
-REMAIL_ENGINE_API_KEY = ''
-REMAIL_ENGINE_DOMAIN = 'foirelay.appspotmail.com'
-
 FOI_MAIL_DOMAIN = ""
 FOI_MAIL_HOST = ""
 FOI_MAIL_PORT = ""
