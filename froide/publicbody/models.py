@@ -30,6 +30,7 @@ class FoiLaw(models.Model):
     letter_start = models.TextField(blank=True)
     letter_end = models.TextField(blank=True)
     jurisdiction = models.CharField(max_length=255)
+    priority = models.SmallIntegerField(default=3)
     max_response_time = models.IntegerField(null=True, blank=True)
     max_response_time_unit = models.CharField(blank=True, max_length=32,
             choices=(('day', _('Day(s)')),
@@ -68,6 +69,7 @@ class PublicBody(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     topic = models.CharField(_("Topic"), max_length=255, blank=True)
+    topic_slug = models.SlugField(_("Topic Slug"), max_length=255)
     url = models.URLField(_("URL"), null=True, blank=True, verify_exists=False)
     parent = models.ForeignKey('PublicBody', null=True, blank=True, default=None,
             on_delete=models.SET_NULL, related_name="children")
@@ -76,7 +78,8 @@ class PublicBody(models.Model):
     depth = models.SmallIntegerField(default=0)
     classification = models.CharField(_("Classification"), max_length=255,
             blank=True)
-    
+    classification_slug = models.SlugField(_("Classification Slug"), max_length=255)
+
     email = models.EmailField(_("Email"), null=True, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
