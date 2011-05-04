@@ -45,24 +45,29 @@
   {% endif %}
     <header id="header">
       <div id="header-content" class="container">
-        <h1 class="span-8">
+        <h1 class="span-9">
           <a href="{% url 'index' %}">{{ SITE_NAME }}</a>
         </h1>
-        <nav id="nav" class="prepend-1 span-15 last">
+        <nav id="nav" class="prepend-1 span-14 last">
           <ul>
             <li><a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a></li>
             <li><a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a></li>
             <li><a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a></li>
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'account-show' %}">{% blocktrans %}Account{% endblocktrans %}</a></li>
-            {% else %}
-            <li><a href="{% url 'account-login' %}">{% blocktrans %}Log In{% endblocktrans %}</a></li>
-            {% endif %}
+            <li><a href="{% url 'help-index' %}">{% blocktrans %}Help{% endblocktrans %}</a></li>
           </ul>
         </nav>
       </div>
     </header>
     <div id="main" class="container">
+      <div class="account-snippet">
+        {% if user.is_authenticated %}
+        {% url 'account-show' as account_url %}
+        {% blocktrans with username=user.get_full_name url=account_url %}Logged in as <a href="{{ url }}">{{ username }}</a>{% endblocktrans %}
+         – <a href="{% url 'account-logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a>
+        {% else %}
+        <a href="{% url 'account-login' %}">{% blocktrans %}Log In / Sign up{% endblocktrans %}</a>
+        {% endif %}
+      </div>
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}

@@ -10,18 +10,18 @@ body {
     display: block;
     /* background: #296198;*/
     margin:0;
-    height:8em;
 }
 
 #header-content {
+    height:8em;
     margin: 0 auto;
 }
 
 #header-content h1 {
     font-family: 'Kreon', arial, serif;
-    margin:2em auto 0;
+    margin:1.8em auto 0;
     padding:0;
-    font-size: 32px;
+    font-size: 38px;
     text-shadow: 0px 0px 1px #222222;
     filter: dropshadow(color=#cccccc, offx=2, offy=2);
 }
@@ -34,7 +34,7 @@ body {
 
 #nav {
     display:block;
-    margin: 4em 0 0;
+    margin: 4.5em 0 0;
 }
 
 #nav ul {
@@ -62,8 +62,18 @@ body {
     color: #1F3372;
 }
 
+.account-snippet {
+    position:absolute;
+    top:0px;
+    right:0px;
+    height: 2em;
+    font-size: 0.75em;
+    padding: 5px;
+}
+
 
 #main {
+    position:relative;
     margin: 0 auto;
     padding: 1.5em;
     border: 1px solid #ccc;
@@ -103,7 +113,63 @@ h2 {
     margin:0 auto;
     padding:0.6em 0 0;
     font-size: 48px;
+    line-height:1.1em;
 }
+
+.action-buttons {
+    margin: 1em auto;
+}
+
+.button {
+    -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
+    -webkit-transition: all 0.1s ease;
+    -moz-transition: all 0.1s ease;
+    -o-transition: all 0.1s ease;
+    line-height: 1.4;
+    background-color: #49A7F3;
+    display: inline-block;
+    padding: 12px 20px !important;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    border-radius: 12px;
+    color: white !important;
+    text-decoration: none;
+    border: none !important;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 0 1em;
+}
+
+.button:hover {
+    background-color: #09f;
+}
+
+.make-request-button {
+    background-color: #41D05F;
+    background-image: url('../img/request.png');
+    background-position: 12px 50%;
+    background-repeat: no-repeat;
+    padding-left: 55px !important;
+}
+
+.explore-requests-button {
+    background-color: #41D05F;
+    background-image: url('../img/explore.png');
+    background-position: 12px 50%;
+    background-repeat: no-repeat;
+    padding-left: 55px !important;
+}
+
+.explore-publicbodies-button {
+    background-color: #41D05F;
+    background-image: url('../img/search.png');
+    background-position: 12px 50%;
+    background-repeat: no-repeat;
+    padding-left: 55px !important;
+}
+
 
 strong {
     color: #222;
