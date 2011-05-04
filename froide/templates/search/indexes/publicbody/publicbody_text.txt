@@ -1,8 +1,8 @@
 {{ object.name }}
-{{ object.geography }}
 {{ object.description }}
-{{ object.website_dump }}
 {{ object.topic }}
+{{ object.website_dump }}
 {{ object.contact }}
 {{ object.address }}
 {{ object.url }}
+{{ object.geography }}
