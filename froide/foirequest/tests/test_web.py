@@ -40,3 +40,16 @@ class WebTest(TestCase):
         self.client.login(username="sw", password="froide")
         response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
+
+    def test_feed(self):
+        response = self.client.get(reverse('foirequest-feed_latest'))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-feed_latest_atom'))
+        self.assertEqual(response.status_code, 200)
+        req = FoiRequest.objects.all()[0]
+        response = self.client.get(reverse('foirequest-feed_atom',
+            kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-feed',
+            kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 200)
