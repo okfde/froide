@@ -174,6 +174,12 @@ class FoiRequest(models.Model):
     def needs_public_body(self):
         return self.status == 'publicbody_needed'
 
+    def awaits_response(self):
+        return self.status == 'awaiting_response'
+
+    def is_overdue(self):
+        return self.due_date < datetime.now()
+
     def status_form_klass(self):
         from foirequest.forms import get_status_form_class
         return get_status_form_class(self)
