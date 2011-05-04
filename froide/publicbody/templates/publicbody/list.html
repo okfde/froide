@@ -6,7 +6,7 @@
 <h2>{% blocktrans %}Public Body{% endblocktrans %}</h2>
 <p>{% blocktrans %}The following Public Bodies can be found here:{% endblocktrans %}</p>
 <div>
-  {% regroup object_list|dictsortreversed:"classification" by classification as classified_list %}
+  {% regroup object_list|dictsortreversed:"topic" by topic as classified_list %}
   {% for classified in classified_list %}
   <h3>{{ classified.grouper }}
     <ul>
