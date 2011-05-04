@@ -131,6 +131,7 @@ class FoiRequest(models.Model):
         verbose_name_plural = _('Freedom of Information Requests')
 
     # Custom Signals
+    message_sent = django.dispatch.Signal(providing_args=["message"])
     message_received = django.dispatch.Signal(providing_args=["message"])
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
@@ -250,7 +251,11 @@ class FoiRequest(models.Model):
 
     @property
     def readable_status(self):
-        return self.STATUS_CHOICES_DICT.get(self.status, _("Unknown"))
+        return FoiRequest.get_readable_status(self.status)
+
+    @classmethod
+    def get_readable_status(cls, status):
+        return cls.STATUS_CHOICES_DICT.get(status, _("Unknown"))
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
@@ -460,9 +465,6 @@ class FoiMessage(models.Model):
         verbose_name = _('Freedom of Information Message')
         verbose_name_plural = _('Freedom of Information Messages')
 
-    message_sent = django.dispatch.Signal(providing_args=[])
-
-
     @property
     def content(self):
         return self.plaintext
@@ -508,15 +510,16 @@ class FoiMessage(models.Model):
                 self.request.secret_address, [self.recipient])
         self.sent = True
         self.save()
-        self.message_sent.send(sender=self)
+        FoiRequest.message_sent.send(sender=self.request, message=self)
 
 
-@receiver(FoiMessage.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
+@receiver(FoiRequest.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, **kwargs):
-    send_mail(_("Your Freedom of Information Request"), 
+    message = kwargs['message']
+    send_mail(_("Your Freedom of Information Request was sent"), 
             "", #FIXME: render_to_string(),
             settings.DEFAULT_FROM_EMAIL,
-            [sender.sender_user.email])
+            [message.sender_user.email])
 
 
 def upload_to(instance, filename):
@@ -568,7 +571,7 @@ class FoiEvent(models.Model):
             u"Received an email from %(public_body)s."),
         "message_sent": _(
             u"%(user)s sent a message to %(public_body)s."),
-        "set_status": _(
+        "status_changed": _(
             u"%(user)s set status to '%(status)s'.")
     }
 
@@ -580,6 +583,17 @@ class FoiEvent(models.Model):
 
     def __unicode__(self):
         return u"%s - %s" % (self.event_name, self.request)
+    
+    @classmethod
+    def create(cls, event_name, request, **context):
+        assert event_name in cls.event_texts
+        event = FoiEvent(request=request,
+                event_name=event_name)
+        event.user = context.pop("user", None)
+        event.public_body = context.pop("public_body", None)
+        event.context_json = json.dumps(context)
+        event.save()
+        return event
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
@@ -610,3 +624,25 @@ class FoiEvent(models.Model):
     
     def as_text(self):
         return self.event_texts[self.event_name] % self.get_context()
+
+@receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
+def create_event_message_sent(sender, **kwargs):
+    FoiEvent.create("message_sent", sender, user=sender.user,
+            public_body=sender.public_body)
+
+@receiver(FoiRequest.message_received, dispatch_uid="create_event_message_received")
+def create_event_message_received(sender, **kwargs):
+    FoiEvent.create("message_received", sender, user=sender.user,
+            public_body=sender.public_body)
+
+@receiver(FoiRequest.status_changed, dispatch_uid="create_event_status_changed")
+def create_event_status_changed(sender, **kwargs):
+    status = kwargs['status']
+    data = kwargs['data']
+    if status == "requires_payment" and data['costs']:
+        FoiEvent.create("reported_costs", sender, user=sender.user,
+            public_body=sender.public_body, amount=data['costs'])
+
+    FoiEvent.create("status_changed", sender, user=sender.user,
+        public_body=sender.public_body, status=FoiRequest.get_readable_status(status))
+
