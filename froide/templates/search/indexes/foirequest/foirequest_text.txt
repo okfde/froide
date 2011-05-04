@@ -1,3 +1,5 @@
 {{ object.title }}
+{{ object.description }}
+{{ object.resolution }}
 {{ object.public_body.name }}
 {% for message in object.messages %}{{ message.get_content }}{% endfor %}
