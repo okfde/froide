@@ -150,6 +150,7 @@ INSTALLED_APPS = (
 
     # external
     'mailer',
+    'south',
     'haystack',
     'djcelery',
     'djkombu',
