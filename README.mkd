@@ -1,6 +1,48 @@
-FroIde
+Froide
 ======
 
-Freedom of Information DE
+Froide is Freedom Of Information Portal written in Python using Django 1.3.
+The name comes (obviously) from Freedom of Information (de). Also Froide
+sounds like the Freude which is German for joy. Which makes Froide pleasant
+to talk about.
+
+It's first use will be the FoI site fragdenstaat.de. Despite the .de, Froide is fully
+internationalized and written in English.
 
 
+Goals
+-----
+
+Froide has the following goals
+
+ - easy to setup
+ - completely internationalized and localized from the ground up
+ - flexible for different uses through configuration
+ - high test coverage
+
+
+Technology
+----------
+
+Froide uses the Django web framework version 1.3.
+For search it uses Solr with Django-haystack.
+For background task it uses Celery with Django-celery.
+South is used for schema migrations.
+Any other requirements can be found in requirements.txt
+
+
+Setup
+-----
+
+1. Setup virtualenv and clone project
+2. Install requirements: pip install -r requirements.txt
+3. Setup Solr and create solr schema with python manage.py build_solr_schema and put it
+   in your solr directory
+4. Setup celery.
+5. ...to be continued...
+
+
+License
+-------
+
+Froide is licensed under the MIT License.
