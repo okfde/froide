@@ -185,7 +185,15 @@ LOGGING = {
     }
 }
 
+SESSION_COOKIE_AGE = 3628800 # six weeks
+
+# south settings
+
+SOUTH_TESTS_MIGRATE = False
+
+
 DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
+
 
 HOLIDAYS = [
     (1, 1), # New Year's Day
