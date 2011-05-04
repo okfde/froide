@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load url from future %}
 
 {% block body %}
+<div class="clearfix">
 <div class="span-11">
-  <h2 class="special-heading">{% blocktrans %}Find the information you are looking for!{% endblocktrans %}</h2>
-  <form class="big-search" action="/search/" method="get">
-    <input type="search" placeholder="{% trans "Your Request Topic" %}"/>
-    <small>{% blocktrans %}Examples: {% endblocktrans %}<a href="/search/?q=">{%trans "Locations of all Playing Grounds" %}</a></small>
-  </form>
+  <h2 class="special-heading">{% blocktrans %}Use your right and make a request!{% endblocktrans %}</h2>
+  <div class="action-buttons">
+    <a class="span-8 button make-request-button" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request{% endblocktrans %}</a>
+    <a class="span-8 button explore-requests-button" href="{% url 'foirequest-list' %}">{% blocktrans %}Explore existing Requests{% endblocktrans %}</a>
+    <a class="span-8 button explore-publicbodies-button" href="{% url 'publicbody-list' %}">{% blocktrans %}Search for Public Bodies{% endblocktrans %}</a>
+  </div>
 </div>
 <div class="prepend-1 span-12 last">
   <ol class="main-guide">
@@ -24,6 +27,7 @@
         <p>{% blocktrans %}We <strong>publish all requests</strong> along with the replies for others to explore.{% endblocktrans %}</p>
         </li>
   </ol>
+</div>
 </div>
 <div class="span-12">
   <h3>{% blocktrans %}Latest Freedom of Information Requests{% endblocktrans %}</h3>
