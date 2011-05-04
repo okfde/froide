@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from publicbody.models import PublicBody
 
 class PublicBodyTest(TestCase):
-    fixtures = ['auth.json', 'publicbodies.json', 'foirequest.json']
+    fixtures = ['auth.json', 'foirequest.json']
 
     def test_web_page(self):
         response = self.client.get(reverse('publicbody-list'))
