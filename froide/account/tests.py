@@ -1,8 +1,11 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+
+from mailer.models import Message
 
 class AccountTest(TestCase):
-    fixtures = ['auth.json', 'publicbodies.json', 'foirequest.json']
+    fixtures = ['auth.json', 'foirequest.json']
 
     def test_account_page(self):
         ok = self.client.login(username='sw', password='wrong')
@@ -39,3 +42,16 @@ class AccountTest(TestCase):
                 "password": "froide"})
         self.assertTrue(response.status_code, 302)
         self.assertIn("simple", response['location'])
+
+    def test_signup(self):
+        self.client.logout()
+        post = {"first_name": "Horst",
+                "last_name": "Porst",
+                "user_email": "horst.porst@example.com"}
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertTrue(response.status_code, 302)
+        user = User.objects.get(email=post['user_email'])
+        self.assertEqual(user.first_name, post['first_name'])
+        self.assertEqual(user.last_name, post['last_name'])
+        messages = Message.objects.filter(to_address=post['user_email'])
+        self.assertEqual(len(messages), 1)

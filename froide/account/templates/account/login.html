@@ -18,12 +18,23 @@
   </script>
 {% endif %}
 {% else %}
-<h2>{% blocktrans %}Please Login{% endblocktrans %}</h2>
+<div class="span-12">
+<h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
 <form method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
   {% csrf_token %}
   {{ form.as_p }}
-  <p><input type="submit" value="{% blocktrans %}Login{% endblocktrans %}"/></p>
+  <p><input type="submit" value="{% blocktrans %}Log In{% endblocktrans %}"/></p>
 </form>
+</div>
+<div class="span-12 last">
+<h2>{% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}</h2>
+<form method="post" action="{% url 'account-signup' %}">
+  {% csrf_token %}
+  {{ signup_form.as_p }}
+  <p><input type="submit" value="{% blocktrans %}Sign Up{% endblocktrans %}"/></p>
+</form>
+</div>
+
 {% endif %}
 {% endblock %}
 
