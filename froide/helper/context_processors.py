@@ -7,4 +7,5 @@ def site_settings(request):
     return {"SITE_NAME": settings.SITE_NAME,
             "SITE_URL": settings.SITE_URL,
             "FROIDE_DRYRUN": settings.FROIDE_DRYRUN,
-            "FROIDE_DRYRUN_DOMAIN": settings.FROIDE_DRYRUN_DOMAIN}
+            "FROIDE_DRYRUN_DOMAIN": settings.FROIDE_DRYRUN_DOMAIN,
+            "LANGUAGE_CODE": settings.LANGUAGE_CODE}
