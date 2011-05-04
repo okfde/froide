@@ -6,6 +6,7 @@ from datetime import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from mailer.models import Message
 
@@ -79,7 +80,10 @@ class RequestTest(TestCase):
         self.assertEqual(req.status, "awaiting_response")
         self.assertEqual(req.visibility, 1)
         message = Message.objects.filter(from_address=req.secret_address).get()
-        self.assertEqual(message.to_address, req.public_body.email)
+        if settings.FROIDE_DRYRUN:
+            self.assertEqual(message.to_address, "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
+        else:
+            self.assertEqual(message.to_address, req.public_body.email)
         self.assertEqual(message.subject, req.title)
         resp = self.client.post(reverse('foirequest-set_status',
             kwargs={"slug": req.slug}))
@@ -235,7 +239,10 @@ class RequestTest(TestCase):
         self.assertTrue(req.messages[0].sent)
         self.assertEqual(req.law, pb.default_law)
         message = Message.objects.filter(from_address=req.secret_address).get()
-        self.assertEqual(message.to_address, pb.email)
+        if settings.FROIDE_DRYRUN:
+            self.assertEqual(message.to_address, "%s@%s" % (pb.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
+        else:
+            self.assertEqual(message.to_address, pb.email)
         self.assertEqual(message.subject, req.title)
 
 
