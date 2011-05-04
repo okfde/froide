@@ -4,8 +4,15 @@
 {% load markup %}
 {% load comments %}
 
+{% block metadescription %}
+  <meta name="description" content="{{ object.description }}" />
+{% endblock %}
+
+
 {% block extra_head %}
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
+<link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" /> 
+
 {% endblock %}
 
 {% block body %}
