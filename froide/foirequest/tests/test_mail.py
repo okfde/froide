@@ -8,7 +8,7 @@ from foirequest.models import FoiRequest
 
 
 class MailTest(TestCase):
-    fixtures = ['publicbodies.json', "foirequest.json"]
+    fixtures = ['auth.json', 'publicbodies.json', "foirequest.json"]
 
     def test_working(self):
         with file("foirequest/tests/test_mail_01.txt") as f:
