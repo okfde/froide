@@ -85,6 +85,8 @@ class FoiRequest(models.Model):
 
     title = models.CharField(_("Title"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
+    description = models.TextField(_("Description"), blank=True)
+    resolution = models.TextField(_("Resolution Summary"), blank=True, null=True)
     public_body = models.ForeignKey(PublicBody, null=True, blank=True,
             on_delete=models.SET_NULL, verbose_name=_("Public Body"))
 
@@ -251,6 +253,7 @@ class FoiRequest(models.Model):
         request = FoiRequest(title=request_form['subject'],
                 public_body=public_body_object,
                 user=user,
+                description=request_form['body'],
                 public=request_form['public'],
                 site=Site.objects.get_current(),
                 first_message=now,
