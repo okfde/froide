@@ -24,6 +24,15 @@
   <dd>{% if object.law %}{{ object.law }}{% else %}{% blocktrans %}Not yet set{% endblocktrans %}{% endif %}</dd>
   <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
   <dd>{{ object.readable_status }}</dd>
+  {% if object.awaits_response %}
+    <dt>{% blocktrans %}Due date:{% endblocktrans %}</dt>
+  {% if object.is_overdue %}
+    <dd class="red">{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}</dd>
+
+  {% else %}
+    <dd>{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}</dd>
+    {% endif %}
+  {% endif %}
 {% if object.refusal_reason %}
   <dt>{% blocktrans %}Refusal Reason{% endblocktrans %}</dt>
   <dd>{{ object.refusal_reason }}</dd>
@@ -31,7 +40,16 @@
 {% if object.costs > 0 %}
   <dt>{% blocktrans %}Cost of information:{% endblocktrans %}</dt>
   <dd>{{ object.costs|floatformat:2 }} {{ froide.currency }}</dd>
+  {% endif %}
+{% if object.description %}
+  <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
+  <dd>{{ object.description|linebreaks }}</dd>
+  {% endif %}
+{% if object.resolution %}
+  <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
+  <dd>{{ object.resolution|linebreaks }}</dd>
 {% endif %}
+
 </dl>
 <div class="span-18">
 {# Public Body Needed #}
