@@ -24,6 +24,9 @@ user_activated_signal = dispatch.Signal(providing_args=[])
 class Profile(models.Model):
     user = models.OneToOneField(User)
 
+    def __unicode__(self):
+        return _(u"Profile of <%(user)s>") % {"user": self.user}
+
 
 class AccountManager(object):
     def __init__(self, user):
