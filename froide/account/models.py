@@ -10,12 +10,12 @@ from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 
-from mailer import send_mail
+from django.core.mail import send_mail
 
 
 @dispatch.receiver(post_save, sender=User)
 def create_profile(sender, instance=None, created=False, **kwargs):
-    if created or instance.get_profile() is None:
+    if created:
         Profile.objects.create(user=instance)
 
 user_activated_signal = dispatch.Signal(providing_args=[])

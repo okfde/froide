@@ -7,8 +7,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
-
-from mailer.models import Message
+from django.core import mail
 
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest
@@ -62,15 +61,17 @@ class RequestTest(TestCase):
         user = User.objects.filter(email=post['user_email']).get()
         self.assertFalse(user.is_active)
         req = FoiRequest.objects.filter(user=user, public_body=pb).get()
-        self.assertIsNotNone(req)
         self.assertEqual(req.title, post['subject'])
+        self.assertEqual(req.description, post['body'])
         self.assertEqual(req.status, "awaiting_user_confirmation")
         self.assertEqual(req.visibility, 0)
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
-        message = Message.objects.filter(to_address=post['user_email']).get()
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(mail.outbox[0].to[0], post['user_email'])
         match = re.search('/%d/%d/(\w+)/' % (user.pk, req.pk),
-                message.message_body)
+                message.body)
         self.assertIsNotNone(match)
         secret = match.group(1)
         response = self.client.get(reverse('account-confirm',
@@ -79,11 +80,13 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.status, "awaiting_response")
         self.assertEqual(req.visibility, 1)
-        message = Message.objects.filter(from_address=req.secret_address).get()
+        self.assertEqual(len(mail.outbox), 3)
+        message = mail.outbox[1]
+        self.assertIn(req.secret_address, message.from_email)
         if settings.FROIDE_DRYRUN:
-            self.assertEqual(message.to_address, "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
+            self.assertEqual(message.to[0], "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
         else:
-            self.assertEqual(message.to_address, req.public_body.email)
+            self.assertEqual(message.to[0], req.public_body.email)
         self.assertEqual(message.subject, req.title)
         resp = self.client.post(reverse('foirequest-set_status',
             kwargs={"slug": req.slug}))
@@ -197,15 +200,16 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(id=req.id)
         self.assertTrue(pb.confirmed)
         self.assertTrue(req.messages[0].sent)
-        message_count = Message.objects.filter(from_address=req.secret_address).count()
+        message_count = len(filter(
+                lambda x: req.secret_address in x.from_email, mail.outbox))
         self.assertEqual(message_count, 1)
         # resent
         response = self.client.post(reverse('publicbody-confirm'),
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 302)
-        message_count = Message.objects.filter(from_address=req.secret_address).count()
+        message_count = len(filter(
+                lambda x: req.secret_address in x.from_email, mail.outbox))
         self.assertEqual(message_count, 1)
-
 
     def test_logged_in_request_with_public_body(self):
         pb = PublicBody.objects.all()[0]
@@ -238,13 +242,15 @@ class RequestTest(TestCase):
         self.assertEqual(req.public_body.pk, pb.pk)
         self.assertTrue(req.messages[0].sent)
         self.assertEqual(req.law, pb.default_law)
-        message = Message.objects.filter(from_address=req.secret_address).get()
+        messages = filter(
+                lambda x: req.secret_address in x.from_email, mail.outbox)
+        self.assertEqual(len(messages), 1)
+        message = messages[0]
         if settings.FROIDE_DRYRUN:
-            self.assertEqual(message.to_address, "%s@%s" % (pb.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
+            self.assertEqual(message.to[0], "%s@%s" % (pb.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
         else:
-            self.assertEqual(message.to_address, pb.email)
+            self.assertEqual(message.to[0], pb.email)
         self.assertEqual(message.subject, req.title)
-
 
     def test_logged_in_request_no_public_body(self):
         self.client.login(username="dummy", password="froide")

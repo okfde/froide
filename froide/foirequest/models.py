@@ -16,9 +16,7 @@ from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
 from django.utils.http import urlquote
-
-
-from mailer import send_mail
+from django.core.mail import send_mail
 
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.date_utils import convert_to_local

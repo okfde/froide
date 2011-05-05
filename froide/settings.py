@@ -149,10 +149,10 @@ INSTALLED_APPS = (
     'django.contrib.comments',
 
     # external
-    'mailer',
     'south',
     'haystack',
     'djcelery',
+    'djcelery_email',
     'djkombu',
     'debug_toolbar',
     
@@ -191,6 +191,7 @@ SESSION_COOKIE_AGE = 3628800 # six weeks
 
 SOUTH_TESTS_MIGRATE = False
 
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
 DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
 
