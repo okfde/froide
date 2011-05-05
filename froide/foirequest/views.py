@@ -158,29 +158,6 @@ def submit_request(request, public_body=None):
     return render(request, 'foirequest/request.html', context, status=400)
 
 @require_POST
-def message(request):
-    authorization = None
-    if 'Authorization' in request.META:
-        authorization = request.META['Authorization']
-    elif 'HTTP_AUTHORIZATION' in request.META:
-        authorization =  request.META['HTTP_AUTHORIZATION']
-    if authorization != settings.REMAIL_ENGINE_API_KEY:
-        return HttpResponse('', status=403)
-
-    try:
-        email_dict = json.loads(request.raw_post_data)
-    except ValueError:
-        logging.error("Invalid JSON data", request.raw_post_data)
-        return HttpResponse('', status=400)
-    try:
-        email_string = email_dict['email']['raw']
-    except KeyError:
-        logging.error("Invalid Mail Dict", email_dict)
-        return HttpResponse('', status=400)
-    process_mail.delay(email_string)
-    return HttpResponse('')
-
-@require_POST
 def set_public_body(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
