@@ -423,6 +423,16 @@ def increment_request_count(sender, **kwargs):
     sender.public_body.save()
 
 
+@receiver(FoiRequest.message_received, dispatch_uid="notify_user_message_received")
+def notify_user_message_received(sender, message=None, **kwargs):
+    send_mail(_("You received a reply to your Freedom of Information Request"), 
+            render_to_string("foirequest/message_received_notification.txt",
+                {"message": message, "request": sender,
+                    "site_name": settings.SITE_NAME}),
+            settings.DEFAULT_FROM_EMAIL,
+            [sender.user.email])
+
+
 class PublicBodySuggestion(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -482,6 +492,13 @@ class FoiMessage(models.Model):
         return _(u"Message in '%(request)s' at %(time)s"
                 ) % {"request": self.request,
                     "time": self.timestamp}
+
+    def get_html_id(self):
+        return _("message-%(id)d") % {"id": self.id}
+
+    def get_absolute_url(self):
+        return "%s#%s" % (self.request.get_absolute_url(),
+                self.get_html_id())
 
     @property
     def sender(self):
