@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest
 
+
 class WebTest(TestCase):
     fixtures = ['auth.json', 'foirequest.json']
 
@@ -19,7 +20,8 @@ class WebTest(TestCase):
 
     def test_request_to(self):
         p = PublicBody.objects.all()[0]
-        response = self.client.get(reverse('foirequest-make_request', kwargs={'public_body': p.slug}))
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body': p.slug}))
         self.assertEqual(response.status_code, 200)
 
     def test_list_requests(self):
@@ -28,17 +30,21 @@ class WebTest(TestCase):
 
     def test_show_request(self):
         req = FoiRequest.objects.all()[0]
-        response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug+"-garbage"}))
+        response = self.client.get(reverse('foirequest-show',
+                kwargs={"slug": req.slug + "-garbage"}))
         self.assertEqual(response.status_code, 404)
-        response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug}))
+        response = self.client.get(reverse('foirequest-show',
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
         req.visibility = 1
         req.public = False
         req.save()
-        response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug}))
+        response = self.client.get(reverse('foirequest-show',
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
         self.client.login(username="sw", password="froide")
-        response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug}))
+        response = self.client.get(reverse('foirequest-show',
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
 
     def test_feed(self):
