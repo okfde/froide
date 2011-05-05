@@ -82,7 +82,7 @@ class RequestTest(TestCase):
         self.assertEqual(req.visibility, 1)
         self.assertEqual(len(mail.outbox), 3)
         message = mail.outbox[1]
-        self.assertIn(req.secret_address, message.from_email)
+        self.assertIn(req.secret_address, message.extra_headers.get('Reply-To',''))
         if settings.FROIDE_DRYRUN:
             self.assertEqual(message.to[0], "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
         else:
@@ -212,14 +212,16 @@ class RequestTest(TestCase):
         self.assertTrue(pb.confirmed)
         self.assertTrue(req.messages[0].sent)
         message_count = len(filter(
-                lambda x: req.secret_address in x.from_email, mail.outbox))
+                lambda x: req.secret_address in x.extra_headers.get('Reply-To',''),
+                mail.outbox))
         self.assertEqual(message_count, 1)
         # resent
         response = self.client.post(reverse('publicbody-confirm'),
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 302)
         message_count = len(filter(
-                lambda x: req.secret_address in x.from_email, mail.outbox))
+                lambda x: req.secret_address in x.extra_headers.get('Reply-To',''),
+                mail.outbox))
         self.assertEqual(message_count, 1)
 
     def test_logged_in_request_with_public_body(self):
@@ -253,12 +255,15 @@ class RequestTest(TestCase):
         self.assertEqual(req.public_body.pk, pb.pk)
         self.assertTrue(req.messages[0].sent)
         self.assertEqual(req.law, pb.default_law)
+
         messages = filter(
-                lambda x: req.secret_address in x.from_email, mail.outbox)
+                lambda x: req.secret_address in x.extra_headers.get('Reply-To',''),
+                mail.outbox)
         self.assertEqual(len(messages), 1)
         message = messages[0]
         if settings.FROIDE_DRYRUN:
-            self.assertEqual(message.to[0], "%s@%s" % (pb.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
+            self.assertEqual(message.to[0], "%s@%s" % (
+                pb.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
         else:
             self.assertEqual(message.to[0], pb.email)
         self.assertEqual(message.subject, req.title)

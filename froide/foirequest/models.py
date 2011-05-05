@@ -19,9 +19,11 @@ from django.utils.http import urlquote
 from django.core.mail import send_mail
 
 from publicbody.models import PublicBody, FoiLaw
+from froide.helper.email_utils import make_address
 from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
+from foirequest.foi_mail import send_foi_mail
 
 html2markdown = lambda x: x
 
@@ -265,7 +267,7 @@ class FoiRequest(models.Model):
     def generate_secret_address(cls, user):
         possible_chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
         secret = "".join([random.choice(possible_chars) for i in range(10)])
-        return "%s+%s@%s" % (user.username, secret, settings.FOI_MAIL_DOMAIN)
+        return "%s+%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
 
     @property
     def readable_status(self):
@@ -547,8 +549,10 @@ class FoiMessage(models.Model):
         if settings.FROIDE_DRYRUN:
             recp = self.recipient.replace("@", "+")
             self.recipient = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
-        send_mail(self.subject, self.plaintext,
-                self.request.secret_address, [self.recipient])
+        # Use send_foi_mail here
+        send_foi_mail(self.subject, self.plaintext,
+                make_address(self.request.secret_address, self.sender_name),
+                [self.recipient])
         self.sent = True
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)

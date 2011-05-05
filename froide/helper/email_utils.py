@@ -11,8 +11,8 @@ from StringIO import StringIO
 from email.Header import decode_header
 from email.Parser import Parser
 from email.utils import parseaddr, parsedate_tz, getaddresses
-
 import imaplib
+
 
 def get_unread_mails(host, port, user, password):
     mail = imaplib.IMAP4_SSL(host, port)
@@ -27,8 +27,14 @@ def get_unread_mails(host, port, user, password):
         mail.close()
         mail.logout()
 
+def make_address(email, name=None):
+    if name:
+        return "%s <%s>" % (name, email)
+    return email
+
 class UnsupportedMailFormat(Exception):
     pass
+
 
 class EmailParser(object):
 

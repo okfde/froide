@@ -1,6 +1,6 @@
 from celery.task import task
 
-from foirequest.email import _process_mail, _fetch_mail
+from foirequest.foi_mail import _process_mail, _fetch_mail
 
 @task
 def process_mail(mail_string):

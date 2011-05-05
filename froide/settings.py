@@ -231,11 +231,35 @@ HAYSTACK_SITECONF = 'froide.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
 HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
 
-FOI_MAIL_DOMAIN = ""
-FOI_MAIL_HOST = ""
-FOI_MAIL_PORT = ""
-FOI_MAIL_ACCOUNT_NAME = ""
-FOI_MAIL_ACCOUNT_PASSWORD = ""
+# Official Notification Mail goes through
+# the normal Django SMTP Backend
+EMAIL_HOST = ""
+EMAIL_PORT = 587
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS = True
+
+# The FoI Mail can use a different account
+FOI_EMAIL_DOMAIN = "example.com"
+# IMAP settings for fetching mail
+FOI_EMAIL_PORT_IMAP = 993
+FOI_EMAIL_HOST_IMAP = "imap.example.com"
+FOI_EMAIL_ACCOUNT_NAME = "foi@example.com"
+FOI_EMAIL_ACCOUNT_PASSWORD = ""
+
+# Is the message you can send from fixed
+# or can you send from any address you like?
+FOI_EMAIL_FIXED_FROM_ADDRESS = True
+
+# SMTP settings for setting FoI mail
+# like Django 
+FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
+FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER 
+FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
+FOI_EMAIL_HOST = "smtp.example.com"
+FOI_EMAIL_PORT = 537
+FOI_EMAIL_USE_TLS = True
+
 
 import djcelery
 djcelery.setup_loader()

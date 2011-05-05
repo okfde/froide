@@ -1,10 +1,33 @@
 import logging
+from email.utils import parseaddr
 
 from django.conf import settings
+from django.core.mail import get_connection, EmailMessage
 
-from foirequest.models import FoiRequest
 from froide.helper.email_utils import (EmailParser,
-        UnsupportedMailFormat, get_unread_mails)
+        UnsupportedMailFormat, get_unread_mails, make_address)
+
+def send_foi_mail(subject, message, from_email, recipient_list,
+              fail_silently=False, **kwargs):
+    connection = get_connection(username=settings.FOI_EMAIL_HOST_USER,
+            password=settings.FOI_EMAIL_HOST_PASSWORD,
+            host=settings.FOI_EMAIL_HOST,
+            port=settings.FOI_EMAIL_PORT,
+            use_tls=settings.FOI_EMAIL_USE_TLS,
+            fail_silently=fail_silently)
+    headers = {}
+    if "message_id" in kwargs:
+        headers['Message-ID'] = kwargs.pop("message_id")
+    if settings.FOI_EMAIL_FIXED_FROM_ADDRESS:
+        name, mailaddr = parseaddr(from_email)
+        from_address = settings.FOI_EMAIL_HOST_FROM
+        from_email = make_address(from_address, name)
+        headers['Reply-To'] = make_address(mailaddr, name)
+    else:
+        headers['Reply-To'] = from_email
+    email = EmailMessage(subject, message, from_email, recipient_list,
+                        connection=connection, headers=headers)
+    return email.send()
 
 def _process_mail(mail_string):
     parser = EmailParser()
@@ -17,8 +40,8 @@ def _process_mail(mail_string):
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?
-
-    mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_MAIL_DOMAIN)
+    from foirequest.models import FoiRequest
+    mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_EMAIL_DOMAIN)
     received_list = filter(mail_filter, received_list)
     for received in received_list:
         secret_mail = received[1]
@@ -29,10 +52,10 @@ def _process_mail(mail_string):
         foi_request.add_message_from_email(email, mail_string)
 
 def _fetch_mail():
-    for rfc_data in get_unread_mails(settings.FOI_MAIL_HOST,
-            settings.FOI_MAIL_PORT,
-            settings.FOI_MAIL_ACCOUNT_NAME,
-            settings.FOI_MAIL_ACCOUNT_PASSWORD):
+    for rfc_data in get_unread_mails(settings.FOI_EMAIL_HOST_IMAP,
+            settings.FOI_EMAIL_PORT_IMAP,
+            settings.FOI_EMAIL_ACCOUNT_NAME,
+            settings.FOI_EMAIL_ACCOUNT_PASSWORD):
         yield rfc_data
 
 def fetch_and_process():
