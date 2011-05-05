@@ -25,10 +25,11 @@ def confirm(request, user_id, secret, request_id=None):
             if request:
                 messages.add_message(request, messages.SUCCESS,
                     _('Your request "%s" has now been sent') % request.title)
+        return HttpResponseRedirect(reverse('account-show'))
     else:
         messages.add_message(request, messages.ERROR,
-                _('There was something wrong with the link in your mail.'))
-    return HttpResponseRedirect(reverse('account-show'))
+                _('You can only use the confirmation link once, please login with your password.'))
+    return HttpResponseRedirect(reverse('account-login'))
 
 def show(request):
     if not request.user.is_authenticated():
