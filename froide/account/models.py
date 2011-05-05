@@ -80,7 +80,8 @@ class AccountManager(object):
                 'site_name': settings.SITE_NAME,
                 'site_url': settings.SITE_URL
             })
-        send_mail(_("%s: please confirm your account" % settings.SITE_NAME),
+        send_mail(_("%(site_name)s: please confirm your account") % {
+                    "site_name": settings.SITE_NAME},
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
 
     @classmethod
