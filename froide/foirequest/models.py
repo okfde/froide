@@ -20,7 +20,7 @@ from django.core.mail import send_mail
 
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.date_utils import convert_to_local
-from froide.helper.text_utils import (replace_email_name, 
+from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
 
 html2markdown = lambda x: x
@@ -47,13 +47,16 @@ class FoiRequest(models.Model):
     ADMIN_SET_CHOICES = (
         ('awaiting_user_confirmation', _('Awaiting user confirmation')),
         ('publicbody_needed', _('Public Body needed')),
-        ('awaiting_publicbody_confirmation', _('Awaiting Public Body confirmation')),
+        ('awaiting_publicbody_confirmation',
+                _('Awaiting Public Body confirmation')),
         ('overdue', _('Response overdue')),
     )
     USER_SET_CHOICES = (
         ('awaiting_response', _('Awaiting response')),
-        ('awaiting_clarification', _('Awaiting clarification from Public Body')),
-        ('awaiting_clarification_from_requester', _('Awaiting clarification from Requester')),
+        ('awaiting_clarification',
+                _('Awaiting clarification from Public Body')),
+        ('awaiting_clarification_from_requester',
+                _('Awaiting clarification from Requester')),
         ('requires_admin', _('Requires administrative action')),
         ('gone_postal', _('Gone Postal')),
         ('not_held', _('Information not held')),
@@ -66,7 +69,8 @@ class FoiRequest(models.Model):
     )
 
     if settings.FROIDE_CONFIG.get('payment_possible'):
-        USER_SET_CHOICES += (('requires_payment', _('Costs specified')),
+        USER_SET_CHOICES += (('requires_payment',
+                        _('Costs specified')),
                 ('payment_refused', _('Payment refused')),
                 ('payment_accepted', _('Payment accepted'))
             )
@@ -80,18 +84,21 @@ class FoiRequest(models.Model):
         (2, _("Public")),
     )
 
-
+    # model fields
     title = models.CharField(_("Title"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
-    resolution = models.TextField(_("Resolution Summary"), blank=True, null=True)
+    resolution = models.TextField(_("Resolution Summary"),
+            blank=True, null=True)
     public_body = models.ForeignKey(PublicBody, null=True, blank=True,
             on_delete=models.SET_NULL, verbose_name=_("Public Body"))
 
     public = models.BooleanField(_("published?"), default=True)
 
-    status = models.CharField(_("Status"), max_length=25, choices=STATUS_CHOICES)
-    visibility = models.SmallIntegerField(_("Visibility"), default=0, choices=VISIBILITY_CHOICES)
+    status = models.CharField(_("Status"), max_length=25,
+            choices=STATUS_CHOICES)
+    visibility = models.SmallIntegerField(_("Visibility"), default=0,
+            choices=VISIBILITY_CHOICES)
     
     user = models.ForeignKey(User, null=True,
             on_delete=models.SET_NULL,
@@ -111,7 +118,7 @@ class FoiRequest(models.Model):
     secret = models.CharField(_("Secret"), blank=True, max_length=100)
 
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
-            on_delete=models.SET_NULL, 
+            on_delete=models.SET_NULL,
             verbose_name=_("Freedom of Information Law"))
     costs = models.FloatField(_("Cost of Information"), default=0.0)
     refusal_reason = models.CharField(_("Refusal reason"), max_length=255,
@@ -159,7 +166,7 @@ class FoiRequest(models.Model):
         if self.visibility == 2:
             return True
         if self.visibility == 1 and (
-                user.is_authenticated() and 
+                user.is_authenticated() and
                 self.user == user):
             return True
         return False
@@ -210,7 +217,8 @@ class FoiRequest(models.Model):
 
     def public_body_suggestions_form(self):
         if not hasattr(self, "_public_body_suggestion_form"):
-            self._public_body_suggestion_form = self.public_body_suggestions_form_klass()()
+            self._public_body_suggestion_form = \
+                    self.public_body_suggestions_form_klass()()
         return self._public_body_suggestion_form
 
     def add_message_from_email(self, email, mail_string):
@@ -311,7 +319,7 @@ class FoiRequest(models.Model):
             if count:
                 postfix = "-%d" % count
             try:
-                FoiRequest.objects.get(slug=request.slug+postfix)
+                FoiRequest.objects.get(slug=request.slug + postfix)
             except FoiRequest.DoesNotExist:
                 break
             count += 1
@@ -414,7 +422,8 @@ class FoiRequest(models.Model):
             message = messages[0]
             message.recipient = public_body.email
             assert message.sent == False
-            message.send() # saves message
+            message.send()  # saves message
+
 
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
@@ -423,9 +432,10 @@ def increment_request_count(sender, **kwargs):
     sender.public_body.save()
 
 
-@receiver(FoiRequest.message_received, dispatch_uid="notify_user_message_received")
+@receiver(FoiRequest.message_received,
+        dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    send_mail(_("You received a reply to your Freedom of Information Request"), 
+    send_mail(_("You received a reply to your Freedom of Information Request"),
             render_to_string("foirequest/message_received_notification.txt",
                 {"message": message, "request": sender,
                     "site_name": settings.SITE_NAME}),
@@ -450,11 +460,13 @@ class PublicBodySuggestion(models.Model):
         verbose_name = _('Public Body Suggestion')
         verbose_name_plural = _('Public Body Suggestions')
 
+
 class FoiMessage(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
     sent = models.BooleanField(_("has message been sent?"), default=True)
-    is_response = models.BooleanField(_("Is this message a response?"), default=True)
+    is_response = models.BooleanField(_("Is this message a response?"),
+            default=True)
     sender_user = models.ForeignKey(User, blank=True, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("From User"))
@@ -474,7 +486,8 @@ class FoiMessage(models.Model):
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
 
     _status = models.SmallIntegerField(null=True, default=None, blank=True)
-    _resolution = models.SmallIntegerField(null=True, default=None, blank=True)
+    _resolution = models.SmallIntegerField(null=True, default=None,
+            blank=True)
     _visibility = models.SmallIntegerField(default=1)
 
     class Meta:
@@ -515,7 +528,8 @@ class FoiMessage(models.Model):
 
     def get_content(self):
         content = self.content
-        # content = remove_quote(content, replacement=_(u"Quoted part removed"))
+        # content = remove_quote(content,
+        #        replacement=_(u"Quoted part removed"))
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
         content = remove_signature(content)
@@ -539,7 +553,8 @@ class FoiMessage(models.Model):
         FoiRequest.message_sent.send(sender=self.request, message=self)
 
 
-@receiver(FoiRequest.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
+@receiver(FoiRequest.message_sent,
+        dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     if len(sender.messages) == 1:
         subject = _("Your Freedom of Information Request was sent")
@@ -547,7 +562,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     else:
         subject = _("Your Message was sent")
         template = "foirequest/confirm_foi_message_sent.txt"
-    send_mail(subject, 
+    send_mail(subject,
             render_to_string(template,
                 {"request": sender, "message": message,
                     "site_name": settings.SITE_NAME}),
@@ -582,7 +597,9 @@ class FoiAttachment(models.Model):
         return True
 
     def get_preview_url(self):
-        return "http://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL, urlquote(self.file.url))
+        return "http://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
+                urlquote(self.file.url))
+
 
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
@@ -658,17 +675,22 @@ class FoiEvent(models.Model):
     def as_text(self):
         return self.event_texts[self.event_name] % self.get_context()
 
+
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
 def create_event_message_sent(sender, **kwargs):
     FoiEvent.create("message_sent", sender, user=sender.user,
             public_body=sender.public_body)
 
-@receiver(FoiRequest.message_received, dispatch_uid="create_event_message_received")
+
+@receiver(FoiRequest.message_received,
+        dispatch_uid="create_event_message_received")
 def create_event_message_received(sender, **kwargs):
     FoiEvent.create("message_received", sender, user=sender.user,
             public_body=sender.public_body)
 
-@receiver(FoiRequest.status_changed, dispatch_uid="create_event_status_changed")
+
+@receiver(FoiRequest.status_changed,
+        dispatch_uid="create_event_status_changed")
 def create_event_status_changed(sender, **kwargs):
     status = kwargs['status']
     data = kwargs['data']
@@ -677,5 +699,5 @@ def create_event_status_changed(sender, **kwargs):
             public_body=sender.public_body, amount=data['costs'])
 
     FoiEvent.create("status_changed", sender, user=sender.user,
-        public_body=sender.public_body, status=FoiRequest.get_readable_status(status))
-
+        public_body=sender.public_body,
+        status=FoiRequest.get_readable_status(status))
