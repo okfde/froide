@@ -1,12 +1,8 @@
-import json
-import logging
-
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
-from django.http import (HttpResponseRedirect, HttpResponse,
+from django.http import (HttpResponseRedirect,
         HttpResponseForbidden, HttpResponseBadRequest, Http404)
-from django.conf import settings
 from django.contrib import messages
 
 from foirequest.forms import RequestForm
@@ -15,9 +11,7 @@ from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest, FoiEvent, FoiAttachment
-from foirequest.tasks import process_mail
 from foirequest.forms import SendMessageForm, get_status_form_class
-from froide.helper.utils import get_next
 
 
 def index(request):
@@ -228,15 +222,19 @@ def set_status(request, slug):
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 @require_POST
-def sent_message(request):
+def send_message(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden()
+    if request.user != foirequest.user:
+        return HttpResponseForbidden()
     form = SendMessageForm(request.POST)
-    if form.is_valid():
-        foimessage = form.foimessage_object
-        if foimessage.sender_user != request.user:
-            return HttpResponseForbidden()
+    if form.is_valid() and foirequest.replyable():
+        foirequest.add_message(request.user, **form.cleaned_data)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Message has been sent.'))
-        foimessage.send()
-        return HttpResponseRedirect(get_next(request))
+        return HttpResponseRedirect(foirequest.get_absolute_url())
     else:
         return HttpResponseBadRequest()
+
+

@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from publicbody.models import PublicBody
-from foirequest.models import FoiRequest, FoiMessage, FoiLaw
+from foirequest.models import FoiRequest, FoiLaw
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
         'create_new_publicbody', False)
@@ -68,16 +68,11 @@ class RequestForm(forms.Form):
             self.clean_law_for_public_body(self.public_body_object)
         return cleaned
 
-class SendMessageForm(forms.Form):
-    foimessage = forms.IntegerField()
 
-    def clean_foimessage(self):
-        foimessage_id = int(self.cleaned_data['foimessage'])
-        try:
-            self.foimessage_object = FoiMessage.objects.get(pk=foimessage_id)
-        except FoiMessage.DoesNotExist:
-            raise forms.ValidationError(_("Message not found"))
-        return foimessage_id
+class SendMessageForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea,
+            label=_("Your message"))
+
 
 def get_public_body_suggestions_form_class(queryset):
     if len(queryset):

@@ -1,7 +1,8 @@
 {% load i18n %}{% blocktrans with name=request.user.get_full_name title=request.title %}Hello {{ name }},
 
-your request "{{ title }}" has been sent. We will notify you when you get a response.
+your message for the Freedom of Information request "{{ title }}" has been sent. We will notify you when you get a response.
 
 Cheers,
 {{ site_name }}
 {% endblocktrans %}
+

@@ -19,4 +19,6 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/suggest/public-body/$", 'foirequest.views.suggest_public_body', name="foirequest-suggest_public_body"),
     url(r"^(?P<slug>[-\w]+)/set/public-body/$", 'foirequest.views.set_public_body', name="foirequest-set_public_body"),
     url(r"^(?P<slug>[-\w]+)/set/status/$", 'foirequest.views.set_status', name="foirequest-set_status"),
+    url(r"^(?P<slug>[-\w]+)/send/message/$", 'foirequest.views.send_message', name="foirequest-send_message"),
+
 )

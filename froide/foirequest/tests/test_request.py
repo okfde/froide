@@ -123,6 +123,18 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.costs, float(costs))
         self.assertEqual(req.status, status)
+        # send reply
+        old_len = len(mail.outbox)
+        post = {"message": "My custom reply"}
+        response = self.client.post(reverse('foirequest-send_message',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 302)
+        new_len = len(mail.outbox)
+        print [m.subject for m in mail.outbox]
+        self.assertEqual(old_len + 2, new_len)
+        message = filter(lambda x: req.title in x.subject, mail.outbox)[-1]
+        self.assertEqual(message.body, post['message'])
+        # logout
         self.client.logout()
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),

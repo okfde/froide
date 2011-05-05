@@ -173,6 +173,9 @@ class FoiRequest(models.Model):
     def is_overdue(self):
         return self.due_date < datetime.now()
 
+    def replyable(self):
+        return not self.awaits_response()
+
     def status_form_klass(self):
         from foirequest.forms import get_status_form_class
         return get_status_form_class(self)
@@ -234,6 +237,20 @@ class FoiRequest(models.Model):
             att.file = File(attachment)
             att.save()
         self.message_received.send(sender=self, message=message)
+
+    def add_message(self, user, message=None, **kwargs):
+        message = FoiMessage(request=self)
+        last_message = list(self.messages)[-1]
+        message.subject = _("Re: %(subject)s"
+                ) % {"subject": last_message.subject}
+        message.is_response = False
+        message.sender_user = user
+        message.sender_name = user.get_full_name()
+        message.sender_email = self.secret_address
+        message.recipient = last_message.sender_email
+        message.timestamp = datetime.now()
+        message.plaintext = message
+        message.send()
 
     @classmethod
     def generate_secret_address(cls, user):
@@ -506,12 +523,19 @@ class FoiMessage(models.Model):
 
 
 @receiver(FoiRequest.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
-def send_foimessage_sent_confirmation(sender, **kwargs):
-    message = kwargs['message']
-    send_mail(_("Your Freedom of Information Request was sent"), 
-            "", #FIXME: render_to_string(),
+def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
+    if len(sender.messages) == 1:
+        subject = _("Your Freedom of Information Request was sent")
+        template = "foirequest/confirm_foi_request_sent.txt"
+    else:
+        subject = _("Your Message was sent")
+        template = "foirequest/confirm_foi_message_sent.txt"
+    send_mail(subject, 
+            render_to_string(template,
+                {"request": sender, "message": message,
+                    "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
-            [message.sender_user.email])
+            [sender.user.email])
 
 
 def upload_to(instance, filename):
