@@ -247,6 +247,7 @@ class FoiRequest(models.Model):
         self.message_received.send(sender=self, message=message)
 
     def add_message(self, user, message=None, **kwargs):
+        message_body = message
         message = FoiMessage(request=self)
         last_message = list(self.messages)[-1]
         message.subject = _("Re: %(subject)s"
@@ -257,7 +258,7 @@ class FoiRequest(models.Model):
         message.sender_email = self.secret_address
         message.recipient = last_message.sender_email
         message.timestamp = datetime.now()
-        message.plaintext = message
+        message.plaintext = message_body
         message.send()
 
     @classmethod

@@ -130,7 +130,6 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
         new_len = len(mail.outbox)
-        print [m.subject for m in mail.outbox]
         self.assertEqual(old_len + 2, new_len)
         message = filter(lambda x: req.title in x.subject, mail.outbox)[-1]
         self.assertEqual(message.body, post['message'])
