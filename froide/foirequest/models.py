@@ -344,6 +344,8 @@ class FoiRequest(models.Model):
         if public_body_object is not None:
             message.recipient = public_body_object.email
             cls.request_to_public_body.send(sender=request)
+        else:
+            message.recipient = ""
         message.plaintext = cls.construct_message_body(message,
                 request_form['body'])
         message.original = message.plaintext
