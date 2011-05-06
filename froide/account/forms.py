@@ -27,13 +27,16 @@ class NewUserForm(forms.Form):
     def clean_user_email(self):
         email = self.cleaned_data['user_email']
         try:
-            User.objects.get(email=email)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             pass
         else:
-            raise forms.ValidationError(mark_safe(
+            if user.is_active:
+                raise forms.ValidationError(mark_safe(
                     _('This email address already has an account. <a href="%s?simple" class="target-small">Please login using that email address.</a>') % reverse("account-login")))
-
+            else:
+                raise forms.ValidationError(
+                    _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))
         return email
 
 class NewUserWithPasswordForm(NewUserForm):
