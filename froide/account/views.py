@@ -12,6 +12,10 @@ from froide.helper.utils import get_next
 from froide.helper.auth import login_user
 
 def confirm(request, user_id, secret, request_id=None):
+    if request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are logged in and cannot use a confirmation link.'))
+        return HttpResponseRedirect(reverse('account-show'))
     user = get_object_or_404(auth.models.User, pk=int(user_id))
     if user.is_active:
         raise Http404
