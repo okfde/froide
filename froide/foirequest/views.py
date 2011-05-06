@@ -177,7 +177,7 @@ def set_public_body(request, slug):
     # FIXME: make foilaw dynamic
     foilaw = public_body.default_law
     foirequest.set_public_body(public_body, foilaw)
-    messages.add_message(request, messages.ERROR,
+    messages.add_message(request, messages.SUCCESS,
             _("Request was sent to: %(name)s.") % {"name": public_body.name})
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
