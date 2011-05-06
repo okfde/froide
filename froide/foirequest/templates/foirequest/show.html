@@ -17,6 +17,7 @@
 
 {% block body %}
 <h2>{{ object.title }}</h2>
+<div class="span-18">
 <dl>
   <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
   <dd>{% if object.public_body %}{{ object.public_body.name }}{% else %}{% blocktrans %}Not yet known{% endblocktrans %}{% endif %}</dd>
@@ -51,7 +52,6 @@
 {% endif %}
 
 </dl>
-<div class="span-18">
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
 <div class="info">
