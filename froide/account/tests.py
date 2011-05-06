@@ -71,6 +71,5 @@ class AccountTest(TestCase):
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
-        print response['Location']
         self.assertNotEqual(response['Location'], reverse('account-login'))
 
