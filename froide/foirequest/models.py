@@ -145,7 +145,7 @@ class FoiRequest(models.Model):
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
 
     def __unicode__(self):
-        return u"Request '%s'" % self.title
+        return _(u"Request '%s'") % self.title
 
     @property
     def messages(self):
