@@ -155,7 +155,7 @@
     <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
       {% csrf_token %}
       {{ suggestions_form }}
-      <input type="submit" value="{% blocktrans %}Choose selected Public Body{% endblocktrans %}"/>
+      <input type="submit" value="{% blocktrans %}Send this request to the selected Public Body{% endblocktrans %}"/>
     </form>
   </div>
   {% endif %}
