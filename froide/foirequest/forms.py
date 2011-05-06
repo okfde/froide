@@ -77,7 +77,7 @@ class SendMessageForm(forms.Form):
 def get_public_body_suggestions_form_class(queryset):
     if len(queryset):
         class PublicBodySuggestionsForm(forms.Form):
-            suggestions = forms.ChoiceField(label=_("Suggestions"),
+            public_body = forms.ChoiceField(label=_("Suggestions"),
                     widget=forms.RadioSelect,
                     choices=((s.pk, s.public_body) for s in queryset))
 
