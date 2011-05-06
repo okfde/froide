@@ -344,10 +344,11 @@ class FoiRequest(models.Model):
         if public_body_object is not None:
             message.recipient = public_body_object.email
             cls.request_to_public_body.send(sender=request)
+            message.plaintext = cls.construct_message_body(message,
+                request_form['body'])
         else:
             message.recipient = ""
-        message.plaintext = cls.construct_message_body(message,
-                request_form['body'])
+            message.plaintext = request_form['body']
         message.original = message.plaintext
         message.save()
         cls.request_created.send(sender=request)
@@ -428,6 +429,8 @@ class FoiRequest(models.Model):
             assert len(messages) == 1
             message = messages[0]
             message.recipient = public_body.email
+            message.plaintext = FoiRequest.construct_message_body(message,
+                message.plaintext)
             assert message.sent == False
             message.send()  # saves message
 
