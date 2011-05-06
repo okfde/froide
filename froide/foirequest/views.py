@@ -141,12 +141,14 @@ def submit_request(request, public_body=None):
             else:
                 messages.add_message(request, messages.INFO, 
                     _('Your request has been sent.'))
+            return HttpResponseRedirect(foi_request.get_absolute_url())
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
                     password=password)
             messages.add_message(request, messages.INFO,
                     _('Please check your inbox for mail from us to confirm your mail address.'))
-        return HttpResponseRedirect(foi_request.get_absolute_url())
+            # user cannot access the request yet!
+            return HttpResponseRedirect("/")
     messages.add_message(request, messages.ERROR,
         _('There were errors in your form submission. Please review and submit again.'))
     return render(request, 'foirequest/request.html', context, status=400)
