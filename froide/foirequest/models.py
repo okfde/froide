@@ -231,6 +231,7 @@ class FoiRequest(models.Model):
         message.sender_email = email['from'][1]
         message.sender_public_body = self.public_body
         message.timestamp = convert_to_local(*email['date'])
+        message.recipient = self.secret_address
         # strip timezone, in case database can't handle it
         message.timestamp = message.timestamp.replace(tzinfo=None)
         message.plaintext = email['body']
