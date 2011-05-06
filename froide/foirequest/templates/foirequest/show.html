@@ -148,18 +148,18 @@
 </div>
 
 {% if object.user == user %}
-<div class="section">
 {% with suggestions_form=object.public_body_suggestions_form %}
-{% if suggestions_form %}
-  <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
+  {% if suggestions_form %}
+  <div class="section">
+    <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
     <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
       {% csrf_token %}
       {{ suggestions_form }}
       <input type="submit" value="{% blocktrans %}Choose selected Public Body{% endblocktrans %}"/>
     </form>
-    {% endif %}
-{% endwith %}
-</div>
+  </div>
+  {% endif %}
+  {% endwith %}
 {% endif %}
 {% endif %}
 {# End Public Body Needed #}
