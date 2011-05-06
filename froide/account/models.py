@@ -64,7 +64,7 @@ class AccountManager(object):
         if request_id is not None:
             to_sign.append(str(request_id))
         if self.user.last_login:
-            to_sign.append(str(self.user.last_login))
+            to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
         return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
 
     def send_confirmation_mail(self, request_id=None, password=None):
