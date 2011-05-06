@@ -1,6 +1,8 @@
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest, FoiLaw
@@ -79,8 +81,11 @@ def get_public_body_suggestions_form_class(queryset):
         class PublicBodySuggestionsForm(forms.Form):
             public_body = forms.ChoiceField(label=_("Suggestions"),
                     widget=forms.RadioSelect,
-                    choices=((s.pk, s.public_body) for s in queryset))
-
+                    choices=((s.public_body.id, mark_safe(
+                        _('%(name)s - <a href="%(url)s">More Information</a>') %
+                            {"name": escape(s.public_body.name),
+                            "url": s.public_body.get_absolute_url()
+                        })) for s in queryset))
         return PublicBodySuggestionsForm
     return None
 
@@ -96,7 +101,7 @@ def get_status_form_class(foirequest):
                     widget=forms.TextInput(attrs={"size": "4"}))
 
         refusal_reason = forms.ChoiceField(label=_("Refusal Reason"),
-                choices=(('', '-------'),) + 
+                choices=(('', _('No or other reason given')),) + 
                 foirequest.law.get_refusal_reason_choices(),required=False)
 
     return FoiRequestStatusForm
