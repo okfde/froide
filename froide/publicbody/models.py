@@ -16,6 +16,9 @@ from froide.helper.date_utils import (calculate_workingday_range,
 
 
 class PublicBodyManager(CurrentSiteManager):
+    def get_query_set(self):
+        return super(PublicBodyManager, self).get_query_set().exclude(email="")
+
     def get_for_homepage(self, count=5):
         return self.get_query_set()[:count]
 
