@@ -482,7 +482,8 @@ class FoiMessage(models.Model):
     sender_public_body = models.ForeignKey(PublicBody, blank=True,
             null=True, on_delete=models.SET_NULL,
             verbose_name=_("From Public Body"))
-    recipient = models.CharField(_("Recipient"), max_length=255, blank=True)
+    recipient = models.CharField(_("Recipient"), max_length=255,
+            blank=True, null=True)
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     plaintext = models.TextField(_("plain text"), blank=True, null=True)
