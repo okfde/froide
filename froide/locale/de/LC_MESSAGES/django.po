@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-06 11:29+0200\n"
-"PO-Revision-Date: 2011-05-06 11:34+0100\n"
+"POT-Creation-Date: 2011-05-06 13:17+0200\n"
+"PO-Revision-Date: 2011-05-06 13:18+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -111,41 +111,45 @@ msgstr "Profil von <%(user)s>"
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
 
-#: account/views.py:21
+#: account/views.py:17
+msgid "You are logged in and cannot use a confirmation link."
+msgstr "Sie sind gerade eingeloggt und können daher Bestätigungslinks nicht nutzen."
+
+#: account/views.py:25
 msgid "Your email address is now confirmed and you are logged in. The next time you want to log in, use the password from the email."
 msgstr "Ihre E-Mailadresse ist jetzt bestätigt und Sie sind eingeloggt. Das nächste Mal, wenn Sie sich einloggen möchten, nutzen Sie bitte das Ihnen zugemailte Passwort."
 
-#: account/views.py:27
+#: account/views.py:31
 #, python-format
 msgid "Your request \"%s\" has now been sent"
 msgstr "Ihre Anfrage \"%s\" wurde nun gesendet"
 
-#: account/views.py:31
+#: account/views.py:35
 msgid "You can only use the confirmation link once, please login with your password."
 msgstr "Sie können den Bestätigungslink nur einmal benutzen, bitte loggen Sie sich mit Ihrem Passwort ein."
 
-#: account/views.py:43
+#: account/views.py:47
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
-#: account/views.py:65
+#: account/views.py:69
 #: account/templates/account/login.html:7
 msgid "You are now logged in."
 msgstr "Sie sind jetzt eingeloggt."
 
-#: account/views.py:73
+#: account/views.py:77
 msgid "Please activate your mail address before logging in."
 msgstr "Bitte bestätigen Sie Ihre Mailadresse bevor Sie sich einloggen."
 
-#: account/views.py:76
+#: account/views.py:80
 msgid "E-mail and password do not match."
 msgstr "E-Mailadresse und Passwort passen nicht zusammen"
 
-#: account/views.py:87
+#: account/views.py:91
 msgid "You are currently logged in, you cannot signup."
 msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 
-#: account/views.py:95
+#: account/views.py:99
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine Mail von uns erhalten mit einem Bestätigungslink."
 
@@ -259,7 +263,7 @@ msgstr "'%(title)s' an %(publicbody)s"
 #: foirequest/models.py:96
 #: foirequest/models.py:460
 #: foirequest/models.py:625
-#: publicbody/models.py:109
+#: publicbody/models.py:112
 #: publicbody/templates/publicbody/list.html:6
 msgid "Public Body"
 msgstr "Behörde"
@@ -409,13 +413,13 @@ msgid "Public"
 msgstr "Öffentlich"
 
 #: foirequest/models.py:91
-#: publicbody/models.py:28
-#: publicbody/models.py:69
+#: publicbody/models.py:31
+#: publicbody/models.py:72
 msgid "Slug"
 msgstr "URL-Kürzel"
 
 #: foirequest/models.py:92
-#: publicbody/models.py:70
+#: publicbody/models.py:73
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -462,7 +466,7 @@ msgid "Secret"
 msgstr "Geheimnis"
 
 #: foirequest/models.py:124
-#: publicbody/models.py:47
+#: publicbody/models.py:50
 msgid "Freedom of Information Law"
 msgstr "Informationsfreiheitsgesetz"
 
@@ -475,8 +479,8 @@ msgid "Refusal reason"
 msgstr "Verweigerungsgrund"
 
 #: foirequest/models.py:130
-#: publicbody/models.py:42
-#: publicbody/models.py:98
+#: publicbody/models.py:45
+#: publicbody/models.py:101
 msgid "Site"
 msgstr "Seite"
 
@@ -493,6 +497,11 @@ msgstr "Informationsfreiheitsanfrage"
 #: templates/simple_base.html:6
 msgid "Freedom of Information Requests"
 msgstr "Informationsfreiheitsanfragen"
+
+#: foirequest/models.py:148
+#, python-format
+msgid "Request '%s'"
+msgstr "Anfrage '%s'"
 
 #: foirequest/models.py:257
 #, python-format
@@ -607,7 +616,7 @@ msgid "Belongs to request"
 msgstr "Gehört zur Anfrage"
 
 #: foirequest/models.py:594
-#: publicbody/models.py:68
+#: publicbody/models.py:71
 msgid "Name"
 msgstr "Name"
 
@@ -1197,85 +1206,85 @@ msgstr "E-Mailadresse für Informationsfreiheitsanfragen"
 msgid "Homepage URL of Public Body"
 msgstr "Homepage URL der Behörde"
 
-#: publicbody/models.py:36
+#: publicbody/models.py:39
 msgid "Day(s)"
 msgstr "Tag(e)"
 
-#: publicbody/models.py:37
+#: publicbody/models.py:40
 msgid "Working Day(s)"
 msgstr "Arbeitstag(e)"
 
-#: publicbody/models.py:38
+#: publicbody/models.py:41
 msgid "Month(s) (DE)"
 msgstr "Monat(e) (DE)"
 
-#: publicbody/models.py:41
+#: publicbody/models.py:44
 msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 msgstr "Mögliche Verweigerungsgründe, einer pro Zeile, z.B. §X.Y: Datenschutzgründe"
 
-#: publicbody/models.py:48
-#: publicbody/models.py:104
+#: publicbody/models.py:51
+#: publicbody/models.py:107
 msgid "Freedom of Information Laws"
 msgstr "Informationsfreiheitsgesetze"
 
-#: publicbody/models.py:71
+#: publicbody/models.py:74
 msgid "Topic"
 msgstr "Thema"
 
-#: publicbody/models.py:72
+#: publicbody/models.py:75
 msgid "Topic Slug"
 msgstr "Thema-URL-Kürzel"
 
-#: publicbody/models.py:73
+#: publicbody/models.py:76
 msgid "URL"
 msgstr "URL"
 
-#: publicbody/models.py:79
+#: publicbody/models.py:82
 msgid "Classification"
 msgstr "Klassifikation"
 
-#: publicbody/models.py:81
+#: publicbody/models.py:84
 msgid "Classification Slug"
 msgstr "Klassifikations-URL-Kürzel"
 
-#: publicbody/models.py:83
+#: publicbody/models.py:86
 msgid "Email"
 msgstr "E-Mail"
 
-#: publicbody/models.py:84
+#: publicbody/models.py:87
 #: templates/base.html:84
 msgid "Contact"
 msgstr "Kontakt"
 
-#: publicbody/models.py:85
+#: publicbody/models.py:88
 msgid "Address"
 msgstr "Adresse"
 
-#: publicbody/models.py:86
+#: publicbody/models.py:89
 msgid "Website Dump"
 msgstr "Webseiten-Dump"
 
-#: publicbody/models.py:88
+#: publicbody/models.py:91
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: publicbody/models.py:91
+#: publicbody/models.py:94
 msgid "Updated by"
 msgstr "Aktualisiert von"
 
-#: publicbody/models.py:94
+#: publicbody/models.py:97
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: publicbody/models.py:96
+#: publicbody/models.py:99
 msgid "Number of requests"
 msgstr "Anzahl der Anfragen"
 
-#: publicbody/models.py:101
+#: publicbody/models.py:104
 msgid "Geography"
 msgstr "Geographie"
 
-#: publicbody/models.py:110
+#: publicbody/models.py:113
 #: templates/base.html:55
 msgid "Public Bodies"
 msgstr "Behörden"
