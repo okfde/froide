@@ -18,7 +18,7 @@ def confirm(request, user_id, secret, request_id=None):
     account_manager = AccountManager(user)
     if account_manager.confirm_account(secret, request_id):
         messages.add_message(request, messages.INFO,
-                _('Your email address is now confirmed.'))
+                _('Your email address is now confirmed and you are logged in. The next time you want to log in, use the password from the email.'))
         login_user(request, user)
         if request_id is not None:
             request = FoiRequest.confirmed_request(user, request_id)
