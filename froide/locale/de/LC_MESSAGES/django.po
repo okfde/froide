@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-06 00:14+0200\n"
-"PO-Revision-Date: 2011-05-06 00:17+0100\n"
+"POT-Creation-Date: 2011-05-06 11:19+0200\n"
+"PO-Revision-Date: 2011-05-06 11:20+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -70,30 +70,34 @@ msgid "Last Name"
 msgstr "Nachname"
 
 #: account/forms.py:18
-#: account/forms.py:54
+#: account/forms.py:57
 msgid "Email address"
 msgstr "E-Mailadresse"
 
 #: account/forms.py:19
-#: account/forms.py:53
+#: account/forms.py:56
 msgid "mail@ddress.net"
 msgstr "email@dresse.net"
 
-#: account/forms.py:35
+#: account/forms.py:36
 #, python-format
 msgid "This email address already has an account. <a href=\"%s?simple\" class=\"target-small\">Please login using that email address.</a>"
 msgstr "Diese E-Mailadresse hat schon einen Account. <a href=\"%s?simple\" class=\"target-small\">Bitte loggen Sie sich mit dieser E-Mailadresse ein.</a>"
 
-#: account/forms.py:41
-#: account/forms.py:56
+#: account/forms.py:39
+msgid "This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you."
+msgstr "Diese E-Mailadresse ist schon registriert, aber noch nicht bestätigt! Bitte klicken Sie auf den Bestätigungslink, den wir Ihnen zugemailt hatten."
+
+#: account/forms.py:44
+#: account/forms.py:59
 msgid "Password"
 msgstr "Passwort"
 
-#: account/forms.py:43
+#: account/forms.py:46
 msgid "Password (repeat)"
 msgstr "Password (wiederholen)"
 
-#: account/forms.py:48
+#: account/forms.py:51
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein"
 
@@ -253,8 +257,8 @@ msgstr "'%(title)s' an %(publicbody)s"
 
 #: foirequest/forms.py:16
 #: foirequest/models.py:96
-#: foirequest/models.py:455
-#: foirequest/models.py:619
+#: foirequest/models.py:457
+#: foirequest/models.py:622
 #: publicbody/models.py:109
 #: publicbody/templates/publicbody/list.html:6
 msgid "Public Body"
@@ -266,7 +270,7 @@ msgstr "IFG"
 
 #: foirequest/forms.py:19
 #: foirequest/forms.py:20
-#: foirequest/models.py:487
+#: foirequest/models.py:490
 #: foirequest/templates/foirequest/_request_form.html:11
 #: foirequest/templates/foirequest/request.html:166
 #: foirequest/templates/foirequest/show.html:84
@@ -428,8 +432,8 @@ msgid "Visibility"
 msgstr "Sichtbarkeit"
 
 #: foirequest/models.py:107
-#: foirequest/models.py:458
-#: foirequest/models.py:616
+#: foirequest/models.py:460
+#: foirequest/models.py:619
 msgid "User"
 msgstr "Nutzer"
 
@@ -477,9 +481,9 @@ msgid "Site"
 msgstr "Seite"
 
 #: foirequest/models.py:137
-#: foirequest/models.py:453
-#: foirequest/models.py:471
-#: foirequest/models.py:613
+#: foirequest/models.py:455
+#: foirequest/models.py:473
+#: foirequest/models.py:616
 msgid "Freedom of Information Request"
 msgstr "Informationsfreiheitsanfrage"
 
@@ -499,177 +503,177 @@ msgstr "AW: %(subject)s "
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: foirequest/models.py:443
+#: foirequest/models.py:445
 msgid "You received a reply to your Freedom of Information Request"
 msgstr "Sie haben eine Antwort auf Ihre Informationsfreiheitsanfrage erhalten"
 
-#: foirequest/models.py:459
+#: foirequest/models.py:461
 msgid "Timestamp of Suggestion"
 msgstr "Zeitstempel des Vorschlags"
 
-#: foirequest/models.py:465
+#: foirequest/models.py:467
 msgid "Public Body Suggestion"
 msgstr "Vorschlag für Behörde"
 
-#: foirequest/models.py:466
+#: foirequest/models.py:468
 msgid "Public Body Suggestions"
 msgstr "Vorschläge für Behörden"
 
-#: foirequest/models.py:472
+#: foirequest/models.py:474
 msgid "has message been sent?"
 msgstr "wurde die Nachricht versendet?"
 
-#: foirequest/models.py:473
+#: foirequest/models.py:475
 msgid "Is this message a response?"
 msgstr "Ist diese Nachricht eine Antwort?"
 
-#: foirequest/models.py:477
+#: foirequest/models.py:479
 msgid "From User"
 msgstr "Von Nutzer"
 
-#: foirequest/models.py:478
+#: foirequest/models.py:480
 msgid "From Email"
 msgstr "Von E-Mail"
 
-#: foirequest/models.py:480
+#: foirequest/models.py:482
 msgid "From Name"
 msgstr "Von Name"
 
-#: foirequest/models.py:484
+#: foirequest/models.py:486
 msgid "From Public Body"
 msgstr "Von Behörde"
 
-#: foirequest/models.py:485
+#: foirequest/models.py:487
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: foirequest/models.py:486
-#: foirequest/models.py:621
+#: foirequest/models.py:489
+#: foirequest/models.py:624
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
-#: foirequest/models.py:488
+#: foirequest/models.py:491
 msgid "plain text"
 msgstr "einfacher Text"
 
-#: foirequest/models.py:489
+#: foirequest/models.py:492
 msgid "HTML"
 msgstr "HTML"
 
-#: foirequest/models.py:490
+#: foirequest/models.py:493
 msgid "Original"
 msgstr "Original"
 
-#: foirequest/models.py:491
+#: foirequest/models.py:494
 msgid "Was Redacted?"
 msgstr "wurde zensiert?"
 
-#: foirequest/models.py:502
+#: foirequest/models.py:505
 msgid "Freedom of Information Message"
 msgstr "Informationsfreiheitsnachricht"
 
-#: foirequest/models.py:503
+#: foirequest/models.py:506
 msgid "Freedom of Information Messages"
 msgstr "Informationsfreiheitsnachrichten"
 
-#: foirequest/models.py:510
+#: foirequest/models.py:513
 #, python-format
 msgid "Message in '%(request)s' at %(time)s"
 msgstr "Nachricht in '%(request)s' um %(time)s"
 
-#: foirequest/models.py:515
+#: foirequest/models.py:518
 #, python-format
 msgid "message-%(id)d"
 msgstr "nachricht-%(id)d"
 
-#: foirequest/models.py:538
+#: foirequest/models.py:541
 msgid "<<name and email address>>"
 msgstr "<<Name und E-Mailadresse>>"
 
-#: foirequest/models.py:539
+#: foirequest/models.py:542
 msgid "<<email address>>"
 msgstr "<<E-Mailadresse>>"
 
-#: foirequest/models.py:567
+#: foirequest/models.py:570
 msgid "Your Freedom of Information Request was sent"
 msgstr "Ihre Informationsfreiheitsanfrage wurde versendet"
 
-#: foirequest/models.py:570
+#: foirequest/models.py:573
 msgid "Your Message was sent"
 msgstr "Ihre Nachricht wurde gesendet"
 
-#: foirequest/models.py:587
+#: foirequest/models.py:590
 msgid "Belongs to request"
 msgstr "Gehört zur Anfrage"
 
-#: foirequest/models.py:588
+#: foirequest/models.py:591
 #: publicbody/models.py:68
 msgid "Name"
 msgstr "Name"
 
-#: foirequest/models.py:589
+#: foirequest/models.py:592
 msgid "File"
 msgstr "Datei"
 
-#: foirequest/models.py:590
+#: foirequest/models.py:593
 msgid "Size"
 msgstr "Größe"
 
-#: foirequest/models.py:591
+#: foirequest/models.py:594
 msgid "File type"
 msgstr "Dateityp"
 
-#: foirequest/models.py:592
+#: foirequest/models.py:595
 msgid "Format"
 msgstr "Format"
 
-#: foirequest/models.py:597
+#: foirequest/models.py:600
 msgid "Attachment"
 msgstr "Anhang"
 
-#: foirequest/models.py:598
+#: foirequest/models.py:601
 #: foirequest/templates/foirequest/show.html:93
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: foirequest/models.py:620
+#: foirequest/models.py:623
 msgid "Event Name"
 msgstr "Ereignisname"
 
-#: foirequest/models.py:622
+#: foirequest/models.py:625
 msgid "Context JSON"
 msgstr "Kontext JSON"
 
-#: foirequest/models.py:626
+#: foirequest/models.py:629
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr "%(user)s hat Kosten in Höhe von %(amount)s für diese Anfrage angegeben."
 
-#: foirequest/models.py:628
+#: foirequest/models.py:631
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr "Email von %(public_body)s erhalten."
 
-#: foirequest/models.py:630
+#: foirequest/models.py:633
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr "%(user)s hat eine Nachricht an %(public_body)s gesendet."
 
-#: foirequest/models.py:632
+#: foirequest/models.py:635
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr "%(user)s hat den Status auf '%(status)s' gesetzt."
 
-#: foirequest/models.py:638
+#: foirequest/models.py:641
 msgid "Request Event"
 msgstr "Anfrageereignis"
 
-#: foirequest/models.py:639
+#: foirequest/models.py:642
 msgid "Request Events"
 msgstr "Anfrageereignisse"
 
 #. Translators: Hash part of Event URL
-#: foirequest/models.py:657
+#: foirequest/models.py:660
 msgid "event"
 msgstr "ereignis"
 
