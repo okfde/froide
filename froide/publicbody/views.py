@@ -1,8 +1,7 @@
 import json
 
 from django.shortcuts import get_object_or_404
-from django.http import (HttpResponse, HttpResponseForbidden,
-        HttpResponseRedirect, HttpResponseBadRequest)
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import urlresolvers
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
@@ -12,6 +11,8 @@ from haystack.query import SearchQuerySet, SQ
 from publicbody.models import PublicBody
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
+from froide.helper.utils import render_400, render_403
+
 
 class PublicBodyListView(JSONResponseListView):
     model = PublicBody
@@ -52,13 +53,13 @@ def autocomplete(request):
 
 def confirm(request):
     if not request.user.is_authenticated():
-        return HttpResponseForbidden()
+        return render_403(request)
     if not request.user.is_staff and not request.user.is_superuser:
-        return HttpResponseForbidden()
+        return render_403(request)
     try:
         pb = get_object_or_404(PublicBody, pk=int(request.POST.get('public_body', '')))
     except ValueError:
-        return HttpResponseBadRequest()
+        return render_400(request)
     result = pb.confirm()
     if result is None:
         messages.add_message(request, messages.ERROR,

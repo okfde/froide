@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404, HttpResponseForbidden
+from django.http import HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib import messages
 from django.utils.translation import ugettext as _
@@ -8,8 +8,9 @@ from django.utils.translation import ugettext as _
 from account.forms import UserLoginForm, NewUserForm
 from account.models import AccountManager
 from foirequest.models import FoiRequest
-from froide.helper.utils import get_next
 from froide.helper.auth import login_user
+from froide.helper.utils import get_next, render_403
+
 
 def confirm(request, user_id, secret, request_id=None):
     if request.user.is_authenticated():
@@ -37,7 +38,7 @@ def confirm(request, user_id, secret, request_id=None):
 
 def show(request):
     if not request.user.is_authenticated():
-        return HttpResponseForbidden()
+        return render_403(request)
     my_requests = FoiRequest.objects.filter(user=request.user)
     return render(request, 'account/show.html', {'foirequests': my_requests})
 

@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
-from django.http import (HttpResponseRedirect,
-        HttpResponseForbidden, HttpResponseBadRequest, Http404)
+from django.http import HttpResponseRedirect, Http404
 from django.contrib import messages
 
 from foirequest.forms import RequestForm
@@ -12,6 +11,7 @@ from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest, FoiEvent, FoiAttachment
 from foirequest.forms import SendMessageForm, get_status_form_class
+from froide.helper.utils import render_400, render_403
 
 
 def index(request):
@@ -35,7 +35,7 @@ def show(request, slug, template_name="foirequest/show.html"):
     except FoiRequest.DoesNotExist:
         raise Http404
     if not obj.is_visible(request.user):
-        return HttpResponseForbidden()
+        return render_403(request)
 
     all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
     for message in obj.messages:
@@ -157,7 +157,7 @@ def submit_request(request, public_body=None):
 def set_public_body(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
-        return HttpResponseForbidden()
+        return render_403(request)
     try:
         public_body_pk = int(request.POST.get('public_body', ''))
     except ValueError:
@@ -169,11 +169,11 @@ def set_public_body(request, slug):
     except PublicBody.DoesNotExist:
         messages.add_message(request, messages.ERROR,
             _('Missing or invalid input!'))
-        return HttpResponseBadRequest()
+        return render_400(request)
     if not foirequest.needs_public_body():
         messages.add_message(request, messages.ERROR,
             _("This request doesn't need a Public Body!"))
-        return HttpResponseBadRequest()
+        return render_400(request)
     # FIXME: make foilaw dynamic
     foilaw = public_body.default_law
     foirequest.set_public_body(public_body, foilaw)
@@ -185,15 +185,15 @@ def set_public_body(request, slug):
 def suggest_public_body(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not foirequest.needs_public_body():
-        return HttpResponseBadRequest()
+        return render_400(request)
     try:
         public_body_pk = int(request.POST.get('public_body', ''))
     except ValueError:
-        return HttpResponseBadRequest()
+        return render_400(request)
     try:
         public_body = PublicBody.objects.get(pk=public_body_pk)
     except PublicBody.DoesNotExist:
-        return HttpResponseBadRequest()
+        return render_400(request)
     # FIXME: make foilaw dynamic
     # foilaw = public_body.default_law
     user = None
@@ -209,9 +209,9 @@ def suggest_public_body(request, slug):
 def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
-        return HttpResponseForbidden()
+        return render_403(request)
     if not foirequest.status_settable:
-        return HttpResponseBadRequest()
+        return render_400(request)
     form = get_status_form_class(foirequest)(request.POST)
     if form.is_valid():
         foirequest.set_status(form.cleaned_data)
@@ -220,16 +220,16 @@ def set_status(request, slug):
     else:
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
-        return HttpResponseBadRequest()
+        return render_400(request)
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 @require_POST
 def send_message(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated():
-        return HttpResponseForbidden()
+        return render_403(request)
     if request.user != foirequest.user:
-        return HttpResponseForbidden()
+        return render_403(request)
     form = SendMessageForm(request.POST)
     if form.is_valid() and foirequest.replyable():
         foirequest.add_message(request.user, **form.cleaned_data)
@@ -237,14 +237,14 @@ def send_message(request, slug):
                 _('Your Message has been sent.'))
         return HttpResponseRedirect(foirequest.get_absolute_url())
     else:
-        return HttpResponseBadRequest()
+        return render_400(request)
 
 @require_POST
 def make_public(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
-        return HttpResponseForbidden()
+        return render_403(request)
     if not foirequest.status_settable:
-        return HttpResponseBadRequest()
+        return render_400(request)
     foirequest.make_public()
     return HttpResponseRedirect(foirequest.get_absolute_url())
