@@ -12,13 +12,16 @@ Froide.app.performPublicBodySearch = (function(){
             $("#search-results").slideDown();
             return;
         }
+        $("#search-spinner").fadeIn();
         $("#search-results").hide();
         $.getJSON(Froide.url.searchPublicBody, {"q": query}, function(results){
             var result, i;
             lastPublicBodyQuery = query;
+            $("#search-spinner").hide();
             $("#search-results .result").remove();
             if (results.length === 0){
                 $("#empty-result").show();
+                $("#search-results").show();
                 return;
             } else {
                 $("#empty-result").hide();
@@ -39,8 +42,8 @@ Froide.app.performPublicBodySearch = (function(){
                     $("#public_body-chooser .selected-result input").attr("checked", "checked");
                     $("#search-results").slideUp();
                 });
+                $("#search-results").slideDown();
             }
-            $("#search-results").slideDown();
         });
     };
 }());
@@ -224,6 +227,9 @@ $(function(){
         } else {
             obj.slideUp();
         }
+    });
+    $("#search-public_bodies-submit").click(function(e){
+        Froide.app.performPublicBodySearch();
     });
     $("#search-public_bodies").keydown(function(e){
         if(e.keyCode === 13){

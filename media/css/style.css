@@ -294,6 +294,9 @@ form.foirequest fieldset > div {
     margin:2em;
 }
 
+.info-link {
+    font-size: 0.75em;
+}
 
 form.foirequest ol {
     margin:0;
@@ -324,10 +327,6 @@ span.help {
     padding:0;
     margin:0;
     border:1px solid #ccc;
-}
-
-#public_body-chooser ul li label{
-    display:inline;
 }
 
 #new-public_body {
@@ -462,6 +461,10 @@ form.foirequest p {
     height: 14em;
     max-height: 14em;
     overflow: auto;
+}
+
+.highlight {
+    background: #FFFC78;
 }
 
 #review-warnings {
