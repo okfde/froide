@@ -71,7 +71,7 @@ def login(request, base="base.html"):
                         return HttpResponseRedirect(
                                 reverse('account-login')+"?simple")
                     else:
-                        return HttpResponseRedirect(get_next(request))
+                        return HttpResponseRedirect(reverse('account-show'))
                 else:
                     messages.add_message(request, messages.ERROR,
                             _('Please activate your mail address before logging in.'))
