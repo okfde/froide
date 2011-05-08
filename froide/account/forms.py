@@ -3,8 +3,11 @@ from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
 
-from helper.widgets import EmailInput
+from helper.widgets import EmailInput, AgreeCheckboxInput
+
+user_can_hide_web = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 
 class NewUserForm(forms.Form):
     first_name = forms.CharField(max_length=30,
@@ -17,6 +20,22 @@ class NewUserForm(forms.Form):
                 'class': 'inline'}))
     user_email = forms.EmailField(label=_('Email address'),
             widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
+ 
+    if user_can_hide_web:
+        private = forms.BooleanField(required=False,
+                label=_("Hide my name on the web"),
+                help_text=_("If you check this, your name will still appear in the request to the public body, but we will do our best to not display it publicly."))
+        
+    terms = forms.BooleanField(error_messages={'required':
+            _('You need to accept our Terms and Conditions.')},
+            widget=AgreeCheckboxInput(
+                agree_to=_(u'You agree to our <a href="%(url)s" class="target-new">Terms and Conditions</a>'),
+                url_name="help-terms"))
+    privacy = forms.BooleanField(error_messages={'required':
+            _('You need to accept our Privacy Statement.')},
+            widget=AgreeCheckboxInput(
+                agree_to=_(u'You agree to our <a href="%(url)s" class="target-new">Privacy Statement</a>'),
+                url_name="help-privacy"))
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()

@@ -132,8 +132,24 @@
      <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
      {{ user_form.user_email.errors }}
       <p>
-        {{ user_form.user_email }}
-        </p>
+      {{ user_form.user_email }}
+      </p>
+      {% if user_form.private %}
+        <div class="section">
+          {{ user_form.private }} {{ user_form.private.label_tag }}<br/>
+          <span class="help">{{ user_form.private.help_text }}</span>
+        </div>
+      {% endif %}
+      <div class="section">
+      {% if user_form.terms %}
+       {{ user_form.terms.errors }}
+       {{ user_form.terms }}
+       {% endif %}
+      {% if user_form.privacy %}
+       <br/>{{ user_form.privacy.errors }}
+       {{ user_form.privacy }}
+      {% endif %}
+        </div>
       </div>
       {% endif %}
       <div class="section">
