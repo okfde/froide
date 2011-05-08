@@ -160,6 +160,9 @@ class FoiRequest(models.Model):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
+    def get_description(self):
+        return replace_email(self.description, _("<<email address>>"))
+
     def is_visible(self, user):
         if self.visibility == 0:
             return False
