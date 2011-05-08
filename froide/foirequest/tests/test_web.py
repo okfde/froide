@@ -8,7 +8,7 @@ from foirequest.models import FoiRequest
 
 
 class WebTest(TestCase):
-    fixtures = ['auth.json', 'foirequest.json']
+    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
 
     def test_index(self):
         response = self.client.get('/')

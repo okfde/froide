@@ -8,7 +8,7 @@ from django.core import mail
 from account.models import AccountManager
 
 class AccountTest(TestCase):
-    fixtures = ['auth.json', 'foirequest.json']
+    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
 
     def test_account_page(self):
         ok = self.client.login(username='sw', password='wrong')

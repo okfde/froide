@@ -14,7 +14,7 @@ from foirequest.models import FoiRequest
 
 
 class RequestTest(TestCase):
-    fixtures = ['auth.json', 'foirequest.json']
+    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
 
     def test_public_body_logged_in_request(self):
         ok = self.client.login(username='sw', password='froide')
