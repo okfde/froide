@@ -57,16 +57,12 @@ class FoiRequest(models.Model):
         ('awaiting_response', _('Awaiting response')),
         ('awaiting_clarification',
                 _('Awaiting clarification from Public Body')),
-        ('awaiting_clarification_from_requester',
-                _('Awaiting clarification from Requester')),
-        ('requires_admin', _('Requires administrative action')),
         ('gone_postal', _('Gone Postal')),
         ('not_held', _('Information not held')),
         ('refused', _('Request refused')),
         ('successful', _('Request Successful')),
         ('partially_successful', _('Request partially successful')),
         ('escalation', _('Escalate Request')),
-        ('error_message', _('Error Occured')),
         ('user_withdrawn', _('User withdrew request')),
     )
 
