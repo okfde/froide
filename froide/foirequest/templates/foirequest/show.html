@@ -190,14 +190,34 @@
 {# Reply #}
 {% if object.user == user and object.status_settable %}
 <div class="section">
+  <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>
+  <div id="write-message">
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}">{% csrf_token %}
-    <p>{% blocktrans %}You can send another message if you want to.{% endblocktrans %}</p>
-    <textarea name="message"></textarea>
+    <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
+    <textarea name="message"></textarea><br/>
     <input type="submit" value="{% blocktrans %}Send Message{% endblocktrans %}"/>
   </form>
+  </div>
 </div>
 {% endif %}
 {# End Reply #}
+
+{% if object.user == user and not object.public %}
+<div class="section">
+  <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+    {% csrf_token %}
+    <p>{% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
+    <input type="submit" value="{% blocktrans %}Make this request public now{% endblocktrans %}"/>
+    </p>
+  </form>
+  {% if object.public_date %}
+  <p>{% blocktrans with time_left=object.public_date|timeuntil %}This request will be published automatically in {{ time_left }}.{% endblocktrans %}</p>
+  {% else %}
+  <p>{% blocktrans with days=froide.request_public_after_due_days %}This request will be made public automatically {{ days }} days after the request was due.{% endblocktrans %}</p>
+  {% endif %}
+</div>
+{% endif %}
+
 </div>
 {% endblock %}
 

@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 
 from django.db import models
@@ -139,6 +139,8 @@ class FoiRequest(models.Model):
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
+    made_public = django.dispatch.Signal(providing_args=[])
+
 
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
@@ -180,6 +182,12 @@ class FoiRequest(models.Model):
 
     def replyable(self):
         return not self.awaits_response()
+
+    def public_date(self):
+        if self.due_date:
+            return self.due_date + timedelta(days=settings.FROIDE_CONFIG.get(
+                'request_public_after_due_days', 14))
+        return None
 
     def status_form_klass(self):
         from foirequest.forms import get_status_form_class
@@ -430,6 +438,12 @@ class FoiRequest(models.Model):
                 message.plaintext)
             assert message.sent == False
             message.send()  # saves message
+
+    def make_public(self):
+        self.public = True
+        self.visibility = 2
+        self.save()
+        self.made_public.send(sender=self)
 
 
 @receiver(FoiRequest.request_to_public_body,

@@ -239,4 +239,12 @@ def send_message(request, slug):
     else:
         return HttpResponseBadRequest()
 
-
+@require_POST
+def make_public(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or request.user != foirequest.user:
+        return HttpResponseForbidden()
+    if not foirequest.status_settable:
+        return HttpResponseBadRequest()
+    foirequest.make_public()
+    return HttpResponseRedirect(foirequest.get_absolute_url())

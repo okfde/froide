@@ -20,5 +20,5 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/set/public-body/$", 'foirequest.views.set_public_body', name="foirequest-set_public_body"),
     url(r"^(?P<slug>[-\w]+)/set/status/$", 'foirequest.views.set_status', name="foirequest-set_status"),
     url(r"^(?P<slug>[-\w]+)/send/message/$", 'foirequest.views.send_message', name="foirequest-send_message"),
-
+    url(r"^(?P<slug>[-\w]+)/make/public/$", 'foirequest.views.make_public', name="foirequest-make_public"),
 )
