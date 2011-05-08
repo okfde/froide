@@ -222,6 +222,10 @@ HOLIDAYS_FOR_EASTER = (0, -2, 1, 39, 50, 60)
 FROIDE_CONFIG = {
     "create_new_publicbody": True,
     "publicbody_empty": True,
+    "user_can_hide_web": True,
+    "public_body_officials_public": True,
+    "public_body_officials_email_public": False,
+    "request_public_after_due_days": 14,
     "payment_possible": True,
     "currency": "Euro"
 }
