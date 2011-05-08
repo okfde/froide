@@ -83,6 +83,9 @@
 {% endif %}
 {# End Unconfirmed Public Body #}
 
+<hr/>
+<h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
+
 {% for message in object.messages %}
 <div id="{{ message.get_html_id }}" class="message-container">
 <div class="message{% if not message.sender_user %} message-received{% endif %}">
