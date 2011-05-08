@@ -581,9 +581,9 @@ class FoiMessage(models.Model):
             recp = self.recipient.replace("@", "+")
             self.recipient = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
         # Use send_foi_mail here
-        send_foi_mail(self.subject, self.plaintext,
-                make_address(self.request.secret_address, self.sender_name),
-                [self.recipient])
+        from_addr = make_address(self.request.secret_address,
+                self.request.user.get_full_name())
+        send_foi_mail(self.subject, self.plaintext, from_addr, [self.recipient])
         self.sent = True
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
