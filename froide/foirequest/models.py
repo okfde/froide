@@ -259,7 +259,7 @@ class FoiRequest(models.Model):
                 ) % {"subject": last_message.subject}
         message.is_response = False
         message.sender_user = user
-        message.sender_name = user.get_full_name()
+        message.sender_name = user.get_profile().display_name
         message.sender_email = self.secret_address
         message.recipient = last_message.sender_email
         message.timestamp = datetime.now()
@@ -339,7 +339,7 @@ class FoiRequest(models.Model):
                 is_response=False,
                 sender_user=user,
                 sender_email=request.secret_address,
-                sender_name=user.get_full_name(),
+                sender_name=user.get_profile().display_name,
                 timestamp=now,
                 subject=request.title)
         if public_body_object is not None:
@@ -528,7 +528,13 @@ class FoiMessage(models.Model):
     @property
     def sender(self):
         if self.sender_user:
-            return self.sender_user.get_full_name()
+            return self.sender_user.get_profile().display_name
+        if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
+                False):
+            return make_address(self.sender_email, self.sender_name)
+        if settings.FROIDE_CONFIG.get("public_body_officials_public",
+                False):
+            return self.sender_name
         else:
             return self.sender_public_body.name
 
@@ -542,6 +548,9 @@ class FoiMessage(models.Model):
         content = self.content
         # content = remove_quote(content,
         #        replacement=_(u"Quoted part removed"))
+        if self.sender_user:
+            profile = self.sender_user.get_profile()
+            content = profile.apply_message_redaction(content)
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
         content = remove_signature(content)
@@ -674,7 +683,7 @@ class FoiEvent(models.Model):
         context = json.loads(self.context_json)
         user = ""
         if self.user:
-            user = self.user.get_full_name()
+            user = self.user.get_profile().display_name()
         pb = ""
         if self.public_body:
             pb = self.public_body.name

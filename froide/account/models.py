@@ -23,9 +23,30 @@ user_activated_signal = dispatch.Signal(providing_args=[])
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
+    private = models.BooleanField(default=False)
 
     def __unicode__(self):
         return _(u"Profile of <%(user)s>") % {"user": self.user}
+
+    def display_name(self):
+        if self.private:
+            return _(u"<< Name Hidden >>")
+        else:
+            return self.user.get_full_name()
+
+    def apply_message_redaction(self, content):
+        if not self.private:
+            return content
+        last_name = self.user.last_name
+        first_name = self.user.first_name
+        full_name = self.user.get_full_name()
+        content = content.replace(full_name,
+                _("<< Name removed >>"))
+        content = content.replace(last_name,
+                _("<< Name removed >>"))
+        content = content.replace(first_name,
+                _("<< Name removed >>"))
+        return content
 
 
 class AccountManager(object):
@@ -109,4 +130,8 @@ class AccountManager(object):
             password = User.objects.make_random_password()
         user.set_password(password)
         user.save()
+        if data['private']:
+            profile = user.get_profile()
+            profile.private = True
+            profile.save()
         return user, password
