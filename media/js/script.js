@@ -139,16 +139,16 @@ Froide.app.performReview = (function(){
             for(i=0; i < warnings.length; i += 1){
                 reviewWarnings.append("<li>" + warnings[i] + "</li>");
             }
-            reviewWarnings.parent().show();
+            reviewWarnings.show();
         }
         $("#review-from").text(getFullName() + " <" + getEmail() +">");
         $("#review-to").text(getPublicBody());
         $("#review-subject").text($("#id_subject").val());
         text = $('#letter_start').text();
-        text += "\n" + $("#id_body").val();
+        text += '\n<div class="highlight">' + $("#id_body").val() + "</div>";
         text += "\n" + $('#letter_end').text();
         text += getFullName();
-        $("#review-text").text(text);
+        $("#review-text").html(text);
         openLightBox();
     };
 }());
