@@ -93,7 +93,8 @@ def get_status_form_class(foirequest):
     class FoiRequestStatusForm(forms.Form):
         status = forms.ChoiceField(label=_("Status"),
                 # widget=forms.RadioSelect,
-                choices=(('', '-------'),) + FoiRequest.USER_SET_CHOICES)
+                choices=[('', '-------')] + \
+                        map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES))
         if payment_possible:
             costs = forms.FloatField(label=_("Costs"),
                     required=False, min_value=0.0,

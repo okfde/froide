@@ -47,34 +47,45 @@ class FoiRequestManager(CurrentSiteManager):
 
 class FoiRequest(models.Model):
     ADMIN_SET_CHOICES = (
-        ('awaiting_user_confirmation', _('Awaiting user confirmation')),
-        ('publicbody_needed', _('Public Body needed')),
+        ('awaiting_user_confirmation', _('Awaiting user confirmation'),
+            _("The requester's email address is yet to be confirmed.")),
+        ('publicbody_needed', _('Public Body needed'),
+            _('This request still needs a Public Body.')),
         ('awaiting_publicbody_confirmation',
-                _('Awaiting Public Body confirmation')),
-        ('overdue', _('Response overdue')),
+            _('Awaiting Public Body confirmation'),
+            _('The Public Body of this request has been created by the user and still needs to be confirmed.')),
+        ('overdue', _('Response overdue'),
+            _('The request has not been answered in the legal time limit.')),
     )
     USER_SET_CHOICES = (
-        ('awaiting_response', _('Awaiting response')),
+        ('awaiting_response', _('Awaiting response'),
+                _('This request is still waiting for a response from the Public Body.')),
         ('awaiting_clarification',
-                _('Awaiting clarification from Public Body')),
-        ('gone_postal', _('Gone Postal')),
-        ('not_held', _('Information not held')),
-        ('refused', _('Request refused')),
-        ('successful', _('Request Successful')),
-        ('partially_successful', _('Request partially successful')),
-        ('escalation', _('Escalate Request')),
-        ('user_withdrawn', _('User withdrew request')),
+                _('Awaiting clarification from Public Body'),
+                _('A response was not satisfying to the requester and he requested more information.')),
+        ('successful', _('Request Successful'),
+            _('The request has been successul.')),
+        ('partially_successful', _('Request partially successful'),
+            _('The request has been partially successful (some information was provided, but not all)')),
+        ('not_held', _('Information not held'),
+            _('The Public Body stated that it does not possess the information.')),
+        ('refused', _('Request refused'),
+            _('The Public Body refuses to provide the information.')),
+        # ('gone_postal', _('Gone Postal'), _('')),
+        # ('escalation', _('Escalate Request'), _('')),
+        # ('user_withdrawn', _('User withdrew request'), _('')),
     )
 
     if settings.FROIDE_CONFIG.get('payment_possible'):
         USER_SET_CHOICES += (('requires_payment',
-                        _('Costs specified')),
-                ('payment_refused', _('Payment refused')),
-                ('payment_accepted', _('Payment accepted'))
+                        _('Costs specified'),
+                        _('The Public Body specified the costs for providing the information.')),
+                # ('payment_refused', _('Payment refused'), _('')),
+                # ('payment_accepted', _('Payment accepted'), _(''))
             )
 
-    STATUS_CHOICES = ADMIN_SET_CHOICES + USER_SET_CHOICES
-    STATUS_CHOICES_DICT = dict(STATUS_CHOICES)
+    STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
+    STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])
 
     VISIBILITY_CHOICES = (
         (0, _("Invisible")),
@@ -283,9 +294,17 @@ class FoiRequest(models.Model):
     def readable_status(self):
         return FoiRequest.get_readable_status(self.status)
 
+    @property
+    def status_description(self):
+        return FoiRequest.get_status_description(self.status)
+
     @classmethod
     def get_readable_status(cls, status):
-        return cls.STATUS_CHOICES_DICT.get(status, _("Unknown"))
+        return cls.STATUS_CHOICES_DICT.get(status, (_("Unknown"), None))[0]
+
+    @classmethod
+    def get_status_description(cls, status):
+        return cls.STATUS_CHOICES_DICT.get(status, (None, _("Unknown")))[1]
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
