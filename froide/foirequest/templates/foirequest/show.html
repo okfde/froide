@@ -223,7 +223,7 @@
   {% if object.public_date %}
   <p>{% blocktrans with time_left=object.public_date|timeuntil %}This request will be published automatically in {{ time_left }}.{% endblocktrans %}</p>
   {% else %}
-  <p>{% blocktrans with days=froide.request_public_after_due_days %}This request will be made public automatically {{ days }} days after the request was due.{% endblocktrans %}</p>
+  <p>{% blocktrans count days=froide.request_public_after_due_days %}This request will be made public automatically one day after the request was due.{% plural %}This request will be made public automatically {{ days }} days after the request was due.{% endblocktrans %}</p>
   {% endif %}
 </div>
 {% endif %}
