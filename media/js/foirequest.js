@@ -46,6 +46,10 @@ $(function(){
         Froide.app.performReview();
     });
 
+    $("form.foirequest").submit(function(e){
+        $("#send-request-button").attr("disabled", "disabled");
+    });
+
     if (publicBodyPrefilled){
         publicBodyChosen();
     }
