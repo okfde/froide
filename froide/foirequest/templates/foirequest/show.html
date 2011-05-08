@@ -20,9 +20,21 @@
 <div class="span-18">
 <dl>
   <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
-  <dd>{% if object.public_body %}{{ object.public_body.name }}{% else %}{% blocktrans %}Not yet known{% endblocktrans %}{% endif %}</dd>
+  <dd>{% if object.public_body %}
+  <a href="{{ object.get_absolute_url }}">{{ object.public_body.name }}</a>
+  {% else %}
+  {% blocktrans %}Not yet known{% endblocktrans %}
+  {% endif %}</dd>
   <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
-  <dd>{% if object.law %}{{ object.law }}{% else %}{% blocktrans %}Not yet set{% endblocktrans %}{% endif %}</dd>
+  <dd>{% if object.law %}
+  {% if object.law.url %}
+  <a href="{{ object.law.url }}" class="target-new">{{ object.law }}</a>
+  {% else %}
+  {{ object.law }}
+  {% endif %}
+  {% else %}
+  {% blocktrans %}Not yet set{% endblocktrans %}
+  {% endif %}</dd>
   <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
   <dd>{{ object.readable_status }}</dd>
   {% if object.awaits_response %}
@@ -44,7 +56,7 @@
   {% endif %}
 {% if object.description %}
   <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
-  <dd>{{ object.description|linebreaks }}</dd>
+  <dd>{{ object.get_description|linebreaks }}</dd>
   {% endif %}
 {% if object.resolution %}
   <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
