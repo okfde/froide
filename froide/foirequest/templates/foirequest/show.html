@@ -4,9 +4,9 @@
 {% load markup %}
 {% load comments %}
 
-{% block metadescription %}
-  <meta name="description" content="{{ object.description }}" />
-{% endblock %}
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block metadescription %}{{ object.description }}{% endblock %}
 
 
 {% block extra_head %}
@@ -178,7 +178,6 @@
 {% endif %}
 {% endif %}
 {# End Public Body Needed #}
-
 {# Set status #}
 {% if object.user == user and object.status_settable %}
 <div class="section">
