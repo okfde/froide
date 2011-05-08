@@ -130,7 +130,7 @@
 {% endif %}
 <div class="comments-container">
 {% get_comment_count for message as comment_count %}
-<a class="toggle" href="#comments-{{ message.id }}">{% blocktrans count count=comment_count %}{{ count }} comment{% plural %}{{ count }} comments{% endblocktrans %}</a>
+<a class="toggle" href="#comments-{{ message.id }}">{% blocktrans count count=comment_count %}Show {{ count }} comment{% plural %}Show {{ count }} comments{% endblocktrans %}</a>
 <div id="comments-{{ message.id }}" class="comments">
   {% render_comment_list for message %}
   {% if user.is_authenticated %}
