@@ -27,15 +27,18 @@ class PublicBodyManager(CurrentSiteManager):
 
 
 class FoiLaw(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
-    description = models.TextField(blank=True)
-    letter_start = models.TextField(blank=True)
-    letter_end = models.TextField(blank=True)
-    jurisdiction = models.CharField(max_length=255)
-    priority = models.SmallIntegerField(default=3)
-    max_response_time = models.IntegerField(null=True, blank=True)
-    max_response_time_unit = models.CharField(blank=True, max_length=32,
+    description = models.TextField(_("Description"), blank=True)
+    letter_start = models.TextField(_("Start of Letter"), blank=True)
+    letter_end = models.TextField(_("End of Letter"), blank=True)
+    jurisdiction = models.CharField(_("Jurisdiction"), max_length=255)
+    priority = models.SmallIntegerField(_("Priority"), default=3)
+    url = models.CharField(_("URL"), max_length=255, blank=True)
+    max_response_time = models.IntegerField(_("Maximal Response Time"),
+            null=True, blank=True)
+    max_response_time_unit = models.CharField(_("Unit of Response Time"),
+            blank=True, max_length=32,
             choices=(('day', _('Day(s)')),
                 ('working_day', _('Working Day(s)')),
                 ('month_de', _('Month(s) (DE)')),
