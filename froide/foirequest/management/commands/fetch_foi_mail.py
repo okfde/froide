@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation
-
-translation.activate('en')
+from django.conf import settings
 
 from foirequest.email import fetch_and_process
 
@@ -9,6 +8,8 @@ class Command(BaseCommand):
     help = "Fetches and processes mail from the configured IMAP account"
 
     def handle(self, *args, **options):
+        translation.activate(settings.LANGUAGE_CODE)
+
         count = 0
         try:
             count = fetch_and_process()
