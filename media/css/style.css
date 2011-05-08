@@ -340,6 +340,10 @@ span.help {
     background-color: #ddd;
 }
 
+textarea {
+    height:auto;
+}
+
 #new-public_body textarea {
     height:3em;
     width:auto;
