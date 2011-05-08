@@ -354,16 +354,8 @@ form.foirequest h4 {
     margin:1em 0 0.5em 1em;
 }
 
-form.foirequest label {
+.block label{
     display:block;
-}
-
-form.foirequest .selected-result label {
-    display:inline;
-}
-
-form.foirequest label.inline {
-    display:inline;
 }
 
 form.foirequest div.error {

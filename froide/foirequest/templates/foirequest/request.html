@@ -43,6 +43,7 @@
         {{ request_form.public_body_object }}
       </label>
       {% endif %}
+      <div class="block">
       {% if froide.publicbody_empty %}
       <label>
         <input type="radio" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
@@ -57,7 +58,8 @@
         <div id="new-public_body" style="display:none">
           {{ public_body_form.as_p }}
         </div>
-      {% endif %}
+        {% endif %}
+      </div>
       <span class="help">{% blocktrans %}Please select one of the above options to proceed.{% endblocktrans %}</span>
     </div>
     {% endif %}
@@ -192,14 +194,13 @@
           </ul>
           <ul>
             <li>{% blocktrans %}Please use proper spelling.{% endblocktrans %}</li>
-            <li>{% blocktrans %}Please stay polite{% endblocktrans %}</li>
+            <li>{% blocktrans %}Please stay polite.{% endblocktrans %}</li>
           </ul>
         </div>
         <div class="clear">
-          <p>{% blocktrans %}If you want to <a href="#" class="close">edit your request, click here</a>{% endblocktrans %}</p>
           <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
-
-          <input type="submit" value="{% trans "Submit Request" %}">
+          <p><input type="submit" id="send-request-button" value="{% trans "Submit Request"%}" /> 
+          {% blocktrans %} or <a href="#" class="close">edit your request again</a>{% endblocktrans %}</p>
         </div>
       </div>
     </fieldset>
