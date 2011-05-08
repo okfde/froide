@@ -13,9 +13,9 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 
 
-@dispatch.receiver(post_save, sender=User)
+@dispatch.receiver(post_save, sender=User, dispatch_uid="account.models.create_profile")
 def create_profile(sender, instance=None, created=False, **kwargs):
-    if created:
+    if created and not kwargs.get('raw', False):
         Profile.objects.create(user=instance)
 
 user_activated_signal = dispatch.Signal(providing_args=[])
