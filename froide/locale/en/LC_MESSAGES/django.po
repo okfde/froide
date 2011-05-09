@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-08 18:07+0200\n"
+"POT-Creation-Date: 2011-05-09 19:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,11 +78,11 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: account/forms.py:21 account/forms.py:76
+#: account/forms.py:21 account/forms.py:78
 msgid "Email address"
 msgstr ""
 
-#: account/forms.py:22 account/forms.py:75
+#: account/forms.py:22 account/forms.py:77
 msgid "mail@ddress.net"
 msgstr ""
 
@@ -92,15 +92,19 @@ msgstr ""
 
 #: account/forms.py:27
 msgid ""
-"If you check this, your name will still appear in the request to the public "
-"body, but we will do our best to not display it publicly."
+"If you check this, your name will still appear in requests to public bodies, "
+"but we will do our best to not display it publicly."
 msgstr ""
 
-#: account/forms.py:30
+#: account/forms.py:29
+msgid "Terms and Conditions"
+msgstr ""
+
+#: account/forms.py:31
 msgid "You need to accept our Terms and Conditions."
 msgstr ""
 
-#: account/forms.py:32
+#: account/forms.py:33
 #, python-format
 msgid ""
 "You agree to our <a href=\"%(url)s\" class=\"target-new\">Terms and "
@@ -108,38 +112,42 @@ msgid ""
 msgstr ""
 
 #: account/forms.py:35
-msgid "You need to accept our Privacy Statement."
+msgid "Privacy Statement"
 msgstr ""
 
 #: account/forms.py:37
+msgid "You need to accept our Privacy Statement."
+msgstr ""
+
+#: account/forms.py:39
 #, python-format
 msgid ""
 "You agree to our <a href=\"%(url)s\" class=\"target-new\">Privacy Statement</"
 "a>"
 msgstr ""
 
-#: account/forms.py:55
+#: account/forms.py:57
 #, python-format
 msgid ""
 "This email address already has an account. <a href=\"%s?simple\" class="
 "\"target-small\">Please login using that email address.</a>"
 msgstr ""
 
-#: account/forms.py:58
+#: account/forms.py:60
 msgid ""
 "This email address is already registered, but not yet confirmed! Please "
 "click on the confirmation link in the mail we send you."
 msgstr ""
 
-#: account/forms.py:63 account/forms.py:78
+#: account/forms.py:65 account/forms.py:80
 msgid "Password"
 msgstr ""
 
-#: account/forms.py:65
+#: account/forms.py:67
 msgid "Password (repeat)"
 msgstr ""
 
-#: account/forms.py:70
+#: account/forms.py:72
 msgid "Passwords do not match!"
 msgstr ""
 
@@ -156,53 +164,73 @@ msgstr ""
 msgid "<< Name removed >>"
 msgstr ""
 
-#: account/models.py:104
+#: account/models.py:107
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr ""
 
-#: account/views.py:18
+#: account/views.py:21
 msgid "You are logged in and cannot use a confirmation link."
 msgstr ""
 
-#: account/views.py:26
+#: account/views.py:29
 msgid ""
 "Your email address is now confirmed and you are logged in. The next time you "
 "want to log in, use the password from the email."
 msgstr ""
 
-#: account/views.py:32
+#: account/views.py:35
 #, python-format
 msgid "Your request \"%s\" has now been sent"
 msgstr ""
 
-#: account/views.py:36
+#: account/views.py:39
 msgid ""
 "You can only use the confirmation link once, please login with your password."
 msgstr ""
 
-#: account/views.py:48
+#: account/views.py:54
 msgid "You have been logged out."
 msgstr ""
 
-#: account/views.py:70 account/templates/account/login.html:7
+#: account/views.py:77 account/templates/account/login.html:7
 msgid "You are now logged in."
 msgstr ""
 
-#: account/views.py:78
+#: account/views.py:85
 msgid "Please activate your mail address before logging in."
 msgstr ""
 
-#: account/views.py:81
+#: account/views.py:88
 msgid "E-mail and password do not match."
 msgstr ""
 
-#: account/views.py:92
+#: account/views.py:100
 msgid "You are currently logged in, you cannot signup."
 msgstr ""
 
-#: account/views.py:100
+#: account/views.py:108
 msgid "Please check your emails for a mail from us with a confirmation link."
+msgstr ""
+
+#: account/views.py:120
+msgid "You are not currently logged in, you cannot change your password."
+msgstr ""
+
+#: account/views.py:126
+msgid "Your password has been changed."
+msgstr ""
+
+#: account/views.py:134
+msgid "You are currently logged in, you cannot get a password reset link."
+msgstr ""
+
+#: account/views.py:140
+msgid "Check your mail, we sent you a password reset link."
+msgstr ""
+
+#: account/views.py:153
+msgid "Your password has been set and you are now logged in."
 msgstr ""
 
 #: account/templates/account/confirmation_mail.txt:1
@@ -227,6 +255,7 @@ msgid ""
 msgstr ""
 
 #: account/templates/account/confirmation_mail.txt:12
+#: account/templates/account/password_reset_email.txt:9
 #, python-format
 msgid ""
 "Cheers,\n"
@@ -237,16 +266,75 @@ msgstr ""
 msgid "Please Log In"
 msgstr ""
 
-#: account/templates/account/login.html:26
+#: account/templates/account/login.html:28
 msgid "Log In"
 msgstr ""
 
-#: account/templates/account/login.html:30
-msgid "Don't have an account? Sign up!"
+#: account/templates/account/login.html:33
+msgid "In case you forgot your password..."
 msgstr ""
 
 #: account/templates/account/login.html:34
+msgid "... we can send you a reset link to your email address."
+msgstr ""
+
+#: account/templates/account/login.html:38
+msgid "Send reset link"
+msgstr ""
+
+#: account/templates/account/login.html:42
+msgid "Don't have an account? Sign up!"
+msgstr ""
+
+#: account/templates/account/login.html:48
 msgid "Sign Up"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:4
+msgid "Password reset"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:10
+msgid "Enter new password"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:12
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:16
+msgid "New password:"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:18
+msgid "Confirm password:"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:19
+msgid "Change my password"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:24
+msgid "Password reset unsuccessful"
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:26
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: account/templates/account/password_reset_email.txt:2
+#, python-format
+msgid ""
+"You're receiving this e-mail because you requested a password reset for your "
+"account at %(site_name)s."
+msgstr ""
+
+#: account/templates/account/password_reset_email.txt:4
+msgid "Please go to the following page and choose a new password:"
 msgstr ""
 
 #: account/templates/account/show.html:7
@@ -285,8 +373,20 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: account/templates/account/show.html:25
-msgid "Last Message"
+#: account/templates/account/show.html:25 foirequest/models.py:122
+msgid "Due Date"
+msgstr ""
+
+#: account/templates/account/show.html:40
+msgid "Administrative Section"
+msgstr ""
+
+#: account/templates/account/show.html:42
+msgid "Change your password"
+msgstr ""
+
+#: account/templates/account/show.html:51
+msgid "Change password"
 msgstr ""
 
 #: foirequest/feeds.py:12
@@ -512,10 +612,6 @@ msgstr ""
 
 #: foirequest/models.py:120
 msgid "Resolution date"
-msgstr ""
-
-#: foirequest/models.py:122
-msgid "Due Date"
 msgstr ""
 
 #: foirequest/models.py:125
@@ -861,7 +957,7 @@ msgid ""
 "I'd like to make a request under a freedom of information law."
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:14 templates/index.html:38
+#: foirequest/templates/foirequest/list.html:14 templates/index.html:48
 msgid "No requests yet"
 msgstr ""
 
@@ -1602,21 +1698,43 @@ msgid ""
 msgstr ""
 
 #: templates/index.html:33
-msgid "Latest Freedom of Information Requests"
+msgid "What is Freedom of Information?"
+msgstr ""
+
+#: templates/index.html:34
+msgid ""
+"Every citizen has the right under the Freedom of Information Law to ask for "
+"and receive access to information from Public Bodies concerning public "
+"affairs."
+msgstr ""
+
+#: templates/index.html:38
+msgid "What does this site do?"
+msgstr ""
+
+#: templates/index.html:39
+msgid ""
+"This site allows you to easily write a Freedom of Information request to a "
+"Public Body. The twist is that we publish all requests and replies so that "
+"others don't have to ask for the same information."
 msgstr ""
 
 #: templates/index.html:43
+msgid "Latest Freedom of Information Requests"
+msgstr ""
+
+#: templates/index.html:53
 msgid "Top Public Bodies"
 msgstr ""
 
-#: templates/index.html:47
+#: templates/index.html:57
 #, python-format
 msgid "1 request"
 msgid_plural "%(count)s requests"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/index.html:50
+#: templates/index.html:60
 msgid "No public bodies yet"
 msgstr ""
 
