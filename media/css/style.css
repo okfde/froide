@@ -6,6 +6,8 @@ body {
     color: #333333;
 }
 
+table.no-stripes tbody tr:nth-child(even) td, table.no-stripes tbody tr.even td {background:#fff;}
+
 #header {
     display: block;
     /* background: #296198;*/
@@ -21,7 +23,7 @@ body {
     font-family: 'Kreon', arial, serif;
     margin:1.8em auto 0;
     padding:0;
-    font-size: 38px;
+    font-size: 2.5em;
     text-shadow: 0px 0px 1px #222222;
     filter: dropshadow(color=#cccccc, offx=2, offy=2);
 }
@@ -93,8 +95,12 @@ body {
 }
 
 h2 {
-    font-size:32px;
+    font-size:1.5em;
     font-family: 'Kreon';
+}
+
+h3 {
+    font-size:1.2em;
 }
 
 .messages {
@@ -111,9 +117,11 @@ h2 {
     filter: dropshadow(color=#cccccc, offx=2, offy=2);
     color:#333;
     margin:0 auto;
-    padding:0.6em 0 0;
-    font-size: 32px;
+    padding:1em 0 0;
+    font-size:2em;
+    /* font-size: 1.8em;*/
     line-height:1.1em;
+    /* line-height:1em;*/
 }
 
 .action-buttons {
@@ -151,7 +159,7 @@ h2 {
     background-image: url('../img/request.png');
     background-position: 12px 50%;
     background-repeat: no-repeat;
-    padding-left: 55px !important;
+    padding-left: 70px !important;
 }
 
 .explore-requests-button {
@@ -159,7 +167,7 @@ h2 {
     background-image: url('../img/explore.png');
     background-position: 12px 50%;
     background-repeat: no-repeat;
-    padding-left: 55px !important;
+    padding-left: 70px !important;
 }
 
 .explore-publicbodies-button {
@@ -167,7 +175,7 @@ h2 {
     background-image: url('../img/search.png');
     background-position: 12px 50%;
     background-repeat: no-repeat;
-    padding-left: 55px !important;
+    padding-left: 70px !important;
 }
 
 
@@ -195,23 +203,23 @@ strong {
 .main-guide {
     font-weight:bold;
     color:#222;
-    margin: 1.2em 0 1em;
+    margin: 1em 0 1em;
     padding-left:1em;
-    font-size:28px;
+    font-size:1.8em;
 }
 
 .main-guide li h3 {
     font-weight:bold;
     color:#222;
-    font-size: 28px;
+    font-size: 1em;
     margin:0;
 }
 
 .main-guide li p {
     color:#333;
     font-weight:normal;
-    margin:0;
-    font-size: 24px;
+    margin:0 0 1em;
+    font-size: 0.834em;
 }
 
 #footer {
@@ -404,6 +412,14 @@ form.foirequest .text {
 
 form.foirequest p {
     margin: 0 0 0.5em;
+}
+
+.js .hidden {
+    display:none;
+}
+
+.hidden:target {
+    display:block;
 }
 
 .no-js #review-button {
