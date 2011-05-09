@@ -24,15 +24,17 @@ class NewUserForm(forms.Form):
     if user_can_hide_web:
         private = forms.BooleanField(required=False,
                 label=_("Hide my name on the web"),
-                help_text=_("If you check this, your name will still appear in the request to the public body, but we will do our best to not display it publicly."))
+                help_text=_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly."))
         
-    terms = forms.BooleanField(error_messages={'required':
-            _('You need to accept our Terms and Conditions.')},
+    terms = forms.BooleanField(label=_("Terms and Conditions"),
+            error_messages={'required':
+                _('You need to accept our Terms and Conditions.')},
             widget=AgreeCheckboxInput(
                 agree_to=_(u'You agree to our <a href="%(url)s" class="target-new">Terms and Conditions</a>'),
                 url_name="help-terms"))
-    privacy = forms.BooleanField(error_messages={'required':
-            _('You need to accept our Privacy Statement.')},
+    privacy = forms.BooleanField(label=_("Privacy Statement"),
+            error_messages={'required':
+                _('You need to accept our Privacy Statement.')},
             widget=AgreeCheckboxInput(
                 agree_to=_(u'You agree to our <a href="%(url)s" class="target-new">Privacy Statement</a>'),
                 url_name="help-privacy"))
