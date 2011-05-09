@@ -4,6 +4,9 @@ from django.http import HttpResponseRedirect, Http404
 from django.contrib import auth
 from django.contrib import messages
 from django.utils.translation import ugettext as _
+from django.views.decorators.http import require_POST
+from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
+from django.utils.http import base36_to_int
 
 from account.forms import UserLoginForm, NewUserForm
 from account.models import AccountManager
@@ -26,30 +29,34 @@ def confirm(request, user_id, secret, request_id=None):
                 _('Your email address is now confirmed and you are logged in. The next time you want to log in, use the password from the email.'))
         login_user(request, user)
         if request_id is not None:
-            request = FoiRequest.confirmed_request(user, request_id)
-            if request:
+            foirequest = FoiRequest.confirmed_request(user, request_id)
+            if foirequest:
                 messages.add_message(request, messages.SUCCESS,
-                    _('Your request "%s" has now been sent') % request.title)
+                    _('Your request "%s" has now been sent') % foirequest.title)
         return HttpResponseRedirect(reverse('account-show'))
     else:
         messages.add_message(request, messages.ERROR,
                 _('You can only use the confirmation link once, please login with your password.'))
     return HttpResponseRedirect(reverse('account-login'))
 
-def show(request):
+def show(request, context=None):
     if not request.user.is_authenticated():
         return render_403(request)
     my_requests = FoiRequest.objects.filter(user=request.user)
-    return render(request, 'account/show.html', {'foirequests': my_requests})
+    if not context:
+        context = {}
+    context.update({'foirequests': my_requests})
+    return render(request, 'account/show.html', context)
 
 def logout(request):
     auth.logout(request)
     messages.add_message(request, messages.INFO,
             _('You have been logged out.'))
-    return HttpResponseRedirect(get_next(request))
+    return HttpResponseRedirect("/")
 
 def login(request, base="base.html"):
     simple = False
+    reset_form = auth.forms.PasswordResetForm()
     if request.GET.get("simple") is not None:
         base = "simple_base.html"
         simple = True
@@ -83,9 +90,10 @@ def login(request, base="base.html"):
             {"form": form,
             "signup_form": signup_form,
             "custom_base": base,
+            "reset_form": reset_form,
             "simple": simple}, status=status)
 
-
+@require_POST
 def signup(request):
     if request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
@@ -105,3 +113,42 @@ def signup(request):
             "custom_base": "base.html",
             "simple": False}, status=400)
 
+@require_POST
+def change_password(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are not currently logged in, you cannot change your password.'))
+        return HttpResponseRedirect("/")
+    form = request.user.get_profile().get_password_change_form(request.POST)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your password has been changed.'))
+        return HttpResponseRedirect(reverse('account-show'))
+    return show(request, context={"password_change_form": form})
+
+@require_POST
+def send_reset_password_link(request):
+    if request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are currently logged in, you cannot get a password reset link.'))
+        return HttpResponseRedirect("/")
+    form = auth.forms.PasswordResetForm(request.POST)
+    if form.is_valid():
+        form.save(email_template_name="account/password_reset_email.txt")
+        messages.add_message(request, messages.SUCCESS,
+                _('Check your mail, we sent you a password reset link.'))
+        return HttpResponseRedirect('/')
+    return login(request, context={"send_reset_password_link": form})
+
+def password_reset_confirm(request, uidb36=None, token=None):
+    response = django_password_reset_confirm(request, uidb36=uidb36, token=token,
+            template_name='account/password_reset_confirm.html',
+            post_reset_redirect=reverse('account-show'))
+    if response.status_code == 302:
+        uid_int = base36_to_int(uidb36)
+        user = auth.models.User.objects.get(id=uid_int)
+        login_user(request, user)
+        messages.add_message(request, messages.SUCCESS,
+                _('Your password has been set and you are now logged in.'))
+    return response

@@ -9,8 +9,8 @@ from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.contrib.auth.models import User
-
 from django.core.mail import send_mail
+from django.contrib.auth.forms import SetPasswordForm
 
 
 @dispatch.receiver(post_save, sender=User, dispatch_uid="account.models.create_profile")
@@ -47,6 +47,9 @@ class Profile(models.Model):
         content = content.replace(first_name,
                 _("<< Name removed >>"))
         return content
+
+    def get_password_change_form(self, *args, **kwargs):
+        return SetPasswordForm(self.user, *args, **kwargs)
 
 
 class AccountManager(object):

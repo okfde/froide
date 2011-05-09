@@ -22,16 +22,32 @@
 <h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
 <form method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
   {% csrf_token %}
-  {{ form.as_p }}
-  <p><input type="submit" value="{% blocktrans %}Log In{% endblocktrans %}"/></p>
+  <table class="no-stripes">
+    {{ form.as_table }}
+    <tr><td></td>
+      <td><input type="submit" value="{% blocktrans %}Log In{% endblocktrans %}"/></td>
+    </tr>
+  </table>
+</form>
+<br/>
+<h2>{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h2>
+<p>{% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}</p>
+<form method="post" action="{% url 'account-send_reset_password_link' %}">
+  {% csrf_token %}
+  {{ reset_form.as_p }}
+  <input type="submit" value="{% blocktrans %}Send reset link{% endblocktrans %}"/>
 </form>
 </div>
 <div class="span-12 last">
 <h2>{% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}</h2>
 <form method="post" action="{% url 'account-signup' %}">
   {% csrf_token %}
-  {{ signup_form.as_p }}
-  <p><input type="submit" value="{% blocktrans %}Sign Up{% endblocktrans %}"/></p>
+  <table class="no-stripes">
+    {{ signup_form.as_table }}
+    <tr><td></td>
+      <td><input type="submit" value="{% blocktrans %}Sign Up{% endblocktrans %}"/></td>
+    </tr>
+  </table>
 </form>
 </div>
 
