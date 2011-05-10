@@ -305,19 +305,26 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}),
                 {"public_body": "9" * 10})
         self.assertEqual(response.status_code, 400)
+        self.client.logout()
+        self.client.login(username="sw", password="froide")
+        mail.outbox = []
         response = self.client.post(
                 reverse('foirequest-suggest_public_body',
                 kwargs={"slug": req.slug}),
-                {"public_body": str(pb.pk)})
+                {"public_body": str(pb.pk),
+                "reason": "A good reason"})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(req.publicbodysuggestion_set.all()[0].public_body, pb)
-
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], req.user.email)
         # set public body
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug + "garbage"}),
                 {"public_body": str(pb.pk)})
         self.assertEqual(response.status_code, 404)
+        self.client.logout()
+        self.client.login(username="dummy", password="froide")
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),

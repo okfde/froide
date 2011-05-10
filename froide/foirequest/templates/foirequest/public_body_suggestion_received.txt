@@ -10,4 +10,4 @@ you received a suggestion for a Public Body on your request '{{ title }}'.{% end
 {{ request.get_absolute_domain_url }}
 
 {% blocktrans %}Cheers,
-{{ site_name }}
+{{ site_name }}{% endblocktrans %}
