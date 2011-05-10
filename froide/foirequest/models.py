@@ -509,6 +509,8 @@ class PublicBodySuggestion(models.Model):
             verbose_name=_("User"))
     timestamp = models.DateTimeField(_("Timestamp of Suggestion"),
             auto_now_add=True)
+    reason = models.TextField(_("Reason this Public Body fits the request"),
+            blank=True, default="")
 
     class Meta:
         get_latest_by = 'timestamp'
