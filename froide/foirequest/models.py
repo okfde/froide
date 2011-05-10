@@ -17,6 +17,8 @@ from django.template.loader import render_to_string
 from django.utils.timesince import timesince
 from django.utils.http import urlquote
 from django.core.mail import send_mail
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.email_utils import make_address
@@ -728,27 +730,49 @@ class FoiEvent(models.Model):
         if self.public_body:
             pb = self.public_body.name
         context.update({"user": user, "public_body": pb,
-            "since": timesince(self.timestamp), "date": self.timestamp})
+            "since": timesince(self.timestamp), "date": self.timestamp,
+            "request": self.request.title})
         self._context = context
         return context
-    
-    def as_html(self):
-        return self.event_texts[self.event_name] % self.get_context()
-    
+
+    def get_html_context(self):
+        context = getattr(self, "_html_context", None)
+        if context is not None:
+            return context
+        def link(url, title):
+            return mark_safe('<a href="%s">%s</a>' % (url, escape(title)))
+        context = self.get_context()
+        if self.user:
+            profile = self.user.get_profile()
+            if not profile.private:
+                context['user'] = link(profile.get_absolute_url(),
+                        context['user'])
+        if self.public_body:
+            context['public_body'] = link(self.public_body.get_absolute_url(),
+                    context['public_body'])
+        context['request'] = link(self.request.get_absolute_url(),
+                context['request'])
+        self._html_context = context
+        return context
+
     def as_text(self):
         return self.event_texts[self.event_name] % self.get_context()
+    
+    def as_html(self):
+        return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
 def create_event_message_sent(sender, **kwargs):
-    FoiEvent.create("message_sent", sender, user=sender.user,
+    FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
             public_body=sender.public_body)
 
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="create_event_message_received")
 def create_event_message_received(sender, **kwargs):
-    FoiEvent.create("message_received", sender, user=sender.user,
+    FoiEvent.objects.create_event("message_received", sender,
+            user=sender.user,
             public_body=sender.public_body)
 
 
