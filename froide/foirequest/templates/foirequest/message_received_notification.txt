@@ -1,4 +1,4 @@
-{% load i18n %}{% blocktrans with name=request.user.get_full_name title=request.title url=message.get_absolute_url %}Hello {{ name }},
+{% load i18n %}{% blocktrans with name=request.user.get_full_name title=request.title url=message.get_absolute_domain_url %}Hello {{ name }},
 
 You received a response to your request "{{ title }}". Please read the response and change the status of the request if needed. You can also send another message.
 
@@ -7,6 +7,4 @@ To read your response, click the link below:
 {{ url }}
 
 Cheers,
-{{ site_name }}
-{% endblocktrans %}
-
+{{ site_name }}{% endblocktrans %}
