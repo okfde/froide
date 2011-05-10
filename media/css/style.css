@@ -178,11 +178,9 @@ h3 {
     padding-left: 70px !important;
 }
 
-
 strong {
     color: #222;
 }
-
 
 .big-search {
 }
@@ -256,6 +254,11 @@ form.foirequest fieldset {
     padding:0.5em 0 1em;
     border:0;
     border-top:1px solid #ccc;
+}
+
+.important-form {
+    background-color: #FFE9EE;
+
 }
 
 form.foirequest fieldset.active > div{
@@ -458,16 +461,17 @@ form.foirequest p {
     -moz-border-radius: 10px;
     border-radius: 10px;
 }
+
 .close-button {
     float: right;
     margin: 1em;
 }
 
 *html #lightbox-background {
-	position: absolute;
+    position: absolute;
 }
 *html .lightbox {
-	position: absolute;
+    position: absolute;
 }
 
 #review-text {

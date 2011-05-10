@@ -184,7 +184,7 @@
 {% if object.user == user %}
 {% with suggestions_form=object.public_body_suggestions_form %}
   {% if suggestions_form %}
-  <div class="section">
+  <div class="section important-form">
     <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
     <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
       {% csrf_token %}
@@ -199,7 +199,7 @@
 {# End Public Body Needed #}
 {# Set status #}
 {% if object.user == user and object.status_settable %}
-<div class="section">
+<div class="section important-form">
   <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}">{% csrf_token %}
     <label for="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
     {{ object.status_form.status }}<br/>
