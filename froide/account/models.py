@@ -48,6 +48,11 @@ class Profile(models.Model):
                 _("<< Name removed >>"))
         return content
 
+    def get_absolute_url(self):
+        if self.private:
+            return None
+        return ""
+
     def get_password_change_form(self, *args, **kwargs):
         return SetPasswordForm(self.user, *args, **kwargs)
 
