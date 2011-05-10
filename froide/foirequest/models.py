@@ -152,6 +152,7 @@ class FoiRequest(models.Model):
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
+    public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
     made_public = django.dispatch.Signal(providing_args=[])
 
 
@@ -454,6 +455,22 @@ class FoiRequest(models.Model):
             return self.safe_send_first_message()
         return None
 
+    def suggest_public_body(self, public_body, reason, user):
+        try:
+            PublicBodySuggestion.objects.get(public_body=public_body,
+                    request=self)
+        except PublicBodySuggestion.DoesNotExist:
+            suggestion = self.publicbodysuggestion_set.create(
+                    public_body=public_body,
+                    reason=reason,
+                    user=user)
+            self.public_body_suggested.send(sender=self,
+                    suggestion=suggestion)
+            return suggestion
+        else:
+            return False
+
+
     def set_public_body(self, public_body, law):
         assert self.public_body == None
         assert self.status == "publicbody_needed"
@@ -497,6 +514,18 @@ def notify_user_message_received(sender, message=None, **kwargs):
                     "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
+
+
+@receiver(FoiRequest.public_body_suggested,
+        dispatch_uid="notify_user_public_body_suggested")
+def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
+    if sender.user != suggestion.user:
+        send_mail(_("Your request received a suggestion for a Public Body"),
+                render_to_string("foirequest/public_body_suggestion_received.txt",
+                    {"suggestion": suggestion, "request": sender,
+                        "site_name": settings.SITE_NAME}),
+                settings.DEFAULT_FROM_EMAIL,
+                [sender.user.email])
 
 
 class PublicBodySuggestion(models.Model):

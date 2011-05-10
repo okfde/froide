@@ -154,10 +154,29 @@
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
 <div class="section">
-  <p>{% blocktrans %}You can suggest a public body for this request:{% endblocktrans %}</p>
-<form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
+  <p>{% blocktrans %}You can suggest a public body for this request.{% endblocktrans %}
+  {% with suggestions=object.public_body_suggestions %}
+  {% if suggestions %}
+  <br/>{% blocktrans %}The following public bodies have already been suggested:{% endblocktrans %}
+  {% endif %}
+  </p>
+      <ul>
+      {% for suggestion in suggestions %}
+      <li><strong>{{ suggestion.public_body.name }}</strong> - <a href="{{ suggestion.public_body.get_absolute_url }}" class="info-link">{% blocktrans %}Details{% endblocktrans %}</a>{% if suggestion.reason %}<br/>
+      {% blocktrans %}Reason given by the user:{% endblocktrans %} {{ suggestion.reason }}
+      {% endif %}
+      </li>
+      {% empty %}
+        <li>{% blocktrans %}There are no suggestions yet{% endblocktrans %}</li>
+      {% endfor %}
+      </ul>
+  {% endwith %}
+  <form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
     {% csrf_token %}
     {% include "publicbody/_chooser.html" %}
+    {% with form=object.make_public_body_suggestion_form %}
+    {{ form.reason.label_tag }} {{ form.reason }}
+    {% endwith %}
     <input type="submit" value="{% blocktrans %}Suggest this Public Body{% endblocktrans%}"/>
   </form>
 </div>

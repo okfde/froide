@@ -10,7 +10,8 @@ from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest, FoiEvent, FoiAttachment
-from foirequest.forms import SendMessageForm, get_status_form_class
+from foirequest.forms import (SendMessageForm, get_status_form_class,
+        MakePublicBodySuggestionForm)
 from froide.helper.utils import render_400, render_403
 
 
@@ -186,24 +187,26 @@ def suggest_public_body(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not foirequest.needs_public_body():
         return render_400(request)
-    try:
-        public_body_pk = int(request.POST.get('public_body', ''))
-    except ValueError:
-        return render_400(request)
-    try:
-        public_body = PublicBody.objects.get(pk=public_body_pk)
-    except PublicBody.DoesNotExist:
-        return render_400(request)
-    # FIXME: make foilaw dynamic
-    # foilaw = public_body.default_law
-    user = None
-    if request.user.is_authenticated():
-        user = request.user
-    foirequest.publicbodysuggestion_set.create(public_body=public_body,
-            user=user)
-    messages.add_message(request, messages.SUCCESS,
-        _('Your suggestion has been added'))
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    form = MakePublicBodySuggestionForm(request.POST)
+    if form.is_valid():
+        # FIXME: make foilaw dynamic
+        # foilaw = public_body.default_law
+        public_body = form.public_body_object
+        user = None
+        if request.user.is_authenticated():
+            user = request.user
+        response = foirequest.suggest_public_body(public_body,
+                form.cleaned_data['reason'], user)
+        if response:
+            messages.add_message(request, messages.SUCCESS,
+                _('Your Public Body suggestion has been added.'))
+        else:
+            messages.add_message(request, messages.NOTICE,
+                _('This Public Body has already been suggested.'))
+        return HttpResponseRedirect(foirequest.get_absolute_url())
+    messages.add_message(request, messages.ERROR, 
+            _("You need to specify a Public Body!"))
+    return render_400(request)
 
 @require_POST
 def set_status(request, slug):
