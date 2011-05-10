@@ -74,6 +74,25 @@ class SendMessageForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea,
             label=_("Your message"))
 
+class MakePublicBodySuggestionForm(forms.Form):
+    public_body = forms.IntegerField()
+    reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
+            widget=forms.TextInput(attrs={"size": "40"}), required=False)
+    
+    def clean_public_body(self):
+        pb = self.cleaned_data['public_body']
+        try:
+            pb_pk = int(pb)
+        except ValueError:
+            raise forms.ValidationError(_("Invalid value"))
+        try:
+            public_body = PublicBody.objects.get(pk=pb_pk)
+        except PublicBody.DoesNotExist:
+            raise forms.ValidationError(_("Invalid value"))
+        self.public_body_object = public_body
+        self.foi_law_object = public_body.default_law
+        return pb
+
 
 def get_public_body_suggestions_form_class(queryset):
     if len(queryset):
