@@ -827,9 +827,27 @@ def create_event_status_changed(sender, **kwargs):
     status = kwargs['status']
     data = kwargs['data']
     if status == "requires_payment" and data['costs']:
-        FoiEvent.create("reported_costs", sender, user=sender.user,
-            public_body=sender.public_body, amount=data['costs'])
+        FoiEvent.objects.create_event("reported_costs", sender,
+                user=sender.user,
+                public_body=sender.public_body, amount=data['costs'])
+    elif status == "refused" and data['refusal_reason']:
+        FoiEvent.objects.create_event("request_refused", sender,
+                user=sender.user,
+                public_body=sender.public_body, reason=data['refusal_reason'])
+    else:
+        FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
+            public_body=sender.public_body,
+            status=FoiRequest.get_readable_status(status))
 
-    FoiEvent.create("status_changed", sender, user=sender.user,
-        public_body=sender.public_body,
-        status=FoiRequest.get_readable_status(status))
+@receiver(FoiRequest.made_public,
+        dispatch_uid="create_event_made_public")
+def create_event_made_public(sender, **kwargs):
+    FoiEvent.objects.create_event("made_public", sender, user=sender.user,
+            public_body=sender.public_body)
+
+@receiver(FoiRequest.public_body_suggested,
+        dispatch_uid="create_event_public_body_suggested")
+def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
+    FoiEvent.objects.create_event("public_body_suggested", sender, user=suggestion.user,
+            public_body=suggestion.public_body)
+
