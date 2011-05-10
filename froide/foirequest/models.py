@@ -665,6 +665,20 @@ class FoiAttachment(models.Model):
         return "http://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
 
+class FoiEventManager(models.Manager):
+    def create_event(self, event_name, request, **context):
+        assert event_name in FoiEvent.event_texts
+        event = FoiEvent(request=request,
+                public=request.visibility == 2,
+                event_name=event_name)
+        event.user = context.pop("user", None)
+        event.public_body = context.pop("public_body", None)
+        event.context_json = json.dumps(context)
+        event.save()
+        return event
+
+    def get_for_homepage(self):
+        return self.get_query_set().filter(public=True)
 
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
@@ -692,28 +706,20 @@ class FoiEvent(models.Model):
         "message_sent": _(
             u"%(user)s sent a message to %(public_body)s."),
         "status_changed": _(
-            u"%(user)s set status to '%(status)s'.")
+            u"%(user)s set status to '%(status)s'."),
+        "made_public": _(
+            u"%(user)s made the request '%(request)s' public."),
+        "request_refused": _(
+            u"%(public_body)s refused to provide information on the grounds of %(reason)s.")
     }
 
     class Meta:
         ordering = ('timestamp',)
-        # order_with_respect_to = 'belongs_to'
         verbose_name = _('Request Event')
         verbose_name_plural = _('Request Events')
 
     def __unicode__(self):
         return u"%s - %s" % (self.event_name, self.request)
-    
-    @classmethod
-    def create(cls, event_name, request, **context):
-        assert event_name in cls.event_texts
-        event = FoiEvent(request=request,
-                event_name=event_name)
-        event.user = context.pop("user", None)
-        event.public_body = context.pop("public_body", None)
-        event.context_json = json.dumps(context)
-        event.save()
-        return event
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
