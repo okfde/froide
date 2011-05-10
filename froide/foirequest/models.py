@@ -171,6 +171,9 @@ class FoiRequest(models.Model):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
 
@@ -556,6 +559,11 @@ class FoiMessage(models.Model):
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),
                 self.get_html_id())
+
+    def get_absolute_domain_url(self):
+        return "%s#%s" % (self.request.get_absolute_domain_url(),
+                self.get_html_id())
+
 
     @property
     def sender(self):
