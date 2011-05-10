@@ -675,11 +675,16 @@ class FoiEvent(models.Model):
     public_body = models.ForeignKey(PublicBody, null=True,
             on_delete=models.SET_NULL, blank=True,
             verbose_name=_("Public Body"))
+    public = models.BooleanField(_("Is Public?"), default=True)
     event_name = models.CharField(_("Event Name"), max_length=255)
     timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
     context_json = models.TextField(_("Context JSON"))
 
+    objects = FoiEventManager()
+
     event_texts = {
+        "public_body_suggested":
+            _("%(user)s suggested %(public_body)s for the request '%(request)s'"),
         "reported_costs": _(
             u"%(user)s reported costs of %(amount)s for this request."),
         "message_received": _(
