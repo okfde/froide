@@ -563,6 +563,19 @@ form.foirequest p {
     list-style-type: none;
 }
 
+.event {
+    color: #999;
+}
+
+.event a {
+    color: #999;
+    text-decoration: none;
+}
+
+.event a:hover {
+    text-decoration: underline;
+}
+
 .comments-container {
     margin: 0.5em 0 0;
 }
