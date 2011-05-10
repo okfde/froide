@@ -81,9 +81,10 @@ def get_public_body_suggestions_form_class(queryset):
             public_body = forms.ChoiceField(label=_("Suggestions"),
                     widget=forms.RadioSelect,
                     choices=((s.public_body.id, mark_safe(
-                        _('%(name)s - <a href="%(url)s">More Information</a>') %
+                        '%(name)s - <a class="info-link" href="%(url)s">%(link)s</a>' %
                             {"name": escape(s.public_body.name),
-                            "url": s.public_body.get_absolute_url()
+                            "url": s.public_body.get_absolute_url(),
+                            "link": _("More Info")
                         })) for s in queryset))
         return PublicBodySuggestionsForm
     return None
