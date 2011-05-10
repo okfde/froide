@@ -250,6 +250,10 @@ class FoiRequest(models.Model):
                     self.public_body_suggestions_form_klass()()
         return self._public_body_suggestion_form
 
+    def make_public_body_suggestion_form(self):
+        from foirequest.forms import MakePublicBodySuggestionForm
+        return MakePublicBodySuggestionForm()
+
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
         message.subject = email['subject']
