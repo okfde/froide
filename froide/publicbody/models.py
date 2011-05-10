@@ -21,7 +21,7 @@ class PublicBodyManager(CurrentSiteManager):
                 .filter(depth__lt=2)
 
     def get_for_homepage(self, count=5):
-        return self.get_query_set()[:count]
+        return self.get_query_set().order_by('-number_of_requests')[:count]
 
     def get_for_search_index(self):
         return self.get_query_set()
