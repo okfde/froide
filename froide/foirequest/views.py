@@ -247,7 +247,5 @@ def make_public(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
-    if not foirequest.status_settable:
-        return render_400(request)
     foirequest.make_public()
     return HttpResponseRedirect(foirequest.get_absolute_url())
