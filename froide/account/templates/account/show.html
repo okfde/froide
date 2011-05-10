@@ -37,18 +37,25 @@
   {% endfor %}
     </tbody>
   </table>
-  <h3>{% blocktrans %}Administrative Section{% endblocktrans %}</h3>
+  <h3>{% blocktrans %}Settings{% endblocktrans %}</h3>
   <div class="section">
     <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
     <div id="change-password"{% if not password_change_form %} class="hidden"{% endif %}>
       <form action="{% url 'account-change_password' %}" method="post">
         {% csrf_token %}
+        <table class="no-stripes">
         {% if password_change_form %}
-        {{ password_change_form.as_p }}
+        {{ password_change_form.as_table }}
         {% else %}
-        {{ user.get_profile.get_password_change_form.as_p }}
+        {{ user.get_profile.get_password_change_form.as_table }}
         {% endif %}
-      <input type="submit" value="{% blocktrans %}Change password{% endblocktrans %}"/>
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" value="{% blocktrans %}Change password{% endblocktrans %}"/>
+          </td>
+        </tr>
+      </table>
     </form>
     </div>
   </div>
