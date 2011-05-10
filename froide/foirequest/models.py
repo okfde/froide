@@ -233,7 +233,11 @@ class FoiRequest(models.Model):
         self.status_changed.send(sender=self, status=status, data=data)
 
     def public_body_suggestions(self):
-        return PublicBodySuggestion.objects.filter(request=self)
+        if not hasattr(self, "_public_body_suggestion"):
+            self._public_body_suggestion = \
+                    PublicBodySuggestion.objects.filter(request=self) \
+                        .select_related("public_body", "request")
+        return self._public_body_suggestion
 
     def public_body_suggestions_form_klass(self):
         from foirequest.forms import get_public_body_suggestions_form_class
