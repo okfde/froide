@@ -573,11 +573,6 @@ class FoiMessage(models.Model):
     original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
 
-    _status = models.SmallIntegerField(null=True, default=None, blank=True)
-    _resolution = models.SmallIntegerField(null=True, default=None,
-            blank=True)
-    _visibility = models.SmallIntegerField(default=1)
-
     class Meta:
         get_latest_by = 'timestamp'
         ordering = ('timestamp',)
