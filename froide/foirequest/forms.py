@@ -11,7 +11,6 @@ new_publicbody_allowed = settings.FROIDE_CONFIG.get(
         'create_new_publicbody', False)
 publicbody_empty = settings.FROIDE_CONFIG.get('publicbody_empty', True)
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
-payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(forms.Form):
