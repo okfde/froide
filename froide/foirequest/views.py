@@ -40,9 +40,10 @@ def show(request, slug, template_name="foirequest/show.html"):
 
     all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
     for message in obj.messages:
-        message._attachments = filter(lambda x: x.belongs_to_id == message.id, all_attachments)
+        message._attachments = filter(lambda x: x.belongs_to_id == message.id,
+                all_attachments)
 
-    events = FoiEvent.objects.filter(request=obj).select_related("user",
+    events = FoiEvent.objects.filter(request=obj).select_related("user", "request",
             "public_body").order_by("timestamp")
     event_count = len(events)
     last_index = event_count
