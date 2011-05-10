@@ -8,9 +8,8 @@
     {% endfor %}
     {% if form.comment.errors %}{{ form.comment.errors }}{% endif %}
     <p{% if form.comment.errors %} class="error"{% endif %}>
-      {{ form.comment.label_tag }} {{ form.comment }}
-    </p>
-  <p class="submit">
+    {{ form.comment.label_tag }}<br/>
+    {{ form.comment }}<br/>
     <input type="submit" name="post" class="submit-post" value="{% trans "Post" %}" />
   </p>
 </form>
