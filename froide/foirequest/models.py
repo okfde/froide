@@ -624,8 +624,8 @@ class FoiMessage(models.Model):
         content = self.content
         # content = remove_quote(content,
         #        replacement=_(u"Quoted part removed"))
-        if self.sender_user:
-            profile = self.sender_user.get_profile()
+        if self.request.user:
+            profile = self.request.user.get_profile()
             content = profile.apply_message_redaction(content)
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
