@@ -21,7 +21,7 @@
 <dl>
   <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
   <dd>{% if object.public_body %}
-  <a href="{{ object.get_absolute_url }}">{{ object.public_body.name }}</a>
+  <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
   {% else %}
   {% blocktrans %}Not yet known{% endblocktrans %}
   {% endif %}</dd>
