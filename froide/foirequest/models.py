@@ -291,7 +291,7 @@ class FoiRequest(models.Model):
                 ) % {"subject": last_message.subject}
         message.is_response = False
         message.sender_user = user
-        message.sender_name = user.get_profile().display_name
+        message.sender_name = user.get_profile().display_name()
         message.sender_email = self.secret_address
         message.recipient = last_message.sender_email
         message.timestamp = datetime.now()
