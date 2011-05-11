@@ -379,7 +379,7 @@ class FoiRequest(models.Model):
                 is_response=False,
                 sender_user=user,
                 sender_email=request.secret_address,
-                sender_name=user.get_profile().display_name,
+                sender_name=user.get_profile().display_name(),
                 timestamp=now,
                 subject=request.title)
         if public_body_object is not None:
