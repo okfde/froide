@@ -7,7 +7,7 @@
 <h2>{% blocktrans %}Your account{% endblocktrans %}</h2>
 <p>{% blocktrans %}Your name:{% endblocktrans %} {{ user.get_full_name }}<br/>
 {% blocktrans %}Your email address:{% endblocktrans %} {{ user.email }}
-{% if user.get_profile.private %}
+{% if user.get_profile.private %}<br/>
   {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
 {% endif %}
 </p>
