@@ -1,5 +1,6 @@
 {{ message.request.law.letter_start }}
 {{ body }}
+
 {{ message.request.law.letter_end }}
 {{ message.sender_user.get_full_name }}
 
