@@ -29,7 +29,7 @@
   <ul>
     {% for foirequest in foi_requests %}
     <li>
-      <a href="{[ foirequest.get_absolute_url ]}">{{ foirequest.title }}</a>
+    <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
     </li>
     {% empty %}
     <li>{% blocktrans %}No requests so far.{% endblocktrans %} 
