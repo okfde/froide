@@ -156,10 +156,9 @@
       {% endif %}
       <div class="section">
       {{ request_form.public }}
-      <label class="inline" for="id_public">{% blocktrans %}This request will be public
-        immediately.{% endblocktrans %}</label><br/>
+      <label class="inline" for="id_public">{% blocktrans %}This request is public.{% endblocktrans %}</label><br/>
       <span class="help">
-        {% blocktrans %}If you don't want your request to be immediately public, uncheck this. We will automatically publish the request some time after the last message or you can decide to publish the request yourself before that.{% endblocktrans %}
+        {% blocktrans %}If you don't want your request to be public right now, uncheck this. You can always decide to make it public later.{% endblocktrans %}
       </span>
       </div>
       <br/><input type="button" id="review-button" value="Review and Submit"/>

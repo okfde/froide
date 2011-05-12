@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-12 17:21+0200\n"
+"POT-Creation-Date: 2011-05-12 20:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -419,7 +419,7 @@ msgstr ""
 
 #: foirequest/forms.py:20 foirequest/forms.py:21 foirequest/models.py:570
 #: foirequest/templates/foirequest/_request_form.html:11
-#: foirequest/templates/foirequest/request.html:184
+#: foirequest/templates/foirequest/request.html:183
 #: foirequest/templates/foirequest/show.html:99
 msgid "Subject"
 msgstr ""
@@ -461,7 +461,7 @@ msgstr ""
 msgid "Suggestions"
 msgstr ""
 
-#: foirequest/forms.py:106 publicbody/templates/publicbody/_chooser.html:8
+#: foirequest/forms.py:106 publicbody/templates/publicbody/_chooser.html:9
 msgid "More Info"
 msgstr ""
 
@@ -1184,60 +1184,57 @@ msgid "Your email address"
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:159
-msgid ""
-"This request will be public\n"
-"        immediately."
+msgid "This request is public."
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:162
+#: foirequest/templates/foirequest/request.html:161
 msgid ""
-"If you don't want your request to be immediately public, uncheck this. We "
-"will automatically publish the request some time after the last message or "
-"you can decide to publish the request yourself before that."
+"If you don't want your request to be public right now, uncheck this. You can "
+"always decide to make it public later."
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:169
+#: foirequest/templates/foirequest/request.html:168
 msgid "Step 3 - Review your Request and Submit"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:171
+#: foirequest/templates/foirequest/request.html:170
 msgid "Close"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:172
+#: foirequest/templates/foirequest/request.html:171
 msgid "Review your Request and Submit"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:176
+#: foirequest/templates/foirequest/request.html:175
 msgid "To"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:180
+#: foirequest/templates/foirequest/request.html:179
 #: foirequest/templates/foirequest/show.html:95
 msgid "From"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:196
+#: foirequest/templates/foirequest/request.html:195
 msgid "Please use proper spelling."
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:197
+#: foirequest/templates/foirequest/request.html:196
 msgid "Please stay polite."
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:201
+#: foirequest/templates/foirequest/request.html:200
 msgid "If you are happy with your request, click below to submit it."
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:202
+#: foirequest/templates/foirequest/request.html:201
 msgid "Submit Request"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:203
+#: foirequest/templates/foirequest/request.html:202
 msgid " or <a href=\"#\" class=\"close\">edit your request again</a>"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:211
+#: foirequest/templates/foirequest/request.html:210
 msgid "Similar Requests"
 msgstr ""
 
@@ -1569,11 +1566,11 @@ msgstr ""
 msgid "Public Bodies"
 msgstr ""
 
-#: publicbody/views.py:66
+#: publicbody/views.py:67
 msgid "This request was already confirmed."
 msgstr ""
 
-#: publicbody/views.py:69
+#: publicbody/views.py:70
 #, python-format
 msgid "%(count)d message was sent."
 msgid_plural "%(count)d messages were sent"
@@ -1584,35 +1581,35 @@ msgstr[1] ""
 msgid "Confirm this Public Body "
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:11
+#: publicbody/templates/publicbody/_chooser.html:12
 msgid "Search for a topic or the public body that is responsible:"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:13
+#: publicbody/templates/publicbody/_chooser.html:14
 msgid "Search Term"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:14
+#: publicbody/templates/publicbody/_chooser.html:15
 msgid "Search"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:15
+#: publicbody/templates/publicbody/_chooser.html:16
 msgid "Try something like:"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:16
+#: publicbody/templates/publicbody/_chooser.html:17
 msgid "Environment"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:16
+#: publicbody/templates/publicbody/_chooser.html:17
 msgid "or"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:17
+#: publicbody/templates/publicbody/_chooser.html:18
 msgid "Ministry of Labour"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:24
+#: publicbody/templates/publicbody/_chooser.html:25
 msgid "No Public Bodies found for this query"
 msgstr ""
 
