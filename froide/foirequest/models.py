@@ -44,7 +44,7 @@ class FoiRequestManager(CurrentSiteManager):
         return self.get_query_set().filter(visibility=2)
 
     def get_for_latest_feed(self):
-        return self.get_query_set()[:15]
+        return self.filter(public=True).order_by("-first_message")[:15]
 
 
 class FoiRequest(models.Model):
