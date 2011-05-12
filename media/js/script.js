@@ -218,6 +218,14 @@ Froide.app.statusSet = (function(){
     };
 }());
 
+Froide.app.activateMessage = function(){
+    $("#public-body").removeClass("active");
+    $("#step-message").slideDown()
+        .removeClass("hidden")
+        .parent().addClass("active");
+};
+
+
 $(function(){
     $("a.target-new").live('click', function(e){
         e.preventDefault();
@@ -259,6 +267,8 @@ $(function(){
         onSelect: function(value, data){
             var li = Froide.app.getPublicBodyResultListItem(data);
             Froide.app.selectSearchListItem($(li));
+            Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(), false);
+            Froide.app.activateMessage();
         }
     });
     // $("#search-public_bodies").focus();
