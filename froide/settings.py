@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Django settings for froide project.
 import os.path
 
@@ -228,6 +229,10 @@ FROIDE_CONFIG = {
     "request_public_after_due_days": 14,
     "payment_possible": True,
     "currency": "Euro"
+}
+
+# name classification values and their boost values
+FROIDE_PUBLIC_BODY_BOOSTS = {
 }
 
 SITE_NAME = 'FroIde'
