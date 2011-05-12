@@ -6,7 +6,7 @@ from django.core import urlresolvers
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
 
-from haystack.query import SearchQuerySet, SQ
+from haystack.query import SearchQuerySet
 
 from publicbody.models import PublicBody
 from froide.helper.json_view import (JSONResponseDetailView,
@@ -34,22 +34,23 @@ class PublicBodyDetailView(JSONResponseDetailView):
         return context
 
 def search(request):
-    query = request.GET.get("q","")
-    # query = " OR ".join(query.split())
-    result = SearchQuerySet().models(PublicBody).auto_query(query)
-    result = [{"name": x.name, "id": x.pk, "url": x.url} for x in result]
+    query = request.GET.get("q", "")
+    # query = " AND ".join(query.split())
+    result = list(SearchQuerySet().models(PublicBody).auto_query(query))
+    result = [{"name": x.name, "id": x.pk, "url": x.url, "score": x.score} for x in result]
+    
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def autocomplete(request):
-    result = SearchQuerySet().filter(
-        SQ(name_auto=request.GET.get('q', '')) |
-        SQ(topic_auto=request.GET.get('q', ''))
-    ) 
-    for x in result:
-        print x.get_stored_fields()
-    l = [x.get_stored_fields()['name'] for x in result]
-    # l.extend([x.get_stored_fields()['name_auto'] for x in result])
-    return HttpResponse(json.dumps(list(set(l))), content_type="application/json")
+    query = request.GET.get('query', '')
+    result = SearchQuerySet().autocomplete(name_auto=query)
+    names = [x.name for x in result]
+    data = [{"name": x.name, "id": x.pk, "url": x.url} for x in result]
+    response = {"query": query,
+        "suggestions": names,
+        "data": data
+    }
+    return HttpResponse(json.dumps(response), content_type="application/json")
 
 def confirm(request):
     if not request.user.is_authenticated():

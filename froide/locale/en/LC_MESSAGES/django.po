@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-10 19:13+0200\n"
+"POT-Creation-Date: 2011-05-12 17:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -256,6 +256,7 @@ msgstr ""
 
 #: account/templates/account/confirmation_mail.txt:12
 #: account/templates/account/password_reset_email.txt:9
+#: foirequest/templates/foirequest/public_body_suggestion_received.txt:12
 #, python-format
 msgid ""
 "Cheers,\n"
@@ -997,7 +998,7 @@ msgid ""
 "I'd like to make a request under a freedom of information law."
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:14 templates/index.html:48
+#: foirequest/templates/foirequest/list.html:14 templates/index.html:78
 msgid "No requests yet"
 msgstr ""
 
@@ -1587,15 +1588,31 @@ msgstr ""
 msgid "Search for a topic or the public body that is responsible:"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:12
+#: publicbody/templates/publicbody/_chooser.html:13
 msgid "Search Term"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:13
+#: publicbody/templates/publicbody/_chooser.html:14
 msgid "Search"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:18
+#: publicbody/templates/publicbody/_chooser.html:15
+msgid "Try something like:"
+msgstr ""
+
+#: publicbody/templates/publicbody/_chooser.html:16
+msgid "Environment"
+msgstr ""
+
+#: publicbody/templates/publicbody/_chooser.html:16
+msgid "or"
+msgstr ""
+
+#: publicbody/templates/publicbody/_chooser.html:17
+msgid "Ministry of Labour"
+msgstr ""
+
+#: publicbody/templates/publicbody/_chooser.html:24
 msgid "No Public Bodies found for this query"
 msgstr ""
 
@@ -1725,90 +1742,90 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: templates/index.html:8
-msgid "Use your right and make a request!"
-msgstr ""
-
-#: templates/index.html:10
-msgid "Make a Request"
+#: templates/index.html:7
+msgid "Use your right to freedom of information!"
 msgstr ""
 
 #: templates/index.html:11
-msgid "Explore existing Requests"
-msgstr ""
-
-#: templates/index.html:12
-msgid "Search for Public Bodies"
-msgstr ""
-
-#: templates/index.html:18
 msgid "Find the Public Body"
 msgstr ""
 
-#: templates/index.html:19
+#: templates/index.html:12
 msgid ""
 "We help you <strong>search and find</strong> the right entity for your "
 "request."
 msgstr ""
 
-#: templates/index.html:22
+#: templates/index.html:15 templates/index.html.py:41
+msgid "Make a Request"
+msgstr ""
+
+#: templates/index.html:20 templates/index.html.py:51
 msgid "Write a Request"
 msgstr ""
 
-#: templates/index.html:23
+#: templates/index.html:21 templates/index.html.py:52
 msgid ""
 "We help you <strong>write and send</strong> a proper request to the right "
 "address."
 msgstr ""
 
-#: templates/index.html:26
+#: templates/index.html:24 templates/index.html.py:42
+msgid "Explore existing Requests"
+msgstr ""
+
+#: templates/index.html:29 templates/index.html.py:55
 msgid "Receive a Reply"
 msgstr ""
 
-#: templates/index.html:27
+#: templates/index.html:30 templates/index.html.py:56
 msgid ""
 "We <strong>publish all requests</strong> along with the replies for others "
 "to explore."
 msgstr ""
 
-#: templates/index.html:33
+#: templates/index.html:33 templates/index.html.py:43
+msgid "Search for Public Bodies"
+msgstr ""
+
+#: templates/index.html:63
 msgid "What is Freedom of Information?"
 msgstr ""
 
-#: templates/index.html:34
+#: templates/index.html:64
 msgid ""
 "Every citizen has the right under the Freedom of Information Law to ask for "
 "and receive access to information from Public Bodies concerning public "
 "affairs."
 msgstr ""
 
-#: templates/index.html:38
+#: templates/index.html:68
 msgid "What does this site do?"
 msgstr ""
 
-#: templates/index.html:39
+#: templates/index.html:69
 msgid ""
 "This site allows you to easily write a Freedom of Information request to a "
 "Public Body. The twist is that we publish all requests and replies so that "
 "others don't have to ask for the same information."
 msgstr ""
 
-#: templates/index.html:43
+#: templates/index.html:73
 msgid "Latest Freedom of Information Requests"
 msgstr ""
 
-#: templates/index.html:53
+#: templates/index.html:83
 msgid "Top Public Bodies"
 msgstr ""
 
-#: templates/index.html:57
+#: templates/index.html:87
 #, python-format
 msgid "1 request"
 msgid_plural "%(count)s requests"
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/index.html:60
+#: templates/index.html:90
 msgid "No public bodies yet"
 msgstr ""
 

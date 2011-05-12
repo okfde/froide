@@ -298,13 +298,6 @@ form.foirequest fieldset > div {
     list-style-type:none;
 }
 
-
-
-#search-public_bodies {
-    width:60%;
-    margin:2em;
-}
-
 .info-link {
     font-size: 0.75em;
 }
@@ -338,6 +331,50 @@ span.help {
     padding:0;
     margin:0;
     border:1px solid #ccc;
+}
+
+#publicbody-search {
+    margin:2em;
+}
+
+#search-public_bodies {
+    width:60%;
+}
+
+.searchexamples {
+    font-size: 0.8em;
+}
+
+.searchexample {
+
+}
+
+.autocomplete {
+    background: #fff;
+    padding: 0 5px; 
+    border:1px solid #999;
+    cursor:default; 
+    text-align:left; 
+    max-height:250px; 
+    overflow:auto; 
+    margin: 3px 0 0;
+}
+
+.autocomplete div {
+    padding:2px 5px;
+    white-space:nowrap;
+    overflow:hidden;
+}
+.autocomplete strong {
+    color:#000;
+}
+
+.autocomplete > div.selected {
+    background:#F0F0F0;
+}
+
+#search-spinner {
+    margin: 0 20px;
 }
 
 #new-public_body {

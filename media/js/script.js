@@ -4,6 +4,24 @@ var loggedInCallback;
 
 Froide.app = Froide.app || {};
 
+Froide.app.getPublicBodyResultListItem = function(result){
+    var li = '<li class="result"><label>';
+    li += '<input type="radio" name="public_body" value="' + result.id + '"/> ';
+    li += result.name + '</label> - ';
+    li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
+    li += '</li>';
+    return li;
+};
+
+Froide.app.selectSearchListItem = function(li){
+    var html = '<div class="selected-result">' + li.html() + '</div>';
+    $("#public_body-chooser .selected-result").remove();
+    $("#search-results").after(html);
+    $("#public_body-chooser .selected-result input").attr("checked", "checked");
+    $("#search-results").slideUp();
+
+};
+
 Froide.app.performPublicBodySearch = (function(){
     var lastPublicBodyQuery = null;
     return function(){
@@ -27,20 +45,12 @@ Froide.app.performPublicBodySearch = (function(){
                 $("#empty-result").hide();
                 for(i = 0; i < results.length; i += 1){
                     result = results[i];
-                    var li = '<li class="result"><label>';
-                    li += '<input type="radio" name="public_body" value="' + result.id + '"/>';
-                    li += result.name + '</label> - ';
-                    li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
-                    li += '</li>';
+                    var li = Froide.app.getPublicBodyResultListItem(result);
                     $("#search-results").append(li);
                 }
                 $(".result input").change(function(e){
                     var li = $(this).parent().parent();
-                    var html = '<div class="selected-result">' + $(this).parent().parent().html() + '</div>';
-                    $("#public_body-chooser .selected-result").remove();
-                    $("#search-results").after(html);
-                    $("#public_body-chooser .selected-result input").attr("checked", "checked");
-                    $("#search-results").slideUp();
+                    Froide.app.selectSearchListItem(li);
                 });
                 $("#search-results").slideDown();
             }
@@ -237,4 +247,19 @@ $(function(){
             Froide.app.performPublicBodySearch();
         }
     });
+    $("#publicbody-search .searchexample").click(function(e){
+        e.preventDefault();
+        var term = $(this).text();
+        $("#search-public_bodies").val(term);
+        Froide.app.performPublicBodySearch();
+    });
+    $("#search-public_bodies").autocomplete({
+        serviceUrl: Froide.url.autocompletePublicBody,
+        minChars:2,
+        onSelect: function(value, data){
+            var li = Froide.app.getPublicBodyResultListItem(data);
+            Froide.app.selectSearchListItem($(li));
+        }
+    });
+    // $("#search-public_bodies").focus();
 });
