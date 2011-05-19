@@ -174,11 +174,11 @@ Froide.app.publicBodyChosen = (function(){
         }
         var list = $("#check-list").html("");
         var query = $("#search-public_bodies").val();
-        if(query !== ""){
-            list.append(Mustache.to_html(Froide.template.searchInternet,
-                    {url: Mustache.to_html(Froide.template.searchEngineUrl,
-                    {query: query, domain: ""})}));
-        }
+        // if(query !== ""){
+        //     list.append(Mustache.to_html(Froide.template.searchInternet,
+        //             {url: Mustache.to_html(Froide.template.searchEngineUrl,
+        //             {query: query, domain: ""})}));
+        // }
         if (currentPublicBodyChoice !== undefined && 
                 currentPublicBodyChoice !== "" &&
                 currentPublicBodyChoice !== "new"){
@@ -190,13 +190,18 @@ Froide.app.publicBodyChosen = (function(){
                         if (lastChoice !== currentPublicBodyChoice){
                             return;
                         }
-                        list.append(Mustache.to_html(
-                            Froide.template.searchPublicBodyWebsite,
-                            {url: Mustache.to_html(
-                                Froide.template.searchEngineUrl, 
-                                {query: query, domain: result.domain})}
-                        ));
-                        // TODO: Create law chooser here
+                        if (result.url){
+                            list.append('<li><a href="'+result.url+'">' + Froide.template.visitPublicBodyWebsite + '</a></li>');
+                        }
+                        if (result.domain){
+                            list.append(Mustache.to_html(
+                                Froide.template.searchPublicBodyWebsite,
+                                {url: Mustache.to_html(
+                                    Froide.template.searchEngineUrl, 
+                                    {query: query, domain: result.domain})}
+                            ));
+                        }
+                            // TODO: Create law chooser here
                         $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
                         $('#letter_start').text(result.laws[0].letter_start);
                         $('#letter_end').text(result.laws[0].letter_end);
