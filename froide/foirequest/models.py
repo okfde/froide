@@ -43,11 +43,10 @@ class FoiRequestManager(CurrentSiteManager):
     def get_for_search_index(self):
         return self.get_query_set().filter(visibility=2)
 
-    def get_for_latest_feed(self):
-        return self.filter(public=True).order_by("-first_message")[:15]
+    def get_overdue(self):
+        now = datetime.now()
+        return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
 
-    def get_for_list(self):
-        return self.filter(public=True)
 
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
@@ -172,6 +171,7 @@ class FoiRequest(models.Model):
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
+    became_overdue = django.dispatch.Signal(providing_args=["status"])
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
     made_public = django.dispatch.Signal(providing_args=[])
 
@@ -517,6 +517,15 @@ class FoiRequest(models.Model):
         self.save()
         self.made_public.send(sender=self)
 
+    def set_overdue(self):
+        if not self.awaits_response():
+            return None
+        self.status = "overdue"
+        self.save()
+        self.became_overdue.send(sender=self)
+        self.status_changed.send(sender=self, status=self.status, data={})
+
+    
 
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
