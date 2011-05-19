@@ -46,6 +46,22 @@ class FoiRequestManager(CurrentSiteManager):
     def get_for_latest_feed(self):
         return self.filter(public=True).order_by("-first_message")[:15]
 
+    def get_for_list(self):
+        return self.filter(public=True)
+
+class PublishedFoiRequestManager(CurrentSiteManager):
+    def get_query_set(self):
+        return super(PublishedFoiRequestManager,
+                self).get_query_set().filter(public=True)
+
+    def awaiting_response(self):
+        return self.get_query_set().filter(
+                    status="awaiting_response")
+
+    def successful(self):
+        return self.get_query_set().filter(
+                    models.Q(status="successful")|
+                    models.Q(status="partially_successful"))
 
 class FoiRequest(models.Model):
     ADMIN_SET_CHOICES = (
@@ -139,6 +155,7 @@ class FoiRequest(models.Model):
             on_delete=models.SET_NULL, verbose_name=_("Site"))
     
     objects = FoiRequestManager()
+    published = PublishedFoiRequestManager()
 
     class Meta:
         ordering = ('last_message',)
