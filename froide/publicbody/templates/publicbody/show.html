@@ -10,17 +10,19 @@
   <dl>
     <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
     <dd>{{ object.classification }}</dd>
+    <dt>{% blocktrans %}Topic:{% endblocktrans %}</dt>
+    <dd>{{ object.topic }}</dd>
     <dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
     <dd>{{ object.description|markdown }}</dd>
-    <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-    <dd>{{ object.contact|linebreaksbr }}</dd>
     <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
     <dd>{{ object.email }} (<a href="{% url 'foirequest-make_request' public_body=object.slug %}">
       {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
     <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
     <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
-    <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
-    <dd>{{ object.address|linebreaksbr }}</dd>
+    <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
+    <dd>{{ object.contact|linebreaksbr }}</dd>
+    {#<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
+    <dd>{{ object.address|linebreaksbr }}</dd>#}
     <dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
     <dd>{{ object.geography }}</dd>
   </dl>
