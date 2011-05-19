@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import json
 
 from django.db import models
+from django.db.models.signals import pre_delete
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -521,6 +522,13 @@ def increment_request_count(sender, **kwargs):
     sender.public_body.number_of_requests += 1
     sender.public_body.save()
 
+@receiver(pre_delete, sender=FoiRequest,
+        dispatch_uid="foirequest_decrement_request_count")
+def decrement_request_count(sender, instance, **kwargs):
+    sender.public_body.number_of_requests -= 1
+    if sender.public_body.number_of_requests < 0:
+        sender.public_body.number_of_requests = 0
+    sender.public_body.save()
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
