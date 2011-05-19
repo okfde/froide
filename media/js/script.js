@@ -270,15 +270,16 @@ $(function(){
         $("#search-public_bodies").val(term);
         Froide.app.performPublicBodySearch();
     });
-    $("#search-public_bodies").autocomplete({
-        serviceUrl: Froide.url.autocompletePublicBody,
-        minChars:2,
-        onSelect: function(value, data){
-            var li = Froide.app.getPublicBodyResultListItem(data);
-            Froide.app.selectSearchListItem($(li));
-            Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(), false);
-            Froide.app.activateMessage();
-        }
-    });
-    // $("#search-public_bodies").focus();
+    if (Froide && Froide.url && Froide.url.autocompletePublicBody){
+        $("#search-public_bodies").autocomplete({
+            serviceUrl: Froide.url.autocompletePublicBody,
+            minChars:2,
+            onSelect: function(value, data){
+                var li = Froide.app.getPublicBodyResultListItem(data);
+                Froide.app.selectSearchListItem($(li));
+                Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(), false);
+                Froide.app.activateMessage();
+            }
+        });
+    }
 });
