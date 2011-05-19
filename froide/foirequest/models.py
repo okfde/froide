@@ -30,7 +30,6 @@ from foirequest.foi_mail import send_foi_mail
 
 html2markdown = lambda x: x
 
-
 class FoiRequestManager(CurrentSiteManager):
     def get_for_homepage(self, count=5):
         return self.get_query_set()[:count]
@@ -58,6 +57,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def awaiting_response(self):
         return self.get_query_set().filter(
                     status="awaiting_response")
+
+    def get_for_latest_feed(self):
+        return self.get_query_set().order_by("-first_message")[:15]
 
     def successful(self):
         return self.get_query_set().filter(
