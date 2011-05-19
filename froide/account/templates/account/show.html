@@ -21,26 +21,42 @@
     <thead>
       <tr>
         <th>{% blocktrans %}Title{% endblocktrans %}</th>
+        <th>{% blocktrans %}Recipient{% endblocktrans %}</th>
         <th>{% blocktrans %}Status{% endblocktrans %}</th>
         <th>{% blocktrans %}Due Date{% endblocktrans %}</th>
+        <th>{% blocktrans %}Public{% endblocktrans %}</th>
       </tr>
     </thead>
     <tbody>
   {% for foirequest in foirequests %}
     <tr>
       <td>
-        <a href="{% url 'foirequest-show' slug=foirequest.slug %}">{{ foirequest.title }}</a>
+        <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+      </td>
+      <td>
+        {% if foirequest.public_body %}
+        <a href="{{ foirequest.public_body.get_absolute_url }}">{{ foirequest.public_body.name }}</a>
+        {% else %}
+        {% blocktrans %}Not yet set{% endblocktrans %}
+        {% endif %}
       </td>
       <td>{{ foirequest.readable_status }}</td>
-      <td>{% if foirequest.due_date %}{{ foirequest.due_date|date:"DATE_FORMAT" }}{% else %}{% endif %}</td>
+      <td>{% if foirequest.due_date %}{{ foirequest.due_date|date:"DATE_FORMAT" }}{% else %}N/A{% endif %}</td>
+      <td>{% if foirequest.public %}{% blocktrans %}Yes{% endblocktrans %}
+        {% else %}{% blocktrans %}No{% endblocktrans %}{% endif %}
+      </td>
     </tr>
   {% endfor %}
     </tbody>
   </table>
   <h3>{% blocktrans %}Settings{% endblocktrans %}</h3>
-  <div class="section">
-    <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
-    <div id="change-password"{% if not password_change_form %} class="hidden"{% endif %}>
+  <div id="change-password-now" class="section focussed">
+    {% if user.is_new %}
+    <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>
+      {% else %}
+      <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
+      <div id="change-password"{% if not password_change_form %} class="hidden"{% endif %}>
+      {% endif %}
       <form action="{% url 'account-change_password' %}" method="post">
         {% csrf_token %}
         <table class="no-stripes">

@@ -25,15 +25,15 @@ def confirm(request, user_id, secret, request_id=None):
         raise Http404
     account_manager = AccountManager(user)
     if account_manager.confirm_account(secret, request_id):
-        messages.add_message(request, messages.INFO,
-                _('Your email address is now confirmed and you are logged in. The next time you want to log in, use the password from the email.'))
+        messages.add_message(request, messages.WARNING,
+                _('Your email address is now confirmed and you are logged in. You should change your password now by filling out the form below.'))
         login_user(request, user)
         if request_id is not None:
             foirequest = FoiRequest.confirmed_request(user, request_id)
             if foirequest:
                 messages.add_message(request, messages.SUCCESS,
                     _('Your request "%s" has now been sent') % foirequest.title)
-        return HttpResponseRedirect(reverse('account-show'))
+        return HttpResponseRedirect(reverse('account-show') + "?new#change-password-now")
     else:
         messages.add_message(request, messages.ERROR,
                 _('You can only use the confirmation link once, please login with your password.'))
@@ -45,6 +45,8 @@ def show(request, context=None):
     my_requests = FoiRequest.objects.filter(user=request.user)
     if not context:
         context = {}
+    if 'new' in request.GET:
+        request.user.is_new = True
     context.update({'foirequests': my_requests})
     return render(request, 'account/show.html', context)
 
@@ -60,6 +62,9 @@ def login(request, base="base.html"):
     if request.GET.get("simple") is not None:
         base = "simple_base.html"
         simple = True
+    else:
+        if request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('account-show'))
     signup_form = NewUserForm()
     if request.method == "GET":
         form = UserLoginForm()
