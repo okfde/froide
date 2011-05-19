@@ -11,16 +11,6 @@ $(function(){
     var letter_start = $('#letter_start').text();
     var letter_end = $('#letter_end').text();
 
-
-
-    var activateMessage = function(){
-        $("#public-body").removeClass("active");
-        $("#step-message").slideDown()
-            .removeClass("hidden")
-            .parent().addClass("active");
-    };
-
-
     $(".foirequest input").keydown(function(e){
         if(e.keyCode === 13){
             e.preventDefault();
@@ -30,7 +20,7 @@ $(function(){
     var publicBodyChosen = function(){
         Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(),
                                     publicBodyPrefilled);
-        activateMessage();
+        Froide.app.activateMessage();
     };
 
     $(".foirequest input[name='public_body']").live("change", function(e){
