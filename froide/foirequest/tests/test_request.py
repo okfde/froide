@@ -54,7 +54,7 @@ class RequestTest(TestCase):
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
                 "user_email": "sw@example.com",
-                "terms": "on", "privacy": "on",
+                "terms": "on",
                 "law": pb.laws.all()[0].pk}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)

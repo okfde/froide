@@ -26,18 +26,12 @@ class NewUserForm(forms.Form):
                 label=_("Hide my name on the web"),
                 help_text=_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly."))
         
-    terms = forms.BooleanField(label=_("Terms and Conditions"),
+    terms = forms.BooleanField(label=_("Terms and Conditions and Privacy Statement"),
             error_messages={'required':
-                _('You need to accept our Terms and Conditions.')},
+                _('You need to accept our Terms and Conditions and Priavcy Statement.')},
             widget=AgreeCheckboxInput(
-                agree_to=_(u'You agree to our <a href="%(url)s" class="target-new">Terms and Conditions</a>'),
-                url_name="help-terms"))
-    privacy = forms.BooleanField(label=_("Privacy Statement"),
-            error_messages={'required':
-                _('You need to accept our Privacy Statement.')},
-            widget=AgreeCheckboxInput(
-                agree_to=_(u'You agree to our <a href="%(url)s" class="target-new">Privacy Statement</a>'),
-                url_name="help-privacy"))
+                agree_to=_(u'You agree to our <a href="%(url_terms)s" class="target-new">Terms and Conditions</a> and <a href="%(url_privacy)s" class="target-new">Privacy Statement</a>'),
+                url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()

@@ -51,7 +51,7 @@ class AccountTest(TestCase):
         self.client.logout()
         post = {"first_name": "Horst",
                 "last_name": "Porst",
-                "terms": "on", "privacy": "on",
+                "terms": "on",
                 "user_email": "horst.porst@example.com"}
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 302)
