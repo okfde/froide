@@ -87,6 +87,7 @@ Froide.app.performReview = (function(){
     };
 
     var openLightBox = function(){
+        var currentScrollTop = $("#write-request").offset().top;
         var box = $('#step-review');
         box.fadeIn();
         box.css({
@@ -97,6 +98,9 @@ Froide.app.performReview = (function(){
         var closeLightBox = function(){
             $("body").css({"overflow": "auto"});
             $('#lightbox-background, .lightbox').fadeOut();
+            window.setTimeout(function(){
+                $(window).scrollTop(currentScrollTop);
+            }, 100);
         };
         $('#lightbox-background').live('click', closeLightBox);
         $('.lightbox a.close').live('click', closeLightBox);
