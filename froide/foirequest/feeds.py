@@ -16,7 +16,7 @@ class LatestFoiRequestsFeed(Feed):
         return reverse('foirequest-feed_latest')
 
     def items(self):
-        return FoiRequest.objects.get_for_latest_feed()
+        return FoiRequest.published.get_for_latest_feed()
 
     def item_title(self, item):
         return _("'%(title)s' to %(publicbody)s") % {
@@ -41,7 +41,7 @@ class LatestFoiRequestsFeedAtom(LatestFoiRequestsFeed):
 
 class FoiRequestFeed(Feed):
     def get_object(self, request, slug):
-        return get_object_or_404(FoiRequest, slug=slug)
+        return get_object_or_404(FoiRequest, slug=slug, public=True)
 
     def title(self, obj):
         return obj.title
