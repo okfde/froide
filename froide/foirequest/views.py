@@ -24,7 +24,7 @@ def index(request):
         })
 
 def list_requests(request):
-    foi_requests = FoiRequest.objects.all()
+    foi_requests = FoiRequest.published.all()
     return render(request, 'foirequest/list.html', {
             'object_list': foi_requests
         })
