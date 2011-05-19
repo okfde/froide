@@ -462,6 +462,19 @@ form.foirequest p {
     display:block;
 }
 
+.focussed:target {
+    background-color: #FFE9EE;
+    border: 1px red solid;
+}
+
+.focussed:target .hidden {
+    display:block;
+}
+
+.focussed:target .toggle {
+    display:none;
+}
+
 .no-js #review-button {
     display:none;
 }
