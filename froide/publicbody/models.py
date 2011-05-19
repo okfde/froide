@@ -77,11 +77,14 @@ class PublicBody(models.Model):
     description = models.TextField(_("Description"), blank=True)
     topic = models.CharField(_("Topic"), max_length=255, blank=True)
     topic_slug = models.SlugField(_("Topic Slug"), max_length=255)
-    url = models.URLField(_("URL"), null=True, blank=True, verify_exists=False)
-    parent = models.ForeignKey('PublicBody', null=True, blank=True, default=None,
-            on_delete=models.SET_NULL, related_name="children")
-    root = models.ForeignKey('PublicBody', null=True, blank=True, default=None, 
-            on_delete=models.SET_NULL, related_name="descendants")
+    url = models.URLField(_("URL"), null=True, blank=True,
+            verify_exists=False)
+    parent = models.ForeignKey('PublicBody', null=True, blank=True,
+            default=None, on_delete=models.SET_NULL,
+            related_name="children")
+    root = models.ForeignKey('PublicBody', null=True, blank=True,
+            default=None, on_delete=models.SET_NULL,
+            related_name="descendants")
     depth = models.SmallIntegerField(default=0)
     classification = models.CharField(_("Classification"), max_length=255,
             blank=True)
