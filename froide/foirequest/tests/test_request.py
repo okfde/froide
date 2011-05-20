@@ -30,13 +30,24 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.filter(user=user, public_body=pb).get()
         self.assertIsNotNone(req)
+        self.assertFalse(req.public)
         self.assertEqual(req.status, "awaiting_response")
         self.assertEqual(req.visibility, 1)
         self.assertEqual(old_number + 1, req.public_body.number_of_requests)
-        self.assertEqual(req.public, False)
         self.assertEqual(req.title, post['subject'])
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
+        self.client.logout()
+        response = self.client.post(reverse('foirequest-make_public',
+                kwargs={"slug": req.slug}),{})
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-make_public',
+                kwargs={"slug": req.slug}),{})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.published.get(id=req.id)
+        self.assertTrue(req.public)
+
 
     def test_public_body_new_user_request(self):
         self.client.logout()
@@ -358,3 +369,13 @@ class RequestTest(TestCase):
                 {"public_body": str(pb.pk)})
         self.assertEqual(response.status_code, 400)
 
+    # def test_public_body_logged_in_public_request(self):
+    #     ok = self.client.login(username='sw', password='froide')
+    #     user = User.objects.get(username='sw')
+    #     pb = PublicBody.objects.all()[0]
+    #     post = {"subject": "Test-Subject", "body": "This is a test body",
+    #             "public": "on",
+    #             "law": pb.default_law.pk}
+    #     response = self.client.post(reverse('foirequest-submit_request',
+    #             kwargs={"public_body": pb.slug}), post)
+    #     self.assertEqual(response.status_code, 302)
