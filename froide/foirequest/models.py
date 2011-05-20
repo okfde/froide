@@ -645,7 +645,7 @@ class FoiMessage(models.Model):
                 False):
             return make_address(self.sender_email, self.sender_name)
         if settings.FROIDE_CONFIG.get("public_body_officials_public",
-                False):
+                False) and self.sender_name:
             return self.sender_name
         else:
             return self.sender_public_body.name
