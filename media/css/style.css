@@ -61,7 +61,7 @@ table.no-stripes tbody tr:nth-child(even) td, table.no-stripes tbody tr.even td 
 
 #nav ul li a.active,
 #nav ul li a:hover {
-    color: #1F3372;
+    color: #06C;
 }
 
 .account-snippet {
@@ -125,7 +125,7 @@ h3 {
 }
 
 .action-buttons {
-    margin: 1em auto;
+    margin: 2em auto;
 }
 
 .button {

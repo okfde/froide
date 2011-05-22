@@ -3,14 +3,14 @@
 {% load url from future %}
 
 {% block body %}
+<h2 class="special-heading">{% blocktrans %}Use your right and make a request!{% endblocktrans %}</h2>
 <div class="clearfix">
 <div class="span-11">
-  <h2 class="special-heading">{% blocktrans %}Use your right and make a request!{% endblocktrans %}</h2>
   <div class="action-buttons">
+    <a class="span-8 button explore-publicbodies-button" href="{% url 'publicbody-list' %}">{% blocktrans %}Search for Public Bodies{% endblocktrans %}</a>
     <a class="span-8 button make-request-button" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request{% endblocktrans %}</a>
     <a class="span-8 button explore-requests-button" href="{% url 'foirequest-list' %}">{% blocktrans %}Explore existing Requests{% endblocktrans %}</a>
-    <a class="span-8 button explore-publicbodies-button" href="{% url 'publicbody-list' %}">{% blocktrans %}Search for Public Bodies{% endblocktrans %}</a>
-  </div>
+ </div>
 </div>
 <div class="prepend-1 span-12 last">
   <ol class="main-guide">
