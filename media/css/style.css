@@ -659,3 +659,7 @@ form.foirequest p {
 .js .status-section {
     display:none;
 }
+
+.legal-text {
+    white-space:pre-line;
+}

@@ -13,8 +13,8 @@ urlpatterns = patterns("",
     # Translators: URL part of /help/
     (r'^%s/$' % _('about'), TV("help/%s/about.html" % LG), {}, 'help-about'),
     # Translators: URL part of /help/
-    (r'^%s/$' % _('terms'), TV("help/%s/about.html" % LG), {}, 'help-terms'),
+    (r'^%s/$' % _('terms'), TV("help/%s/terms.html" % LG), {}, 'help-terms'),
     # Translators: URL part of /help/
-    (r'^%s/$' % _('privacy'), TV("help/%s/about.html" % LG), {}, 'help-privacy'),
+    (r'^%s/$' % _('privacy'), TV("help/%s/privacy.html" % LG), {}, 'help-privacy'),
 
 )
