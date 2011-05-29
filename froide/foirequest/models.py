@@ -732,7 +732,7 @@ class FoiAttachment(models.Model):
         return True
 
     def get_preview_url(self):
-        return "http://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
+        return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
 
 class FoiEventManager(models.Manager):
