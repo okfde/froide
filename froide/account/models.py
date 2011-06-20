@@ -78,11 +78,11 @@ class AccountManager(object):
 
     def confirm_account(self, secret, request_id=None):
         if not self.check_confirmation_secret(secret, request_id):
-            return
+            return False
         self.user.is_active = True
         self.user.save()
         user_activated_signal.send_robust(sender=self.user)
-        return self.user
+        return True
 
 
     def check_confirmation_secret(self, secret, request_id):
