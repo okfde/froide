@@ -41,27 +41,58 @@ table.no-stripes tbody tr:nth-child(even) td, table.no-stripes tbody tr.even td 
 
 #nav ul {
     list-style-type: none;
+    margin: 0;
 }
 
 #nav ul li {
-}
-#nav ul li a {
     display: inline;
     float:left;
-    margin-right: 1.5em;
+    margin-right: 1em;
+}
+
+#nav ul li.last-nav {
+    margin-right: 0em;
+}
+
+#nav ul li a {
     font-weight: normal;
     -moz-border-radius: 5px;
     border-radius: 5px;
     text-decoration: none;
     letter-spacing: 0.1em;
     color: #666;
-    text-decoration: underline;
+    text-decoration: none;
+}
+
+.special-nav-item a {
+    margin-left: 0.4em;
+    color: #333 !important;
+    padding: 0.2em;
+    background: rgba(0, 153, 255, 0.2);
+    text-decoration:none;
+}
+
+.special-nav-item a:hover {
+    color: #fff !important;
+    background: rgba(0, 153, 255, 1.0);
 }
 
 
 #nav ul li a.active,
 #nav ul li a:hover {
     color: #06C;
+}
+
+#nav ul li.last-nav {
+    float:right;
+}
+
+.search-site {
+    display:inline;
+}
+
+.search-site input {
+    margin:0;
 }
 
 .account-snippet {
