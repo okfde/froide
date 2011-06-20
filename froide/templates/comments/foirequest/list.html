@@ -1,8 +1,8 @@
+{% load i18n %}
 <dl class="comments-list">
   {% for comment in comment_list %}
     <dt id="c{{ comment.id }}">
-        {{ comment.submit_date }} - {{ comment.name }}
-    </dt>
+    {% blocktrans with date=comment.submit_date name=comment.name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}</dt>
     <dd>
         <p>{{ comment.comment }}</p>
     </dd>
