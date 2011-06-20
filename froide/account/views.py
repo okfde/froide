@@ -39,7 +39,7 @@ def confirm(request, user_id, secret, request_id=None):
                 _('You can only use the confirmation link once, please login with your password.'))
     return HttpResponseRedirect(reverse('account-login'))
 
-def show(request, context=None):
+def show(request, context=None, status=200):
     if not request.user.is_authenticated():
         return render_403(request)
     my_requests = FoiRequest.objects.filter(user=request.user)
@@ -48,7 +48,7 @@ def show(request, context=None):
     if 'new' in request.GET:
         request.user.is_new = True
     context.update({'foirequests': my_requests})
-    return render(request, 'account/show.html', context)
+    return render(request, 'account/show.html', context, status=status)
 
 def logout(request):
     auth.logout(request)
@@ -56,8 +56,10 @@ def logout(request):
             _('You have been logged out.'))
     return HttpResponseRedirect("/")
 
-def login(request, base="base.html"):
+def login(request, base="base.html", context=None, status=200):
     simple = False
+    if not context:
+        context = {}
     reset_form = auth.forms.PasswordResetForm()
     if request.GET.get("simple") is not None:
         base = "simple_base.html"
@@ -68,7 +70,6 @@ def login(request, base="base.html"):
     signup_form = NewUserForm()
     if request.method == "GET":
         form = UserLoginForm()
-        status = 200
     elif request.method == "POST":
         status = 400 # if ok, we are going to redirect anyways
         form = UserLoginForm(request.POST)
@@ -91,12 +92,12 @@ def login(request, base="base.html"):
             else:
                 messages.add_message(request, messages.ERROR,
                         _('E-mail and password do not match.'))
-    return render(request, 'account/login.html',
-            {"form": form,
+    context.update({"form": form,
             "signup_form": signup_form,
             "custom_base": base,
             "reset_form": reset_form,
-            "simple": simple}, status=status)
+            "simple": simple})
+    return render(request, 'account/login.html', context, status=status)
 
 @require_POST
 def signup(request):
@@ -123,14 +124,14 @@ def change_password(request):
     if not request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your password.'))
-        return HttpResponseRedirect("/")
+        return render_403(request)
     form = request.user.get_profile().get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been changed.'))
         return HttpResponseRedirect(reverse('account-show'))
-    return show(request, context={"password_change_form": form})
+    return show(request, context={"password_change_form": form}, status=400)
 
 @require_POST
 def send_reset_password_link(request):
@@ -144,7 +145,7 @@ def send_reset_password_link(request):
         messages.add_message(request, messages.SUCCESS,
                 _('Check your mail, we sent you a password reset link.'))
         return HttpResponseRedirect('/')
-    return login(request, context={"send_reset_password_link": form})
+    return login(request, context={"send_reset_password_link": form}, status=400)
 
 def password_reset_confirm(request, uidb36=None, token=None):
     response = django_password_reset_confirm(request, uidb36=uidb36, token=token,
