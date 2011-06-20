@@ -4,8 +4,7 @@
 
 {% block body %}
 <h2>{% blocktrans count counter=topic.count with name=topic.name %}
-{{ counter }} Public Body in Topic '{{ name }}'
-{% plural %}
+{{ counter }} Public Body in Topic '{{ name }}'{% plural %}
 {{ counter }} Public Bodies in Topic '{{ name }}'{% endblocktrans %}</h2>
 
 <form method="get" action="{% url 'publicbody_showsearch' %}">
