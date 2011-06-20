@@ -23,8 +23,8 @@
     <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
     <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
     <dd>{{ object.contact|linebreaksbr }}</dd>
-    {#<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
-    <dd>{{ object.address|linebreaksbr }}</dd>#}
+    {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
+    <dd>{{ object.address|linebreaksbr }}</dd> {% endcomment %}
     <dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
     <dd>{{ object.geography }}</dd>
   </dl>
