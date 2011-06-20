@@ -195,7 +195,7 @@ class PublicBody(models.Model):
         import csv
         from StringIO import StringIO
         s = StringIO()
-        fields =  ("name", "classification", "depth", "children_count", "email", "parent", "description",
+        fields =  ("name", "classification", "depth", "children_count", "email", "description",
                 "url", "website_dump", "contact", "address")
         writer = csv.DictWriter(s, fields)
         for pb in PublicBody.objects.all():
