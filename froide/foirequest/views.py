@@ -52,9 +52,6 @@ def show(request, slug, template_name="foirequest/show.html"):
         last_index = event_count - len(message.events)
     return render(request, template_name, {"object": obj})
 
-def success(request):
-    return render(request, 'index.html')
-
 def make_request(request, public_body=None):
     public_body_form = None
     if public_body is not None:
