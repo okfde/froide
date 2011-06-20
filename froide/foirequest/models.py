@@ -696,7 +696,8 @@ class FoiMessage(models.Model):
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
-        send_foi_mail(self.subject, self.plaintext, from_addr, [self.recipient])
+        send_foi_mail(self.subject, self.plaintext, from_addr,
+                [self.recipient])
         self.sent = True
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
