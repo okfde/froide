@@ -11,7 +11,7 @@ class PublicBodyIndex(indexes.SearchIndex):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', boost=1.5)
     geography = indexes.CharField(model_attr='geography')
-    topic_auto = indexes.EdgeNgramField(model_attr='topic')
+    topic_auto = indexes.EdgeNgramField(model_attr='topic_name')
     name_auto = indexes.EdgeNgramField(model_attr='name')
     url = indexes.CharField(model_attr='get_absolute_url')
 

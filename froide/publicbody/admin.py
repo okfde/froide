@@ -1,5 +1,5 @@
 from django.contrib import admin
-from froide.publicbody.models import PublicBody, FoiLaw
+from froide.publicbody.models import PublicBody, FoiLaw, PublicBodyTopic
 
 class PublicBodyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("geography", "name",)}
@@ -11,5 +11,9 @@ class PublicBodyAdmin(admin.ModelAdmin):
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("jurisdiction", "name",)}
 
+class PublicBodyTopicAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(PublicBody, PublicBodyAdmin)
 admin.site.register(FoiLaw, FoiLawAdmin)
+admin.site.register(PublicBodyTopic, PublicBodyTopicAdmin)

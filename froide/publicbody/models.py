@@ -71,12 +71,26 @@ class FoiLaw(models.Model):
             return calculate_workingday_range(date, self.max_response_time)
 
 
+class PublicBodyTopic(models.Model):
+    name = models.CharField(_("Name"), max_length=255)
+    slug = models.SlugField(_("Slug"), max_length=255)
+    description = models.TextField(_("Description"), blank=True)
+    count = models.IntegerField(_("Count"), default=0)
+
+    class Meta:
+        verbose_name = _("Topic")
+        verbose_name_plural = _("Topics")
+       
+    def __unicode__(self):
+        return self.name
+
+
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
-    topic = models.CharField(_("Topic"), max_length=255, blank=True)
-    topic_slug = models.SlugField(_("Topic Slug"), max_length=255)
+    topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),
+            null=True, on_delete=models.SET_NULL)
     url = models.URLField(_("URL"), null=True, blank=True,
             verify_exists=False)
     parent = models.ForeignKey('PublicBody', null=True, blank=True,
@@ -120,7 +134,7 @@ class PublicBody(models.Model):
         verbose_name_plural = _("Public Bodies")
 
     serializable_fields = ('name', 'slug',
-            'description', 'topic', 'url', 'email', 'contact',
+            'description', 'topic_name', 'url', 'email', 'contact',
             'address', 'geography', 'domain')
         
     def __unicode__(self):
@@ -138,6 +152,12 @@ class PublicBody(models.Model):
     def domain(self):
         if self.url:
             return self.url.split("/")[2]
+        return None
+
+    @property
+    def topic_name(self):
+        if self.topic:
+            return self.topic.name
         return None
 
     @property
