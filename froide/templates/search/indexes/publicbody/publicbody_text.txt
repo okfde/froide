@@ -1,6 +1,6 @@
 {{ object.name }}
 {{ object.description }}
-{{ object.topic }}
+{{ object.topic_name }}
 {{ object.website_dump }}
 {{ object.contact }}
 {{ object.address }}
