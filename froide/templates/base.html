@@ -43,16 +43,31 @@
   {% endif %}
     <header id="header">
       <div id="header-content" class="container">
-        <h1 class="span-9">
+        <h1 class="span-7">
           <a href="{% url 'index' %}">{{ SITE_NAME }}</a>
         </h1>
-        <nav id="nav" class="prepend-1 span-14 last">
+        <nav id="nav" class="span-17 last">
           <ul>
-            <li><a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a></li>
-            <li><a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a></li>
-            <li><a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a></li>
-            <li><a href="{% url 'help-index' %}">{% blocktrans %}Help{% endblocktrans %}</a></li>
+            <li>
+              <a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
+            </li>
+            <li>
+              <a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a>
+           </li>
+            <li>
+              <a href="{% url 'help-index' %}">{% blocktrans %}Help{% endblocktrans %}</a>
+            </li>
+            <li class="special-nav-item">
+              <a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a>
+            </li>
+            <li class="last-nav">
+              <form class="search-site" action="{% url 'haystack_search'%}" method="get">
+                <input type="text" name="q" placeholder="{% trans "Search" %}"/>
+              </form>
+            </li>
+ 
           </ul>
+
         </nav>
       </div>
     </header>
