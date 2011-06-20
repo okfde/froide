@@ -24,11 +24,29 @@ class PublicBodyTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
+    def test_topic(self):
+        pb = PublicBody.objects.all()[0]
+        topic = pb.topic
+        response = self.client.get(reverse('publicbody-show_topic',
+            kwargs={"topic": topic.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(pb.name, response.content.decode('utf-8'))
+
+    def test_autocomplete(self):
+        import json
+        response = self.client.get(
+                reverse('publicbody-autocomplete')+"?query=abc")
+        self.assertEqual(response.status_code, 200)
+        obj = json.loads(response.content.decode('utf-8'))
+        self.assertIn(u'Selbstschutzschule', obj['suggestions'][0])
+        self.assertIn(u'Selbstschutzschule', obj['data'][0]['name'])
+
+
     def test_csv(self):
         csv = PublicBody.export_csv()
         self.assertTrue(csv)
 
     def test_search(self):
-        response = self.client.get(reverse('publicbody-search')+"?q=umwelt")
-        self.assertIn("Bundesministerium f\\u00fcr Umwelt", response.content)
+        response = self.client.get(reverse('publicbody-search')+"?q=abc")
+        self.assertIn("Selbstschutzschule", response.content)
         self.assertEqual(response['Content-Type'], 'application/json')
