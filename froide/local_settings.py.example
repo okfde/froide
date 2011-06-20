@@ -1,0 +1,71 @@
+# -*- coding: utf-8 -*-
+import re
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+LANGUAGE_CODE = "en"
+
+ADMINS = (
+    ('Your Name', 'mail@example.com'),
+)
+INTERNAL_IPS = ('127.0.0.1',)
+
+
+MIDDLEWARE_CLASSES = [
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+]
+MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+
+SITE_NAME = "Your Site Name"
+SITE_URL = 'http://localhost:8000'
+
+rec = re.compile
+# define your greetings and closing regexes
+POSSIBLE_GREETINGS = [rec(u"Sehr geehrt(er? (?:Herr|Frau) .*?)")]
+POSSIBLE_CLOSINGS = [rec(u"Mit freundlichen Grüßen,?")]
+
+FROIDE_CONFIG = {
+    "create_new_publicbody": True,
+    "publicbody_empty": True,
+    "user_can_hide_web": True,
+    "public_body_officials_public": False,
+    "public_body_officials_email_public": False,
+    "payment_possible": True,
+    "currency": "Euro"
+}
+
+
+# boost public bodies by their classification
+FROIDE_PUBLIC_BODY_BOOSTS = {
+    u"Ministry": 1.9,
+    u"Council": 0.8
+}
+
+# dev use:
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = "smtp.example.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "mail@foi.example.com"
+EMAIL_HOST_PASSWORD = "password"
+EMAIL_USE_TLS = True
+
+FOI_EMAIL_DOMAIN = "foi.example.com"
+FOI_EMAIL_PORT_IMAP = 993
+FOI_EMAIL_HOST_IMAP = "imap.example.com"
+FOI_EMAIL_ACCOUNT_NAME = "foirelay@foi.example.com"
+FOI_EMAIL_ACCOUNT_PASSWORD = "password"
+
+FOI_EMAIL_FIXED_FROM_ADDRESS = True
+FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
+FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
+FOI_EMAIL_HOST = "smtp.example.com"
+FOI_EMAIL_PORT = 537
+FOI_EMAIL_USE_TLS = True
+
