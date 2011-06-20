@@ -8,4 +8,9 @@ familien-senioren-frauen-und-jugend.png:
     The Noun Project: http://thenounproject.com/noun/stroller/#icon-No601
 
 verkehr-und-bau.png:
-    The Noun Project: http://thenounproject.com/noun/traffic-cone/#icon-No517
+    The Noun Project: http://thenounproject.com/noun/highway/#icon-No622
+
+auswartiges.png:
+    The Noun Project: http://thenounproject.com/noun/globe/#icon-No248
+
+
