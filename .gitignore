@@ -9,4 +9,5 @@ solr/
 files/
 artwork/
 .coverage
+*/_build/
 froide/htmlcov/
