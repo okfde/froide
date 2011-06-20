@@ -1,14 +1,15 @@
 import json
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import urlresolvers
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
+from django.views.generic import DetailView, ListView
 
 from haystack.query import SearchQuerySet
 
-from publicbody.models import PublicBody
+from publicbody.models import PublicBody, PublicBodyTopic
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
 from froide.helper.utils import render_400, render_403
@@ -19,8 +20,18 @@ class PublicBodyListView(JSONResponseListView):
     template_name = "publicbody/list.html"
 
     def get_context_data(self, **kwargs):
-        context = super(JSONResponseListView, self).get_context_data(**kwargs)
+        context = super(PublicBodyListView, self).get_context_data(**kwargs)
         return context
+
+def index(request):
+    context = {"topics": PublicBodyTopic.objects.order_by("name")}
+    return render(request, 'publicbody/list_topic.html', context)
+
+def show_topic(request, topic):
+    topic = get_object_or_404(PublicBodyTopic, slug=topic)
+    context = {"topic": topic, 
+            "object_list": PublicBody.objects.filter(topic=topic).order_by("name")}
+    return render(request, 'publicbody/show_topic.html', context)
 
 
 class PublicBodyDetailView(JSONResponseDetailView):

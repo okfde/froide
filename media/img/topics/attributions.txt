@@ -1,0 +1,11 @@
+landwirtschaft-und-verbraucherschutz.png:
+    The Noun Project: http://thenounproject.com/noun/wheat/#icon-No587
+
+umwelt.png:
+    The Noun Project: http://thenounproject.com/noun/flower/#icon-No180
+
+familien-senioren-frauen-und-jugend.png:
+    The Noun Project: http://thenounproject.com/noun/stroller/#icon-No601
+
+verkehr-und-bau.png:
+    The Noun Project: http://thenounproject.com/noun/traffic-cone/#icon-No517
