@@ -14,8 +14,11 @@ from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
 
 
-def get_unread_mails(host, port, user, password):
-    mail = imaplib.IMAP4_SSL(host, port)
+def get_unread_mails(host, port, user, password, ssl=True):
+    klass = imaplib.IMAP
+    if ssl:
+        klass = imaplib.IMAP4_SSL
+    mail = klass(host, port)
     mail.login(user, password)
     try:
         status, count = mail.select('Inbox')

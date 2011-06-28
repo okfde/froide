@@ -270,6 +270,7 @@ FOI_EMAIL_PORT_IMAP = 993
 FOI_EMAIL_HOST_IMAP = "imap.example.com"
 FOI_EMAIL_ACCOUNT_NAME = "foi@example.com"
 FOI_EMAIL_ACCOUNT_PASSWORD = ""
+FOI_EMAIL_USE_SSL = True
 
 # Is the message you can send from fixed
 # or can you send from any address you like?

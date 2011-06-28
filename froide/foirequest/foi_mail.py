@@ -55,7 +55,8 @@ def _fetch_mail():
     for rfc_data in get_unread_mails(settings.FOI_EMAIL_HOST_IMAP,
             settings.FOI_EMAIL_PORT_IMAP,
             settings.FOI_EMAIL_ACCOUNT_NAME,
-            settings.FOI_EMAIL_ACCOUNT_PASSWORD):
+            settings.FOI_EMAIL_ACCOUNT_PASSWORD,
+            ssl=settings.FOI_EMAIL_USE_SSL):
         yield rfc_data
 
 def fetch_and_process():
