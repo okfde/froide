@@ -15,7 +15,7 @@ import imaplib
 
 
 def get_unread_mails(host, port, user, password, ssl=True):
-    klass = imaplib.IMAP
+    klass = imaplib.IMAP4
     if ssl:
         klass = imaplib.IMAP4_SSL
     mail = klass(host, port)
