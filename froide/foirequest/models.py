@@ -535,11 +535,12 @@ def increment_request_count(sender, **kwargs):
 
 @receiver(pre_delete, sender=FoiRequest,
         dispatch_uid="foirequest_decrement_request_count")
-def decrement_request_count(sender, instance, **kwargs):
-    sender.public_body.number_of_requests -= 1
-    if sender.public_body.number_of_requests < 0:
-        sender.public_body.number_of_requests = 0
-    sender.public_body.save()
+def decrement_request_count(sender, instance=None, **kwargs):
+
+    instance.public_body.number_of_requests -= 1
+    if instance.public_body.number_of_requests < 0:
+        instance.public_body.number_of_requests = 0
+    instance.public_body.save()
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
