@@ -298,6 +298,8 @@ class FoiRequest(models.Model):
                     name=attachment.name,
                     size=attachment.size,
                     filetype=attachment.content_type)
+            if att.name is None:
+                att.name = _("attached_file")
             attachment._committed = False
             att.file = File(attachment)
             att.save()
