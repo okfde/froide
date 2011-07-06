@@ -2,10 +2,13 @@
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Search Results{% endblocktrans %}</h2>
+<h2>{% blocktrans %}Search Results for "{{ query }}"{% endblocktrans %}</h2>
   <form method="get" action=".">
-    {{ form.as_p }}
-    <input type="submit" value="Search">
+    {# {{ form.as_p }} #}
+    <p><label for="id_q">{% blocktrans %}Search Terms:{% endblocktrans%}</label>
+    <input type="text" name="q" value="{{ query }}" id="id_q" autocomplete="off"/>
+    <input type="submit" value="{% trans "Search" %}"/>
+    </p>
   </form>
       {% if query %}
       <h3>{% blocktrans %}Results{% endblocktrans %}</h3>
