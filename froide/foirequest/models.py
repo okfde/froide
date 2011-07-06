@@ -778,7 +778,7 @@ class FoiEventManager(models.Manager):
         return event
 
     def get_for_homepage(self):
-        return self.get_query_set().filter(public=True)
+        return self.get_query_set().filter(public=True).select_related()
 
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
