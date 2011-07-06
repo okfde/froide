@@ -19,9 +19,12 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'froide.foirequest.views.index', name='index'),
     # Translators: request URL
-    (r'^%s/$' % _('make-request'), 'foirequest.views.make_request', {}, 'foirequest-make_request'),
+    url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),
     # Translators: URL part
-    url(r'^%s/' % _('request'), include('froide.foirequest.urls')),
+    url(r'^%s/' % _('requests'), include('froide.foirequest.urls')),
+    # Translators: request URL
+    url(r'^%s/' % _('request'), include('froide.foirequest.request_urls')),
+
     # Translators: URL part
     url(r'^%s/' % _('entity'), include('froide.publicbody.urls')),
     
