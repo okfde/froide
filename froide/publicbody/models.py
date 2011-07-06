@@ -18,7 +18,7 @@ from froide.helper.date_utils import (calculate_workingday_range,
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
         return super(PublicBodyManager, self).get_query_set().exclude(email="")\
-                .filter(depth__lt=2)
+                .filter(depth__lt=2, email__isnull=False)
 
     def get_for_homepage(self, count=5):
         return self.get_query_set().order_by('-number_of_requests')[:count]
