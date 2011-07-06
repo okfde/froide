@@ -7,25 +7,26 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
-        # Renaming column for 'PublicBody.topic' to match new field type.
-        db.rename_column('publicbody_publicbody', 'topic', 'topic_id')
+        db.delete_column('publicbody_publicbody', 'topic')        
         # Changing field 'PublicBody.topic'
-        db.alter_column('publicbody_publicbody', 'topic_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBodyTopic'], null=True))
+        db.add_column('publicbody_publicbody', 'topic_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBodyTopic'], null=True))
 
         # Adding index on 'PublicBody', fields ['topic']
         db.create_index('publicbody_publicbody', ['topic_id'])
+        db.add_column('publicbody_publicbody', 'topic_id', models.IntegerField(default=None, null=True))
+        db.alter_column('publicbody_publicbody', 'topic', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBodyTopic'], null=True), explicit_name=False)
+
+         # Adding index on 'PublicBody', fields ['topic']
+        db.create_index('publicbody_publicbody', ['topic'])
 
 
     def backwards(self, orm):
         
         # Removing index on 'PublicBody', fields ['topic']
         db.delete_index('publicbody_publicbody', ['topic_id'])
-
-        # Renaming column for 'PublicBody.topic' to match new field type.
-        db.rename_column('publicbody_publicbody', 'topic_id', 'topic')
+        db.delete_column('publicbody_publicbody', 'topic_id')        
         # Changing field 'PublicBody.topic'
-        db.alter_column('publicbody_publicbody', 'topic', self.gf('django.db.models.fields.CharField')(default='', max_length=255))
+        db.add_column('publicbody_publicbody', 'topic', self.gf('django.db.models.fields.CharField')(default='', max_length=255))
 
 
     models = {
