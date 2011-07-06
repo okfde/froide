@@ -538,9 +538,8 @@ class FoiRequest(models.Model):
         self.status = "overdue"
         self.save()
         self.became_overdue.send(sender=self)
-        self.status_changed.send(sender=self, status=self.status, data={})
+        # self.status_changed.send(sender=self, status=self.status, data={})
 
-    
 
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
@@ -811,11 +810,13 @@ class FoiEvent(models.Model):
         "made_public": _(
             u"%(user)s made the request '%(request)s' public."),
         "request_refused": _(
-            u"%(public_body)s refused to provide information on the grounds of %(reason)s.")
+            u"%(public_body)s refused to provide information on the grounds of %(reason)s."),
+        "became_overdue": _(
+            u"This request became overdue")
     }
 
     class Meta:
-        ordering = ('timestamp',)
+        ordering = ('-timestamp',)
         verbose_name = _('Request Event')
         verbose_name_plural = _('Request Events')
 
@@ -918,3 +919,7 @@ def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
     FoiEvent.objects.create_event("public_body_suggested", sender, user=suggestion.user,
             public_body=suggestion.public_body)
 
+@receiver(FoiRequest.became_overdue,
+        dispatch_uid="create_event_became_overdue")
+def create_event_became_overdue(sender, **kwargs):
+    FoiEvent.object.create_event("became_overdue", sender)
