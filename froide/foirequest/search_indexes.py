@@ -8,6 +8,7 @@ class FoiRequestIndex(indexes.SearchIndex):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     title = indexes.CharField(model_attr='title')
     description = indexes.CharField(model_attr='description')
+    summary = indexes.CharField(model_attr='summary')
     status = indexes.CharField(model_attr='status')
     first_message = indexes.DateTimeField(model_attr='first_message')
     last_message = indexes.DateTimeField(model_attr='last_message')
