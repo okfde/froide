@@ -60,6 +60,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def get_for_latest_feed(self):
         return self.get_query_set().order_by("-first_message")[:15]
 
+    def by_last_update(self):
+        return self.get_query_set().order_by('-last_message')
+
     def successful(self):
         return self.get_query_set().filter(
                     models.Q(status="successful")|

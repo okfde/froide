@@ -1,21 +1,68 @@
-{% extends 'base.html' %}
+{% extends 'foirequest/base.html' %}
 {% load url from future %}
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Freedom of Information Requests{% endblocktrans %}</h2>
-<p>{% blocktrans %}This page displays existing requests.{% endblocktrans %}</p>
-<div>
-   <ul>
+{% if not status %}
+<h2>{% blocktrans %}Requests{% endblocktrans %}</h2>
+{% else %}
+<h2>{{ status }}</h2>
+<p>{{ status_description }}</p>
+{% endif %}
+<div class="span-18">
+  <table class="no-stripes">
+    <!-- <thead>-->
+<!--       <tr>-->
+<!--         <th></th>-->
+<!--         <th>{% blocktrans %}Title{% endblocktrans %}</th>-->
+<!--         <th>{% blocktrans %}To{% endblocktrans %}</th>-->
+<!--       </tr>-->
+<!--     </thead>-->
+    <tbody>
     {% for object in object_list %}
-    <li>
-      <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
-    </li>
-    {% empty %}
-    <li>{% blocktrans %}No requests yet{% endblocktrans %}</li>
+    <tr>
+      <td style="vertical-align: top">
+        <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
+      </td>
+      <td>
+        <a href="{{ object.get_absolute_url }}">{{ object.title }}</a> <span class="time-small">{% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}</span><br/>
+        <strong>To:</strong> {% if object.public_body %}
+          <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+        {% else %}
+          {% blocktrans %}Not yet set{% endblocktrans %}
+        {% endif %}
+        <br/><strong>{% blocktrans %}Status:{% endblocktrans %}</strong> {{ object.readable_status }}
+
+        <!-- <p>{{ object.description|truncatewords:6 }}</p>-->
+      </td>
+      <!-- <td style="vertical-align: top">-->
+      <!--   {{ object.last_message }}-->
+      <!-- </td>-->
+    </tr>
   {% endfor %}
+  </tbody>
+</table>
+<!-- {% for object in object_list %}-->
+<!-- <div>-->
+<!--   <h3><a href="{{ object.get_absolute_url }}">{{ object.title }}</a></h3>-->
+<!--   <p>-->
+<!--   <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>-->
+<!--   <hr/>-->
+<!-- </div>-->
+<!-- {% endfor %}-->
+</div>
+
+<div class="span-6 last">
+  <p class="bold">{% blocktrans %}Filter requests by their status:{% endblocktrans %}</p>
+  <ul class="iconed-list">
+  {% for urlpart,readable_status,status in status_list %}
+    <li style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')">
+      <a href="{% url 'foirequest-list' status=urlpart %}">{{ readable_status }}</a>
+    </li>
+    {% endfor %}
   </ul>
 </div>
+
 {% endblock %}
 
 

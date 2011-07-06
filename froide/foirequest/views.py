@@ -16,18 +16,31 @@ from froide.helper.utils import render_400, render_403
 
 
 def index(request):
-    public_bodies = PublicBody.objects.get_for_homepage()
+    # public_bodies = PublicBody.objects.get_for_homepage()
     foi_requests = FoiRequest.objects.get_for_homepage()
+    events = FoiEvent.objects.get_for_homepage()[:5]
     return render(request, 'index.html', 
-            {'public_bodies': public_bodies,
+            {'events': events,
             'foi_requests': foi_requests
         })
 
-def list_requests(request):
-    foi_requests = FoiRequest.published.all()
-    return render(request, 'foirequest/list.html', {
-            'object_list': foi_requests
+def list_requests(request, status=None):
+    context = {}
+    if status is None:
+        foi_requests = FoiRequest.published.by_last_update()
+    else:
+        status = FoiRequest.STATUS_URLS_DICT[status]
+        foi_requests = FoiRequest.published.by_last_update().filter(status=status)
+        context.update({
+            'status': FoiRequest.get_readable_status(status),
+            'status_description': FoiRequest.get_status_description(status)
+            })
+    context.update({
+            'object_list': foi_requests,
+            'status_list': [(x[0], 
+                FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS]
         })
+    return render(request, 'foirequest/list.html', context)
 
 def show(request, slug, template_name="foirequest/show.html"):
     try:
