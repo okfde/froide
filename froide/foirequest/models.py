@@ -96,6 +96,15 @@ class FoiRequest(models.Model):
         # ('user_withdrawn', _('User withdrew request'), _('')),
     )
 
+    STATUS_URLS = [
+            (_("successful"), 'successful'),
+            (_("partially-successful"), 'partially_successful'),
+            (_("refused"), 'refused'),
+            (_("publicbody-needed"), 'publicbody_needed'),
+            (_("awaiting-response"), 'awaiting_response'),
+            (_("overdue"), 'overdue')
+    ]
+
     if settings.FROIDE_CONFIG.get('payment_possible'):
         USER_SET_CHOICES += (('requires_payment',
                         _('Costs specified'),
@@ -103,7 +112,8 @@ class FoiRequest(models.Model):
                 # ('payment_refused', _('Payment refused'), _('')),
                 # ('payment_accepted', _('Payment accepted'), _(''))
             )
-
+        STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
+    STATUS_URLS_DICT = dict(STATUS_URLS)
     STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
     STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])
 
