@@ -151,6 +151,9 @@ def password_reset_confirm(request, uidb36=None, token=None):
     response = django_password_reset_confirm(request, uidb36=uidb36, token=token,
             template_name='account/password_reset_confirm.html',
             post_reset_redirect=reverse('account-show'))
+    # TODO: this is not the smartest of ideas
+    # if django view returns 302, it is assumed that everything was fine
+    # currently this seems safe to assume.
     if response.status_code == 302:
         uid_int = base36_to_int(uidb36)
         user = auth.models.User.objects.get(id=uid_int)
