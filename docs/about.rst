@@ -40,7 +40,15 @@ Features
 Dependencies
 ------------
 
+A detailed list of Python package dependencies can be found in `requirements.txt`, but here is a general overview:
 
+- Django 1.3 - the Web framework
+- South 0.7.3 - the database migration framework (development dependency)
+- Sphinx 1.0.7 - the documentation tool (development dependency)
+- Celery 2.2.5 - task queue for background processing
+- Haystack 1.2.0 - abstraction layer for search
+
+A development goal is that, even though a task queue (like Celery) and a search server (like Solr) are highly recommended, they are not necessary for either development or production setup and can be replaced with Cronjobs and database queries respectively (results/performance will probably degrade, but it should work).
 
 Name
 ----
