@@ -15,19 +15,19 @@
     <dd>{{ object.classification }}</dd>
     <dt>{% blocktrans %}Topic:{% endblocktrans %}</dt>
     <dd>{{ object.topic }}</dd>
-    <dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
-    <dd>{{ object.description|markdown }}</dd>
-    <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
-    <dd>{{ object.email }} (<a href="{% url 'foirequest-make_request' public_body=object.slug %}">
-      {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
+    {% comment %}<dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
+    <dd>{{ object.description|markdown }}</dd>{% endcomment %}
     <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
     <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
+    <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
+    <dd>{{ object.email }} (<a class="make-request-icon" href="{% url 'foirequest-make_request' public_body=object.slug %}">
+      {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
     <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
     <dd>{{ object.contact|linebreaksbr }}</dd>
     {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
     <dd>{{ object.address|linebreaksbr }}</dd> {% endcomment %}
-    <dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
-    <dd>{{ object.geography }}</dd>
+    {% comment %}<dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
+    <dd>{{ object.geography }}</dd>{% endcomment %}
   </dl>
 
   <h3>{% blocktrans %}Latest Freedom of Information Requests for this entity{% endblocktrans %}</h3>
