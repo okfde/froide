@@ -49,7 +49,7 @@ I request information about the following:
       </td>
       <td>
         <a href="{{ object.get_absolute_url }}">{{ object.title }}</a><br/>
-        <strong>To:</strong> {% if object.public_body %}
+        <strong>{% blocktrans %}To:{% endblocktrans %}</strong> {% if object.public_body %}
           <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
         {% else %}
           {% blocktrans %}Not yet set{% endblocktrans %}

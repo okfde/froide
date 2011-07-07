@@ -26,7 +26,7 @@
       </td>
       <td>
         <a href="{{ object.get_absolute_url }}">{{ object.title }}</a> <span class="time-small">{% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}</span><br/>
-        <strong>To:</strong> {% if object.public_body %}
+        <strong>{% blocktrans %}To:{% endblocktrans %}</strong> {% if object.public_body %}
           <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
         {% else %}
           {% blocktrans %}Not yet set{% endblocktrans %}
