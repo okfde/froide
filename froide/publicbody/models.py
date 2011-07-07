@@ -127,6 +127,7 @@ class PublicBody(models.Model):
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
     
+    non_filtered_objects = models.Manager()
     objects = PublicBodyManager()
     
     class Meta:
