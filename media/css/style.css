@@ -297,6 +297,11 @@ strong {
     float: left;
     -webkit-appearance: textfield;
     border: 1px solid #41D05F;
+    outline: none;
+}
+
+.mainsearch:hover .mainsearchbox {
+    border: 1px solid #09f;
 }
 
 .mainsearch-button {
@@ -323,7 +328,7 @@ strong {
     padding-left: 50px !important;
 }
 
-.mainsearch-button:hover {
+.mainsearch:hover .mainsearch-button {
     background-color: #09f;
 }
 
