@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load markup %}
 {% load comments %}
+{% load foirequest_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -67,11 +68,11 @@
   {% endif %}
 {% if object.description %}
   <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
-  <dd>{{ object.get_description|linebreaks }}</dd>
+  <dd>{{ object.get_description|urlize|linebreaks }}</dd>
   {% endif %}
 {% if object.resolution %}
   <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
-  <dd>{{ object.resolution|linebreaks }}</dd>
+  <dd>{{ object.resolution|urlize|linebreaks }}</dd>
 {% endif %}
 
 </dl>
@@ -131,7 +132,7 @@
   </tbody>
   </table>
   <hr/>
-  <div class="message-content">{{ message.get_content|urlize }}</div>
+  <div class="message-content">{% if forloop.counter0 == 0 %}{% highlight_request message %}{% else %}{{ message.get_content|urlize }}{% endif %}</div>
 </div>
 {% if message.events %}
 <div class="events">
