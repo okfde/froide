@@ -344,6 +344,16 @@ class FoiRequest(models.Model):
         secret = "".join([random.choice(possible_chars) for i in range(10)])
         return "%s+%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
 
+    @classmethod
+    def generate_unique_secret_address(cls, user):
+        while True:
+            address = cls.generate_secret_address(user)
+            try:
+                FoiRequest.objects.get(secret_address=address)
+            except FoiRequest.DoesNotExist:
+                break
+        return address
+
     @property
     def readable_status(self):
         return FoiRequest.get_readable_status(self.status)
@@ -386,15 +396,7 @@ class FoiRequest(models.Model):
                 request.status = 'awaiting_response'
                 send_now = True
 
-        # ensure uniqueness of address
-        while True:
-            request.secret_address = cls.generate_secret_address(user)
-            try:
-                FoiRequest.objects.get(secret_address=request.secret_address)
-            except FoiRequest.DoesNotExist:
-                break
-
-        #TODO: add right law
+        request.secret_address = cls.generate_unique_secret_address(user)
         request.law = foi_law
 
         # ensure slug is unique
