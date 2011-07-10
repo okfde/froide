@@ -213,7 +213,7 @@ def suggest_public_body(request, slug):
             messages.add_message(request, messages.SUCCESS,
                 _('Your Public Body suggestion has been added.'))
         else:
-            messages.add_message(request, messages.NOTICE,
+            messages.add_message(request, messages.WARNING,
                 _('This Public Body has already been suggested.'))
         return HttpResponseRedirect(foirequest.get_absolute_url())
     messages.add_message(request, messages.ERROR, 
