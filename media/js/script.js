@@ -202,9 +202,9 @@ Froide.app.publicBodyChosen = (function(){
                             ));
                         }
                             // TODO: Create law chooser here
-                        $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
-                        $('#letter_start').text(result.laws[0].letter_start);
-                        $('#letter_end').text(result.laws[0].letter_end);
+                        // $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
+                        // $('#letter_start').text(result.laws[0].letter_start);
+                        // $('#letter_end').text(result.laws[0].letter_end);
                 });
             }(currentPublicBodyChoice));
         } else {
