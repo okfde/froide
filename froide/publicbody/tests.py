@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from publicbody.models import PublicBody
+from publicbody.models import PublicBody, FoiLaw
 
 class PublicBodyTest(TestCase):
     fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
@@ -50,3 +50,10 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-search')+"?q=abc")
         self.assertIn("Selbstschutzschule", response.content)
         self.assertEqual(response['Content-Type'], 'application/json')
+
+    def test_show_law(self):
+        law = FoiLaw.objects.filter(meta=False)[0]
+        response = self.client.get(reverse('publicbody-foilaw-show', kwargs={"slug": law.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(law.name, response.content)
+

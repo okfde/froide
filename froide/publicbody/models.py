@@ -10,6 +10,7 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.text import truncate_words
+from django.contrib.markup.templatetags.markup import markdown
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
@@ -31,6 +32,9 @@ class FoiLaw(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
+    long_description = models.TextField(_("Website Text"), blank=True)
+    meta = models.BooleanField(_("Meta Law"), default=False)
+    combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
     letter_end = models.TextField(_("End of Letter"), blank=True)
     jurisdiction = models.CharField(_("Jurisdiction"), max_length=255)
@@ -45,7 +49,8 @@ class FoiLaw(models.Model):
                 ('month_de', _('Month(s) (DE)')),
             ))
     refusal_reasons = models.TextField(
-            _(u"Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"))
+            _(u"Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
+            blank=True)
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL,
             default=settings.SITE_ID)
@@ -57,8 +62,20 @@ class FoiLaw(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
+    @property
+    def formatted_description(self):
+        return markdown(self.description)
+
     def get_refusal_reason_choices(self):
         return tuple([(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()])
+
+    @classmethod
+    def get_default_law(cls):
+        return settings.FROIDE_CONFIG.get("default_law", 1)
+
+    def as_dict(self):
+        return {"pk": self.pk, "name": self.name, "letter_start": self.letter_start,
+                "letter_end": self.letter_end, "description": self.description}
 
     def calculate_due_date(self, date=None):
         if date is None:
@@ -163,7 +180,7 @@ class PublicBody(models.Model):
 
     @property
     def default_law(self):
-        return self.laws.all()[0]
+        return FoiLaw.objects.get(pk=FoiLaw.get_default_law())
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
@@ -183,8 +200,7 @@ class PublicBody(models.Model):
         d = {}
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
-        d['laws'] = [{"pk": l.pk, "name": l.name, "letter_start": l.letter_start,
-                "letter_end": l.letter_end} for l in self.laws.all()]
+        d['laws'] = [l.as_dict() for l in self.laws.all()]
         return json.dumps(d)
 
     @property

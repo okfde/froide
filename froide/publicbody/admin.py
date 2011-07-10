@@ -10,6 +10,8 @@ class PublicBodyAdmin(admin.ModelAdmin):
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("jurisdiction", "name",)}
+    list_display = ('name', 'meta',)
+
 
 class PublicBodyTopicAdmin(admin.ModelAdmin):
     pass

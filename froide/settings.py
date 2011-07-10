@@ -234,7 +234,8 @@ FROIDE_CONFIG = {
     "public_body_officials_email_public": False,
     "request_public_after_due_days": 14,
     "payment_possible": True,
-    "currency": "Euro"
+    "currency": "Euro",
+    "default_law": 1
 }
 
 # name classification values and their boost values

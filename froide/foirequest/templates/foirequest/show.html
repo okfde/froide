@@ -25,16 +25,27 @@
   {% else %}
   {% blocktrans %}Not yet known{% endblocktrans %}
   {% endif %}</dd>
-  <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
-  <dd>{% if object.law %}
-  {% if object.law.url %}
-  <a href="{{ object.law.url }}" class="target-new">{{ object.law }}</a>
+  {% if object.law %}
+  {% if object.law.meta %}
+  <dt>{% blocktrans %}Laws used:{% endblocktrans %}</dt>
+  <dd>
+    <ul>
+    {% for law in object.law.combined.all %}
+      <li>
+        <a href="{% url 'publicbody-foilaw-show' slug=law.slug %}" class="target-new">{{ law.name }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+  </dd>
   {% else %}
-  {{ object.law }}
+    <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
+    <dd><a href="{% url 'publicbody-foilaw-show' slug=object.law.slug %}" class="target-new">{{ object.law.name }}</a>
+    </dd>
   {% endif %}
   {% else %}
-  {% blocktrans %}Not yet set{% endblocktrans %}
-  {% endif %}</dd>
+    <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
+    <dd>{% blocktrans %}Not yet set{% endblocktrans %}</dd>
+  {% endif %}
   <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
   <dd>{{ object.readable_status }}</dd>
   {% if object.awaits_response %}

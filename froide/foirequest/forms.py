@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -5,7 +7,8 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
 from publicbody.models import PublicBody
-from foirequest.models import FoiRequest, FoiLaw
+from foirequest.models import FoiRequest
+
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
         'create_new_publicbody', False)
@@ -15,8 +18,6 @@ payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 class RequestForm(forms.Form):
     public_body = forms.CharField(label=_("Public Body"), required=False)
-    law = forms.IntegerField(label=_("FOI Law"), widget=forms.HiddenInput,
-            required=False)
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
     body = forms.CharField(label=_("Body"), 
@@ -24,6 +25,24 @@ class RequestForm(forms.Form):
             attrs={'placeholder': _("Specify your request here...")}))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
+
+    def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
+        super(RequestForm, self).__init__(*args, **kwargs)
+        self.list_of_laws = list_of_laws
+        self.indexed_laws = dict([(l.pk, l) for l in self.list_of_laws])
+        self.default_law = self.indexed_laws[default_law]
+        self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
+            required=False,
+            widget=forms.RadioSelect if not hidden else forms.HiddenInput,
+            initial=default_law,
+            choices=((l.pk, mark_safe(
+                '%(name)s<span class="lawinfo">%(description)s</span>' %
+                    {"name": escape(l.name),
+                    "description": l.formatted_description
+                })) for l in list_of_laws))
+
+    def laws_to_json(self):
+        return json.dumps(dict([(l.id, l.as_dict()) for l in self.list_of_laws]))
 
     def clean_public_body(self):
         pb = self.cleaned_data['public_body']
@@ -50,15 +69,17 @@ class RequestForm(forms.Form):
         return pb
     
     public_body_object = None
-    foi_law_object = None
 
     def clean_law_for_public_body(self, public_body):
-        law = self.cleaned_data['law']
+        return self.clean_law_without_public_body()
+
+    def clean_law_without_public_body(self):
         try:
-            foi_law = public_body.laws.filter(pk=law).get()
-        except FoiLaw.DoesNotExist:
-            raise forms.ValidationError(_("Invalid value"))
-        self.foi_law_object = foi_law
+            law = self.cleaned_data['law']
+            law = self.indexed_laws[int(law)]
+        except (ValueError, KeyError):
+            self._errors["law"] = self.error_class([_("Invalid Information Law")])
+            return None
         return law
 
     def clean(self):
@@ -66,7 +87,9 @@ class RequestForm(forms.Form):
         public_body = cleaned.get("public_body")
         if public_body is not None and (public_body != "new"
                 and public_body != ""):
-            self.clean_law_for_public_body(self.public_body_object)
+            self.foi_law = self.clean_law_for_public_body(self.public_body_object)
+        else:
+            self.foi_law = self.clean_law_without_public_body()
         return cleaned
 
 

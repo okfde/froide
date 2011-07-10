@@ -186,6 +186,7 @@ class FoiRequest(models.Model):
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
     became_overdue = django.dispatch.Signal(providing_args=["status"])
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
+    set_concrete_law = django.dispatch.Signal(providing_args=['name'])
     made_public = django.dispatch.Signal(providing_args=[])
 
 
@@ -287,6 +288,10 @@ class FoiRequest(models.Model):
     def make_public_body_suggestion_form(self):
         from foirequest.forms import MakePublicBodySuggestionForm
         return MakePublicBodySuggestionForm()
+
+    def get_concrete_law_form(self):
+        from foirequest.forms import ConcreteLawForm
+        return ConcreteLawForm(self)
 
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
@@ -812,7 +817,9 @@ class FoiEvent(models.Model):
         "request_refused": _(
             u"%(public_body)s refused to provide information on the grounds of %(reason)s."),
         "became_overdue": _(
-            u"This request became overdue")
+            u"This request became overdue"),
+        "set_concrete_law": _(
+            u"%(user)s set '%(name)s' as the information law for the request.")
     }
 
     class Meta:
@@ -922,4 +929,10 @@ def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="create_event_became_overdue")
 def create_event_became_overdue(sender, **kwargs):
-    FoiEvent.object.create_event("became_overdue", sender)
+    FoiEvent.objects.create_event("became_overdue", sender)
+
+@receiver(FoiRequest.set_concrete_law,
+        dispatch_uid="create_event_set_concrete_law")
+def create_event_set_concrete_law(sender, **kwargs):
+    FoiEvent.objects.create_event("set_concrete_law", sender,
+            user=sender.user)

@@ -5,11 +5,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core import urlresolvers
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
-from django.views.generic import DetailView, ListView
 
 from haystack.query import SearchQuerySet
 
-from publicbody.models import PublicBody, PublicBodyTopic
+from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
 from froide.helper.utils import render_400, render_403
@@ -32,6 +31,12 @@ def show_topic(request, topic):
     context = {"topic": topic, 
             "object_list": PublicBody.objects.filter(topic=topic).order_by("name")}
     return render(request, 'publicbody/show_topic.html', context)
+
+
+def show_foilaw(request, slug):
+    law = get_object_or_404(FoiLaw, slug=slug)
+    context = {"object": law}
+    return render(request, 'publicbody/show_foilaw.html', context)
 
 
 class PublicBodyDetailView(JSONResponseDetailView):

@@ -1,0 +1,17 @@
+{% extends 'publicbody/base.html' %}
+
+{% load url from future %}
+{% load i18n %}
+{% load markup %}
+
+{% block body %}
+<h2>{{ object.name }}</h2>
+<dl>
+  <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
+  <dd><a href="{{ object.url }}" class="target-new">{{ object.name }}</a></dd>
+</dl>
+
+{{ object.long_description|markdown }}
+
+{% endblock %}
+

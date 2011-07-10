@@ -4,11 +4,11 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponseRedirect, Http404
 from django.contrib import messages
 
-from foirequest.forms import RequestForm
+from foirequest.forms import RequestForm, ConcreteLawForm
 from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
-from publicbody.models import PublicBody
+from publicbody.models import PublicBody, FoiLaw
 from foirequest.models import FoiRequest, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, get_status_form_class,
         MakePublicBodySuggestionForm)
@@ -45,12 +45,11 @@ def list_requests(request, status=None):
 def show(request, slug, template_name="foirequest/show.html"):
     try:
         obj = FoiRequest.objects.select_related("public_body",
-                "user", "law").get(slug=slug)
+                "user", "law", "law__combines").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
     if not obj.is_visible(request.user):
         return render_403(request)
-
     all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
     for message in obj.messages:
         message._attachments = filter(lambda x: x.belongs_to_id == message.id,
@@ -72,7 +71,7 @@ def make_request(request, public_body=None):
                 slug=public_body)
     else:
         public_body_form = PublicBodyForm()
-    rq_form = RequestForm()
+    rq_form = RequestForm(FoiLaw.objects.all(), FoiLaw.get_default_law(), True)
     topic = request.GET.get("topic", "")
     user_form = None
     if not request.user.is_authenticated():
@@ -91,9 +90,11 @@ def submit_request(request, public_body=None):
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
-        foilaw = public_body.default_law
     context = {"public_body": public_body}
-    request_form = RequestForm(request.POST)
+    
+    all_laws = FoiLaw.objects.all()
+    request_form = RequestForm(all_laws, FoiLaw.get_default_law(),
+            True, request.POST)
     context['request_form'] = request_form
     context['public_body_form'] = PublicBodyForm()
     if public_body is None and \
@@ -138,7 +139,7 @@ def submit_request(request, public_body=None):
             sent_to_pb = 0
         
         if foilaw is None:
-            foilaw = request_form.foi_law_object
+            foilaw = request_form.foi_law
         
         foi_request = FoiRequest.from_request_form(user, public_body,
                 foilaw, **request_form.cleaned_data)

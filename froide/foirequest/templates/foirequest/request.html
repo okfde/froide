@@ -15,7 +15,6 @@
   Froide.template.foundEmail = "{% blocktrans %}We found an email address in your text {{email}}. Do not sent personal data to the Public Body.{% endblocktrans %}";
   Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}";
   Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}";
-
 </script>
 <script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
 {% endblock %}
@@ -85,27 +84,23 @@
         </ul>
         <p>{% blocktrans %}If you could not find the information you are looking for, write a request below.{% endblocktrans %}</p>
       </div>
-      {# Insert Law Choice here #}
       {{ request_form.non_field_errors }}
       <label for="id_subject">{% trans "Request Subject" %}:</label>
       {{ request_form.subject.errors }}
       {{ request_form.subject }}
+      {% comment %} Insert Law Choice here 
+      <div class="lawchooser">
+        <p class="bold">{% blocktrans %}Choose the law under which you want to make your request:{% endblocktrans %}
+      </div> {% endcomment %}
+      {{ request_form.law }}
       <div class="clearfix" style="margin-top:1em;">
         <div class="span-10">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
-         {{ request_form.body.errors }}
+          {{ request_form.body.errors }}
          <div class="letter">
-           {% if public_body %}
-           <div id="letter_start" class="text">{{ public_body.default_law.letter_start|markdown }}</div>
-           {% else %}
-           <div id="letter_start" class="text">{% include "foirequest/dummy_mail_start.txt" %}</div>
-           {% endif %}
+           <div id="letter_start" class="text">{{ request_form.default_law.letter_start }}</div>
            {{ request_form.body }}
-           {% if public_body %}
-           <div id="letter_end" class="text">{{ public_body.default_law.letter_end|markdown }}</div>
-           {% else %}
-           <div id="letter_end" class="text">{% include "foirequest/dummy_mail_end.txt" %}</div>
-           {% endif %}
+           <div id="letter_end" class="text">{{ request_form.default_law.letter_end }}</div>
           </div>
         </div>
         <div class="span-7 last request-notes">
