@@ -540,6 +540,24 @@ form.foirequest #id_subject {
     margin-right:20%;
 }
 
+.lawchooser {
+    margin: 1em 0;
+}
+
+.lawchooser ul{
+    list-style-type: none;
+    margin: 0;
+}
+.lawchooser li {
+    margin: 0 0 0.25em;
+}
+
+form.foirequest .lawinfo {
+    display: block;
+    color: #666;
+    font-weight: normal;
+}
+
 .check-information {
     border: 1px solid #ccc;
     margin:0.5em 0;
