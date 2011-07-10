@@ -7,10 +7,12 @@
 <h2>{% blocktrans %}Your account{% endblocktrans %}</h2>
 <p>{% blocktrans %}Your name:{% endblocktrans %} {{ user.get_full_name }}<br/>
 {% blocktrans %}Your email address:{% endblocktrans %} {{ user.email }}
-{% if user.get_profile.private %}<br/>
+{% if user.get_profile.private %}
   {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
 {% endif %}
 </p>
+<p>{% blocktrans %}Your address:{% endblocktrans %}{{ user.get_profile.address|linebreaks }}</p>
+
 
 {% if not user.is_active %}
 <p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>

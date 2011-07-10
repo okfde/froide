@@ -128,7 +128,23 @@
       <p>
         {{ user_form.first_name }}
         {{ user_form.last_name }}
-     </p>
+        </p>
+      <div class="clearfix">
+        <div class="span-6">
+         <label for="id_address">{% blocktrans %}Your mailing address{% endblocktrans %}</label>
+       {{ user_form.address.errors }}
+        <p>
+        {{ user_form.address }}<br/><span class="help">{{ user_form.address.help_text }}</span>
+        </p>
+      </div>
+      <div class="span-10 last">
+        <p>{% blocktrans %}Why do you need my mailingaddress?{%endblocktrans %}</p>
+        <p>{% blocktrans %}You need to be a legal person in order to use
+        Freedom of Information in Germany and Public Bodies want your
+        address as proof. However, your address will only be sent with
+        your request and not displayed publicly.{% endblocktrans %}</p>
+      </div>
+    </div>
      <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
      {{ user_form.user_email.errors }}
       <p>

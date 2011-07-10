@@ -83,16 +83,22 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 400)
         post['user_email'] = 'horst.porst@example.com'
         response = self.client.post(reverse('account-signup'), post)
+        self.assertTrue(response.status_code, 400)
+        post['address'] = 'MyOwnPrivateStree 5\n31415 Pi-Ville'
+        response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 302)
         user = User.objects.get(email=post['user_email'])
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
+        profile = user.get_profile()
+        self.assertEqual(profile.address, post['address'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
     def test_confirmation_process(self):
         self.client.logout()
-        user, password = AccountManager.create_user(first_name="Stefan",
-                last_name="Wehrmeyer", user_email="sw@example.com", private=True)
+        user, password = AccountManager.create_user(first_name=u"Stefan",
+                last_name=u"Wehrmeyer", user_email="sw@example.com",
+                address=u"SomeRandomAddress\n11234 Bern", private=True)
         AccountManager(user).send_confirmation_mail(password=password)
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]

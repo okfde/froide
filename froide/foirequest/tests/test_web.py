@@ -27,6 +27,11 @@ class WebTest(TestCase):
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
+        for urlpart, status in FoiRequest.STATUS_URLS:
+            response = self.client.get(reverse('foirequest-list',
+                kwargs={"status": urlpart}))
+            self.assertEqual(response.status_code, 200)
+
 
     def test_show_request(self):
         req = FoiRequest.objects.all()[0]

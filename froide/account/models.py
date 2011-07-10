@@ -24,6 +24,7 @@ user_activated_signal = dispatch.Signal(providing_args=[])
 class Profile(models.Model):
     user = models.OneToOneField(User)
     private = models.BooleanField(default=False)
+    address = models.TextField(blank=True)
 
     def __unicode__(self):
         return _(u"Profile of <%(user)s>") % {"user": self.user}
@@ -35,6 +36,13 @@ class Profile(models.Model):
             return self.user.get_full_name()
 
     def apply_message_redaction(self, content):
+        if self.address:
+            for line in self.address.splitlines():
+                content = content.replace(line,
+                        _("<< Address removed >>"))
+        if self.user.email:
+            content = content.replace(self.user.email,
+                    _("<< Email removed >>"))
         if not self.private:
             return content
         last_name = self.user.last_name
@@ -55,6 +63,10 @@ class Profile(models.Model):
 
     def get_password_change_form(self, *args, **kwargs):
         return SetPasswordForm(self.user, *args, **kwargs)
+
+    def get_address_change_form(self, *args, **kwargs):
+        from account.forms import UserChangeAddressForm
+        return UserChangeAddressForm(self, *args, **kwargs)
 
 
 class AccountManager(object):
@@ -138,8 +150,9 @@ class AccountManager(object):
             password = User.objects.make_random_password()
         user.set_password(password)
         user.save()
+        profile = user.get_profile()
+        profile.address = data['address']
         if data['private']:
-            profile = user.get_profile()
             profile.private = True
-            profile.save()
+        profile.save()
         return user, password

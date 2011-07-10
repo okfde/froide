@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import mail
 
-from publicbody.models import PublicBody
+from publicbody.models import PublicBody, FoiLaw
 from foirequest.models import FoiRequest
 
 
@@ -64,9 +64,10 @@ class RequestTest(TestCase):
         post = {"subject": "Test-Subject With New User",
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
+                "address": "TestStreet 3\n55555 Town",
                 "user_email": "sw@example.com",
                 "terms": "on",
-                "law": pb.laws.all()[0].pk}
+                "law": FoiLaw.get_default_law()}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -103,6 +104,9 @@ class RequestTest(TestCase):
         resp = self.client.post(reverse('foirequest-set_status',
             kwargs={"slug": req.slug}))
         self.assertEqual(resp.status_code, 400)
+        response = self.client.post(reverse('foirequest-set_law',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 400)
         req.add_message_from_email({
             'msgobj': None,
             'date': (datetime.now(),0),
@@ -137,6 +141,9 @@ class RequestTest(TestCase):
         self.assertEqual(req.status, status)
         # send reply
         old_len = len(mail.outbox)
+        response = self.client.post(reverse('foirequest-send_message',
+                kwargs={"slug": req.slug}), {})
+        self.assertEqual(response.status_code, 400)
         post = {"message": "My custom reply"}
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
@@ -145,11 +152,35 @@ class RequestTest(TestCase):
         self.assertEqual(old_len + 2, new_len)
         message = filter(lambda x: req.title in x.subject, mail.outbox)[-1]
         self.assertEqual(message.body, post['message'])
+        self.assertTrue(req.law.meta)
+        other_laws = req.law.combined.all()
+        post = {"law": str(other_laws[0].pk)}
+        response = self.client.post(reverse('foirequest-set_law',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('foirequest-set_law',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 400)
         # logout
         self.client.logout()
+
+        response = self.client.post(reverse('foirequest-set_law',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 403)
+
+        response = self.client.post(reverse('foirequest-send_message',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 403)
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
                 {"status": status, "costs": costs})
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-set_law',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(reverse('foirequest-send_message',
+                kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 403)
 
     def test_public_body_not_logged_in_request(self):
@@ -184,6 +215,7 @@ class RequestTest(TestCase):
                 "body": "This is a test body",
                 "public_body": "new",
                 "public": "on",
+                "law": str(settings.FROIDE_CONFIG['default_law']),
                 "name": "Some New Public Body",
                 "email": "public.body@example.com",
                 "url": "http://example.com/public/body/"}
@@ -284,6 +316,7 @@ class RequestTest(TestCase):
         self.client.login(username="dummy", password="froide")
         post = {"subject": "An Empty Public Body Request",
                 "body": "This is another test body",
+                "law": str(FoiLaw.get_default_law()),
                 "public_body": '',
                 "public": "on"}
         response = self.client.post(
@@ -292,6 +325,10 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(title=post['subject'])
         response = self.client.get(req.get_absolute_url())
         self.assertEqual(response.status_code, 200)
+        message = req.foimessage_set.all()[0]
+        law = FoiLaw.objects.get(pk=FoiLaw.get_default_law())
+        self.assertIn(law.letter_start, message.plaintext)
+        self.assertIn(law.letter_end, message.plaintext)
 
         # suggest public body
         other_req = FoiRequest.objects.filter(public_body__isnull=False)[0]
@@ -325,9 +362,18 @@ class RequestTest(TestCase):
                 {"public_body": str(pb.pk),
                 "reason": "A good reason"})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(req.publicbodysuggestion_set.all()[0].public_body, pb)
+        self.assertEqual([t.public_body for t in req.publicbodysuggestion_set.all()], [pb])
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], req.user.email)
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": str(pb.pk),
+                "reason": "A good reason"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual([t.public_body for t in req.publicbodysuggestion_set.all()], [pb])
+        self.assertEqual(len(mail.outbox), 1)
+
         # set public body
         response = self.client.post(
                 reverse('foirequest-set_public_body',

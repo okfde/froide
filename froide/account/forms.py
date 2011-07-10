@@ -18,6 +18,11 @@ class NewUserForm(forms.Form):
             label=_('Last name'),
             widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
                 'class': 'inline'}))
+    address = forms.CharField(max_length=300, min_length=10,
+            label=_('Mailing Address'),
+            help_text=_('Your address will never be displayed publicly.'),
+            widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
+                'class': 'inline smalltext'}))
     user_email = forms.EmailField(label=_('Email address'),
             widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
  

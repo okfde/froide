@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
 from django.utils.http import base36_to_int
 
-from account.forms import UserLoginForm, NewUserForm
+from account.forms import UserLoginForm, NewUserForm, UserChangeAddressForm
 from account.models import AccountManager
 from foirequest.models import FoiRequest
 from froide.helper.auth import login_user
