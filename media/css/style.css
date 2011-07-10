@@ -588,6 +588,11 @@ form.foirequest p {
     margin: 0 0 0.5em;
 }
 
+textarea.smalltext {
+    width: 200px;
+    height: 80px;
+}
+
 .js .hidden {
     display:none;
 }
