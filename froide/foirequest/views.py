@@ -261,3 +261,19 @@ def make_public(request, slug):
         return render_403(request)
     foirequest.make_public()
     return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
+def set_law(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or request.user != foirequest.user:
+        return render_403(request)
+    if not foirequest.status_settable:
+        return render_400(request)
+    if not foirequest.law.meta:
+        return render_400(request)
+    form = ConcreteLawForm(foirequest, request.POST)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('A concrete law has been set for this request.'))
+    return HttpResponseRedirect(foirequest.get_absolute_url())

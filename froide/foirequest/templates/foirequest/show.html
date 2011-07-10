@@ -230,6 +230,18 @@
   </form>
 </div>
 {# End Set status #}
+
+{# If Meta Law #}
+{% if object.user == user and object.status_settable and object.law.meta %}
+<div class="section">
+  <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
+    <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
+    {{ object.get_concrete_law_form }}
+    <input type="submit" value="{% blocktrans %}Set Concrete Law{% endblocktrans %}"/>
+  </form>
+</div>
+{% endif %}
+
 {# Reply #}
 <div class="section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>

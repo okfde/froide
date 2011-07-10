@@ -148,3 +148,30 @@ def get_status_form_class(foirequest):
                 foirequest.law.get_refusal_reason_choices(),required=False)
 
     return FoiRequestStatusForm
+
+class ConcreteLawForm(forms.Form):
+    def __init__(self, foirequest, *args, **kwargs):
+        super(ConcreteLawForm, self).__init__(*args, **kwargs)
+        self.foirequest = foirequest
+        self.possible_laws = foirequest.law.combined.all()
+        self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
+                choices=[('', '-------')] + \
+                    map(lambda x: (x.pk, x.name), self.possible_laws),
+                coerce=int, empty_value='')
+
+    def clean(self):
+        if self.foirequest.law is None or not self.foirequest.law.meta:
+            raise forms.ValidationError(_("Invalid FoI Request for this operation"))
+        indexed_laws = dict([(l.pk, l) for l in self.possible_laws])
+        if not "law" in self.cleaned_data:
+            return
+        if self.cleaned_data["law"]:
+            self.foi_law = indexed_laws[self.cleaned_data["law"]]
+
+    def save(self):
+        if self.foi_law:
+            self.foirequest.law = self.foi_law
+            self.foirequest.save()
+            self.foirequest.set_concrete_law.send(sender=self.foirequest,
+                    name=self.foi_law.name)
+
