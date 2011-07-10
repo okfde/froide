@@ -300,7 +300,7 @@ strong {
     outline: none;
 }
 
-.mainsearch:hover .mainsearchbox {
+.mainsearch > div:hover .mainsearchbox {
     border: 1px solid #09f;
 }
 
@@ -328,7 +328,7 @@ strong {
     padding-left: 50px !important;
 }
 
-.mainsearch:hover .mainsearch-button {
+.mainsearch > div:hover .mainsearch-button {
     background-color: #09f;
 }
 
