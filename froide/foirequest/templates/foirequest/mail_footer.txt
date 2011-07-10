@@ -1,5 +1,4 @@
 {% load i18n %}-- 
 {% blocktrans %}
-This mail was sent using a FroIde platform. That means that this message and any reply to it will be made public. This fact does not limit the requesters legal right to an answer in accordance with the related freedom of information law.
-You can find more information about FroIde at http://
+Rechtshinweis: Diese Anfrage wurde über den Webservice www.fragdenstaat.de gestellt. Auf www.fragdenstaat.de kann  jedermann Anfragen nach den Informationsfreiheitsgesetzen automatisiert an deutsche Behörden stellen. Alle Anfragen wie auch alle Antworten werden im Internet veröffentlicht. Dadurch wird der Bedarf (Anfragen) und das Angebot (Antworten) nachvollziehbar und transparent im Internet dokumentiert. Wir weisen ausdrücklich auf die automatisierte Veröffentlichung im Internet hin. Eine redaktionelle Prüfung findet nicht statt.
 {% endblocktrans %}
