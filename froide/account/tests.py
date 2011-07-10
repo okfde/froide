@@ -218,4 +218,19 @@ class AccountTest(TestCase):
         self.assertNotIn(user.last_name.encode("utf-8"),
                 response.content)
 
-
+    def test_change_address(self):
+        data = {}
+        response = self.client.post(reverse('account-change_address'), data)
+        self.assertEqual(response.status_code, 403)
+        ok = self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('account-change_address'), data)
+        self.assertEqual(response.status_code, 400)
+        data["address"] = ""
+        response = self.client.post(reverse('account-change_address'), data)
+        self.assertEqual(response.status_code, 400)
+        data["address"] = "Some Value"
+        response = self.client.post(reverse('account-change_address'), data)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(username='sw')
+        profile = user.get_profile()
+        self.assertEqual(profile.address, data['address'])

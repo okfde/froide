@@ -59,6 +59,7 @@ class NewUserForm(forms.Form):
                     _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))
         return email
 
+
 class NewUserWithPasswordForm(NewUserForm):
     password = forms.CharField(widget=forms.PasswordInput,
             label=_('Password'))
@@ -71,9 +72,28 @@ class NewUserWithPasswordForm(NewUserForm):
             raise forms.ValidationError(_("Passwords do not match!"))
         return cleaned
 
+
 class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=EmailInput(
         attrs={'placeholder': _('mail@ddress.net')}),
         label=_('Email address'))
     password = forms.CharField(widget=forms.PasswordInput,
         label=_('Password'))
+
+
+class UserChangeAddressForm(forms.Form):
+    address = forms.CharField(max_length=300,
+            label=_('Mailing Address'),
+            help_text=_('Your address will never be displayed publicly.'),
+            widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
+                'class': 'inline smalltext'}))
+
+    def __init__(self, profile, *args, **kwargs):
+        super(UserChangeAddressForm, self).__init__(*args, **kwargs)
+        self.profile = profile
+        self.fields['address'].initial = self.profile.address
+
+    def save(self):
+        self.profile.address = self.cleaned_data['address']
+        self.profile.save()
+

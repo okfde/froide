@@ -161,3 +161,19 @@ def password_reset_confirm(request, uidb36=None, token=None):
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been set and you are now logged in.'))
     return response
+
+@require_POST
+def change_address(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are not currently logged in, you cannot change your address.'))
+        return render_403(request)
+    form = UserChangeAddressForm(request.user.get_profile(), request.POST)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your address has been changed.'))
+        return HttpResponseRedirect(reverse('account-show'))
+    return show(request, context={"address_change_form": form}, status=400)
+
+
