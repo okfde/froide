@@ -424,14 +424,13 @@ class FoiRequest(models.Model):
                 sender_name=user.get_profile().display_name(),
                 timestamp=now,
                 subject=request.title)
+        message.plaintext = cls.construct_message_body(request_form['body'],
+                request)
         if public_body_object is not None:
             message.recipient = public_body_object.email
             cls.request_to_public_body.send(sender=request)
-            message.plaintext = cls.construct_message_body(message,
-                request_form['body'])
         else:
             message.recipient = ""
-            message.plaintext = request_form['body']
         message.original = message.plaintext
         message.save()
         cls.request_created.send(sender=request)
@@ -440,9 +439,9 @@ class FoiRequest(models.Model):
         return request
 
     @classmethod
-    def construct_message_body(cls, message, body):
+    def construct_message_body(cls, text, request):
         return render_to_string("foirequest/foi_request_mail.txt",
-                {"message": message, "body": body})
+                {"request": request, "body": text})
 
     def determine_visibility(self):
         if self.public:
