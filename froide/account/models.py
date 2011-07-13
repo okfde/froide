@@ -121,6 +121,7 @@ class AccountManager(object):
                 'site_name': settings.SITE_NAME,
                 'site_url': settings.SITE_URL
             })
+        # Translators: Mail subject
         send_mail(_("%(site_name)s: please confirm your account") % {
                     "site_name": settings.SITE_NAME},
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
