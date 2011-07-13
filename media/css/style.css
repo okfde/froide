@@ -591,6 +591,10 @@ form.foirequest .text {
     font-size:14px;
 }
 
+form.foirequest .text label {
+    white-space: normal;
+}
+
 form.foirequest p {
     margin: 0 0 0.5em;
 }
