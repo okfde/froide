@@ -5,6 +5,11 @@ from django.utils.safestring import mark_safe
 class EmailInput(forms.TextInput):
     input_type = 'email'
 
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class AgreeCheckboxInput(forms.CheckboxInput):
     def __init__(self, attrs=None, check_test=bool, agree_to="", url_names=None):
         super(AgreeCheckboxInput, self).__init__(attrs, check_test)
