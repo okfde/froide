@@ -13,4 +13,6 @@ verkehr-und-bau.png:
 auswartiges.png:
     The Noun Project: http://thenounproject.com/noun/globe/#icon-No248
 
+wirtschaft.png
+    The Noun Project: http://thenounproject.com/noun/factory/
 
