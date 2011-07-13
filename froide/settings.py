@@ -49,6 +49,9 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
+DATE_FORMAT = "d.m.Y."
+DATE_INPUT_FORMATS = ("%d.%m.%Y",)
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "..", "files")
@@ -208,7 +211,6 @@ SOUTH_TESTS_MIGRATE = False
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
 DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
-
 
 HOLIDAYS = [
     (1, 1), # New Year's Day

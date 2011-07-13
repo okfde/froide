@@ -32,7 +32,6 @@ class WebTest(TestCase):
                 kwargs={"status": urlpart}))
             self.assertEqual(response.status_code, 200)
 
-
     def test_show_request(self):
         req = FoiRequest.objects.all()[0]
         response = self.client.get(reverse('foirequest-show',
