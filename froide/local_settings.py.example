@@ -2,7 +2,7 @@
 import re
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = True
 
 LANGUAGE_CODE = "en"
 
@@ -29,6 +29,12 @@ rec = re.compile
 # define your greetings and closing regexes
 POSSIBLE_GREETINGS = [rec(u"Sehr geehrt(er? (?:Herr|Frau) .*?)")]
 POSSIBLE_CLOSINGS = [rec(u"Mit freundlichen Grüßen,?")]
+
+SECRET_URLS = {
+    "admin": "admin",
+    "sentry": "sentry",
+    "databrows": "databrowse"
+}
 
 FROIDE_CONFIG = {
     "create_new_publicbody": True,

@@ -4,7 +4,8 @@ import os.path
 import re
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
+
+TEMPLATE_DEBUG = True
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -226,7 +227,13 @@ HOLIDAYS_FOR_EASTER = (0, -2, 1, 39, 50, 60)
 rec = re.compile
 
 POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
-POSSIBLE_CLOSINGS = [rec(u"Sincerely yours,?")]
+POSSIE_CLOSINGS = [rec(u"Sincerely yours,?")]
+
+SECRET_URLS = {
+    "admin": "admin",
+    "sentry": "sentry",
+    "databrows": "databrowse"
+}
 
 FROIDE_CONFIG = {
     "create_new_publicbody": True,

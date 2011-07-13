@@ -14,6 +14,7 @@ from publicbody.models import PublicBody, FoiLaw
 databrowse.site.register(PublicBody)
 databrowse.site.register(FoiLaw)
 
+SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
 urlpatterns = patterns('',
     # Examples:
@@ -27,14 +28,13 @@ urlpatterns = patterns('',
 
     # Translators: URL part
     url(r'^%s/' % _('entity'), include('froide.publicbody.urls')),
+    # Translators: URL part
     url(r'^%s/' % _('law'), include('froide.publicbody.law_urls')),
 
     
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
     # Translators: URL part
     (r'^%s/' % _('account'), include('account.urls')),
     # Translators: URL part
@@ -42,9 +42,23 @@ urlpatterns = patterns('',
     # Translators: URL part
     (r'^%s/' % _('help'), include('froide.help_urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
-    (r'^databrowse/(.*)', user_passes_test(lambda u: u.is_superuser, login_url="/account/login/")(databrowse.site.root)),
+    (r'^comments/', include('django.contrib.comments.urls')),
+    # Secret URLs
+    url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls)),
+    (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls')),
+    (r'^%s/(.*)' % SECRET_URLS.get('databrowse', 'databrowse'),
+            user_passes_test(lambda u: u.is_superuser,
+                login_url="/account/login/")(databrowse.site.root)),
 )
 
+def handler500(request):
+    """
+    500 error handler which includes ``request`` in the context.
+    """
+   
+    from django.shortcuts import render
+
+    return render(request, '500.html', {'request': request}, status=500)
 
 
 if settings.DEBUG:
