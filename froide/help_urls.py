@@ -16,5 +16,6 @@ urlpatterns = patterns("",
     (r'^%s/$' % _('terms'), TV("help/%s/terms.html" % LG), {}, 'help-terms'),
     # Translators: URL part of /help/
     (r'^%s/$' % _('privacy'), TV("help/%s/privacy.html" % LG), {}, 'help-privacy'),
+    (r'^%s/$' % _('asking-questions'), TV("help/%s/asking-questions.html" % LG), {}, 'help-asking_questions'),
 
 )
