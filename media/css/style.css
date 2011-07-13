@@ -920,3 +920,7 @@ textarea.smalltext {
     padding-left: 20px;
     margin-bottom: 5px;
 }
+
+.red {
+    color: red;
+}
