@@ -1,4 +1,3 @@
 {% load i18n %}-- 
-{% blocktrans %}
-Rechtshinweis: Diese Anfrage wurde über den Webservice www.fragdenstaat.de gestellt. Auf www.fragdenstaat.de kann  jedermann Anfragen nach den Informationsfreiheitsgesetzen automatisiert an deutsche Behörden stellen. Alle Anfragen wie auch alle Antworten werden im Internet veröffentlicht. Dadurch wird der Bedarf (Anfragen) und das Angebot (Antworten) nachvollziehbar und transparent im Internet dokumentiert. Wir weisen ausdrücklich auf die automatisierte Veröffentlichung im Internet hin. Eine redaktionelle Prüfung findet nicht statt.
+{% blocktrans %}Legal Advice: This mail was sent by a Freedom of Information Portal
 {% endblocktrans %}
