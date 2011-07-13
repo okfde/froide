@@ -10,4 +10,4 @@ django-debug-toolbar
 pysolr==2.0.13
 BeautifulSoup
 pytz==2011e
-
+django-sentry

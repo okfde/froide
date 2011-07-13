@@ -157,6 +157,8 @@ INSTALLED_APPS = (
     'djcelery_email',
     'djkombu',
     'debug_toolbar',
+    'sentry',
+    'sentry.client',
     
     # local
     'foirequest',
