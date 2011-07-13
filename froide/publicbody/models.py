@@ -10,10 +10,12 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.text import truncate_words
+from django.utils.safestring import mark_safe
 from django.contrib.markup.templatetags.markup import markdown
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
+from froide.helper.form_generator import FormGenerator
 
 
 class PublicBodyManager(CurrentSiteManager):
@@ -65,6 +67,20 @@ class FoiLaw(models.Model):
     @property
     def formatted_description(self):
         return markdown(self.description)
+
+    @property
+    def letter_start_form(self):
+        return mark_safe(FormGenerator(self.letter_start).render_html())
+
+    @property
+    def letter_end_form(self):
+        return mark_safe(FormGenerator(self.letter_end).render_html())
+
+    def get_letter_start_text(self, post):
+        return FormGenerator(self.letter_start, post).render()
+
+    def get_letter_end_text(self, post):
+        return FormGenerator(self.letter_end, post).render()
 
     def get_refusal_reason_choices(self):
         return tuple([(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()])

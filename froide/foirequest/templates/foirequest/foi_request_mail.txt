@@ -1,8 +1,8 @@
-{% load i18n %}{% if request.law %}{{ request.law.letter_start }}
+{% load i18n %}{{ letter_start }}
 
-{% endif %}{{ body }}{% if request.law %}
+{{ body }}
 
-{{ request.law.letter_end }}{% endif %}
+{{ letter_end }}
 {{ request.user.get_full_name }}
 
 {% blocktrans %}Post Address:{% endblocktrans %}

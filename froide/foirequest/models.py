@@ -372,13 +372,13 @@ class FoiRequest(models.Model):
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
-            **request_form):
+            form_data=None, post_data=None):
         now = datetime.now()
-        request = FoiRequest(title=request_form['subject'],
+        request = FoiRequest(title=form_data['subject'],
                 public_body=public_body_object,
                 user=user,
-                description=request_form['body'],
-                public=request_form['public'],
+                description=form_data['body'],
+                public=form_data['public'],
                 site=Site.objects.get_current(),
                 first_message=now,
                 last_message=now)
@@ -424,8 +424,8 @@ class FoiRequest(models.Model):
                 sender_name=user.get_profile().display_name(),
                 timestamp=now,
                 subject=request.title)
-        message.plaintext = cls.construct_message_body(request_form['body'],
-                request)
+        message.plaintext = cls.construct_message_body(form_data['body'],
+                request, foi_law, post_data)
         if public_body_object is not None:
             message.recipient = public_body_object.email
             cls.request_to_public_body.send(sender=request)
@@ -439,9 +439,15 @@ class FoiRequest(models.Model):
         return request
 
     @classmethod
-    def construct_message_body(cls, text, request):
+    def construct_message_body(cls, text, request, foilaw, post_data):
+        letter_start, letter_end = "", ""
+        if foilaw:
+            letter_start = foilaw.get_letter_start_text(post_data)
+            letter_end = foilaw.get_letter_end_text(post_data)
         return render_to_string("foirequest/foi_request_mail.txt",
-                {"request": request, "body": text})
+                {"request": request, "letter_start": letter_start,
+                "letter_end": letter_end,
+                "body": text})
 
     def determine_visibility(self):
         if self.public:
@@ -527,8 +533,8 @@ class FoiRequest(models.Model):
             assert len(messages) == 1
             message = messages[0]
             message.recipient = public_body.email
-            message.plaintext = FoiRequest.construct_message_body(message,
-                message.plaintext)
+            # message.plaintext = FoiRequest.construct_message_body(message,
+            #   message.plaintext)
             assert message.sent == False
             message.send()  # saves message
 

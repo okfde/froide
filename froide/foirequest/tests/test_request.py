@@ -158,6 +158,9 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-set_law',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
+        response = self.client.get(reverse('foirequest-show',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('foirequest-set_law',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
@@ -327,8 +330,8 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 200)
         message = req.foimessage_set.all()[0]
         law = FoiLaw.objects.get(pk=FoiLaw.get_default_law())
-        self.assertIn(law.letter_start, message.plaintext)
-        self.assertIn(law.letter_end, message.plaintext)
+        self.assertIn(law.get_letter_start_text({}), message.plaintext)
+        self.assertIn(law.get_letter_end_text({}), message.plaintext)
 
         # suggest public body
         other_req = FoiRequest.objects.filter(public_body__isnull=False)[0]
@@ -408,6 +411,10 @@ class RequestTest(TestCase):
                 {"public_body": str(pb.pk)})
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
+        message = req.foimessage_set.all()[0]
+        self.assertIn(req.law.get_letter_start_text({}), message.plaintext)
+        self.assertIn(req.law.get_letter_end_text({}), message.plaintext)
+
         self.assertEqual(req.public_body, pb)
         response = self.client.post(
                 reverse('foirequest-set_public_body',

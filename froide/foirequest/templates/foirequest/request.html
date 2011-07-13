@@ -98,12 +98,14 @@
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
           {{ request_form.body.errors }}
          <div class="letter">
-           <div id="letter_start" class="text">{{ request_form.default_law.letter_start }}</div>
+           <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
            {{ request_form.body }}
-           <div id="letter_end" class="text">{{ request_form.default_law.letter_end }}</div>
+           <div id="letter_end" class="text">{{ request_form.default_law.letter_end_form }}</div>
           </div>
         </div>
         <div class="span-7 last request-notes">
+          <h4>{% blocktrans %}Legal Explanation:{% endblocktrans %}</h4>
+            {{ request_form.default_law.description|markdown }}
           <h4>{% blocktrans %}Important Notes:{% endblocktrans %}</h4>
           <ul>
             <li>{% blocktrans %}Write your request in <strong>simple, precise language</strong>.{% endblocktrans %}</li>
