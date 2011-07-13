@@ -774,6 +774,7 @@ class FoiAttachment(models.Model):
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
     
+
     class Meta:
         ordering = ('name',)
         # order_with_respect_to = 'belongs_to'
@@ -955,4 +956,4 @@ def create_event_became_overdue(sender, **kwargs):
         dispatch_uid="create_event_set_concrete_law")
 def create_event_set_concrete_law(sender, **kwargs):
     FoiEvent.objects.create_event("set_concrete_law", sender,
-            user=sender.user)
+            user=sender.user, name=kwargs['name'])
