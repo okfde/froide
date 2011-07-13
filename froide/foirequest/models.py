@@ -681,6 +681,19 @@ class FoiMessage(models.Model):
             return self.sender_public_body.name
 
     @property
+    def real_sender(self):
+        if self.sender_user:
+            return self.sender_user.get_profile().display_name
+        if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
+                False):
+            return make_address(self.sender_email, self.sender_name)
+        if self.sender_name:
+            return self.sender_name
+        else:
+            return self.sender_public_body.name
+
+
+    @property
     def attachments(self):
         if not hasattr(self, "_attachments"):
             self._attachments = list(self.foiattachment_set.all())

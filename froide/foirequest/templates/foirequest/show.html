@@ -105,7 +105,11 @@
     <tbody>
     <tr>
       <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+      {% if object.user == user %}
+      <td>{{ message.real_sender }}</td>
+      {% else %}
       <td>{{ message.sender }}</td>
+      {% endif %}
     </tr>
     <tr>
       <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
@@ -243,6 +247,25 @@
 </div>
 {% endif %}
 
+{# Postal Reply #}
+{% if object.user == user and object.public_body %}
+<div class="section">
+  <a href="#add-postal-reply" class="toggle">{% blocktrans %}Add a Postal reply that you have received{% endblocktrans %}</a>
+  <div id="add-postal-reply" style="display: none">
+    <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}">{% csrf_token %}
+      {% with form=object.get_postal_reply_form %}
+      <table class="no-stripes">
+        {{ form.as_table }}
+      </table>
+      {% endwith %}
+      <input type="submit" value="{% blocktrans %}Add Postal Reply{% endblocktrans %}"/>
+      <p>{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</p>
+  </form>
+  </div>
+</div>
+{% endif %}
+{# End Postal Reply #}
+
 {# Reply #}
 <div class="section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>
@@ -256,6 +279,7 @@
 </div>
 {% endif %}
 {# End Reply #}
+
 
 {% if object.user == user and not object.public %}
 <div class="section">
