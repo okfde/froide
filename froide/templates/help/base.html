@@ -1,2 +1,17 @@
 {% extends 'base.html' %}
+{% load url from future %}
+{% load i18n %}
+
 {% block nav_help %}active{% endblock %}
+{% block body %}
+<div class="span-18">
+  {% block helpbody %}{% endblock %}
+</div>
+<div class="span-6 last">
+  <h3>{% blocktrans %}Help Pages{% endblocktrans %}</h3>
+  <ul>
+    <li><a href="{% url 'help-about' %}">{% trans "About Froide" %}</a></li>
+    <li><a href="{% url 'help-asking_questions' %}">{% trans "Asking Questions" %}</a></li>
+  </ul>
+</div>
+{% endblock %}
