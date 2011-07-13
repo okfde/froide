@@ -229,7 +229,7 @@ class FoiRequest(models.Model):
         return self.status == 'publicbody_needed'
 
     def awaits_response(self):
-        return self.status == 'awaiting_response'
+        return self.status == 'awaiting_response' or self.status == 'overdue'
 
     def is_overdue(self):
         return self.due_date < datetime.now()
