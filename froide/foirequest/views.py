@@ -21,7 +21,7 @@ from froide.helper.utils import render_400, render_403
 
 def index(request):
     # public_bodies = PublicBody.objects.get_for_homepage()
-    foi_requests = FoiRequest.objects.get_for_homepage()
+    foi_requests = FoiRequest.published.get_for_homepage()
     events = FoiEvent.objects.get_for_homepage()[:5]
     return render(request, 'index.html', 
             {'events': events,

@@ -32,7 +32,7 @@ html2markdown = lambda x: x
 
 class FoiRequestManager(CurrentSiteManager):
     def get_for_homepage(self, count=5):
-        return self.get_query_set()[:count]
+        return self.get_query_set().order_by("-last_message")[:count]
 
     def related_from_slug(self, slug):
         return self.get_query_set().filter(slug=slug).select_related()
@@ -62,6 +62,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
     def by_last_update(self):
         return self.get_query_set().order_by('-last_message')
+
+    def get_for_homepage(self, count=5):
+        return self.by_last_update()[:count]
 
     def successful(self):
         return self.get_query_set().filter(
