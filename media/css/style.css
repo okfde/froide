@@ -1,8 +1,8 @@
 body {
-    background-color: #fff;
+    background-color: #f9f9f9;
     margin:0;
     font-size:12pt;
-    font-family: 'Helvetica Neue',arial,helvetica,sans-serif;
+    font-family: 'Helvetica Neue',Helvetica,arial,sans-serif;
     color: #333333;
 }
 
@@ -12,7 +12,7 @@ table.no-stripes tbody tr:nth-child(even) td, table.no-stripes tbody tr.even td 
 
 table.no-stripes tbody tr th {
     text-align: left;
-    vertical-align: top;
+    vertical-align: top;    
 }
 
 #header {
@@ -90,7 +90,7 @@ table.no-stripes tbody tr th {
     color: #333 !important;
     padding: 0.2em;
     background: rgba(0, 153, 255, 0.2);
-    text-decoration:none;
+    /* text-decoration: underline !important;*/
 }
 
 .special-nav-item a:hover {
@@ -130,6 +130,7 @@ table.no-stripes tbody tr th {
     position:relative;
     margin: 0 auto;
     padding: 1.5em;
+    background-color: #fff;
     /* border: 1px solid #ccc;*/
     -moz-box-shadow: 0px 0px 10px #ccc;
     -webkit-box-shadow: 0px 0px 10px #ccc;
@@ -153,6 +154,7 @@ h2 {
 
 h3 {
     font-size:1.2em;
+    font-weight: bold;
 }
 
 .messages {
@@ -585,7 +587,7 @@ form.foirequest .letter textarea {
 form.foirequest .text {
     width: 390px;
     padding: 5px;
-    white-space: pre-wrap;
+    white-space: pre-line;
     word-wrap: break-word;
     background-color: rgba(255,255,255,0.5);
     font-size:14px;
@@ -593,6 +595,12 @@ form.foirequest .text {
 
 form.foirequest .text label {
     white-space: normal;
+    display: block;
+    margin:0;
+}
+
+form.foirequest #post_address {
+    white-space: pre-line;
 }
 
 form.foirequest p {
@@ -723,6 +731,12 @@ textarea.smalltext {
     background-color: #FFF9DC;
 }
 
+.message-postal {
+    background-image: url('../img/status/gone_postal_big.png');
+    background-position: 99% 5px;
+    background-repeat: no-repeat;
+}
+
 .message-table {
     border-spacing: 0px;
 }
@@ -824,6 +838,9 @@ textarea.smalltext {
     padding: 1em 1em 1.2em;
     margin: 0.5em 1em;
     border-radius: 15px;
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
 }
 
 .topic-list > li div:hover {
@@ -847,6 +864,12 @@ textarea.smalltext {
     color: #fff;
     text-decoration: none !important;
 }
+.topic-list > li div:hover a {
+    /* color:#09f;*/
+    color: #fff;
+    text-decoration: none !important;
+}
+
 
 .topic-list > li > p {
     color: #999;
