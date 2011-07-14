@@ -97,6 +97,7 @@ class SendMessageForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea,
             label=_("Your message"))
 
+
 class MakePublicBodySuggestionForm(forms.Form):
     public_body = forms.IntegerField()
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
@@ -123,10 +124,12 @@ def get_public_body_suggestions_form_class(queryset):
             public_body = forms.ChoiceField(label=_("Suggestions"),
                     widget=forms.RadioSelect,
                     choices=((s.public_body.id, mark_safe(
-                        '%(name)s - <a class="info-link" href="%(url)s">%(link)s</a>' %
+                        '''%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
+                        <span class="help">%(reason)s</span>''' %
                             {"name": escape(s.public_body.name),
                             "url": s.public_body.get_absolute_url(),
-                            "link": _("More Info")
+                            "link": _("More Info"),
+                            "reason": _("Reason for this suggestion: %(reason)s") % {"reason": s.reason}
                         })) for s in queryset))
         return PublicBodySuggestionsForm
     return None
@@ -148,6 +151,7 @@ def get_status_form_class(foirequest):
                 foirequest.law.get_refusal_reason_choices(),required=False)
 
     return FoiRequestStatusForm
+
 
 class ConcreteLawForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
