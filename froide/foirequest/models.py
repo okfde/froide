@@ -115,7 +115,7 @@ class FoiRequest(models.Model):
                 # ('payment_refused', _('Payment refused'), _('')),
                 # ('payment_accepted', _('Payment accepted'), _(''))
             )
-        STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
+        # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
     STATUS_URLS_DICT = dict(STATUS_URLS)
     STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
     STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])
