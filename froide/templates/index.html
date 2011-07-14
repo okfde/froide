@@ -7,7 +7,7 @@
 <div class="clearfix">
   <div class="span-12">
 
-    <form class="mainsearch" method="get" action="{% url 'haystack_search'%}">
+    <form class="mainsearch" method="get" action="{% url 'foirequest-search' %}">
       <h3>{% blocktrans %}What topic do you need information on?{% endblocktrans %}</h3>
       <div>
         <input class="mainsearchbox" type="search" placeholder="{% trans "Your Topic" %}" name="q" autocomplete="off"/>

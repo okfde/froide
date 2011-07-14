@@ -61,7 +61,7 @@
               <a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a>
             </li>
             <li class="last-nav">
-              <form class="search-site" action="{% url 'haystack_search'%}" method="get">
+              <form class="search-site" action="{% url 'foirequest-search' %}" method="get">
                 <input type="text" name="q" placeholder="{% trans "Search" %}"/>
               </form>
             </li>

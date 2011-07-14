@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     # Translators: URL part
     (r'^%s/' % _('account'), include('account.urls')),
     # Translators: URL part
-    (r'^%s/' % _('search'), include('haystack.urls')),
+    (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
     # Translators: URL part
     (r'^%s/' % _('help'), include('froide.help_urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
