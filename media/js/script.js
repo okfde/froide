@@ -123,6 +123,15 @@ Froide.app.performReview = (function(){
         return email;
     };
 
+    var getAddress = function(){
+        var address = $("#post_address").length === 0 ? false : $("#post_address").text();
+        if (!address){
+            return $("#id_address").val();
+        }
+        return address;
+    };
+
+
     var getPublicBody = function(){
         var pb = $("#review-publicbody").length === 0 ? false : $("#review-publicbody").text();
         if (!pb){

@@ -120,7 +120,8 @@
       </div>
       {% if user.is_authenticated %}
       <p id="fullname">{{ user.get_full_name }}</p>
-      <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <span id="email_address">{{ user.email }}</span></p>
+      <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
+      <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
       {% else %}
       <div id="user_data_form">
         <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
