@@ -94,7 +94,7 @@ class FoiRequest(models.Model):
             _('The Public Body stated that it does not possess the information.')),
         ('refused', _('Request refused'),
             _('The Public Body refuses to provide the information.')),
-        # ('gone_postal', _('Gone Postal'), _('')),
+        ('gone_postal', _('Gone Postal'), _('The Public Body replied via post mail.')),
         # ('escalation', _('Escalate Request'), _('')),
         # ('user_withdrawn', _('User withdrew request'), _('')),
     )
@@ -188,7 +188,7 @@ class FoiRequest(models.Model):
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
     set_concrete_law = django.dispatch.Signal(providing_args=['name'])
     made_public = django.dispatch.Signal(providing_args=[])
-
+    add_postal_reply = django.dispatch.Signal(providing_args=[])
 
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
@@ -292,6 +292,10 @@ class FoiRequest(models.Model):
     def get_concrete_law_form(self):
         from foirequest.forms import ConcreteLawForm
         return ConcreteLawForm(self)
+
+    def get_postal_reply_form(self):
+        from foirequest.forms import PostalReplyForm
+        return PostalReplyForm(initial={"date": datetime.now().date()})
 
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
@@ -617,6 +621,8 @@ class FoiMessage(models.Model):
     sent = models.BooleanField(_("has message been sent?"), default=True)
     is_response = models.BooleanField(_("Is this message a response?"),
             default=True)
+    is_postal = models.BooleanField(_("Postal?"),
+            default=False)
     sender_user = models.ForeignKey(User, blank=True, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("From User"))
@@ -723,11 +729,20 @@ class FoiMessage(models.Model):
         content = remove_quote(content)
         return content
 
+    def get_real_content(self):
+        content = self.content
+        content = remove_quote(content)
+        return content
+
     def clean(self):
         from django.core.exceptions import ValidationError
         if self.sender_user and self.sender_public_body:
             raise ValidationError(
                     'Message may not be from user and public body')
+
+    def get_postal_attachment_form(self):
+        from foirequest.forms import PostalAttachmentForm
+        return PostalAttachmentForm()
 
     def send(self):
         if settings.FROIDE_DRYRUN:
@@ -773,7 +788,9 @@ class FoiAttachment(models.Model):
     size = models.IntegerField(_("Size"), blank=True, null=True)
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
-    
+
+    POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg",
+            "image/jpg")
 
     class Meta:
         ordering = ('name',)
@@ -840,7 +857,9 @@ class FoiEvent(models.Model):
         "became_overdue": _(
             u"This request became overdue"),
         "set_concrete_law": _(
-            u"%(user)s set '%(name)s' as the information law for the request.")
+            u"%(user)s set '%(name)s' as the information law for the request."),
+        "add_postal_reply": _(
+            u"%(user)s added a reply that was received via snail mail.")
     }
 
     class Meta:
@@ -957,3 +976,9 @@ def create_event_became_overdue(sender, **kwargs):
 def create_event_set_concrete_law(sender, **kwargs):
     FoiEvent.objects.create_event("set_concrete_law", sender,
             user=sender.user, name=kwargs['name'])
+
+@receiver(FoiRequest.add_postal_reply,
+    dispatch_uid="create_event_add_postal_reply")
+def create_event_add_postal_reply(sender, **kwargs):
+    FoiEvent.objects.create_event("add_postal_reply", sender,
+            user=sender.user)

@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django import forms
 from django.conf import settings
@@ -7,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
 from publicbody.models import PublicBody
-from foirequest.models import FoiRequest
+from foirequest.models import FoiRequest, FoiAttachment
 
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
@@ -179,3 +180,59 @@ class ConcreteLawForm(forms.Form):
             self.foirequest.set_concrete_law.send(sender=self.foirequest,
                     name=self.foi_law.name)
 
+
+class PostalReplyForm(forms.Form):
+    date = forms.DateField(
+            widget=forms.DateInput(attrs={"size": "10"}),
+            label=_("Send Date"),
+            help_text=_("Please give the date the reply was sent."),
+            localize=True)
+    sender = forms.CharField(label=_("Sender Name"),
+            widget=forms.TextInput(attrs={"size": "40",
+                "placeholder": _("Sender Name")}), required=True)
+    subject = forms.CharField(label=_("Subject"), required=False,
+            widget=forms.TextInput(attrs={"size": "40",
+                "placeholder": _("Subject")}))
+    text = forms.CharField(label=_("Letter"),
+            widget=forms.Textarea(attrs={"placeholder":
+                _("Letter text you have received")}),
+            required=False,
+            help_text=_("The text can be left empty, instead you can upload scanned documents."))
+    scan = forms.FileField(label=_("Scanned Letter"), required=False,
+            help_text=_("Uploaded scans can be PDF, JPG or PNG"))
+
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        now = datetime.datetime.now().date()
+        if date > now:
+            raise forms.ValidationError(_("Your reply date is in the future, that is not possible."))
+        return date
+
+    def clean_scan(self):
+        scan = self.cleaned_data.get("scan")
+        if scan:
+            if not scan.content_type in FoiAttachment.POSTAL_CONTENT_TYPES:
+                raise forms.ValidationError(
+                        _("The scanned letter must be either PDF, JPG or PNG!"))
+        return scan
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        text = cleaned_data.get("text")
+        scan = cleaned_data.get("scan")
+        if not (text or scan):
+            raise forms.ValidationError(_("You need to provide either the letter text or a scanned document."))
+        return cleaned_data
+
+class PostalAttachmentForm(forms.Form):
+    scan = forms.FileField(label=_("Scanned Document"),
+            help_text=_("Uploaded scans can be PDF, JPG or PNG"))
+
+    def clean_scan(self):
+        scan = self.cleaned_data.get("scan")
+        if scan:
+            if not scan.content_type in FoiAttachment.POSTAL_CONTENT_TYPES:
+                raise forms.ValidationError(
+                        _("The scanned letter must be either PDF, JPG or PNG!"))
+        return scan

@@ -13,5 +13,7 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/send/message/$", 'foirequest.views.send_message', name="foirequest-send_message"),
     url(r"^(?P<slug>[-\w]+)/make/public/$", 'foirequest.views.make_public', name="foirequest-make_public"),
     url(r"^(?P<slug>[-\w]+)/set/law/$", 'foirequest.views.set_law', name="foirequest-set_law"),
+    url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", 'foirequest.views.add_postal_reply', name="foirequest-add_postal_reply"),
+    url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", 'foirequest.views.add_postal_reply_attachment', name="foirequest-add_postal_reply_attachment"),
 
 )

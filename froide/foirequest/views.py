@@ -1,17 +1,21 @@
+import datetime
+
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.http import HttpResponseRedirect, Http404
 from django.contrib import messages
 
+from haystack.query import SearchQuerySet
+
 from foirequest.forms import RequestForm, ConcreteLawForm
 from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody, FoiLaw
-from foirequest.models import FoiRequest, FoiEvent, FoiAttachment
+from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, get_status_form_class,
-        MakePublicBodySuggestionForm)
+        MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm)
 from froide.helper.utils import render_400, render_403
 
 
@@ -42,7 +46,7 @@ def list_requests(request, status=None):
         })
     return render(request, 'foirequest/list.html', context)
 
-def show(request, slug, template_name="foirequest/show.html"):
+def show(request, slug, template_name="foirequest/show.html", context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
                 "user", "law", "law__combines").get(slug=slug)
@@ -52,7 +56,7 @@ def show(request, slug, template_name="foirequest/show.html"):
         return render_403(request)
     all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
     for message in obj.messages:
-        message._attachments = filter(lambda x: x.belongs_to_id == message.id,
+        message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
                 all_attachments)
 
     events = FoiEvent.objects.filter(request=obj).select_related("user", "request",
@@ -62,7 +66,28 @@ def show(request, slug, template_name="foirequest/show.html"):
     for message in reversed(obj.messages):
         message.events = [ev for ev in events[:last_index] if ev.timestamp >= message.timestamp]
         last_index = event_count - len(message.events)
-    return render(request, template_name, {"object": obj})
+
+    if context is None:
+        context = {}
+    context.update({"object": obj})
+    return render(request, template_name, context, status=status)
+
+def search(request):
+    query = request.GET.get("q", "")
+    foirequests = []
+    publicbodies = []
+    for result in SearchQuerySet().auto_query(query):
+        if result.model_name == "publicbody":
+            publicbodies.append(result)
+        else:
+            foirequests.append(result)
+    context = {
+            "foirequests": foirequests,
+            "publicbodies": publicbodies,
+            "query": query
+            }
+    return render(request, "search/search.html", context)
+    
 
 def make_request(request, public_body=None):
     public_body_form = None
@@ -277,3 +302,70 @@ def set_law(request, slug):
         messages.add_message(request, messages.SUCCESS,
                 _('A concrete law has been set for this request.'))
     return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
+def add_postal_reply(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or request.user != foirequest.user:
+        return render_403(request)
+    if not foirequest.public_body:
+        return render_400(request)
+    form = PostalReplyForm(request.POST, request.FILES)
+    if form.is_valid():
+        message = FoiMessage(request=foirequest,
+                is_response=True,
+                is_postal=True,
+                sender_name=form.cleaned_data['sender'],
+                sender_public_body=foirequest.public_body)
+        message.timestamp = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
+        message.subject = form.cleaned_data.get('subject', '')
+        message.plaintext = ""
+        if form.cleaned_data.get('text'):
+            message.plaintext = form.cleaned_data.get('text')
+        message.save()
+        foirequest.add_postal_reply.send(sender=foirequest)
+
+        if form.cleaned_data.get('scan'):
+            scan = request.FILES['scan']
+            att = FoiAttachment(belongs_to=message,
+                    name=scan.name,
+                    size=scan.size,
+                    filetype=scan.content_type)
+            att.file.save(scan.name, scan)
+            att.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('A postal reply was successfully added!'))
+        return HttpResponseRedirect(message.get_absolute_url())
+    messages.add_message(request, messages.ERROR,
+            _('There were errors with your form submission!'))
+    return show(request, slug, context={"postal_reply_form": form}, status=400)
+
+@require_POST
+def add_postal_reply_attachment(request, slug, message_id):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    try:
+        message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
+    except (ValueError, FoiMessage.DoesNotExist):
+        raise Http404
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if request.user != foirequest.user:
+        return render_403(request)
+    if not message.is_postal:
+        return render_400(request)
+    form = PostalAttachmentForm(request.POST, request.FILES)
+    if form.is_valid():
+        scan = request.FILES['scan']
+        att = FoiAttachment(belongs_to=message,
+                name=scan.name,
+                size=scan.size,
+                filetype=scan.content_type)
+        att.file.save(scan.name, scan)
+        att.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your document was attached to the message.'))
+        return HttpResponseRedirect(message.get_absolute_url())
+    else:
+        messages.add_message(request, messages.ERROR,
+                form._errors['scan'][0])
+        return HttpResponseRedirect(foirequest.get_absolute_url())

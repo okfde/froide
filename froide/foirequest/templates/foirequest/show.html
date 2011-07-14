@@ -100,7 +100,7 @@
 
 {% for message in object.messages %}
 <div id="{{ message.get_html_id }}" class="message-container">
-<div class="message{% if not message.sender_user %} message-received{% endif %}">
+  <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}">
   <table class="message-table">
     <tbody>
     <tr>
@@ -117,26 +117,50 @@
     </tr>
     <tr>
       <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
+      {% if message.is_postal %}
+      <td>{{ message.timestamp|date:"DATE_FORMAT" }}</td>
+      {% else %}
       <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
+      {% endif %}
     </tr>
-    {% if message.attachments %}
+    {% if message.all_attachments %}
     <tr>
       <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
     <td>
       <ul>
-    {% for attachment in message.attachments %}
+    {% for attachment in message.all_attachments %}
     <li>
     <a href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
     </li>
     {% endfor %}
-      </ul>
+  </ul>
     </td>
   </tr>
+  {% endif %}
+  {% if user == object.user and message.is_postal %}
+  <tr>
+    <td class="key">{% blocktrans %}Upload Attachments{% endblocktrans %}</td>
+    {% with form=message.get_postal_attachment_form %}
+    <td>
+      <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">{% csrf_token %}
+      {{ form.scan }}
+      <input type="submit" value="{% blocktrans %}Upload Document{% endblocktrans %}"/><br/>
+      {{ form.scan.help_text }}
+    </td>
+    {% endwith %}
   {% endif %}
   </tbody>
   </table>
   <hr/>
-  <div class="message-content">{% if forloop.counter0 == 0 %}{% highlight_request message %}{% else %}{{ message.get_content|urlize }}{% endif %}</div>
+  {% if forloop.counter0 == 0 %}
+  <div class="message-content">{% highlight_request message %}</div>
+  {% else %}
+  {% if user == object.user %}
+  <div class="message-content">{{ message.get_real_content|urlize }}</div>
+  {% else %}
+  <div class="message-content">{{ message.get_content|urlize }}</div>
+  {% endif %}
+  {% endif %}
 </div>
 {% if message.events %}
 <div class="events">
@@ -251,13 +275,17 @@
 {% if object.user == user and object.public_body %}
 <div class="section">
   <a href="#add-postal-reply" class="toggle">{% blocktrans %}Add a Postal reply that you have received{% endblocktrans %}</a>
-  <div id="add-postal-reply" style="display: none">
-    <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}">{% csrf_token %}
-      {% with form=object.get_postal_reply_form %}
+  <div id="add-postal-reply"{% if not postal_reply_form %} style="display: none"{% else %} class="focussed goto-form"{% endif %}>
+    <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}" enctype="multipart/form-data">{% csrf_token %}
       <table class="no-stripes">
-        {{ form.as_table }}
-      </table>
+      {% if postal_reply_form %}
+        {{ postal_reply_form.as_table }}
+      {% else %}
+      {% with form=object.get_postal_reply_form %}
+      {{ form.as_table }}
       {% endwith %}
+      {% endif %}
+      </table>
       <input type="submit" value="{% blocktrans %}Add Postal Reply{% endblocktrans %}"/>
       <p>{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</p>
   </form>
@@ -269,7 +297,7 @@
 {# Reply #}
 <div class="section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>
-  <div id="write-message">
+  <div id="write-message" style="display:none">
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}">{% csrf_token %}
     <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
     <textarea name="message"></textarea><br/>

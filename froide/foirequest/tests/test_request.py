@@ -2,12 +2,15 @@ from __future__ import with_statement
 
 import re
 from datetime import datetime
+import os
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import mail
+from django.utils import translation
+
 
 from publicbody.models import PublicBody, FoiLaw
 from foirequest.models import FoiRequest
@@ -15,6 +18,9 @@ from foirequest.models import FoiRequest
 
 class RequestTest(TestCase):
     fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
+
+    def setup(self):
+        translation.activate(settings.LANGUAGE_CODE)
 
     def test_public_body_logged_in_request(self):
         ok = self.client.login(username='sw', password='froide')
@@ -421,6 +427,61 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}),
                 {"public_body": str(pb.pk)})
         self.assertEqual(response.status_code, 400)
+
+    def test_postal_reply(self):
+        translation.activate(settings.LANGUAGE_CODE)
+        self.client.login(username='sw', password='froide')
+        pb = PublicBody.objects.all()[0]
+        post = {"subject": "Totally Random Request",
+                "body": "This is another test body",
+                "public_body": str(pb.pk),
+                "law": str(pb.default_law.pk),
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        response = self.client.get(reverse("foirequest-show",
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 200)
+        # Date message back
+        message = req.foimessage_set.all()[0]
+        message.timestamp = datetime(2011, 1, 1, 0, 0, 0)
+        message.save()
+
+        path = os.path.join(settings.PROJECT_ROOT, "fixtures", "test.pdf")
+        file_size = os.path.getsize(path)
+        f = file(path, "rb")
+        post = {"date": "01.01.3000", # far future
+                "sender": "Some Sender",
+                "subject": "",
+                "text": "Some Text",
+                "scan": ""}
+        response = self.client.post(reverse("foirequest-add_postal_reply",
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 400)
+        post['date'] = "01/41garbl"
+        response = self.client.post(reverse("foirequest-add_postal_reply",
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 400)
+        post['date'] = "01.02.2011"
+        post['scan'] = f
+        response = self.client.post(reverse("foirequest-add_postal_reply",
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 302)
+        f.close()
+        message = req.foimessage_set.all()[1]
+        attachment = message.foiattachment_set.all()[0]
+        self.assertEqual(attachment.file.size, file_size)
+        self.assertEqual(attachment.size, file_size)
+        f = file(path, "rb")
+        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+            kwargs={"slug": req.slug, "message_id": message.pk}),
+            {"scan": f})
+        f.close()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(message.foiattachment_set.all()), 2)
+
 
     # def test_public_body_logged_in_public_request(self):
     #     ok = self.client.login(username='sw', password='froide')
