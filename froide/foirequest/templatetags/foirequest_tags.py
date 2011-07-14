@@ -8,6 +8,7 @@ register = template.Library()
 def highlight_request(message):
     content = message.get_content()
     description = message.request.description
+    description = description.replace("\r\n", "\n")
     try:
         index = content.index(description)
     except ValueError:
