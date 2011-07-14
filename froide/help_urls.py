@@ -16,6 +16,12 @@ urlpatterns = patterns("",
     (r'^%s/$' % _('terms'), TV("help/%s/terms.html" % LG), {}, 'help-terms'),
     # Translators: URL part of /help/
     (r'^%s/$' % _('privacy'), TV("help/%s/privacy.html" % LG), {}, 'help-privacy'),
-    (r'^%s/$' % _('asking-questions'), TV("help/%s/asking-questions.html" % LG), {}, 'help-asking_questions'),
+    # Translators: URL part of /help/
+    (r'^%s/$' % _('making-requests'), TV("help/%s/making-requests.html" % LG), {}, 'help-making_requests'),
+    # Translators: URL part of /help/
+    (r'^%s/$' % _('your-privacy'), TV("help/%s/your-privacy.html" % LG), {}, 'help-your_privacy'),
+    # Translators: URL part of /help/
+    (r'^%s/$' % _('for-foi-officers'), TV("help/%s/foi-officers.html" % LG), {}, 'help-foi_officers'),
+
 
 )

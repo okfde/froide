@@ -3,6 +3,10 @@
 
 {% block helpbody %}
 <h2>Frag Den Staat - Hilfe</h2>
-
-<a href="{% url 'help-asking_questions' %}">Informationsfreiheitsanfragen auf Frag Den Staat- Fragen und Antworten</a>
+<p>Hier erhalten Sie Antworten zu den folgenden Themen:<p>
+<ul>
+  <li><a href="{% url 'help-making_requests' %}">Informationsfreiheitsanfragen stellen auf Frag Den Staat- Fragen und Antworten</a></li>
+  <li><a href="{% url 'help-your_privacy' %}">Fragen und Antworten zu Ihrer Privatsphäre auf Frag Den Staat</a></li>
+  <li><a href="{% url 'help-foi_officers' %}">Informationen für Behördenmitarbeiter</a></li>
+</ul>
 {% endblock %}
