@@ -60,6 +60,24 @@ Froide.app.performPublicBodySearch = (function(){
 
 Froide.app.performReview = (function(){
     var regex_email = /[^\s]+@[^\.\s]+\.\w+/;
+
+    var resolve_forms = function(html){
+        html = $(html);
+        html.find('label input').each(function(i, el){
+            el = $(el);
+            console.log(el);
+            if (!el.attr("checked")){
+                el.parent().remove();
+                console.log("removed");
+            } else {
+                console.log("replaced with", el.attr("value"));
+                el.parent().replaceWith(el.attr("value"));
+               
+            }
+        });
+        return html.text().replace(/\n\n\n/g, "\n\n").replace(/ {2}/g, " ");
+    };
+
     var no_email = function(str){
         var result = regex_email.exec(str);
         if (result !== null){
@@ -167,10 +185,11 @@ Froide.app.performReview = (function(){
         $("#review-from").text(getFullName() + " <" + getEmail() +">");
         $("#review-to").text(getPublicBody());
         $("#review-subject").text($("#id_subject").val());
-        text = $('#letter_start').text();
-        text += '\n<div class="highlight">' + $("#id_body").val() + "</div>";
-        text += "\n" + $('#letter_end').text();
-        text += getFullName();
+        text = resolve_forms($('#letter_start').clone());
+        text += '\n\n<div class="highlight">' + $("#id_body").val() + "</div>\n\n";
+        text += resolve_forms($('#letter_end').clone());
+        text += "\n" + getFullName();
+        text += "\n\n" + getAddress();
         $("#review-text").html(text);
         openLightBox();
     };
@@ -263,6 +282,9 @@ $(function(){
         } else {
             obj.slideUp();
         }
+    });
+    $(".goto-form").each(function(i, el){
+        window.location.href = "#" + $(el).attr("id");
     });
     $("#search-public_bodies-submit").click(function(e){
         Froide.app.performPublicBodySearch();
