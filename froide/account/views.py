@@ -60,17 +60,18 @@ def login(request, base="base.html", context=None, status=200):
     simple = False
     if not context:
         context = {}
-    reset_form = auth.forms.PasswordResetForm()
+    if not "reset_form" in context:
+        context['reset_form'] = auth.forms.PasswordResetForm()
+    if not "signup_form" in context:
+        context['signup_form'] = NewUserForm()
+
     if request.GET.get("simple") is not None:
         base = "simple_base.html"
         simple = True
     else:
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse('account-show'))
-    signup_form = NewUserForm()
-    if request.method == "GET":
-        form = UserLoginForm()
-    elif request.method == "POST":
+    if request.method == "POST" and status == 200:
         status = 400 # if ok, we are going to redirect anyways
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -99,10 +100,10 @@ def login(request, base="base.html", context=None, status=200):
             else:
                 messages.add_message(request, messages.ERROR,
                         _('E-mail and password do not match.'))
+    else:
+        form = UserLoginForm()
     context.update({"form": form,
-            "signup_form": signup_form,
             "custom_base": base,
-            "reset_form": reset_form,
             "simple": simple})
     return render(request, 'account/login.html', context, status=status)
 
@@ -152,7 +153,7 @@ def send_reset_password_link(request):
         messages.add_message(request, messages.SUCCESS,
                 _('Check your mail, we sent you a password reset link.'))
         return HttpResponseRedirect('/')
-    return login(request, context={"send_reset_password_link": form}, status=400)
+    return login(request, context={"reset_form": form}, status=400)
 
 def password_reset_confirm(request, uidb36=None, token=None):
     response = django_password_reset_confirm(request, uidb36=uidb36, token=token,
