@@ -302,16 +302,17 @@ strong {
 
 .mainsearchbox {
     font-size: 32px;
-    width: 254px;
+    width: 240px;
     display: block;
     float: left;
-    -webkit-appearance: textfield;
-    border: 1px solid #41D05F;
+    border: 1px solid #41D05F !important;
+    margin: 0 !important;
     outline: none;
+    padding:0px !important;
 }
 
 .mainsearch > div:hover .mainsearchbox {
-    border: 1px solid #09f;
+    border: 1px solid #09f !important;
 }
 
 .mainsearch-button {
@@ -321,7 +322,7 @@ strong {
     line-height: 1.4;
     display: block;
     float: left;
-    padding: 6px 10px 8px !important;
+    padding: 6px 10px 6px 50px !important;
     /* -webkit-border-radius: 12px;*/
     /* -moz-border-radius: 12px;*/
     /* border-radius: 12px;*/
@@ -329,13 +330,12 @@ strong {
     text-decoration: none;
     border: 0px !important;
     font-size: 20px;
-    margin: 2px 0 0;
+    margin: 0;
     font-weight: normal;
     background-color: #41D05F;
     background-image: url('../img/search.png');
     background-position: 12px 50%;
     background-repeat: no-repeat;
-    padding-left: 50px !important;
 }
 
 .mainsearch > div:hover .mainsearch-button {
