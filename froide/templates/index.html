@@ -5,17 +5,27 @@
 {% block body %}
 <h2 class="special-heading">{% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}</h2>
 <div class="clearfix">
-  <div class="span-12">
+  <div class="span-10">
 
     <form class="mainsearch" method="get" action="{% url 'foirequest-search' %}">
-      <h3>{% blocktrans %}What topic do you need information on?{% endblocktrans %}</h3>
-      <div>
-        <input class="mainsearchbox" type="search" placeholder="{% trans "Your Topic" %}" name="q" autocomplete="off"/>
+      <div class="clearfix">
+      {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}<br/>
+
+        <input class="mainsearchbox" type="search" autofocus="autofocus" name="q" autocomplete="off"/>
         <button type="submit" class="mainsearch-button">{% blocktrans %}Search For Information{% endblocktrans %}</button>
       </div>
+      <p>{% blocktrans %}Try the following:{% endblocktrans %} 
+      <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
+      {% trans "or" %}
+      <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
+
+      </p>
     </form>
+    <!-- <p>-->
+    <!--   <a class="button make-request-button" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request now!{% endblocktrans %}</a>-->
+    <!-- </p>-->
   </div>
-<div class="span-12 last">
+<div class="prepend-2 span-12 last">
   <div class="main-foirequests">
     <div id="sample-letter">{% blocktrans %}Freedom of Information Request
 
@@ -27,27 +37,42 @@ I request information about the following:
 <a class="make-request-icon" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Write a Request Now!{% endblocktrans %}</a></div>
   </div>
 </div>
-
-<div class="span-12">
-  <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
-  <p>{% blocktrans %}This site allows you to easily write a Freedom of Information request to a Public Body. The twist is that we publish all requests and replies so that others don't have to ask for the same information.{% endblocktrans %}
 </div>
 
-<div class="span-12 last">
+<div class="clearfix">
+<div class="span-10">
   <h3>{% blocktrans %}What is Freedom of Information?{% endblocktrans %}</h3>
   <p>{% blocktrans %}Every citizen has the right under the Federal Freedom of Information Law to ask for and receive access to information from Public Bodies concerning public affairs.{% endblocktrans %}
+  <br/>
+   <a class="target-new" href="http://de.wikipedia.org/Informationsfreiheit">{% blocktrans %}Read more about the Freedom of Information!{% endblocktrans %}</a>
+  </p>
+</div>
+  
+<div class="prepend-2 span-12 last">
+  <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
+  <p>{% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information.{% endblocktrans %}
+  <br/>
+   <a href="{% url 'help-index' %}">{% blocktrans %}Read more about the concept!{% endblocktrans %}</a>
+  </p>
 </div>
 
+<!-- <div class="span-8 last">-->
+<!--   <h3>{% blocktrans %}How can I start?{% endblocktrans %}</h3>-->
+<!--   {% url 'foirequest-list' as foirequests_url %}-->
+<!--   <p>{% blocktrans %}You can start by browsing <a href="{{ foirequests_url }}">existing Freedom of Information requests</a> to get a feeling for what Freedom of Information is all about.{% endblocktrans %}-->
+<!--   </p>-->
+<!-- </div>-->
 
-<div class="span-12">
+</div>
+<div class="clearfix">
+<div class="span-10">
   <h3>{% blocktrans %}Latest Freedom of Information Requests{% endblocktrans %}</h3>
   <table class="no-stripes">
     <tbody>
     {% for object in foi_requests %}
     <tr>
       <td style="vertical-align: top">
-        <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/><br/>
-        <span class="time-small">{% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}</span><br/>
+        <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
       </td>
       <td>
         <a href="{{ object.get_absolute_url }}">{{ object.title }}</a><br/>
@@ -56,30 +81,29 @@ I request information about the following:
         {% else %}
           {% blocktrans %}Not yet set{% endblocktrans %}
         {% endif %}
-        <br/><strong>{% blocktrans %}Status:{% endblocktrans %}</strong> {{ object.readable_status }}
-
-        <!-- <p>{{ object.description|truncatewords:6 }}</p>-->
+        <br/><span class="time-small">{{ object.readable_status }},
+          {% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}</span>
       </td>
-      <!-- <td style="vertical-align: top">-->
-      <!--   {{ object.last_message }}-->
-      <!-- </td>-->
     </tr>
   {% endfor %}
   </tbody>
 </table>
 
 </div>
-<div class="span-12 last">
+<div class="prepend-2 span-12 last">
     <h3>{% blocktrans %}Latest activities{% endblocktrans %}</h3>
     <ul>
       {% for obj in events %}
       <li>
-        <a href="{{ obj.get_absolute_url }}">{% blocktrans with title=obj.request.title %}Request "{{ title }}"{% endblocktrans %}</a>: {{ obj.as_html }}
+      {{ obj.as_html }} - 
+      <span class="time-small">
+        <a href="{{ obj.get_absolute_url }}">{% trans "go to request" %}</a>
+      </span>
       </li>
       {% empty %}
         <li>{% blocktrans %}No public bodies yet{% endblocktrans %}
       {% endfor %}
      </ul>
    </div>
- 
+</div>
 {% endblock %}

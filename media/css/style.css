@@ -292,19 +292,17 @@ strong {
 }
 
 .mainsearch {
-    width:400px;
-    padding: 35px;
+    padding: 70px 0 35px;
     margin: 0 auto;
-    text-align: center;
 }
 
 .mainsearch h3 {
-    font-weight: bold;
+    /* font-weight: normal;*/
 }
 
 .mainsearchbox {
     font-size: 32px;
-    width: 250px;
+    width: 254px;
     display: block;
     float: left;
     -webkit-appearance: textfield;
@@ -890,7 +888,7 @@ textarea.smalltext {
     white-space: pre-wrap;
 
     position: relative;  
-    width: 300px;  
+    width: 370px;  
     padding: 50px;  
     margin: 0 auto;  
     background-color: #fff;  
