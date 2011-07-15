@@ -16,7 +16,7 @@ class PublicBodyIndex(indexes.SearchIndex):
     name_auto = indexes.EdgeNgramField(model_attr='name')
     url = indexes.CharField(model_attr='get_absolute_url')
 
-    def get_queryset(self):
+    def index_queryset(self):
         """Used when the entire index for model is updated."""
         return PublicBody.objects.get_for_search_index()
 

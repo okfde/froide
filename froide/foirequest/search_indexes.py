@@ -15,7 +15,7 @@ class FoiRequestIndex(indexes.SearchIndex):
     last_message = indexes.DateTimeField(model_attr='last_message')
     url = indexes.CharField(model_attr='get_absolute_url')
 
-    def get_queryset(self):
+    def index_queryset(self):
         """Used when the entire index for model is updated."""
         return FoiRequest.published.get_for_search_index()
 
