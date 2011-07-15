@@ -17,7 +17,7 @@ class FoiRequestIndex(indexes.SearchIndex):
 
     def get_queryset(self):
         """Used when the entire index for model is updated."""
-        return FoiRequest.objects.get_for_search_index()
+        return FoiRequest.published.get_for_search_index()
 
 
 site.register(FoiRequest, FoiRequestIndex)

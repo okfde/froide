@@ -40,9 +40,6 @@ class FoiRequestManager(CurrentSiteManager):
     def get_by_secret_mail(self, mail):
         return self.get_query_set().get(secret_address=mail)
 
-    def get_for_search_index(self):
-        return self.get_query_set().filter(visibility=2)
-
     def get_overdue(self):
         now = datetime.now()
         return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
@@ -65,6 +62,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
     def get_for_homepage(self, count=5):
         return self.by_last_update()[:count]
+
+    def get_for_search_index(self):
+        return self.get_query_set()
 
     def successful(self):
         return self.get_query_set().filter(
