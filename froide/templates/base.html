@@ -46,7 +46,7 @@
         <h1>
           <a href="{% url 'index' %}">{{ SITE_NAME }}</a>
         </h1>
-        <nav id="nav" class="span-17 last">
+        <nav id="nav">
           <ul>
             <li class="{% block nav_requests %}{% endblock %}">
               <a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>

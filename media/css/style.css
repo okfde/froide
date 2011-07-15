@@ -52,7 +52,9 @@ table.no-stripes tbody tr th {
 
 #nav {
     display:block;
-    margin: 40px 0 0;
+    margin: 40px 0 0 0;
+    float:left;
+    width: 685px;
 }
 
 #nav ul {
@@ -170,12 +172,13 @@ h3 {
     /* text-shadow: 1px 1px 1px #dddddd;*/
     /* filter: dropshadow(color=#cccccc, offx=2, offy=2);*/
     color:#333;
-    margin:0 auto 1em;
+    margin:0 0 1em;
     padding:1em 0 0.5em;
-    font-size:1.4em;
-    /* font-size: 1.8em;*/
-    line-height:1.1em;
+    font-size: 1.2em;
+    text-align: justify;
+    /* width: 470px;*/
     /* line-height:1em;*/
+    /* font-weight: bold;*/
 }
 
 .action-buttons {
