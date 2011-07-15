@@ -734,6 +734,7 @@ class FoiMessage(models.Model):
 
     def get_real_content(self):
         content = self.content
+        content = replace_email(content, _("<<email address>>"))
         content = remove_quote(content)
         return content
 
