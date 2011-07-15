@@ -25,7 +25,9 @@ def index(request):
     events = FoiEvent.objects.get_for_homepage()[:5]
     return render(request, 'index.html', 
             {'events': events,
-            'foi_requests': foi_requests
+            'foi_requests': foi_requests,
+            'foicount': FoiRequest.published.count(),
+            'pbcount': PublicBody.objects.count()
         })
 
 def list_requests(request, status=None):
