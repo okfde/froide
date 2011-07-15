@@ -32,7 +32,8 @@
     </tr>
     {% empty %}
     <tr><td>
-        <p>{% blocktrans %}No relevant requests found for "{{ query }}".{% endblocktrans %}</p>
+      <p>{% blocktrans %}No relevant requests found for "{{ query }}".{% endblocktrans %}<br/>
+      <a href="{% url 'foirequest-list' %}">{% blocktrans %}You can browse the list of existing requests.{% endblocktrans %}</a></p>
     </td></tr>
     {% endfor %}
     </table>
@@ -55,7 +56,8 @@
 
     {% empty %}
       <tr><td>
-        <p>{% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}</p>
+        <p>{% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
+        <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a></p>
       </td></tr>
     {% endfor %}
   </table>
