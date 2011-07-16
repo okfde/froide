@@ -4,10 +4,13 @@ from haystack import indexes
 from haystack import site
 
 from publicbody.models import PublicBody
+from helper.searchindex import QueuedRealTimeSearchIndex
+
 
 PUBLIC_BODY_BOOSTS = getattr(settings, "FROIDE_PUBLIC_BODY_BOOSTS", {})
 
-class PublicBodyIndex(indexes.SearchIndex):
+
+class PublicBodyIndex(QueuedRealTimeSearchIndex):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', boost=1.5)
     geography = indexes.CharField(model_attr='geography')

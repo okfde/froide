@@ -2,9 +2,10 @@ from haystack import indexes
 from haystack import site
 
 from foirequest.models import FoiRequest
+from helper.searchindex import QueuedRealTimeSearchIndex
 
 
-class FoiRequestIndex(indexes.SearchIndex):
+class FoiRequestIndex(QueuedRealTimeSearchIndex):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     title = indexes.CharField(model_attr='title')
     description = indexes.CharField(model_attr='description')
