@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import json
 
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models import signals
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -566,7 +566,7 @@ def increment_request_count(sender, **kwargs):
     sender.public_body.number_of_requests += 1
     sender.public_body.save()
 
-@receiver(pre_delete, sender=FoiRequest,
+@receiver(signals.pre_delete, sender=FoiRequest,
         dispatch_uid="foirequest_decrement_request_count")
 def decrement_request_count(sender, instance=None, **kwargs):
 
@@ -761,6 +761,17 @@ class FoiMessage(models.Model):
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
 
+# Signals for Indexing FoiMessage via FoiRequest
+def foimessage_delayed_update(instance, **kwargs):
+    from helper.tasks import delayed_update
+    delayed_update.delay(instance.request.pk, FoiRequest)
+signals.post_save.connect(foimessage_delayed_update, sender=FoiMessage)
+
+def foimessage_delayed_remove(instance, **kwargs):
+    from helper.tasks import delayed_remove
+    delayed_remove.delay(instance.request.pk, FoiRequest)
+signals.post_delete.connect(foimessage_delayed_remove, sender=FoiMessage)
+
 
 @receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
@@ -814,6 +825,18 @@ class FoiAttachment(models.Model):
     def get_preview_url(self):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
+
+# Signals for Indexing FoiAttachment via FoiRequest
+def foiattachment_delayed_update(instance, **kwargs):
+    from helper.tasks import delayed_update
+    delayed_update.delay(instance.belongs_to.request.pk, FoiRequest)
+signals.post_save.connect(foiattachment_delayed_update, sender=FoiAttachment)
+
+def foiattachment_delayed_remove(instance, **kwargs):
+    from helper.tasks import delayed_remove
+    delayed_remove.delay(instance.belongs_to.request.pk, FoiRequest)
+signals.post_delete.connect(foiattachment_delayed_remove, sender=FoiAttachment)
+
 
 class FoiEventManager(models.Manager):
     def create_event(self, event_name, request, **context):
