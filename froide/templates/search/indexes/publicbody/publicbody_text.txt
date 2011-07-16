@@ -4,5 +4,6 @@
 {{ object.website_dump }}
 {{ object.contact }}
 {{ object.address }}
+{{ object.classification }}
 {{ object.url }}
 {{ object.geography }}

@@ -805,6 +805,9 @@ class FoiAttachment(models.Model):
     def __unicode__(self):
         return u"%s (%s) of %s" % (self.name, self.size, self.belongs_to)
 
+    def index_content(self):
+        return "\n".join((self.name,))
+
     def can_preview(self):
         return True
 
