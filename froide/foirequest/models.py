@@ -764,12 +764,12 @@ class FoiMessage(models.Model):
 # Signals for Indexing FoiMessage via FoiRequest
 def foimessage_delayed_update(instance, **kwargs):
     from helper.tasks import delayed_update
-    delayed_update.delay(instance.request.pk, FoiRequest)
+    delayed_update.delay(instance.request_id, FoiRequest)
 signals.post_save.connect(foimessage_delayed_update, sender=FoiMessage)
 
 def foimessage_delayed_remove(instance, **kwargs):
     from helper.tasks import delayed_remove
-    delayed_remove.delay(instance.request.pk, FoiRequest)
+    delayed_remove.delay(instance.request_id, FoiRequest)
 signals.post_delete.connect(foimessage_delayed_remove, sender=FoiMessage)
 
 
@@ -829,12 +829,12 @@ class FoiAttachment(models.Model):
 # Signals for Indexing FoiAttachment via FoiRequest
 def foiattachment_delayed_update(instance, **kwargs):
     from helper.tasks import delayed_update
-    delayed_update.delay(instance.belongs_to.request.pk, FoiRequest)
+    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
 signals.post_save.connect(foiattachment_delayed_update, sender=FoiAttachment)
 
 def foiattachment_delayed_remove(instance, **kwargs):
     from helper.tasks import delayed_remove
-    delayed_remove.delay(instance.belongs_to.request.pk, FoiRequest)
+    delayed_remove.delay(instance.belongs_to.request_id, FoiRequest)
 signals.post_delete.connect(foiattachment_delayed_remove, sender=FoiAttachment)
 
 
