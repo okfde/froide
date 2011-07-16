@@ -162,7 +162,8 @@ class PublicBody(models.Model):
     
     non_filtered_objects = models.Manager()
     objects = PublicBodyManager()
-    
+    published = objects
+
     class Meta:
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
