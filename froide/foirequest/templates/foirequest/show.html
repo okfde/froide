@@ -239,6 +239,7 @@
 {% endif %}
 {% endif %}
 {# End Public Body Needed #}
+
 {# Set status #}
 {% if object.user == user and object.status_settable %}
 <div class="section important-form">
@@ -272,6 +273,8 @@
   </form>
 </div>
 {% endif %}
+{# endif for object.user == user and object.status_settable #}
+{% endif %}
 
 {# Postal Reply #}
 {% if object.user == user and object.public_body %}
@@ -293,7 +296,6 @@
   </form>
   </div>
 </div>
-{% endif %}
 {# End Postal Reply #}
 
 {# Reply #}
