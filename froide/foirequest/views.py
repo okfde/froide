@@ -51,17 +51,18 @@ def list_requests(request, status=None):
 def show(request, slug, template_name="foirequest/show.html", context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
-                "user", "law", "law__combines").get(slug=slug)
+                "user", "user__profile", "law", "law__combined").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
     if not obj.is_visible(request.user):
         return render_403(request)
     all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
     for message in obj.messages:
+        message.request = obj
         message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
                 all_attachments)
 
-    events = FoiEvent.objects.filter(request=obj).select_related("user", "request",
+    events = FoiEvent.objects.filter(request=obj).select_related("user", "user__profile", "request",
             "public_body").order_by("timestamp")
     event_count = len(events)
     last_index = event_count

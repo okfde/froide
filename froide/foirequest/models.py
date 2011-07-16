@@ -199,7 +199,7 @@ class FoiRequest(models.Model):
     @property
     def messages(self):
         if not hasattr(self, "_messages"):
-            self._messages = self.foimessage_set.select_related("sender_user",
+            self._messages = self.foimessage_set.select_related("sender_user", "sender_user__profile",
                     "sender_public_body").order_by("timestamp")
         return self._messages
 
