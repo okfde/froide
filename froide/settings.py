@@ -201,6 +201,13 @@ LOGGING = {
 
 SESSION_COOKIE_AGE = 3628800 # six weeks
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
+
 # south settings
 
 SOUTH_TESTS_MIGRATE = False
