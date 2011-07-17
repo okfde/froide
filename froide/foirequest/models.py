@@ -48,7 +48,8 @@ class FoiRequestManager(CurrentSiteManager):
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(public=True)
+                self).get_query_set().filter(public=True)\
+                        .select_related("public_body")
 
     def awaiting_response(self):
         return self.get_query_set().filter(
@@ -851,7 +852,9 @@ class FoiEventManager(models.Manager):
         return event
 
     def get_for_homepage(self):
-        return self.get_query_set().filter(public=True).select_related()
+        return self.get_query_set().filter(public=True)\
+                .select_related("user", "user__profile", "public_body",
+                        "request")
 
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
