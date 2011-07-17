@@ -17,12 +17,14 @@ from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, get_status_form_class,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm)
 from froide.helper.utils import render_400, render_403
+from helper.cache import cache_anonymous_page
 
 
+@cache_anonymous_page(15 * 60)
 def index(request):
     # public_bodies = PublicBody.objects.get_for_homepage()
     foi_requests = FoiRequest.published.get_for_homepage()
-    events = FoiEvent.objects.get_for_homepage()[:5]
+    events = FoiEvent.objects.get_for_homepage()[:10]
     return render(request, 'index.html', 
             {'events': events,
             'foi_requests': foi_requests,
