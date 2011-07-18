@@ -7,13 +7,7 @@
 <div class="clearfix">
   <div class="span-12">
     <h2>{% blocktrans %}Search Results for &quot;{{ query }}&quot; in Public Bodies{% endblocktrans %}</h2>
-
-    <form method="get" action="{% url 'publicbody-search' %}">
-      <div>
-        <input type="search" placeholder="{% trans "Search Terms" %}" name="q" value="{{ query }}" autocomplete="off"/>
-        <button type="submit">{% blocktrans %}Search all Public Bodies{% endblocktrans %}</button>
-      </div>
-    </form>
+    {% include "publicbody/_search_form.html" %}
     <table class="no-stripes">
     {% for object in page.object_list %}
       <tr>

@@ -6,10 +6,7 @@
 {% block body %}
 <h2>{% blocktrans %}Public Bodies by Topic{% endblocktrans %}</h2>
 
-<form method="get" action="{% url 'publicbody_showsearch' %}">
-  <input name="q" type="search" placeholder="{% blocktrans %}Search Terms{% endblocktrans %}"/>
-  <input type="submit" value="{% blocktrans %}Search all Public Bodies{% endblocktrans %}"/>
-</form>
+{% include "publicbody/_search_form.html" %}
 
 <ul class="topic-list">
   {% for topic in topics %}

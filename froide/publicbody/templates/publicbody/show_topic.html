@@ -8,11 +8,8 @@
 {{ counter }} Public Body in Topic '{{ name }}'{% plural %}
 {{ counter }} Public Bodies in Topic '{{ name }}'{% endblocktrans %}</h2>
 
-<form method="get" action="{% url 'publicbody_showsearch' %}">
-  <input name="q" type="search" placeholder="{% blocktrans %}Search Terms{% endblocktrans %}"/>
-  <!-- <input type="hidden" name="topic" value="{{ topic.name }}" />-->
-  <input type="submit" value="{% blocktrans %}Search all Public Bodies{% endblocktrans %}"/>
-</form>
+{% include "publicbody/_search_form.html" %}
+
 <br/>
 <p><a href="{% url 'publicbody-list' %}">{% blocktrans %}back to list of topics{% endblocktrans %}</a></p>
 
