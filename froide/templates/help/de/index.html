@@ -3,10 +3,55 @@
 
 {% block helpbody %}
 <h2>Frag Den Staat - Hilfe</h2>
-<p>Hier erhalten Sie Antworten zu den folgenden Themen:<p>
+
+<h3>Wozu dient Frag den Staat?</h3>
+
+<p>Mit Hilfe von Frag den Staat können Sie herausfinden, was deutsche Bundesbehörden tun.</p>
+
+<h3>Wie funktioniert die Seite?</h3>
+
+<p>Sie suchen die Behörde aus, von der Sie Informationen anfordern möchten, und schreiben Ihre Anfrage für diese. Wir übermitteln dann Ihre Anfrage an die Behörde. Sämtliche Antworten dieser Behörde werden automatisch auf der Website veröffentlicht - damit Sie und jede andere Person diese finden und lesen können.</p>
+
+<h3>Warum sollte ich Frag den Staat nutzen?</h3>
+
+<p>Die zugrunde liegende Idee: Wir bezahlen Steuern, die Regierung gibt dieses Geld anschließend aus. Diese Ausgaben beeinflussen unser Leben in vielerlei Hinsicht, angefangen beim Straßenbau bis hin zu Ausgaben für die nationale Verteidigung. Wir als Bürger haben das Recht (und die Pflicht), unsere Regierung zu kontrollieren. Je genauer wir herausfinden, wie die Regierung in der Praxis abläuft, desto besser können wir Verbesserungsvorschläge für Dinge machen, die schlecht umgesetzt werden, und können Dinge loben, die gut umgesetzt werden.</p>
+
+<h3>Aus welchem Grund sollte eine Behörde auf meine Anfrage reagieren?</h3>
+
+<p>Nach dem Informationsfreiheitsgesetz (IFG) des Bundes müssen sie antworten. Die Antwort wird entweder die gewünschte Information umfassen, oder einen rechtlich gültigen Grund nennen, warum sie nicht veröffentlicht werden kann. Ein dritter, nicht so häufiger Fall: Es liegen bei einer Behörde keinerlei Informationen zu Ihrer Anfrage vor.</p>
+
+<h3>Wer steht hinter Frag den Staat?</h3>
+
+<p>Die Seite Frag den Staat wird von der Open Knowledge Foundation Deutschland e.V. (OKF Deutschland) (Link: [unter OKF Deutschland] http://okfn.de/about/mission/) betrieben. Die OKF Deutschland versteht sich als aktiver Teil der deutschen und europäischen Zivilgesellschaft. Sie fördert und stärkt die Bürgerrechte wie sie im Grundgesetz und in der Europäischen Menschenrechtskonvention verankert sind. Die OKF Deutschland ist ein Ableger der britischen Open Knowledge Foundation, einer 2004 gegründeten <a href="http://okfn.org/about/">zivilgesellschaftlichen Non-Profit-Organisation.</a></p>
+
+<p>Der Zweck der OKF Deutschland ist die Förderung der offenen Zugänglichkeit aller Formen von Wissen, wobei “Wissen” auch Information, Daten und alle anderen, synonymen Begriffe umfasst.</p>
+
+<h3>Wer hat Frag den Staat entwickelt?</h3>
+
+<p>Die Software für www.fragdenstaat.de hat <a href="http://stefanwehrmeyer.com">Stefan Wehrmeyer</a> nach dem Vorbild der Seite “What do they know” neu geschrieben und online gestellt. Die Software heißt <a href="https://github.com/stefanw/froide">Froide, steht unter der MIT Lizenz und kann von GitHub heruntergeladen werden</a>.</p>
+
+<p>Betrieben wird das Projekt derzeit rein ehrenamtlich und auf technischer Infrastruktur, die die <a href="http://okfn.de">Open Knowledge Foundation Deutschland</a> kostenfrei zur Verfügung stellt.</p>
+
+<h3>Wer unterstützt Frag den Staat?</h3>
+
+<p>Zu den Unterstützern der ersten Stunde zählen Transparency International Deutschland e.V, Mehr Demokratie e.V., die Deutsche Gesellschaft für Informationsfreiheit, das Open Data Network e.V., das Recherchenetzwerk n-ost, ... tbc.</p>
+
+<p>Falls Sie bzw. Ihre Organisation Frag den Staat und die dahinter liegende Idee ebenfalls unterstützen wollen, wenden Sie sich bitte an uns: info [at] fragdenstaat.de</p>
+
+<h3>Wie kann ich Frag den Staat materiell unterstützen?</h3>
+
+<!-- <p>Sie können dies direkt in Form einer Spende tun: [flatter?] bzw. auf dem Konto [to be named]</p>-->
+
+<p>Falls Sie Erfahrung beim Akquirieren von Spenden oder Fördergeldern haben, dann setzen Sie sich bitte mit uns in Verbindung: info [at] fragdenstaat.de</p>
+
+<hr/>
+
+<p>Weiterführende Fragen und Antworten zu den folgenden Themen:<p>
 <ul>
-  <li><a href="{% url 'help-making_requests' %}">Informationsfreiheitsanfragen stellen auf Frag Den Staat- Fragen und Antworten</a></li>
+  <li><a href="{% url 'help-making_requests' %}">Informationsfreiheitsanfragen stellen auf Frag Den Staat</a></li>
   <li><a href="{% url 'help-your_privacy' %}">Fragen und Antworten zu Ihrer Privatsphäre auf Frag Den Staat</a></li>
   <li><a href="{% url 'help-foi_officers' %}">Informationen für Behördenmitarbeiter</a></li>
 </ul>
+
+
 {% endblock %}
