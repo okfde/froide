@@ -3,33 +3,40 @@
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Search Public Bodies{% endblocktrans %}</h2>
 
-<form method="get" action="{% url 'publicbody_showsearch' %}">
-  <input name="q" type="search" value="{{ form.q.value }}" placeholder="{% blocktrans %}Search Terms{% endblocktrans %}"/>
-  <input type="submit" value="{% blocktrans %}Search all Public Bodies{% endblocktrans %}"/>
-</form>
+<div class="clearfix">
+  <div class="span-12">
+    <h2>{% blocktrans %}Search Results for &quot;{{ query }}&quot; in Public Bodies{% endblocktrans %}</h2>
 
-{% if query %}
-      <h3>{% blocktrans %}Search Results{% endblocktrans %}</h3>
-      {% for result in page.object_list %}
-          <p>
-              <a href="{{ result.object.get_absolute_url }}">{{ result.object }}</a>
-          </p>
-      {% empty %}
-          <p>No results found.</p>
-      {% endfor %}
+    <form method="get" action="{% url 'publicbody-search' %}">
+      <div>
+        <input type="search" placeholder="{% trans "Search Terms" %}" name="q" value="{{ query }}" autocomplete="off"/>
+        <button type="submit">{% blocktrans %}Search all Public Bodies{% endblocktrans %}</button>
+      </div>
+    </form>
+    <table class="no-stripes">
+    {% for object in page.object_list %}
+      <tr>
+      <td style="vertical-align: top">
+        <img src="{{ STATIC_URL }}img/topics/{{ object.topic_slug }}.png" alt="{{ object.topic_auto }}" title="{{ object.topic_auto }}"/>
+      </td>
+      <td>
+        <a href="{{ object.url }}">{{ object.name }}</a>
+        {% comment %}<a title="{% blocktrans %}Click here to make a request to this Public Body{% endblocktrans %}" href="{% url 'foirequest-make_request' public_body=object.slug %}">
+           <img src="{{ STATIC_URL }}img/tiny_request.png" alt="{% blocktrans %}Make a Request{% endblocktrans %}" />
+         </a>{% endcomment %}
+       </td>
+    </tr>
 
-      {% if page.has_previous or page.has_next %}
-          <div>
-              {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-              |
-              {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
-          </div>
-      {% endif %}
-  {% else %}
-      {# Show some example queries to run, maybe query syntax, something else? #}
-  {% endif %}
+    {% empty %}
+      <tr><td>
+        <p>{% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
+        <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a></p>
+      </td></tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
 
 
 {% endblock %}
