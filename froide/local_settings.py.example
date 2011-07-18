@@ -21,6 +21,12 @@ MIDDLEWARE_CLASSES = [
 ]
 MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
 
 SITE_NAME = "Your Site Name"
 SITE_URL = 'http://localhost:8000'
