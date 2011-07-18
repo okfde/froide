@@ -49,7 +49,7 @@ class PublicBodyDetailView(JSONResponseDetailView):
             context['foi_requests'] = context['object'].foirequest_set.order_by('last_message')[:10]
         return context
 
-def search(request):
+def search_json(request):
     query = request.GET.get("q", "")
     # query = " AND ".join(query.split())
     result = list(SearchQuerySet().models(PublicBody).auto_query(query))

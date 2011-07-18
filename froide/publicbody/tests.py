@@ -47,7 +47,7 @@ class PublicBodyTest(TestCase):
         self.assertTrue(csv)
 
     def test_search(self):
-        response = self.client.get(reverse('publicbody-search')+"?q=abc")
+        response = self.client.get(reverse('publicbody-search_json')+"?q=abc")
         self.assertIn("Selbstschutzschule", response.content)
         self.assertEqual(response['Content-Type'], 'application/json')
 
