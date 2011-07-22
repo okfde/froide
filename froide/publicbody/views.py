@@ -23,7 +23,7 @@ class PublicBodyListView(JSONResponseListView):
         return context
 
 def index(request):
-    context = {"topics": PublicBodyTopic.objects.order_by("name")}
+    context = {"topics": PublicBodyTopic.objects.get_list()}
     return render(request, 'publicbody/list_topic.html', context)
 
 def show_topic(request, topic):
