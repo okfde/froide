@@ -46,3 +46,5 @@ License
 -------
 
 Froide is licensed under the MIT License.
+
+Some folders contain an attributions.txt with more information about the copyright holders in this specific folder.
