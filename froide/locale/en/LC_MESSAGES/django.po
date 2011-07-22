@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-18 17:27+0200\n"
+"POT-Creation-Date: 2011-07-22 11:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -415,7 +415,6 @@ msgid "Your Freedom of Information Requests"
 msgstr ""
 
 #: account/templates/account/show.html:25 foirequest/models.py:134
-#: foirequest/templates/foirequest/list.html:17
 msgid "Title"
 msgstr ""
 
@@ -437,7 +436,7 @@ msgid "Public"
 msgstr ""
 
 #: account/templates/account/show.html:42
-#: foirequest/templates/foirequest/list.html:32
+#: foirequest/templates/foirequest/list.html:25
 #: foirequest/templates/foirequest/show.html:48 templates/index.html:82
 msgid "Not yet set"
 msgstr ""
@@ -496,7 +495,7 @@ msgid "'%(title)s' to %(publicbody)s"
 msgstr ""
 
 #: foirequest/forms.py:21 foirequest/models.py:140 foirequest/models.py:606
-#: foirequest/models.py:867 publicbody/models.py:168
+#: foirequest/models.py:867 publicbody/models.py:180
 msgid "Public Body"
 msgstr ""
 
@@ -765,13 +764,13 @@ msgstr ""
 msgid "Visible to Requester"
 msgstr ""
 
-#: foirequest/models.py:135 publicbody/models.py:35 publicbody/models.py:109
-#: publicbody/models.py:123
+#: foirequest/models.py:135 publicbody/models.py:35 publicbody/models.py:119
+#: publicbody/models.py:135
 msgid "Slug"
 msgstr ""
 
-#: foirequest/models.py:136 publicbody/models.py:36 publicbody/models.py:110
-#: publicbody/models.py:124
+#: foirequest/models.py:136 publicbody/models.py:36 publicbody/models.py:120
+#: publicbody/models.py:136
 msgid "Description"
 msgstr ""
 
@@ -823,7 +822,7 @@ msgstr ""
 msgid "Refusal reason"
 msgstr ""
 
-#: foirequest/models.py:174 publicbody/models.py:56 publicbody/models.py:155
+#: foirequest/models.py:174 publicbody/models.py:56 publicbody/models.py:167
 msgid "Site"
 msgstr ""
 
@@ -968,8 +967,8 @@ msgstr ""
 msgid "Belongs to request"
 msgstr ""
 
-#: foirequest/models.py:802 publicbody/models.py:34 publicbody/models.py:108
-#: publicbody/models.py:122 publicbody/templates/publicbody/show_topic.html:22
+#: foirequest/models.py:802 publicbody/models.py:34 publicbody/models.py:118
+#: publicbody/models.py:134 publicbody/templates/publicbody/show_topic.html:19
 msgid "Name"
 msgstr ""
 
@@ -1224,28 +1223,31 @@ msgstr ""
 msgid "Requests"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:18
-#: foirequest/templates/foirequest/request.html:189
-msgid "To"
-msgstr ""
-
-#: foirequest/templates/foirequest/list.html:28
+#: foirequest/templates/foirequest/list.html:21
 #: foirequest/templates/foirequest/show.html:171 templates/index.html:85
 #: templates/search/search.html:30
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:29
+#: foirequest/templates/foirequest/list.html:22
 #: foirequest/templates/foirequest/request.html:36 templates/index.html:79
 msgid "To:"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:34
+#: foirequest/templates/foirequest/list.html:27
 msgid "Status:"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:56
+#: foirequest/templates/foirequest/list.html:33
+msgid "No requests with this status yet."
+msgstr ""
+
+#: foirequest/templates/foirequest/list.html:35
+msgid "No requests yet."
+msgstr ""
+
+#: foirequest/templates/foirequest/list.html:44
 msgid "Filter requests by their status:"
 msgstr ""
 
@@ -1478,6 +1480,10 @@ msgstr ""
 
 #: foirequest/templates/foirequest/request.html:185
 msgid "Review your Request and Submit"
+msgstr ""
+
+#: foirequest/templates/foirequest/request.html:189
+msgid "To"
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:193
@@ -1768,7 +1774,7 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#: publicbody/models.py:44 publicbody/models.py:127
+#: publicbody/models.py:44 publicbody/models.py:139
 msgid "URL"
 msgstr ""
 
@@ -1796,67 +1802,67 @@ msgstr ""
 msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 msgstr ""
 
-#: publicbody/models.py:62 publicbody/models.py:161
+#: publicbody/models.py:62 publicbody/models.py:173
 msgid "Freedom of Information Laws"
 msgstr ""
 
-#: publicbody/models.py:111
+#: publicbody/models.py:121
 msgid "Count"
 msgstr ""
 
-#: publicbody/models.py:114 publicbody/models.py:125
+#: publicbody/models.py:126 publicbody/models.py:137
 msgid "Topic"
 msgstr ""
 
-#: publicbody/models.py:115
+#: publicbody/models.py:127
 msgid "Topics"
 msgstr ""
 
-#: publicbody/models.py:136 publicbody/templates/publicbody/show_topic.html:23
+#: publicbody/models.py:148 publicbody/templates/publicbody/show_topic.html:20
 msgid "Classification"
 msgstr ""
 
-#: publicbody/models.py:138
+#: publicbody/models.py:150
 msgid "Classification Slug"
 msgstr ""
 
-#: publicbody/models.py:140
+#: publicbody/models.py:152
 msgid "Email"
 msgstr ""
 
-#: publicbody/models.py:141
+#: publicbody/models.py:153
 msgid "Contact"
 msgstr ""
 
-#: publicbody/models.py:142
+#: publicbody/models.py:154
 msgid "Address"
 msgstr ""
 
-#: publicbody/models.py:143
+#: publicbody/models.py:155
 msgid "Website Dump"
 msgstr ""
 
-#: publicbody/models.py:145
+#: publicbody/models.py:157
 msgid "Created by"
 msgstr ""
 
-#: publicbody/models.py:148
+#: publicbody/models.py:160
 msgid "Updated by"
 msgstr ""
 
-#: publicbody/models.py:151
+#: publicbody/models.py:163
 msgid "confirmed"
 msgstr ""
 
-#: publicbody/models.py:153
+#: publicbody/models.py:165
 msgid "Number of requests"
 msgstr ""
 
-#: publicbody/models.py:158
+#: publicbody/models.py:170
 msgid "Geography"
 msgstr ""
 
-#: publicbody/models.py:169 templates/base.html:55
+#: publicbody/models.py:181 templates/base.html:55
 msgid "Public Bodies"
 msgstr ""
 
@@ -1911,6 +1917,14 @@ msgstr ""
 msgid "No Public Bodies found for this query"
 msgstr ""
 
+#: publicbody/templates/publicbody/_search_form.html:5
+msgid "Search Terms"
+msgstr ""
+
+#: publicbody/templates/publicbody/_search_form.html:6
+msgid "Search all Public Bodies"
+msgstr ""
+
 #: publicbody/templates/publicbody/list.html:7
 #: publicbody/templates/publicbody/list_topic.html:7
 msgid "Public Bodies by Topic"
@@ -1924,18 +1938,6 @@ msgstr ""
 msgid "No Public Bodies yet"
 msgstr ""
 
-#: publicbody/templates/publicbody/list_topic.html:10
-#: publicbody/templates/publicbody/search.html:13
-#: publicbody/templates/publicbody/show_topic.html:12
-msgid "Search Terms"
-msgstr ""
-
-#: publicbody/templates/publicbody/list_topic.html:11
-#: publicbody/templates/publicbody/search.html:14
-#: publicbody/templates/publicbody/show_topic.html:14
-msgid "Search all Public Bodies"
-msgstr ""
-
 #: publicbody/templates/publicbody/request.html:5
 #, python-format
 msgid "Write a request to %(name)s"
@@ -1946,13 +1948,13 @@ msgstr ""
 msgid "Search Results for &quot;%(query)s&quot; in Public Bodies"
 msgstr ""
 
-#: publicbody/templates/publicbody/search.html:34
+#: publicbody/templates/publicbody/search.html:28
 #: templates/search/search.html:60
 #, python-format
 msgid "No relevant Public bodies found for \"%(query)s\"."
 msgstr ""
 
-#: publicbody/templates/publicbody/search.html:35
+#: publicbody/templates/publicbody/search.html:29
 #: templates/search/search.html:61
 msgid "You can browse the list of Public Bodies."
 msgstr ""
@@ -2012,15 +2014,15 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: publicbody/templates/publicbody/show_topic.html:17
+#: publicbody/templates/publicbody/show_topic.html:14
 msgid "back to list of topics"
 msgstr ""
 
-#: publicbody/templates/publicbody/show_topic.html:31
+#: publicbody/templates/publicbody/show_topic.html:28
 msgid "Click here to make a request to this Public Body"
 msgstr ""
 
-#: publicbody/templates/publicbody/show_topic.html:32
+#: publicbody/templates/publicbody/show_topic.html:29
 msgid "Make a Request"
 msgstr ""
 
