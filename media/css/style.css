@@ -172,13 +172,18 @@ h3 {
     /* text-shadow: 1px 1px 1px #dddddd;*/
     /* filter: dropshadow(color=#cccccc, offx=2, offy=2);*/
     color:#333;
-    margin:0 0 1em;
+    margin:0 0 0.5em;
     padding:1em 0 0.5em;
     font-size: 1.2em;
     text-align: justify;
     /* width: 470px;*/
     /* line-height:1em;*/
     /* font-weight: bold;*/
+}
+
+#main-folders .special-heading {
+    color: #fff;
+    padding:1em 20px 0.5em;
 }
 
 .action-buttons {
@@ -291,9 +296,26 @@ strong {
     font-weight: normal;
 }
 
+#main-folders {
+    background-image: url('../img/folders.jpg');
+}
+
 .mainsearch {
     padding: 70px 0 35px;
-    margin: 0 auto;
+    margin: 2em 0 0 40px;
+    color: #eee;
+}
+
+.mainsearch p {
+    margin:0.2em 0 0.2em;
+}
+
+.mainsearch p a {
+    color: #fff;
+}
+
+.mainsearch p a:hover {
+    color: #09f;
 }
 
 .mainsearch h3 {
@@ -302,17 +324,13 @@ strong {
 
 .mainsearchbox {
     font-size: 32px;
-    width: 240px;
+    width: 210px;
     display: block;
     float: left;
-    border: 1px solid #41D05F !important;
     margin: 0 !important;
     outline: none;
+    border: 0px;
     padding:0px !important;
-}
-
-.mainsearch > div:hover .mainsearchbox {
-    border: 1px solid #09f !important;
 }
 
 .mainsearch-button {
@@ -338,12 +356,23 @@ strong {
     background-repeat: no-repeat;
 }
 
-.mainsearch > div:hover .mainsearch-button {
-    background-color: #09f;
+.main-foirequests {
+    margin: 20px 20px 20px 0;
 }
 
-.main-foirequests {
-    margin-bottom: 2em;
+#sample-letter {
+    font-family: Georgia,serif;
+    font-size: 1em;
+    white-space: pre-wrap;
+    position: relative;
+    width: 350px;
+    padding: 50px;
+    margin: 0 auto;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8);
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);  
+    -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);  
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);      
 }
 
 #footer {
@@ -880,54 +909,6 @@ textarea.smalltext {
     background-repeat: none;
     background-position: 0 0;
 }
-
-/* Taken mostly from http://www.sitepoint.com/pure-css3-paper-curl/ */
-#sample-letter {
-    font-family: Georgia,serif;
-    font-size: 1em;
-    white-space: pre-wrap;
-
-    position: relative;  
-    width: 370px;  
-    padding: 50px;  
-    margin: 0 auto;  
-    background-color: #fff;  
-    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);  
-    -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);  
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);      
-}
-
-#sample-letter:before, #sample-letter:after  
-{  
-    position: absolute;  
-    width: 40%;  
-    height: 10px;  
-    content: ' ';  
-    left: 12px;  
-    bottom: 12px;  
-    background: transparent;  
-    -webkit-transform: skew(-5deg) rotate(-5deg);  
-    -moz-transform: skew(-5deg) rotate(-5deg);  
-    -ms-transform: skew(-5deg) rotate(-5deg);  
-    -o-transform: skew(-5deg) rotate(-5deg);  
-    transform: skew(-5deg) rotate(-5deg);  
-    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  
-    -moz-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  
-    z-index: -1;
-
-}  
-#sample-letter:after  
-{  
-    left: auto;  
-    right: 12px;  
-    -webkit-transform: skew(5deg) rotate(5deg);  
-    -moz-transform: skew(5deg) rotate(5deg);  
-    -ms-transform: skew(5deg) rotate(5deg);  
-    -o-transform: skew(5deg) rotate(5deg);  
-    transform: skew(5deg) rotate(5deg);  
-} 
-
 
 .time-small {
     color: #666;

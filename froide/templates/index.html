@@ -4,13 +4,12 @@
 
 {% block body %}
 <h2 class="special-heading">{% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}</h2>
-<div class="clearfix">
+<div class="clearfix" id="main-folders">
   <div class="span-10">
 
     <form class="mainsearch" method="get" action="{% url 'foirequest-search' %}">
+      <p>{% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}</p>
       <div class="clearfix">
-      {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}<br/>
-
         <input class="mainsearchbox" type="text" autofocus="autofocus" name="q" autocomplete="off"/>
         <button type="submit" class="mainsearch-button">{% blocktrans %}Search For Information{% endblocktrans %}</button>
       </div>
@@ -18,7 +17,6 @@
       <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
       {% trans "or" %}
       <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
-
       </p>
     </form>
     <!-- <p>-->
