@@ -1,9 +1,3 @@
-{{ object.name }}
-{{ object.description }}
-{{ object.topic_name }}
-{{ object.website_dump }}
-{{ object.contact }}
-{{ object.address }}
-{{ object.classification }}
-{{ object.url }}
-{{ object.geography }}
+{{ object.name }} {{ object.description }} {{ object.topic_name }} {{ object.website_dump }}
+ {{ object.contact }} {{ object.address }} {{ object.classification }} {{ object.url }}
+ {{ object.geography }}
