@@ -17,8 +17,7 @@ def delayed_update(instance_pk, model):
 @task
 def delayed_remove(instance_pk, model):
     translation.activate(settings.LANGUAGE_CODE)
-    try:
-        instance = model.published.get(pk=instance_pk)
-    except (model.DoesNotExist, AttributeError):
-        return
-    site.remove_object(instance)
+    # Fake an instance (real one is already gone from the DB)
+    fake_instance = model()
+    fake_instance.pk = instance_pk
+    site.remove_object(fake_instance)
