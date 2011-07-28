@@ -8,6 +8,7 @@ data/
 solr/
 files/
 artwork/
+documents/
 .coverage
 */_build/
 froide/htmlcov/
