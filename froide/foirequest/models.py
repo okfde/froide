@@ -564,13 +564,16 @@ class FoiRequest(models.Model):
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
 def increment_request_count(sender, **kwargs):
+    if not sender.public_body.public_body:
+        return
     sender.public_body.number_of_requests += 1
     sender.public_body.save()
 
 @receiver(signals.pre_delete, sender=FoiRequest,
         dispatch_uid="foirequest_decrement_request_count")
 def decrement_request_count(sender, instance=None, **kwargs):
-
+    if not instance.public_body:
+        return
     instance.public_body.number_of_requests -= 1
     if instance.public_body.number_of_requests < 0:
         instance.public_body.number_of_requests = 0
