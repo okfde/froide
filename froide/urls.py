@@ -42,7 +42,6 @@ urlpatterns = patterns('',
     # Translators: URL part
     (r'^%s/' % _('help'), include('froide.help_urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
-    (r'^comments/', include('django.contrib.comments.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls)),
     (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls')),
