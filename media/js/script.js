@@ -19,7 +19,36 @@ Froide.app.selectSearchListItem = function(li){
     $("#search-results").after(html);
     $("#public_body-chooser .selected-result input").attr("checked", "checked");
     $("#search-results").slideUp();
+};
 
+Froide.app.searchSimilarRequests = function(){
+    var q = [], t, query;
+    t = $(".foirequest input[name='public_body']:checked");
+    if (t && t.val()!== "" && t.val() !== "new"){
+        q.push(t.parent().text().trim());
+    }
+    var subject = $("#id_subject").val();
+    if (subject.length > 0){
+        q.push(subject);
+    }
+    if (q.length === 0){
+        return;
+    }
+    query = q[q.length - 1];
+    $.getJSON(Froide.url.searchRequests, {"q": query}, function(results){
+        if (results.length === 0){
+            $("#similar-requests-container").css({"visibility": "hidden"});
+        } else {
+            $("#similar-requests").html("");
+            for (var i = 0; i < results.length; i += 1){
+                var result = results[i];
+                $("#similar-requests").append('<li><a title="' + result.public_body_name + '" href="' + result.url + '">' + result.title + '</a></li>');
+            }
+            $("#similar-requests").hide();
+            $("#similar-requests-container").css({"visibility": "visible"});
+            $("#similar-requests").show("normal");
+        }
+    });
 };
 
 Froide.app.performPublicBodySearch = (function(){
@@ -149,7 +178,6 @@ Froide.app.performReview = (function(){
         return address;
     };
 
-
     var getPublicBody = function(){
         var pb = $("#review-publicbody").length === 0 ? false : $("#review-publicbody").text();
         if (!pb){
@@ -260,6 +288,34 @@ Froide.app.activateMessage = function(){
     $("#step-message").slideDown()
         .removeClass("hidden")
         .parent().addClass("active");
+};
+
+var conditionalFixed = function(id){
+    /* Quick hack, probably better solutions out there */
+    var elem = $("#"+id),
+        top = elem.offset().top,
+        left = elem.offset().left,
+        height = elem.height(),
+        parent = elem.parent(),
+        fixed = 1;
+    var adjust = function(){
+        var scrollTop = $(window).scrollTop();
+        threshold = top + parent.height() - 2*height;
+        if(fixed > 0  && scrollTop < top) {
+            fixed = 0;
+            elem.css({"position": "static", "top": "auto", "left": "auto"});
+        } else if (fixed !== 1 && (scrollTop > top && scrollTop < threshold)) {
+            fixed = 1;
+            elem.css({"position": "fixed", "top": "0px", "left": left+"px"});
+        }
+    };
+    $(window).resize(function(){
+        fixed = 0;
+        elem.css({"position": "static", "top": "auto", "left": "auto"});
+        left = elem.offset().left;
+        adjust();
+    });
+    $(window).scroll(adjust);
 };
 
 

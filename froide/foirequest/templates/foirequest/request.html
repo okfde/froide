@@ -7,6 +7,8 @@
 {% block extra_footer %}
 <script type="text/javascript">
   var Froide = Froide || {};
+  Froide.url = Froide.url || {};
+  Froide.url.searchRequests = "{% url 'foirequest-search_similar' %}";
   Froide.template = Froide.template || {};
   Froide.template.visitPublicBodyWebsite = '{% blocktrans %}Visit the website of this Public Body{% endblocktrans %}';
   Froide.template.searchInternet = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information" %} </a></li>';
@@ -219,10 +221,10 @@
   </form>
 </div>
 <div id="lightbox-background"></div>
-<div class="prepend-1 span-5 last" style="visibility:hidden">
+<div class="prepend-1 span-5 last" id="similar-requests-container" style="visibility:hidden">
   <h4>{% blocktrans %}Similar Requests{% endblocktrans %}</h4>
-  <ul>
-    <li></li>
+  <ul id="similar-requests">
+    <li>{% blocktrans %}None found{% endblocktrans %}</li>
   </ul>
 </div>
 {% endblock %}

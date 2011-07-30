@@ -20,6 +20,7 @@ $(function(){
     var publicBodyChosen = function(){
         Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(),
                                     publicBodyPrefilled);
+        Froide.app.searchSimilarRequests();
         Froide.app.activateMessage();
     };
 
@@ -31,6 +32,8 @@ $(function(){
         }
         publicBodyChosen();
     });
+    
+    $("#id_subject").blur(Froide.app.searchSimilarRequests);
 
     $("#review-button").click(function(){
         Froide.app.performReview();
@@ -52,4 +55,5 @@ $(function(){
     if ($("#option-newpublicbody").attr("checked")){
         $("#new-public_body").slideDown();
     }
+    conditionalFixed("similar-requests-container");
 });
