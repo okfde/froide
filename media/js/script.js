@@ -264,8 +264,8 @@ Froide.app.publicBodyChosen = (function(){
                 });
             }(currentPublicBodyChoice));
         } else {
-            $('#letter_start').text(letter_start);
-            $('#letter_end').text(letter_end);
+            // $('#letter_start').text(letter_start);
+            // $('#letter_end').text(letter_end);
         }
     };
 }());
