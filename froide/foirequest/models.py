@@ -48,7 +48,7 @@ class FoiRequestManager(CurrentSiteManager):
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(public=True)\
+                self).get_query_set().filter(visibility=2)\
                         .select_related("public_body")
 
     def awaiting_response(self):
