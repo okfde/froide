@@ -1,10 +1,10 @@
-import json
-
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import urlresolvers
+from django.utils import simplejson as json
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
+
 
 from haystack.query import SearchQuerySet
 

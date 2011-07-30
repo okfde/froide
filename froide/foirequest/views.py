@@ -1,18 +1,19 @@
 import datetime
 
+from django.utils import simplejson as json
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib import messages
 
 from haystack.query import SearchQuerySet
 
-from foirequest.forms import RequestForm, ConcreteLawForm
 from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody, FoiLaw
+from foirequest.forms import RequestForm, ConcreteLawForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, get_status_form_class,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm)
