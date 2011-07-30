@@ -78,6 +78,18 @@ def show(request, slug, template_name="foirequest/show.html", context=None, stat
     context.update({"object": obj})
     return render(request, template_name, context, status=status)
 
+def search_similar(request):
+    query = request.GET.get("q", None)
+    result = []
+    if query:
+        sqs = SearchQuerySet().models(FoiRequest)
+        for q in query.split():
+            sqs = sqs.filter_or(content=sqs.query.clean(q))
+        result = list(sqs)[:10]
+        result = [{"title": x.title, "id": x.pk, "public_body_name": x.public_body_name, "description": x.description,
+            "url": x.url, "score": x.score} for x in result]
+    return HttpResponse(json.dumps(result), content_type="application/json")
+
 def search(request):
     query = request.GET.get("q", "")
     foirequests = []

@@ -16,4 +16,5 @@ urlpatterns += patterns("",
     (r'^%s/rss/$' % pgettext('URL part', 'latest'), LatestFoiRequestsFeed(), {}, 'foirequest-feed_latest'),
     # Translators: part in /request/to/public-body-slug URL
     (r'^submit$', 'foirequest.views.submit_request', {}, 'foirequest-submit_request'),
+    (r'^search/json$', 'foirequest.views.search_similar', {}, 'foirequest-search_similar'),
 )
