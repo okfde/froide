@@ -564,7 +564,7 @@ class FoiRequest(models.Model):
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
 def increment_request_count(sender, **kwargs):
-    if not sender.public_body.public_body:
+    if not sender.public_body:
         return
     sender.public_body.number_of_requests += 1
     sender.public_body.save()
