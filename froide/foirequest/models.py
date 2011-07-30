@@ -141,7 +141,7 @@ class FoiRequest(models.Model):
 
     public = models.BooleanField(_("published?"), default=True)
 
-    status = models.CharField(_("Status"), max_length=25,
+    status = models.CharField(_("Status"), max_length=50,
             choices=STATUS_CHOICES)
     visibility = models.SmallIntegerField(_("Visibility"), default=0,
             choices=VISIBILITY_CHOICES)
