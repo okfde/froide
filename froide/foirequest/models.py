@@ -656,9 +656,6 @@ class FoiMessage(models.Model):
         verbose_name = _('Freedom of Information Message')
         verbose_name_plural = _('Freedom of Information Messages')
 
-    GREETINGS = settings.POSSIBLE_GREETINGS
-    CLOSINGS = settings.POSSIBLE_CLOSINGS
-
     @property
     def content(self):
         return self.plaintext
@@ -719,17 +716,7 @@ class FoiMessage(models.Model):
         if self.request.user:
             profile = self.request.user.get_profile()
             content = profile.apply_message_redaction(content)
-
-        for greeting in self.GREETINGS:
-            match = greeting.search(content)
-            if match is not None and len(match.groups()):
-                content = content.replace(match.group(1), _("<< Greeting >>"))
-
-        for closing in self.CLOSINGS:
-            match = closing.search(content)
-            if match is not None:
-                content = content[:match.end()]
-
+        
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
         content = remove_signature(content)
