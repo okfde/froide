@@ -25,7 +25,7 @@ Froide.app.searchSimilarRequests = function(){
     var q = [], t, query;
     t = $(".foirequest input[name='public_body']:checked");
     if (t && t.val()!== "" && t.val() !== "new"){
-        q.push(t.parent().text().trim());
+        q.push(jQuery.trim(t.parent().text()));
     }
     var subject = $("#id_subject").val();
     if (subject.length > 0){
