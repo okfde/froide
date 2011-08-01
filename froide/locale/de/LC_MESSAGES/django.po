@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-31 22:39+0200\n"
-"PO-Revision-Date: 2011-07-31 22:39+0100\n"
+"POT-Creation-Date: 2011-08-01 11:15+0200\n"
+"PO-Revision-Date: 2011-08-01 11:16+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2139,14 +2139,18 @@ msgid "About"
 msgstr "Über uns"
 
 #: templates/base.html:97
+msgid "Join the Project"
+msgstr "Mitmachen!"
+
+#: templates/base.html:99
 msgid "Impressum"
 msgstr "Impressum"
 
-#: templates/base.html:98
+#: templates/base.html:100
 msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
-#: templates/base.html:99
+#: templates/base.html:101
 msgid "Privacy Statement"
 msgstr "Datenschutzerklärung"
 

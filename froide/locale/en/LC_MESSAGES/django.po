@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-31 22:39+0200\n"
+"POT-Creation-Date: 2011-08-01 11:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2099,14 +2099,18 @@ msgid "About"
 msgstr ""
 
 #: templates/base.html:97
-msgid "Impressum"
-msgstr ""
-
-#: templates/base.html:98
-msgid "Terms of Use"
+msgid "Join the Project"
 msgstr ""
 
 #: templates/base.html:99
+msgid "Impressum"
+msgstr ""
+
+#: templates/base.html:100
+msgid "Terms of Use"
+msgstr ""
+
+#: templates/base.html:101
 msgid "Privacy Statement"
 msgstr ""
 
