@@ -1,10 +1,20 @@
 {% load i18n %}
 <dl class="comments-list">
   {% for comment in comment_list %}
-    <dt id="c{{ comment.id }}">
+    <dt id="c{{ comment.id }}">{% if comment.user.is_staff %}<span class="moderator">{% trans "Moderator" %}</span>{% endif %}
     {% blocktrans with date=comment.submit_date name=comment.name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}</dt>
-    <dd>
-        <p>{{ comment.comment }}</p>
+    <dd{% if comment.user.is_staff %} class="moderator"{% endif %}>
+        {% if comment.user.is_staff %}
+            <p>{{ comment.comment }}</p>
+        {% else %}
+            {% if comment.comment != comment.comment|truncatewords:20 %}
+                <p id="comment-{{ comment.id }}">{{ comment.comment|truncatewords:20 }}
+                    <a href="#comment-{{ comment.id }}-full" class="toggle hideparent">{% trans "Read all" %}</a></p>
+                <p style="display:none" id="comment-{{ comment.id }}-full">{{ comment.comment }}</p>
+            {% else %}
+                <p>{{ comment.comment }}</p>
+            {% endif %}
+        {% endif %}
     </dd>
   {% endfor %}
 </dl>

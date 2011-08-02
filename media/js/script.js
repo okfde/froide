@@ -339,6 +339,10 @@ $(function(){
             obj.slideUp();
         }
     });
+    $("a.hideparent").live("click", function(e){
+        e.preventDefault();
+        $(this).parent().hide();
+    });
     $(".goto-form").each(function(i, el){
         window.location.href = "#" + $(el).attr("id");
     });

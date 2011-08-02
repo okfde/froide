@@ -175,9 +175,10 @@
 {% endif %}
 <div class="comments-container">
   {% get_comment_list for message as comment_list %}
-  <a class="toggle" href="#comments-{{ message.id }}">{% blocktrans count count=comment_list|length %}Show {{ count }} comment / Write a comment{% plural %}Show {{ count }} comments / Write a comment{% endblocktrans %}</a>
 <div id="comments-{{ message.id }}" class="comments">
   {% include "comments/foirequest/list.html" %}
+  <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
+  <div class="comment-form" id="comment-form-{{ message.id }}">
   {% if user.is_authenticated %}
   {% with next=object.get_absolute_url %}
     {% render_comment_form for message %}
@@ -185,7 +186,7 @@
   {% else %}
   <a href="{% url 'account-login' %}">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
   {% endif %}
-<a class="toggle" href="#comments-{{ message.id }}">{% blocktrans %}Hide comments{% endblocktrans %}</a>
+  </div>
 </div>
 </div>
 </div>

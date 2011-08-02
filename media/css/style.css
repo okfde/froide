@@ -832,12 +832,30 @@ textarea.smalltext {
     font-size:0.9em;
 }
 
-.js .comments {
+.js .comment-form {
     display:none;
 }
 
-.comments:target {
+.comment-form:target {
     display:block !important;
+}
+
+.comments-list {
+    margin-left: 1em;
+}
+
+.comments-list p {
+    margin-bottom: 0.5em;
+}
+
+.comments-list dt {
+    font-weight: normal;
+    color: #999;
+    font-size: 0.8em;
+}
+
+.moderator {
+    background-color: #C4FFD6;
 }
 
 .section {
