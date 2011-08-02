@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-02 18:54+0200\n"
-"PO-Revision-Date: 2011-08-02 18:57+0100\n"
+"POT-Creation-Date: 2011-08-02 22:56+0200\n"
+"PO-Revision-Date: 2011-08-02 23:34+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -517,7 +517,7 @@ msgstr "Behörde"
 #: foirequest/forms.py:195
 #: foirequest/models.py:646
 #: foirequest/templates/foirequest/_request_form.html:11
-#: foirequest/templates/foirequest/request.html:199
+#: foirequest/templates/foirequest/request.html:241
 #: foirequest/templates/foirequest/show.html:117
 msgid "Subject"
 msgstr "Betreff"
@@ -1190,7 +1190,7 @@ msgid "Message"
 msgstr "Nachricht"
 
 #: foirequest/templates/foirequest/_request_form.html:21
-#: foirequest/templates/foirequest/request.html:130
+#: foirequest/templates/foirequest/request.html:172
 msgid "Your first name"
 msgstr "Ihr Vorname"
 
@@ -1405,95 +1405,159 @@ msgid "Please select one of the above options to proceed."
 msgstr "Bitte wählen Sie eine der oberen Optionen um weiterzumachen."
 
 #: foirequest/templates/foirequest/request.html:72
-msgid "Step 2 - Write the Request"
-msgstr "Schritt 2 - Schreiben Sie die Anfrage"
+msgid "Step 2 - Choose the type of request"
+msgstr "Schritt 2 - Wählen Sie die Art der Anfrage"
 
-#: foirequest/templates/foirequest/request.html:75
+#: foirequest/templates/foirequest/request.html:74
+msgid "What kind of information do you want?"
+msgstr "Welche Art von Information benötigen Sie?"
+
+#: foirequest/templates/foirequest/request.html:78
+msgid "a matter that involves you personally"
+msgstr "Informationen, die Sie persönlich betreffen"
+
+#: foirequest/templates/foirequest/request.html:80
+msgid "Questions like \"Where do I get X?\" or \"What do I have to do if X?\""
+msgstr "Anfragen wie \"Woher bekomme ich X?\" oder \"Was muss ich tun, damit X?\""
+
+#: foirequest/templates/foirequest/request.html:86
+msgid "a question about a political opinion"
+msgstr "Begründungen für politische Entscheidungen"
+
+#: foirequest/templates/foirequest/request.html:88
+msgid "Questions like \"Why don't you do X?\" or \"How can it be that X?\""
+msgstr "Fragen wie \"Warum gibt es kein Gesetz zu X?\" oder \"Wie kann es sein, dass X?\""
+
+#: foirequest/templates/foirequest/request.html:93
+msgid "a matter of general interest"
+msgstr "Informationen aus Dokumenten oder Akten"
+
+#: foirequest/templates/foirequest/request.html:95
+msgid "Questions like \"How much did X cost?\" or \"Please give me a list of X?\""
+msgstr "Anfragen wie \"Wieviel hat X gekostet?\" oder \"Geben Sie mir bitte eine Liste aller X\""
+
+#: foirequest/templates/foirequest/request.html:98
+msgid "Continue"
+msgstr "zum nächsten Schritt"
+
+#: foirequest/templates/foirequest/request.html:101
+msgid "A request about a matter involving you personally"
+msgstr "Eine Anfrage, die Sie persönlich betrifft"
+
+#: foirequest/templates/foirequest/request.html:102
+msgid "If you want to ask a question that relates to you personally, like how you can achieve something or who you have to contact, you need publicly available information that the public service site 115.de can provide to you:"
+msgstr "Wenn Sie eine Frage stellen wollen, die sich auf Sie selbst bezieht, wie etwa \"Wo bekomme <b>ich</b> diesen Service?\" oder \"Was muss <b>ich</b> in diesem Fall tun?\", dann brauchen Sie Informationen zu Behörden-Dienstleistungen, die Ihnen die Seite 115.de gerne zur Verfügung stellt:"
+
+#: foirequest/templates/foirequest/request.html:103
+msgid "Click here to continue to 115.de"
+msgstr "Klicken Sie hier um zu 115.de zu gelangen"
+
+#: foirequest/templates/foirequest/request.html:104
+msgid "Please note that you shouldn't use this site to request personal information."
+msgstr "Bitte beachten Sie, dass FragDenStaat.de nicht für Anfragen nach persönlichen Informationen geeignet ist."
+
+#: foirequest/templates/foirequest/request.html:107
+msgid "A request about an opinion"
+msgstr "Politische Entscheidungen"
+
+#: foirequest/templates/foirequest/request.html:108
+msgid "In order to ask about a political state, you need to talk to people not public bodies. Please ask your Member of Parliament about the topic you are interested in:"
+msgstr "Wenn Sie sich über Gründe für politische Entscheidungen informieren möchten, sollten Sie mit Ihrem Bundestagsabgeordneten reden. Sie können Ihrem Abgeordneten auf abgeordnetenwatch.de Fragen stellen:"
+
+#: foirequest/templates/foirequest/request.html:109
+msgid "Click here to go to abgeordnetenwatch.de"
+msgstr "Klicken Sie hier um zu abgeordnetenwatch.de zu gelangen"
+
+#: foirequest/templates/foirequest/request.html:114
+msgid "Step 3 - Write the Request"
+msgstr "Schritt 3 - Schreiben Sie die Anfrage"
+
+#: foirequest/templates/foirequest/request.html:117
 msgid "Please have a look if the information you are looking for is already available online."
 msgstr "Bitte vergewissern Sie sich, dass die Informationen, die Sie suchen, nicht schon online verfügbar sind."
 
-#: foirequest/templates/foirequest/request.html:78
+#: foirequest/templates/foirequest/request.html:120
 #, python-format
 msgid "Search this site for %(topic)s"
 msgstr "Durchsuchen Sie die Seite nach %(topic)s"
 
-#: foirequest/templates/foirequest/request.html:81
+#: foirequest/templates/foirequest/request.html:123
 msgid "Explore other requests made to this Public Body"
 msgstr "Lesen Sie andere Anfragen an diese Behörde"
 
-#: foirequest/templates/foirequest/request.html:84
+#: foirequest/templates/foirequest/request.html:126
 msgid "Try a Google Search for your topic"
 msgstr "Probieren Sie eine Google Suche nach diesem Thema"
 
-#: foirequest/templates/foirequest/request.html:87
+#: foirequest/templates/foirequest/request.html:129
 msgid "If you could not find the information you are looking for, write a request below."
 msgstr "Falls Sie die gewünschten Informationen nicht finden konnten, schreiben Sie unten eine Anfrage."
 
-#: foirequest/templates/foirequest/request.html:90
+#: foirequest/templates/foirequest/request.html:132
 msgid "Request Subject"
 msgstr "Betreff der Anfrage"
 
-#: foirequest/templates/foirequest/request.html:101
+#: foirequest/templates/foirequest/request.html:143
 msgid "Your Request:"
 msgstr "Ihr Anfrage:"
 
-#: foirequest/templates/foirequest/request.html:110
+#: foirequest/templates/foirequest/request.html:152
 msgid "Legal Explanation:"
 msgstr "Erklärung:"
 
-#: foirequest/templates/foirequest/request.html:112
+#: foirequest/templates/foirequest/request.html:154
 msgid "Important Notes:"
 msgstr "Wichtige Hinweise:"
 
-#: foirequest/templates/foirequest/request.html:114
+#: foirequest/templates/foirequest/request.html:156
 msgid "Write your request in <strong>simple, precise language</strong>."
 msgstr "Schreiben Sie Ihre Anfrage in <strong>einfacher, präziser Sprache</strong>."
 
-#: foirequest/templates/foirequest/request.html:115
+#: foirequest/templates/foirequest/request.html:157
 msgid "Ask for <strong>specific</strong> documents or information."
 msgstr "Fragen Sie nach <strong>spezifischen</strong> Dokumenten oder Informationen."
 
-#: foirequest/templates/foirequest/request.html:116
+#: foirequest/templates/foirequest/request.html:158
 msgid "Keep it <strong>focused and concise</strong>."
 msgstr "Halten Sie es <strong>kurz und bündig</strong>."
 
-#: foirequest/templates/foirequest/request.html:117
+#: foirequest/templates/foirequest/request.html:159
 msgid "This site is <strong>public</strong>. Everything you type and any response will be published."
 msgstr "Diese Seite ist <strong>öffentlich</strong>. Alles, was Sie eingeben und die Antworten werden veröffentlicht."
 
-#: foirequest/templates/foirequest/request.html:118
+#: foirequest/templates/foirequest/request.html:160
 msgid "Do <strong>not include</strong> personal information in your request."
 msgstr "Schließen Sie <strong>keine</strong> persönlichen Daten in Ihre Anfrage ein."
 
-#: foirequest/templates/foirequest/request.html:119
+#: foirequest/templates/foirequest/request.html:161
 msgid "Do <strong>not ask</strong> for personal information."
 msgstr "Fragen Sie <strong>nicht</strong> nach persönlichen Informationen."
 
-#: foirequest/templates/foirequest/request.html:126
+#: foirequest/templates/foirequest/request.html:168
 msgid "Your Post Address:"
 msgstr "Ihre Postadresse:"
 
-#: foirequest/templates/foirequest/request.html:127
+#: foirequest/templates/foirequest/request.html:169
 msgid "Your Email Address:"
 msgstr "Ihre E-Mailadresse:"
 
-#: foirequest/templates/foirequest/request.html:130
+#: foirequest/templates/foirequest/request.html:172
 msgid "and"
 msgstr "und"
 
-#: foirequest/templates/foirequest/request.html:131
+#: foirequest/templates/foirequest/request.html:173
 msgid "last name"
 msgstr "Nachname"
 
-#: foirequest/templates/foirequest/request.html:140
+#: foirequest/templates/foirequest/request.html:182
 msgid "Your mailing address"
 msgstr "Ihre Postanschrift"
 
-#: foirequest/templates/foirequest/request.html:147
+#: foirequest/templates/foirequest/request.html:189
 msgid "Why do you need my mailingaddress?"
 msgstr "Warum benötigen Sie meine Anschrift?"
 
-#: foirequest/templates/foirequest/request.html:148
+#: foirequest/templates/foirequest/request.html:190
 msgid ""
 "You need to be a legal person in order to use\n"
 "        Freedom of Information in Germany and Public Bodies want your\n"
@@ -1505,68 +1569,68 @@ msgstr ""
 "        Adresse als Beweis. Ihre Adresse wird aber nur mit\n"
 "        Ihrer Anfrage mitgeschickt und nicht etwa öffentlich dargestellt."
 
-#: foirequest/templates/foirequest/request.html:154
+#: foirequest/templates/foirequest/request.html:196
 msgid "Your email address"
 msgstr "Ihre E-Mailadresse"
 
-#: foirequest/templates/foirequest/request.html:175
+#: foirequest/templates/foirequest/request.html:217
 msgid "This request is public."
 msgstr "Diese Anfrage ist öffentlich."
 
-#: foirequest/templates/foirequest/request.html:177
+#: foirequest/templates/foirequest/request.html:219
 msgid "If you don't want your request to be public right now, uncheck this. You can always decide to make it public later."
 msgstr "Wenn Ihre Anfrage nicht sofort öffentlich sein soll, entfernen Sie den Haken. Sie können die Anfrage dann später veröffentlichen."
 
-#: foirequest/templates/foirequest/request.html:180
+#: foirequest/templates/foirequest/request.html:222
 msgid "Review and Submit"
 msgstr "Überprüfen und Absenden"
 
-#: foirequest/templates/foirequest/request.html:184
-msgid "Step 3 - Review your Request and Submit"
-msgstr "Schritt 3 - Überprüfen Sie Ihre Anfrage und schicken Sie sie ab"
+#: foirequest/templates/foirequest/request.html:226
+msgid "Step 4 - Review your Request and Submit"
+msgstr "Schritt 4 - Überprüfen Sie Ihre Anfrage und schicken Sie sie ab"
 
-#: foirequest/templates/foirequest/request.html:186
+#: foirequest/templates/foirequest/request.html:228
 msgid "Close"
 msgstr "Schließen"
 
-#: foirequest/templates/foirequest/request.html:187
+#: foirequest/templates/foirequest/request.html:229
 msgid "Review your Request and Submit"
 msgstr "Überprüfen Sie Ihre Anfrage und senden Sie sie ab"
 
-#: foirequest/templates/foirequest/request.html:191
+#: foirequest/templates/foirequest/request.html:233
 msgid "To"
 msgstr "An"
 
-#: foirequest/templates/foirequest/request.html:195
+#: foirequest/templates/foirequest/request.html:237
 #: foirequest/templates/foirequest/show.html:109
 msgid "From"
 msgstr "Von"
 
-#: foirequest/templates/foirequest/request.html:211
+#: foirequest/templates/foirequest/request.html:253
 msgid "Please use proper spelling."
 msgstr "Bitte achten Sie auf Ihre Rechtschreibung."
 
-#: foirequest/templates/foirequest/request.html:212
+#: foirequest/templates/foirequest/request.html:254
 msgid "Please stay polite."
 msgstr "Bitte bleiben Sie höflich."
 
-#: foirequest/templates/foirequest/request.html:216
+#: foirequest/templates/foirequest/request.html:258
 msgid "If you are happy with your request, click below to submit it."
 msgstr "Wenn Sie mit Ihrer Anfrage zufrieden sind, klicken Sie unten, um sie abzuschicken."
 
-#: foirequest/templates/foirequest/request.html:217
+#: foirequest/templates/foirequest/request.html:259
 msgid "Submit Request"
 msgstr "Anfrage absenden"
 
-#: foirequest/templates/foirequest/request.html:218
+#: foirequest/templates/foirequest/request.html:260
 msgid " or <a href=\"#\" class=\"close\">edit your request again</a>"
 msgstr " oder <a href=\"#\" class=\"close\">bearbeiten Sie Ihre Anrage noch mal</a>"
 
-#: foirequest/templates/foirequest/request.html:226
+#: foirequest/templates/foirequest/request.html:268
 msgid "Similar Requests"
 msgstr "Ähnliche Anfragen"
 
-#: foirequest/templates/foirequest/request.html:228
+#: foirequest/templates/foirequest/request.html:270
 msgid "None found"
 msgstr "Keine gefunden"
 
@@ -2340,9 +2404,6 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 
 #~ msgid "Search Results"
 #~ msgstr "Suchergebnisse"
-
-#~ msgid "What topic do you need information on?"
-#~ msgstr "Zu welchem Thema brauchen Sie Informationen?"
 
 #~ msgid "browse the list of requests"
 #~ msgstr "schauen Sie sich die Liste der Anfragen an"
