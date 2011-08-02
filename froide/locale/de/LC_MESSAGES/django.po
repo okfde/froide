@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-01 11:15+0200\n"
-"PO-Revision-Date: 2011-08-01 11:16+0100\n"
+"POT-Creation-Date: 2011-08-02 12:39+0200\n"
+"PO-Revision-Date: 2011-08-02 12:43+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -179,8 +179,8 @@ msgid "Profile of <%(user)s>"
 msgstr "Profil von <%(user)s>"
 
 #: account/models.py:34
-msgid "<< Name Hidden >>"
-msgstr "Anonymer Nutzer"
+msgid "Name only visible to Public Body"
+msgstr "Name des Antragstellers ist nur für die Behörde sichtbar"
 
 #: account/models.py:42
 msgid "<< Address removed >>"
@@ -2321,6 +2321,9 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 #: templates/search/search.html:71
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
+
+#~ msgid "<< Name Hidden >>"
+#~ msgstr "Anonymer Nutzer"
 
 #~ msgid "No public bodies yet"
 #~ msgstr "Noch keine Behörden"
