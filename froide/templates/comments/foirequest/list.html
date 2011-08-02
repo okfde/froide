@@ -5,14 +5,14 @@
     {% blocktrans with date=comment.submit_date name=comment.name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}</dt>
     <dd{% if comment.user.is_staff %} class="moderator"{% endif %}>
         {% if comment.user.is_staff %}
-            <p>{{ comment.comment }}</p>
+            <p>{{ comment.comment|linebreaksbr }}</p>
         {% else %}
             {% if comment.comment != comment.comment|truncatewords:20 %}
                 <p id="comment-{{ comment.id }}">{{ comment.comment|truncatewords:20 }}
                     <a href="#comment-{{ comment.id }}-full" class="toggle hideparent">{% trans "Read all" %}</a></p>
-                <p style="display:none" id="comment-{{ comment.id }}-full">{{ comment.comment }}</p>
+                <p style="display:none" id="comment-{{ comment.id }}-full">{{ comment.comment|linebreaksbr }}</p>
             {% else %}
-                <p>{{ comment.comment }}</p>
+                <p>{{ comment.comment|linebreaksbr }}</p>
             {% endif %}
         {% endif %}
     </dd>
