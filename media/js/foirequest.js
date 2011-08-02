@@ -21,8 +21,24 @@ $(function(){
         Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(),
                                     publicBodyPrefilled);
         Froide.app.searchSimilarRequests();
-        Froide.app.activateMessage();
+        Froide.app.activateFoiCheck();
     };
+    
+    $("#continue-foicheck").click(function(e){
+        e.preventDefault();
+        $("#foicheck-form").slideUp();
+        if ($("#option-check_foi_personal").attr("checked")){
+            $("#write-request").hide();
+            $("#review-and-submit").hide();
+            $("#nofoi-personal").slideDown();
+        } else if ($("#option-check_foi_opinion").attr("checked")){
+            $("#write-request").hide();
+            $("#review-and-submit").hide();
+            $("#nofoi-opinion").slideDown();
+        } else if ($("#option-check_foi").attr("checked")){
+            Froide.app.activateMessage();
+        }
+    });
 
     $(".foirequest input[name='public_body']").live("change", function(e){
         if ($("#option-newpublicbody").attr("checked")){

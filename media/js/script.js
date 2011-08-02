@@ -283,8 +283,16 @@ Froide.app.statusSet = (function(){
     };
 }());
 
-Froide.app.activateMessage = function(){
+Froide.app.activateFoiCheck = function(){
     $("#public-body").removeClass("active");
+    $("#step-checkfoi").slideDown()
+        .removeClass("hidden")
+        .parent().addClass("active");
+};
+
+Froide.app.activateMessage = function(){
+    $("#check-foi").removeClass("active");
+    $("#step-checkfoi").hide();
     $("#step-message").slideDown()
         .removeClass("hidden")
         .parent().addClass("active");
@@ -369,7 +377,7 @@ $(function(){
                 var li = Froide.app.getPublicBodyResultListItem(data);
                 Froide.app.selectSearchListItem($(li));
                 Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(), false);
-                Froide.app.activateMessage();
+                Froide.app.activateFoiCheck();
             }
         });
     }
