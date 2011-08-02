@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-02 12:39+0200\n"
-"PO-Revision-Date: 2011-08-02 12:43+0100\n"
+"PO-Revision-Date: 2011-08-02 13:38+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2262,7 +2262,7 @@ msgstr "Abschicken"
 #: templates/comments/foirequest/list.html:5
 #, python-format
 msgid "On %(date)s, %(name)s wrote:"
-msgstr "%(name)s schrieb amd %(date)s:"
+msgstr "%(name)s schrieb am %(date)s:"
 
 #: templates/help/base.html:11
 msgid "Help Pages"
