@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-02 12:41+0200\n"
+"POT-Creation-Date: 2011-08-02 18:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1331,7 +1331,7 @@ msgstr ""
 
 #: foirequest/templates/foirequest/request.html:39
 #: foirequest/templates/foirequest/show.html:60
-#: foirequest/templates/foirequest/show.html:207
+#: foirequest/templates/foirequest/show.html:208
 msgid "Details"
 msgstr ""
 
@@ -1614,123 +1614,116 @@ msgstr ""
 msgid "Upload Document"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:178
-#, python-format
-msgid "Show %(count)s comment / Write a comment"
-msgid_plural "Show %(count)s comments / Write a comment"
-msgstr[0] ""
-msgstr[1] ""
+#: foirequest/templates/foirequest/show.html:180
+msgid "Write a comment"
+msgstr ""
 
-#: foirequest/templates/foirequest/show.html:186
+#: foirequest/templates/foirequest/show.html:187
 msgid "Please login to write a comment."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:188
-msgid "Hide comments"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:193
+#: foirequest/templates/foirequest/show.html:194
 msgid "No messages yet"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:199
+#: foirequest/templates/foirequest/show.html:200
 msgid "You can suggest a public body for this request."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:202
+#: foirequest/templates/foirequest/show.html:203
 msgid "The following public bodies have already been suggested:"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:208
+#: foirequest/templates/foirequest/show.html:209
 msgid "Reason given by the user:"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:212
+#: foirequest/templates/foirequest/show.html:213
 msgid "There are no suggestions yet"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:222
+#: foirequest/templates/foirequest/show.html:223
 msgid "Suggest this Public Body"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:230
+#: foirequest/templates/foirequest/show.html:231
 msgid ""
 "As the author of this request, please choose a public body from one of the "
 "suggestions:"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:234
+#: foirequest/templates/foirequest/show.html:235
 msgid "Send this request to the selected Public Body"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:247
+#: foirequest/templates/foirequest/show.html:248
 msgid "Current status of request:"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:250
+#: foirequest/templates/foirequest/show.html:251
 msgid "Please specify what the Public Body charges for the information."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:251
+#: foirequest/templates/foirequest/show.html:252
 msgid "Costs:"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:256
+#: foirequest/templates/foirequest/show.html:257
 msgid ""
 "When you are denied information, the Public Body should always state the "
 "reason."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:257
+#: foirequest/templates/foirequest/show.html:258
 msgid "Refusal Reason: "
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:260
+#: foirequest/templates/foirequest/show.html:261
 msgid "Set status"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:270
+#: foirequest/templates/foirequest/show.html:271
 msgid ""
 "This request was made under multiple information laws. If it is apparent "
 "from the reply under which law the request was answered, please choose this "
 "law below. If it is not obvious, leave it as it is."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:272
+#: foirequest/templates/foirequest/show.html:273
 msgid "Set Concrete Law"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:282
+#: foirequest/templates/foirequest/show.html:283
 msgid "Add a Postal reply that you have received"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:294
+#: foirequest/templates/foirequest/show.html:295
 msgid "Add Postal Reply"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:295
+#: foirequest/templates/foirequest/show.html:296
 msgid "You can attach more documents to this reply later."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:303
+#: foirequest/templates/foirequest/show.html:304
 msgid "Send a reply to this Public Body"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:306
+#: foirequest/templates/foirequest/show.html:307
 msgid "You can send another message to this Public Body if you want to."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:308
+#: foirequest/templates/foirequest/show.html:309
 msgid "Send Message"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:320
+#: foirequest/templates/foirequest/show.html:321
 msgid ""
 "This request is <strong>not public</strong> at the moment. You can make this "
 "request public by clicking the button below."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:321
+#: foirequest/templates/foirequest/show.html:322
 msgid "Make this request public now"
 msgstr ""
 
@@ -1874,11 +1867,11 @@ msgstr ""
 msgid "topic"
 msgstr ""
 
-#: publicbody/views.py:83
+#: publicbody/views.py:84
 msgid "This request was already confirmed."
 msgstr ""
 
-#: publicbody/views.py:86
+#: publicbody/views.py:87
 #, python-format
 msgid "%(count)d message was sent."
 msgid_plural "%(count)d messages were sent"
@@ -2221,9 +2214,17 @@ msgstr ""
 msgid "Post"
 msgstr ""
 
+#: templates/comments/foirequest/list.html:4
+msgid "Moderator"
+msgstr ""
+
 #: templates/comments/foirequest/list.html:5
 #, python-format
 msgid "On %(date)s, %(name)s wrote:"
+msgstr ""
+
+#: templates/comments/foirequest/list.html:12
+msgid "Read all"
 msgstr ""
 
 #: templates/help/base.html:11
