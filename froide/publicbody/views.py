@@ -8,6 +8,7 @@ from django.contrib import messages
 
 from haystack.query import SearchQuerySet
 
+from foirequest.models import FoiRequest
 from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
@@ -46,7 +47,7 @@ class PublicBodyDetailView(JSONResponseDetailView):
     def get_context_data(self, **kwargs):
         context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
         if self.format == "html":
-            context['foi_requests'] = context['object'].foirequest_set.order_by('last_message')[:10]
+            context['foi_requests'] = FoiRequest.published.filter(public_body=context['object']).order_by('last_message')[:10]
         return context
 
 def search_json(request):
