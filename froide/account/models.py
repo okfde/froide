@@ -68,7 +68,7 @@ class Profile(models.Model):
 
     def get_absolute_url(self):
         if self.private:
-            return None
+            return ""
         return ""
 
     def get_password_change_form(self, *args, **kwargs):
