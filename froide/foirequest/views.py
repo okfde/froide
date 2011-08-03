@@ -85,7 +85,7 @@ def search_similar(request):
         sqs = SearchQuerySet().models(FoiRequest)
         for q in query.split():
             sqs = sqs.filter_or(content=sqs.query.clean(q))
-        result = list(sqs)[:10]
+        result = list(sqs)[:5]
         result = [{"title": x.title, "id": x.pk, "public_body_name": x.public_body_name, "description": x.description,
             "url": x.url, "score": x.score} for x in result]
     return HttpResponse(json.dumps(result), content_type="application/json")
