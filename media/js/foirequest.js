@@ -31,6 +31,7 @@ $(function(){
             $("#write-request").hide();
             $("#review-and-submit").hide();
             $("#nofoi-personal").slideDown();
+            $("#publicbody-link")
         } else if ($("#option-check_foi_opinion").attr("checked")){
             $("#write-request").hide();
             $("#review-and-submit").hide();

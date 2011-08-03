@@ -248,6 +248,8 @@ Froide.app.publicBodyChosen = (function(){
                         }
                         if (result.url){
                             list.append('<li><a href="'+result.url+'">' + Froide.template.visitPublicBodyWebsite + '</a></li>');
+                            $("#publicbody-link").attr("href", result.url);
+                            $("#publicbody-link").text(Froide.template.visitPublicBodyWebsite);
                         }
                         if (result.domain){
                             list.append(Mustache.to_html(
