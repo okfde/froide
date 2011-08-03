@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-02 22:56+0200\n"
+"POT-Creation-Date: 2011-08-03 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1374,7 +1374,7 @@ msgid "Questions like \"Why don't you do X?\" or \"How can it be that X?\""
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:93
-msgid "a matter of general interest"
+msgid "a matter of general interest (Freedom of Information request)"
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:95
