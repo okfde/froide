@@ -12,6 +12,10 @@ class FoiRequestAdmin(admin.ModelAdmin):
     inlines = [
         FoiMessageInline,
     ]
+    list_display = ('title', 'first_message', 'user', 'public_body', 'status',)
+    list_filter = ('user', 'status',)
+    search_fields = ['title', "description"]
+
 
 
 class FoiAttachmentInline(admin.TabularInline):
