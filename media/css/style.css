@@ -363,6 +363,7 @@ strong {
 #sample-letter {
     font-family: Georgia,serif;
     font-size: 1em;
+    white-space: nowrap;
     white-space: pre-wrap;
     position: relative;
     width: 350px;
@@ -617,6 +618,7 @@ form.foirequest .letter textarea {
 form.foirequest .text {
     width: 390px;
     padding: 5px;
+    white-space: nowrap;
     white-space: pre-line;
     word-wrap: break-word;
     background-color: rgba(255,255,255,0.5);
@@ -630,6 +632,7 @@ form.foirequest .text label {
 }
 
 form.foirequest #post_address {
+    white-space: nowrap;
     white-space: pre-line;
 }
 
@@ -713,6 +716,7 @@ textarea.smalltext {
 }
 
 #review-text {
+    white-space: nowrap;
     white-space: pre-wrap;
     word-wrap: break-word;
     font-family: "Times New Roman", Times, serif;
@@ -796,6 +800,7 @@ textarea.smalltext {
 }
 
 .message-content {
+    white-space: nowrap;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -869,6 +874,7 @@ textarea.smalltext {
 }
 
 .legal-text {
+    white-space: nowrap;
     white-space:pre-line;
 }
 
