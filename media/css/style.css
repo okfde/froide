@@ -468,6 +468,15 @@ form.foirequest > ol > li{
     margin-bottom:2em;
 }
 
+span.help-block {
+    color: #555;
+    font-size:1em;
+    display: block;
+    margin-left:1em;
+    margin-bottom:1em;
+    font-weight:normal;
+}
+
 span.help {
     color: #888;
     font-size:0.75em;

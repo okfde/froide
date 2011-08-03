@@ -244,6 +244,8 @@ Froide.app.publicBodyChosen = (function(){
                         }
                         if (result.url){
                             list.append('<li><a href="'+result.url+'">' + Froide.template.visitPublicBodyWebsite + '</a></li>');
+                            $("#publicbody-link").attr("href", result.url);
+                            $("#publicbody-link").text(Froide.template.visitPublicBodyWebsite);
                         }
                         if (result.domain){
                             list.append(Mustache.to_html(
@@ -279,8 +281,16 @@ Froide.app.statusSet = (function(){
     };
 }());
 
-Froide.app.activateMessage = function(){
+Froide.app.activateFoiCheck = function(){
     $("#public-body").removeClass("active");
+    $("#step-checkfoi").slideDown()
+        .removeClass("hidden")
+        .parent().addClass("active");
+};
+
+Froide.app.activateMessage = function(){
+    $("#check-foi").removeClass("active");
+    $("#step-checkfoi").hide();
     $("#step-message").slideDown()
         .removeClass("hidden")
         .parent().addClass("active");
@@ -365,7 +375,7 @@ $(function(){
                 var li = Froide.app.getPublicBodyResultListItem(data);
                 Froide.app.selectSearchListItem($(li));
                 Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(), false);
-                Froide.app.activateMessage();
+                Froide.app.activateFoiCheck();
             }
         });
     }
