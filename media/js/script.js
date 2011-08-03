@@ -1,5 +1,4 @@
 var Froide = Froide || {};
-
 var loggedInCallback;
 
 Froide.app = Froide.app || {};
@@ -94,12 +93,9 @@ Froide.app.performReview = (function(){
         html = $(html);
         html.find('label input').each(function(i, el){
             el = $(el);
-            console.log(el);
             if (!el.attr("checked")){
                 el.parent().remove();
-                console.log("removed");
             } else {
-                console.log("replaced with", el.attr("value"));
                 el.parent().replaceWith(el.attr("value"));
                
             }
