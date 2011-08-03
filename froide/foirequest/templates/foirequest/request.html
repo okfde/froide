@@ -11,10 +11,15 @@
   Froide.url.searchRequests = "{% url 'foirequest-search_similar' %}";
   Froide.template = Froide.template || {};
   Froide.template.visitPublicBodyWebsite = '{% blocktrans %}Visit the website of this Public Body{% endblocktrans %}';
+  Froide.regex = Froide.regex || {};
+  Froide.regex.greetings = [{% blocktrans %}/Dear Sir or Madam/{% endblocktrans %}gi];
+  Froide.regex.closings = [{% blocktrans %}/Kind Regards/{% endblocktrans %}gi];
   Froide.template.searchInternet = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information" %} </a></li>';
   Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search Public Body Website" %}</a></li>';
   Froide.template.searchEngineUrl = '{% search_engine_query %}';
-  Froide.template.foundEmail = "{% blocktrans %}We found an email address in your text {{email}}. Do not sent personal data to the Public Body.{% endblocktrans %}";
+  Froide.template.foundEmail = "{% trans "We found an email address in your text: {{ email }}. Do not sent personal data to the Public Body." %}";
+  Froide.template.foundGreeting = "{% trans "We found {{ find }} in your text, but there is already a greeting at the top of the letter!" %}";
+  Froide.template.foundClosing = "{% trans "We found {{ find }} in your text, but there is already a closing at the bottom of the letter!" %}";
   Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}";
   Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}";
 </script>

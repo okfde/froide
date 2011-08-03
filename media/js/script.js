@@ -106,27 +106,54 @@ Froide.app.performReview = (function(){
     var no_email = function(str){
         var result = regex_email.exec(str);
         if (result !== null){
-            return Froide.template.foundEmail;
+            return Mustache.to_html(Froide.template.foundEmail, {email: result[0]});
         }
+        return undefined;
     };
+    
+    var no_greetings = function(str){
+        var result, i;
+        for (i = 0; i< Froide.regex.greetings.length; i += 1){
+            result = Froide.regex.greetings[i].exec(str);
+            if (result !== null){
+                return Mustache.to_html(Froide.template.foundGreeting, {find: result[0]});
+            }
+        }
+        return undefined;
+    };
+    
+    var no_closings = function(str){
+        var result, i;
+        for (i = 0; i< Froide.regex.closings.length; i += 1){
+            result = Froide.regex.closings[i].exec(str);
+            if (result !== null){
+                return Mustache.to_html(Froide.template.foundClosing, {find: result[0]});
+            }
+        }
+        return undefined;
+    };
+    
     var non_empty = function(str){
         if (str.replace(/\s/g, "").length === 0){
             return true;
         }
+        return undefined;
     };
     var non_empty_body = function(str){
         if (non_empty(str)){
             return Froide.template.emptyBody;
         }
+        return undefined;
     };
     var non_empty_subject = function(str){
         if (non_empty(str)){
             return Froide.template.emptySubject;
         }
+        return undefined;
     };
     var formChecks = {
         "id_subject": [non_empty_subject],
-        "id_body": [non_empty_body, no_email]
+        "id_body": [non_empty_body, no_email, no_greetings, no_closings]
     };
 
     var openLightBox = function(){
