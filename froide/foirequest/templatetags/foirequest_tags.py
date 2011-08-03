@@ -2,11 +2,12 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
+from helper.text_utils import unescape
 
 register = template.Library()
 
 def highlight_request(message):
-    content = message.get_content()
+    content = unescape(message.get_content().replace("\r\n", "\n"))
     description = message.request.description
     description = description.replace("\r\n", "\n")
     try:
