@@ -19,9 +19,13 @@ class LatestFoiRequestsFeed(Feed):
         return FoiRequest.published.get_for_latest_feed()
 
     def item_title(self, item):
+        if item.public_body:
+            pb_name = item.public_body.name
+        else:
+            pb_name = _("Not yet known")
         return _("'%(title)s' to %(publicbody)s") % {
                 "title": item.title,
-                "publicbody": item.public_body.name
+                "publicbody": pb_name
                 }
 
     def item_description(self, item):
