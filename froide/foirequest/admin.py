@@ -15,7 +15,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     list_display = ('title', 'first_message', 'user', 'public_body', 'status',)
     list_filter = ('user', 'status',)
     search_fields = ['title', "description"]
-
+    ordering = ('-last_message',)
 
 
 class FoiAttachmentInline(admin.TabularInline):
