@@ -52,6 +52,15 @@
     </li>
     {% endfor %}
   </ul>
+  <p>{% blocktrans %}Feeds for latest requests{% endblocktrans %}</p>
+  <ul class="iconed-list">
+    <li class="rss-icon">
+        <a href="{% url 'foirequest-feed_latest' %}">{% trans "RSS Feed" %}</a>
+    </li>
+    <li class="atom-icon">
+        <a href="{% url 'foirequest-feed_latest_atom' %}">{% trans "Atom Feed" %}</a>
+    </li>
+  </ul>
 </div>
 
 {% endblock %}
