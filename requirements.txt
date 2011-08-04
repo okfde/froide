@@ -12,3 +12,4 @@ BeautifulSoup
 markdown
 pytz==2011e
 django-sentry
+django-pagination==1.0.7

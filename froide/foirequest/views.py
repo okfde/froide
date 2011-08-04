@@ -36,10 +36,10 @@ def index(request):
 def list_requests(request, status=None):
     context = {}
     if status is None:
-        foi_requests = FoiRequest.published.by_last_update()
+        foi_requests = FoiRequest.published.for_list_view()
     else:
         status = FoiRequest.STATUS_URLS_DICT[status]
-        foi_requests = FoiRequest.published.by_last_update().filter(status=status)
+        foi_requests = FoiRequest.published.for_list_view().filter(status=status)
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)

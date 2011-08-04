@@ -1,8 +1,10 @@
 {% extends 'foirequest/base.html' %}
 {% load url from future %}
 {% load i18n %}
+{% load pagination_tags %}
 
 {% block body %}
+{% autopaginate object_list %}
 {% if not status %}
 <h2>{% blocktrans %}Requests{% endblocktrans %}</h2>
 {% else %}
@@ -38,6 +40,7 @@
   {% endfor %}
   </tbody>
 </table>
+{% paginate %}
 </div>
 
 <div class="span-6 last">
