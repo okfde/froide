@@ -738,6 +738,14 @@ textarea.smalltext {
     overflow: auto;
 }
 
+.rss-icon {
+    background-image: url('../img/rss-icon.png');
+}
+
+.atom-icon {
+    background-image: url('../img/atom-icon.png');
+}
+
 .highlight {
     background: #FFFC78;
 }
