@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-03 19:22+0200\n"
-"PO-Revision-Date: 2011-08-03 19:26+0100\n"
+"POT-Creation-Date: 2011-08-04 08:58+0200\n"
+"PO-Revision-Date: 2011-08-04 08:59+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -446,7 +446,7 @@ msgid "Public"
 msgstr "Öffentlich"
 
 #: account/templates/account/show.html:42
-#: foirequest/templates/foirequest/list.html:25
+#: foirequest/templates/foirequest/list.html:27
 #: foirequest/templates/foirequest/show.html:48
 #: templates/index.html:80
 msgid "Not yet set"
@@ -1271,12 +1271,12 @@ msgstr ""
 msgid "Post Address:"
 msgstr "Postanschrift"
 
-#: foirequest/templates/foirequest/list.html:7
+#: foirequest/templates/foirequest/list.html:9
 #: templates/base.html:52
 msgid "Requests"
 msgstr "Anfragen"
 
-#: foirequest/templates/foirequest/list.html:21
+#: foirequest/templates/foirequest/list.html:23
 #: foirequest/templates/foirequest/show.html:171
 #: templates/index.html:83
 #: templates/search/search.html:30
@@ -1284,25 +1284,25 @@ msgstr "Anfragen"
 msgid "%(time)s ago"
 msgstr "%(time)s her"
 
-#: foirequest/templates/foirequest/list.html:22
+#: foirequest/templates/foirequest/list.html:24
 #: foirequest/templates/foirequest/request.html:43
 #: templates/index.html:77
 msgid "To:"
 msgstr "An:"
 
-#: foirequest/templates/foirequest/list.html:27
+#: foirequest/templates/foirequest/list.html:29
 msgid "Status:"
 msgstr "Status:"
 
-#: foirequest/templates/foirequest/list.html:33
+#: foirequest/templates/foirequest/list.html:35
 msgid "No requests with this status yet."
 msgstr "Bisher keine Anfragen mit diesem Status."
 
-#: foirequest/templates/foirequest/list.html:35
+#: foirequest/templates/foirequest/list.html:37
 msgid "No requests yet."
 msgstr "Keine Anfragen bisher."
 
-#: foirequest/templates/foirequest/list.html:44
+#: foirequest/templates/foirequest/list.html:47
 msgid "Filter requests by their status:"
 msgstr "Filtern Sie Anfragen nach ihrem Status:"
 
@@ -2370,6 +2370,16 @@ msgstr "Ihre Privatsphäre"
 msgid "For FoI Officers"
 msgstr "Für Behördenmitarbeiter"
 
+#: templates/pagination/pagination.html:5
+#: templates/pagination/pagination.html:7
+msgid "previous"
+msgstr "vorherige"
+
+#: templates/pagination/pagination.html:21
+#: templates/pagination/pagination.html:23
+msgid "next"
+msgstr "nächste"
+
 #: templates/search/search.html:8
 #, python-format
 msgid "Search Results for \"%(query)s\""
@@ -2445,12 +2455,6 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 
 #~ msgid "Results"
 #~ msgstr "Ergebnisse"
-
-#~ msgid "Previous"
-#~ msgstr "Vorherige"
-
-#~ msgid "Next"
-#~ msgstr "Nächste"
 
 #~ msgid "asking-questions"
 #~ msgstr "anfragen-stellen"

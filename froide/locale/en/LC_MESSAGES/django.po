@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-03 19:23+0200\n"
+"POT-Creation-Date: 2011-08-04 08:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -440,7 +440,7 @@ msgid "Public"
 msgstr ""
 
 #: account/templates/account/show.html:42
-#: foirequest/templates/foirequest/list.html:25
+#: foirequest/templates/foirequest/list.html:27
 #: foirequest/templates/foirequest/show.html:48 templates/index.html:80
 msgid "Not yet set"
 msgstr ""
@@ -1223,35 +1223,35 @@ msgstr ""
 msgid "Post Address:"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:7 templates/base.html:52
+#: foirequest/templates/foirequest/list.html:9 templates/base.html:52
 msgid "Requests"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:21
+#: foirequest/templates/foirequest/list.html:23
 #: foirequest/templates/foirequest/show.html:171 templates/index.html:83
 #: templates/search/search.html:30
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:22
+#: foirequest/templates/foirequest/list.html:24
 #: foirequest/templates/foirequest/request.html:43 templates/index.html:77
 msgid "To:"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:27
+#: foirequest/templates/foirequest/list.html:29
 msgid "Status:"
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:33
+#: foirequest/templates/foirequest/list.html:35
 msgid "No requests with this status yet."
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:35
+#: foirequest/templates/foirequest/list.html:37
 msgid "No requests yet."
 msgstr ""
 
-#: foirequest/templates/foirequest/list.html:44
+#: foirequest/templates/foirequest/list.html:47
 msgid "Filter requests by their status:"
 msgstr ""
 
@@ -2341,6 +2341,16 @@ msgstr ""
 
 #: templates/help/base.html:17
 msgid "For FoI Officers"
+msgstr ""
+
+#: templates/pagination/pagination.html:5
+#: templates/pagination/pagination.html:7
+msgid "previous"
+msgstr ""
+
+#: templates/pagination/pagination.html:21
+#: templates/pagination/pagination.html:23
+msgid "next"
 msgstr ""
 
 #: templates/search/search.html:8
