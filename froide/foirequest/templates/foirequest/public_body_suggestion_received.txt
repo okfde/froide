@@ -1,4 +1,4 @@
-{% load i18n %}{% blocktrans with name=request.user.get_full_name titl=request.title %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name titl=request.title %}Hello {{ name }},
 
 you received a suggestion for a Public Body on your request '{{ title }}'.{% endblocktrans%}
 {% blocktrans %}The suggestion is:{% endblocktrans %}
@@ -11,3 +11,4 @@ you received a suggestion for a Public Body on your request '{{ title }}'.{% end
 
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
+{% endautoescape %}

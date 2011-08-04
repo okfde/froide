@@ -1,4 +1,4 @@
-{% load i18n %}{{ letter_start }}
+{% load i18n %}{% autoescape off %}{{ letter_start }}
 
 {{ body }}
 
@@ -10,3 +10,4 @@
 {{ request.user.get_profile.address }}
 
 {% include "foirequest/mail_footer.txt" %}
+{% endautoescape %}
