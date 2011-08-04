@@ -61,6 +61,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def by_last_update(self):
         return self.get_query_set().order_by('-last_message')
 
+    def for_list_view(self):
+        return self.get_query_set().order_by('-first_message')
+
     def get_for_homepage(self, count=5):
         return self.by_last_update()[:count]
 
