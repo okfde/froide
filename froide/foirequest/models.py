@@ -173,7 +173,7 @@ class FoiRequest(models.Model):
     costs = models.FloatField(_("Cost of Information"), default=0.0)
     refusal_reason = models.CharField(_("Refusal reason"), max_length=255,
             blank=True)
-    checked = models.BooleanField(_("was checked"), default=False)
+    checked = models.BooleanField(_("checked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
     
     site = models.ForeignKey(Site, null=True,
