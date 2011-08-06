@@ -8,8 +8,11 @@
     {% endfor %}
     {% if form.comment.errors %}{{ form.comment.errors }}{% endif %}
     <p{% if form.comment.errors %} class="error"{% endif %}>
-    {{ form.comment.label_tag }}<br/>
+    {% blocktrans with name=user.get_full_name %}Comment by {{ name }}:{% endblocktrans %}<br/>
     {{ form.comment }}<br/>
+    {% if user.get_profile.private %}
+    <p class="red">{% trans "Despite your privacy settings, your real name will be published with comments.<br/>There are <strong>no anonymous comments</strong>." %}</p>
+    {% endif %}
     <input type="submit" name="post" class="submit-post" value="{% trans "Post" %}" />
   </p>
 </form>
