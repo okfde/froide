@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-05 15:17+0200\n"
+"POT-Creation-Date: 2011-08-06 18:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -183,24 +183,24 @@ msgstr ""
 msgid "Name only visible to Public Body"
 msgstr ""
 
-#: account/models.py:42
+#: account/models.py:43
 msgid "<< Address removed >>"
 msgstr ""
 
-#: account/models.py:45
+#: account/models.py:46
 msgid "<< Email removed >>"
 msgstr ""
 
-#: account/models.py:52 account/models.py:54 account/models.py:56
+#: account/models.py:53 account/models.py:55 account/models.py:57
 msgid "<< Name removed >>"
 msgstr ""
 
-#: account/models.py:60
+#: account/models.py:61
 msgid "<< Greeting >>"
 msgstr ""
 
 #. Translators: Mail subject
-#: account/models.py:135
+#: account/models.py:136
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr ""
@@ -2320,7 +2320,18 @@ msgstr ""
 msgid "No events yet"
 msgstr ""
 
-#: templates/comments/form.html:13
+#: templates/comments/form.html:11
+#, python-format
+msgid "Comment by %(name)s:"
+msgstr ""
+
+#: templates/comments/form.html:14
+msgid ""
+"Despite your privacy settings, your real name will be published with comment."
+"<br/>There are <strong>no anonymous comments</strong>."
+msgstr ""
+
+#: templates/comments/form.html:16
 msgid "Post"
 msgstr ""
 

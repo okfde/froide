@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-05 15:16+0200\n"
-"PO-Revision-Date: 2011-08-05 15:22+0100\n"
+"POT-Creation-Date: 2011-08-06 18:55+0200\n"
+"PO-Revision-Date: 2011-08-06 18:55+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -182,26 +182,26 @@ msgstr "Profil von <%(user)s>"
 msgid "Name only visible to Public Body"
 msgstr "Name des Antragstellers ist nur für die Behörde sichtbar"
 
-#: account/models.py:42
+#: account/models.py:43
 msgid "<< Address removed >>"
 msgstr "<< Adresse entfernt >>"
 
-#: account/models.py:45
+#: account/models.py:46
 msgid "<< Email removed >>"
 msgstr "<< E-Mail entfernt >>"
 
-#: account/models.py:52
-#: account/models.py:54
-#: account/models.py:56
+#: account/models.py:53
+#: account/models.py:55
+#: account/models.py:57
 msgid "<< Name removed >>"
 msgstr "Anonymer Nutzer"
 
-#: account/models.py:60
+#: account/models.py:61
 msgid "<< Greeting >>"
 msgstr "<< Anrede >>"
 
 #. Translators: Mail subject
-#: account/models.py:135
+#: account/models.py:136
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
@@ -2347,7 +2347,16 @@ msgstr "zur Anfrage"
 msgid "No events yet"
 msgstr "Noch keine Ereignisse"
 
-#: templates/comments/form.html:13
+#: templates/comments/form.html:11
+#, python-format
+msgid "Comment by %(name)s:"
+msgstr "Kommentar von %(name)s:"
+
+#: templates/comments/form.html:14
+msgid "Despite your privacy settings, your real name will be published with comment.<br/>There are <strong>no anonymous comments</strong>."
+msgstr "Trotz Ihrer Privatsphäre-Einstellungen wird Ihr Name mit Ihrem Kommentar veröffentlicht.<br/>Es gibt <strong>keine anonymen Kommentare</strong."
+
+#: templates/comments/form.html:16
 msgid "Post"
 msgstr "Abschicken"
 
