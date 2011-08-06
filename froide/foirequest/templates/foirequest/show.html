@@ -110,6 +110,26 @@
             <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">{% trans "Atom Feed" %}</a>
         </li>
     </ul>
+  {% if user.is_staff %}
+    <h3>{% trans "Admin Tools" %}</h3>
+    <a href="{% url 'admin:foirequest_foirequest_change' object.id %}">{% trans "View on Admin site" %}</a><br/>
+    {% if object.checked %}
+      {% trans "Marked as checked" %}<br/>
+    {% else %}
+    <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
+      {% csrf_token %}
+      <input type="submit" value="{% trans "Mark as checked" %}"/>
+    </form>
+    {% endif %}
+    {% if not object.is_foi %}
+      {% trans "Marked as NOT FoI" %}<br/>
+    {% else %}
+    <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+      {% csrf_token %}
+      <input type="submit" value="{% trans "Mark as NOT FoI" %}"/>
+    </form>
+    {% endif %}
+  {% endif %}
 </div>
 </div>
 <div class="span-18">

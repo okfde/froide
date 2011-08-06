@@ -30,6 +30,7 @@ from foirequest.foi_mail import send_foi_mail
 
 html2markdown = lambda x: x
 
+
 class FoiRequestManager(CurrentSiteManager):
     def get_for_homepage(self, count=5):
         return self.get_query_set().order_by("-last_message")[:count]
@@ -172,12 +173,16 @@ class FoiRequest(models.Model):
     costs = models.FloatField(_("Cost of Information"), default=0.0)
     refusal_reason = models.CharField(_("Refusal reason"), max_length=255,
             blank=True)
+    checked = models.BooleanField(_("checked"), default=False)
+    is_foi = models.BooleanField(_("is FoI request"), default=True)
     
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
-    
+
+
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
+
 
     class Meta:
         ordering = ('last_message',)
