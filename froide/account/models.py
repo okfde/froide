@@ -38,8 +38,9 @@ class Profile(models.Model):
     def apply_message_redaction(self, content):
         if self.address:
             for line in self.address.splitlines():
-                content = content.replace(line,
-                        _("<< Address removed >>"))
+                if line.strip():
+                    content = content.replace(line,
+                            _("<< Address removed >>"))
         if self.user.email:
             content = content.replace(self.user.email,
                     _("<< Email removed >>"))
