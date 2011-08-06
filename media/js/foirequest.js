@@ -31,7 +31,7 @@ $(function(){
             $("#write-request").hide();
             $("#review-and-submit").hide();
             $("#nofoi-personal").slideDown();
-            $("#publicbody-link")
+            $("#publicbody-link");
         } else if ($("#option-check_foi_opinion").attr("checked")){
             $("#write-request").hide();
             $("#review-and-submit").hide();
@@ -40,6 +40,18 @@ $(function(){
             Froide.app.activateMessage();
         }
     });
+
+    var highlightRegex = function(elem, regex){
+        elem.html(elem.html().replace(regex, "<em>$&</em>"));
+    };
+    var i;
+    for(i = 0; i < Froide.regex.greetings.length; i += 1){
+        highlightRegex($("#letter_start"), Froide.regex.greetings[i]);
+    }
+    for(i = 0; i < Froide.regex.closings.length; i += 1){
+        highlightRegex($("#letter_end"), Froide.regex.closings[i]);
+    }
+
 
     $(".foirequest input[name='public_body']").live("change", function(e){
         if ($("#option-newpublicbody").attr("checked")){

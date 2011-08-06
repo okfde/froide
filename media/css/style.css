@@ -634,6 +634,12 @@ form.foirequest .text {
     font-size:14px;
 }
 
+form.foirequest .text em {
+    font-size: 1.2em;
+    font-weight: bold;
+    font-style: normal;
+}
+
 form.foirequest .text label {
     white-space: normal;
     display: block;
