@@ -387,3 +387,29 @@ def add_postal_reply_attachment(request, slug, message_id):
         messages.add_message(request, messages.ERROR,
                 form._errors['scan'][0])
         return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
+def mark_not_foi(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff:
+        return render_403(request)
+    foirequest.is_foi = False
+    foirequest.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('Request marked as not a FoI request.'))
+    return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
+def mark_checked(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff:
+        return render_403(request)
+    foirequest.checked = True
+    foirequest.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('Request marked as checked.'))
+    return HttpResponseRedirect(foirequest.get_absolute_url())
