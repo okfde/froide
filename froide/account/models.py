@@ -107,7 +107,6 @@ class AccountManager(object):
         user_activated_signal.send_robust(sender=self.user)
         return True
 
-
     def check_confirmation_secret(self, secret, request_id):
         return self.generate_confirmation_secret(request_id) == secret
 

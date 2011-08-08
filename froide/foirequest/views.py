@@ -12,7 +12,7 @@ from haystack.query import SearchQuerySet
 from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
-from publicbody.models import PublicBody, FoiLaw
+from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
 from foirequest.forms import RequestForm, ConcreteLawForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, get_status_form_class,
@@ -33,23 +33,45 @@ def index(request):
             'pbcount': PublicBody.objects.count()
         })
 
-def list_requests(request, status=None):
+def list_requests(request, status=None, topic=None):
     context = {}
-    if status is None:
+    topic_list = PublicBodyTopic.objects.get_list()
+    if status is None and topic is None:
         foi_requests = FoiRequest.published.for_list_view()
-    else:
+    elif status is not None:
         status = FoiRequest.STATUS_URLS_DICT[status]
         foi_requests = FoiRequest.published.for_list_view().filter(status=status)
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)
             })
+    elif topic is not None:
+        topic = get_object_or_404(PublicBodyTopic, slug=topic)
+        foi_requests = FoiRequest.published.for_list_view().filter(public_body__topic=topic)
+        context.update({
+            'topic': topic,
+            })
     context.update({
+            'page_title': _("FoI Requests"),
             'object_list': foi_requests,
             'status_list': [(x[0], 
-                FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS]
+                FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
+            'topic_list': topic_list
         })
     return render(request, 'foirequest/list.html', context)
+
+def list_requests_not_foi(request):
+    context = {}
+    context.update({
+        'page_title': _("Non-FoI Requests"),
+        'not_foi': True,
+        'object_list': FoiRequest.published_not_foi.all(),
+        'status_list': [(x[0], 
+            FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
+        'topic_list': PublicBodyTopic.objects.get_list()
+    })
+    return render(request, 'foirequest/list.html', context)
+
 
 def show(request, slug, template_name="foirequest/show.html", context=None, status=200):
     try:

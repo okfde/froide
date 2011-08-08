@@ -6,10 +6,15 @@ from foirequest.feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 
 
 urlpatterns = patterns("",
-    (r'^$', 'foirequest.views.list_requests', {}, 'foirequest-list'))
+    (r'^$', 'foirequest.views.list_requests', {}, 'foirequest-list'),
+    (r'^%s/$' % pgettext('URL part', 'not-foi'), 'foirequest.views.list_requests_not_foi', {}, 'foirequest-list_not_foi'),
+    # Translators: part in request filter URL
+    (r'^%s/(?P<topic>[-\w]+)/$' % pgettext('URL part', 'topic'), 'foirequest.views.list_requests', {}, 'foirequest-list'),
+
+)
 
 urlpatterns += patterns("",
-    *[(r'^(?P<status>%s)/$' % urlpart, 'foirequest.views.list_requests',{}, 'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS])
+    *[(r'^(?P<status>%s)/$' % urlpart, 'foirequest.views.list_requests', {}, 'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS])
 
 urlpatterns += patterns("",
     (r'^%s/feed/$' % pgettext('URL part', 'latest'), LatestFoiRequestsFeedAtom(), {}, 'foirequest-feed_latest_atom'),
