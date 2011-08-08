@@ -143,14 +143,14 @@
     <tr>
       <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
       {% if object.user == user %}
-      <td>{{ message.real_sender }}</td>
+      <td class="value-padding-right">{{ message.real_sender }}</td>
       {% else %}
-      <td>{{ message.sender }}</td>
+      <td class="value-padding-right">{{ message.sender }}</td>
       {% endif %}
     </tr>
     <tr>
       <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
-      <td><strong>{{ message.subject }}</strong></td>
+      <td class="value-padding-right"><strong>{{ message.subject }}</strong></td>
     </tr>
     <tr>
       <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>

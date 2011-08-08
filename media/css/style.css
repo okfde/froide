@@ -810,6 +810,10 @@ textarea.smalltext {
     content: ":";
 }
 
+.message-table td.value-padding-right {
+    padding-right:65px;
+}
+
 .message-table tbody tr:nth-child(even) td, .message tbody tr.even td {
     background: transparent;
 }
