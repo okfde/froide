@@ -19,7 +19,13 @@
 {% block body %}
 <h2>{{ object.title }}</h2>
 <div class="clearfix">
-<div class="span-18">
+  <div class="span-18">
+{% if not object.is_foi %}
+<div class="notice">
+  {% blocktrans %}This request is not an FoI request. This site is only for requesting specific information from public bodies.{% endblocktrans %}
+</div>
+{% endif %}
+
 <dl>
   <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
   <dd>{% if object.public_body %}
