@@ -5,11 +5,15 @@
 
 {% block body %}
 {% autopaginate object_list %}
-{% if not status %}
-<h2>{% blocktrans %}Requests{% endblocktrans %}</h2>
+{% if not status and not topic %}
+<h2>{{ page_title|safe }}</h2>
 {% else %}
+{% if status %}
 <h2>{{ status }}</h2>
 <p>{{ status_description }}</p>
+{% else %}
+<h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
+{% endif %}
 {% endif %}
 <div class="span-18">
   <table class="no-stripes">
@@ -44,6 +48,11 @@
 </div>
 
 <div class="span-6 last">
+  {% if status or topic or not_foi %}
+  <p>
+    <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
+  </p>
+  {% endif %}
   <p class="bold">{% blocktrans %}Filter requests by their status:{% endblocktrans %}</p>
   <ul class="iconed-list">
   {% for urlpart,readable_status,status in status_list %}
@@ -52,6 +61,20 @@
     </li>
     {% endfor %}
   </ul>
+  <p class="bold">{% blocktrans %}Filter requests by category:{% endblocktrans %}</p>
+  <ul class="iconed-list">
+  {% for topic in topic_list %}
+    <li style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')">
+    <a href="{% url 'foirequest-list' topic=topic.slug %}">{{ topic.name }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <p>
+    <a href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
+  </p>
+
+
   <p>{% blocktrans %}Feeds for latest requests{% endblocktrans %}</p>
   <ul class="iconed-list">
     <li class="rss-icon">
