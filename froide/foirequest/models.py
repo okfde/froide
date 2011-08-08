@@ -49,7 +49,7 @@ class FoiRequestManager(CurrentSiteManager):
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(visibility=2)\
+                self).get_query_set().filter(visibility=2, is_foi=True)\
                         .select_related("public_body")
 
     def awaiting_response(self):
@@ -75,6 +75,14 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set().filter(
                     models.Q(status="successful")|
                     models.Q(status="partially_successful"))
+
+
+class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
+    def get_query_set(self):
+        return super(PublishedFoiRequestManager,
+                self).get_query_set().filter(visibility=2, is_foi=False)\
+                        .select_related("public_body")
+
 
 class FoiRequest(models.Model):
     ADMIN_SET_CHOICES = (
@@ -182,6 +190,7 @@ class FoiRequest(models.Model):
 
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
+    published_not_foi = PublishedNotFoiRequestManager()
 
 
     class Meta:
@@ -761,7 +770,9 @@ class FoiMessage(models.Model):
         FoiRequest.message_sent.send(sender=self.request, message=self)
 
 # Signals for Indexing FoiMessage via FoiRequest
-def foimessage_delayed_update(instance, **kwargs):
+def foimessage_delayed_update(instance=None, created=False, **kwargs):
+    if created and kwargs.get('raw', False):
+        return
     from helper.tasks import delayed_update
     delayed_update.delay(instance.request_id, FoiRequest)
 signals.post_save.connect(foimessage_delayed_update, sender=FoiMessage)
@@ -826,7 +837,9 @@ class FoiAttachment(models.Model):
                 urlquote(self.file.url))
 
 # Signals for Indexing FoiAttachment via FoiRequest
-def foiattachment_delayed_update(instance, **kwargs):
+def foiattachment_delayed_update(instance, created=False, **kwargs):
+    if created and kwargs.get('raw', False):
+        return
     from helper.tasks import delayed_update
     delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
 signals.post_save.connect(foiattachment_delayed_update, sender=FoiAttachment)
