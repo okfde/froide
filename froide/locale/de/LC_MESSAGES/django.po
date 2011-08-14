@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-08 21:06+0200\n"
-"PO-Revision-Date: 2011-08-08 21:10+0100\n"
+"PO-Revision-Date: 2011-08-14 11:35+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2365,7 +2365,7 @@ msgstr "Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen des B
 #: templates/index.html:11
 #, python-format
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
-msgstr "Durchsuchen Sie %(foicount)s Anfragen und %(pbcount)s Behörden:"
+msgstr "Suchen Sie in %(foicount)s Anfragen und %(pbcount)s Behörden:"
 
 #: templates/index.html:14
 #: templates/search/search.html:12
