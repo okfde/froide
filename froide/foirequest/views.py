@@ -65,7 +65,7 @@ def list_requests_not_foi(request):
     context.update({
         'page_title': _("Non-FoI Requests"),
         'not_foi': True,
-        'object_list': FoiRequest.published_not_foi.all(),
+        'object_list': FoiRequest.published_not_foi.for_list_view(),
         'status_list': [(x[0], 
             FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
         'topic_list': PublicBodyTopic.objects.get_list()

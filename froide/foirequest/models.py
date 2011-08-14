@@ -83,6 +83,9 @@ class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
                 self).get_query_set().filter(visibility=2, is_foi=False)\
                         .select_related("public_body")
 
+    def for_list_view(self):
+        return self.get_query_set().order_by('-first_message')
+
 
 class FoiRequest(models.Model):
     ADMIN_SET_CHOICES = (
