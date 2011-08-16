@@ -166,6 +166,10 @@
       <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
       {% endif %}
     </tr>
+    <tr>
+      <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
+      <td>{{ message.get_recipient }}</td>
+    </tr>
     {% if message.all_attachments %}
     <tr>
       <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>

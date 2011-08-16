@@ -105,6 +105,9 @@ class FoiRequest(models.Model):
         ('awaiting_clarification',
                 _('Awaiting clarification from Public Body'),
                 _('A response was not satisfying to the requester and he requested more information.')),
+        # ('request_redirected',
+        #         _('Request was redirected to another Public Body'),
+        #         _('The current Public Body redirected the request to another Public Body.')),
         ('successful', _('Request Successful'),
             _('The request has been successul.')),
         ('partially_successful', _('Request partially successful'),
@@ -334,7 +337,8 @@ class FoiRequest(models.Model):
         message.sender_email = email['from'][1]
         message.sender_public_body = self.public_body
         message.timestamp = convert_to_local(*email['date'])
-        message.recipient = self.secret_address
+        message.recipient_email = self.secret_address
+        message.recipient = self.user.get_profile().display_name()
         # strip timezone, in case database can't handle it
         message.timestamp = message.timestamp.replace(tzinfo=None)
         message.plaintext = email['body']
@@ -366,7 +370,9 @@ class FoiRequest(models.Model):
         message.sender_user = user
         message.sender_name = user.get_profile().display_name()
         message.sender_email = self.secret_address
-        message.recipient = last_message.sender_email
+        message.recipient_email = last_message.sender_email
+        message.recipient_public_body = last_message.sender_public_body
+        message.recipient = last_message.sender_name
         message.timestamp = datetime.now()
         message.plaintext = message_body
         message.send()
@@ -460,10 +466,13 @@ class FoiRequest(models.Model):
         message.plaintext = cls.construct_message_body(form_data['body'],
                 request, foi_law, post_data)
         if public_body_object is not None:
-            message.recipient = public_body_object.email
+            message.recipient_public_body = public_body_object
+            message.recipient = public_body_object.name
+            message.recipient_email = public_body_object.email
             cls.request_to_public_body.send(sender=request)
         else:
             message.recipient = ""
+            message.recipient_email = ""
         message.original = message.plaintext
         message.save()
         cls.request_created.send(sender=request)
@@ -565,7 +574,9 @@ class FoiRequest(models.Model):
             messages = self.foimessage_set.all()
             assert len(messages) == 1
             message = messages[0]
-            message.recipient = public_body.email
+            message.recipient_public_body = public_body
+            message.recipient = public_body.name
+            message.recipient_email = public_body.email
             # message.plaintext = FoiRequest.construct_message_body(message,
             #   message.plaintext)
             assert message.sent == False
@@ -664,9 +675,15 @@ class FoiMessage(models.Model):
             blank=True, max_length=255)
     sender_public_body = models.ForeignKey(PublicBody, blank=True,
             null=True, on_delete=models.SET_NULL,
-            verbose_name=_("From Public Body"))
+            verbose_name=_("From Public Body"), related_name='send_messages')
+
     recipient = models.CharField(_("Recipient"), max_length=255,
             blank=True, null=True)
+    recipient_email = models.CharField(_("Recipient Email"), max_length=255,
+            blank=True, null=True)
+    recipient_public_body = models.ForeignKey(PublicBody, blank=True,
+            null=True, on_delete=models.SET_NULL,
+            verbose_name=_("Public Body Recipient"), related_name='received_messages')
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     plaintext = models.TextField(_("plain text"), blank=True, null=True)
@@ -700,7 +717,17 @@ class FoiMessage(models.Model):
     def get_absolute_domain_url(self):
         return "%s#%s" % (self.request.get_absolute_domain_url(),
                 self.get_html_id())
+    
+    def get_recipient(self):
+        if self.recipient_public_body:
+            return mark_safe('<a href="%(url)s">%(name)s</a>' % {
+                "url": self.recipient_public_body.get_absolute_url(),
+                "name": escape(self.recipient_public_body.name)})
+        else:
+            return self.recipient
 
+    def get_quoted(self):
+        return "\n".join([">%s" % l for l in self.plaintext.splitlines()])
 
     @property
     def sender(self):
@@ -766,13 +793,13 @@ class FoiMessage(models.Model):
 
     def send(self):
         if settings.FROIDE_DRYRUN:
-            recp = self.recipient.replace("@", "+")
-            self.recipient = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
+            recp = self.recipient_email.replace("@", "+")
+            self.recipient_email = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
         send_foi_mail(self.subject, self.plaintext, from_addr,
-                [self.recipient])
+                [self.recipient_email])
         self.sent = True
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
