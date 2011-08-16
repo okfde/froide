@@ -33,7 +33,7 @@ class WebTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_show_request(self):
-        req = FoiRequest.objects.all()[0]
+        req = FoiRequest.objects.get(pk=6)
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug + "-garbage"}))
         self.assertEqual(response.status_code, 404)
@@ -56,7 +56,7 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('foirequest-feed_latest_atom'))
         self.assertEqual(response.status_code, 200)
-        req = FoiRequest.objects.all()[0]
+        req = FoiRequest.objects.get(pk=6)
         response = self.client.get(reverse('foirequest-feed_atom',
             kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)

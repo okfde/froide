@@ -34,7 +34,7 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.filter(user=user, public_body=pb).get()
+        req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
         self.assertIsNotNone(req)
         self.assertFalse(req.public)
         self.assertEqual(req.status, "awaiting_response")
@@ -387,7 +387,7 @@ class RequestTest(TestCase):
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug + "garbage"}),
-                {"public_body": str(pb.pk)})
+                {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 404)
         self.client.logout()
         self.client.login(username="dummy", password="froide")
@@ -402,19 +402,19 @@ class RequestTest(TestCase):
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
-                {"public_body": "9" * 10})
+                {"suggestion": "9" * 10})
         self.assertEqual(response.status_code, 400)
         self.client.logout()
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
-                {"public_body": str(pb.pk)})
+                {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 403)
         self.client.login(username="dummy", password="froide")
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
-                {"public_body": str(pb.pk)})
+                {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
         message = req.foimessage_set.all()[0]
@@ -425,7 +425,7 @@ class RequestTest(TestCase):
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
-                {"public_body": str(pb.pk)})
+                {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 400)
 
     def test_postal_reply(self):
