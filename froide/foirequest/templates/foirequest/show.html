@@ -257,8 +257,8 @@
   {% endwith %}
   <form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
     {% csrf_token %}
-    {% include "publicbody/_chooser.html" %}
     {% with form=object.make_public_body_suggestion_form %}
+    {{ form.public_body }}
     {{ form.reason.label_tag }} {{ form.reason }}
     {% endwith %}
     <br/><input type="submit" value="{% blocktrans %}Suggest this Public Body{% endblocktrans%}"/>
@@ -286,19 +286,26 @@
 {% if object.user == user and object.status_settable %}
 <div class="section important-form">
   <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}">{% csrf_token %}
-    <label for="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
-    {{ object.status_form.status }}<br/>
-    {% if froide.payment_possible %}
-    <div class="status-payment status-section">{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
-      <label id="id_costs">{% blocktrans %}Costs:{% endblocktrans %} </label>
-      {{ object.status_form.costs }} {{ froide.currency }}
-    </div>
-    {% endif %}
-    <div class="status-refusal status-section">
-  {% blocktrans %}When you are denied information, the Public Body should always state the reason.{% endblocktrans %}<br/>
-      <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
-      {{ object.status_form.refusal_reason }}
-    </div>
+    {% with status_form=object.get_status_form %}
+      <label for="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
+      {{ status_form.status }}<br/>
+      {% if froide.payment_possible %}
+      <div class="status-payment status-section">{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
+        <label id="id_costs">{% blocktrans %}Costs:{% endblocktrans %} </label>
+        {{ status_form.costs }} {{ froide.currency }}
+      </div>
+      {% endif %}
+      <div class="status-refusal status-section">
+    {% blocktrans %}When you are denied information, the Public Body should always state the reason.{% endblocktrans %}<br/>
+        <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
+        {{ status_form.refusal_reason }}
+      </div>
+      <div class="status-redirected status-section">
+    {% blocktrans %}If your message is redirected to a different Public Body, please specify the new Public Body:{% endblocktrans %}<br/>
+        <label id="id_redirected">{% blocktrans %}Request was redirected to: {% endblocktrans %}</label>
+        {{ status_form.redirected }}
+      </div>
+    {% endwith %}
     <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
     </p>
   </form>
@@ -310,7 +317,7 @@
 <div class="section">
   <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
     <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-    {{ object.get_concrete_law_form }}
+    {{ object.get_concrete_law_form.as_p }}
     <input type="submit" value="{% blocktrans %}Set Concrete Law{% endblocktrans %}"/>
   </form>
 </div>
@@ -346,7 +353,11 @@
   <div id="write-message" style="display:none">
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}">{% csrf_token %}
     <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
-    <textarea name="message"></textarea><br/>
+    <table class="no-stripes">
+    {% with send_message_form=object.get_send_message_form %}
+      {{ send_message_form.as_table }}
+    {% endwith %}
+    </table>
     <input type="submit" value="{% blocktrans %}Send Message{% endblocktrans %}"/>
   </form>
   </div>

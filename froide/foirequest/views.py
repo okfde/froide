@@ -15,7 +15,7 @@ from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
 from foirequest.forms import RequestForm, ConcreteLawForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
-from foirequest.forms import (SendMessageForm, get_status_form_class,
+from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm)
 from froide.helper.utils import render_400, render_403
 from helper.cache import cache_anonymous_page
@@ -237,7 +237,7 @@ def set_public_body(request, slug):
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
     try:
-        public_body_pk = int(request.POST.get('public_body', ''))
+        public_body_pk = int(request.POST.get('suggestion', ''))
     except ValueError:
         messages.add_message(request, messages.ERROR,
             _('Missing or invalid input!'))
@@ -292,7 +292,7 @@ def set_status(request, slug):
         return render_403(request)
     if not foirequest.status_settable:
         return render_400(request)
-    form = get_status_form_class(foirequest)(request.POST)
+    form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():
         foirequest.set_status(form.cleaned_data)
         messages.add_message(request, messages.SUCCESS,
@@ -310,7 +310,7 @@ def send_message(request, slug):
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
-    form = SendMessageForm(request.POST)
+    form = SendMessageForm(foirequest, request.POST)
     if form.is_valid() and foirequest.replyable():
         foirequest.add_message(request.user, **form.cleaned_data)
         messages.add_message(request, messages.SUCCESS,

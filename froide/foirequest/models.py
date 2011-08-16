@@ -267,17 +267,12 @@ class FoiRequest(models.Model):
                 'request_public_after_due_days', 14))
         return None
 
-    def status_form_klass(self):
-        from foirequest.forms import get_status_form_class
-        return get_status_form_class(self)
-
-    def status_form(self):
-        if not hasattr(self, "_status_form"):
-            self._status_form = self.status_form_klass()(
+    def get_status_form(self):
+        from foirequest.forms import FoiRequestStatusForm
+        return FoiRequestStatusForm(self,
                     initial={"status": self.status,
                         "costs": self.costs,
                         "refusal_reason": self.refusal_reason})
-        return self._status_form
 
     def set_status(self, data):
         self.status = data['status']
@@ -291,6 +286,15 @@ class FoiRequest(models.Model):
         status = data.pop("status")
         self.status_changed.send(sender=self, status=status, data=data)
 
+    def possible_reply_addresses(self):
+        addresses = {}
+        for message in reversed(self.messages):
+            if message.is_response:
+                if not message.sender_email in addresses:
+                    addresses[message.sender_email] = message
+        return addresses
+
+
     def public_body_suggestions(self):
         if not hasattr(self, "_public_body_suggestion"):
             self._public_body_suggestion = \
@@ -298,16 +302,9 @@ class FoiRequest(models.Model):
                         .select_related("public_body", "request")
         return self._public_body_suggestion
 
-    def public_body_suggestions_form_klass(self):
-        from foirequest.forms import get_public_body_suggestions_form_class
-        return get_public_body_suggestions_form_class(
-            self.public_body_suggestions())
-
     def public_body_suggestions_form(self):
-        if not hasattr(self, "_public_body_suggestion_form"):
-            self._public_body_suggestion_form = \
-                    self.public_body_suggestions_form_klass()()
-        return self._public_body_suggestion_form
+        from foirequest.forms import PublicBodySuggestionsForm
+        return PublicBodySuggestionsForm(self.public_body_suggestions())
 
     def make_public_body_suggestion_form(self):
         from foirequest.forms import MakePublicBodySuggestionForm
@@ -320,6 +317,14 @@ class FoiRequest(models.Model):
     def get_postal_reply_form(self):
         from foirequest.forms import PostalReplyForm
         return PostalReplyForm(initial={"date": datetime.now().date()})
+
+    def quote_last_message(self):
+        return list(self.messages)[-1].get_quoted()
+
+    def get_send_message_form(self):
+        from foirequest.forms import SendMessageForm
+        return SendMessageForm(self,
+                initial={"message": _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")})
 
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)

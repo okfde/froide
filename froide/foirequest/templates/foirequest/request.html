@@ -45,17 +45,11 @@
       </p>
       {% else %}
       <div id="step-public_body">
-        {% include 'publicbody/_chooser.html' %}
-      {% if request_form.public_body_object %}
-      <label>
-        <input type="radio" name="public_body" value="{{ request_form.public_body_object.pk }}" checked="checked"/>
-        {{ request_form.public_body_object }}
-      </label>
-      {% endif %}
+        {{ request_form.public_body }}
       <div class="block">
       {% if froide.publicbody_empty %}
       <label>
-        <input type="radio" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
+        <input type="radio" id="option-emptypublicbody" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
         {% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
       </label>
       {% endif %}
@@ -73,6 +67,7 @@
     </div>
     {% endif %}
   </fieldset>
+  {% if not request_form.errors %}
   <fieldset id="check-foi">
     <legend>{% blocktrans %}Step 2 - Choose the type of request{% endblocktrans %}</legend>
     <div class="hidden" id="step-checkfoi">
@@ -116,6 +111,7 @@
         </div>
     </div>
   </fieldset>
+  {% endif %}
   <fieldset id="write-request">
     <legend>{% blocktrans %}Step 3 - Write the Request{% endblocktrans %}</legend>
     <div class="hidden" id="step-message">

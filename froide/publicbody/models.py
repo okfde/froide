@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
+from django.utils.html import escape
 from django.contrib.markup.templatetags.markup import markdown
 
 from froide.helper.date_utils import (calculate_workingday_range,
@@ -214,6 +215,9 @@ class PublicBody(models.Model):
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
+
+    def get_label(self):
+        return mark_safe('%(name)s - <a href="%(url)s" class="target-new info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
 
     def confirm(self):
         if self.confirmed:

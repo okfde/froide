@@ -483,26 +483,26 @@ span.help {
     width:80%;
 }
 
-#public_body-chooser {
+.public_body-chooser {
 }
 
-#search-results {
+.search-results {
     max-height: 12em;
     overflow-y: auto;
 }
 
-#public_body-chooser ul {
+.public_body-chooser ul {
     list-style-type:none;
     padding:0;
     margin:0;
     border:1px solid #ccc;
 }
 
-#publicbody-search {
+.publicbody-search {
     margin:2em;
 }
 
-#search-public_bodies {
+.search-public_bodies {
     width:60%;
 }
 
@@ -523,6 +523,7 @@ span.help {
     max-height:250px; 
     overflow:auto; 
     margin: 3px 0 0;
+    width: 100% !important;
 }
 
 .autocomplete div {
@@ -538,7 +539,7 @@ span.help {
     background:#F0F0F0;
 }
 
-#search-spinner {
+.search-spinner {
     margin: 0 20px;
 }
 

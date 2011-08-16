@@ -3,21 +3,23 @@ var loggedInCallback;
 
 Froide.app = Froide.app || {};
 
-Froide.app.getPublicBodyResultListItem = function(result){
+Froide.app.getPublicBodyResultListItem = function(el, result){
+    var name = el.attr("data-inputname");
     var li = '<li class="result"><label>';
-    li += '<input type="radio" name="public_body" value="' + result.id + '"/> ';
+    li += '<input type="radio" name="' + name + '" value="' + result.id + '"/> ';
     li += result.name + '</label> - ';
     li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
     li += '</li>';
     return li;
 };
 
-Froide.app.selectSearchListItem = function(li){
+Froide.app.selectSearchListItem = function(el, li){
     var html = '<div class="selected-result">' + li.html() + '</div>';
-    $("#public_body-chooser .selected-result").remove();
-    $("#search-results").after(html);
-    $("#public_body-chooser .selected-result input").attr("checked", "checked");
-    $("#search-results").slideUp();
+    el.find(".selected-result").remove();
+    el.find(".search-results").after(html);
+    el.find(".selected-result input").attr("checked", "checked");
+    el.find(".search-results").slideUp();
+    el.trigger("publicBodyChosen");
 };
 
 Froide.app.searchSimilarRequests = function(){
@@ -52,35 +54,35 @@ Froide.app.searchSimilarRequests = function(){
 
 Froide.app.performPublicBodySearch = (function(){
     var lastPublicBodyQuery = null;
-    return function(){
-        var query = $("#search-public_bodies").val();
+    return function(el){
+        var query = el.find(".search-public_bodies").val();
         if (lastPublicBodyQuery === query){
-            $("#search-results").slideDown();
+            el.find(".search-results").slideDown();
             return;
         }
-        $("#search-spinner").fadeIn();
-        $("#search-results").hide();
+        el.find(".search-spinner").fadeIn();
+        el.find(".search-results").hide();
         $.getJSON(Froide.url.searchPublicBody, {"q": query}, function(results){
             var result, i;
             lastPublicBodyQuery = query;
-            $("#search-spinner").hide();
-            $("#search-results .result").remove();
+            el.find(".search-spinner").hide();
+            el.find(".search-results .result").remove();
             if (results.length === 0){
-                $("#empty-result").show();
-                $("#search-results").show();
+                el.find(".empty-result").show();
+                el.find(".search-results").show();
                 return;
             } else {
-                $("#empty-result").hide();
+                el.find(".empty-result").hide();
                 for(i = 0; i < results.length; i += 1){
                     result = results[i];
-                    var li = Froide.app.getPublicBodyResultListItem(result);
-                    $("#search-results").append(li);
+                    var li = Froide.app.getPublicBodyResultListItem(el, result);
+                    el.find(".search-results").append(li);
                 }
-                $(".result input").change(function(e){
+                el.find(".result input").change(function(e){
                     var li = $(this).parent().parent();
-                    Froide.app.selectSearchListItem(li);
+                    Froide.app.selectSearchListItem(el, li);
                 });
-                $("#search-results").slideDown();
+                el.find(".search-results").slideDown();
             }
         });
     };
@@ -299,16 +301,23 @@ Froide.app.statusSet = (function(){
     return function(){
         $(".status-refusal").hide();
         $(".status-payment").hide();
+        $(".status-redirected").hide();
         var status = $("#id_status").val();
         if (/refus/.exec(status) !== null) {
             $(".status-refusal").slideDown();
         } else if (/payment|costs/.exec(status) !== null){
             $(".status-payment").slideDown();
+        } else if (/redirect/.exec(status) !== null){
+            $(".status-redirected").slideDown();
         }
     };
 }());
 
 Froide.app.activateFoiCheck = function(){
+    if ($("#check-foi").length === 0){
+        Froide.app.activateMessage();
+        return;
+    }
     $("#public-body").removeClass("active");
     $("#step-checkfoi").slideDown()
         .removeClass("hidden")
@@ -379,31 +388,39 @@ $(function(){
     $(".goto-form").each(function(i, el){
         window.location.href = "#" + $(el).attr("id");
     });
-    $("#search-public_bodies-submit").click(function(e){
-        Froide.app.performPublicBodySearch();
+    $(".search-public_bodies-submit").click(function(e){
+        Froide.app.performPublicBodySearch($(this).parent().parent());
     });
-    $("#search-public_bodies").keydown(function(e){
+    $(".search-public_bodies").keydown(function(e){
         if(e.keyCode === 13){
             e.preventDefault();
+            Froide.app.performPublicBodySearch($(this).parent().parent());
+        }
+    });
+    $(".publicbody-search .searchexample").click(function(e){
+        e.preventDefault();
+        var term = $(this).text();
+        var par = $(this).parent().parent();
+        par.find(".search-public_bodies").val(term);
+        Froide.app.performPublicBodySearch(par.parent());
+    });
+
+    $(".search-public_bodies").each(function(i, input){
+        if($(input).val() !== ""){
             Froide.app.performPublicBodySearch();
         }
     });
-    $("#publicbody-search .searchexample").click(function(e){
-        e.preventDefault();
-        var term = $(this).text();
-        $("#search-public_bodies").val(term);
-        Froide.app.performPublicBodySearch();
-    });
+
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){
-        $("#search-public_bodies").autocomplete({
-            serviceUrl: Froide.url.autocompletePublicBody,
-            minChars:2,
-            onSelect: function(value, data){
-                var li = Froide.app.getPublicBodyResultListItem(data);
-                Froide.app.selectSearchListItem($(li));
-                Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(), false);
-                Froide.app.activateFoiCheck();
-            }
+        $(".search-public_bodies").each(function(i, input){
+            $(input).autocomplete({
+                serviceUrl: Froide.url.autocompletePublicBody,
+                minChars: 2,
+                onSelect: function(value, data){
+                    var li = Froide.app.getPublicBodyResultListItem($(input).parent(), data);
+                    Froide.app.selectSearchListItem($(input).parent().parent(), $(li));
+                }
+            });
         });
     }
 });

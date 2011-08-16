@@ -1,6 +1,4 @@
 $(function(){
-    var publicBodyPrefilled = $("#search-public_bodies").length === 0;
-
     loggedInCallback = function(data){
         $("#user_data_form").html("<p>"+data.name+" "+data.last_name+"</p>"+
                     "<p>"+data.email+"</p>");
@@ -16,6 +14,8 @@ $(function(){
             e.preventDefault();
         }
     });
+
+    var publicBodyPrefilled = $(".foirequest .search-public_bodies").length === 0;
 
     var publicBodyChosen = function(){
         Froide.app.publicBodyChosen($(".foirequest input[name='public_body']:checked").val(),
@@ -53,7 +53,7 @@ $(function(){
     }
 
 
-    $(".foirequest input[name='public_body']").live("change", function(e){
+    $(".foirequest .public_body-chooser").live("publicBodyChosen", function(e){
         if ($("#option-newpublicbody").attr("checked")){
             $("#new-public_body").slideDown();
         } else {
@@ -73,16 +73,16 @@ $(function(){
     });
 
     if (publicBodyPrefilled){
-        publicBodyChosen();
+        $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     }
-    if($("#search-public_bodies").length === 1 && $("#search-public_bodies").val() !== ""){
-        Froide.app.performPublicBodySearch();
+    else if($(".foirequest input[name='public_body']:checked").length > 0){
+        $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     }
-    if($(".foirequest input[name='public_body']:checked").length > 0){
-        publicBodyChosen();
-    }
-    if ($("#option-newpublicbody").attr("checked")){
-        $("#new-public_body").slideDown();
-    }
+    $("#option-newpublicbody").change(function(e){
+        $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
+    });
+    $("#option-emptypublicbody").change(function(e){
+        $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
+    });
     conditionalFixed("similar-requests-container");
 });

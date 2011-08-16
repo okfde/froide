@@ -8,6 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
 from publicbody.models import PublicBody
+from publicbody.widgets import PublicBodySelect
 from foirequest.models import FoiRequest, FoiAttachment
 
 
@@ -18,7 +19,7 @@ payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(forms.Form):
-    public_body = forms.CharField(label=_("Public Body"), required=False)
+    public_body = forms.CharField(widget=PublicBodySelect, label=_("Public Body"), required=False)
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
     body = forms.CharField(label=_("Body"), 
@@ -98,9 +99,18 @@ class SendMessageForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea,
             label=_("Your message"))
 
+    def __init__(self, foirequest, *args, **kwargs):
+        super(SendMessageForm, self).__init__(*args, **kwargs)
+        choices = [(m.id, m.sender) for k, m in foirequest.possible_reply_addresses().items()]
+        choices.append((0, _("Default address of %(publicbody)s") % {
+                "publicbody": foirequest.public_body.name}))
+        self.fields['to'] = forms.TypedChoiceField(
+                choices=choices, coerce=int, required=True)
+
+
 
 class MakePublicBodySuggestionForm(forms.Form):
-    public_body = forms.IntegerField()
+    public_body = forms.IntegerField(widget=PublicBodySelect)
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
             widget=forms.TextInput(attrs={"size": "40"}), required=False)
     
@@ -119,39 +129,37 @@ class MakePublicBodySuggestionForm(forms.Form):
         return pb
 
 
-def get_public_body_suggestions_form_class(queryset):
-    if len(queryset):
-        class PublicBodySuggestionsForm(forms.Form):
-            public_body = forms.ChoiceField(label=_("Suggestions"),
-                    widget=forms.RadioSelect,
-                    choices=((s.public_body.id, mark_safe(
-                        '''%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
-                        <span class="help">%(reason)s</span>''' %
-                            {"name": escape(s.public_body.name),
-                            "url": s.public_body.get_absolute_url(),
-                            "link": _("More Info"),
-                            "reason": _("Reason for this suggestion: %(reason)s") % {"reason": s.reason}
-                        })) for s in queryset))
-        return PublicBodySuggestionsForm
-    return None
+class PublicBodySuggestionsForm(forms.Form):
+    def __init__(self, queryset, *args, **kwargs):
+        super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)
+        self.fields['suggestion'] = forms.ChoiceField(label=_("Suggestions"),
+            widget=forms.RadioSelect,
+            choices=((s.public_body.id, mark_safe(
+                '''%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
+                <span class="help">%(reason)s</span>''' %
+                    {"name": escape(s.public_body.name),
+                    "url": s.public_body.get_absolute_url(),
+                    "link": _("More Info"),
+                    "reason": _("Reason for this suggestion: %(reason)s") % {"reason": s.reason}
+                })) for s in queryset))
 
-def get_status_form_class(foirequest):
-    class FoiRequestStatusForm(forms.Form):
-        status = forms.ChoiceField(label=_("Status"),
-                # widget=forms.RadioSelect,
-                choices=[('', '-------')] + \
-                        map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES))
-        if payment_possible:
-            costs = forms.FloatField(label=_("Costs"),
-                    required=False, min_value=0.0,
-                    localize=True,
-                    widget=forms.TextInput(attrs={"size": "4"}))
+class FoiRequestStatusForm(forms.Form):
+    def __init__(self, foirequest, *args, **kwargs):
+        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
+        self.fields['refusal_reason'] = forms.ChoiceField(label=_("Refusal Reason"),
+            choices=(('', _('No or other reason given')),) + 
+            foirequest.law.get_refusal_reason_choices(),required=False)
 
-        refusal_reason = forms.ChoiceField(label=_("Refusal Reason"),
-                choices=(('', _('No or other reason given')),) + 
-                foirequest.law.get_refusal_reason_choices(),required=False)
-
-    return FoiRequestStatusForm
+    status = forms.ChoiceField(label=_("Status"),
+            # widget=forms.RadioSelect,
+            choices=[('', '-------')] + \
+                    map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES))
+    redirected = forms.IntegerField(required=False, widget=PublicBodySelect)
+    if payment_possible:
+        costs = forms.FloatField(label=_("Costs"),
+                required=False, min_value=0.0,
+                localize=True,
+                widget=forms.TextInput(attrs={"size": "4"}))
 
 
 class ConcreteLawForm(forms.Form):
