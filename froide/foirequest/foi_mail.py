@@ -36,7 +36,7 @@ def _process_mail(mail_string):
     except UnsupportedMailFormat:
         logging.warn("Unsupported Mail Format: %s" % mail_string)
         return
-
+    mail_string = email['original']
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?

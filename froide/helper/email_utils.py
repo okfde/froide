@@ -10,7 +10,7 @@ import time
 from StringIO import StringIO
 from email.Header import decode_header
 from email.Parser import Parser
-from email.utils import parseaddr, parsedate_tz, getaddresses
+from email.utils import parseaddr, parsedate_tz, getaddresses, decode_rfc2231
 import imaplib
 
 
@@ -79,6 +79,10 @@ class EmailParser(object):
         return (datetime.fromtimestamp(time.mktime(date[:9])), date[9])
 
     def parse(self, content):
+        try:
+            content = decode_rfc2231(content)[2]
+        except Exception:
+            pass
         p = Parser()
         msgobj = p.parsestr(content)
         if msgobj['Subject'] is not None:
@@ -124,6 +128,7 @@ class EmailParser(object):
             'msgobj': msgobj,
             'date': date,
             'subject': subject,
+            'original': content,
             'body': body,
             'html': html,
             'from': parseaddr(msgobj.get('From')),
