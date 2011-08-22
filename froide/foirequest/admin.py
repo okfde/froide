@@ -15,7 +15,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     ]
     list_display = ('title', 'first_message', 'user', 'checked', 'public_body', 'status',)
     list_filter = ('checked', 'first_message', 'last_message', 'status', 'is_foi', 'public')
-    search_fields = ['title', "description"]
+    search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
     actions = ['mark_checked', 'mark_not_foi']
