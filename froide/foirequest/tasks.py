@@ -1,15 +1,34 @@
+import sys
+
 from celery.task import task
 
 from django.conf import settings
 from django.utils import translation
+from django.db import transaction
 
 from foirequest.models import FoiRequest
 from foirequest.foi_mail import _process_mail, _fetch_mail
 
 @task
-def process_mail(mail_string):
+def process_mail(mail):
     translation.activate(settings.LANGUAGE_CODE)
-    return _process_mail(mail_string)
+    def run(mail_string):
+        try:
+            _process_mail(mail_string)
+        except Exception:
+            transaction.rollback()
+            return sys.exc_info()
+        else:
+            transaction.commit()
+            return None
+    run = transaction.commit_manually(run)
+    exc_info = run(mail)
+    if exc_info is not None:
+        from sentry.client.models import client
+        client.create_from_exception(exc_info=exc_info, view="foirequest.tasks.process_mail")
+
+
+
 
 @task
 def fetch_mail():
