@@ -747,6 +747,10 @@ class FoiMessage(models.Model):
                 ) % {"request": self.request,
                     "time": self.timestamp}
 
+    @property
+    def readable_status(self):
+        return FoiRequest.get_readable_status(self.status)
+
     def get_html_id(self):
         return _("message-%(id)d") % {"id": self.id}
 

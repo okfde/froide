@@ -187,6 +187,12 @@
       <td>{{ message.get_recipient }}</td>
     </tr>
     {% endif %}
+    {% if message.status %}
+    <tr>
+      <td class="key">{% blocktrans %}Status{% endblocktrans %}</td>
+      <td>{{ message.readable_status }}</td>
+    </tr>
+    {% endif %}
     {% if message.all_attachments %}
     <tr>
       <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
