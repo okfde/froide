@@ -226,14 +226,15 @@ class FoiRequest(models.Model):
 
     @property
     def messages(self):
-        if not hasattr(self, "_messages"):
+        if not hasattr(self, "_messages") or \
+                self._messages is None:
             self._messages = self.foimessage_set.select_related("sender_user", "sender_user__profile",
                     "sender_public_body").order_by("timestamp")
         return self._messages
 
     @property
     def status_settable(self):
-        return len(self.messages) > 1
+        return self.awaits_classification()
 
     def get_absolute_url(self):
         return reverse('foirequest-show',
