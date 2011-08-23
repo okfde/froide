@@ -262,12 +262,14 @@ class FoiRequest(models.Model):
 
     def awaits_response(self):
         return self.status == 'awaiting_response' or self.status == 'overdue'
-
     def is_overdue(self):
         return self.due_date < datetime.now()
 
-    def replyable(self):
-        return not self.awaits_response()
+    def awaits_classification(self):
+        return self.status == 'awaiting_classification'
+
+    def set_awaits_classification(self):
+        self.status = 'awaiting_classification'
 
     def public_date(self):
         if self.due_date:
