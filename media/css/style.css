@@ -590,6 +590,11 @@ form.foirequest #id_subject {
     margin-right:20%;
 }
 
+.long-input {
+    padding: 5px;
+    width: 390px;
+}
+
 .lawchooser {
     margin: 1em 0;
 }

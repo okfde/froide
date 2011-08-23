@@ -96,19 +96,60 @@ class RequestForm(forms.Form):
             self.foi_law = self.clean_law_without_public_body()
         return cleaned
 
+class MessagePublicBodySenderForm(forms.Form):
+    sender = forms.IntegerField(label=_("Sending Public Body"),
+            widget=PublicBodySelect, min_value=1)
+
+    def __init__(self, message, *args, **kwargs):
+        if not "initial" in kwargs:
+            kwargs['initial']={"sender": message.sender_public_body.id}
+        if not "prefix" in kwargs:
+            kwargs['prefix'] = "m%d" % message.id
+        self.message = message
+        super(MessagePublicBodySenderForm, self).__init__(*args, **kwargs)
+
+    def clean_sender(self):
+        pk = self.cleaned_data['sender']
+        try:
+            self._public_body = PublicBody.objects.get(id=pk)
+        except PublicBody.DoesNotExist:
+            raise forms.ValidationError(_("Invalid value"))
+        return pk
+
+    def save(self):
+        self.message.sender_public_body = self._public_body
+        self.message.save()
 
 class SendMessageForm(forms.Form):
+    subject = forms.CharField(label=_("Subject"),
+            widget=forms.TextInput(attrs={"class": "long-input"}))
     message = forms.CharField(widget=forms.Textarea,
             label=_("Your message"))
 
     def __init__(self, foirequest, *args, **kwargs):
         super(SendMessageForm, self).__init__(*args, **kwargs)
-        choices = [(m.id, m.sender) for k, m in foirequest.possible_reply_addresses().items()]
+        self.foirequest = foirequest
+        choices = [(m.id, m.real_sender) for k, m in foirequest.possible_reply_addresses().items()]
         choices.append((0, _("Default address of %(publicbody)s") % {
                 "publicbody": foirequest.public_body.name}))
         self.fields['to'] = forms.TypedChoiceField(
                 choices=choices, coerce=int, required=True)
 
+    def save(self, user):
+        if self.cleaned_data["to"] == 0:
+            recipient_name = self.foirequest.public_body.name
+            recipient_email = self.foirequest.public_body.email
+            recipient_pb = self.foirequest.public_body
+        else:
+            message = filter(lambda x: x.id == self.cleaned_data["to"],
+                    list(self.foirequest.messages))[0]
+            recipient_name = message.sender_name
+            recipient_email = message.sender_email
+            recipient_pb = message.sender_public_body
+        self.foirequest.add_message(user, recipient_name, recipient_email,
+                self.cleaned_data["subject"],
+                self.cleaned_data['message'],
+                recipient_pb=recipient_pb)
 
 
 class MakePublicBodySuggestionForm(forms.Form):
@@ -162,6 +203,19 @@ class FoiRequestStatusForm(forms.Form):
                 required=False, min_value=0.0,
                 localize=True,
                 widget=forms.TextInput(attrs={"size": "4"}))
+
+    def clean(self):
+        pk = self.cleaned_data.get('redirected', None)
+        status = self.cleaned_data.get('status', None)
+        if status == "request_redirected":
+            if pk is None:
+                raise forms.ValidationError(_("Provide the redirected public body!"))
+            try:
+                self._redirected_public_body = PublicBody.objects.get(id=pk)
+            except PublicBody.DoesNotExist:
+                raise forms.ValidationError(_("Invalid value"))
+        return self.cleaned_data
+
 
 
 class ConcreteLawForm(forms.Form):
