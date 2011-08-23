@@ -208,7 +208,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.filter(user=user, public_body=pb).get()
+        req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
         self.client.logout() # log out to remove Account link
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
