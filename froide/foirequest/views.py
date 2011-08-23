@@ -292,7 +292,7 @@ def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
-    if not foirequest.awaits_classification():
+    if not foirequest.message_needs_status():
         return render_400(request)
     form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():

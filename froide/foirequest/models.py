@@ -124,12 +124,16 @@ class FoiRequest(models.Model):
                 _('Request refused'),
                 _('The Public Body refuses to provide the information.')),
         ('user_withdrew_costs',
-                _('You withdraw request due to costs'),
+                _('Request was withdrawn due to costs'),
                 _('User withdrew the request due to the associated costs.')),
-        ('user_withdrawn',
-                _('You withdraw request (other reason)'),
+        ('user_withdrew',
+                _('Request was withdrawn'),
                 _('User withdrew the request for other reasons.')),
     )
+
+    MESSAGE_STATUS_TO_REQUEST_STATUS = {
+        "request_redirected": "awaiting_response"
+    }
 
     STATUS_URLS = [
             (_("successful"), 'successful'),
@@ -294,21 +298,21 @@ class FoiRequest(models.Model):
                         "refusal_reason": self.refusal_reason})
 
     def set_status(self, form):
-        if not self.awaits_classification():
-            return
         data = form.cleaned_data
         message = self.message_needs_status()
         if message:
             message.status = data['status']
             message.save()
-        self.status = data['status']
+        else:
+            return
+        self.status = self.MESSAGE_STATUS_TO_REQUEST_STATUS.get(data['status'], data['status'])
         message = self.message_needs_status()
         self.costs = data['costs']
-        if self.status == "refused":
+        if data['status'] == "refused":
             self.refusal_reason = data['refusal_reason']
         else:
             self.refusal_reason = u""
-        if self.status == "request_redirected":
+        if data['status'] == "request_redirected":
             self.public_body = form._redirected_public_body
         if message is not None:
             self.set_awaits_classification()
