@@ -417,7 +417,7 @@ $(function(){
                 serviceUrl: Froide.url.autocompletePublicBody,
                 minChars: 2,
                 onSelect: function(value, data){
-                    var li = Froide.app.getPublicBodyResultListItem($(input).parent(), data);
+                    var li = Froide.app.getPublicBodyResultListItem($(input).parent().parent(), data);
                     Froide.app.selectSearchListItem($(input).parent().parent(), $(li));
                 }
             });
