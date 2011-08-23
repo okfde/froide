@@ -249,6 +249,7 @@ Froide.app.performReview = (function(){
 }());
 
 Froide.app.publicBodyChosen = (function(){
+    var doneChoice;
     return function(currentPublicBodyChoice, publicBodyPrefilled){
         if(publicBodyPrefilled){
             return;
@@ -260,7 +261,7 @@ Froide.app.publicBodyChosen = (function(){
         //             {url: Mustache.to_html(Froide.template.searchEngineUrl,
         //             {query: query, domain: ""})}));
         // }
-        if (currentPublicBodyChoice !== undefined && 
+        if (currentPublicBodyChoice !== undefined &&
                 currentPublicBodyChoice !== "" &&
                 currentPublicBodyChoice !== "new"){
             (function(lastChoice){
@@ -270,6 +271,14 @@ Froide.app.publicBodyChosen = (function(){
                     function(result){
                         if (lastChoice !== currentPublicBodyChoice){
                             return;
+                        }
+                        if (lastChoice === doneChoice){
+                            return;
+                        }
+                        if (result.request_note_markdown){
+                            $("#request-note").html(result.request_note_markdown).slideDown();
+                        } else {
+                            $("#request-note").hide();
                         }
                         if (result.url){
                             list.append('<li><a href="'+result.url+'">' + Froide.template.visitPublicBodyWebsite + '</a></li>');
@@ -288,9 +297,12 @@ Froide.app.publicBodyChosen = (function(){
                         // $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
                         // $('#letter_start').text(result.laws[0].letter_start);
                         // $('#letter_end').text(result.laws[0].letter_end);
-                });
+                        doneChoice = lastChoice;
+                    });
             }(currentPublicBodyChoice));
         } else {
+            doneChoice = currentPublicBodyChoice;
+            $("#request-note").hide();
             // $('#letter_start').text(letter_start);
             // $('#letter_end').text(letter_end);
         }
@@ -316,6 +328,9 @@ Froide.app.statusSet = (function(){
 Froide.app.activateFoiCheck = function(){
     if ($("#check-foi").length === 0){
         Froide.app.activateMessage();
+        return;
+    }
+    if ($("#step-message").css("display") === "block"){
         return;
     }
     $("#public-body").removeClass("active");

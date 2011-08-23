@@ -155,6 +155,7 @@ class PublicBody(models.Model):
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
+    request_note = models.TextField(_("request note"), blank=True)
     
     _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
@@ -179,10 +180,11 @@ class PublicBody(models.Model):
     published = objects
 
     class Meta:
+        ordering = ('name',)
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
 
-    serializable_fields = ('name', 'slug',
+    serializable_fields = ('name', 'slug', 'request_note_markdown',
             'description', 'topic_name', 'url', 'email', 'contact',
             'address', 'geography', 'domain')
         
@@ -208,6 +210,10 @@ class PublicBody(models.Model):
         if self.topic:
             return self.topic.name
         return None
+
+    @property
+    def request_note_markdown(self):
+        return markdown(self.request_note)
 
     @property
     def default_law(self):

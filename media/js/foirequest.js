@@ -73,16 +73,19 @@ $(function(){
     });
 
     if (publicBodyPrefilled){
-        $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
+        publicBodyChosen();
     }
     else if($(".foirequest input[name='public_body']:checked").length > 0){
         $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     }
-    $("#option-newpublicbody").change(function(e){
+    $(".foirequest input[name='public_body']").live("change", function(e){
         $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     });
-    $("#option-emptypublicbody").change(function(e){
-        $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
-    });
+    // $("#option-newpublicbody").change(function(e){
+    //     $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
+    // });
+    // $("#option-emptypublicbody").change(function(e){
+    //     $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
+    // });
     conditionalFixed("similar-requests-container");
 });
