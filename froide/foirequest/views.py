@@ -73,7 +73,8 @@ def list_requests_not_foi(request):
     return render(request, 'foirequest/list.html', context)
 
 
-def show(request, slug, template_name="foirequest/show.html", context=None, status=200):
+def show(request, slug, template_name="foirequest/show.html",
+            context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
                 "user", "user__profile", "law", "law__combined").get(slug=slug)
