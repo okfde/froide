@@ -312,13 +312,10 @@ Froide.app.publicBodyChosen = (function(){
 Froide.app.statusSet = (function(){
     return function(){
         $(".status-refusal").hide();
-        $(".status-payment").hide();
         $(".status-redirected").hide();
         var status = $("#id_status").val();
         if (/refus/.exec(status) !== null) {
             $(".status-refusal").slideDown();
-        } else if (/payment|costs/.exec(status) !== null){
-            $(".status-payment").slideDown();
         } else if (/redirect/.exec(status) !== null){
             $(".status-redirected").slideDown();
         }
