@@ -90,12 +90,19 @@ class EmailParser(object):
             subj_fragments = []
             for s , enc in decodefrag:
                 if enc:
-                    s = unicode(s , enc).encode('utf8','replace')
+                    try:
+                        s = unicode(s , enc)
+                    except UnicodeDecodeError:
+                        # desperate move here
+                        try:
+                            s = s.decode("latin1")
+                        except:
+                            pass
                 subj_fragments.append(s)
             subject = ''.join(subj_fragments)
+            subject = subject.replace('\n\t', " ")
         else:
             subject = None
-        subject = subject.replace('\n\t', " ")
         attachments = []
         body = None
         html = None
@@ -128,7 +135,6 @@ class EmailParser(object):
             'msgobj': msgobj,
             'date': date,
             'subject': subject,
-            'original': content,
             'body': body,
             'html': html,
             'from': parseaddr(msgobj.get('From')),
