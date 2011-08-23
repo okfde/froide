@@ -19,7 +19,9 @@ payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(forms.Form):
-    public_body = forms.CharField(widget=PublicBodySelect, label=_("Public Body"), required=False)
+    public_body = forms.CharField(widget=PublicBodySelect,
+            label=_("Search for a topic or a public body:"),
+            required=False)
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
     body = forms.CharField(label=_("Body"), 

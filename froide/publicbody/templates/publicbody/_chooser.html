@@ -9,9 +9,8 @@
 Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new info-link">{% trans "More Info" %}</a>';
 </script>
 <div class="public_body-chooser" data-inputname="{{ name }}">
-  <label for="search-public_bodies-{{ name }}">{% blocktrans %}Search for a topic or a public body:{% endblocktrans %}</label>
   <div class="publicbody-search">
-  <input type="search" value="{{ topic }}" class="search-public_bodies" id="search-public_bodies-{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
+  <input type="search" value="{{ topic }}" class="search-public_bodies" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
   <input type="button" value="{% blocktrans %}Search{% endblocktrans %}" class="search-public_bodies-submit"/>
   <div class="searchexamples">{% blocktrans %}Try something like:{% endblocktrans %} 
     <a href="?topic={% trans "Environment" %}" class="searchexample">{% trans "Environment" %}</a> {% trans "or" %}
