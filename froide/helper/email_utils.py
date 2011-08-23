@@ -79,10 +79,6 @@ class EmailParser(object):
         return (datetime.fromtimestamp(time.mktime(date[:9])), date[9])
 
     def parse(self, content):
-        try:
-            content = decode_rfc2231(content)[2]
-        except Exception:
-            pass
         p = Parser()
         msgobj = p.parsestr(content)
         if msgobj['Subject'] is not None:

@@ -1,12 +1,10 @@
-import logging
 import base64
 from email.utils import parseaddr
 
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage
 
-from froide.helper.email_utils import (EmailParser,
-        UnsupportedMailFormat, get_unread_mails, make_address)
+from froide.helper.email_utils import (EmailParser, get_unread_mails, make_address)
 
 def send_foi_mail(subject, message, from_email, recipient_list,
               fail_silently=False, **kwargs):
