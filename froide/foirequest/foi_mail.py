@@ -1,4 +1,5 @@
 import logging
+import base64
 from email.utils import parseaddr
 
 from django.conf import settings
@@ -31,18 +32,20 @@ def send_foi_mail(subject, message, from_email, recipient_list,
 
 def _process_mail(mail_string):
     parser = EmailParser()
-    try:
-        email = parser.parse(mail_string)
-    except UnsupportedMailFormat:
-        logging.warn("Unsupported Mail Format: %s" % mail_string)
-        return
-    mail_string = email['original']
+    email = parser.parse(mail_string)
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?
     from foirequest.models import FoiRequest
     mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_EMAIL_DOMAIN)
     received_list = filter(mail_filter, received_list)
+
+    # make original mail storeable as unicode
+    try:
+        mail_string = mail_string.decode("utf-8")
+    except UnicodeDecodeError:
+        mail_string = base64.b64encode(mail_string).decode("utf-8")
+
     for received in received_list:
         secret_mail = received[1]
         try:
