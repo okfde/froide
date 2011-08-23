@@ -155,6 +155,7 @@ class PublicBody(models.Model):
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
+    request_note = models.TextField(_("request note"), blank=True)
     
     _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
