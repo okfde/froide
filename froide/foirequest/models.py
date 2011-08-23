@@ -96,29 +96,39 @@ class FoiRequest(models.Model):
         ('awaiting_publicbody_confirmation',
             _('Awaiting Public Body confirmation'),
             _('The Public Body of this request has been created by the user and still needs to be confirmed.')),
+        ('awaiting_classification',
+            _('Request awaits classification'),
+            _('A message was received and the user needs to set a new status.')),
         ('overdue', _('Response overdue'),
             _('The request has not been answered in the legal time limit.')),
     )
     USER_SET_CHOICES = (
         ('awaiting_response', _('Awaiting response'),
                 _('This request is still waiting for a response from the Public Body.')),
-        ('awaiting_clarification',
-                _('Awaiting clarification from Public Body'),
-                _('A response was not satisfying to the requester and he requested more information.')),
-        # ('request_redirected',
-        #         _('Request was redirected to another Public Body'),
-        #         _('The current Public Body redirected the request to another Public Body.')),
-        ('successful', _('Request Successful'),
-            _('The request has been successul.')),
-        ('partially_successful', _('Request partially successful'),
-            _('The request has been partially successful (some information was provided, but not all)')),
-        ('not_held', _('Information not held'),
-            _('The Public Body stated that it does not possess the information.')),
-        ('refused', _('Request refused'),
-            _('The Public Body refuses to provide the information.')),
-        ('gone_postal', _('Gone Postal'), _('The Public Body replied via post mail.')),
-        # ('escalation', _('Escalate Request'), _('')),
-        # ('user_withdrawn', _('User withdrew request'), _('')),
+        # ('awaiting_clarification',
+        #         _('Awaiting clarification from Public Body'),
+        #         _('A response was not satisfying to the requester and he requested more information.')),
+        ('request_redirected',
+                _('Request was redirected to another Public Body'),
+                _('The current Public Body redirected the request to another Public Body.')),
+        ('successful',
+                _('Request Successful'),
+                _('The request has been successul.')),
+        ('partially_successful',
+                _('Request partially successful'),
+                _('The request has been partially successful (some information was provided, but not all)')),
+        ('not_held',
+                _('Information not held'),
+                _('The Public Body stated that it does not possess the information.')),
+        ('refused',
+                _('Request refused'),
+                _('The Public Body refuses to provide the information.')),
+        ('user_withdrew_costs',
+                _('You withdraw request due to costs'),
+                _('User withdrew the request due to the associated costs.')),
+        ('user_withdrawn',
+                _('You withdraw request (other reason)'),
+                _('User withdrew the request for other reasons.')),
     )
 
     STATUS_URLS = [
@@ -130,16 +140,10 @@ class FoiRequest(models.Model):
             (_("overdue"), 'overdue')
     ]
 
-    if settings.FROIDE_CONFIG.get('payment_possible'):
-        USER_SET_CHOICES += (('requires_payment',
-                        _('Costs specified'),
-                        _('The Public Body specified the costs for providing the information.')),
-                # ('payment_refused', _('Payment refused'), _('')),
-                # ('payment_accepted', _('Payment accepted'), _(''))
-            )
-        # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
+    # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
     STATUS_URLS_DICT = dict(STATUS_URLS)
     STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
+    STATUS_USER_CHOICES = [(x[0], x[1]) for x in USER_SET_CHOICES]
     STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])
 
     VISIBILITY_CHOICES = (
