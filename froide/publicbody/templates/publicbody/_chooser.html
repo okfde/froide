@@ -8,21 +8,26 @@
   Froide.template = Froide.template || {};
 Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new info-link">{% trans "More Info" %}</a>';
 </script>
-<div id="public_body-chooser">
-  <label for="search-public_bodies">{% blocktrans %}Search for a topic or the public body that is responsible:{% endblocktrans %}</label>
-  <div id="publicbody-search">
-  <input type="search" value="{{ topic }}" id="search-public_bodies" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
-  <input type="button" value="{% blocktrans %}Search{% endblocktrans %}" id="search-public_bodies-submit"/>
+<div class="public_body-chooser" data-inputname="{{ name }}">
+  <div class="publicbody-search">
+  <input type="search" value="{{ topic }}" class="search-public_bodies" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
+  <input type="button" value="{% blocktrans %}Search{% endblocktrans %}" class="search-public_bodies-submit"/>
   <div class="searchexamples">{% blocktrans %}Try something like:{% endblocktrans %} 
     <a href="?topic={% trans "Environment" %}" class="searchexample">{% trans "Environment" %}</a> {% trans "or" %}
     <a href="?topic={% trans "Ministry of Labour" %}" class="searchexample">{% trans "Ministry of Labour" %}</a>
   </div>
   </div>
-  <div id="search-spinner" style="display:none">
+  <div class="search-spinner" style="display:none">
     <img src="{{ STATIC_URL }}img/spinner.gif" alt="Loading..."/>
   </div>
-  <ul id="search-results" style="display:none">
-    <li id="empty-result" style="display:none">{% blocktrans %}No Public Bodies found for this query{% endblocktrans %}</li>
+  <ul class="search-results" style="display:none">
+    <li class="empty-result" style="display:none">{% blocktrans %}No Public Bodies found for this query{% endblocktrans %}</li>
   </ul>
+  {% if value %}
+  <label>
+    <input type="radio" name="{{ name }}" value="{{ value }}" checked="checked"/>
+    {{ value_label }}
+  </label>
+  {% endif %}
 </div>
  

@@ -96,27 +96,44 @@ class FoiRequest(models.Model):
         ('awaiting_publicbody_confirmation',
             _('Awaiting Public Body confirmation'),
             _('The Public Body of this request has been created by the user and still needs to be confirmed.')),
+        ('awaiting_classification',
+            _('Request awaits classification'),
+            _('A message was received and the user needs to set a new status.')),
         ('overdue', _('Response overdue'),
             _('The request has not been answered in the legal time limit.')),
     )
     USER_SET_CHOICES = (
         ('awaiting_response', _('Awaiting response'),
                 _('This request is still waiting for a response from the Public Body.')),
-        ('awaiting_clarification',
-                _('Awaiting clarification from Public Body'),
-                _('A response was not satisfying to the requester and he requested more information.')),
-        ('successful', _('Request Successful'),
-            _('The request has been successul.')),
-        ('partially_successful', _('Request partially successful'),
-            _('The request has been partially successful (some information was provided, but not all)')),
-        ('not_held', _('Information not held'),
-            _('The Public Body stated that it does not possess the information.')),
-        ('refused', _('Request refused'),
-            _('The Public Body refuses to provide the information.')),
-        ('gone_postal', _('Gone Postal'), _('The Public Body replied via post mail.')),
-        # ('escalation', _('Escalate Request'), _('')),
-        # ('user_withdrawn', _('User withdrew request'), _('')),
+        # ('awaiting_clarification',
+        #         _('Awaiting clarification from Public Body'),
+        #         _('A response was not satisfying to the requester and he requested more information.')),
+        ('request_redirected',
+                _('Request was redirected to another Public Body'),
+                _('The current Public Body redirected the request to another Public Body.')),
+        ('successful',
+                _('Request Successful'),
+                _('The request has been successul.')),
+        ('partially_successful',
+                _('Request partially successful'),
+                _('The request has been partially successful (some information was provided, but not all)')),
+        ('not_held',
+                _('Information not held'),
+                _('The Public Body stated that it does not possess the information.')),
+        ('refused',
+                _('Request refused'),
+                _('The Public Body refuses to provide the information.')),
+        ('user_withdrew_costs',
+                _('Request was withdrawn due to costs'),
+                _('User withdrew the request due to the associated costs.')),
+        ('user_withdrew',
+                _('Request was withdrawn'),
+                _('User withdrew the request for other reasons.')),
     )
+
+    MESSAGE_STATUS_TO_REQUEST_STATUS = {
+        "request_redirected": "awaiting_response"
+    }
 
     STATUS_URLS = [
             (_("successful"), 'successful'),
@@ -127,16 +144,10 @@ class FoiRequest(models.Model):
             (_("overdue"), 'overdue')
     ]
 
-    if settings.FROIDE_CONFIG.get('payment_possible'):
-        USER_SET_CHOICES += (('requires_payment',
-                        _('Costs specified'),
-                        _('The Public Body specified the costs for providing the information.')),
-                # ('payment_refused', _('Payment refused'), _('')),
-                # ('payment_accepted', _('Payment accepted'), _(''))
-            )
-        # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
+    # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
     STATUS_URLS_DICT = dict(STATUS_URLS)
     STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
+    STATUS_USER_CHOICES = [(x[0], x[1]) for x in USER_SET_CHOICES]
     STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])
 
     VISIBILITY_CHOICES = (
@@ -219,14 +230,15 @@ class FoiRequest(models.Model):
 
     @property
     def messages(self):
-        if not hasattr(self, "_messages"):
+        if not hasattr(self, "_messages") or \
+                self._messages is None:
             self._messages = self.foimessage_set.select_related("sender_user", "sender_user__profile",
                     "sender_public_body").order_by("timestamp")
         return self._messages
 
     @property
     def status_settable(self):
-        return len(self.messages) > 1
+        return self.awaits_classification()
 
     def get_absolute_url(self):
         return reverse('foirequest-show',
@@ -237,6 +249,15 @@ class FoiRequest(models.Model):
 
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
+
+    def response_messages(self):
+        return filter(lambda m: m.is_response, self.messages)
+
+    def message_needs_status(self):
+        mes = filter(lambda m: m.status is None, self.response_messages())
+        if not mes:
+            return None
+        return mes[0]
 
     def is_visible(self, user):
         if self.visibility == 0:
@@ -254,12 +275,14 @@ class FoiRequest(models.Model):
 
     def awaits_response(self):
         return self.status == 'awaiting_response' or self.status == 'overdue'
-
     def is_overdue(self):
         return self.due_date < datetime.now()
 
-    def replyable(self):
-        return not self.awaits_response()
+    def awaits_classification(self):
+        return self.status == 'awaiting_classification'
+
+    def set_awaits_classification(self):
+        self.status = 'awaiting_classification'
 
     def public_date(self):
         if self.due_date:
@@ -267,29 +290,44 @@ class FoiRequest(models.Model):
                 'request_public_after_due_days', 14))
         return None
 
-    def status_form_klass(self):
-        from foirequest.forms import get_status_form_class
-        return get_status_form_class(self)
-
-    def status_form(self):
-        if not hasattr(self, "_status_form"):
-            self._status_form = self.status_form_klass()(
+    def get_status_form(self):
+        from foirequest.forms import FoiRequestStatusForm
+        return FoiRequestStatusForm(self,
                     initial={"status": self.status,
                         "costs": self.costs,
                         "refusal_reason": self.refusal_reason})
-        return self._status_form
 
-    def set_status(self, data):
-        self.status = data['status']
-        if settings.FROIDE_CONFIG.get('payment_possible'):
-            self.costs = data['costs']
-        if self.status == "refused":
+    def set_status(self, form):
+        data = form.cleaned_data
+        message = self.message_needs_status()
+        if message:
+            message.status = data['status']
+            message.save()
+        else:
+            return
+        self.status = self.MESSAGE_STATUS_TO_REQUEST_STATUS.get(data['status'], data['status'])
+        message = self.message_needs_status()
+        self.costs = data['costs']
+        if data['status'] == "refused":
             self.refusal_reason = data['refusal_reason']
         else:
             self.refusal_reason = u""
+        if data['status'] == "request_redirected":
+            self.public_body = form._redirected_public_body
+        if message is not None:
+            self.set_awaits_classification()
         self.save()
         status = data.pop("status")
         self.status_changed.send(sender=self, status=status, data=data)
+
+    def possible_reply_addresses(self):
+        addresses = {}
+        for message in reversed(self.messages):
+            if message.is_response:
+                if not message.sender_email in addresses:
+                    addresses[message.sender_email] = message
+        return addresses
+
 
     def public_body_suggestions(self):
         if not hasattr(self, "_public_body_suggestion"):
@@ -298,16 +336,9 @@ class FoiRequest(models.Model):
                         .select_related("public_body", "request")
         return self._public_body_suggestion
 
-    def public_body_suggestions_form_klass(self):
-        from foirequest.forms import get_public_body_suggestions_form_class
-        return get_public_body_suggestions_form_class(
-            self.public_body_suggestions())
-
     def public_body_suggestions_form(self):
-        if not hasattr(self, "_public_body_suggestion_form"):
-            self._public_body_suggestion_form = \
-                    self.public_body_suggestions_form_klass()()
-        return self._public_body_suggestion_form
+        from foirequest.forms import PublicBodySuggestionsForm
+        return PublicBodySuggestionsForm(self.public_body_suggestions())
 
     def make_public_body_suggestion_form(self):
         from foirequest.forms import MakePublicBodySuggestionForm
@@ -321,6 +352,18 @@ class FoiRequest(models.Model):
         from foirequest.forms import PostalReplyForm
         return PostalReplyForm(initial={"date": datetime.now().date()})
 
+    def quote_last_message(self):
+        return list(self.messages)[-1].get_quoted()
+
+    def get_send_message_form(self):
+        from foirequest.forms import SendMessageForm
+        last_message = list(self.messages)[-1]
+        subject = _("Re: %(subject)s"
+                ) % {"subject": last_message.subject}
+        return SendMessageForm(self,
+                initial={"subject": subject, 
+                    "message": _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")})
+
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
         message.subject = email['subject']
@@ -329,13 +372,15 @@ class FoiRequest(models.Model):
         message.sender_email = email['from'][1]
         message.sender_public_body = self.public_body
         message.timestamp = convert_to_local(*email['date'])
-        message.recipient = self.secret_address
+        message.recipient_email = self.secret_address
+        message.recipient = self.user.get_profile().display_name()
         # strip timezone, in case database can't handle it
         message.timestamp = message.timestamp.replace(tzinfo=None)
         message.plaintext = email['body']
         message.html = html2markdown(email['html'])
         message.original = mail_string
         message.save()
+        self.status = 'awaiting_classification'
         self.last_message = message.timestamp
         self.save()
 
@@ -351,17 +396,19 @@ class FoiRequest(models.Model):
             att.save()
         self.message_received.send(sender=self, message=message)
 
-    def add_message(self, user, message=None, **kwargs):
+    def add_message(self, user, recipient_name, recipient_email,
+            subject, message, recipient_pb=None):
         message_body = message
         message = FoiMessage(request=self)
-        last_message = list(self.messages)[-1]
-        message.subject = _("Re: %(subject)s"
-                ) % {"subject": last_message.subject}
+        message.subject = subject
         message.is_response = False
         message.sender_user = user
         message.sender_name = user.get_profile().display_name()
         message.sender_email = self.secret_address
-        message.recipient = last_message.sender_email
+        message.recipient_email = recipient_email
+
+        message.recipient_public_body = recipient_pb
+        message.recipient = recipient_name
         message.timestamp = datetime.now()
         message.plaintext = message_body
         message.send()
@@ -451,14 +498,18 @@ class FoiRequest(models.Model):
                 sender_email=request.secret_address,
                 sender_name=user.get_profile().display_name(),
                 timestamp=now,
+                status="awaiting_response",
                 subject=request.title)
         message.plaintext = cls.construct_message_body(form_data['body'],
                 request, foi_law, post_data)
         if public_body_object is not None:
-            message.recipient = public_body_object.email
+            message.recipient_public_body = public_body_object
+            message.recipient = public_body_object.name
+            message.recipient_email = public_body_object.email
             cls.request_to_public_body.send(sender=request)
         else:
             message.recipient = ""
+            message.recipient_email = ""
         message.original = message.plaintext
         message.save()
         cls.request_created.send(sender=request)
@@ -560,7 +611,9 @@ class FoiRequest(models.Model):
             messages = self.foimessage_set.all()
             assert len(messages) == 1
             message = messages[0]
-            message.recipient = public_body.email
+            message.recipient_public_body = public_body
+            message.recipient = public_body.name
+            message.recipient_email = public_body.email
             # message.plaintext = FoiRequest.construct_message_body(message,
             #   message.plaintext)
             assert message.sent == False
@@ -659,9 +712,18 @@ class FoiMessage(models.Model):
             blank=True, max_length=255)
     sender_public_body = models.ForeignKey(PublicBody, blank=True,
             null=True, on_delete=models.SET_NULL,
-            verbose_name=_("From Public Body"))
+            verbose_name=_("From Public Body"), related_name='send_messages')
+
     recipient = models.CharField(_("Recipient"), max_length=255,
             blank=True, null=True)
+    recipient_email = models.CharField(_("Recipient Email"), max_length=255,
+            blank=True, null=True)
+    recipient_public_body = models.ForeignKey(PublicBody, blank=True,
+            null=True, on_delete=models.SET_NULL,
+            verbose_name=_("Public Body Recipient"), related_name='received_messages')
+    status = models.CharField(_("Status"), max_length=50, null=True, blank=True,
+            choices=FoiRequest.STATUS_USER_CHOICES, default=None)
+
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     plaintext = models.TextField(_("plain text"), blank=True, null=True)
@@ -685,6 +747,10 @@ class FoiMessage(models.Model):
                 ) % {"request": self.request,
                     "time": self.timestamp}
 
+    @property
+    def readable_status(self):
+        return FoiRequest.get_readable_status(self.status)
+
     def get_html_id(self):
         return _("message-%(id)d") % {"id": self.id}
 
@@ -696,6 +762,23 @@ class FoiMessage(models.Model):
         return "%s#%s" % (self.request.get_absolute_domain_url(),
                 self.get_html_id())
 
+    def get_public_body_sender_form(self):
+        from foirequest.forms import MessagePublicBodySenderForm
+        return MessagePublicBodySenderForm(self)
+    
+    def get_recipient(self):
+        if self.recipient_public_body:
+            return mark_safe('<a href="%(url)s">%(name)s</a>' % {
+                "url": self.recipient_public_body.get_absolute_url(),
+                "name": escape(self.recipient_public_body.name)})
+        else:
+            return self.recipient
+
+    def get_quoted(self):
+        return "\n".join([">%s" % l for l in self.plaintext.splitlines()])
+
+    def needs_status_input(self):
+        return self.request.message_needs_status() == self
 
     @property
     def sender(self):
@@ -761,13 +844,13 @@ class FoiMessage(models.Model):
 
     def send(self):
         if settings.FROIDE_DRYRUN:
-            recp = self.recipient.replace("@", "+")
-            self.recipient = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
+            recp = self.recipient_email.replace("@", "+")
+            self.recipient_email = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
         send_foi_mail(self.subject, self.plaintext, from_addr,
-                [self.recipient])
+                [self.recipient_email])
         self.sent = True
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
@@ -895,6 +978,8 @@ class FoiEvent(models.Model):
             u"Received an email from %(public_body)s."),
         "message_sent": _(
             u"%(user)s sent a message to %(public_body)s."),
+        "request_redirected": _(
+            u"Request was redirected to %(public_body)s."),
         "status_changed": _(
             u"%(user)s set status to '%(status)s'."),
         "made_public": _(
@@ -988,7 +1073,7 @@ def create_event_message_received(sender, **kwargs):
 def create_event_status_changed(sender, **kwargs):
     status = kwargs['status']
     data = kwargs['data']
-    if status == "requires_payment" and data['costs']:
+    if data['costs'] > 0:
         FoiEvent.objects.create_event("reported_costs", sender,
                 user=sender.user,
                 public_body=sender.public_body, amount=data['costs'])
@@ -996,6 +1081,10 @@ def create_event_status_changed(sender, **kwargs):
         FoiEvent.objects.create_event("request_refused", sender,
                 user=sender.user,
                 public_body=sender.public_body, reason=data['refusal_reason'])
+    elif status == "request_redirected":
+        FoiEvent.objects.create_event("request_redirected", sender,
+                user=sender.user,
+                public_body=sender.public_body)
     else:
         FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
             public_body=sender.public_body,

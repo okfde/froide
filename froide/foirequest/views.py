@@ -15,8 +15,9 @@ from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
 from foirequest.forms import RequestForm, ConcreteLawForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
-from foirequest.forms import (SendMessageForm, get_status_form_class,
-        MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm)
+from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
+        MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm,
+        MessagePublicBodySenderForm)
 from froide.helper.utils import render_400, render_403
 from helper.cache import cache_anonymous_page
 
@@ -73,7 +74,8 @@ def list_requests_not_foi(request):
     return render(request, 'foirequest/list.html', context)
 
 
-def show(request, slug, template_name="foirequest/show.html", context=None, status=200):
+def show(request, slug, template_name="foirequest/show.html",
+            context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
                 "user", "user__profile", "law", "law__combined").get(slug=slug)
@@ -237,7 +239,7 @@ def set_public_body(request, slug):
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
     try:
-        public_body_pk = int(request.POST.get('public_body', ''))
+        public_body_pk = int(request.POST.get('suggestion', ''))
     except ValueError:
         messages.add_message(request, messages.ERROR,
             _('Missing or invalid input!'))
@@ -290,17 +292,17 @@ def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
-    if not foirequest.status_settable:
+    if not foirequest.message_needs_status():
         return render_400(request)
-    form = get_status_form_class(foirequest)(request.POST)
+    form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():
-        foirequest.set_status(form.cleaned_data)
+        foirequest.set_status(form)
         messages.add_message(request, messages.SUCCESS,
                 _('Status of request has been updated.'))
     else:
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
-        return render_400(request)
+        return show(request, slug, context={"status_form": form}, status=400)
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 @require_POST
@@ -310,14 +312,14 @@ def send_message(request, slug):
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
-    form = SendMessageForm(request.POST)
-    if form.is_valid() and foirequest.replyable():
-        foirequest.add_message(request.user, **form.cleaned_data)
+    form = SendMessageForm(foirequest, request.POST)
+    if form.is_valid():
+        form.save(request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Message has been sent.'))
         return HttpResponseRedirect(foirequest.get_absolute_url())
     else:
-        return render_400(request)
+        return show(request, slug, context={"send_message_form": form}, status=400)
 
 @require_POST
 def make_public(request, slug):
@@ -332,7 +334,7 @@ def set_law(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
-    if not foirequest.status_settable:
+    if not foirequest.response_messages():
         return render_400(request)
     if not foirequest.law.meta:
         return render_400(request)
@@ -363,6 +365,8 @@ def add_postal_reply(request, slug):
         if form.cleaned_data.get('text'):
             message.plaintext = form.cleaned_data.get('text')
         message.save()
+        foirequest.status = 'awaiting_classification'
+        foirequest.save()
         foirequest.add_postal_reply.send(sender=foirequest)
 
         if form.cleaned_data.get('scan'):
@@ -405,10 +409,31 @@ def add_postal_reply_attachment(request, slug, message_id):
         messages.add_message(request, messages.SUCCESS,
                 _('Your document was attached to the message.'))
         return HttpResponseRedirect(message.get_absolute_url())
-    else:
-        messages.add_message(request, messages.ERROR,
-                form._errors['scan'][0])
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+    messages.add_message(request, messages.ERROR,
+            form._errors['scan'][0])
+    return render_400(request)
+
+@require_POST
+def set_message_sender(request, slug, message_id):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    try:
+        message = FoiMessage.objects.get(request=foirequest,
+                pk=int(message_id))
+    except (ValueError, FoiMessage.DoesNotExist):
+        raise Http404
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if request.user != foirequest.user:
+        return render_403(request)
+    if not message.is_response:
+        return render_400(request)
+    form = MessagePublicBodySenderForm(message, request.POST)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(message.get_absolute_url())
+    messages.add_message(request, messages.ERROR,
+            form._errors['sender'][0])
+    return render_400(request)
 
 @require_POST
 def mark_not_foi(request, slug):

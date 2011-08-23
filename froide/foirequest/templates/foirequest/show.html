@@ -148,11 +148,26 @@
     <tbody>
     <tr>
       <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+      <td class="value-padding-right">
       {% if object.user == user %}
-      <td class="value-padding-right">{{ message.real_sender }}</td>
+          {% if message.is_response %}
+          {{ message.real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
+          <div id="change-pb-{{ message.id }}" style="display:none">
+            {% with message_pb_form=message.get_public_body_sender_form %}
+               <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                 {% csrf_token %}
+                 <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label> 
+                  {{ message_pb_form.sender }}
+                  <input type="submit" value="{% blocktrans %}Set Sending Public Body{% endblocktrans %}"/>
+                </form>
+              {% endwith %}
+          </div>
+          {% else %}
+          {{ message.real_sender }}
+          {% endif %}
       {% else %}
-      <td class="value-padding-right">{{ message.sender }}</td>
-      {% endif %}
+        {{ message.sender }}
+        {% endif %}</td>
     </tr>
     <tr>
       <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
@@ -166,6 +181,18 @@
       <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
       {% endif %}
     </tr>
+    {% if not message.is_response %}
+    <tr>
+      <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
+      <td>{{ message.get_recipient }}</td>
+    </tr>
+    {% endif %}
+    {% if message.status %}
+    <tr>
+      <td class="key">{% blocktrans %}Status{% endblocktrans %}</td>
+      <td>{{ message.readable_status }}</td>
+    </tr>
+    {% endif %}
     {% if message.all_attachments %}
     <tr>
       <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
@@ -205,6 +232,24 @@
   {% endif %}
   {% endif %}
 </div>
+{# Set status #}
+{% if object.user == user and message.needs_status_input %}
+<div id="set-status" class="section important-form">
+  <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">{% csrf_token %}
+    {% if status_form %}
+      {% include "foirequest/_set_status.html" %}
+    {% else %}
+    {% with status_form=object.get_status_form %}
+      {% include "foirequest/_set_status.html" %}
+    {% endwith %}
+    {% endif %}
+    <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
+    </p>
+  </form>
+</div>
+{% endif %}
+{# End Set status #}
+
 {% if message.events %}
 <div class="events">
   <ol>
@@ -257,8 +302,8 @@
   {% endwith %}
   <form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
     {% csrf_token %}
-    {% include "publicbody/_chooser.html" %}
     {% with form=object.make_public_body_suggestion_form %}
+    {{ form.public_body }}
     {{ form.reason.label_tag }} {{ form.reason }}
     {% endwith %}
     <br/><input type="submit" value="{% blocktrans %}Suggest this Public Body{% endblocktrans%}"/>
@@ -282,40 +327,15 @@
 {% endif %}
 {# End Public Body Needed #}
 
-{# Set status #}
-{% if object.user == user and object.status_settable %}
-<div class="section important-form">
-  <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}">{% csrf_token %}
-    <label for="id_status">{% blocktrans %}Current status of request:{% endblocktrans %}</label><br/>
-    {{ object.status_form.status }}<br/>
-    {% if froide.payment_possible %}
-    <div class="status-payment status-section">{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
-      <label id="id_costs">{% blocktrans %}Costs:{% endblocktrans %} </label>
-      {{ object.status_form.costs }} {{ froide.currency }}
-    </div>
-    {% endif %}
-    <div class="status-refusal status-section">
-  {% blocktrans %}When you are denied information, the Public Body should always state the reason.{% endblocktrans %}<br/>
-      <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
-      {{ object.status_form.refusal_reason }}
-    </div>
-    <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
-    </p>
-  </form>
-</div>
-{# End Set status #}
-
 {# If Meta Law #}
 {% if object.user == user and object.status_settable and object.law.meta %}
 <div class="section">
   <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
     <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-    {{ object.get_concrete_law_form }}
+    {{ object.get_concrete_law_form.as_p }}
     <input type="submit" value="{% blocktrans %}Set Concrete Law{% endblocktrans %}"/>
   </form>
 </div>
-{% endif %}
-{# endif for object.user == user and object.status_settable #}
 {% endif %}
 
 {# Postal Reply #}
@@ -323,7 +343,7 @@
 <div class="section">
   <a href="#add-postal-reply" class="toggle">{% blocktrans %}Add a Postal reply that you have received{% endblocktrans %}</a>
   <div id="add-postal-reply"{% if not postal_reply_form %} style="display: none"{% else %} class="focussed goto-form"{% endif %}>
-    <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}" enctype="multipart/form-data">{% csrf_token %}
+    <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
       <table class="no-stripes">
       {% if postal_reply_form %}
         {{ postal_reply_form.as_table }}
@@ -343,10 +363,18 @@
 {# Reply #}
 <div class="section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>
-  <div id="write-message" style="display:none">
-  <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}">{% csrf_token %}
+  <div id="write-message"{% if not send_message_form %} style="display:none"{% endif %}>
+  <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">{% csrf_token %}
     <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
-    <textarea name="message"></textarea><br/>
+    <table class="no-stripes">
+      {% if send_message_form %}
+        {{ send_message_form.as_table }}
+      {% else %}
+        {% with send_message_form=object.get_send_message_form %}
+          {{ send_message_form.as_table }}
+        {% endwith %}
+      {% endif %}
+    </table>
     <input type="submit" value="{% blocktrans %}Send Message{% endblocktrans %}"/>
   </form>
   </div>

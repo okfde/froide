@@ -3,7 +3,7 @@ from __future__ import with_statement
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from publicbody.models import PublicBody
+from publicbody.models import PublicBody, PublicBodyTopic
 from foirequest.models import FoiRequest
 
 
@@ -31,9 +31,17 @@ class WebTest(TestCase):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": urlpart}))
             self.assertEqual(response.status_code, 200)
+        
+        for topic in PublicBodyTopic.objects.all():
+            response = self.client.get(reverse('foirequest-list',
+                kwargs={"topic": topic.slug}))
+            self.assertEqual(response.status_code, 200)
+        
+        response = self.client.get(reverse('foirequest-list_not_foi'))
+        self.assertEqual(response.status_code, 200)
 
     def test_show_request(self):
-        req = FoiRequest.objects.get(pk=6)
+        req = FoiRequest.objects.all()[0]
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug + "-garbage"}))
         self.assertEqual(response.status_code, 404)
@@ -41,7 +49,6 @@ class WebTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
         req.visibility = 1
-        req.public = False
         req.save()
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
@@ -56,7 +63,7 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('foirequest-feed_latest_atom'))
         self.assertEqual(response.status_code, 200)
-        req = FoiRequest.objects.get(pk=6)
+        req = FoiRequest.objects.all()[0]
         response = self.client.get(reverse('foirequest-feed_atom',
             kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
