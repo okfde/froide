@@ -70,6 +70,8 @@
     </div>
     {% endif %}
   </fieldset>
+  <div id="request-note" class="notice"{% if not public_body.request_note %} style="display:none"{% endif %}>{% if public_body.request_note %}{{ public_body.request_note|markdown }}{% endif %}</div>
+ 
   {% if not request_form.errors %}
   <fieldset id="check-foi">
     <legend>{% blocktrans %}Step 2 - Choose the type of request{% endblocktrans %}</legend>
