@@ -246,6 +246,15 @@ class FoiRequest(models.Model):
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
 
+    def response_messages(self):
+        return filter(lambda m: m.is_response, self.messages)
+
+    def message_needs_status(self):
+        mes = filter(lambda m: m.status is None, self.response_messages())
+        if not mes:
+            return None
+        return mes[0]
+
     def is_visible(self, user):
         if self.visibility == 0:
             return False
