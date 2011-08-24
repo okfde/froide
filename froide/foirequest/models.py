@@ -31,6 +31,60 @@ from foirequest.foi_mail import send_foi_mail
 html2markdown = lambda x: x
 
 
+class FoiRequestFollowerManager(models.Manager):
+    def follow(self, request, user, email=None, **kwargs):
+        if user.is_authenticated():
+            following = request.followed_by(user)
+            if following:
+                following.delete()
+                return False
+            FoiRequestFollower.objects.create(request=request, user=user)
+            return True
+        else:
+            following = request.followed_by(email)
+            if following:
+                return False
+            try:
+                following = FoiRequestFollower.objects.get(email=email)
+                return None
+            except FoiRequestFollower.DoesNotExist:
+                following = FoiRequestFollower.objects.create(request=request, email=email)
+                following.send_follow_mail()
+            return True
+
+
+class FoiRequestFollower(models.Model):
+    request = models.ForeignKey('FoiRequest',
+            verbose_name=_("Freedom of Information Request"))
+    user = models.ForeignKey(User, null=True, blank=True, verbose_name=_("User"))
+    email = models.CharField(max_length=255, blank=True)
+    confirmed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(_("Timestamp of Following"),
+            auto_now_add=True)
+
+    objects = FoiRequestFollowerManager()
+
+    class Meta:
+        get_latest_by = 'timestamp'
+        ordering = ('timestamp',)
+        verbose_name = _('Request Follower')
+        verbose_name_plural = _('Request Followers')
+
+    def __unicode__(self):
+        return _("%(user)s follows %(request)s") % {
+                "user": self.email or str(self.user),
+                "request": self.request}
+
+    def send_follow_mail(self):
+        send_mail(_("Confirm that you want to follow this request"),
+            render_to_string("foirequest/confirm_following.txt",
+                {"request": self.request,
+                "link": self.construct_follow_link(),
+                "site_name": settings.SITE_NAME}),
+            settings.DEFAULT_FROM_EMAIL,
+            [self.email])
+
+
 class FoiRequestManager(CurrentSiteManager):
     def get_for_homepage(self, count=5):
         return self.get_query_set().order_by("-last_message")[:count]
@@ -197,6 +251,9 @@ class FoiRequest(models.Model):
             blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
+
+    followers = models.ManyToManyField(User, related_name="following_requests",
+            through=FoiRequestFollower)
     
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
@@ -283,6 +340,18 @@ class FoiRequest(models.Model):
 
     def set_awaits_classification(self):
         self.status = 'awaiting_classification'
+
+    def followed_by(self, user):
+        try:
+            if isinstance(user, basestring):
+                return FoiRequestFollower.objects.get(request=self,
+                        email=user, confirmed=True)
+            else:
+                return FoiRequestFollower.objects.get(request=self,
+                        user=user)
+        except FoiRequestFollower.DoesNotExist:
+            return False
+
 
     def public_date(self):
         if self.due_date:
