@@ -47,6 +47,8 @@ class EmailParser(object):
             dispositions = content_disposition.strip().split(";")
             if content_disposition and dispositions[0].lower() == "attachment":
                 file_data = message_part.get_payload(decode=True)
+                if file_data is None:
+                    file_data = ""
                 attachment = StringIO(file_data)
                 attachment.content_type = message_part.get_content_type()
                 attachment.size = len(file_data)
