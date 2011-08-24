@@ -43,12 +43,16 @@
       <p><strong>{% trans "To:" %}</strong> <span id="review-publicbody">{{ public_body.name }}</span> - 
       <a href="{{ public_body.get_absolute_url }}" class="info-link target-new">{% blocktrans %}Details{% endblocktrans %}</a>
       </p>
+      {% if public_body.request_note %}
+      <div id="request-note" class="notice">{{ public_body.request_note|markdown }}</div>
+      {% endif %}
       {% else %}
       <div id="step-public_body">
         {{ request_form.public_body.label_tag }}
         <div style="margin:2em">
           {{ request_form.public_body }}
         </div>
+      <div id="request-note" class="notice" style="display:none"></div>
       <div class="block">
       {% if froide.publicbody_empty %}
       <label>
@@ -70,8 +74,6 @@
     </div>
     {% endif %}
   </fieldset>
-  <div id="request-note" class="notice"{% if not public_body.request_note %} style="display:none"{% endif %}>{% if public_body.request_note %}{{ public_body.request_note|markdown }}{% endif %}</div>
- 
   {% if not request_form.errors %}
   <fieldset id="check-foi">
     <legend>{% blocktrans %}Step 2 - Choose the type of request{% endblocktrans %}</legend>
