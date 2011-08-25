@@ -11,6 +11,7 @@
 
 
 {% block extra_head %}
+<link rel="self" type="text/html" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
 <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" /> 
 
@@ -407,6 +408,9 @@
       Froide.app.statusSet();
     });
     Froide.app.statusSet();
+    loggedInCallback = function(data){
+      location.href = $("link[rel='self']").attr("href");
+    };
   });
 </script>
 {% endblock %}
