@@ -192,7 +192,7 @@ h3 {
     /* left: -5.5em;*/
 }
 
-.button {
+.big-button {
     -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
     box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
@@ -214,7 +214,7 @@ h3 {
     margin: 0 0 1em;
 }
 
-.button:hover {
+.big-button:hover {
     background-color: #09f;
 }
 
@@ -989,4 +989,13 @@ textarea.smalltext {
 
 .red {
     color: red;
+}
+
+#followrequest-form p {
+    margin: 0;
+}
+
+#followrequest-form label {
+    font-weight: normal;
+    font-size: 12pt;
 }
