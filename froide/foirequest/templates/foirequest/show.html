@@ -78,11 +78,11 @@
   {% endif %}
 {% if object.description %}
   <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
-  <dd>{{ object.get_description|urlize|linebreaks }}</dd>
+  <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
   {% endif %}
 {% if object.resolution %}
   <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
-  <dd>{{ object.resolution|urlize|linebreaks }}</dd>
+  <dd>{{ object.resolution|urlizetrunc:40|linebreaks }}</dd>
 {% endif %}
 
 </dl>
@@ -231,6 +231,7 @@
       {{ form.scan }}
       <input type="submit" value="{% blocktrans %}Upload Document{% endblocktrans %}"/><br/>
       {{ form.scan.help_text }}
+      </form>
     </td>
     {% endwith %}
   {% endif %}
