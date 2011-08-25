@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     url(r'^%s/' % _('requests'), include('froide.foirequest.urls')),
     # Translators: request URL
     url(r'^%s/' % _('request'), include('froide.foirequest.request_urls')),
+    # Translators: follow request URL
+    url(r'^%s/' % _('follow'), include('froide.foirequestfollower.urls')),
+
 
     # Translators: URL part
     url(r'^%s/' % _('entity'), include('froide.publicbody.urls')),
