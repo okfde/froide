@@ -108,22 +108,26 @@
 <hr/>
 </div>
 <div class="span-6 last">
-  <p>{% blocktrans %}Stay up to date on this request{% endblocktrans %}</p>
-  <ul class="iconed-list">
-    {% if user != object.user %}
-    <li>
-    <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">{% csrf_token %}
+    {% if user.is_authenticated and user != object.user %}
+    <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
+      {% csrf_token %}
     {% if followform %}
       {{ followform.as_p }}
       <input type="submit" value="{% trans "Follow request" %}"/>
     {% else %}
       {% followrequest object user "followform" %}
       {{ followform.as_p }}
-      <input type="submit" value="{{ followform.button_name }}"/>
+      {% if followform.following %}
+      <span class="help">{% blocktrans %}You are currently <span class="green">following</span> this request and you will get email updates.{% endblocktrans %}</span>
+      <button class="button icon remove" type="submit"/>{% trans "Unfollow request" %}</button><br/>
+      {% else %}
+      <span class="help">{% blocktrans %}Follow this request and get notified by email when something changes.{% endblocktrans %}</span>
+      <button class="button mail icon" type="submit"/>{% trans "Follow request" %}</button><br/>
+      {% endif %}
     {% endif %}
     </form>
-    </li>
     {% endif %}
+    <ul class="iconed-list">
       <li class="rss-icon">
           <a href="{% url 'foirequest-feed' slug=object.slug %}">{% trans "RSS Feed" %}</a>
       </li>

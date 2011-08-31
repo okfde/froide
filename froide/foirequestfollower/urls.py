@@ -8,6 +8,6 @@ urlpatterns = patterns("",
         pgettext('URL part', 'confirm-follow'), 'foirequestfollower.views.confirm_follow',
         {}, 'foirequestfollower-confirm_follow'),
     (r'^%s/(?P<follow_id>\d+)/(?P<check>[0-9a-f]{32})/$' %
-        pgettext('URL part', 'confirm-unfollow'), 'foirequestfollower.views.confirm_unfollow',
+        pgettext('URL part', 'unfollow'), 'foirequestfollower.views.unfollow_by_link',
         {}, 'foirequestfollower-confirm_unfollow'),
 )

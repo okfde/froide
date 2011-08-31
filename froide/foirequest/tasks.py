@@ -27,9 +27,6 @@ def process_mail(mail):
         from sentry.client.models import client
         client.create_from_exception(exc_info=exc_info, view="foirequest.tasks.process_mail")
 
-
-
-
 @task
 def fetch_mail():
     for rfc_data in _fetch_mail():
@@ -40,3 +37,11 @@ def detect_overdue():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_overdue():
         foirequest.set_overdue()
+
+@task
+def update_followers(request_id, message):
+    try:
+        foirequest = FoiRequest.objects.get(id=request_id)
+        FoiRequest.objects.send_update(foirequest, message)
+    except FoiRequest.DoesNotExist:
+        pass

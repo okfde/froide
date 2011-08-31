@@ -71,12 +71,19 @@ class FoiRequestFollower(models.Model):
             'check': self.get_follow_secret()})
 
     def get_follow_secret(self):
-        to_sign = [self.email, self.request.id, self.id]
+        to_sign = [self.email, str(self.request.id), str(self.id)]
         return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
+
+    def check_and_unfollow(self, check):
+        secret = self.get_follow_secret()
+        if check == secret:
+            self.delete()
+            return True
+        return False
 
     def send_follow_mail(self):
         send_mail(_("%(site_name)s: Please confirm that you want to follow this request") % {"site_name": settings.SITE_NAME},
-            render_to_string("foirequest/confirm_following.txt",
+            render_to_string("foirequestfollowers/confirm_follow.txt",
                 {"request": self.request,
                 "follow_link": self.get_follow_link(),
                 "unfollow_link": self.get_unfollow_link(),
@@ -90,7 +97,7 @@ class FoiRequestFollower(models.Model):
         if not self.request.is_visible(None):
             return
         send_mail(_("Update on request %(request)s" % {"request": self.request.title}),
-            render_to_string("foirequest/update_followers.txt",
+            render_to_string("foirequestfollower/update_follower.txt",
                 {"request": self.request,
                 "user": self.user,
                 "message": message,
@@ -102,14 +109,20 @@ class FoiRequestFollower(models.Model):
 @receiver(FoiRequest.message_received,
     dispatch_uid="notify_followers_message_received")
 def notify_followers_message_received(sender, message=None, **kwargs):
-    FoiRequestFollowerManager.send_update(sender,
+    FoiRequestFollower.objects.send_update(sender,
         _("The request '%(request)s' received a reply.") % {
             "request": sender.title})
 
 @receiver(FoiRequest.message_sent,
         dispatch_uid="notify_followers_send_foimessage")
 def notify_followers_send_foimessage(sender, message=None, **kwargs):
-    FoiRequestFollowerManager.send_update(sender,
+    FoiRequestFollower.objects.send_update(sender,
         _("A message was sent in the request '%(request)s'.") % {
             "request": sender.title})
 
+@receiver(FoiRequest.add_postal_reply,
+    dispatch_uid="notify_followers_add_postal_reply")
+def notify_followers_add_postal_reply(sender, **kwargs):
+    FoiRequestFollower.objects.send_update(sender,
+        _("The request '%(request)s' received a postal reply.") % {
+            "request": sender.title})

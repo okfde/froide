@@ -20,7 +20,7 @@ def follow(request, slug):
                 messages.add_message(request, messages.SUCCESS,
                         _("You are now following this request."))
             else:
-                messages.add_message(request, messages.SUCCESS,
+                messages.add_message(request, messages.INFO,
                         _("You are not following this request anymore."))
         else:
             if followed is None:
@@ -34,12 +34,20 @@ def follow(request, slug):
                         _("You are following this request. If you want to unfollow it, click the unfollow link in the emails you received."))
 
 
-        return HttpResponseRedirect(request.get_absolute_url())
+        return HttpResponseRedirect(foirequest.get_absolute_url())
     else:
         return show(request, slug, context={"followform": form}, status=400)
 
 def confirm_follow(request, follow_id, check):
-    follower = get_object_or_404(FoiRequestFollower, id=int(follow_id))
+    get_object_or_404(FoiRequestFollower, id=int(follow_id))
 
-def confirm_unfollow(request, follow_id, check):
-    pass
+def unfollow_by_link(request, follow_id, check):
+    follower = get_object_or_404(FoiRequestFollower, id=int(follow_id))
+    if follower.check_and_unfollow(check):
+        messages.add_message(request, messages.INFO,
+            _("You are not following this request anymore."))
+    else:
+        messages.add_message(request, messages.ERROR,
+            _("There was something wrong with your link. Perhaps try again."))
+    return HttpResponseRedirect(follower.request.get_absolute_url())
+

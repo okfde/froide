@@ -980,6 +980,11 @@ textarea.smalltext {
     font-weight: bold;
 }
 
+.iconed-list {
+    padding-left: 0;
+    margin: 1em 0em 1em 0em;
+}
+
 .iconed-list li {
     background-repeat: no-repeat;
     background-position:0 3px;
@@ -989,6 +994,10 @@ textarea.smalltext {
 
 .red {
     color: red;
+}
+
+.green {
+    background-color: #C4FFD6;
 }
 
 #followrequest-form p {
