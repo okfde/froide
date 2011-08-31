@@ -197,7 +197,7 @@ class FoiRequest(models.Model):
             blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
-    
+
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
 
@@ -264,7 +264,7 @@ class FoiRequest(models.Model):
             return False
         if self.visibility == 2:
             return True
-        if self.visibility == 1 and (
+        if user and self.visibility == 1 and (
                 user.is_authenticated() and
                 self.user == user):
             return True
@@ -283,6 +283,19 @@ class FoiRequest(models.Model):
 
     def set_awaits_classification(self):
         self.status = 'awaiting_classification'
+
+    def followed_by(self, user):
+        from foirequestfollower.models import FoiRequestFollower
+        try:
+            if isinstance(user, basestring):
+                return FoiRequestFollower.objects.get(request=self,
+                        email=user, confirmed=True)
+            else:
+                return FoiRequestFollower.objects.get(request=self,
+                        user=user)
+        except FoiRequestFollower.DoesNotExist:
+            return False
+
 
     def public_date(self):
         if self.due_date:
@@ -661,7 +674,6 @@ def notify_user_message_received(sender, message=None, **kwargs):
                     "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
-
 
 @receiver(FoiRequest.public_body_suggested,
         dispatch_uid="notify_user_public_body_suggested")

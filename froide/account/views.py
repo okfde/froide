@@ -12,7 +12,7 @@ from account.forms import UserLoginForm, NewUserForm, UserChangeAddressForm
 from account.models import AccountManager
 from foirequest.models import FoiRequest
 from froide.helper.auth import login_user
-from froide.helper.utils import get_next, render_403
+from froide.helper.utils import render_403
 
 
 def confirm(request, user_id, secret, request_id=None):
@@ -56,7 +56,8 @@ def logout(request):
             _('You have been logged out.'))
     return HttpResponseRedirect("/")
 
-def login(request, base="base.html", context=None, status=200):
+def login(request, base="base.html", context=None,
+        template='account/login.html', status=200):
     simple = False
     if not context:
         context = {}
@@ -105,7 +106,7 @@ def login(request, base="base.html", context=None, status=200):
     context.update({"form": form,
             "custom_base": base,
             "simple": simple})
-    return render(request, 'account/login.html', context, status=status)
+    return render(request, template, context, status=status)
 
 @require_POST
 def signup(request):

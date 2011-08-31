@@ -102,7 +102,8 @@
                   {% blocktrans %}Questions like "How much did X cost?" or "Please give me a list of X?"{% endblocktrans %}
               </span>
             </label>
-            <input type="button" value="{% trans "Continue" %}" id="continue-foicheck"/>
+            <button class="button icon arrowright" id="continue-foicheck">{% trans "Continue" %}</button>
+            <span id="select-one-information-kind" style="display:none">{% trans "Please select one of the above options!" %}</span>
         </div>
         <div id="nofoi-personal" style="display:none">
             <h3>{% blocktrans %}A request about a matter involving you personally{% endblocktrans %}</h3>
@@ -227,7 +228,8 @@
         {% blocktrans %}If you don't want your request to be public right now, uncheck this. You can always decide to make it public later.{% endblocktrans %}
       </span>
       </div>
-      <br/><input type="button" id="review-button" value="{% trans "Review and Submit" %}"/>
+      <br/>
+        <button type="button" id="review-button" class="primary button icon arrowright">{% trans "Review and Submit" %}</button>
       </div>
     </fieldset>
     <fieldset id="review-and-submit">
@@ -264,7 +266,7 @@
         </div>
         <div class="clear">
           <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
-          <p><input type="submit" id="send-request-button" value="{% trans "Submit Request"%}" /> 
+          <p><button type="submit" id="send-request-button" class="button icon approve primary">{% trans "Submit Request"%}</button>
           {% blocktrans %} or <a href="#" class="close">edit your request again</a>{% endblocktrans %}</p>
         </div>
       </div>
@@ -279,4 +281,3 @@
   </ul>
 </div>
 {% endblock %}
-

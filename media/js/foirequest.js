@@ -26,7 +26,6 @@ $(function(){
     
     $("#continue-foicheck").click(function(e){
         e.preventDefault();
-        $("#foicheck-form").slideUp();
         if ($("#option-check_foi_personal").attr("checked")){
             $("#write-request").hide();
             $("#review-and-submit").hide();
@@ -38,7 +37,11 @@ $(function(){
             $("#nofoi-opinion").slideDown();
         } else if ($("#option-check_foi").attr("checked")){
             Froide.app.activateMessage();
+        } else {
+            $("#select-one-information-kind").show();
+            return;
         }
+        $("#foicheck-form").slideUp();
     });
 
     var highlightRegex = function(elem, regex){

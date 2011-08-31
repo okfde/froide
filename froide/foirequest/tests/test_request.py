@@ -54,7 +54,6 @@ class RequestTest(TestCase):
         req = FoiRequest.published.get(id=req.id)
         self.assertTrue(req.public)
 
-
     def test_public_body_new_user_request(self):
         self.client.logout()
         pb = PublicBody.objects.all()[0]

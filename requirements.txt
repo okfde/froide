@@ -1,8 +1,9 @@
 Django==1.3
 South==0.7.3
-celery==2.2.5
-django-celery==2.2.4
-django-kombu==0.9.2
+celery==2.3.0
+django-celery==2.3
+kombu==1.2.1
+django-kombu==0.9.4
 -e git://github.com/stefanw/django-haystack.git#egg=django_haystack
 # -e git://github.com/toastdriven/django-haystack.git@v1.2.0#egg=django_haystack-1.2.0_beta-py2.7-dev
 -e hg+https://bitbucket.org/pmclanahan/django-celery-email@213c771215bb4c3dec9dac184ed3eec228ceca07#egg=django_celery_email-tip

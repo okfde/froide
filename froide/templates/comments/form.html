@@ -13,7 +13,7 @@
     {% if user.get_profile.private %}
     <span class="red">{% trans "Despite your privacy settings, your real name will be published with comment.<br/>There are <strong>no anonymous comments</strong>." %}</span><br/>
     {% endif %}
-    <input type="submit" name="post" class="submit-post" value="{% trans "Post" %}" />
+    <button type="submit" name="post" class="button comment icon">{% trans "Post Comment" %}</button>
   </p>
 </form>
 

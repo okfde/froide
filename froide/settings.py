@@ -166,6 +166,7 @@ INSTALLED_APPS = (
     
     # local
     'foirequest',
+    'foirequestfollower',
     'publicbody',
     'account',
 )

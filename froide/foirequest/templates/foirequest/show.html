@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load markup %}
 {% load comments %}
-{% load foirequest_tags %}
+{% load foirequest_tags follower_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -11,6 +11,7 @@
 
 
 {% block extra_head %}
+<link rel="self" type="text/html" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
 <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" /> 
 
@@ -107,14 +108,32 @@
 <hr/>
 </div>
 <div class="span-6 last">
-    <p>{% blocktrans %}Stay up to date on this request{% endblocktrans %}</p>
+    {% if user.is_authenticated and user != object.user %}
+    <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
+      {% csrf_token %}
+    {% if followform %}
+      {{ followform.as_p }}
+      <input type="submit" value="{% trans "Follow request" %}"/>
+    {% else %}
+      {% followrequest object user "followform" %}
+      {{ followform.as_p }}
+      {% if followform.following %}
+      <span class="help">{% blocktrans %}You are currently <span class="green">following</span> this request and you will get email updates.{% endblocktrans %}</span>
+      <button class="button icon remove" type="submit"/>{% trans "Unfollow request" %}</button><br/>
+      {% else %}
+      <span class="help">{% blocktrans %}Follow this request and get notified by email when something changes.{% endblocktrans %}</span>
+      <button class="button mail icon" type="submit"/>{% trans "Follow request" %}</button><br/>
+      {% endif %}
+    {% endif %}
+    </form>
+    {% endif %}
     <ul class="iconed-list">
-        <li class="rss-icon">
-            <a href="{% url 'foirequest-feed' slug=object.slug %}">{% trans "RSS Feed" %}</a>
-        </li>
-        <li class="atom-icon">
-            <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">{% trans "Atom Feed" %}</a>
-        </li>
+      <li class="rss-icon">
+          <a href="{% url 'foirequest-feed' slug=object.slug %}">{% trans "RSS Feed" %}</a>
+      </li>
+      <li class="atom-icon">
+          <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">{% trans "Atom Feed" %}</a>
+      </li>
     </ul>
   {% if user.is_staff %}
     <h3>{% trans "Admin Tools" %}</h3>
@@ -124,7 +143,7 @@
     {% else %}
     <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
       {% csrf_token %}
-      <input type="submit" value="{% trans "Mark as checked" %}"/>
+      <input class="button" type="submit" value="{% trans "Mark as checked" %}"/>
     </form>
     {% endif %}
     {% if not object.is_foi %}
@@ -132,7 +151,7 @@
     {% else %}
     <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
       {% csrf_token %}
-      <input type="submit" value="{% trans "Mark as NOT FoI" %}"/>
+      <input class="button" type="submit" value="{% trans "Mark as NOT FoI" %}"/>
     </form>
     {% endif %}
   {% endif %}
@@ -240,9 +259,9 @@
     {% if status_form %}
       {% include "foirequest/_set_status.html" %}
     {% else %}
-    {% with status_form=object.get_status_form %}
-      {% include "foirequest/_set_status.html" %}
-    {% endwith %}
+      {% with status_form=object.get_status_form %}
+        {% include "foirequest/_set_status.html" %}
+      {% endwith %}
     {% endif %}
     <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
     </p>
@@ -408,6 +427,9 @@
       Froide.app.statusSet();
     });
     Froide.app.statusSet();
+    loggedInCallback = function(data){
+      location.href = $("link[rel='self']").attr("href");
+    };
   });
 </script>
 {% endblock %}

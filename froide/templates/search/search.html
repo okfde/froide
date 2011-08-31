@@ -9,7 +9,7 @@
     <form method="get" action="{% url 'foirequest-search' %}">
       <div>
         <input type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off"/>
-        <button type="submit">{% blocktrans %}Search For Information{% endblocktrans %}</button>
+        <button class="button icon search" type="submit">{% blocktrans %}Search For Information{% endblocktrans %}</button>
       </div>
     </form>
   </div>
@@ -67,7 +67,7 @@
 <div>
   <h3>{% blocktrans %}Couldn't find what you were looking for?{% endblocktrans %}</h3>
   <p>
-    <a class="button make-request-button" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Freedom of Information Request now!{% endblocktrans %}</a>
+    <a class="big-button make-request-button" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Freedom of Information Request now!{% endblocktrans %}</a>
   </p>
 </div>
 

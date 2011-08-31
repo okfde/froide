@@ -1,0 +1,7 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with title=request.title site_name=site_name %}Hi,
+
+please confirm that you want to follow the request "{{ title }}" on {{ site_name }} by clicking this link:{% endblocktrans %}
+
+{{ follow_link }}
+
+{% endautoescape %}

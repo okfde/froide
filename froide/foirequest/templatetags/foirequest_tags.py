@@ -18,4 +18,5 @@ def highlight_request(message):
     return mark_safe('%s<div class="highlight">%s</div>%s' % (escape(content[:index]),
             escape(description), escape(content[offset:])))
 
+
 register.simple_tag(highlight_request)
