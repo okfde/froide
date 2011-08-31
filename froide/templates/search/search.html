@@ -9,7 +9,7 @@
     <form method="get" action="{% url 'foirequest-search' %}">
       <div>
         <input type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off"/>
-        <button type="submit">{% blocktrans %}Search For Information{% endblocktrans %}</button>
+        <button class="button icon search" type="submit">{% blocktrans %}Search For Information{% endblocktrans %}</button>
       </div>
     </form>
   </div>

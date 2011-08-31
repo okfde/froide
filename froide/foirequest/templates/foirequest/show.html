@@ -139,7 +139,7 @@
     {% else %}
     <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
       {% csrf_token %}
-      <input type="submit" value="{% trans "Mark as checked" %}"/>
+      <input class="button" type="submit" value="{% trans "Mark as checked" %}"/>
     </form>
     {% endif %}
     {% if not object.is_foi %}
@@ -147,7 +147,7 @@
     {% else %}
     <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
       {% csrf_token %}
-      <input type="submit" value="{% trans "Mark as NOT FoI" %}"/>
+      <input class="button" type="submit" value="{% trans "Mark as NOT FoI" %}"/>
     </form>
     {% endif %}
   {% endif %}
@@ -255,9 +255,9 @@
     {% if status_form %}
       {% include "foirequest/_set_status.html" %}
     {% else %}
-    {% with status_form=object.get_status_form %}
-      {% include "foirequest/_set_status.html" %}
-    {% endwith %}
+      {% with status_form=object.get_status_form %}
+        {% include "foirequest/_set_status.html" %}
+      {% endwith %}
     {% endif %}
     <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
     </p>
