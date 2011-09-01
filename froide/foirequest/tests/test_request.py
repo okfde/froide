@@ -574,6 +574,7 @@ class RequestTest(TestCase):
 
     def test_set_message_sender(self):
         from foirequest.forms import MessagePublicBodySenderForm
+        mail.outbox = []
         self.client.login(username="dummy", password="froide")
         pb = PublicBody.objects.all()[0]
         post = {"subject": "A simple test request",
@@ -584,6 +585,7 @@ class RequestTest(TestCase):
         response = self.client.post(
                 reverse('foirequest-submit_request'), post)
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 2)
         req = FoiRequest.objects.get(title=post['subject'])
         req.add_message_from_email({
             'msgobj': None,
@@ -599,7 +601,21 @@ class RequestTest(TestCase):
             'attachments': []
         }, "FAKE_ORIGINAL")
         self.assertEqual(len(req.messages), 2)
+        self.assertEqual(len(mail.outbox), 3)
+        notification = mail.outbox[-1]
+        match = re.search('https?://[^/]+(/.*?/%d/[^\s]+)' % req.user.pk,
+                notification.body)
+        self.assertIsNotNone(match)
+        url = match.group(1)
+        self.client.logout()
+        response = self.client.get(reverse('account-show'))
+        self.assertEqual(response.status_code, 403)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
         message = req.messages[1]
+        self.assertIn(req.get_absolute_url(), response['Location'])
+        response = self.client.get(reverse('account-show'))
+        self.assertEqual(response.status_code, 200)
         form = MessagePublicBodySenderForm(message)
         post_var = form.add_prefix("sender")
         self.assertTrue(message.is_response)

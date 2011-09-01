@@ -39,6 +39,22 @@ def confirm(request, user_id, secret, request_id=None):
                 _('You can only use the confirmation link once, please login with your password.'))
     return HttpResponseRedirect(reverse('account-login'))
 
+def go(request, user_id, secret, url):
+    if request.user.is_authenticated():
+        if request.user.id != user_id:
+            messages.add_message(request, messages.NOTICE,
+                _('You are logged in with a different user account. Please logout first before using this link.'))
+    else:
+        user = get_object_or_404(auth.models.User, pk=int(user_id))
+        if not user.is_active:
+            messages.add_message(request, messages.ERROR,
+                _('Your account is not active.'))
+            raise Http404
+        account_manager = AccountManager(user)
+        if account_manager.check_autologin_secret(secret):
+            login_user(request, user)
+    return HttpResponseRedirect(url)
+
 def show(request, context=None, status=200):
     if not request.user.is_authenticated():
         return render_403(request)

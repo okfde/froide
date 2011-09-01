@@ -671,6 +671,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
     send_mail(_("You received a reply to your Freedom of Information Request"),
             render_to_string("foirequest/message_received_notification.txt",
                 {"message": message, "request": sender,
+                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_url()),
                     "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
