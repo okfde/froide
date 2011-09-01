@@ -20,7 +20,7 @@ class NewUserForm(forms.Form):
                 'class': 'inline'}))
     address = forms.CharField(max_length=300, min_length=10,
             label=_('Mailing Address'),
-            help_text=_('Your address will never be displayed publicly.'),
+            help_text=_('Your address will not be displayed publicly.'),
             widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
                 'class': 'inline smalltext'}))
     user_email = forms.EmailField(label=_('Email address'),
@@ -29,7 +29,7 @@ class NewUserForm(forms.Form):
     if user_can_hide_web:
         private = forms.BooleanField(required=False,
                 label=_("Hide my name on the web"),
-                help_text=_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly."))
+                help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
         
     terms = forms.BooleanField(label=_("Terms and Conditions and Privacy Statement"),
             error_messages={'required':
