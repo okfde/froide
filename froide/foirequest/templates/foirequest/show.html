@@ -233,25 +233,14 @@
     <td>
       <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">{% csrf_token %}
       {{ form.scan }}
-      <input type="submit" value="{% blocktrans %}Upload Document{% endblocktrans %}"/><br/>
+      <button type="submit" class="button icon add">{% blocktrans %}Upload Document{% endblocktrans %}</button><br/>
       {{ form.scan.help_text }}
       </form>
     </td>
     {% endwith %}
   {% endif %}
   </tbody>
-  </table>
-  <hr/>
-  {% if forloop.counter0 == 0 %}
-  <div class="message-content">{% highlight_request message %}</div>
-  {% else %}
-  {% if user == object.user %}
-  <div class="message-content">{{ message.get_real_content|urlize }}</div>
-  {% else %}
-  <div class="message-content">{{ message.get_content|urlize }}</div>
-  {% endif %}
-  {% endif %}
-</div>
+</table>
 {# Set status #}
 {% if object.user == user and message.needs_status_input %}
 <div id="set-status" class="section important-form">
@@ -263,12 +252,23 @@
         {% include "foirequest/_set_status.html" %}
       {% endwith %}
     {% endif %}
-    <input type="submit" value="{% blocktrans %}Set status{% endblocktrans %}"/>
+    <button class="button icon tag" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
     </p>
   </form>
 </div>
 {% endif %}
 {# End Set status #}
+  <hr/>
+  {% if forloop.counter0 == 0 %}
+  <div class="message-content">{% highlight_request message %}</div>
+  {% else %}
+  {% if user == object.user %}
+  <div class="message-content">{{ message.get_real_content|urlize }}</div>
+  {% else %}
+  <div class="message-content">{{ message.get_content|urlize }}</div>
+  {% endif %}
+  {% endif %}
+</div>
 
 {% if message.events %}
 <div class="events">
