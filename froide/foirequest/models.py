@@ -264,6 +264,8 @@ class FoiRequest(models.Model):
             return False
         if self.visibility == 2:
             return True
+        if user.is_superuser:
+            return True
         if user and self.visibility == 1 and (
                 user.is_authenticated() and
                 self.user == user):
