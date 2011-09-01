@@ -72,6 +72,10 @@ class Profile(models.Model):
             return ""
         return ""
 
+    def get_autologin_url(self, url):
+        account_manager = AccountManager(self.user)
+        return account_manager.get_autologin_url(url)
+
     def get_password_change_form(self, *args, **kwargs):
         return SetPasswordForm(self.user, *args, **kwargs)
 
@@ -106,6 +110,20 @@ class AccountManager(object):
         self.user.save()
         user_activated_signal.send_robust(sender=self.user)
         return True
+
+    def get_autologin_url(self, url):
+        return  settings.SITE_URL + reverse('account-go', kwargs={"user_id": self.user.id,
+            "secret": self.generate_autologin_secret(),
+            "url": url})
+
+    def check_autologin_secret(self, secret):
+        return self.generate_autologin_secret() == secret
+
+    def generate_autologin_secret(self):
+        to_sign = [str(self.user.pk)]
+        if self.user.last_login:
+            to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
+        return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
 
     def check_confirmation_secret(self, secret, request_id):
         return self.generate_confirmation_secret(request_id) == secret
