@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-01 16:21+0200\n"
-"PO-Revision-Date: 2011-09-01 17:21+0100\n"
+"POT-Creation-Date: 2011-09-01 19:22+0200\n"
+"PO-Revision-Date: 2011-09-01 19:39+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -116,9 +116,8 @@ msgid "Mailing Address"
 msgstr "Postadresse"
 
 #: account/forms.py:23
-#: account/forms.py:87
-msgid "Your address will never be displayed publicly."
-msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
+msgid "Your address will not be displayed publicly."
+msgstr "Ihre Adresse wird nicht öffentlich angezeigt."
 
 #: account/forms.py:24
 #: account/forms.py:88
@@ -140,8 +139,8 @@ msgid "Hide my name on the web"
 msgstr "Zeige meinen Namen auf der Seite nicht an"
 
 #: account/forms.py:32
-msgid "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly."
-msgstr "Wenn Sie diesen Haken setzen, wird Ihr Name immer noch an die Behörde gesendet, aber wir werden ihn nicht öffentlich anzeigen."
+msgid "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity"
+msgstr "Ihr Name wird an die Behörde gesendet, aber wir werden ihn nach Möglichkeit nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen <b>keine</b> komplette Anonymität garantieren."
 
 #: account/forms.py:34
 msgid "Terms and Conditions and Privacy Statement"
@@ -177,6 +176,10 @@ msgstr "Passwort (wiederholen)"
 #: account/forms.py:72
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
+
+#: account/forms.py:87
+msgid "Your address will never be displayed publicly."
+msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
 #: account/models.py:30
 #, python-format
@@ -623,7 +626,7 @@ msgid "Suggestions"
 msgstr "Vorschläge"
 
 #: foirequest/forms.py:185
-#: publicbody/models.py:226
+#: publicbody/models.py:231
 #: publicbody/templates/publicbody/_chooser.html:9
 msgid "More Info"
 msgstr "Details"
@@ -849,15 +852,15 @@ msgstr "Sichtbar für Anfragesteller"
 
 #: foirequest/models.py:161
 #: publicbody/models.py:36
-#: publicbody/models.py:121
-#: publicbody/models.py:137
+#: publicbody/models.py:126
+#: publicbody/models.py:142
 msgid "Slug"
 msgstr "URL-Kürzel"
 
 #: foirequest/models.py:162
 #: publicbody/models.py:37
-#: publicbody/models.py:122
-#: publicbody/models.py:138
+#: publicbody/models.py:127
+#: publicbody/models.py:143
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -868,7 +871,7 @@ msgstr "Ergebniszusammenfassung"
 #: foirequest/models.py:166
 #: foirequest/models.py:695
 #: foirequest/models.py:977
-#: publicbody/models.py:184
+#: publicbody/models.py:189
 msgid "Public Body"
 msgstr "Behörde"
 
@@ -930,7 +933,7 @@ msgstr "ist eine IF-Anfrage"
 
 #: foirequest/models.py:202
 #: publicbody/models.py:57
-#: publicbody/models.py:170
+#: publicbody/models.py:175
 msgid "Site"
 msgstr "Seite"
 
@@ -1106,8 +1109,8 @@ msgstr "Gehört zur Anfrage"
 
 #: foirequest/models.py:910
 #: publicbody/models.py:35
-#: publicbody/models.py:120
-#: publicbody/models.py:136
+#: publicbody/models.py:125
+#: publicbody/models.py:141
 #: publicbody/templates/publicbody/show_topic.html:19
 msgid "Name"
 msgstr "Name"
@@ -1351,8 +1354,8 @@ msgid "How to make a successful FOI Request"
 msgstr "Wie man eine erfolgreiche IFG-Anfrage stellt"
 
 #: foirequest/templates/foirequest/_set_status.html:3
-msgid "Status of request after the above message:"
-msgstr "Status der Anfrage nach obiger Antwort:"
+msgid "Status of request after this message:"
+msgstr "Status der Anfrage nach dieser Antwort:"
 
 #: foirequest/templates/foirequest/_set_status.html:6
 msgid "When you are denied information, the Public Body should always state the reason."
@@ -1987,7 +1990,7 @@ msgstr "Anhänge hochladen"
 msgid "Upload Document"
 msgstr "Dokument hochladen"
 
-#: foirequest/templates/foirequest/show.html:266
+#: foirequest/templates/foirequest/show.html:255
 msgid "Set status"
 msgstr "Status festlegen"
 
@@ -2250,7 +2253,7 @@ msgid "Priority"
 msgstr "Priorität"
 
 #: publicbody/models.py:45
-#: publicbody/models.py:141
+#: publicbody/models.py:146
 msgid "URL"
 msgstr "URL"
 
@@ -2279,81 +2282,86 @@ msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 msgstr "Mögliche Verweigerungsgründe, einer pro Zeile, z.B. §X.Y: Datenschutzgründe"
 
 #: publicbody/models.py:63
-#: publicbody/models.py:176
+#: publicbody/models.py:181
 msgid "Freedom of Information Laws"
 msgstr "Informationsfreiheitsgesetze"
 
-#: publicbody/models.py:87
+#: publicbody/models.py:88
+#: publicbody/models.py:92
 msgid "Law not applicable"
 msgstr "Gesetz nicht anwendbar"
 
-#: publicbody/models.py:87
+#: publicbody/models.py:88
+msgid "No law can be applied"
+msgstr "Kein Gesetz kann angewendet werden"
+
+#: publicbody/models.py:92
 msgid "Law cannot be applied"
 msgstr "Das Gesetz kann nicht angewendet werden"
 
-#: publicbody/models.py:123
+#: publicbody/models.py:128
 msgid "Count"
 msgstr "Anzahl"
 
-#: publicbody/models.py:128
-#: publicbody/models.py:139
+#: publicbody/models.py:133
+#: publicbody/models.py:144
 msgid "Topic"
 msgstr "Thema"
 
-#: publicbody/models.py:129
+#: publicbody/models.py:134
 msgid "Topics"
 msgstr "Themen"
 
-#: publicbody/models.py:150
+#: publicbody/models.py:155
 #: publicbody/templates/publicbody/show_topic.html:20
 msgid "Classification"
 msgstr "Klassifikation"
 
-#: publicbody/models.py:152
+#: publicbody/models.py:157
 msgid "Classification Slug"
 msgstr "Klassifikations-URL-Kürzel"
 
-#: publicbody/models.py:154
+#: publicbody/models.py:159
 msgid "Email"
 msgstr "E-Mail"
 
-#: publicbody/models.py:155
+#: publicbody/models.py:160
 msgid "Contact"
 msgstr "Kontakt"
 
-#: publicbody/models.py:156
+#: publicbody/models.py:161
 msgid "Address"
 msgstr "Adresse"
 
-#: publicbody/models.py:157
+#: publicbody/models.py:162
 msgid "Website Dump"
 msgstr "Webseiten-Dump"
 
-#: publicbody/models.py:158
+#: publicbody/models.py:163
 msgid "request note"
 msgstr "Anfrage-Hinweis"
 
-#: publicbody/models.py:160
+#: publicbody/models.py:165
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: publicbody/models.py:163
+#: publicbody/models.py:168
 msgid "Updated by"
 msgstr "Aktualisiert von"
 
-#: publicbody/models.py:166
+#: publicbody/models.py:171
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: publicbody/models.py:168
+#: publicbody/models.py:173
 msgid "Number of requests"
 msgstr "Anzahl der Anfragen"
 
-#: publicbody/models.py:173
+#: publicbody/models.py:178
 msgid "Geography"
 msgstr "Geographie"
 
-#: publicbody/models.py:185
+#: publicbody/models.py:190
 #: templates/base.html:56
 msgid "Public Bodies"
 msgstr "Behörden"
