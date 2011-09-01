@@ -95,7 +95,7 @@ def show(request, slug, template_name="foirequest/show.html",
     last_index = event_count
     for message in reversed(obj.messages):
         message.events = [ev for ev in events[:last_index] if ev.timestamp >= message.timestamp]
-        last_index = event_count - len(message.events)
+        last_index = last_index - len(message.events)
 
     if context is None:
         context = {}
