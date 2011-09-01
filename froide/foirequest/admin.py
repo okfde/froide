@@ -36,6 +36,11 @@ class FoiAttachmentInline(admin.TabularInline):
 
 
 class FoiMessageAdmin(admin.ModelAdmin):
+    list_display = ('subject', 'sender_user', 'sender_email', 'recipient_email',)
+    list_filter = ('is_postal', 'is_response', 'sent', 'status',)
+    search_fields = ['subject', 'sender_email', 'recipient_email']
+    ordering = ('-timestamp',)
+    date_hierarchy = 'timestamp'
     inlines = [
         FoiAttachmentInline,
     ]
