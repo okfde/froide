@@ -190,7 +190,7 @@ class FoiRequestStatusForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
         self.fields['refusal_reason'] = forms.ChoiceField(label=_("Refusal Reason"),
-            choices=(('', _('No or other reason given')),) + 
+            choices=[('', _('No or other reason given'))] + 
             foirequest.law.get_refusal_reason_choices(),required=False)
 
     status = forms.ChoiceField(label=_("Status"),

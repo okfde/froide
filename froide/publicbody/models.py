@@ -84,7 +84,12 @@ class FoiLaw(models.Model):
         return FormGenerator(self.letter_end, post).render()
 
     def get_refusal_reason_choices(self):
-        return tuple([(_("Law not applicable"), _("Law cannot be applied"))] + \
+        if self.meta:
+            return [(_("Law not applicable"), _("No law can be applied"))] +\
+                    [(l[0], "%s: %s" % (law.name, l[1])) for law in self.combined.all()
+                         for l in law.get_refusal_reason_choices()[1:]]
+        else:
+            return tuple([(_("Law not applicable"), _("Law cannot be applied"))] + \
                 [(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()])
 
     @classmethod
