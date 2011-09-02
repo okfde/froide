@@ -1,6 +1,6 @@
 {% load i18n %}{% autoescape off %}{% blocktrans with title=request.title site_name=site_name name=user.get_full_name message=message unfollow_link=unfollow_link %}Hello {{ name }},
 
-there is an update for the request "{{ title }}" on {{ site_name }}:
+there is an update for the request "{{ title }}" on {{ site_name }}.
 {{ message }}
 
 If you don't want to receive any email updates for this request, click the link below:
