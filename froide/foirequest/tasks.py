@@ -37,11 +37,3 @@ def detect_overdue():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_overdue():
         foirequest.set_overdue()
-
-@task
-def update_followers(request_id, message):
-    try:
-        foirequest = FoiRequest.objects.get(id=request_id)
-        FoiRequest.objects.send_update(foirequest, message)
-    except FoiRequest.DoesNotExist:
-        pass
