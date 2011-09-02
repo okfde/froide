@@ -89,12 +89,14 @@ def show(request, slug, template_name="foirequest/show.html",
         message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
                 all_attachments)
 
-    events = FoiEvent.objects.filter(request=obj).select_related("user", "user__profile", "request",
+    events = FoiEvent.objects.filter(request=obj).select_related(
+            "user", "user__profile", "request",
             "public_body").order_by("timestamp")
     event_count = len(events)
     last_index = event_count
     for message in reversed(obj.messages):
-        message.events = [ev for ev in events[:last_index] if ev.timestamp >= message.timestamp]
+        message.events = [ev for ev in events[:last_index]
+                if ev.timestamp >= message.timestamp]
         last_index = last_index - len(message.events)
 
     if context is None:
