@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-02 15:57+0200\n"
+"POT-Creation-Date: 2011-09-05 20:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2095,38 +2095,39 @@ msgstr ""
 
 #: foirequestfollower/models.py:99
 #, python-format
-msgid "Update on request %(request)s"
+msgid "%(site_name)s: Update on request %(request)s"
 msgstr ""
 
-#: foirequestfollower/models.py:113
+#: foirequestfollower/models.py:114
 #, python-format
 msgid "The request '%(request)s' received a reply."
 msgstr ""
 
-#: foirequestfollower/models.py:120
+#: foirequestfollower/models.py:121
 #, python-format
 msgid "A message was sent in the request '%(request)s'."
 msgstr ""
 
-#: foirequestfollower/models.py:127
+#: foirequestfollower/models.py:128
 #, python-format
 msgid "The request '%(request)s' received a postal reply."
 msgstr ""
 
-#: foirequestfollower/tasks.py:36
-msgid "%(time)s: %(text)"
+#: foirequestfollower/tasks.py:38
+#, python-format
+msgid "%(time)s: %(text)s"
 msgstr ""
 
-#: foirequestfollower/tasks.py:37 foirequestfollower/tasks.py:51
+#: foirequestfollower/tasks.py:39 foirequestfollower/tasks.py:54
 msgid "TIME_FORMAT"
 msgstr ""
 
-#: foirequestfollower/tasks.py:50
+#: foirequestfollower/tasks.py:53
 #, python-format
 msgid "%(time)s: New comment by %(name)s"
 msgstr ""
 
-#: foirequestfollower/tasks.py:63
+#: foirequestfollower/tasks.py:66
 #, python-format
 msgid ""
 "The following happend in the last 24 hours:\n"
@@ -2189,6 +2190,9 @@ msgid ""
 "\n"
 "there is an update for the request \"%(title)s\" on %(site_name)s.\n"
 "%(message)s\n"
+"\n"
+"Click this link to go to the request:\n"
+"%(link)s\n"
 "\n"
 "If you don't want to receive any email updates for this request, click the "
 "link below:\n"

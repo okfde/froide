@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-02 16:02+0200\n"
-"PO-Revision-Date: 2011-09-02 16:17+0100\n"
+"POT-Creation-Date: 2011-09-05 20:50+0200\n"
+"PO-Revision-Date: 2011-09-05 20:52+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2119,40 +2119,40 @@ msgstr "%(site_name)s: Bitte bestätigen Sie, dass Sie Benachrichtigungen für d
 
 #: foirequestfollower/models.py:99
 #, python-format
-msgid "Update on request %(request)s"
-msgstr "Neue Nachricht für Anfrage \"%(request)s\""
+msgid "%(site_name)s: Update on request %(request)s"
+msgstr "%(site_name)s: Neues bei Anfrage \"%(request)s\""
 
-#: foirequestfollower/models.py:113
+#: foirequestfollower/models.py:114
 #, python-format
 msgid "The request '%(request)s' received a reply."
 msgstr "Die Anfrage \"%(request)s\" hat eine Antwort erhalten."
 
-#: foirequestfollower/models.py:120
+#: foirequestfollower/models.py:121
 #, python-format
 msgid "A message was sent in the request '%(request)s'."
 msgstr "Eine Nachricht wurde in der Anfrage \"%(request)s\" versendet."
 
-#: foirequestfollower/models.py:127
+#: foirequestfollower/models.py:128
 #, python-format
 msgid "The request '%(request)s' received a postal reply."
 msgstr "Die Anfrage \"%(request)s\" hat eine Antwort per Post erhalten."
 
-#: foirequestfollower/tasks.py:36
+#: foirequestfollower/tasks.py:38
 #, python-format
 msgid "%(time)s: %(text)s"
 msgstr "%(time)s: %(text)s"
 
-#: foirequestfollower/tasks.py:37
-#: foirequestfollower/tasks.py:51
+#: foirequestfollower/tasks.py:39
+#: foirequestfollower/tasks.py:54
 msgid "TIME_FORMAT"
 msgstr "H:i"
 
-#: foirequestfollower/tasks.py:50
+#: foirequestfollower/tasks.py:53
 #, python-format
 msgid "%(time)s: New comment by %(name)s"
 msgstr "%(time)s: Neuer Kommentar von %(name)s"
 
-#: foirequestfollower/tasks.py:63
+#: foirequestfollower/tasks.py:66
 #, python-format
 msgid ""
 "The following happend in the last 24 hours:\n"
@@ -2215,6 +2215,9 @@ msgid ""
 "there is an update for the request \"%(title)s\" on %(site_name)s.\n"
 "%(message)s\n"
 "\n"
+"Click this link to go to the request:\n"
+"%(link)s\n"
+"\n"
 "If you don't want to receive any email updates for this request, click the link below:\n"
 "%(unfollow_link)s\n"
 "\n"
@@ -2225,6 +2228,9 @@ msgstr ""
 "\n"
 "es gabe eine neue Nachricht in der Anfrage \"%(title)s\" auf %(site_name)s.\n"
 "%(message)s\n"
+"\n"
+"Klicken Sie diesen Link um zur Anfrage zu gelangen:\n"
+"%(link)s\n"
 "\n"
 "Wenn Sie keine weiteren E-Mail-Benachrichtigungen erhalten möchten, klicken Sie diesen Link an:\n"
 "%(unfollow_link)s\n"
