@@ -1,7 +1,10 @@
-{% load i18n %}{% autoescape off %}{% blocktrans with title=request.title site_name=site_name name=user.get_full_name message=message unfollow_link=unfollow_link %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% blocktrans with title=request.title site_name=site_name name=user.get_full_name message=message unfollow_link=unfollow_link link=request.get_absolute_domain_url %}Hello {{ name }},
 
 there is an update for the request "{{ title }}" on {{ site_name }}.
 {{ message }}
+
+Click this link to go to the request:
+{{ link }}
 
 If you don't want to receive any email updates for this request, click the link below:
 {{ unfollow_link }}
