@@ -96,7 +96,8 @@ class FoiRequestFollower(models.Model):
             return
         if not self.request.is_visible(None):
             return
-        send_mail(_("Update on request %(request)s" % {"request": self.request.title}),
+        send_mail(_("%(site_name)s: Update on request %(request)s" %
+                {"request": self.request.title, "site_name": settings.SITE_NAME}),
             render_to_string("foirequestfollower/update_follower.txt",
                 {"request": self.request,
                 "user": self.user,
