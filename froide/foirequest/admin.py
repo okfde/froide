@@ -55,7 +55,10 @@ class FoiEventAdmin(admin.ModelAdmin):
 
 
 class PublicBodySuggestionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('request', 'public_body', 'user', 'reason',)
+    search_fields = ['request', 'reason']
+    ordering = ('-timestamp',)
+    date_hierarchy = 'timestamp'
 
 
 admin.site.register(FoiRequest, FoiRequestAdmin)
