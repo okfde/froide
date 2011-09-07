@@ -102,7 +102,8 @@ class MessagePublicBodySenderForm(forms.Form):
 
     def __init__(self, message, *args, **kwargs):
         if not "initial" in kwargs:
-            kwargs['initial']={"sender": message.sender_public_body.id}
+            if message.sender_public_body:
+                kwargs['initial'] = {"sender": message.sender_public_body.id}
         if not "prefix" in kwargs:
             kwargs['prefix'] = "m%d" % message.id
         self.message = message
