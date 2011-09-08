@@ -650,6 +650,19 @@ class FoiRequest(models.Model):
         # self.status_changed.send(sender=self, status=self.status, data={})
 
 
+@receiver(FoiRequest.became_overdue,
+        dispatch_uid="send_notification_became_overdue")
+def send_notification_became_overdue(sender, **kwargs):
+    send_mail(_("%(site_name)s: Request became overdue")
+                % {"site_name": settings.SITE_NAME},
+            render_to_string("foirequest/became_overdue.txt",
+                {"request": sender,
+                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
+                    "site_name": settings.SITE_NAME}),
+            settings.DEFAULT_FROM_EMAIL,
+            [sender.user.email])
+
+
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
 def increment_request_count(sender, **kwargs):

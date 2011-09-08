@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=go_url %}Hello {{ name }},
+
+Your request "{{ title }}" was not answered in the required time and became overdue.
+We recommend that you send another message to the public body to check the status of the request and if they received it.
+
+Here's a link to the request:
+{{ url }}
+
+Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+
