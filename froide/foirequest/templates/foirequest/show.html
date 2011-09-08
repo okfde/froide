@@ -383,7 +383,7 @@
 {# Reply #}
 <div class="section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>
-  <div id="write-message"{% if not send_message_form %} style="display:none"{% endif %}>
+  <div id="write-message"{% if not object.is_overdue and not send_message_form %} style="display:none"{% endif %}>
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">{% csrf_token %}
     <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
     <table class="no-stripes">
