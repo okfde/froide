@@ -328,6 +328,7 @@ class FoiRequest(models.Model):
         else:
             self.refusal_reason = u""
         if data['status'] == "request_redirected":
+            self.due_date = self.law.calculate_due_date()
             self.public_body = form._redirected_public_body
         if message is not None:
             self.set_awaits_classification()
@@ -994,7 +995,7 @@ class FoiEvent(models.Model):
         "message_sent": _(
             u"%(user)s sent a message to %(public_body)s."),
         "request_redirected": _(
-            u"Request was redirected to %(public_body)s."),
+            u"Request was redirected to %(public_body)s and due date has been reset."),
         "status_changed": _(
             u"%(user)s set status to '%(status)s'."),
         "made_public": _(
