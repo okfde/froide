@@ -686,6 +686,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
         send_mail(_("Your request received a suggestion for a Public Body"),
                 render_to_string("foirequest/public_body_suggestion_received.txt",
                     {"suggestion": suggestion, "request": sender,
+                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
                         "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [sender.user.email])
