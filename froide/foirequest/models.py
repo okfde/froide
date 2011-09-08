@@ -45,6 +45,11 @@ class FoiRequestManager(CurrentSiteManager):
         now = datetime.now()
         return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
 
+    def get_unclassified(self):
+        some_days_ago = datetime.now() - timedelta(days=4)
+        return self.get_query_set().filter(status="awaiting_classification",
+                last_message__lt=some_days_ago)
+
 
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
@@ -648,6 +653,16 @@ class FoiRequest(models.Model):
         self.save()
         self.became_overdue.send(sender=self)
         # self.status_changed.send(sender=self, status=self.status, data={})
+
+    def send_classification_reminder(self):
+        send_mail(_("%(site_name)s: Please classify the reply to your request")
+                    % {"site_name": settings.SITE_NAME},
+                render_to_string("foirequest/classification_reminder.txt",
+                    {"request": self,
+                        "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_url()),
+                        "site_name": settings.SITE_NAME}),
+                settings.DEFAULT_FROM_EMAIL,
+                [self.user.email])
 
 
 @receiver(FoiRequest.became_overdue,

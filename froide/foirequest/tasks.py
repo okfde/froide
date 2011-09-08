@@ -37,3 +37,9 @@ def detect_overdue():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_overdue():
         foirequest.set_overdue()
+
+@task
+def classification_reminder():
+    translation.activate(settings.LANGUAGE_CODE)
+    for foirequest in FoiRequest.objects.get_unclassified():
+        foirequest.send_classification_reminder()
