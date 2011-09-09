@@ -78,7 +78,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
     def successful(self):
         return self.get_query_set().filter(
-                    models.Q(status="successful")|
+                    models.Q(status="successful") |
                     models.Q(status="partially_successful"))
 
 
@@ -139,6 +139,8 @@ class FoiRequest(models.Model):
     MESSAGE_STATUS_TO_REQUEST_STATUS = {
         "request_redirected": "awaiting_response"
     }
+    NON_FINAL_STATUS = ('awaiting_response', 'request_redirected',
+            'overdue', 'awaiting_classification', 'publicbody_needed')
 
     STATUS_URLS = [
             (_("successful"), 'successful'),
@@ -264,16 +266,19 @@ class FoiRequest(models.Model):
             return None
         return mes[0]
 
+    def status_is_final(self):
+        return not self.status in self.NON_FINAL_STATUS
+
     def is_visible(self, user):
         if self.visibility == 0:
             return False
         if self.visibility == 2:
             return True
-        if user.is_superuser:
-            return True
         if user and self.visibility == 1 and (
                 user.is_authenticated() and
                 self.user == user):
+            return True
+        if user and user.is_superuser:
             return True
         return False
 
@@ -282,6 +287,7 @@ class FoiRequest(models.Model):
 
     def awaits_response(self):
         return self.status == 'awaiting_response' or self.status == 'overdue'
+
     def is_overdue(self):
         return self.due_date < datetime.now()
 

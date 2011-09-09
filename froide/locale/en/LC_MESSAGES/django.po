@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-09 13:11+0200\n"
+"POT-Creation-Date: 2011-09-09 22:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -448,12 +448,12 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: account/templates/account/show.html:26 foirequest/models.py:767
+#: account/templates/account/show.html:26 foirequest/models.py:768
 msgid "Recipient"
 msgstr ""
 
 #: account/templates/account/show.html:27 foirequest/forms.py:197
-#: foirequest/models.py:177 foirequest/models.py:774
+#: foirequest/models.py:177 foirequest/models.py:775
 #: foirequest/templates/foirequest/show.html:211
 msgid "Status"
 msgstr ""
@@ -552,7 +552,7 @@ msgid "Search for a topic or a public body:"
 msgstr ""
 
 #: foirequest/forms.py:25 foirequest/forms.py:26 foirequest/forms.py:125
-#: foirequest/forms.py:258 foirequest/forms.py:260 foirequest/models.py:778
+#: foirequest/forms.py:258 foirequest/forms.py:260 foirequest/models.py:779
 #: foirequest/templates/foirequest/_request_form.html:11
 #: foirequest/templates/foirequest/request.html:252
 #: foirequest/templates/foirequest/show.html:192
@@ -603,6 +603,11 @@ msgstr ""
 #: foirequest/forms.py:134
 #, python-format
 msgid "Default address of %(publicbody)s"
+msgstr ""
+
+#: foirequest/forms.py:136 foirequest/templates/foirequest/request.html:244
+#: foirequest/templates/foirequest/show.html:205
+msgid "To"
 msgstr ""
 
 #: foirequest/forms.py:158
@@ -846,11 +851,11 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: foirequest/models.py:170 foirequest/templates/foirequest/show.html:356
+#: foirequest/models.py:170 foirequest/templates/foirequest/show.html:357
 msgid "Resolution Summary"
 msgstr ""
 
-#: foirequest/models.py:173 foirequest/models.py:732 foirequest/models.py:1014
+#: foirequest/models.py:173 foirequest/models.py:733 foirequest/models.py:1015
 #: publicbody/models.py:189
 msgid "Public Body"
 msgstr ""
@@ -863,7 +868,7 @@ msgstr ""
 msgid "Visibility"
 msgstr ""
 
-#: foirequest/models.py:184 foirequest/models.py:735 foirequest/models.py:1011
+#: foirequest/models.py:184 foirequest/models.py:736 foirequest/models.py:1012
 #: foirequestfollower/models.py:44
 msgid "User"
 msgstr ""
@@ -912,8 +917,8 @@ msgstr ""
 msgid "Site"
 msgstr ""
 
-#: foirequest/models.py:220 foirequest/models.py:730 foirequest/models.py:750
-#: foirequest/models.py:1008 foirequestfollower/models.py:43
+#: foirequest/models.py:220 foirequest/models.py:731 foirequest/models.py:751
+#: foirequest/models.py:1009 foirequestfollower/models.py:43
 msgid "Freedom of Information Request"
 msgstr ""
 
@@ -926,16 +931,16 @@ msgstr ""
 msgid "Request '%s'"
 msgstr ""
 
-#: foirequest/models.py:258 foirequest/models.py:874 foirequest/models.py:881
+#: foirequest/models.py:258 foirequest/models.py:875 foirequest/models.py:882
 msgid "<<email address>>"
 msgstr ""
 
-#: foirequest/models.py:387
+#: foirequest/models.py:388
 #, python-format
 msgid "Re: %(subject)s"
 msgstr ""
 
-#: foirequest/models.py:391
+#: foirequest/models.py:392
 msgid ""
 "Dear Sir or Madam,\n"
 "\n"
@@ -945,244 +950,244 @@ msgid ""
 "\n"
 msgstr ""
 
-#: foirequest/models.py:419
+#: foirequest/models.py:420
 msgid "attached_file"
 msgstr ""
 
-#: foirequest/models.py:468 foirequest/models.py:472
+#: foirequest/models.py:469 foirequest/models.py:473
 msgid "Unknown"
 msgstr ""
 
-#: foirequest/models.py:663
+#: foirequest/models.py:664
 #, python-format
 msgid "%(site_name)s: Please classify the reply to your request"
 msgstr ""
 
-#: foirequest/models.py:676
+#: foirequest/models.py:677
 #, python-format
 msgid "%(site_name)s: Request became overdue"
 msgstr ""
 
-#: foirequest/models.py:707
+#: foirequest/models.py:708
 msgid "You received a reply to your Freedom of Information Request"
 msgstr ""
 
-#: foirequest/models.py:719
+#: foirequest/models.py:720
 msgid "Your request received a suggestion for a Public Body"
 msgstr ""
 
-#: foirequest/models.py:736
+#: foirequest/models.py:737
 msgid "Timestamp of Suggestion"
 msgstr ""
 
-#: foirequest/models.py:738
+#: foirequest/models.py:739
 msgid "Reason this Public Body fits the request"
 msgstr ""
 
-#: foirequest/models.py:744
+#: foirequest/models.py:745
 msgid "Public Body Suggestion"
 msgstr ""
 
-#: foirequest/models.py:745
+#: foirequest/models.py:746
 msgid "Public Body Suggestions"
 msgstr ""
 
-#: foirequest/models.py:751
+#: foirequest/models.py:752
 msgid "has message been sent?"
 msgstr ""
 
-#: foirequest/models.py:752
+#: foirequest/models.py:753
 msgid "Is this message a response?"
 msgstr ""
 
-#: foirequest/models.py:754
+#: foirequest/models.py:755
 msgid "Postal?"
 msgstr ""
 
-#: foirequest/models.py:758
+#: foirequest/models.py:759
 msgid "From User"
 msgstr ""
 
-#: foirequest/models.py:759
+#: foirequest/models.py:760
 msgid "From Email"
 msgstr ""
 
-#: foirequest/models.py:761
+#: foirequest/models.py:762
 msgid "From Name"
 msgstr ""
 
-#: foirequest/models.py:765
+#: foirequest/models.py:766
 msgid "From Public Body"
 msgstr ""
 
-#: foirequest/models.py:769
+#: foirequest/models.py:770
 msgid "Recipient Email"
 msgstr ""
 
-#: foirequest/models.py:773
+#: foirequest/models.py:774
 msgid "Public Body Recipient"
 msgstr ""
 
-#: foirequest/models.py:777 foirequest/models.py:1017
+#: foirequest/models.py:778 foirequest/models.py:1018
 msgid "Timestamp"
 msgstr ""
 
-#: foirequest/models.py:779
+#: foirequest/models.py:780
 msgid "plain text"
 msgstr ""
 
-#: foirequest/models.py:780
+#: foirequest/models.py:781
 msgid "HTML"
 msgstr ""
 
-#: foirequest/models.py:781
+#: foirequest/models.py:782
 msgid "Original"
 msgstr ""
 
-#: foirequest/models.py:782
+#: foirequest/models.py:783
 msgid "Was Redacted?"
 msgstr ""
 
-#: foirequest/models.py:788
+#: foirequest/models.py:789
 msgid "Freedom of Information Message"
 msgstr ""
 
-#: foirequest/models.py:789
+#: foirequest/models.py:790
 msgid "Freedom of Information Messages"
 msgstr ""
 
-#: foirequest/models.py:796
+#: foirequest/models.py:797
 #, python-format
 msgid "Message in '%(request)s' at %(time)s"
 msgstr ""
 
-#: foirequest/models.py:805
+#: foirequest/models.py:806
 #, python-format
 msgid "message-%(id)d"
 msgstr ""
 
-#: foirequest/models.py:873
+#: foirequest/models.py:874
 msgid "<<name and email address>>"
 msgstr ""
 
-#: foirequest/models.py:926
+#: foirequest/models.py:927
 msgid "Your Freedom of Information Request was sent"
 msgstr ""
 
-#: foirequest/models.py:929
+#: foirequest/models.py:930
 msgid "Your Message was sent"
 msgstr ""
 
-#: foirequest/models.py:946
+#: foirequest/models.py:947
 msgid "Belongs to request"
 msgstr ""
 
-#: foirequest/models.py:947 publicbody/models.py:35 publicbody/models.py:125
+#: foirequest/models.py:948 publicbody/models.py:35 publicbody/models.py:125
 #: publicbody/models.py:141 publicbody/templates/publicbody/show_topic.html:19
 msgid "Name"
 msgstr ""
 
-#: foirequest/models.py:948
+#: foirequest/models.py:949
 msgid "File"
 msgstr ""
 
-#: foirequest/models.py:949
+#: foirequest/models.py:950
 msgid "Size"
 msgstr ""
 
-#: foirequest/models.py:950
+#: foirequest/models.py:951
 msgid "File type"
 msgstr ""
 
-#: foirequest/models.py:951
+#: foirequest/models.py:952
 msgid "Format"
 msgstr ""
 
-#: foirequest/models.py:959
+#: foirequest/models.py:960
 msgid "Attachment"
 msgstr ""
 
-#: foirequest/models.py:960 foirequest/templates/foirequest/show.html:217
+#: foirequest/models.py:961 foirequest/templates/foirequest/show.html:217
 msgid "Attachments"
 msgstr ""
 
-#: foirequest/models.py:1015
+#: foirequest/models.py:1016
 msgid "Is Public?"
 msgstr ""
 
-#: foirequest/models.py:1016
+#: foirequest/models.py:1017
 msgid "Event Name"
 msgstr ""
 
-#: foirequest/models.py:1018
+#: foirequest/models.py:1019
 msgid "Context JSON"
 msgstr ""
 
-#: foirequest/models.py:1024
+#: foirequest/models.py:1025
 #, python-format
 msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr ""
 
-#: foirequest/models.py:1026
+#: foirequest/models.py:1027
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr ""
 
-#: foirequest/models.py:1028
+#: foirequest/models.py:1029
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr ""
 
-#: foirequest/models.py:1030
+#: foirequest/models.py:1031
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr ""
 
-#: foirequest/models.py:1032
+#: foirequest/models.py:1033
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
 msgstr ""
 
-#: foirequest/models.py:1034
+#: foirequest/models.py:1035
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr ""
 
-#: foirequest/models.py:1036
+#: foirequest/models.py:1037
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
 msgstr ""
 
-#: foirequest/models.py:1038
+#: foirequest/models.py:1039
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr ""
 
-#: foirequest/models.py:1040
+#: foirequest/models.py:1041
 msgid "This request became overdue"
 msgstr ""
 
-#: foirequest/models.py:1042
+#: foirequest/models.py:1043
 #, python-format
 msgid "%(user)s set '%(name)s' as the information law for the request."
 msgstr ""
 
-#: foirequest/models.py:1044
+#: foirequest/models.py:1045
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr ""
 
-#: foirequest/models.py:1049
+#: foirequest/models.py:1050
 msgid "Request Event"
 msgstr ""
 
-#: foirequest/models.py:1050
+#: foirequest/models.py:1051
 msgid "Request Events"
 msgstr ""
 
 #. Translators: Hash part of Event URL
-#: foirequest/models.py:1057
+#: foirequest/models.py:1058
 msgid "event"
 msgstr ""
 
@@ -1820,11 +1825,6 @@ msgstr ""
 msgid "Review your Request and Submit"
 msgstr ""
 
-#: foirequest/templates/foirequest/request.html:244
-#: foirequest/templates/foirequest/show.html:205
-msgid "To"
-msgstr ""
-
 #: foirequest/templates/foirequest/request.html:248
 #: foirequest/templates/foirequest/show.html:169
 msgid "From"
@@ -2056,62 +2056,65 @@ msgstr ""
 msgid "Send this request to the selected Public Body"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:353
+#: foirequest/templates/foirequest/show.html:354
 msgid "Write a summary of the response"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:358
-msgid ""
-"Please give a summary of the response. Have you received the information you "
-"need? What have you learned from it?"
+#: foirequest/templates/foirequest/show.html:359
+msgid "Please give a summary of the response."
 msgstr ""
 
 #: foirequest/templates/foirequest/show.html:360
-msgid "Save"
+msgid ""
+"Have you received the information you need? What have you learned from it?"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:370
+#: foirequest/templates/foirequest/show.html:362
+msgid "Save Summary"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:373
 msgid ""
 "This request was made under multiple information laws. If it is apparent "
 "from the reply under which law the request was answered, please choose this "
 "law below. If it is not obvious, leave it as it is."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:372
+#: foirequest/templates/foirequest/show.html:375
 msgid "Set Concrete Law"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:380
+#: foirequest/templates/foirequest/show.html:383
 msgid "Add a Postal reply that you have received"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:392
+#: foirequest/templates/foirequest/show.html:395
 msgid "Add Postal Reply"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:393
+#: foirequest/templates/foirequest/show.html:396
 msgid "You can attach more documents to this reply later."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:401
+#: foirequest/templates/foirequest/show.html:404
 msgid "Send a reply to this Public Body"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:404
+#: foirequest/templates/foirequest/show.html:407
 msgid "You can send another message to this Public Body if you want to."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:414
+#: foirequest/templates/foirequest/show.html:417
 msgid "Send Message"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:426
+#: foirequest/templates/foirequest/show.html:429
 msgid ""
 "This request is <strong>not public</strong> at the moment. You can make this "
 "request public by clicking the button below."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:427
+#: foirequest/templates/foirequest/show.html:430
 msgid "Make this request public now"
 msgstr ""
 

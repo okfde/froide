@@ -347,6 +347,25 @@
 {% endif %}
 {# End Public Body Needed #}
 
+{# Write Resolution #}
+{% if object.user == user and object.status_is_final %}
+<div class="section">
+  {% if object.resolution %}
+  <a href="#write-resolution" class="toggle">{% blocktrans %}Write a summary of the response{% endblocktrans %}</a>
+  {% endif %}
+  <div id="write-resolution"{% if object.resolution %} style="display: none"{% endif %}>
+    <h3>{% blocktrans %}Resolution Summary{% endblocktrans %}</h3>
+    <form method="post" action="{% url 'foirequest-set_resolution' slug=object.slug %}">{% csrf_token %}
+      <p>{% blocktrans %}Please give a summary of the response.{% endblocktrans %}<br/>
+      {% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+      <textarea rows="8" name="resolution">{{ object.resolution }}</textarea><br/>
+      <input type="submit" value="{% blocktrans %}Save Summary{% endblocktrans %}"/>
+    </form>
+  </div>
+</div>
+{% endif %}
+{# End Write Resolution #}
+
 {# If Meta Law #}
 {% if object.user == user and object.status_settable and object.law.meta %}
 <div class="section">
