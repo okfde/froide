@@ -48,6 +48,7 @@
 </div>
 
 <div class="span-6 last">
+  <p>{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</p>
   {% if status or topic or not_foi %}
   <p>
     <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>

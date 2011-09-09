@@ -54,6 +54,7 @@ def list_requests(request, status=None, topic=None):
             })
     context.update({
             'page_title': _("FoI Requests"),
+            'count': foi_requests.count(),
             'object_list': foi_requests,
             'status_list': [(x[0], 
                 FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
@@ -66,6 +67,7 @@ def list_requests_not_foi(request):
     context.update({
         'page_title': _("Non-FoI Requests"),
         'not_foi': True,
+        'count': FoiRequest.published_not_foi.for_list_view().count(),
         'object_list': FoiRequest.published_not_foi.for_list_view(),
         'status_list': [(x[0], 
             FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
