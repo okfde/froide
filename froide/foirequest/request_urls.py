@@ -13,6 +13,8 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/send/message/$", 'foirequest.views.send_message', name="foirequest-send_message"),
     url(r"^(?P<slug>[-\w]+)/make/public/$", 'foirequest.views.make_public', name="foirequest-make_public"),
     url(r"^(?P<slug>[-\w]+)/set/law/$", 'foirequest.views.set_law', name="foirequest-set_law"),
+    url(r"^(?P<slug>[-\w]+)/set/resolution/$", 'foirequest.views.set_resolution', name="foirequest-set_resolution"),
+
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", 'foirequest.views.add_postal_reply', name="foirequest-add_postal_reply"),
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", 'foirequest.views.add_postal_reply_attachment', name="foirequest-add_postal_reply_attachment"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set/public-body/$", 'foirequest.views.set_message_sender', name="foirequest-set_message_sender"),

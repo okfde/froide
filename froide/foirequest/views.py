@@ -350,6 +350,22 @@ def set_law(request, slug):
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 @require_POST
+def set_resolution(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or request.user != foirequest.user:
+        return render_403(request)
+    if not foirequest.status_is_final():
+        return render_400(request)
+    resolution = request.POST.get('resolution', None)
+    if resolution is None:
+        return render_400(request)
+    foirequest.resolution = resolution
+    foirequest.save()
+    messages.add_message(request, messages.SUCCESS,
+                _('The resolution summary has been saved.'))
+    return HttpResponseRedirect(foirequest.get_absolute_url())
+
+@require_POST
 def add_postal_reply(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
