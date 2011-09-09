@@ -133,7 +133,7 @@ class SendMessageForm(forms.Form):
         choices = [(m.id, m.real_sender) for k, m in foirequest.possible_reply_addresses().items()]
         choices.append((0, _("Default address of %(publicbody)s") % {
                 "publicbody": foirequest.public_body.name}))
-        self.fields['to'] = forms.TypedChoiceField(
+        self.fields['to'] = forms.TypedChoiceField(label=_("To"),
                 choices=choices, coerce=int, required=True)
 
     def save(self, user):
