@@ -89,8 +89,8 @@ class FoiLaw(models.Model):
                     [(l[0], "%s: %s" % (law.name, l[1])) for law in self.combined.all()
                          for l in law.get_refusal_reason_choices()[1:]]
         else:
-            return tuple([(_("Law not applicable"), _("Law cannot be applied"))] + \
-                [(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()])
+            return [(_("Law not applicable"), _("Law cannot be applied"))] + \
+                [(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()]
 
     @classmethod
     def get_default_law(cls):
