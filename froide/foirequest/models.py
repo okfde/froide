@@ -953,6 +953,10 @@ class FoiAttachment(models.Model):
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg",
             "image/jpg")
+    PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
+            'application/msword', 'application/msexcel', 'application/vnd.msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            )
 
     class Meta:
         ordering = ('name',)
@@ -967,7 +971,7 @@ class FoiAttachment(models.Model):
         return "\n".join((self.name,))
 
     def can_preview(self):
-        return True
+        return self.filetype in self.PREVIEWABLE_FILETYPES
 
     def get_preview_url(self):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
