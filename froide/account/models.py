@@ -1,4 +1,5 @@
 import hmac
+import re
 
 from django.db import models
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.contrib.auth.forms import SetPasswordForm
+from django.utils.crypto import constant_time_compare
 
 
 @dispatch.receiver(post_save, sender=User, dispatch_uid="account.models.create_profile")
@@ -56,12 +58,12 @@ class Profile(models.Model):
         content = content.replace(first_name,
                 _("<< Name removed >>"))
         for greeting in settings.POSSIBLE_GREETINGS:
-            match = greeting.search(content)
+            match = greeting.search(content, re.I)
             if match is not None and len(match.groups()):
                 content = content.replace(match.group(1), _("<< Greeting >>"))
 
         for closing in settings.POSSIBLE_CLOSINGS:
-            match = closing.search(content)
+            match = closing.search(content, re.I)
             if match is not None:
                 content = content[:match.end()]
 
@@ -117,7 +119,7 @@ class AccountManager(object):
             "url": url})
 
     def check_autologin_secret(self, secret):
-        return self.generate_autologin_secret() == secret
+        return constant_time_compare(self.generate_autologin_secret(), secret)
 
     def generate_autologin_secret(self):
         to_sign = [str(self.user.pk)]
@@ -126,7 +128,7 @@ class AccountManager(object):
         return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
 
     def check_confirmation_secret(self, secret, request_id):
-        return self.generate_confirmation_secret(request_id) == secret
+        return constant_time_compare(self.generate_confirmation_secret(request_id), secret)
 
     def generate_confirmation_secret(self, request_id=None):
         to_sign = [str(self.user.pk), self.user.email]

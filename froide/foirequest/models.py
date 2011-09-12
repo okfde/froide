@@ -20,6 +20,7 @@ from django.utils.http import urlquote
 from django.core.mail import send_mail
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils.crypto import salted_hmac, constant_time_compare
 
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.email_utils import make_address
@@ -106,6 +107,8 @@ class FoiRequest(models.Model):
             _('A message was received and the user needs to set a new status.')),
         ('overdue', _('Response overdue'),
             _('The request has not been answered in the legal time limit.')),
+        ('escalated', _('Request escalated'),
+            _('The request has been escalated to the mediating entity.')),
     )
     USER_SET_CHOICES = (
         ('awaiting_response', _('Awaiting response'),
@@ -231,6 +234,8 @@ class FoiRequest(models.Model):
     set_concrete_law = django.dispatch.Signal(providing_args=['name'])
     made_public = django.dispatch.Signal(providing_args=[])
     add_postal_reply = django.dispatch.Signal(providing_args=[])
+    escalated = django.dispatch.Signal(providing_args=[])
+
 
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
@@ -254,11 +259,26 @@ class FoiRequest(models.Model):
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
+    def get_auth_link(self):
+        return u"%s%s" % (settings.SITE_URL,
+            reverse('foirequest-auth',
+                kwargs={"obj_id": self.id,
+                    "code": self.get_auth_code()
+                }))
+
+    def get_accessible_link(self):
+        if self.visibility == 1:
+            return self.get_auth_link()
+        return self.get_absolute_domain_url()
+
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
 
     def response_messages(self):
         return filter(lambda m: m.is_response, self.messages)
+
+    def reply_received(self):
+        return len(self.response_messages()) > 0
 
     def message_needs_status(self):
         mes = filter(lambda m: m.status is None, self.response_messages())
@@ -269,7 +289,7 @@ class FoiRequest(models.Model):
     def status_is_final(self):
         return not self.status in self.NON_FINAL_STATUS
 
-    def is_visible(self, user):
+    def is_visible(self, user, pb_auth=None):
         if self.visibility == 0:
             return False
         if self.visibility == 2:
@@ -280,6 +300,8 @@ class FoiRequest(models.Model):
             return True
         if user and user.is_superuser:
             return True
+        if self.visibility == 1 and pb_auth is not None:
+            return self.check_auth_code(pb_auth)
         return False
 
     def needs_public_body(self):
@@ -290,6 +312,9 @@ class FoiRequest(models.Model):
 
     def is_overdue(self):
         return self.due_date < datetime.now()
+
+    def has_been_refused(self):
+        return self.status == 'refused' or self.status == 'escalated'
 
     def awaits_classification(self):
         return self.status == 'awaiting_classification'
@@ -363,6 +388,13 @@ class FoiRequest(models.Model):
                         .select_related("public_body", "request")
         return self._public_body_suggestion
 
+    def get_auth_code(self):
+        return salted_hmac("FoiRequestPublicBodyAuth",
+                str(self.id)).hexdigest()
+
+    def check_auth_code(self, code):
+        return constant_time_compare(code, self.get_auth_code())
+
     def public_body_suggestions_form(self):
         from foirequest.forms import PublicBodySuggestionsForm
         return PublicBodySuggestionsForm(self.public_body_suggestions())
@@ -390,6 +422,25 @@ class FoiRequest(models.Model):
         return SendMessageForm(self,
                 initial={"subject": subject, 
                     "message": _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")})
+
+    def get_escalation_message_form(self):
+        from foirequest.forms import EscalationMessageForm
+        subject = _('Complaint about request "%(title)s"'
+                ) % {"title": self.title}
+        return EscalationMessageForm(self,
+                initial={"subject": subject, 
+                    "message": _('''Dear Sir or Madam,
+
+I'd like to complain about the handling of the request under the %(law)s documented here:
+
+%(link)s
+
+I believe this request has been mishandled because ...
+
+Sincerely yours
+%(name)s''') % {"law": self.law.name,
+"link": self.get_accessible_link(),
+"name": self.user.get_full_name()}})
 
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
@@ -433,12 +484,30 @@ class FoiRequest(models.Model):
         message.sender_name = user.get_profile().display_name()
         message.sender_email = self.secret_address
         message.recipient_email = recipient_email
-
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
         message.timestamp = datetime.now()
         message.plaintext = message_body
         message.send()
+
+    def add_escalation_message(self, subject, message):
+        message_body = message
+        message = FoiMessage(request=self)
+        message.subject = subject
+        message.is_response = False
+        message.is_escalation = True
+        message.sender_user = self.user
+        message.sender_name = self.user.get_profile().display_name()
+        message.sender_email = self.secret_address
+        message.recipient_email = self.law.mediator.email
+        message.recipient_public_body = self.law.mediator
+        message.recipient = self.law.mediator.name
+        message.timestamp = datetime.now()
+        message.plaintext = message_body
+        message.send()
+        self.status = 'escalated'
+        self.save()
+        self.escalated.send(sender=self)
 
     @classmethod
     def generate_secret_address(cls, user):
@@ -754,6 +823,8 @@ class FoiMessage(models.Model):
             default=True)
     is_postal = models.BooleanField(_("Postal?"),
             default=False)
+    is_escalation = models.BooleanField(_("Escalation?"),
+            default=False)
     sender_user = models.ForeignKey(User, blank=True, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("From User"))
@@ -953,6 +1024,10 @@ class FoiAttachment(models.Model):
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg",
             "image/jpg")
+    PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
+            'application/msword', 'application/msexcel', 'application/vnd.msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            )
 
     class Meta:
         ordering = ('name',)
@@ -967,7 +1042,7 @@ class FoiAttachment(models.Model):
         return "\n".join((self.name,))
 
     def can_preview(self):
-        return True
+        return self.filetype in self.PREVIEWABLE_FILETYPES
 
     def get_preview_url(self):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
@@ -1042,7 +1117,9 @@ class FoiEvent(models.Model):
         "set_concrete_law": _(
             u"%(user)s set '%(name)s' as the information law for the request."),
         "add_postal_reply": _(
-            u"%(user)s added a reply that was received via snail mail.")
+            u"%(user)s added a reply that was received via snail mail."),
+        "escalated": _(
+            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request.")
     }
 
     class Meta:
@@ -1106,9 +1183,9 @@ class FoiEvent(models.Model):
 
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, **kwargs):
+def create_event_message_sent(sender, message, **kwargs):
     FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
-            public_body=sender.public_body)
+            public_body=message.recipient_public_body)
 
 
 @receiver(FoiRequest.message_received,
@@ -1169,3 +1246,9 @@ def create_event_set_concrete_law(sender, **kwargs):
 def create_event_add_postal_reply(sender, **kwargs):
     FoiEvent.objects.create_event("add_postal_reply", sender,
             user=sender.user)
+
+@receiver(FoiRequest.escalated,
+    dispatch_uid="create_event_escalated")
+def create_event_escalated(sender, **kwargs):
+    FoiEvent.objects.create_event("escalated", sender,
+            user=sender.user, public_body=sender.law.mediator)

@@ -54,6 +54,10 @@ class FoiLaw(models.Model):
     refusal_reasons = models.TextField(
             _(u"Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
             blank=True)
+    mediator = models.ForeignKey('PublicBody', verbose_name=_("Mediator"),
+            null=True, blank=True,
+            default=None, on_delete=models.SET_NULL,
+            related_name="mediating_laws")
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL,
             default=settings.SITE_ID)

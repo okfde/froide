@@ -800,6 +800,10 @@ textarea.smalltext {
     background-repeat: no-repeat;
 }
 
+.message-escalated {
+    background-color: #FFE9EE;
+}
+
 .message-table {
     border-spacing: 0px;
 }

@@ -4,6 +4,7 @@ from foirequest.feeds import FoiRequestFeed, FoiRequestFeedAtom
 
 
 urlpatterns = patterns("",
+    url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'foirequest.views.auth', name="foirequest-auth"),
     url(r"^(?P<slug>[-\w]+)/$", 'foirequest.views.show', name="foirequest-show"),
     url(r"^(?P<slug>[-\w]+)/feed/$", FoiRequestFeedAtom(), name="foirequest-feed_atom"),
     url(r"^(?P<slug>[-\w]+)/rss/$", FoiRequestFeed(), name="foirequest-feed"),
@@ -11,6 +12,7 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/set/public-body/$", 'foirequest.views.set_public_body', name="foirequest-set_public_body"),
     url(r"^(?P<slug>[-\w]+)/set/status/$", 'foirequest.views.set_status', name="foirequest-set_status"),
     url(r"^(?P<slug>[-\w]+)/send/message/$", 'foirequest.views.send_message', name="foirequest-send_message"),
+    url(r"^(?P<slug>[-\w]+)/escalation/message/$", 'foirequest.views.escalation_message', name="foirequest-escalation_message"),
     url(r"^(?P<slug>[-\w]+)/make/public/$", 'foirequest.views.make_public', name="foirequest-make_public"),
     url(r"^(?P<slug>[-\w]+)/set/law/$", 'foirequest.views.set_law', name="foirequest-set_law"),
     url(r"^(?P<slug>[-\w]+)/set/resolution/$", 'foirequest.views.set_resolution', name="foirequest-set_resolution"),

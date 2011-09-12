@@ -57,7 +57,7 @@ def go(request, user_id, secret, url):
 
 def show(request, context=None, status=200):
     if not request.user.is_authenticated():
-        return render_403(request)
+        return HttpResponseRedirect(reverse('account-login'))
     my_requests = FoiRequest.objects.filter(user=request.user)
     if not context:
         context = {}
