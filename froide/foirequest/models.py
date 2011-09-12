@@ -20,6 +20,7 @@ from django.utils.http import urlquote
 from django.core.mail import send_mail
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils.crypto import salted_hmac, constant_time_compare
 
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.email_utils import make_address
@@ -106,6 +107,8 @@ class FoiRequest(models.Model):
             _('A message was received and the user needs to set a new status.')),
         ('overdue', _('Response overdue'),
             _('The request has not been answered in the legal time limit.')),
+        ('escalated', _('Request escalated'),
+            _('The request has been escalated to the mediating entity.')),
     )
     USER_SET_CHOICES = (
         ('awaiting_response', _('Awaiting response'),
@@ -231,6 +234,8 @@ class FoiRequest(models.Model):
     set_concrete_law = django.dispatch.Signal(providing_args=['name'])
     made_public = django.dispatch.Signal(providing_args=[])
     add_postal_reply = django.dispatch.Signal(providing_args=[])
+    escalated = django.dispatch.Signal(providing_args=[])
+
 
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
@@ -254,11 +259,26 @@ class FoiRequest(models.Model):
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
+    def get_auth_link(self):
+        return u"%s%s" % (settings.SITE_URL,
+            reverse('foirequest-auth',
+                kwargs={"obj_id": self.id,
+                    "code": self.get_auth_code()
+                }))
+
+    def get_accessible_link(self):
+        if self.visibility == 1:
+            return self.get_auth_link()
+        return self.get_absolute_domain_url()
+
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
 
     def response_messages(self):
         return filter(lambda m: m.is_response, self.messages)
+
+    def reply_received(self):
+        return len(self.response_messages()) > 0
 
     def message_needs_status(self):
         mes = filter(lambda m: m.status is None, self.response_messages())
@@ -269,7 +289,7 @@ class FoiRequest(models.Model):
     def status_is_final(self):
         return not self.status in self.NON_FINAL_STATUS
 
-    def is_visible(self, user):
+    def is_visible(self, user, pb_auth=None):
         if self.visibility == 0:
             return False
         if self.visibility == 2:
@@ -280,6 +300,8 @@ class FoiRequest(models.Model):
             return True
         if user and user.is_superuser:
             return True
+        if self.visibility == 1 and pb_auth is not None:
+            return self.check_auth_code(pb_auth)
         return False
 
     def needs_public_body(self):
@@ -290,6 +312,9 @@ class FoiRequest(models.Model):
 
     def is_overdue(self):
         return self.due_date < datetime.now()
+
+    def has_been_refused(self):
+        return self.status == 'refused' or self.status == 'escalated'
 
     def awaits_classification(self):
         return self.status == 'awaiting_classification'
@@ -362,6 +387,13 @@ class FoiRequest(models.Model):
                     PublicBodySuggestion.objects.filter(request=self) \
                         .select_related("public_body", "request")
         return self._public_body_suggestion
+
+    def get_auth_code(self):
+        return salted_hmac("FoiRequestPublicBodyAuth",
+                str(self.id)).hexdigest()
+
+    def check_auth_code(self, code):
+        return constant_time_compare(code, self.get_auth_code())
 
     def public_body_suggestions_form(self):
         from foirequest.forms import PublicBodySuggestionsForm

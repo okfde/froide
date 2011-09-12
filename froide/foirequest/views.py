@@ -75,6 +75,15 @@ def list_requests_not_foi(request):
     })
     return render(request, 'foirequest/list.html', context)
 
+def auth(request, obj_id, code):
+    foirequest = get_object_or_404(FoiRequest, pk=obj_id)
+    if foirequest.is_visible(request.user):
+        return HttpResponseRedirect(foirequest.get_absolute_url())
+    if foirequest.check_auth_code(code):
+        request.session['pb_auth'] = code
+        return HttpResponseRedirect(foirequest.get_absolute_url())
+    else:
+        return render_403(request)
 
 def show(request, slug, template_name="foirequest/show.html",
             context=None, status=200):
@@ -83,7 +92,7 @@ def show(request, slug, template_name="foirequest/show.html",
                 "user", "user__profile", "law", "law__combined").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
-    if not obj.is_visible(request.user):
+    if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):
         return render_403(request)
     all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
     for message in obj.messages:
