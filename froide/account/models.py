@@ -1,4 +1,5 @@
 import hmac
+import re
 
 from django.db import models
 from django.conf import settings
@@ -56,12 +57,12 @@ class Profile(models.Model):
         content = content.replace(first_name,
                 _("<< Name removed >>"))
         for greeting in settings.POSSIBLE_GREETINGS:
-            match = greeting.search(content)
+            match = greeting.search(content, re.I)
             if match is not None and len(match.groups()):
                 content = content.replace(match.group(1), _("<< Greeting >>"))
 
         for closing in settings.POSSIBLE_CLOSINGS:
-            match = closing.search(content)
+            match = closing.search(content, re.I)
             if match is not None:
                 content = content[:match.end()]
 
