@@ -367,7 +367,7 @@
 {# End Write Resolution #}
 
 {# If Meta Law #}
-{% if object.user == user and object.status_settable and object.law.meta %}
+{% if object.user == user and object.law.meta and object.reply_received %}
 <div class="section">
   <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
     <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
