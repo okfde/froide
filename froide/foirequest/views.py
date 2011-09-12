@@ -17,7 +17,7 @@ from foirequest.forms import RequestForm, ConcreteLawForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm,
-        MessagePublicBodySenderForm)
+        MessagePublicBodySenderForm, EscalationMessageForm)
 from froide.helper.utils import render_400, render_403
 from helper.cache import cache_anonymous_page
 
@@ -333,6 +333,22 @@ def send_message(request, slug):
         return HttpResponseRedirect(foirequest.get_absolute_url())
     else:
         return show(request, slug, context={"send_message_form": form}, status=400)
+
+@require_POST
+def escalation_message(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if request.user != foirequest.user:
+        return render_403(request)
+    form = EscalationMessageForm(foirequest, request.POST)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your Escalation Message has been sent.'))
+        return HttpResponseRedirect(foirequest.get_absolute_url())
+    else:
+        return show(request, slug, context={"escalation_form": form}, status=400)
 
 @require_POST
 def make_public(request, slug):

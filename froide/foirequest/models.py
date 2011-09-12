@@ -423,6 +423,25 @@ class FoiRequest(models.Model):
                 initial={"subject": subject, 
                     "message": _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")})
 
+    def get_escalation_message_form(self):
+        from foirequest.forms import EscalationMessageForm
+        subject = _('Complaint about request "%(title)s"'
+                ) % {"title": self.title}
+        return EscalationMessageForm(self,
+                initial={"subject": subject, 
+                    "message": _('''Dear Sir or Madam,
+
+I'd like to complain about the handling of the request under the %(law)s documented here:
+
+%(link)s
+
+I believe this request has been mishandled because ...
+
+Sincerely yours
+%(name)s''') % {"law": self.law.name,
+"link": self.get_accessible_link(),
+"name": self.user.get_full_name()}})
+
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
         message.subject = email['subject']
@@ -465,12 +484,30 @@ class FoiRequest(models.Model):
         message.sender_name = user.get_profile().display_name()
         message.sender_email = self.secret_address
         message.recipient_email = recipient_email
-
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
         message.timestamp = datetime.now()
         message.plaintext = message_body
         message.send()
+
+    def add_escalation_message(self, subject, message):
+        message_body = message
+        message = FoiMessage(request=self)
+        message.subject = subject
+        message.is_response = False
+        message.is_escalation = True
+        message.sender_user = self.user
+        message.sender_name = self.user.get_profile().display_name()
+        message.sender_email = self.secret_address
+        message.recipient_email = self.law.mediator.email
+        message.recipient_public_body = self.law.mediator
+        message.recipient = self.law.mediator.name
+        message.timestamp = datetime.now()
+        message.plaintext = message_body
+        message.send()
+        self.status = 'escalated'
+        self.save()
+        self.escalated.send(sender=self)
 
     @classmethod
     def generate_secret_address(cls, user):
@@ -786,6 +823,8 @@ class FoiMessage(models.Model):
             default=True)
     is_postal = models.BooleanField(_("Postal?"),
             default=False)
+    is_escalation = models.BooleanField(_("Escalation?"),
+            default=False)
     sender_user = models.ForeignKey(User, blank=True, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("From User"))
@@ -1078,7 +1117,9 @@ class FoiEvent(models.Model):
         "set_concrete_law": _(
             u"%(user)s set '%(name)s' as the information law for the request."),
         "add_postal_reply": _(
-            u"%(user)s added a reply that was received via snail mail.")
+            u"%(user)s added a reply that was received via snail mail."),
+        "escalated": _(
+            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request.")
     }
 
     class Meta:
@@ -1142,9 +1183,9 @@ class FoiEvent(models.Model):
 
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, **kwargs):
+def create_event_message_sent(sender, message, **kwargs):
     FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
-            public_body=sender.public_body)
+            public_body=message.recipient_public_body)
 
 
 @receiver(FoiRequest.message_received,
@@ -1205,3 +1246,9 @@ def create_event_set_concrete_law(sender, **kwargs):
 def create_event_add_postal_reply(sender, **kwargs):
     FoiEvent.objects.create_event("add_postal_reply", sender,
             user=sender.user)
+
+@receiver(FoiRequest.escalated,
+    dispatch_uid="create_event_escalated")
+def create_event_escalated(sender, **kwargs):
+    FoiEvent.objects.create_event("escalated", sender,
+            user=sender.user, public_body=sender.law.mediator)

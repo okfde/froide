@@ -173,6 +173,19 @@ class MakePublicBodySuggestionForm(forms.Form):
         return pb
 
 
+class EscalationMessageForm(forms.Form):
+    subject = forms.CharField(label=_("Subject"),
+            widget=forms.TextInput(attrs={"class": "long-input"}))
+    message = forms.CharField(widget=forms.Textarea,
+            label=_("Your message"), )
+
+    def __init__(self, foirequest, *args, **kwargs):
+        super(EscalationMessageForm, self).__init__(*args, **kwargs)
+        self.foirequest = foirequest
+
+    def save(self):
+        self.foirequest.add_escalation_message(**self.cleaned_data)
+
 class PublicBodySuggestionsForm(forms.Form):
     def __init__(self, queryset, *args, **kwargs):
         super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)

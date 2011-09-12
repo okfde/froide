@@ -162,7 +162,7 @@
 
 {% for message in object.messages %}
 <div id="{{ message.get_html_id }}" class="message-container">
-  <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}">
+  <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
   <table class="message-table">
     <tbody>
     <tr>
@@ -398,6 +398,32 @@
   </div>
 </div>
 {# End Postal Reply #}
+{# Escalate #}
+{% if object.has_been_refused and object.law.mediator %}
+<div class="section">
+  <a href="#escalate" class="toggle">{% blocktrans %}Send a letter to a mediator{% endblocktrans %}</a>
+  <div id="escalate"{% if not escalation_form %} style="display:none"{% endif %}>
+  <form method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">{% csrf_token %}
+    <p>{% blocktrans with entity=object.law.mediator.name law_name=object.law.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled under the {{ law_name }}.{% endblocktrans %}</p>
+    <table class="no-stripes">
+      {% if escalation_form %}
+        {{ escalation_form.as_table }}
+      {% else %}
+        {% with escalation_form=object.get_escalation_message_form %}
+          {{ escalation_form.as_table }}
+        {% endwith %}
+      {% endif %}
+    </table>
+    {% if not object.public %}
+    <p>{% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}</p>
+    {% endif %}
+    <input type="submit" value="{% blocktrans %}File Complaint{% endblocktrans %}"/>
+  </form>
+  </div>
+</div>
+{% endif %}
+
+{# End Escalate #}
 
 {# Reply #}
 <div class="section">
