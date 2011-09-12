@@ -609,7 +609,7 @@ class RequestTest(TestCase):
         url = match.group(1)
         self.client.logout()
         response = self.client.get(reverse('account-show'))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         message = req.messages[1]

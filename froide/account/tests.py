@@ -23,7 +23,7 @@ class AccountTest(TestCase):
     def test_login_page(self):
         self.client.logout()
         response = self.client.get(reverse('account-show'))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
         self.client.get(reverse('account-login'))
         response = self.client.post(reverse('account-login'),
                 {"email": "doesnt@exist.com",
@@ -65,7 +65,7 @@ class AccountTest(TestCase):
         # inactive users can't login
         self.assertEqual(response.status_code, 400)
         response = self.client.get(reverse('account-show'))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
 
     def test_signup(self):
