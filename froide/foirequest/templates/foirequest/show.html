@@ -233,7 +233,7 @@
     <td>
       <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">{% csrf_token %}
       {{ form.scan }}
-      <button type="submit" class="button icon add">{% blocktrans %}Upload Document{% endblocktrans %}</button><br/>
+      <button type="submit" class="upload-button button icon add">{% blocktrans %}Upload Document{% endblocktrans %}</button><br/>
       {{ form.scan.help_text }}
       </form>
     </td>

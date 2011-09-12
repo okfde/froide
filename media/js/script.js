@@ -422,6 +422,21 @@ $(function(){
             Froide.app.performPublicBodySearch();
         }
     });
+    $("button.upload-button").click(function(e){
+        var elem = $(this);
+        var file = elem.parent().find("input[type='file']");
+        if (file.length !== 0){
+            if (file.val() === ""){
+                e.preventDefault();
+                file.click();
+                file.change(function(){
+                    if ($(this).val() !== ""){
+                        elem.click();
+                    }
+                });
+            }
+        }
+    });
 
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){
         $(".search-public_bodies").each(function(i, input){
