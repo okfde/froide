@@ -15,13 +15,13 @@ def convert_to_local(date, offset_in_seconds=None):
     date = pytz.utc.localize(date)
     return date.astimezone(PYTZ_TIME_ZONE)
 
-def calculate_month_range_de(date, months):
+def calculate_month_range_de(date, months=1):
     """ Should calculate after German BGB Law § 188"""
     assert months < 12, "Can't calculate month_range > 12"
     tempdate = date + timedelta(days=(31 * months))
     m = tempdate.month
     y = tempdate.year
-    d = date.day
+    d = tempdate.day
     last_day = calendar.monthrange(y, m)[1]
     if d > last_day:
         d = last_day
@@ -72,3 +72,6 @@ def calc_easter(year):
     month = f // 31
     day = f % 31 + 1
     return (year, month, day)
+
+if __name__ == '__main__':
+    print calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1)
