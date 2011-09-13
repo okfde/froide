@@ -14,3 +14,4 @@ markdown
 pytz==2011e
 django-sentry
 django-pagination==1.0.7
+django-secure==0.1.0
