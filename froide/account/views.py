@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
@@ -102,15 +103,15 @@ def login(request, base="base.html", context=None,
                     if not profile.address:
                         messages.add_message(request, messages.WARNING,
                             _('A recent change requires you to set your address! Please enter it below!'))
-                        return HttpResponseRedirect(reverse('account-show')+"?address#change-address-now")
+                        return HttpResponseRedirect(settings.SITE_URL + reverse('account-show')+"?address#change-address-now")
 
                     messages.add_message(request, messages.INFO,
                             _('You are now logged in.'))
                     if simple:
                         return HttpResponseRedirect(
-                                reverse('account-login')+"?simple")
+                                settings.SITE_URL + reverse('account-login')+"?simple")
                     else:
-                        return HttpResponseRedirect(reverse('account-show'))
+                        return HttpResponseRedirect(settings.SITE_URL + reverse('account-show'))
                 else:
                     messages.add_message(request, messages.ERROR,
                             _('Please activate your mail address before logging in.'))
