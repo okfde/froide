@@ -204,6 +204,7 @@ LOGGING = {
 }
 
 SESSION_COOKIE_AGE = 3628800 # six weeks
+SESSION_COOKIE_HTTPONLY = True
 
 CACHES = {
     'default': {
