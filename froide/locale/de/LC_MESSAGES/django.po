@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-12 19:23+0200\n"
-"PO-Revision-Date: 2011-09-09 13:13+0100\n"
+"POT-Creation-Date: 2011-09-13 14:16+0200\n"
+"PO-Revision-Date: 2011-09-13 14:15+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -811,16 +811,12 @@ msgstr ""
 "beantwortet."
 
 #: foirequest/models.py:110
-#, fuzzy
 msgid "Request escalated"
-msgstr "Anfrage abgelehnt"
+msgstr "Vermittlung angefordert"
 
 #: foirequest/models.py:111
-#, fuzzy
 msgid "The request has been escalated to the mediating entity."
-msgstr ""
-"Diese Anfrage wurde nicht in der gesetzlich vorgeschriebenen Zeit "
-"beantwortet."
+msgstr "Diese Anfrage wurde an die vermittelnde Stelle weitergeleitet."
 
 #: foirequest/models.py:114
 msgid "Awaiting response"
@@ -1039,9 +1035,9 @@ msgstr ""
 "\n"
 
 #: foirequest/models.py:428
-#, fuzzy, python-format
+#, python-format
 msgid "Complaint about request \"%(title)s\""
-msgstr "Anfrage \"%(title)s\""
+msgstr "Vermittlung bei Anfrage \"%(title)s\""
 
 #: foirequest/models.py:432
 #, python-format
@@ -1058,6 +1054,17 @@ msgid ""
 "Sincerely yours\n"
 "%(name)s"
 msgstr ""
+"Sehr geehrte Damen und Herren,\n"
+"\n"
+"ich bitte um Vermittelung bei einer Anfrage nach dem %(law)s. Die bisherige "
+"Korrespondenz finden Sie hier:\n"
+"\n"
+"%(link)s\n"
+"\n"
+"Ich bin der Meinung, die Anfrage wurde zu unrecht abgelehnt, weil ...\n"
+"\n"
+"Mit freundlichen Grüßen\n"
+"%(name)s"
 
 #: foirequest/models.py:471
 msgid "attached_file"
@@ -1115,7 +1122,7 @@ msgstr "Postweg?"
 
 #: foirequest/models.py:826
 msgid "Escalation?"
-msgstr ""
+msgstr "Vermittlung?"
 
 #: foirequest/models.py:830
 msgid "From User"
@@ -1304,7 +1311,7 @@ msgstr ""
 msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
 "request."
-msgstr ""
+msgstr "%(user)s bittet %(public_body)s um Vermittlung bei der Anfrage."
 
 #: foirequest/models.py:1127
 msgid "Request Event"
@@ -1410,9 +1417,8 @@ msgid "Your Message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."
 
 #: foirequest/views.py:348
-#, fuzzy
 msgid "Your Escalation Message has been sent."
-msgstr "Ihre Nachricht wurde gesendet."
+msgstr "Ihre Anfrage nach Vermittlung wurde gesendet."
 
 #: foirequest/views.py:374
 msgid "A concrete law has been set for this request."
@@ -2329,22 +2335,19 @@ msgid "Write a summary of the response"
 msgstr "Schreiben Sie eine Zusammenfassung der Antwort"
 
 #: foirequest/templates/foirequest/show.html:359
-#, fuzzy
 msgid "Please give a summary of the response."
-msgstr "Schreiben Sie eine Zusammenfassung der Antwort"
+msgstr "Bitte schreiben Sie eine Zusammenfassung der Antwort."
 
 #: foirequest/templates/foirequest/show.html:360
-#, fuzzy
 msgid ""
 "Have you received the information you need? What have you learned from it?"
 msgstr ""
-"Bitte schreiben Sie eine Zusammenfassung der Antwort. Haben Sie alle "
-"Informationen, die Sie brauchten erhalten? Was haben Sie erfahren?"
+"Haben Sie die Informationen, die Sie erfragt haben, erhalten? Was haben Sie "
+"erfahren?"
 
 #: foirequest/templates/foirequest/show.html:362
-#, fuzzy
 msgid "Save Summary"
-msgstr "Ergebniszusammenfassung"
+msgstr "Zusammenfassung speichern"
 
 #: foirequest/templates/foirequest/show.html:373
 msgid ""
@@ -2363,7 +2366,7 @@ msgstr "Konkretes Gesetz festlegen"
 
 #: foirequest/templates/foirequest/show.html:383
 msgid "Send a letter to a mediator"
-msgstr ""
+msgstr "Schalten Sie den gesetzlichen Vermittler ein"
 
 #: foirequest/templates/foirequest/show.html:386
 #, python-format
@@ -2371,12 +2374,16 @@ msgid ""
 "You can file a complaint to the %(entity)s if you think your request was not "
 "properly handled under the %(law_name)s."
 msgstr ""
+"%(entity)s ist für die Vermittlung von Anträgen nach dem %(law_name)s "
+"zuständig und Sie können hier um Vermittlung bitten."
 
 #: foirequest/templates/foirequest/show.html:397
 msgid ""
 "Your request is currently not public, but will be made accessible to the "
 "mediator via the special link in the message."
 msgstr ""
+"Ihre Anfrage ist momentan nicht öffentlich, allerdings wird sie der "
+"vermittelnden Stelle über den Link in der Nachricht zugänglich gemacht."
 
 #: foirequest/templates/foirequest/show.html:399
 #: foirequest/templates/foirequest/show.html:443
@@ -2678,9 +2685,8 @@ msgstr ""
 "Mögliche Verweigerungsgründe, einer pro Zeile, z.B. §X.Y: Datenschutzgründe"
 
 #: publicbody/models.py:57
-#, fuzzy
 msgid "Mediator"
-msgstr "Moderator"
+msgstr "Vermittelnde Stelle"
 
 #: publicbody/models.py:67 publicbody/models.py:185
 msgid "Freedom of Information Laws"
