@@ -20,7 +20,7 @@
 {% else %}
 <div class="span-12">
   <h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
-  <form method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
+  <form method="post" action="{{ SITE_URL }}{% url 'account-login' %}{% if simple %}?simple{% endif %}">
     {% csrf_token %}
     <table class="no-stripes">
       {{ form.as_table }}
@@ -33,7 +33,7 @@
   <br/>
   <h2>{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h2>
   <p>{% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}</p>
-  <form method="post" action="{% url 'account-send_reset_password_link' %}">
+  <form method="post" action="{{ SITE_URL }}{% url 'account-send_reset_password_link' %}">
     {% csrf_token %}
     {{ reset_form.as_p }}
     <input type="submit" value="{% blocktrans %}Send reset link{% endblocktrans %}"/>
@@ -42,7 +42,7 @@
 {% if not simple %}
 <div class="span-12 last">
   <h2>{% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}</h2>
-  <form method="post" action="{% url 'account-signup' %}">
+  <form method="post" action="{{ SITE_URL }}{% url 'account-signup' %}">
     {% csrf_token %}
     <table class="no-stripes">
       {{ signup_form.as_table }}
