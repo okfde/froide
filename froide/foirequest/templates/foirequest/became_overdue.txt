@@ -3,6 +3,8 @@
 Your request "{{ title }}" was not answered in the required time and became overdue.
 We recommend that you send another message to the public body to check the status of the request and if they received it.
 
+If you received a postal answer, please add it to the request.
+
 Here's a link to the request:
 {{ url }}
 
