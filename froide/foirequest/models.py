@@ -376,7 +376,7 @@ class FoiRequest(models.Model):
         addresses = {}
         for message in reversed(self.messages):
             if message.is_response:
-                if not message.sender_email in addresses:
+                if message.sender_email and not message.sender_email in addresses:
                     addresses[message.sender_email] = message
         return addresses
 
