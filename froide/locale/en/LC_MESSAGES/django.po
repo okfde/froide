@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-13 14:15+0200\n"
+"POT-Creation-Date: 2011-09-14 15:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -215,91 +215,91 @@ msgstr ""
 msgid "%(site_name)s: please confirm your account"
 msgstr ""
 
-#: account/views.py:21
+#: account/views.py:22
 msgid "You are logged in and cannot use a confirmation link."
 msgstr ""
 
-#: account/views.py:29
+#: account/views.py:30
 msgid ""
 "Your email address is now confirmed and you are logged in. You should change "
 "your password now by filling out the form below."
 msgstr ""
 
-#: account/views.py:35
+#: account/views.py:36
 #, python-format
 msgid "Your request \"%s\" has now been sent"
 msgstr ""
 
-#: account/views.py:39
+#: account/views.py:40
 msgid ""
 "You can only use the confirmation link once, please login with your password."
 msgstr ""
 
-#: account/views.py:46
+#: account/views.py:47
 msgid ""
 "You are logged in with a different user account. Please logout first before "
 "using this link."
 msgstr ""
 
-#: account/views.py:51
+#: account/views.py:52
 msgid "Your account is not active."
 msgstr ""
 
-#: account/views.py:72
+#: account/views.py:73
 msgid "You have been logged out."
 msgstr ""
 
-#: account/views.py:104
+#: account/views.py:105
 msgid ""
 "A recent change requires you to set your address! Please enter it below!"
 msgstr ""
 
-#: account/views.py:108 account/templates/account/login.html:7
+#: account/views.py:109 account/templates/account/login.html:7
 #: account/templates/account/simple_login.html:7
 msgid "You are now logged in."
 msgstr ""
 
-#: account/views.py:116
+#: account/views.py:117
 msgid "Please activate your mail address before logging in."
 msgstr ""
 
-#: account/views.py:119
+#: account/views.py:120
 msgid "E-mail and password do not match."
 msgstr ""
 
-#: account/views.py:131
+#: account/views.py:132
 msgid "You are currently logged in, you cannot signup."
 msgstr ""
 
-#: account/views.py:139
+#: account/views.py:140
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 
-#: account/views.py:151
+#: account/views.py:152
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 
-#: account/views.py:157
+#: account/views.py:158
 msgid "Your password has been changed."
 msgstr ""
 
-#: account/views.py:165
+#: account/views.py:166
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 
-#: account/views.py:171
+#: account/views.py:172
 msgid "Check your mail, we sent you a password reset link."
 msgstr ""
 
-#: account/views.py:187
+#: account/views.py:188
 msgid "Your password has been set and you are now logged in."
 msgstr ""
 
-#: account/views.py:194
+#: account/views.py:195
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 
-#: account/views.py:200
+#: account/views.py:201
 msgid "Your address has been changed."
 msgstr ""
 
@@ -1411,6 +1411,8 @@ msgid ""
 "overdue.\n"
 "We recommend that you send another message to the public body to check the "
 "status of the request and if they received it.\n"
+"\n"
+"If you received a postal answer, please add it to the request.\n"
 "\n"
 "Here's a link to the request:\n"
 "%(url)s\n"
