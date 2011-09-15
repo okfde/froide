@@ -1022,8 +1022,9 @@ class FoiAttachment(models.Model):
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
 
-    POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg",
-            "image/jpg")
+    POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
+            "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
+            "text/pdf", "text/x-pdf")
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
