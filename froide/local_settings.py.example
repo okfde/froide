@@ -23,6 +23,8 @@ MIDDLEWARE_CLASSES = [
 ]
 MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
+SESSION_COOKIE_SECURE = False
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
