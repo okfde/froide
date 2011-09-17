@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 15:47+0200\n"
-"PO-Revision-Date: 2011-09-14 15:53+0100\n"
+"POT-Creation-Date: 2011-09-17 15:19+0200\n"
+"PO-Revision-Date: 2011-09-17 15:21+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -296,6 +296,11 @@ msgstr "Sie sind momentan nicht eingeloggt, daher können Sie Ihre Adresse nicht
 #: account/views.py:201
 msgid "Your address has been changed."
 msgstr "Ihre Adresse wurde geändert."
+
+#: account/views.py:206
+#, python-format
+msgid "You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s"
+msgstr "Sie haben vermutlich Ihre Browser-Cookies deaktivert, allerdings brauchen Sie Cookies für diese Seite! Cookies werden auf dieser Seite nur über eine sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: %(reason)s"
 
 #: account/templates/account/confirmation_mail.txt:1
 #, python-format
@@ -887,7 +892,7 @@ msgstr "Ergebniszusammenfassung"
 
 #: foirequest/models.py:176
 #: foirequest/models.py:802
-#: foirequest/models.py:1090
+#: foirequest/models.py:1091
 #: publicbody/models.py:193
 msgid "Public Body"
 msgstr "Behörde"
@@ -902,7 +907,7 @@ msgstr "Sichtbarkeit"
 
 #: foirequest/models.py:187
 #: foirequest/models.py:805
-#: foirequest/models.py:1087
+#: foirequest/models.py:1088
 #: foirequestfollower/models.py:44
 msgid "User"
 msgstr "Nutzer"
@@ -957,7 +962,7 @@ msgstr "Seite"
 #: foirequest/models.py:223
 #: foirequest/models.py:800
 #: foirequest/models.py:820
-#: foirequest/models.py:1084
+#: foirequest/models.py:1085
 #: foirequestfollower/models.py:43
 msgid "Freedom of Information Request"
 msgstr "Informationsfreiheitsanfrage"
@@ -1114,7 +1119,7 @@ msgid "Public Body Recipient"
 msgstr "Empfangende Behörde"
 
 #: foirequest/models.py:849
-#: foirequest/models.py:1093
+#: foirequest/models.py:1094
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
@@ -1192,96 +1197,96 @@ msgstr "Dateityp"
 msgid "Format"
 msgstr "Format"
 
-#: foirequest/models.py:1035
+#: foirequest/models.py:1036
 msgid "Attachment"
 msgstr "Anhang"
 
-#: foirequest/models.py:1036
+#: foirequest/models.py:1037
 #: foirequest/templates/foirequest/show.html:217
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: foirequest/models.py:1091
+#: foirequest/models.py:1092
 msgid "Is Public?"
 msgstr "Öffentlich oder nicht?"
 
-#: foirequest/models.py:1092
+#: foirequest/models.py:1093
 msgid "Event Name"
 msgstr "Ereignisname"
 
-#: foirequest/models.py:1094
+#: foirequest/models.py:1095
 msgid "Context JSON"
 msgstr "Kontext JSON"
 
-#: foirequest/models.py:1100
+#: foirequest/models.py:1101
 #, python-format
 msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr "%(user)s schlug %(public_body)s für die Anfrage '%(request)s' vor."
 
-#: foirequest/models.py:1102
+#: foirequest/models.py:1103
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr "%(user)s hat Kosten in Höhe von %(amount)s für diese Anfrage angegeben."
 
-#: foirequest/models.py:1104
+#: foirequest/models.py:1105
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr "E-Mail von %(public_body)s erhalten."
 
-#: foirequest/models.py:1106
+#: foirequest/models.py:1107
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr "%(user)s hat eine Nachricht an %(public_body)s gesendet."
 
-#: foirequest/models.py:1108
+#: foirequest/models.py:1109
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
 msgstr "Die Anfrage wurde an %(public_body)s weitergeleitet und die Frist neu gesetzt."
 
-#: foirequest/models.py:1110
+#: foirequest/models.py:1111
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr "%(user)s hat den Status auf '%(status)s' gesetzt."
 
-#: foirequest/models.py:1112
+#: foirequest/models.py:1113
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
 msgstr "%(user)s hat die Anfrage '%(request)s' öffentlich geschaltet."
 
-#: foirequest/models.py:1114
+#: foirequest/models.py:1115
 #, python-format
 msgid "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr "%(public_body)s weigert sich, die Information zur Verfügung zu stellen aus folgendem Grund: %(reason)s."
 
-#: foirequest/models.py:1116
+#: foirequest/models.py:1117
 msgid "This request became overdue"
 msgstr "Die Frist für diese Anfrage ist abgelaufen"
 
-#: foirequest/models.py:1118
+#: foirequest/models.py:1119
 #, python-format
 msgid "%(user)s set '%(name)s' as the information law for the request."
 msgstr "%(user)s legte %(name)s als zutreffendes Informationsgesetz für die Anfrage fest."
 
-#: foirequest/models.py:1120
+#: foirequest/models.py:1121
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr "%(user)s hat eine Antwort hinzugefügt, die auf dem Postweg erhalten wurde."
 
-#: foirequest/models.py:1122
+#: foirequest/models.py:1123
 #, python-format
 msgid "%(user)s filed a complaint to the %(public_body)s about the handling of this request."
 msgstr "%(user)s bittet %(public_body)s um Vermittlung bei der Anfrage."
 
-#: foirequest/models.py:1127
+#: foirequest/models.py:1128
 msgid "Request Event"
 msgstr "Anfrageereignis"
 
-#: foirequest/models.py:1128
+#: foirequest/models.py:1129
 msgid "Request Events"
 msgstr "Anfrageereignisse"
 
 #. Translators: Hash part of Event URL
-#: foirequest/models.py:1135
+#: foirequest/models.py:1136
 msgid "event"
 msgstr "ereignis"
 
@@ -2724,6 +2729,10 @@ msgstr "400 - Fehlerhafte Anfrage"
 #: templates/403.html:5
 msgid "403 - Forbidden"
 msgstr "403 - Verboten"
+
+#: templates/403.html:9
+msgid "You tried to access a site that you are not authorized to access or you triggered a security warning."
+msgstr "Sie haben versucht einen Teil der Seite aufzurufen, für den Sie keine Rechte haben oder Sie haben einen zusätzlichen Sicherheitsmechanismus ausgelöst."
 
 #: templates/404.html:5
 msgid "404 - Not Found"
