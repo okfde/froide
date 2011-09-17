@@ -202,4 +202,5 @@ def change_address(request):
         return HttpResponseRedirect(reverse('account-show'))
     return show(request, context={"address_change_form": form}, status=400)
 
-
+def csrf_failure(request, reason=''):
+    return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})

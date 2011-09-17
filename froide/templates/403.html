@@ -3,4 +3,9 @@
 
 {% block body %}
 <h2>{% blocktrans %}403 - Forbidden{% endblocktrans %}</h2>
+{% if message %}
+  <p>{{ message }}</p>
+{% else %}
+  <p>{% blocktrans %}You tried to access a site that you are not authorized to access or you triggered a security warning.{% endblocktrans %}</p>
+{% endif %}
 {% endblock %}

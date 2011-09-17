@@ -205,6 +205,9 @@ LOGGING = {
     }
 }
 
+CSRF_COOKIE_SECURE = True
+CSRF_FAILURE_VIEW = 'froide.account.views.csrf_failure'
+
 SESSION_COOKIE_AGE = 3628800 # six weeks
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
