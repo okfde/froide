@@ -51,7 +51,11 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
 
 
 class FoiEventAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('event_name', 'request', 'timestamp',)
+    list_filter = ('event_name', 'public')
+    search_fields = ['request__title', "public_body__name"]
+    ordering = ('-timestamp',)
+    date_hierarchy = 'timestamp'
 
 
 class PublicBodySuggestionAdmin(admin.ModelAdmin):
