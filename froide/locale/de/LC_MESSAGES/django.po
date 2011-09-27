@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-27 17:29+0200\n"
-"PO-Revision-Date: 2011-09-27 17:41+0100\n"
+"PO-Revision-Date: 2011-09-27 19:05+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2950,7 +2950,7 @@ msgstr "Kommentar von %(name)s:"
 
 #: templates/comments/form.html:14
 msgid "Despite your privacy settings, your real name will be published with comment.<br/>There are <strong>no anonymous comments</strong>."
-msgstr "Trotz Ihrer Privatsphäre-Einstellungen wird Ihr Name mit Ihrem Kommentar veröffentlicht.<br/>Es gibt <strong>keine anonymen Kommentare</strong."
+msgstr "Trotz Ihrer Privatsphäre-Einstellungen wird Ihr Name mit Ihrem Kommentar veröffentlicht.<br/>Es gibt <strong>keine anonymen Kommentare</strong>."
 
 #: templates/comments/form.html:16
 msgid "Post Comment"
