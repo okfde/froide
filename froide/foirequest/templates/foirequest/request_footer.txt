@@ -1,4 +1,3 @@
 {% load i18n %}{% autoescape off %}-- 
-{% blocktrans %}Legal Advice: This mail was sent by a Freedom of Information Portal
-{% endblocktrans %}
-{% endautoescape %}
+{% blocktrans %}Legal Advice: This request was sent by a Freedom of Information Portal
+{% endblocktrans %}{% endautoescape %}

@@ -487,7 +487,7 @@ Sincerely yours
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
         message.timestamp = datetime.now()
-        message.plaintext = message_body
+        message.plaintext = self.construct_standard_message_body(message_body)
         message.send()
 
     def add_escalation_message(self, subject, message):
@@ -503,7 +503,7 @@ Sincerely yours
         message.recipient_public_body = self.law.mediator
         message.recipient = self.law.mediator.name
         message.timestamp = datetime.now()
-        message.plaintext = message_body
+        message.plaintext = self.construct_standard_message_body(message_body)
         message.send()
         self.status = 'escalated'
         self.save()
@@ -596,8 +596,8 @@ Sincerely yours
                 timestamp=now,
                 status="awaiting_response",
                 subject=request.title)
-        message.plaintext = cls.construct_message_body(form_data['body'],
-                request, foi_law, post_data)
+        message.plaintext = request.construct_message_body(form_data['body'],
+                foi_law, post_data)
         if public_body_object is not None:
             message.recipient_public_body = public_body_object
             message.recipient = public_body_object.name
@@ -613,16 +613,19 @@ Sincerely yours
             message.send()
         return request
 
-    @classmethod
-    def construct_message_body(cls, text, request, foilaw, post_data):
+    def construct_message_body(self, text, foilaw, post_data):
         letter_start, letter_end = "", ""
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
             letter_end = foilaw.get_letter_end_text(post_data)
         return render_to_string("foirequest/foi_request_mail.txt",
-                {"request": request, "letter_start": letter_start,
+                {"request": self, "letter_start": letter_start,
                 "letter_end": letter_end,
                 "body": text})
+
+    def construct_standard_message_body(self, text):
+        return render_to_string("foirequest/mail_with_userinfo.txt",
+                {"request": self, "body": text})
 
     def determine_visibility(self):
         if self.public:

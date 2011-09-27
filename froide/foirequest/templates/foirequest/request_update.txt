@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with link=go_url title=request.title site_name=site_name name=user.get_full_name message=message %}Hello {{ name }},
+
+the following happened on your request "{{ title }}" on {{ site_name }}.
+{{ message }}
+
+Click this link to go to the request:
+{{ link }}
+
+Cheers,
+{{ site_name }}
+{% endblocktrans %}{% endautoescape %}

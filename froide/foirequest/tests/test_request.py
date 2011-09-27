@@ -176,7 +176,8 @@ class RequestTest(TestCase):
         new_len = len(mail.outbox)
         self.assertEqual(old_len + 2, new_len)
         message = filter(lambda x: post['subject'] == x.subject, mail.outbox)[-1]
-        self.assertEqual(message.body, post['message'])
+        self.assertTrue(message.body.startswith(post['message']))
+        self.assertIn(user.get_profile().address, message.body)
         self.assertIn(new_foi_email, message.to[0])
         req._messages = None
         foimessage = list(req.messages)[-1]
