@@ -739,6 +739,18 @@ Sincerely yours
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
 
+    def send_update(self, event_string):
+        send_mail(_("%(site_name)s: Update on request %(request)s") %
+                {"request": self.title, "site_name": settings.SITE_NAME},
+                render_to_string("foirequest/request_update.txt",
+                    {"request": self,
+                    "user": self.user,
+                    "message": event_string,
+                    "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_url()),
+                    "site_name": settings.SITE_NAME}),
+                settings.DEFAULT_FROM_EMAIL,
+                [self.user.email])
+
 
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="send_notification_became_overdue")

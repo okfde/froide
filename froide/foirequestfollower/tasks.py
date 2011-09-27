@@ -24,21 +24,13 @@ def update_followers(request_id, message):
 
 @task
 def batch_update():
+    return _batch_update()
+
+def _batch_update():
     translation.activate(settings.LANGUAGE_CODE)
     requests = {}
     gte_date = datetime.now() - timedelta(days=1)
     updates = {}
-    for event in FoiEvent.objects.filter(timestamp__gte=gte_date).select_related("request"):
-        if event.event_name in ("message_received", "message_sent"):
-            continue
-        if not event.request_id in requests:
-            requests[event.request_id] = event.request
-        updates.setdefault(event.request_id, [])
-        tf = TimeFormat(event.timestamp)
-        updates[event.request_id].append((event.timestamp, _("%(time)s: %(text)s") % {
-                "time": tf.format(_("TIME_FORMAT")),
-                "text": event.as_text()
-            }))
 
     message_type = ContentType.objects.get_for_model(FoiMessage)
     for comment in Comment.objects.filter(content_type=message_type,
@@ -57,12 +49,34 @@ def batch_update():
         except FoiMessage.DoesNotExist:
             pass
 
+    # send out update on comments to request users
+    for req_id, request in requests.items():
+        if not updates[req_id]:
+            continue
+        sorted_events = sorted(updates[req_id], key=lambda x: x[0])
+        event_string = "\n".join([x[1] for x in sorted_events])
+        request.send_update(event_string)
+
+    for event in FoiEvent.objects.filter(timestamp__gte=gte_date).select_related("request"):
+        if event.event_name in ("message_received", "message_sent"):
+            continue
+        if not event.request_id in requests:
+            requests[event.request_id] = event.request
+        updates.setdefault(event.request_id, [])
+        tf = TimeFormat(event.timestamp)
+        updates[event.request_id].append((event.timestamp, _("%(time)s: %(text)s") % {
+                "time": tf.format(_("TIME_FORMAT")),
+                "text": event.as_text()
+            }))
+    
+    # Send out update on comments and event to followers
     for req_id, request in requests.items():
         if not updates[req_id]:
             continue
         updates[req_id].sort(key=lambda x: x[0])
+        event_string = "\n".join([x[1] for x in updates[req_id]])
         followers = FoiRequestFollower.objects.filter(request=request)
         for follower in followers:
             follower.send_update(_("The following happend in the last 24 hours:\n%(events)s") %
-                    {"events": "\n".join([x[1] for x in updates[req_id]])}
+                    {"events": event_string}
                     )
