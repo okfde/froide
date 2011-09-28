@@ -1106,7 +1106,7 @@ class FoiEvent(models.Model):
             verbose_name=_("Public Body"))
     public = models.BooleanField(_("Is Public?"), default=True)
     event_name = models.CharField(_("Event Name"), max_length=255)
-    timestamp = models.DateTimeField(_("Timestamp"), auto_now_add=True)
+    timestamp = models.DateTimeField(_("Timestamp"))
     context_json = models.TextField(_("Context JSON"))
 
     objects = FoiEventManager()
@@ -1145,6 +1145,12 @@ class FoiEvent(models.Model):
 
     def __unicode__(self):
         return u"%s - %s" % (self.event_name, self.request)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.timestamp = datetime.now()
+        super(FoiEvent, self).save(*args, **kwargs)
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
