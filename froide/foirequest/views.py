@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.template.defaultfilters import slugify
 from django.contrib import messages
 
 from haystack.query import SearchQuerySet
@@ -416,11 +417,12 @@ def add_postal_reply(request, slug):
 
         if form.cleaned_data.get('scan'):
             scan = request.FILES['scan']
+            scan_name = slugify(scan.name)
             att = FoiAttachment(belongs_to=message,
-                    name=scan.name,
+                    name=scan_name,
                     size=scan.size,
                     filetype=scan.content_type)
-            att.file.save(scan.name, scan)
+            att.file.save(scan_name, scan)
             att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A postal reply was successfully added!'))
@@ -445,11 +447,12 @@ def add_postal_reply_attachment(request, slug, message_id):
     form = PostalAttachmentForm(request.POST, request.FILES)
     if form.is_valid():
         scan = request.FILES['scan']
+        scan_name = slugify(scan.name)
         att = FoiAttachment(belongs_to=message,
-                name=scan.name,
+                name=scan_name,
                 size=scan.size,
                 filetype=scan.content_type)
-        att.file.save(scan.name, scan)
+        att.file.save(scan_name, scan)
         att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your document was attached to the message.'))
