@@ -108,6 +108,12 @@
 <hr/>
 </div>
 <div class="span-6 last">
+    <h3>{% trans "Follow this request" %}</h3>
+    {% with count=object.follow_count %}
+      {% if count %}
+      <p><span class="help">{% blocktrans count count=count %}One person is following this request.{% plural %}There are {{ count }} people following this request.{% endblocktrans %}</span></p>
+      {% endif %}
+    {% endwith %}
     {% if user.is_authenticated and user != object.user %}
     <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
       {% csrf_token %}
