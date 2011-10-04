@@ -986,14 +986,14 @@ textarea.smalltext {
 
 .iconed-list {
     padding-left: 0;
-    margin: 1em 0em 1em 0em;
+    margin: 0.5em 0em 0.5em 0em;
 }
 
 .iconed-list li {
     background-repeat: no-repeat;
     background-position:0 3px;
     padding-left: 20px;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
 }
 
 .red {
