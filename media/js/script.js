@@ -353,6 +353,11 @@ var conditionalFixed = function(id){
         parent = elem.parent(),
         fixed = 1;
     var adjust = function(){
+        if(!elem.hasClass("sticky")){
+            elem.css({"position": "static", "top": "auto", "left": "auto"});
+            window.unbind("scroll", adjust);
+            return;
+        }
         var scrollTop = $(window).scrollTop();
         threshold = top + parent.height() - 2*height;
         if(fixed > 0  && scrollTop < top) {
@@ -383,6 +388,16 @@ $(function(){
         var win = window.open($(this).attr("href"), "",
                 'height=500,width=800,resizable=yes,scrollbars=yes');
         win.focus();
+    });
+    $(".sticky").each(function(i, el){
+        conditionalFixed($(el).attr("id"));
+    });
+    $(".sticky a").click(function(e){
+        $(this).parent().removeClass("sticky");
+    });
+    $("a.toggle-target").live("click", function(e){
+        var obj = $($(this).attr("href")).find(".toggle");
+        obj.trigger("click");
     });
     $("a.toggle").live("click", function(e){
         e.preventDefault();

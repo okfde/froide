@@ -322,6 +322,10 @@ class FoiRequest(models.Model):
     def set_awaits_classification(self):
         self.status = 'awaiting_classification'
 
+    def follow_count(self):
+        from foirequestfollower.models import FoiRequestFollower
+        return FoiRequestFollower.objects.filter(request=self).count()
+
     def followed_by(self, user):
         from foirequestfollower.models import FoiRequestFollower
         try:

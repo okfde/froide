@@ -18,6 +18,19 @@
 {% endblock %}
 
 {% block body %}
+{% if not user.is_authenticated and object.awaits_classification %}
+{% url "account-login" as login_url %}
+<div class="notice">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
+{% endif %}
+{% if object.user == user and object.awaits_classification %}
+<div class="notice">{% blocktrans with name=user.get_full_name %}{{ name }}, please read the latest response and <a href="#set-status">set a new status for this request!</a>{% endblocktrans %}</div>
+{% endif %}
+{% if object.user == user and object.has_been_refused and object.law.mediator %}
+<div class="notice">
+  {% blocktrans %}You request has been refused.{% endblocktrans %}
+  <a href="#escalate-section" class="toggle-target">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
+</div>
+{% endif %}
 <h2>{{ object.title }}</h2>
 <div class="clearfix">
   <div class="span-18">
@@ -108,6 +121,12 @@
 <hr/>
 </div>
 <div class="span-6 last">
+    <h3>{% trans "Follow this request" %}</h3>
+    {% with count=object.follow_count %}
+      {% if count %}
+      <p><span class="help">{% blocktrans count count=count %}One person is following this request.{% plural %}There are {{ count }} people following this request.{% endblocktrans %}</span></p>
+      {% endif %}
+    {% endwith %}
     {% if user.is_authenticated and user != object.user %}
     <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
       {% csrf_token %}
@@ -347,6 +366,37 @@
 {% endif %}
 {# End Public Body Needed #}
 
+{# Escalate #}
+{% if object.user == user %}
+{% if object.has_been_refused and object.law.mediator %}
+<div class="section" id="escalate-section">
+  <div class="error">
+    {% blocktrans %}You request has been refused.{% endblocktrans %}
+    <a href="#escalate" class="toggle">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
+  </div>
+  <div id="escalate"{% if not escalation_form %} style="display:none"{% endif %}>
+  <form method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">{% csrf_token %}
+    <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled under the.{% endblocktrans %}</p>
+    <table class="no-stripes">
+      {% if escalation_form %}
+        {{ escalation_form.as_table }}
+      {% else %}
+        {% with escalation_form=object.get_escalation_message_form %}
+          {{ escalation_form.as_table }}
+        {% endwith %}
+      {% endif %}
+    </table>
+    {% if not object.public %}
+    <p>{% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}</p>
+    {% endif %}
+    <input type="submit" value="{% blocktrans %}Send Message{% endblocktrans %}"/>
+  </form>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+{# End Escalate #}
+
 {# Write Resolution #}
 {% if object.user == user and object.status_is_final %}
 <div class="section">
@@ -365,43 +415,6 @@
 </div>
 {% endif %}
 {# End Write Resolution #}
-
-{# If Meta Law #}
-{% if object.user == user and object.law.meta and object.reply_received %}
-<div class="section">
-  <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
-    <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-    {{ object.get_concrete_law_form.as_p }}
-    <input type="submit" value="{% blocktrans %}Set Concrete Law{% endblocktrans %}"/>
-  </form>
-</div>
-{% endif %}
-
-{# Escalate #}
-{% if object.has_been_refused and object.law.mediator %}
-<div class="section">
-  <a href="#escalate" class="toggle">{% blocktrans %}Send a letter to a mediator{% endblocktrans %}</a>
-  <div id="escalate"{% if not escalation_form %} style="display:none"{% endif %}>
-  <form method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">{% csrf_token %}
-    <p>{% blocktrans with entity=object.law.mediator.name law_name=object.law.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled under the {{ law_name }}.{% endblocktrans %}</p>
-    <table class="no-stripes">
-      {% if escalation_form %}
-        {{ escalation_form.as_table }}
-      {% else %}
-        {% with escalation_form=object.get_escalation_message_form %}
-          {{ escalation_form.as_table }}
-        {% endwith %}
-      {% endif %}
-    </table>
-    {% if not object.public %}
-    <p>{% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}</p>
-    {% endif %}
-    <input type="submit" value="{% blocktrans %}Send Message{% endblocktrans %}"/>
-  </form>
-  </div>
-</div>
-{% endif %}
-{# End Escalate #}
 
 {# Postal Reply #}
 {% if object.user == user and object.public_body %}
@@ -446,6 +459,17 @@
 </div>
 {% endif %}
 {# End Reply #}
+
+{# If Meta Law #}
+{% if object.user == user and object.law.meta and object.reply_received %}
+<div class="section">
+  <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
+    <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
+    {{ object.get_concrete_law_form.as_p }}
+    <input type="submit" value="{% blocktrans %}Set Concrete Law{% endblocktrans %}"/>
+  </form>
+</div>
+{% endif %}
 
 
 {% if object.user == user and not object.public %}
