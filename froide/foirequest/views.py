@@ -417,7 +417,8 @@ def add_postal_reply(request, slug):
 
         if form.cleaned_data.get('scan'):
             scan = request.FILES['scan']
-            scan_name = slugify(scan.name)
+            scan_name = scan.name.rsplit(".", 1)
+            scan_name = ".".join([slugify(n) for n in scan_name])
             att = FoiAttachment(belongs_to=message,
                     name=scan_name,
                     size=scan.size,
@@ -447,7 +448,8 @@ def add_postal_reply_attachment(request, slug, message_id):
     form = PostalAttachmentForm(request.POST, request.FILES)
     if form.is_valid():
         scan = request.FILES['scan']
-        scan_name = slugify(scan.name)
+        scan_name = scan.name.rsplit(".", 1)
+        scan_name = ".".join([slugify(n) for n in scan_name])
         att = FoiAttachment(belongs_to=message,
                 name=scan_name,
                 size=scan.size,
