@@ -58,7 +58,7 @@ class EmailParser(object):
                 attachment.read_date = None
 
                 for param in dispositions[1:]:
-                    name,value = param.split("=")
+                    name,value = param.split("=", 1)
                     name = name.lower().strip()
                     value = value.strip()
                     if value.startswith('"') and value.endswith('"'):
