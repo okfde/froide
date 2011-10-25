@@ -64,6 +64,8 @@ FROIDE_PUBLIC_BODY_BOOSTS = {
     u"Council": 0.8
 }
 
+DEFAULT_FROM_EMAIL = 'info@example.com'
+
 # dev use:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
