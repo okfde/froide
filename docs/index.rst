@@ -16,9 +16,12 @@ Freedom of Information Portal.
    :maxdepth: 2
 
    about
-   setup
+   gettingstarted
+   models
    configuration
    development
+   productionsetup
+
 
 
 Indices and tables

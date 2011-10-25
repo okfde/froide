@@ -36,6 +36,7 @@ Features
   request-unique email address (using SMTP) and the platform will receive answers on
   that mail address (by accessing an IMAP account).
 - Search functionality for Requests and Public Bodies.
+- Error Reporting interface via Sentry.
 
 Dependencies
 ------------
