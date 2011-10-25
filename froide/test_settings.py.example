@@ -248,7 +248,7 @@ HOLIDAYS_FOR_EASTER = (0, -2, 1, 39, 50, 60)
 rec = re.compile
 
 POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
-POSSIE_CLOSINGS = [rec(u"Sincerely yours,?")]
+POSSIBLE_CLOSINGS = [rec(u"Sincerely yours,?")]
 
 SECRET_URLS = {
     "admin": "admin",
