@@ -16,11 +16,12 @@ class Migration(SchemaMigration):
             ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('count', self.gf('django.db.models.fields.IntegerField')(default=0)),
         ))
+        db.rename_column('publicbody_publicbody', 'topic', 'topic_name')
         db.send_create_signal('publicbody', ['PublicBodyTopic'])
 
 
     def backwards(self, orm):
-        
+        db.rename_column('publicbody_publicbody', 'topic_name', 'topic')
         # Deleting model 'PublicBodyTopic'
         db.delete_table('publicbody_publicbodytopic')
 

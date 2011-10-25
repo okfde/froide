@@ -7,14 +7,15 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        from publicbody.models import PublicBody, PublicBodyTopic
-        topics = {}
-        for topic in PublicBodyTopic.objects.all():
-            topics[topic.slug] = topic
-        for pb in PublicBody.objects.all():
-            if pb.topic_slug in topics:
-                pb.topic = topics[pb.topic_slug]
-                pb.save()
+        """Code to execute for data migration"""
+        # from publicbody.models import PublicBody, PublicBodyTopic
+        # topics = {}
+        # for topic in PublicBodyTopic.objects.all():
+        #     topics[topic.slug] = topic
+        # for pb in PublicBody.objects.all():
+        #     if pb.topic_slug in topics:
+        #         pb.topic = topics[pb.topic_slug]
+        #         pb.save()
 
 
     def backwards(self, orm):

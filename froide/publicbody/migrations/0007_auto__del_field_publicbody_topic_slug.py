@@ -10,6 +10,7 @@ class Migration(SchemaMigration):
         
         # Deleting field 'PublicBody.topic_slug'
         db.delete_column('publicbody_publicbody', 'topic_slug')
+        db.delete_column('publicbody_publicbody', 'topic_name')
 
 
     def backwards(self, orm):

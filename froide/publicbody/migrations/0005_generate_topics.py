@@ -1,32 +1,26 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        db.delete_column('publicbody_publicbody', 'topic')        
-        # Changing field 'PublicBody.topic'
-        db.add_column('publicbody_publicbody', 'topic_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBodyTopic'], null=True))
-
-        # Adding index on 'PublicBody', fields ['topic']
-        db.create_index('publicbody_publicbody', ['topic_id'])
-        db.add_column('publicbody_publicbody', 'topic_id', models.IntegerField(default=None, null=True))
-        db.alter_column('publicbody_publicbody', 'topic', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBodyTopic'], null=True), explicit_name=False)
-
-         # Adding index on 'PublicBody', fields ['topic']
-        db.create_index('publicbody_publicbody', ['topic'])
+        """This doesn't work automatically"""
+        # from publicbody.models import PublicBody, PublicBodyTopic
+        # topics = {}
+        # for pb in PublicBody.objects.values('id', 'topic_slug', 'topic_name'):
+        #     if pb['topic_slug'] not in topics:
+        #         topics[pb['topic_slug']] = PublicBodyTopic(name=pb['topic_name'],
+        #                 slug=pb['topic_slug'], description="")
+        #     topics[pb['topic_slug']].count += 1
+        # for topic in topics:
+        #     topics[topic].save()
 
 
     def backwards(self, orm):
-        
-        # Removing index on 'PublicBody', fields ['topic']
-        db.delete_index('publicbody_publicbody', ['topic_id'])
-        db.delete_column('publicbody_publicbody', 'topic_id')        
-        # Changing field 'PublicBody.topic'
-        db.add_column('publicbody_publicbody', 'topic', self.gf('django.db.models.fields.CharField')(default='', max_length=255))
+        "Write your backwards methods here."
 
 
     models = {
@@ -103,7 +97,7 @@ class Migration(SchemaMigration):
             'root': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'descendants'", 'null': 'True', 'blank': 'True', 'to': "orm['publicbody.PublicBody']"}),
             'site': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': "orm['sites.Site']", 'null': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),
-            'topic': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['publicbody.PublicBodyTopic']", 'null': 'True'}),
+            'topic_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'topic_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'website_dump': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
