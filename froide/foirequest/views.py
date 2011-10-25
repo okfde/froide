@@ -152,7 +152,10 @@ def make_request(request, public_body=None):
                 slug=public_body)
     else:
         public_body_form = PublicBodyForm()
-    rq_form = RequestForm(FoiLaw.objects.all(), FoiLaw.get_default_law(), True)
+    subj = request.GET.get("subject", "")
+    body = request.GET.get("body", "")
+    rq_form = RequestForm(FoiLaw.objects.all(), FoiLaw.get_default_law(),
+            True, initial={"subject": subj, "body": body})
     topic = request.GET.get("topic", "")
     user_form = None
     if not request.user.is_authenticated():
