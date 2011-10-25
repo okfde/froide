@@ -48,7 +48,7 @@ class PublicBodyTest(TestCase):
 
     def test_search(self):
         response = self.client.get(reverse('publicbody-search_json')+"?q=abc")
-        self.assertIn("Selbstschutzschule", response.content)
+        self.assertIn("Selbstschutzschule", response.content) # fails if search is not available
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_show_law(self):
