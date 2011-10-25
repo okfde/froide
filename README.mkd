@@ -14,37 +14,6 @@ Docs
 
 [Read the documentation](http://readthedocs.org/docs/froide/en/latest/) including a [Getting Started Guide](http://readthedocs.org/docs/froide/en/latest/gettingstarted/).
 
-Goals
------
-
-Froide has the following goals
-
- - easy to setup
- - completely internationalized and localized from the ground up
- - flexible for different uses through configuration
- - high test coverage
-
-
-Technology
-----------
-
-Froide uses the Django web framework version 1.3.
-For search it uses Solr with Django-haystack.
-For background task it uses Celery with Django-celery.
-South is used for schema migrations.
-Any other requirements can be found in requirements.txt
-
-
-Setup
------
-
-1. Setup virtualenv and clone project
-2. Install requirements: pip install -r requirements.txt
-3. Setup Solr and create solr schema with python manage.py build_solr_schema and put it
-   in your solr directory
-4. Setup celery.
-5. ...to be continued...
-
 
 License
 -------
