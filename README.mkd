@@ -9,6 +9,10 @@ to talk about.
 It's first use will be the FoI site fragdenstaat.de. Despite the .de, Froide is fully
 internationalized and written in English.
 
+Docs
+----
+
+[Read the documentation](http://readthedocs.org/docs/froide/en/latest/) including a [Getting Started Guide](http://readthedocs.org/docs/froide/en/latest/gettingstarted/).
 
 Goals
 -----
