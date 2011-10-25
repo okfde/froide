@@ -476,7 +476,7 @@ class RequestTest(TestCase):
         path = os.path.join(settings.PROJECT_ROOT, "fixtures", "test.pdf")
         file_size = os.path.getsize(path)
         f = file(path, "rb")
-        post = {"date": "01.01.3000", # far future
+        post = {"date": "3000-01-01", # far future
                 "sender": "Some Sender",
                 "subject": "",
                 "text": "Some Text",
@@ -505,7 +505,7 @@ class RequestTest(TestCase):
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
-        post['date'] = "01.02.2011"
+        post['date'] = "2011-01-02"
         post['scan'] = f
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)

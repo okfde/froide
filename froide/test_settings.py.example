@@ -265,7 +265,7 @@ FROIDE_CONFIG = {
     "request_public_after_due_days": 14,
     "payment_possible": True,
     "currency": "Euro",
-    "default_law": 1
+    "default_law": 2
 }
 
 # name classification values and their boost values
@@ -295,7 +295,7 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = True
 
 # The FoI Mail can use a different account
-FOI_EMAIL_DOMAIN = "example.com"
+FOI_EMAIL_DOMAIN = "fragdenstaat.de"
 # IMAP settings for fetching mail
 FOI_EMAIL_PORT_IMAP = 993
 FOI_EMAIL_HOST_IMAP = "imap.example.com"

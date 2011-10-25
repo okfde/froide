@@ -38,8 +38,8 @@ class PublicBodyTest(TestCase):
                 reverse('publicbody-autocomplete')+"?query=abc")
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(u'Selbstschutzschule', obj['suggestions'][0])
-        self.assertIn(u'Selbstschutzschule', obj['data'][0]['name'])
+        self.assertIn(u'Selbstschutzschule', obj['suggestions'][0]) # fails if search is not available
+        self.assertIn(u'Selbstschutzschule', obj['data'][0]['name']) # fails if search is not available
 
 
     def test_csv(self):
