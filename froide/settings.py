@@ -229,7 +229,7 @@ SOUTH_TESTS_MIGRATE = False
 
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
-DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
+DEFAULT_FROM_EMAIL = 'info@example.com'
 
 HOLIDAYS = [
     (1, 1), # New Year's Day
@@ -275,8 +275,8 @@ FROIDE_PUBLIC_BODY_BOOSTS = {
 SITE_NAME = 'FroIde'
 SITE_URL = 'http://localhost:8000'
 
-FROIDE_DRYRUN = True
-FROIDE_DRYRUN_DOMAIN = "fragdenstaat.stefanwehrmeyer.com"
+FROIDE_DRYRUN = False
+FROIDE_DRYRUN_DOMAIN = "testmail.example.com"
 
 AUTH_PROFILE_MODULE = 'account.Profile'
 
@@ -284,7 +284,7 @@ SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=
 
 HAYSTACK_SITECONF = 'froide.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
+HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/fragdenstaat'
 
 # Official Notification Mail goes through
 # the normal Django SMTP Backend
