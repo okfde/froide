@@ -58,7 +58,7 @@ Index Boosting of Public Bodies
 -------------------------------
 
 Some Public Bodies are more important and should appear first in
-searches (if there name and description match the search terms). You can
+searches (if their name and description match the search terms). You can
 provide a mapping of public body classifications (e.g. ministry,
 council etc.) to their search boost factor via the `FROIDE_PUBLIC_BODY_BOOSTS` setting::
 
@@ -82,7 +82,7 @@ production)::
     # production environment:
     EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
-Define the standard Django SMTP parameters for sending regular (not FoI-Email to public bodies)::
+Define the standard Django SMTP parameters for sending regular email notifications (not FoI request emails to public bodies)::
 
     EMAIL_HOST = "smtp.example.com"
     EMAIL_PORT = 587
@@ -118,7 +118,7 @@ Public Body E-Mail Dry-run
 --------------------------
 
 You can set your site up and test it out in a production environment
-while sending public body e-mails not to the public bodies but to
+while sending public body emails not to the public bodies but to
 another mail server. Use the following settings::
 
     FROIDE_DRYRUN = True
@@ -133,7 +133,7 @@ to
     public-body+example.com@mymail.example.com
 
 right before the mail is
-send out (the changed address is not stored). This allows for some
+sent out (the changed address is not stored). This allows for some
 testing of sending and receiving mails to and from public bodies wihtout spamming them.
 
 Setting Up Search with Solr
@@ -149,7 +149,11 @@ Haystack configuration for solr works like so::
     HAYSTACK_SEARCH_ENGINE = 'solr'
     HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
 
-For details, please refer to the Haystack Documentation.
+If you have a solr multicore setup, your solr URL would probably look more like this::
+
+    HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/froide'
+
+For details, please refer to the `Haystack Documentation <http://haystacksearch.org>`_.
 
 Setting Up Background Processing with Celery
 --------------------------------------------
