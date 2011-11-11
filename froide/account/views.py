@@ -42,7 +42,7 @@ def confirm(request, user_id, secret, request_id=None):
 
 def go(request, user_id, secret, url):
     if request.user.is_authenticated():
-        if request.user.id != user_id:
+        if request.user.id != int(user_id):
             messages.add_message(request, messages.INFO,
                 _('You are logged in with a different user account. Please logout first before using this link.'))
     else:
