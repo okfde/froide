@@ -515,7 +515,7 @@ Sincerely yours
 
     @classmethod
     def generate_secret_address(cls, user):
-        possible_chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
         secret = "".join([random.choice(possible_chars) for i in range(10)])
         return "%s+%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
 
