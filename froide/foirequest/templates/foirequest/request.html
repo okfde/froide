@@ -74,7 +74,7 @@
     </div>
     {% endif %}
   </fieldset>
-  {% if not request_form.errors and not request_form.subject %}
+  {% if not request_form.is_bound and not request_form.initial.subject %}
   <fieldset id="check-foi">
     <legend>{% blocktrans %}Step 2 - Choose the type of request{% endblocktrans %}</legend>
     <div class="hidden" id="step-checkfoi">
