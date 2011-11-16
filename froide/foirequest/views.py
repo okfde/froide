@@ -150,6 +150,8 @@ def make_request(request, public_body=None):
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
+        if not public_body.email:
+            raise Http404
     else:
         public_body_form = PublicBodyForm()
     subj = request.GET.get("subject", "")
