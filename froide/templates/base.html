@@ -10,12 +10,11 @@
         font-family: 'Kreon';
         font-style: normal;
         font-weight: 700;
-        src: local('Kreon bold'), local('Kreon-bold'), url('{{ STATIC_URL }}font/Kreon-Bold.woff') format('woff');
         src: local('Kreon regular'), local('Kreon-regular'), url('{{ STATIC_URL }}font/Kreon-Regular.woff') format('woff');
       }
     </style>
   {% else %}
-  <link href="https://fonts.googleapis.com/css?family=Kreon:regular" rel="stylesheet" type="text/css" />
+  <link href='https://fonts.googleapis.com/css?family=Kreon' rel='stylesheet' type='text/css'>
   {% endif %}
   <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
   <link rel="stylesheet" href="{{ STATIC_URL }}css/gh-buttons.css" type="text/css" media="screen, projection" />

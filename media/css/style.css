@@ -40,8 +40,8 @@ table.no-stripes tbody tr th {
 
 #header-content h1 a {
     margin-left: 0;
-    background: transparent url('../img/logo.png') no-repeat 0 0;
-    padding:3px 0 0 45px;
+    background: transparent url('../img/logo.png') no-repeat 3px 11px;
+    padding:0 0 0 45px;
 }
 
 #header-content h1 a,
