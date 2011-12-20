@@ -360,20 +360,31 @@ strong {
     margin: 20px 20px 20px 0;
 }
 
-#sample-letter {
-    font-family: Georgia,serif;
-    font-size: 1em;
-    white-space: nowrap;
-    white-space: pre-wrap;
-    position: relative;
+.frontpage-teaser {
     width: 350px;
-    padding: 50px;
+    padding: 20px 50px;
     margin: 0 auto;
     background-color: #fff;
     background-color: rgba(255, 255, 255, 0.8);
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);  
     -moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);  
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);      
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.frontpage-teaser small {
+    color: #666;
+}
+
+.frontpage-teaser h3 {
+    margin-top: 0;
+}
+
+#sample-letter {
+    font-family: Georgia,serif;
+    font-size: 1em;
+    white-space: nowrap;
+    white-space: pre-wrap;
 }
 
 #footer {
