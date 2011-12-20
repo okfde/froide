@@ -96,7 +96,7 @@ I request information about the following:
           {% blocktrans %}Not yet set{% endblocktrans %}
         {% endif %}
         <br/><span class="time-small">{{ object.readable_status }},
-          {% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}</span>
+          {% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span>
       </td>
     </tr>
   {% endfor %}
@@ -120,7 +120,7 @@ I request information about the following:
           {% blocktrans %}Not yet set{% endblocktrans %}
         {% endif %}
         <br/><span class="time-small">{{ object.readable_status }},
-          {% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}</span>
+          {% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span>
       </td>
     </tr>
   {% endfor %}
