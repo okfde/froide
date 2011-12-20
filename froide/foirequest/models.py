@@ -83,12 +83,12 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def successful(self):
         return self.get_query_set().filter(
                     models.Q(status="successful") |
-                    models.Q(status="partially_successful"))
+                    models.Q(status="partially_successful")).order_by("-last_message")
 
     def unsuccessful(self):
         return self.get_query_set().filter(
                     models.Q(status="refused") |
-                    models.Q(status="not_held"))
+                    models.Q(status="not_held")).order_by("-last_message")
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
