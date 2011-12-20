@@ -11,7 +11,7 @@ class FeaturedRequestManager(CurrentSiteManager):
     def getFeatured(self):
         try:
             return self.get_query_set().order_by("-timestamp").select_related('request', 'request__publicbody')[0]
-        except (self.model.DoesNotExist, IndexError):
+        except IndexError:
             return None
 
 
