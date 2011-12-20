@@ -14,6 +14,8 @@ from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
+from frontpage.models import FeaturedRequest
+
 from foirequest.forms import RequestForm, ConcreteLawForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
@@ -25,12 +27,13 @@ from helper.cache import cache_anonymous_page
 
 @cache_anonymous_page(15 * 60)
 def index(request):
-    # public_bodies = PublicBody.objects.get_for_homepage()
-    foi_requests = FoiRequest.published.get_for_homepage()
-    events = FoiEvent.objects.get_for_homepage()[:10]
+    successful_foi_requests = FoiRequest.published.successful()[:8]
+    unsuccessful_foi_requests = FoiRequest.published.unsuccessful()[:8]
+    featured = FeaturedRequest.objects.getFeatured()
     return render(request, 'index.html', 
-            {'events': events,
-            'foi_requests': foi_requests,
+            {'featured': featured,
+            'successful_foi_requests': successful_foi_requests,
+            'unsuccessful_foi_requests': unsuccessful_foi_requests,
             'foicount': FoiRequest.published.count(),
             'pbcount': PublicBody.objects.count()
         })
