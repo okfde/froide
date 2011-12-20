@@ -72,7 +72,10 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set().order_by('-first_message')
 
     def get_for_homepage(self, count=5):
-        return self.by_last_update()[:count]
+        return self.by_last_update().filter(
+                models.Q(status='successful') |
+                models.Q(status='partially_successful') |
+                models.Q(status='refused'))[:count]
 
     def get_for_search_index(self):
         return self.get_query_set()
@@ -81,6 +84,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set().filter(
                     models.Q(status="successful") |
                     models.Q(status="partially_successful"))
+
+    def unsuccessful(self):
+        return self.get_query_set().filter(
+                    models.Q(status="refused") |
+                    models.Q(status="not_held"))
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
