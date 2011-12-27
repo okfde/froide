@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-20 17:51+0100\n"
-"PO-Revision-Date: 2011-12-20 17:52+0100\n"
+"POT-Creation-Date: 2011-12-27 15:47+0100\n"
+"PO-Revision-Date: 2011-12-27 15:52+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2466,9 +2466,14 @@ msgstr ""
 "%(site_name)s\n"
 
 #: frontpage/models.py:20
+#: frontpage/models.py:36
 #: templates/index.html:30
 msgid "Featured Request"
 msgstr "Anfrage der Woche"
+
+#: frontpage/models.py:37
+msgid "Featured Requests"
+msgstr "Anfragen der Woche"
 
 #: publicbody/forms.py:10
 msgid "Name of Public Body"
