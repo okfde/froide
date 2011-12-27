@@ -29,3 +29,9 @@ class FeaturedRequest(models.Model):
             on_delete=models.SET_NULL, verbose_name=_("Site"))
 
     objects = FeaturedRequestManager()
+
+    class Meta:
+        ordering = ('-timestamp',)
+        get_latest_by = 'timestamp'
+        verbose_name = _('Featured Request')
+        verbose_name_plural = _('Featured Requests')
