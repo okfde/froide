@@ -4,7 +4,7 @@ from froide.foirequest.models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion)
 
 
-class FoiMessageInline(admin.TabularInline):
+class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
 
 
