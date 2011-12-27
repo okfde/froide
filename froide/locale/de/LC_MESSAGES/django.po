@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 15:47+0100\n"
-"PO-Revision-Date: 2011-12-27 15:52+0100\n"
+"POT-Creation-Date: 2011-12-27 18:37+0100\n"
+"PO-Revision-Date: 2011-12-27 19:25+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -448,6 +448,7 @@ msgstr "Ihre Informationsfreiheitsanfragen"
 
 #: account/templates/account/show.html:25
 #: foirequest/models.py:178
+#: frontpage/models.py:22
 msgid "Title"
 msgstr "Titel"
 
@@ -1129,6 +1130,7 @@ msgstr "Empfangende Behörde"
 
 #: foirequest/models.py:876
 #: foirequest/models.py:1121
+#: frontpage/models.py:21
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
@@ -2471,6 +2473,16 @@ msgstr ""
 msgid "Featured Request"
 msgstr "Anfrage der Woche"
 
+#: frontpage/models.py:23
+msgid "Text"
+msgstr "Text"
+
+#: frontpage/models.py:24
+#: publicbody/models.py:45
+#: publicbody/models.py:150
+msgid "URL"
+msgstr "URL"
+
 #: frontpage/models.py:37
 msgid "Featured Requests"
 msgstr "Anfragen der Woche"
@@ -2518,11 +2530,6 @@ msgstr "Zuständigkeitsbereich"
 #: publicbody/models.py:44
 msgid "Priority"
 msgstr "Priorität"
-
-#: publicbody/models.py:45
-#: publicbody/models.py:150
-msgid "URL"
-msgstr "URL"
 
 #: publicbody/models.py:46
 msgid "Maximal Response Time"

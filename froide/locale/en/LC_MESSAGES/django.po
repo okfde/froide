@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 15:46+0100\n"
+"POT-Creation-Date: 2011-12-27 18:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -453,6 +453,7 @@ msgid "Your Freedom of Information Requests"
 msgstr ""
 
 #: account/templates/account/show.html:25 foirequest/models.py:178
+#: frontpage/models.py:22
 msgid "Title"
 msgstr ""
 
@@ -1077,7 +1078,7 @@ msgstr ""
 msgid "Public Body Recipient"
 msgstr ""
 
-#: foirequest/models.py:876 foirequest/models.py:1121
+#: foirequest/models.py:876 foirequest/models.py:1121 frontpage/models.py:21
 msgid "Timestamp"
 msgstr ""
 
@@ -2408,6 +2409,14 @@ msgstr ""
 msgid "Featured Request"
 msgstr ""
 
+#: frontpage/models.py:23
+msgid "Text"
+msgstr ""
+
+#: frontpage/models.py:24 publicbody/models.py:45 publicbody/models.py:150
+msgid "URL"
+msgstr ""
+
 #: frontpage/models.py:37
 msgid "Featured Requests"
 msgstr ""
@@ -2454,10 +2463,6 @@ msgstr ""
 
 #: publicbody/models.py:44
 msgid "Priority"
-msgstr ""
-
-#: publicbody/models.py:45 publicbody/models.py:150
-msgid "URL"
 msgstr ""
 
 #: publicbody/models.py:46
