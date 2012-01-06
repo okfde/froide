@@ -66,6 +66,21 @@ class FoiRequestFollowerTest(TestCase):
         else:
             self.assertTrue(False)
 
+    def test_unfollowing(self):
+        req = FoiRequest.objects.all()[0]
+        user = User.objects.get(username='dummy')
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('foirequestfollower-follow',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 302)
+        follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
+        self.assertEqual(follower, 1)
+        response = self.client.post(reverse('foirequestfollower-follow',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 302)
+        follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
+        self.assertEqual(follower, 0)
+
     def test_updates(self):
         mail.outbox = []
         req = FoiRequest.objects.all()[0]
@@ -81,7 +96,7 @@ class FoiRequestFollowerTest(TestCase):
             'url'       : '',
             'comment'   : 'This is my comment',
         }
-        
+
         f = CommentForm(mes)
         d.update(f.initial)
         self.client.post(reverse("comments-post-comment"), d)
