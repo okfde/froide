@@ -42,12 +42,15 @@ def remove_quote(text, replacement=u"", quote_prefix=u">"):
             put_replacement = True
     return u"\n".join(lines)
 
-SIGNATURE_DIVIDER = re.compile(r'^--\s+')
-
-def remove_signature(text, replacement=u""):
+def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
     lines = []
+    found = False
     for line in text.splitlines():
-        if SIGNATURE_DIVIDER.match(line) is not None:
+        for divider in dividers:
+            if divider.match(line) is not None:
+                found = True
+                break
+        if found:
             break
         lines.append(line)
     return u"\n".join(lines)
