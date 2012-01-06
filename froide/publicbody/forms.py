@@ -11,15 +11,3 @@ class PublicBodyForm(forms.Form):
     description = forms.CharField(label=_("Short description"), widget=forms.Textarea, required=False)
     email = forms.EmailField(widget=EmailInput, label=_("Email Address for Freedom of Information Requests"))
     url = forms.URLField(label=_("Homepage URL of Public Body"))
-    
-
-class TopicSearchForm(SearchForm):
-    topic = forms.CharField(required=False, widget=forms.HiddenInput)
-
-    def search(self):
-        sqs = super(TopicSearchForm, self).search()
-        topic = self.cleaned_data['topic']
-        if topic:
-            sqs.filter_and(topic_auto=topic)
-        return sqs
-

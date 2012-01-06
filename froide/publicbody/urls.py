@@ -4,10 +4,10 @@ from django.utils.translation import pgettext
 
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView, search_view_factory
+from haystack.forms import SearchForm
 
 from publicbody.models import PublicBody
 from publicbody.views import PublicBodyDetailView
-from publicbody.forms import TopicSearchForm
 
 
 # Without threading...
@@ -16,7 +16,7 @@ urlpatterns = patterns('haystack.views',
         view_class=SearchView,
         template='publicbody/search.html',
         searchqueryset=SearchQuerySet().models(PublicBody),
-        form_class=TopicSearchForm
+        form_class=SearchForm
     ), name='publicbody-search'),
 )
 
