@@ -79,6 +79,13 @@ def list_requests_not_foi(request):
     })
     return render(request, 'foirequest/list.html', context)
 
+def shortlink(request, obj_id):
+    foirequest = get_object_or_404(FoiRequest, pk=obj_id)
+    if foirequest.is_visible(request.user):
+        return HttpResponseRedirect(foirequest.get_absolute_url())
+    else:
+        return render_403(request)
+
 def auth(request, obj_id, code):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
     if foirequest.is_visible(request.user):

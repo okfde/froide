@@ -4,6 +4,7 @@ from foirequest.feeds import FoiRequestFeed, FoiRequestFeedAtom
 
 
 urlpatterns = patterns("",
+    url(r"^(?P<obj_id>\d+)$", 'foirequest.views.shortlink', name="foirequest-shortlink"),
     url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'foirequest.views.auth', name="foirequest-auth"),
     url(r"^(?P<slug>[-\w]+)/$", 'foirequest.views.show', name="foirequest-show"),
     url(r"^(?P<slug>[-\w]+)/feed/$", FoiRequestFeedAtom(), name="foirequest-feed_atom"),
