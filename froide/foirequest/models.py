@@ -211,7 +211,7 @@ class FoiRequest(models.Model):
             on_delete=models.SET_NULL,
             verbose_name=_("Freedom of Information Law"))
     costs = models.FloatField(_("Cost of Information"), default=0.0)
-    refusal_reason = models.CharField(_("Refusal reason"), max_length=255,
+    refusal_reason = models.CharField(_("Refusal reason"), max_length=1024,
             blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
