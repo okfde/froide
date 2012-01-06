@@ -94,6 +94,21 @@ class AccountTest(TestCase):
         self.assertEqual(profile.address, post['address'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
+        # sign up with email that is not confirmed
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertTrue(response.status_code, 400)
+
+        # sign up with email that is confirmed
+        message = mail.outbox[0]
+        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        response = self.client.get(reverse('account-confirm',
+                kwargs={'user_id': user.pk,
+                'secret': match.group(1)}))
+        self.assertEqual(response.status_code, 302)
+        self.client.logout()
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertTrue(response.status_code, 400)
+
     def test_confirmation_process(self):
         self.client.logout()
         user, password = AccountManager.create_user(first_name=u"Stefan",
@@ -234,3 +249,61 @@ class AccountTest(TestCase):
         user = User.objects.get(username='sw')
         profile = user.get_profile()
         self.assertEqual(profile.address, data['address'])
+
+    def test_go(self):
+        user = User.objects.get(username='dummy')
+        other_user = User.objects.get(username='sw')
+        # test url is not cached and does not cause 404
+        test_url = reverse('foirequest-make_request')
+        profile = user.get_profile()
+
+        # Try logging in via link: success
+        autologin = profile.get_autologin_url(test_url)
+        response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(test_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['user'], user)
+        self.assertTrue(response.context['user'].is_authenticated())
+        self.client.logout()
+
+        # Try logging in via link: other user is authenticated
+        ok = self.client.login(username='sw', password='froide')
+        self.assertTrue(ok)
+        autologin = profile.get_autologin_url(test_url)
+        response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(test_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['user'], other_user)
+        self.assertTrue(response.context['user'].is_authenticated())
+        self.client.logout()
+
+        # Try logging in via link: user not active
+        autologin = profile.get_autologin_url(test_url)
+        user.is_active = False
+        user.save()
+        response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(test_url)
+        self.assertTrue(response.context['user'].is_anonymous())
+
+        # Try logging in via link: wrong user id
+        autologin = reverse('account-go', kwargs=dict(
+            user_id='80000', secret='a'*32, url=test_url
+        ))
+        response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(test_url)
+        self.assertTrue(response.context['user'].is_anonymous())
+        user.is_active = True
+        user.save()
+
+        # Try logging in via link: wrong secret
+        autologin = reverse('account-go', kwargs=dict(
+            user_id=str(user.id), secret='a'*32, url=test_url
+        ))
+        response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(test_url)
+        self.assertTrue(response.context['user'].is_anonymous())
