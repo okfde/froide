@@ -8,6 +8,7 @@ from django.utils.dateformat import TimeFormat
 from django.conf import settings
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from foirequest.models import FoiRequest, FoiEvent, FoiMessage
 from foirequestfollower.models import FoiRequestFollower
@@ -29,7 +30,7 @@ def batch_update():
 def _batch_update():
     translation.activate(settings.LANGUAGE_CODE)
     requests = {}
-    gte_date = datetime.now() - timedelta(days=1)
+    gte_date = timezone.now() - timedelta(days=1)
     updates = {}
 
     message_type = ContentType.objects.get_for_model(FoiMessage)

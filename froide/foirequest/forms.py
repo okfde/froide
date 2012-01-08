@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils import timezone
 
 from publicbody.models import PublicBody
 from publicbody.widgets import PublicBodySelect
@@ -71,7 +72,7 @@ class RequestForm(forms.Form):
             self.public_body_object = public_body
             self.foi_law_object = public_body.default_law
         return pb
-    
+
     public_body_object = None
 
     def clean_law_for_public_body(self, public_body):
@@ -157,7 +158,7 @@ class MakePublicBodySuggestionForm(forms.Form):
     public_body = forms.IntegerField(widget=PublicBodySelect)
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
             widget=forms.TextInput(attrs={"size": "40"}), required=False)
-    
+
     def clean_public_body(self):
         pb = self.cleaned_data['public_body']
         try:
@@ -282,7 +283,7 @@ class PostalReplyForm(forms.Form):
 
     def clean_date(self):
         date = self.cleaned_data['date']
-        now = datetime.datetime.now().date()
+        now = timezone.now().date()
         if date > now:
             raise forms.ValidationError(_("Your reply date is in the future, that is not possible."))
         return date

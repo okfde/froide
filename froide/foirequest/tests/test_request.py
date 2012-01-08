@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import mail
 from django.utils import translation
-
+from django.utils import timezone
 
 from publicbody.models import PublicBody, FoiLaw
 from foirequest.models import FoiRequest, FoiMessage
@@ -118,7 +118,7 @@ class RequestTest(TestCase):
         new_foi_email = "foi@" + pb.email.split("@")[1]
         req.add_message_from_email({
             'msgobj': None,
-            'date': (datetime.now() - timedelta(days=1),0),
+            'date': (timezone.now() - timedelta(days=1),0),
             'subject': u"Re: %s" % req.title,
             'body': u"""Message""",
             'html': None,
@@ -590,7 +590,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(title=post['subject'])
         req.add_message_from_email({
             'msgobj': None,
-            'date': (datetime.now() + timedelta(days=1),0),
+            'date': (timezone.now() + timedelta(days=1),0),
             'subject': u"Re: %s" % req.title,
             'body': u"""Message""",
             'html': None,

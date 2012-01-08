@@ -30,7 +30,7 @@ def index(request):
     successful_foi_requests = FoiRequest.published.successful()[:8]
     unsuccessful_foi_requests = FoiRequest.published.unsuccessful()[:8]
     featured = FeaturedRequest.objects.getFeatured()
-    return render(request, 'index.html', 
+    return render(request, 'index.html',
             {'featured': featured,
             'successful_foi_requests': successful_foi_requests,
             'unsuccessful_foi_requests': unsuccessful_foi_requests,
@@ -73,7 +73,7 @@ def list_requests_not_foi(request):
         'not_foi': True,
         'count': FoiRequest.published_not_foi.for_list_view().count(),
         'object_list': FoiRequest.published_not_foi.for_list_view(),
-        'status_list': [(x[0], 
+        'status_list': [(x[0],
             FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
         'topic_list': PublicBodyTopic.objects.get_list()
     })
@@ -153,7 +153,6 @@ def search(request):
             "query": query
             }
     return render(request, "search/search.html", context)
-    
 
 def make_request(request, public_body=None):
     public_body_form = None
@@ -187,7 +186,7 @@ def submit_request(request, public_body=None):
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
     context = {"public_body": public_body}
-    
+
     all_laws = FoiLaw.objects.all()
     request_form = RequestForm(all_laws, FoiLaw.get_default_law(),
             True, request.POST)
@@ -420,6 +419,7 @@ def add_postal_reply(request, slug):
                 is_postal=True,
                 sender_name=form.cleaned_data['sender'],
                 sender_public_body=foirequest.public_body)
+        #TODO: Check if timezone support is correct
         message.timestamp = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
         message.subject = form.cleaned_data.get('subject', '')
         message.plaintext = ""
