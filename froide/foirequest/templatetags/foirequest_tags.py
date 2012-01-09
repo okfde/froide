@@ -15,7 +15,7 @@ def highlight_request(message):
     except ValueError:
         return content
     offset = index + len(description)
-    return mark_safe('%s<div class="highlight">%s</div>%s' % (escape(content[:index]),
+    return mark_safe('<div class="foldin">%s</div><div class="highlight">%s</div><div class="foldin">%s</div>' % (escape(content[:index]),
             escape(description), escape(content[offset:])))
 
 
