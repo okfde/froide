@@ -33,7 +33,7 @@ class Profile(models.Model):
 
     def display_name(self):
         if self.private:
-            return _(u"Name only visible to Public Body")
+            return _(u"Name Not Public")
         else:
             return self.user.get_full_name()
 

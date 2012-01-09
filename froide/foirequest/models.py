@@ -431,9 +431,15 @@ class FoiRequest(models.Model):
         last_message = list(self.messages)[-1]
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
+        if self.is_overdue():
+            message = render_to_string('foirequest/overdue_reply.txt', {
+                'foirequest': self
+            })
+        else:
+            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")
         return SendMessageForm(self,
                 initial={"subject": subject, 
-                    "message": _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")})
+                    "message": message})
 
     def get_escalation_message_form(self):
         from foirequest.forms import EscalationMessageForm
