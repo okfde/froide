@@ -703,6 +703,10 @@ textarea.smalltext {
     display:none;
 }
 
+.focussed:target .toggle-div {
+    display:block !important;
+}
+
 .no-js #review-button {
     display:none;
 }

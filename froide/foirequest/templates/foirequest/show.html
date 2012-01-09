@@ -23,7 +23,7 @@
 <div class="notice">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
 {% endif %}
 {% if object.user == user and object.awaits_classification %}
-<div class="notice">{% blocktrans with name=user.get_full_name %}{{ name }}, please read the latest response and <a href="#set-status">set a new status for this request!</a>{% endblocktrans %}</div>
+<div class="notice">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status">set a new status for this request!</a>{% endblocktrans %}</div>
 {% endif %}
 {% if object.user == user and object.is_overdue %}
 <div class="warning">
@@ -45,9 +45,12 @@
   <a href="#escalate-section" class="show-target">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
 </div>
 {% endif %}
+
 <h2>{{ object.title }}</h2>
+
 <div class="clearfix">
   <div class="span-18">
+
 {% if not object.is_foi %}
 <div class="notice">
   {% blocktrans %}This request is not an FoI request. This site is only for requesting specific information from public bodies.{% endblocktrans %}
@@ -88,7 +91,7 @@
     <dt>{% blocktrans %}Due date:{% endblocktrans %}</dt>
   {% if object.is_overdue %}
   <dd class="red">
-  {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}
+  {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}</dd>
   {% else %}
     <dd>{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
     {% endif %}
@@ -188,7 +191,28 @@
   {% endif %}
 </div>
 </div>
-<div class="span-18">
+
+<div class="clearfix">
+
+<div class="span-6 push-18">
+  <div class="sticky foirequest-overview">
+  {% if object.messages %}
+    <h4>{% trans "Overview" %}</h4>
+    <small><a class="toggle" href="#foirequest-overview-list">{% trans "show/hide" %}</a></small>
+    <ul id="foirequest-overview-list">
+    {% for message in object.messages %}
+      <li>
+        <a href="#{{ message.get_html_id }}">{{ message.timestamp|date:"SHORT_DATE_FORMAT" }}</a>
+        <br/>
+        <small>{% blocktrans with sender=message.sender|truncatewords:4 %}from {{ sender }}{% endblocktrans %}</small>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </div>
+</div>
+
+<div class="span-18 pull-6 last">
 
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
@@ -290,7 +314,7 @@
 {% if object.public_body %}
 <div class="section focussed" id="add-postal-reply-section">
   <a href="#add-postal-reply" class="toggle">{% blocktrans %}Add a Postal reply that you have received{% endblocktrans %}</a>
-  <div id="add-postal-reply"{% if not postal_reply_form %} style="display: none"{% else %} class="goto-form"{% endif %}>
+  <div id="add-postal-reply"{% if not postal_reply_form %} style="display: none" class="toggle-div"{% else %} class="toggle-div goto-form"{% endif %}>
     <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
       <table class="no-stripes">
       {% if postal_reply_form %}
@@ -310,11 +334,11 @@
 
 {# Reply #}
 <div class="section focussed" id="reply-section">
-  <a href="#write-message" class="toggle">{% blocktrans %}Send a reply to this Public Body{% endblocktrans %}</a>
+  <a href="#write-message" class="toggle">{% blocktrans %}Send a message to this Public Body{% endblocktrans %}</a>
   <div id="write-message"{% if not object.is_overdue and not send_message_form %} style="display:none"{% endif %}>
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">{% csrf_token %}
   {% if object.is_overdue %}
-    <p>{% blocktrans %}Your request is overdue. You should send a reminder to the Public Body!{% endblocktrans %}</p>
+    <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
   {% else %}
     <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
   {% endif %}
@@ -501,22 +525,6 @@
 <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
 {% endfor %}
 </div>
-<div class="span-6 last">
-  <div class="sticky foirequest-overview">
-  {% if object.messages %}
-    <h4>{% trans "Overview" %}</h4>
-    <small><a class="toggle" href="#foirequest-overview-list">{% trans "show/hide" %}</a></small>
-    <ul id="foirequest-overview-list">
-    {% for message in object.messages %}
-      <li>
-        <a href="#{{ message.get_html_id }}">{{ message.timestamp|date:"SHORT_DATE_FORMAT" }}</a>
-        <br/>
-        <small>{% blocktrans with sender=message.sender|truncatewords:4 %}from {{ sender }}{% endblocktrans %}</small>
-      </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  </div>
 </div>
 {% endblock %}
 
