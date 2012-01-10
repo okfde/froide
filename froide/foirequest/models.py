@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import json
 
 from django.db import models
-from django.db.models import signals
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -12,7 +11,6 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.core.files import File
 import django.dispatch
-from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
@@ -773,59 +771,7 @@ Sincerely yours
                 [self.user.email])
 
 
-@receiver(FoiRequest.became_overdue,
-        dispatch_uid="send_notification_became_overdue")
-def send_notification_became_overdue(sender, **kwargs):
-    send_mail(_("%(site_name)s: Request became overdue")
-                % {"site_name": settings.SITE_NAME},
-            render_to_string("foirequest/became_overdue.txt",
-                {"request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
-                    "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
 
-
-@receiver(FoiRequest.request_to_public_body,
-        dispatch_uid="foirequest_increment_request_count")
-def increment_request_count(sender, **kwargs):
-    if not sender.public_body:
-        return
-    sender.public_body.number_of_requests += 1
-    sender.public_body.save()
-
-@receiver(signals.pre_delete, sender=FoiRequest,
-        dispatch_uid="foirequest_decrement_request_count")
-def decrement_request_count(sender, instance=None, **kwargs):
-    if not instance.public_body:
-        return
-    instance.public_body.number_of_requests -= 1
-    if instance.public_body.number_of_requests < 0:
-        instance.public_body.number_of_requests = 0
-    instance.public_body.save()
-
-@receiver(FoiRequest.message_received,
-        dispatch_uid="notify_user_message_received")
-def notify_user_message_received(sender, message=None, **kwargs):
-    send_mail(_("You received a reply to your Freedom of Information Request"),
-            render_to_string("foirequest/message_received_notification.txt",
-                {"message": message, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_url()),
-                    "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
-
-@receiver(FoiRequest.public_body_suggested,
-        dispatch_uid="notify_user_public_body_suggested")
-def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
-    if sender.user != suggestion.user:
-        send_mail(_("Your request received a suggestion for a Public Body"),
-                render_to_string("foirequest/public_body_suggestion_received.txt",
-                    {"suggestion": suggestion, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
-                        "site_name": settings.SITE_NAME}),
-                settings.DEFAULT_FROM_EMAIL,
-                [sender.user.email])
 
 
 class PublicBodySuggestion(models.Model):
@@ -1010,36 +956,6 @@ class FoiMessage(models.Model):
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
 
-# Signals for Indexing FoiMessage via FoiRequest
-def foimessage_delayed_update(instance=None, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
-        return
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.request_id, FoiRequest)
-signals.post_save.connect(foimessage_delayed_update, sender=FoiMessage)
-
-def foimessage_delayed_remove(instance, **kwargs):
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.request_id, FoiRequest)
-signals.post_delete.connect(foimessage_delayed_remove, sender=FoiMessage)
-
-
-@receiver(FoiRequest.message_sent,
-        dispatch_uid="send_foimessage_sent_confirmation")
-def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
-    if len(sender.messages) == 1:
-        subject = _("Your Freedom of Information Request was sent")
-        template = "foirequest/confirm_foi_request_sent.txt"
-    else:
-        subject = _("Your Message was sent")
-        template = "foirequest/confirm_foi_message_sent.txt"
-    send_mail(subject,
-            render_to_string(template,
-                {"request": sender, "message": message,
-                    "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
-
 
 def upload_to(instance, filename):
     return "foi/%s/%s" % (instance.belongs_to.id, filename)
@@ -1081,19 +997,6 @@ class FoiAttachment(models.Model):
     def get_preview_url(self):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
-
-# Signals for Indexing FoiAttachment via FoiRequest
-def foiattachment_delayed_update(instance, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
-        return
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
-signals.post_save.connect(foiattachment_delayed_update, sender=FoiAttachment)
-
-def foiattachment_delayed_remove(instance, **kwargs):
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
-signals.post_delete.connect(foiattachment_delayed_remove, sender=FoiAttachment)
 
 
 class FoiEventManager(models.Manager):
@@ -1217,78 +1120,9 @@ class FoiEvent(models.Model):
 
     def as_text(self):
         return self.event_texts[self.event_name] % self.get_context()
-    
+
     def as_html(self):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
-
-@receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, message, **kwargs):
-    FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
-            public_body=message.recipient_public_body)
-
-
-@receiver(FoiRequest.message_received,
-        dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, **kwargs):
-    FoiEvent.objects.create_event("message_received", sender,
-            user=sender.user,
-            public_body=sender.public_body)
-
-
-@receiver(FoiRequest.status_changed,
-        dispatch_uid="create_event_status_changed")
-def create_event_status_changed(sender, **kwargs):
-    status = kwargs['status']
-    data = kwargs['data']
-    if data['costs'] > 0:
-        FoiEvent.objects.create_event("reported_costs", sender,
-                user=sender.user,
-                public_body=sender.public_body, amount=data['costs'])
-    elif status == "refused" and data['refusal_reason']:
-        FoiEvent.objects.create_event("request_refused", sender,
-                user=sender.user,
-                public_body=sender.public_body, reason=data['refusal_reason'])
-    elif status == "request_redirected":
-        FoiEvent.objects.create_event("request_redirected", sender,
-                user=sender.user,
-                public_body=sender.public_body)
-    else:
-        FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
-            public_body=sender.public_body,
-            status=FoiRequest.get_readable_status(status))
-
-@receiver(FoiRequest.made_public,
-        dispatch_uid="create_event_made_public")
-def create_event_made_public(sender, **kwargs):
-    FoiEvent.objects.create_event("made_public", sender, user=sender.user,
-            public_body=sender.public_body)
-
-@receiver(FoiRequest.public_body_suggested,
-        dispatch_uid="create_event_public_body_suggested")
-def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
-    FoiEvent.objects.create_event("public_body_suggested", sender, user=suggestion.user,
-            public_body=suggestion.public_body)
-
-@receiver(FoiRequest.became_overdue,
-        dispatch_uid="create_event_became_overdue")
-def create_event_became_overdue(sender, **kwargs):
-    FoiEvent.objects.create_event("became_overdue", sender)
-
-@receiver(FoiRequest.set_concrete_law,
-        dispatch_uid="create_event_set_concrete_law")
-def create_event_set_concrete_law(sender, **kwargs):
-    FoiEvent.objects.create_event("set_concrete_law", sender,
-            user=sender.user, name=kwargs['name'])
-
-@receiver(FoiRequest.add_postal_reply,
-    dispatch_uid="create_event_add_postal_reply")
-def create_event_add_postal_reply(sender, **kwargs):
-    FoiEvent.objects.create_event("add_postal_reply", sender,
-            user=sender.user)
-
-@receiver(FoiRequest.escalated,
-    dispatch_uid="create_event_escalated")
-def create_event_escalated(sender, **kwargs):
-    FoiEvent.objects.create_event("escalated", sender,
-            user=sender.user, public_body=sender.law.mediator)
+# Import Signals here so models are available
+import foirequest.signals
