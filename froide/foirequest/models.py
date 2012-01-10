@@ -187,7 +187,7 @@ class FoiRequest(models.Model):
             choices=STATUS_CHOICES)
     visibility = models.SmallIntegerField(_("Visibility"), default=0,
             choices=VISIBILITY_CHOICES)
-    
+
     user = models.ForeignKey(User, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
@@ -200,10 +200,16 @@ class FoiRequest(models.Model):
             blank=True, null=True)
     due_date = models.DateTimeField(_("Due Date"),
             blank=True, null=True)
-    
+
     secret_address = models.CharField(_("Secret address"), max_length=255,
             db_index=True, unique=True)
     secret = models.CharField(_("Secret"), blank=True, max_length=100)
+
+    same_as = models.ForeignKey('self', null=True, blank=True,
+            on_delete=models.SET_NULL,
+            verbose_name=_("Original Request"))
+    same_as_count = models.IntegerField(_("Similar request count"), default=0)
+
 
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
             on_delete=models.SET_NULL,
