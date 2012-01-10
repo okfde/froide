@@ -43,3 +43,14 @@ def classification_reminder():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_unclassified():
         foirequest.send_classification_reminder()
+
+@task
+def count_same_foirequests(instance_id):
+    translation.activate(settings.LANGUAGE_CODE)
+    try:
+        req = FoiRequest.objects.get(id=instance_id)
+        count = FoiRequest.objects.filter(same_as=req).count()
+        req.same_as_count = count
+        req.save()
+    except FoiRequest.DoesNotExist:
+        pass
