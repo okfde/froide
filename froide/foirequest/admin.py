@@ -19,6 +19,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
     actions = ['mark_checked', 'mark_not_foi']
+    raw_id_fields = ('same_as',)
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
