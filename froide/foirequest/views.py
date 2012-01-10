@@ -49,7 +49,7 @@ def list_requests(request, status=None, topic=None):
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)
-            })
+        })
     elif topic is not None:
         topic = get_object_or_404(PublicBodyTopic, slug=topic)
         foi_requests = FoiRequest.published.for_list_view().filter(public_body__topic=topic)
@@ -60,7 +60,7 @@ def list_requests(request, status=None, topic=None):
             'page_title': _("FoI Requests"),
             'count': foi_requests.count(),
             'object_list': foi_requests,
-            'status_list': [(x[0], 
+            'status_list': [(x[0],
                 FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
             'topic_list': topic_list
         })
