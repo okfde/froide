@@ -532,7 +532,7 @@
   <ul>
   {% for foirequest in object.same_as_set.all %}
     <li>
-      <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }} {{ foirequest.title }}</a>
+      {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
     </li>
   {% endfor %}
   </ul>
@@ -540,8 +540,8 @@
 {% endif %}
 {% if object.same_as %}
 <div class="span-18" id="identical">
-  <p>{% blocktrans %}This request is identical to:{% endblocktrans %}</p>
-    <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a>
+  <p>{% blocktrans %}This request is identical to:{% endblocktrans %}
+    <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a></p>
   </p>
 </div>
 {% endif %}
