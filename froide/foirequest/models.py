@@ -431,7 +431,7 @@ class FoiRequest(models.Model):
         last_message = list(self.messages)[-1]
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
-        if self.is_overdue():
+        if self.is_overdue() and self.awaits_response():
             message = render_to_string('foirequest/overdue_reply.txt', {
                 'foirequest': self
             })
