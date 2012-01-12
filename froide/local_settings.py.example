@@ -69,6 +69,7 @@ FROIDE_PUBLIC_BODY_BOOSTS = {
 }
 
 DEFAULT_FROM_EMAIL = 'info@example.com'
+SERVER_EMAIL = 'error@example.com'
 EMAIL_SUBJECT_PREFIX = '[Froide] '
 
 # dev use:
