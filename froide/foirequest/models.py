@@ -207,8 +207,8 @@ class FoiRequest(models.Model):
 
     same_as = models.ForeignKey('self', null=True, blank=True,
             on_delete=models.SET_NULL,
-            verbose_name=_("Original Request"))
-    same_as_count = models.IntegerField(_("Similar request count"), default=0)
+            verbose_name=_("Identical request"))
+    same_as_count = models.IntegerField(_("Identical request count"), default=0)
 
 
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
