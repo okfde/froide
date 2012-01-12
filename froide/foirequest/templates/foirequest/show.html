@@ -198,7 +198,6 @@
   <div class="sticky foirequest-overview">
   {% if object.messages %}
     <h4>{% trans "Overview" %}</h4>
-    <small><a class="toggle" href="#foirequest-overview-list">{% trans "show/hide" %}</a></small>
     <ul id="foirequest-overview-list">
     {% for message in object.messages %}
       <li>
