@@ -25,7 +25,7 @@ def process_mail(mail):
     exc_info = run(mail)
     if exc_info is not None:
         from sentry.client.models import client
-        client.create_from_exception(exc_info=exc_info, view="foirequest.tasks.process_mail")
+        client.create_from_exception(exc_info=exc_info, view="froide.foirequest.tasks.process_mail")
 
 @task
 def fetch_mail():

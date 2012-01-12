@@ -3,7 +3,7 @@ from __future__ import with_statement
 
 from django.test import TestCase
 
-from foirequest.tasks import _process_mail
+from froide.foirequest.tasks import _process_mail
 from foirequest.models import FoiRequest
 
 

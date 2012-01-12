@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 from foirequest.models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 from froide.foirequest.tasks import count_same_foirequests
 
-from helper.tasks import delayed_update
+from froide.helper.tasks import delayed_update
 
 
 @receiver(FoiRequest.became_overdue,
