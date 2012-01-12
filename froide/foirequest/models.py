@@ -17,7 +17,7 @@ from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
 from django.utils.http import urlquote
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_managers
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
@@ -479,7 +479,7 @@ Sincerely yours
         self.status = 'awaiting_classification'
         self.last_message = message.timestamp
         self.save()
-
+        has_pdf = False
         for attachment in email['attachments']:
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
@@ -487,9 +487,16 @@ Sincerely yours
                     filetype=attachment.content_type)
             if att.name is None:
                 att.name = _("attached_file")
+            if att.name.endswith('pdf') or 'pdf' in att.filetype:
+                has_pdf = True
             attachment._committed = False
             att.file = File(attachment)
             att.save()
+        if (has_pdf and
+                settings.FROIDE_CONFIG.get("mail_managers_on_pdf_attachment",
+                    False)):
+            mail_managers(_('Message contains PDF'),
+                    self.get_absolute_domain_url())
         self.message_received.send(sender=self, message=message)
 
     def add_message(self, user, recipient_name, recipient_email,
@@ -531,7 +538,7 @@ Sincerely yours
     def generate_secret_address(cls, user):
         possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
         secret = "".join([random.choice(possible_chars) for i in range(10)])
-        return "%s+%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
+        return "%s.%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
 
     @classmethod
     def generate_unique_secret_address(cls, user):
