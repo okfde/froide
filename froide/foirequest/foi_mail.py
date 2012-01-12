@@ -2,9 +2,14 @@ import base64
 from email.utils import parseaddr
 
 from django.conf import settings
-from django.core.mail import get_connection, EmailMessage
+from django.core.mail import get_connection, EmailMessage, mail_managers
+from django.utils.translation import ugettext as _
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails, make_address)
+
+
+unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
+No corresponding request could be identified, please investigate!''')
 
 def send_foi_mail(subject, message, from_email, recipient_list,
               fail_silently=False, **kwargs):
@@ -49,6 +54,9 @@ def _process_mail(mail_string):
         try:
             foi_request = FoiRequest.objects.get_by_secret_mail(secret_mail)
         except FoiRequest.DoesNotExist:
+            if secret_mail.endswith('@%s' % settings.FOI_EMAIL_DOMAIN):
+                mail_managers(_('Unknown FoI-Mail Recipient'),
+                    unknown_foimail_message % {'address': secret_mail})
             continue
         foi_request.add_message_from_email(email, mail_string)
 
