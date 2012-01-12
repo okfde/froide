@@ -165,13 +165,13 @@ INSTALLED_APPS = (
     'sentry.client',
     'pagination',
     'djangosecure',
-    
+
     # local
-    'foirequest',
-    'foirequestfollower',
-    'frontpage',
-    'publicbody',
-    'account',
+    'froide.foirequest',
+    'froide.foirequestfollower',
+    'froide.frontpage',
+    'froide.publicbody',
+    'froide.account',
 )
 
 # A sample logging configuration. The only tangible logging
