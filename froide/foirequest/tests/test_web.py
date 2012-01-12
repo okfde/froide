@@ -31,14 +31,31 @@ class WebTest(TestCase):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": urlpart}))
             self.assertEqual(response.status_code, 200)
-        
+
         for topic in PublicBodyTopic.objects.all():
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"topic": topic.slug}))
             self.assertEqual(response.status_code, 200)
-        
+
         response = self.client.get(reverse('foirequest-list_not_foi'))
         self.assertEqual(response.status_code, 200)
+
+    def test_list_no_identical(self):
+        reqs = FoiRequest.published.all()
+        req1 = reqs[0]
+        req2 = reqs[1]
+        response = self.client.get(reverse('foirequest-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(req1.title, response.content.decode('utf-8'))
+        self.assertIn(req2.title, response.content.decode('utf-8'))
+        req1.same_as = req2
+        req1.save()
+        req2.same_as_count = 1
+        req2.save()
+        response = self.client.get(reverse('foirequest-list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(req1.title, response.content.decode('utf-8'))
+        self.assertIn(req2.title, response.content.decode('utf-8'))
 
     def test_show_request(self):
         req = FoiRequest.objects.all()[0]
