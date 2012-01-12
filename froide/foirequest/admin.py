@@ -55,7 +55,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
                 raise PermissionDenied
             queryset.update(same_as=req)
             count_same_foirequests.delay(req.id)
-            self.message_user(request, _("Successfully marked requests as same."))
+            self.message_user(request, _("Successfully marked requests as identical."))
             # Return None to display the change list page again.
             return None
 

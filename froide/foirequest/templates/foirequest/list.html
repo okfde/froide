@@ -34,7 +34,7 @@
         <br/>
         <span class="hover-visble small">{% blocktrans with time=object.first_message|timesince %}{{ time }} ago{% endblocktrans %}
         {% if object.same_as_count %}
-          – <a href="{{ object.get_absolute_url }}#identical">{% blocktrans count counter=object.same_as_count %}One similar request{% plural %}{{ counter }} similar requests{% endblocktrans %}</a>
+          – <a href="{{ object.get_absolute_url }}#identical">{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>
         {% endif %}
         </span>
       </td>
