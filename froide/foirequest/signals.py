@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from foirequest.models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
-from foirequest.tasks import count_same_foirequests
+from froide.foirequest.tasks import count_same_foirequests
 
 from helper.tasks import delayed_update
 
