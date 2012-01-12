@@ -252,6 +252,11 @@ class FoiRequest(models.Model):
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
 
+
+    @property
+    def same_as_set(self):
+        return FoiRequest.objects.filter(same_as=self)
+
     @property
     def messages(self):
         if not hasattr(self, "_messages") or \

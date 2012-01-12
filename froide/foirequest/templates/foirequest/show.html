@@ -526,6 +526,25 @@
 {% endfor %}
 </div>
 </div>
+{% if object.same_as_count %}
+<div class="span-18" id="identical">
+  <h5>{% blocktrans %}Identical requests{% endblocktrans %}</h5>
+  <ul>
+  {% for foirequest in object.same_as_set.all %}
+    <li>
+      <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }} {{ foirequest.title }}</a>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% if object.same_as %}
+<div class="span-18" id="identical">
+  <p>{% blocktrans %}This request is identical to:{% endblocktrans %}</p>
+    <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a>
+  </p>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_footer %}
