@@ -1,8 +1,14 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
+from django.core.exceptions import PermissionDenied
+from django.db import router
+from django.template.response import TemplateResponse
+from django.utils.safestring import mark_safe
+from django.contrib.admin import helpers
+
 from froide.foirequest.models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion)
-
+from froide.foirequest.tasks import count_same_foirequests
 
 class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
@@ -18,7 +24,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
-    actions = ['mark_checked', 'mark_not_foi']
+    actions = ['mark_checked', 'mark_not_foi', 'mark_same_as']
+    raw_id_fields = ('same_as',)
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
@@ -29,6 +36,48 @@ class FoiRequestAdmin(admin.ModelAdmin):
         rows_updated = queryset.update(is_foi=False)
         self.message_user(request, _("%d request(s) successfully marked as not FoI." % rows_updated))
     mark_not_foi.short_description = _("Mark selected requests as not FoI")
+
+    def mark_same_as(self, request, queryset):
+        """
+        Mark selected requests as same as the one we are choosing now.
+
+        """
+        opts = self.model._meta
+        # Check that the user has change permission for the actual model
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        # User has already chosen the other req
+        if request.POST.get('req_id'):
+            try:
+                req = self.model.objects.get(id=int(request.POST.get('req_id')))
+            except (ValueError, self.model.DoesNotExist,):
+                raise PermissionDenied
+            queryset.update(same_as=req)
+            count_same_foirequests.delay(req.id)
+            self.message_user(request, _("Successfully marked requests as same."))
+            # Return None to display the change list page again.
+            return None
+
+        db = router.db_for_write(self.model)
+        context = {
+            'opts': opts,
+            'queryset': queryset,
+            'media': self.media,
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
+                    self.model._meta.get_field(
+                    'same_as').rel, using=db).render(
+                    'req_id', None).replace('../../..', '../..')),
+            'applabel': opts.app_label
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(request, 'foirequest/admin_mark_same_as.html',
+            context, current_app=self.admin_site.name)
+
+    mark_same_as.short_description = _("Mark selected requests as identical to...")
+
 
 
 class FoiAttachmentInline(admin.TabularInline):

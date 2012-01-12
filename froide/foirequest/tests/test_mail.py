@@ -6,7 +6,7 @@ from django.core import mail
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from foirequest.tasks import _process_mail
+from froide.foirequest.tasks import _process_mail
 from foirequest.models import FoiRequest
 
 

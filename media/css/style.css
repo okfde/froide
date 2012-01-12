@@ -682,6 +682,8 @@ textarea.smalltext {
     height: 80px;
 }
 
+
+
 .js .hidden {
     display:none;
 }
@@ -991,6 +993,21 @@ textarea.smalltext {
     background-position: 0 0;
 }
 
+.small {
+    color: #666;
+    font-size:0.8em;
+}
+
+.small a {
+    text-decoration: none;
+    color: #666;
+}
+
+.small a:hover {
+    text-decoration: underline;
+    color: #666;
+}
+
 .time-small {
     color: #666;
     font-size:0.8em;
@@ -1070,4 +1087,16 @@ textarea.smalltext {
 .sidebar h3 {
     font-size: 1em;
     margin-top: 0;
+}
+
+.hover-visible {
+    visibility: hidden;
+}
+
+.hover-parent:hover .hover-visible{
+    visibility: visible;
+}
+
+.center {
+    text-align: center;
 }

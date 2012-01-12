@@ -321,7 +321,7 @@ FOI_EMAIL_USE_TLS = True
 import djcelery
 djcelery.setup_loader()
 
-CELERY_IMPORTS = ("foirequest.tasks", )
+CELERY_IMPORTS = ("froide.foirequest.tasks", "froide.helper.tasks")
 
 CELERY_RESULT_BACKEND = "database"
 CELERY_RESULT_DBURI = "sqlite:///dev.db"
