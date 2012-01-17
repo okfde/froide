@@ -65,9 +65,7 @@
                 <input type="text" name="q" placeholder="{% trans "Search" %}"/>
               </form>
             </li>
- 
           </ul>
-
         </nav>
       </div>
     </header>
@@ -92,6 +90,13 @@
     {% endblock %}
   </div>
   <footer id="footer" class="container">
+    <div>
+      <a class="logo" href="http://okfn.de"><img src="{{ STATIC_URL }}img/okf.png" /></a>
+      <p>
+        {% url 'help-about' as about_url %}
+        {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://stefanwehrmeyer.com">Stefan Wehrmeyer</a>.<br/>If you want to support Froide, please visit the <a href="{{url}}">repository on GitHub.</a>.{% endblocktrans %}
+      </p>
+    </div>
     <ul>
       <li><a href="{% url 'help-about' %}">{% trans "About" %}</a></li>
       <li><a href="http://blog.fragdenstaat.de/">{% trans "Blog" %}</a></li>

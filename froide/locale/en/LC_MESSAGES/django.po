@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-12 04:37+0100\n"
+"POT-Creation-Date: 2012-01-16 20:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,6 +44,11 @@ msgstr ""
 #. Translators: URL part of /help/
 #: help_urls.py:24
 msgid "for-foi-officers"
+msgstr ""
+
+#. Translators: URL part of /help/
+#: help_urls.py:26
+msgid "howto-foi"
 msgstr ""
 
 #. Translators: request URL
@@ -2898,40 +2903,48 @@ msgstr ""
 msgid "Make a Request!"
 msgstr ""
 
-#: templates/base.html:78
+#: templates/base.html:76
 #, python-format
 msgid "Logged in as <a href=\"%(url)s\">%(username)s</a>"
 msgstr ""
 
-#: templates/base.html:79
+#: templates/base.html:77
 msgid "Logout"
 msgstr ""
 
-#: templates/base.html:81
+#: templates/base.html:79
 msgid "Log In / Sign up"
 msgstr ""
 
 #: templates/base.html:96
-msgid "About"
-msgstr ""
-
-#: templates/base.html:97
-msgid "Blog"
+#, python-format
+msgid ""
+"Froide is a free and Open Source Project by <a href=\"http://stefanwehrmeyer."
+"com\">Stefan Wehrmeyer</a>.<br/>If you want to support Froide, please visit "
+"the <a href=\"%(url)s\">repository on GitHub.</a>."
 msgstr ""
 
 #: templates/base.html:99
-msgid "Mailinglist!"
+msgid "About"
 msgstr ""
 
 #: templates/base.html:100
-msgid "Impressum"
-msgstr ""
-
-#: templates/base.html:101
-msgid "Terms of Use"
+msgid "Blog"
 msgstr ""
 
 #: templates/base.html:102
+msgid "Mailinglist!"
+msgstr ""
+
+#: templates/base.html:103
+msgid "Impressum"
+msgstr ""
+
+#: templates/base.html:104
+msgid "Terms of Use"
+msgstr ""
+
+#: templates/base.html:105
 msgid "Privacy Statement"
 msgstr ""
 
