@@ -334,7 +334,7 @@
 {# Reply #}
 <div class="section focussed" id="reply-section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a message to this Public Body{% endblocktrans %}</a>
-  <div id="write-message"{% if not object.is_overdue and not object.awaits_response and not send_message_form %} style="display:none"{% endif %}>
+  <div id="write-message"{% if send_message_form or object.is_overdue and object.awaits_response %}{% else %} style="display:none"{% endif %}>
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">{% csrf_token %}
   {% if object.is_overdue and object.awaits_response %}
     <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
