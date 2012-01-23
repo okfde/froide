@@ -155,9 +155,13 @@ class FoiRequest(models.Model):
             (_("successful"), 'successful'),
             (_("partially-successful"), 'partially_successful'),
             (_("refused"), 'refused'),
+            (_("escalated"), 'escalated'),
+            (_("withdrawn"), 'user_withdrew'),
+            (_("withdrawn-costs"), 'user_withdrew_costs'),
             (_("publicbody-needed"), 'publicbody_needed'),
             (_("awaiting-response"), 'awaiting_response'),
-            (_("overdue"), 'overdue')
+            (_("overdue"), 'overdue'),
+            (_("not-held"), 'not_held')
     ]
 
     # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
