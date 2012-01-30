@@ -193,7 +193,7 @@
       {% with object.get_set_tags_form as set_tags_form %}
         {% trans "Enter tags:" %}
         {{ set_tags_form.tags }}
-        <small>{{ set_tags_form.tags.help_text }}</small>
+        <br/><small>{{ set_tags_form.tags.help_text }}</small>
       {% endwith %}
     </form>
     <hr/>
