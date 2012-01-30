@@ -7,6 +7,6 @@ class FeaturedRequestAdmin(admin.ModelAdmin):
     search_fields = ['title', 'request__title']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
-    raw_id_fields = ('request',)
+    raw_id_fields = ('request', 'user',)
 
 admin.site.register(FeaturedRequest, FeaturedRequestAdmin)
