@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-30 19:23+0100\n"
-"PO-Revision-Date: 2012-01-30 19:31+0100\n"
+"POT-Creation-Date: 2012-01-30 20:04+0100\n"
+"PO-Revision-Date: 2012-01-30 20:07+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -519,31 +519,39 @@ msgstr "Ändern Sie Ihre Adresse"
 msgid "Change address"
 msgstr "Adresse ändern"
 
-#: foirequest/admin.py:33
+#: foirequest/admin.py:35
 #, python-format
 msgid "%d request(s) successfully marked as checked."
 msgstr "%d Anfrage(n) wurden als gesehen markiert."
 
-#: foirequest/admin.py:34
+#: foirequest/admin.py:36
 msgid "Mark selected requests as checked"
 msgstr "Markiere ausgewählte Informationsfreiheitsanfragen als gesehen"
 
-#: foirequest/admin.py:38
+#: foirequest/admin.py:40
 #, python-format
 msgid "%d request(s) successfully marked as not FoI."
 msgstr "%d "
 
-#: foirequest/admin.py:39
+#: foirequest/admin.py:41
 msgid "Mark selected requests as not FoI"
 msgstr "Markiere ausgewählte Anfragen als nicht-IF"
 
-#: foirequest/admin.py:59
+#: foirequest/admin.py:61
 msgid "Successfully marked requests as identical."
 msgstr "Markierung als identisch war erfolgreich."
 
-#: foirequest/admin.py:80
+#: foirequest/admin.py:82
 msgid "Mark selected requests as identical to..."
 msgstr "Markiere ausgewählte Anfragen als identisch zu..."
+
+#: foirequest/admin.py:100
+msgid "Successfully added tags to requests"
+msgstr "Tags zu Anfragen hinzufügen war erfolgreich"
+
+#: foirequest/admin.py:116
+msgid "Tag all requests with..."
+msgstr "Anfragen mit Tags versehen..."
 
 #: foirequest/feeds.py:12
 #, python-format
@@ -1544,6 +1552,7 @@ msgid "Costs:"
 msgstr "Kosten:"
 
 #: foirequest/templates/foirequest/admin_mark_same_as.html:16
+#: foirequest/templates/foirequest/admin_tag_all.html:16
 msgid "Home"
 msgstr "Start"
 
@@ -1562,6 +1571,22 @@ msgstr "...sind identisch zu dieser Anfrage:"
 #: foirequest/templates/foirequest/admin_mark_same_as.html:39
 msgid "Mark as identical to chosen request"
 msgstr "Als identisch zu den gewählten Anfragen markieren"
+
+#: foirequest/templates/foirequest/admin_tag_all.html:19
+msgid "Add tags to multiple requests"
+msgstr "Fügen Sie Tags zu mehreren Anfragen hinzu"
+
+#: foirequest/templates/foirequest/admin_tag_all.html:26
+msgid "Add these tags to all selected requests:"
+msgstr "Füge diese Tags zu allen gewählten Anfragen hinzu:"
+
+#: foirequest/templates/foirequest/admin_tag_all.html:27
+msgid "Enter Tags here"
+msgstr "Hier Tags eingeben"
+
+#: foirequest/templates/foirequest/admin_tag_all.html:41
+msgid "Add tags to these requests"
+msgstr "Fügen Sie Tags zu diesen Anfragen hinzu"
 
 #: foirequest/templates/foirequest/became_overdue.txt:1
 #, python-format

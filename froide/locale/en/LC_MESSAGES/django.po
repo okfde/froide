@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-30 19:23+0100\n"
+"POT-Creation-Date: 2012-01-30 20:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -518,30 +518,38 @@ msgstr ""
 msgid "Change address"
 msgstr ""
 
-#: foirequest/admin.py:33
+#: foirequest/admin.py:35
 #, python-format
 msgid "%d request(s) successfully marked as checked."
 msgstr ""
 
-#: foirequest/admin.py:34
+#: foirequest/admin.py:36
 msgid "Mark selected requests as checked"
 msgstr ""
 
-#: foirequest/admin.py:38
+#: foirequest/admin.py:40
 #, python-format
 msgid "%d request(s) successfully marked as not FoI."
 msgstr ""
 
-#: foirequest/admin.py:39
+#: foirequest/admin.py:41
 msgid "Mark selected requests as not FoI"
 msgstr ""
 
-#: foirequest/admin.py:59
+#: foirequest/admin.py:61
 msgid "Successfully marked requests as identical."
 msgstr ""
 
-#: foirequest/admin.py:80
+#: foirequest/admin.py:82
 msgid "Mark selected requests as identical to..."
+msgstr ""
+
+#: foirequest/admin.py:100
+msgid "Successfully added tags to requests"
+msgstr ""
+
+#: foirequest/admin.py:116
+msgid "Tag all requests with..."
 msgstr ""
 
 #: foirequest/feeds.py:12
@@ -1491,6 +1499,7 @@ msgid "Costs:"
 msgstr ""
 
 #: foirequest/templates/foirequest/admin_mark_same_as.html:16
+#: foirequest/templates/foirequest/admin_tag_all.html:16
 msgid "Home"
 msgstr ""
 
@@ -1508,6 +1517,22 @@ msgstr ""
 
 #: foirequest/templates/foirequest/admin_mark_same_as.html:39
 msgid "Mark as identical to chosen request"
+msgstr ""
+
+#: foirequest/templates/foirequest/admin_tag_all.html:19
+msgid "Add tags to multiple requests"
+msgstr ""
+
+#: foirequest/templates/foirequest/admin_tag_all.html:26
+msgid "Add these tags to all selected requests:"
+msgstr ""
+
+#: foirequest/templates/foirequest/admin_tag_all.html:27
+msgid "Enter Tags here"
+msgstr ""
+
+#: foirequest/templates/foirequest/admin_tag_all.html:41
+msgid "Add tags to these requests"
 msgstr ""
 
 #: foirequest/templates/foirequest/became_overdue.txt:1
