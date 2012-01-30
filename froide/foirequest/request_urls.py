@@ -16,6 +16,7 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/escalation/message/$", 'foirequest.views.escalation_message', name="foirequest-escalation_message"),
     url(r"^(?P<slug>[-\w]+)/make/public/$", 'foirequest.views.make_public', name="foirequest-make_public"),
     url(r"^(?P<slug>[-\w]+)/set/law/$", 'foirequest.views.set_law', name="foirequest-set_law"),
+    url(r"^(?P<slug>[-\w]+)/set/tags/$", 'foirequest.views.set_tags', name="foirequest-set_tags"),
     url(r"^(?P<slug>[-\w]+)/set/resolution/$", 'foirequest.views.set_resolution', name="foirequest-set_resolution"),
 
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", 'foirequest.views.add_postal_reply', name="foirequest-add_postal_reply"),

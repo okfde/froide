@@ -7,6 +7,9 @@ from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
+from taggit.forms import TagField
+from taggit.utils import edit_string_for_tags
+
 from publicbody.models import PublicBody
 from publicbody.widgets import PublicBodySelect
 from foirequest.models import FoiRequest, FoiAttachment
@@ -24,7 +27,7 @@ class RequestForm(forms.Form):
             required=False)
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
-    body = forms.CharField(label=_("Body"), 
+    body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
             attrs={'placeholder': _("Specify your request here...")}))
     public = forms.BooleanField(required=False, initial=True,
@@ -71,7 +74,7 @@ class RequestForm(forms.Form):
             self.public_body_object = public_body
             self.foi_law_object = public_body.default_law
         return pb
-    
+
     public_body_object = None
 
     def clean_law_for_public_body(self, public_body):
@@ -95,6 +98,7 @@ class RequestForm(forms.Form):
         else:
             self.foi_law = self.clean_law_without_public_body()
         return cleaned
+
 
 class MessagePublicBodySenderForm(forms.Form):
     sender = forms.IntegerField(label=_("Sending Public Body"),
@@ -120,6 +124,7 @@ class MessagePublicBodySenderForm(forms.Form):
     def save(self):
         self.message.sender_public_body = self._public_body
         self.message.save()
+
 
 class SendMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
@@ -157,7 +162,7 @@ class MakePublicBodySuggestionForm(forms.Form):
     public_body = forms.IntegerField(widget=PublicBodySelect)
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
             widget=forms.TextInput(attrs={"size": "40"}), required=False)
-    
+
     def clean_public_body(self):
         pb = self.cleaned_data['public_body']
         try:
@@ -186,6 +191,7 @@ class EscalationMessageForm(forms.Form):
     def save(self):
         self.foirequest.add_escalation_message(**self.cleaned_data)
 
+
 class PublicBodySuggestionsForm(forms.Form):
     def __init__(self, queryset, *args, **kwargs):
         super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)
@@ -200,12 +206,13 @@ class PublicBodySuggestionsForm(forms.Form):
                     "reason": _("Reason for this suggestion: %(reason)s") % {"reason": s.reason}
                 })) for s in queryset))
 
+
 class FoiRequestStatusForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
         self.fields['refusal_reason'] = forms.ChoiceField(label=_("Refusal Reason"),
-            choices=[('', _('No or other reason given'))] + 
-            foirequest.law.get_refusal_reason_choices(),required=False)
+            choices=[('', _('No or other reason given'))] +
+            foirequest.law.get_refusal_reason_choices(), required=False)
 
     status = forms.ChoiceField(label=_("Status"),
             # widget=forms.RadioSelect,
@@ -229,7 +236,6 @@ class FoiRequestStatusForm(forms.Form):
             except PublicBody.DoesNotExist:
                 raise forms.ValidationError(_("Invalid value"))
         return self.cleaned_data
-
 
 
 class ConcreteLawForm(forms.Form):
@@ -279,7 +285,6 @@ class PostalReplyForm(forms.Form):
     scan = forms.FileField(label=_("Scanned Letter"), required=False,
             help_text=_("Uploaded scans can be PDF, JPG or PNG"))
 
-
     def clean_date(self):
         date = self.cleaned_data['date']
         now = datetime.datetime.now().date()
@@ -303,6 +308,7 @@ class PostalReplyForm(forms.Form):
             raise forms.ValidationError(_("You need to provide either the letter text or a scanned document."))
         return cleaned_data
 
+
 class PostalAttachmentForm(forms.Form):
     scan = forms.FileField(label=_("Scanned Document"),
             help_text=_("Uploaded scans can be PDF, JPG or PNG"))
@@ -314,3 +320,17 @@ class PostalAttachmentForm(forms.Form):
                 raise forms.ValidationError(
                         _("The scanned letter must be either PDF, JPG or PNG!"))
         return scan
+
+
+class TagFoiRequestForm(forms.Form):
+    tags = TagField(label=_("Tags"),
+            help_text=_("Comma separated and quoted"))
+
+    def __init__(self, foirequest, *args, **kwargs):
+        self.foirequest = foirequest
+        kwargs['initial'] = {'tags': edit_string_for_tags([o for o in foirequest.tags.all()])}
+        super(TagFoiRequestForm, self).__init__(*args, **kwargs)
+
+    def save(self):
+        self.foirequest.tags.set(*self.cleaned_data['tags'])
+        self.foirequest.save()

@@ -359,12 +359,15 @@ class FoiRequest(models.Model):
         except FoiRequestFollower.DoesNotExist:
             return False
 
-
     def public_date(self):
         if self.due_date:
             return self.due_date + timedelta(days=settings.FROIDE_CONFIG.get(
                 'request_public_after_due_days', 14))
         return None
+
+    def get_set_tags_form(self):
+        from foirequest.forms import TagFoiRequestForm
+        return TagFoiRequestForm(self)
 
     def get_status_form(self):
         from foirequest.forms import FoiRequestStatusForm

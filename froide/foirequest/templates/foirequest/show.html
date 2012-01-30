@@ -185,8 +185,18 @@
     {% endif %}
     {% endwith %}
 
-  {% if user.is_staff %}
+    {% if user.is_staff %}
+    <hr/>
     <a href="{% url 'admin:foirequest_foirequest_change' object.id %}">{% trans "View on Admin site" %}</a><br/>
+    <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
+      {% csrf_token %}
+      {% with object.get_set_tags_form as set_tags_form %}
+        {% trans "Enter tags:" %}
+        {{ set_tags_form.tags }}
+        <small>{{ set_tags_form.tags.help_text }}</small>
+      {% endwith %}
+    </form>
+    <hr/>
     {% if object.checked %}
       {% trans "Marked as checked" %}<br/>
     {% else %}

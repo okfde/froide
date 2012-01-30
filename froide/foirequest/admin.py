@@ -10,6 +10,7 @@ from froide.foirequest.models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion)
 from froide.foirequest.tasks import count_same_foirequests
 
+
 class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
 
@@ -77,7 +78,6 @@ class FoiRequestAdmin(admin.ModelAdmin):
             context, current_app=self.admin_site.name)
 
     mark_same_as.short_description = _("Mark selected requests as identical to...")
-
 
 
 class FoiAttachmentInline(admin.TabularInline):
