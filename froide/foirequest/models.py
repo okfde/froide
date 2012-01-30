@@ -21,6 +21,7 @@ from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
 
 from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
 
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.email_utils import make_address
@@ -99,6 +100,14 @@ class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
 
     def for_list_view(self):
         return self.get_query_set().order_by('-first_message')
+
+
+class TaggedFoiRequest(TaggedItemBase):
+    content_object = models.ForeignKey('FoiRequest')
+
+    class Meta:
+        verbose_name = _('FoI Request Tag')
+        verbose_name_plural = _('FoI Request Tags')
 
 
 class FoiRequest(models.Model):
@@ -231,7 +240,7 @@ class FoiRequest(models.Model):
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
     published_not_foi = PublishedNotFoiRequestManager()
-    tags = TaggableManager()
+    tags = TaggableManager(through=TaggedFoiRequest)
 
     class Meta:
         ordering = ('last_message',)
