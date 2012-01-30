@@ -162,6 +162,7 @@
     {% endif %}
     </form>
     {% endif %}
+
     <ul class="iconed-list">
       <li class="rss-icon">
           <a href="{% url 'foirequest-feed' slug=object.slug %}">{% trans "RSS Feed" %}</a>
@@ -170,6 +171,20 @@
           <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">{% trans "Atom Feed" %}</a>
       </li>
     </ul>
+
+    {% with object.tags.all as tags %}
+    <h3>{% trans "Tags" %}</h3>
+    {% if tags %}
+      <ul class="tag-list">
+      {% for tag in tags %}
+        <li>
+          <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+
   {% if user.is_staff %}
     <a href="{% url 'admin:foirequest_foirequest_change' object.id %}">{% trans "View on Admin site" %}</a><br/>
     {% if object.checked %}
