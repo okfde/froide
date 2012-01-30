@@ -240,7 +240,7 @@ class FoiRequest(models.Model):
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
     published_not_foi = PublishedNotFoiRequestManager()
-    tags = TaggableManager(through=TaggedFoiRequest)
+    tags = TaggableManager(through=TaggedFoiRequest, blank=True)
 
     class Meta:
         ordering = ('last_message',)
