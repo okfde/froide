@@ -165,6 +165,7 @@ INSTALLED_APPS = (
     'sentry.client',
     'pagination',
     'djangosecure',
+    'taggit',
 
     # local
     'froide.foirequest',
