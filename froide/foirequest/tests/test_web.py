@@ -40,6 +40,16 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list_not_foi'))
         self.assertEqual(response.status_code, 200)
 
+    def test_tagged_requests(self):
+        response = self.client.get(reverse('foirequest-list', kwargs={"tag": "awesome"}))
+        self.assertEqual(response.status_code, 404)
+        req = FoiRequest.published.all()[0]
+        req.tags.add('awesome')
+        req.save()
+        response = self.client.get(reverse('foirequest-list', kwargs={"tag": "awesome"}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(req.title, response.content.decode('utf-8'))
+
     def test_list_no_identical(self):
         reqs = FoiRequest.published.all()
         req1 = reqs[0]
