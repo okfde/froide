@@ -399,6 +399,21 @@ strong {
     margin: 2em auto 1em;
 }
 
+#footer div {
+    margin: 0 auto 2em;
+    width: 630px;
+}
+
+#footer .logo {
+    display: block;
+    float: left;
+    padding-right: 2em;
+}
+
+#footer p {
+    text-align: left;
+}
+
 #footer ul{
     /* bottom:0px;*/
     /* position:absolute;*/
