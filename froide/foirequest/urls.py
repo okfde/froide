@@ -10,6 +10,7 @@ urlpatterns = patterns("",
     (r'^%s/$' % pgettext('URL part', 'not-foi'), 'foirequest.views.list_requests_not_foi', {}, 'foirequest-list_not_foi'),
     # Translators: part in request filter URL
     (r'^%s/(?P<topic>[-\w]+)/$' % pgettext('URL part', 'topic'), 'foirequest.views.list_requests', {}, 'foirequest-list'),
+    (r'^%s/(?P<tag>[-\w]+)/$' % pgettext('URL part', 'tag'), 'foirequest.views.list_requests', {}, 'foirequest-list'),
 
 )
 

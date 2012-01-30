@@ -5,15 +5,18 @@
 
 {% block body %}
 {% autopaginate object_list %}
-{% if not status and not topic %}
-<h2>{{ page_title|safe }}</h2>
-{% else %}
-{% if status %}
-<h2>{{ status }}</h2>
-<p>{{ status_description }}</p>
-{% else %}
-<h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
+{% if not filtered %}
+  <h2>{{ page_title|safe }}</h2>
 {% endif %}
+{% if status %}
+  <h2>{{ status }}</h2>
+  <p>{{ status_description }}</p>
+{% endif %}
+{% if tag %}
+  <h2>{% blocktrans with name=tag.name %}Requests with tag "{{ name }}"{% endblocktrans %}</h2>
+{% endif %}
+{% if topic %}
+  <h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
 {% endif %}
 <div class="span-18">
   <table class="no-stripes">
@@ -55,7 +58,7 @@
 
 <div class="span-6 last">
   <p>{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</p>
-  {% if status or topic or not_foi %}
+  {% if filtered or not_foi %}
   <p>
     <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
   </p>

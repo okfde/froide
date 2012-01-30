@@ -20,6 +20,8 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
 
+from taggit.managers import TaggableManager
+
 from publicbody.models import PublicBody, FoiLaw
 from froide.helper.email_utils import make_address
 from froide.helper.date_utils import convert_to_local
@@ -214,7 +216,6 @@ class FoiRequest(models.Model):
             verbose_name=_("Identical request"))
     same_as_count = models.IntegerField(_("Identical request count"), default=0)
 
-
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
             on_delete=models.SET_NULL,
             verbose_name=_("Freedom of Information Law"))
@@ -227,11 +228,10 @@ class FoiRequest(models.Model):
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
 
-
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
     published_not_foi = PublishedNotFoiRequestManager()
-
+    tags = TaggableManager()
 
     class Meta:
         ordering = ('last_message',)

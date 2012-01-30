@@ -1013,6 +1013,24 @@ textarea.smalltext {
     font-size:0.8em;
 }
 
+.tag-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.tag-list li {
+    display: inline;
+}
+
+.tag-list li a {
+    font-size: 0.8em;
+   text-decoration: none;
+}
+
+.tag-list li a:hover {
+   text-decoration: underline;
+}
+
 .iconed-list {
     list-style-type: none;
 }

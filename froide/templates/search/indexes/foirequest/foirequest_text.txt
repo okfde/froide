@@ -1,6 +1,10 @@
 {{ object.title }} {{ object.description }} {{ object.resolution }} {{ object.refusal_reason }}
  {{ object.public_body.name }}
 
+{% for tag in object.tags.all %}
+	{{ tag.name }}
+{% endfor %}
+
 {% for message in object.messages %}
     {{ message.get_content }}
     {% for att in message.foiattachment_set.all %}
