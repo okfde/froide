@@ -17,7 +17,7 @@ from publicbody.forms import PublicBodyForm
 from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
 from frontpage.models import FeaturedRequest
 
-from foirequest.forms import RequestForm, ConcreteLawForm
+from foirequest.forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
 from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm,
@@ -416,6 +416,19 @@ def set_law(request, slug):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A concrete law has been set for this request.'))
+    return HttpResponseRedirect(foirequest.get_absolute_url())
+
+
+@require_POST
+def set_tags(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated() or not request.user.is_staff:
+        return render_403(request)
+    form = TagFoiRequestForm(foirequest, request.POST)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Tags have been set for this request'))
     return HttpResponseRedirect(foirequest.get_absolute_url())
 
 

@@ -10,6 +10,7 @@ from publicbody.models import PublicBody
 from foirequest.models import FoiRequest
 from account.models import AccountManager
 
+
 class AccountTest(TestCase):
     fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
 
