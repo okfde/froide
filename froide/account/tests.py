@@ -67,7 +67,6 @@ class AccountTest(TestCase):
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 302)
 
-
     def test_signup(self):
         mail.outbox = []
         post = {"first_name": "Horst",
@@ -129,7 +128,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
-                'secret': 'a'*32}))
+                'secret': 'a' * 32}))
         self.assertEqual(response.status_code, 302)
         self.client.logout()
         response = self.client.get(reverse('account-confirm',
@@ -210,11 +209,11 @@ class AccountTest(TestCase):
         self.assertTrue(ok)
 
     def test_private_name(self):
-        user = User.objects.get(email="mail@stefanwehrmeyer.com")
+        user = User.objects.get(username="dummy")
         profile = user.get_profile()
         profile.private = True
         profile.save()
-        self.client.login(username='sw', password='froide')
+        self.client.login(username='dummy', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Request - Private name",
                 "body": "This is a test body",
@@ -224,7 +223,7 @@ class AccountTest(TestCase):
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
-        self.client.logout() # log out to remove Account link
+        self.client.logout()  # log out to remove Account link
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
@@ -238,6 +237,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-change_address'), data)
         self.assertEqual(response.status_code, 403)
         ok = self.client.login(username='sw', password='froide')
+        self.assertTrue(ok)
         response = self.client.post(reverse('account-change_address'), data)
         self.assertEqual(response.status_code, 400)
         data["address"] = ""
@@ -290,7 +290,7 @@ class AccountTest(TestCase):
 
         # Try logging in via link: wrong user id
         autologin = reverse('account-go', kwargs=dict(
-            user_id='80000', secret='a'*32, url=test_url
+            user_id='80000', secret='a' * 32, url=test_url
         ))
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 404)
@@ -301,7 +301,7 @@ class AccountTest(TestCase):
 
         # Try logging in via link: wrong secret
         autologin = reverse('account-go', kwargs=dict(
-            user_id=str(user.id), secret='a'*32, url=test_url
+            user_id=str(user.id), secret='a' * 32, url=test_url
         ))
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 302)
