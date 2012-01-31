@@ -173,8 +173,8 @@
     </ul>
 
     {% with object.tags.all as tags %}
-    <h3>{% trans "Tags" %}</h3>
     {% if tags %}
+      <h3>{% trans "Tags" %}</h3>
       <ul class="tag-list">
       {% for tag in tags %}
         <li>
