@@ -60,7 +60,7 @@ def list_requests(request, status=None, topic=None, tag=None):
             })
     elif tag is not None:
         tag_object = get_object_or_404(Tag, slug=tag)
-        foi_requests = FoiRequest.published.filter(tags=tag_object)
+        foi_requests = FoiRequest.published.for_list_view().filter(tags=tag_object)
         if not foi_requests:
             raise Http404
         context.update({

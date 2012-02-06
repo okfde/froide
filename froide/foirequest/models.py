@@ -70,7 +70,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set().order_by('-last_message')
 
     def for_list_view(self):
-        return self.get_query_set().filter(same_as__isnull=True).order_by('-first_message')
+        return self.by_last_update().filter(same_as__isnull=True)
 
     def get_for_homepage(self, count=5):
         return self.by_last_update().filter(
@@ -82,12 +82,12 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set()
 
     def successful(self):
-        return self.get_query_set().filter(
+        return self.by_last_update().filter(
                     models.Q(status="successful") |
                     models.Q(status="partially_successful")).order_by("-last_message")
 
     def unsuccessful(self):
-        return self.get_query_set().filter(
+        return self.by_last_update().filter(
                     models.Q(status="refused") |
                     models.Q(status="not_held")).order_by("-last_message")
 
