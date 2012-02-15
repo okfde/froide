@@ -90,5 +90,4 @@ $(function(){
     // $("#option-emptypublicbody").change(function(e){
     //     $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     // });
-    conditionalFixed("similar-requests-container");
 });
