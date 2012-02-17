@@ -1012,6 +1012,7 @@ class FoiAttachment(models.Model):
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/x-pdf',
             )
 
     class Meta:
