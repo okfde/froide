@@ -23,7 +23,7 @@ from django.utils.crypto import salted_hmac, constant_time_compare
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
-from publicbody.models import PublicBody, FoiLaw
+from publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
@@ -57,7 +57,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
         return super(PublishedFoiRequestManager,
                 self).get_query_set().filter(visibility=2, is_foi=True)\
-                        .select_related("public_body")
+                        .select_related("public_body", "jurisdiction")
 
     def awaiting_response(self):
         return self.get_query_set().filter(
@@ -92,9 +92,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
                     models.Q(status="not_held")).order_by("-last_message")
 
 
-class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
+class PublishedNotFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
-        return super(PublishedFoiRequestManager,
+        return super(CurrentSiteManager,
                 self).get_query_set().filter(visibility=2, is_foi=False)\
                         .select_related("public_body")
 
@@ -233,6 +233,9 @@ class FoiRequest(models.Model):
             blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
+
+    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
+            null=True, on_delete=models.SET_NULL)
 
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
@@ -619,7 +622,8 @@ Sincerely yours
 
         request.secret_address = cls.generate_unique_secret_address(user)
         request.law = foi_law
-
+        if public_body_object is not None:
+            request.jurisdiction = public_body_object.jurisdiction
         # ensure slug is unique
         request.slug = slugify(request.title)
         count = 0
@@ -745,12 +749,12 @@ Sincerely yours
         else:
             return False
 
-
     def set_public_body(self, public_body, law):
         assert self.public_body == None
         assert self.status == "publicbody_needed"
         self.public_body = public_body
         self.law = law
+        self.jurisdiction = public_body.jurisdiction
         send_now = self.set_status_after_change()
         if send_now:
             self.due_date = self.law.calculate_due_date()
