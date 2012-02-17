@@ -26,7 +26,6 @@
 <a href="{% url 'admin:foirequest_foiattachment_change' attachment.id %}">{% trans "View on Admin site" %}</a>
 {% if attachment.file %}
 <a href="{{ attachment.file.url }}">{{ attachment.name }}</a> {% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
-<iframe src="{{ attachment.get_preview_url }}" width="100%" height="300px"></iframe>
 {% else %}
 <div class="error">
 	{% blocktrans %}No file present!{% endblocktrans %}
