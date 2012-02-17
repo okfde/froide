@@ -13,6 +13,9 @@
 <br/>
 <p><a href="{% url 'publicbody-list' %}">{% blocktrans %}back to list of topics{% endblocktrans %}</a></p>
 
+{% regroup object_list|dictsort:"jurisdiction" by jurisdiction as juris_list %}
+{% for juris in juris_list %}
+<h3>{{ juris.grouper.name }}</h3>
 <table>
   <thead>
     <tr>
@@ -21,7 +24,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for publicbody in object_list %}
+    {% for publicbody in juris.list %}
     <tr>
       <td>
         <a href="{% url 'publicbody-show' slug=publicbody.slug %}">{{ publicbody.name }}</a>
@@ -34,5 +37,5 @@
     {% endfor %}
   </tbody>
 </table>
-</ul>
+{% endfor %}
 {% endblock %}
