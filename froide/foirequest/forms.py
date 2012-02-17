@@ -10,7 +10,7 @@ from django.utils.html import escape
 from taggit.forms import TagField
 from taggit.utils import edit_string_for_tags
 
-from publicbody.models import PublicBody
+from publicbody.models import PublicBody, FoiLaw
 from publicbody.widgets import PublicBodySelect
 from foirequest.models import FoiRequest, FoiAttachment
 
@@ -37,11 +37,14 @@ class RequestForm(forms.Form):
         super(RequestForm, self).__init__(*args, **kwargs)
         self.list_of_laws = list_of_laws
         self.indexed_laws = dict([(l.pk, l) for l in self.list_of_laws])
-        self.default_law = self.indexed_laws[default_law]
+        self.default_law = default_law
+
+        self.fields["public_body"].widget.set_initial_jurisdiction(
+                kwargs.get('initial', {}).pop('jurisdiction', None))
         self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
             required=False,
             widget=forms.RadioSelect if not hidden else forms.HiddenInput,
-            initial=default_law,
+            initial=default_law.pk,
             choices=((l.pk, mark_safe(
                 '%(name)s<span class="lawinfo">%(description)s</span>' %
                     {"name": escape(l.name),
@@ -78,7 +81,13 @@ class RequestForm(forms.Form):
     public_body_object = None
 
     def clean_law_for_public_body(self, public_body):
-        return self.clean_law_without_public_body()
+        law = self.clean_law_without_public_body()
+        if law is None:
+            return None
+        if law.jurisdiction.id != law.jurisdiction.id:
+            self._errors["law"] = self.error_class([_("Invalid Information Law")])
+            return None
+        return law
 
     def clean_law_without_public_body(self):
         try:
@@ -161,7 +170,7 @@ class SendMessageForm(forms.Form):
 class MakePublicBodySuggestionForm(forms.Form):
     public_body = forms.IntegerField(widget=PublicBodySelect)
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
-            widget=forms.TextInput(attrs={"size": "40"}), required=False)
+            widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}), required=False)
 
     def clean_public_body(self):
         pb = self.cleaned_data['public_body']

@@ -39,7 +39,7 @@
       <legend>{% blocktrans %}Step 1 - Find the Public Body{% endblocktrans %}</legend>
       {% if public_body %}
       <input type="hidden" name="public_body" value="{{ public_body.pk }}"/>
-      <input type="hidden" name="law" value="{{ public_body.default_law.pk }}"/>
+      <input type="hidden" id="chosen-law" name="law" value="{{ public_body.default_law.pk }}"/>
       <p><strong>{% trans "To:" %}</strong> <span id="review-publicbody">{{ public_body.name }}</span> - 
       <a href="{{ public_body.get_absolute_url }}" class="info-link target-new">{% blocktrans %}Details{% endblocktrans %}</a>
       </p>
@@ -87,7 +87,6 @@
                   {% blocktrans %}Questions like "Where do I get X?" or "What do I have to do if X?"{% endblocktrans %}
               </span>
             </label>
-            
             <label>
               <input id="option-check_foi_opinion" type="radio" name="check_foi" value="false"/>
               {% blocktrans %}a question about a political opinion{% endblocktrans %}
@@ -158,8 +157,10 @@
           </div>
         </div>
         <div class="span-7 last request-notes">
-          <h4>{% blocktrans %}Legal Explanation:{% endblocktrans %}</h4>
-            {{ request_form.default_law.description|markdown }}
+          <div id="law-description"{% if not request_form.default_law.description %} style="display:none"{% endif %}>
+            <h4>{% blocktrans %}Legal Explanation:{% endblocktrans %}</h4>
+              <div id="law-description-text">{{ request_form.default_law.description|markdown }}</div>
+            </div>
           <h4>{% blocktrans %}Important Notes:{% endblocktrans %}</h4>
           <ul>
             <li>{% blocktrans %}Write your request in <strong>simple, precise language</strong>.{% endblocktrans %}</li>
@@ -168,7 +169,6 @@
             <li>{% blocktrans %}This site is <strong>public</strong>. Everything you type and any response will be published.{% endblocktrans %}</li>
             <li>{% blocktrans %}Do <strong>not include</strong> personal information in your request.{% endblocktrans %}</li>
             <li>{% blocktrans %}Do <strong>not ask</strong> for personal information.{% endblocktrans %}</li>
-
           </ul>
         </div>
       </div>
