@@ -14,7 +14,7 @@ from taggit.models import Tag
 from account.forms import NewUserForm
 from account.models import AccountManager
 from publicbody.forms import PublicBodyForm
-from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw
+from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
 from frontpage.models import FeaturedRequest
 
 from foirequest.forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
@@ -40,7 +40,7 @@ def index(request):
         })
 
 
-def list_requests(request, status=None, topic=None, tag=None):
+def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None):
     context = {
         'filtered': True
     }
@@ -61,8 +61,6 @@ def list_requests(request, status=None, topic=None, tag=None):
     elif tag is not None:
         tag_object = get_object_or_404(Tag, slug=tag)
         foi_requests = FoiRequest.published.for_list_view().filter(tags=tag_object)
-        if not foi_requests:
-            raise Http404
         context.update({
             'tag': tag_object
         })
@@ -70,14 +68,24 @@ def list_requests(request, status=None, topic=None, tag=None):
         foi_requests = FoiRequest.published.for_list_view()
         context['filtered'] = False
 
-    context.update({
-            'page_title': _("FoI Requests"),
-            'count': foi_requests.count(),
-            'object_list': foi_requests,
-            'status_list': [(x[0],
-                FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
-            'topic_list': topic_list
+    if jurisdiction is not None:
+        jurisdiction_object = get_object_or_404(Jurisdiction, slug=jurisdiction)
+        foi_requests = foi_requests.filter(jurisdiction=jurisdiction_object)
+        context.update({
+            'jurisdiction': jurisdiction_object
         })
+    else:
+        context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
+
+    context.update({
+        'page_title': _("FoI Requests"),
+        'count': foi_requests.count(),
+        'object_list': foi_requests,
+        'status_list': [(x[0],
+            FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
+        'topic_list': topic_list
+    })
+
     return render(request, 'foirequest/list.html', context)
 
 
@@ -182,12 +190,17 @@ def make_request(request, public_body=None):
                 slug=public_body)
         if not public_body.email:
             raise Http404
+        all_laws = FoiLaw.objects.filter(jurisdiction=public_body.jurisdiction)
     else:
+        all_laws = FoiLaw.objects.all()
         public_body_form = PublicBodyForm()
-    subj = request.GET.get("subject", "")
-    body = request.GET.get("body", "")
-    rq_form = RequestForm(FoiLaw.objects.all(), FoiLaw.get_default_law(),
-            True, initial={"subject": subj, "body": body})
+    initial = {
+        "subject": request.GET.get("subject", ""),
+        "body": request.GET.get("body", "")
+    }
+    initial['jurisdiction'] = request.GET.get("jurisdiction", None)
+    rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
+            True, initial=initial)
     topic = request.GET.get("topic", "")
     user_form = None
     if not request.user.is_authenticated():
@@ -207,10 +220,12 @@ def submit_request(request, public_body=None):
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
+        all_laws = FoiLaw.objects.filter(jurisdiction=public_body.jurisdiction)
+    else:
+        all_laws = FoiLaw.objects.all()
     context = {"public_body": public_body}
 
-    all_laws = FoiLaw.objects.all()
-    request_form = RequestForm(all_laws, FoiLaw.get_default_law(),
+    request_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
             True, request.POST)
     context['request_form'] = request_form
     context['public_body_form'] = PublicBodyForm()
