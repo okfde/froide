@@ -805,9 +805,6 @@ Sincerely yours
                 [self.user.email])
 
 
-
-
-
 class PublicBodySuggestion(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -900,7 +897,7 @@ class FoiMessage(models.Model):
     def get_public_body_sender_form(self):
         from foirequest.forms import MessagePublicBodySenderForm
         return MessagePublicBodySenderForm(self)
-    
+
     def get_recipient(self):
         if self.recipient_public_body:
             return mark_safe('<a href="%(url)s">%(name)s</a>' % {
@@ -940,7 +937,6 @@ class FoiMessage(models.Model):
         else:
             return self.sender_public_body.name
 
-
     @property
     def attachments(self):
         if not hasattr(self, "_attachments"):
@@ -954,7 +950,7 @@ class FoiMessage(models.Model):
         if self.request.user:
             profile = self.request.user.get_profile()
             content = profile.apply_message_redaction(content)
-        
+
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
         content = remove_signature(content)
@@ -1050,6 +1046,7 @@ class FoiEventManager(models.Manager):
                 .select_related("user", "user__profile", "public_body",
                         "request")
 
+
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -1136,6 +1133,7 @@ class FoiEvent(models.Model):
         context = getattr(self, "_html_context", None)
         if context is not None:
             return context
+
         def link(url, title):
             return mark_safe('<a href="%s">%s</a>' % (url, escape(title)))
         context = self.get_context()

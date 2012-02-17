@@ -15,6 +15,7 @@ from froide.foirequest.tasks import count_same_foirequests
 
 class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
+    raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
 
 
 class FoiRequestAdmin(admin.ModelAdmin):
@@ -28,7 +29,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
     actions = ['mark_checked', 'mark_not_foi', 'tag_all', 'mark_same_as']
-    raw_id_fields = ('same_as',)
+    raw_id_fields = ('same_as', 'public_body', 'user',)
+    save_on_top = True
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
@@ -121,18 +123,20 @@ class FoiAttachmentInline(admin.TabularInline):
 
 
 class FoiMessageAdmin(admin.ModelAdmin):
+    save_on_top = True
     list_display = ('subject', 'sender_user', 'sender_email', 'recipient_email',)
     list_filter = ('is_postal', 'is_response', 'sent', 'status',)
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
+    raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
     inlines = [
         FoiAttachmentInline,
     ]
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):
-    pass
+    raw_id_fields = ('belongs_to',)
 
 
 class FoiEventAdmin(admin.ModelAdmin):
@@ -141,6 +145,7 @@ class FoiEventAdmin(admin.ModelAdmin):
     search_fields = ['request__title', "public_body__name"]
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
+    raw_id_fields = ('request', 'user', 'public_body')
 
 
 class PublicBodySuggestionAdmin(admin.ModelAdmin):
@@ -148,6 +153,7 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
     search_fields = ['request', 'reason']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
+    raw_id_fields = ('request', 'public_body', 'user')
 
 
 admin.site.register(FoiRequest, FoiRequestAdmin)
