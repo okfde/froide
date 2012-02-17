@@ -587,3 +587,29 @@ def mark_checked(request, slug):
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as checked.'))
     return HttpResponseRedirect(foirequest.get_absolute_url())
+
+
+@require_POST
+def approve_attachment(request, slug, attachment):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff and foirequest.user != request.user:
+        return render_403(request)
+    att = get_object_or_404(FoiAttachment, id=int(attachment))
+    att.approved = True
+    att.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('Attachment approved.'))
+    return HttpResponseRedirect(att.get_absolute_url())
+
+
+def list_unchecked(request):
+    if not request.user.is_staff:
+        return render_403(request)
+    foirequests = FoiRequest.published.filter(checked=False).order_by('-id')
+    attachments = FoiAttachment.objects.filter(approved=False).order_by('-id')
+    return render(request, 'foirequest/list_unchecked.html', {
+        'foirequests': foirequests,
+        'attachments': attachments
+    })

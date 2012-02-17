@@ -7,6 +7,7 @@ from foirequest.feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 
 urlpatterns = patterns("",
     (r'^%s/$' % pgettext('URL part', 'not-foi'), 'foirequest.views.list_requests_not_foi', {}, 'foirequest-list_not_foi'),
+    (r'^unchecked/$', 'foirequest.views.list_unchecked', {}, 'foirequest-list_unchecked'),
     (r'^%s/feed/$' % pgettext('URL part', 'latest'), LatestFoiRequestsFeedAtom(), {}, 'foirequest-feed_latest_atom'),
     (r'^%s/rss/$' % pgettext('URL part', 'latest'), LatestFoiRequestsFeed(), {}, 'foirequest-feed_latest'),
     # Translators: part in /request/to/public-body-slug URL

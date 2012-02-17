@@ -1004,6 +1004,7 @@ class FoiAttachment(models.Model):
     size = models.IntegerField(_("Size"), blank=True, null=True)
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
+    approved = models.BooleanField(_("Approved"), default=False)
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
             "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
@@ -1031,6 +1032,13 @@ class FoiAttachment(models.Model):
     def get_preview_url(self):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
+
+    def get_html_id(self):
+        return _("attachment-%(id)d") % {"id": self.id}
+
+    def get_absolute_url(self):
+        return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
+                self.get_html_id())
 
 
 class FoiEventManager(models.Manager):
