@@ -1033,6 +1033,13 @@ class FoiAttachment(models.Model):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
 
+    def get_html_id(self):
+        return _("attachment-%(id)d") % {"id": self.id}
+
+    def get_absolute_url(self):
+        return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
+                self.get_html_id())
+
 
 class FoiEventManager(models.Manager):
     def create_event(self, event_name, request, **context):

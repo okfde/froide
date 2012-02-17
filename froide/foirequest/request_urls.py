@@ -18,12 +18,10 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/set/law/$", 'foirequest.views.set_law', name="foirequest-set_law"),
     url(r"^(?P<slug>[-\w]+)/set/tags/$", 'foirequest.views.set_tags', name="foirequest-set_tags"),
     url(r"^(?P<slug>[-\w]+)/set/resolution/$", 'foirequest.views.set_resolution', name="foirequest-set_resolution"),
-
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", 'foirequest.views.add_postal_reply', name="foirequest-add_postal_reply"),
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", 'foirequest.views.add_postal_reply_attachment', name="foirequest-add_postal_reply_attachment"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set/public-body/$", 'foirequest.views.set_message_sender', name="foirequest-set_message_sender"),
     url(r"^(?P<slug>[-\w]+)/mark/not-foi/$", 'foirequest.views.mark_not_foi', name="foirequest-mark_not_foi"),
     url(r"^(?P<slug>[-\w]+)/mark/checked/$", 'foirequest.views.mark_checked', name="foirequest-mark_checked"),
-
-
+    url(r"^(?P<slug>[-\w]+)/approve/(?P<attachment>\d+)/$", 'foirequest.views.approve_attachment', name="foirequest-approve_attachment"),
 )
