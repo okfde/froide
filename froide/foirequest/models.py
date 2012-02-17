@@ -1004,6 +1004,7 @@ class FoiAttachment(models.Model):
     size = models.IntegerField(_("Size"), blank=True, null=True)
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
+    approved = models.BooleanField(_("Approved"), default=False)
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
             "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
