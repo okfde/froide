@@ -1,13 +1,15 @@
 $(function(){
     loggedInCallback = function(data){
         $("#user_data_form").html("<p>"+data.name+" "+data.last_name+"</p>"+
-                    "<p>"+data.email+"</p>");
+                    "<p>"+data.address+"</p><p>"+data.email+"</p>");
     };
 
 
- 
-    var letter_start = $('#letter_start').text();
-    var letter_end = $('#letter_end').text();
+    Froide.cachedLaw = {
+        letter_start_form: $('#letter_start').html(),
+        letter_end_form: $('#letter_end').html(),
+        description_markdown: $('#law-description-text').html()
+    };
 
     $(".foirequest input").keydown(function(e){
         if(e.keyCode === 13){
