@@ -53,18 +53,25 @@ Froide.app.searchSimilarRequests = function(){
 };
 
 Froide.app.performPublicBodySearch = (function(){
-    var lastPublicBodyQuery = null;
+    var lastPublicBodyQuery = null, lastJurisdiction = null;
     return function(el){
         var query = el.find(".search-public_bodies").val();
-        if (lastPublicBodyQuery === query){
+        var juris = el.find('.search-public_bodies-jurisdiction');
+        var params = {q: query};
+        if (juris.length){
+            juris = juris.val();
+            params.jurisdiction = juris;
+        }
+        if (lastPublicBodyQuery === query && lastJurisdiction === juris){
             el.find(".search-results").slideDown();
             return;
         }
         el.find(".search-spinner").fadeIn();
         el.find(".search-results").hide();
-        $.getJSON(Froide.url.searchPublicBody, {"q": query}, function(results){
+        $.getJSON(Froide.url.searchPublicBody, params, function(results){
             var result, i;
             lastPublicBodyQuery = query;
+            lastJurisdiction = juris;
             el.find(".search-spinner").hide();
             el.find(".search-results .result").remove();
             if (results.length === 0){
@@ -250,6 +257,16 @@ Froide.app.performReview = (function(){
 
 Froide.app.publicBodyChosen = (function(){
     var doneChoice;
+    var showFormForLaw = function(law){
+        $('#letter_start').html(law.letter_start_form);
+        $('#letter_end').html(law.letter_end_form);
+        if (law.description_markdown.length) {
+            $('#law-description-text').html(law.description_markdown);
+            $('#law-description').show();
+        } else {
+            $('#law-description').hide();
+        }
+    };
     return function(currentPublicBodyChoice, publicBodyPrefilled){
         if(publicBodyPrefilled){
             return;
@@ -265,8 +282,7 @@ Froide.app.publicBodyChosen = (function(){
                 currentPublicBodyChoice !== "" &&
                 currentPublicBodyChoice !== "new"){
             (function(lastChoice){
-                $.getJSON(Froide.url.showPublicBody
-                        .replace(/0\.json/, 
+                $.getJSON(Froide.url.showPublicBody.replace(/0\.json/,
                     currentPublicBodyChoice +".json"),{},
                     function(result){
                         if (lastChoice !== currentPublicBodyChoice){
@@ -289,22 +305,25 @@ Froide.app.publicBodyChosen = (function(){
                             list.append(Mustache.to_html(
                                 Froide.template.searchPublicBodyWebsite,
                                 {url: Mustache.to_html(
-                                    Froide.template.searchEngineUrl, 
+                                    Froide.template.searchEngineUrl,
                                     {query: query, domain: result.domain})}
                             ));
                         }
                             // TODO: Create law chooser here
-                        // $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
-                        // $('#letter_start').text(result.laws[0].letter_start);
-                        // $('#letter_end').text(result.laws[0].letter_end);
+                        var chosenLaw = $('#chosen-law');
+                        if(chosenLaw.length){
+                            chosenLaw.val(result.laws[0].pk);
+                        } else {
+                            $("#public-body").append('<input id="chosen-law" type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
+                        }
+                        showFormForLaw(result.laws[0]);
                         doneChoice = lastChoice;
                     });
             }(currentPublicBodyChoice));
         } else {
             doneChoice = currentPublicBodyChoice;
             $("#request-note").slideUp();
-            // $('#letter_start').text(letter_start);
-            // $('#letter_end').text(letter_end);
+            showFormForLaw(Froide.cachedLaw);
         }
     };
 }());
@@ -397,7 +416,7 @@ $(function(){
 
     $(".search-public_bodies").each(function(i, input){
         if($(input).val() !== ""){
-            Froide.app.performPublicBodySearch();
+            Froide.app.performPublicBodySearch($(this).parent().parent());
         }
     });
     $("button.upload-button").click(function(e){
@@ -417,15 +436,29 @@ $(function(){
     });
 
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){
-        $(".search-public_bodies").each(function(i, input){
-            $(input).autocomplete({
+        $(".publicbody-search").each(function(i, el){
+            var input = $(el).find('.search-public_bodies');
+            var params = {};
+            var juris = $(el).find('.search-public_bodies-jurisdiction');
+            if (juris.length){
+                params.jurisdiction = juris.val();
+            }
+            var auto = input.autocomplete({
                 serviceUrl: Froide.url.autocompletePublicBody,
                 minChars: 2,
+                params: params,
                 onSelect: function(value, data){
-                    var li = Froide.app.getPublicBodyResultListItem($(input).parent().parent(), data);
-                    Froide.app.selectSearchListItem($(input).parent().parent(), $(li));
+                    var li = Froide.app.getPublicBodyResultListItem(input.parent().parent(), data);
+                    Froide.app.selectSearchListItem(input.parent().parent(), $(li));
                 }
             });
+            if (juris.length){
+                juris.change(function(){
+                    auto.options.params.jurisdiction = juris.val();
+                    auto.clearCache();
+                    auto.onValueChange();
+                });
+            }
         });
     }
 });

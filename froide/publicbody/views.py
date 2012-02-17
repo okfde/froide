@@ -23,13 +23,15 @@ class PublicBodyListView(JSONResponseListView):
         context = super(PublicBodyListView, self).get_context_data(**kwargs)
         return context
 
+
 def index(request):
     context = {"topics": PublicBodyTopic.objects.get_list()}
     return render(request, 'publicbody/list_topic.html', context)
 
+
 def show_topic(request, topic):
     topic = get_object_or_404(PublicBodyTopic, slug=topic)
-    context = {"topic": topic, 
+    context = {"topic": topic,
             "object_list": PublicBody.objects.filter(topic=topic).order_by("name")}
     return render(request, 'publicbody/show_topic.html', context)
 
@@ -50,17 +52,25 @@ class PublicBodyDetailView(JSONResponseDetailView):
             context['foi_requests'] = FoiRequest.published.filter(public_body=context['object']).order_by('last_message')[:10]
         return context
 
+
 def search_json(request):
     query = request.GET.get("q", "")
+    jurisdiction = request.GET.get('jurisdiction', None)
     # query = " AND ".join(query.split())
-    result = list(SearchQuerySet().models(PublicBody).auto_query(query))
-    result = [{"name": x.name, "id": x.pk, "url": x.url, "score": x.score} for x in result]
-    
+    result = SearchQuerySet().models(PublicBody).auto_query(query)
+    if jurisdiction is not None:
+        result = result.filter(jurisdiction=result.query.clean(jurisdiction))
+    result = [{"name": x.name, "id": x.pk, "url": x.url, "score": x.score} for x in list(result)]
+
     return HttpResponse(json.dumps(result), content_type="application/json")
+
 
 def autocomplete(request):
     query = request.GET.get('query', '')
+    jurisdiction = request.GET.get('jurisdiction', None)
     result = SearchQuerySet().autocomplete(name_auto=query)
+    if jurisdiction is not None:
+        result = result.filter(jurisdiction=result.query.clean(jurisdiction))
     names = [x.name for x in result]
     data = [{"name": x.name, "id": x.pk, "url": x.url} for x in result]
     response = {"query": query,
@@ -68,6 +78,7 @@ def autocomplete(request):
         "data": data
     }
     return HttpResponse(json.dumps(response), content_type="application/json")
+
 
 def confirm(request):
     if not request.user.is_authenticated():
@@ -84,7 +95,7 @@ def confirm(request):
             _('This request was already confirmed.'))
     else:
         messages.add_message(request, messages.ERROR,
-                ungettext('%(count)d message was sent.', 
+                ungettext('%(count)d message was sent.',
                     '%(count)d messages were sent', result
                     ) % {"count": result})
     return HttpResponseRedirect(

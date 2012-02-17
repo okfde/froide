@@ -30,7 +30,7 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         old_number = pb.number_of_requests
         post = {"subject": "Test-Subject", "body": "This is a test body",
-                "law": pb.default_law.pk}
+                "law": str(pb.default_law.pk)}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -45,11 +45,11 @@ class RequestTest(TestCase):
         self.assertIn(post['body'], message.plaintext)
         self.client.logout()
         response = self.client.post(reverse('foirequest-make_public',
-                kwargs={"slug": req.slug}),{})
+                kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 403)
         self.client.login(username='sw', password='froide')
         response = self.client.post(reverse('foirequest-make_public',
-                kwargs={"slug": req.slug}),{})
+                kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.published.get(id=req.id)
         self.assertTrue(req.public)
@@ -60,7 +60,7 @@ class RequestTest(TestCase):
         post = {"subject": "Test-Subject With New User",
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
-                "user_email": "dummy@example.com", # already exists in fixture
+                "user_email": "dummy@example.com",  # already exists in fixture
                 "law": pb.laws.all()[0].pk}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
@@ -72,7 +72,7 @@ class RequestTest(TestCase):
                 "address": "TestStreet 3\n55555 Town",
                 "user_email": "sw@example.com",
                 "terms": "on",
-                "law": FoiLaw.get_default_law()}
+                "law": str(FoiLaw.get_default_law().id)}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -289,7 +289,7 @@ class RequestTest(TestCase):
         self.assertTrue(pb.confirmed)
         self.assertTrue(req.messages[0].sent)
         message_count = len(filter(
-                lambda x: req.secret_address in x.extra_headers.get('Reply-To',''),
+                lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
                 mail.outbox))
         self.assertEqual(message_count, 1)
         # resent
@@ -297,7 +297,7 @@ class RequestTest(TestCase):
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 302)
         message_count = len(filter(
-                lambda x: req.secret_address in x.extra_headers.get('Reply-To',''),
+                lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
                 mail.outbox))
         self.assertEqual(message_count, 1)
 
@@ -315,7 +315,7 @@ class RequestTest(TestCase):
         response = self.client.post(
                 reverse('foirequest-submit_request'), post)
         self.assertEqual(response.status_code, 400)
-        post['public_body'] = '9' * 10 # not that many in fixture
+        post['public_body'] = '9' * 10  # not that many in fixture
         response = self.client.post(
                 reverse('foirequest-submit_request'), post)
         self.assertEqual(response.status_code, 400)
@@ -334,7 +334,7 @@ class RequestTest(TestCase):
         self.assertEqual(req.law, pb.default_law)
 
         messages = filter(
-                lambda x: req.secret_address in x.extra_headers.get('Reply-To',''),
+                lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
                 mail.outbox)
         self.assertEqual(len(messages), 1)
         message = messages[0]
@@ -349,7 +349,7 @@ class RequestTest(TestCase):
         self.client.login(username="dummy", password="froide")
         post = {"subject": "An Empty Public Body Request",
                 "body": "This is another test body",
-                "law": str(FoiLaw.get_default_law()),
+                "law": str(FoiLaw.get_default_law().id),
                 "public_body": '',
                 "public": "on"}
         response = self.client.post(
@@ -359,7 +359,7 @@ class RequestTest(TestCase):
         response = self.client.get(req.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         message = req.foimessage_set.all()[0]
-        law = FoiLaw.objects.get(pk=FoiLaw.get_default_law())
+        law = FoiLaw.get_default_law()
         self.assertIn(law.get_letter_start_text({}), message.plaintext)
         self.assertIn(law.get_letter_end_text({}), message.plaintext)
 
@@ -561,7 +561,6 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
-
     # def test_public_body_logged_in_public_request(self):
     #     ok = self.client.login(username='sw', password='froide')
     #     user = User.objects.get(username='sw')
@@ -580,7 +579,7 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         post = {"subject": "A simple test request",
                 "body": "This is another test body",
-                "law": str(FoiLaw.get_default_law()),
+                "law": str(FoiLaw.get_default_law().id),
                 "public_body": str(pb.id),
                 "public": "on"}
         response = self.client.post(
@@ -590,7 +589,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(title=post['subject'])
         req.add_message_from_email({
             'msgobj': None,
-            'date': (datetime.now() + timedelta(days=1),0),
+            'date': (datetime.now() + timedelta(days=1), 0),
             'subject': u"Re: %s" % req.title,
             'body': u"""Message""",
             'html': None,

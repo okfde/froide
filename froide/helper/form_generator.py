@@ -37,7 +37,7 @@ class FormProcessor(object):
             if line is not None:
                 if in_form:
                     if not line or (line and line[0] not in ".,;"):
-                        if new_lines[-1] and new_lines[-1][-1] not in "\n":
+                        if new_lines and new_lines[-1] and new_lines[-1][-1] not in "\n":
                             line = " " + line
                 new_lines.append(line)
             if not was_form:
@@ -52,7 +52,6 @@ class HtmlFormPreprocessor(FormProcessor):
         self.radio_count += 1
         label = match.group(3).strip()
         checked = match.group(2).strip()
-        ws = match.group(1)
         if len(checked):
             checked = ' checked="checked"'
         return '''<label for="fg_option_%(radio)d"><input type="radio" id="fg_option_%(radio)d"%(checked)s" name="fg_radio_%(option)d" value="%(label)s"/> %(label)s</label>''' % {"radio": self.radio_count, "option": count, "label": label,
@@ -62,11 +61,11 @@ class HtmlFormPreprocessor(FormProcessor):
         self.check_count += 1
         label = match.group(3).strip()
         checked = match.group(2).strip()
-        ws = match.group(1)
         if len(checked):
             checked = ' checked="checked"'
         return '''<label for="fg_check_%(check)d"><input type="checkbox" id="fg_check_%(check)d"%(checked)s" name="fg_check_%(check)d" value="%(label)s"/> %(label)s</label>''' % {"check": self.check_count, "label": label,
         "checked": checked}
+
 
 class TextFormPreprocessor(FormProcessor):
     def __init__(self, post_data):
@@ -122,6 +121,3 @@ Cheers!'''
     print repr(form.render_html())
     print "-" * 30
     print form.render()
-
-
-

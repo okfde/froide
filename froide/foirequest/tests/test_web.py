@@ -3,7 +3,7 @@ from __future__ import with_statement
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from publicbody.models import PublicBody, PublicBodyTopic
+from publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
 from foirequest.models import FoiRequest
 
 
@@ -39,6 +39,21 @@ class WebTest(TestCase):
 
         response = self.client.get(reverse('foirequest-list_not_foi'))
         self.assertEqual(response.status_code, 200)
+
+    def test_list_jurisdiction_requests(self):
+        juris = Jurisdiction.objects.all()[0]
+        response = self.client.get(reverse('foirequest-list'),
+                kwargs={'jurisdiction': juris.slug})
+        self.assertEqual(response.status_code, 200)
+        for urlpart, status in FoiRequest.STATUS_URLS:
+            response = self.client.get(reverse('foirequest-list',
+                kwargs={"status": urlpart, 'jurisdiction': juris.slug}))
+            self.assertEqual(response.status_code, 200)
+
+        for topic in PublicBodyTopic.objects.all():
+            response = self.client.get(reverse('foirequest-list',
+                kwargs={"topic": topic.slug, 'jurisdiction': juris.slug}))
+            self.assertEqual(response.status_code, 200)
 
     def test_tagged_requests(self):
         response = self.client.get(reverse('foirequest-list', kwargs={"tag": "awesome"}))
