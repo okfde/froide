@@ -866,6 +866,7 @@ class FoiMessage(models.Model):
     html = models.TextField(_("HTML"), blank=True, null=True)
     original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
+    not_publishable = models.BooleanField(_('Not publishable'), default=False)
 
     class Meta:
         get_latest_by = 'timestamp'
