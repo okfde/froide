@@ -295,7 +295,7 @@ class PostalReplyForm(forms.Form):
     scan = forms.FileField(label=_("Scanned Letter"), required=False,
             help_text=scan_help_text)
     not_publishable = forms.BooleanField(label=_("You are not allowed to publish some received documents"),
-            initial=False,
+            initial=False, required=False,
             help_text=_('If the reply explicitly states that you are not allowed to publish some of the documents (e.g. due to copyright), check this.'))
 
     def clean_date(self):
