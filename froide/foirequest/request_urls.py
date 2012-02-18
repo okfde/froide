@@ -24,4 +24,5 @@ urlpatterns = patterns("",
     url(r"^(?P<slug>[-\w]+)/mark/not-foi/$", 'foirequest.views.mark_not_foi', name="foirequest-mark_not_foi"),
     url(r"^(?P<slug>[-\w]+)/mark/checked/$", 'foirequest.views.mark_checked', name="foirequest-mark_checked"),
     url(r"^(?P<slug>[-\w]+)/approve/(?P<attachment>\d+)/$", 'foirequest.views.approve_attachment', name="foirequest-approve_attachment"),
+    url(r"^(?P<slug>[-\w]+)/make-same/(?P<message_id>\d+)/$", 'foirequest.views.make_same_request', name="foirequest-make_same_request"),
 )

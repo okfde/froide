@@ -470,10 +470,12 @@
       <li>
       {% if not attachment.approved %}
         <div class="warning">
-        <span>{% trans "Not public yet" %}</span><br/>
       {% endif %}
+      {% if attachment.approved %}
         <a id="{{ attachment.get_absolute_url }}" href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
-      {% if not attachment.approved %}
+      {% else %}
+        {% if user == object.user or user.is_staff %}
+          <a id="{{ attachment.get_absolute_url }}" href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
           <form method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
             {% csrf_token %}
             {% if object.user.get_profile.private %}
@@ -484,6 +486,9 @@
             <input class="button" type="submit" value="{% trans "Publish this attachment" %}"/>
             <p>{% trans "If it does contain personally identifying information, moderators will redact it and then publish it for you." %}</p>
           </form>
+        {% else %}
+        <span>{% trans "This attachment is not public yet" %}</span>
+        {% endif %}
         </div>
       {% endif %}
       </li>
@@ -508,6 +513,30 @@
     {% endif %}
     </tbody>
   </table>
+  {% if message.not_publishable %}
+    <div class="info">
+      <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, due to copyright law we are not allowed to publish these documents online.{% endblocktrans %}</p>
+    {% if user.is_authenticated %}
+      {% if object.user == user %}
+        <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
+      {% else %}
+        {% check_same_request object user "same_request" %}
+        {% if same_request %}
+          <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+        {% else %}
+          <form method="post" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
+            {% csrf_token %}
+            <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+            <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
+          </form>
+        {% endif %}
+      {% endif %}
+    {% else %}
+      {% url "account-login" as account_login %}
+      <p>{% blocktrans with url=account_login %}If you login, you can make an identical request in your name with one click to gain individual access to the information that we are not allowed to publish here. <a href="{{ url }}">You can login or sign up here.</a>{% endblocktrans %}</p>
+    {% endif %}
+    </div>
+  {% endif %}
   {# Set status #}
   {% if object.user == user and message.needs_status_input %}
   <div id="set-status" class="section important-form">

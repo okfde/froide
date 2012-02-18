@@ -23,6 +23,7 @@ def send_notification_became_overdue(sender, **kwargs):
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
+
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
@@ -33,6 +34,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
                     "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
+
 
 @receiver(FoiRequest.public_body_suggested,
         dispatch_uid="notify_user_public_body_suggested")
@@ -46,6 +48,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
                     "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [sender.user.email])
+
 
 @receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
@@ -85,6 +88,7 @@ def increment_request_count(sender, **kwargs):
     sender.public_body.number_of_requests += 1
     sender.public_body.save()
 
+
 @receiver(signals.pre_delete, sender=FoiRequest,
         dispatch_uid="foirequest_decrement_request_count")
 def decrement_request_count(sender, instance=None, **kwargs):
@@ -105,10 +109,12 @@ def foimessage_delayed_update(instance=None, created=False, **kwargs):
         return
     delayed_update.delay(instance.request_id, FoiRequest)
 
+
 @receiver(signals.post_delete, sender=FoiMessage,
         dispatch_uid='foimessage_delayed_remove')
 def foimessage_delayed_remove(instance, **kwargs):
     delayed_update.delay(instance.request_id, FoiRequest)
+
 
 @receiver(signals.post_save, sender=FoiAttachment,
         dispatch_uid='foiattachment_delayed_update')
@@ -116,6 +122,7 @@ def foiattachment_delayed_update(instance, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
     delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
+
 
 @receiver(signals.post_delete, sender=FoiAttachment,
         dispatch_uid='foiattachment_delayed_remove')
@@ -130,12 +137,14 @@ def create_event_message_sent(sender, message, **kwargs):
     FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
             public_body=message.recipient_public_body)
 
+
 @receiver(FoiRequest.message_received,
         dispatch_uid="create_event_message_received")
 def create_event_message_received(sender, **kwargs):
     FoiEvent.objects.create_event("message_received", sender,
             user=sender.user,
             public_body=sender.public_body)
+
 
 @receiver(FoiRequest.status_changed,
         dispatch_uid="create_event_status_changed")
@@ -150,6 +159,10 @@ def create_event_status_changed(sender, **kwargs):
         FoiEvent.objects.create_event("request_refused", sender,
                 user=sender.user,
                 public_body=sender.public_body, reason=data['refusal_reason'])
+    elif status == "partially_successful" and data['refusal_reason']:
+        FoiEvent.objects.create_event("partially_successful", sender,
+                user=sender.user,
+                public_body=sender.public_body, reason=data['refusal_reason'])
     elif status == "request_redirected":
         FoiEvent.objects.create_event("request_redirected", sender,
                 user=sender.user,
@@ -159,11 +172,13 @@ def create_event_status_changed(sender, **kwargs):
             public_body=sender.public_body,
             status=FoiRequest.get_readable_status(status))
 
+
 @receiver(FoiRequest.made_public,
         dispatch_uid="create_event_made_public")
 def create_event_made_public(sender, **kwargs):
     FoiEvent.objects.create_event("made_public", sender, user=sender.user,
             public_body=sender.public_body)
+
 
 @receiver(FoiRequest.public_body_suggested,
         dispatch_uid="create_event_public_body_suggested")
@@ -171,10 +186,12 @@ def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
     FoiEvent.objects.create_event("public_body_suggested", sender, user=suggestion.user,
             public_body=suggestion.public_body)
 
+
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="create_event_became_overdue")
 def create_event_became_overdue(sender, **kwargs):
     FoiEvent.objects.create_event("became_overdue", sender)
+
 
 @receiver(FoiRequest.set_concrete_law,
         dispatch_uid="create_event_set_concrete_law")
@@ -182,11 +199,13 @@ def create_event_set_concrete_law(sender, **kwargs):
     FoiEvent.objects.create_event("set_concrete_law", sender,
             user=sender.user, name=kwargs['name'])
 
+
 @receiver(FoiRequest.add_postal_reply,
     dispatch_uid="create_event_add_postal_reply")
 def create_event_add_postal_reply(sender, **kwargs):
     FoiEvent.objects.create_event("add_postal_reply", sender,
             user=sender.user)
+
 
 @receiver(FoiRequest.escalated,
     dispatch_uid="create_event_escalated")

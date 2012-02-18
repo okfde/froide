@@ -275,6 +275,7 @@ class ConcreteLawForm(forms.Form):
 
 
 class PostalReplyForm(forms.Form):
+    scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>. All uploaded documents will be published!"))
     date = forms.DateField(
             widget=forms.DateInput(attrs={"size": "10"}),
             label=_("Send Date"),
@@ -292,7 +293,10 @@ class PostalReplyForm(forms.Form):
             required=False,
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
     scan = forms.FileField(label=_("Scanned Letter"), required=False,
-            help_text=_("Uploaded scans can be PDF, JPG or PNG"))
+            help_text=scan_help_text)
+    not_publishable = forms.BooleanField(label=_("You are not allowed to publish some received documents"),
+            initial=False,
+            help_text=_('If the reply explicitly states that you are not allowed to publish some of the documents (e.g. due to copyright), check this.'))
 
     def clean_date(self):
         date = self.cleaned_data['date']
@@ -320,7 +324,7 @@ class PostalReplyForm(forms.Form):
 
 class PostalAttachmentForm(forms.Form):
     scan = forms.FileField(label=_("Scanned Document"),
-            help_text=_("Uploaded scans can be PDF, JPG or PNG"))
+            help_text=PostalReplyForm.scan_help_text)
 
     def clean_scan(self):
         scan = self.cleaned_data.get("scan")
