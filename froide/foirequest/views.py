@@ -483,6 +483,7 @@ def add_postal_reply(request, slug):
         message.plaintext = ""
         if form.cleaned_data.get('text'):
             message.plaintext = form.cleaned_data.get('text')
+        message.not_publishable = form.cleaned_data['not_publishable']
         message.save()
         foirequest.status = 'awaiting_classification'
         foirequest.save()
@@ -613,3 +614,31 @@ def list_unchecked(request):
         'foirequests': foirequests,
         'attachments': attachments
     })
+
+
+@require_POST
+def make_same_request(request, slug, message_id):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    message = get_object_or_404(FoiMessage, id=int(message_id))
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not foirequest == message.request:
+        return render_400(request)
+    if not message.not_publishable:
+        return render_400(request)
+    same_requests = FoiRequest.objects.filter(user=request.user, same_as=foirequest).count()
+    if same_requests:
+        messages.add_message(request, messages.ERROR,
+            _("You already made an identical request"))
+        return render_400(request)
+    fr = FoiRequest.from_request_form(
+        request.user, foirequest.public_body,
+        foirequest.law,
+        form_data=dict(
+            subject=foirequest.title,
+            body=foirequest.description,
+            public=foirequest.public
+        ))  # Don't pass post_data, get default letter of law
+    fr.same_as = foirequest
+    fr.save()
+    return HttpResponseRedirect(fr.get_absolute_url())
