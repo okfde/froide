@@ -150,6 +150,10 @@ def create_event_status_changed(sender, **kwargs):
         FoiEvent.objects.create_event("request_refused", sender,
                 user=sender.user,
                 public_body=sender.public_body, reason=data['refusal_reason'])
+    elif status == "partially_successful" and data['refusal_reason']:
+        FoiEvent.objects.create_event("partially_successful", sender,
+                user=sender.user,
+                public_body=sender.public_body, reason=data['refusal_reason'])
     elif status == "request_redirected":
         FoiEvent.objects.create_event("request_redirected", sender,
                 user=sender.user,

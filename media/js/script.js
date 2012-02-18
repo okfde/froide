@@ -333,7 +333,7 @@ Froide.app.statusSet = (function(){
         $(".status-refusal").hide();
         $(".status-redirected").hide();
         var status = $("#id_status").val();
-        if (/refus/.exec(status) !== null) {
+        if (/refus/.exec(status) !== null || /partial/.exec(status) !== null) {
             $(".status-refusal").slideDown();
         } else if (/redirect/.exec(status) !== null){
             $(".status-redirected").slideDown();

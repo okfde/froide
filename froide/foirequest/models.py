@@ -264,10 +264,8 @@ class FoiRequest(models.Model):
     add_postal_reply = django.dispatch.Signal(providing_args=[])
     escalated = django.dispatch.Signal(providing_args=[])
 
-
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
-
 
     @property
     def same_as_set(self):
@@ -399,7 +397,7 @@ class FoiRequest(models.Model):
         self.status = self.MESSAGE_STATUS_TO_REQUEST_STATUS.get(data['status'], data['status'])
         message = self.message_needs_status()
         self.costs = data['costs']
-        if data['status'] == "refused":
+        if data['status'] == "refused" or data['status'] == "partially_successful":
             self.refusal_reason = data['refusal_reason']
         else:
             self.refusal_reason = u""
@@ -419,7 +417,6 @@ class FoiRequest(models.Model):
                 if message.sender_email and not message.sender_email in addresses:
                     addresses[message.sender_email] = message
         return addresses
-
 
     def public_body_suggestions(self):
         if not hasattr(self, "_public_body_suggestion"):
@@ -466,7 +463,7 @@ class FoiRequest(models.Model):
         else:
             message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")
         return SendMessageForm(self,
-                initial={"subject": subject, 
+                initial={"subject": subject,
                     "message": message})
 
     def get_escalation_message_form(self):
@@ -474,7 +471,7 @@ class FoiRequest(models.Model):
         subject = _('Complaint about request "%(title)s"'
                 ) % {"title": self.title}
         return EscalationMessageForm(self,
-                initial={"subject": subject, 
+                initial={"subject": subject,
                     "message": _('''Dear Sir or Madam,
 
 I'd like to complain about the handling of the request under the %(law)s documented here:
@@ -1094,6 +1091,8 @@ class FoiEvent(models.Model):
             u"%(user)s made the request '%(request)s' public."),
         "request_refused": _(
             u"%(public_body)s refused to provide information on the grounds of %(reason)s."),
+        "partially_successful": _(
+            u"%(public_body)s answered partially, but denied access to all information on the grounds of %(reason)s."),
         "became_overdue": _(
             u"This request became overdue"),
         "set_concrete_law": _(
