@@ -64,7 +64,7 @@ class FoiLaw(models.Model):
     letter_start = models.TextField(_("Start of Letter"), blank=True)
     letter_end = models.TextField(_("End of Letter"), blank=True)
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
-            null=True, on_delete=models.SET_NULL)
+            null=True, on_delete=models.SET_NULL, blank=True)
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
@@ -214,7 +214,7 @@ class PublicBody(models.Model):
             null=True, on_delete=models.SET_NULL, default=settings.SITE_ID)
 
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
-            null=True, on_delete=models.SET_NULL)
+            blank=True, null=True, on_delete=models.SET_NULL)
 
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
