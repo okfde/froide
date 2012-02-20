@@ -647,4 +647,6 @@ def make_same_request(request, slug, message_id):
         ))  # Don't pass post_data, get default letter of law
     fr.same_as = foirequest
     fr.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('You successfully requested this document! Your request is displayed below.'))
     return HttpResponseRedirect(fr.get_absolute_url())
