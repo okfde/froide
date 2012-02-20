@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-20 01:26+0100\n"
+"POT-Creation-Date: 2012-02-20 11:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1501,6 +1501,11 @@ msgid ""
 "information: %(url)s"
 msgstr ""
 
+#: foirequest/views.py:651
+msgid ""
+"You successfully requested this document! Your request is displayed below."
+msgstr ""
+
 #: foirequest/templates/foirequest/_request_form.html:15
 msgid "Message"
 msgstr ""
@@ -1700,13 +1705,14 @@ msgid "Status:"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:46
-#: foirequest/templates/foirequest/show.html:574 templates/index.html:99
+#: foirequest/templates/foirequest/show.html:575 templates/index.html:99
 #: templates/index.html.py:123 templates/search/search.html:30
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:48
+#: foirequest/templates/foirequest/show.html:604
 #, python-format
 msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
@@ -2337,7 +2343,7 @@ msgstr ""
 #: foirequest/templates/foirequest/show.html:143
 #, python-format
 msgid "One person is following this request."
-msgid_plural "There are %(count)s people following this request."
+msgid_plural "There are %(counter)s people following this request."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -2584,27 +2590,31 @@ msgid ""
 "publish here. <a href=\"%(url)s\">You can login or sign up here.</a>"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:551
+#: foirequest/templates/foirequest/show.html:538
+#, python-format
+msgid "So far one person also requested this document."
+msgid_plural ""
+"So far <strong>%(counter)s people</strong> requested this document."
+msgstr[0] ""
+msgstr[1] ""
+
+#: foirequest/templates/foirequest/show.html:552
 msgid "Set status"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:583
+#: foirequest/templates/foirequest/show.html:584
 msgid "Write a comment"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:590
+#: foirequest/templates/foirequest/show.html:591
 msgid "Please login to write a comment."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:597
+#: foirequest/templates/foirequest/show.html:598
 msgid "No messages yet"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:603
-msgid "Identical requests"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:615
+#: foirequest/templates/foirequest/show.html:616
 msgid "This request is identical to:"
 msgstr ""
 
