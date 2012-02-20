@@ -290,6 +290,10 @@ class FoiRequest(models.Model):
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
+    def get_absolute_domain_short_url(self):
+        return u"%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
+                kwargs={'obj_id': self.id}))
+
     def get_auth_link(self):
         return u"%s%s" % (settings.SITE_URL,
             reverse('foirequest-auth',
