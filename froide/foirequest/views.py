@@ -628,17 +628,21 @@ def make_same_request(request, slug, message_id):
         return render_400(request)
     if not message.not_publishable:
         return render_400(request)
+    if foirequest.same_as is not None:
+        foirequest = foirequest.same_as
     same_requests = FoiRequest.objects.filter(user=request.user, same_as=foirequest).count()
     if same_requests:
         messages.add_message(request, messages.ERROR,
             _("You already made an identical request"))
         return render_400(request)
+    body = u"%s\n\n%s" % (foirequest.description,
+            _('Please see this request on FragDenStaat.de where you granted access to this information: %(url)s') % {'url': foirequest.get_absolute_domain_short_url()})
     fr = FoiRequest.from_request_form(
         request.user, foirequest.public_body,
         foirequest.law,
         form_data=dict(
             subject=foirequest.title,
-            body=foirequest.description,
+            body=body,
             public=foirequest.public
         ))  # Don't pass post_data, get default letter of law
     fr.same_as = foirequest
