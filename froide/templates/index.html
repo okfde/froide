@@ -30,9 +30,9 @@
     <small>{% blocktrans %}Featured Request{% endblocktrans %}</small>
     <h3>{{ featured.title }}</h3>
     <p>
-      {{ featured.text|truncatewords:55 }}
+      {{ featured.text|truncatewords:55|linebreaksbr }}
       {% if featured.url %}
-        <a href="{{ featured.url }}">{% blocktrans %}Read the blog post{% endblocktrans %}</a><br/>
+        <br/><a href="{{ featured.url }}">{% blocktrans %}Read the blog post{% endblocktrans %}</a><br/>
       {% endif %}
     </p>
     <p><a class="make-request-icon" href="{% url 'foirequest-show' slug=featured.request.slug %}">{% blocktrans %}Visit this request{% endblocktrans %}</a>
