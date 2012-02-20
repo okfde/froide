@@ -140,7 +140,7 @@
     <h3>{% trans "Follow this request" %}</h3>
     {% with count=object.follow_count %}
       {% if count %}
-      <p><span class="help">{% blocktrans count count=count %}One person is following this request.{% plural %}There are {{ count }} people following this request.{% endblocktrans %}</span></p>
+      <p><span class="help">{% blocktrans count counter=count %}One person is following this request.{% plural %}There are {{ counter }} people following this request.{% endblocktrans %}</span></p>
       {% endif %}
     {% endwith %}
     {% if user.is_authenticated and user != object.user %}
@@ -535,7 +535,7 @@
       {% url "account-login" as account_login %}
       <p>{% blocktrans with url=account_login %}If you login, you can make an identical request in your name with one click to gain individual access to the information that we are not allowed to publish here. <a href="{{ url }}">You can login or sign up here.</a>{% endblocktrans %}</p>
     {% endif %}
-      <p>{% blocktrans count num=object.same_as_count %}So far one person also requested this document.{% plural %}So far <strong>{{ num }} people</strong> requested this document.{% endblocktrans %}</p>
+      <p>{% blocktrans count counter=object.same_as_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
     </div>
   {% endif %}
   {# Set status #}
@@ -601,7 +601,7 @@
 </div>
 {% if object.same_as_count %}
 <div class="span-18" id="identical">
-  <h5>{% blocktrans count num=object.same_as_count %}One identical request{% plural %}{{ num }} identical requests{% endblocktrans %}</h5>
+  <h5>{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
   <ul>
   {% for foirequest in object.same_as_set.all %}
     <li>
