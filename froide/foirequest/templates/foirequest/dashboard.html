@@ -1,0 +1,136 @@
+{% extends 'foirequest/base.html' %}
+{% load url from future %}
+{% load i18n %}
+
+{% block extra_head %}
+{{ block.super }}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/d3/d3.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/d3/d3.time.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/d3/d3.layout.min.js"></script>
+    <style type="text/css">
+
+rect {
+  fill: #ddd;
+}
+
+path.area {
+  fill: #000;
+  fill-opacity: .75;
+}
+
+.axis, .grid {
+  shape-rendering: crispEdges;
+}
+
+.grid line {
+  stroke: #fff;
+}
+
+.grid line.minor {
+  stroke-opacity: .5;
+}
+
+.grid text {
+  display: none;
+}
+
+.axis line {
+  stroke: #000;
+}
+
+.grid path, .axis path {
+  display: none;
+}
+
+    </style>
+{% endblock %}
+
+{% block body %}
+<div id="requests">
+    <h2>{% trans "Number of Requests" %}</h2>
+</div>
+<div id="users">
+    <h2>{% trans "Number of Users" %}</h2>
+</div>
+{% endblock %}
+
+{% block extra_footer %}
+    <script type="text/javascript">
+var allData = {{ data|safe }};
+
+var makeChart = function(selector, data){
+  var w = 400,
+      h = 400;
+
+  var m = [10, 50, 20, 10],
+      w = 960 - m[1] - m[3],
+      h = 500 - m[0] - m[2],
+      parse = d3.time.format("%Y-%m-%d").parse;
+
+
+  var color = d3.scale.category10();
+
+  // Scales. Note the inverted domain for the y-scale: bigger is up!
+  var x = d3.time.scale().range([20, w - 20]),
+      y = d3.scale.linear().range([h - 20, 20]);
+
+  // Axes.
+  var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+      yAxis = d3.svg.axis().scale(y).orient("right");
+
+  // An area generator.
+  var area = d3.svg.area()
+      .x(function(d) { return x(d.date); })
+      .y0(y(0))
+      .y1(function(d) { return y(d.total); });
+
+  var svg = d3.select(selector).append("svg")
+      .attr("width", w + m[1] + m[3])
+      .attr("height", h + m[0] + m[2]);
+
+  svg.append("rect")
+      .attr("width", w)
+      .attr("height", h);
+
+    data.forEach(function(d) {
+      d.date = parse(d.date);
+      d.num = +d.num;
+      d.total = +d.total;
+    });
+
+    // Compute the minimum and maximum date, and the maximum price.
+    x.domain([data[0].date, data[data.length - 1].date]);
+    y.domain([0, d3.max(data, function(d) { return d.total; })]);
+
+    x.domain([data[0].date, data[data.length - 1].date]);
+    y.domain([0, d3.max(data, function(d) { return d.total; })]);
+
+    svg.append("g")
+        .attr("class", "x grid")
+        .attr("transform", "translate(0," + h + ")")
+        .call(xAxis.tickSubdivide(1).tickSize(-h));
+
+    svg.append("g")
+        .attr("class", "y grid")
+        .attr("transform", "translate(" + w + ",0)")
+        .call(yAxis.tickSubdivide(1).tickSize(-w));
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + h + ")")
+        .call(xAxis.tickSubdivide(0).tickSize(6));
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + w + ",0)")
+        .call(yAxis.tickSubdivide(0).tickSize(6));
+
+    svg.append("path")
+        .attr("class", "area")
+        .attr("d", area(data));
+  };
+  makeChart("#users", allData.user);
+  makeChart("#requests", allData.foirequest);
+</script>
+{% endblock %}
+

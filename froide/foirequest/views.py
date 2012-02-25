@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
+from django.contrib.auth.models import User
 
 from haystack.query import SearchQuerySet
 from taggit.models import Tag
@@ -38,6 +39,33 @@ def index(request):
             'foicount': FoiRequest.published.count(),
             'pbcount': PublicBody.objects.count()
         })
+
+
+def dashboard(request):
+    if not request.user.is_staff:
+        return render_403(request)
+    context = {}
+    user = {}
+    for u in User.objects.filter(date_joined__gte=datetime.datetime(2011, 7, 30)):
+        d = u.date_joined.date().isoformat()
+        user.setdefault(d, 0)
+        user[d] += 1
+    context['user'] = sorted([{'date': k, 'num': v, 'symbol': 'user'} for k, v in user.items()], key=lambda x: x['date'])
+    total = 0
+    for user in context['user']:
+        total += user['num']
+        user['total'] = total
+    foirequest = {}
+    for u in FoiRequest.objects.filter(first_message__gte=datetime.datetime(2011, 7, 30)):
+        d = u.first_message.date().isoformat()
+        foirequest.setdefault(d, 0)
+        foirequest[d] += 1
+    context['foirequest'] = sorted([{'date': k, 'num': v, 'symbol': 'user'} for k, v in foirequest.items()], key=lambda x: x['date'])
+    total = 0
+    for req in context['foirequest']:
+        total += req['num']
+        req['total'] = total
+    return render(request, 'foirequest/dashboard.html', {'data': json.dumps(context)})
 
 
 def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None):

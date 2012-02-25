@@ -17,8 +17,8 @@ databrowse.site.register(FoiLaw)
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
 urlpatterns = patterns('',
-    # Examples:
     url(r'^$', 'froide.foirequest.views.index', name='index'),
+    url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard'),
     # Translators: request URL
     url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),
     # Translators: URL part
