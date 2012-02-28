@@ -12,6 +12,7 @@
 
 {% block extra_head %}
 <link rel="self" type="text/html" href="{% url 'foirequest-show' slug=object.slug %}"/>
+<link rel="canonical" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
 <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" />
 
@@ -116,6 +117,16 @@
 {% endif %}
 
 </dl>
+
+{% if object.visibility == 2 %}
+{% if object.user == user %}
+<div>
+  <p>{% trans "Share your request with friends and followers!" %}</p>
+{% endif %}
+<div class="socialshareprivacy"></div>
+{% endif %}
+</div>
+
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
 <div class="info">
@@ -621,7 +632,9 @@
 {% endblock %}
 
 {% block extra_footer %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.socialshareprivacy.min.js"></script>
 <script type="text/javascript">
+  var STATIC_URL = "{{ STATIC_URL }}";
   $(function(){
     $("#public_body-chooser input[name='public_body']").live("change", function(e){
       Froide.app.publicBodyChosen($("#public_body-chooser input[name='public_body']:checked").val());
@@ -633,6 +646,26 @@
     loggedInCallback = function(data){
       location.href = $("link[rel='self']").attr("href");
     };
+    if($('.socialshareprivacy').length > 0){
+      $('.socialshareprivacy').socialSharePrivacy({
+        css_path: STATIC_URL + "js/libs/socialshareprivacy/socialshareprivacy.css",
+        uri: "{{ SITE_URL }}{{ object.get_absolute_url }}",
+        services: {
+          facebook: {
+            perma_option: 'off',
+            dummy_img: STATIC_URL + "js/libs/socialshareprivacy/images/dummy_facebook.png"
+          },
+          twitter: {
+            perma_option: 'off',
+            dummy_img: STATIC_URL + "js/libs/socialshareprivacy/images/dummy_twitter.png"
+          },
+          gplus: {
+            perma_option: 'off',
+            dummy_img: STATIC_URL + "js/libs/socialshareprivacy/images/dummy_gplus.png"
+          }
+        }
+      });
+    }
   });
 </script>
 {% endblock %}
