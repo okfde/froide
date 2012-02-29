@@ -44,8 +44,13 @@ class Jurisdiction(models.Model):
 
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
-        return super(PublicBodyManager, self).get_query_set().exclude(email="")\
+        return super(PublicBodyManager, self).get_query_set()\
+                .exclude(email="")\
                 .filter(email__isnull=False)
+
+    def get_list(self):
+        return self.get_query_set()\
+            .filter(jurisdiction__hidden=False)
 
     def get_for_homepage(self, count=5):
         return self.get_query_set().order_by('-number_of_requests')[:count]

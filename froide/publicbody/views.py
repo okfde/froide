@@ -31,8 +31,13 @@ def index(request):
 
 def show_topic(request, topic):
     topic = get_object_or_404(PublicBodyTopic, slug=topic)
-    context = {"topic": topic,
-            "object_list": PublicBody.objects.filter(topic=topic).order_by("name")}
+    context = {
+        "topic": topic,
+        "object_list": PublicBody.objects.get_list()\
+                    .select_related('jurisdiction')\
+                    .filter(topic=topic)\
+                    .order_by("jurisdiction__rank", "name")
+        }
     return render(request, 'publicbody/show_topic.html', context)
 
 
