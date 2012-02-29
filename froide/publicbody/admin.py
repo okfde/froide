@@ -6,7 +6,7 @@ from froide.publicbody.models import (PublicBody, FoiLaw, PublicBodyTopic,
 class PublicBodyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'email', 'url', 'classification', 'topic', 'depth',)
-    list_filter = ('classification', 'topic',)
+    list_filter = ('classification', 'topic', 'jurisdiction',)
     search_fields = ['name', "description"]
     exclude = ('confirmed',)
 
