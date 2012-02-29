@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 url = None
                 if 'url' in pb:
                     url = "http://%s" % pb['url']
-
+                self.stdout.write((u"Trying: %s\n" % pb['name']).encode('utf-8'))
                 public_body = PublicBody.objects.create(
                     name=name,
                     slug=slugify(name),
@@ -102,6 +102,7 @@ class Command(BaseCommand):
                     jurisdiction=juris
                 )
                 public_body.laws.add(*laws)
+                self.stdout.write((u"%s\n" % public_body).encode('utf-8'))
 
     def get_topic(self, pb):
         name = pb['name'].lower()
