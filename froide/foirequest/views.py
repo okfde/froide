@@ -37,7 +37,7 @@ def index(request):
             'successful_foi_requests': successful_foi_requests,
             'unsuccessful_foi_requests': unsuccessful_foi_requests,
             'foicount': FoiRequest.published.count(),
-            'pbcount': PublicBody.objects.count()
+            'pbcount': PublicBody.objects.get_list().count()
         })
 
 
