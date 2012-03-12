@@ -546,7 +546,7 @@
       {% url "account-login" as account_login %}
       <p>{% blocktrans with url=account_login %}If you login, you can make an identical request in your name with one click to gain individual access to the information that we are not allowed to publish here. <a href="{{ url }}">You can login or sign up here.</a>{% endblocktrans %}</p>
     {% endif %}
-      <p>{% blocktrans count counter=object.same_as_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
+      <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
     </div>
   {% endif %}
   {# Set status #}

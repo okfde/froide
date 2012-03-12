@@ -283,6 +283,11 @@ class FoiRequest(models.Model):
     def status_settable(self):
         return self.awaits_classification()
 
+    def identical_count(self):
+        if self.same_as:
+            return self.same_as.same_as_count
+        return self.esame_as_count
+
     def get_absolute_url(self):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
