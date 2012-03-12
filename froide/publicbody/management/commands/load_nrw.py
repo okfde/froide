@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
         # importing landesverwaltung nrw
         with file(os.path.join(directory, 'landesverwaltung_nrw.json')) as f:
-            pbs = json.load(f)
+            pbs = json.loads(f.read().decode('utf-8'))
             for pb in pbs:
                 topic = self.get_topic(pb)
                 classifications = pb['name'].split()
@@ -54,7 +54,7 @@ class Command(BaseCommand):
                     classification=classification,
                     classification_slug=slugify(classification),
                     email=pb.get('email', None),
-                    contact="%s\n%s" % (pb.get('kontakt', ''), pb.get('url', '')),
+                    contact=u"%s\n%s" % (pb.get('kontakt', ''), pb.get('url', '')),
                     address=pb.get('address'),
                     website_dump='',
                     request_note='',
