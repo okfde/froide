@@ -492,7 +492,7 @@
             {% if object.user.get_profile.private %}
             <p>{% trans "Please check this attachment and if it doesn't contain personally identifying information, click the button below." %}</p>
             {% else %}
-            <p>{% blocktrans with name=user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}), click the button below.{% endblocktrans %}</p>
+            <p>{% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}), click the button below.{% endblocktrans %}</p>
             {% endif %}
             <input class="button" type="submit" value="{% trans "Publish this attachment" %}"/>
             <p>{% trans "If it does contain personally identifying information, please inform moderators (info@fragdenstaat.de) and they will redact the document and then publish it for you." %}</p>
