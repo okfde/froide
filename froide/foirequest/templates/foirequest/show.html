@@ -571,11 +571,7 @@
   {% if forloop.counter0 == 0 %}
     <div>{% highlight_request message %}</div>
   {% else %}
-    {% if user == object.user %}
-      <div>{{ message.get_real_content|urlize }}</div>
-    {% else %}
-      <div>{{ message.get_content|urlize }}</div>
-    {% endif %}
+    <div>{{ message.get_content|urlize }}</div>
   {% endif %}
   </div>
 </div>
