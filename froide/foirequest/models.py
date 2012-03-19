@@ -954,6 +954,18 @@ class FoiMessage(models.Model):
             self._attachments = list(self.foiattachment_set.all())
         return self._attachments
 
+    def get_subject(self):
+        content = self.subject
+        # content = remove_quote(content,
+        #        replacement=_(u"Quoted part removed"))
+        if self.request.user:
+            profile = self.request.user.get_profile()
+            content = profile.apply_message_redaction(content)
+
+        content = replace_email_name(content, _("<<name and email address>>"))
+        content = replace_email(content, _("<<email address>>"))
+        return content
+
     def get_content(self):
         content = self.content
         # content = remove_quote(content,
