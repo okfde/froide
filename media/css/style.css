@@ -159,6 +159,10 @@ h3 {
     font-weight: bold;
 }
 
+h4 {
+    margin-top: 0.1em;
+}
+
 .messages {
     list-style-type:none;
 }
@@ -199,6 +203,7 @@ h3 {
     -webkit-transition: all 0.1s ease;
     -moz-transition: all 0.1s ease;
     -o-transition: all 0.1s ease;
+    transition: all 0.1s ease;
     line-height: 1.4;
     background-color: #49A7F3;
     display: inline-block;
@@ -392,6 +397,21 @@ strong {
     font-size: 12px;
     text-align: center;
     margin: 2em auto 1em;
+}
+
+#footer div {
+    margin: 0 auto 2em;
+    width: 630px;
+}
+
+#footer .logo {
+    display: block;
+    float: left;
+    padding-right: 2em;
+}
+
+#footer p {
+    text-align: left;
 }
 
 #footer ul{
@@ -677,6 +697,8 @@ textarea.smalltext {
     height: 80px;
 }
 
+
+
 .js .hidden {
     display:none;
 }
@@ -696,6 +718,10 @@ textarea.smalltext {
 
 .focussed:target .toggle {
     display:none;
+}
+
+.focussed:target .toggle-div {
+    display:block !important;
 }
 
 .no-js #review-button {
@@ -847,7 +873,7 @@ textarea.smalltext {
     margin-bottom: 0.4em;
 }
 
-.message-content {
+.message-content > div {
     white-space: nowrap;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -982,9 +1008,42 @@ textarea.smalltext {
     background-position: 0 0;
 }
 
+.small {
+    color: #666;
+    font-size:0.8em;
+}
+
+.small a {
+    text-decoration: none;
+    color: #666;
+}
+
+.small a:hover {
+    text-decoration: underline;
+    color: #666;
+}
+
 .time-small {
     color: #666;
     font-size:0.8em;
+}
+
+.tag-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.tag-list li {
+    display: inline;
+}
+
+.tag-list li a {
+    font-size: 0.8em;
+   text-decoration: none;
+}
+
+.tag-list li a:hover {
+   text-decoration: underline;
 }
 
 .iconed-list {
@@ -1022,4 +1081,73 @@ textarea.smalltext {
 #followrequest-form label {
     font-weight: normal;
     font-size: 12pt;
+}
+
+.foldin {
+/*    color: #999;
+    overflow: hidden;
+    max-height: 90px;
+    -webkit-transition: all 5s ease;
+    -moz-transition: all 5s ease;
+    -o-transition: all 5s ease;
+    transition: all 5s ease;*/
+}
+
+.message-content:hover .foldin {
+    /* content height should never become bigger than this */
+    /*max-height: 1000px;*/
+/*    color: #333;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;*/
+}
+
+.foirequest-overview h4{
+    padding-left: 1em;
+}
+
+.foirequest-overview ul {
+    list-style-type: none;
+}
+
+.foirequest-overview small a {
+    position: relative;
+    left: 1.8em;
+    top: -1em;
+}
+
+.sidebar h3 {
+    font-size: 1em;
+    margin-top: 0;
+}
+
+.hover-visible {
+    visibility: hidden;
+}
+
+.hover-parent:hover .hover-visible{
+    visibility: visible;
+}
+
+.center {
+    text-align: center;
+}
+
+.socialshareprivacy {
+    opacity: 0.5;
+}
+
+.info .socialshareprivacy {
+    opacity: 1;
+}
+
+.socialshareprivacy:hover {
+    opacity: 1;
+}
+
+.banner {
+    width: 998px;
+    margin: 0 auto;
+    display: none;
 }

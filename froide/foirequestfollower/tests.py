@@ -12,7 +12,7 @@ from django.contrib.comments.forms import CommentForm
 
 from foirequest.models import FoiRequest
 from foirequestfollower.models import FoiRequestFollower
-from foirequestfollower.tasks import _batch_update
+from froide.foirequestfollower.tasks import _batch_update
 
 
 class FoiRequestFollowerTest(TestCase):

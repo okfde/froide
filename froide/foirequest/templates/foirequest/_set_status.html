@@ -3,7 +3,7 @@
 <label for="id_status">{% blocktrans %}Status of request after this message:{% endblocktrans %}</label><br/>
 {{ status_form.status }}<br/>
 <div class="status-refusal status-section">
-{% blocktrans %}When you are denied information, the Public Body should always state the reason.{% endblocktrans %}<br/>
+{% blocktrans %}When you are (partially) denied access to information, the Public Body should always state the reason.{% endblocktrans %}<br/>
   <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
   {{ status_form.refusal_reason }}
 </div>

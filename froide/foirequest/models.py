@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import json
 
 from django.db import models
-from django.db.models import signals
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -12,18 +11,20 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.core.files import File
 import django.dispatch
-from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
 from django.utils.http import urlquote
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_managers
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils import timezone
 
-from publicbody.models import PublicBody, FoiLaw
+from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
+
+from publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
@@ -57,7 +58,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
         return super(PublishedFoiRequestManager,
                 self).get_query_set().filter(visibility=2, is_foi=True)\
-                        .select_related("public_body")
+                        .select_related("public_body", "jurisdiction")
 
     def awaiting_response(self):
         return self.get_query_set().filter(
@@ -70,7 +71,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set().order_by('-last_message')
 
     def for_list_view(self):
-        return self.get_query_set().order_by('-first_message')
+        return self.by_last_update().filter(same_as__isnull=True)
 
     def get_for_homepage(self, count=5):
         return self.by_last_update().filter(
@@ -82,24 +83,32 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set()
 
     def successful(self):
-        return self.get_query_set().filter(
+        return self.by_last_update().filter(
                     models.Q(status="successful") |
                     models.Q(status="partially_successful")).order_by("-last_message")
 
     def unsuccessful(self):
-        return self.get_query_set().filter(
+        return self.by_last_update().filter(
                     models.Q(status="refused") |
                     models.Q(status="not_held")).order_by("-last_message")
 
 
-class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
+class PublishedNotFoiRequestManager(CurrentSiteManager):
     def get_query_set(self):
-        return super(PublishedFoiRequestManager,
+        return super(CurrentSiteManager,
                 self).get_query_set().filter(visibility=2, is_foi=False)\
                         .select_related("public_body")
 
     def for_list_view(self):
         return self.get_query_set().order_by('-first_message')
+
+
+class TaggedFoiRequest(TaggedItemBase):
+    content_object = models.ForeignKey('FoiRequest')
+
+    class Meta:
+        verbose_name = _('FoI Request Tag')
+        verbose_name_plural = _('FoI Request Tags')
 
 
 class FoiRequest(models.Model):
@@ -158,9 +167,13 @@ class FoiRequest(models.Model):
             (_("successful"), 'successful'),
             (_("partially-successful"), 'partially_successful'),
             (_("refused"), 'refused'),
+            (_("escalated"), 'escalated'),
+            (_("withdrawn"), 'user_withdrew'),
+            (_("withdrawn-costs"), 'user_withdrew_costs'),
             (_("publicbody-needed"), 'publicbody_needed'),
             (_("awaiting-response"), 'awaiting_response'),
-            (_("overdue"), 'overdue')
+            (_("overdue"), 'overdue'),
+            (_("not-held"), 'not_held')
     ]
 
     # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
@@ -208,6 +221,11 @@ class FoiRequest(models.Model):
             db_index=True, unique=True)
     secret = models.CharField(_("Secret"), blank=True, max_length=100)
 
+    same_as = models.ForeignKey('self', null=True, blank=True,
+            on_delete=models.SET_NULL,
+            verbose_name=_("Identical request"))
+    same_as_count = models.IntegerField(_("Identical request count"), default=0)
+
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
             on_delete=models.SET_NULL,
             verbose_name=_("Freedom of Information Law"))
@@ -217,14 +235,16 @@ class FoiRequest(models.Model):
     checked = models.BooleanField(_("checked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
 
+    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
+            null=True, on_delete=models.SET_NULL)
+
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
-
 
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
     published_not_foi = PublishedNotFoiRequestManager()
-
+    tags = TaggableManager(through=TaggedFoiRequest, blank=True)
 
     class Meta:
         ordering = ('last_message',)
@@ -245,9 +265,12 @@ class FoiRequest(models.Model):
     add_postal_reply = django.dispatch.Signal(providing_args=[])
     escalated = django.dispatch.Signal(providing_args=[])
 
-
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
+
+    @property
+    def same_as_set(self):
+        return FoiRequest.objects.filter(same_as=self)
 
     @property
     def messages(self):
@@ -261,12 +284,21 @@ class FoiRequest(models.Model):
     def status_settable(self):
         return self.awaits_classification()
 
+    def identical_count(self):
+        if self.same_as:
+            return self.same_as.same_as_count
+        return self.same_as_count
+
     def get_absolute_url(self):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
+    def get_absolute_domain_short_url(self):
+        return u"%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
+                kwargs={'obj_id': self.id}))
 
     def get_auth_link(self):
         return u"%s%s" % (settings.SITE_URL,
@@ -347,12 +379,15 @@ class FoiRequest(models.Model):
         except FoiRequestFollower.DoesNotExist:
             return False
 
-
     def public_date(self):
         if self.due_date:
             return self.due_date + timedelta(days=settings.FROIDE_CONFIG.get(
                 'request_public_after_due_days', 14))
         return None
+
+    def get_set_tags_form(self):
+        from foirequest.forms import TagFoiRequestForm
+        return TagFoiRequestForm(self)
 
     def get_status_form(self):
         from foirequest.forms import FoiRequestStatusForm
@@ -372,7 +407,7 @@ class FoiRequest(models.Model):
         self.status = self.MESSAGE_STATUS_TO_REQUEST_STATUS.get(data['status'], data['status'])
         message = self.message_needs_status()
         self.costs = data['costs']
-        if data['status'] == "refused":
+        if data['status'] == "refused" or data['status'] == "partially_successful":
             self.refusal_reason = data['refusal_reason']
         else:
             self.refusal_reason = u""
@@ -392,7 +427,6 @@ class FoiRequest(models.Model):
                 if message.sender_email and not message.sender_email in addresses:
                     addresses[message.sender_email] = message
         return addresses
-
 
     def public_body_suggestions(self):
         if not hasattr(self, "_public_body_suggestion"):
@@ -432,16 +466,22 @@ class FoiRequest(models.Model):
         last_message = list(self.messages)[-1]
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
+        if self.is_overdue() and self.awaits_response():
+            message = render_to_string('foirequest/overdue_reply.txt', {
+                'foirequest': self
+            })
+        else:
+            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")
         return SendMessageForm(self,
-                initial={"subject": subject, 
-                    "message": _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")})
+                initial={"subject": subject,
+                    "message": message})
 
     def get_escalation_message_form(self):
         from foirequest.forms import EscalationMessageForm
         subject = _('Complaint about request "%(title)s"'
                 ) % {"title": self.title}
         return EscalationMessageForm(self,
-                initial={"subject": subject, 
+                initial={"subject": subject,
                     "message": _('''Dear Sir or Madam,
 
 I'd like to complain about the handling of the request under the %(law)s documented here:
@@ -472,7 +512,7 @@ Sincerely yours
         self.status = 'awaiting_classification'
         self.last_message = message.timestamp
         self.save()
-
+        has_pdf = False
         for attachment in email['attachments']:
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
@@ -480,9 +520,16 @@ Sincerely yours
                     filetype=attachment.content_type)
             if att.name is None:
                 att.name = _("attached_file")
+            if att.name.endswith('pdf') or 'pdf' in att.filetype:
+                has_pdf = True
             attachment._committed = False
             att.file = File(attachment)
             att.save()
+        if (has_pdf and
+                settings.FROIDE_CONFIG.get("mail_managers_on_pdf_attachment",
+                    False)):
+            mail_managers(_('Message contains PDF'),
+                    self.get_absolute_domain_url())
         self.message_received.send(sender=self, message=message)
 
     def add_message(self, user, recipient_name, recipient_email,
@@ -524,7 +571,7 @@ Sincerely yours
     def generate_secret_address(cls, user):
         possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
         secret = "".join([random.choice(possible_chars) for i in range(10)])
-        return "%s+%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
+        return "%s.%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
 
     @classmethod
     def generate_unique_secret_address(cls, user):
@@ -580,7 +627,8 @@ Sincerely yours
 
         request.secret_address = cls.generate_unique_secret_address(user)
         request.law = foi_law
-
+        if public_body_object is not None:
+            request.jurisdiction = public_body_object.jurisdiction
         # ensure slug is unique
         request.slug = slugify(request.title)
         count = 0
@@ -706,12 +754,12 @@ Sincerely yours
         else:
             return False
 
-
     def set_public_body(self, public_body, law):
         assert self.public_body == None
         assert self.status == "publicbody_needed"
         self.public_body = public_body
         self.law = law
+        self.jurisdiction = public_body.jurisdiction
         send_now = self.set_status_after_change()
         if send_now:
             self.due_date = self.law.calculate_due_date()
@@ -764,61 +812,6 @@ Sincerely yours
                     "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
-
-
-@receiver(FoiRequest.became_overdue,
-        dispatch_uid="send_notification_became_overdue")
-def send_notification_became_overdue(sender, **kwargs):
-    send_mail(_("%(site_name)s: Request became overdue")
-                % {"site_name": settings.SITE_NAME},
-            render_to_string("foirequest/became_overdue.txt",
-                {"request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
-                    "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
-
-
-@receiver(FoiRequest.request_to_public_body,
-        dispatch_uid="foirequest_increment_request_count")
-def increment_request_count(sender, **kwargs):
-    if not sender.public_body:
-        return
-    sender.public_body.number_of_requests += 1
-    sender.public_body.save()
-
-@receiver(signals.pre_delete, sender=FoiRequest,
-        dispatch_uid="foirequest_decrement_request_count")
-def decrement_request_count(sender, instance=None, **kwargs):
-    if not instance.public_body:
-        return
-    instance.public_body.number_of_requests -= 1
-    if instance.public_body.number_of_requests < 0:
-        instance.public_body.number_of_requests = 0
-    instance.public_body.save()
-
-@receiver(FoiRequest.message_received,
-        dispatch_uid="notify_user_message_received")
-def notify_user_message_received(sender, message=None, **kwargs):
-    send_mail(_("You received a reply to your Freedom of Information Request"),
-            render_to_string("foirequest/message_received_notification.txt",
-                {"message": message, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_url()),
-                    "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
-
-@receiver(FoiRequest.public_body_suggested,
-        dispatch_uid="notify_user_public_body_suggested")
-def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
-    if sender.user != suggestion.user:
-        send_mail(_("Your request received a suggestion for a Public Body"),
-                render_to_string("foirequest/public_body_suggestion_received.txt",
-                    {"suggestion": suggestion, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
-                        "site_name": settings.SITE_NAME}),
-                settings.DEFAULT_FROM_EMAIL,
-                [sender.user.email])
 
 
 class PublicBodySuggestion(models.Model):
@@ -878,6 +871,7 @@ class FoiMessage(models.Model):
     html = models.TextField(_("HTML"), blank=True, null=True)
     original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
+    not_publishable = models.BooleanField(_('Not publishable'), default=False)
 
     class Meta:
         get_latest_by = 'timestamp'
@@ -913,7 +907,7 @@ class FoiMessage(models.Model):
     def get_public_body_sender_form(self):
         from foirequest.forms import MessagePublicBodySenderForm
         return MessagePublicBodySenderForm(self)
-    
+
     def get_recipient(self):
         if self.recipient_public_body:
             return mark_safe('<a href="%(url)s">%(name)s</a>' % {
@@ -953,12 +947,23 @@ class FoiMessage(models.Model):
         else:
             return self.sender_public_body.name
 
-
     @property
     def attachments(self):
         if not hasattr(self, "_attachments"):
             self._attachments = list(self.foiattachment_set.all())
         return self._attachments
+
+    def get_subject(self):
+        content = self.subject
+        # content = remove_quote(content,
+        #        replacement=_(u"Quoted part removed"))
+        if self.request.user:
+            profile = self.request.user.get_profile()
+            content = profile.apply_message_redaction(content)
+
+        content = replace_email_name(content, _("<<name and email address>>"))
+        content = replace_email(content, _("<<email address>>"))
+        return content
 
     def get_content(self):
         content = self.content
@@ -967,7 +972,7 @@ class FoiMessage(models.Model):
         if self.request.user:
             profile = self.request.user.get_profile()
             content = profile.apply_message_redaction(content)
-        
+
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
         content = remove_signature(content)
@@ -1003,36 +1008,6 @@ class FoiMessage(models.Model):
         self.save()
         FoiRequest.message_sent.send(sender=self.request, message=self)
 
-# Signals for Indexing FoiMessage via FoiRequest
-def foimessage_delayed_update(instance=None, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
-        return
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.request_id, FoiRequest)
-signals.post_save.connect(foimessage_delayed_update, sender=FoiMessage)
-
-def foimessage_delayed_remove(instance, **kwargs):
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.request_id, FoiRequest)
-signals.post_delete.connect(foimessage_delayed_remove, sender=FoiMessage)
-
-
-@receiver(FoiRequest.message_sent,
-        dispatch_uid="send_foimessage_sent_confirmation")
-def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
-    if len(sender.messages) == 1:
-        subject = _("Your Freedom of Information Request was sent")
-        template = "foirequest/confirm_foi_request_sent.txt"
-    else:
-        subject = _("Your Message was sent")
-        template = "foirequest/confirm_foi_message_sent.txt"
-    send_mail(subject,
-            render_to_string(template,
-                {"request": sender, "message": message,
-                    "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
-
 
 def upload_to(instance, filename):
     return "foi/%s/%s" % (instance.belongs_to.id, filename)
@@ -1047,6 +1022,7 @@ class FoiAttachment(models.Model):
     size = models.IntegerField(_("Size"), blank=True, null=True)
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
+    approved = models.BooleanField(_("Approved"), default=False)
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
             "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
@@ -1054,6 +1030,7 @@ class FoiAttachment(models.Model):
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/x-pdf',
             )
 
     class Meta:
@@ -1075,18 +1052,12 @@ class FoiAttachment(models.Model):
         return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
                 urlquote(self.file.url))
 
-# Signals for Indexing FoiAttachment via FoiRequest
-def foiattachment_delayed_update(instance, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
-        return
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
-signals.post_save.connect(foiattachment_delayed_update, sender=FoiAttachment)
+    def get_html_id(self):
+        return _("attachment-%(id)d") % {"id": self.id}
 
-def foiattachment_delayed_remove(instance, **kwargs):
-    from helper.tasks import delayed_update
-    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
-signals.post_delete.connect(foiattachment_delayed_remove, sender=FoiAttachment)
+    def get_absolute_url(self):
+        return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
+                self.get_html_id())
 
 
 class FoiEventManager(models.Manager):
@@ -1105,6 +1076,7 @@ class FoiEventManager(models.Manager):
         return self.get_query_set().filter(public=True)\
                 .select_related("user", "user__profile", "public_body",
                         "request")
+
 
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
@@ -1139,6 +1111,8 @@ class FoiEvent(models.Model):
             u"%(user)s made the request '%(request)s' public."),
         "request_refused": _(
             u"%(public_body)s refused to provide information on the grounds of %(reason)s."),
+        "partially_successful": _(
+            u"%(public_body)s answered partially, but denied access to all information on the grounds of %(reason)s."),
         "became_overdue": _(
             u"This request became overdue"),
         "set_concrete_law": _(
@@ -1192,6 +1166,7 @@ class FoiEvent(models.Model):
         context = getattr(self, "_html_context", None)
         if context is not None:
             return context
+
         def link(url, title):
             return mark_safe('<a href="%s">%s</a>' % (url, escape(title)))
         context = self.get_context()
@@ -1210,78 +1185,9 @@ class FoiEvent(models.Model):
 
     def as_text(self):
         return self.event_texts[self.event_name] % self.get_context()
-    
+
     def as_html(self):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
-
-@receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, message, **kwargs):
-    FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
-            public_body=message.recipient_public_body)
-
-
-@receiver(FoiRequest.message_received,
-        dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, **kwargs):
-    FoiEvent.objects.create_event("message_received", sender,
-            user=sender.user,
-            public_body=sender.public_body)
-
-
-@receiver(FoiRequest.status_changed,
-        dispatch_uid="create_event_status_changed")
-def create_event_status_changed(sender, **kwargs):
-    status = kwargs['status']
-    data = kwargs['data']
-    if data['costs'] > 0:
-        FoiEvent.objects.create_event("reported_costs", sender,
-                user=sender.user,
-                public_body=sender.public_body, amount=data['costs'])
-    elif status == "refused" and data['refusal_reason']:
-        FoiEvent.objects.create_event("request_refused", sender,
-                user=sender.user,
-                public_body=sender.public_body, reason=data['refusal_reason'])
-    elif status == "request_redirected":
-        FoiEvent.objects.create_event("request_redirected", sender,
-                user=sender.user,
-                public_body=sender.public_body)
-    else:
-        FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
-            public_body=sender.public_body,
-            status=FoiRequest.get_readable_status(status))
-
-@receiver(FoiRequest.made_public,
-        dispatch_uid="create_event_made_public")
-def create_event_made_public(sender, **kwargs):
-    FoiEvent.objects.create_event("made_public", sender, user=sender.user,
-            public_body=sender.public_body)
-
-@receiver(FoiRequest.public_body_suggested,
-        dispatch_uid="create_event_public_body_suggested")
-def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
-    FoiEvent.objects.create_event("public_body_suggested", sender, user=suggestion.user,
-            public_body=suggestion.public_body)
-
-@receiver(FoiRequest.became_overdue,
-        dispatch_uid="create_event_became_overdue")
-def create_event_became_overdue(sender, **kwargs):
-    FoiEvent.objects.create_event("became_overdue", sender)
-
-@receiver(FoiRequest.set_concrete_law,
-        dispatch_uid="create_event_set_concrete_law")
-def create_event_set_concrete_law(sender, **kwargs):
-    FoiEvent.objects.create_event("set_concrete_law", sender,
-            user=sender.user, name=kwargs['name'])
-
-@receiver(FoiRequest.add_postal_reply,
-    dispatch_uid="create_event_add_postal_reply")
-def create_event_add_postal_reply(sender, **kwargs):
-    FoiEvent.objects.create_event("add_postal_reply", sender,
-            user=sender.user)
-
-@receiver(FoiRequest.escalated,
-    dispatch_uid="create_event_escalated")
-def create_event_escalated(sender, **kwargs):
-    FoiEvent.objects.create_event("escalated", sender,
-            user=sender.user, public_body=sender.law.mediator)
+# Import Signals here so models are available
+import foirequest.signals

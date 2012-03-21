@@ -1,0 +1,71 @@
+{% extends 'foirequest/base.html' %}
+{% load url from future %}
+{% load i18n %}
+{% load pagination_tags %}
+
+{% block body %}
+<div class="span-12">
+<h2>{% trans "FoI Requests" %}</h2>
+{% for foirequest in foirequests %}
+<div class="item">
+<h3>{{ foirequest.title }}</h3>
+<p>{{ foirequest.description }}</p>
+<a href="{% url 'admin:foirequest_foirequest_change' foirequest.id %}">{% trans "View on Admin site" %}</a>
+<form method="post" action="{% url 'foirequest-mark_checked' slug=foirequest.slug %}">
+  {% csrf_token %}
+  <input class="button" type="submit" value="{% trans "Mark as checked" %}"/>
+</form>
+<hr/>
+</div>
+{% endfor %}
+</div>
+
+<div class="span-12 last">
+<h2>{% trans "Attachments" %}</h2>
+{% for attachment in attachments %}
+<div class="item">
+<a href="{% url 'admin:foirequest_foiattachment_change' attachment.id %}">{% trans "View on Admin site" %}</a>
+{% if attachment.file %}
+<a href="{{ attachment.file.url }}">{{ attachment.name }}</a> {% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+{% else %}
+<div class="error">
+	{% blocktrans %}No file present!{% endblocktrans %}
+</div>
+{% endif %}
+{% if attachment.belongs_to.request.slug %}
+<form method="post" action="{% url 'foirequest-approve_attachment' slug=attachment.belongs_to.request.slug attachment=attachment.pk %}">
+{% csrf_token %}
+{% if attachment.belongs_to.request.user.get_profile.private %}
+	<p>{% trans "May not contain private information" %}</p>
+	{% else %}
+	<p>{% blocktrans with name=attachment.belongs_to.request.user.get_full_name %}May only contain name {{ name }}.{% endblocktrans %}</p>
+	{% endif %}
+	<input class="button" type="submit" value="{% trans "Publish this attachment" %}"/>
+</form>
+{% else %}
+<div class="error">
+	{% blocktrans %}No request present!{% endblocktrans %}
+</div>
+{% endif %}
+<hr/>
+</div>
+{% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_footer %}
+<script type="text/javascript">
+  $(function(){
+    $("form").submit(function(e){
+    	e.preventDefault();
+    	var form = $(this);
+    	var csrf = form.find('input[name="csrfmiddlewaretoken"]').attr('value');
+    	form.parent().css('opacity', '0.5');
+      	var url = form.attr('action');
+      	$.post(url, {csrfmiddlewaretoken: csrf}, function(){
+      		form.parent().remove();
+      	});
+    });
+  });
+</script>
+{% endblock %}

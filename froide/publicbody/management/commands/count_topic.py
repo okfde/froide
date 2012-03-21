@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.utils import translation
 from django.conf import settings
 
+
 class Command(BaseCommand):
     help = "Counts PulbicBodies for Topics"
 

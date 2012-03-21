@@ -7,9 +7,11 @@
 {% block body %}
 <h2>{{ object.name }}</h2>
 <div class="span-18">
+  {% if object.email %}
   <p>
     <a class="big-button make-request-button" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
   </p>
+  {% endif %}
   <dl>
     <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
     <dd>{{ object.classification }}</dd>
@@ -19,9 +21,11 @@
     <dd>{{ object.description|markdown }}</dd>{% endcomment %}
     <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
     <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
+    {% if object.email %}
     <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
     <dd>{{ object.email }} (<a class="make-request-icon" href="{% url 'foirequest-make_request' public_body=object.slug %}">
       {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
+    {% endif %}
     <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
     <dd>{{ object.contact|linebreaksbr }}</dd>
     {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>

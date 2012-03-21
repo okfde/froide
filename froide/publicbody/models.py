@@ -19,10 +19,38 @@ from froide.helper.date_utils import (calculate_workingday_range,
 from froide.helper.form_generator import FormGenerator
 
 
+class JurisdictionManager(models.Manager):
+    def get_visible(self):
+        return super(JurisdictionManager, self).get_query_set()\
+                .filter(hidden=False).order_by('rank', 'name')
+
+
+class Jurisdiction(models.Model):
+    name = models.CharField(_("Name"), max_length=255)
+    slug = models.SlugField(_("Slug"), max_length=255)
+    description = models.TextField(_("Description"), blank=True)
+    hidden = models.BooleanField(_("Hidden"), default=False)
+    rank = models.SmallIntegerField(default=1)
+
+    objects = JurisdictionManager()
+
+    class Meta:
+        verbose_name = _("Jurisdiction")
+        verbose_name_plural = _("Jurisdictions")
+
+    def __unicode__(self):
+        return self.name
+
+
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
-        return super(PublicBodyManager, self).get_query_set().exclude(email="")\
+        return super(PublicBodyManager, self).get_query_set()\
+                .exclude(email="")\
                 .filter(email__isnull=False)
+
+    def get_list(self):
+        return self.get_query_set()\
+            .filter(jurisdiction__hidden=False)
 
     def get_for_homepage(self, count=5):
         return self.get_query_set().order_by('-number_of_requests')[:count]
@@ -40,7 +68,8 @@ class FoiLaw(models.Model):
     combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
     letter_end = models.TextField(_("End of Letter"), blank=True)
-    jurisdiction = models.CharField(_("Jurisdiction"), max_length=255)
+    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
+            null=True, on_delete=models.SET_NULL, blank=True)
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
@@ -88,21 +117,31 @@ class FoiLaw(models.Model):
         return FormGenerator(self.letter_end, post).render()
 
     def get_refusal_reason_choices(self):
+        not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
         if self.meta:
-            return [(_("Law not applicable"), _("No law can be applied"))] +\
+            return not_applicable +\
                     [(l[0], "%s: %s" % (law.name, l[1])) for law in self.combined.all()
                          for l in law.get_refusal_reason_choices()[1:]]
         else:
-            return [(_("Law not applicable"), _("Law cannot be applied"))] + \
+            return not_applicable + \
                 [(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()]
 
     @classmethod
-    def get_default_law(cls):
-        return settings.FROIDE_CONFIG.get("default_law", 1)
+    def get_default_law(cls, pb=None):
+        if pb:
+            return cls.objects.filter(jurisdiction=pb.jurisdiction, meta=True)[0]
+        return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
 
     def as_dict(self):
-        return {"pk": self.pk, "name": self.name, "letter_start": self.letter_start,
-                "letter_end": self.letter_end, "description": self.description}
+        return {"pk": self.pk, "name": self.name,
+                "description_markdown": markdown(self.description),
+                "description": self.description,
+                "letter_start": self.letter_start,
+                "letter_end": self.letter_end,
+                "letter_start_form": self.letter_start_form,
+                "letter_end_form": self.letter_end_form,
+                "jurisdiction": self.jurisdiction.name,
+                "jurisdiction_id": self.jurisdiction.id}
 
     def calculate_due_date(self, date=None):
         if date is None:
@@ -118,7 +157,7 @@ class FoiLaw(models.Model):
 class PublicBodyTopicManager(models.Manager):
     def get_list(self):
         """This is an unportable hack in order to put
-        the 'Andere' (other) topic (currently first item in list) 
+        the 'Andere' (other) topic (currently first item in list)
         at the end of the list
         TODO: solve this via some kind of boost field"""
         topics = list(self.get_query_set().order_by("name"))
@@ -136,7 +175,7 @@ class PublicBodyTopic(models.Model):
     class Meta:
         verbose_name = _("Topic")
         verbose_name_plural = _("Topics")
-       
+
     def __unicode__(self):
         return self.name
 
@@ -148,7 +187,7 @@ class PublicBody(models.Model):
     topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),
             null=True, on_delete=models.SET_NULL)
     url = models.URLField(_("URL"), null=True, blank=True,
-            verify_exists=False)
+            verify_exists=False, max_length=500)
     parent = models.ForeignKey('PublicBody', null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
             related_name="children")
@@ -165,7 +204,7 @@ class PublicBody(models.Model):
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
-    
+
     _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
             on_delete=models.SET_NULL)
@@ -173,17 +212,18 @@ class PublicBody(models.Model):
             blank=True, null=True, related_name='public_body_updaters',
             on_delete=models.SET_NULL)
     confirmed = models.BooleanField(_("confirmed"), default=True)
-    
+
     number_of_requests = models.IntegerField(_("Number of requests"),
             default=0)
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL, default=settings.SITE_ID)
-    
-    geography = models.CharField(_("Geography"), max_length=255)
+
+    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
+            blank=True, null=True, on_delete=models.SET_NULL)
 
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
-    
+
     non_filtered_objects = models.Manager()
     objects = PublicBodyManager()
     published = objects
@@ -195,10 +235,10 @@ class PublicBody(models.Model):
 
     serializable_fields = ('name', 'slug', 'request_note_markdown',
             'description', 'topic_name', 'url', 'email', 'contact',
-            'address', 'geography', 'domain')
-        
+            'address', 'domain')
+
     def __unicode__(self):
-        return u"%s (%s)" % (self.name, self.geography)
+        return u"%s (%s)" % (self.name, self.jurisdiction)
 
     @property
     def created_by(self):
@@ -226,7 +266,7 @@ class PublicBody(models.Model):
 
     @property
     def default_law(self):
-        return FoiLaw.objects.get(pk=FoiLaw.get_default_law())
+        return FoiLaw.get_default_law(self)
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
@@ -249,7 +289,7 @@ class PublicBody(models.Model):
         d = {}
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
-        d['laws'] = [l.as_dict() for l in self.laws.all()]
+        d['laws'] = [self.default_law.as_dict()]
         return json.dumps(d)
 
     @property
@@ -261,7 +301,7 @@ class PublicBody(models.Model):
         import csv
         from StringIO import StringIO
         s = StringIO()
-        fields =  ("name", "classification", "depth", "children_count", "email", "description",
+        fields = ("name", "classification", "depth", "children_count", "email", "description",
                 "url", "website_dump", "contact", "address")
         writer = csv.DictWriter(s, fields)
         for pb in PublicBody.objects.all():

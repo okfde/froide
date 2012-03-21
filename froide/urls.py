@@ -17,8 +17,8 @@ databrowse.site.register(FoiLaw)
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
 urlpatterns = patterns('',
-    # Examples:
     url(r'^$', 'froide.foirequest.views.index', name='index'),
+    url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard'),
     # Translators: request URL
     url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),
     # Translators: URL part
@@ -34,7 +34,6 @@ urlpatterns = patterns('',
     # Translators: URL part
     url(r'^%s/' % _('law'), include('froide.publicbody.law_urls')),
 
-    
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
   <!--[if lt IE 8]><link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
+  <meta name="google-site-verification" content="upljx19ZJVGT73Sx1miWKLOWBKga4LQJ_hqFl0vhhJE" />
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" /> 
   <meta name="language" content="{{ LANGUAGE_CODE }}" />
   {# Translators: meta keywords #}
@@ -65,12 +66,19 @@
                 <input type="text" name="q" placeholder="{% trans "Search" %}"/>
               </form>
             </li>
- 
           </ul>
-
         </nav>
       </div>
     </header>
+<!--     <div class="banner success">
+      <strong>{% trans "Like this? Consider supporting us!" %}
+      <a href="{% url 'help-about' %}#spenden">{% trans "Donate now!" %}</a>
+      </strong>
+      <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
+        <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
+      </a>
+      </strong>
+    </div> -->
     <div id="main" class="container">
       <div class="account-snippet">
         {% if user.is_authenticated %}
@@ -92,6 +100,13 @@
     {% endblock %}
   </div>
   <footer id="footer" class="container">
+    <div>
+      <a class="logo" href="http://okfn.de"><img src="{{ STATIC_URL }}img/okf.png" /></a>
+      <p>
+        {% url 'help-about' as about_url %}
+        {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://stefanwehrmeyer.com">Stefan Wehrmeyer</a>.<br/>If you want to support Froide, please visit the <a href="{{url}}">repository on GitHub.</a>.{% endblocktrans %}
+      </p>
+    </div>
     <ul>
       <li><a href="{% url 'help-about' %}">{% trans "About" %}</a></li>
       <li><a href="http://blog.fragdenstaat.de/">{% trans "Blog" %}</a></li>

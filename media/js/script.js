@@ -53,18 +53,25 @@ Froide.app.searchSimilarRequests = function(){
 };
 
 Froide.app.performPublicBodySearch = (function(){
-    var lastPublicBodyQuery = null;
+    var lastPublicBodyQuery = null, lastJurisdiction = null;
     return function(el){
         var query = el.find(".search-public_bodies").val();
-        if (lastPublicBodyQuery === query){
+        var juris = el.find('.search-public_bodies-jurisdiction');
+        var params = {q: query};
+        if (juris.length){
+            juris = juris.val();
+            params.jurisdiction = juris;
+        }
+        if (lastPublicBodyQuery === query && lastJurisdiction === juris){
             el.find(".search-results").slideDown();
             return;
         }
         el.find(".search-spinner").fadeIn();
         el.find(".search-results").hide();
-        $.getJSON(Froide.url.searchPublicBody, {"q": query}, function(results){
+        $.getJSON(Froide.url.searchPublicBody, params, function(results){
             var result, i;
             lastPublicBodyQuery = query;
+            lastJurisdiction = juris;
             el.find(".search-spinner").hide();
             el.find(".search-results .result").remove();
             if (results.length === 0){
@@ -250,6 +257,16 @@ Froide.app.performReview = (function(){
 
 Froide.app.publicBodyChosen = (function(){
     var doneChoice;
+    var showFormForLaw = function(law){
+        $('#letter_start').html(law.letter_start_form);
+        $('#letter_end').html(law.letter_end_form);
+        if (law.description_markdown.length) {
+            $('#law-description-text').html(law.description_markdown);
+            $('#law-description').show();
+        } else {
+            $('#law-description').hide();
+        }
+    };
     return function(currentPublicBodyChoice, publicBodyPrefilled){
         if(publicBodyPrefilled){
             return;
@@ -265,8 +282,7 @@ Froide.app.publicBodyChosen = (function(){
                 currentPublicBodyChoice !== "" &&
                 currentPublicBodyChoice !== "new"){
             (function(lastChoice){
-                $.getJSON(Froide.url.showPublicBody
-                        .replace(/0\.json/, 
+                $.getJSON(Froide.url.showPublicBody.replace(/0\.json/,
                     currentPublicBodyChoice +".json"),{},
                     function(result){
                         if (lastChoice !== currentPublicBodyChoice){
@@ -289,22 +305,25 @@ Froide.app.publicBodyChosen = (function(){
                             list.append(Mustache.to_html(
                                 Froide.template.searchPublicBodyWebsite,
                                 {url: Mustache.to_html(
-                                    Froide.template.searchEngineUrl, 
+                                    Froide.template.searchEngineUrl,
                                     {query: query, domain: result.domain})}
                             ));
                         }
                             // TODO: Create law chooser here
-                        // $("#public-body").append('<input type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
-                        // $('#letter_start').text(result.laws[0].letter_start);
-                        // $('#letter_end').text(result.laws[0].letter_end);
+                        var chosenLaw = $('#chosen-law');
+                        if(chosenLaw.length){
+                            chosenLaw.val(result.laws[0].pk);
+                        } else {
+                            $("#public-body").append('<input id="chosen-law" type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
+                        }
+                        showFormForLaw(result.laws[0]);
                         doneChoice = lastChoice;
                     });
             }(currentPublicBodyChoice));
         } else {
             doneChoice = currentPublicBodyChoice;
             $("#request-note").slideUp();
-            // $('#letter_start').text(letter_start);
-            // $('#letter_end').text(letter_end);
+            showFormForLaw(Froide.cachedLaw);
         }
     };
 }());
@@ -314,7 +333,7 @@ Froide.app.statusSet = (function(){
         $(".status-refusal").hide();
         $(".status-redirected").hide();
         var status = $("#id_status").val();
-        if (/refus/.exec(status) !== null) {
+        if (/refus/.exec(status) !== null || /partial/.exec(status) !== null) {
             $(".status-refusal").slideDown();
         } else if (/redirect/.exec(status) !== null){
             $(".status-redirected").slideDown();
@@ -344,40 +363,6 @@ Froide.app.activateMessage = function(){
         .parent().addClass("active");
 };
 
-var conditionalFixed = function(id){
-    /* Quick hack, probably better solutions out there */
-    var elem = $("#"+id),
-        top = elem.offset().top,
-        left = elem.offset().left,
-        height = elem.height(),
-        parent = elem.parent(),
-        fixed = 1;
-    var adjust = function(){
-        if(!elem.hasClass("sticky")){
-            elem.css({"position": "static", "top": "auto", "left": "auto"});
-            window.unbind("scroll", adjust);
-            return;
-        }
-        var scrollTop = $(window).scrollTop();
-        threshold = top + parent.height() - 2*height;
-        if(fixed > 0  && scrollTop < top) {
-            fixed = 0;
-            elem.css({"position": "static", "top": "auto", "left": "auto"});
-        } else if (fixed !== 1 && (scrollTop > top && scrollTop < threshold)) {
-            fixed = 1;
-            elem.css({"position": "fixed", "top": "0px", "left": left+"px"});
-        }
-    };
-    $(window).resize(function(){
-        fixed = 0;
-        elem.css({"position": "static", "top": "auto", "left": "auto"});
-        left = elem.offset().left;
-        adjust();
-    });
-    $(window).scroll(adjust);
-};
-
-
 $(function(){
     $("a.target-new").live('click', function(e){
         e.preventDefault();
@@ -390,14 +375,11 @@ $(function(){
         win.focus();
     });
     $(".sticky").each(function(i, el){
-        conditionalFixed($(el).attr("id"));
+         $(el).scrollToFixed({marginTop: 10});
     });
-    $(".sticky a").click(function(e){
-        $(this).parent().removeClass("sticky");
-    });
-    $("a.toggle-target").live("click", function(e){
+    $("a.show-target").live("click", function(e){
         var obj = $($(this).attr("href")).find(".toggle");
-        obj.trigger("click");
+        $(obj.attr("href")).show();
     });
     $("a.toggle").live("click", function(e){
         e.preventDefault();
@@ -434,7 +416,7 @@ $(function(){
 
     $(".search-public_bodies").each(function(i, input){
         if($(input).val() !== ""){
-            Froide.app.performPublicBodySearch();
+            Froide.app.performPublicBodySearch($(this).parent().parent());
         }
     });
     $("button.upload-button").click(function(e){
@@ -454,15 +436,35 @@ $(function(){
     });
 
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){
-        $(".search-public_bodies").each(function(i, input){
-            $(input).autocomplete({
+        $(".publicbody-search").each(function(i, el){
+            var input = $(el).find('.search-public_bodies');
+            var params = {};
+            var juris = $(el).find('.search-public_bodies-jurisdiction');
+            if (juris.length){
+                params.jurisdiction = juris.val();
+            }
+            var auto = input.autocomplete({
                 serviceUrl: Froide.url.autocompletePublicBody,
                 minChars: 2,
+                params: params,
                 onSelect: function(value, data){
-                    var li = Froide.app.getPublicBodyResultListItem($(input).parent().parent(), data);
-                    Froide.app.selectSearchListItem($(input).parent().parent(), $(li));
+                    var li = Froide.app.getPublicBodyResultListItem(input.parent().parent(), data);
+                    Froide.app.selectSearchListItem(input.parent().parent(), $(li));
                 }
             });
+            if (juris.length){
+                juris.change(function(){
+                    auto.options.params.jurisdiction = juris.val();
+                    auto.clearCache();
+                    auto.onValueChange();
+                });
+            }
         });
     }
 });
+
+/*
+ * ScrollToFixed by Joseph Cava-Lynch
+ * https://github.com/bigspotteddog/ScrollToFixed
+*/
+(function(a){a.ScrollToFixed=function(c,f){var i=this;i.$el=a(c);i.el=c;i.$el.data("ScrollToFixed",i);var b=false;var u=i.$el;var t=0;var l=0;var g=-1;var d=-1;var n=null;function o(){h();d=-1;t=u.offset().top;l=u.offset().left;if(g==-1){orginalOffsetLeft=l}b=true;if(i.options.bottom!=-1){q()}}function k(){return u.css("position")=="fixed"}function r(){return u.css("position")=="absolute"}function e(){return !(k()||r())}function q(){if(!k()){n.css({display:u.css("display"),width:u.outerWidth(true),height:u.outerHeight(true),"float":u.css("float")});u.css({width:u.width(),position:"fixed",top:i.options.bottom==-1?m():"",bottom:i.options.bottom==-1?"":i.options.bottom})}}function h(){if(!e()){d=-1;n.css("display","none");u.css({width:"",position:"",left:"",top:""})}}function p(v){if(v!=d){u.css("left",l-v);d=v}}function m(){return i.options.marginTop}function s(){if(!b){o()}var v=a(window).scrollLeft();var w=a(window).scrollTop();if(i.options.bottom==-1){if(i.options.limit>0&&w>=i.options.limit-m()){if(!r()){j();u.trigger("preAbsolute");u.css({width:u.width(),position:"absolute",top:i.options.limit,left:l});u.trigger("unfixed")}}else{if(w>=t-m()){if(!k()){j();u.trigger("preFixed");q();d=-1;u.trigger("fixed")}p(v)}else{if(k()){j();u.trigger("preUnfixed");h();u.trigger("unfixed")}}}}else{if(i.options.limit>0){if(w+a(window).height()-u.outerHeight(true)>=i.options.limit-m()){if(k()){j();u.trigger("preUnfixed");h();u.trigger("unfixed")}}else{if(!k()){j();u.trigger("preFixed");q()}p(v);u.trigger("fixed")}}else{p(v)}}}function j(){var v=u.css("position");if(v=="absolute"){u.trigger("postAbsolute")}else{if(v=="fixed"){u.trigger("postFixed")}else{u.trigger("postUnfixed")}}}i.init=function(){i.options=a.extend({},a.ScrollToFixed.defaultOptions,f);if(navigator.platform=="iPad"||navigator.platform=="iPhone"||navigator.platform=="iPod"){return}i.$el.css("z-index",i.options.zIndex);n=a("<div/>");i.$el.after(n);a(window).bind("resize",function(v){o();s()});a(window).bind("scroll",function(v){s()});if(i.options.preFixed){u.bind("preFixed",i.options.preFixed)}if(i.options.postFixed){u.bind("postFixed",i.options.postFixed)}if(i.options.preUnfixed){u.bind("preUnfixed",i.options.preUnfixed)}if(i.options.postUnfixed){u.bind("postUnfixed",i.options.postUnfixed)}if(i.options.preAbsolute){u.bind("preAbsolute",i.options.preAbsolute)}if(i.options.postAbsolute){u.bind("postAbsolute",i.options.postAbsolute)}if(i.options.fixed){u.bind("fixed",i.options.fixed)}if(i.options.unfixed){u.bind("unfixed",i.options.unfixed)}if(i.options.bottom!=-1){if(!k()){j();u.trigger("preFixed");q()}}};i.init()};a.ScrollToFixed.defaultOptions={marginTop:0,limit:0,bottom:-1,zIndex:1000};a.fn.scrollToFixed=function(b){return this.each(function(){(new a.ScrollToFixed(this,b))})}})(jQuery);

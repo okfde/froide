@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n %}
+{% load admin_modify adminmedia %}
+{% load url from future %}
+
+{% block extrahead %}{{ block.super }}
+{% url 'admin:jsi18n' as jsi18nurl %}
+<script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+     <a href="../../">{% trans "Home" %}</a> &rsaquo;
+     <a href="../">{{ app_label|capfirst }}</a> &rsaquo;
+     <a href="./">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
+     {% trans 'Mark multiple requests identical' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+<div>
+<p>{% blocktrans %}These FoI request...{% endblocktrans %}<br/>
+<ul>
+{% for obj in queryset %}
+    <li>
+    {{ obj }}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+    </li>
+{% endfor %}
+</ul>
+<br/>{% blocktrans %}...are identical to this one:{% endblocktrans %}</p>
+{{ req_widget }}
+</p>
+<input type="hidden" name="action" value="mark_same_as" />
+<input type="submit" value="{% trans "Mark as identical to chosen request" %}" />
+</div>
+</form>
+{% endblock %}

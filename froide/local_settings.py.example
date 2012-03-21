@@ -9,6 +9,10 @@ LANGUAGE_CODE = "en"
 ADMINS = (
     ('Your Name', 'mail@example.com'),
 )
+MANAGERS = (
+    ('Your Team', 'team@example.com'),
+)
+
 INTERNAL_IPS = ('127.0.0.1',)
 
 
@@ -65,6 +69,8 @@ FROIDE_PUBLIC_BODY_BOOSTS = {
 }
 
 DEFAULT_FROM_EMAIL = 'info@example.com'
+SERVER_EMAIL = 'error@example.com'
+EMAIL_SUBJECT_PREFIX = '[Froide] '
 
 # dev use:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
