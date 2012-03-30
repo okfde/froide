@@ -612,7 +612,7 @@
   <ul>
   {% for foirequest in object.same_as_set.all %}
     <li>
-      {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+      {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.readable_status }}</a>
     </li>
   {% endfor %}
   </ul>
