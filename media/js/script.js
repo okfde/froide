@@ -7,7 +7,7 @@ Froide.app.getPublicBodyResultListItem = function(el, result){
     var name = el.attr("data-inputname");
     var li = '<li class="result"><label>';
     li += '<input type="radio" name="' + name + '" value="' + result.id + '"/> ';
-    li += result.name + '</label> - ';
+    li += result.name + '(' + result.jurisdiction +')</label> - ';
     li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
     li += '</li>';
     return li;

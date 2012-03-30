@@ -290,6 +290,7 @@ class PublicBody(models.Model):
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
         d['laws'] = [self.default_law.as_dict()]
+        d['jurisdiction'] = self.jurisdiction.name
         return json.dumps(d)
 
     @property

@@ -10,9 +10,6 @@ Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}
 </script>
 <div class="public_body-chooser" data-inputname="{{ name }}">
   <div class="publicbody-search">
-    {% if juris_widget %}
-    <label>{% trans "Jurisdiction:" %} {{ juris_widget }}</label><br/>
-    {% endif %}
     <input type="search" value="{{ topic }}" class="search-public_bodies" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
     <button type="button" class="button icon search search-public_bodies-submit">{% blocktrans %}Search{% endblocktrans %}</button>
     <div class="searchexamples">{% blocktrans %}Try something like:{% endblocktrans %} 

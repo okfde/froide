@@ -64,10 +64,10 @@ def search_json(request):
     jurisdiction = request.GET.get('jurisdiction', None)
     # query = " AND ".join(query.split())
     result = SearchQuerySet().models(PublicBody).auto_query(query)
-    if jurisdiction is None:
-        jurisdiction = Jurisdiction.objects.order_by('rank')[0].name
-    result = result.filter(jurisdiction=result.query.clean(jurisdiction))
-    result = [{"name": x.name, "id": x.pk, "url": x.url, "score": x.score} for x in list(result)]
+    if jurisdiction is not None:
+        result = result.filter(jurisdiction=result.query.clean(jurisdiction))
+    result = [{"name": x.name,  "jurisdiction": x.jurisdiction,
+            "id": x.pk, "url": x.url, "score": x.score} for x in list(result)]
 
     return HttpResponse(json.dumps(result), content_type="application/json")
 
@@ -76,11 +76,11 @@ def autocomplete(request):
     query = request.GET.get('query', '')
     jurisdiction = request.GET.get('jurisdiction', None)
     result = SearchQuerySet().autocomplete(name_auto=query)
-    if jurisdiction is None:
-        jurisdiction = Jurisdiction.objects.order_by('rank')[0].name
-    result = result.filter(jurisdiction=result.query.clean(jurisdiction))
-    names = [x.name for x in result]
-    data = [{"name": x.name, "id": x.pk, "url": x.url} for x in result]
+    if jurisdiction is not None:
+        result = result.filter(jurisdiction=result.query.clean(jurisdiction))
+    names = [u"%s (%s)" % (x.name, x.jurisdiction) for x in result]
+    data = [{"name": x.name, "jurisdiction": x.jurisdiction,
+            "id": x.pk, "url": x.url} for x in result]
     response = {"query": query,
         "suggestions": names,
         "data": data
