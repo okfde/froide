@@ -117,15 +117,16 @@
 {% endif %}
 
 </dl>
-<!-- 
+
 {% if object.visibility == 2 %}
-{% if object.user == user %}
 <div>
+{% if object.user == user %}
   <p>{% trans "Share your request with friends and followers!" %}</p>
 {% endif %}
-<div class="socialshareprivacy"></div>
+  <div class="socialshareprivacy"></div>
+</div>
 {% endif %}
-</div> -->
+
 
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
