@@ -100,6 +100,42 @@ class WebTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
 
+    def test_short_link_request(self):
+        req = FoiRequest.objects.all()[0]
+        response = self.client.get(reverse('foirequest-shortlink',
+                kwargs={"obj_id": 0}))
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(reverse('foirequest-shortlink',
+                kwargs={"obj_id": req.id}))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
+        req.visibility = 1
+        req.save()
+        response = self.client.get(reverse('foirequest-shortlink',
+                kwargs={"obj_id": req.id}))
+        self.assertEqual(response.status_code, 403)
+
+    def test_auth_links(self):
+        req = FoiRequest.objects.all()[0]
+        req.visibility = 1
+        req.save()
+        response = self.client.get(reverse('foirequest-show',
+            kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+        response = self.client.get(reverse('foirequest-auth',
+            kwargs={'obj_id': req.id, 'code': '0a'}))
+        self.assertEqual(response.status_code, 403)
+        response = self.client.get(reverse('foirequest-auth',
+            kwargs={'obj_id': req.id, 'code': req.get_auth_code()}))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
+        # Check logged in with wrong code
+        self.client.login(username="sw", password="froide")
+        response = self.client.get(reverse('foirequest-auth',
+            kwargs={'obj_id': req.id, 'code': '0a'}))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
+
     def test_feed(self):
         response = self.client.get(reverse('foirequest-feed_latest'))
         self.assertEqual(response.status_code, 200)
