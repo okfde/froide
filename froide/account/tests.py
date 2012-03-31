@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core import mail
 
 from publicbody.models import PublicBody
-from foirequest.models import FoiRequest
+from foirequest.models import FoiRequest, FoiMessage
 from account.models import AccountManager
 
 
@@ -151,6 +151,44 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('account-login'), response['Location'])
 
+    def test_next_link_login(self):
+        mes = FoiMessage.objects.all()[0]
+        url = mes.get_absolute_url()
+        enc_url = url.replace('#', '%23')  # FIX: fake uri encode
+        response = self.client.get(reverse('account-login') + '?next=%s' % enc_url)
+        # occurences in hidden inputs of login, signup and forgotten password
+        self.assertTrue(response.content.decode('utf-8').count(url), 3)
+        response = self.client.post(reverse('account-login'),
+                {"email": "mail@stefanwehrmeyer.com",
+                'next': url,
+                "password": "froide"})
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(url))
+
+    def test_next_link_signup(self):
+        self.client.logout()
+        mail.outbox = []
+        mes = FoiMessage.objects.all()[0]
+        url = mes.get_absolute_url()
+        post = {
+            "first_name": "Horst",
+            "last_name": "Porst",
+            "terms": "on",
+            'user_email': 'horst.porst@example.com',
+            'address': 'MyOwnPrivateStree 5\n31415 Pi-Ville',
+            'next': url
+        }
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertTrue(response.status_code, 302)
+        user = User.objects.get(email=post['user_email'])
+        message = mail.outbox[0]
+        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        response = self.client.get(reverse('account-confirm',
+                kwargs={'user_id': user.pk,
+                'secret': match.group(1)}))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(url))
+
     def test_change_password(self):
         response = self.client.get(reverse('account-change_password'))
         self.assertEqual(response.status_code, 405)
@@ -208,6 +246,31 @@ class AccountTest(TestCase):
         self.client.logout()
         ok = self.client.login(username='sw', password='froide4')
         self.assertTrue(ok)
+
+    def test_next_password_reset(self):
+        mail.outbox = []
+        mes = FoiMessage.objects.all()[0]
+        url = mes.get_absolute_url()
+        data = {
+            'email': 'mail@stefanwehrmeyer.com',
+            'next': url
+        }
+        response = self.client.post(reverse('account-send_reset_password_link'), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(url))
+        message = mail.outbox[0]
+        match = re.search('/account/reset/([^/]+)/', message.body)
+        uidb36, token = match.group(1).split("-", 1)
+        response = self.client.get(reverse('account-password_reset_confirm',
+            kwargs={"uidb36": uidb36, "token": token}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['validlink'])
+        data = {"new_password1": "froide4",
+                "new_password2": "froide4"}
+        response = self.client.post(reverse('account-password_reset_confirm',
+            kwargs={"uidb36": uidb36, "token": token}), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith(url))
 
     def test_private_name(self):
         user = User.objects.get(username="dummy")
