@@ -148,3 +148,14 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-feed',
             kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
+
+    def test_unchecked(self):
+        response = self.client.get(reverse('foirequest-list_unchecked'))
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username="dummy", password="froide")
+        response = self.client.get(reverse('foirequest-list_unchecked'))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+        self.client.login(username="sw", password="froide")
+        response = self.client.get(reverse('foirequest-list_unchecked'))
+        self.assertEqual(response.status_code, 200)
