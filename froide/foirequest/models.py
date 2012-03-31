@@ -436,7 +436,7 @@ class FoiRequest(models.Model):
 
     def get_auth_code(self):
         return salted_hmac("FoiRequestPublicBodyAuth",
-                str(self.id)).hexdigest()
+                '%s#%s' % (self.id, self.secret_address)).hexdigest()
 
     def check_auth_code(self, code):
         return constant_time_compare(code, self.get_auth_code())
