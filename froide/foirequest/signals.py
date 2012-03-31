@@ -127,7 +127,9 @@ def foiattachment_delayed_update(instance, created=False, **kwargs):
 @receiver(signals.post_delete, sender=FoiAttachment,
         dispatch_uid='foiattachment_delayed_remove')
 def foiattachment_delayed_remove(instance, **kwargs):
-    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
+    if (instance.belongs_to is not None and
+                instance.belongs_to.request_id is not None):
+        delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
 
 
 # Event creation
