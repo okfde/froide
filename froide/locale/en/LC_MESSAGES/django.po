@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-31 17:24+0200\n"
+"POT-Creation-Date: 2012-04-02 12:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -231,79 +231,79 @@ msgstr ""
 msgid "Your request \"%s\" has now been sent"
 msgstr ""
 
-#: account/views.py:40
+#: account/views.py:45
 msgid ""
 "You can only use the confirmation link once, please login with your password."
 msgstr ""
 
-#: account/views.py:48
+#: account/views.py:53
 msgid ""
 "You are logged in with a different user account. Please logout first before "
 "using this link."
 msgstr ""
 
-#: account/views.py:53
+#: account/views.py:58
 msgid "Your account is not active."
 msgstr ""
 
-#: account/views.py:76
+#: account/views.py:81
 msgid "You have been logged out."
 msgstr ""
 
-#: account/views.py:109
+#: account/views.py:115
 msgid ""
 "A recent change requires you to set your address! Please enter it below!"
 msgstr ""
 
-#: account/views.py:114 account/templates/account/login.html:7
+#: account/views.py:120 account/templates/account/login.html:7
 msgid "You are now logged in."
 msgstr ""
 
-#: account/views.py:122
+#: account/views.py:130
 msgid "Please activate your mail address before logging in."
 msgstr ""
 
-#: account/views.py:125
+#: account/views.py:133
 msgid "E-mail and password do not match."
 msgstr ""
 
-#: account/views.py:138
+#: account/views.py:150
 msgid "You are currently logged in, you cannot signup."
 msgstr ""
 
-#: account/views.py:146
+#: account/views.py:159
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 
-#: account/views.py:159
+#: account/views.py:175
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 
-#: account/views.py:165
+#: account/views.py:181
 msgid "Your password has been changed."
 msgstr ""
 
-#: account/views.py:174
+#: account/views.py:192
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 
-#: account/views.py:180
+#: account/views.py:200
 msgid "Check your mail, we sent you a password reset link."
 msgstr ""
 
-#: account/views.py:197
+#: account/views.py:217
 msgid "Your password has been set and you are now logged in."
 msgstr ""
 
-#: account/views.py:205
+#: account/views.py:228
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 
-#: account/views.py:211
+#: account/views.py:234
 msgid "Your address has been changed."
 msgstr ""
 
-#: account/views.py:217
+#: account/views.py:240
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -345,27 +345,27 @@ msgstr ""
 msgid "Please Log In"
 msgstr ""
 
-#: account/templates/account/login.html:30
+#: account/templates/account/login.html:31
 msgid "Log In"
 msgstr ""
 
-#: account/templates/account/login.html:35
+#: account/templates/account/login.html:36
 msgid "In case you forgot your password..."
 msgstr ""
 
-#: account/templates/account/login.html:36
+#: account/templates/account/login.html:37
 msgid "... we can send you a reset link to your email address."
 msgstr ""
 
-#: account/templates/account/login.html:40
+#: account/templates/account/login.html:42
 msgid "Send reset link"
 msgstr ""
 
-#: account/templates/account/login.html:45
+#: account/templates/account/login.html:47
 msgid "Don't have an account? Sign up!"
 msgstr ""
 
-#: account/templates/account/login.html:51
+#: account/templates/account/login.html:54
 msgid "Sign Up"
 msgstr ""
 
@@ -1496,18 +1496,18 @@ msgstr ""
 msgid "Attachment approved."
 msgstr ""
 
-#: foirequest/views.py:664
+#: foirequest/views.py:666
 msgid "You already made an identical request"
 msgstr ""
 
-#: foirequest/views.py:667
+#: foirequest/views.py:669
 #, python-format
 msgid ""
 "Please see this request on FragDenStaat.de where you granted access to this "
 "information: %(url)s"
 msgstr ""
 
-#: foirequest/views.py:679
+#: foirequest/views.py:681
 msgid ""
 "You successfully requested this document! Your request is displayed below."
 msgstr ""
@@ -1719,14 +1719,14 @@ msgid "Status:"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:46
-#: foirequest/templates/foirequest/show.html:583 templates/index.html:99
+#: foirequest/templates/foirequest/show.html:587 templates/index.html:99
 #: templates/index.html.py:123 templates/search/search.html:30
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:48
-#: foirequest/templates/foirequest/show.html:612
+#: foirequest/templates/foirequest/show.html:616
 #, python-format
 msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
@@ -2588,29 +2588,34 @@ msgid ""
 "this was a mistake, please contact info@example.com."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:537
+#: foirequest/templates/foirequest/show.html:536
+msgid "You made the original request."
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:540
 msgid "You made an identical request."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:541
+#: foirequest/templates/foirequest/show.html:544
 msgid ""
 "You can make a request identical to this one in your name to gain individual "
 "access to the information that we are not allowed to publish here."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:542
+#: foirequest/templates/foirequest/show.html:545
 msgid "Make identical request in your name"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:548
+#: foirequest/templates/foirequest/show.html:552
 #, python-format
 msgid ""
 "If you login, you can make an identical request in your name with one click "
 "to gain individual access to the information that we are not allowed to "
-"publish here. <a href=\"%(url)s\">You can login or sign up here.</a>"
+"publish here. <a href=\"%(url)s?next=%(next)s\">You can login or sign up "
+"here.</a>"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:550
+#: foirequest/templates/foirequest/show.html:554
 #, python-format
 msgid "So far one person also requested this document."
 msgid_plural ""
@@ -2618,23 +2623,23 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: foirequest/templates/foirequest/show.html:564
+#: foirequest/templates/foirequest/show.html:568
 msgid "Set status"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:592
+#: foirequest/templates/foirequest/show.html:596
 msgid "Write a comment"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:599
+#: foirequest/templates/foirequest/show.html:603
 msgid "Please login to write a comment."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:606
+#: foirequest/templates/foirequest/show.html:610
 msgid "No messages yet"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:624
+#: foirequest/templates/foirequest/show.html:628
 msgid "This request is identical to:"
 msgstr ""
 
