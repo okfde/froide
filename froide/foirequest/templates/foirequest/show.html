@@ -532,15 +532,19 @@
       {% if object.user == user %}
         <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
       {% else %}
-        {% check_same_request object user "same_request" %}
-        {% if same_request %}
-          <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+        {% if object.same_as.user == user %}
+          <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
         {% else %}
-          <form method="post" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
-            {% csrf_token %}
-            <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
-            <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
-          </form>
+          {% check_same_request object user "same_request" %}
+          {% if same_request %}
+            <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+          {% else %}
+            <form method="post" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+              <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
+            </form>
+          {% endif %}
         {% endif %}
       {% endif %}
     {% else %}

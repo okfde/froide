@@ -658,6 +658,8 @@ def make_same_request(request, slug, message_id):
         return render_400(request)
     if foirequest.same_as is not None:
         foirequest = foirequest.same_as
+    if foirequest.user == request.user:
+        return render_400(request)
     same_requests = FoiRequest.objects.filter(user=request.user, same_as=foirequest).count()
     if same_requests:
         messages.add_message(request, messages.ERROR,
