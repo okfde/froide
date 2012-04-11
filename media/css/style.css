@@ -1151,3 +1151,40 @@ textarea.smalltext {
     margin: 0 auto;
     display: none;
 }
+
+.state-header {
+    background: center top no-repeat;
+}
+
+.state-header .state-headline {
+    text-align: center;
+    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.state-header h1 {
+    font-weight: bold;
+    margin-bottom: 0;
+    text-shadow: 0px 0px 5px #fff;
+    filter: dropshadow(color=#fff, offx=0, offy=0);
+}
+
+.state-header h2 {
+    font-size: 1.4em;
+}
+
+.state-header h1, .state-header h2 {
+    margin-top: 0;
+    padding-top: 20px;
+    color: #333;
+}
+
+.state-header .container > div {
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 1em 1em 0.2em 1em;
+}
+
+.state-header .container > div, h3 {
+    margin-top: 0;
+}

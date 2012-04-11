@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block body %}
+<div class="state-header" style="background-image: url('{{ STATIC_URL }}img/jurisdictions/nrw_panorama.jpg')">
+  <div class="state-headline">
+    <h1>Informationsfreiheit<br/>in Nordrhein-Westfalen</h1>
+    <h2>Fragen Sie Landesbehörden nach Verwaltungsinformationen – es ist Ihr gutes Recht.</h2>
+  </div>
+  <div class="container">
+    <div class="push-1 span-6">
+      <h3>Welche Behörden?</h3>
+      <p>Alle Einrichtungen, die Verwaltungs&shy;aufgaben des Landes wahrnehmen.</p>
+      <p>Stellen Sie eine Anfrage an eine von <a href="{% url 'publicbody-show-pb_jurisdiction' slug=object.slug %}">{{ pb_count }} Behörden in NRW.</a></p>
+    </div>
+    <div class="push-2 span-6">
+      <h3>Was für Informationen?</h3>
+      <p>Verträge, Protokolle, Gutachten und andere Dokumente aus der Verwaltung:
+        Sie haben das Recht auf Einsicht.</p>
+      <p><a href="{% url 'foirequest-make_request' %}">Stellen Sie eine Anfrage!</a></p>
+    </div>
+    <div class="push-3 span-6 last">
+      <h3>Welches Recht?</h3>
+      <p>Das Informations&shy;freiheits&shy;gesetz von NRW erlaubt Ihnen den Zugang zu Informationen der Verwaltung </p>
+      <p><a href="#">Lernen Sie Ihr Recht kennen.</a></p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

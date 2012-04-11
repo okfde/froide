@@ -1,0 +1,33 @@
+{% extends 'publicbody/base.html' %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block body %}
+<h2>{{ object.name }}: {% trans "Public Bodies" %}</h2>
+
+{% include "publicbody/_search_form.html" %}
+
+<table>
+  <thead>
+    <tr>
+      <th>{% blocktrans %}Name{% endblocktrans %}</th>
+      <th>{% blocktrans %}Classification{% endblocktrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for publicbody in publicbodies %}
+    <tr>
+      <td>
+        <a href="{% url 'publicbody-show' slug=publicbody.slug %}">{{ publicbody.name }}</a>
+        <a title="{% blocktrans %}Click here to make a request to this Public Body{% endblocktrans %}" href="{% url 'foirequest-make_request' public_body=publicbody.slug %}">
+           <img src="{{ STATIC_URL }}img/tiny_request.png" alt="{% blocktrans %}Make a Request{% endblocktrans %}" />
+         </a>
+      </td>
+      <td>{{ publicbody.classification }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

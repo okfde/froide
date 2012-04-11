@@ -4,6 +4,7 @@ from django.core import urlresolvers
 from django.utils import simplejson as json
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
+from django.template import TemplateDoesNotExist
 
 
 from haystack.query import SearchQuerySet
@@ -28,6 +29,29 @@ class PublicBodyListView(JSONResponseListView):
 def index(request):
     context = {"topics": PublicBodyTopic.objects.get_list()}
     return render(request, 'publicbody/list_topic.html', context)
+
+
+def show_jurisdiction(request, slug):
+    jurisdiction = get_object_or_404(Jurisdiction, slug=slug)
+    context = {
+        "object": jurisdiction,
+        "pb_count": PublicBody.objects.filter(jurisdiction=jurisdiction).count()
+    }
+    try:
+        return render(request,
+            'publicbody/jurisdiction/%s.html' % jurisdiction.slug, context)
+    except TemplateDoesNotExist:
+        return render(request,
+            'publicbody/jurisdiction.html', context)
+
+
+def show_pb_jurisdiction(request, slug):
+    jurisdiction = get_object_or_404(Jurisdiction, slug=slug)
+    context = {
+        "object": jurisdiction,
+        "publicbodies": PublicBody.objects.filter(jurisdiction=jurisdiction)
+    }
+    return render(request, 'publicbody/pb_jurisdiction.html', context)
 
 
 def show_topic(request, topic):
