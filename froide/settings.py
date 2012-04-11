@@ -254,8 +254,7 @@ POSSIE_CLOSINGS = [rec(u"Sincerely yours,?")]
 
 SECRET_URLS = {
     "admin": "admin",
-    "sentry": "sentry",
-    "databrowse": "databrowse"
+    "sentry": "sentry"
 }
 
 FROIDE_CONFIG = {
