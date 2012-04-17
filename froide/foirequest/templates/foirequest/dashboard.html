@@ -59,9 +59,6 @@ path.area {
 var allData = {{ data|safe }};
 
 var makeChart = function(selector, data){
-  var w = 400,
-      h = 400;
-
   var m = [10, 50, 20, 10],
       w = 960 - m[1] - m[3],
       h = 500 - m[0] - m[2],
