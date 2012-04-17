@@ -125,6 +125,7 @@ class EmailParser(object):
                     charset,
                     'replace').encode('utf8','replace')
         tos = getaddresses(msgobj.get_all('To', []))
+        tos.extend(getaddresses(msgobj.get_all('X-Original-To', [])))
         ccs = getaddresses(msgobj.get_all('Cc', []))
         resent_tos = getaddresses(msgobj.get_all('resent-to', []))
         resent_ccs = getaddresses(msgobj.get_all('resent-cc', []))
