@@ -628,6 +628,8 @@ def approve_attachment(request, slug, attachment):
     if not request.user.is_staff and foirequest.user != request.user:
         return render_403(request)
     att = get_object_or_404(FoiAttachment, id=int(attachment))
+    if not att.can_approve and not request.user.is_staff:
+        return render_403(request)
     att.approved = True
     att.save()
     messages.add_message(request, messages.SUCCESS,
