@@ -292,6 +292,10 @@ class FoiRequest(models.Model):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
+    def get_absolute_short_url(self):
+        return reverse('foirequest-shortlink',
+                kwargs={'obj_id': self.id})
+
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
