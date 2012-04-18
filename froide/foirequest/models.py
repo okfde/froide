@@ -801,7 +801,7 @@ Sincerely yours
                     % {"site_name": settings.SITE_NAME},
                 render_to_string("foirequest/classification_reminder.txt",
                     {"request": self,
-                        "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_url()),
+                        "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
                         "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
@@ -813,7 +813,7 @@ Sincerely yours
                     {"request": self,
                     "user": self.user,
                     "message": event_string,
-                    "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_url()),
+                    "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
