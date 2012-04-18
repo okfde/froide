@@ -70,15 +70,7 @@
         </nav>
       </div>
     </header>
-<!--     <div class="banner success">
-      <strong>{% trans "Like this? Consider supporting us!" %}
-      <a href="{% url 'help-about' %}#spenden">{% trans "Donate now!" %}</a>
-      </strong>
-      <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
-        <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
-      </a>
-      </strong>
-    </div> -->
+    {% block banner %}{% endblock %}
     <div id="main" class="container">
       <div class="account-snippet">
         {% if user.is_authenticated %}

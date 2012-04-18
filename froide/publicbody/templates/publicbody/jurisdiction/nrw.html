@@ -3,6 +3,10 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block title %}Informationsfreiheit in Nordrhein-Westfalen - {{ SITE_NAME }}{% endblock %}
+
+{% block metadescription %}Informationsfreiheitsgesetze in NRW mit FragDenStaat.de einfach nutzen.{% endblock %}
+
 {% block body %}
 <div class="state-header" style="background-image: url('{{ STATIC_URL }}img/jurisdictions/nrw_panorama.jpg')">
   <div class="state-headline">
@@ -29,4 +33,70 @@
   </div>
 </div>
 
+
+<div class="container">
+  <div class="push-1 span-14">
+    <h3>Pressemitteilung</h3>
+    <h4>Bürger fragen, Behörden antworten</h4>
+<p><em>Besserer Zugang zu Informationen aus Kommunal- und Landesbehörden in Nordrhein-Westfalen durch FragDenStaat.de</em></p>
+</p><p>
+Düsseldorf, xx.04.2012 – Ab sofort können Bürgerinnen und Bürger in Nordrhein-Westfalen Anfragen an Kommunal- und Landesbehörden über eine zentrale Internetseite stellen. Die Organisationen Mehr Demokratie, Open Knowledge Foundation Deutschland und Transparency Deutschland haben heute den offiziellen Startschuss für das Internetportal FragDenStaat.de/NRW gegeben. 
+</p><p>
+Das unabhängige Portal ermöglicht es Bürgerinnen und Bürgern, Anfragen nach den Informationsfreiheitsgesetzen (IFG) an Bundesbehörden zu stellen. Die Antwort der Behörde wird automatisch an die Plattform geleitet und dort zusammen mit der Anfrage des Nutzers veröffentlicht. Auch die Kommunal- und Landesbehörden von NRW sind jetzt in das Portal eingebunden. Damit ist NRW das erste Bundesland, in dem Bürgerinnen und Bürger über FragDenStaat.de/NRW Anfragen an Kommunal- und Landesbehörden stellen können. 
+</p><p>
+„FragDenStaat.de ist zu einer zentralen Sammelstelle für Anfragen und Antworten nach dem Informationsfreiheitsgesetz geworden. Seit dem Start des Portals im August 2011 wurden über dreihundert Anfragen gestellt. Diesen Erfolg wollen wir in NRW fortsetzen“, erläuterte Stefan Wehrmeyer, Projektleiter FragDenStaat.de von Open Knowledge Foundation Deutschland. 
+</p><p>
+“Informationsfreiheit ist ein wichtiger Bestandteil demokratischer Teilhabe. FragDenStaat.de/NRW erleichtert es Bürgerinnen und Bürgern, Informationen der Kommunal- und Landesbehörden einzufordern, so zum Beispiel über geplante Infrastruktur- und Bauprojekte“, erklärte Mehr Demokratie-Landesgeschäftsführer Alexander Slonka dazu.
+</p><p>
+ „Das Informationsfreiheitsgesetz in NRW hat eine lange Tradition und weist relativ wenige Ausnahmetatbestände auf. Wir wollen Verbesserungen für ein noch moderneres Informationsfreiheitsgesetz in NRW, um das Vertrauen und die Akzeptanz öffentlichen Handelns weiter zu fördern“, fordert Andreas Riegel, Leiter der Regionalgruppe Rheinland von Transparency Deutschland. 
+</p><p>
+Das Online-Portal soll die Rechenschaftspflicht der öffentlichen Verwaltung stärken. Gleichzeitig sollen Verbesserungen des Gesetzes den Schutz vor Manipulation und Korruption erhöhen. Die zivilgesellschaftlichen Organisationen fordern die sich im Wahlkampf befindlichen Parteien auf, sich zu Verbesserungen des IFG in NRW zu bekennen.
+</p><p>
+Es ist im Bereich der Daseinsvorsorge so auszubauen, dass Betriebs- und Geschäftsgeheimnisse wie nach den Berliner und Bremer Gesetzen veröffentlicht werden müssen, wenn das Informationsinteresse der Allgemeinheit das schutzwürdige Geheimhaltungsinteresse des privaten Vertragspartners überwiegt. Außerdem fordern die Organisationen eine Ausweitung des Kreises möglicher Antragssteller, so dass nicht nur natürliche, sondern auch juristische Personen Anträge stellen können – wie es im Bundes-IFG und den anderen Länder-IFGs längst üblich. 
+</p><p>
+Das Informationsfreiheitsgesetz in NRW ist seit dem 01.01.2002 in Kraft.
+</p><p>
+Kontakt: 
+<ul>
+  <li>
+Stefan Wehrmeyer, Projektleiter FragDenStaat.de<br/>
+Open Knowledge Foundation Deutschland e.V.<br/>
+Tel.: 0151 / 15 550 559 
+</li><li>
+Andreas Riegel<br/>
+Leiter der Regionalgruppe Rheinland von Transparency Deutschland<br/>
+Tel.: 030 / 54 98 98 0
+</li><li>
+Alexander Slonka <br/>
+Mehr Demokratie e. V., Landesverband Nordrhein-Westfalen<br/>
+Tel.: 02203 / 592859
+</li>
+</ul>
+  </div>
+  <div class="prepend-2 push-1 span-7 last">
+    <h3>Fakten zu FragDenStaat.de</h3>
+    <dl>
+      <dt>Online seit</dt>
+      <dd>1. August 2011</dd>
+      <dt>Anfragen nach dem IFG</dt>
+      <dd>mehr als 350 Anfragen</dd>
+      <dt>Betrieben von</dt>
+      <dd><a href="http://www.okfn.de">Open Knowledge Foundation e.V.</a></dd>
+      <dt>Finanziert duch</dt>
+      <dd><a href="{% url 'help-about' %}#spenden">Spenden</a> und ehrenamtliche Arbeit</dd>
+      <dt>Unterstützt von</dt>
+      <dd>Transparency International, Mehr Demokratie und <a href="{% url 'help-about' %}#unterstuetzer">11 weitere Organisationen</a></dd>
+    </dl>
+    <h3>NRW-Informationsgesetze</h3>
+    {% for law in laws %}
+      <p><strong>{{ law.name }}</strong>, in Kraft getreten am {{ law.created }} -
+      <a href="{{ law.get_absolute_url }}">mehr zu diesem Gesetz erfahren...</a></p>
+    {% endfor %}
+    <h3>Anfragen in NRW</h3>
+    {% for foirequest in foirequests %}
+      <p>An <a href="{{ foirequest.public_body.get_absolute_url }}">{{ foirequest.public_body.name }}</a>:<br/>
+      "{{ foirequest.title }}" - <a title="{{ foirequest.title }}" href="{{ foirequest.get_absolute_url }}">zur Anfrage</a></p>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}
