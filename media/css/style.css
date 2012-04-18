@@ -15,6 +15,9 @@ table.no-stripes tbody tr th {
     vertical-align: top;    
 }
 
+.page-break  { display:none; }
+.print-only { display: none; }
+
 #header {
     display: block;
     /* background: #296198;*/
