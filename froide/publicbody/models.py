@@ -64,6 +64,8 @@ class FoiLaw(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     long_description = models.TextField(_("Website Text"), blank=True)
+    created = models.DateField(_("Creation Date"), blank=True, null=True)
+    updated = models.DateField(_("Updated Date"), blank=True, null=True)
     meta = models.BooleanField(_("Meta Law"), default=False)
     combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
