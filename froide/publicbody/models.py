@@ -100,6 +100,9 @@ class FoiLaw(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
+    def get_absolute_url(self):
+        return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
+
     @property
     def formatted_description(self):
         return markdown(self.description)
