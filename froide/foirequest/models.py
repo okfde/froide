@@ -474,7 +474,8 @@ class FoiRequest(models.Model):
                 'foirequest': self
             })
         else:
-            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")
+            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n%(name)s\n")
+            message = message % {'name': self.user.get_full_name()}
         return SendMessageForm(self,
                 initial={"subject": subject,
                     "message": message})
