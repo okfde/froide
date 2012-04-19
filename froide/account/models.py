@@ -182,7 +182,8 @@ class AccountManager(object):
         user.set_password(password)
         user.save()
         profile = user.get_profile()
-        profile.address = data['address']
+        if 'address' in data:
+            profile.address = data['address']
         if data['private']:
             profile.private = True
         profile.save()

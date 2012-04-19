@@ -144,11 +144,19 @@ class SendMessageForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
-        choices = [(m.id, m.real_sender) for k, m in foirequest.possible_reply_addresses().items()]
+        choices = [(m.id, m.real_sender) for k, m in
+            foirequest.possible_reply_addresses().items()]
         choices.append((0, _("Default address of %(publicbody)s") % {
                 "publicbody": foirequest.public_body.name}))
         self.fields['to'] = forms.TypedChoiceField(label=_("To"),
                 choices=choices, coerce=int, required=True)
+
+        if foirequest.law and foirequest.law.email_only:
+            self.fields['send_address'] = forms.BooleanField(
+                label=_("Send physical address"),
+                help_text=_(('If the public body is asking for your post '
+                    'address, check this and we will append it to your message.')),
+                required=False)
 
     def save(self, user):
         if self.cleaned_data["to"] == 0:
@@ -164,7 +172,8 @@ class SendMessageForm(forms.Form):
         self.foirequest.add_message(user, recipient_name, recipient_email,
                 self.cleaned_data["subject"],
                 self.cleaned_data['message'],
-                recipient_pb=recipient_pb)
+                recipient_pb=recipient_pb,
+                send_address=self.cleaned_data.get('send_address', True))
 
 
 class MakePublicBodySuggestionForm(forms.Form):
