@@ -613,7 +613,7 @@ class RequestTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         message = req.messages[1]
-        self.assertIn(req.get_absolute_url(), response['Location'])
+        self.assertIn(req.get_absolute_short_url(), response['Location'])
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
         form = MessagePublicBodySenderForm(message)

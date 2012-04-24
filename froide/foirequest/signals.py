@@ -18,7 +18,7 @@ def send_notification_became_overdue(sender, **kwargs):
                 % {"site_name": settings.SITE_NAME},
             render_to_string("foirequest/became_overdue.txt",
                 {"request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_url()),
+                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
@@ -30,7 +30,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
     send_mail(_("You received a reply to your Freedom of Information Request"),
             render_to_string("foirequest/message_received_notification.txt",
                 {"message": message, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_url()),
+                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
@@ -44,7 +44,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
                 render_to_string("foirequest/public_body_suggestion_received.txt",
                     {"suggestion": suggestion, "request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(
-                            sender.get_absolute_url()),
+                            sender.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [sender.user.email])

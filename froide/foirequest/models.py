@@ -905,6 +905,10 @@ class FoiMessage(models.Model):
         return "%s#%s" % (self.request.get_absolute_url(),
                 self.get_html_id())
 
+    def get_absolute_short_url(self):
+        return "%s#%s" % (self.request.get_absolute_short_url(),
+                self.get_html_id())
+
     def get_absolute_domain_url(self):
         return "%s#%s" % (self.request.get_absolute_domain_url(),
                 self.get_html_id())
