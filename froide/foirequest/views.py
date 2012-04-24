@@ -56,7 +56,8 @@ def dashboard(request):
         total += user['num']
         user['total'] = total
     foirequest = {}
-    for u in FoiRequest.objects.filter(first_message__gte=datetime.datetime(2011, 7, 30)):
+    for u in FoiRequest.objects.filter(is_foi=True, public_body__isnull=False,
+                                        first_message__gte=datetime.datetime(2011, 7, 30)):
         d = u.first_message.date().isoformat()
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
