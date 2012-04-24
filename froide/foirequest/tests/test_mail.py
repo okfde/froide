@@ -8,6 +8,7 @@ from django.utils.translation import ugettext as _
 
 from froide.foirequest.tasks import _process_mail
 from foirequest.models import FoiRequest
+from helper.email_utils import EmailParser
 
 
 class MailTest(TestCase):
@@ -41,3 +42,9 @@ class MailTest(TestCase):
         recipients = [m.to[0] for m in mail.outbox]
         for manager in settings.MANAGERS:
             self.assertIn(manager[1], recipients)
+
+    def test_inline_attachments(self):
+        parser = EmailParser()
+        with file("foirequest/tests/test_mail_03.txt") as f:
+            email = parser.parse(f.read())
+        self.assertEqual(len(email['attachments']), 1)
