@@ -103,7 +103,7 @@ class RequestTest(TestCase):
         self.assertEqual(req.visibility, 1)
         self.assertEqual(len(mail.outbox), 3)
         message = mail.outbox[1]
-        self.assertIn(req.secret_address, message.extra_headers.get('Reply-To',''))
+        self.assertIn(req.secret_address, message.extra_headers.get('Reply-To', ''))
         if settings.FROIDE_DRYRUN:
             self.assertEqual(message.to[0], "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_DRYRUN_DOMAIN))
         else:
@@ -118,7 +118,7 @@ class RequestTest(TestCase):
         new_foi_email = "foi@" + pb.email.split("@")[1]
         req.add_message_from_email({
             'msgobj': None,
-            'date': (datetime.now() - timedelta(days=1),0),
+            'date': (datetime.now() - timedelta(days=1), 0),
             'subject': u"Re: %s" % req.title,
             'body': u"""Message""",
             'html': None,
@@ -164,7 +164,7 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
-        post["to"] = '9'*10
+        post["to"] = '9' * 10
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
@@ -476,7 +476,7 @@ class RequestTest(TestCase):
         path = os.path.join(settings.PROJECT_ROOT, "fixtures", "test.pdf")
         file_size = os.path.getsize(path)
         f = file(path, "rb")
-        post = {"date": "3000-01-01", # far future
+        post = {"date": "3000-01-01",  # far future
                 "sender": "Some Sender",
                 "subject": "",
                 "text": "Some Text",
@@ -496,7 +496,6 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         req.public_body = pb
         req.save()
-
 
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
@@ -622,7 +621,7 @@ class RequestTest(TestCase):
         alternate_pb = PublicBody.objects.all()[1]
         response = self.client.post(
                 reverse('foirequest-set_message_sender',
-                kwargs={"slug": req.slug, "message_id": "9"*8}),
+                kwargs={"slug": req.slug, "message_id": "9" * 8}),
                 {post_var: alternate_pb.id})
         self.assertEqual(response.status_code, 404)
         self.assertNotEqual(message.sender_public_body, alternate_pb)
@@ -674,7 +673,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         self.assertTrue(req.is_foi)
         response = self.client.post(reverse('foirequest-mark_not_foi',
-                kwargs={"slug": req.slug+"-blub"}))
+                kwargs={"slug": req.slug + "-blub"}))
         self.assertEqual(response.status_code, 404)
 
         response = self.client.post(reverse('foirequest-mark_not_foi',
@@ -700,7 +699,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         self.assertFalse(req.checked)
         response = self.client.post(reverse('foirequest-mark_checked',
-                kwargs={"slug": req.slug+"-blub"}))
+                kwargs={"slug": req.slug + "-blub"}))
         self.assertEqual(response.status_code, 404)
 
         response = self.client.post(reverse('foirequest-mark_checked',
