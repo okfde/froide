@@ -43,7 +43,7 @@ def _process_mail(mail_string):
             # TODO: BCC?
     from foirequest.models import FoiRequest
     mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_EMAIL_DOMAIN)
-    received_list = set(filter(mail_filter, received_list))
+    received_list = filter(mail_filter, received_list)
 
     # make original mail storeable as unicode
     try:
@@ -51,8 +51,12 @@ def _process_mail(mail_string):
     except UnicodeDecodeError:
         mail_string = base64.b64encode(mail_string).decode("utf-8")
 
+    already = set()
     for received in received_list:
         secret_mail = received[1]
+        if secret_mail in already:
+            continue
+        already.add(secret_mail)
         try:
             foi_request = FoiRequest.objects.get_by_secret_mail(secret_mail)
         except FoiRequest.DoesNotExist:
