@@ -9,6 +9,7 @@ from helper.widgets import EmailInput, AgreeCheckboxInput
 
 user_can_hide_web = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 
+
 class NewUserForm(forms.Form):
     first_name = forms.CharField(max_length=30,
             label=_('First name'),
@@ -25,12 +26,12 @@ class NewUserForm(forms.Form):
                 'class': 'inline smalltext'}))
     user_email = forms.EmailField(label=_('Email address'),
             widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
- 
+
     if user_can_hide_web:
         private = forms.BooleanField(required=False,
                 label=_("Hide my name on the web"),
                 help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
-        
+
     terms = forms.BooleanField(label=_("Terms and Conditions and Privacy Statement"),
             error_messages={'required':
                 _('You need to accept our Terms and Conditions and Priavcy Statement.')},
@@ -96,4 +97,3 @@ class UserChangeAddressForm(forms.Form):
     def save(self):
         self.profile.address = self.cleaned_data['address']
         self.profile.save()
-

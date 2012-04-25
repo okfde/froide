@@ -474,7 +474,8 @@ class FoiRequest(models.Model):
                 'foirequest': self
             })
         else:
-            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")
+            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n%(name)s\n")
+            message = message % {'name': self.user.get_full_name()}
         return SendMessageForm(self,
                 initial={"subject": subject,
                     "message": message})
@@ -538,7 +539,7 @@ Sincerely yours
         self.message_received.send(sender=self, message=message)
 
     def add_message(self, user, recipient_name, recipient_email,
-            subject, message, recipient_pb=None):
+            subject, message, recipient_pb=None, send_address=True):
         message_body = message
         message = FoiMessage(request=self)
         message.subject = subject
@@ -550,7 +551,9 @@ Sincerely yours
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
         message.timestamp = datetime.now()
-        message.plaintext = self.construct_standard_message_body(message_body)
+        message.plaintext = self.construct_standard_message_body(
+            message_body,
+            send_address=send_address)
         message.send()
 
     def add_escalation_message(self, subject, message):
@@ -660,8 +663,9 @@ Sincerely yours
                 timestamp=now,
                 status="awaiting_response",
                 subject=request.title)
+        send_address = not request.law.email_only
         message.plaintext = request.construct_message_body(form_data['body'],
-                foi_law, post_data)
+                foi_law, post_data, send_address=send_address)
         if public_body_object is not None:
             message.recipient_public_body = public_body_object
             message.recipient = public_body_object.name
@@ -677,19 +681,22 @@ Sincerely yours
             message.send()
         return request
 
-    def construct_message_body(self, text, foilaw, post_data):
+    def construct_message_body(self, text, foilaw, post_data, send_address=True):
         letter_start, letter_end = "", ""
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
             letter_end = foilaw.get_letter_end_text(post_data)
         return render_to_string("foirequest/foi_request_mail.txt",
-                {"request": self, "letter_start": letter_start,
+                {"request": self,
+                "letter_start": letter_start,
                 "letter_end": letter_end,
-                "body": text})
+                "body": text,
+                "send_address": send_address
+            })
 
-    def construct_standard_message_body(self, text):
+    def construct_standard_message_body(self, text, send_address=True):
         return render_to_string("foirequest/mail_with_userinfo.txt",
-                {"request": self, "body": text})
+                {"request": self, "body": text, 'send_address': send_address})
 
     def determine_visibility(self):
         if self.public:
