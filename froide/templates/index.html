@@ -2,6 +2,21 @@
 {% load i18n %}
 {% load url from future %}
 
+
+{% block banner %}
+   <div class="banner success">
+    <strong>
+      {% trans "FragDenStaat.de jetzt auch in NRW verfügbar!" %}
+      <a href="{% url 'publicbody-show_jurisdiction' slug='nrw' %}">{% trans "Zur Ankündigung..." %}</a>
+<!--           {% trans "Like this? Consider supporting us!" %}
+      <a href="{% url 'help-about' %}#spenden">{% trans "Donate now!" %}</a>
+    <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
+      <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
+    </a> -->
+    </strong>
+  </div>
+{% endblock %}
+
 {% block body %}
 <h2 class="special-heading">{% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}</h2>
 <div class="clearfix" id="main-folders">

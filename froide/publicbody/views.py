@@ -9,7 +9,7 @@ from django.template import TemplateDoesNotExist
 
 from haystack.query import SearchQuerySet
 
-from foirequest.models import FoiRequest
+from foirequest.models import FoiRequest, FoiMessage
 from publicbody.models import (PublicBody,
     PublicBodyTopic, FoiLaw, Jurisdiction)
 from froide.helper.json_view import (JSONResponseDetailView,
@@ -35,7 +35,10 @@ def show_jurisdiction(request, slug):
     jurisdiction = get_object_or_404(Jurisdiction, slug=slug)
     context = {
         "object": jurisdiction,
-        "pb_count": PublicBody.objects.filter(jurisdiction=jurisdiction).count()
+        "pb_count": PublicBody.objects.filter(jurisdiction=jurisdiction).count(),
+        "laws": FoiLaw.objects.filter(meta=False,
+            jurisdiction=jurisdiction).order_by('priority'),
+        "foirequests": FoiRequest.published.filter(jurisdiction=jurisdiction)[:5]
     }
     try:
         return render(request,
@@ -80,6 +83,15 @@ class PublicBodyDetailView(JSONResponseDetailView):
         context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
         if self.format == "html":
             context['foi_requests'] = FoiRequest.published.filter(public_body=context['object']).order_by('last_message')[:10]
+            msgs = {}
+            blacklist = set()
+            for m in FoiMessage.objects.filter(request__public_body=context['object']).order_by('timestamp'):
+                if m.status is None:
+                    blacklist.add(m.request_id)
+                elif m.request_id not in blacklist:
+                    msgs.setdefault(m.request_id, [])
+                    msgs[m.request_id].append((m.status, str(m.timestamp).split('.')[0]))
+            context['message_data'] = json.dumps(msgs.values())
         return context
 
 
