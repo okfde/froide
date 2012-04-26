@@ -27,7 +27,7 @@
       {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
     {% endif %}
     <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-    <dd>{{ object.contact|linebreaksbr }}</dd>
+    <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>
     {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
     <dd>{{ object.address|linebreaksbr }}</dd> {% endcomment %}
     {% comment %}<dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
