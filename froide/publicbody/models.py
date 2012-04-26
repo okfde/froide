@@ -41,6 +41,10 @@ class Jurisdiction(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('publicbody-show_jurisdiction',
+            kwargs={'slug': self.slug})
+
 
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
