@@ -1188,6 +1188,6 @@ textarea.smalltext {
     padding: 15px 15px 0.2em 15px;
 }
 
-.state-header .container > div, h3 {
+.state-header .container > div h3 {
     margin-top: 0;
 }
