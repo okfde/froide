@@ -22,11 +22,7 @@ Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}
     <img src="{{ STATIC_URL }}img/spinner.gif" alt="Loading..."/>
   </div>
   <ul class="search-results" style="display:none">
-    {% if juris_widget %}
-    <li class="empty-result" style="display:none">{% blocktrans %}No Public Bodies found in this jurisdiction for this query.{% endblocktrans %}</li>
-    {% else %}
     <li class="empty-result" style="display:none">{% blocktrans %}No Public Bodies found for this query.{% endblocktrans %}</li>
-    {% endif %}
   </ul>
   {% if value %}
   <label>
