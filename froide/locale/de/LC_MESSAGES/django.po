@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-27 09:37+0200\n"
-"PO-Revision-Date: 2012-04-27 09:38+0100\n"
+"PO-Revision-Date: 2012-04-27 17:42+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -2127,7 +2127,7 @@ msgstr "Politische Entscheidungen"
 
 #: foirequest/templates/foirequest/request.html:116
 msgid "In order to ask about a political state, you need to talk to people not public bodies. Please ask your Member of Parliament about the topic you are interested in:"
-msgstr "Wenn Sie sich über Gründe für politische Entscheidungen informieren möchten, sollten Sie mit Ihrem Bundestagsabgeordneten reden. Sie können Ihrem Abgeordneten auf abgeordnetenwatch.de Fragen stellen:"
+msgstr "Wenn Sie sich über Gründe für politische Entscheidungen informieren möchten, sollten Sie mit Ihrem Bundestagsabgeordneten, Landtagsabgeordneten, Ratsmitglied oder einen Mandatsträger in anderer Funktion (z.B. Mitglied einer Bezirksvertretung) reden. Sie können Ihrem Bundes- oder Landtagsabgeordneten (in einzelnen Kommunen auch ihrem Ratsmitglied) auf abgeordnetenwatch.de Fragen stellen:"
 
 #: foirequest/templates/foirequest/request.html:117
 msgid "Click here to go to abgeordnetenwatch.de"
