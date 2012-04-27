@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-26 14:41+0200\n"
+"POT-Creation-Date: 2012-04-27 09:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -472,8 +472,8 @@ msgstr ""
 
 #: account/templates/account/show.html:42
 #: foirequest/templates/foirequest/list.html:42
-#: foirequest/templates/foirequest/show.html:87 templates/index.html:111
-#: templates/index.html.py:135
+#: foirequest/templates/foirequest/show.html:87 templates/index.html:110
+#: templates/index.html.py:134
 msgid "Not yet set"
 msgstr ""
 
@@ -1723,8 +1723,8 @@ msgid "Filtered by requests to Public Bodies in %(name)s."
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:39
-#: foirequest/templates/foirequest/request.html:43 templates/index.html:108
-#: templates/index.html.py:132
+#: foirequest/templates/foirequest/request.html:43 templates/index.html:107
+#: templates/index.html.py:131
 msgid "To:"
 msgstr ""
 
@@ -1733,8 +1733,8 @@ msgid "Status:"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:46
-#: foirequest/templates/foirequest/show.html:594 templates/index.html:114
-#: templates/index.html.py:138 templates/search/search.html:30
+#: foirequest/templates/foirequest/show.html:594 templates/index.html:113
+#: templates/index.html.py:137 templates/search/search.html:30
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
@@ -2816,7 +2816,7 @@ msgid ""
 "%(site_name)s\n"
 msgstr ""
 
-#: frontpage/models.py:20 frontpage/models.py:36 templates/index.html:45
+#: frontpage/models.py:20 frontpage/models.py:36 templates/index.html:44
 msgid "Featured Request"
 msgstr ""
 
@@ -2996,11 +2996,11 @@ msgstr ""
 msgid "Public Bodies"
 msgstr ""
 
-#: publicbody/views.py:139
+#: publicbody/views.py:141
 msgid "This request was already confirmed."
 msgstr ""
 
-#: publicbody/views.py:142
+#: publicbody/views.py:144
 #, python-format
 msgid "%(count)d message was sent."
 msgid_plural "%(count)d messages were sent"
@@ -3027,7 +3027,7 @@ msgstr ""
 msgid "Environment"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:16 templates/index.html:33
+#: publicbody/templates/publicbody/_chooser.html:16 templates/index.html:32
 msgid "or"
 msgstr ""
 
@@ -3035,11 +3035,15 @@ msgstr ""
 msgid "Ministry of Labour"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:25
+#: publicbody/templates/publicbody/_chooser.html:18
+msgid "Write to us if a public body is missing"
+msgstr ""
+
+#: publicbody/templates/publicbody/_chooser.html:26
 msgid "No Public Bodies found in this jurisdiction for this query."
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:27
+#: publicbody/templates/publicbody/_chooser.html:28
 msgid "No Public Bodies found for this query."
 msgstr ""
 
@@ -3136,7 +3140,20 @@ msgid "Make a request now!"
 msgstr ""
 
 #: publicbody/templates/publicbody/show_foilaw.html:10
-msgid "Law Text can be found here:"
+msgid "Link to law text:"
+msgstr ""
+
+#: publicbody/templates/publicbody/show_foilaw.html:11
+#, python-format
+msgid "Law text of %(name)s (%(juris)s)"
+msgstr ""
+
+#: publicbody/templates/publicbody/show_foilaw.html:12
+msgid "Came into effect on"
+msgstr ""
+
+#: publicbody/templates/publicbody/show_foilaw.html:15
+msgid "Last update on"
 msgstr ""
 
 #: publicbody/templates/publicbody/show_topic.html:7
@@ -3260,66 +3277,66 @@ msgstr ""
 msgid "Privacy Statement"
 msgstr ""
 
-#: templates/index.html:9
+#: templates/index.html:8
 msgid "FragDenStaat.de jetzt auch in NRW verfügbar!"
 msgstr ""
 
-#: templates/index.html:10
+#: templates/index.html:9
 msgid "Zur Ankündigung..."
 msgstr ""
 
-#: templates/index.html:11
+#: templates/index.html:10
 msgid "Like this? Consider supporting us!"
 msgstr ""
 
-#: templates/index.html:12
+#: templates/index.html:11
 msgid "Donate now!"
 msgstr ""
 
-#: templates/index.html:14
+#: templates/index.html:13
 msgid "Flattr us!"
 msgstr ""
 
-#: templates/index.html:21
+#: templates/index.html:20
 msgid ""
 "This site publishes Freedom of Information requests and helps you to make "
 "your own!"
 msgstr ""
 
-#: templates/index.html:26
+#: templates/index.html:25
 #, python-format
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
 msgstr ""
 
-#: templates/index.html:29 templates/search/search.html:12
+#: templates/index.html:28 templates/search/search.html:12
 msgid "Search For Information"
 msgstr ""
 
-#: templates/index.html:31
+#: templates/index.html:30
 msgid "Try the following:"
 msgstr ""
 
-#: templates/index.html:32
+#: templates/index.html:31
 msgid "Nuclear"
 msgstr ""
 
-#: templates/index.html:34
+#: templates/index.html:33
 msgid "Employment"
 msgstr ""
 
-#: templates/index.html:38
+#: templates/index.html:37
 msgid "Make a Request now!"
 msgstr ""
 
-#: templates/index.html:50
+#: templates/index.html:49
 msgid "Read the blog post"
 msgstr ""
 
-#: templates/index.html:53
+#: templates/index.html:52
 msgid "Visit this request"
 msgstr ""
 
-#: templates/index.html:57
+#: templates/index.html:56
 msgid ""
 "Freedom of Information Request\n"
 "\n"
@@ -3330,44 +3347,44 @@ msgid ""
 "..."
 msgstr ""
 
-#: templates/index.html:64
+#: templates/index.html:63
 msgid "Write a Request Now!"
 msgstr ""
 
-#: templates/index.html:73
+#: templates/index.html:72
 msgid "What is Freedom of Information?"
 msgstr ""
 
-#: templates/index.html:74
+#: templates/index.html:73
 msgid ""
 "Every citizen has the right under the Federal Freedom of Information Law to "
 "ask for and receive access to information from Public Bodies concerning "
 "public affairs."
 msgstr ""
 
-#: templates/index.html:76
+#: templates/index.html:75
 msgid "Read more about the Freedom of Information!"
 msgstr ""
 
-#: templates/index.html:81
+#: templates/index.html:80
 msgid "What does this site do?"
 msgstr ""
 
-#: templates/index.html:82
+#: templates/index.html:81
 msgid ""
 "This site publishes Freedom of Information requests and replies so that "
 "others don't have to ask for the same information."
 msgstr ""
 
-#: templates/index.html:84
+#: templates/index.html:83
 msgid "Read more about the concept!"
 msgstr ""
 
-#: templates/index.html:89
+#: templates/index.html:88
 msgid "How can I start?"
 msgstr ""
 
-#: templates/index.html:91
+#: templates/index.html:90
 #, python-format
 msgid ""
 "You can start by browsing <a href=\"%(foirequests_url)s\">existing Freedom "
@@ -3375,11 +3392,11 @@ msgid ""
 "is all about."
 msgstr ""
 
-#: templates/index.html:98
+#: templates/index.html:97
 msgid "Successful Requests"
 msgstr ""
 
-#: templates/index.html:122
+#: templates/index.html:121
 msgid "Unsuccessful Requests"
 msgstr ""
 
