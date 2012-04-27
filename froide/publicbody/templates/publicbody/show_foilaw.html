@@ -7,8 +7,14 @@
 {% block body %}
 <h2>{{ object.name }} ({{ object.jurisdiction.name }})</h2>
 <dl>
-  <dt>{% blocktrans %}Law Text can be found here:{% endblocktrans %}</dt>
-  <dd><a href="{{ object.url }}" class="target-new">{{ object.name }}</a></dd>
+  <dt>{% blocktrans %}Link to law text:{% endblocktrans %}</dt>
+  <dd><a href="{{ object.url }}" class="target-new">{% blocktrans with name=object.name juris=object.jurisdiction.name %}Law text of {{ name }} ({{ juris }}){% endblocktrans %}</a></dd>
+  <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
+  <dd>{{ object.created|date:"DATE_FORMAT" }}</dd>
+  {% if object.updated %}
+  <dt>{% blocktrans %}Last update on{% endblocktrans %}:</dt>
+  <dd>{{ object.updated|date:"DATE_FORMAT" }}</dd>
+  {% endif %}
 </dl>
 
 <div>
