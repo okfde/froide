@@ -15,6 +15,7 @@ from publicbody.models import (PublicBody,
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
 from froide.helper.utils import render_400, render_403
+from helper.cache import cache_anonymous_page
 
 
 class PublicBodyListView(JSONResponseListView):
@@ -31,6 +32,7 @@ def index(request):
     return render(request, 'publicbody/list_topic.html', context)
 
 
+@cache_anonymous_page(15 * 60)
 def show_jurisdiction(request, slug):
     jurisdiction = get_object_or_404(Jurisdiction, slug=slug)
     context = {
