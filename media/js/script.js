@@ -75,8 +75,10 @@ Froide.app.performPublicBodySearch = (function(){
             el.find(".search-spinner").hide();
             el.find(".search-results .result").remove();
             if (results.length === 0){
-                el.find(".empty-result").show();
-                el.find(".search-results").show();
+                if ($('.selected-result').length === 0){
+                    el.find(".empty-result").show();
+                    el.find(".search-results").show();
+                }
                 return;
             } else {
                 el.find(".empty-result").hide();
