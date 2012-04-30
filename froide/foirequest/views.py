@@ -412,10 +412,10 @@ def send_message(request, slug):
         return render_403(request)
     form = SendMessageForm(foirequest, request.POST)
     if form.is_valid():
-        form.save(request.user)
+        mes = form.save(request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Message has been sent.'))
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return HttpResponseRedirect(mes.get_absolute_url())
     else:
         return show(request, slug, context={"send_message_form": form}, status=400)
 

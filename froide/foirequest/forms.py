@@ -170,7 +170,7 @@ class SendMessageForm(forms.Form):
             recipient_name = message.sender_name
             recipient_email = message.sender_email
             recipient_pb = message.sender_public_body
-        self.foirequest.add_message(user, recipient_name, recipient_email,
+        return self.foirequest.add_message(user, recipient_name, recipient_email,
                 self.cleaned_data["subject"],
                 self.cleaned_data['message'],
                 recipient_pb=recipient_pb,

@@ -555,6 +555,7 @@ Sincerely yours
             message_body,
             send_address=send_address)
         message.send()
+        return message
 
     def add_escalation_message(self, subject, message):
         message_body = message
