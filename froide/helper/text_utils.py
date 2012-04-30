@@ -8,6 +8,7 @@ import htmlentitydefs
 # @param text The HTML (or XML) source text.
 # @return The plain text, as a Unicode string, if necessary.
 
+
 def unescape(text):
     def fixup(m):
         text = m.group(0)
@@ -26,10 +27,14 @@ def unescape(text):
                 text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
-        return text # leave as is
+        return text  # leave as is
     return re.sub("&#?\w+;", fixup, text)
 
-def remove_quote(text, replacement=u"", quote_prefix=u">"):
+
+def remove_quote(text, replacement=u"", quote_prefix=u">",
+        quote_separators=None):
+    if quote_separators is None:
+        quote_separators = [re.compile('-{5}\w+ \w+-{5}\s*', re.UNICODE)]
     lines = []
     put_replacement = True
     for line in text.splitlines():
@@ -40,7 +45,17 @@ def remove_quote(text, replacement=u"", quote_prefix=u">"):
         else:
             lines.append(line)
             put_replacement = True
+    found = False
+    for i, line in enumerate(lines):
+        for qs in quote_separators:
+            if qs.match(line) is not None:
+                found = True
+                break
+        if found:
+            break
+    lines = lines[:i]
     return u"\n".join(lines)
+
 
 def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
     lines = []
@@ -57,10 +72,12 @@ def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
 
 EMAIL_NAME_RE = re.compile(r'[,:]? "?.*?"? <[^@]+@[^>]+>')
 
+
 def replace_email_name(text, replacement=u""):
     return EMAIL_NAME_RE.sub(replacement, text)
 
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
+
 
 def replace_email(text, replacement=u""):
     return EMAIL_RE.sub(replacement, text)
