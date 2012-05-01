@@ -46,6 +46,7 @@ def remove_quote(text, replacement=u"", quote_prefix=u">",
             lines.append(line)
             put_replacement = True
     found = False
+    i = len(lines)
     for i, line in enumerate(lines):
         for qs in quote_separators:
             if qs.match(line) is not None:
