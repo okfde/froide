@@ -84,6 +84,32 @@ class EmailParser(object):
                 return attachment
         return None
 
+    def parse_header_field(self, field):
+        if field is None:
+            return None
+        decodefrag = decode_header(field)
+        fragments = []
+        for s, enc in decodefrag:
+            if enc:
+                try:
+                    s = unicode(s, enc)
+                except UnicodeDecodeError:
+                    # desperate move here
+                    try:
+                        s = s.decode("latin1")
+                    except:
+                        pass
+            fragments.append(s)
+        field = ''.join(fragments)
+        return field.replace('\n\t', " ")
+
+    def get_address_list(self, msgobj, field):
+        address_list = getaddresses(msgobj.get_all(field, []))
+        fixed = []
+        for addr in address_list:
+            fixed.append((self.parse_header_field(addr[0]), addr[1]))
+        return fixed
+
     def parse_date(self, date):
         date = parsedate_tz(date)
         if date is None:
@@ -110,35 +136,22 @@ class EmailParser(object):
     def parse(self, content):
         p = Parser()
         msgobj = p.parsestr(content)
-        if msgobj['Subject'] is not None:
-            decodefrag = decode_header(msgobj['Subject'])
-            subj_fragments = []
-            for s, enc in decodefrag:
-                if enc:
-                    try:
-                        s = unicode(s, enc)
-                    except UnicodeDecodeError:
-                        # desperate move here
-                        try:
-                            s = s.decode("latin1")
-                        except:
-                            pass
-                subj_fragments.append(s)
-            subject = ''.join(subj_fragments)
-            subject = subject.replace('\n\t', " ")
-        else:
-            subject = None
+        subject = self.parse_header_field(msgobj['Subject'])
         attachments = []
         body = []
         html = []
         self.parse_body(msgobj.walk(), attachments, body, html)
         body = '\n'.join(body)
         html = '\n'.join(html)
-        tos = getaddresses(msgobj.get_all('To', []))
-        tos.extend(getaddresses(msgobj.get_all('X-Original-To', [])))
-        ccs = getaddresses(msgobj.get_all('Cc', []))
-        resent_tos = getaddresses(msgobj.get_all('resent-to', []))
-        resent_ccs = getaddresses(msgobj.get_all('resent-cc', []))
+
+        tos = self.get_address_list(msgobj, 'To')
+        tos.extend(self.get_address_list(msgobj, 'X-Original-To'))
+        ccs = self.get_address_list(msgobj, 'Cc')
+        resent_tos = self.get_address_list(msgobj, 'resent-to')
+        resent_ccs = self.get_address_list(msgobj, 'resent-cc')
+
+        from_field = parseaddr(msgobj.get('From'))
+        from_field = (self.parse_header_field(from_field[0]), from_field[1])
         date = self.parse_date(msgobj.get("Date"))
         return {
             'msgobj': msgobj,
@@ -146,7 +159,7 @@ class EmailParser(object):
             'subject': subject,
             'body': body,
             'html': html,
-            'from': parseaddr(msgobj.get('From')),
+            'from': from_field,
             'to': tos,
             'cc': ccs,
             'resent_to': resent_tos,

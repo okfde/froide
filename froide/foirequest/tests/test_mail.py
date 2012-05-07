@@ -20,6 +20,7 @@ class MailTest(TestCase):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
+        self.assertEqual(messages[0].sender_name, u'J\xf6rg Gahl-Killen')
 
     def test_working_with_attachment(self):
         with file("foirequest/tests/test_mail_02.txt") as f:
