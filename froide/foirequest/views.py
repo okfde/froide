@@ -641,8 +641,8 @@ def approve_attachment(request, slug, attachment):
 def list_unchecked(request):
     if not request.user.is_staff:
         return render_403(request)
-    foirequests = FoiRequest.published.filter(checked=False).order_by('-id')
-    attachments = FoiAttachment.objects.filter(approved=False).order_by('-id')
+    foirequests = FoiRequest.published.filter(checked=False).order_by('-id')[:30]
+    attachments = FoiAttachment.objects.filter(approved=False).order_by('-id')[:30]
     return render(request, 'foirequest/list_unchecked.html', {
         'foirequests': foirequests,
         'attachments': attachments
