@@ -1077,6 +1077,12 @@ class FoiAttachment(models.Model):
         return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
                 self.get_html_id())
 
+    def admin_link_message(self):
+        return '<a href="%s">%s</a>' % (
+            reverse('admin:foirequest_foimessage_change',
+                args=(self.belongs_to_id,)), _('See FoiMessage'))
+    admin_link_message.allow_tags = True
+
 
 class FoiEventManager(models.Manager):
     def create_event(self, event_name, request, **context):
