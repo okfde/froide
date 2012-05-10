@@ -34,7 +34,7 @@ def unescape(text):
 def remove_quote(text, replacement=u"", quote_prefix=u">",
         quote_separators=None):
     if quote_separators is None:
-        quote_separators = [re.compile('-{5}\w+ \w+-{5}\s*', re.UNICODE)]
+        quote_separators = [re.compile('\s*-{5}\w+ \w+-{5}\s*', re.UNICODE)]
     lines = []
     put_replacement = True
     for line in text.splitlines():
@@ -49,7 +49,7 @@ def remove_quote(text, replacement=u"", quote_prefix=u">",
     i = len(lines)
     for i, line in enumerate(lines):
         for qs in quote_separators:
-            if qs.match(line) is not None:
+            if qs.match(line) is not None and "".join(lines[:i]).strip():
                 found = True
                 break
         if found:
