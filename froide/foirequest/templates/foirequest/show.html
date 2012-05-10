@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load markup %}
 {% load comments %}
-{% load foirequest_tags follower_tags %}
+{% load foirequest_tags follower_tags account_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -555,8 +555,17 @@
         {% endif %}
       {% endif %}
     {% else %}
-      {% url "account-login" as account_login %}
-      <p>{% blocktrans with url=account_login next=message.get_absolute_url|urlencode %}If you login, you can make an identical request in your name with one click to gain individual access to the information that we are not allowed to publish here. <a href="{{ url }}?next={{ next }}">You can login or sign up here.</a>{% endblocktrans %}</p>
+      <form method="post" id="make-same-request" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}#make-same-request">
+        {% csrf_token %}
+        <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+        {% if not new_user_form %}
+          {% get_new_user_form "new_user_form" %}
+        {% endif %}
+        <table class="now-loggedin no-stripes">
+          {{ new_user_form.as_table }}
+        </table>
+        <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
+      </form>
     {% endif %}
       <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
     </div>
@@ -655,6 +664,7 @@
     });
     Froide.app.statusSet();
     loggedInCallback = function(data){
+      $('.now-loggedin').hide();
       location.href = $("link[rel='self']").attr("href");
     };
     if($('.socialshareprivacy').length > 0){

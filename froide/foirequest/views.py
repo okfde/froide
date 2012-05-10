@@ -653,25 +653,31 @@ def list_unchecked(request):
 def make_same_request(request, slug, message_id):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     message = get_object_or_404(FoiMessage, id=int(message_id))
-    if not request.user.is_authenticated():
-        return render_403(request)
-    if not foirequest == message.request:
-        return render_400(request)
     if not message.not_publishable:
+        return render_400(request)
+    if not foirequest == message.request:
         return render_400(request)
     if foirequest.same_as is not None:
         foirequest = foirequest.same_as
-    if foirequest.user == request.user:
-        return render_400(request)
-    same_requests = FoiRequest.objects.filter(user=request.user, same_as=foirequest).count()
-    if same_requests:
-        messages.add_message(request, messages.ERROR,
-            _("You already made an identical request"))
-        return render_400(request)
+    if not request.user.is_authenticated():
+        new_user_form = NewUserForm(request.POST)
+        if not new_user_form.is_valid():
+            return show(request, slug, context={"new_user_form": new_user_form}, status=400)
+        else:
+            user, password = AccountManager.create_user(**new_user_form.cleaned_data)
+    else:
+        user = request.user
+        if foirequest.user == user:
+            return render_400(request)
+        same_requests = FoiRequest.objects.filter(user=user, same_as=foirequest).count()
+        if same_requests:
+            messages.add_message(request, messages.ERROR,
+                _("You already made an identical request"))
+            return render_400(request)
     body = u"%s\n\n%s" % (foirequest.description,
             _('Please see this request on FragDenStaat.de where you granted access to this information: %(url)s') % {'url': foirequest.get_absolute_domain_short_url()})
     fr = FoiRequest.from_request_form(
-        request.user, foirequest.public_body,
+        user, foirequest.public_body,
         foirequest.law,
         form_data=dict(
             subject=foirequest.title,
@@ -680,6 +686,14 @@ def make_same_request(request, slug, message_id):
         ))  # Don't pass post_data, get default letter of law
     fr.same_as = foirequest
     fr.save()
-    messages.add_message(request, messages.SUCCESS,
-            _('You successfully requested this document! Your request is displayed below.'))
-    return HttpResponseRedirect(fr.get_absolute_url())
+    if user.is_active:
+        messages.add_message(request, messages.SUCCESS,
+                _('You successfully requested this document! Your request is displayed below.'))
+        return HttpResponseRedirect(fr.get_absolute_url())
+    else:
+        AccountManager(user).send_confirmation_mail(request_id=fr.pk,
+                password=password)
+        messages.add_message(request, messages.INFO,
+                _('Please check your inbox for mail from us to confirm your mail address.'))
+        # user cannot access the request yet!
+        return HttpResponseRedirect("/")
