@@ -2,10 +2,14 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from publicbody.models import PublicBody, FoiLaw
+from foirequest.tests import factories
 
 
 class PublicBodyTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
+    # fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
+
+    def setUp(self):
+        factories.make_world()
 
     def test_web_page(self):
         response = self.client.get(reverse('publicbody-list'))
@@ -63,4 +67,4 @@ class PublicBodyTest(TestCase):
         law = FoiLaw.objects.filter(meta=False)[0]
         response = self.client.get(reverse('publicbody-foilaw-show', kwargs={"slug": law.slug}))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(law.name, response.content)
+        self.assertIn(law.name, response.content.decode('utf-8'))

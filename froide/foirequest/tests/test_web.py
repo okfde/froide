@@ -5,10 +5,12 @@ from django.core.urlresolvers import reverse
 
 from publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
 from foirequest.models import FoiRequest
+from foirequest.tests import factories
 
 
 class WebTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
+    def setUp(self):
+        self.site = factories.make_world()
 
     def test_index(self):
         response = self.client.get('/')
@@ -23,6 +25,11 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-make_request',
             kwargs={'public_body': p.slug}))
         self.assertEqual(response.status_code, 200)
+        p.email = ""
+        p.save()
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body': p.slug}))
+        self.assertEqual(response.status_code, 404)
 
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
@@ -66,6 +73,7 @@ class WebTest(TestCase):
         self.assertIn(req.title, response.content.decode('utf-8'))
 
     def test_list_no_identical(self):
+        factories.FoiRequestFactory.create(site=self.site)
         reqs = FoiRequest.published.all()
         req1 = reqs[0]
         req2 = reqs[1]
@@ -158,4 +166,32 @@ class WebTest(TestCase):
         self.client.logout()
         self.client.login(username="sw", password="froide")
         response = self.client.get(reverse('foirequest-list_unchecked'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_dashboard(self):
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username="dummy", password="froide")
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+        self.client.login(username="sw", password="froide")
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_search_similar(self):
+        response = self.client.get(reverse('foirequest-search_similar'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual('[]', response.content.decode('utf-8'))
+        self.assertEqual(response['Content-Type'], 'application/json')
+        response = self.client.get(reverse('foirequest-search_similar') + '?q=Bundes')
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn('title', content)
+        self.assertIn('description', content)
+        self.assertIn('public_body_name', content)
+        self.assertIn('url', content)
+
+    def test_search(self):
+        response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)

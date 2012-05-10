@@ -9,18 +9,16 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import mail
-from django.utils import translation
 
-
+from foirequest.tests import factories
 from publicbody.models import PublicBody, FoiLaw
-from foirequest.models import FoiRequest, FoiMessage
+from foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 
 
 class RequestTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
 
-    def setup(self):
-        translation.activate(settings.LANGUAGE_CODE)
+    def setUp(self):
+        factories.make_world()
 
     def test_public_body_logged_in_request(self):
         ok = self.client.login(username='sw', password='froide')
@@ -56,11 +54,12 @@ class RequestTest(TestCase):
 
     def test_public_body_new_user_request(self):
         self.client.logout()
+        factories.UserFactory.create(email="dummy@example.com")
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Test-Subject With New User",
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
-                "user_email": "dummy@example.com",  # already exists in fixture
+                "user_email": "dummy@example.com",
                 "law": pb.laws.all()[0].pk}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
@@ -72,7 +71,7 @@ class RequestTest(TestCase):
                 "address": "TestStreet 3\n55555 Town",
                 "user_email": "sw@example.com",
                 "terms": "on",
-                "law": str(FoiLaw.get_default_law().id)}
+                "law": str(FoiLaw.get_default_law(pb).id)}
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -453,7 +452,6 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_postal_reply(self):
-        translation.activate(settings.LANGUAGE_CODE)
         self.client.login(username='sw', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Totally Random Request",
@@ -473,7 +471,7 @@ class RequestTest(TestCase):
         message.timestamp = datetime(2011, 1, 1, 0, 0, 0)
         message.save()
 
-        path = os.path.join(settings.PROJECT_ROOT, "fixtures", "test.pdf")
+        path = os.path.join(settings.PROJECT_ROOT, "testdata", "test.pdf")
         file_size = os.path.getsize(path)
         f = file(path, "rb")
         post = {"date": "3000-01-01",  # far future
@@ -697,6 +695,8 @@ class RequestTest(TestCase):
 
     def test_mark_checked(self):
         req = FoiRequest.objects.all()[0]
+        req.checked = False
+        req.save()
         self.assertFalse(req.checked)
         response = self.client.post(reverse('foirequest-mark_checked',
                 kwargs={"slug": req.slug + "-blub"}))
@@ -720,3 +720,287 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertTrue(req.checked)
+
+    def test_escalation_message(self):
+        req = FoiRequest.objects.all()[0]
+        response = self.client.post(reverse('foirequest-escalation_message',
+                kwargs={"slug": req.slug + 'blub'}))
+        self.assertEqual(response.status_code, 404)
+        response = self.client.post(reverse('foirequest-escalation_message',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+        ok = self.client.login(username="dummy", password="froide")
+        self.assertTrue(ok)
+        response = self.client.post(reverse('foirequest-escalation_message',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+        self.client.login(username="sw", password="froide")
+        response = self.client.post(reverse('foirequest-escalation_message',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 400)
+        mail.outbox = []
+        response = self.client.post(reverse('foirequest-escalation_message',
+                kwargs={"slug": req.slug}), {
+            'subject': 'My Escalation Subject',
+            'message': 'My Escalation Message'
+            })
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(req.get_absolute_url(), response['Location'])
+        self.assertEqual(req.law.mediator, req.messages[-1].recipient_public_body)
+        self.assertEqual(len(mail.outbox), 2)
+
+    def test_set_tags(self):
+        req = FoiRequest.objects.all()[0]
+
+        # Bad method
+        response = self.client.get(reverse('foirequest-set_tags',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 405)
+
+        # Bad slug
+        response = self.client.post(reverse('foirequest-set_tags',
+                kwargs={"slug": req.slug + 'blub'}))
+        self.assertEqual(response.status_code, 404)
+
+        # Not logged in
+        self.client.logout()
+        response = self.client.post(reverse('foirequest-set_tags',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+
+        # Not staff
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('foirequest-set_tags',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+
+        # Bad form
+        self.client.logout()
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-set_tags',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(req.tags.all()), 0)
+
+        response = self.client.post(reverse('foirequest-set_tags',
+                kwargs={"slug": req.slug}),
+                {'tags': 'SomeTag, "Another Tag", SomeTag'})
+        self.assertEqual(response.status_code, 302)
+        tags = req.tags.all()
+        self.assertEqual(len(tags), 2)
+        self.assertIn('SomeTag', [t.name for t in tags])
+        self.assertIn('Another Tag', [t.name for t in tags])
+
+    def test_set_resolution(self):
+        req = FoiRequest.objects.all()[0]
+
+        # Bad method
+        response = self.client.get(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 405)
+
+        # Bad slug
+        response = self.client.post(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug + 'blub'}))
+        self.assertEqual(response.status_code, 404)
+
+        # Not logged in
+        self.client.logout()
+        response = self.client.post(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+
+        # Not user of request
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 403)
+
+        # Request not final
+        self.client.logout()
+        self.client.login(username='sw', password='froide')
+        req.status = 'awaiting_response'
+        req.save()
+        response = self.client.post(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 400)
+
+        # No resolution given
+        req.status = 'successful'
+        req.save()
+        response = self.client.post(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 400)
+
+        res = "This is resolved"
+        response = self.client.post(reverse('foirequest-set_resolution',
+                kwargs={"slug": req.slug}), {"resolution": res})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(id=req.id)
+        self.assertEqual(req.resolution, res)
+
+    def test_approve_attachment(self):
+        req = FoiRequest.objects.all()[0]
+        mes = req.messages[-1]
+        att = factories.FoiAttachmentFactory.create(belongs_to=mes, approved=False)
+
+        # Bad method
+        response = self.client.get(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 405)
+
+        # Bad slug
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug + 'blub', "attachment": att.id}))
+        self.assertEqual(response.status_code, 404)
+
+        # Not logged in
+        self.client.logout()
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+
+        # Not user of request
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": '9' * 8}))
+        self.assertEqual(response.status_code, 404)
+
+        user = User.objects.get(username='sw')
+        user.is_staff = False
+        user.save()
+
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 302)
+        att = FoiAttachment.objects.get(id=att.id)
+        self.assertTrue(att.approved)
+
+        att.approved = False
+        att.can_approve = False
+        att.save()
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+        att = FoiAttachment.objects.get(id=att.id)
+        self.assertFalse(att.approved)
+        self.assertFalse(att.can_approve)
+
+        self.client.logout()
+        self.client.login(username='dummy_staff', password='froide')
+        response = self.client.post(reverse('foirequest-approve_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 302)
+        att = FoiAttachment.objects.get(id=att.id)
+        self.assertTrue(att.approved)
+        self.assertFalse(att.can_approve)
+
+    def test_make_same_request(self):
+        fake_mes = factories.FoiMessageFactory.create(not_publishable=True)
+        req = FoiRequest.objects.all()[0]
+        mes = req.messages[-1]
+
+        # req doesn't exist
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug + 'blub', "message_id": '9' * 4}))
+        self.assertEqual(response.status_code, 404)
+
+        # message doesn't exist
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": '9' * 4}))
+        self.assertEqual(response.status_code, 404)
+
+        # message is publishable
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": mes.id}))
+        self.assertEqual(response.status_code, 400)
+
+        # message does not belong to request
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": fake_mes.id}))
+        self.assertEqual(response.status_code, 400)
+
+        # not loged in, no form
+        mes.not_publishable = True
+        mes.save()
+
+        response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": mes.id}))
+        self.assertEqual(response.status_code, 400)
+
+        # user made original request
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": mes.id}))
+        self.assertEqual(response.status_code, 400)
+
+        # make request
+        mail.outbox = []
+        self.client.logout()
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": mes.id}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 2)
+        user = User.objects.get(username='dummy')
+        same_req = FoiRequest.objects.get(same_as=req, user=user)
+        self.assertIn(same_req.get_absolute_url(), response['Location'])
+
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": req.slug, "message_id": mes.id}))
+        self.assertEqual(response.status_code, 400)
+        same_req = FoiRequest.objects.get(same_as=req, user=user)
+
+        same_mes = factories.FoiMessageFactory.create(
+            request=same_req, not_publishable=True)
+        self.client.logout()
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": same_req.slug, "message_id": same_mes.id}))
+        self.assertEqual(response.status_code, 400)
+
+        self.client.logout()
+        mail.outbox = []
+        post = {"first_name": "Bob",
+                "last_name": "Bobbington",
+                "address": "MyAddres 12\nB-Town",
+                "user_email": "bob@example.com",
+                "terms": "on"
+        }
+        response = self.client.post(reverse('foirequest-make_same_request',
+                kwargs={"slug": same_req.slug, "message_id": same_mes.id}), post)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(FoiRequest.objects.filter(same_as=req).count(), 2)
+        same_req2 = FoiRequest.objects.get(same_as=req, user__email=post['user_email'])
+        self.assertEqual(same_req2.status, "awaiting_user_confirmation")
+        self.assertEqual(same_req2.visibility, 0)
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(message.to[0], post['user_email'])
+        match = re.search('/(\d+)/%d/(\w+)/' % (same_req2.pk), message.body)
+        self.assertIsNotNone(match)
+        new_user = User.objects.get(id=int(match.group(1)))
+        self.assertFalse(new_user.is_active)
+        secret = match.group(2)
+        response = self.client.get(reverse('account-confirm',
+                kwargs={'user_id': new_user.pk,
+                'secret': secret, 'request_id': same_req2.pk}))
+        self.assertEqual(response.status_code, 302)
+        new_user = User.objects.get(id=new_user.pk)
+        self.assertTrue(new_user.is_active)
+        same_req2 = FoiRequest.objects.get(pk=same_req2.pk)
+        self.assertEqual(same_req2.status, "awaiting_response")
+        self.assertEqual(same_req2.visibility, 2)
+        self.assertEqual(len(mail.outbox), 3)
