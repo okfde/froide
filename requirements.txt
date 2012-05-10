@@ -28,3 +28,4 @@ pysolr==2.0.13
 python-dateutil==1.5
 pytz==2011e
 wsgiref==0.1.2
+-e git://github.com/dnerdy/factory_boy.git#egg=factory
