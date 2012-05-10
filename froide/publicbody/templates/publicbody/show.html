@@ -13,6 +13,8 @@
   </p>
   {% endif %}
   <dl>
+    <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
+    <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
     <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
     <dd>{{ object.classification }}</dd>
     <dt>{% blocktrans %}Topic:{% endblocktrans %}</dt>
@@ -27,7 +29,7 @@
       {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
     {% endif %}
     <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-    <dd>{{ object.contact|linebreaksbr }}</dd>
+    <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>
     {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
     <dd>{{ object.address|linebreaksbr }}</dd> {% endcomment %}
     {% comment %}<dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>

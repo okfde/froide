@@ -76,33 +76,32 @@
       </table>
     </form>
     </div>
-  </div>
-  <div id="change-address-now" class="section focussed">
-    {% if not user.get_profile.address %}
-    <h3>{% blocktrans %}You need to enter your address.{% endblocktrans %}</h3>
-      {% else %}
-      <a href="#change-address" class="toggle">{% blocktrans %}Change your address{% endblocktrans %}</a>
-      <div id="change-address"{% if not address_change_form %} class="hidden"{% endif %}>
-      {% endif %}
-      <form action="{% url 'account-change_address' %}" method="post">
-        {% csrf_token %}
-        <table class="no-stripes">
-        {% if address_change_form %}
-        {{ address_change_form.as_table }}
+    <div id="change-address-now" class="section focussed">
+      {% if not user.get_profile.address %}
+      <h3>{% blocktrans %}You need to enter your address.{% endblocktrans %}</h3>
         {% else %}
-        {{ user.get_profile.get_address_change_form.as_table }}
+        <a href="#change-address" class="toggle">{% blocktrans %}Change your address{% endblocktrans %}</a>
+        <div id="change-address"{% if not address_change_form %} class="hidden"{% endif %}>
         {% endif %}
-        <tr>
-          <td></td>
-          <td>
-            <input type="submit" value="{% blocktrans %}Change address{% endblocktrans %}"/>
-          </td>
-        </tr>
-      </table>
-    </form>
+        <form action="{% url 'account-change_address' %}" method="post">
+          {% csrf_token %}
+          <table class="no-stripes">
+          {% if address_change_form %}
+          {{ address_change_form.as_table }}
+          {% else %}
+          {{ user.get_profile.get_address_change_form.as_table }}
+          {% endif %}
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" value="{% blocktrans %}Change address{% endblocktrans %}"/>
+            </td>
+          </tr>
+        </table>
+      </form>
+      </div>
     </div>
   </div>
-
 </div>
 {% endif %}
 {% endblock %}

@@ -1,19 +1,31 @@
--e svn+http://code.djangoproject.com/svn/django/trunk/#egg=django_trunk
+BeautifulSoup==3.2.0
+Django==1.4
+Markdown==2.0.3
 South==0.7.3
+amqplib==1.0.0
+anyjson==0.3.1
 celery==2.3.1
+coverage==3.5.1
 django-celery==2.3.3
-kombu==1.2.1
+-e hg+https://bitbucket.org/pmclanahan/django-celery-email@213c771215bb4c3dec9dac184ed3eec228ceca07#egg=django_celery_email-dev
+django-debug-toolbar==0.8.5
+-e git://github.com/stefanw/django-haystack.git@2e0a89219a4be16f831e1f4d028d128d8de6b46e#egg=django_haystack-dev
+django-indexer==0.3.0
 django-kombu==0.9.4
--e git://github.com/stefanw/django-haystack.git#egg=django_haystack
-# -e git://github.com/toastdriven/django-haystack.git@v1.2.0#egg=django_haystack-1.2.0_beta-py2.7-dev
--e hg+https://bitbucket.org/pmclanahan/django-celery-email@213c771215bb4c3dec9dac184ed3eec228ceca07#egg=django_celery_email-tip
-django-debug-toolbar
-pysolr==2.0.13
-BeautifulSoup
-markdown
-pytz==2011e
-django-sentry
 django-pagination==1.0.7
+django-paging==0.2.4
+django-picklefield==0.1.9
 django-secure==0.1.0
+-e git://github.com/dcramer/sentry.git@9aaa7bd63b4249e88e1892a27fcd7bd7f1df8087#egg=sentry
 django-taggit==0.9.3
-coverage
+django-templatetag-sugar==0.1
+gunicorn==0.12.2
+kombu==1.2.1
+ordereddict==1.1
+psycopg2==2.4.1
+pyparsing==1.5.5
+pysolr==2.0.13
+python-dateutil==1.5
+pytz==2011e
+wsgiref==0.1.2
+-e git://github.com/dnerdy/factory_boy.git#egg=factory

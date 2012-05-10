@@ -11,6 +11,7 @@ from froide.helper.email_utils import (EmailParser, get_unread_mails, make_addre
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
 No corresponding request could be identified, please investigate!''')
 
+
 def send_foi_mail(subject, message, from_email, recipient_list,
               fail_silently=False, **kwargs):
     connection = get_connection(username=settings.FOI_EMAIL_HOST_USER,
@@ -33,6 +34,7 @@ def send_foi_mail(subject, message, from_email, recipient_list,
                         connection=connection, headers=headers)
     return email.send()
 
+
 def _process_mail(mail_string):
     parser = EmailParser()
     email = parser.parse(mail_string)
@@ -49,8 +51,12 @@ def _process_mail(mail_string):
     except UnicodeDecodeError:
         mail_string = base64.b64encode(mail_string).decode("utf-8")
 
+    already = set()
     for received in received_list:
         secret_mail = received[1]
+        if secret_mail in already:
+            continue
+        already.add(secret_mail)
         try:
             foi_request = FoiRequest.objects.get_by_secret_mail(secret_mail)
         except FoiRequest.DoesNotExist:
@@ -60,6 +66,7 @@ def _process_mail(mail_string):
             continue
         foi_request.add_message_from_email(email, mail_string)
 
+
 def _fetch_mail():
     for rfc_data in get_unread_mails(settings.FOI_EMAIL_HOST_IMAP,
             settings.FOI_EMAIL_PORT_IMAP,
@@ -67,6 +74,7 @@ def _fetch_mail():
             settings.FOI_EMAIL_ACCOUNT_PASSWORD,
             ssl=settings.FOI_EMAIL_USE_SSL):
         yield rfc_data
+
 
 def fetch_and_process():
     count = 0

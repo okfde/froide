@@ -241,6 +241,7 @@ class FoiRequest(models.Model):
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
 
+    non_filtered_objects = models.Manager()
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
     published_not_foi = PublishedNotFoiRequestManager()
@@ -276,8 +277,8 @@ class FoiRequest(models.Model):
     def messages(self):
         if not hasattr(self, "_messages") or \
                 self._messages is None:
-            self._messages = self.foimessage_set.select_related("sender_user", "sender_user__profile",
-                    "sender_public_body").order_by("timestamp")
+            self._messages = list(self.foimessage_set.select_related("sender_user", "sender_user__profile",
+                    "sender_public_body").order_by("timestamp"))
         return self._messages
 
     @property
@@ -292,6 +293,10 @@ class FoiRequest(models.Model):
     def get_absolute_url(self):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
+
+    def get_absolute_short_url(self):
+        return reverse('foirequest-shortlink',
+                kwargs={'obj_id': self.id})
 
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
@@ -437,7 +442,7 @@ class FoiRequest(models.Model):
 
     def get_auth_code(self):
         return salted_hmac("FoiRequestPublicBodyAuth",
-                str(self.id)).hexdigest()
+                '%s#%s' % (self.id, self.secret_address)).hexdigest()
 
     def check_auth_code(self, code):
         return constant_time_compare(code, self.get_auth_code())
@@ -471,7 +476,8 @@ class FoiRequest(models.Model):
                 'foirequest': self
             })
         else:
-            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n\n")
+            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n%(name)s\n")
+            message = message % {'name': self.user.get_full_name()}
         return SendMessageForm(self,
                 initial={"subject": subject,
                     "message": message})
@@ -533,7 +539,7 @@ Sincerely yours
         self.message_received.send(sender=self, message=message)
 
     def add_message(self, user, recipient_name, recipient_email,
-            subject, message, recipient_pb=None):
+            subject, message, recipient_pb=None, send_address=True):
         message_body = message
         message = FoiMessage(request=self)
         message.subject = subject
@@ -545,8 +551,11 @@ Sincerely yours
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
         message.timestamp = timezone.now()
-        message.plaintext = self.construct_standard_message_body(message_body)
+        message.plaintext = self.construct_standard_message_body(
+            message_body,
+            send_address=send_address)
         message.send()
+        return message
 
     def add_escalation_message(self, subject, message):
         message_body = message
@@ -655,8 +664,9 @@ Sincerely yours
                 timestamp=now,
                 status="awaiting_response",
                 subject=request.title)
+        send_address = not request.law.email_only
         message.plaintext = request.construct_message_body(form_data['body'],
-                foi_law, post_data)
+                foi_law, post_data, send_address=send_address)
         if public_body_object is not None:
             message.recipient_public_body = public_body_object
             message.recipient = public_body_object.name
@@ -672,19 +682,22 @@ Sincerely yours
             message.send()
         return request
 
-    def construct_message_body(self, text, foilaw, post_data):
+    def construct_message_body(self, text, foilaw, post_data, send_address=True):
         letter_start, letter_end = "", ""
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
             letter_end = foilaw.get_letter_end_text(post_data)
         return render_to_string("foirequest/foi_request_mail.txt",
-                {"request": self, "letter_start": letter_start,
+                {"request": self,
+                "letter_start": letter_start,
                 "letter_end": letter_end,
-                "body": text})
+                "body": text,
+                "send_address": send_address
+            })
 
-    def construct_standard_message_body(self, text):
+    def construct_standard_message_body(self, text, send_address=True):
         return render_to_string("foirequest/mail_with_userinfo.txt",
-                {"request": self, "body": text})
+                {"request": self, "body": text, 'send_address': send_address})
 
     def determine_visibility(self):
         if self.public:
@@ -796,7 +809,7 @@ Sincerely yours
                     % {"site_name": settings.SITE_NAME},
                 render_to_string("foirequest/classification_reminder.txt",
                     {"request": self,
-                        "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_url()),
+                        "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
                         "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
@@ -808,7 +821,7 @@ Sincerely yours
                     {"request": self,
                     "user": self.user,
                     "message": event_string,
-                    "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_url()),
+                    "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
@@ -898,6 +911,10 @@ class FoiMessage(models.Model):
 
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),
+                self.get_html_id())
+
+    def get_absolute_short_url(self):
+        return "%s#%s" % (self.request.get_absolute_short_url(),
                 self.get_html_id())
 
     def get_absolute_domain_url(self):
@@ -1022,6 +1039,7 @@ class FoiAttachment(models.Model):
     size = models.IntegerField(_("Size"), blank=True, null=True)
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
     format = models.CharField(_("Format"), blank=True, max_length=100)
+    can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
@@ -1058,6 +1076,12 @@ class FoiAttachment(models.Model):
     def get_absolute_url(self):
         return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
                 self.get_html_id())
+
+    def admin_link_message(self):
+        return '<a href="%s">%s</a>' % (
+            reverse('admin:foirequest_foimessage_change',
+                args=(self.belongs_to_id,)), _('See FoiMessage'))
+    admin_link_message.allow_tags = True
 
 
 class FoiEventManager(models.Manager):

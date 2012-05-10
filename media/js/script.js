@@ -7,7 +7,7 @@ Froide.app.getPublicBodyResultListItem = function(el, result){
     var name = el.attr("data-inputname");
     var li = '<li class="result"><label>';
     li += '<input type="radio" name="' + name + '" value="' + result.id + '"/> ';
-    li += result.name + '</label> - ';
+    li += result.name + '(' + result.jurisdiction +')</label> - ';
     li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
     li += '</li>';
     return li;
@@ -75,8 +75,10 @@ Froide.app.performPublicBodySearch = (function(){
             el.find(".search-spinner").hide();
             el.find(".search-results .result").remove();
             if (results.length === 0){
-                el.find(".empty-result").show();
-                el.find(".search-results").show();
+                if ($('.selected-result').length === 0){
+                    el.find(".empty-result").show();
+                    el.find(".search-results").show();
+                }
                 return;
             } else {
                 el.find(".empty-result").hide();

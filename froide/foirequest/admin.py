@@ -137,6 +137,21 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to',)
+    ordering = ('-id',)
+    list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
+    list_filter = ('can_approve', 'approved',)
+    search_fields = ['name']
+    actions = ['approve', 'cannot_approve']
+
+    def approve(self, request, queryset):
+        rows_updated = queryset.update(approved=True)
+        self.message_user(request, _("%d attachment(s) successfully approved." % rows_updated))
+    approve.short_description = _("Mark selected as approved")
+
+    def cannot_approve(self, request, queryset):
+        rows_updated = queryset.update(can_approve=False)
+        self.message_user(request, _("%d attachment(s) successfully marked as not approvable." % rows_updated))
+    cannot_approve.short_description = _("Mark selected as NOT approvable")
 
 
 class FoiEventAdmin(admin.ModelAdmin):

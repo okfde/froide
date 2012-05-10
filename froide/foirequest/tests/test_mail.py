@@ -8,10 +8,16 @@ from django.utils.translation import ugettext as _
 
 from froide.foirequest.tasks import _process_mail
 from foirequest.models import FoiRequest
+from helper.email_utils import EmailParser
+from foirequest.tests import factories
 
 
 class MailTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', "foirequest.json"]
+    def setUp(self):
+        site = factories.make_world()
+        req = factories.FoiRequestFactory.create(site=site,
+            secret_address="sw+yurpykc1hr@fragdenstaat.de")
+        factories.FoiMessageFactory.create(request=req)
 
     def test_working(self):
         with file("foirequest/tests/test_mail_01.txt") as f:
@@ -19,6 +25,7 @@ class MailTest(TestCase):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
+        self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
 
     def test_working_with_attachment(self):
         with file("foirequest/tests/test_mail_02.txt") as f:
@@ -41,3 +48,9 @@ class MailTest(TestCase):
         recipients = [m.to[0] for m in mail.outbox]
         for manager in settings.MANAGERS:
             self.assertIn(manager[1], recipients)
+
+    def test_inline_attachments(self):
+        parser = EmailParser()
+        with file("foirequest/tests/test_mail_03.txt") as f:
+            email = parser.parse(f.read())
+        self.assertEqual(len(email['attachments']), 1)

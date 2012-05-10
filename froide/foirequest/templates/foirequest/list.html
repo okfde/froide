@@ -43,7 +43,7 @@
         {% endif %}
         <br/><strong>{% blocktrans %}Status:{% endblocktrans %}</strong> {{ object.readable_status }}
         <br/>
-        <span class="hover-visble small">{% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}
+        <span title="{{ object.last_message }}" class="hover-visble small">{% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}
         {% if object.same_as_count %}
           – <a href="{{ object.get_absolute_url }}#identical">{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>
         {% endif %}

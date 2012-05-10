@@ -56,7 +56,8 @@ def dashboard(request):
         total += user['num']
         user['total'] = total
     foirequest = {}
-    for u in FoiRequest.objects.filter(first_message__gte=datetime.datetime(2011, 7, 30)):
+    for u in FoiRequest.objects.filter(is_foi=True, public_body__isnull=False,
+                                        first_message__gte=datetime.datetime(2011, 7, 30)):
         d = u.first_message.date().isoformat()
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
@@ -314,7 +315,7 @@ def submit_request(request, public_body=None):
             else:
                 messages.add_message(request, messages.INFO,
                     _('Your request has been sent.'))
-            return HttpResponseRedirect(foi_request.get_absolute_url())
+            return HttpResponseRedirect(foi_request.get_absolute_url() + _('?request-made'))
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
                     password=password)
@@ -411,10 +412,10 @@ def send_message(request, slug):
         return render_403(request)
     form = SendMessageForm(foirequest, request.POST)
     if form.is_valid():
-        form.save(request.user)
+        mes = form.save(request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Message has been sent.'))
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return HttpResponseRedirect(mes.get_absolute_url())
     else:
         return show(request, slug, context={"send_message_form": form}, status=400)
 
@@ -629,6 +630,8 @@ def approve_attachment(request, slug, attachment):
     if not request.user.is_staff and foirequest.user != request.user:
         return render_403(request)
     att = get_object_or_404(FoiAttachment, id=int(attachment))
+    if not att.can_approve and not request.user.is_staff:
+        return render_403(request)
     att.approved = True
     att.save()
     messages.add_message(request, messages.SUCCESS,
@@ -639,8 +642,8 @@ def approve_attachment(request, slug, attachment):
 def list_unchecked(request):
     if not request.user.is_staff:
         return render_403(request)
-    foirequests = FoiRequest.published.filter(checked=False).order_by('-id')
-    attachments = FoiAttachment.objects.filter(approved=False).order_by('-id')
+    foirequests = FoiRequest.published.filter(checked=False).order_by('-id')[:30]
+    attachments = FoiAttachment.objects.filter(approved=False, can_approve=True).order_by('-id')[:30]
     return render(request, 'foirequest/list_unchecked.html', {
         'foirequests': foirequests,
         'attachments': attachments
@@ -651,23 +654,31 @@ def list_unchecked(request):
 def make_same_request(request, slug, message_id):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     message = get_object_or_404(FoiMessage, id=int(message_id))
-    if not request.user.is_authenticated():
-        return render_403(request)
-    if not foirequest == message.request:
-        return render_400(request)
     if not message.not_publishable:
+        return render_400(request)
+    if not foirequest == message.request:
         return render_400(request)
     if foirequest.same_as is not None:
         foirequest = foirequest.same_as
-    same_requests = FoiRequest.objects.filter(user=request.user, same_as=foirequest).count()
-    if same_requests:
-        messages.add_message(request, messages.ERROR,
-            _("You already made an identical request"))
-        return render_400(request)
+    if not request.user.is_authenticated():
+        new_user_form = NewUserForm(request.POST)
+        if not new_user_form.is_valid():
+            return show(request, slug, context={"new_user_form": new_user_form}, status=400)
+        else:
+            user, password = AccountManager.create_user(**new_user_form.cleaned_data)
+    else:
+        user = request.user
+        if foirequest.user == user:
+            return render_400(request)
+        same_requests = FoiRequest.objects.filter(user=user, same_as=foirequest).count()
+        if same_requests:
+            messages.add_message(request, messages.ERROR,
+                _("You already made an identical request"))
+            return render_400(request)
     body = u"%s\n\n%s" % (foirequest.description,
             _('Please see this request on FragDenStaat.de where you granted access to this information: %(url)s') % {'url': foirequest.get_absolute_domain_short_url()})
     fr = FoiRequest.from_request_form(
-        request.user, foirequest.public_body,
+        user, foirequest.public_body,
         foirequest.law,
         form_data=dict(
             subject=foirequest.title,
@@ -676,6 +687,14 @@ def make_same_request(request, slug, message_id):
         ))  # Don't pass post_data, get default letter of law
     fr.same_as = foirequest
     fr.save()
-    messages.add_message(request, messages.SUCCESS,
-            _('You successfully requested this document! Your request is displayed below.'))
-    return HttpResponseRedirect(fr.get_absolute_url())
+    if user.is_active:
+        messages.add_message(request, messages.SUCCESS,
+                _('You successfully requested this document! Your request is displayed below.'))
+        return HttpResponseRedirect(fr.get_absolute_url())
+    else:
+        AccountManager(user).send_confirmation_mail(request_id=fr.pk,
+                password=password)
+        messages.add_message(request, messages.INFO,
+                _('Please check your inbox for mail from us to confirm your mail address.'))
+        # user cannot access the request yet!
+        return HttpResponseRedirect("/")

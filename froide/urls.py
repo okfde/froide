@@ -1,24 +1,28 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.conf.urls.static import static
 from django.conf import settings
-from django.contrib.auth.decorators import user_passes_test
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.utils.translation import ugettext as _
 
 from django.contrib import admin
 admin.autodiscover()
 
-from django.contrib import databrowse
-from publicbody.models import PublicBody, FoiLaw
+from publicbody.models import Jurisdiction
 
-databrowse.site.register(PublicBody)
-databrowse.site.register(FoiLaw)
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
 urlpatterns = patterns('',
     url(r'^$', 'froide.foirequest.views.index', name='index'),
-    url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard'),
+    url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard')
+)
+
+urlpatterns += patterns('',
+    *[(r'^(?P<slug>%s)/' % j.slug,
+        include('froide.publicbody.jurisdiction_urls')) for j in Jurisdiction.objects.all()]
+)
+
+urlpatterns += patterns('',
     # Translators: request URL
     url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),
     # Translators: URL part
@@ -46,19 +50,22 @@ urlpatterns = patterns('',
     (r'^comments/', include('django.contrib.comments.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls)),
-    (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls')),
-    (r'^%s/(.*)' % SECRET_URLS.get('databrowse', 'databrowse'),
-            user_passes_test(lambda u: u.is_superuser,
-                login_url="/account/login/")(databrowse.site.root)),
+    (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls'))
 )
+
+try:
+    from custom_urls import urlpatterns as custom_urlpatterns
+    urlpatterns += custom_urlpatterns
+except ImportError:
+    pass
+
 
 def handler500(request):
     """
     500 error handler which includes ``request`` in the context.
     """
-   
-    from django.shortcuts import render
 
+    from django.shortcuts import render
     return render(request, '500.html', {'request': request}, status=500)
 
 

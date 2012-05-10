@@ -15,6 +15,9 @@ table.no-stripes tbody tr th {
     vertical-align: top;    
 }
 
+.page-break  { display:none; }
+.print-only { display: none; }
+
 #header {
     display: block;
     /* background: #296198;*/
@@ -329,7 +332,7 @@ strong {
 
 .mainsearchbox {
     font-size: 32px;
-    width: 210px;
+    width: 225px;
     display: block;
     float: left;
     margin: 0 !important;
@@ -1149,5 +1152,40 @@ textarea.smalltext {
 .banner {
     width: 998px;
     margin: 0 auto;
-    display: none;
+}
+
+.state-header {
+    background: center top no-repeat;
+    margin-bottom: 2em;
+}
+
+.state-header .state-headline {
+    text-align: center;
+}
+
+.state-header h1 {
+    font-weight: bold;
+    margin-bottom: 0;
+    text-shadow: 0px 0px 5px #fff;
+    filter: dropshadow(color=#fff, offx=0, offy=0);
+}
+
+.state-header h2 {
+    font-size: 1.4em;
+}
+
+.state-header h1, .state-header h2 {
+    margin-top: 0;
+    padding-top: 20px;
+    color: #333;
+}
+
+.state-header .container > div {
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 15px 15px 0.2em 15px;
+}
+
+.state-header .container > div h3 {
+    margin-top: 0;
 }

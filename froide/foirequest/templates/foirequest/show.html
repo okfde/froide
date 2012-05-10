@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load markup %}
 {% load comments %}
-{% load foirequest_tags follower_tags %}
+{% load foirequest_tags follower_tags account_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -15,7 +15,7 @@
 <link rel="canonical" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
 <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" />
-
+<link rel="stylesheet" href="{{ STATIC_URL }}css/print-request.css" type="text/css" media="print" />
 {% endblock %}
 
 {% block body %}
@@ -49,7 +49,7 @@
 
 <h2>{{ object.title }}</h2>
 
-<div class="clearfix">
+<div class="clearfix" id="meta-infos">
   <div class="span-18">
 
 {% if not object.is_foi %}
@@ -117,15 +117,16 @@
 {% endif %}
 
 </dl>
-<!-- 
+
 {% if object.visibility == 2 %}
+<div class="social">
 {% if object.user == user %}
-<div>
   <p>{% trans "Share your request with friends and followers!" %}</p>
 {% endif %}
-<div class="socialshareprivacy"></div>
+  <div class="socialshareprivacy"></div>
+</div>
 {% endif %}
-</div> -->
+
 
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
@@ -251,7 +252,7 @@
 
 {# Public Body Needed #}
 {% if object.status == "publicbody_needed" %}
-<div class="section">
+<div class="section no-print">
   <p>{% blocktrans %}You can suggest a public body for this request.{% endblocktrans %}
   {% with suggestions=object.public_body_suggestions %}
   {% if suggestions %}
@@ -282,7 +283,7 @@
 {% if object.user == user %}
 {% with suggestions_form=object.public_body_suggestions_form %}
   {% if suggestions_form %}
-  <div class="section important-form">
+  <div class="section important-form no-print">
     <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
     <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
       {% csrf_token %}
@@ -299,7 +300,7 @@
 {# Escalate #}
 {% if object.user == user %}
 {% if object.has_been_refused and object.law.mediator %}
-<div class="section" id="escalate-section">
+<div class="section no-print" id="escalate-section">
   <div class="error">
     {% blocktrans %}You request has been refused.{% endblocktrans %}
     <a href="#escalate" class="toggle">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
@@ -328,7 +329,7 @@
 
 {# Write Resolution #}
 {% if object.status_is_final %}
-<div class="section">
+<div class="section no-print">
   {% if object.resolution %}
   <a href="#write-resolution" class="toggle">{% blocktrans %}Write a summary of the response{% endblocktrans %}</a>
   {% endif %}
@@ -347,7 +348,7 @@
 
 {# Postal Reply #}
 {% if object.public_body %}
-<div class="section focussed" id="add-postal-reply-section">
+<div class="section focussed no-print" id="add-postal-reply-section">
   <a href="#add-postal-reply" class="toggle">{% blocktrans %}Add a Postal reply that you have received{% endblocktrans %}</a>
   <div id="add-postal-reply"{% if not postal_reply_form %} style="display: none" class="toggle-div"{% else %} class="toggle-div goto-form"{% endif %}>
     <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
@@ -368,7 +369,7 @@
 {# End Postal Reply #}
 
 {# Reply #}
-<div class="section focussed" id="reply-section">
+<div class="section focussed no-print" id="reply-section">
   <a href="#write-message" class="toggle">{% blocktrans %}Send a message to this Public Body{% endblocktrans %}</a>
   <div id="write-message"{% if send_message_form or object.is_overdue and object.awaits_response %}{% else %} style="display:none"{% endif %}>
   <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">{% csrf_token %}
@@ -395,7 +396,7 @@
 
 {# If Meta Law #}
 {% if object.law.meta and object.reply_received %}
-<div class="section">
+<div class="section no-print">
   <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
     <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
     {{ object.get_concrete_law_form.as_p }}
@@ -406,7 +407,7 @@
 
 
 {% if not object.public %}
-<div class="section">
+<div class="section no-print">
   <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
     {% csrf_token %}
     <p>{% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
@@ -416,7 +417,7 @@
 </div>
 {% endif %}
 {% endif %}{# endif: object.user == user #}
-
+<div class="page-break"></div>
 <h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
 
 {% for message in object.messages %}
@@ -430,7 +431,7 @@
         {% if object.user == user %}
             {% if message.is_response %}
             {{ message.real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
-            <div id="change-pb-{{ message.id }}" style="display:none">
+            <div id="change-pb-{{ message.id }}" style="display:none" class="no-print">
               {% with message_pb_form=message.get_public_body_sender_form %}
                  <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
                    {% csrf_token %}
@@ -487,16 +488,23 @@
       {% else %}
         {% if user == object.user or user.is_staff %}
           <a id="{{ attachment.get_absolute_url }}" href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
-          <form method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+          {% if attachment.can_approve or user.is_staff %}
+          <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
             {% csrf_token %}
             {% if object.user.get_profile.private %}
-            <p>{% trans "Please check this attachment and if it doesn't contain personally identifying information, click the button below." %}</p>
+            <p>{% trans "Please check this attachment and if it doesn't contain personally identifying information and if you are not explicitly forbidden to publish it, click the button below." %}</p>
             {% else %}
-            <p>{% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}), click the button below.{% endblocktrans %}</p>
+            <p>{% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}) and if publication is not explicitly forbidden, click the button below.{% endblocktrans %}</p>
+            {% endif %}
+            {% if not attachment.can_approve %}
+            <p><strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>{% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}</p>
             {% endif %}
             <input class="button" type="submit" value="{% trans "Publish this attachment" %}"/>
             <p>{% trans "If it does contain personally identifying information, please inform moderators (info@fragdenstaat.de) and they will redact the document and then publish it for you." %}</p>
           </form>
+          {% else %}
+            <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
+          {% endif %}
         {% else %}
         <span>{% trans "This attachment is not public yet" %}</span>
         {% endif %}
@@ -510,7 +518,7 @@
     </tr>
     {% endif %}
     {% if user == object.user and message.is_postal %}
-    <tr>
+    <tr class="no-print">
       <td class="key">{% blocktrans %}Upload Attachments{% endblocktrans %}</td>
       {% with form=message.get_postal_attachment_form %}
       <td>
@@ -531,27 +539,40 @@
       {% if object.user == user %}
         <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
       {% else %}
-        {% check_same_request object user "same_request" %}
-        {% if same_request %}
-          <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+        {% if object.same_as.user == user %}
+          <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
         {% else %}
-          <form method="post" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
-            {% csrf_token %}
-            <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
-            <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
-          </form>
+          {% check_same_request object user "same_request" %}
+          {% if same_request %}
+            <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+          {% else %}
+            <form method="post" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+              <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
+            </form>
+          {% endif %}
         {% endif %}
       {% endif %}
     {% else %}
-      {% url "account-login" as account_login %}
-      <p>{% blocktrans with url=account_login %}If you login, you can make an identical request in your name with one click to gain individual access to the information that we are not allowed to publish here. <a href="{{ url }}">You can login or sign up here.</a>{% endblocktrans %}</p>
+      <form method="post" id="make-same-request" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}#make-same-request">
+        {% csrf_token %}
+        <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+        {% if not new_user_form %}
+          {% get_new_user_form "new_user_form" %}
+        {% endif %}
+        <table class="now-loggedin no-stripes">
+          {{ new_user_form.as_table }}
+        </table>
+        <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
+      </form>
     {% endif %}
       <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
     </div>
   {% endif %}
   {# Set status #}
   {% if object.user == user and message.needs_status_input %}
-  <div id="set-status" class="section important-form">
+  <div id="set-status" class="section important-form no-print">
     <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">{% csrf_token %}
       {% if status_form %}
         {% include "foirequest/_set_status.html" %}
@@ -579,7 +600,7 @@
 <div class="events">
   <ol>
   {% for event in message.events %}
-  <li class="event" id="{{ event.get_html_id }}"><span title="{{ event.timestamp }}">{% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span>: {{ event.as_html }}</li>
+  <li class="event" id="{{ event.get_html_id }}"><span class="no-print" title="{{ event.timestamp }}">{% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="print-only">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}</li>
   {% endfor %}
   </ol>
 </div>
@@ -595,31 +616,34 @@
     {% render_comment_form for message %}
   {% endwith %}
   {% else %}
-  <a href="{% url 'account-login' %}">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
+  <a href="{% url 'account-login' %}" class="no-print">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
   {% endif %}
   </div>
 </div>
 </div>
 </div>
+{% if not forloop.last %}
+  <div class="page-break"></div>
+{% endif %}
 {% empty %}
 <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
 {% endfor %}
 </div>
 </div>
 {% if object.same_as_count %}
-<div class="span-18" id="identical">
+<div class="span-18 no-print" id="identical">
   <h5>{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
   <ul>
   {% for foirequest in object.same_as_set.all %}
     <li>
-      {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+      {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.readable_status }}</a>
     </li>
   {% endfor %}
   </ul>
 </div>
 {% endif %}
 {% if object.same_as %}
-<div class="span-18" id="identical">
+<div class="span-18 no-print" id="identical">
   <p>{% blocktrans %}This request is identical to:{% endblocktrans %}
     <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a></p>
   </p>
@@ -640,6 +664,7 @@
     });
     Froide.app.statusSet();
     loggedInCallback = function(data){
+      $('.now-loggedin').hide();
       location.href = $("link[rel='self']").attr("href");
     };
     if($('.socialshareprivacy').length > 0){
@@ -665,4 +690,3 @@
   });
 </script>
 {% endblock %}
-

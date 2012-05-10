@@ -27,10 +27,12 @@ def process_mail(mail):
         from sentry.client.models import client
         client.create_from_exception(exc_info=exc_info, view="froide.foirequest.tasks.process_mail")
 
+
 @task
 def fetch_mail():
     for rfc_data in _fetch_mail():
         process_mail.delay(rfc_data)
+
 
 @task
 def detect_overdue():
@@ -38,11 +40,13 @@ def detect_overdue():
     for foirequest in FoiRequest.objects.get_overdue():
         foirequest.set_overdue()
 
+
 @task
 def classification_reminder():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_unclassified():
         foirequest.send_classification_reminder()
+
 
 @task
 def count_same_foirequests(instance_id):

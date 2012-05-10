@@ -41,6 +41,10 @@ class Jurisdiction(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('publicbody-show_jurisdiction',
+            kwargs={'slug': self.slug})
+
 
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
@@ -64,6 +68,8 @@ class FoiLaw(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     long_description = models.TextField(_("Website Text"), blank=True)
+    created = models.DateField(_("Creation Date"), blank=True, null=True)
+    updated = models.DateField(_("Updated Date"), blank=True, null=True)
     meta = models.BooleanField(_("Meta Law"), default=False)
     combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
@@ -87,6 +93,7 @@ class FoiLaw(models.Model):
             null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
             related_name="mediating_laws")
+    email_only = models.BooleanField(_('E-Mail only'), default=False)
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL,
             default=settings.SITE_ID)
@@ -97,6 +104,9 @@ class FoiLaw(models.Model):
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
+
+    def get_absolute_url(self):
+        return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
 
     @property
     def formatted_description(self):
@@ -290,6 +300,7 @@ class PublicBody(models.Model):
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
         d['laws'] = [self.default_law.as_dict()]
+        d['jurisdiction'] = self.jurisdiction.name
         return json.dumps(d)
 
     @property

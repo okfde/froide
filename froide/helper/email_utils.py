@@ -10,7 +10,7 @@ import time
 from StringIO import StringIO
 from email.Header import decode_header
 from email.Parser import Parser
-from email.utils import parseaddr, parsedate_tz, getaddresses, decode_rfc2231
+from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
 
 
@@ -30,10 +30,12 @@ def get_unread_mails(host, port, user, password, ssl=True):
         mail.close()
         mail.logout()
 
+
 def make_address(email, name=None):
     if name:
         return "%s <%s>" % (name, email)
     return email
+
 
 class UnsupportedMailFormat(Exception):
     pass
@@ -41,11 +43,25 @@ class UnsupportedMailFormat(Exception):
 
 class EmailParser(object):
 
+    def parse_dispositions(self, dispo):
+        dispos = dispo.strip().split(";")
+        dispo_name = dispos[0].lower()
+        dispo_dict = {}
+        for param in dispos[1:]:
+            name, value = param.split("=", 1)
+            name = name.lower().strip()
+            value = value.strip()
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+            dispo_dict[name] = value
+        return dispo_name, dispo_dict
+
     def parse_attachment(self, message_part):
         content_disposition = message_part.get("Content-Disposition", None)
         if content_disposition:
-            dispositions = content_disposition.strip().split(";")
-            if content_disposition and dispositions[0].lower() == "attachment":
+            dispo_type, dispo_dict = self.parse_dispositions(content_disposition)
+            if dispo_type == "attachment" or (dispo_type == 'inline' and
+                    'filename' in dispo_dict):
                 file_data = message_part.get_payload(decode=True)
                 if file_data is None:
                     file_data = ""
@@ -57,22 +73,42 @@ class EmailParser(object):
                 attachment.mod_date = None
                 attachment.read_date = None
 
-                for param in dispositions[1:]:
-                    name,value = param.split("=", 1)
-                    name = name.lower().strip()
-                    value = value.strip()
-                    if value.startswith('"') and value.endswith('"'):
-                        value = value[1:-1]
-                    if name == "filename":
-                        attachment.name = value
-                    elif name == "create-date":
-                        attachment.create_date = value  #TODO: datetime
-                    elif name == "modification-date":
-                        attachment.mod_date = value #TODO: datetime
-                    elif name == "read-date":
-                        attachment.read_date = value #TODO: datetime
+                if "filename" in dispo_dict:
+                    attachment.name = dispo_dict['filename']
+                elif "create-date" in dispo_dict:
+                    attachment.create_date = dispo_dict['create-date']  # TODO: datetime
+                elif "modification-date" in dispo_dict:
+                    attachment.mod_date = dispo_dict['modification-date']  # TODO: datetime
+                elif "read-date" in dispo_dict:
+                    attachment.read_date = dispo_dict['read-date']  # TODO: datetime
                 return attachment
         return None
+
+    def parse_header_field(self, field):
+        if field is None:
+            return None
+        decodefrag = decode_header(field)
+        fragments = []
+        for s, enc in decodefrag:
+            if enc:
+                try:
+                    s = unicode(s, enc)
+                except UnicodeDecodeError:
+                    # desperate move here
+                    try:
+                        s = s.decode("latin1")
+                    except:
+                        pass
+            fragments.append(s)
+        field = ''.join(fragments)
+        return field.replace('\n\t', " ")
+
+    def get_address_list(self, msgobj, field):
+        address_list = getaddresses(msgobj.get_all(field, []))
+        fixed = []
+        for addr in address_list:
+            fixed.append((self.parse_header_field(addr[0]), addr[1]))
+        return fixed
 
     def parse_date(self, date):
         date = parsedate_tz(date)
@@ -80,54 +116,42 @@ class EmailParser(object):
             return None
         return (datetime.fromtimestamp(time.mktime(date[:9])), date[9])
 
-    def parse(self, content):
-        p = Parser()
-        msgobj = p.parsestr(content)
-        if msgobj['Subject'] is not None:
-            decodefrag = decode_header(msgobj['Subject'])
-            subj_fragments = []
-            for s , enc in decodefrag:
-                if enc:
-                    try:
-                        s = unicode(s , enc)
-                    except UnicodeDecodeError:
-                        # desperate move here
-                        try:
-                            s = s.decode("latin1")
-                        except:
-                            pass
-                subj_fragments.append(s)
-            subject = ''.join(subj_fragments)
-            subject = subject.replace('\n\t', " ")
-        else:
-            subject = None
-        attachments = []
-        body = None
-        html = None
-        for part in msgobj.walk():
+    def parse_body(self, parts, attachments, body, html):
+        for part in parts:
             attachment = self.parse_attachment(part)
             if attachment:
                 attachments.append(attachment)
             elif part.get_content_type() == "text/plain":
-                if body is None:
-                    body = ""
                 charset = part.get_content_charset() or 'ascii'
-                body += unicode(
+                body.append(unicode(
                     part.get_payload(decode=True),
-                    charset,
-                    'replace').encode('utf8','replace')
+                    charset, 'replace').encode('utf8', 'replace'))
             elif part.get_content_type() == "text/html":
-                if html is None:
-                    html = ""
                 charset = part.get_content_charset() or 'ascii'
-                html += unicode(
+                html.append(unicode(
                     part.get_payload(decode=True),
                     charset,
-                    'replace').encode('utf8','replace')
-        tos = getaddresses(msgobj.get_all('To', []))
-        ccs = getaddresses(msgobj.get_all('Cc', []))
-        resent_tos = getaddresses(msgobj.get_all('resent-to', []))
-        resent_ccs = getaddresses(msgobj.get_all('resent-cc', []))
+                    'replace').encode('utf8', 'replace'))
+
+    def parse(self, content):
+        p = Parser()
+        msgobj = p.parsestr(content)
+        subject = self.parse_header_field(msgobj['Subject'])
+        attachments = []
+        body = []
+        html = []
+        self.parse_body(msgobj.walk(), attachments, body, html)
+        body = '\n'.join(body)
+        html = '\n'.join(html)
+
+        tos = self.get_address_list(msgobj, 'To')
+        tos.extend(self.get_address_list(msgobj, 'X-Original-To'))
+        ccs = self.get_address_list(msgobj, 'Cc')
+        resent_tos = self.get_address_list(msgobj, 'resent-to')
+        resent_ccs = self.get_address_list(msgobj, 'resent-cc')
+
+        from_field = parseaddr(msgobj.get('From'))
+        from_field = (self.parse_header_field(from_field[0]), from_field[1])
         date = self.parse_date(msgobj.get("Date"))
         return {
             'msgobj': msgobj,
@@ -135,7 +159,7 @@ class EmailParser(object):
             'subject': subject,
             'body': body,
             'html': html,
-            'from': parseaddr(msgobj.get('From')),
+            'from': from_field,
             'to': tos,
             'cc': ccs,
             'resent_to': resent_tos,
@@ -152,3 +176,8 @@ class EmailParser(object):
  #        fixes mime encoding issues (for display within html)
  #        clean_text = quopri.decodestring(message_text)
 
+if __name__ == '__main__':
+    p = EmailParser()
+    email = p.parse(file('../foirequest/tests/test_mail_03.txt').read())
+    for i, at in enumerate(email['attachments']):
+        file(getattr(at, 'name', 'test'), 'w').write(at.read())

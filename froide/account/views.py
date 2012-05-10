@@ -34,6 +34,11 @@ def confirm(request, user_id, secret, request_id=None):
             if foirequest:
                 messages.add_message(request, messages.SUCCESS,
                     _('Your request "%s" has now been sent') % foirequest.title)
+        next = request.GET.get('next', request.session.get('next'))
+        if next:
+            if 'next' in request.session:
+                del request.session['next']
+            return HttpResponseRedirect(settings.SITE_URL + next)
         return HttpResponseRedirect(reverse('account-show') + "?new#change-password-now")
     else:
         messages.add_message(request, messages.ERROR,
@@ -94,7 +99,8 @@ def login(request, base="base.html", context=None,
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse('account-show'))
     if request.method == "POST" and status == 200:
-        status = 400 #  if ok, we are going to redirect anyways
+        status = 400  # if ok, we are going to redirect anyways
+        next = request.POST.get('next')
         form = UserLoginForm(request.POST)
         if form.is_valid():
             user = auth.authenticate(username=form.cleaned_data['email'],
@@ -116,6 +122,8 @@ def login(request, base="base.html", context=None,
                         return HttpResponseRedirect(
                                 settings.SITE_URL + reverse('account-login') + "?simple")
                     else:
+                        if next:
+                            return HttpResponseRedirect(settings.SITE_URL + next)
                         return HttpResponseRedirect(settings.SITE_URL + reverse('account-show'))
                 else:
                     messages.add_message(request, messages.ERROR,
@@ -126,30 +134,38 @@ def login(request, base="base.html", context=None,
     else:
         form = UserLoginForm()
     context.update({"form": form,
-            "custom_base": base,
-            "simple": simple})
+        "custom_base": base,
+        "simple": simple,
+        'next': request.GET.get('next')
+    })
     return render(request, template, context, status=status)
 
 
 @require_POST
 def signup(request):
+    next = request.POST.get('next')
+    next_url = (settings.SITE_URL + next) if next else '/'
     if request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot signup.'))
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(next_url)
     form = UserLoginForm()
     signup_form = NewUserForm(request.POST)
+    next = request.POST.get('next')
     if signup_form.is_valid():
         user, password = AccountManager.create_user(**signup_form.cleaned_data)
         AccountManager(user).send_confirmation_mail(password=password)
         messages.add_message(request, messages.SUCCESS,
                 _('Please check your emails for a mail from us with a confirmation link.'))
-        return HttpResponseRedirect("/")
-    return render(request, 'account/login.html',
-            {"form": form,
-            "signup_form": signup_form,
-            "custom_base": "base.html",
-            "simple": False}, status=400)
+        if next:
+            request.session['next'] = next
+        return HttpResponseRedirect(next_url)
+    return render(request, 'account/login.html', {
+        "form": form,
+        "signup_form": signup_form,
+        "custom_base": "base.html",
+        "simple": False
+    }, status=400)
 
 
 @require_POST
@@ -169,16 +185,20 @@ def change_password(request):
 
 @require_POST
 def send_reset_password_link(request):
+    next = request.POST.get('next')
+    next_url = (settings.SITE_URL + next) if next else '/'
     if request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot get a password reset link.'))
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(next_url)
     form = auth.forms.PasswordResetForm(request.POST)
     if form.is_valid():
+        if next:
+            request.session['next'] = next
         form.save(email_template_name="account/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
                 _('Check your mail, we sent you a password reset link.'))
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(next_url)
     return login(request, context={"reset_form": form}, status=400)
 
 
@@ -195,6 +215,9 @@ def password_reset_confirm(request, uidb36=None, token=None):
         login_user(request, user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been set and you are now logged in.'))
+        if 'next' in request.session:
+            response['Location'] = settings.SITE_URL + request.session['next']
+            del request.session['next']
     return response
 
 

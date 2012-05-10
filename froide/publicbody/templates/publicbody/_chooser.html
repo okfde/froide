@@ -10,25 +10,19 @@ Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}
 </script>
 <div class="public_body-chooser" data-inputname="{{ name }}">
   <div class="publicbody-search">
-    {% if juris_widget %}
-    <label>{% trans "Jurisdiction:" %} {{ juris_widget }}</label><br/>
-    {% endif %}
     <input type="search" value="{{ topic }}" class="search-public_bodies" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
     <button type="button" class="button icon search search-public_bodies-submit">{% blocktrans %}Search{% endblocktrans %}</button>
     <div class="searchexamples">{% blocktrans %}Try something like:{% endblocktrans %} 
       <a href="?topic={% trans "Environment" %}" class="searchexample">{% trans "Environment" %}</a> {% trans "or" %}
-      <a href="?topic={% trans "Ministry of Labour" %}" class="searchexample">{% trans "Ministry of Labour" %}</a>
+      <a href="?topic={% trans "Ministry of Labour" %}" class="searchexample">{% trans "Ministry of Labour" %}</a><br/>
+      <a href="{% url 'help-about' %}">{% trans "Write to us if a public body is missing" %}</a>
     </div>
   </div>
   <div class="search-spinner" style="display:none">
     <img src="{{ STATIC_URL }}img/spinner.gif" alt="Loading..."/>
   </div>
   <ul class="search-results" style="display:none">
-    {% if juris_widget %}
-    <li class="empty-result" style="display:none">{% blocktrans %}No Public Bodies found in this jurisdiction for this query.{% endblocktrans %}</li>
-    {% else %}
     <li class="empty-result" style="display:none">{% blocktrans %}No Public Bodies found for this query.{% endblocktrans %}</li>
-    {% endif %}
   </ul>
   {% if value %}
   <label>
