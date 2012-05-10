@@ -99,7 +99,7 @@ def login(request, base="base.html", context=None,
         if request.user.is_authenticated():
             return HttpResponseRedirect(reverse('account-show'))
     if request.method == "POST" and status == 200:
-        status = 400 #  if ok, we are going to redirect anyways
+        status = 400  # if ok, we are going to redirect anyways
         next = request.POST.get('next')
         form = UserLoginForm(request.POST)
         if form.is_valid():

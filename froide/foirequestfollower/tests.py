@@ -3,9 +3,7 @@ import re
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django.core import mail
-from django.utils import translation
 from django.contrib.auth.models import User
 from django.contrib.comments.forms import CommentForm
 
@@ -13,13 +11,12 @@ from django.contrib.comments.forms import CommentForm
 from foirequest.models import FoiRequest
 from foirequestfollower.models import FoiRequestFollower
 from froide.foirequestfollower.tasks import _batch_update
+from foirequest.tests import factories
 
 
 class FoiRequestFollowerTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
-
-    def setup(self):
-        translation.activate(settings.LANGUAGE_CODE)
+    def setUp(self):
+        factories.make_world()
 
     def test_following(self):
         req = FoiRequest.objects.all()[0]
@@ -91,10 +88,10 @@ class FoiRequestFollowerTest(TestCase):
         self.assertEqual(response.status_code, 302)
         mes = list(req.messages)[-1]
         d = {
-            'name'      : 'Jim Bob',
-            'email'     : 'jim.bob@example.com',
-            'url'       : '',
-            'comment'   : 'This is my comment',
+            'name': 'Jim Bob',
+            'email': 'jim.bob@example.com',
+            'url': '',
+            'comment': 'This is my comment',
         }
 
         f = CommentForm(mes)

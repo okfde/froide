@@ -8,16 +8,19 @@ from django.core import mail
 
 from publicbody.models import PublicBody
 from foirequest.models import FoiRequest, FoiMessage
+from foirequest.tests import factories
 from account.models import AccountManager
 
 
 class AccountTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
+    def setUp(self):
+        factories.make_world()
 
     def test_account_page(self):
         ok = self.client.login(username='sw', password='wrong')
         self.assertFalse(ok)
         ok = self.client.login(username='sw', password='froide')
+        self.assertTrue(ok)
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
 
