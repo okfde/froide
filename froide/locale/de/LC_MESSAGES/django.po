@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-12 18:28+0200\n"
-"PO-Revision-Date: 2012-05-12 18:33+0100\n"
+"PO-Revision-Date: 2012-05-12 20:43+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -3436,7 +3436,7 @@ msgstr "Flattr uns!"
 
 #: templates/index.html:20
 msgid "This site publishes Freedom of Information requests and helps you to make your own!"
-msgstr "Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen des Bundes und hilft Ihnen, selber Anfragen an den Staat zu stellen."
+msgstr "Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen und hilft Ihnen, selber Anfragen an den Staat zu stellen."
 
 #: templates/index.html:25
 #, python-format
@@ -3500,7 +3500,7 @@ msgstr "Was ist Informationsfreiheit?"
 
 #: templates/index.html:73
 msgid "Every citizen has the right under the Federal Freedom of Information Law to ask for and receive access to information from Public Bodies concerning public affairs."
-msgstr "Jeder Bürger hat nach den Informations&shy;gesetzen des Bundes das Recht, Zugang zu Informationen der öffentlichen Hand zu erhalten."
+msgstr "Jeder Bürger hat nach den Informations&shy;gesetzen das Recht, Zugang zu Informationen der öffentlichen Hand zu erhalten."
 
 #: templates/index.html:75
 msgid "Read more about the Freedom of Information!"
