@@ -1195,11 +1195,11 @@ class FoiEvent(models.Model):
         def link(url, title):
             return mark_safe('<a href="%s">%s</a>' % (url, escape(title)))
         context = self.get_context()
-        # if self.user:
-        #     profile = self.user.get_profile()
-        #     if not profile.private:
-        #         context['user'] = link(profile.get_absolute_url(),
-        #                 context['user'])
+        if self.user:
+            profile = self.user.get_profile()
+            if not profile.private:
+                context['user'] = link(profile.get_absolute_url(),
+                        context['user'])
         if self.public_body:
             context['public_body'] = link(self.public_body.get_absolute_url(),
                     context['public_body'])

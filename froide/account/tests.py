@@ -374,3 +374,16 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
         self.assertTrue(response.context['user'].is_anonymous())
+
+    def test_profile_page(self):
+        user = User.objects.get(username='sw')
+        response = self.client.get(reverse('account-profile',
+            kwargs={'slug': user.username}))
+        self.assertEqual(response.status_code, 200)
+        user2 = factories.UserFactory.create()
+        profile = user2.get_profile()
+        profile.private = True
+        profile.save()
+        response = self.client.get(reverse('account-profile',
+            kwargs={'slug': user2.username}))
+        self.assertEqual(response.status_code, 404)

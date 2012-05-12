@@ -31,6 +31,11 @@ class Profile(models.Model):
     def __unicode__(self):
         return _(u"Profile of <%(user)s>") % {"user": self.user}
 
+    def get_absolute_url(self):
+        if self.private:
+            return ""
+        return reverse('account-profile', kwargs={'slug': self.user.username})
+
     def display_name(self):
         if self.private:
             return _(u"Name Not Public")
@@ -68,11 +73,6 @@ class Profile(models.Model):
                 content = content[:match.end()]
 
         return content
-
-    def get_absolute_url(self):
-        if self.private:
-            return ""
-        return ""
 
     def get_autologin_url(self, url):
         account_manager = AccountManager(self.user)
