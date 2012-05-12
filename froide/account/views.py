@@ -10,8 +10,8 @@ from django.contrib.auth.views import password_reset_confirm as django_password_
 from django.utils.http import base36_to_int
 
 from account.forms import UserLoginForm, NewUserForm, UserChangeAddressForm
-from account.models import AccountManager
-from foirequest.models import FoiRequest
+from account.models import AccountManager, User
+from foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
@@ -73,6 +73,20 @@ def show(request, context=None, status=200):
         request.user.is_new = True
     context.update({'foirequests': my_requests})
     return render(request, 'account/show.html', context, status=status)
+
+
+def profile(request, slug):
+    user = get_object_or_404(User, username=slug)
+    profile = user.get_profile()
+    if profile.private:
+        raise Http404
+    foirequests = FoiRequest.objects.filter(user=user).order_by('-first_message')
+    foievents = FoiEvent.objects.filter(public=True, user=user)[:20]
+    return render(request, 'account/profile.html', {
+        'user': user,
+        'requests': foirequests,
+        'events': foievents
+    })
 
 
 def logout(request):

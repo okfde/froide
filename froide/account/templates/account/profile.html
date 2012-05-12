@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% load i18n %}
+{% load markup %}
+
+{% block title %}{{ user.get_full_name }}{% endblock %}
+
+{% block metadescription %}{% blocktrans with name=user.get_full_name %}Requests and activities of {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block body %}
+<h2>{% blocktrans with name=user.get_full_name %}Profile of {{ name }}{% endblocktrans %}</h2>
+
+<div class="clearfix">
+  <div class="span-12">
+    <h3>{% blocktrans count counter=requests|length %}The user's request{% plural %}The user's {{ counter }} requests{% endblocktrans %}</h3>
+    {% with object_list=requests %}
+      {% include "foirequest/_requests_as_table.html" %}
+    {% endwith %}
+  </div>
+  <div class="span-12 last">
+    <h3>{% blocktrans %}User's recent events{% endblocktrans %}</h3>
+    <ul>
+      {% for event in events %}
+      <li id="{{ event.get_html_id }}">
+        <a href="{{ event.get_absolute_url }}">
+          <span class="no-print" title="{{ event.timestamp }}">{% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="print-only">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span></a>: {{ event.as_html }}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
