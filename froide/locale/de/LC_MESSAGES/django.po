@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-10 16:11+0200\n"
-"PO-Revision-Date: 2012-05-11 18:38+0100\n"
+"POT-Creation-Date: 2012-05-12 18:28+0200\n"
+"PO-Revision-Date: 2012-05-12 18:33+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -84,15 +84,20 @@ msgid "account"
 msgstr "account"
 
 #. Translators: URL part
-#. Translators: part in Public Body URL
 #: urls.py:47
+msgid "profile"
+msgstr "profil"
+
+#. Translators: URL part
+#. Translators: part in Public Body URL
+#: urls.py:49
 #: publicbody/urls.py:15
 #: publicbody/urls.py:27
 msgid "search"
 msgstr "suche"
 
 #. Translators: URL part
-#: urls.py:49
+#: urls.py:51
 msgid "help"
 msgstr "hilfe"
 
@@ -188,25 +193,25 @@ msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 msgid "Profile of <%(user)s>"
 msgstr "Profil von <%(user)s>"
 
-#: account/models.py:36
+#: account/models.py:41
 msgid "Name Not Public"
 msgstr "Name nicht öffentlich"
 
-#: account/models.py:45
+#: account/models.py:50
 msgid "<< Address removed >>"
 msgstr "<< Adresse entfernt >>"
 
-#: account/models.py:48
+#: account/models.py:53
 msgid "<< Email removed >>"
 msgstr "<< E-Mail entfernt >>"
 
-#: account/models.py:55
-#: account/models.py:57
-#: account/models.py:59
+#: account/models.py:60
+#: account/models.py:62
+#: account/models.py:64
 msgid "<< Name removed >>"
 msgstr "Anonymer Nutzer"
 
-#: account/models.py:63
+#: account/models.py:68
 msgid "<< Greeting >>"
 msgstr "<< Anrede >>"
 
@@ -241,64 +246,64 @@ msgstr "Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich
 msgid "Your account is not active."
 msgstr "Ihr Nutzerkonto ist nicht aktiviert."
 
-#: account/views.py:81
+#: account/views.py:95
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
-#: account/views.py:115
+#: account/views.py:129
 msgid "A recent change requires you to set your address! Please enter it below!"
 msgstr "Eine kürzlich stattgefundene Änderung erfordert, dass Sie Ihre Adresse angeben. Bitte tragen Sie sie unten ein."
 
-#: account/views.py:120
+#: account/views.py:134
 #: account/templates/account/login.html:7
 msgid "You are now logged in."
 msgstr "Sie sind jetzt eingeloggt."
 
-#: account/views.py:130
+#: account/views.py:144
 msgid "Please activate your mail address before logging in."
 msgstr "Bitte bestätigen Sie Ihre Mailadresse bevor Sie sich einloggen."
 
-#: account/views.py:133
+#: account/views.py:147
 msgid "E-mail and password do not match."
 msgstr "E-Mailadresse und Passwort passen nicht zusammen."
 
-#: account/views.py:150
+#: account/views.py:164
 msgid "You are currently logged in, you cannot signup."
 msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 
-#: account/views.py:159
+#: account/views.py:173
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine Mail mit einem Bestätigungslink von uns erhalten."
 
-#: account/views.py:175
+#: account/views.py:189
 msgid "You are not currently logged in, you cannot change your password."
 msgstr "Sie sind gerade nicht eingeloggt, daher können Sie Ihr Passwort nicht ändern."
 
-#: account/views.py:181
+#: account/views.py:195
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: account/views.py:192
+#: account/views.py:206
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr "Sie sind gerade eingeloggt, Sie können keinen Passwort-Zurücksetzen-Link erhalten."
 
-#: account/views.py:200
+#: account/views.py:214
 msgid "Check your mail, we sent you a password reset link."
 msgstr "Überprüfen Sie Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetzen-Link geschickt."
 
-#: account/views.py:217
+#: account/views.py:231
 msgid "Your password has been set and you are now logged in."
 msgstr "Ihre Password wurde gesetzt und Sie sind jetzt eingeloggt."
 
-#: account/views.py:228
+#: account/views.py:242
 msgid "You are not currently logged in, you cannot change your address."
 msgstr "Sie sind momentan nicht eingeloggt, daher können Sie Ihre Adresse nicht ändern."
 
-#: account/views.py:234
+#: account/views.py:248
 msgid "Your address has been changed."
 msgstr "Ihre Adresse wurde geändert."
 
-#: account/views.py:240
+#: account/views.py:254
 #, python-format
 msgid "You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s"
 msgstr "Sie haben vermutlich Ihre Browser-Cookies deaktivert, allerdings brauchen Sie Cookies für diese Seite! Cookies werden auf dieser Seite nur über eine sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: %(reason)s"
@@ -413,6 +418,37 @@ msgstr "Sie erhalten diese E-Mail, weil Sie Ihr Passwort für ihren %(site_name)
 msgid "Please go to the following page and choose a new password:"
 msgstr "Bitte besuchen Sie folgende Seite und wählen Sie ein neues Passwort:"
 
+#: account/templates/account/profile.html:8
+#, python-format
+msgid "Requests and activities of %(name)s"
+msgstr "Anfragen und Aktionen von %(name)s"
+
+#: account/templates/account/profile.html:11
+#, python-format
+msgid "Profile of %(name)s"
+msgstr "Profil von %(name)s"
+
+#: account/templates/account/profile.html:15
+#, python-format
+msgid "The user's request"
+msgid_plural "The user's %(counter)s requests"
+msgstr[0] "Die Anfrage des Nutzers"
+msgstr[1] "Die %(counter)s Anfragen des Nutzers"
+
+#: account/templates/account/profile.html:21
+msgid "User's recent events"
+msgstr "Kürzliche Aktionen des Nutzers"
+
+#: account/templates/account/profile.html:26
+#: foirequest/templates/foirequest/_requests_as_table.html:19
+#: foirequest/templates/foirequest/show.html:603
+#: templates/index.html:113
+#: templates/index.html.py:137
+#: templates/search/search.html:30
+#, python-format
+msgid "%(time)s ago"
+msgstr "%(time)s her"
+
 #: account/templates/account/show.html:7
 msgid "Your account"
 msgstr "Ihr Account"
@@ -472,7 +508,7 @@ msgid "Public"
 msgstr "Öffentlich"
 
 #: account/templates/account/show.html:42
-#: foirequest/templates/foirequest/list.html:42
+#: foirequest/templates/foirequest/_requests_as_table.html:15
 #: foirequest/templates/foirequest/show.html:87
 #: templates/index.html:110
 #: templates/index.html.py:134
@@ -1626,6 +1662,33 @@ msgstr " Vorschau Ihrer Anfrage"
 msgid "How to make a successful FOI Request"
 msgstr "Wie man eine erfolgreiche IFG-Anfrage stellt"
 
+#: foirequest/templates/foirequest/_requests_as_table.html:12
+#: foirequest/templates/foirequest/request.html:43
+#: templates/index.html:107
+#: templates/index.html.py:131
+msgid "To:"
+msgstr "An:"
+
+#: foirequest/templates/foirequest/_requests_as_table.html:17
+msgid "Status:"
+msgstr "Status:"
+
+#: foirequest/templates/foirequest/_requests_as_table.html:21
+#: foirequest/templates/foirequest/show.html:635
+#, python-format
+msgid "One identical request"
+msgid_plural "%(counter)s identical requests"
+msgstr[0] "eine identische Anfrage"
+msgstr[1] "%(counter)s identische Anfragen"
+
+#: foirequest/templates/foirequest/_requests_as_table.html:29
+msgid "No requests with this status yet."
+msgstr "Bisher keine Anfragen mit diesem Status."
+
+#: foirequest/templates/foirequest/_requests_as_table.html:31
+msgid "No requests yet."
+msgstr "Keine Anfragen bisher."
+
 #: foirequest/templates/foirequest/_set_status.html:3
 msgid "Status of request after this message:"
 msgstr "Status der Anfrage nach dieser Antwort:"
@@ -1825,89 +1888,53 @@ msgstr "Anfragen mit Thema \"%(name)s\""
 msgid "Filtered by requests to Public Bodies in %(name)s."
 msgstr "Nur Anfragen an Behörden von %(name)s."
 
-#: foirequest/templates/foirequest/list.html:39
-#: foirequest/templates/foirequest/request.html:43
-#: templates/index.html:107
-#: templates/index.html.py:131
-msgid "To:"
-msgstr "An:"
-
-#: foirequest/templates/foirequest/list.html:44
-msgid "Status:"
-msgstr "Status:"
-
-#: foirequest/templates/foirequest/list.html:46
-#: foirequest/templates/foirequest/show.html:603
-#: templates/index.html:113
-#: templates/index.html.py:137
-#: templates/search/search.html:30
-#, python-format
-msgid "%(time)s ago"
-msgstr "%(time)s her"
-
-#: foirequest/templates/foirequest/list.html:48
-#: foirequest/templates/foirequest/show.html:635
-#, python-format
-msgid "One identical request"
-msgid_plural "%(counter)s identical requests"
-msgstr[0] "eine identische Anfrage"
-msgstr[1] "%(counter)s identische Anfragen"
-
-#: foirequest/templates/foirequest/list.html:56
-msgid "No requests with this status yet."
-msgstr "Bisher keine Anfragen mit diesem Status."
-
-#: foirequest/templates/foirequest/list.html:58
-msgid "No requests yet."
-msgstr "Keine Anfragen bisher."
-
-#: foirequest/templates/foirequest/list.html:68
+#: foirequest/templates/foirequest/list.html:35
 #, python-format
 msgid "%(counter)s request"
 msgid_plural "%(counter)s requests"
 msgstr[0] "%(counter)s Anfrage"
 msgstr[1] "%(counter)s Anfragen"
 
-#: foirequest/templates/foirequest/list.html:71
+#: foirequest/templates/foirequest/list.html:38
 msgid "Show all FoI requests"
 msgstr "Zeige alle Informationsfreiheitsanfragen"
 
-#: foirequest/templates/foirequest/list.html:75
+#: foirequest/templates/foirequest/list.html:42
 #, python-format
 msgid "Filter requests for %(name)s by their status:"
 msgstr "Filtern Sie Anfragen an %(name)s nach ihrem Status:"
 
-#: foirequest/templates/foirequest/list.html:83
+#: foirequest/templates/foirequest/list.html:50
 #, python-format
 msgid "Filter requests for %(name)s by category:"
 msgstr "Filtern Sie Anfragen an %(name)s nach ihrem Thema:"
 
-#: foirequest/templates/foirequest/list.html:93
+#: foirequest/templates/foirequest/list.html:60
 msgid "Filter requests by their jurisdiction:"
 msgstr "Filtern Sie Anfragen nach Zuständigkeitsbereich:"
 
-#: foirequest/templates/foirequest/list.html:102
+#: foirequest/templates/foirequest/list.html:69
 msgid "Filter requests by their status:"
 msgstr "Filtern Sie Anfragen nach ihrem Status:"
 
-#: foirequest/templates/foirequest/list.html:110
+#: foirequest/templates/foirequest/list.html:77
 msgid "Filter requests by category:"
 msgstr "Filtern Sie Anfragen nach ihrem Thema:"
 
-#: foirequest/templates/foirequest/list.html:120
+#: foirequest/templates/foirequest/list.html:87
 msgid "Show all Non-FoI requests"
 msgstr "Zeige andere Anfragen"
 
-#: foirequest/templates/foirequest/list.html:124
+#: foirequest/templates/foirequest/list.html:91
 msgid "Feeds for latest requests"
 msgstr "Feed für neueste Anfragen"
 
-#: foirequest/templates/foirequest/list.html:127
+#: foirequest/templates/foirequest/list.html:94
 #: foirequest/templates/foirequest/show.html:180
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
-#: foirequest/templates/foirequest/list.html:130
+#: foirequest/templates/foirequest/list.html:97
 #: foirequest/templates/foirequest/show.html:183
 msgid "Atom Feed"
 msgstr "Atom-Feed"
