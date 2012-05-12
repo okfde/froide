@@ -145,7 +145,7 @@ class AccountTest(TestCase):
         user.is_active = False
         # set last_login back artificially so it's not the same
         # as in secret link
-        user.last_login = user.last_login - datetime.timedelta(seconds=1)
+        user.last_login = user.last_login - datetime.timedelta(seconds=10)
         user.save()
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
