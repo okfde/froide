@@ -7,6 +7,7 @@ from django.utils import translation
 from django.db import transaction
 
 from foiidea.crawler import crawl_source_by_id
+from foiidea.models import Article
 
 
 @task
@@ -27,3 +28,8 @@ def fetch_articles(source_id):
     if exc_info is not None:
         from sentry.client.models import client
         client.create_from_exception(exc_info=exc_info, view="froide.foiidea.tasks.fetch_articles")
+
+
+@task
+def recalculate_order():
+    Article.objects.recalculate_order()

@@ -21,6 +21,11 @@ class ArticleManager(models.Manager):
     def get_ordered(self):
         return self.get_query_set().order_by('-order').select_related('public_bodies', 'foirequests')
 
+    def recalculate_order(self):
+        for a in self.all().iterator():
+            a.set_order()
+            a.save()
+
 
 class Article(models.Model):
     title = models.CharField(max_length=255)
