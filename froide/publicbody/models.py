@@ -192,6 +192,7 @@ class PublicBodyTopic(models.Model):
 
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
+    other_names = models.TextField(default="")
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),

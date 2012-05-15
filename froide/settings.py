@@ -173,6 +173,7 @@ INSTALLED_APPS = (
     'froide.frontpage',
     'froide.publicbody',
     'froide.account',
+    'froide.foiidea',
 )
 
 # A sample logging configuration. The only tangible logging
