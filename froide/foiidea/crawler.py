@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import time
+import math
 from datetime import datetime
 
 import requests
@@ -11,7 +13,15 @@ CRAWLER = {
 }
 
 # German keywords for now
-KEYWORDS = ['minister', 'amt']
+KEYWORDS = [u'minister', u'amt']
+
+BOOSTERS = {
+    u'gutachten': 1,
+    u'dokument': 1,
+    u'akte': 1,
+    u'geheim': 3,
+    u'unveröffentlicht': 3
+}
 
 
 def crawl_source_by_id(source_id):
@@ -33,14 +43,23 @@ def crawl_source(source):
         if count:
             continue
         text = item['text'].lower()
-        found = False
+
         # Test for interestingness
+        found = False
         for keyword in KEYWORDS:
             if keyword in text:
                 found = True
                 break
         if not found:
             continue
+
+        # Calculate a score from terms
+        score = 1
+        for boost in BOOSTERS:
+            if boost in text:
+                score += BOOSTERS[boost]
+        item['score'] = score
+
         # Try to match public bodies
         if public_bodies is None:
             from publicbody.models import PublicBody
@@ -51,11 +70,18 @@ def crawl_source(source):
                 any([x.strip().lower() in text for x in other_names.split(',')
                     if x.strip()])):
                 pbs.append(public_body_id)
+        item['score'] += math.ceil(math.log(len(pbs) + 1))
+
         item['date'] = datetime.fromtimestamp(time.mktime(item['date']))
         item.update({'source': source})
-        article = Article.objects.create(**item)
+
+        article = Article(**item)
+        article.set_order()
+        article.save()
         article.public_bodies.add(*pbs)
+
         article_count += 1
+
     source.last_crawled = datetime.utcnow()
     source.save()
     return article_count
