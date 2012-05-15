@@ -29,7 +29,7 @@ class Article(models.Model):
     url = models.URLField(unique=True)
     score = models.IntegerField(default=0)  # calculated
     rank = models.IntegerField(default=0)  # user
-    order = models.IntegerField(default=0)  # rank
+    order = models.IntegerField(default=0)  # order in list
     source = models.ForeignKey(Source, null=True)
     public_bodies = models.ManyToManyField('publicbody.PublicBody', blank=True)
     foirequests = models.ManyToManyField('foirequest.FoiRequest', blank=True)
