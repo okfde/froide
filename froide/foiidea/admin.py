@@ -9,6 +9,7 @@ class SourceAdmin(admin.ModelAdmin):
 
 
 class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'source', 'date', 'order')
     raw_id_fields = ['public_bodies', 'foirequests']
 
 admin.site.register(Source, SourceAdmin)
