@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-12 20:03+0200\n"
+"POT-Creation-Date: 2012-05-15 17:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -88,13 +88,18 @@ msgid "profile"
 msgstr ""
 
 #. Translators: URL part
+#: urls.py:49
+msgid "foi-ideas"
+msgstr ""
+
+#. Translators: URL part
 #. Translators: part in Public Body URL
-#: urls.py:49 publicbody/urls.py:15 publicbody/urls.py:27
+#: urls.py:51 publicbody/urls.py:15 publicbody/urls.py:27
 msgid "search"
 msgstr ""
 
 #. Translators: URL part
-#: urls.py:51
+#: urls.py:53
 msgid "help"
 msgstr ""
 
@@ -444,8 +449,8 @@ msgstr ""
 
 #: account/templates/account/profile.html:26
 #: foirequest/templates/foirequest/_requests_as_table.html:19
-#: foirequest/templates/foirequest/show.html:603 templates/index.html:113
-#: templates/index.html.py:137 templates/search/search.html:30
+#: foirequest/templates/foirequest/show.html:603 templates/index.html:112
+#: templates/index.html.py:136 templates/search/search.html:30
 #, python-format
 msgid "%(time)s ago"
 msgstr ""
@@ -506,8 +511,8 @@ msgstr ""
 
 #: account/templates/account/show.html:42
 #: foirequest/templates/foirequest/_requests_as_table.html:15
-#: foirequest/templates/foirequest/show.html:87 templates/index.html:110
-#: templates/index.html.py:134
+#: foirequest/templates/foirequest/show.html:87 templates/index.html:109
+#: templates/index.html.py:133
 msgid "Not yet set"
 msgstr ""
 
@@ -545,6 +550,15 @@ msgstr ""
 
 #: account/templates/account/show.html:97
 msgid "Change address"
+msgstr ""
+
+#: foiidea/templates/foiidea/index.html:9
+msgid "Recent news articles with FOI potential"
+msgstr ""
+
+#: foiidea/templates/foiidea/index.html:26
+#, python-format
+msgid "Make a request to %(name)s"
 msgstr ""
 
 #: foirequest/admin.py:37
@@ -711,7 +725,7 @@ msgstr ""
 msgid "Suggestions"
 msgstr ""
 
-#: foirequest/forms.py:224 publicbody/models.py:285
+#: foirequest/forms.py:224 publicbody/models.py:286
 #: publicbody/templates/publicbody/_chooser.html:9
 msgid "More Info"
 msgstr ""
@@ -992,12 +1006,12 @@ msgid "Visible to Requester"
 msgstr ""
 
 #: foirequest/models.py:192 publicbody/models.py:30 publicbody/models.py:68
-#: publicbody/models.py:179 publicbody/models.py:195
+#: publicbody/models.py:179 publicbody/models.py:196
 msgid "Slug"
 msgstr ""
 
 #: foirequest/models.py:193 publicbody/models.py:31 publicbody/models.py:69
-#: publicbody/models.py:180 publicbody/models.py:196
+#: publicbody/models.py:180 publicbody/models.py:197
 msgid "Description"
 msgstr ""
 
@@ -1006,7 +1020,7 @@ msgid "Resolution Summary"
 msgstr ""
 
 #: foirequest/models.py:197 foirequest/models.py:835 foirequest/models.py:1114
-#: publicbody/models.py:243
+#: publicbody/models.py:244
 msgid "Public Body"
 msgstr ""
 
@@ -1072,12 +1086,12 @@ msgid "is FoI request"
 msgstr ""
 
 #: foirequest/models.py:237 publicbody/models.py:38 publicbody/models.py:77
-#: publicbody/models.py:231 publicbody/templates/publicbody/show.html:16
+#: publicbody/models.py:232 publicbody/templates/publicbody/show.html:16
 msgid "Jurisdiction"
 msgstr ""
 
 #: foirequest/models.py:241 frontpage/models.py:29 publicbody/models.py:97
-#: publicbody/models.py:228
+#: publicbody/models.py:229
 msgid "Site"
 msgstr ""
 
@@ -1608,8 +1622,8 @@ msgid "How to make a successful FOI Request"
 msgstr ""
 
 #: foirequest/templates/foirequest/_requests_as_table.html:12
-#: foirequest/templates/foirequest/request.html:43 templates/index.html:107
-#: templates/index.html.py:131
+#: foirequest/templates/foirequest/request.html:43 templates/index.html:106
+#: templates/index.html.py:130
 msgid "To:"
 msgstr ""
 
@@ -2858,7 +2872,7 @@ msgid ""
 "%(site_name)s\n"
 msgstr ""
 
-#: frontpage/models.py:20 frontpage/models.py:36 templates/index.html:44
+#: frontpage/models.py:20 frontpage/models.py:36 templates/index.html:43
 msgid "Featured Request"
 msgstr ""
 
@@ -2866,7 +2880,7 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: frontpage/models.py:24 publicbody/models.py:80 publicbody/models.py:199
+#: frontpage/models.py:24 publicbody/models.py:80 publicbody/models.py:200
 msgid "URL"
 msgstr ""
 
@@ -2967,7 +2981,7 @@ msgstr ""
 msgid "E-Mail only"
 msgstr ""
 
-#: publicbody/models.py:103 publicbody/models.py:235
+#: publicbody/models.py:103 publicbody/models.py:236
 msgid "Freedom of Information Laws"
 msgstr ""
 
@@ -2983,7 +2997,7 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: publicbody/models.py:186 publicbody/models.py:197
+#: publicbody/models.py:186 publicbody/models.py:198
 msgid "Topic"
 msgstr ""
 
@@ -2991,53 +3005,53 @@ msgstr ""
 msgid "Topics"
 msgstr ""
 
-#: publicbody/models.py:208
+#: publicbody/models.py:209
 #: publicbody/templates/publicbody/pb_jurisdiction.html:15
 #: publicbody/templates/publicbody/show_topic.html:23
 msgid "Classification"
 msgstr ""
 
-#: publicbody/models.py:210
+#: publicbody/models.py:211
 msgid "Classification Slug"
 msgstr ""
 
-#: publicbody/models.py:212
+#: publicbody/models.py:213
 msgid "Email"
 msgstr ""
 
-#: publicbody/models.py:213
+#: publicbody/models.py:214
 msgid "Contact"
 msgstr ""
 
-#: publicbody/models.py:214
+#: publicbody/models.py:215
 msgid "Address"
 msgstr ""
 
-#: publicbody/models.py:215
+#: publicbody/models.py:216
 msgid "Website Dump"
 msgstr ""
 
-#: publicbody/models.py:216
+#: publicbody/models.py:217
 msgid "request note"
 msgstr ""
 
-#: publicbody/models.py:218
+#: publicbody/models.py:219
 msgid "Created by"
 msgstr ""
 
-#: publicbody/models.py:221
+#: publicbody/models.py:222
 msgid "Updated by"
 msgstr ""
 
-#: publicbody/models.py:224
+#: publicbody/models.py:225
 msgid "confirmed"
 msgstr ""
 
-#: publicbody/models.py:226
+#: publicbody/models.py:227
 msgid "Number of requests"
 msgstr ""
 
-#: publicbody/models.py:244
+#: publicbody/models.py:245
 #: publicbody/templates/publicbody/pb_jurisdiction.html:7
 #: templates/base.html:56
 msgid "Public Bodies"
@@ -3074,7 +3088,7 @@ msgstr ""
 msgid "Environment"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:16 templates/index.html:32
+#: publicbody/templates/publicbody/_chooser.html:16 templates/index.html:31
 msgid "or"
 msgstr ""
 
@@ -3372,66 +3386,46 @@ msgstr ""
 msgid "Privacy Statement"
 msgstr ""
 
-#: templates/index.html:8
-msgid "FragDenStaat.de jetzt auch in NRW verfügbar!"
-msgstr ""
-
-#: templates/index.html:9
-msgid "Zur Ankündigung..."
-msgstr ""
-
-#: templates/index.html:10
-msgid "Like this? Consider supporting us!"
-msgstr ""
-
-#: templates/index.html:11
-msgid "Donate now!"
-msgstr ""
-
-#: templates/index.html:13
-msgid "Flattr us!"
-msgstr ""
-
-#: templates/index.html:20
+#: templates/index.html:19
 msgid ""
 "This site publishes Freedom of Information requests and helps you to make "
 "your own!"
 msgstr ""
 
-#: templates/index.html:25
+#: templates/index.html:24
 #, python-format
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
 msgstr ""
 
-#: templates/index.html:28 templates/search/search.html:12
+#: templates/index.html:27 templates/search/search.html:12
 msgid "Search For Information"
 msgstr ""
 
-#: templates/index.html:30
+#: templates/index.html:29
 msgid "Try the following:"
 msgstr ""
 
-#: templates/index.html:31
+#: templates/index.html:30
 msgid "Nuclear"
 msgstr ""
 
-#: templates/index.html:33
+#: templates/index.html:32
 msgid "Employment"
 msgstr ""
 
-#: templates/index.html:37
+#: templates/index.html:36
 msgid "Make a Request now!"
 msgstr ""
 
-#: templates/index.html:49
+#: templates/index.html:48
 msgid "Read the blog post"
 msgstr ""
 
-#: templates/index.html:52
+#: templates/index.html:51
 msgid "Visit this request"
 msgstr ""
 
-#: templates/index.html:56
+#: templates/index.html:55
 msgid ""
 "Freedom of Information Request\n"
 "\n"
@@ -3442,45 +3436,45 @@ msgid ""
 "..."
 msgstr ""
 
-#: templates/index.html:63
+#: templates/index.html:62
 msgid "Write a Request Now!"
 msgstr ""
 
-#: templates/index.html:72
+#: templates/index.html:71
 msgid "What is Freedom of Information?"
 msgstr ""
 
-#: templates/index.html:73
+#: templates/index.html:72
 msgid ""
 "Every citizen has the right under the Freedom of Information Laws to ask for "
 "and receive access to information from Public Bodies concerning public "
 "affairs."
 msgstr ""
 
-#: templates/index.html:75
+#: templates/index.html:74
 msgid "Read more about the Freedom of Information!"
 msgstr ""
 
-#: templates/index.html:80
+#: templates/index.html:79
 msgid "What does this site do?"
 msgstr ""
 
-#: templates/index.html:81
+#: templates/index.html:80
 msgid ""
 "This site publishes Freedom of Information requests and replies so that "
 "others don't have to ask for the same information and replies can be "
 "scrutinized by the public."
 msgstr ""
 
-#: templates/index.html:83
+#: templates/index.html:82
 msgid "Read more about the concept!"
 msgstr ""
 
-#: templates/index.html:88
+#: templates/index.html:87
 msgid "How can I start?"
 msgstr ""
 
-#: templates/index.html:90
+#: templates/index.html:89
 #, python-format
 msgid ""
 "You can start by browsing <a href=\"%(foirequests_url)s\">existing Freedom "
@@ -3488,11 +3482,11 @@ msgid ""
 "is all about."
 msgstr ""
 
-#: templates/index.html:97
+#: templates/index.html:96
 msgid "Successful Requests"
 msgstr ""
 
-#: templates/index.html:121
+#: templates/index.html:120
 msgid "Unsuccessful Requests"
 msgstr ""
 
