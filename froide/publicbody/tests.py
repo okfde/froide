@@ -6,8 +6,6 @@ from foirequest.tests import factories
 
 
 class PublicBodyTest(TestCase):
-    # fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
-
     def setUp(self):
         factories.make_world()
 
@@ -65,6 +63,7 @@ class PublicBodyTest(TestCase):
 
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]
-        response = self.client.get(reverse('publicbody-foilaw-show', kwargs={"slug": law.slug}))
+        self.assertIn(law.jurisdiction.name, unicode(law))
+        response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn(law.name, response.content.decode('utf-8'))
