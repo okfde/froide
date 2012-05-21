@@ -273,7 +273,8 @@ def make_world():
     meta_bund.combined.add(ifg_bund, uig_bund)
     ifg_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG NRW')
     uig_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='UIG NRW')
-    meta_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG-UIG NRW', meta=True)
+    meta_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG-UIG NRW',
+        meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
