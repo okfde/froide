@@ -265,6 +265,8 @@ def submit_request(request, public_body=None):
             if pb_form.is_valid():
                 data = pb_form.cleaned_data
                 data['confirmed'] = False
+                # Take the first jurisdiction there is
+                data['jurisdiction'] = Jurisdiction.objects.all()[0]
                 public_body = PublicBody(**data)
             else:
                 error = True
@@ -300,7 +302,10 @@ def submit_request(request, public_body=None):
             sent_to_pb = 0
 
         if foilaw is None:
-            foilaw = request_form.foi_law
+            if public_body is not None:
+                foilaw = public_body.default_law
+            else:
+                foilaw = request_form.foi_law
 
         foi_request = FoiRequest.from_request_form(user, public_body,
                 foilaw, form_data=request_form.cleaned_data, post_data=request.POST)
@@ -349,9 +354,10 @@ def set_public_body(request, slug):
         messages.add_message(request, messages.ERROR,
             _("This request doesn't need a Public Body!"))
         return render_400(request)
-    # FIXME: make foilaw dynamic
+
     foilaw = public_body.default_law
     foirequest.set_public_body(public_body, foilaw)
+
     messages.add_message(request, messages.SUCCESS,
             _("Request was sent to: %(name)s.") % {"name": public_body.name})
     return HttpResponseRedirect(foirequest.get_absolute_url())

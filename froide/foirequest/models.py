@@ -637,8 +637,8 @@ Sincerely yours
 
         request.secret_address = cls.generate_unique_secret_address(user)
         request.law = foi_law
-        if public_body_object is not None:
-            request.jurisdiction = public_body_object.jurisdiction
+        if foi_law is not None:
+            request.jurisdiction = foi_law.jurisdiction
         # ensure slug is unique
         request.slug = slugify(request.title)
         count = 0
@@ -665,7 +665,9 @@ Sincerely yours
                 timestamp=now,
                 status="awaiting_response",
                 subject=request.title)
-        send_address = not request.law.email_only
+        send_address = True
+        if request.law:
+            send_address = not request.law.email_only
         message.plaintext = request.construct_message_body(form_data['body'],
                 foi_law, post_data, send_address=send_address)
         if public_body_object is not None:

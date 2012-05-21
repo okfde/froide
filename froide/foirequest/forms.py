@@ -85,7 +85,7 @@ class RequestForm(forms.Form):
         law = self.clean_law_without_public_body()
         if law is None:
             return None
-        if law.jurisdiction.id != law.jurisdiction.id:
+        if law.jurisdiction.id != public_body.jurisdiction.id:
             self._errors["law"] = self.error_class([_("Invalid Information Law")])
             return None
         return law
