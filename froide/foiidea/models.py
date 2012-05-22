@@ -54,7 +54,7 @@ class Article(models.Model):
         Reddit Hot Formula
         The hot formula. Should match the equivalent function in postgres.
         """
-        s = self.score + self.rank
+        s = self.score * 500 + self.rank * 1000
         td = self.date - epoch
         ep_seconds = td.days * 86400 + td.seconds + (float(td.microseconds) / 1000000)
         order = math.log(max(abs(s), 1), 10)
