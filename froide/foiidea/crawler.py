@@ -70,7 +70,7 @@ def crawl_source(source):
                 any([x.strip().lower() in text for x in other_names.split(',')
                     if x.strip()])):
                 pbs.append(public_body_id)
-        item['score'] += math.ceil(math.log(len(pbs) + 1))
+        item['score'] += len(pbs)
         if item['date'] is not None:
             item['date'] = datetime.fromtimestamp(time.mktime(item['date']))
         else:
