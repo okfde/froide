@@ -71,8 +71,10 @@ def crawl_source(source):
                     if x.strip()])):
                 pbs.append(public_body_id)
         item['score'] += math.ceil(math.log(len(pbs) + 1))
-
-        item['date'] = datetime.fromtimestamp(time.mktime(item['date']))
+        if item['date'] is not None:
+            item['date'] = datetime.fromtimestamp(time.mktime(item['date']))
+        else:
+            item['date'] = datetime.utcnow()
         item.update({'source': source})
 
         article = Article(**item)

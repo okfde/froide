@@ -9,7 +9,10 @@ def convert_to_items(data):
     for item in feed.entries:
         text = etree.parse(StringIO(item.description), html_parser)
         text = ''.join(text.getroot().itertext()).strip()
-        date = item.published_parsed
+        try:
+            date = item.published_parsed
+        except AttributeError:
+            date = None
         link = item.link.split('#')[0]
         yield dict(title=item.title, text=text, url=link, date=date)
 
