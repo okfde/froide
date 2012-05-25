@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
 
 from froide.foiidea.models import Source, Article
 
@@ -9,6 +8,8 @@ class SourceAdmin(admin.ModelAdmin):
 
 
 class ArticleAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+    date_hierarchy = 'date'
     list_display = ('title', 'source', 'date', 'score', 'rank', 'order')
     raw_id_fields = ['public_bodies', 'foirequests']
     exclude = ('order',)
