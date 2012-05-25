@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-25 18:39+0200\n"
+"POT-Creation-Date: 2012-05-25 19:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -569,7 +569,7 @@ msgstr ""
 
 #: foiidea/templates/foiidea/_article.html:37
 #, python-format
-msgid "Request to %(name)s"
+msgid "Make request to %(name)s"
 msgstr ""
 
 #: foiidea/templates/foiidea/_article.html:46

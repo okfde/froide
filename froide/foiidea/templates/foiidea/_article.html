@@ -33,7 +33,7 @@
 {% for pb in object.public_bodies.all %}
     <li>
         <a href="{% url 'foirequest-make_request' public_body=pb.slug %}?ref=article:{{ object.id }}&amp;subject={{ object.title}}&amp;body={{ object.url|urlencode }}">
-            {% blocktrans with name=pb.name %}Request to {{ name }}{% endblocktrans %}
+            {% blocktrans with name=pb.name %}Make request to {{ name }}{% endblocktrans %}
         </a>
     </li>
 {% endfor %}

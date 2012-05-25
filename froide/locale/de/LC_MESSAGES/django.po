@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-25 18:40+0200\n"
-"PO-Revision-Date: 2012-05-25 18:45+0100\n"
+"POT-Creation-Date: 2012-05-25 19:02+0200\n"
+"PO-Revision-Date: 2012-05-25 19:04+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -572,8 +572,8 @@ msgstr "Stellen Sie eine Anfrage zu diesem Artikel:"
 
 #: foiidea/templates/foiidea/_article.html:37
 #, python-format
-msgid "Request to %(name)s"
-msgstr "Anfragen an %(name)s"
+msgid "Make request to %(name)s"
+msgstr "Anfrage an %(name)s stellen"
 
 #: foiidea/templates/foiidea/_article.html:46
 msgid "Ideas for requests:"
@@ -3675,14 +3675,14 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 
+#~ msgid "Request to %(name)s"
+#~ msgstr "Anfragen an %(name)s"
+
 #~ msgid "foi-ideas"
 #~ msgstr "inspiration"
 
 #~ msgid "Recent news articles with FOI potential"
 #~ msgstr "Kürzliche Nachrichten mit IFG-Potential"
-
-#~ msgid "Make a request to %(name)s"
-#~ msgstr "Stellen Sie eine Anfrage an %(name)s"
 
 #~ msgid "FragDenStaat.de jetzt auch in NRW verfügbar!"
 #~ msgstr "FragDenStaat.de jetzt auch in NRW verfügbar!"
