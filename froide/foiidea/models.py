@@ -16,7 +16,7 @@ class Source(models.Model):
     name = models.CharField(max_length=255)
     homepage = models.URLField()
     url = models.URLField()
-    crawler = models.CharField(max_length=255)
+    crawler = models.CharField(max_length=255, default='rss')
     last_crawled = models.DateTimeField()
 
     def __unicode__(self):
