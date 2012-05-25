@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 import math
 from datetime import datetime
 
 from django.db import models
+from django.core.urlresolvers import reverse
+from django.dispatch import receiver
+from django.contrib.comments import signals as comment_signals
+from django.contrib.comments.models import Comment
 
 epoch = datetime(1970, 1, 1)
 
@@ -19,7 +24,8 @@ class Source(models.Model):
 
 class ArticleManager(models.Manager):
     def get_ordered(self):
-        return self.get_query_set().order_by('-order').select_related('public_bodies', 'foirequests')
+        return self.get_query_set().order_by('-order')\
+            .select_related('public_bodies', 'foirequests')
 
     def recalculate_order(self):
         for a in self.all().iterator():
@@ -47,20 +53,59 @@ class Article(models.Model):
     def __unicode__(self):
         return u"%s: %s" % (self.source, self.title)
 
-    def get_order(self):
+    def get_absolute_url(self):
+        return reverse('foiidea-show', kwargs={'article_id': self.id})
+
+    def get_order(self, number_of_comments=None):
         """
         From: http://amix.dk/blog/post/19588
         https://github.com/reddit/reddit
         Reddit Hot Formula
         The hot formula. Should match the equivalent function in postgres.
         """
-        s = self.score * 500 + self.rank * 1000
+        if number_of_comments is None:
+            number_of_comments = self.get_number_of_comments()
+        s = self.score * 500 + self.rank * 1000 + number_of_comments * 50
         td = self.date - epoch
         ep_seconds = td.days * 86400 + td.seconds + (float(td.microseconds) / 1000000)
         order = math.log(max(abs(s), 1), 10)
         sign = 1 if s > 0 else -1 if s < 0 else 0
         seconds = ep_seconds - 1134028003
-        return round(order + sign * seconds / 45000, 7)
+        return round(order + sign * seconds / 45000, 4) * 1000
 
-    def set_order(self):
-        self.order = self.get_order()
+    def set_order(self, number_of_comments=0):
+        self.order = self.get_order(number_of_comments=number_of_comments)
+
+    def get_number_of_comments(self):
+        return Comment.objects.filter(content_object=self).count()
+
+
+@receiver(comment_signals.comment_was_posted,
+            dispatch_uid="comment_was_posted_article")
+def comment_was_posted_article(sender, comment, request, **kwargs):
+    if comment.content_type.model_class() is not Article:
+        return
+    article = comment.content_type.content_object
+    article.set_order(article.get_number_of_comments())
+    article.save()
+
+
+from foirequest.models import FoiRequest
+
+
+@receiver(FoiRequest.request_created,
+    dispatch_uid="check_reference")
+def check_reference(sender, reference, **kwargs):
+    if reference is None:
+        return
+    if not 'article' in reference:
+        return
+    try:
+        article_id = int(reference['article'])
+    except ValueError:
+        return
+    try:
+        article = Article.objects.get(id=article_id)
+    except Article.DoesNotExist:
+        return
+    article.foirequests.add(sender)
