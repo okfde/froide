@@ -1,41 +1,23 @@
 {% extends "foiidea/base.html" %}
 
 {% load i18n %}
-{% load url from future %}
 {% load pagination_tags %}
 
 {% block body %}
 {% autopaginate object_list %}
-<h2>{% trans "Recent news articles with FOI potential" %}</h2>
+<h2>{% trans "Read the news and make requests!" %}</h2>
 
 <div class="clearfix">
 <div class="span-18">
 
 {% for object in object_list %}
-    <h3><a href="{{ object.url }}">{{ object.title }}</a></h3>
-    <blockquote>
-        {{ object.text|linebreaksbr|truncatewords:50 }}
-        <p>
-            <cite><a href="{{ object.source.homepage }}">{{ object.source.name }}</a> - <a href="{{ object.url }}">{{ object.title }}</a></cite>
-        </p>
-    </blockquote>
-    <ul>
-    {% for pb in object.public_bodies.all %}
-        <li>
-            <a href="{% url 'foirequest-make_request' public_body=pb.slug %}">
-                {% blocktrans with name=pb.name %}Make a request to {{ name }}{% endblocktrans %}
-            </a>
-        </li>
-    {% endfor %}
-    </ul>
+    {% include "foiidea/_article.html" %}
+    <br/>
     <hr/>
 {% endfor %}
-</div>
 {% paginate %}
-
-<div class="span-6 last">
-
 </div>
+
 
 </div>
 {% endblock %}
