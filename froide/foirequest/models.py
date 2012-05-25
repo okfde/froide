@@ -611,7 +611,7 @@ Sincerely yours
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
-            form_data=None, post_data=None):
+            form_data=None, post_data=None, **kwargs):
         now = datetime.now()
         request = FoiRequest(title=form_data['subject'],
                 public_body=public_body_object,
@@ -680,7 +680,7 @@ Sincerely yours
             message.recipient_email = ""
         message.original = message.plaintext
         message.save()
-        cls.request_created.send(sender=request)
+        cls.request_created.send(sender=request, reference=form_data.get('reference'))
         if send_now:
             message.send()
         return request

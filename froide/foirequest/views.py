@@ -225,7 +225,8 @@ def make_request(request, public_body=None):
         public_body_form = PublicBodyForm()
     initial = {
         "subject": request.GET.get("subject", ""),
-        "body": request.GET.get("body", "")
+        "body": request.GET.get("body", ""),
+        "reference": request.GET.get('ref', '')
     }
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
     rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),

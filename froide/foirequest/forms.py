@@ -33,6 +33,7 @@ class RequestForm(forms.Form):
             attrs={'placeholder': _("Specify your request here...")}))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
+    reference = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
         super(RequestForm, self).__init__(*args, **kwargs)
@@ -80,6 +81,19 @@ class RequestForm(forms.Form):
         return pb
 
     public_body_object = None
+
+    def clean_reference(self):
+        ref = self.cleaned_data['reference']
+        if ref == '':
+            return None
+        try:
+            kind, value = ref.split(':')
+        except ValueError:
+            return None
+        try:
+            return {kind: value}
+        except ValueError:
+            return None
 
     def clean_law_for_public_body(self, public_body):
         law = self.clean_law_without_public_body()
