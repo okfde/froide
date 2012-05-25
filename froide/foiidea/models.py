@@ -89,7 +89,7 @@ class Article(models.Model):
 def comment_was_posted_article(sender, comment, request, **kwargs):
     if comment.content_type.model_class() is not Article:
         return
-    article = comment.content_type.content_object
+    article = comment.content_object
     article.set_order(article.get_number_of_comments())
     article.save()
 
