@@ -11,6 +11,8 @@ class SourceAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'source', 'date', 'score', 'rank', 'order')
     raw_id_fields = ['public_bodies', 'foirequests']
+    exclude = ('order',)
+
 
 admin.site.register(Source, SourceAdmin)
 admin.site.register(Article, ArticleAdmin)

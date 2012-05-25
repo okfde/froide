@@ -56,6 +56,10 @@ class Article(models.Model):
     def get_absolute_url(self):
         return reverse('foiidea-show', kwargs={'article_id': self.id})
 
+    def save(self, *args, **kwargs):
+        self.set_order()
+        super(Article, self).save(*args, **kwargs)
+
     def get_order(self, number_of_comments=None):
         """
         From: http://amix.dk/blog/post/19588
