@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.contrib.comments import signals as comment_signals
 from django.contrib.comments.models import Comment
+from django.contrib.contenttypes.models import ContentType
 
 epoch = datetime(1970, 1, 1)
 
@@ -81,7 +82,9 @@ class Article(models.Model):
         self.order = self.get_order(number_of_comments=number_of_comments)
 
     def get_number_of_comments(self):
-        return Comment.objects.filter(content_object=self).count()
+        return Comment.objects.filter(
+            content_type=ContentType.objects.get_for_model(self),
+            object_pk=self.id).count()
 
 
 @receiver(comment_signals.comment_was_posted,
