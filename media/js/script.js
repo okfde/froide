@@ -380,12 +380,12 @@ $(function(){
          $(el).scrollToFixed({marginTop: 10});
     });
     $("a.show-target").live("click", function(e){
-        var obj = $($(this).attr("href")).find(".toggle");
+        var obj = $('#' + $(this).attr("href").split('#')[1]).find(".toggle");
         $(obj.attr("href")).show();
     });
     $("a.toggle").live("click", function(e){
         e.preventDefault();
-        var obj = $($(this).attr("href"));
+        var obj = $('#' + $(this).attr("href").split('#')[1]);
         if (obj.css("display") === "none"){
             obj.slideDown();
         } else {
