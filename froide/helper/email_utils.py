@@ -74,7 +74,7 @@ class EmailParser(object):
                 attachment.read_date = None
 
                 if "filename" in dispo_dict:
-                    attachment.name = dispo_dict['filename']
+                    attachment.name = self.parse_header_field(dispo_dict['filename'])
                 elif "create-date" in dispo_dict:
                     attachment.create_date = dispo_dict['create-date']  # TODO: datetime
                 elif "modification-date" in dispo_dict:
