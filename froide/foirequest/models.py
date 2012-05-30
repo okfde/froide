@@ -1143,11 +1143,11 @@ class FoiEvent(models.Model):
         "became_overdue": _(
             u"This request became overdue"),
         "set_concrete_law": _(
-            u"%(user)s set '%(name)s' as the information law for the request."),
+            u"%(user)s set '%(name)s' as the information law for the request %(request)s."),
         "add_postal_reply": _(
             u"%(user)s added a reply that was received via snail mail."),
         "escalated": _(
-            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request.")
+            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s.")
     }
 
     class Meta:
