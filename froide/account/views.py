@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -11,6 +13,7 @@ from django.utils.http import base36_to_int
 
 from account.forms import UserLoginForm, NewUserForm, UserChangeAddressForm
 from account.models import AccountManager, User
+from foirequestfollower.models import FoiRequestFollower
 from foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
@@ -71,7 +74,22 @@ def show(request, context=None, status=200):
         context = {}
     if 'new' in request.GET:
         request.user.is_new = True
-    context.update({'foirequests': my_requests})
+    own_foirequests = FoiRequest.objects.get_dashboard_requests(request.user)
+    followed_foirequest_ids = map(lambda x: x.request_id,
+        FoiRequestFollower.objects.filter(user=request.user))
+    following = False
+    events = []
+    if followed_foirequest_ids:
+        following = len(followed_foirequest_ids)
+        since = request.user.last_login - timedelta(days=14)
+        events = FoiEvent.objects.filter(public=True,
+            request__in=followed_foirequest_ids, timestamp__gte=since)[:10]
+    context.update({
+            'own_requests': own_foirequests,
+            'followed_events': events,
+            'following': following,
+            'foirequests': my_requests
+        })
     return render(request, 'account/show.html', context, status=status)
 
 
