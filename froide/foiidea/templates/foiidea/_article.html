@@ -2,7 +2,7 @@
 {% load url from future %}
 
 <h3>
-    <small class="small">{{ object.source.name }}</small>
+    <small class="small">{{ object.source.name }}, {{ object.date|date:"DATE_FORMAT" }}</small>
     <br/><a class="target-new" href="{{ object.url }}">{{ object.title }}</a></h3>
 
     {% comment %}

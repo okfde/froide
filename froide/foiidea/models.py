@@ -38,7 +38,7 @@ class Article(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
     date = models.DateTimeField()
-    url = models.URLField(unique=True)
+    url = models.URLField(unique=True, max_length=800)
     score = models.IntegerField(default=0)  # calculated
     rank = models.IntegerField(default=0)  # user
     order = models.IntegerField(default=0)  # order in list
