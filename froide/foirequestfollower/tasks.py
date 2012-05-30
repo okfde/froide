@@ -22,9 +22,11 @@ def update_followers(request_id, message):
     except FoiRequest.DoesNotExist:
         pass
 
+
 @task
 def batch_update():
     return _batch_update()
+
 
 def _batch_update():
     translation.activate(settings.LANGUAGE_CODE)
@@ -68,7 +70,7 @@ def _batch_update():
                 "time": tf.format(_("TIME_FORMAT")),
                 "text": event.as_text()
             }))
-    
+
     # Send out update on comments and event to followers
     for req_id, request in requests.items():
         if not updates[req_id]:
