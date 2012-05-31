@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-30 16:19+0200\n"
+"POT-Creation-Date: 2012-05-31 20:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -765,6 +765,12 @@ msgstr ""
 
 #: foirequest/forms.py:171
 msgid "Send physical address"
+msgstr ""
+
+#: foirequest/forms.py:172
+msgid ""
+"If the public body is asking for your post address, check this and we will "
+"append it to your message."
 msgstr ""
 
 #: foirequest/forms.py:196

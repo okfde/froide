@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-30 16:19+0200\n"
-"PO-Revision-Date: 2012-05-30 16:21+0100\n"
+"POT-Creation-Date: 2012-05-31 20:55+0200\n"
+"PO-Revision-Date: 2012-05-31 20:56+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -782,6 +782,10 @@ msgstr "An"
 #: foirequest/forms.py:171
 msgid "Send physical address"
 msgstr "Adresse mitsenden"
+
+#: foirequest/forms.py:172
+msgid "If the public body is asking for your post address, check this and we will append it to your message."
+msgstr "Falls die Behörde Ihre Postanschrift benötigt, setzen Sie einen Haken und wir werden Ihre Anschrift an die Nachricht anhängen."
 
 #: foirequest/forms.py:196
 msgid "Please specify a reason why this is the right Public Body:"

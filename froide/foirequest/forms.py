@@ -169,7 +169,7 @@ class SendMessageForm(forms.Form):
         if foirequest.law and foirequest.law.email_only:
             self.fields['send_address'] = forms.BooleanField(
                 label=_("Send physical address"),
-                help_text=_(('If the public body is asking for your post '
+                help_text=(_('If the public body is asking for your post '
                     'address, check this and we will append it to your message.')),
                 required=False)
 
