@@ -101,7 +101,7 @@ def profile(request, slug):
     foirequests = FoiRequest.objects.filter(user=user).order_by('-first_message')
     foievents = FoiEvent.objects.filter(public=True, user=user)[:20]
     return render(request, 'account/profile.html', {
-        'user': user,
+        'profile_user': user,
         'requests': foirequests,
         'events': foievents
     })
