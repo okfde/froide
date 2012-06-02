@@ -1056,7 +1056,7 @@ class FoiAttachment(models.Model):
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
             "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
-            "text/pdf", "text/x-pdf")
+            "text/pdf", "text/x-pdf", "application/text-plain:formatted", "text/plain")
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
