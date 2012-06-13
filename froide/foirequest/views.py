@@ -521,6 +521,7 @@ def add_postal_reply(request, slug):
             message.plaintext = form.cleaned_data.get('text')
         message.not_publishable = form.cleaned_data['not_publishable']
         message.save()
+        foirequest.last_message = message.timestamp
         foirequest.status = 'awaiting_classification'
         foirequest.save()
         foirequest.add_postal_reply.send(sender=foirequest)
