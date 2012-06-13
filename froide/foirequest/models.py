@@ -54,10 +54,8 @@ class FoiRequestManager(CurrentSiteManager):
                 last_message__lt=some_days_ago)
 
     def get_dashboard_requests(self, user):
-        a_week_ago = datetime.now() - timedelta(days=7)
         return self.get_query_set().filter(user=user).filter(
-            Q(status="awaiting_classification") | Q(
-                Q(status='overdue') & Q(last_message__gte=a_week_ago)))
+            Q(status="awaiting_classification") | Q(status='overdue'))
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
