@@ -57,6 +57,12 @@ urlpatterns += patterns('',
     (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls'))
 )
 
+if not settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^%s%s/' % (settings.MEDIA_URL[1:], settings.FOI_MEDIA_PATH),
+            include('froide.foirequest.media_urls'))
+    )
+
 try:
     from custom_urls import urlpatterns as custom_urlpatterns
     urlpatterns += custom_urlpatterns

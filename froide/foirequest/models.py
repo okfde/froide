@@ -1037,7 +1037,7 @@ class FoiMessage(models.Model):
 
 
 def upload_to(instance, filename):
-    return "foi/%s/%s" % (instance.belongs_to.id, filename)
+    return "%s/%s/%s" % (settings.FOI_MEDIA_PATH, instance.belongs_to.id, filename)
 
 
 class FoiAttachment(models.Model):
@@ -1073,19 +1073,37 @@ class FoiAttachment(models.Model):
     def index_content(self):
         return "\n".join((self.name,))
 
+    def has_public_access(self):
+        return self.belongs_to.request.visibility == 2 and self.approved
+
     def can_preview(self):
-        return self.filetype in self.PREVIEWABLE_FILETYPES
+        return self.has_public_access() and self.filetype in self.PREVIEWABLE_FILETYPES
 
     def get_preview_url(self):
-        return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
-                urlquote(self.file.url))
+        return "https://docs.google.com/viewer?url=%s%s" % (
+            settings.SITE_URL,
+                urlquote(self.get_absolute_url()))
 
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
 
+    @models.permalink
     def get_absolute_url(self):
-        return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
-                self.get_html_id())
+        return ('foirequest-auth_message_attachment', (), {
+            'message_id': self.belongs_to_id,
+            'attachment_name': self.name
+            })
+
+    def is_visible(self, user, foirequest):
+        if self.approved:
+            return True
+        if user and (
+                user.is_authenticated() and
+                foirequest.user == user):
+            return True
+        if user and user.is_superuser:
+            return True
+        return False
 
     def admin_link_message(self):
         return '<a href="%s">%s</a>' % (

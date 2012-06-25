@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
-from foirequest.models import FoiRequest
+from foirequest.models import FoiRequest, FoiAttachment
 from foirequest.tests import factories
 
 
@@ -195,3 +195,36 @@ class WebTest(TestCase):
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)
+
+
+class MediaServingTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+
+    def test_request_not_public(self):
+        att = FoiAttachment.objects.filter(approved=True)[0]
+        req = att.belongs_to.request
+        req.visibility = 1
+        req.save()
+        response = self.client.get(att.get_absolute_url())
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username='sw', password='froide')
+        response = self.client.get(att.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('X-Accel-Redirect', response)
+        self.assertEqual(response['X-Accel-Redirect'], att.file.url)
+
+    def test_attachment_not_approved(self):
+        att = FoiAttachment.objects.filter(approved=False)[0]
+        response = self.client.get(att.get_absolute_url())
+        self.assertEqual(response.status_code, 403)
+        self.client.login(username='sw', password='froide')
+        response = self.client.get(att.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+
+    def test_request_public(self):
+        att = FoiAttachment.objects.filter(approved=True)[0]
+        response = self.client.get(att.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(att.get_absolute_url() + 'a')
+        self.assertEqual(response.status_code, 404)
