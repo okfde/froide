@@ -705,3 +705,24 @@ def make_same_request(request, slug, message_id):
                 _('Please check your inbox for mail from us to confirm your mail address.'))
         # user cannot access the request yet!
         return HttpResponseRedirect("/")
+
+
+def auth_message_attachment(request, message_id, attachment_name):
+    '''
+    nginx auth view
+    '''
+    message = get_object_or_404(FoiMessage, pk=message_id)
+    attachment = get_object_or_404(FoiAttachment, belongs_to=message,
+        name=attachment_name)
+    foirequest = message.request
+    pb_auth = request.session.get('pb_auth')
+
+    if not foirequest.is_visible(request.user, pb_auth=pb_auth):
+        return render_403(request)
+    if not attachment.is_visible(request.user, foirequest):
+        return render_403(request)
+
+    response = HttpResponse()
+    response['Content-Type'] = ""
+    response['X-Accel-Redirect'] = attachment.file.url
+    return response
