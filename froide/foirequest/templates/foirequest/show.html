@@ -484,10 +484,10 @@
         <div class="warning">
       {% endif %}
       {% if attachment.approved %}
-        <a id="{{ attachment.get_absolute_url }}" href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+        <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
       {% else %}
         {% if user == object.user or user.is_staff %}
-          <a id="{{ attachment.get_absolute_url }}" href="{{ attachment.file.url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+          <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
           {% if attachment.can_approve or user.is_staff %}
           <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
             {% csrf_token %}
