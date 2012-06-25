@@ -2,6 +2,7 @@ from __future__ import with_statement
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
 from foirequest.models import FoiRequest, FoiAttachment
@@ -212,7 +213,7 @@ class MediaServingTest(TestCase):
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn('X-Accel-Redirect', response)
-        self.assertEqual(response['X-Accel-Redirect'], att.file.url)
+        self.assertEqual(response['X-Accel-Redirect'], settings.MEDIA_URL + att.file.url)
 
     def test_attachment_not_approved(self):
         att = FoiAttachment.objects.filter(approved=False)[0]

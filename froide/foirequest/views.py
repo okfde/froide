@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.utils import simplejson as json
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -25,6 +26,9 @@ from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
         MessagePublicBodySenderForm, EscalationMessageForm)
 from froide.helper.utils import render_400, render_403
 from helper.cache import cache_anonymous_page
+
+
+X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
 
 @cache_anonymous_page(15 * 60)
@@ -711,7 +715,8 @@ def auth_message_attachment(request, message_id, attachment_name):
     '''
     nginx auth view
     '''
-    message = get_object_or_404(FoiMessage, pk=message_id)
+
+    message = get_object_or_404(FoiMessage, id=int(message_id))
     attachment = get_object_or_404(FoiAttachment, belongs_to=message,
         name=attachment_name)
     foirequest = message.request
@@ -724,5 +729,6 @@ def auth_message_attachment(request, message_id, attachment_name):
 
     response = HttpResponse()
     response['Content-Type'] = ""
-    response['X-Accel-Redirect'] = attachment.file.url
+    response['X-Accel-Redirect'] = X_ACCEL_REDIRECT_PREFIX + attachment.get_internal_url()
+
     return response

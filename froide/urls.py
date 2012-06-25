@@ -57,7 +57,9 @@ urlpatterns += patterns('',
     (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls'))
 )
 
-if not settings.DEBUG:
+USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
+
+if USE_X_ACCEL_REDIRECT:
     urlpatterns += patterns('',
         url(r'^%s%s/' % (settings.MEDIA_URL[1:], settings.FOI_MEDIA_PATH),
             include('froide.foirequest.media_urls'))

@@ -1087,6 +1087,9 @@ class FoiAttachment(models.Model):
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
 
+    def get_internal_url(self):
+        return self.file.url
+
     @models.permalink
     def get_absolute_url(self):
         return ('foirequest-auth_message_attachment', (), {
