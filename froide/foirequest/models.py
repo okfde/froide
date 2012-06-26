@@ -533,7 +533,7 @@ Sincerely yours
                     filetype=attachment.content_type)
             if att.name is None:
                 att.name = _("attached_file")
-            att.name = re.sub('[\w\.\-]', '', att.name)
+            att.name = re.sub('[^\w\.\-]', '', att.name)
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
             attachment._committed = False
