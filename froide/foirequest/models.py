@@ -1,6 +1,7 @@
 import random
 from datetime import datetime, timedelta
 import json
+import re
 
 from django.db import models
 from django.db.models import Q
@@ -532,7 +533,7 @@ Sincerely yours
                     filetype=attachment.content_type)
             if att.name is None:
                 att.name = _("attached_file")
-            att.name = "".join(filter(lambda x: ord(x) < 128, att.name))
+            att.name = re.sub('[\w\.\-]', '', att.name)
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
             attachment._committed = False
@@ -1037,7 +1038,7 @@ class FoiMessage(models.Model):
 
 
 def upload_to(instance, filename):
-    return "%s/%s/%s" % (settings.FOI_MEDIA_PATH, instance.belongs_to.id, filename)
+    return "%s/%s/%s" % (settings.FOI_MEDIA_PATH, instance.belongs_to.id, instance.name)
 
 
 class FoiAttachment(models.Model):
