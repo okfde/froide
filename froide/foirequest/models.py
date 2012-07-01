@@ -1091,7 +1091,7 @@ class FoiAttachment(models.Model):
         return _("attachment-%(id)d") % {"id": self.id}
 
     def get_internal_url(self):
-        return self.file.url
+        return settings.MEDIA_URL + settings.self.file.name
 
     def get_anchor_url(self):
         return '%s#%s' % (self.belongs_to.request.get_absolute_url(), self.get_html_id())
