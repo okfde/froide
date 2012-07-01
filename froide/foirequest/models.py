@@ -526,13 +526,13 @@ Sincerely yours
         self.last_message = message.timestamp
         self.save()
         has_pdf = False
-        for attachment in email['attachments']:
+        for i, attachment in enumerate(email['attachments']):
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
                     size=attachment.size,
                     filetype=attachment.content_type)
             if att.name is None:
-                att.name = _("attached_file")
+                att.name = _("attached_file_%d") % i
             att.name = re.sub('[^\w\.\-]', '', att.name)
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
