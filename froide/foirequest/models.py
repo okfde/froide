@@ -1051,6 +1051,9 @@ class FoiAttachment(models.Model):
     format = models.CharField(_("Format"), blank=True, max_length=100)
     can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
+    redacted = models.ForeignKey('self', verbose_name=_("Redacted Version"),
+        null=True, blank=True, on_delete=models.SET_NULL)
+    is_redacted = models.BooleanField(_("Is redacted"), default=False)
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
             "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
