@@ -472,6 +472,14 @@
         <td>{{ message.readable_status }}</td>
       </tr>
       {% endif %}
+      {% if user.is_staff %}
+      <tr class="no-print">
+        <td class="key">{% blocktrans %}Admin{% endblocktrans %}</td>
+        <td>
+          <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
+        </td>
+      </tr>
+      {% endif %}
       {% if message.all_attachments %}
       <tr>
         <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
@@ -484,29 +492,66 @@
         <div class="warning">
       {% endif %}
       {% if attachment.approved %}
-        <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+        <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
+          {{ attachment.name }} ({{ attachment.size|filesizeformat }})
+        </a>
+        {% if attachment.can_preview %}
+         - <a class="target-new" href="{{ attachment.get_preview_url }}">
+         {% trans "Preview in Browser" %}
+        </a>
+       {% endif %}
       {% else %}
         {% if user == object.user or user.is_staff %}
-          <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">{{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>{% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+          <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
+            {{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>
+            {% if attachment.can_preview %}
+              - <a class="target-new" href="{{ attachment.get_preview_url }}">
+                {% trans "Preview in Browser" %}
+              </a>
+            {% endif %}
           {% if attachment.can_approve or user.is_staff %}
           <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
             {% csrf_token %}
             {% if object.user.get_profile.private %}
-            <p>{% trans "Please check this attachment and if it doesn't contain personally identifying information and if you are not explicitly forbidden to publish it, click the button below." %}</p>
+            <p>
+              {% trans "Please check this attachment and if it doesn't contain personally identifying information and if you are not explicitly forbidden to publish it, click the button below." %}
+            </p>
             {% else %}
-            <p>{% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}) and if publication is not explicitly forbidden, click the button below.{% endblocktrans %}</p>
+            <p>
+              {% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}) and if publication is not explicitly forbidden, click the button below.{% endblocktrans %}
+            </p>
             {% endif %}
             {% if not attachment.can_approve %}
-            <p><strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>{% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}</p>
+              <p>
+                <strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>
+              {% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}
+              </p>
             {% endif %}
             <input class="button" type="submit" value="{% trans "Publish this attachment" %}"/>
             <p>{% trans "If it does contain personally identifying information, please inform moderators (info@fragdenstaat.de) and they will redact the document and then publish it for you." %}</p>
+            {% if user.is_staff %}
+              <p><a href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+                {% if attachment.is_redacted %}
+                  {% trans "Update this redacted version" %}
+                {% endif %}
+                {% if attachment.redacted %}
+                  {% trans "Update the redacted version of this attachment" %}
+                {% endif %}
+                {% if not attachment.redacted and not attachment.is_redacted %}
+                  {% trans "Redact this attachment" %}
+                {% endif %}
+              </a></p>
+            {% endif %}
           </form>
           {% else %}
             <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
           {% endif %}
         {% else %}
-        <span>{% trans "This attachment is not public yet" %}</span>
+          {% if not attachment.can_approve %}
+            <span>{% trans "This attachment can't be published." %}</span>
+          {% else %}
+            <span>{% trans "This attachment has not been published yet." %}</span>
+          {% endif %}
         {% endif %}
         </div>
       {% endif %}
