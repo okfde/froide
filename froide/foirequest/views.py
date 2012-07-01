@@ -647,7 +647,7 @@ def approve_attachment(request, slug, attachment):
     att.save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
-    return HttpResponseRedirect(att.get_absolute_url())
+    return HttpResponseRedirect(att.get_anchor_url())
 
 
 def list_unchecked(request):

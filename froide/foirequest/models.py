@@ -1090,12 +1090,18 @@ class FoiAttachment(models.Model):
     def get_internal_url(self):
         return self.file.url
 
-    @models.permalink
+    def get_anchor_url(self):
+        return '%s#%s' % (self.belongs_to.request.get_absolute_url(), self.get_html_id())
+
     def get_absolute_url(self):
-        return ('foirequest-auth_message_attachment', (), {
-            'message_id': self.belongs_to_id,
-            'attachment_name': self.name
-            })
+        if settings.USE_X_ACCEL_REDIRECT:
+            return reverse('foirequest-auth_message_attachment',
+                kwargs={
+                    'message_id': self.belongs_to_id,
+                    'attachment_name': self.name
+                })
+        else:
+            return self.file.url
 
     def is_visible(self, user, foirequest):
         if self.approved:
