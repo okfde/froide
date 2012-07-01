@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.conf import settings
 from django.core.files import File
@@ -758,13 +759,14 @@ def redact_attachment(request, slug, attachment_id):
         if path is None:
             return render_400(request)
         name, extensions = attachment.name.rsplit('.', 1)
+        name = re.sub('[^\w\.\-]', '', name)
         pdf_file = File(file(path))
         if already:
             att = already
         else:
             att = FoiAttachment(
                 belongs_to=attachment.belongs_to,
-                name='%s_redacted.pdf' % name,
+                name=_('%s_redacted.pdf') % name,
                 is_redacted=True,
                 filetype='application/pdf',
                 approved=True,
