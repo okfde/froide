@@ -120,6 +120,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
 
 class FoiAttachmentInline(admin.TabularInline):
     model = FoiAttachment
+    raw_id_fields = ('redacted',)
 
 
 class FoiMessageAdmin(admin.ModelAdmin):
@@ -137,7 +138,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):
-    raw_id_fields = ('belongs_to',)
+    raw_id_fields = ('belongs_to', 'redacted',)
     ordering = ('-id',)
     list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
     list_filter = ('can_approve', 'approved',)

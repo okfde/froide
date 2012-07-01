@@ -1,6 +1,7 @@
 import datetime
 
 from django.conf import settings
+from django.core.files import File
 from django.utils import simplejson as json
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -26,7 +27,7 @@ from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
         MessagePublicBodySenderForm, EscalationMessageForm)
 from froide.helper.utils import render_400, render_403
 from helper.cache import cache_anonymous_page
-
+from redaction.utils import convert_to_pdf
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
@@ -164,7 +165,8 @@ def show(request, slug, template_name="foirequest/show.html",
         raise Http404
     if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):
         return render_403(request)
-    all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
+    all_attachments = FoiAttachment.objects.select_related('redacted')\
+            .filter(belongs_to__request=obj).all()
     for message in obj.messages:
         message.request = obj
         message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
@@ -647,14 +649,15 @@ def approve_attachment(request, slug, attachment):
     att.save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
-    return HttpResponseRedirect(att.get_absolute_url())
+    return HttpResponseRedirect(att.get_anchor_url())
 
 
 def list_unchecked(request):
     if not request.user.is_staff:
         return render_403(request)
     foirequests = FoiRequest.published.filter(checked=False).order_by('-id')[:30]
-    attachments = FoiAttachment.objects.filter(approved=False, can_approve=True).order_by('-id')[:30]
+    attachments = FoiAttachment.objects.filter(is_redacted=False, redacted__isnull=True,
+        approved=False, can_approve=True).order_by('-id')[:30]
     return render(request, 'foirequest/list_unchecked.html', {
         'foirequests': foirequests,
         'attachments': attachments
@@ -732,3 +735,51 @@ def auth_message_attachment(request, message_id, attachment_name):
     response['X-Accel-Redirect'] = X_ACCEL_REDIRECT_PREFIX + attachment.get_internal_url()
 
     return response
+
+
+def redact_attachment(request, slug, attachment_id):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_staff and not request.user == foirequest.user:
+        return render_403(request)
+    attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
+            belongs_to__request=foirequest)
+    if not attachment.can_approve and not request.user.is_staff:
+        return render_403(request)
+    already = None
+    if attachment.redacted:
+        already = attachment.redacted
+    elif attachment.is_redacted:
+        already = attachment
+
+    if already is not None and not already.can_approve and not request.user.is_staff:
+        return render_403(request)
+    if request.method == 'POST':
+        path = convert_to_pdf(request.POST)
+        if path is None:
+            return render_400(request)
+        name, extensions = attachment.name.rsplit('.', 1)
+        pdf_file = File(file(path))
+        if already:
+            att = already
+        else:
+            att = FoiAttachment(
+                belongs_to=attachment.belongs_to,
+                name='%s_redacted.pdf' % name,
+                is_redacted=True,
+                filetype='application/pdf',
+                approved=True,
+                can_approve=True
+            )
+        att.file = pdf_file
+        att.size = pdf_file.size
+        att.save()
+        if not attachment.is_redacted:
+            attachment.redacted = att
+            attachment.can_approve = False
+            attachment.approved = False
+            attachment.save()
+        return HttpResponseRedirect(att.get_anchor_url())
+    return render(request, 'foirequest/redact.html', {
+        'foirequest': foirequest,
+        'attachment': attachment
+    })

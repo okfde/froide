@@ -526,13 +526,13 @@ Sincerely yours
         self.last_message = message.timestamp
         self.save()
         has_pdf = False
-        for attachment in email['attachments']:
+        for i, attachment in enumerate(email['attachments']):
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
                     size=attachment.size,
                     filetype=attachment.content_type)
             if att.name is None:
-                att.name = _("attached_file")
+                att.name = _("attached_file_%d") % i
             att.name = re.sub('[^\w\.\-]', '', att.name)
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
@@ -1051,6 +1051,9 @@ class FoiAttachment(models.Model):
     format = models.CharField(_("Format"), blank=True, max_length=100)
     can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
+    redacted = models.ForeignKey('self', verbose_name=_("Redacted Version"),
+        null=True, blank=True, on_delete=models.SET_NULL)
+    is_redacted = models.BooleanField(_("Is redacted"), default=False)
 
     POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
             "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
@@ -1090,12 +1093,18 @@ class FoiAttachment(models.Model):
     def get_internal_url(self):
         return self.file.url
 
-    @models.permalink
+    def get_anchor_url(self):
+        return '%s#%s' % (self.belongs_to.request.get_absolute_url(), self.get_html_id())
+
     def get_absolute_url(self):
-        return ('foirequest-auth_message_attachment', (), {
-            'message_id': self.belongs_to_id,
-            'attachment_name': self.name
-            })
+        if settings.USE_X_ACCEL_REDIRECT:
+            return reverse('foirequest-auth_message_attachment',
+                kwargs={
+                    'message_id': self.belongs_to_id,
+                    'attachment_name': self.name
+                })
+        else:
+            return self.file.url
 
     def is_visible(self, user, foirequest):
         if self.approved:
