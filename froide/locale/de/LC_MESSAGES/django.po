@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-01 20:17+0200\n"
-"PO-Revision-Date: 2012-07-01 20:25+0100\n"
+"POT-Creation-Date: 2012-07-01 20:53+0200\n"
+"PO-Revision-Date: 2012-07-01 20:55+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -1595,130 +1595,135 @@ msgctxt "URL part"
 msgid "tag"
 msgstr "tag"
 
-#: foirequest/views.py:115
+#: foirequest/views.py:116
 #: foirequest/templates/foirequest/list_unchecked.html:8
 msgid "FoI Requests"
 msgstr "Informationsfreiheitsanfragen"
 
-#: foirequest/views.py:129
+#: foirequest/views.py:130
 msgid "Non-FoI Requests"
 msgstr "Anfragen <b>nicht</b> im Sinne des Informationsfreiheitsgesetzes"
 
-#: foirequest/views.py:322
+#: foirequest/views.py:323
 msgid "Others can now suggest the Public Bodies for your request."
 msgstr "Andere können nun Behörden für diese Anfrage vorschlagen."
 
-#: foirequest/views.py:325
+#: foirequest/views.py:326
 msgid "Your request will be sent as soon as the newly created Public Body was confirmed by an administrator."
 msgstr "Ihre Anfrage wird gesendet, sobald die neu erstellte Behörde von einem Administrator bestätigt wurde."
 
-#: foirequest/views.py:329
+#: foirequest/views.py:330
 msgid "Your request has been sent."
 msgstr "Ihre Anfrage wurde gesendet."
 
-#: foirequest/views.py:330
+#: foirequest/views.py:331
 msgid "?request-made"
 msgstr "?anfrage-gestellt"
 
-#: foirequest/views.py:335
-#: foirequest/views.py:712
+#: foirequest/views.py:336
+#: foirequest/views.py:713
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr "Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mailadresse."
 
-#: foirequest/views.py:339
+#: foirequest/views.py:340
 msgid "There were errors in your form submission. Please review and submit again."
 msgstr "Ihre Formulareingabe enthielt Fehler. Bitte überprüfen Sie und senden Sie das Formular noch einmal."
 
-#: foirequest/views.py:352
-#: foirequest/views.py:358
+#: foirequest/views.py:353
+#: foirequest/views.py:359
 msgid "Missing or invalid input!"
 msgstr "Fehlende oder ungültige Eingabe!"
 
-#: foirequest/views.py:362
+#: foirequest/views.py:363
 msgid "This request doesn't need a Public Body!"
 msgstr "Diese Anfrage benötigt keine Behörde!"
 
-#: foirequest/views.py:369
+#: foirequest/views.py:370
 #, python-format
 msgid "Request was sent to: %(name)s."
 msgstr "Anfrage wurde gesendet an: %(name)s"
 
-#: foirequest/views.py:390
+#: foirequest/views.py:391
 msgid "Your Public Body suggestion has been added."
 msgstr "Ihr Vorschlag für eine Behörde wurde hinzugefügt."
 
-#: foirequest/views.py:393
+#: foirequest/views.py:394
 msgid "This Public Body has already been suggested."
 msgstr "Diese Behörde wurde schon vorgeschlagen."
 
-#: foirequest/views.py:396
+#: foirequest/views.py:397
 msgid "You need to specify a Public Body!"
 msgstr "Sie müssen eine Behörde angeben!"
 
-#: foirequest/views.py:411
+#: foirequest/views.py:412
 msgid "Status of request has been updated."
 msgstr "Status der Anfrage wurde aktualisiert."
 
-#: foirequest/views.py:414
+#: foirequest/views.py:415
 msgid "Invalid value for form submission!"
 msgstr "Ungültige Eingabe im Formular!"
 
-#: foirequest/views.py:430
+#: foirequest/views.py:431
 msgid "Your Message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."
 
-#: foirequest/views.py:447
+#: foirequest/views.py:448
 msgid "Your Escalation Message has been sent."
 msgstr "Ihre Anfrage nach Vermittlung wurde gesendet."
 
-#: foirequest/views.py:475
+#: foirequest/views.py:476
 msgid "A concrete law has been set for this request."
 msgstr "Ein konkretes Gesetz wurde für diese Anfrage festgelegt."
 
-#: foirequest/views.py:488
+#: foirequest/views.py:489
 msgid "Tags have been set for this request"
 msgstr "Die Tags dieser Anfrage wurden gespeichert."
 
-#: foirequest/views.py:505
+#: foirequest/views.py:506
 msgid "The resolution summary has been saved."
 msgstr "Ihre Ergebniszusammenfassung wurde gespeichert."
 
-#: foirequest/views.py:547
+#: foirequest/views.py:548
 msgid "A postal reply was successfully added!"
 msgstr "Eine per Post erhaltene Antwort wurde hinzugefügt!"
 
-#: foirequest/views.py:550
+#: foirequest/views.py:551
 msgid "There were errors with your form submission!"
 msgstr "Ihre Angaben waren fehlerhaft!"
 
-#: foirequest/views.py:580
+#: foirequest/views.py:581
 msgid "Your document was attached to the message."
 msgstr "Ihr Dokument wurde an die Antwort angehängt."
 
-#: foirequest/views.py:620
+#: foirequest/views.py:621
 msgid "Request marked as not a FoI request."
 msgstr "Anfrage wurde als nicht-IF markiert."
 
-#: foirequest/views.py:634
+#: foirequest/views.py:635
 msgid "Request marked as checked."
 msgstr "Anfrage als gesehen markiert."
 
-#: foirequest/views.py:651
+#: foirequest/views.py:652
 msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
 
-#: foirequest/views.py:690
+#: foirequest/views.py:691
 msgid "You already made an identical request"
 msgstr "Sie haben schon eine identische Anfrage gestellt"
 
-#: foirequest/views.py:693
+#: foirequest/views.py:694
 #, python-format
 msgid "Please see this request on FragDenStaat.de where you granted access to this information: %(url)s"
 msgstr "Ich verweise auf eine Anfrage auf FragDenStaat.de, der Sie Zugang zu den angefragten Dokumenten gewährt haben: %(url)s"
 
-#: foirequest/views.py:706
+#: foirequest/views.py:707
 msgid "You successfully requested this document! Your request is displayed below."
 msgstr "Sie haben das Dokument nun angefragt. Ihre Anfrage finden Sie auf dieser Seite."
+
+#: foirequest/views.py:769
+#, python-format
+msgid "%s_redacted.pdf"
+msgstr "%s_geschwaerzt.pdf"
 
 #: foirequest/templates/foirequest/_request_form.html:15
 msgid "Message"

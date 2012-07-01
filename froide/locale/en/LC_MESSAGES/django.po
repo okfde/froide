@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-01 19:40+0200\n"
+"POT-Creation-Date: 2012-07-01 20:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1541,133 +1541,138 @@ msgctxt "URL part"
 msgid "tag"
 msgstr ""
 
-#: foirequest/views.py:115
+#: foirequest/views.py:116
 #: foirequest/templates/foirequest/list_unchecked.html:8
 msgid "FoI Requests"
 msgstr ""
 
-#: foirequest/views.py:129
+#: foirequest/views.py:130
 msgid "Non-FoI Requests"
 msgstr ""
 
-#: foirequest/views.py:322
+#: foirequest/views.py:323
 msgid "Others can now suggest the Public Bodies for your request."
 msgstr ""
 
-#: foirequest/views.py:325
+#: foirequest/views.py:326
 msgid ""
 "Your request will be sent as soon as the newly created Public Body was "
 "confirmed by an administrator."
 msgstr ""
 
-#: foirequest/views.py:329
+#: foirequest/views.py:330
 msgid "Your request has been sent."
 msgstr ""
 
-#: foirequest/views.py:330
+#: foirequest/views.py:331
 msgid "?request-made"
 msgstr ""
 
-#: foirequest/views.py:335 foirequest/views.py:712
+#: foirequest/views.py:336 foirequest/views.py:713
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr ""
 
-#: foirequest/views.py:339
+#: foirequest/views.py:340
 msgid ""
 "There were errors in your form submission. Please review and submit again."
 msgstr ""
 
-#: foirequest/views.py:352 foirequest/views.py:358
+#: foirequest/views.py:353 foirequest/views.py:359
 msgid "Missing or invalid input!"
 msgstr ""
 
-#: foirequest/views.py:362
+#: foirequest/views.py:363
 msgid "This request doesn't need a Public Body!"
 msgstr ""
 
-#: foirequest/views.py:369
+#: foirequest/views.py:370
 #, python-format
 msgid "Request was sent to: %(name)s."
 msgstr ""
 
-#: foirequest/views.py:390
+#: foirequest/views.py:391
 msgid "Your Public Body suggestion has been added."
 msgstr ""
 
-#: foirequest/views.py:393
+#: foirequest/views.py:394
 msgid "This Public Body has already been suggested."
 msgstr ""
 
-#: foirequest/views.py:396
+#: foirequest/views.py:397
 msgid "You need to specify a Public Body!"
 msgstr ""
 
-#: foirequest/views.py:411
+#: foirequest/views.py:412
 msgid "Status of request has been updated."
 msgstr ""
 
-#: foirequest/views.py:414
+#: foirequest/views.py:415
 msgid "Invalid value for form submission!"
 msgstr ""
 
-#: foirequest/views.py:430
+#: foirequest/views.py:431
 msgid "Your Message has been sent."
 msgstr ""
 
-#: foirequest/views.py:447
+#: foirequest/views.py:448
 msgid "Your Escalation Message has been sent."
 msgstr ""
 
-#: foirequest/views.py:475
+#: foirequest/views.py:476
 msgid "A concrete law has been set for this request."
 msgstr ""
 
-#: foirequest/views.py:488
+#: foirequest/views.py:489
 msgid "Tags have been set for this request"
 msgstr ""
 
-#: foirequest/views.py:505
+#: foirequest/views.py:506
 msgid "The resolution summary has been saved."
 msgstr ""
 
-#: foirequest/views.py:547
+#: foirequest/views.py:548
 msgid "A postal reply was successfully added!"
 msgstr ""
 
-#: foirequest/views.py:550
+#: foirequest/views.py:551
 msgid "There were errors with your form submission!"
 msgstr ""
 
-#: foirequest/views.py:580
+#: foirequest/views.py:581
 msgid "Your document was attached to the message."
 msgstr ""
 
-#: foirequest/views.py:620
+#: foirequest/views.py:621
 msgid "Request marked as not a FoI request."
 msgstr ""
 
-#: foirequest/views.py:634
+#: foirequest/views.py:635
 msgid "Request marked as checked."
 msgstr ""
 
-#: foirequest/views.py:651
+#: foirequest/views.py:652
 msgid "Attachment approved."
 msgstr ""
 
-#: foirequest/views.py:690
+#: foirequest/views.py:691
 msgid "You already made an identical request"
 msgstr ""
 
-#: foirequest/views.py:693
+#: foirequest/views.py:694
 #, python-format
 msgid ""
 "Please see this request on FragDenStaat.de where you granted access to this "
 "information: %(url)s"
 msgstr ""
 
-#: foirequest/views.py:706
+#: foirequest/views.py:707
 msgid ""
 "You successfully requested this document! Your request is displayed below."
+msgstr ""
+
+#: foirequest/views.py:769
+#, python-format
+msgid "%s_redacted.pdf"
 msgstr ""
 
 #: foirequest/templates/foirequest/_request_form.html:15
