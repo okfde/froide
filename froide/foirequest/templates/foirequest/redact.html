@@ -1,0 +1,186 @@
+{% extends 'foirequest/base.html' %}
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block metadescription %}{{ object.description }}{% endblock %}
+
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/pdfviewer.css"/>
+    <link rel="resource" type="application/l10n" href="{{ STATIC_URL }}js/libs/pdfviewer/locale.properties"/><!-- PDFJSSCRIPT_REMOVE_CORE -->
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/compatibility.js"></script> <!-- PDFJSSCRIPT_REMOVE_FIREFOX_EXTENSION -->
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/l10n.js"></script><!-- PDFJSSCRIPT_REMOVE_CORE -->
+  <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/pdf.js"></script>
+  <script type="text/javascript">
+    PDFJS.workerSrc = "{{ STATIC_URL }}js/libs/pdfviewer/pdf.js";
+  </script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/pdfviewer.js"></script>
+  <script>
+    var info = function(x) { console.log(x); }
+    var kImageDirectory = "{{ STATIC_URL }}img/pdfviewer/";
+    var kDefaultURL = "{{ attachment.get_absolute_url }}";
+  </script>
+{% endblock %}
+
+{% block body %}
+<h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
+{% if foirequest.user.get_profile.private %}
+  <p>{% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}:<br/><strong>name, address and email address</strong>.{% endblocktrans %}</p>
+{% else %}
+  <p>{% blocktrans with name=foirequest.user.get_full_name %}Please remove the following personally identifying information of {{ name }}:<br/><strong>address and email address</strong>. You can leave the name.{% endblocktrans %}</p>
+{% endif %}
+<span class="help">{% trans "To redact draw black rectangles over information" %}</span>
+<form id="redaction-form" method="post">
+  {% csrf_token %}
+  <p><a href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>&nbsp;
+    <a href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>&nbsp;
+    <input type="button" id="submit-form" value="{% trans "Save and publish" %}"/>
+</form>
+<div id="sending-form" style="display:none">
+  <p>{% trans "Redaction process started, please wait..." %}</p>
+</div>
+<div class="pdfviewer" style="position:relative; min-height:600px">
+{% include "redaction/viewer.html" %}
+</div>
+{% endblock %}
+
+{% block extra_footer %}
+<div id="lightbox-background"></div>
+<script>
+  var pageRedactions = {};
+  var sendRedaction = function(){
+    var form = document.getElementById('redaction-form');
+    $('#redaction-form').hide();
+    $('#sending-form').show();
+    var addKV = function(k,v){
+      var inp = document.createElement('input');
+      inp.type = 'hidden';
+      inp.name = k;
+      inp.value = v;
+      form.appendChild(inp);
+    };
+    var affected = [], r, i, currentExtractPageNumber = 1;
+    var extractImage = function(pagenumber) {
+      PDFView.page = pagenumber;
+      applyRedaction(pagenumber, function(data){
+        addKV('page_' + pagenumber, data);
+        if (pagenumber === PDFView.pages.length) {
+          form.submit();
+        } else {
+          currentExtractPageNumber += 1;
+          extractImage(currentExtractPageNumber);
+        }
+      });
+    }
+    extractImage(currentExtractPageNumber);
+  };
+  $('#submit-form').click(sendRedaction);
+
+  var applyRedaction = function(page, done){
+    var pv = PDFView.pages[page - 1];
+    if (pv === undefined){
+      window.setTimeout(function(){
+        applyRedaction(page, done);
+      }, 500);
+      return;
+    }
+    if (pv.ctx === undefined || pv.renderingState !== 3){
+      window.setTimeout(function(){
+        applyRedaction(page, done);
+      }, 500)
+    } else {
+      window.setTimeout(function(){
+        drawRedaction(page, pv.ctx);
+        done(pv.canvas.toDataURL('image/png'));
+      }, 500);
+    }
+  };
+
+  var drawRedactions = function(){
+    for (var page in pageRedactions) {
+      drawRedaction(page)
+    }
+  };
+
+  var drawRedaction = function(page, newctx){
+    var ctx, page, i, redactions;
+    var pageRedaction = pageRedactions[page];
+    if (pageRedaction === undefined) {
+      return;
+    }
+    ctx = newctx || pageRedaction.ctx;
+    ctx.fillStyle = '#000';
+    if (newctx === undefined) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    }
+    redactions = pageRedaction.redactions;
+    for(i = 0; i < redactions.length; i += 1) {
+      ctx.fillRect(redactions[i][0], redactions[i][1], redactions[i][2], redactions[i][3]);
+    }
+  };
+  var redactPage = function(currentPageNumber){
+    if ($('#redactionArea' + currentPageNumber).length !== 0){
+      // pageRedactions[currentPageNumber].ctx = null;
+      // pageRedactions[currentPageNumber].redactions = [];
+      // delete pageRedactions[currentPageNumber];
+      // document.getElementById('pageContainer' + currentPageNumber).removeChild(document.getElementById('redactionArea' + currentPageNumber));
+      return;
+    }
+    var container = document.getElementById('pageContainer' + currentPageNumber);
+    var canvas = document.createElement('canvas');
+    canvas.id = 'redactionArea' + currentPageNumber;
+    canvas.className = 'redactionArea'
+    canvas.width = parseFloat(container.style.width);
+    canvas.height = parseFloat(container.style.height);
+    var ctx = canvas.getContext('2d');
+    var page = currentPageNumber;
+    pageRedactions[page] = {
+      ctx: ctx,
+      redactions: []
+    };
+    var redactions = pageRedactions[page].redactions;
+    var isDown = false;
+    canvas.addEventListener('mousedown', function annotationImageOver(e) {
+      isDown = true;
+      redactions.push([e.offsetX, e.offsetY, 0, 0]);
+      drawRedactions();
+    }, false);
+    canvas.addEventListener('mousemove', function annotationImageOver(e) {
+      if (!isDown) {
+        return;
+      }
+      var r = redactions[redactions.length - 1];
+      r[2] = e.offsetX - r[0];
+      r[3] = e.offsetY - r[1];
+      drawRedactions();
+    }, false);
+  canvas.addEventListener('mouseup', function annotationImageOver(e) {
+    if (!isDown) {
+      return;
+    }
+    var r = redactions[redactions.length - 1];
+    r[2] = e.offsetX - r[0];
+    r[3] = e.offsetY - r[1];
+    isDown = false;
+    drawRedactions();
+    }, false);
+  container.appendChild(canvas);
+  return false;
+  };
+  $(function(){
+    var first = true, lastPageNumber = 0;
+    window.addEventListener('pagechange', function() {
+      for (var i = 0; i < PDFView.pages.length; i += 1) {
+        (function(pv, pageNumber){
+          pv.onAfterDraw = function(){
+            redactPage(pageNumber);
+          };
+        }(PDFView.pages[i], i + 1));
+      }
+    }, true);
+  });
+</script>
+{% endblock %}

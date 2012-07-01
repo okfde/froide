@@ -171,6 +171,7 @@ INSTALLED_APPS = (
     'pagination',
     'djangosecure',
     'taggit',
+    'redaction',
 
     # local
     'froide.foirequest',
