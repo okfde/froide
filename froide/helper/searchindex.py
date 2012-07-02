@@ -27,5 +27,3 @@ class QueuedRealTimeSearchIndex(SearchIndex):
 
     def delayed_remove(self, instance, **kwargs):
         delayed_remove.delay(instance.pk, kwargs['sender'])
-
-

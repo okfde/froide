@@ -25,12 +25,13 @@ from django.utils.crypto import salted_hmac, constant_time_compare
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
-from publicbody.models import PublicBody, FoiLaw, Jurisdiction
+from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
-from foirequest.foi_mail import send_foi_mail
+
+from .foi_mail import send_foi_mail
 
 html2markdown = lambda x: x
 
@@ -1254,4 +1255,4 @@ class FoiEvent(models.Model):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
 # Import Signals here so models are available
-import foirequest.signals
+import foirequest.signals  # noqa

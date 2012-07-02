@@ -4,6 +4,7 @@ from django.conf import settings
 
 from foirequest.email import fetch_and_process
 
+
 class Command(BaseCommand):
     help = "Fetches and processes mail from the configured IMAP account"
 
@@ -15,6 +16,5 @@ class Command(BaseCommand):
             count = fetch_and_process()
         except Exception as e:
             raise CommandError('Fetch raised an error: %s' % e)
-        self.stdout.write('Successfully fetched and processed %(count)d mails\n' % 
+        self.stdout.write('Successfully fetched and processed %(count)d mails\n' %
                 {"count": count})
-

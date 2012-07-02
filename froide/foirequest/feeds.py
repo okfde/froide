@@ -5,13 +5,13 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
-
 from foirequest.models import FoiRequest
+
 
 class LatestFoiRequestsFeed(Feed):
     title = _("Latest Freedom of Information Requests on %(sitename)s") % {"sitename": settings.SITE_NAME}
     description = _("This feed contains the latest Freedom of Information requests that have been made through %(sitename)s.") % {"sitename": settings.SITE_NAME}
-    
+
     def link(self):
         return reverse('foirequest-feed_latest')
 
@@ -68,10 +68,10 @@ class FoiRequestFeed(Feed):
     def item_pubdate(self, item):
         return item.timestamp
 
+
 class FoiRequestFeedAtom(FoiRequestFeed):
     feed_type = Atom1Feed
     subtitle = FoiRequestFeed.description
 
     def link(self, obj):
         return reverse('foirequest-feed_atom', kwargs={"slug": obj.slug})
-

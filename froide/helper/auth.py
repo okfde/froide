@@ -3,6 +3,7 @@ from django.core.validators import email_re
 from django.contrib.auth import models, load_backend, login
 from django.conf import settings
 
+
 class EmailBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         if email_re.search(username):
@@ -13,6 +14,7 @@ class EmailBackend(ModelBackend):
             except models.User.DoesNotExist:
                 return None
         return None
+
 
 def login_user(request, user):
     if not hasattr(user, 'backend'):

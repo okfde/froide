@@ -17,7 +17,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'dev.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -80,13 +80,12 @@ STATIC_URL = "/static/"
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = STATIC_URL +'admin/'
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, "..", "media"),
 )
-
 
 
 # List of finder classes that know how to find static files in
@@ -221,7 +220,7 @@ LOGGING = {
 CSRF_COOKIE_SECURE = True
 CSRF_FAILURE_VIEW = 'froide.account.views.csrf_failure'
 
-SESSION_COOKIE_AGE = 3628800 # six weeks
+SESSION_COOKIE_AGE = 3628800  # six weeks
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 
@@ -245,11 +244,11 @@ EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 DEFAULT_FROM_EMAIL = 'info@example.com'
 
 HOLIDAYS = [
-    (1, 1), # New Year's Day
-    (5, 1), # Labour Day
-    (10, 3), # German Unity Day
-    (12, 25), # Christmas
-    (12, 26) # Second day of Christmas
+    (1, 1),  # New Year's Day
+    (5, 1),  # Labour Day
+    (10, 3),  # German Unity Day
+    (12, 25),  # Christmas
+    (12, 26)  # Second day of Christmas
 ]
 
 # Weekends are non-working days
@@ -320,9 +319,9 @@ FOI_EMAIL_USE_SSL = True
 FOI_EMAIL_FIXED_FROM_ADDRESS = True
 
 # SMTP settings for setting FoI mail
-# like Django 
+# like Django
 FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
-FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER 
+FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER
 FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
 FOI_EMAIL_HOST = "smtp.example.com"
 FOI_EMAIL_PORT = 537
@@ -346,6 +345,6 @@ BROKER_USER = ""
 BROKER_PASSWORD = ""
 
 try:
-    from local_settings import *
+    from local_settings import *  # noqa
 except ImportError:
     pass

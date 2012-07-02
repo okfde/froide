@@ -11,8 +11,9 @@ from django.utils.html import escape
 from taggit.forms import TagField
 from taggit.utils import edit_string_for_tags
 
-from publicbody.models import PublicBody
-from publicbody.widgets import PublicBodySelect
+from froide.publicbody.models import PublicBody
+from froide.publicbody.widgets import PublicBodySelect
+
 from foirequest.models import FoiRequest, FoiAttachment
 
 

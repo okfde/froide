@@ -6,7 +6,6 @@ from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
 from django.template import TemplateDoesNotExist
 
-
 from haystack.query import SearchQuerySet
 
 from foirequest.models import FoiRequest, FoiMessage

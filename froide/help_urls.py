@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 LG = settings.LANGUAGE_CODE
 
+
 def TV(template):
     return TemplateView.as_view(template_name=template)
 
@@ -21,7 +22,6 @@ urlpatterns = patterns("",
     # Translators: URL part of /help/
     (r'^%s/$' % _('your-privacy'), TV("help/%s/your-privacy.html" % LG), {}, 'help-your_privacy'),
     # Translators: URL part of /help/
-    (r'^%s/$' % _('for-foi-officers'), TV("help/%s/foi-officers.html" % LG), {}, 'help-foi_officers'),
-
-
+    (r'^%s/$' % _('for-foi-officers'), TV("help/%s/foi-officers.html" % LG), {},
+        'help-foi_officers'),
 )

@@ -36,12 +36,14 @@ def send_foi_mail(subject, message, from_email, recipient_list,
 
 
 def _process_mail(mail_string):
+
+    from foirequest.models import FoiRequest
+
     parser = EmailParser()
     email = parser.parse(mail_string)
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?
-    from foirequest.models import FoiRequest
     mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_EMAIL_DOMAIN)
     received_list = filter(mail_filter, received_list)
 
