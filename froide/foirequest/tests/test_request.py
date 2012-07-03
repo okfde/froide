@@ -742,9 +742,10 @@ class RequestTest(TestCase):
         mail.outbox = []
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug}), {
-            'subject': 'My Escalation Subject',
-            'message': 'My Escalation Message'
-            })
+                    'subject': 'My Escalation Subject',
+                    'message': 'My Escalation Message'
+                }
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(req.get_absolute_url(), response['Location'])
         self.assertEqual(req.law.mediator, req.messages[-1].recipient_public_body)

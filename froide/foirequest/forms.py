@@ -31,7 +31,7 @@ class RequestForm(forms.Form):
             widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
-            attrs={'placeholder': _("Specify your request here...")}))
+                attrs={'placeholder': _("Specify your request here...")}))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -250,7 +250,7 @@ class FoiRequestStatusForm(forms.Form):
 
     status = forms.ChoiceField(label=_("Status"),
             # widget=forms.RadioSelect,
-            choices=[('', '-------')] + \
+            choices=[('', '-------')] +
                     map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES))
     redirected = forms.IntegerField(required=False, widget=PublicBodySelect)
     if payment_possible:
@@ -278,7 +278,7 @@ class ConcreteLawForm(forms.Form):
         self.foirequest = foirequest
         self.possible_laws = foirequest.law.combined.all()
         self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
-                choices=[('', '-------')] + \
+                choices=[('', '-------')] +
                     map(lambda x: (x.pk, x.name), self.possible_laws),
                 coerce=int, empty_value='')
 

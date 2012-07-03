@@ -92,7 +92,7 @@ def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None)
         foi_requests = FoiRequest.published.for_list_view().filter(public_body__topic=topic)
         context.update({
             'topic': topic,
-            })
+        })
     elif tag is not None:
         tag_object = get_object_or_404(Tag, slug=tag)
         foi_requests = FoiRequest.published.for_list_view().filter(tags=tag_object)
@@ -212,10 +212,10 @@ def search(request):
         else:
             foirequests.append(result)
     context = {
-            "foirequests": foirequests,
-            "publicbodies": publicbodies,
-            "query": query
-            }
+        "foirequests": foirequests,
+        "publicbodies": publicbodies,
+        "query": query
+    }
     return render(request, "search/search.html", context)
 
 

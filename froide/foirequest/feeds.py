@@ -24,9 +24,9 @@ class LatestFoiRequestsFeed(Feed):
         else:
             pb_name = _("Not yet known")
         return _("'%(title)s' to %(publicbody)s") % {
-                "title": item.title,
-                "publicbody": pb_name
-                }
+            "title": item.title,
+            "publicbody": pb_name
+        }
 
     def item_description(self, item):
         return item.description

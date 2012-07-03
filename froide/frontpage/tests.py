@@ -29,7 +29,8 @@ class RequestTest(TestCase):
             timestamp=datetime.now(),
             text="",
             url="",
-        site=Site.objects.get_current())
+            site=Site.objects.get_current()
+        )
         title2 = "Awesomer Request"
         FeaturedRequest.objects.create(request=some_foireq,
             title=title2,

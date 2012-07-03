@@ -86,11 +86,11 @@ def show(request, context=None, status=200):
         events = FoiEvent.objects.filter(public=True,
             request__in=followed_foirequest_ids, timestamp__gte=since)[:10]
     context.update({
-            'own_requests': own_foirequests,
-            'followed_events': events,
-            'following': following,
-            'foirequests': my_requests
-        })
+        'own_requests': own_foirequests,
+        'followed_events': events,
+        'following': following,
+        'foirequests': my_requests
+    })
     return render(request, 'account/show.html', context, status=status)
 
 

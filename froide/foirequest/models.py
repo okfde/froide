@@ -780,7 +780,7 @@ Sincerely yours
             return False
 
     def set_public_body(self, public_body, law):
-        assert self.public_body == None
+        assert self.public_body is None
         assert self.status == "publicbody_needed"
         self.public_body = public_body
         self.law = law
@@ -799,7 +799,7 @@ Sincerely yours
             message.recipient_email = public_body.email
             # message.plaintext = FoiRequest.construct_message_body(message,
             #   message.plaintext)
-            assert message.sent == False
+            assert not message.sent
             message.send()  # saves message
 
     def make_public(self):
@@ -1256,3 +1256,4 @@ class FoiEvent(models.Model):
 
 # Import Signals here so models are available
 import froide.foirequest.signals  # noqa
+froide.foirequest.signals
