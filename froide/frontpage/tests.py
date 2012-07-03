@@ -6,17 +6,17 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils import translation
-from django.contrib.sites.models import Site
 
 from froide.foirequest.models import FoiRequest
+from froide.foirequest.tests.factories import make_world
 
 from .models import FeaturedRequest
 
 
 class RequestTest(TestCase):
-    fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
 
     def setUp(self):
+        self.site = make_world()
         translation.activate(settings.LANGUAGE_CODE)
 
     def test_featured_requests(self):
@@ -29,7 +29,7 @@ class RequestTest(TestCase):
             timestamp=datetime.now(),
             text="",
             url="",
-            site=Site.objects.get_current()
+            site=self.site
         )
         title2 = "Awesomer Request"
         FeaturedRequest.objects.create(request=some_foireq,
@@ -37,7 +37,7 @@ class RequestTest(TestCase):
             timestamp=datetime.now() + timedelta(days=1),
             text="",
             url="",
-            site=Site.objects.get_current())
+            site=self.site)
         response = self.client.get(reverse('index') + "?bust_cache=true")
         self.assertEqual(response.status_code, 200)
         self.assertIn(title2, response.content)
