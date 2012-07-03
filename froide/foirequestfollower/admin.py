@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from foirequestfollower.models import FoiRequestFollower
+from .models import FoiRequestFollower
 
 
 class FoiRequestFollowerAdmin(admin.ModelAdmin):

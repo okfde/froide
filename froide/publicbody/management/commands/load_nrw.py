@@ -13,14 +13,17 @@ class Command(BaseCommand):
     topic_cache = {}
 
     def handle(self, directory, *args, **options):
-        translation.activate(settings.LANGUAGE_CODE)
         from django.contrib.auth.models import User
-        sw = User.objects.get(username='sw')
         from django.contrib.sites.models import Site
+
+        from froide.publicbody.models import (PublicBody, Jurisdiction, FoiLaw,
+            PublicBodyTopic)
+        translation.activate(settings.LANGUAGE_CODE)
+
+        sw = User.objects.get(username='sw')
         site = Site.objects.get_current()
-        from publicbody.models import PublicBodyTopic
-        self.topic_cache = dict([(pb.slug, pb) for pb in PublicBodyTopic.objects.all()])
-        from publicbody.models import PublicBody, Jurisdiction, FoiLaw
+        self.topic_cache = dict([(pb.slug, pb) for pb in
+                PublicBodyTopic.objects.all()])
         juris = Jurisdiction.objects.get(slug='nordrhein-westfalen')
 
         laws = FoiLaw.objects.filter(jurisdiction=juris)

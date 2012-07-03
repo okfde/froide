@@ -8,5 +8,5 @@ class Command(BaseCommand):
 
     def handle(self, source_id, **options):
         translation.activate(settings.LANGUAGE_CODE)
-        from foiidea.crawler import crawl_source_by_id
+        from froide.foiidea.crawler import crawl_source_by_id
         crawl_source_by_id(int(source_id))

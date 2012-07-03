@@ -8,5 +8,5 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         translation.activate(settings.LANGUAGE_CODE)
-        from foiidea.models import Article
+        from froide.foiidea.models import Article
         Article.objects.recalculate_order()

@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 
 
-urlpatterns = patterns("publicbody.views",
+urlpatterns = patterns("froide.publicbody.views",
     url(r"^$", 'show_jurisdiction', name="publicbody-show_jurisdiction"),
-# Translators: URL part
+    # Translators: URL part
     url(r"^%s/$" % _('entity'),
         lambda r, slug: HttpResponseRedirect(
             reverse("publicbody-show-pb_jurisdiction", kwargs={'slug': slug}))),

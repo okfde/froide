@@ -6,8 +6,8 @@ from django.conf import settings
 from django.utils import translation
 from django.db import transaction
 
-from foirequest.models import FoiRequest
-from foirequest.foi_mail import _process_mail, _fetch_mail
+from .models import FoiRequest
+from .foi_mail import _process_mail, _fetch_mail
 
 
 @task

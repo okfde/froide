@@ -1,8 +1,9 @@
 from haystack import indexes
 from haystack import site
 
-from foirequest.models import FoiRequest
-from helper.searchindex import QueuedRealTimeSearchIndex
+from froide.helper.searchindex import QueuedRealTimeSearchIndex
+
+from .models import FoiRequest
 
 
 class FoiRequestIndex(QueuedRealTimeSearchIndex):

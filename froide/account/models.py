@@ -82,7 +82,7 @@ class Profile(models.Model):
         return SetPasswordForm(self.user, *args, **kwargs)
 
     def get_address_change_form(self, *args, **kwargs):
-        from account.forms import UserChangeAddressForm
+        from froide.account.forms import UserChangeAddressForm
         return UserChangeAddressForm(self, *args, **kwargs)
 
 

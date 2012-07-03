@@ -2,9 +2,9 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
-from foirequest.models import FoiRequest
+from froide.helper.text_utils import unescape
 
-from helper.text_utils import unescape
+from froide.foirequest.models import FoiRequest
 
 register = template.Library()
 

@@ -4,10 +4,11 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 
-from foirequest.models import FoiRequest
-from foirequest.views import show
-from foirequestfollower.models import FoiRequestFollower
-from foirequestfollower.forms import FollowRequestForm
+from froide.foirequest.models import FoiRequest
+from froide.foirequest.views import show
+
+from .models import FoiRequestFollower
+from .forms import FollowRequestForm
 
 
 @require_POST

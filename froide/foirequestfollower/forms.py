@@ -3,8 +3,9 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
-from foirequest.models import User
-from foirequestfollower.models import FoiRequestFollower
+from froide.foirequest.models import User
+
+from .models import FoiRequestFollower
 
 
 class FollowRequestForm(forms.Form):

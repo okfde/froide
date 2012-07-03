@@ -173,10 +173,10 @@ INSTALLED_APPS = (
     'taggit',
 
     # local
-    'foirequest',
-    'foirequestfollower',
-    'publicbody',
-    'account',
+    'froide.foirequest',
+    'froide.foirequestfollower',
+    'froide.publicbody',
+    'froide.account',
 )
 
 # A sample logging configuration. The only tangible logging

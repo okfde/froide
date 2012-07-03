@@ -14,7 +14,7 @@ from taggit.utils import edit_string_for_tags
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 
-from foirequest.models import FoiRequest, FoiAttachment
+from .models import FoiRequest, FoiAttachment
 
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(

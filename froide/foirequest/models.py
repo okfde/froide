@@ -375,11 +375,11 @@ class FoiRequest(models.Model):
         self.status = 'awaiting_classification'
 
     def follow_count(self):
-        from foirequestfollower.models import FoiRequestFollower
+        from froide.foirequestfollower.models import FoiRequestFollower
         return FoiRequestFollower.objects.filter(request=self).count()
 
     def followed_by(self, user):
-        from foirequestfollower.models import FoiRequestFollower
+        from froide.foirequestfollower.models import FoiRequestFollower
         try:
             if isinstance(user, basestring):
                 return FoiRequestFollower.objects.get(request=self,
@@ -397,11 +397,11 @@ class FoiRequest(models.Model):
         return None
 
     def get_set_tags_form(self):
-        from foirequest.forms import TagFoiRequestForm
+        from .forms import TagFoiRequestForm
         return TagFoiRequestForm(self)
 
     def get_status_form(self):
-        from foirequest.forms import FoiRequestStatusForm
+        from .forms import FoiRequestStatusForm
         return FoiRequestStatusForm(self,
                     initial={"status": self.status,
                         "costs": self.costs,
@@ -454,26 +454,26 @@ class FoiRequest(models.Model):
         return constant_time_compare(code, self.get_auth_code())
 
     def public_body_suggestions_form(self):
-        from foirequest.forms import PublicBodySuggestionsForm
+        from .forms import PublicBodySuggestionsForm
         return PublicBodySuggestionsForm(self.public_body_suggestions())
 
     def make_public_body_suggestion_form(self):
-        from foirequest.forms import MakePublicBodySuggestionForm
+        from .forms import MakePublicBodySuggestionForm
         return MakePublicBodySuggestionForm()
 
     def get_concrete_law_form(self):
-        from foirequest.forms import ConcreteLawForm
+        from .forms import ConcreteLawForm
         return ConcreteLawForm(self)
 
     def get_postal_reply_form(self):
-        from foirequest.forms import PostalReplyForm
+        from .forms import PostalReplyForm
         return PostalReplyForm(initial={"date": datetime.now().date()})
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
 
     def get_send_message_form(self):
-        from foirequest.forms import SendMessageForm
+        from .forms import SendMessageForm
         last_message = list(self.messages)[-1]
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
@@ -489,7 +489,7 @@ class FoiRequest(models.Model):
                     "message": message})
 
     def get_escalation_message_form(self):
-        from foirequest.forms import EscalationMessageForm
+        from .forms import EscalationMessageForm
         subject = _('Complaint about request "%(title)s"'
                 ) % {"title": self.title}
         return EscalationMessageForm(self,
@@ -934,7 +934,7 @@ class FoiMessage(models.Model):
                 self.get_html_id())
 
     def get_public_body_sender_form(self):
-        from foirequest.forms import MessagePublicBodySenderForm
+        from froide.foirequest.forms import MessagePublicBodySenderForm
         return MessagePublicBodySenderForm(self)
 
     def get_recipient(self):
@@ -1021,7 +1021,7 @@ class FoiMessage(models.Model):
                     'Message may not be from user and public body')
 
     def get_postal_attachment_form(self):
-        from foirequest.forms import PostalAttachmentForm
+        from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
     def send(self):
@@ -1255,4 +1255,4 @@ class FoiEvent(models.Model):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
 # Import Signals here so models are available
-import foirequest.signals  # noqa
+import froide.foirequest.signals  # noqa

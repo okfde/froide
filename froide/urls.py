@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 from django.contrib import admin
 admin.autodiscover()
 
-from publicbody.models import Jurisdiction
+from froide.publicbody.models import Jurisdiction
 
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
@@ -42,11 +42,11 @@ urlpatterns += patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Translators: URL part
-    (r'^%s/' % _('account'), include('account.urls')),
+    (r'^%s/' % _('account'), include('froide.account.urls')),
     # Translators: URL part
-    (r'^%s/' % _('profile'), include('account.profile_urls')),
+    (r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
-    (r'^%s/' % _('news'), include('foiidea.urls')),
+    (r'^%s/' % _('news'), include('froide.foiidea.urls')),
     # Translators: URL part
     (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
     # Translators: URL part

@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
-from publicbody.models import PublicBody, Jurisdiction
+from .models import PublicBody, Jurisdiction
 
 
 class PublicBodySelect(forms.Widget):

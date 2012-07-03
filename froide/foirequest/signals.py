@@ -5,10 +5,10 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from foirequest.models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
-from froide.foirequest.tasks import count_same_foirequests
-
 from froide.helper.tasks import delayed_update
+
+from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
+from .tasks import count_same_foirequests
 
 
 @receiver(FoiRequest.became_overdue,

@@ -6,8 +6,8 @@ from django.conf import settings
 from django.utils import translation
 from django.db import transaction
 
-from foiidea.crawler import crawl_source_by_id
-from foiidea.models import Article
+from .crawler import crawl_source_by_id
+from .models import Article
 
 
 @task

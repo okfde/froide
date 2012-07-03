@@ -4,9 +4,10 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
-from publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
-from foirequest.models import FoiRequest, FoiAttachment
-from foirequest.tests import factories
+from froide.publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
+from froide.foirequest.models import FoiRequest, FoiAttachment
+from froide.foirequest.tests import factories
+from froide.helper.test_utils import skip_if_environ
 
 
 class WebTest(TestCase):
@@ -180,6 +181,7 @@ class WebTest(TestCase):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
 
+    @skip_if_environ('FROIDE_SKIP_SOLR')
     def test_search_similar(self):
         response = self.client.get(reverse('foirequest-search_similar'))
         self.assertEqual(response.status_code, 200)
@@ -193,6 +195,7 @@ class WebTest(TestCase):
         self.assertIn('public_body_name', content)
         self.assertIn('url', content)
 
+    @skip_if_environ('FROIDE_SKIP_SOLR')
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)
@@ -213,7 +216,8 @@ class MediaServingTest(TestCase):
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn('X-Accel-Redirect', response)
-        self.assertEqual(response['X-Accel-Redirect'], settings.MEDIA_URL + att.file.url)
+        self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
+            settings.X_ACCEL_REDIRECT_PREFIX, att.file.url))
 
     def test_attachment_not_approved(self):
         att = FoiAttachment.objects.filter(approved=False)[0]

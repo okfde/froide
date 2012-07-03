@@ -6,10 +6,11 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.core import mail
 
-from publicbody.models import PublicBody
-from foirequest.models import FoiRequest, FoiMessage
-from foirequest.tests import factories
-from account.models import AccountManager
+from froide.publicbody.models import PublicBody
+from froide.foirequest.models import FoiRequest, FoiMessage
+from froide.foirequest.tests import factories
+
+from .models import AccountManager
 
 
 class AccountTest(TestCase):

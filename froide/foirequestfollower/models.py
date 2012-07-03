@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 
-from foirequest.models import FoiRequest
+from froide.foirequest.models import FoiRequest
 
 
 class FoiRequestFollowerManager(models.Manager):

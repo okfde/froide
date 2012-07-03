@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from froide.foiidea.models import Source, Article
+from .models import Source, Article
 
 
 class SourceAdmin(admin.ModelAdmin):

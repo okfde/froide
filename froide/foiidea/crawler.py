@@ -4,8 +4,8 @@ from datetime import datetime
 
 import requests
 
-from foiidea.crawlers import rss
-from foiidea.models import Source, Article
+from .crawlers import rss
+from .models import Source, Article
 
 CRAWLER = {
     'rss': rss
@@ -48,7 +48,7 @@ def crawl_source(source):
 
         # Try to match public bodies
         if public_bodies is None:
-            from publicbody.models import PublicBody
+            from froide.publicbody.models import PublicBody
             public_bodies = PublicBody.objects.all().values_list('id', 'name', 'other_names')
         pbs = []
         for public_body_id, name, other_names in public_bodies:

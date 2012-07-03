@@ -10,9 +10,9 @@ from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
-from account.models import Profile
-from publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
-from foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
+from froide.account.models import Profile
+from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
+from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
     PublicBodySuggestion)
 
 

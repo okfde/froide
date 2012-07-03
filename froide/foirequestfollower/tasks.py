@@ -9,8 +9,9 @@ from django.conf import settings
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 
-from foirequest.models import FoiRequest, FoiEvent, FoiMessage
-from foirequestfollower.models import FoiRequestFollower
+from froide.foirequest.models import FoiRequest, FoiEvent, FoiMessage
+
+from .models import FoiRequestFollower
 
 
 @task

@@ -1,6 +1,6 @@
 from django import template
 
-from foirequestfollower.forms import FollowRequestForm
+from froide.foirequestfollower.forms import FollowRequestForm
 
 register = template.Library()
 

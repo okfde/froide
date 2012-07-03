@@ -37,7 +37,7 @@ def send_foi_mail(subject, message, from_email, recipient_list,
 
 def _process_mail(mail_string):
 
-    from foirequest.models import FoiRequest
+    from .models import FoiRequest
 
     parser = EmailParser()
     email = parser.parse(mail_string)

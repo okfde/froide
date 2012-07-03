@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from foiidea.models import Article
+from .models import Article
 
 
 def index(request):

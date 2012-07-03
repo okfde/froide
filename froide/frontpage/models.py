@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 
-from foirequest.models import FoiRequest
+from froide.foirequest.models import FoiRequest
 
 
 class FeaturedRequestManager(CurrentSiteManager):

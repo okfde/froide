@@ -3,9 +3,9 @@ from django.conf import settings
 from haystack import indexes
 from haystack import site
 
-from publicbody.models import PublicBody
-from helper.searchindex import QueuedRealTimeSearchIndex
+from froide.helper.searchindex import QueuedRealTimeSearchIndex
 
+from .models import PublicBody
 
 PUBLIC_BODY_BOOSTS = getattr(settings, "FROIDE_PUBLIC_BODY_BOOSTS", {})
 

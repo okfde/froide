@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from publicbody.models import PublicBody, FoiLaw
-from foirequest.tests import factories
+from froide.foirequest.tests import factories
+from froide.helper.test_utils import skip_if_environ
+
+from .models import PublicBody, FoiLaw
 
 
 class PublicBodyTest(TestCase):
@@ -35,6 +37,7 @@ class PublicBodyTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(pb.name, response.content.decode('utf-8'))
 
+    @skip_if_environ('FROIDE_SKIP_SOLR')
     def test_autocomplete(self):
         import json
         response = self.client.get(
@@ -54,6 +57,7 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv()
         self.assertTrue(csv)
 
+    @skip_if_environ('FROIDE_SKIP_SOLR')
     def test_search(self):
         response = self.client.get(reverse('publicbody-search_json') + "?q=abc")
         self.assertIn("Selbstschutzschule", response.content)  # fails if search is not available

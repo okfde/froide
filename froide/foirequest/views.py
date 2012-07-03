@@ -15,20 +15,20 @@ from django.contrib.auth.models import User
 from haystack.query import SearchQuerySet
 from taggit.models import Tag
 
-from account.forms import NewUserForm
-from account.models import AccountManager
-from publicbody.forms import PublicBodyForm
-from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
-from frontpage.models import FeaturedRequest
+from froide.account.forms import NewUserForm
+from froide.account.models import AccountManager
+from froide.publicbody.forms import PublicBodyForm
+from froide.publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
+from froide.frontpage.models import FeaturedRequest
+from froide.helper.utils import render_400, render_403
+from froide.helper.cache import cache_anonymous_page
+from froide.redaction.utils import convert_to_pdf
 
-from foirequest.forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
-from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
-from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
+from .forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
+from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
+from .forms import (SendMessageForm, FoiRequestStatusForm,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm,
         MessagePublicBodySenderForm, EscalationMessageForm)
-from froide.helper.utils import render_400, render_403
-from helper.cache import cache_anonymous_page
-from redaction.utils import convert_to_pdf
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 

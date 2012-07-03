@@ -97,7 +97,7 @@ def comment_was_posted_article(sender, comment, request, **kwargs):
     article.save()
 
 
-from foirequest.models import FoiRequest
+from froide.foirequest.models import FoiRequest
 
 
 @receiver(FoiRequest.request_created,

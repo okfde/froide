@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext as _
 
-from helper.widgets import EmailInput
+from froide.helper.widgets import EmailInput
 
 
 class PublicBodyForm(forms.Form):

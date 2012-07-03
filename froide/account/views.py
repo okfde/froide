@@ -11,12 +11,13 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
 from django.utils.http import base36_to_int
 
-from account.forms import UserLoginForm, NewUserForm, UserChangeAddressForm
-from account.models import AccountManager, User
-from foirequestfollower.models import FoiRequestFollower
-from foirequest.models import FoiRequest, FoiEvent
+from froide.foirequestfollower.models import FoiRequestFollower
+from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
+
+from .forms import UserLoginForm, NewUserForm, UserChangeAddressForm
+from .models import AccountManager, User
 
 
 def confirm(request, user_id, secret, request_id=None):

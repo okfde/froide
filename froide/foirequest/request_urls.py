@@ -1,9 +1,9 @@
 from django.conf.urls.defaults import patterns, url
 
-from foirequest.feeds import FoiRequestFeed, FoiRequestFeedAtom
+from .feeds import FoiRequestFeed, FoiRequestFeedAtom
 
 
-urlpatterns = patterns("foirequest.views",
+urlpatterns = patterns("froide.foirequest.views",
     url(r"^(?P<obj_id>\d+)$", 'shortlink', name="foirequest-shortlink"),
     url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'auth', name="foirequest-auth"),
     url(r"^(?P<slug>[-\w]+)/$", 'show', name="foirequest-show"),

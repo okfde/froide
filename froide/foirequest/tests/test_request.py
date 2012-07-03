@@ -10,9 +10,9 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import mail
 
-from foirequest.tests import factories
-from publicbody.models import PublicBody, FoiLaw
-from foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.publicbody.models import PublicBody, FoiLaw
+from froide.foirequest.tests import factories
+from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 
 
 class RequestTest(TestCase):
@@ -570,7 +570,7 @@ class RequestTest(TestCase):
     #     self.assertEqual(response.status_code, 302)
 
     def test_set_message_sender(self):
-        from foirequest.forms import MessagePublicBodySenderForm
+        from froide.foirequest.forms import MessagePublicBodySenderForm
         mail.outbox = []
         self.client.login(username="dummy", password="froide")
         pb = PublicBody.objects.all()[0]

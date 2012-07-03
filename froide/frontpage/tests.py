@@ -8,8 +8,9 @@ from django.conf import settings
 from django.utils import translation
 from django.contrib.sites.models import Site
 
-from frontpage.models import FeaturedRequest
-from foirequest.models import FoiRequest
+from froide.foirequest.models import FoiRequest
+
+from .models import FeaturedRequest
 
 
 class RequestTest(TestCase):
