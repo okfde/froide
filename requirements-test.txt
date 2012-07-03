@@ -1,0 +1,27 @@
+Markdown==2.0.3
+celery==2.3.1
+South==0.7.3
+coverage==3.5.1
+pep8==1.3.3
+django-celery==2.3.3
+-e hg+https://bitbucket.org/pmclanahan/django-celery-email@213c771215bb4c3dec9dac184ed3eec228ceca07#egg=django_celery_email-dev
+django-debug-toolbar==0.8.5
+-e git://github.com/stefanw/django-haystack.git@2e0a89219a4be16f831e1f4d028d128d8de6b46e#egg=django_haystack-dev
+django-indexer==0.3.0
+django-kombu==0.9.4
+django-pagination==1.0.7
+django-paging==0.2.4
+django-picklefield==0.1.9
+django-secure==0.1.0
+django-sentry==1.8.6.2
+django-taggit==0.9.3
+django-templatetag-sugar==0.1
+kombu==1.2.1
+ordereddict==1.1
+pysolr==2.0.13
+python-dateutil==1.5
+pytz==2011e
+-e git://github.com/dnerdy/factory_boy.git#egg=factory
+lxml==2.3.4
+feedparser==5.1.2
+requests==0.12.1
