@@ -579,7 +579,7 @@
   </table>
   {% if message.not_publishable %}
     <div class="info">
-      <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, due to copyright law we are not allowed to publish these documents online.{% endblocktrans %}</p>
+      <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, we are not allowed to publish these documents online.{% endblocktrans %}</p>
     {% if user.is_authenticated %}
       {% if object.user == user %}
         <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
