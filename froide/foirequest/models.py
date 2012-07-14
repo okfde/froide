@@ -1056,14 +1056,15 @@ class FoiAttachment(models.Model):
         null=True, blank=True, on_delete=models.SET_NULL)
     is_redacted = models.BooleanField(_("Is redacted"), default=False)
 
-    POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
-            "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
-            "text/pdf", "text/x-pdf", "application/text-plain:formatted", "text/plain")
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/x-pdf',
-            )
+            'application/x-pdf', 'pdf/application', 'application/acrobat',
+            'applications/vnd.pdf', 'text/pdf', 'text/x-pdf'
+    )
+
+    POSTAL_CONTENT_TYPES = PREVIEWABLE_FILETYPES + ("image/png", "image/jpeg", "image/jpg",
+            "image/jpg", "application/text-plain:formatted", "text/plain")
 
     class Meta:
         ordering = ('name',)
