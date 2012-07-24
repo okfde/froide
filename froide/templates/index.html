@@ -3,7 +3,7 @@
 {% load url from future %}
 
 {% block banner %}
-   {% comment %}<div class="banner success">
+   <div class="banner success">
     <strong>
       {% trans "Like this? Consider supporting us!" %}
       <a href="{% url 'help-about' %}#spenden">{% trans "Donate now!" %}</a>
@@ -11,7 +11,7 @@
       <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
     </a>
     </strong>
-  </div>{% endcomment %}
+  </div>
 {% endblock %}
 
 {% block body %}
