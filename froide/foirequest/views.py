@@ -42,7 +42,7 @@ def index(request):
             {'featured': featured,
             'successful_foi_requests': successful_foi_requests,
             'unsuccessful_foi_requests': unsuccessful_foi_requests,
-            'foicount': FoiRequest.published.count(),
+            'foicount': FoiRequest.published.for_list_view().count(),
             'pbcount': PublicBody.objects.get_list().count()
         })
 
