@@ -5,6 +5,7 @@ import re
 
 from django.db import models
 from django.db.models import Q
+from django.db import IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -648,23 +649,33 @@ Sincerely yours
         request.law = foi_law
         if foi_law is not None:
             request.jurisdiction = foi_law.jurisdiction
-        # ensure slug is unique
-        request.slug = slugify(request.title)
-        count = 0
-        postfix = ""
-        while True:
-            if count:
-                postfix = "-%d" % count
-            try:
-                FoiRequest.objects.get(slug=request.slug + postfix)
-            except FoiRequest.DoesNotExist:
-                break
-            count += 1
-        request.slug += postfix
-
         if send_now:
             request.due_date = request.law.calculate_due_date()
-        request.save()
+
+        # ensure slug is unique
+        while True:
+            request.slug = slugify(request.title)
+            first_round = True
+            count = 0
+            postfix = ""
+            try:
+                while True:
+                    if not first_round:
+                        postfix = "-%d" % count
+                    if not FoiRequest.objects.filter(slug=request.slug + postfix).exists():
+                        break
+                    if first_round:
+                        first_round = False
+                        count = FoiRequest.objects.filter(slug__startswith=request.slug).count()
+                    else:
+                        count += 1
+                request.slug += postfix
+                request.save()
+            except IntegrityError:
+                pass
+            else:
+                break
+
         message = FoiMessage(request=request,
                 sent=False,
                 is_response=False,
