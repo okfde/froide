@@ -25,6 +25,7 @@ class NewUserForm(forms.Form):
             widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
                 'class': 'inline smalltext'}))
     user_email = forms.EmailField(label=_('Email address'),
+            help_text=_('Not public, you will need to confirm this address.'),
             widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
 
     if USER_CAN_HIDE_WEB:

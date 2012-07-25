@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-24 20:34+0200\n"
+"POT-Creation-Date: 2012-07-25 10:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: account/forms.py:23 account/forms.py:87
+#: account/forms.py:23 account/forms.py:88
 msgid "Mailing Address"
 msgstr ""
 
@@ -127,38 +127,42 @@ msgstr ""
 msgid "Your address will not be displayed publicly."
 msgstr ""
 
-#: account/forms.py:25 account/forms.py:89
+#: account/forms.py:25 account/forms.py:90
 msgid "Street, Post Code, City"
 msgstr ""
 
-#: account/forms.py:27 account/forms.py:80
+#: account/forms.py:27 account/forms.py:81
 msgid "Email address"
 msgstr ""
 
-#: account/forms.py:28 account/forms.py:79
+#: account/forms.py:28
+msgid "Not public, you will need to confirm this address."
+msgstr ""
+
+#: account/forms.py:29 account/forms.py:80
 msgid "mail@ddress.net"
 msgstr ""
 
-#: account/forms.py:32
+#: account/forms.py:33
 msgid "Hide my name on the web"
 msgstr ""
 
-#: account/forms.py:33
+#: account/forms.py:34
 msgid ""
 "If you check this, your name will still appear in requests to public bodies, "
 "but we will do our best to not display it publicly. However, we cannot "
 "guarantee your anonymity"
 msgstr ""
 
-#: account/forms.py:35
+#: account/forms.py:36
 msgid "Terms and Conditions and Privacy Statement"
 msgstr ""
 
-#: account/forms.py:37
+#: account/forms.py:38
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
 msgstr ""
 
-#: account/forms.py:39
+#: account/forms.py:40
 #, python-format
 msgid ""
 "You agree to our <a href=\"%(url_terms)s\" class=\"target-new\">Terms and "
@@ -166,32 +170,32 @@ msgid ""
 "Statement</a>"
 msgstr ""
 
-#: account/forms.py:57
+#: account/forms.py:58
 #, python-format
 msgid ""
 "This email address already has an account. <a href=\"%s?simple\" class="
 "\"target-small\">Please login using that email address.</a>"
 msgstr ""
 
-#: account/forms.py:60
+#: account/forms.py:61
 msgid ""
 "This email address is already registered, but not yet confirmed! Please "
 "click on the confirmation link in the mail we send you."
 msgstr ""
 
-#: account/forms.py:66 account/forms.py:82
+#: account/forms.py:67 account/forms.py:83
 msgid "Password"
 msgstr ""
 
-#: account/forms.py:68
+#: account/forms.py:69
 msgid "Password (repeat)"
 msgstr ""
 
-#: account/forms.py:73
+#: account/forms.py:74
 msgid "Passwords do not match!"
 msgstr ""
 
-#: account/forms.py:88
+#: account/forms.py:89
 msgid "Your address will never be displayed publicly."
 msgstr ""
 
@@ -494,17 +498,17 @@ msgstr ""
 msgid "Your Freedom of Information Requests"
 msgstr ""
 
-#: account/templates/account/show.html:57 foirequest/models.py:198
+#: account/templates/account/show.html:57 foirequest/models.py:199
 #: frontpage/models.py:22
 msgid "Title"
 msgstr ""
 
-#: account/templates/account/show.html:58 foirequest/models.py:883
+#: account/templates/account/show.html:58 foirequest/models.py:889
 msgid "Recipient"
 msgstr ""
 
 #: account/templates/account/show.html:59 foirequest/forms.py:251
-#: foirequest/models.py:208 foirequest/models.py:890
+#: foirequest/models.py:209 foirequest/models.py:896
 #: foirequest/templates/foirequest/show.html:471
 msgid "Status"
 msgstr ""
@@ -513,7 +517,7 @@ msgstr ""
 msgid "Last Message"
 msgstr ""
 
-#: account/templates/account/show.html:61 foirequest/models.py:194
+#: account/templates/account/show.html:61 foirequest/models.py:195
 msgid "Public"
 msgstr ""
 
@@ -705,7 +709,7 @@ msgstr ""
 
 #: foirequest/forms.py:30 foirequest/forms.py:31 foirequest/forms.py:155
 #: foirequest/forms.py:216 foirequest/forms.py:323 foirequest/forms.py:325
-#: foirequest/models.py:894
+#: foirequest/models.py:900
 #: foirequest/templates/foirequest/_request_form.html:11
 #: foirequest/templates/foirequest/request.html:253
 #: foirequest/templates/foirequest/show.html:452
@@ -893,297 +897,297 @@ msgctxt "URL part"
 msgid "to"
 msgstr ""
 
-#: foirequest/models.py:116
+#: foirequest/models.py:117
 msgid "FoI Request Tag"
 msgstr ""
 
-#: foirequest/models.py:117
+#: foirequest/models.py:118
 msgid "FoI Request Tags"
 msgstr ""
 
-#: foirequest/models.py:122
+#: foirequest/models.py:123
 msgid "Awaiting user confirmation"
 msgstr ""
 
-#: foirequest/models.py:123
+#: foirequest/models.py:124
 msgid "The requester's email address is yet to be confirmed."
 msgstr ""
 
-#: foirequest/models.py:124
+#: foirequest/models.py:125
 msgid "Public Body needed"
 msgstr ""
 
-#: foirequest/models.py:125
+#: foirequest/models.py:126
 msgid "This request still needs a Public Body."
 msgstr ""
 
-#: foirequest/models.py:127
+#: foirequest/models.py:128
 msgid "Awaiting Public Body confirmation"
 msgstr ""
 
-#: foirequest/models.py:128
+#: foirequest/models.py:129
 msgid ""
 "The Public Body of this request has been created by the user and still needs "
 "to be confirmed."
 msgstr ""
 
-#: foirequest/models.py:130
+#: foirequest/models.py:131
 msgid "Request awaits classification"
 msgstr ""
 
-#: foirequest/models.py:131
+#: foirequest/models.py:132
 msgid "A message was received and the user needs to set a new status."
 msgstr ""
 
-#: foirequest/models.py:132
+#: foirequest/models.py:133
 msgid "Response overdue"
 msgstr ""
 
-#: foirequest/models.py:133
+#: foirequest/models.py:134
 msgid "The request has not been answered in the legal time limit."
 msgstr ""
 
-#: foirequest/models.py:134
+#: foirequest/models.py:135
 msgid "Request escalated"
 msgstr ""
 
-#: foirequest/models.py:135
+#: foirequest/models.py:136
 msgid "The request has been escalated to the mediating entity."
 msgstr ""
 
-#: foirequest/models.py:138
+#: foirequest/models.py:139
 msgid "Awaiting response"
 msgstr ""
 
-#: foirequest/models.py:139
+#: foirequest/models.py:140
 msgid "This request is still waiting for a response from the Public Body."
 msgstr ""
 
-#: foirequest/models.py:144
+#: foirequest/models.py:145
 msgid "Request was redirected to another Public Body"
 msgstr ""
 
-#: foirequest/models.py:145
+#: foirequest/models.py:146
 msgid "The current Public Body redirected the request to another Public Body."
 msgstr ""
 
-#: foirequest/models.py:147
+#: foirequest/models.py:148
 msgid "Request Successful"
 msgstr ""
 
-#: foirequest/models.py:148
+#: foirequest/models.py:149
 msgid "The request has been successul."
 msgstr ""
 
-#: foirequest/models.py:150
+#: foirequest/models.py:151
 msgid "Request partially successful"
 msgstr ""
 
-#: foirequest/models.py:151
+#: foirequest/models.py:152
 msgid ""
 "The request has been partially successful (some information was provided, "
 "but not all)"
 msgstr ""
 
-#: foirequest/models.py:153
+#: foirequest/models.py:154
 msgid "Information not held"
 msgstr ""
 
-#: foirequest/models.py:154
+#: foirequest/models.py:155
 msgid "The Public Body stated that it does not possess the information."
 msgstr ""
 
-#: foirequest/models.py:156
+#: foirequest/models.py:157
 msgid "Request refused"
 msgstr ""
 
-#: foirequest/models.py:157
+#: foirequest/models.py:158
 msgid "The Public Body refuses to provide the information."
 msgstr ""
 
-#: foirequest/models.py:159
+#: foirequest/models.py:160
 msgid "Request was withdrawn due to costs"
 msgstr ""
 
-#: foirequest/models.py:160
+#: foirequest/models.py:161
 msgid "User withdrew the request due to the associated costs."
 msgstr ""
 
-#: foirequest/models.py:162
+#: foirequest/models.py:163
 msgid "Request was withdrawn"
 msgstr ""
 
-#: foirequest/models.py:163
+#: foirequest/models.py:164
 msgid "User withdrew the request for other reasons."
 msgstr ""
 
-#: foirequest/models.py:173
+#: foirequest/models.py:174
 msgid "successful"
 msgstr ""
 
-#: foirequest/models.py:174
+#: foirequest/models.py:175
 msgid "partially-successful"
 msgstr ""
 
-#: foirequest/models.py:175
+#: foirequest/models.py:176
 msgid "refused"
 msgstr ""
 
-#: foirequest/models.py:176
+#: foirequest/models.py:177
 msgid "escalated"
 msgstr ""
 
-#: foirequest/models.py:177
+#: foirequest/models.py:178
 msgid "withdrawn"
 msgstr ""
 
-#: foirequest/models.py:178
+#: foirequest/models.py:179
 msgid "withdrawn-costs"
 msgstr ""
 
-#: foirequest/models.py:179
+#: foirequest/models.py:180
 msgid "publicbody-needed"
 msgstr ""
 
-#: foirequest/models.py:180
+#: foirequest/models.py:181
 msgid "awaiting-response"
 msgstr ""
 
-#: foirequest/models.py:181
+#: foirequest/models.py:182
 msgid "overdue"
 msgstr ""
 
-#: foirequest/models.py:182
+#: foirequest/models.py:183
 msgid "not-held"
 msgstr ""
 
-#: foirequest/models.py:192
+#: foirequest/models.py:193
 msgid "Invisible"
 msgstr ""
 
-#: foirequest/models.py:193
+#: foirequest/models.py:194
 msgid "Visible to Requester"
 msgstr ""
 
-#: foirequest/models.py:199 publicbody/models.py:30 publicbody/models.py:68
+#: foirequest/models.py:200 publicbody/models.py:30 publicbody/models.py:68
 #: publicbody/models.py:179 publicbody/models.py:196
 msgid "Slug"
 msgstr ""
 
-#: foirequest/models.py:200 publicbody/models.py:31 publicbody/models.py:69
+#: foirequest/models.py:201 publicbody/models.py:31 publicbody/models.py:69
 #: publicbody/models.py:180 publicbody/models.py:197
 msgid "Description"
 msgstr ""
 
-#: foirequest/models.py:201 foirequest/templates/foirequest/show.html:337
+#: foirequest/models.py:202 foirequest/templates/foirequest/show.html:337
 msgid "Resolution Summary"
 msgstr ""
 
-#: foirequest/models.py:204 foirequest/models.py:846 foirequest/models.py:1155
+#: foirequest/models.py:205 foirequest/models.py:852 foirequest/models.py:1161
 #: publicbody/models.py:244
 msgid "Public Body"
 msgstr ""
 
-#: foirequest/models.py:206
+#: foirequest/models.py:207
 msgid "published?"
 msgstr ""
 
-#: foirequest/models.py:210
+#: foirequest/models.py:211
 msgid "Visibility"
 msgstr ""
 
-#: foirequest/models.py:215 foirequest/models.py:849 foirequest/models.py:1152
+#: foirequest/models.py:216 foirequest/models.py:855 foirequest/models.py:1158
 #: foirequestfollower/models.py:44 frontpage/models.py:27
 msgid "User"
 msgstr ""
 
-#: foirequest/models.py:217
+#: foirequest/models.py:218
 msgid "Date of first message"
 msgstr ""
 
-#: foirequest/models.py:219
+#: foirequest/models.py:220
 msgid "Date of last message"
 msgstr ""
 
-#: foirequest/models.py:221
+#: foirequest/models.py:222
 msgid "Resolution date"
 msgstr ""
 
-#: foirequest/models.py:223
+#: foirequest/models.py:224
 msgid "Due Date"
 msgstr ""
 
-#: foirequest/models.py:226
+#: foirequest/models.py:227
 msgid "Secret address"
 msgstr ""
 
-#: foirequest/models.py:228
+#: foirequest/models.py:229
 msgid "Secret"
 msgstr ""
 
-#: foirequest/models.py:232
+#: foirequest/models.py:233
 msgid "Identical request"
 msgstr ""
 
-#: foirequest/models.py:233
+#: foirequest/models.py:234
 msgid "Identical request count"
 msgstr ""
 
-#: foirequest/models.py:237 publicbody/models.py:102
+#: foirequest/models.py:238 publicbody/models.py:102
 msgid "Freedom of Information Law"
 msgstr ""
 
-#: foirequest/models.py:238
+#: foirequest/models.py:239
 msgid "Cost of Information"
 msgstr ""
 
-#: foirequest/models.py:239
+#: foirequest/models.py:240
 msgid "Refusal reason"
 msgstr ""
 
-#: foirequest/models.py:241
+#: foirequest/models.py:242
 msgid "checked"
 msgstr ""
 
-#: foirequest/models.py:242
+#: foirequest/models.py:243
 msgid "is FoI request"
 msgstr ""
 
-#: foirequest/models.py:244 publicbody/models.py:38 publicbody/models.py:77
+#: foirequest/models.py:245 publicbody/models.py:38 publicbody/models.py:77
 #: publicbody/models.py:232 publicbody/templates/publicbody/show.html:16
 msgid "Jurisdiction"
 msgstr ""
 
-#: foirequest/models.py:248 frontpage/models.py:29 publicbody/models.py:97
+#: foirequest/models.py:249 frontpage/models.py:29 publicbody/models.py:97
 #: publicbody/models.py:229
 msgid "Site"
 msgstr ""
 
-#: foirequest/models.py:259 foirequest/models.py:844 foirequest/models.py:864
-#: foirequest/models.py:1149 foirequestfollower/models.py:43
+#: foirequest/models.py:260 foirequest/models.py:850 foirequest/models.py:870
+#: foirequest/models.py:1155 foirequestfollower/models.py:43
 msgid "Freedom of Information Request"
 msgstr ""
 
-#: foirequest/models.py:260 templates/base.html:6 templates/simple_base.html:6
+#: foirequest/models.py:261 templates/base.html:6 templates/simple_base.html:6
 msgid "Freedom of Information Requests"
 msgstr ""
 
-#: foirequest/models.py:276
+#: foirequest/models.py:277
 #, python-format
 msgid "Request '%s'"
 msgstr ""
 
-#: foirequest/models.py:327 foirequest/models.py:994 foirequest/models.py:1006
-#: foirequest/models.py:1013
+#: foirequest/models.py:328 foirequest/models.py:1000
+#: foirequest/models.py:1012 foirequest/models.py:1019
 msgid "<<email address>>"
 msgstr ""
 
-#: foirequest/models.py:478
+#: foirequest/models.py:479
 #, python-format
 msgid "Re: %(subject)s"
 msgstr ""
 
-#: foirequest/models.py:485
+#: foirequest/models.py:486
 #, python-format
 msgid ""
 "Dear Sir or Madam,\n"
@@ -1194,12 +1198,12 @@ msgid ""
 "%(name)s\n"
 msgstr ""
 
-#: foirequest/models.py:493
+#: foirequest/models.py:494
 #, python-format
 msgid "Complaint about request \"%(title)s\""
 msgstr ""
 
-#: foirequest/models.py:497
+#: foirequest/models.py:498
 #, python-format
 msgid ""
 "Dear Sir or Madam,\n"
@@ -1215,285 +1219,285 @@ msgid ""
 "%(name)s"
 msgstr ""
 
-#: foirequest/models.py:536
+#: foirequest/models.py:537
 #, python-format
 msgid "attached_file_%d"
 msgstr ""
 
-#: foirequest/models.py:546
+#: foirequest/models.py:547
 msgid "Message contains PDF"
 msgstr ""
 
-#: foirequest/models.py:615 foirequest/models.py:619
+#: foirequest/models.py:616 foirequest/models.py:620
 msgid "Unknown"
 msgstr ""
 
-#: foirequest/models.py:820
+#: foirequest/models.py:826
 #, python-format
 msgid "%(site_name)s: Please classify the reply to your request"
 msgstr ""
 
-#: foirequest/models.py:830 foirequestfollower/models.py:99
+#: foirequest/models.py:836 foirequestfollower/models.py:99
 #, python-format
 msgid "%(site_name)s: Update on request %(request)s"
 msgstr ""
 
-#: foirequest/models.py:850
+#: foirequest/models.py:856
 msgid "Timestamp of Suggestion"
 msgstr ""
 
-#: foirequest/models.py:852
+#: foirequest/models.py:858
 msgid "Reason this Public Body fits the request"
 msgstr ""
 
-#: foirequest/models.py:858
+#: foirequest/models.py:864
 msgid "Public Body Suggestion"
 msgstr ""
 
-#: foirequest/models.py:859
+#: foirequest/models.py:865
 msgid "Public Body Suggestions"
 msgstr ""
 
-#: foirequest/models.py:865
+#: foirequest/models.py:871
 msgid "has message been sent?"
 msgstr ""
 
-#: foirequest/models.py:866
+#: foirequest/models.py:872
 msgid "Is this message a response?"
 msgstr ""
 
-#: foirequest/models.py:868
+#: foirequest/models.py:874
 msgid "Postal?"
 msgstr ""
 
-#: foirequest/models.py:870
+#: foirequest/models.py:876
 msgid "Escalation?"
 msgstr ""
 
-#: foirequest/models.py:874
+#: foirequest/models.py:880
 msgid "From User"
 msgstr ""
 
-#: foirequest/models.py:875
+#: foirequest/models.py:881
 msgid "From Email"
 msgstr ""
 
-#: foirequest/models.py:877
+#: foirequest/models.py:883
 msgid "From Name"
 msgstr ""
 
-#: foirequest/models.py:881
+#: foirequest/models.py:887
 msgid "From Public Body"
 msgstr ""
 
-#: foirequest/models.py:885
+#: foirequest/models.py:891
 msgid "Recipient Email"
 msgstr ""
 
-#: foirequest/models.py:889
+#: foirequest/models.py:895
 msgid "Public Body Recipient"
 msgstr ""
 
-#: foirequest/models.py:893 foirequest/models.py:1158 frontpage/models.py:21
+#: foirequest/models.py:899 foirequest/models.py:1164 frontpage/models.py:21
 msgid "Timestamp"
 msgstr ""
 
-#: foirequest/models.py:895
+#: foirequest/models.py:901
 msgid "plain text"
 msgstr ""
 
-#: foirequest/models.py:896
+#: foirequest/models.py:902
 msgid "HTML"
 msgstr ""
 
-#: foirequest/models.py:897
+#: foirequest/models.py:903
 msgid "Original"
 msgstr ""
 
-#: foirequest/models.py:898
+#: foirequest/models.py:904
 msgid "Was Redacted?"
 msgstr ""
 
-#: foirequest/models.py:899
+#: foirequest/models.py:905
 msgid "Not publishable"
 msgstr ""
 
-#: foirequest/models.py:905
+#: foirequest/models.py:911
 msgid "Freedom of Information Message"
 msgstr ""
 
-#: foirequest/models.py:906
+#: foirequest/models.py:912
 msgid "Freedom of Information Messages"
 msgstr ""
 
-#: foirequest/models.py:913
+#: foirequest/models.py:919
 #, python-format
 msgid "Message in '%(request)s' at %(time)s"
 msgstr ""
 
-#: foirequest/models.py:922
+#: foirequest/models.py:928
 #, python-format
 msgid "message-%(id)d"
 msgstr ""
 
-#: foirequest/models.py:993 foirequest/models.py:1005
+#: foirequest/models.py:999 foirequest/models.py:1011
 msgid "<<name and email address>>"
 msgstr ""
 
-#: foirequest/models.py:1047
+#: foirequest/models.py:1053
 msgid "Belongs to request"
 msgstr ""
 
-#: foirequest/models.py:1048 publicbody/models.py:29 publicbody/models.py:67
+#: foirequest/models.py:1054 publicbody/models.py:29 publicbody/models.py:67
 #: publicbody/models.py:178 publicbody/models.py:194
 #: publicbody/templates/publicbody/pb_jurisdiction.html:14
 #: publicbody/templates/publicbody/show_topic.html:22
 msgid "Name"
 msgstr ""
 
-#: foirequest/models.py:1049
+#: foirequest/models.py:1055
 msgid "File"
 msgstr ""
 
-#: foirequest/models.py:1050
+#: foirequest/models.py:1056
 msgid "Size"
 msgstr ""
 
-#: foirequest/models.py:1051
+#: foirequest/models.py:1057
 msgid "File type"
 msgstr ""
 
-#: foirequest/models.py:1052
+#: foirequest/models.py:1058
 msgid "Format"
 msgstr ""
 
-#: foirequest/models.py:1053
+#: foirequest/models.py:1059
 msgid "User can approve"
 msgstr ""
 
-#: foirequest/models.py:1054
+#: foirequest/models.py:1060
 msgid "Approved"
 msgstr ""
 
-#: foirequest/models.py:1055
+#: foirequest/models.py:1061
 msgid "Redacted Version"
 msgstr ""
 
-#: foirequest/models.py:1057
+#: foirequest/models.py:1063
 msgid "Is redacted"
 msgstr ""
 
-#: foirequest/models.py:1072
+#: foirequest/models.py:1078
 msgid "Attachment"
 msgstr ""
 
-#: foirequest/models.py:1073
+#: foirequest/models.py:1079
 #: foirequest/templates/foirequest/list_unchecked.html:24
 #: foirequest/templates/foirequest/show.html:485
 msgid "Attachments"
 msgstr ""
 
-#: foirequest/models.py:1093
+#: foirequest/models.py:1099
 #, python-format
 msgid "attachment-%(id)d"
 msgstr ""
 
-#: foirequest/models.py:1125
+#: foirequest/models.py:1131
 msgid "See FoiMessage"
 msgstr ""
 
-#: foirequest/models.py:1156
+#: foirequest/models.py:1162
 msgid "Is Public?"
 msgstr ""
 
-#: foirequest/models.py:1157
+#: foirequest/models.py:1163
 msgid "Event Name"
 msgstr ""
 
-#: foirequest/models.py:1159
-msgid "Context JSON"
-msgstr ""
-
 #: foirequest/models.py:1165
-#, python-format
-msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
-msgstr ""
-
-#: foirequest/models.py:1167
-#, python-format
-msgid "%(user)s reported costs of %(amount)s for this request."
-msgstr ""
-
-#: foirequest/models.py:1169
-#, python-format
-msgid "Received an email from %(public_body)s."
+msgid "Context JSON"
 msgstr ""
 
 #: foirequest/models.py:1171
 #, python-format
-msgid "%(user)s sent a message to %(public_body)s."
+msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr ""
 
 #: foirequest/models.py:1173
 #, python-format
-msgid "Request was redirected to %(public_body)s and due date has been reset."
+msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr ""
 
 #: foirequest/models.py:1175
 #, python-format
-msgid "%(user)s set status to '%(status)s'."
+msgid "Received an email from %(public_body)s."
 msgstr ""
 
 #: foirequest/models.py:1177
 #, python-format
-msgid "%(user)s made the request '%(request)s' public."
+msgid "%(user)s sent a message to %(public_body)s."
 msgstr ""
 
 #: foirequest/models.py:1179
+#, python-format
+msgid "Request was redirected to %(public_body)s and due date has been reset."
+msgstr ""
+
+#: foirequest/models.py:1181
+#, python-format
+msgid "%(user)s set status to '%(status)s'."
+msgstr ""
+
+#: foirequest/models.py:1183
+#, python-format
+msgid "%(user)s made the request '%(request)s' public."
+msgstr ""
+
+#: foirequest/models.py:1185
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr ""
 
-#: foirequest/models.py:1181
+#: foirequest/models.py:1187
 #, python-format
 msgid ""
 "%(public_body)s answered partially, but denied access to all information on "
 "the grounds of %(reason)s."
 msgstr ""
 
-#: foirequest/models.py:1183
+#: foirequest/models.py:1189
 msgid "This request became overdue"
 msgstr ""
 
-#: foirequest/models.py:1185
+#: foirequest/models.py:1191
 #, python-format
 msgid ""
 "%(user)s set '%(name)s' as the information law for the request %(request)s."
 msgstr ""
 
-#: foirequest/models.py:1187
+#: foirequest/models.py:1193
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr ""
 
-#: foirequest/models.py:1189
+#: foirequest/models.py:1195
 #, python-format
 msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
 "request %(request)s."
 msgstr ""
 
-#: foirequest/models.py:1194
+#: foirequest/models.py:1200
 msgid "Request Event"
 msgstr ""
 
-#: foirequest/models.py:1195
+#: foirequest/models.py:1201
 msgid "Request Events"
 msgstr ""
 
 #. Translators: Hash part of Event URL
-#: foirequest/models.py:1208
+#: foirequest/models.py:1214
 msgid "event"
 msgstr ""
 
