@@ -5,7 +5,7 @@ import re
 
 from django.db import models
 from django.db.models import Q
-from django.db import IntegrityError
+from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -658,23 +658,25 @@ Sincerely yours
             first_round = True
             count = 0
             postfix = ""
-            try:
-                while True:
-                    if not first_round:
-                        postfix = "-%d" % count
-                    if not FoiRequest.objects.filter(slug=request.slug + postfix).exists():
-                        break
-                    if first_round:
-                        first_round = False
-                        count = FoiRequest.objects.filter(slug__startswith=request.slug).count()
-                    else:
-                        count += 1
-                request.slug += postfix
-                request.save()
-            except IntegrityError:
-                pass
-            else:
-                break
+            with transaction.commit_manually():
+                try:
+                    while True:
+                        if not first_round:
+                            postfix = "-%d" % count
+                        if not FoiRequest.objects.filter(slug=request.slug + postfix).exists():
+                            break
+                        if first_round:
+                            first_round = False
+                            count = FoiRequest.objects.filter(slug__startswith=request.slug).count()
+                        else:
+                            count += 1
+                    request.slug += postfix
+                    request.save()
+                except IntegrityError:
+                    transaction.rollback()
+                else:
+                    transaction.commit()
+                    break
 
         message = FoiMessage(request=request,
                 sent=False,
