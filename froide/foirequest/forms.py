@@ -160,7 +160,7 @@ class SendMessageForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
-        choices = [(m.id, m.real_sender) for k, m in
+        choices = [(m.id, m.reply_address_entry) for k, m in
             foirequest.possible_reply_addresses().items()]
         choices.append((0, _("Default address of %(publicbody)s") % {
                 "publicbody": foirequest.public_body.name}))

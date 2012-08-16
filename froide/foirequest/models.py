@@ -990,6 +990,14 @@ class FoiMessage(models.Model):
             return self.sender_public_body.name
 
     @property
+    def reply_address_entry(self):
+        email = self.sender_email
+        if email:
+            return u'%s@... (%s)' % (email.split('@')[0], self.real_sender)
+        else:
+            return self.real_sender
+
+    @property
     def attachments(self):
         if not hasattr(self, "_attachments"):
             self._attachments = list(self.foiattachment_set.all())
