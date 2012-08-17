@@ -70,6 +70,7 @@ class FoiLaw(models.Model):
     long_description = models.TextField(_("Website Text"), blank=True)
     created = models.DateField(_("Creation Date"), blank=True, null=True)
     updated = models.DateField(_("Updated Date"), blank=True, null=True)
+    request_note = models.TextField(_("request note"), blank=True)
     meta = models.BooleanField(_("Meta Law"), default=False)
     combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
