@@ -127,6 +127,10 @@ class FoiLaw(models.Model):
     def get_letter_end_text(self, post):
         return FormGenerator(self.letter_end, post).render()
 
+    @property
+    def request_note_markdown(self):
+        return markdown(self.request_note)
+
     def get_refusal_reason_choices(self):
         not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
         if self.meta:
@@ -146,6 +150,7 @@ class FoiLaw(models.Model):
     def as_dict(self):
         return {"pk": self.pk, "name": self.name,
                 "description_markdown": markdown(self.description),
+                "request_note_markdown": self.request_note_markdown,
                 "description": self.description,
                 "letter_start": self.letter_start,
                 "letter_end": self.letter_end,

@@ -293,8 +293,9 @@ Froide.app.publicBodyChosen = (function(){
                         if (lastChoice === doneChoice){
                             return;
                         }
-                        if (result.request_note_markdown){
-                            $("#request-note").html(result.request_note_markdown).slideDown();
+                        var request_note = result.laws[0].request_note_markdown + result.request_note_markdown;
+                        if (request_note){
+                            $("#request-note").html(request_note).slideDown();
                         } else {
                             $("#request-note").hide();
                         }

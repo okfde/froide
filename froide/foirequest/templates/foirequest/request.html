@@ -44,8 +44,15 @@
       <p><strong>{% trans "To:" %}</strong> <span id="review-publicbody">{{ public_body.name }}</span> - 
       <a href="{{ public_body.get_absolute_url }}" class="info-link target-new">{% blocktrans %}Details{% endblocktrans %}</a>
       </p>
-      {% if public_body.request_note %}
-      <div id="request-note" class="notice">{{ public_body.request_note|markdown }}</div>
+      {% if public_body.request_note or public_body.default_law.request_note %}
+      <div id="request-note" class="notice">
+        {% if public_body.default_law.request_note %}
+          {{ public_body.default_law.request_note|markdown }}
+        {% endif %}
+        {% if public_body.request_note %}
+          {{ public_body.request_note|markdown }}
+        {% endif %}
+      </div>
       {% endif %}
       {% else %}
       <div id="step-public_body">
