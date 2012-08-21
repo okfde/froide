@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-21 16:03+0200\n"
-"PO-Revision-Date: 2012-08-21 16:12+0100\n"
+"POT-Creation-Date: 2012-08-21 18:13+0200\n"
+"PO-Revision-Date: 2012-08-21 18:14+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
 
 #. Translators: URL part of /help/
 #: help_urls.py:15
@@ -852,7 +852,6 @@ msgid "Suggestions"
 msgstr "Vorschläge"
 
 #: foirequest/forms.py:239 publicbody/models.py:292
-#: publicbody/templates/publicbody/_chooser.html:9
 msgid "More Info"
 msgstr "Details"
 
@@ -3599,6 +3598,10 @@ msgstr[1] "%(count)d Nachrichten wurden gesendet."
 msgid "Confirm this Public Body "
 msgstr "Bestätigen Sie diese Behörde"
 
+#: publicbody/templates/publicbody/_chooser.html:9
+msgid "Info"
+msgstr "Info"
+
 #: publicbody/templates/publicbody/_chooser.html:13
 msgid "Search Term"
 msgstr "Suchbegriff"
@@ -3640,24 +3643,29 @@ msgid "Search all Public Bodies"
 msgstr "Suchen Sie in allen Behörden"
 
 #: publicbody/templates/publicbody/jurisdiction.html:9
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:6
 #, python-format
 msgid "Freedom of Information<br/>in %(name)s"
 msgstr "Informationsfreiheit<br/> in %(name)s"
 
 #: publicbody/templates/publicbody/jurisdiction.html:10
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:7
 msgid "Ask Public Bodies for administrative information — it's your right."
 msgstr ""
 "Fragen Sie Behörden nach Verwaltungsinformationen – es ist Ihr gutes Recht."
 
 #: publicbody/templates/publicbody/jurisdiction.html:14
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:11
 msgid "Which Public Bodies?"
 msgstr "Welche Behörden?"
 
 #: publicbody/templates/publicbody/jurisdiction.html:16
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:13
 msgid "All bodies that work on administrative tasks of this jurisdiction."
 msgstr "Alle Einrichtungen, die Verwaltungs­aufgaben des Landes wahrnehmen."
 
 #: publicbody/templates/publicbody/jurisdiction.html:17
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:14
 #, python-format
 msgid ""
 "Make a request to one of <a href=\"%(url)s\">%(pb_count)s Public Bodies.</a>"
@@ -3666,10 +3674,12 @@ msgstr ""
 "Behörden.</a>"
 
 #: publicbody/templates/publicbody/jurisdiction.html:20
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:17
 msgid "What Information?"
 msgstr "Welche Informationen?"
 
 #: publicbody/templates/publicbody/jurisdiction.html:21
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:18
 msgid ""
 "Contracts, memos, reports and other documents of the administration: you "
 "have the right to know."
@@ -3678,14 +3688,17 @@ msgstr ""
 "haben das Recht auf Einsicht."
 
 #: publicbody/templates/publicbody/jurisdiction.html:22
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:19
 msgid "Make a request!"
 msgstr "Stellen Sie eine Anfrage!"
 
 #: publicbody/templates/publicbody/jurisdiction.html:25
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:22
 msgid "What right?"
 msgstr "Welches Recht?"
 
 #: publicbody/templates/publicbody/jurisdiction.html:26
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:23
 #, python-format
 msgid ""
 "The freedom of information law in %(name)s allows you access to "
@@ -3695,6 +3708,7 @@ msgstr ""
 "Informationen der Verwaltung."
 
 #: publicbody/templates/publicbody/jurisdiction.html:27
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:24
 msgid "Get to know your right!"
 msgstr "Lernen Sie Ihr Recht kennen."
 
@@ -3763,8 +3777,8 @@ msgid "Email:"
 msgstr "E-Mail:"
 
 #: publicbody/templates/publicbody/show.html:30
-msgid "Write to them here"
-msgstr "Schreiben Sie hier an sie"
+msgid "Make a request"
+msgstr "Stellen Sie eine Anfrage"
 
 #: publicbody/templates/publicbody/show.html:32
 msgid "Contact:"
@@ -3786,18 +3800,22 @@ msgstr "Stellen Sie jetzt eine Anfrage!"
 msgid "Link to law text:"
 msgstr "Link zum Gesetzestext:"
 
-#: publicbody/templates/publicbody/show_foilaw.html:11
+#: publicbody/templates/publicbody/show_foilaw.html:12
 #, python-format
 msgid "Law text of %(name)s (%(juris)s)"
 msgstr "Gesetzestext: %(name)s (%(juris)s)"
 
-#: publicbody/templates/publicbody/show_foilaw.html:12
+#: publicbody/templates/publicbody/show_foilaw.html:15
 msgid "Came into effect on"
 msgstr "Trat in Kraft am"
 
-#: publicbody/templates/publicbody/show_foilaw.html:15
+#: publicbody/templates/publicbody/show_foilaw.html:19
 msgid "Last update on"
 msgstr "Letzte Änderung"
+
+#: publicbody/templates/publicbody/show_foilaw.html:23
+msgid "Mediating authority"
+msgstr "Vermittelnde Behörde"
 
 #: publicbody/templates/publicbody/show_topic.html:7
 #, python-format
@@ -4166,6 +4184,9 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 #: templates/search/search.html:71
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
+
+#~ msgid "Write to them here"
+#~ msgstr "Schreiben Sie hier an sie"
 
 #~ msgid "Your Dashboard"
 #~ msgstr "Deine Übersicht"

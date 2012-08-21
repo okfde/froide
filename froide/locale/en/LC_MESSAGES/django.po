@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-21 16:02+0200\n"
+"POT-Creation-Date: 2012-08-21 18:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -790,7 +790,6 @@ msgid "Suggestions"
 msgstr ""
 
 #: foirequest/forms.py:239 publicbody/models.py:292
-#: publicbody/templates/publicbody/_chooser.html:9
 msgid "More Info"
 msgstr ""
 
@@ -3232,6 +3231,10 @@ msgstr[1] ""
 msgid "Confirm this Public Body "
 msgstr ""
 
+#: publicbody/templates/publicbody/_chooser.html:9
+msgid "Info"
+msgstr ""
+
 #: publicbody/templates/publicbody/_chooser.html:13
 msgid "Search Term"
 msgstr ""
@@ -3273,47 +3276,57 @@ msgid "Search all Public Bodies"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:9
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:6
 #, python-format
 msgid "Freedom of Information<br/>in %(name)s"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:10
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:7
 msgid "Ask Public Bodies for administrative information — it's your right."
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:14
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:11
 msgid "Which Public Bodies?"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:16
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:13
 msgid "All bodies that work on administrative tasks of this jurisdiction."
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:17
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:14
 #, python-format
 msgid ""
 "Make a request to one of <a href=\"%(url)s\">%(pb_count)s Public Bodies.</a>"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:20
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:17
 msgid "What Information?"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:21
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:18
 msgid ""
 "Contracts, memos, reports and other documents of the administration: you "
 "have the right to know."
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:22
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:19
 msgid "Make a request!"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:25
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:22
 msgid "What right?"
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:26
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:23
 #, python-format
 msgid ""
 "The freedom of information law in %(name)s allows you access to "
@@ -3321,6 +3334,7 @@ msgid ""
 msgstr ""
 
 #: publicbody/templates/publicbody/jurisdiction.html:27
+#: publicbody/templates/publicbody/jurisdiction/berlin-brandenburg.html:24
 msgid "Get to know your right!"
 msgstr ""
 
@@ -3389,7 +3403,7 @@ msgid "Email:"
 msgstr ""
 
 #: publicbody/templates/publicbody/show.html:30
-msgid "Write to them here"
+msgid "Make a request"
 msgstr ""
 
 #: publicbody/templates/publicbody/show.html:32
@@ -3412,17 +3426,21 @@ msgstr ""
 msgid "Link to law text:"
 msgstr ""
 
-#: publicbody/templates/publicbody/show_foilaw.html:11
+#: publicbody/templates/publicbody/show_foilaw.html:12
 #, python-format
 msgid "Law text of %(name)s (%(juris)s)"
 msgstr ""
 
-#: publicbody/templates/publicbody/show_foilaw.html:12
+#: publicbody/templates/publicbody/show_foilaw.html:15
 msgid "Came into effect on"
 msgstr ""
 
-#: publicbody/templates/publicbody/show_foilaw.html:15
+#: publicbody/templates/publicbody/show_foilaw.html:19
 msgid "Last update on"
+msgstr ""
+
+#: publicbody/templates/publicbody/show_foilaw.html:23
+msgid "Mediating authority"
 msgstr ""
 
 #: publicbody/templates/publicbody/show_topic.html:7
