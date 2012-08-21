@@ -659,9 +659,23 @@ form.foirequest .lawinfo {
     margin:0;
 }
 
+form.foirequest .letter {
+    background-color: white;
+    width: 400px;
+}
+
 form.foirequest .letter textarea {
     margin: 0;
     font-size:14px;
+    background-color: white;
+    height: 80px;
+    color: #333;
+}
+
+form.foirequest .text a {
+    color: #999;
+    font-size: 80%;
+    text-decoration: none
 }
 
 form.foirequest .text {
@@ -670,7 +684,14 @@ form.foirequest .text {
     white-space: nowrap;
     white-space: pre-line;
     word-wrap: break-word;
-    background-color: rgba(255,255,255,0.5);
+    background-color: white;
+    font-size:14px;
+}
+
+form.foirequest .text-like {
+    background-color: white;
+    width: 390px;
+    padding: 0 5px;
     font-size:14px;
 }
 

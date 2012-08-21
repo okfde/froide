@@ -364,6 +364,8 @@ Froide.app.activateMessage = function(){
     $("#step-message").slideDown()
         .removeClass("hidden")
         .parent().addClass("active");
+    $('#id_subject').focus();
+
 };
 
 $(function(){

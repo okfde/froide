@@ -1,6 +1,6 @@
 $(function(){
     loggedInCallback = function(data){
-        $("#user_data_form").html("<p>"+data.name+" "+data.last_name+"</p>"+
+        $(".user_data_form").html("<p>"+data.name+" "+data.last_name+"</p>"+
                     "<p>"+data.address+"</p><p>"+data.email+"</p>");
     };
 
@@ -45,17 +45,6 @@ $(function(){
         }
         $("#foicheck-form").slideUp();
     });
-
-    var highlightRegex = function(elem, regex){
-        elem.html(elem.html().replace(regex, "<em>$&</em>"));
-    };
-    var i;
-    for(i = 0; i < Froide.regex.greetings.length; i += 1){
-        highlightRegex($("#letter_start"), Froide.regex.greetings[i]);
-    }
-    for(i = 0; i < Froide.regex.closings.length; i += 1){
-        highlightRegex($("#letter_end"), Froide.regex.closings[i]);
-    }
 
 
     $(".foirequest .public_body-chooser").live("publicBodyChosen", function(e){
