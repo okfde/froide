@@ -9,13 +9,13 @@ class PublicBodyAdmin(admin.ModelAdmin):
     list_filter = ('topic', 'jurisdiction', 'classification')
     search_fields = ['name', "description"]
     exclude = ('confirmed',)
-    raw_id_fields = ('parent', 'root')
+    raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
 
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("jurisdiction", "name",)}
     list_display = ('name', 'meta', 'jurisdiction',)
-    raw_id_fields = ('mediator', '_created_by', '_updated_by')
+    raw_id_fields = ('mediator',)
 
 
 class JurisdictionAdmin(admin.ModelAdmin):
