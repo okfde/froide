@@ -10,8 +10,9 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
-from foirequest.models import FoiRequest, FoiEvent, FoiMessage
-from foirequestfollower.models import FoiRequestFollower
+from froide.foirequest.models import FoiRequest, FoiEvent, FoiMessage
+
+from .models import FoiRequestFollower
 
 
 @task
@@ -23,9 +24,11 @@ def update_followers(request_id, message):
     except FoiRequest.DoesNotExist:
         pass
 
+
 @task
 def batch_update():
     return _batch_update()
+
 
 def _batch_update():
     translation.activate(settings.LANGUAGE_CODE)
@@ -44,9 +47,10 @@ def _batch_update():
             tf = TimeFormat(comment.submit_date)
             updates[message.request_id].append((comment.submit_date,
                 _("%(time)s: New comment by %(name)s") % {
-                "time": tf.format(_("TIME_FORMAT")),
-                "name": comment.name
-            }))
+                    "time": tf.format(_("TIME_FORMAT")),
+                    "name": comment.name
+                }
+            ))
         except FoiMessage.DoesNotExist:
             pass
 
@@ -65,11 +69,13 @@ def _batch_update():
             requests[event.request_id] = event.request
         updates.setdefault(event.request_id, [])
         tf = TimeFormat(event.timestamp)
-        updates[event.request_id].append((event.timestamp, _("%(time)s: %(text)s") % {
+        updates[event.request_id].append((event.timestamp,
+            _("%(time)s: %(text)s") % {
                 "time": tf.format(_("TIME_FORMAT")),
                 "text": event.as_text()
-            }))
-    
+            }
+        ))
+
     # Send out update on comments and event to followers
     for req_id, request in requests.items():
         if not updates[req_id]:
@@ -78,6 +84,8 @@ def _batch_update():
         event_string = "\n".join([x[1] for x in updates[req_id]])
         followers = FoiRequestFollower.objects.filter(request=request)
         for follower in followers:
-            follower.send_update(_("The following happend in the last 24 hours:\n%(events)s") %
-                    {"events": event_string}
-                    )
+            follower.send_update(
+                _("The following happend in the last 24 hours:\n%(events)s") % {
+                    "events": event_string
+                }
+            )

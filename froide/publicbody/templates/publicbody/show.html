@@ -26,7 +26,7 @@
     {% if object.email %}
     <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
     <dd>{{ object.email }} (<a class="make-request-icon" href="{% url 'foirequest-make_request' public_body=object.slug %}">
-      {% blocktrans %}Write to them here{% endblocktrans %}</a>)</dd>
+      {% blocktrans %}Make a request{% endblocktrans %}</a>)</dd>
     {% endif %}
     <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
     <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>

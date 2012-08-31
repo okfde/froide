@@ -6,10 +6,11 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.core import mail
 
-from publicbody.models import PublicBody
-from foirequest.models import FoiRequest, FoiMessage
-from foirequest.tests import factories
-from account.models import AccountManager
+from froide.publicbody.models import PublicBody
+from froide.foirequest.models import FoiRequest, FoiMessage
+from froide.foirequest.tests import factories
+
+from .models import AccountManager
 
 
 class AccountTest(TestCase):
@@ -145,7 +146,7 @@ class AccountTest(TestCase):
         user.is_active = False
         # set last_login back artificially so it's not the same
         # as in secret link
-        user.last_login = user.last_login - datetime.timedelta(seconds=1)
+        user.last_login = user.last_login - datetime.timedelta(seconds=10)
         user.save()
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
@@ -374,3 +375,16 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
         self.assertTrue(response.context['user'].is_anonymous())
+
+    def test_profile_page(self):
+        user = User.objects.get(username='sw')
+        response = self.client.get(reverse('account-profile',
+            kwargs={'slug': user.username}))
+        self.assertEqual(response.status_code, 200)
+        user2 = factories.UserFactory.create()
+        profile = user2.get_profile()
+        profile.private = True
+        profile.save()
+        response = self.client.get(reverse('account-profile',
+            kwargs={'slug': user2.username}))
+        self.assertEqual(response.status_code, 404)

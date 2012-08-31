@@ -70,6 +70,7 @@ class FoiLaw(models.Model):
     long_description = models.TextField(_("Website Text"), blank=True)
     created = models.DateField(_("Creation Date"), blank=True, null=True)
     updated = models.DateField(_("Updated Date"), blank=True, null=True)
+    request_note = models.TextField(_("request note"), blank=True)
     meta = models.BooleanField(_("Meta Law"), default=False)
     combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
@@ -126,6 +127,10 @@ class FoiLaw(models.Model):
     def get_letter_end_text(self, post):
         return FormGenerator(self.letter_end, post).render()
 
+    @property
+    def request_note_markdown(self):
+        return markdown(self.request_note)
+
     def get_refusal_reason_choices(self):
         not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
         if self.meta:
@@ -145,6 +150,7 @@ class FoiLaw(models.Model):
     def as_dict(self):
         return {"pk": self.pk, "name": self.name,
                 "description_markdown": markdown(self.description),
+                "request_note_markdown": self.request_note_markdown,
                 "description": self.description,
                 "letter_start": self.letter_start,
                 "letter_end": self.letter_end,
@@ -192,6 +198,7 @@ class PublicBodyTopic(models.Model):
 
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
+    other_names = models.TextField(default="", blank=True)
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),

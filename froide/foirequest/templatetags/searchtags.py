@@ -3,6 +3,7 @@ from django import template
 
 register = template.Library()
 
+
 def search_engine_query(query=None, domain=""):
     if query is None:
         return settings.SEARCH_ENGINE_QUERY % {"query": "{{query}}", "domain": "{{domain}}"}

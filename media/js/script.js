@@ -7,7 +7,7 @@ Froide.app.getPublicBodyResultListItem = function(el, result){
     var name = el.attr("data-inputname");
     var li = '<li class="result"><label>';
     li += '<input type="radio" name="' + name + '" value="' + result.id + '"/> ';
-    li += result.name + '(' + result.jurisdiction +')</label> - ';
+    li += result.name + ' (' + result.jurisdiction +')</label> - ';
     li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
     li += '</li>';
     return li;
@@ -293,8 +293,9 @@ Froide.app.publicBodyChosen = (function(){
                         if (lastChoice === doneChoice){
                             return;
                         }
-                        if (result.request_note_markdown){
-                            $("#request-note").html(result.request_note_markdown).slideDown();
+                        var request_note = result.laws[0].request_note_markdown + result.request_note_markdown;
+                        if (request_note){
+                            $("#request-note").html(request_note).slideDown();
                         } else {
                             $("#request-note").hide();
                         }
@@ -363,6 +364,8 @@ Froide.app.activateMessage = function(){
     $("#step-message").slideDown()
         .removeClass("hidden")
         .parent().addClass("active");
+    $('#id_subject').focus();
+
 };
 
 $(function(){
@@ -380,12 +383,12 @@ $(function(){
          $(el).scrollToFixed({marginTop: 10});
     });
     $("a.show-target").live("click", function(e){
-        var obj = $($(this).attr("href")).find(".toggle");
+        var obj = $('#' + $(this).attr("href").split('#')[1]).find(".toggle");
         $(obj.attr("href")).show();
     });
     $("a.toggle").live("click", function(e){
         e.preventDefault();
-        var obj = $($(this).attr("href"));
+        var obj = $('#' + $(this).attr("href").split('#')[1]);
         if (obj.css("display") === "none"){
             obj.slideDown();
         } else {

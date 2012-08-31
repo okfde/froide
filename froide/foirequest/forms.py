@@ -12,9 +12,10 @@ from django.utils import timezone
 from taggit.forms import TagField
 from taggit.utils import edit_string_for_tags
 
-from publicbody.models import PublicBody
-from publicbody.widgets import PublicBodySelect
-from foirequest.models import FoiRequest, FoiAttachment
+from froide.publicbody.models import PublicBody
+from froide.publicbody.widgets import PublicBodySelect
+
+from .models import FoiRequest, FoiAttachment
 
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
@@ -31,9 +32,10 @@ class RequestForm(forms.Form):
             widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
-            attrs={'placeholder': _("Specify your request here...")}))
+                attrs={'placeholder': _("Specify your request here...")}))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
+    reference = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
         super(RequestForm, self).__init__(*args, **kwargs)
@@ -82,11 +84,24 @@ class RequestForm(forms.Form):
 
     public_body_object = None
 
+    def clean_reference(self):
+        ref = self.cleaned_data['reference']
+        if ref == '':
+            return None
+        try:
+            kind, value = ref.split(':')
+        except ValueError:
+            return None
+        try:
+            return {kind: value}
+        except ValueError:
+            return None
+
     def clean_law_for_public_body(self, public_body):
         law = self.clean_law_without_public_body()
         if law is None:
             return None
-        if law.jurisdiction.id != law.jurisdiction.id:
+        if law.jurisdiction.id != public_body.jurisdiction.id:
             self._errors["law"] = self.error_class([_("Invalid Information Law")])
             return None
         return law
@@ -146,7 +161,7 @@ class SendMessageForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
-        choices = [(m.id, m.real_sender) for k, m in
+        choices = [(m.id, m.reply_address_entry) for k, m in
             foirequest.possible_reply_addresses().items()]
         choices.append((0, _("Default address of %(publicbody)s") % {
                 "publicbody": foirequest.public_body.name}))
@@ -156,7 +171,7 @@ class SendMessageForm(forms.Form):
         if foirequest.law and foirequest.law.email_only:
             self.fields['send_address'] = forms.BooleanField(
                 label=_("Send physical address"),
-                help_text=_(('If the public body is asking for your post '
+                help_text=(_('If the public body is asking for your post '
                     'address, check this and we will append it to your message.')),
                 required=False)
 
@@ -237,7 +252,7 @@ class FoiRequestStatusForm(forms.Form):
 
     status = forms.ChoiceField(label=_("Status"),
             # widget=forms.RadioSelect,
-            choices=[('', '-------')] + \
+            choices=[('', '-------')] +
                     map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES))
     redirected = forms.IntegerField(required=False, widget=PublicBodySelect)
     if payment_possible:
@@ -265,7 +280,7 @@ class ConcreteLawForm(forms.Form):
         self.foirequest = foirequest
         self.possible_laws = foirequest.law.combined.all()
         self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
-                choices=[('', '-------')] + \
+                choices=[('', '-------')] +
                     map(lambda x: (x.pk, x.name), self.possible_laws),
                 coerce=int, empty_value='')
 

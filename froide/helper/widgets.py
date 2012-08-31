@@ -2,6 +2,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 
+
 class EmailInput(forms.TextInput):
     input_type = 'email'
 

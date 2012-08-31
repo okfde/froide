@@ -5,13 +5,11 @@
 {% block banner %}
    <div class="banner success">
     <strong>
-      {% trans "FragDenStaat.de jetzt auch in NRW verfügbar!" %}
-      <a href="{% url 'publicbody-show_jurisdiction' slug='nrw' %}">{% trans "Zur Ankündigung..." %}</a>
-<!--           {% trans "Like this? Consider supporting us!" %}
+      {% trans "Like this? Consider supporting us!" %}
       <a href="{% url 'help-about' %}#spenden">{% trans "Donate now!" %}</a>
     <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
       <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
-    </a> -->
+    </a>
     </strong>
   </div>
 {% endblock %}
@@ -70,7 +68,7 @@ I request information about the following:
 <div class="clearfix">
 <div class="span-10">
   <h3>{% blocktrans %}What is Freedom of Information?{% endblocktrans %}</h3>
-  <p>{% blocktrans %}Every citizen has the right under the Federal Freedom of Information Law to ask for and receive access to information from Public Bodies concerning public affairs.{% endblocktrans %}
+  <p>{% blocktrans %}Every citizen has the right under the Freedom of Information Laws to ask for and receive access to information from Public Bodies concerning public affairs.{% endblocktrans %}
   <br/>
    <a class="target-new" href="http://de.wikipedia.org/wiki/Informationsfreiheit">{% blocktrans %}Read more about the Freedom of Information!{% endblocktrans %}</a>
   </p>
@@ -78,7 +76,7 @@ I request information about the following:
 
 <div class="prepend-2 span-12 last">
   <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
-  <p>{% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information.{% endblocktrans %}
+  <p>{% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information and replies can be scrutinized by the public.{% endblocktrans %}
   <br/>
    <a href="{% url 'help-index' %}">{% blocktrans %}Read more about the concept!{% endblocktrans %}</a>
   </p>

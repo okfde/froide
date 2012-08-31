@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -9,11 +11,13 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
 from django.utils.http import base36_to_int
 
-from account.forms import UserLoginForm, NewUserForm, UserChangeAddressForm
-from account.models import AccountManager
-from foirequest.models import FoiRequest
+from froide.foirequestfollower.models import FoiRequestFollower
+from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
+
+from .forms import UserLoginForm, NewUserForm, UserChangeAddressForm
+from .models import AccountManager, User
 
 
 def confirm(request, user_id, secret, request_id=None):
@@ -71,8 +75,37 @@ def show(request, context=None, status=200):
         context = {}
     if 'new' in request.GET:
         request.user.is_new = True
-    context.update({'foirequests': my_requests})
+    own_foirequests = FoiRequest.objects.get_dashboard_requests(request.user)
+    followed_foirequest_ids = map(lambda x: x.request_id,
+        FoiRequestFollower.objects.filter(user=request.user))
+    following = False
+    events = []
+    if followed_foirequest_ids:
+        following = len(followed_foirequest_ids)
+        since = request.user.last_login - timedelta(days=14)
+        events = FoiEvent.objects.filter(public=True,
+            request__in=followed_foirequest_ids, timestamp__gte=since)[:10]
+    context.update({
+        'own_requests': own_foirequests,
+        'followed_events': events,
+        'following': following,
+        'foirequests': my_requests
+    })
     return render(request, 'account/show.html', context, status=status)
+
+
+def profile(request, slug):
+    user = get_object_or_404(User, username=slug)
+    profile = user.get_profile()
+    if profile.private:
+        raise Http404
+    foirequests = FoiRequest.objects.filter(user=user).order_by('-first_message')
+    foievents = FoiEvent.objects.filter(public=True, user=user)[:20]
+    return render(request, 'account/profile.html', {
+        'profile_user': user,
+        'requests': foirequests,
+        'events': foievents
+    })
 
 
 def logout(request):

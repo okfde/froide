@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 from django.contrib import admin
 admin.autodiscover()
 
-from publicbody.models import Jurisdiction
+from froide.publicbody.models import Jurisdiction
 
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
@@ -42,7 +42,11 @@ urlpatterns += patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Translators: URL part
-    (r'^%s/' % _('account'), include('account.urls')),
+    (r'^%s/' % _('account'), include('froide.account.urls')),
+    # Translators: URL part
+    (r'^%s/' % _('profile'), include('froide.account.profile_urls')),
+    # Translators: URL part
+    (r'^%s/' % _('news'), include('froide.foiidea.urls')),
     # Translators: URL part
     (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
     # Translators: URL part
@@ -52,6 +56,14 @@ urlpatterns += patterns('',
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls)),
     (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls'))
 )
+
+USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
+
+if USE_X_ACCEL_REDIRECT:
+    urlpatterns += patterns('',
+        url(r'^%s%s/' % (settings.MEDIA_URL[1:], settings.FOI_MEDIA_PATH),
+            include('froide.foirequest.media_urls'))
+    )
 
 try:
     from custom_urls import urlpatterns as custom_urlpatterns

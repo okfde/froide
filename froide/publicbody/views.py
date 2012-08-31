@@ -6,16 +6,16 @@ from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
 from django.template import TemplateDoesNotExist
 
-
 from haystack.query import SearchQuerySet
 
-from foirequest.models import FoiRequest, FoiMessage
-from publicbody.models import (PublicBody,
-    PublicBodyTopic, FoiLaw, Jurisdiction)
+from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
 from froide.helper.utils import render_400, render_403
-from helper.cache import cache_anonymous_page
+from froide.helper.cache import cache_anonymous_page
+
+from .models import (PublicBody,
+    PublicBodyTopic, FoiLaw, Jurisdiction)
 
 
 class PublicBodyListView(JSONResponseListView):
@@ -63,11 +63,11 @@ def show_topic(request, topic):
     topic = get_object_or_404(PublicBodyTopic, slug=topic)
     context = {
         "topic": topic,
-        "object_list": PublicBody.objects.get_list()\
-                    .select_related('jurisdiction')\
-                    .filter(topic=topic)\
+        "object_list": PublicBody.objects.get_list()
+                    .select_related('jurisdiction')
+                    .filter(topic=topic)
                     .order_by("jurisdiction__rank", "name")
-        }
+    }
     return render(request, 'publicbody/show_topic.html', context)
 
 
@@ -104,7 +104,7 @@ def search_json(request):
     result = SearchQuerySet().models(PublicBody).auto_query(query)
     if jurisdiction is not None:
         result = result.filter(jurisdiction=result.query.clean(jurisdiction))
-    result = [{"name": x.name,  "jurisdiction": x.jurisdiction,
+    result = [{"name": x.name, "jurisdiction": x.jurisdiction,
             "id": x.pk, "url": x.url, "score": x.score} for x in list(result)]
 
     return HttpResponse(json.dumps(result), content_type="application/json")

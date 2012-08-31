@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 
-from foirequest.models import FoiRequest
+from froide.foirequest.models import FoiRequest
 
 
 class FoiRequestFollowerManager(models.Manager):
@@ -107,6 +107,7 @@ class FoiRequestFollower(models.Model):
             settings.DEFAULT_FROM_EMAIL,
             [self.email or self.user.email])
 
+
 @receiver(FoiRequest.message_received,
     dispatch_uid="notify_followers_message_received")
 def notify_followers_message_received(sender, message=None, **kwargs):
@@ -114,12 +115,14 @@ def notify_followers_message_received(sender, message=None, **kwargs):
         _("The request '%(request)s' received a reply.") % {
             "request": sender.title})
 
+
 @receiver(FoiRequest.message_sent,
         dispatch_uid="notify_followers_send_foimessage")
 def notify_followers_send_foimessage(sender, message=None, **kwargs):
     FoiRequestFollower.objects.send_update(sender,
         _("A message was sent in the request '%(request)s'.") % {
             "request": sender.title})
+
 
 @receiver(FoiRequest.add_postal_reply,
     dispatch_uid="notify_followers_add_postal_reply")

@@ -1,28 +1,35 @@
 from django.conf.urls.defaults import patterns, url
 
-from foirequest.feeds import FoiRequestFeed, FoiRequestFeedAtom
+from .feeds import FoiRequestFeed, FoiRequestFeedAtom
 
 
-urlpatterns = patterns("",
-    url(r"^(?P<obj_id>\d+)$", 'foirequest.views.shortlink', name="foirequest-shortlink"),
-    url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'foirequest.views.auth', name="foirequest-auth"),
-    url(r"^(?P<slug>[-\w]+)/$", 'foirequest.views.show', name="foirequest-show"),
+urlpatterns = patterns("froide.foirequest.views",
+    url(r"^(?P<obj_id>\d+)$", 'shortlink', name="foirequest-shortlink"),
+    url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'auth', name="foirequest-auth"),
+    url(r"^(?P<slug>[-\w]+)/$", 'show', name="foirequest-show"),
+    url(r"^(?P<slug>[-\w]+)/suggest/public-body/$", 'suggest_public_body', name="foirequest-suggest_public_body"),
+    url(r"^(?P<slug>[-\w]+)/set/public-body/$", 'set_public_body', name="foirequest-set_public_body"),
+    url(r"^(?P<slug>[-\w]+)/set/status/$", 'set_status', name="foirequest-set_status"),
+    url(r"^(?P<slug>[-\w]+)/send/message/$", 'send_message', name="foirequest-send_message"),
+    url(r"^(?P<slug>[-\w]+)/escalation/message/$", 'escalation_message', name="foirequest-escalation_message"),
+    url(r"^(?P<slug>[-\w]+)/make/public/$", 'make_public', name="foirequest-make_public"),
+    url(r"^(?P<slug>[-\w]+)/set/law/$", 'set_law', name="foirequest-set_law"),
+    url(r"^(?P<slug>[-\w]+)/set/tags/$", 'set_tags', name="foirequest-set_tags"),
+    url(r"^(?P<slug>[-\w]+)/set/resolution/$", 'set_resolution', name="foirequest-set_resolution"),
+    url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", 'add_postal_reply', name="foirequest-add_postal_reply"),
+    url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", 'add_postal_reply_attachment', name="foirequest-add_postal_reply_attachment"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set/public-body/$", 'set_message_sender', name="foirequest-set_message_sender"),
+    url(r"^(?P<slug>[-\w]+)/mark/not-foi/$", 'mark_not_foi', name="foirequest-mark_not_foi"),
+    url(r"^(?P<slug>[-\w]+)/mark/checked/$", 'mark_checked', name="foirequest-mark_checked"),
+    url(r"^(?P<slug>[-\w]+)/approve/(?P<attachment>\d+)/$", 'approve_attachment', name="foirequest-approve_attachment"),
+    url(r"^(?P<slug>[-\w]+)/make-same/(?P<message_id>\d+)/$", 'make_same_request', name="foirequest-make_same_request"),
+
+    # Redaction
+    url(r"^(?P<slug>[-\w]+)/redact/(?P<attachment_id>\d+)/$", 'redact_attachment', name="foirequest-redact_attachment"),
+)
+
+# Feed
+urlpatterns += patterns("",
     url(r"^(?P<slug>[-\w]+)/feed/$", FoiRequestFeedAtom(), name="foirequest-feed_atom"),
-    url(r"^(?P<slug>[-\w]+)/rss/$", FoiRequestFeed(), name="foirequest-feed"),
-    url(r"^(?P<slug>[-\w]+)/suggest/public-body/$", 'foirequest.views.suggest_public_body', name="foirequest-suggest_public_body"),
-    url(r"^(?P<slug>[-\w]+)/set/public-body/$", 'foirequest.views.set_public_body', name="foirequest-set_public_body"),
-    url(r"^(?P<slug>[-\w]+)/set/status/$", 'foirequest.views.set_status', name="foirequest-set_status"),
-    url(r"^(?P<slug>[-\w]+)/send/message/$", 'foirequest.views.send_message', name="foirequest-send_message"),
-    url(r"^(?P<slug>[-\w]+)/escalation/message/$", 'foirequest.views.escalation_message', name="foirequest-escalation_message"),
-    url(r"^(?P<slug>[-\w]+)/make/public/$", 'foirequest.views.make_public', name="foirequest-make_public"),
-    url(r"^(?P<slug>[-\w]+)/set/law/$", 'foirequest.views.set_law', name="foirequest-set_law"),
-    url(r"^(?P<slug>[-\w]+)/set/tags/$", 'foirequest.views.set_tags', name="foirequest-set_tags"),
-    url(r"^(?P<slug>[-\w]+)/set/resolution/$", 'foirequest.views.set_resolution', name="foirequest-set_resolution"),
-    url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", 'foirequest.views.add_postal_reply', name="foirequest-add_postal_reply"),
-    url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", 'foirequest.views.add_postal_reply_attachment', name="foirequest-add_postal_reply_attachment"),
-    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set/public-body/$", 'foirequest.views.set_message_sender', name="foirequest-set_message_sender"),
-    url(r"^(?P<slug>[-\w]+)/mark/not-foi/$", 'foirequest.views.mark_not_foi', name="foirequest-mark_not_foi"),
-    url(r"^(?P<slug>[-\w]+)/mark/checked/$", 'foirequest.views.mark_checked', name="foirequest-mark_checked"),
-    url(r"^(?P<slug>[-\w]+)/approve/(?P<attachment>\d+)/$", 'foirequest.views.approve_attachment', name="foirequest-approve_attachment"),
-    url(r"^(?P<slug>[-\w]+)/make-same/(?P<message_id>\d+)/$", 'foirequest.views.make_same_request', name="foirequest-make_same_request"),
+    url(r"^(?P<slug>[-\w]+)/rss/$", FoiRequestFeed(), name="foirequest-feed")
 )

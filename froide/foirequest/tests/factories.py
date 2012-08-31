@@ -10,9 +10,9 @@ from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
-from account.models import Profile
-from publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
-from foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
+from froide.account.models import Profile
+from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
+from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
     PublicBodySuggestion)
 
 
@@ -33,9 +33,8 @@ class ProfileFactory(factory.Factory):
 class UserFactory(factory.Factory):
     FACTORY_FOR = User
     first_name = 'Jane'
-    last_name = factory.Sequence(lambda n: 'D%se' % ('o' * int(n)))
-    username = factory.LazyAttribute(lambda o: '%s.%s' % (o.first_name.lower()[0],
-        o.last_name.lower()))
+    last_name = factory.Sequence(lambda n: 'D%se' % ('o' * min(20, int(n))))
+    username = factory.Sequence(lambda n: 'user_%s' % n)
     email = factory.LazyAttribute(lambda o: '%s.%s@example.org' % (
         o.first_name.lower(), o.last_name.lower()))
     # password is always 'froide'
@@ -233,8 +232,8 @@ class FoiAttachmentFactory(factory.Factory):
     FACTORY_FOR = FoiAttachment
 
     belongs_to = factory.SubFactory(FoiMessageFactory)
-    name = 'Attachment_name'
-    file = factory.LazyAttribute(lambda o: 'files/foi/{0}/file.pdf'.format(o.belongs_to.id))
+    name = factory.Sequence(lambda n: "file_{0}".format(n))
+    file = factory.LazyAttribute(lambda o: 'files/foi/{0}/file_{0}.pdf'.format(o.belongs_to.id))
     size = 500
     filetype = 'application/pdf'
     format = 'pdf'
@@ -273,7 +272,8 @@ def make_world():
     meta_bund.combined.add(ifg_bund, uig_bund)
     ifg_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG NRW')
     uig_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='UIG NRW')
-    meta_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG-UIG NRW', meta=True)
+    meta_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG-UIG NRW',
+        meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
@@ -284,5 +284,7 @@ def make_world():
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)
     FoiMessageFactory.create(request=req, sender_user=user1, recipient_public_body=pb_bund_1)
-    FoiMessageFactory.create(request=req, sender_public_body=pb_bund_1)
+    mes = FoiMessageFactory.create(request=req, sender_public_body=pb_bund_1)
+    FoiAttachmentFactory.create(belongs_to=mes, approved=False)
+    FoiAttachmentFactory.create(belongs_to=mes, approved=True)
     return site

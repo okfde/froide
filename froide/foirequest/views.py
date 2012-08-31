@@ -1,5 +1,8 @@
 import datetime
+import re
 
+from django.conf import settings
+from django.core.files import File
 from django.utils import simplejson as json
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
@@ -12,19 +15,22 @@ from django.contrib.auth.models import User
 from haystack.query import SearchQuerySet
 from taggit.models import Tag
 
-from account.forms import NewUserForm
-from account.models import AccountManager
-from publicbody.forms import PublicBodyForm
-from publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
-from frontpage.models import FeaturedRequest
+from froide.account.forms import NewUserForm
+from froide.account.models import AccountManager
+from froide.publicbody.forms import PublicBodyForm
+from froide.publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
+from froide.frontpage.models import FeaturedRequest
+from froide.helper.utils import render_400, render_403
+from froide.helper.cache import cache_anonymous_page
+from froide.redaction.utils import convert_to_pdf
 
-from foirequest.forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
-from foirequest.models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
-from foirequest.forms import (SendMessageForm, FoiRequestStatusForm,
+from .forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
+from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
+from .forms import (SendMessageForm, FoiRequestStatusForm,
         MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm,
         MessagePublicBodySenderForm, EscalationMessageForm)
-from froide.helper.utils import render_400, render_403
-from helper.cache import cache_anonymous_page
+
+X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
 
 @cache_anonymous_page(15 * 60)
@@ -36,7 +42,7 @@ def index(request):
             {'featured': featured,
             'successful_foi_requests': successful_foi_requests,
             'unsuccessful_foi_requests': unsuccessful_foi_requests,
-            'foicount': FoiRequest.published.count(),
+            'foicount': FoiRequest.published.for_list_view().count(),
             'pbcount': PublicBody.objects.get_list().count()
         })
 
@@ -86,7 +92,7 @@ def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None)
         foi_requests = FoiRequest.published.for_list_view().filter(public_body__topic=topic)
         context.update({
             'topic': topic,
-            })
+        })
     elif tag is not None:
         tag_object = get_object_or_404(Tag, slug=tag)
         foi_requests = FoiRequest.published.for_list_view().filter(tags=tag_object)
@@ -160,7 +166,8 @@ def show(request, slug, template_name="foirequest/show.html",
         raise Http404
     if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):
         return render_403(request)
-    all_attachments = FoiAttachment.objects.filter(belongs_to__request=obj).all()
+    all_attachments = FoiAttachment.objects.select_related('redacted')\
+            .filter(belongs_to__request=obj).all()
     for message in obj.messages:
         message.request = obj
         message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
@@ -205,10 +212,10 @@ def search(request):
         else:
             foirequests.append(result)
     context = {
-            "foirequests": foirequests,
-            "publicbodies": publicbodies,
-            "query": query
-            }
+        "foirequests": foirequests,
+        "publicbodies": publicbodies,
+        "query": query
+    }
     return render(request, "search/search.html", context)
 
 
@@ -225,8 +232,10 @@ def make_request(request, public_body=None):
         public_body_form = PublicBodyForm()
     initial = {
         "subject": request.GET.get("subject", ""),
-        "body": request.GET.get("body", "")
+        "reference": request.GET.get('ref', '')
     }
+    if 'body' in request.GET:
+        initial['body'] = request.GET['body']
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
     rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
             True, initial=initial)
@@ -265,6 +274,8 @@ def submit_request(request, public_body=None):
             if pb_form.is_valid():
                 data = pb_form.cleaned_data
                 data['confirmed'] = False
+                # Take the first jurisdiction there is
+                data['jurisdiction'] = Jurisdiction.objects.all()[0]
                 public_body = PublicBody(**data)
             else:
                 error = True
@@ -300,7 +311,10 @@ def submit_request(request, public_body=None):
             sent_to_pb = 0
 
         if foilaw is None:
-            foilaw = request_form.foi_law
+            if public_body is not None:
+                foilaw = public_body.default_law
+            else:
+                foilaw = request_form.foi_law
 
         foi_request = FoiRequest.from_request_form(user, public_body,
                 foilaw, form_data=request_form.cleaned_data, post_data=request.POST)
@@ -349,9 +363,10 @@ def set_public_body(request, slug):
         messages.add_message(request, messages.ERROR,
             _("This request doesn't need a Public Body!"))
         return render_400(request)
-    # FIXME: make foilaw dynamic
+
     foilaw = public_body.default_law
     foirequest.set_public_body(public_body, foilaw)
+
     messages.add_message(request, messages.SUCCESS,
             _("Request was sent to: %(name)s.") % {"name": public_body.name})
     return HttpResponseRedirect(foirequest.get_absolute_url())
@@ -515,6 +530,7 @@ def add_postal_reply(request, slug):
             message.plaintext = form.cleaned_data.get('text')
         message.not_publishable = form.cleaned_data['not_publishable']
         message.save()
+        foirequest.last_message = message.timestamp
         foirequest.status = 'awaiting_classification'
         foirequest.save()
         foirequest.add_postal_reply.send(sender=foirequest)
@@ -636,14 +652,15 @@ def approve_attachment(request, slug, attachment):
     att.save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
-    return HttpResponseRedirect(att.get_absolute_url())
+    return HttpResponseRedirect(att.get_anchor_url())
 
 
 def list_unchecked(request):
     if not request.user.is_staff:
         return render_403(request)
     foirequests = FoiRequest.published.filter(checked=False).order_by('-id')[:30]
-    attachments = FoiAttachment.objects.filter(approved=False, can_approve=True).order_by('-id')[:30]
+    attachments = FoiAttachment.objects.filter(is_redacted=False, redacted__isnull=True,
+        approved=False, can_approve=True).order_by('-id')[:30]
     return render(request, 'foirequest/list_unchecked.html', {
         'foirequests': foirequests,
         'attachments': attachments
@@ -698,3 +715,75 @@ def make_same_request(request, slug, message_id):
                 _('Please check your inbox for mail from us to confirm your mail address.'))
         # user cannot access the request yet!
         return HttpResponseRedirect("/")
+
+
+def auth_message_attachment(request, message_id, attachment_name):
+    '''
+    nginx auth view
+    '''
+
+    message = get_object_or_404(FoiMessage, id=int(message_id))
+    attachment = get_object_or_404(FoiAttachment, belongs_to=message,
+        name=attachment_name)
+    foirequest = message.request
+    pb_auth = request.session.get('pb_auth')
+
+    if not foirequest.is_visible(request.user, pb_auth=pb_auth):
+        return render_403(request)
+    if not attachment.is_visible(request.user, foirequest):
+        return render_403(request)
+
+    response = HttpResponse()
+    response['Content-Type'] = ""
+    response['X-Accel-Redirect'] = X_ACCEL_REDIRECT_PREFIX + attachment.get_internal_url()
+
+    return response
+
+
+def redact_attachment(request, slug, attachment_id):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_staff and not request.user == foirequest.user:
+        return render_403(request)
+    attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
+            belongs_to__request=foirequest)
+    if not attachment.can_approve and not request.user.is_staff:
+        return render_403(request)
+    already = None
+    if attachment.redacted:
+        already = attachment.redacted
+    elif attachment.is_redacted:
+        already = attachment
+
+    if already is not None and not already.can_approve and not request.user.is_staff:
+        return render_403(request)
+    if request.method == 'POST':
+        path = convert_to_pdf(request.POST)
+        if path is None:
+            return render_400(request)
+        name, extensions = attachment.name.rsplit('.', 1)
+        name = re.sub('[^\w\.\-]', '', name)
+        pdf_file = File(file(path))
+        if already:
+            att = already
+        else:
+            att = FoiAttachment(
+                belongs_to=attachment.belongs_to,
+                name=_('%s_redacted.pdf') % name,
+                is_redacted=True,
+                filetype='application/pdf',
+                approved=True,
+                can_approve=True
+            )
+        att.file = pdf_file
+        att.size = pdf_file.size
+        att.save()
+        if not attachment.is_redacted:
+            attachment.redacted = att
+            attachment.can_approve = False
+            attachment.approved = False
+            attachment.save()
+        return HttpResponseRedirect(att.get_anchor_url())
+    return render(request, 'foirequest/redact.html', {
+        'foirequest': foirequest,
+        'attachment': attachment
+    })

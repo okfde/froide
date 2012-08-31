@@ -1,13 +1,13 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from publicbody.models import PublicBody, FoiLaw
-from foirequest.tests import factories
+from froide.foirequest.tests import factories
+from froide.helper.test_utils import skip_if_environ
+
+from .models import PublicBody, FoiLaw
 
 
 class PublicBodyTest(TestCase):
-    # fixtures = ['auth_profile.json', 'publicbody.json', 'foirequest.json']
-
     def setUp(self):
         factories.make_world()
 
@@ -37,6 +37,7 @@ class PublicBodyTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(pb.name, response.content.decode('utf-8'))
 
+    @skip_if_environ('FROIDE_SKIP_SOLR')
     def test_autocomplete(self):
         import json
         response = self.client.get(
@@ -56,6 +57,7 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv()
         self.assertTrue(csv)
 
+    @skip_if_environ('FROIDE_SKIP_SOLR')
     def test_search(self):
         response = self.client.get(reverse('publicbody-search_json') + "?q=abc")
         self.assertIn("Selbstschutzschule", response.content)  # fails if search is not available
@@ -65,6 +67,7 @@ class PublicBodyTest(TestCase):
 
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]
-        response = self.client.get(reverse('publicbody-foilaw-show', kwargs={"slug": law.slug}))
+        self.assertIn(law.jurisdiction.name, unicode(law))
+        response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn(law.name, response.content.decode('utf-8'))

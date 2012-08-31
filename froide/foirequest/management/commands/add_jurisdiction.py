@@ -8,8 +8,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
-        from foirequest.models import FoiRequest
-        from publicbody.models import PublicBody, Jurisdiction, FoiLaw
+        from froide.foirequest.models import FoiRequest
+        from froide.publicbody.models import PublicBody, Jurisdiction, FoiLaw
 
         juris = Jurisdiction.objects.all()[0]
         laws = FoiLaw.objects.filter(jurisdiction=juris)

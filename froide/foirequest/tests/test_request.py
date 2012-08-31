@@ -11,9 +11,9 @@ from django.conf import settings
 from django.core import mail
 from django.utils import timezone
 
-from foirequest.tests import factories
-from publicbody.models import PublicBody, FoiLaw
-from foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.publicbody.models import PublicBody, FoiLaw
+from froide.foirequest.tests import factories
+from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 
 
 class RequestTest(TestCase):
@@ -571,7 +571,7 @@ class RequestTest(TestCase):
     #     self.assertEqual(response.status_code, 302)
 
     def test_set_message_sender(self):
-        from foirequest.forms import MessagePublicBodySenderForm
+        from froide.foirequest.forms import MessagePublicBodySenderForm
         mail.outbox = []
         self.client.login(username="dummy", password="froide")
         pb = PublicBody.objects.all()[0]
@@ -743,9 +743,10 @@ class RequestTest(TestCase):
         mail.outbox = []
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug}), {
-            'subject': 'My Escalation Subject',
-            'message': 'My Escalation Message'
-            })
+                    'subject': 'My Escalation Subject',
+                    'message': 'My Escalation Message'
+                }
+        )
         self.assertEqual(response.status_code, 302)
         self.assertIn(req.get_absolute_url(), response['Location'])
         self.assertEqual(req.law.mediator, req.messages[-1].recipient_public_body)

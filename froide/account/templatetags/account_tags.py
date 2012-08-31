@@ -1,6 +1,6 @@
 from django import template
 
-from account.forms import NewUserForm
+from froide.account.forms import NewUserForm
 
 register = template.Library()
 

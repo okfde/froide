@@ -31,6 +31,11 @@ class Profile(models.Model):
     def __unicode__(self):
         return _(u"Profile of <%(user)s>") % {"user": self.user}
 
+    def get_absolute_url(self):
+        if self.private:
+            return ""
+        return reverse('account-profile', kwargs={'slug': self.user.username})
+
     def display_name(self):
         if self.private:
             return _(u"Name Not Public")
@@ -69,11 +74,6 @@ class Profile(models.Model):
 
         return content
 
-    def get_absolute_url(self):
-        if self.private:
-            return ""
-        return ""
-
     def get_autologin_url(self, url):
         account_manager = AccountManager(self.user)
         return account_manager.get_autologin_url(url)
@@ -82,7 +82,7 @@ class Profile(models.Model):
         return SetPasswordForm(self.user, *args, **kwargs)
 
     def get_address_change_form(self, *args, **kwargs):
-        from account.forms import UserChangeAddressForm
+        from froide.account.forms import UserChangeAddressForm
         return UserChangeAddressForm(self, *args, **kwargs)
 
 

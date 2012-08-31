@@ -72,8 +72,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
             'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
                     self.model._meta.get_field(
-                    'same_as').rel, using=db).render(
-                    'req_id', None).replace('../../..', '../..')),
+                        'same_as').rel, using=db).render(
+                            'req_id', None).replace('../../..', '../..')),
             'applabel': opts.app_label
         }
 
@@ -120,6 +120,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
 
 class FoiAttachmentInline(admin.TabularInline):
     model = FoiAttachment
+    raw_id_fields = ('redacted',)
 
 
 class FoiMessageAdmin(admin.ModelAdmin):
@@ -129,6 +130,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
+    exclude = ('original',)
     raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
     inlines = [
         FoiAttachmentInline,
@@ -136,7 +138,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):
-    raw_id_fields = ('belongs_to',)
+    raw_id_fields = ('belongs_to', 'redacted',)
     ordering = ('-id',)
     list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
     list_filter = ('can_approve', 'approved',)

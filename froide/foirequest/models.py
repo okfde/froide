@@ -1,8 +1,11 @@
 import random
 from datetime import datetime, timedelta
 import json
+import re
 
 from django.db import models
+from django.db.models import Q
+from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
@@ -24,12 +27,13 @@ from django.utils import timezone
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
-from publicbody.models import PublicBody, FoiLaw, Jurisdiction
+from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
-from foirequest.foi_mail import send_foi_mail
+
+from .foi_mail import send_foi_mail
 
 html2markdown = lambda x: x
 
@@ -52,6 +56,10 @@ class FoiRequestManager(CurrentSiteManager):
         some_days_ago = timezone.now() - timedelta(days=4)
         return self.get_query_set().filter(status="awaiting_classification",
                 last_message__lt=some_days_ago)
+
+    def get_dashboard_requests(self, user):
+        return self.get_query_set().filter(user=user).filter(
+            Q(status="awaiting_classification") | Q(status='overdue'))
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
@@ -369,11 +377,11 @@ class FoiRequest(models.Model):
         self.status = 'awaiting_classification'
 
     def follow_count(self):
-        from foirequestfollower.models import FoiRequestFollower
+        from froide.foirequestfollower.models import FoiRequestFollower
         return FoiRequestFollower.objects.filter(request=self).count()
 
     def followed_by(self, user):
-        from foirequestfollower.models import FoiRequestFollower
+        from froide.foirequestfollower.models import FoiRequestFollower
         try:
             if isinstance(user, basestring):
                 return FoiRequestFollower.objects.get(request=self,
@@ -391,11 +399,11 @@ class FoiRequest(models.Model):
         return None
 
     def get_set_tags_form(self):
-        from foirequest.forms import TagFoiRequestForm
+        from .forms import TagFoiRequestForm
         return TagFoiRequestForm(self)
 
     def get_status_form(self):
-        from foirequest.forms import FoiRequestStatusForm
+        from .forms import FoiRequestStatusForm
         return FoiRequestStatusForm(self,
                     initial={"status": self.status,
                         "costs": self.costs,
@@ -448,26 +456,26 @@ class FoiRequest(models.Model):
         return constant_time_compare(code, self.get_auth_code())
 
     def public_body_suggestions_form(self):
-        from foirequest.forms import PublicBodySuggestionsForm
+        from .forms import PublicBodySuggestionsForm
         return PublicBodySuggestionsForm(self.public_body_suggestions())
 
     def make_public_body_suggestion_form(self):
-        from foirequest.forms import MakePublicBodySuggestionForm
+        from .forms import MakePublicBodySuggestionForm
         return MakePublicBodySuggestionForm()
 
     def get_concrete_law_form(self):
-        from foirequest.forms import ConcreteLawForm
+        from .forms import ConcreteLawForm
         return ConcreteLawForm(self)
 
     def get_postal_reply_form(self):
-        from foirequest.forms import PostalReplyForm
-        return PostalReplyForm(initial={"date": timezone.now().date()})
+        from .forms import PostalReplyForm
+        return PostalReplyForm(initial={"date": datetime.now().date()})
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
 
     def get_send_message_form(self):
-        from foirequest.forms import SendMessageForm
+        from .forms import SendMessageForm
         last_message = list(self.messages)[-1]
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
@@ -483,7 +491,7 @@ class FoiRequest(models.Model):
                     "message": message})
 
     def get_escalation_message_form(self):
-        from foirequest.forms import EscalationMessageForm
+        from .forms import EscalationMessageForm
         subject = _('Complaint about request "%(title)s"'
                 ) % {"title": self.title}
         return EscalationMessageForm(self,
@@ -519,13 +527,14 @@ Sincerely yours
         self.last_message = message.timestamp
         self.save()
         has_pdf = False
-        for attachment in email['attachments']:
+        for i, attachment in enumerate(email['attachments']):
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
                     size=attachment.size,
                     filetype=attachment.content_type)
             if att.name is None:
-                att.name = _("attached_file")
+                att.name = _("attached_file_%d") % i
+            att.name = re.sub('[^\w\.\-]', '', att.name)
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
             attachment._committed = False
@@ -579,8 +588,9 @@ Sincerely yours
     @classmethod
     def generate_secret_address(cls, user):
         possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
+        user_name = user.username.replace('_', '.')
         secret = "".join([random.choice(possible_chars) for i in range(10)])
-        return "%s.%s@%s" % (user.username, secret, settings.FOI_EMAIL_DOMAIN)
+        return "%s.%s@%s" % (user_name, secret, settings.FOI_EMAIL_DOMAIN)
 
     @classmethod
     def generate_unique_secret_address(cls, user):
@@ -610,7 +620,7 @@ Sincerely yours
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
-            form_data=None, post_data=None):
+            form_data=None, post_data=None, **kwargs):
         now = timezone.now()
         request = FoiRequest(title=form_data['subject'],
                 public_body=public_body_object,
@@ -636,25 +646,37 @@ Sincerely yours
 
         request.secret_address = cls.generate_unique_secret_address(user)
         request.law = foi_law
-        if public_body_object is not None:
-            request.jurisdiction = public_body_object.jurisdiction
-        # ensure slug is unique
-        request.slug = slugify(request.title)
-        count = 0
-        postfix = ""
-        while True:
-            if count:
-                postfix = "-%d" % count
-            try:
-                FoiRequest.objects.get(slug=request.slug + postfix)
-            except FoiRequest.DoesNotExist:
-                break
-            count += 1
-        request.slug += postfix
-
+        if foi_law is not None:
+            request.jurisdiction = foi_law.jurisdiction
         if send_now:
             request.due_date = request.law.calculate_due_date()
-        request.save()
+
+        # ensure slug is unique
+        while True:
+            request.slug = slugify(request.title)
+            first_round = True
+            count = 0
+            postfix = ""
+            with transaction.commit_manually():
+                try:
+                    while True:
+                        if not first_round:
+                            postfix = "-%d" % count
+                        if not FoiRequest.objects.filter(slug=request.slug + postfix).exists():
+                            break
+                        if first_round:
+                            first_round = False
+                            count = FoiRequest.objects.filter(slug__startswith=request.slug).count()
+                        else:
+                            count += 1
+                    request.slug += postfix
+                    request.save()
+                except IntegrityError:
+                    transaction.rollback()
+                else:
+                    transaction.commit()
+                    break
+
         message = FoiMessage(request=request,
                 sent=False,
                 is_response=False,
@@ -664,7 +686,9 @@ Sincerely yours
                 timestamp=now,
                 status="awaiting_response",
                 subject=request.title)
-        send_address = not request.law.email_only
+        send_address = True
+        if request.law:
+            send_address = not request.law.email_only
         message.plaintext = request.construct_message_body(form_data['body'],
                 foi_law, post_data, send_address=send_address)
         if public_body_object is not None:
@@ -677,7 +701,7 @@ Sincerely yours
             message.recipient_email = ""
         message.original = message.plaintext
         message.save()
-        cls.request_created.send(sender=request)
+        cls.request_created.send(sender=request, reference=form_data.get('reference'))
         if send_now:
             message.send()
         return request
@@ -768,7 +792,7 @@ Sincerely yours
             return False
 
     def set_public_body(self, public_body, law):
-        assert self.public_body == None
+        assert self.public_body is None
         assert self.status == "publicbody_needed"
         self.public_body = public_body
         self.law = law
@@ -787,7 +811,7 @@ Sincerely yours
             message.recipient_email = public_body.email
             # message.plaintext = FoiRequest.construct_message_body(message,
             #   message.plaintext)
-            assert message.sent == False
+            assert not message.sent
             message.send()  # saves message
 
     def make_public(self):
@@ -922,7 +946,7 @@ class FoiMessage(models.Model):
                 self.get_html_id())
 
     def get_public_body_sender_form(self):
-        from foirequest.forms import MessagePublicBodySenderForm
+        from froide.foirequest.forms import MessagePublicBodySenderForm
         return MessagePublicBodySenderForm(self)
 
     def get_recipient(self):
@@ -963,6 +987,14 @@ class FoiMessage(models.Model):
             return self.sender_name
         else:
             return self.sender_public_body.name
+
+    @property
+    def reply_address_entry(self):
+        email = self.sender_email
+        if email:
+            return u'%s@... (%s)' % (email.split('@')[0], self.real_sender)
+        else:
+            return self.real_sender
 
     @property
     def attachments(self):
@@ -1009,7 +1041,7 @@ class FoiMessage(models.Model):
                     'Message may not be from user and public body')
 
     def get_postal_attachment_form(self):
-        from foirequest.forms import PostalAttachmentForm
+        from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
     def send(self):
@@ -1027,12 +1059,11 @@ class FoiMessage(models.Model):
 
 
 def upload_to(instance, filename):
-    return "foi/%s/%s" % (instance.belongs_to.id, filename)
+    return "%s/%s/%s" % (settings.FOI_MEDIA_PATH, instance.belongs_to.id, instance.name)
 
 
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(FoiMessage, null=True,
-            on_delete=models.SET_NULL,
             verbose_name=_("Belongs to request"))
     name = models.CharField(_("Name"), max_length=255)
     file = models.FileField(_("File"), upload_to=upload_to)
@@ -1041,15 +1072,19 @@ class FoiAttachment(models.Model):
     format = models.CharField(_("Format"), blank=True, max_length=100)
     can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
+    redacted = models.ForeignKey('self', verbose_name=_("Redacted Version"),
+        null=True, blank=True, on_delete=models.SET_NULL)
+    is_redacted = models.BooleanField(_("Is redacted"), default=False)
 
-    POSTAL_CONTENT_TYPES = ("application/pdf", "image/png", "image/jpeg", "image/jpg",
-            "image/jpg", "application/x-pdf", "application/acrobat", "applications/vnd.pdf",
-            "text/pdf", "text/x-pdf")
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/x-pdf',
-            )
+            'application/x-pdf', 'pdf/application', 'application/acrobat',
+            'applications/vnd.pdf', 'text/pdf', 'text/x-pdf'
+    )
+
+    POSTAL_CONTENT_TYPES = PREVIEWABLE_FILETYPES + ("image/png", "image/jpeg", "image/jpg",
+            "image/jpg", "application/text-plain:formatted", "text/plain")
 
     class Meta:
         ordering = ('name',)
@@ -1063,19 +1098,46 @@ class FoiAttachment(models.Model):
     def index_content(self):
         return "\n".join((self.name,))
 
+    def has_public_access(self):
+        return self.belongs_to.request.visibility == 2 and self.approved
+
     def can_preview(self):
-        return self.filetype in self.PREVIEWABLE_FILETYPES
+        return self.has_public_access() and self.filetype in self.PREVIEWABLE_FILETYPES
 
     def get_preview_url(self):
-        return "https://docs.google.com/viewer?url=%s%s" % (settings.SITE_URL,
-                urlquote(self.file.url))
+        return "https://docs.google.com/viewer?url=%s%s" % (
+            settings.SITE_URL,
+                urlquote(self.get_absolute_url()))
 
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
 
+    def get_internal_url(self):
+        return settings.MEDIA_URL + self.file.name
+
+    def get_anchor_url(self):
+        return '%s#%s' % (self.belongs_to.request.get_absolute_url(), self.get_html_id())
+
     def get_absolute_url(self):
-        return "%s#%s" % (self.belongs_to.request.get_absolute_url(),
-                self.get_html_id())
+        if settings.USE_X_ACCEL_REDIRECT:
+            return reverse('foirequest-auth_message_attachment',
+                kwargs={
+                    'message_id': self.belongs_to_id,
+                    'attachment_name': self.name
+                })
+        else:
+            return self.file.url
+
+    def is_visible(self, user, foirequest):
+        if self.approved:
+            return True
+        if user and (
+                user.is_authenticated() and
+                foirequest.user == user):
+            return True
+        if user and user.is_superuser:
+            return True
+        return False
 
     def admin_link_message(self):
         return '<a href="%s">%s</a>' % (
@@ -1140,11 +1202,11 @@ class FoiEvent(models.Model):
         "became_overdue": _(
             u"This request became overdue"),
         "set_concrete_law": _(
-            u"%(user)s set '%(name)s' as the information law for the request."),
+            u"%(user)s set '%(name)s' as the information law for the request %(request)s."),
         "add_postal_reply": _(
             u"%(user)s added a reply that was received via snail mail."),
         "escalated": _(
-            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request.")
+            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s.")
     }
 
     class Meta:
@@ -1194,11 +1256,11 @@ class FoiEvent(models.Model):
         def link(url, title):
             return mark_safe('<a href="%s">%s</a>' % (url, escape(title)))
         context = self.get_context()
-        # if self.user:
-        #     profile = self.user.get_profile()
-        #     if not profile.private:
-        #         context['user'] = link(profile.get_absolute_url(),
-        #                 context['user'])
+        if self.user:
+            profile = self.user.get_profile()
+            if not profile.private:
+                context['user'] = link(profile.get_absolute_url(),
+                        context['user'])
         if self.public_body:
             context['public_body'] = link(self.public_body.get_absolute_url(),
                     context['public_body'])
@@ -1214,4 +1276,5 @@ class FoiEvent(models.Model):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
 # Import Signals here so models are available
-import foirequest.signals
+import froide.foirequest.signals  # noqa
+froide.foirequest.signals

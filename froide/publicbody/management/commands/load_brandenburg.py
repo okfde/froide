@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-import os
 import json
 
 from django.core.management.base import BaseCommand
@@ -13,14 +12,17 @@ class Command(BaseCommand):
     topic_cache = {}
 
     def handle(self, filepath, *args, **options):
-        translation.activate(settings.LANGUAGE_CODE)
         from django.contrib.auth.models import User
-        sw = User.objects.get(username='sw')
         from django.contrib.sites.models import Site
+
+        from froide.publicbody.models import (PublicBodyTopic, PublicBody,
+            Jurisdiction, FoiLaw)
+
+        translation.activate(settings.LANGUAGE_CODE)
+
+        sw = User.objects.get(username='sw')
         site = Site.objects.get_current()
-        from publicbody.models import PublicBodyTopic
         self.topic_cache = dict([(pb.slug, pb) for pb in PublicBodyTopic.objects.all()])
-        from publicbody.models import PublicBody, Jurisdiction, FoiLaw
         juris = Jurisdiction.objects.get(slug='brandenburg')
 
         laws = FoiLaw.objects.filter(jurisdiction=juris)

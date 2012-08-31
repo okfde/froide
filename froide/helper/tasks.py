@@ -14,6 +14,8 @@ from sentry.client.handlers import SentryHandler
 
 logger = logging.getLogger('task')
 logger.addHandler(SentryHandler())
+
+
 def process_failure_signal(exception, traceback, sender, task_id,
                             signal, args, kwargs, einfo, **kw):
     exc_info = (type(exception), exception, traceback)
@@ -31,6 +33,7 @@ def process_failure_signal(exception, traceback, sender, task_id,
     )
 task_failure.connect(process_failure_signal)
 
+
 @task
 def delayed_update(instance_pk, model):
     """ Only index stuff that is known to be public """
@@ -41,6 +44,7 @@ def delayed_update(instance_pk, model):
         return
     site.update_object(instance)
 
+
 @task
 def delayed_remove(instance_pk, model):
     translation.activate(settings.LANGUAGE_CODE)
@@ -48,4 +52,3 @@ def delayed_remove(instance_pk, model):
     fake_instance = model()
     fake_instance.pk = instance_pk
     site.remove_object(fake_instance)
-

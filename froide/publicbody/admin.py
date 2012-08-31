@@ -5,11 +5,11 @@ from froide.publicbody.models import (PublicBody, FoiLaw, PublicBodyTopic,
 
 class PublicBodyAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ('name', 'email', 'url', 'classification', 'topic', 'depth',)
-    list_filter = ('classification', 'topic', 'jurisdiction',)
+    list_display = ('name', 'email', 'url', 'classification', 'topic', 'jurisdiction',)
+    list_filter = ('topic', 'jurisdiction', 'classification')
     search_fields = ['name', "description"]
     exclude = ('confirmed',)
-    raw_id_fields = ('parent', 'root')
+    raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
 
 
 class FoiLawAdmin(admin.ModelAdmin):

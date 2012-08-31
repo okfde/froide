@@ -10,21 +10,35 @@ TEMPLATE_DEBUG = True
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dev.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'test.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#         'NAME': 'fragdenstaat',                      # Or path to database file if using sqlite3.
+#         'USER': 'fragdenstaat',                      # Not used with sqlite3.
+#         'PASSWORD': '',                  # Not used with sqlite3.
+#         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+#         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+#         'OPTIONS': {
+#             'autocommit': True,
+#         }
+#     }
+# }
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -38,7 +52,7 @@ USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de'
 
 SITE_ID = 1
 
@@ -59,6 +73,11 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, "..", "files")
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/files/'
 
+FOI_MEDIA_PATH = 'foi'
+
+USE_X_ACCEL_REDIRECT = True
+X_ACCEL_REDIRECT_PREFIX = '/protected'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -76,7 +95,7 @@ STATIC_URL = "/static/"
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = STATIC_URL +'admin/'
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -84,13 +103,12 @@ STATICFILES_DIRS = (
 )
 
 
-
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 FIXTURE_DIRS = [
@@ -121,18 +139,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
-
-MIDDLEWARE_CLASSES = [
-    'django.middleware.common.CommonMiddleware',
-    'djangosecure.middleware.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'pagination.middleware.PaginationMiddleware',
-]
 
 ROOT_URLCONF = 'froide.urls'
 
@@ -162,17 +170,18 @@ INSTALLED_APPS = (
     'djcelery_email',
     'djkombu',
     'debug_toolbar',
-    'sentry',
+    # 'sentry',
     'sentry.client',
     'pagination',
-    'djangosecure',
     'taggit',
 
     # local
-    'foirequest',
-    'foirequestfollower',
-    'publicbody',
-    'account',
+    'froide.foirequest',
+    'froide.foirequestfollower',
+    'froide.frontpage',
+    'froide.publicbody',
+    'froide.account',
+    'froide.foiidea',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -188,6 +197,10 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
         },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -199,6 +212,11 @@ LOGGING = {
             'propagate': True,
             'level': 'DEBUG',
         },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': True
+        },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
@@ -207,20 +225,12 @@ LOGGING = {
     }
 }
 
-CSRF_COOKIE_SECURE = True
-CSRF_FAILURE_VIEW = 'froide.account.views.csrf_failure'
-
-SESSION_COOKIE_AGE = 3628800 # six weeks
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = True
-
-# Django-Secure options
-SECURE_FRAME_DENY = True
-
+SESSION_COOKIE_AGE = 3628800  # six weeks
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
@@ -230,14 +240,14 @@ SOUTH_TESTS_MIGRATE = False
 
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
-DEFAULT_FROM_EMAIL = 'info@example.com'
+DEFAULT_FROM_EMAIL = 'info@fragdenstaat.de'
 
 HOLIDAYS = [
-    (1, 1), # New Year's Day
-    (5, 1), # Labour Day
-    (10, 3), # German Unity Day
-    (12, 25), # Christmas
-    (12, 26) # Second day of Christmas
+    (1, 1),  # New Year's Day
+    (5, 1),  # Labour Day
+    (10, 3),  # German Unity Day
+    (12, 25),  # Christmas
+    (12, 26)  # Second day of Christmas
 ]
 
 # Weekends are non-working days
@@ -246,46 +256,17 @@ HOLIDAYS_WEEKENDS = True
 # Calculates other German holidays based on easter sunday
 HOLIDAYS_FOR_EASTER = (0, -2, 1, 39, 50, 60)
 
-rec = re.compile
-
-POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
-POSSIBLE_CLOSINGS = [rec(u"Sincerely yours,?")]
-
-SECRET_URLS = {
-    "admin": "admin",
-    "sentry": "sentry",
-    "databrowse": "databrowse"
-}
-
-FROIDE_CONFIG = {
-    "create_new_publicbody": True,
-    "publicbody_empty": True,
-    "user_can_hide_web": True,
-    "public_body_officials_public": True,
-    "public_body_officials_email_public": False,
-    "request_public_after_due_days": 14,
-    "payment_possible": True,
-    "currency": "Euro",
-    "default_law": 2
-}
-
-# name classification values and their boost values
-FROIDE_PUBLIC_BODY_BOOSTS = {
-}
-
-SITE_NAME = 'FroIde'
-SITE_URL = 'http://localhost:8000'
-
 FROIDE_DRYRUN = False
-FROIDE_DRYRUN_DOMAIN = "testmail.example.com"
+FROIDE_DRYRUN_DOMAIN = "fragdenstaat.stefanwehrmeyer.com"
 
 AUTH_PROFILE_MODULE = 'account.Profile'
 
 SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=de&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"
 
+
 HAYSTACK_SITECONF = 'froide.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/froide'
+HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/fragdenstaat'
 
 # Official Notification Mail goes through
 # the normal Django SMTP Backend
@@ -309,9 +290,9 @@ FOI_EMAIL_USE_SSL = True
 FOI_EMAIL_FIXED_FROM_ADDRESS = True
 
 # SMTP settings for setting FoI mail
-# like Django 
+# like Django
 FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
-FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER 
+FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER
 FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
 FOI_EMAIL_HOST = "smtp.example.com"
 FOI_EMAIL_PORT = 537
@@ -321,7 +302,7 @@ FOI_EMAIL_USE_TLS = True
 import djcelery
 djcelery.setup_loader()
 
-CELERY_IMPORTS = ("foirequest.tasks", )
+CELERY_IMPORTS = ("froide.helper.tasks", )
 
 CELERY_RESULT_BACKEND = "database"
 CELERY_RESULT_DBURI = "sqlite:///dev.db"
@@ -333,3 +314,71 @@ BROKER_HOST = "localhost"
 BROKER_PORT = 8000
 BROKER_USER = ""
 BROKER_PASSWORD = ""
+
+# local settings
+
+LANGUAGE_CODE = "de"
+
+DATE_FORMAT = "d. F Y"
+SHORT_DATE_FORMAT = "d.m.Y"
+DATE_INPUT_FORMATS = ("%d.%m.%Y",)
+SHORT_DATETIME_FORMAT = "d.m.Y H:i"
+DATETIME_INPUT_FORMATS = ("%d.%m.%Y %H:%M",)
+TIME_FORMAT = "H:i"
+TIME_INPUT_FORMATS = ("%H:%M",)
+
+ADMINS = (
+    ('Stefan Wehrmeyer', 'mail@stefanwehrmeyer.com'),
+)
+INTERNAL_IPS = ('127.0.0.1',)
+
+
+MIDDLEWARE_CLASSES = [
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'pagination.middleware.PaginationMiddleware',
+]
+MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+SITE_NAME = "Frag den Staat"
+SITE_URL = 'http://localhost:8000'
+
+rec = re.compile
+POSSIBLE_GREETINGS = [rec(u"Sehr geehrt(er? (?:Herr|Frau) .*)")]
+POSSIBLE_CLOSINGS = [rec(u"Mit freundlichen Gr\xfc\xdfen,?")]
+
+
+TWITTER_CONSUMER_KEY = "4yuJF1vAnAYU0THU4v6ZPQ"
+TWITTER_CONSUMER_SECRET = "sW9tWul2La2UpULVCEqFs7t1o3lczKqvM4LwFvup1SI"
+TWITTER_ACCESS_KEY = '297351336-OrhX7oQHwSHMYBUO3A0i4GT9Ws6COBwaGcjVZtwM'
+TWITTER_ACCESS_SECRET = '2fCvKbooTtzodKW4uVknY3MVkmYVWbxLuBs5fKHcnI'
+
+
+SECRET_URLS = {
+    "admin": "admin",
+    "sentry": "sentry",
+    "databrowse": "databrowse"
+}
+
+FROIDE_CONFIG = {
+    "create_new_publicbody": True,
+    "publicbody_empty": True,
+    "user_can_hide_web": True,
+    "public_body_officials_public": False,
+    "public_body_officials_email_public": False,
+    "payment_possible": True,
+    "currency": "Euro",
+    "default_law": 2
+}
+
+FROIDE_PUBLIC_BODY_BOOSTS = {
+    u"Oberste Bundesbehörde": 1.9,
+    u"Obere Bundesbehörde": 1.1,
+    u"Andere": 0.8
+}
+
+# dev use:
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

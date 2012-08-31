@@ -40,11 +40,19 @@
       {% if public_body %}
       <input type="hidden" name="public_body" value="{{ public_body.pk }}"/>
       <input type="hidden" id="chosen-law" name="law" value="{{ public_body.default_law.pk }}"/>
+      {{ request_form.reference }}
       <p><strong>{% trans "To:" %}</strong> <span id="review-publicbody">{{ public_body.name }}</span> - 
       <a href="{{ public_body.get_absolute_url }}" class="info-link target-new">{% blocktrans %}Details{% endblocktrans %}</a>
       </p>
-      {% if public_body.request_note %}
-      <div id="request-note" class="notice">{{ public_body.request_note|markdown }}</div>
+      {% if public_body.request_note or public_body.default_law.request_note %}
+      <div id="request-note" class="notice">
+        {% if public_body.default_law.request_note %}
+          {{ public_body.default_law.request_note|markdown }}
+        {% endif %}
+        {% if public_body.request_note %}
+          {{ public_body.request_note|markdown }}
+        {% endif %}
+      </div>
       {% endif %}
       {% else %}
       <div id="step-public_body">
@@ -153,7 +161,25 @@
          <div class="letter">
            <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
            {{ request_form.body }}
-           <div id="letter_end" class="text">{{ request_form.default_law.letter_end_form }}</div>
+           <div class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
+           {% blocktrans %}Kind Regards,{% endblocktrans %}</div>
+           <div id="letter_end" style="display:none" class="text">{{ request_form.default_law.letter_end_form }}</div>
+           <div class="text-like">
+           {% if user.is_authenticated %}
+              <p id="fullname">{{ user.get_full_name }}</p>
+            {% else %}
+            <div class="user_data_form">
+              <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
+            <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
+            {{ user_form.first_name.errors }}
+            {{ user_form.last_name.errors }}
+            <p>
+              {{ user_form.first_name }}
+              {{ user_form.last_name }}
+              </p>
+            </div>
+            {% endif %}
+            </div>
           </div>
         </div>
         <div class="span-7 last request-notes">
@@ -173,21 +199,12 @@
         </div>
       </div>
       {% if user.is_authenticated %}
-      <p id="fullname">{{ user.get_full_name }}</p>
-      <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
-      <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
+        <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
+        <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
       {% else %}
-      <div id="user_data_form">
-        <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
-      <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
-      {{ user_form.first_name.errors }}
-      {{ user_form.last_name.errors }}
-      <p>
-        {{ user_form.first_name }}
-        {{ user_form.last_name }}
-        </p>
-      <div class="clearfix">
-        <div class="span-6">
+      <div class="user_data_form">
+        <div class="clearfix">
+          <div class="span-6">
          <label for="id_address">{% blocktrans %}Your mailing address{% endblocktrans %}</label>
        {{ user_form.address.errors }}
         <p>
@@ -218,7 +235,7 @@
        {{ user_form.terms.errors }}
        {{ user_form.terms }}
        {% endif %}
-        </div>
+      </div>
       </div>
       {% endif %}
       <div class="section">

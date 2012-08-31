@@ -7,11 +7,11 @@ from django.core import mail
 from django.contrib.auth.models import User
 from django.contrib.comments.forms import CommentForm
 
+from froide.foirequest.models import FoiRequest
+from froide.foirequest.tests import factories
 
-from foirequest.models import FoiRequest
-from foirequestfollower.models import FoiRequestFollower
-from froide.foirequestfollower.tasks import _batch_update
-from foirequest.tests import factories
+from .models import FoiRequestFollower
+from .tasks import _batch_update
 
 
 class FoiRequestFollowerTest(TestCase):

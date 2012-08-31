@@ -5,9 +5,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from helper.widgets import EmailInput, AgreeCheckboxInput
+from froide.helper.widgets import EmailInput, AgreeCheckboxInput
 
-user_can_hide_web = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
+USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 
 
 class NewUserForm(forms.Form):
@@ -25,9 +25,10 @@ class NewUserForm(forms.Form):
             widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
                 'class': 'inline smalltext'}))
     user_email = forms.EmailField(label=_('Email address'),
+            help_text=_('Not public, you will need to confirm this address.'),
             widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
 
-    if user_can_hide_web:
+    if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(required=False,
                 label=_("Hide my name on the web"),
                 help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))

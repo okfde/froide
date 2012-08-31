@@ -4,10 +4,12 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 
-from foirequest.models import FoiRequest
-from foirequest.views import show
-from foirequestfollower.models import FoiRequestFollower
-from foirequestfollower.forms import FollowRequestForm
+from froide.foirequest.models import FoiRequest
+from froide.foirequest.views import show
+
+from .models import FoiRequestFollower
+from .forms import FollowRequestForm
+
 
 @require_POST
 def follow(request, slug):
@@ -33,13 +35,14 @@ def follow(request, slug):
                 messages.add_message(request, messages.INFO,
                         _("You are following this request. If you want to unfollow it, click the unfollow link in the emails you received."))
 
-
         return HttpResponseRedirect(foirequest.get_absolute_url())
     else:
         return show(request, slug, context={"followform": form}, status=400)
 
+
 def confirm_follow(request, follow_id, check):
     get_object_or_404(FoiRequestFollower, id=int(follow_id))
+
 
 def unfollow_by_link(request, follow_id, check):
     follower = get_object_or_404(FoiRequestFollower, id=int(follow_id))
@@ -50,4 +53,3 @@ def unfollow_by_link(request, follow_id, check):
         messages.add_message(request, messages.ERROR,
             _("There was something wrong with your link. Perhaps try again."))
     return HttpResponseRedirect(follower.request.get_absolute_url())
-

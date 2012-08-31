@@ -15,6 +15,7 @@ def convert_to_local(date, offset_in_seconds=None):
     date = pytz.utc.localize(date)
     return date.astimezone(PYTZ_TIME_ZONE)
 
+
 def calculate_month_range_de(date, months=1):
     """ Should calculate after German BGB Law § 188"""
     assert months < 12, "Can't calculate month_range > 12"
@@ -30,6 +31,7 @@ def calculate_month_range_de(date, months=1):
     due += timedelta(days=1)
     return due
 
+
 def calculate_workingday_range(date, days):
     one_day = timedelta(days=1)
     while days > 0:
@@ -37,6 +39,7 @@ def calculate_workingday_range(date, days):
         if not is_holiday(date):
             days -= 1
     return date
+
 
 def is_holiday(date):
     if settings.HOLIDAYS_WEEKENDS:
@@ -53,11 +56,13 @@ def is_holiday(date):
             return True
     return False
 
+
 def advance_after_holiday(date):
     one_day = timedelta(days=1)
     while is_holiday(date):
         date += one_day
     return date
+
 
 # (c) Martin Diers, licensed under MIT
 # taken from: http://code.activestate.com/recipes/576517-calculate-easter-western-given-a-year/

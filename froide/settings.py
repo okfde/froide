@@ -17,7 +17,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'dev.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
@@ -46,6 +46,7 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
+
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
@@ -58,6 +59,11 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, "..", "files")
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/files/'
+
+FOI_MEDIA_PATH = 'foi'
+
+USE_X_ACCEL_REDIRECT = True
+X_ACCEL_REDIRECT_PREFIX = '/protected'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -76,7 +82,7 @@ STATIC_URL = "/static/"
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
 # Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = STATIC_URL +'admin/'
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -84,13 +90,12 @@ STATICFILES_DIRS = (
 )
 
 
-
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 FIXTURE_DIRS = [
@@ -121,7 +126,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = [
@@ -167,6 +172,7 @@ INSTALLED_APPS = (
     'pagination',
     'djangosecure',
     'taggit',
+    'redaction',
 
     # local
     'froide.foirequest',
@@ -174,6 +180,7 @@ INSTALLED_APPS = (
     'froide.frontpage',
     'froide.publicbody',
     'froide.account',
+    'froide.foiidea',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -186,6 +193,10 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'sentry.errors': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
         },
@@ -211,7 +222,7 @@ LOGGING = {
 CSRF_COOKIE_SECURE = True
 CSRF_FAILURE_VIEW = 'froide.account.views.csrf_failure'
 
-SESSION_COOKIE_AGE = 3628800 # six weeks
+SESSION_COOKIE_AGE = 3628800  # six weeks
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 
@@ -235,11 +246,11 @@ EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 DEFAULT_FROM_EMAIL = 'info@example.com'
 
 HOLIDAYS = [
-    (1, 1), # New Year's Day
-    (5, 1), # Labour Day
-    (10, 3), # German Unity Day
-    (12, 25), # Christmas
-    (12, 26) # Second day of Christmas
+    (1, 1),  # New Year's Day
+    (5, 1),  # Labour Day
+    (10, 3),  # German Unity Day
+    (12, 25),  # Christmas
+    (12, 26)  # Second day of Christmas
 ]
 
 # Weekends are non-working days
@@ -310,9 +321,9 @@ FOI_EMAIL_USE_SSL = True
 FOI_EMAIL_FIXED_FROM_ADDRESS = True
 
 # SMTP settings for setting FoI mail
-# like Django 
+# like Django
 FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
-FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER 
+FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER
 FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
 FOI_EMAIL_HOST = "smtp.example.com"
 FOI_EMAIL_PORT = 537
@@ -336,6 +347,6 @@ BROKER_USER = ""
 BROKER_PASSWORD = ""
 
 try:
-    from local_settings import *
+    from local_settings import *  # noqa
 except ImportError:
     pass
