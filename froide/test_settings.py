@@ -168,11 +168,13 @@ INSTALLED_APPS = (
     'haystack',
     'djcelery',
     'djcelery_email',
-    'djkombu',
+    'kombu.transport.django',
     'debug_toolbar',
-    # 'sentry',
-    'sentry.client',
+    'raven.contrib.django',
+    'raven.contrib.django.celery',
+    'celery_haystack',
     'pagination',
+    'djangosecure',
     'taggit',
 
     # local
@@ -182,6 +184,7 @@ INSTALLED_APPS = (
     'froide.publicbody',
     'froide.account',
     'froide.foiidea',
+    'froide.redaction',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -263,10 +266,12 @@ AUTH_PROFILE_MODULE = 'account.Profile'
 
 SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=de&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"
 
-
-HAYSTACK_SITECONF = 'froide.search_sites'
-HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/fragdenstaat'
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr/fragdenstaat'
+    }
+}
 
 # Official Notification Mail goes through
 # the normal Django SMTP Backend
@@ -302,8 +307,6 @@ FOI_EMAIL_USE_TLS = True
 import djcelery
 djcelery.setup_loader()
 
-CELERY_IMPORTS = ("froide.helper.tasks", )
-
 CELERY_RESULT_BACKEND = "database"
 CELERY_RESULT_DBURI = "sqlite:///dev.db"
 
@@ -317,7 +320,7 @@ BROKER_PASSWORD = ""
 
 # local settings
 
-LANGUAGE_CODE = "de"
+LANGUAGE_CODE = "en"
 
 DATE_FORMAT = "d. F Y"
 SHORT_DATE_FORMAT = "d.m.Y"

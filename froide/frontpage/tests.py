@@ -1,11 +1,11 @@
 from __future__ import with_statement
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.utils import translation
+from django.utils import translation, timezone
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tests.factories import make_world
@@ -26,7 +26,7 @@ class RequestTest(TestCase):
         title = "Awesome Request"
         FeaturedRequest.objects.create(request=some_foireq,
             title=title,
-            timestamp=datetime.now(),
+            timestamp=timezone.now(),
             text="",
             url="",
             site=self.site
@@ -34,7 +34,7 @@ class RequestTest(TestCase):
         title2 = "Awesomer Request"
         FeaturedRequest.objects.create(request=some_foireq,
             title=title2,
-            timestamp=datetime.now() + timedelta(days=1),
+            timestamp=timezone.now() + timedelta(days=1),
             text="",
             url="",
             site=self.site)

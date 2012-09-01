@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 import re
 
@@ -22,13 +22,13 @@ from django.core.mail import send_mail, mail_managers
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
+from django.utils import timezone
 
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
-from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
 
@@ -48,11 +48,11 @@ class FoiRequestManager(CurrentSiteManager):
         return self.get_query_set().get(secret_address=mail)
 
     def get_overdue(self):
-        now = datetime.now()
+        now = timezone.now()
         return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
 
     def get_unclassified(self):
-        some_days_ago = datetime.now() - timedelta(days=4)
+        some_days_ago = timezone.now() - timedelta(days=4)
         return self.get_query_set().filter(status="awaiting_classification",
                 last_message__lt=some_days_ago)
 
@@ -364,7 +364,7 @@ class FoiRequest(models.Model):
         return self.status == 'awaiting_response' or self.status == 'overdue'
 
     def is_overdue(self):
-        return self.due_date < datetime.now()
+        return self.due_date < timezone.now()
 
     def has_been_refused(self):
         return self.status == 'refused' or self.status == 'escalated'
@@ -468,7 +468,7 @@ class FoiRequest(models.Model):
 
     def get_postal_reply_form(self):
         from .forms import PostalReplyForm
-        return PostalReplyForm(initial={"date": datetime.now().date()})
+        return PostalReplyForm(initial={"date": timezone.now().date()})
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
@@ -515,11 +515,9 @@ Sincerely yours
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
         message.sender_public_body = self.public_body
-        message.timestamp = convert_to_local(*email['date'])
+        message.timestamp = email['date']
         message.recipient_email = self.secret_address
         message.recipient = self.user.get_profile().display_name()
-        # strip timezone, in case database can't handle it
-        message.timestamp = message.timestamp.replace(tzinfo=None)
         message.plaintext = email['body']
         message.html = html2markdown(email['html'])
         message.original = mail_string
@@ -560,7 +558,7 @@ Sincerely yours
         message.recipient_email = recipient_email
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
-        message.timestamp = datetime.now()
+        message.timestamp = timezone.now()
         message.plaintext = self.construct_standard_message_body(
             message_body,
             send_address=send_address)
@@ -579,7 +577,7 @@ Sincerely yours
         message.recipient_email = self.law.mediator.email
         message.recipient_public_body = self.law.mediator
         message.recipient = self.law.mediator.name
-        message.timestamp = datetime.now()
+        message.timestamp = timezone.now()
         message.plaintext = self.construct_standard_message_body(message_body)
         message.send()
         self.status = 'escalated'
@@ -622,7 +620,7 @@ Sincerely yours
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
             form_data=None, post_data=None, **kwargs):
-        now = datetime.now()
+        now = timezone.now()
         request = FoiRequest(title=form_data['subject'],
                 public_body=public_body_object,
                 user=user,
@@ -1221,7 +1219,7 @@ class FoiEvent(models.Model):
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.id:
-            self.timestamp = datetime.now()
+            self.timestamp = timezone.now()
         super(FoiEvent, self).save(*args, **kwargs)
 
     def get_html_id(self):

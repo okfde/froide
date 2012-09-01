@@ -5,13 +5,15 @@ http://www.ianlewis.org/en/parsing-email-attachments-python
 Licensed under MIT
 
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 from StringIO import StringIO
 from email.Header import decode_header
 from email.Parser import Parser
 from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
+
+import pytz
 
 
 def get_unread_mails(host, port, user, password, ssl=True):
@@ -110,11 +112,15 @@ class EmailParser(object):
             fixed.append((self.parse_header_field(addr[0]), addr[1]))
         return fixed
 
-    def parse_date(self, date):
-        date = parsedate_tz(date)
-        if date is None:
+    def parse_date(self, date_str):
+        date_tuple = parsedate_tz(date_str)
+        if date_tuple is None:
             return None
-        return (datetime.fromtimestamp(time.mktime(date[:9])), date[9])
+        date = datetime.fromtimestamp(time.mktime(date_tuple[:9]))
+        offset = date_tuple[9]
+        if offset is not None:
+            date = date - timedelta(seconds=offset)
+        return pytz.utc.localize(date)
 
     def parse_body(self, parts, attachments, body, html):
         for part in parts:

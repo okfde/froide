@@ -7,6 +7,7 @@ from django.core.mail import mail_admins
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils import timezone
 
 from taggit.forms import TagField
 from taggit.utils import edit_string_for_tags
@@ -195,7 +196,8 @@ class SendMessageForm(forms.Form):
 class MakePublicBodySuggestionForm(forms.Form):
     public_body = forms.IntegerField(widget=PublicBodySelect)
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
-            widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}), required=False)
+        widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}),
+        required=False)
 
     def clean_public_body(self):
         pb = self.cleaned_data['public_body']
@@ -336,7 +338,7 @@ class PostalReplyForm(forms.Form, PostalScanMixin):
 
     def clean_date(self):
         date = self.cleaned_data['date']
-        now = datetime.datetime.now().date()
+        now = timezone.now().date()
         if date > now:
             raise forms.ValidationError(_("Your reply date is in the future, that is not possible."))
         return date

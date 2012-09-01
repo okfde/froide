@@ -5,10 +5,17 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from froide.helper.tasks import delayed_update
+from haystack import connections
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
-from .tasks import count_same_foirequests
+
+
+def trigger_index_update(klass, instance_pk):
+    fake_instance = klass()
+    fake_instance.pk = instance_pk
+    uni = connections['default'].get_unified_index()
+    index = uni.get_index(klass)
+    index.enqueue_save(fake_instance)
 
 
 @receiver(FoiRequest.became_overdue,
@@ -74,6 +81,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
 def foirequest_add_same_as_count(instance=None, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
+    from .tasks import count_same_foirequests
     if instance.same_as:
         count_same_foirequests.delay(instance.same_as.id)
 
@@ -107,13 +115,13 @@ def decrement_request_count(sender, instance=None, **kwargs):
 def foimessage_delayed_update(instance=None, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
-    delayed_update.delay(instance.request_id, FoiRequest)
+    instance.request.save()
 
 
 @receiver(signals.post_delete, sender=FoiMessage,
         dispatch_uid='foimessage_delayed_remove')
 def foimessage_delayed_remove(instance, **kwargs):
-    delayed_update.delay(instance.request_id, FoiRequest)
+    trigger_index_update(FoiRequest, instance.request_id)
 
 
 @receiver(signals.post_save, sender=FoiAttachment,
@@ -121,7 +129,7 @@ def foimessage_delayed_remove(instance, **kwargs):
 def foiattachment_delayed_update(instance, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
-    delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
+    instance.belongs_to.request.save()
 
 
 @receiver(signals.post_delete, sender=FoiAttachment,
@@ -129,7 +137,7 @@ def foiattachment_delayed_update(instance, created=False, **kwargs):
 def foiattachment_delayed_remove(instance, **kwargs):
     if (instance.belongs_to is not None and
                 instance.belongs_to.request_id is not None):
-        delayed_update.delay(instance.belongs_to.request_id, FoiRequest)
+        trigger_index_update(FoiRequest, instance.belongs_to.request_id)
 
 
 # Event creation

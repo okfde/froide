@@ -8,6 +8,7 @@ from django.utils.dateformat import TimeFormat
 from django.conf import settings
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 
 from froide.foirequest.models import FoiRequest, FoiEvent, FoiMessage
 
@@ -32,7 +33,7 @@ def batch_update():
 def _batch_update():
     translation.activate(settings.LANGUAGE_CODE)
     requests = {}
-    gte_date = datetime.now() - timedelta(days=1)
+    gte_date = timezone.now() - timedelta(days=1)
     updates = {}
 
     message_type = ContentType.objects.get_for_model(FoiMessage)
@@ -46,7 +47,7 @@ def _batch_update():
             tf = TimeFormat(comment.submit_date)
             updates[message.request_id].append((comment.submit_date,
                 _("%(time)s: New comment by %(name)s") % {
-                    "time": tf.format(_("TIME_FORMAT")),
+                    "time": tf.format(_(settings.TIME_FORMAT)),
                     "name": comment.name
                 }
             ))

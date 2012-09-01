@@ -9,13 +9,6 @@ from django.conf import settings
 PYTZ_TIME_ZONE = pytz.timezone(settings.TIME_ZONE)
 
 
-def convert_to_local(date, offset_in_seconds=None):
-    if offset_in_seconds is not None:
-        date = date - timedelta(seconds=offset_in_seconds)
-    date = pytz.utc.localize(date)
-    return date.astimezone(PYTZ_TIME_ZONE)
-
-
 def calculate_month_range_de(date, months=1):
     """ Should calculate after German BGB Law § 188"""
     assert months < 12, "Can't calculate month_range > 12"
@@ -29,7 +22,7 @@ def calculate_month_range_de(date, months=1):
     due = datetime(y, m, d, 0, 0, 0)
     due = advance_after_holiday(due)
     due += timedelta(days=1)
-    return due
+    return PYTZ_TIME_ZONE.localize(due)
 
 
 def calculate_workingday_range(date, days):

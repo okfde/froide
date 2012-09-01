@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core import mail
+from django.utils import timezone
 
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
@@ -117,7 +118,7 @@ class RequestTest(TestCase):
         new_foi_email = "foi@" + pb.email.split("@")[1]
         req.add_message_from_email({
             'msgobj': None,
-            'date': (datetime.now() - timedelta(days=1), 0),
+            'date': timezone.now() - timedelta(days=1),
             'subject': u"Re: %s" % req.title,
             'body': u"""Message""",
             'html': None,
@@ -468,7 +469,8 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 200)
         # Date message back
         message = req.foimessage_set.all()[0]
-        message.timestamp = datetime(2011, 1, 1, 0, 0, 0)
+        message.timestamp = timezone.utc.localize(
+            datetime(2011, 1, 1, 0, 0, 0))
         message.save()
 
         path = os.path.join(settings.PROJECT_ROOT, "testdata", "test.pdf")
@@ -586,7 +588,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(title=post['subject'])
         req.add_message_from_email({
             'msgobj': None,
-            'date': (datetime.now() + timedelta(days=1), 0),
+            'date': timezone.now() + timedelta(days=1),
             'subject': u"Re: %s" % req.title,
             'body': u"""Message""",
             'html': None,

@@ -53,8 +53,7 @@ urlpatterns += patterns('',
     (r'^%s/' % _('help'), include('froide.help_urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
     # Secret URLs
-    url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls)),
-    (r'^%s/' % SECRET_URLS.get('sentry', 'sentry'), include('sentry.web.urls'))
+    url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls))
 )
 
 USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
