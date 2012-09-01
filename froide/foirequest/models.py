@@ -516,7 +516,7 @@ Sincerely yours
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
         message.sender_public_body = self.public_body
-        message.timestamp = convert_to_local(*email['date'])
+        message.timestamp = email['date']
         message.recipient_email = self.secret_address
         message.recipient = self.user.get_profile().display_name()
         message.plaintext = email['body']
