@@ -3,7 +3,7 @@ import re
 
 from django.conf import settings
 from django.core.files import File
-from django.utils import simplejson as json
+from django.utils import timezone, simplejson as json
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
@@ -52,7 +52,9 @@ def dashboard(request):
         return render_403(request)
     context = {}
     user = {}
-    for u in User.objects.filter(date_joined__gte=datetime.datetime(2011, 7, 30)):
+    start_date = timezone.utc.localize(datetime.datetime(2011, 7, 30))
+    for u in User.objects.filter(
+            date_joined__gte=start_date):
         d = u.date_joined.date().isoformat()
         user.setdefault(d, 0)
         user[d] += 1
@@ -62,8 +64,10 @@ def dashboard(request):
         total += user['num']
         user['total'] = total
     foirequest = {}
-    for u in FoiRequest.objects.filter(is_foi=True, public_body__isnull=False,
-                                        first_message__gte=datetime.datetime(2011, 7, 30)):
+    for u in FoiRequest.objects.filter(
+            is_foi=True,
+            public_body__isnull=False,
+            first_message__gte=start_date):
         d = u.first_message.date().isoformat()
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
@@ -523,7 +527,8 @@ def add_postal_reply(request, slug):
                 sender_name=form.cleaned_data['sender'],
                 sender_public_body=foirequest.public_body)
         #TODO: Check if timezone support is correct
-        message.timestamp = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
+        date = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
+        message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = form.cleaned_data.get('subject', '')
         message.plaintext = ""
         if form.cleaned_data.get('text'):

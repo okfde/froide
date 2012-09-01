@@ -9,6 +9,7 @@ from django.db.models import get_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from froide.account.models import Profile
 from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
@@ -42,8 +43,8 @@ class UserFactory(factory.Factory):
     is_staff = False
     is_active = True
     is_superuser = False
-    last_login = datetime(2000, 1, 1)
-    date_joined = datetime(1999, 1, 1)
+    last_login = datetime(2000, 1, 1).replace(tzinfo=timezone.utc)
+    date_joined = datetime(1999, 1, 1).replace(tzinfo=timezone.utc)
     # profile = factory.RelatedFactory(ProfileFactory, 'user')
 
 
@@ -144,8 +145,8 @@ class FoiLawFactory(factory.Factory):
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = 'Description'
     long_description = 'Long description'
-    created = datetime.now() - timedelta(days=600)
-    updated = datetime.now() - timedelta(days=300)
+    created = timezone.now() - timedelta(days=600)
+    updated = timezone.now() - timedelta(days=300)
     meta = False
     letter_start = 'Dear Sir or Madam,'
     letter_end = 'Kind regards'
@@ -173,10 +174,10 @@ class FoiRequestFactory(factory.Factory):
     status = ''
     visibility = 2
     user = factory.LazyAttribute(lambda o: UserFactory())
-    first_message = datetime.now() - timedelta(days=14)
-    last_message = datetime.now() - timedelta(days=2)
+    first_message = timezone.now() - timedelta(days=14)
+    last_message = timezone.now() - timedelta(days=2)
     resolved_on = None
-    due_date = datetime.now() + timedelta(days=14)
+    due_date = timezone.now() + timedelta(days=14)
 
     secret_address = factory.LazyAttribute(
         lambda o: '%s.%s@fragdenstaat.de' % (o.user.username, ''.join([random.choice(string.hexdigits) for x in range(8)])))
@@ -219,7 +220,7 @@ class FoiMessageFactory(factory.Factory):
     recipient_public_body = None
     status = FoiRequest.STATUS_USER_CHOICES[0][0]
 
-    timestamp = factory.Sequence(lambda n: datetime.now() - timedelta(days=1000 - int(n)))
+    timestamp = factory.Sequence(lambda n: timezone.now() - timedelta(days=1000 - int(n)))
     subject = 'subject'
     plaintext = 'plaintext'
     html = ''
@@ -249,13 +250,13 @@ class FoiEventFactory(factory.Factory):
     public_body = None
     public = True
     event_name = 'became_overdue'
-    timestamp = factory.Sequence(lambda n: datetime.now() - timedelta(days=n))
+    timestamp = factory.Sequence(lambda n: timezone.now() - timedelta(days=n))
     context_json = '{}'
 
 
 def make_world():
     site = Site.objects.get(id=1)
-    # import pdb; pdb.set_trace()
+
     user1 = UserFactory.create(is_staff=True, username='sw',
         email='mail@stefanwehrmeyer.com')
     p = user1.get_profile()

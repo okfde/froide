@@ -47,7 +47,7 @@ def _batch_update():
             tf = TimeFormat(comment.submit_date)
             updates[message.request_id].append((comment.submit_date,
                 _("%(time)s: New comment by %(name)s") % {
-                    "time": tf.format(_("TIME_FORMAT")),
+                    "time": tf.format(_(settings.TIME_FORMAT)),
                     "name": comment.name
                 }
             ))

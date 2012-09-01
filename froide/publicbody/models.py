@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -12,6 +12,7 @@ from django.conf import settings
 from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils import timezone
 from django.contrib.markup.templatetags.markup import markdown
 
 from froide.helper.date_utils import (calculate_workingday_range,
@@ -161,7 +162,7 @@ class FoiLaw(models.Model):
 
     def calculate_due_date(self, date=None):
         if date is None:
-            date = datetime.now()
+            date = timezone.now()
         if self.max_response_time_unit == "month_de":
             return calculate_month_range_de(date, self.max_response_time)
         elif self.max_response_time_unit == "day":

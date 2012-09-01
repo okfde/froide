@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 import re
 
@@ -29,7 +29,6 @@ from taggit.models import TaggedItemBase
 
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
-from froide.helper.date_utils import convert_to_local
 from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
 
@@ -469,7 +468,7 @@ class FoiRequest(models.Model):
 
     def get_postal_reply_form(self):
         from .forms import PostalReplyForm
-        return PostalReplyForm(initial={"date": datetime.now().date()})
+        return PostalReplyForm(initial={"date": timezone.now().date()})
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()

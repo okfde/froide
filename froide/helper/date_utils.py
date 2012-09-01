@@ -22,7 +22,7 @@ def calculate_month_range_de(date, months=1):
     due = datetime(y, m, d, 0, 0, 0)
     due = advance_after_holiday(due)
     due += timedelta(days=1)
-    return due
+    return PYTZ_TIME_ZONE.localize(due)
 
 
 def calculate_workingday_range(date, days):

@@ -2,11 +2,13 @@
 from __future__ import with_statement
 
 import os
+from datetime import datetime
 
 from django.test import TestCase
 from django.core import mail
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 
 from froide.helper.email_utils import EmailParser
 
@@ -35,6 +37,9 @@ class MailTest(TestCase):
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
+        message = messages[1]
+        self.assertEqual(message.timestamp,
+                datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
 
     def test_working_with_attachment(self):
         with file(p("test_mail_02.txt")) as f:
@@ -47,7 +52,7 @@ class MailTest(TestCase):
         self.assertEqual(messages[1].attachments[0].name, u"TI-IFG-AntragVordruck.docx")
 
     def test_wrong_address(self):
-        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        request = FoiRequest.objects.get_by_secret_mail(u"sw+yurpykc1hr@fragdenstaat.de")
         request.delete()
         mail.outbox = []
         with file(p("test_mail_01.txt")) as f:
