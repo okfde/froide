@@ -1,5 +1,3 @@
-import sys
-
 from celery.task import task
 
 from django.conf import settings
@@ -19,15 +17,12 @@ def process_mail(mail):
             _process_mail(mail_string)
         except Exception:
             transaction.rollback()
-            return sys.exc_info()
+            raise
         else:
             transaction.commit()
             return None
     run = transaction.commit_manually(run)
-    exc_info = run(mail)
-    if exc_info is not None:
-        from sentry.client.models import client
-        client.create_from_exception(exc_info=exc_info, view="froide.foirequest.tasks.process_mail")
+    run(mail)
 
 
 @task

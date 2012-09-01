@@ -153,10 +153,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.markup',
-    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
     'django.contrib.databrowse',
     'django.contrib.comments',
 
@@ -165,14 +162,13 @@ INSTALLED_APPS = (
     'haystack',
     'djcelery',
     'djcelery_email',
-    'djkombu',
     'debug_toolbar',
-    'sentry',
-    'sentry.client',
+    'raven.contrib.django',
+    'raven.contrib.django.celery',
+    'celery_haystack',
     'pagination',
     'djangosecure',
     'taggit',
-    'redaction',
 
     # local
     'froide.foirequest',
@@ -181,6 +177,7 @@ INSTALLED_APPS = (
     'froide.publicbody',
     'froide.account',
     'froide.foiidea',
+    'froide.redaction',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -190,15 +187,24 @@ INSTALLED_APPS = (
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry'],
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        'sentry.errors': {
+        'sentry': {
             'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'raven.contrib.django.handlers.SentryHandler',
         },
         'console': {
             'level': 'DEBUG',
@@ -216,7 +222,26 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        }
     }
+}
+
+RAVEN_CONFIG = {
+    'dsn': 'http://public:secret@example.com/1',
 }
 
 CSRF_COOKIE_SECURE = True
@@ -295,9 +320,12 @@ AUTH_PROFILE_MODULE = 'account.Profile'
 
 SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=de&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"
 
-HAYSTACK_SITECONF = 'froide.search_sites'
-HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/fragdenstaat'
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr/fragdenstaat'
+    }
+}
 
 # Official Notification Mail goes through
 # the normal Django SMTP Backend
@@ -333,18 +361,8 @@ FOI_EMAIL_USE_TLS = True
 import djcelery
 djcelery.setup_loader()
 
-CELERY_IMPORTS = ("froide.helper.tasks",)
-
 CELERY_RESULT_BACKEND = "database"
-CELERY_RESULT_DBURI = "sqlite:///dev.db"
-
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-BROKER_BACKEND = 'django'
-BROKER_HOST = "localhost"
-BROKER_PORT = 8000
-BROKER_USER = ""
-BROKER_PASSWORD = ""
 
 try:
     from local_settings import *  # noqa
