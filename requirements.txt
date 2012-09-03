@@ -19,7 +19,7 @@ django-celery-email==1.0.3
 django-celery-transactions==0.1.2
 django-crispy-forms==1.1.4
 django-debug-toolbar==0.9.4
--e git://github.com/stefanw/django-haystack.git@301f70fe35a423d2363b665208b2fc5cb8cd3668#egg=django_haystack-dev
+-e git://github.com/stefanw/django-haystack.git@6fd68057f920a5b22dd4c5aff0528efb004d4a36#egg=django_haystack-dev
 django-indexer==0.3.0
 django-kombu==0.9.4
 django-pagination==1.0.7
