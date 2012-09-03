@@ -313,7 +313,7 @@ Froide.app.publicBodyChosen = (function(){
                             ));
                         }
                             // TODO: Create law chooser here
-                        var chosenLaw = $('#chosen-law');
+                        var chosenLaw = $('#id_law');
                         if(chosenLaw.length){
                             chosenLaw.val(result.laws[0].pk);
                         } else {

@@ -39,7 +39,7 @@
       <legend>{% blocktrans %}Step 1 - Find the Public Body{% endblocktrans %}</legend>
       {% if public_body %}
       <input type="hidden" name="public_body" value="{{ public_body.pk }}"/>
-      <input type="hidden" id="chosen-law" name="law" value="{{ public_body.default_law.pk }}"/>
+      <input type="hidden" id="id_law" name="law" value="{{ public_body.default_law.pk }}"/>
       {{ request_form.reference }}
       <p><strong>{% trans "To:" %}</strong> <span id="review-publicbody">{{ public_body.name }}</span> - 
       <a href="{{ public_body.get_absolute_url }}" class="info-link target-new">{% blocktrans %}Details{% endblocktrans %}</a>
@@ -149,11 +149,9 @@
       <label for="id_subject">{% trans "Request Subject" %}:</label>
       {{ request_form.subject.errors }}
       {{ request_form.subject }}
-      {% comment %} Insert Law Choice here 
-      <div class="lawchooser">
-        <p class="bold">{% blocktrans %}Choose the law under which you want to make your request:{% endblocktrans %}
-      </div> {% endcomment %}
-      {{ request_form.law }}
+      {% if not public_body %}
+        {{ request_form.law }}
+      {% endif %}
       <div class="clearfix" style="margin-top:1em;">
         <div class="span-10">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
