@@ -228,7 +228,7 @@ def send_reset_password_link(request):
     if form.is_valid():
         if next:
             request.session['next'] = next
-        form.save(email_template_name="account/password_reset_email.txt")
+        form.save(use_https=True, email_template_name="account/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
                 _('Check your mail, we sent you a password reset link.'))
         return HttpResponseRedirect(next_url)
