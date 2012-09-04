@@ -34,6 +34,10 @@ from froide.helper.text_utils import (replace_email_name,
 
 from .foi_mail import send_foi_mail
 
+# Fix for weird model behavior
+from django.utils import translation
+translation.activate(settings.LANGUAGE_CODE)
+
 html2markdown = lambda x: x
 
 
