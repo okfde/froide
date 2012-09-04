@@ -5,11 +5,12 @@ from datetime import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
+from django.utils import timezone
 from django.contrib.comments import signals as comment_signals
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 
-epoch = datetime(1970, 1, 1)
+epoch = timezone.utc.localize(datetime(1970, 1, 1))
 
 
 class Source(models.Model):
