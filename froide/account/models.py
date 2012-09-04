@@ -29,7 +29,7 @@ class Profile(models.Model):
     address = models.TextField(blank=True)
 
     def __unicode__(self):
-        return _(u"Profile of <%(user)s>") % {"user": self.user}
+        return unicode(_(u"Profile of <%(user)s>") % {"user": self.user})
 
     def get_absolute_url(self):
         if self.private:
@@ -38,7 +38,7 @@ class Profile(models.Model):
 
     def display_name(self):
         if self.private:
-            return _(u"Name Not Public")
+            return unicode(_(u"Name Not Public"))
         else:
             return self.user.get_full_name()
 
@@ -47,25 +47,26 @@ class Profile(models.Model):
             for line in self.address.splitlines():
                 if line.strip():
                     content = content.replace(line,
-                            _("<< Address removed >>"))
+                            unicode(_("<< Address removed >>")))
         if self.user.email:
             content = content.replace(self.user.email,
-                    _("<< Email removed >>"))
+                    unicode(_("<< Email removed >>")))
         if not self.private:
             return content
         last_name = self.user.last_name
         first_name = self.user.first_name
         full_name = self.user.get_full_name()
         content = content.replace(full_name,
-                _("<< Name removed >>"))
+                unicode(_("<< Name removed >>")))
         content = content.replace(last_name,
-                _("<< Name removed >>"))
+                unicode(_("<< Name removed >>")))
         content = content.replace(first_name,
-                _("<< Name removed >>"))
+                unicode(_("<< Name removed >>")))
         for greeting in settings.POSSIBLE_GREETINGS:
             match = greeting.search(content, re.I)
             if match is not None and len(match.groups()):
-                content = content.replace(match.group(1), _("<< Greeting >>"))
+                content = content.replace(match.group(1),
+                    unicode(_("<< Greeting >>")))
 
         for closing in settings.POSSIBLE_CLOSINGS:
             match = closing.search(content, re.I)
@@ -152,8 +153,8 @@ class AccountManager(object):
                 'site_url': settings.SITE_URL
             })
         # Translators: Mail subject
-        send_mail(_("%(site_name)s: please confirm your account") % {
-                    "site_name": settings.SITE_NAME},
+        send_mail(unicode(_("%(site_name)s: please confirm your account") % {
+                    "site_name": settings.SITE_NAME}),
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
 
     @classmethod
