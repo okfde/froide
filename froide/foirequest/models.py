@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models import Q
 from django.db import transaction, IntegrityError
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
@@ -33,10 +33,6 @@ from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote)
 
 from .foi_mail import send_foi_mail
-
-# Fix for weird model behavior
-from django.utils import translation
-translation.activate(settings.LANGUAGE_CODE)
 
 html2markdown = lambda x: x
 

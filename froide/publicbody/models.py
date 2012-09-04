@@ -3,7 +3,7 @@ import json
 from datetime import timedelta
 
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
