@@ -24,7 +24,7 @@ foirequest_urls = [
     # Translators: part in request filter URL
     (r'^%s/(?P<tag>[-\w]+)/$' % pgettext('URL part', 'tag'), 'list_requests', {},
         'foirequest-list'),
-] + [(r'^(?P<status>%s)/$' % urlpart, 'list_requests', {}, 'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS]
+] + [(r'^(?P<status>%s)/$' % unicode(urlpart), 'list_requests', {}, 'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS]
 
 urlpatterns += patterns("froide.foirequest.views",
     *foirequest_urls

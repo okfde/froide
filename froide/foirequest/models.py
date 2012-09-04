@@ -184,7 +184,15 @@ class FoiRequest(models.Model):
     ]
 
     # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
-    STATUS_URLS_DICT = dict(STATUS_URLS)
+    _STATUS_URLS_DICT = None
+
+    @classmethod
+    def get_status_from_url(cls, status):
+        if cls._STATUS_URLS_DICT is None:
+            cls._STATUS_URLS_DICT = dict([
+                (unicode(x), y) for x, y in cls.STATUS_URLS])
+        return cls._STATUS_URLS_DICT[status]
+
     STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
     STATUS_USER_CHOICES = [(x[0], x[1]) for x in USER_SET_CHOICES]
     STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])

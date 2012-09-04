@@ -85,7 +85,7 @@ def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None)
     }
     topic_list = PublicBodyTopic.objects.get_list()
     if status is not None:
-        status = FoiRequest.STATUS_URLS_DICT[status]
+        status = FoiRequest.get_status_from_url(status)
         foi_requests = FoiRequest.published.for_list_view().filter(status=status)
         context.update({
             'status': FoiRequest.get_readable_status(status),
@@ -120,8 +120,9 @@ def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None)
         'page_title': _("FoI Requests"),
         'count': foi_requests.count(),
         'object_list': foi_requests,
-        'status_list': [(x[0],
-            FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
+        'status_list': [(unicode(x[0]),
+            FoiRequest.get_readable_status(x[1]),
+            x[1]) for x in FoiRequest.STATUS_URLS],
         'topic_list': topic_list
     })
 

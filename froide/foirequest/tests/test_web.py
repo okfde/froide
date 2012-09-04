@@ -38,7 +38,7 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
         for urlpart, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
-                kwargs={"status": urlpart}))
+                kwargs={"status": unicode(urlpart)}))
             self.assertEqual(response.status_code, 200)
 
         for topic in PublicBodyTopic.objects.all():
