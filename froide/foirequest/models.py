@@ -619,11 +619,11 @@ Sincerely yours
 
     @classmethod
     def get_readable_status(cls, status):
-        return cls.STATUS_CHOICES_DICT.get(status, (_("Unknown"), None))[0]
+        return unicode(cls.STATUS_CHOICES_DICT.get(status, (_("Unknown"), None))[0])
 
     @classmethod
     def get_status_description(cls, status):
-        return cls.STATUS_CHOICES_DICT.get(status, (None, _("Unknown")))[1]
+        return unicode(cls.STATUS_CHOICES_DICT.get(status, (None, _("Unknown")))[1])
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
