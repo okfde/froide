@@ -51,6 +51,15 @@ class FoiRequestManager(CurrentSiteManager):
         now = timezone.now()
         return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
 
+    def get_to_be_asleep(self):
+        return self.get_asleep().exclude(status='asleep')
+
+    def get_asleep(self):
+        six_months_ago = timezone.now() - timedelta(days=30 * 6)
+        return self.get_query_set()\
+            .filter(status__in=FoiRequest.NON_FINAL_STATUS,
+                last_message__lt=six_months_ago)
+
     def get_unclassified(self):
         some_days_ago = timezone.now() - timedelta(days=4)
         return self.get_query_set().filter(status="awaiting_classification",
@@ -134,6 +143,8 @@ class FoiRequest(models.Model):
             _('The request has not been answered in the legal time limit.')),
         ('escalated', _('Request escalated'),
             _('The request has been escalated to the mediating entity.')),
+        ('asleep', _('Request asleep'),
+            _('The request is not resolved and has not been active for a while.')),
     )
     USER_SET_CHOICES = (
         ('awaiting_response', _('Awaiting response'),
@@ -168,7 +179,7 @@ class FoiRequest(models.Model):
         "request_redirected": "awaiting_response"
     }
     NON_FINAL_STATUS = ('awaiting_response', 'request_redirected',
-            'overdue', 'awaiting_classification', 'publicbody_needed')
+            'overdue', 'asleep', 'awaiting_classification', 'publicbody_needed')
 
     STATUS_URLS = [
             (_("successful"), 'successful'),
@@ -180,6 +191,7 @@ class FoiRequest(models.Model):
             (_("publicbody-needed"), 'publicbody_needed'),
             (_("awaiting-response"), 'awaiting_response'),
             (_("overdue"), 'overdue'),
+            (_("asleep"), 'asleep'),
             (_("not-held"), 'not_held')
     ]
 
@@ -274,7 +286,8 @@ class FoiRequest(models.Model):
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
     status_changed = django.dispatch.Signal(providing_args=["status", "data"])
-    became_overdue = django.dispatch.Signal(providing_args=["status"])
+    became_overdue = django.dispatch.Signal(providing_args=[])
+    became_asleep = django.dispatch.Signal(providing_args=[])
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
     set_concrete_law = django.dispatch.Signal(providing_args=['name'])
     made_public = django.dispatch.Signal(providing_args=[])
@@ -834,6 +847,11 @@ Sincerely yours
         self.save()
         self.became_overdue.send(sender=self)
         # self.status_changed.send(sender=self, status=self.status, data={})
+
+    def set_asleep(self):
+        self.status = "asleep"
+        self.save()
+        self.became_asleep.send(sender=self)
 
     def send_classification_reminder(self):
         send_mail(_("%(site_name)s: Please classify the reply to your request")

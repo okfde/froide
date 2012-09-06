@@ -39,6 +39,13 @@ def detect_overdue():
 
 
 @task
+def detect_asleep():
+    translation.activate(settings.LANGUAGE_CODE)
+    for foirequest in FoiRequest.objects.get_to_be_asleep():
+        foirequest.set_asleep()
+
+
+@task
 def classification_reminder():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_unclassified():
