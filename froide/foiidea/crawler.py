@@ -4,6 +4,8 @@ from datetime import datetime
 
 import requests
 
+from django.utils import timezone
+
 from .crawlers import rss
 from .models import Source, Article
 
@@ -68,8 +70,10 @@ def crawl_source(source):
 
         if item['date'] is not None:
             item['date'] = datetime.fromtimestamp(time.mktime(item['date']))
+            item['date'] = timezone.make_aware(item['date'],
+                                               timezone.get_current_timezone())
         else:
-            item['date'] = datetime.utcnow()
+            item['date'] = timezone.now()
         item.update({'source': source})
 
         article = Article(**item)
