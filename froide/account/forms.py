@@ -22,8 +22,10 @@ class NewUserForm(forms.Form):
     address = forms.CharField(max_length=300, min_length=10,
             label=_('Mailing Address'),
             help_text=_('Your address will not be displayed publicly.'),
-            widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
-                'class': 'inline smalltext'}))
+            widget=forms.Textarea(attrs={
+                'rows': '3',
+                'placeholder': _('Street, Post Code, City'),
+            }))
     user_email = forms.EmailField(label=_('Email address'),
             help_text=_('Not public, you will need to confirm this address.'),
             widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
