@@ -322,6 +322,10 @@ class FoiRequest(models.Model):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
+    @property
+    def url(self):
+        return self.get_absolute_url()
+
     def get_absolute_short_url(self):
         return reverse('foirequest-shortlink',
                 kwargs={'obj_id': self.id})

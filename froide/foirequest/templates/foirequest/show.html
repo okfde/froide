@@ -19,681 +19,790 @@
 {% endblock %}
 
 {% block body %}
+
 {% if not user.is_authenticated and object.awaits_classification %}
-{% url "account-login" as login_url %}
-<div class="notice">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
+  {% url "account-login" as login_url %}
+  <div class="alert alert-info">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
 {% endif %}
+
 {% if object.user == user and object.awaits_classification %}
-<div class="notice">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status">set a new status for this request!</a>{% endblocktrans %}</div>
+  <div class="alert alert-info">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status">set a new status for this request!</a>{% endblocktrans %}</div>
 {% endif %}
+
 {% if object.user == user and object.is_overdue and object.awaits_response %}
-<div class="warning">
-  {% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!<br/>
-  Please act now:{% endblocktrans %}
-  <ul>
-    <li>
-      {% blocktrans %}Have you received a reply by <b>postal mail</b>? &rarr; <a class="show-target" href="#add-postal-reply-section">Add it to the records below!</a>{% endblocktrans %}
-    </li>
-    <li>
-      {% blocktrans %}Have you not gotten any reply? &rarr; <a class="show-target" href="#reply-section">Write a reminder to the public body!</a>{% endblocktrans %}
-    </li>
-  </ul>
-</div>
+  <div class="alert">
+    {% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!<br/>
+    Please act now:{% endblocktrans %}
+    <ul>
+      <li>
+        {% blocktrans %}Have you received a reply by <b>postal mail</b>? &rarr; <a class="show-target" href="#add-postal-reply-section">Add it to the records below!</a>{% endblocktrans %}
+      </li>
+      <li>
+        {% blocktrans %}Have you not gotten any reply? &rarr; <a class="show-target" href="#reply-section">Write a reminder to the public body!</a>{% endblocktrans %}
+      </li>
+    </ul>
+  </div>
 {% endif %}
+
 {% if object.user == user and object.has_been_refused and object.law.mediator %}
-<div class="notice">
-  {% blocktrans %}You request has been refused.{% endblocktrans %}
-  <a href="#escalate-section" class="show-target">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
-</div>
+  <div class="alert alert-info">
+    {% blocktrans %}You request has been refused.{% endblocktrans %}
+    <a href="#escalate-section" class="show-target">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
+  </div>
+{% endif %}
+
+{% if not object.is_foi %}
+  <div class="alert alert-info">
+    {% blocktrans %}This request is not an FoI request. This site is only for requesting specific information from public bodies.{% endblocktrans %}
+  </div>
 {% endif %}
 
 <h2>{{ object.title }}</h2>
 
-<div class="clearfix" id="meta-infos">
-  <div class="span-18">
+<div class="row">
+  <div class="span9">
+    {% if object.user == user %}
+      <ul class="nav nav-tabs request-nav">
+        <li{% if active_tab == 'info' %} class="active"{% endif %}>
+          <a href="#info" data-toggle="tab">
+            {% trans "Request Details" %}
+          </a>
+        </li>
+        {% if object.message_needs_status %}
+        <li{% if active_tab == 'set-status' %} class="active"{% endif %}>
+          <a href="#set-status" data-toggle="tab">
+            {% trans "Set status" %}
+          </a>
+        </li>
+        {% endif %}
+        {% if object.status == "publicbody_needed" %}
+          <li{% if active_tab == "choose-public-body" %} class="active"{% endif %}>
+            <a href="#choose-public-body" data-toggle="tab">
+              {% trans "Choose Public Body" %}
+            </a>
+          </li>
+        {% endif %}
+        {% if object.public_body %}
+          <li{% if active_tab == 'add-postal-reply' %} class="active"{% endif %}>
+            <a href="#add-postal-reply" data-toggle="tab">
+              {% blocktrans %}Add a Postal reply{% endblocktrans %}
+            </a>
+          </li>
+          <li{% if active_tab == "write-message" %} class="active"{% endif %}>
+            <a href="#write-message" data-toggle="tab">
+              {% blocktrans %}Send a message{% endblocktrans %}
+            </a>
+          </li>
+        {% endif %}
+        {% if object.law.mediator %}
+          <li{% if active_tab == 'escalate' %} class="active"{% endif %}>
+            <a href="#escalate" data-toggle="tab">
+              {% trans "Escalate this request" %}
+            </a>
+          </li>
+        {% endif %}
+        {% if object.status_is_final %}
+          <li>
+            <a href="#write-resolution" data-toggle="tab">
+              {% blocktrans %}Write a summary{% endblocktrans %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
 
-{% if not object.is_foi %}
-<div class="notice">
-  {% blocktrans %}This request is not an FoI request. This site is only for requesting specific information from public bodies.{% endblocktrans %}
-</div>
-{% endif %}
+      <div class="tab-content well request-well">
 
-<dl>
-  <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
-  <dd>{% if object.public_body %}
-  <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
-  {% else %}
-  {% blocktrans %}Not yet known{% endblocktrans %}
-  {% endif %}</dd>
-  {% if object.law %}
-  {% if object.law.meta %}
-  <dt>{% blocktrans %}Laws used:{% endblocktrans %}</dt>
-  <dd>
-    <ul>
-    {% for law in object.law.combined.all %}
-      <li>
-        <a href="{% url 'publicbody-foilaw-show' slug=law.slug %}" class="target-new">{{ law.name }}</a>
-      </li>
-    {% endfor %}
-    </ul>
-  </dd>
-  {% else %}
-    <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
-    <dd><a href="{% url 'publicbody-foilaw-show' slug=object.law.slug %}" class="target-new">{{ object.law.name }}</a>
-    </dd>
-  {% endif %}
-  {% else %}
-    <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
-    <dd>{% blocktrans %}Not yet set{% endblocktrans %}</dd>
-  {% endif %}
-  <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
-  <dd>{{ object.readable_status }}</dd>
-  {% if object.awaits_response %}
-    <dt>{% blocktrans %}Due date:{% endblocktrans %}</dt>
-  {% if object.is_overdue %}
-  <dd class="red">
-  {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}</dd>
-  {% else %}
-    <dd>{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
-    {% endif %}
-    <br/><small><a href="{% url 'help-foi_officers' %}#frist">{% blocktrans %}How is this calculated?{% endblocktrans %}</a></small>
-    </dd>
-  {% endif %}
-{% if object.refusal_reason %}
-  <dt>{% blocktrans %}Refusal Reason{% endblocktrans %}</dt>
-  <dd>{{ object.refusal_reason }}</dd>
-{% endif %}
-{% if object.costs > 0 %}
-  <dt>{% blocktrans %}Cost of information:{% endblocktrans %}</dt>
-  <dd>{{ object.costs|floatformat:2 }} {{ froide.currency }}</dd>
-  {% endif %}
-{% if object.description %}
-  <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
-  <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
-  {% endif %}
-{% if object.resolution %}
-  <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
-  <dd>{{ object.resolution|urlizetrunc:40|linebreaks }}</dd>
-{% endif %}
+        {# Set status #}
+        {% with status_message=object.message_needs_status %}
+          {% if status_message %}
+            <div id="set-status" class="tab-pane no-print{% if active_tab == 'set-status' %} active{% endif %}">
+              {{ status_message }}
+              <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+                {% csrf_token %}
+                {% if status_form %}
+                  {% include "foirequest/_set_status.html" %}
+                {% else %}
+                  {% with status_form=object.get_status_form %}
+                    {% include "foirequest/_set_status.html" %}
+                  {% endwith %}
+                {% endif %}
+                <button class="btn" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+              </form>
+            </div>
+          {% endif %}
+        {% endwith %}
+        {# End Set status #}
 
-</dl>
+        {% if object.status == "publicbody_needed" %}
+          <div class="tab-pane{% if active_tab == 'choose-public-body' %} active{% endif %}" id="choose-public-body">
+            {% with suggestions_form=object.public_body_suggestions_form %}
+              {% if suggestions_form %}
+                <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
+                <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
+                  {% csrf_token %}
+                  {{ suggestions_form }}
+                  <button class="btn" type="submit">{% blocktrans %}Send this request to the selected Public Body{% endblocktrans %}</button>
+                </form>
+              {% endif %}
+            {% endwith %}
+          </div>
+        {% endif %}
 
-{% if object.visibility == 2 %}
-<div class="social">
-{% if object.user == user %}
-  <p>{% trans "Share your request with friends and followers!" %}</p>
-{% endif %}
-  <div class="socialshareprivacy"></div>
-</div>
-{% endif %}
+        {# Escalate #}
+        {% if object.law.mediator %}
+          <div class="tab-pane no-print{% if active_tab == 'escalate' %} active{% endif %}" id="escalate">
+            <form method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+              {% csrf_token %}
+              <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled.{% endblocktrans %}</p>
+              <table>
+                {% if escalation_form %}
+                  {{ escalation_form.as_table }}
+                {% else %}
+                  {% with escalation_form=object.get_escalation_message_form %}
+                    {{ escalation_form.as_table }}
+                  {% endwith %}
+                {% endif %}
+              </table>
+              {% if not object.public %}
+                <p>{% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}</p>
+              {% endif %}
+              <button class="btn" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+            </form>
+          </div>
+        {% endif %}
+        {# End Escalate #}
 
+        {# Write Resolution #}
+        {% if object.status_is_final %}
+          <div class="tab-pane no-print{% if active_tab == 'write-resolution' %} active{% endif %}" id="write-resolution">
+            <h3>{% blocktrans %}Resolution Summary{% endblocktrans %}</h3>
+            <form method="post" action="{% url 'foirequest-set_resolution' slug=object.slug %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+              <textarea rows="8" class="span6" name="resolution">{% if object.resolution %}{{ object.resolution }}{% endif %}</textarea><br/>
+              <button type="submit" class="btn">{% blocktrans %}Save Summary{% endblocktrans %}</button>
+            </form>
+          </div>
+        {% endif %}
+        {# End Write Resolution #}
 
-{# Public Body Needed #}
-{% if object.status == "publicbody_needed" %}
-<div class="info">
-  {% blocktrans %}This request was not sent yet, because it still needs a Public Body as a recipient.{% endblocktrans %}
-</div>
-{% if not object.public %}
-<div class="notice">
-  {% blocktrans %}This request is not public and will not receive suggestions for public bodies from users!{% endblocktrans %}
-</div>
-{% endif %}
-{% endif %}
-{# Unconfirmed Public Body #}
-{% if object.public_body and not object.public_body.confirmed %}
-<div class="notice">
-  {% blocktrans %}The public body of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
-</div>
-{% endif %}
-{# End Unconfirmed Public Body #}
-<hr/>
-</div>
-<div class="span-6 last sidebar">
-    <h3>{% trans "Follow this request" %}</h3>
-    {% with count=object.follow_count %}
-      {% if count %}
-      <p><span class="help">{% blocktrans count counter=count %}One person is following this request.{% plural %}There are {{ counter }} people following this request.{% endblocktrans %}</span></p>
-      {% endif %}
-    {% endwith %}
-    {% if user.is_authenticated and user != object.user %}
-    <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
-      {% csrf_token %}
-    {% if followform %}
-      {{ followform.as_p }}
-      <input type="submit" value="{% trans "Follow request" %}"/>
-    {% else %}
-      {% followrequest object user "followform" %}
-      {{ followform.as_p }}
-      {% if followform.following %}
-      <span class="help">{% blocktrans %}You are currently <span class="green">following</span> this request and you will get email updates.{% endblocktrans %}</span>
-      <button class="button icon remove" type="submit"/>{% trans "Unfollow request" %}</button><br/>
+        {# Postal Reply #}
+        {% if object.public_body %}
+          <div class="tab-pane focussed no-print{% if active_tab == 'add-postal-reply' %} active{% endif %}" id="add-postal-reply">
+            <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
+              <table class="no-stripes">
+                {% if postal_reply_form %}
+                  {{ postal_reply_form.as_table }}
+                {% else %}
+                  {% with form=object.get_postal_reply_form %}
+                    {{ form.as_table }}
+                  {% endwith %}
+                {% endif %}
+              </table>
+              <button type="submit" class="btn">{% blocktrans %}Add Postal Reply{% endblocktrans %}</button>
+              <p>{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</p>
+            </form>
+          </div>
+          {# End Postal Reply #}
+
+          {# Reply #}
+          <div class="tab-pane no-print{% if active_tab == 'write-message' %} active{% endif %}" id="write-message">
+            <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">
+              {% csrf_token %}
+              {% if object.is_overdue and object.awaits_response %}
+                <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
+              {% else %}
+                <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
+              {% endif %}
+              <table class="no-stripes">
+                {% if send_message_form %}
+                  {{ send_message_form.as_table }}
+                {% else %}
+                  {% with send_message_form=object.get_send_message_form %}
+                    {{ send_message_form.as_table }}
+                  {% endwith %}
+                {% endif %}
+              </table>
+              <button class="btn" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+            </form>
+          </div>
+        {% endif %}
+        {# End Reply, end if object.public_body #}
+
+        {# If Meta Law #}
+        {% if object.law.meta and object.reply_received %}
+          <div class="tab-pane no-print">
+            <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
+              {{ object.get_concrete_law_form.as_p }}
+              <button type="submit" class="btn">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
+            </form>
+          </div>
+        {% endif %}
+
+        {% if not object.public %}
+          <div class="tab-pane no-print">
+            <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+              {% csrf_token %}
+              <p>
+                {% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
+                <button type="submit" class="btn">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
+              </p>
+            </form>
+          </div>
+        {% endif %}
+        <div class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
+      {% endif %}{# endif: object.user == user #}
+
+        {# Public Body Needed #}
+        {% if object.status == "publicbody_needed" %}
+          <div class="no-print">
+            <p>{% blocktrans %}You can suggest a public body for this request.{% endblocktrans %}
+            {% with suggestions=object.public_body_suggestions %}
+              {% if suggestions %}
+                <br/>{% blocktrans %}The following public bodies have already been suggested:{% endblocktrans %}
+              {% endif %}
+              </p>
+              <ul>
+              {% for suggestion in suggestions %}
+                <li>
+                  <strong>{{ suggestion.public_body.name }}</strong> - <a href="{{ suggestion.public_body.get_absolute_url }}" class="info-link">{% blocktrans %}Details{% endblocktrans %}</a>
+                  {% if suggestion.reason %}
+                    <br/>
+                    {% blocktrans %}Reason given by the user:{% endblocktrans %} {{ suggestion.reason }}
+                  {% endif %}
+                </li>
+              {% empty %}
+                <li>{% blocktrans %}There are no suggestions yet{% endblocktrans %}</li>
+              {% endfor %}
+              </ul>
+            {% endwith %}
+            <form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
+              {% csrf_token %}
+              {% with form=object.make_public_body_suggestion_form %}
+                {{ form.public_body }}
+                {{ form.reason.label_tag }} {{ form.reason }}
+              {% endwith %}
+              <br/>
+              <button class="btn" type="submit">{% blocktrans %}Suggest this Public Body{% endblocktrans%}</button>
+            </form>
+          </div>
+        {% endif %}
+        {# End Public Body Needed #}
+
+    <dl>
+      <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
+      <dd>
+        {% if object.public_body %}
+          <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+        {% else %}
+          {% blocktrans %}Not yet known{% endblocktrans %}
+        {% endif %}
+      </dd>
+      {% if object.law %}
+        {% if object.law.meta %}
+          <dt>{% blocktrans %}Laws used:{% endblocktrans %}</dt>
+          <dd>
+            <ul>
+              {% for law in object.law.combined.all %}
+                <li>
+                  <a href="{% url 'publicbody-foilaw-show' slug=law.slug %}" class="target-new">{{ law.name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </dd>
+        {% else %}
+          <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
+          <dd>
+            <a href="{% url 'publicbody-foilaw-show' slug=object.law.slug %}" class="target-new">{{ object.law.name }}</a>
+          </dd>
+        {% endif %}
       {% else %}
-      <span class="help">{% blocktrans %}Follow this request and get notified by email when something changes.{% endblocktrans %}</span>
-      <button class="button mail icon" type="submit"/>{% trans "Follow request" %}</button><br/>
+        <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
+        <dd>{% blocktrans %}Not yet set{% endblocktrans %}</dd>
+      {% endif %}
+      <dt>{% blocktrans %}Status of this request:{% endblocktrans %}</dt>
+      <dd>{{ object.readable_status }}</dd>
+      {% if object.awaits_response %}
+        <dt>{% blocktrans %}Due date:{% endblocktrans %}</dt>
+        {% if object.is_overdue %}
+          <dd class="red">
+            {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}
+          </dd>
+        {% else %}
+          <dd>
+            {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
+        {% endif %}
+          <a href="{% url 'help-foi_officers' %}#frist">{% blocktrans %}How is this calculated?{% endblocktrans %}</a>
+          </dd>
+      {% endif %}
+      {% if object.refusal_reason %}
+        <dt>{% blocktrans %}Refusal Reason{% endblocktrans %}</dt>
+        <dd>{{ object.refusal_reason }}</dd>
+      {% endif %}
+      {% if object.costs > 0 %}
+        <dt>{% blocktrans %}Cost of information:{% endblocktrans %}</dt>
+        <dd>{{ object.costs|floatformat:2 }} {{ froide.currency }}</dd>
+        {% endif %}
+      {% if object.description %}
+        <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
+        <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
+        {% endif %}
+      {% if object.resolution %}
+        <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
+        <dd>{{ object.resolution|urlizetrunc:40|linebreaks }}</dd>
+      {% endif %}
+    </dl>
+
+    {# Public Body Needed #}
+    {% if object.status == "publicbody_needed" %}
+      <div class="alert alert-info">
+        {% blocktrans %}This request was not sent yet, because it still needs a Public Body as a recipient.{% endblocktrans %}
+      </div>
+      {% if not object.public %}
+        <div class="alert alert-info">
+          {% blocktrans %}This request is not public and will not receive suggestions for public bodies from users!{% endblocktrans %}
+        </div>
       {% endif %}
     {% endif %}
-    </form>
+
+    {# Unconfirmed Public Body #}
+    {% if object.public_body and not object.public_body.confirmed %}
+      <div class="alert alert-info">
+        {% blocktrans %}The public body of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
+      </div>
     {% endif %}
+    {# End Unconfirmed Public Body #}
+    {% if user == object.user %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
 
-    <ul class="iconed-list">
-      <li class="rss-icon">
-          <a href="{% url 'foirequest-feed' slug=object.slug %}">{% trans "RSS Feed" %}</a>
-      </li>
-      <li class="atom-icon">
-          <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">{% trans "Atom Feed" %}</a>
-      </li>
-    </ul>
+  <div class="span3">
+    <ul class="nav nav-list">
+      <li class="nav-header">{% trans "Follow this request" %}</li>
+      {% with count=object.follow_count %}
+        {% if count %}
+          <li class="muted">{% blocktrans count counter=count %}One person following this request{% plural %}{{ counter }} people following this request{% endblocktrans %}</li>
+        {% endif %}
+      {% endwith %}
 
-    {% with object.tags.all as tags %}
-    {% if tags %}
-      <h3>{% trans "Tags" %}</h3>
-      <ul class="tag-list">
-      {% for tag in tags %}
+      {% if user.is_authenticated and user != object.user %}
         <li>
-          <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
+          <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
+            {% csrf_token %}
+            {% if followform %}
+              {{ followform.as_p }}
+              <button type="submit" class="btn">{% trans "Follow request" %}</button>
+            {% else %}
+              {% followrequest object user "followform" %}
+              {{ followform.as_p }}
+              {% if followform.following %}
+                <p>
+                  {% blocktrans %}You are currently <span class="green">following</span> this request and you will get email updates.{% endblocktrans %}
+                </p>
+                <button class="btn" type="submit">{% trans "Unfollow request" %}</button>
+              {% else %}
+                <p>
+                  {% blocktrans %}Follow this request and get notified by email when something changes.{% endblocktrans %}
+                </p>
+                <button class="btn" type="submit">{% trans "Follow request" %}</button>
+              {% endif %}
+            {% endif %}
+          </form>
+        </li>
+      {% endif %}
+
+      <li>
+        <a href="{% url 'foirequest-feed' slug=object.slug %}">
+          <i class="rss-icon"></i>
+          {% trans "RSS Feed" %}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">
+          <i class="atom-icon"></i>
+          {% trans "Atom Feed" %}
+        </a>
+      </li>
+
+      {% if object.visibility == 2 %}
+        <li class="nav-header">{% trans "Share this request" %}</li>
+        <li>
+          <div class="socialshareprivacy"></div><br/>
+        </li>
+      {% endif %}
+
+      <li class="nav-header">{% trans "Short URL" %}</li>
+      <li>
+        <input type="text" readonly value="{{ object.get_absolute_domain_short_url }}"/>
+      </li>
+
+      {% with object.tags.all as tags %}
+        {% if tags %}
+          <li class="nav-header">{% trans "Tags" %}</li>
+          <li>
+            <ul class="tag-list">
+              {% for tag in tags %}
+                <li>
+                  <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endif %}
+      {% endwith %}
+
+      {% if user.is_staff %}
+        <li class="nav-header">{% trans "Staff Actions" %}</li>
+        <li>
+          <a href="{% url 'admin:foirequest_foirequest_change' object.id %}">{% trans "View on Admin site" %}</a>
+        </li>
+        <li>
+          <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
+            {% csrf_token %}
+            {% with object.get_set_tags_form as set_tags_form %}
+              {{ set_tags_form.tags }}
+            {% endwith %}
+          </form>
+        </li>
+        {% if object.checked %}
+          <li>{% trans "Marked as checked" %}</li>
+        {% else %}
+          <li>
+            <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
+              {% csrf_token %}
+              <button class="btn" type="submit">{% trans "Mark as checked" %}</button>
+            </form>
+          </li>
+        {% endif %}
+        {% if not object.is_foi %}
+          <li>{% trans "Marked as NOT FoI" %}</li>
+        {% else %}
+          <li>
+            <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+              {% csrf_token %}
+              <button class="btn" type="submit">{% trans "Mark as NOT FoI" %}</button>
+            </form>
+          </li>
+        {% endif %}
+      {% endif %}
+    </ul>
+  </div>
+
+</div>
+
+<hr/>
+
+<div class="row" data-spy="scroll" data-target="#message-nav">
+
+  <div class="span9">
+    <div class="page-break"></div>
+    <h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
+
+    {% for message in object.messages %}
+      <div id="{{ message.get_html_id }}" class="message-container">
+        <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
+          <table class="message-table">
+            <tbody>
+              <tr>
+                <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+                <td class="value-padding-right">
+                  {% if object.user == user %}
+                    {% if message.is_response %}
+                      {{ message.real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
+                      <div id="change-pb-{{ message.id }}" style="display:none" class="no-print">
+                        {% with message_pb_form=message.get_public_body_sender_form %}
+                          <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                            {% csrf_token %}
+                            <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
+                            {{ message_pb_form.sender }}
+                            <button type="submit" class="btn">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                          </form>
+                        {% endwith %}
+                      </div>
+                    {% else %}
+                      {{ message.real_sender }}
+                    {% endif %}
+                  {% else %}
+                    {{ message.sender }}
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
+                <td class="value-padding-right"><strong>{{ message.get_subject }}</strong></td>
+              </tr>
+              <tr>
+                <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
+                {% if message.is_postal %}
+                  <td>{{ message.timestamp|date:"DATE_FORMAT" }}</td>
+                {% else %}
+                  <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
+                {% endif %}
+              </tr>
+              {% if not message.is_response %}
+                <tr>
+                  <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
+                  <td>{{ message.get_recipient }}</td>
+                </tr>
+              {% endif %}
+              {% if message.status %}
+                <tr>
+                  <td class="key">{% blocktrans %}Status{% endblocktrans %}</td>
+                  <td>{{ message.readable_status }}</td>
+                </tr>
+              {% endif %}
+              {% if user.is_staff %}
+                <tr class="no-print">
+                  <td class="key">{% blocktrans %}Admin{% endblocktrans %}</td>
+                  <td>
+                    <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
+                  </td>
+                </tr>
+              {% endif %}
+              {% if message.all_attachments %}
+                <tr>
+                  <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
+                  <td>
+                    <ul>
+                      {% for attachment in message.all_attachments %}
+                        {% if attachment.approved or user.is_staff or user == request.user %}
+                          <li>
+                            {% if not attachment.approved %}
+                              <div class="alert">
+                            {% endif %}
+                            {% if attachment.approved %}
+                              <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
+                                {{ attachment.name }} ({{ attachment.size|filesizeformat }})
+                              </a>
+                              {% if attachment.can_preview %}
+                                -
+                                <a class="target-new" href="{{ attachment.get_preview_url }}">
+                                  {% trans "Preview in Browser" %}
+                                </a>
+                              {% endif %}
+                            {% else %}
+                              {% if user == object.user or user.is_staff %}
+                                <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
+                                  {{ attachment.name }} ({{ attachment.size|filesizeformat }})
+                                </a>
+                                {% if attachment.can_preview %}
+                                  -
+                                  <a class="target-new" href="{{ attachment.get_preview_url }}">
+                                    {% trans "Preview in Browser" %}
+                                  </a>
+                                {% endif %}
+                                {% if attachment.can_approve or user.is_staff %}
+                                  <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+                                    {% csrf_token %}
+                                    {% if object.user.get_profile.private %}
+                                      <p>
+                                        {% trans "Please check this attachment and if it doesn't contain personally identifying information and if you are not explicitly forbidden to publish it, click the button below." %}
+                                      </p>
+                                    {% else %}
+                                      <p>
+                                        {% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}) and if publication is not explicitly forbidden, click the button below.{% endblocktrans %}
+                                      </p>
+                                    {% endif %}
+                                    {% if not attachment.can_approve %}
+                                      <p>
+                                        <strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>
+                                        {% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}
+                                      </p>
+                                    {% endif %}
+                                    <button class="btn" type="submit">{% trans "Publish this attachment" %}</button>
+                                    <p>{% trans "If it does contain personally identifying information, please inform moderators (info@fragdenstaat.de) and they will redact the document and then publish it for you." %}</p>
+
+                                    {% if user.is_staff %}
+                                      <p>
+                                        <a href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+                                        {% if attachment.is_redacted %}
+                                          {% trans "Update this redacted version" %}
+                                        {% endif %}
+                                        {% if attachment.redacted %}
+                                          {% trans "Update the redacted version of this attachment" %}
+                                        {% endif %}
+                                        {% if not attachment.redacted and not attachment.is_redacted %}
+                                          {% trans "Redact this attachment" %}
+                                        {% endif %}
+                                        </a>
+                                      </p>
+                                    {% endif %}
+                                  </form>
+                                {% else %}
+                                  <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
+                                {% endif %}
+                              {% else %}
+                                {% if not attachment.can_approve %}
+                                  <span>{% trans "This attachment can't be published." %}</span>
+                                {% else %}
+                                  <span>{% trans "This attachment has not been published yet." %}</span>
+                                {% endif %}
+                              {% endif %}
+                              {% if not attachment.approved %}
+                                </div>
+                              {% endif %}
+                            {% endif %}
+                          </li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </td>
+                </tr>
+              {% endif %}
+              {% if user == object.user and message.is_postal %}
+                <tr class="no-print">
+                  <td class="key">{% blocktrans %}Upload Attachments{% endblocktrans %}</td>
+                  {% with form=message.get_postal_attachment_form %}
+                    <td>
+                      <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.scan }}
+                        <button type="submit" class="upload-button btn">{% blocktrans %}Upload Document{% endblocktrans %}</button>
+                        <span class="help-block">{{ form.scan.help_text }}</span>
+                      </form>
+                    </td>
+                  {% endwith %}
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+          {% if message.not_publishable %}
+            <div class="alert alert-info">
+              <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, we are not allowed to publish these documents online.{% endblocktrans %}</p>
+              {% if user.is_authenticated %}
+                {% if object.user == user %}
+                  <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
+                {% else %}
+                  {% if object.same_as.user == user %}
+                    <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
+                  {% else %}
+                    {% check_same_request object user "same_request" %}
+                    {% if same_request %}
+                      <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+                    {% else %}
+                      <form method="post" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
+                        {% csrf_token %}
+                        <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+                        <button type="submit" class="btn">{% trans "Make identical request in your name" %}</button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+              {% else %}
+                <form method="post" id="make-same-request" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}#make-same-request">
+                  {% csrf_token %}
+                  <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
+                  {% if not new_user_form %}
+                    {% get_new_user_form "new_user_form" %}
+                  {% endif %}
+                  <table class="now-loggedin">
+                    {{ new_user_form.as_table }}
+                  </table>
+                  <button type="submit" class="btn">{% trans "Make identical request in your name" %}</button>
+                </form>
+              {% endif %}
+              <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
+            </div>
+          {% endif %}
+
+          <hr/>
+
+          <div id="{{ message.get_html_id }}-content" class="message-content">
+            {% if forloop.counter0 == 0 %}
+              <div>{% highlight_request message %}</div>
+            {% else %}
+              <div>{{ message.get_content|urlize }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if message.events %}
+          <div class="events">
+            <ol>
+              {% for event in message.events %}
+                <li class="event" id="{{ event.get_html_id }}">
+                  <span class="no-print" title="{{ event.timestamp }}">{% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="print-only">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
+                </li>
+              {% endfor %}
+            </ol>
+          </div>
+        {% endif %}
+
+        <div class="comments-container">
+          {% get_comment_list for message as comment_list %}
+          <div id="comments-{{ message.id }}" class="comments">
+            {% include "comments/foirequest/list.html" %}
+            <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
+            <div class="comment-form" id="comment-form-{{ message.id }}">
+              {% if user.is_authenticated %}
+                {% with next=object.get_absolute_url %}
+                  {% render_comment_form for message %}
+                {% endwith %}
+              {% else %}
+                <a href="{% url 'account-login' %}" class="no-print">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if not forloop.last %}
+        <div class="page-break"></div>
+      {% endif %}
+      {% empty %}
+      <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
+    {% endfor %}
+  </div>
+
+  <div class="span3">
+    {% if object.messages %}
+      <ul id="message-nav" class="sticky nav nav-list">
+      {% for message in object.messages %}
+        {% ifchanged message.sender %}
+          <li class="nav-header">
+            {{ message.sender|truncatewords:4 }}
+          </li>
+        {% endifchanged %}
+        <li>
+          <a href="#{{ message.get_html_id }}">
+            {{ message.timestamp|date:"SHORT_DATE_FORMAT" }}
+          </a>
         </li>
       {% endfor %}
       </ul>
     {% endif %}
-    {% endwith %}
-
-    {% if user.is_staff %}
-    <hr/>
-    <a href="{% url 'admin:foirequest_foirequest_change' object.id %}">{% trans "View on Admin site" %}</a><br/>
-    <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
-      {% csrf_token %}
-      {% with object.get_set_tags_form as set_tags_form %}
-        {% trans "Enter tags:" %}
-        {{ set_tags_form.tags }}
-        <br/><small>{{ set_tags_form.tags.help_text }}</small>
-      {% endwith %}
-    </form>
-    <hr/>
-    {% if object.checked %}
-      {% trans "Marked as checked" %}<br/>
-    {% else %}
-    <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
-      {% csrf_token %}
-      <input class="button" type="submit" value="{% trans "Mark as checked" %}"/>
-    </form>
-    {% endif %}
-    {% if not object.is_foi %}
-      {% trans "Marked as NOT FoI" %}<br/>
-    {% else %}
-    <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
-      {% csrf_token %}
-      <input class="button" type="submit" value="{% trans "Mark as NOT FoI" %}"/>
-    </form>
-    {% endif %}
-  {% endif %}
-</div>
-</div>
-
-<div class="clearfix">
-
-<div class="span-6 push-18">
-  <div class="sticky foirequest-overview">
-  {% if object.messages %}
-    <h4>{% trans "Overview" %}</h4>
-    <ul id="foirequest-overview-list">
-    {% for message in object.messages %}
-      <li>
-        <a href="#{{ message.get_html_id }}">{{ message.timestamp|date:"SHORT_DATE_FORMAT" }}</a>
-        <br/>
-        <small>{% blocktrans with sender=message.sender|truncatewords:4 %}from {{ sender }}{% endblocktrans %}</small>
-      </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
   </div>
+
 </div>
 
-<div class="span-18 pull-6 last">
-
-{# Public Body Needed #}
-{% if object.status == "publicbody_needed" %}
-<div class="section no-print">
-  <p>{% blocktrans %}You can suggest a public body for this request.{% endblocktrans %}
-  {% with suggestions=object.public_body_suggestions %}
-  {% if suggestions %}
-  <br/>{% blocktrans %}The following public bodies have already been suggested:{% endblocktrans %}
-  {% endif %}
-  </p>
-      <ul>
-      {% for suggestion in suggestions %}
-      <li><strong>{{ suggestion.public_body.name }}</strong> - <a href="{{ suggestion.public_body.get_absolute_url }}" class="info-link">{% blocktrans %}Details{% endblocktrans %}</a>{% if suggestion.reason %}<br/>
-      {% blocktrans %}Reason given by the user:{% endblocktrans %} {{ suggestion.reason }}
-      {% endif %}
-      </li>
-      {% empty %}
-        <li>{% blocktrans %}There are no suggestions yet{% endblocktrans %}</li>
-      {% endfor %}
-      </ul>
-  {% endwith %}
-  <form method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
-    {% csrf_token %}
-    {% with form=object.make_public_body_suggestion_form %}
-    {{ form.public_body }}
-    {{ form.reason.label_tag }} {{ form.reason }}
-    {% endwith %}
-    <br/><input type="submit" value="{% blocktrans %}Suggest this Public Body{% endblocktrans%}"/>
-  </form>
-</div>
-
-{% if object.user == user %}
-{% with suggestions_form=object.public_body_suggestions_form %}
-  {% if suggestions_form %}
-  <div class="section important-form no-print">
-    <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
-    <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
-      {% csrf_token %}
-      {{ suggestions_form }}
-      <input type="submit" value="{% blocktrans %}Send this request to the selected Public Body{% endblocktrans %}"/>
-    </form>
-  </div>
-  {% endif %}
-  {% endwith %}
-{% endif %}
-{% endif %}
-{# End Public Body Needed #}
-
-{# Escalate #}
-{% if object.user == user %}
-{% if object.has_been_refused and object.law.mediator %}
-<div class="section no-print" id="escalate-section">
-  <div class="error">
-    {% blocktrans %}You request has been refused.{% endblocktrans %}
-    <a href="#escalate" class="toggle">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
-  </div>
-  <div id="escalate"{% if not escalation_form %} style="display:none"{% endif %}>
-  <form method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">{% csrf_token %}
-    <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled under the.{% endblocktrans %}</p>
-    <table class="no-stripes">
-      {% if escalation_form %}
-        {{ escalation_form.as_table }}
-      {% else %}
-        {% with escalation_form=object.get_escalation_message_form %}
-          {{ escalation_form.as_table }}
-        {% endwith %}
-      {% endif %}
-    </table>
-    {% if not object.public %}
-    <p>{% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}</p>
-    {% endif %}
-    <input type="submit" value="{% blocktrans %}Send Message{% endblocktrans %}"/>
-  </form>
-  </div>
-</div>
-{% endif %}
-{# End Escalate #}
-
-{# Write Resolution #}
-{% if object.status_is_final %}
-<div class="section no-print">
-  {% if object.resolution %}
-  <a href="#write-resolution" class="toggle">{% blocktrans %}Write a summary of the response{% endblocktrans %}</a>
-  {% endif %}
-  <div id="write-resolution"{% if object.resolution %} style="display: none"{% endif %}>
-    <h3>{% blocktrans %}Resolution Summary{% endblocktrans %}</h3>
-    <form method="post" action="{% url 'foirequest-set_resolution' slug=object.slug %}">{% csrf_token %}
-      <p>{% blocktrans %}Please give a summary of the response.{% endblocktrans %}<br/>
-      {% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
-      <textarea rows="8" name="resolution">{% if object.resolution %}{{ object.resolution }}{% endif %}</textarea><br/>
-      <input type="submit" value="{% blocktrans %}Save Summary{% endblocktrans %}"/>
-    </form>
-  </div>
-</div>
-{% endif %}
-{# End Write Resolution #}
-
-{# Postal Reply #}
-{% if object.public_body %}
-<div class="section focussed no-print" id="add-postal-reply-section">
-  <a href="#add-postal-reply" class="toggle">{% blocktrans %}Add a Postal reply that you have received{% endblocktrans %}</a>
-  <div id="add-postal-reply"{% if not postal_reply_form %} style="display: none" class="toggle-div"{% else %} class="toggle-div goto-form"{% endif %}>
-    <form method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
-      <table class="no-stripes">
-      {% if postal_reply_form %}
-        {{ postal_reply_form.as_table }}
-      {% else %}
-      {% with form=object.get_postal_reply_form %}
-      {{ form.as_table }}
-      {% endwith %}
-      {% endif %}
-      </table>
-      <input type="submit" value="{% blocktrans %}Add Postal Reply{% endblocktrans %}"/>
-      <p>{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</p>
-  </form>
-  </div>
-</div>
-{# End Postal Reply #}
-
-{# Reply #}
-<div class="section focussed no-print" id="reply-section">
-  <a href="#write-message" class="toggle">{% blocktrans %}Send a message to this Public Body{% endblocktrans %}</a>
-  <div id="write-message"{% if send_message_form or object.is_overdue and object.awaits_response %}{% else %} style="display:none"{% endif %}>
-  <form method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">{% csrf_token %}
-  {% if object.is_overdue and object.awaits_response %}
-    <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
-  {% else %}
-    <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
-  {% endif %}
-    <table class="no-stripes">
-      {% if send_message_form %}
-        {{ send_message_form.as_table }}
-      {% else %}
-        {% with send_message_form=object.get_send_message_form %}
-          {{ send_message_form.as_table }}
-        {% endwith %}
-      {% endif %}
-    </table>
-    <button class="button" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-  </form>
-  </div>
-</div>
-{% endif %}
-{# End Reply #}
-
-{# If Meta Law #}
-{% if object.law.meta and object.reply_received %}
-<div class="section no-print">
-  <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">{% csrf_token %}
-    <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-    {{ object.get_concrete_law_form.as_p }}
-    <input type="submit" value="{% blocktrans %}Set Concrete Law{% endblocktrans %}"/>
-  </form>
-</div>
-{% endif %}
-
-
-{% if not object.public %}
-<div class="section no-print">
-  <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-    {% csrf_token %}
-    <p>{% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
-    <input type="submit" value="{% blocktrans %}Make this request public now{% endblocktrans %}"/>
-    </p>
-  </form>
-</div>
-{% endif %}
-{% endif %}{# endif: object.user == user #}
-<div class="page-break"></div>
-<h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
-
-{% for message in object.messages %}
-<div id="{{ message.get_html_id }}" class="message-container">
-  <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
-    <table class="message-table">
-      <tbody>
-      <tr>
-        <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
-        <td class="value-padding-right">
-        {% if object.user == user %}
-            {% if message.is_response %}
-            {{ message.real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
-            <div id="change-pb-{{ message.id }}" style="display:none" class="no-print">
-              {% with message_pb_form=message.get_public_body_sender_form %}
-                 <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
-                   {% csrf_token %}
-                   <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
-                    {{ message_pb_form.sender }}
-                    <input type="submit" value="{% blocktrans %}Set Sending Public Body{% endblocktrans %}"/>
-                  </form>
-                {% endwith %}
-            </div>
-            {% else %}
-            {{ message.real_sender }}
-            {% endif %}
-        {% else %}
-          {{ message.sender }}
-          {% endif %}</td>
-      </tr>
-      <tr>
-        <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
-        <td class="value-padding-right"><strong>{{ message.get_subject }}</strong></td>
-      </tr>
-      <tr>
-        <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
-        {% if message.is_postal %}
-        <td>{{ message.timestamp|date:"DATE_FORMAT" }}</td>
-        {% else %}
-        <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
-        {% endif %}
-      </tr>
-      {% if not message.is_response %}
-      <tr>
-        <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
-        <td>{{ message.get_recipient }}</td>
-      </tr>
-      {% endif %}
-      {% if message.status %}
-      <tr>
-        <td class="key">{% blocktrans %}Status{% endblocktrans %}</td>
-        <td>{{ message.readable_status }}</td>
-      </tr>
-      {% endif %}
-      {% if user.is_staff %}
-      <tr class="no-print">
-        <td class="key">{% blocktrans %}Admin{% endblocktrans %}</td>
-        <td>
-          <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
-        </td>
-      </tr>
-      {% endif %}
-      {% if message.all_attachments %}
-      <tr>
-        <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
-      <td>
-        <ul>
-      {% for attachment in message.all_attachments %}
-      {% if attachment.approved or user.is_staff or user == request.user %}
-      <li>
-      {% if not attachment.approved %}
-        <div class="warning">
-      {% endif %}
-      {% if attachment.approved %}
-        <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
-          {{ attachment.name }} ({{ attachment.size|filesizeformat }})
-        </a>
-        {% if attachment.can_preview %}
-         - <a class="target-new" href="{{ attachment.get_preview_url }}">
-         {% trans "Preview in Browser" %}
-        </a>
-       {% endif %}
-      {% else %}
-        {% if user == object.user or user.is_staff %}
-          <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
-            {{ attachment.name }} ({{ attachment.size|filesizeformat }})</a>
-            {% if attachment.can_preview %}
-              - <a class="target-new" href="{{ attachment.get_preview_url }}">
-                {% trans "Preview in Browser" %}
-              </a>
-            {% endif %}
-          {% if attachment.can_approve or user.is_staff %}
-          <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
-            {% csrf_token %}
-            {% if object.user.get_profile.private %}
-            <p>
-              {% trans "Please check this attachment and if it doesn't contain personally identifying information and if you are not explicitly forbidden to publish it, click the button below." %}
-            </p>
-            {% else %}
-            <p>
-              {% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}) and if publication is not explicitly forbidden, click the button below.{% endblocktrans %}
-            </p>
-            {% endif %}
-            {% if not attachment.can_approve %}
-              <p>
-                <strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>
-              {% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}
-              </p>
-            {% endif %}
-            <input class="button" type="submit" value="{% trans "Publish this attachment" %}"/>
-            <p>{% trans "If it does contain personally identifying information, please inform moderators (info@fragdenstaat.de) and they will redact the document and then publish it for you." %}</p>
-            {% if user.is_staff %}
-              <p><a href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-                {% if attachment.is_redacted %}
-                  {% trans "Update this redacted version" %}
-                {% endif %}
-                {% if attachment.redacted %}
-                  {% trans "Update the redacted version of this attachment" %}
-                {% endif %}
-                {% if not attachment.redacted and not attachment.is_redacted %}
-                  {% trans "Redact this attachment" %}
-                {% endif %}
-              </a></p>
-            {% endif %}
-          </form>
-          {% else %}
-            <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
-          {% endif %}
-        {% else %}
-          {% if not attachment.can_approve %}
-            <span>{% trans "This attachment can't be published." %}</span>
-          {% else %}
-            <span>{% trans "This attachment has not been published yet." %}</span>
-          {% endif %}
-        {% endif %}
-        </div>
-      {% endif %}
-      </li>
-      {% endif %}
-      {% endfor %}
-    </ul>
-      </td>
-    </tr>
-    {% endif %}
-    {% if user == object.user and message.is_postal %}
-    <tr class="no-print">
-      <td class="key">{% blocktrans %}Upload Attachments{% endblocktrans %}</td>
-      {% with form=message.get_postal_attachment_form %}
-      <td>
-        <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">{% csrf_token %}
-        {{ form.scan }}
-        <button type="submit" class="upload-button button icon add">{% blocktrans %}Upload Document{% endblocktrans %}</button><br/>
-        {{ form.scan.help_text }}
-        </form>
-      </td>
-      {% endwith %}
-    {% endif %}
-    </tbody>
-  </table>
-  {% if message.not_publishable %}
-    <div class="info">
-      <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, we are not allowed to publish these documents online.{% endblocktrans %}</p>
-    {% if user.is_authenticated %}
-      {% if object.user == user %}
-        <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
-      {% else %}
-        {% if object.same_as.user == user %}
-          <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
-        {% else %}
-          {% check_same_request object user "same_request" %}
-          {% if same_request %}
-            <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
-          {% else %}
-            <form method="post" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
-              {% csrf_token %}
-              <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
-              <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
-            </form>
-          {% endif %}
-        {% endif %}
-      {% endif %}
-    {% else %}
-      <form method="post" id="make-same-request" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}#make-same-request">
-        {% csrf_token %}
-        <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
-        {% if not new_user_form %}
-          {% get_new_user_form "new_user_form" %}
-        {% endif %}
-        <table class="now-loggedin no-stripes">
-          {{ new_user_form.as_table }}
-        </table>
-        <input type="submit" class="button" value="{% trans "Make identical request in your name" %}"/>
-      </form>
-    {% endif %}
-      <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
-    </div>
-  {% endif %}
-  {# Set status #}
-  {% if object.user == user and message.needs_status_input %}
-  <div id="set-status" class="section important-form no-print">
-    <form method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">{% csrf_token %}
-      {% if status_form %}
-        {% include "foirequest/_set_status.html" %}
-      {% else %}
-        {% with status_form=object.get_status_form %}
-          {% include "foirequest/_set_status.html" %}
-        {% endwith %}
-      {% endif %}
-      <button class="button icon tag" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
-      </p>
-    </form>
-  </div>
-  {% endif %}
-  {# End Set status #}
-  <hr/>
-  <div id="{{ message.get_html_id }}-content" class="message-content">
-  {% if forloop.counter0 == 0 %}
-    <div>{% highlight_request message %}</div>
-  {% else %}
-    <div>{{ message.get_content|urlize }}</div>
-  {% endif %}
-  </div>
-</div>
-{% if message.events %}
-<div class="events">
-  <ol>
-  {% for event in message.events %}
-  <li class="event" id="{{ event.get_html_id }}"><span class="no-print" title="{{ event.timestamp }}">{% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="print-only">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}</li>
-  {% endfor %}
-  </ol>
-</div>
-{% endif %}
-<div class="comments-container">
-  {% get_comment_list for message as comment_list %}
-<div id="comments-{{ message.id }}" class="comments">
-  {% include "comments/foirequest/list.html" %}
-  <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
-  <div class="comment-form" id="comment-form-{{ message.id }}">
-  {% if user.is_authenticated %}
-  {% with next=object.get_absolute_url %}
-    {% render_comment_form for message %}
-  {% endwith %}
-  {% else %}
-  <a href="{% url 'account-login' %}" class="no-print">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
-  {% endif %}
-  </div>
-</div>
-</div>
-</div>
-{% if not forloop.last %}
-  <div class="page-break"></div>
-{% endif %}
-{% empty %}
-<p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
-{% endfor %}
-</div>
-</div>
 {% if object.same_as_count %}
-<div class="span-18 no-print" id="identical">
-  <h5>{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
-  <ul>
-  {% for foirequest in object.same_as_set.all %}
-    <li>
-      {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.readable_status }}</a>
-    </li>
-  {% endfor %}
-  </ul>
-</div>
+  <div class="row">
+    <div class="span8 no-print" id="identical">
+      <h5>{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
+      <ul>
+        {% for foirequest in object.same_as_set.all %}
+          <li>
+            {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.readable_status }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 {% endif %}
 {% if object.same_as %}
-<div class="span-18 no-print" id="identical">
-  <p>{% blocktrans %}This request is identical to:{% endblocktrans %}
-    <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a></p>
-  </p>
-</div>
+  <div class="row">
+    <div class="span8 no-print" id="identical">
+      <p>
+        {% blocktrans %}This request is identical to:{% endblocktrans %}
+        <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a>
+      </p>
+    </div>
+  </div>
 {% endif %}
+
 {% endblock %}
 
 {% block extra_footer %}

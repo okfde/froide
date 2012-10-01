@@ -29,10 +29,15 @@ class RequestForm(forms.Form):
             label=_("Search for a topic or a public body:"),
             required=False)
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
+            widget=forms.TextInput(
+                attrs={'placeholder': _("Subject"),
+                "class": "span7"}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
-                attrs={'placeholder': _("Specify your request here...")}))
+                attrs={
+                    'placeholder': _("Specify your request here..."),
+                    "class": "span5"
+                }))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -154,8 +159,8 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "long-input"}))
-    message = forms.CharField(widget=forms.Textarea,
+            widget=forms.TextInput(attrs={"class": "span5"}))
+    message = forms.CharField(widget=forms.Textarea(attrs={"class": "span5"}),
             label=_("Your message"))
 
     def __init__(self, foirequest, *args, **kwargs):
@@ -359,7 +364,8 @@ class PostalAttachmentForm(forms.Form, PostalScanMixin):
 
 class TagFoiRequestForm(forms.Form):
     tags = TagField(label=_("Tags"),
-            help_text=_("Comma separated and quoted"))
+        widget=forms.TextInput(attrs={'placeholder': _('Tags')}),
+        help_text=_("Comma separated and quoted"))
 
     def __init__(self, foirequest, *args, **kwargs):
         self.foirequest = foirequest

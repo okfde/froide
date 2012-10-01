@@ -115,6 +115,7 @@ def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None)
         })
     else:
         context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
+        context['filtered'] = False
 
     context.update({
         'page_title': _("FoI Requests"),
@@ -181,6 +182,7 @@ def show(request, slug, template_name="foirequest/show.html",
     events = FoiEvent.objects.filter(request=obj).select_related(
             "user", "user__profile", "request",
             "public_body").order_by("timestamp")
+
     event_count = len(events)
     last_index = event_count
     for message in reversed(obj.messages):
@@ -190,7 +192,27 @@ def show(request, slug, template_name="foirequest/show.html",
 
     if context is None:
         context = {}
-    context.update({"object": obj})
+
+    active_tab = 'info'
+    if request.user.is_authenticated() and request.user == obj.user:
+        if obj.awaits_classification():
+            active_tab = 'set-status'
+        elif obj.is_overdue() and obj.awaits_response():
+            active_tab = 'write-message'
+
+        if 'postal_reply_form' in context:
+            active_tab = 'add-postal-reply'
+        elif 'status_form' in context:
+            active_tab = 'set-status'
+        elif 'send_message_form' in context:
+            active_tab = 'write-message'
+        elif 'escalation_form' in context:
+            active_tab = 'escalate'
+
+    context.update({
+        "object": obj,
+        "active_tab": active_tab
+    })
     return render(request, template_name, context, status=status)
 
 
