@@ -1,4 +1,4 @@
-{% load url from future %}{% load i18n %}<!DOCTYPE html>
+{% load url from future %}{% load i18n %}{% load gravatar %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" class="no-js">
   <head>
   <meta charset="utf-8">
@@ -16,13 +16,11 @@
   {% else %}
   <link href='https://fonts.googleapis.com/css?family=Kreon' rel='stylesheet' type='text/css'>
   {% endif %}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/gh-buttons.css" type="text/css" media="screen, projection" />
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
-  <!--[if lt IE 8]><link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+  <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
   <meta name="google-site-verification" content="upljx19ZJVGT73Sx1miWKLOWBKga4LQJ_hqFl0vhhJE" />
-  <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" /> 
+  <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
   <meta name="language" content="{{ LANGUAGE_CODE }}" />
   {# Translators: meta keywords #}
   <meta name="keywords" content="{% trans "Freedom of Information Requests, Freedom of Information Law, Public Body Information" %}" />
@@ -42,76 +40,116 @@
   {% if FROIDE_DRYRUN %}
   <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ FROIDE_DRYRUN_DOMAIN }}</div>
   {% endif %}
-    <header id="header">
-      <div id="header-content">
-        <h1>
-          <a href="{% url 'index' %}">{{ SITE_NAME }}</a>
-        </h1>
-        <nav id="nav">
-          <ul>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="{% url 'index' %}" class="brand">
+          <h1>{{ SITE_NAME }}</h1>
+        </a>
+        <div class="nav-collapse collapse">
+          <ul class="nav">
+            <li class="first-divider divider-vertical"></li>
             <li class="{% block nav_requests %}{% endblock %}">
               <a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
             </li>
             <li class="{% block nav_publicbodies %}{% endblock %}">
               <a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a>
            </li>
-            <li class="{% block nav_help %}{% endblock %}">
-              <a href="{% url 'help-index' %}">{% blocktrans %}Help{% endblocktrans %}</a>
-            </li>
             <li class="special-nav-item {% block nav_makerequest %}{% endblock %}">
-              <a href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Request!{% endblocktrans %}</a>
-            </li>
-            <li class="last-nav">
-              <form class="search-site" action="{% url 'foirequest-search' %}" method="get">
-                <input type="text" name="q" placeholder="{% trans "Search" %}"/>
-              </form>
+              <a href="{% url 'foirequest-make_request' %}"><span>{% blocktrans %}Make a Request!{% endblocktrans %}</span></a>
             </li>
           </ul>
-        </nav>
+          <form class="navbar-search pull-left" action="{% url 'foirequest-search' %}" method="get">
+            <input class="span2 search-query" type="text" name="q" placeholder="{% trans "Search" %}"/>
+          </form>
+          <ul class="nav pull-right">
+            {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#" class="account-snippet" data-toggle="dropdown">
+                <img width="30" src="{% gravatar_url user.email 30 %}" alt="{{ user.get_full_name }}"/>
+                <p class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
+                  {{ user.last_name|truncatechars:12 }}
+                  <b class="caret"></b>
+                </p>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a href="{% url 'account-show' %}">{% trans "Account" %}</a>
+                </li>
+                {% if not user.get_profile.private %}
+                <li>
+                  <a href="{{ user.get_profile.get_absolute_url }}">{% trans "Public Profile" %}</a>
+                </li>
+                {% endif %}
+                <li class="divider"></li>
+                <li>
+                  <a href="{% url 'account-logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a>
+                </li>
+              </ul>
+            </li>
+            {% else %}
+              <li>
+                <a class="account-login" href="{% url 'account-login' %}">
+                  {% blocktrans %}Log In / Sign up{% endblocktrans %}
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
       </div>
-    </header>
-    {% block banner %}{% endblock %}
-    <div id="main" class="container">
-      <div class="account-snippet">
-        {% if user.is_authenticated %}
-        {% url 'account-show' as account_url %}
-        {% blocktrans with username=user.get_full_name url=account_url %}Logged in as <a href="{{ url }}">{{ username }}</a>{% endblocktrans %}
-         – <a href="{% url 'account-logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a>
-        {% else %}
-        <a href="{% url 'account-login' %}">{% blocktrans %}Log In / Sign up{% endblocktrans %}</a>
-        {% endif %}
-      </div>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% block body %}
-    {% endblock %}
-  </div>
-  <footer id="footer" class="container">
-    <div>
-      <a class="logo" href="http://okfn.de"><img src="{{ STATIC_URL }}img/okf.png" /></a>
-      <p>
-        {% url 'help-about' as about_url %}
-        {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://stefanwehrmeyer.com">Stefan Wehrmeyer</a>.<br/>If you want to support Froide, please visit the <a href="{{url}}">repository on GitHub.</a>.{% endblocktrans %}
-      </p>
     </div>
-    <ul>
-      <li><a href="{% url 'help-about' %}">{% trans "About" %}</a></li>
-      <li><a href="http://blog.fragdenstaat.de/">{% trans "Blog" %}</a></li>
-      <li><a href="https://twitter.com/fragdenstaat">@fragdenstaat</a></li>
-      <li><a href="http://lists.okfn.org/mailman/listinfo/fragdenstaat">{% trans "Mailinglist!" %}</a></li>
-      <li><a href="{% url 'help-about' %}#impressum">{% trans "Impressum" %}</a></li>
-      <li><a href="{% url 'help-terms' %}">{% trans "Terms of Use" %}</a></li>
-      <li><a href="{% url 'help-privacy' %}">{% trans "Privacy Statement" %}</a></li>
-    </ul>
+  </div>
+  {% block banner %}{% endblock %}
+
+  {% if messages %}
+  <div class="container">
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div id="main" class="container">
+  {% block body %}
+  {% endblock %}
+  </div>
+
+<hr/>
+<footer class="container" id="footer">
+    <div class="row">
+      <div class="span9">
+        <p>
+          {% url 'help-about' as about_url %}
+          {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://stefanwehrmeyer.com">Stefan Wehrmeyer</a>. If you want to support Froide, please visit the <a href="{{url}}">repository on GitHub</a>.{% endblocktrans %}
+        </p>
+      </div>
+      <div class="span3">
+        <a href="http://www.okfn.de"><img src="{{ STATIC_URL }}img/okf.png" /></a>
+      </div>
+    </div>
+    <div class="row">
+      <ul class="span12 unstyled pagination-centered">
+        <li><a href="{% url 'help-about' %}">{% trans "About" %}</a></li>
+        <li><a href="http://blog.fragdenstaat.de/">{% trans "Blog" %}</a></li>
+        <li><a href="https://twitter.com/fragdenstaat">@fragdenstaat</a></li>
+        <li><a href="http://lists.okfn.org/mailman/listinfo/fragdenstaat">{% trans "Mailinglist!" %}</a></li>
+        <li><a href="{% url 'help-about' %}#impressum">{% trans "Impressum" %}</a></li>
+        <li><a href="{% url 'help-terms' %}">{% trans "Terms of Use" %}</a></li>
+        <li><a href="{% url 'help-privacy' %}">{% trans "Privacy Statement" %}</a></li>
+      </ul>
+    </div>
   </footer>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery-1.4.2.js"%3E%3C/script%3E'))</script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery.js"%3E%3C/script%3E'))</script>
+  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
   <script src="{{ STATIC_URL }}js/libs/jquery.autocomplete.js"></script>
   
