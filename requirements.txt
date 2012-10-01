@@ -60,3 +60,4 @@ requests==0.13.9
 sentry==4.10.0
 simplejson==2.6.1
 wsgiref==0.1.2
+django-gravatar2==1.0.6
