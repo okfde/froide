@@ -3,71 +3,53 @@
 {% load i18n %}
 
 {% block body %}
-<div class="clearfix">
-  <div class="span-12">
-    <h2>{% blocktrans %}Search Results for "{{ query }}"{% endblocktrans %}</h2>
-    <form method="get" action="{% url 'foirequest-search' %}">
-      <div>
-        <input type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off"/>
-        <button class="button icon search" type="submit">{% blocktrans %}Search For Information{% endblocktrans %}</button>
-      </div>
-    </form>
+<h2>{% blocktrans %}Search Results for "{{ query }}"{% endblocktrans %}</h2>
+<form method="get" action="{% url 'foirequest-search' %}" class="form-search">
+  <div class="input-append">
+    <input type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off" class="search-query"/>
+    <button class="btn" type="submit">
+      <i class="icon-search"></i>
+      {% blocktrans %}Search For Information{% endblocktrans %}
+    </button>
   </div>
-</div>
-<div class="clearfix">
-  <div class="span-12">
+</form>
+<div class="row">
+  <div class="span6">
     <h3>{% blocktrans %}Related Freedom of Information Requests{% endblocktrans %}</h3>
-    <table class="no-stripes">
-    {% for object in foirequests %}
-        <tr>
-      <td style="vertical-align: top">
-        <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
-      </td>
-      <td>
-        <a href="{{ object.url }}">{{ object.title }}</a>
-        <br/>
-        <span class="time-small">{{ object.readable_status }}, 
-          {% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span><br/>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td>
-      <p>{% blocktrans %}No relevant requests found for "{{ query }}".{% endblocktrans %}<br/>
-      <a href="{% url 'foirequest-list' %}">{% blocktrans %}You can browse the list of existing requests.{% endblocktrans %}</a></p>
-    </td></tr>
-    {% endfor %}
-    </table>
+    <ul class="unstyled">
+      {% for object in foirequests %}
+        <li>
+          {% include "foirequest/snippets/request_item.html" %}
+        </li>
+      {% empty %}
+        <li>
+          {% blocktrans %}No relevant requests found for "{{ query }}".{% endblocktrans %}<br/>
+          <a href="{% url 'foirequest-list' %}">{% blocktrans %}You can browse the list of existing requests.{% endblocktrans %}</a>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
-  <div class="span-12 last">
+  <div class="span6">
     <h3>{% blocktrans %}Related Public Bodies{% endblocktrans %}</h3>
-    <table class="no-stripes">
-    {% for object in publicbodies %}
-      <tr>
-      <td style="vertical-align: top">
-        <img src="{{ STATIC_URL }}img/topics/{{ object.topic_slug }}.png" alt="{{ object.topic_auto }}" title="{{ object.topic_auto }}"/>
-      </td>
-      <td>
-        <a href="{{ object.url }}">{{ object.name }}</a>
-        {% comment %}<a title="{% blocktrans %}Click here to make a request to this Public Body{% endblocktrans %}" href="{% url 'foirequest-make_request' public_body=object.slug %}">
-           <img src="{{ STATIC_URL }}img/tiny_request.png" alt="{% blocktrans %}Make a Request{% endblocktrans %}" />
-         </a>{% endcomment %}
-      </td>
-    </tr>
-
-    {% empty %}
-      <tr><td>
-        <p>{% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
-        <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a></p>
-      </td></tr>
-    {% endfor %}
-  </table>
+    <ul class="unstyled">
+      {% for object in publicbodies %}
+        <li>
+          {% include "publicbody/snippets/publicbody_item.html" %}
+        </li>
+      {% empty %}
+        <li>
+          {% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
+          <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 
 <div>
   <h3>{% blocktrans %}Couldn't find what you were looking for?{% endblocktrans %}</h3>
   <p>
-    <a class="big-button make-request-button" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Freedom of Information Request now!{% endblocktrans %}</a>
+    <a class="btn btn-primary" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Freedom of Information Request now!{% endblocktrans %}</a>
   </p>
 </div>
 
