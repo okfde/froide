@@ -7,16 +7,17 @@
 {% autopaginate object_list %}
 <h2>{% trans "Read the news and make requests!" %}</h2>
 
-<div class="clearfix">
-<div class="span-18">
+<div class="row">
+	<div class="span10">
 
-{% for object in object_list %}
-    {% include "foiidea/_article.html" %}
-    <br/>
-    <hr/>
-{% endfor %}
-{% paginate %}
-</div>
+	{% for object in object_list %}
+	    {% include "foiidea/_article.html" %}
+	    <br/>
+	    <hr/>
+	{% endfor %}
+
+	{% paginate %}
+	</div>
 
 
 </div>
