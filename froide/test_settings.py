@@ -176,6 +176,8 @@ INSTALLED_APPS = (
     'pagination',
     'djangosecure',
     'taggit',
+    'django_gravatar',
+    'floppyforms',
 
     # local
     'froide.foirequest',

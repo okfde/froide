@@ -1,20 +1,13 @@
 {% load i18n %}
+{% load floppyforms %}
 {{ status_form.non_field_errors }}
-<label for="id_status">{% blocktrans %}Status of request after this message:{% endblocktrans %}</label><br/>
-{{ status_form.status }}<br/>
+{% formrow status_form.status using "bootstrap/horizontal_row.html" %}
 <div class="status-refusal status-section">
-{% blocktrans %}When you are (partially) denied access to information, the Public Body should always state the reason.{% endblocktrans %}<br/>
-  <label id="id_refusal_reason">{% blocktrans %}Refusal Reason: {% endblocktrans %}</label>
-  {{ status_form.refusal_reason }}
+	{% formrow status_form.refusal_reason using "bootstrap/horizontal_row.html" %}
 </div>
 <div class="status-redirected status-section">
-  {% blocktrans %}If your message is redirected to a different Public Body, please specify the new Public Body:{% endblocktrans %}<br/>
-  {{ status_form.redirected.errors }}
-  {{ status_form.redirected }}
+	{% formrow status_form.redirected using "bootstrap/horizontal_row.html" %}
 </div>
 {% if froide.payment_possible %}
-<div>{% blocktrans %}Please specify what the Public Body charges for the information.{% endblocktrans %}<br/>
-  <label id="id_costs">{% blocktrans %}Costs:{% endblocktrans %} </label>
-  {{ status_form.costs }} {{ froide.currency }}
-</div>
+	{% formrow status_form.costs using "bootstrap/horizontal_row.html" %}
 {% endif %}

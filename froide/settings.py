@@ -170,6 +170,7 @@ INSTALLED_APPS = (
     'djangosecure',
     'taggit',
     'django_gravatar',
+    'floppyforms',
 
     # local
     'froide.foirequest',

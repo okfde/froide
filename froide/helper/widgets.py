@@ -1,14 +1,16 @@
-from django import forms
+import floppyforms as forms
+
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 
 
-class EmailInput(forms.TextInput):
-    input_type = 'email'
+class PriceInput(forms.TextInput):
+    template_name = "bootstrap/price_input.html"
 
-
-class DateInput(forms.DateInput):
-    input_type = 'date'
+    def get_context(self, name, value, attrs):
+        ctx = super(PriceInput, self).get_context(name, value, attrs)
+        ctx['attrs']['class'] = 'input-mini'
+        return ctx
 
 
 class AgreeCheckboxInput(forms.CheckboxInput):

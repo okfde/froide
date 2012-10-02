@@ -1,6 +1,7 @@
 {% extends custom_base %}
 {% load url from future %}
 {% load i18n %}
+{% load floppyforms %}
 
 {% block body %}
 {% if user.is_authenticated %}
@@ -21,45 +22,33 @@
 {% else %}
 <div class="row">
   <div class="span6">
-    <h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
-    <form method="post" action="{{ SITE_URL }}{% url 'account-login' %}{% if simple %}?simple{% endif %}">
-      {% csrf_token %}
-      {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-      <table class="no-stripes">
-        {{ form.as_table }}
-        <tr>
-          <td></td>
-          <td>
-            <button type="submit" class="btn">{% blocktrans %}Log In{% endblocktrans %}</button>
-          </td>
-        </tr>
-      </table>
-    </form>
-    <br/>
+    <div class="well">
+      <h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
+      <form class="form-horizontal" method="post" action="{{ SITE_URL }}{% url 'account-login' %}{% if simple %}?simple{% endif %}">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+        {% form form using "bootstrap/horizontal.html" %}
+
+        <button type="submit" class="btn">{% blocktrans %}Log In{% endblocktrans %}</button>
+      </form>
+    </div>
     <h4>{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h4>
     <p>{% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}</p>
-    <form method="post" action="{{ SITE_URL }}{% url 'account-send_reset_password_link' %}">
+    <form class="form-horizontal" method="post" action="{{ SITE_URL }}{% url 'account-send_reset_password_link' %}">
       {% csrf_token %}
       {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-      {{ reset_form.as_p }}
+      {% form reset_form using "bootstrap/horizontal.html" %}
       <button type="submit" class="btn">{% blocktrans %}Send reset link{% endblocktrans %}</button>
     </form>
   </div>
 {% if not simple %}
 <div class="span6">
   <h3>{% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}</h3>
-  <form method="post" action="{{ SITE_URL }}{% url 'account-signup' %}">
+  <form class="form-horizontal" method="post" action="{{ SITE_URL }}{% url 'account-signup' %}">
     {% csrf_token %}
     {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-    <table>
-      {{ signup_form.as_table }}
-      <tr>
-        <td></td>
-        <td>
-          <button type="submit" class="btn">{% blocktrans %}Sign Up{% endblocktrans %}</button>
-        </td>
-      </tr>
-    </table>
+    {% form signup_form using "bootstrap/horizontal.html" %}
+    <button type="submit" class="btn">{% blocktrans %}Sign Up{% endblocktrans %}</button>
   </form>
 </div>
 {% endif %}

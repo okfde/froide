@@ -1,4 +1,5 @@
-from django import forms
+import floppyforms as forms
+
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _

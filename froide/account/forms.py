@@ -1,11 +1,12 @@
-from django import forms
+import floppyforms as forms
+
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from froide.helper.widgets import EmailInput, AgreeCheckboxInput
+from froide.helper.widgets import AgreeCheckboxInput
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 
@@ -28,7 +29,7 @@ class NewUserForm(forms.Form):
             }))
     user_email = forms.EmailField(label=_('Email address'),
             help_text=_('Not public, you will need to confirm this address.'),
-            widget=EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
+            widget=forms.EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
 
     if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(required=False,
@@ -78,7 +79,7 @@ class NewUserWithPasswordForm(NewUserForm):
 
 
 class UserLoginForm(forms.Form):
-    email = forms.EmailField(widget=EmailInput(
+    email = forms.EmailField(widget=forms.EmailInput(
         attrs={'placeholder': _('mail@ddress.net')}),
         label=_('Email address'))
     password = forms.CharField(widget=forms.PasswordInput,
