@@ -2,19 +2,30 @@
 {% load url from future %}
 {% load i18n %}
 
-{% block nav_help %}active{% endblock %}
 {% block body %}
-<div class="span-18">
-  {% block helpbody %}{% endblock %}
-</div>
-<div class="span-6 last">
-  <h3>{% blocktrans %}Help Pages{% endblocktrans %}</h3>
-  <ul>
-    <li><a href="{% url 'help-index' %}">{% trans "General Information" %}</a></li>
-    <li><a href="{% url 'help-about' %}">{% trans "About Froide" %}</a></li>
-    <li><a href="{% url 'help-making_requests' %}">{% trans "Making Requests" %}</a></li>
-    <li><a href="{% url 'help-your_privacy' %}">{% trans "Your Privacy" %}</a></li>
-    <li><a href="{% url 'help-foi_officers' %}">{% trans "For FoI Officers" %}</a></li>
-  </ul>
+<div class="row">
+	<div class="span9">
+	  {% block helpbody %}{% endblock %}
+	</div>
+	<div class="span3">
+	  <h3>{% blocktrans %}Help Pages{% endblocktrans %}</h3>
+	  <ul class="nav nav-list">
+	    <li>
+	    	<a href="{% url 'help-index' %}">{% trans "General Information" %}</a>
+	    </li>
+	    <li>
+	    	<a href="{% url 'help-about' %}">{% trans "About Froide" %}</a>
+	    </li>
+	    <li>
+	    	<a href="{% url 'help-making_requests' %}">{% trans "Making Requests" %}</a>
+	    </li>
+	    <li>
+	    	<a href="{% url 'help-your_privacy' %}">{% trans "Your Privacy" %}</a>
+	    </li>
+	    <li>
+	    	<a href="{% url 'help-foi_officers' %}">{% trans "For FoI Officers" %}</a>
+	    </li>
+	  </ul>
+	</div>
 </div>
 {% endblock %}
