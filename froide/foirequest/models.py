@@ -347,7 +347,7 @@ class FoiRequest(models.Model):
     def get_accessible_link(self):
         if self.visibility == 1:
             return self.get_auth_link()
-        return self.get_absolute_domain_url()
+        return self.get_absolute_domain_short_url()
 
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
