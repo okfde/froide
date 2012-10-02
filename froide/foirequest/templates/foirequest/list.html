@@ -43,7 +43,7 @@
       <span class="badge">{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
     </p>
     <ul class="nav nav-list">
-      {% if filtered or not_foi %}
+      {% if filtered or not_foi or jurisdiction %}
         <li>
           <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
         </li>
