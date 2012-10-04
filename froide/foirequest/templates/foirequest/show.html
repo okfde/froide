@@ -66,7 +66,7 @@
       <ul class="nav nav-tabs request-nav">
         <li{% if active_tab == 'info' %} class="active"{% endif %}>
           <a href="#info" data-toggle="tab">
-            {% trans "Request Details" %}
+            {% trans "Request" %}
           </a>
         </li>
         {% if object.message_needs_status %}
@@ -86,7 +86,7 @@
         {% if object.public_body %}
           <li{% if active_tab == 'add-postal-reply' %} class="active"{% endif %}>
             <a href="#add-postal-reply" data-toggle="tab">
-              {% blocktrans %}Add a Postal reply{% endblocktrans %}
+              {% blocktrans %}Got Mail?{% endblocktrans %}
             </a>
           </li>
           <li{% if active_tab == "write-message" %} class="active"{% endif %}>
@@ -98,21 +98,14 @@
         {% if object.law.mediator %}
           <li{% if active_tab == 'escalate' %} class="active"{% endif %}>
             <a href="#escalate" data-toggle="tab">
-              {% trans "Escalate this request" %}
+              {% trans "Denied?" %}
             </a>
           </li>
         {% endif %}
-        {% if object.status_is_final %}
+        {% if object.status_is_final or object.law.meta %}
           <li>
-            <a href="#write-resolution" data-toggle="tab">
-              {% blocktrans %}Write a summary{% endblocktrans %}
-            </a>
-          </li>
-        {% endif %}
-        {% if object.law.meta and object.reply_received %}
-          <li>
-            <a href="#set-law" data-toggle="tab">
-              {% blocktrans %}Set law{% endblocktrans %}
+            <a href="#more" data-toggle="tab">
+              {% blocktrans %}More...{% endblocktrans %}
             </a>
           </li>
         {% endif %}
@@ -178,20 +171,6 @@
         {% endif %}
         {# End Escalate #}
 
-        {# Write Resolution #}
-        {% if object.status_is_final %}
-          <div class="tab-pane no-print{% if active_tab == 'write-resolution' %} active{% endif %}" id="write-resolution">
-            <h3>{% blocktrans %}Resolution Summary{% endblocktrans %}</h3>
-            <form method="post" action="{% url 'foirequest-set_resolution' slug=object.slug %}">
-              {% csrf_token %}
-              <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
-              <textarea rows="8" class="span6" name="resolution">{% if object.resolution %}{{ object.resolution }}{% endif %}</textarea><br/>
-              <button type="submit" class="btn">{% blocktrans %}Save Summary{% endblocktrans %}</button>
-            </form>
-          </div>
-        {% endif %}
-        {# End Write Resolution #}
-
         {# Postal Reply #}
         {% if object.public_body %}
           <div class="tab-pane no-print{% if active_tab == 'add-postal-reply' %} active{% endif %}" id="add-postal-reply">
@@ -232,14 +211,28 @@
         {# End Reply, end if object.public_body #}
 
         {# If Meta Law #}
-        {% if object.law.meta and object.reply_received %}
-          <div class="tab-pane no-print" id="set-law">
-            <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
-              {% csrf_token %}
-              <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-              {{ object.get_concrete_law_form.as_p }}
-              <button type="submit" class="btn">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
-            </form>
+        {% if object.law.meta or object.status_is_final %}
+          <div class="tab-pane no-print" id="more">
+            {% if object.law.meta %}
+              <h4>{% trans "Set Law" %}</h4>
+              <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
+                {% csrf_token %}
+                <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
+                {{ object.get_concrete_law_form.as_p }}
+                <button type="submit" class="btn">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
+              </form>
+            {% endif %}
+            {# Write Resolution #}
+            {% if object.status_is_final %}
+              <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
+              <form method="post" action="{% url 'foirequest-set_resolution' slug=object.slug %}">
+                {% csrf_token %}
+                <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+                <textarea rows="8" class="span6" name="resolution">{% if object.resolution %}{{ object.resolution }}{% endif %}</textarea><br/>
+                <button type="submit" class="btn">{% blocktrans %}Save Summary{% endblocktrans %}</button>
+              </form>
+            {% endif %}
+            {# End Write Resolution #}
           </div>
         {% endif %}
 
