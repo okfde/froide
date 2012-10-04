@@ -30,7 +30,7 @@
 
 {% block body %}
 <div class="row">
-<div class="span10">
+<div class="span9">
   <h2>{% blocktrans %}Write a request{% endblocktrans %}</h2>
   {% if public_body %}
   <form method="post" action="{{ SITE_URL }}{% url 'foirequest-submit_request' public_body=public_body.slug %}" class="foirequest">
@@ -137,7 +137,7 @@
     <legend>{% blocktrans %}Step 3 - Write the Request{% endblocktrans %}</legend>
     <div class="js-hidden" id="step-message">
       <div class="row">
-        <div class="span10">
+        <div class="span9">
           <div class="">
             <p>{% blocktrans %}Please have a look if the information you are looking for is already available online.{% endblocktrans %}</p>
             <ul id="check-list">
@@ -163,7 +163,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="span6">
+        <div class="span5">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
           {{ request_form.body.errors }}
           <div class="letter">
@@ -206,37 +206,27 @@
           </ul>
         </div>
       </div>
+      <hr/>
       {% if user.is_authenticated %}
         <div class="user_data_form row">
-          <div class="span6">
+          <div class="span5">
             <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
             <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
           </div>
         </div>
       {% else %}
-        <div class="user_data_form row">
-          <div class="span6">
-            <label for="id_address">{% blocktrans %}Your mailing address{% endblocktrans %}</label>
-            {{ user_form.address.errors }}
-            <p>
-              {{ user_form.address }}<br/><span class="help">{{ user_form.address.help_text }}</span>
-            </p>
-          </div>
-          <div class="span4">
-            <p>{% blocktrans %}Why do you need my mailingaddress?{%endblocktrans %}</p>
-            <p>{% blocktrans %}You need to be a legal person in order to use
-            Freedom of Information in Germany and Public Bodies want your
-            address as proof. However, your address will only be sent with
-            your request and not displayed publicly.{% endblocktrans %}</p>
-          </div>
-        </div>
         <div class="row">
           <div class="span9">
-            <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
-            {{ user_form.user_email.errors }}
-            <p>
+            <div class="well user_data_form">
+              <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
+              {{ user_form.user_email.errors }}
               {{ user_form.user_email }}
-            </p>
+
+              <label for="id_address">{% blocktrans %}Your mailing address{% endblocktrans %}</label>
+              {{ user_form.address.errors }}
+              {{ user_form.address }}
+              <span class="help-inline">{{ user_form.address.help_text }}</span>
+            </div>
             {% if user_form.private %}
               <div class="well">
                 <label class="checkbox">{{ user_form.private }} {{ user_form.private.label }}</label>
@@ -306,7 +296,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="span12">
+          <div class="span9">
             <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
             <p>
               <button type="submit" id="send-request-button" class="btn btn-primary">
@@ -321,7 +311,7 @@
     </fieldset>
   </form>
 </div>
-<div class="span2 sticky" id="similar-requests-container" style="visibility:hidden">
+<div class="span3 sticky" id="similar-requests-container" style="visibility:hidden">
   <h4>{% blocktrans %}Similar Requests{% endblocktrans %}</h4>
   <ul id="similar-requests">
     <li>{% blocktrans %}None found{% endblocktrans %}</li>
