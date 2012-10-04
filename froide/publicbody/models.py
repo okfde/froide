@@ -149,16 +149,19 @@ class FoiLaw(models.Model):
         return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
 
     def as_dict(self):
-        return {"pk": self.pk, "name": self.name,
-                "description_markdown": markdown(self.description),
-                "request_note_markdown": self.request_note_markdown,
-                "description": self.description,
-                "letter_start": self.letter_start,
-                "letter_end": self.letter_end,
-                "letter_start_form": self.letter_start_form,
-                "letter_end_form": self.letter_end_form,
-                "jurisdiction": self.jurisdiction.name,
-                "jurisdiction_id": self.jurisdiction.id}
+        return {
+            "pk": self.pk, "name": self.name,
+            "description_markdown": markdown(self.description),
+            "request_note_markdown": self.request_note_markdown,
+            "description": self.description,
+            "letter_start": self.letter_start,
+            "letter_end": self.letter_end,
+            "letter_start_form": self.letter_start_form,
+            "letter_end_form": self.letter_end_form,
+            "jurisdiction": self.jurisdiction.name,
+            "jurisdiction_id": self.jurisdiction.id,
+            "email_only": self.email_only
+        }
 
     def calculate_due_date(self, date=None):
         if date is None:
