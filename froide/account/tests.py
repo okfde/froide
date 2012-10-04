@@ -86,11 +86,9 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-signup'), post)
         self.assertEqual(response.status_code, 400)
         post['user_email'] = 'horst.porst@example.com'
-        response = self.client.post(reverse('account-signup'), post)
-        self.assertTrue(response.status_code, 400)
         post['address'] = 'MyOwnPrivateStree 5\n31415 Pi-Ville'
         response = self.client.post(reverse('account-signup'), post)
-        self.assertTrue(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         user = User.objects.get(email=post['user_email'])
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
@@ -140,7 +138,8 @@ class AccountTest(TestCase):
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
         # user is already active, link does not exist
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('account-login'))
         # deactivate user
         user = User.objects.get(pk=user.pk)
         user.is_active = False
