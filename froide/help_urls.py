@@ -24,4 +24,6 @@ urlpatterns = patterns("",
     # Translators: URL part of /help/
     (r'^%s/$' % _('for-foi-officers'), TV("help/%s/foi-officers.html" % LG), {},
         'help-foi_officers'),
+    (r'^%s/$' % _('donate'), TV("help/%s/donate.html" % LG), {},
+        'help-donate'),
 )
