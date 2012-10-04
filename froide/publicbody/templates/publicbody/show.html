@@ -21,8 +21,10 @@
   <dd>{{ object.topic }}</dd>
   {% comment %}<dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
   <dd>{{ object.description|markdown }}</dd>{% endcomment %}
+  {% if object.url %}
   <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
   <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
+  {% endif %}
   {% if object.email %}
   <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
   <dd>{{ object.email }} (<a class="make-request-icon" href="{% url 'foirequest-make_request' public_body=object.slug %}">
