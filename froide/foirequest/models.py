@@ -322,6 +322,10 @@ class FoiRequest(models.Model):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
+    @property
+    def url(self):
+        return self.get_absolute_url()
+
     def get_absolute_short_url(self):
         return reverse('foirequest-shortlink',
                 kwargs={'obj_id': self.id})
@@ -343,7 +347,7 @@ class FoiRequest(models.Model):
     def get_accessible_link(self):
         if self.visibility == 1:
             return self.get_auth_link()
-        return self.get_absolute_domain_url()
+        return self.get_absolute_domain_short_url()
 
     def get_description(self):
         return replace_email(self.description, _("<<email address>>"))
@@ -1124,7 +1128,9 @@ class FoiAttachment(models.Model):
         return "\n".join((self.name,))
 
     def has_public_access(self):
-        return self.belongs_to.request.visibility == 2 and self.approved
+        if self.belongs_to:
+            return self.belongs_to.request.visibility == 2 and self.approved
+        return False
 
     def can_preview(self):
         return self.has_public_access() and self.filetype in self.PREVIEWABLE_FILETYPES
@@ -1141,7 +1147,10 @@ class FoiAttachment(models.Model):
         return settings.MEDIA_URL + self.file.name
 
     def get_anchor_url(self):
-        return '%s#%s' % (self.belongs_to.request.get_absolute_url(), self.get_html_id())
+        if self.belongs_to:
+            return '%s#%s' % (self.belongs_to.request.get_absolute_url(),
+                self.get_html_id())
+        return '#' + self.get_html_id()
 
     def get_absolute_url(self):
         if settings.USE_X_ACCEL_REDIRECT:

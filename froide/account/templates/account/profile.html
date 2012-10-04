@@ -10,15 +10,19 @@
 {% block body %}
 <h2>{% blocktrans with name=profile_user.get_full_name %}Profile of {{ name }}{% endblocktrans %}</h2>
 
-<div class="clearfix">
-  <div class="span-12">
-    <h3>{% blocktrans count counter=requests|length %}The user's request{% plural %}The user's {{ counter }} requests{% endblocktrans %}</h3>
-    {% with object_list=requests %}
-      {% include "foirequest/_requests_as_table.html" %}
-    {% endwith %}
+<div class="row">
+  <div class="span6">
+    <h3>{% blocktrans count counter=requests|length %}Request{% plural %}{{ counter }} requests{% endblocktrans %}</h3>
+    <ul class="unstyled">
+      {% for object in requests %}
+        <li>
+          {% include "foirequest/snippets/request_item.html" %}
+        </li>
+      {% endfor %}
+    </ul>
   </div>
-  <div class="span-12 last">
-    <h3>{% blocktrans %}User's recent events{% endblocktrans %}</h3>
+  <div class="span6">
+    <h3>{% blocktrans %}Recent events{% endblocktrans %}</h3>
     <ul>
       {% for event in events %}
       <li id="{{ event.get_html_id }}">

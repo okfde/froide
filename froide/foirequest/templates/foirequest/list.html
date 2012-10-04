@@ -26,80 +26,96 @@
 {% if filtered and jurisdiction %}
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}
-<div class="span-18">
-  {% include "foirequest/_requests_as_table.html" %}
-  {% paginate %}
-</div>
+<div class="row">
+  <div class="span8">
+    <ul class="unstyled">
+      {% for object in object_list %}
+      <li>
+        {% include "foirequest/snippets/request_item.html" %}
+      </li>
+    {% endfor %}
+    </ul>
+    {% paginate %}
+  </div>
 
-<div class="span-6 last">
-  <p>{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</p>
-  {% if filtered or not_foi %}
-  <p>
-    <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
-  </p>
-  {% endif %}
-  {% if jurisdiction %}
-    <p class="bold">{% blocktrans with name=jurisdiction.name %}Filter requests for {{ name }} by their status:{% endblocktrans %}</p>
-    <ul class="iconed-list">
-    {% for urlpart,readable_status,status in status_list %}
-      <li style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')">
-        <a href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">{{ readable_status }}</a>
-      </li>
-      {% endfor %}
-    </ul>
-    <p class="bold">{% blocktrans with name=jurisdiction.name %}Filter requests for {{ name }} by category:{% endblocktrans %}</p>
-    <ul class="iconed-list">
-    {% for topic in topic_list %}
-      <li style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')">
-      <a href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">{{ topic.name }}</a>
-      </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    {% if jurisdiction_list|length > 1 %}
-      <p class="bold">{% blocktrans %}Filter requests by their jurisdiction:{% endblocktrans %}</p>
-      <ul class="iconed-list">
-      {% for juris in jurisdiction_list %}
-        <li style="background-image:url('{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png')">
-          <a href="{% url 'foirequest-list' jurisdiction=juris.slug %}">{{ juris.name }}</a>
+  <div class="span4">
+    <p>
+      <span class="badge">{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
+    </p>
+    <ul class="nav nav-list">
+      {% if filtered or not_foi or jurisdiction %}
+        <li>
+          <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
         </li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-    <p class="bold">{% blocktrans %}Filter requests by their status:{% endblocktrans %}</p>
-    <ul class="iconed-list">
-    {% for urlpart,readable_status,status in status_list %}
-      <li style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')">
-        <a href="{% url 'foirequest-list' status=urlpart %}">{{ readable_status }}</a>
+      {% endif %}
+      {% if jurisdiction %}
+        <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by status{% endblocktrans %}</li>
+        {% for urlpart,readable_status,status in status_list %}
+          <li>
+            <a href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
+              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')"></i>
+              {{ readable_status }}
+            </a>
+        </li>
+        {% endfor %}
+        <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by category{% endblocktrans %}</li>
+        {% for topic in topic_list %}
+          <li>
+            <a href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
+              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')"></i>
+              {{ topic.name }}
+            </a>
+          </li>
+        {% endfor %}
+      {% else %}
+        {% if jurisdiction_list|length > 1 %}
+          <li class="nav-header">{% blocktrans %}By jurisdiction{% endblocktrans %}</li>
+          {% for juris in jurisdiction_list %}
+            <li>
+              <a href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
+                <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png')"></i>
+                {{ juris.name }}
+              </a>
+            </li>
+          {% endfor %}
+        {% endif %}
+        <li class="nav-header">{% blocktrans %}By status{% endblocktrans %}</li>
+        {% for urlpart,readable_status,status in status_list %}
+          <li>
+            <a href="{% url 'foirequest-list' status=urlpart %}">
+              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')"></i>
+              {{ readable_status }}
+            </a>
+          </li>
+        {% endfor %}
+        <li class="nav-header">{% blocktrans %}By category{% endblocktrans %}</li>
+        {% for topic in topic_list %}
+          <li>
+            <a href="{% url 'foirequest-list' topic=topic.slug %}">
+              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')"></i>
+              {{ topic.name }}
+            </a>
+          </li>
+        {% endfor %}
+      {% endif %}
+      <li class="divider"></li>
+      <li>
+        <a href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
       </li>
-      {% endfor %}
-    </ul>
-    <p class="bold">{% blocktrans %}Filter requests by category:{% endblocktrans %}</p>
-    <ul class="iconed-list">
-    {% for topic in topic_list %}
-      <li style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')">
-      <a href="{% url 'foirequest-list' topic=topic.slug %}">{{ topic.name }}</a>
+      <li class="divider"></li>
+      <li>
+        <a href="{% url 'foirequest-feed_latest' %}">
+          <i class="rss-icon"></i>
+          {% trans "RSS Feed" %}
+        </a>
       </li>
-      {% endfor %}
+      <li>
+        <a href="{% url 'foirequest-feed_latest_atom' %}">
+          <i class="atom-icon"></i>
+          {% trans "Atom Feed" %}
+        </a>
+      </li>
     </ul>
-  {% endif %}
-  <p>
-    <a href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
-  </p>
-
-
-  <p>{% blocktrans %}Feeds for latest requests{% endblocktrans %}</p>
-  <ul class="iconed-list">
-    <li class="rss-icon">
-        <a href="{% url 'foirequest-feed_latest' %}">{% trans "RSS Feed" %}</a>
-    </li>
-    <li class="atom-icon">
-        <a href="{% url 'foirequest-feed_latest_atom' %}">{% trans "Atom Feed" %}</a>
-    </li>
-  </ul>
+  </div>
 </div>
-
 {% endblock %}
-
-
-

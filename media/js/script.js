@@ -5,9 +5,9 @@ Froide.app = Froide.app || {};
 
 Froide.app.getPublicBodyResultListItem = function(el, result){
     var name = el.attr("data-inputname");
-    var li = '<li class="result"><label>';
+    var li = '<li class="result"><label class="radio">';
     li += '<input type="radio" name="' + name + '" value="' + result.id + '"/> ';
-    li += result.name + ' (' + result.jurisdiction +')</label> - ';
+    li += result.name + ' (' + result.jurisdiction +')</label>';
     li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
     li += '</li>';
     return li;
@@ -395,6 +395,7 @@ $(function(){
             obj.slideUp();
         }
     });
+
     $("a.hideparent").live("click", function(e){
         e.preventDefault();
         $(this).parent().hide();
@@ -439,6 +440,23 @@ $(function(){
             }
         }
     });
+
+    var activeTab = $('.nav a[href=' + location.hash + ']');
+    if (activeTab) {
+        activeTab.tab('show');
+    }
+
+    $('a[data-tabgo="tab"]').click(function(e){
+      $(this).tab('show');
+      activateNav(e);
+    });
+
+    $('a[data-toggle="tab"]').on('shown', activateNav);
+
+    var activateNav = function (e) {
+        $('.nav a[href="' + e.target.hash + '"]').closest('.nav').find('li').removeClass("active");
+        $('.nav a[href="' + e.target.hash + '"]').parent().addClass("active");
+    };
 
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){
         $(".publicbody-search").each(function(i, el){

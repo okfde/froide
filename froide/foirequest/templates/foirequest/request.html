@@ -4,6 +4,8 @@
 {% load markup %}
 {% load searchtags %}
 
+{% block nav_makerequest %}active{% endblock %}
+
 {% block extra_footer %}
 <script type="text/javascript">
   var Froide = Froide || {};
@@ -27,7 +29,8 @@
 {% endblock %}
 
 {% block body %}
-<div class="span-18">
+<div class="row">
+<div class="span10">
   <h2>{% blocktrans %}Write a request{% endblocktrans %}</h2>
   {% if public_body %}
   <form method="post" action="{{ SITE_URL }}{% url 'foirequest-submit_request' public_body=public_body.slug %}" class="foirequest">
@@ -63,13 +66,13 @@
       <div id="request-note" class="notice" style="display:none"></div>
       <div class="block">
       {% if froide.publicbody_empty %}
-      <label>
+      <label class="radio">
         <input type="radio" id="option-emptypublicbody" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
         {% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
       </label>
       {% endif %}
       {% if froide.create_new_publicbody %}
-        <label>
+        <label class="radio">
           <input id="option-newpublicbody" type="radio" name="public_body" value="new" {% if request_form.public_body.value == "new" %}checked="checked"{% endif %}/>
           {% blocktrans %}Create a new public body on the fly.{% endblocktrans %}
         </label>
@@ -85,31 +88,34 @@
   {% if not request_form.is_bound and not request_form.initial.subject %}
   <fieldset id="check-foi">
     <legend>{% blocktrans %}Step 2 - Choose the type of request{% endblocktrans %}</legend>
-    <div class="hidden" id="step-checkfoi">
+    <div class="js-hidden" id="step-checkfoi">
         <h3>{% blocktrans %}What kind of information do you want?{% endblocktrans %}</h3>
         <div class="block" id="foicheck-form">
-            <label>
+            <label class="radio">
               <input id="option-check_foi_personal" type="radio" name="check_foi" value="false"/>
               {% blocktrans %}a matter that involves you personally{% endblocktrans %}
               <span class="help-block">
                   {% blocktrans %}Questions like "Where do I get X?" or "What do I have to do if X?"{% endblocktrans %}
               </span>
             </label>
-            <label>
+            <label class="radio">
               <input id="option-check_foi_opinion" type="radio" name="check_foi" value="false"/>
               {% blocktrans %}a question about a political opinion{% endblocktrans %}
               <span class="help-block">
                   {% blocktrans %}Questions like "Why don't you do X?" or "How can it be that X?"{% endblocktrans %}
               </span>
             </label>
-            <label>
+            <label class="radio">
               <input id="option-check_foi" type="radio" name="check_foi" value="true"/>
               {% blocktrans %}a matter of general interest (Freedom of Information request){% endblocktrans %}
               <span class="help-block">
                   {% blocktrans %}Questions like "How much did X cost?" or "Please give me a list of X?"{% endblocktrans %}
               </span>
             </label>
-            <button class="button icon arrowright" id="continue-foicheck">{% trans "Continue" %}</button>
+            <button class="btn" id="continue-foicheck">
+              <i class="icon-arrow-right"></i>
+              {% trans "Continue" %}
+            </button>
             <span id="select-one-information-kind" style="display:none">{% trans "Please select one of the above options!" %}</span>
         </div>
         <div id="nofoi-personal" style="display:none">
@@ -129,62 +135,66 @@
   {% endif %}
   <fieldset id="write-request">
     <legend>{% blocktrans %}Step 3 - Write the Request{% endblocktrans %}</legend>
-    <div class="hidden" id="step-message">
-      <div class="check-information">
-        <p>{% blocktrans %}Please have a look if the information you are looking for is already available online.{% endblocktrans %}</p>
-        <ul id="check-list">
-          {% if topic %}
-          <li><a class="target-new" href="#">{% blocktrans with topic=topic %}Search this site for {{ topic }}{% endblocktrans %}</a></li>
+    <div class="js-hidden" id="step-message">
+      <div class="row">
+        <div class="span10">
+          <div class="">
+            <p>{% blocktrans %}Please have a look if the information you are looking for is already available online.{% endblocktrans %}</p>
+            <ul id="check-list">
+              {% if topic %}
+              <li><a class="target-new" href="#">{% blocktrans with topic=topic %}Search this site for {{ topic }}{% endblocktrans %}</a></li>
+              {% endif %}
+              {% if public_body %}
+              <li><a class="target-new" href="#">{% blocktrans %}Explore other requests made to this Public Body{% endblocktrans %}</a></li>
+              {% endif %}
+              {% if public_body and topic %}
+              <li><a class="target-new" href="{% search_engine_query topic public_body.domain %}">{% blocktrans %}Try a Google Search for your topic{% endblocktrans %}</a></li>
+              {% endif %}
+            </ul>
+            <p>{% blocktrans %}If you could not find the information you are looking for, write a request below.{% endblocktrans %}</p>
+          </div>
+          {{ request_form.non_field_errors }}
+          <label for="id_subject">{% trans "Request Subject" %}:</label>
+          {{ request_form.subject.errors }}
+          {{ request_form.subject }}
+          {% if not public_body %}
+            {{ request_form.law }}
           {% endif %}
-          {% if public_body %}
-          <li><a class="target-new" href="#">{% blocktrans %}Explore other requests made to this Public Body{% endblocktrans %}</a></li>
-          {% endif %}
-          {% if public_body and topic %}
-          <li><a class="target-new" href="{% search_engine_query topic public_body.domain %}">{% blocktrans %}Try a Google Search for your topic{% endblocktrans %}</a></li>
-          {% endif %}
-        </ul>
-        <p>{% blocktrans %}If you could not find the information you are looking for, write a request below.{% endblocktrans %}</p>
+        </div>
       </div>
-      {{ request_form.non_field_errors }}
-      <label for="id_subject">{% trans "Request Subject" %}:</label>
-      {{ request_form.subject.errors }}
-      {{ request_form.subject }}
-      {% if not public_body %}
-        {{ request_form.law }}
-      {% endif %}
-      <div class="clearfix" style="margin-top:1em;">
-        <div class="span-10">
+      <div class="row">
+        <div class="span6">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
           {{ request_form.body.errors }}
-         <div class="letter">
-           <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
-           {{ request_form.body }}
-           <div class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
-           {% blocktrans %}Kind Regards,{% endblocktrans %}</div>
-           <div id="letter_end" style="display:none" class="text">{{ request_form.default_law.letter_end_form }}</div>
-           <div class="text-like">
-           {% if user.is_authenticated %}
-              <p id="fullname">{{ user.get_full_name }}</p>
-            {% else %}
-            <div class="user_data_form">
-              <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
-            <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
-            {{ user_form.first_name.errors }}
-            {{ user_form.last_name.errors }}
-            <p>
-              {{ user_form.first_name }}
-              {{ user_form.last_name }}
-              </p>
-            </div>
-            {% endif %}
+          <div class="letter">
+            <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
+            {{ request_form.body }}
+            <div class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
+            {% blocktrans %}Kind Regards,{% endblocktrans %}</div>
+            <div id="letter_end" style="display:none" class="text">{{ request_form.default_law.letter_end_form }}</div>
+            <div class="text-like">
+              {% if user.is_authenticated %}
+                <p id="fullname">{{ user.get_full_name }}</p>
+              {% else %}
+                <div class="user_data_form">
+                  <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
+                  <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
+                  {{ user_form.first_name.errors }}
+                  {{ user_form.last_name.errors }}
+                  <p>
+                    {{ user_form.first_name }}
+                    {{ user_form.last_name }}
+                  </p>
+                </div>
+              {% endif %}
             </div>
           </div>
         </div>
-        <div class="span-7 last request-notes">
+        <div class="span4">
           <div id="law-description"{% if not request_form.default_law.description %} style="display:none"{% endif %}>
             <h4>{% blocktrans %}Legal Explanation:{% endblocktrans %}</h4>
               <div id="law-description-text">{{ request_form.default_law.description|markdown }}</div>
-            </div>
+          </div>
           <h4>{% blocktrans %}Important Notes:{% endblocktrans %}</h4>
           <ul>
             <li>{% blocktrans %}Write your request in <strong>simple, precise language</strong>.{% endblocktrans %}</li>
@@ -197,102 +207,126 @@
         </div>
       </div>
       {% if user.is_authenticated %}
-        <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
-        <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
+        <div class="user_data_form row">
+          <div class="span6">
+            <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
+            <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
+          </div>
+        </div>
       {% else %}
-      <div class="user_data_form">
-        <div class="clearfix">
-          <div class="span-6">
-         <label for="id_address">{% blocktrans %}Your mailing address{% endblocktrans %}</label>
-       {{ user_form.address.errors }}
-        <p>
-        {{ user_form.address }}<br/><span class="help">{{ user_form.address.help_text }}</span>
-        </p>
-      </div>
-      <div class="span-10 last">
-        <p>{% blocktrans %}Why do you need my mailingaddress?{%endblocktrans %}</p>
-        <p>{% blocktrans %}You need to be a legal person in order to use
-        Freedom of Information in Germany and Public Bodies want your
-        address as proof. However, your address will only be sent with
-        your request and not displayed publicly.{% endblocktrans %}</p>
-      </div>
-    </div>
-     <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
-     {{ user_form.user_email.errors }}
-      <p>
-      {{ user_form.user_email }}
-      </p>
-      {% if user_form.private %}
-        <div class="section">
-          {{ user_form.private }} {{ user_form.private.label_tag }}<br/>
-          <span class="help">{{ user_form.private.help_text }}</span>
+        <div class="user_data_form row">
+          <div class="span6">
+            <label for="id_address">{% blocktrans %}Your mailing address{% endblocktrans %}</label>
+            {{ user_form.address.errors }}
+            <p>
+              {{ user_form.address }}<br/><span class="help">{{ user_form.address.help_text }}</span>
+            </p>
+          </div>
+          <div class="span4">
+            <p>{% blocktrans %}Why do you need my mailingaddress?{%endblocktrans %}</p>
+            <p>{% blocktrans %}You need to be a legal person in order to use
+            Freedom of Information in Germany and Public Bodies want your
+            address as proof. However, your address will only be sent with
+            your request and not displayed publicly.{% endblocktrans %}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span9">
+            <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
+            {{ user_form.user_email.errors }}
+            <p>
+              {{ user_form.user_email }}
+            </p>
+            {% if user_form.private %}
+              <div class="well">
+                <label class="checkbox">{{ user_form.private }} {{ user_form.private.label }}</label>
+                <span class="help-block">{{ user_form.private.help_text }}</span>
+              </div>
+            {% endif %}
+            <div class="well">
+              {% if user_form.terms %}
+                {{ user_form.terms.errors }}
+                {{ user_form.terms }}
+              {% endif %}
+            </div>
+          </div>
         </div>
       {% endif %}
-      <div class="section">
-      {% if user_form.terms %}
-       {{ user_form.terms.errors }}
-       {{ user_form.terms }}
-       {% endif %}
+      <div class="row">
+        <div class="span9">
+          <div class="well">
+            <label class="checkbox">
+              {{ request_form.public }}
+              {% blocktrans %}This request is public.{% endblocktrans %}
+            </label>
+            <span class="help-block">
+              {% blocktrans %}If you don't want your request to be public right now, uncheck this. You can always decide to make it public later.{% endblocktrans %}
+            </span>
+          </div>
+        </div>
       </div>
-      </div>
-      {% endif %}
-      <div class="section">
-      {{ request_form.public }}
-      <label class="inline" for="id_public">{% blocktrans %}This request is public.{% endblocktrans %}</label><br/>
-      <span class="help">
-        {% blocktrans %}If you don't want your request to be public right now, uncheck this. You can always decide to make it public later.{% endblocktrans %}
-      </span>
-      </div>
-      <br/>
-        <button type="button" id="review-button" class="primary button icon arrowright">{% trans "Review and Submit" %}</button>
-      </div>
+      <button type="button" id="review-button" class="btn btn-primary"><i class="icon-white icon-hand-right"></i> {% trans "Review and Submit" %}</button>
     </fieldset>
     <fieldset id="review-and-submit">
       <legend>{% blocktrans %}Step 4 - Review your Request and Submit{% endblocktrans %}</legend>
-      <div class="hidden lightbox" id="step-review">
+      <div class="js-hidden lightbox" id="step-review">
         <a href="#" class="close"><span class="close-button">{% blocktrans %}Close{% endblocktrans %}</span></a>
-        <h3>{% blocktrans %}Review your Request and Submit{% endblocktrans %}</h3>
-        <table class="message-table">
-          <tbody>
-          <tr>
-            <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
-            <td id="review-to"></td>
-          </tr>
-          <tr>
-            <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
-            <td id="review-from"></td>
-          </tr>
-          <tr>
-            <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
-            <td><strong id="review-subject"></strong></td>
-          </tr>
-          </tbody>
-        </table>
-       <div class="span-17">
-          <div id="review-text"></div>
-       </div>
-        <div class="span-6 last request-notes">
-          <ul id="review-warnings" class="notice">
-          </ul>
-          <ul>
-            <li>{% blocktrans %}Please use proper spelling.{% endblocktrans %}</li>
-            <li>{% blocktrans %}Please stay polite.{% endblocktrans %}</li>
-          </ul>
+        <div class="row">
+          <div class="span8">
+            <h4>{% blocktrans %}Review your Request and Submit{% endblocktrans %}</h4>
+            <table class="message-table">
+              <tbody>
+              <tr>
+                <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
+                <td id="review-to"></td>
+              </tr>
+              <tr>
+                <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+                <td id="review-from"></td>
+              </tr>
+              <tr>
+                <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
+                <td><strong id="review-subject"></strong></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="clear">
-          <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
-          <p><button type="submit" id="send-request-button" class="button icon approve primary">{% trans "Submit Request"%}</button>
-          {% blocktrans %} or <a href="#" class="close">edit your request again</a>{% endblocktrans %}</p>
+        <div class="row">
+         <div class="span8">
+            <div id="review-text"></div>
+         </div>
+          <div class="span4">
+            <ul id="review-warnings">
+            </ul>
+            <ul>
+              <li>{% blocktrans %}Please use proper spelling.{% endblocktrans %}</li>
+              <li>{% blocktrans %}Please stay polite.{% endblocktrans %}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span12">
+            <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
+            <p>
+              <button type="submit" id="send-request-button" class="btn btn-primary">
+                <i class="icon-white icon-ok"></i>
+                {% trans "Submit Request"%}
+              </button>
+              {% blocktrans %} or <a href="#" class="close">edit your request again</a>{% endblocktrans %}
+            </p>
+          </div>
         </div>
       </div>
     </fieldset>
   </form>
 </div>
-<div id="lightbox-background"></div>
-<div class="prepend-1 span-5 last sticky" id="similar-requests-container" style="visibility:hidden">
+<div class="span2 sticky" id="similar-requests-container" style="visibility:hidden">
   <h4>{% blocktrans %}Similar Requests{% endblocktrans %}</h4>
   <ul id="similar-requests">
     <li>{% blocktrans %}None found{% endblocktrans %}</li>
   </ul>
 </div>
+</div>
+<div id="lightbox-background"></div>
 {% endblock %}

@@ -1,34 +1,30 @@
-{% extends 'base.html' %}
+{% extends 'publicbody/base.html' %}
 {% load url from future %}
 {% load i18n %}
 
 {% block body %}
 
-<div class="clearfix">
-  <div class="span-12">
+<div class="row">
+  <div class="span10">
     <h2>{% blocktrans %}Search Results for &quot;{{ query }}&quot; in Public Bodies{% endblocktrans %}</h2>
     {% include "publicbody/_search_form.html" %}
-    <table class="no-stripes">
-    {% for object in page.object_list %}
-      <tr>
-      <td style="vertical-align: top">
-        <img src="{{ STATIC_URL }}img/topics/{{ object.topic_slug }}.png" alt="{{ object.topic_auto }}" title="{{ object.topic_auto }}"/>
-      </td>
-      <td>
-        <a href="{{ object.url }}">{{ object.name }}</a>
-        {% comment %}<a title="{% blocktrans %}Click here to make a request to this Public Body{% endblocktrans %}" href="{% url 'foirequest-make_request' public_body=object.slug %}">
-           <img src="{{ STATIC_URL }}img/tiny_request.png" alt="{% blocktrans %}Make a Request{% endblocktrans %}" />
-         </a>{% endcomment %}
-       </td>
-    </tr>
+    <ul class="unstyled">
+      {% for object in page.object_list %}
+        <li>
+          {% include "publicbody/snippets/publicbody_item.html" %}
+        </li>
 
-    {% empty %}
-      <tr><td>
-        <p>{% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
-        <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a></p>
-      </td></tr>
-    {% endfor %}
-  </table>
+      {% empty %}
+        <li>
+          <p>
+            {% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}
+          </p>
+          <p>
+            <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a>
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 

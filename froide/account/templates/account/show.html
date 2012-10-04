@@ -6,17 +6,21 @@
 {% block body %}
 <div>
     <h2>{% trans "Your Account" %}</h2>
-    <div class="span-18">
-        <h3>
-            {% blocktrans count counter=own_requests|length %}One request that needs your attention{% plural %}{{ counter }} requests that need your attention{% endblocktrans %}
-        </h3>
-        {% with object_list=own_requests %}
-            {% include "foirequest/_requests_as_table.html" %}
-        {% endwith %}
+    <div class="span12">
+      <h3>
+        {% blocktrans count counter=own_requests|length %}One request that needs your attention{% plural %}{{ counter }} requests that need your attention{% endblocktrans %}
+      </h3>
+      <ul class="unstyled">
+        {% for object in own_requests %}
+          <li>
+            {% include "foirequest/snippets/request_item.html" %}
+          </li>
+        {% endfor %}
+      </ul>
     </div>
 </div>
 <div>
-    <div class="span-18">
+    <div class="span12">
         <h3>
           {% trans "Your followed requests" %}
         </h3>
@@ -47,9 +51,9 @@
 
 
 {% if not user.is_active %}
-<p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>
+  <p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>
 {% else %}
-<div class="span-24">
+<div class="span12">
   <table>
     <caption>{% blocktrans %}Your Freedom of Information Requests{% endblocktrans %}</caption>
     <thead>
@@ -107,23 +111,16 @@
       <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>
     {% else %}
       <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
-      <div id="change-password"{% if not password_change_form %} class="hidden"{% endif %}>
+      <div id="change-password"{% if not password_change_form %} class="js-hidden"{% endif %}>
     {% endif %}
       <form action="{% url 'account-change_password' %}" method="post">
         {% csrf_token %}
-        <table class="no-stripes">
         {% if password_change_form %}
-        {{ password_change_form.as_table }}
+          {{ password_change_form.as_p }}
         {% else %}
-        {{ user.get_profile.get_password_change_form.as_table }}
+          {{ user.get_profile.get_password_change_form.as_p }}
         {% endif %}
-        <tr>
-          <td></td>
-          <td>
-            <input type="submit" value="{% blocktrans %}Change password{% endblocktrans %}"/>
-          </td>
-        </tr>
-      </table>
+        <button type="submit" class="btn">{% blocktrans %}Change password{% endblocktrans %}</button>
     </form>
     {% if not user.is_new %}
     </div>
@@ -134,23 +131,16 @@
       <h3>{% blocktrans %}You need to enter your address.{% endblocktrans %}</h3>
         {% else %}
         <a href="#change-address" class="toggle">{% blocktrans %}Change your address{% endblocktrans %}</a>
-        <div id="change-address"{% if not address_change_form %} class="hidden"{% endif %}>
+        <div id="change-address"{% if not address_change_form %} class="js-hidden"{% endif %}>
         {% endif %}
         <form action="{% url 'account-change_address' %}" method="post">
           {% csrf_token %}
-          <table class="no-stripes">
           {% if address_change_form %}
-          {{ address_change_form.as_table }}
+            {{ address_change_form.as_p }}
           {% else %}
-          {{ user.get_profile.get_address_change_form.as_table }}
+            {{ user.get_profile.get_address_change_form.as_p }}
           {% endif %}
-          <tr>
-            <td></td>
-            <td>
-              <input type="submit" value="{% blocktrans %}Change address{% endblocktrans %}"/>
-            </td>
-          </tr>
-        </table>
+          <button type="submit" class="btn">{% blocktrans %}Change address{% endblocktrans %}</button>
       </form>
       </div>
     </div>

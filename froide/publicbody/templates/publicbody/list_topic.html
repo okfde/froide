@@ -8,11 +8,16 @@
 
 {% include "publicbody/_search_form.html" %}
 
-<ul class="topic-list">
+<ul class="thumbnails">
   {% for topic in topics %}
-  <li class="span-8{% if forloop.counter|divisibleby:3 %} last{% endif %}">
-  <a href="{% url 'publicbody-show_topic' topic=topic.slug %}">
-    <div><h4 class="topic-icon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}.png')">{{ topic.name }}</h4></div>
+  <li class="span3">
+  	<a class="thumbnail iconed-item clearfix" href="{% url 'publicbody-show_topic' topic=topic.slug %}">
+  		<div class="iconed-icon fixed-height">
+    		<img src="{{ STATIC_URL }}img/topics/{{ topic.slug }}.png" alt="{{ topic.name }}"/>
+    	</div>
+    	<div class="iconed-description">
+    		<h4>{{ topic.name }}</h4>
+    	</div>
     </a>
   </li>
   {% endfor %}

@@ -27,7 +27,7 @@ def confirm(request, user_id, secret, request_id=None):
         return HttpResponseRedirect(reverse('account-show'))
     user = get_object_or_404(auth.models.User, pk=int(user_id))
     if user.is_active:
-        raise Http404
+        return HttpResponseRedirect(reverse('account-login'))
     account_manager = AccountManager(user)
     if account_manager.confirm_account(secret, request_id):
         messages.add_message(request, messages.WARNING,

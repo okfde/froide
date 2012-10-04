@@ -13,29 +13,35 @@
     <h1>Informationsfreiheit<br/>in Nordrhein-Westfalen</h1>
     <h2>Fragen Sie Landesbehörden nach Verwaltungsinformationen – es ist Ihr gutes Recht.</h2>
   </div>
-  <div class="container">
-    <div class="push-1 span-6">
-      <h3>Welche Behörden?</h3>
-      <p>Alle Einrichtungen, die Verwaltungs&shy;aufgaben des Landes wahrnehmen.</p>
-      <p>Stellen Sie eine Anfrage an eine von <a href="{% url 'publicbody-show-pb_jurisdiction' slug=object.slug %}">{{ pb_count }} Behörden in NRW.</a></p>
-    </div>
-    <div class="push-2 span-6">
-      <h3>Welche Informationen?</h3>
-      <p>Verträge, Protokolle, Gutachten und andere Dokumente aus der Verwaltung:
-        Sie haben das Recht auf Einsicht.</p>
-      <p><a href="{% url 'foirequest-make_request' %}">Stellen Sie eine Anfrage!</a></p>
-    </div>
-    <div class="push-3 span-6 last">
-      <h3>Welches Recht?</h3>
-      <p>Das Informations&shy;freiheits&shy;gesetz von NRW erlaubt Ihnen den Zugang zu Informationen der Verwaltung.</p>
-      <p><a href="{% url 'publicbody-foilaw-show' slug='ifg-nrw' %}">Lernen Sie Ihr Recht kennen.</a></p>
-    </div>
-  </div>
+  <ul class="state-points thumbnails">
+    <li class="span3">
+      <div class="thumbnail">
+        <h3>Welche Behörden?</h3>
+        <p>Alle Einrichtungen, die Verwaltungs&shy;aufgaben des Landes wahrnehmen.</p>
+        <p>Stellen Sie eine Anfrage an eine von <a href="{% url 'publicbody-show-pb_jurisdiction' slug=object.slug %}">{{ pb_count }} Behörden in NRW.</a></p>
+      </div>
+    </li>
+    <li class="span3">
+      <div class="thumbnail">
+        <h3>Welche Informationen?</h3>
+        <p>Verträge, Protokolle, Gutachten und andere Dokumente aus der Verwaltung:
+          Sie haben das Recht auf Einsicht.</p>
+        <p><a href="{% url 'foirequest-make_request' %}">Stellen Sie eine Anfrage!</a></p>
+      </div>
+    </li>
+    <li class="span3">
+      <div class="thumbnail">
+        <h3>Welches Recht?</h3>
+        <p>Das Informations&shy;freiheits&shy;gesetz von NRW erlaubt Ihnen den Zugang zu Informationen der Verwaltung.</p>
+        <p><a href="{% url 'publicbody-foilaw-show' slug='ifg-nrw' %}">Lernen Sie Ihr Recht kennen.</a></p>
+      </div>
+    </li>
+  </ul>
 </div>
 
 
-<div class="container">
-  <div class="push-1 span-14">
+<div class="row">
+  <div class="span8">
     <h3>Pressemitteilung</h3>
     <h4>Bürger fragen, Behörden antworten</h4>
 <p><em>Besserer Zugang zu Informationen aus Kommunal- und Landesbehörden in Nordrhein-Westfalen durch FragDenStaat.de</em></p>
@@ -85,7 +91,7 @@ Kontakt:
 <p>Transparency International Deutschland e. V. arbeitet deutschlandweit an einer effektiven und nachhaltigen Bekämpfung und Eindämmung der Korruption. Dies ist nur möglich, wenn Staat, Wirtschaft und Zivilgesellschaft zusammenarbeiten und Koalitionen gebildet werden. In Arbeits- und Regionalgruppen werden die Ziele an entscheidende Stellen transportiert, Lösungen erarbeitet und gesellschaftliche wie politische Entwicklungen kritisch begleitet.</p>
 
 </div>
-  <div class="prepend-2 push-1 span-7 last">
+  <div class="span4">
     <h3>Fakten zu FragDenStaat.de</h3>
     <dl>
       <dt>Online seit</dt>

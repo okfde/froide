@@ -6,52 +6,48 @@
 
 {% block body %}
 <h2>{{ object.name }}</h2>
-<div class="span-18">
+
+{% if object.email %}
+<p>
+  <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
+</p>
+{% endif %}
+<dl>
+  <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
+  <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
+  <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
+  <dd>{{ object.classification }}</dd>
+  <dt>{% blocktrans %}Topic:{% endblocktrans %}</dt>
+  <dd>{{ object.topic }}</dd>
+  {% comment %}<dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
+  <dd>{{ object.description|markdown }}</dd>{% endcomment %}
+  <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
+  <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
   {% if object.email %}
-  <p>
-    <a class="big-button make-request-button" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
-  </p>
+  <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
+  <dd>{{ object.email }} (<a class="make-request-icon" href="{% url 'foirequest-make_request' public_body=object.slug %}">
+    {% blocktrans %}Make a request{% endblocktrans %}</a>)</dd>
   {% endif %}
-  <dl>
-    <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
-    <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
-    <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
-    <dd>{{ object.classification }}</dd>
-    <dt>{% blocktrans %}Topic:{% endblocktrans %}</dt>
-    <dd>{{ object.topic }}</dd>
-    {% comment %}<dt>{% blocktrans %}Description:{% endblocktrans %}</dt>
-    <dd>{{ object.description|markdown }}</dd>{% endcomment %}
-    <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
-    <dd><a href="{{ object.url }}" class="target-new">{{ object.url }}</a></dd>
-    {% if object.email %}
-    <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
-    <dd>{{ object.email }} (<a class="make-request-icon" href="{% url 'foirequest-make_request' public_body=object.slug %}">
-      {% blocktrans %}Make a request{% endblocktrans %}</a>)</dd>
-    {% endif %}
-    <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-    <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>
-    {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
-    <dd>{{ object.address|linebreaksbr }}</dd> {% endcomment %}
-    {% comment %}<dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
-    <dd>{{ object.geography }}</dd>{% endcomment %}
-  </dl>
+  <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
+  <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>
+  {% comment %}<dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
+  <dd>{{ object.address|linebreaksbr }}</dd> {% endcomment %}
+  {% comment %}<dt>{% blocktrans %}Geography:{% endblocktrans %}</dt>
+  <dd>{{ object.geography }}</dd>{% endcomment %}
+</dl>
 
-  <h3>{% blocktrans %}Latest Freedom of Information Requests for this entity{% endblocktrans %}</h3>
-  <ul>
-    {% for foirequest in foi_requests %}
-    <li>
-    <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
-    </li>
-    {% empty %}
-    <li>{% blocktrans %}No requests so far.{% endblocktrans %} 
-    <a href="{% url 'foirequest-make_request' public_body=object.slug %}">
-      {% blocktrans %}Make a request now!{% endblocktrans %}</a></li>
-    {% endfor %}
-  </ul>
-</div>
-<div class="span-6">
-
-</div>
+<h3>{% blocktrans %}Latest Freedom of Information Requests for this entity{% endblocktrans %}</h3>
+<ul>
+  {% for foirequest in foi_requests %}
+  <li>
+  <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+  </li>
+  {% empty %}
+  <li>{% blocktrans %}No requests so far.{% endblocktrans %} 
+  <a href="{% url 'foirequest-make_request' public_body=object.slug %}">
+    {% blocktrans %}Make a request now!{% endblocktrans %}</a></li>
+  {% endfor %}
+</ul>
 {% endblock %}
 
 {% block extra_footer %}

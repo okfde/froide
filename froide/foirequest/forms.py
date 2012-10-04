@@ -1,7 +1,7 @@
 import json
-import datetime
 
-from django import forms
+import floppyforms as forms
+
 from django.conf import settings
 from django.core.mail import mail_admins
 from django.utils.translation import ugettext as _
@@ -14,6 +14,7 @@ from taggit.utils import edit_string_for_tags
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
+from froide.helper.widgets import PriceInput
 
 from .models import FoiRequest, FoiAttachment
 
@@ -29,10 +30,15 @@ class RequestForm(forms.Form):
             label=_("Search for a topic or a public body:"),
             required=False)
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={'placeholder': _("Subject")}))
+            widget=forms.TextInput(
+                attrs={'placeholder': _("Subject"),
+                "class": "span7"}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
-                attrs={'placeholder': _("Specify your request here...")}))
+                attrs={
+                    'placeholder': _("Specify your request here..."),
+                    "class": "span5"
+                }))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -154,8 +160,8 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "long-input"}))
-    message = forms.CharField(widget=forms.Textarea,
+            widget=forms.TextInput(attrs={"class": "span5"}))
+    message = forms.CharField(widget=forms.Textarea(attrs={"class": "span5"}),
             label=_("Your message"))
 
     def __init__(self, foirequest, *args, **kwargs):
@@ -165,8 +171,8 @@ class SendMessageForm(forms.Form):
             foirequest.possible_reply_addresses().items()]
         choices.append((0, _("Default address of %(publicbody)s") % {
                 "publicbody": foirequest.public_body.name}))
-        self.fields['to'] = forms.TypedChoiceField(label=_("To"),
-                choices=choices, coerce=int, required=True)
+        self.fields.insert(0, 'to', forms.TypedChoiceField(label=_("To"),
+                choices=choices, coerce=int, required=True))
 
         if foirequest.law and foirequest.law.email_only:
             self.fields['send_address'] = forms.BooleanField(
@@ -216,8 +222,10 @@ class MakePublicBodySuggestionForm(forms.Form):
 
 class EscalationMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "long-input"}))
-    message = forms.CharField(widget=forms.Textarea,
+            widget=forms.TextInput(attrs={"class": "span5"}))
+    message = forms.CharField(
+            widget=forms.Textarea(
+                attrs={"class": "span5"}),
             label=_("Your message"), )
 
     def __init__(self, foirequest, *args, **kwargs):
@@ -246,20 +254,33 @@ class PublicBodySuggestionsForm(forms.Form):
 class FoiRequestStatusForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
-        self.fields['refusal_reason'] = forms.ChoiceField(label=_("Refusal Reason"),
+        self.fields['refusal_reason'] = forms.ChoiceField(
+            label=_("Refusal Reason"),
             choices=[('', _('No or other reason given'))] +
-            foirequest.law.get_refusal_reason_choices(), required=False)
+                foirequest.law.get_refusal_reason_choices(),
+            required=False,
+            help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
+        )
 
     status = forms.ChoiceField(label=_("Status"),
             # widget=forms.RadioSelect,
             choices=[('', '-------')] +
-                    map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES))
-    redirected = forms.IntegerField(required=False, widget=PublicBodySelect)
+                    map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES),
+            help_text=_('In what kind of state is this request?'))
+    redirected = forms.IntegerField(
+        label=_("Redirected to"),
+        required=False,
+        widget=PublicBodySelect,
+        help_text=_('If your message is redirected to a different Public Body, please specify the new Public Body')
+    )
     if payment_possible:
-        costs = forms.FloatField(label=_("Costs"),
-                required=False, min_value=0.0,
-                localize=True,
-                widget=forms.TextInput(attrs={"size": "4"}))
+        costs = forms.FloatField(
+            label=_("Costs"),
+            required=False, min_value=0.0,
+            localize=True,
+            widget=PriceInput(attrs={"size": "4"}),
+            help_text=_('Please specify what the Public Body charges for the information.')
+        )
 
     def clean(self):
         pk = self.cleaned_data.get('redirected', None)
@@ -315,19 +336,21 @@ class PostalScanMixin(object):
 class PostalReplyForm(forms.Form, PostalScanMixin):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>. All uploaded documents will be published!"))
     date = forms.DateField(
-            widget=forms.DateInput(attrs={"size": "10"}),
+            widget=forms.TextInput(attrs={"class": "input-small"}),
             label=_("Send Date"),
             help_text=_("Please give the date the reply was sent."),
             localize=True)
     sender = forms.CharField(label=_("Sender Name"),
-            widget=forms.TextInput(attrs={"size": "40",
+            widget=forms.TextInput(attrs={"class": "span5",
                 "placeholder": _("Sender Name")}), required=True)
     subject = forms.CharField(label=_("Subject"), required=False,
-            widget=forms.TextInput(attrs={"size": "40",
+            widget=forms.TextInput(attrs={"class": "span5",
                 "placeholder": _("Subject")}))
     text = forms.CharField(label=_("Letter"),
             widget=forms.Textarea(attrs={"placeholder":
-                _("Letter text you have received")}),
+                _("Letter text you have received"),
+                "class": "span5"
+            }),
             required=False,
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
     scan = forms.FileField(label=_("Scanned Letter"), required=False,
@@ -359,7 +382,8 @@ class PostalAttachmentForm(forms.Form, PostalScanMixin):
 
 class TagFoiRequestForm(forms.Form):
     tags = TagField(label=_("Tags"),
-            help_text=_("Comma separated and quoted"))
+        widget=forms.TextInput(attrs={'placeholder': _('Tags')}),
+        help_text=_("Comma separated and quoted"))
 
     def __init__(self, foirequest, *args, **kwargs):
         self.foirequest = foirequest
