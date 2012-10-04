@@ -2,14 +2,15 @@
 {% load i18n %}
 {% load url from future %}
 
-{% comment %}
+{% block banner %}
+  {% comment %}
   <div class="container">
-    <div class="alert alert-success alert-block">
+    <div class="alert alert-info alert-block">
       <div class="row">
         <div class="span9">
           <strong>
             {% trans "Like this? Consider supporting us!" %}
-            <a href="{% url 'help-about' %}#spenden">{% trans "Donate now!" %}</a>
+            <a href="{% url 'help-donate' %}" class="btn btn-small btn-success"><i class="icon-white icon-heart"></i> {% trans "Donate now!" %}</a>
           </strong>
         </div>
         <div class="span2">
@@ -20,7 +21,8 @@
       </div>
     </div>
   </div>
-{% endcomment %}
+  {% endcomment %}
+{% endblock %}
 
 {% block body %}
 
