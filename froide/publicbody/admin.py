@@ -13,7 +13,7 @@ class PublicBodyAdmin(admin.ModelAdmin):
 
 
 class FoiLawAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("jurisdiction", "name",)}
+    prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'meta', 'jurisdiction',)
     raw_id_fields = ('mediator',)
 
