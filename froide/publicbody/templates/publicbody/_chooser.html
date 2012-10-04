@@ -6,7 +6,7 @@
   Froide.url.autocompletePublicBody = "{% url 'publicbody-autocomplete' %}";
   Froide.url.showPublicBody = "{% url 'publicbody-show_json' pk=0 format='json' %}";
   Froide.template = Froide.template || {};
-Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new info-link"><i class="icon-info"></i></a>';
+Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new"><i class="icon-info-sign"></i></a>';
 </script>
 <div class="public_body-chooser" data-inputname="{{ name }}">
   <div class="publicbody-search form-search">
@@ -14,7 +14,7 @@ Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}
       <input type="search" value="{{ topic }}" class="search-public_bodies search-query span4" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
       <button type="button" class="btn search-public_bodies-submit"><i class="icon-search"></i>{% blocktrans %}Search{% endblocktrans %}</button>
     </div>
-    <div class="searchexamples">{% blocktrans %}Try something like:{% endblocktrans %} 
+    <div class="searchexamples help-block">{% blocktrans %}Try something like:{% endblocktrans %} 
       <a href="?topic={% trans "Environment" %}" class="searchexample">{% trans "Environment" %}</a> {% trans "or" %}
       <a href="?topic={% trans "Ministry of Labour" %}" class="searchexample">{% trans "Ministry of Labour" %}</a><br/>
       <a href="{% url 'help-about' %}">{% trans "Write to us if a public body is missing" %}</a>
