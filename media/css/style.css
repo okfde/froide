@@ -215,6 +215,7 @@ strong {
 }
 
 #footer {
+    font-size: 80%;
     color: #666;
     margin-top: 2em;
     display: block;
