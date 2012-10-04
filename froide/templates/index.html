@@ -51,11 +51,14 @@
           <h3>{{ featured.title }}</h3>
           <p>
             {{ featured.text|truncatewords:55|linebreaksbr }}
-            <br/>
-            {% if featured.url %}
+          </p>
+          {% if featured.url %}
+            <p>
               <a href="{{ featured.url }}"><i class="icon-bullhorn"></i> {% blocktrans %}Read the blog post{% endblocktrans %}</a>
-            {% endif %}
-              <a href="{% url 'foirequest-show' slug=featured.request.slug %}"><i class="icon-envelope"></i> {% blocktrans %}Visit this request{% endblocktrans %}</a>
+            </p>
+          {% endif %}
+          <p>
+            <a href="{% url 'foirequest-show' slug=featured.request.slug %}"><i class="icon-envelope"></i> {% blocktrans %}Visit this request{% endblocktrans %}</a>
           </p>
         </div>
         {% else %}
