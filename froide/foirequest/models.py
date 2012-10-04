@@ -389,7 +389,9 @@ class FoiRequest(models.Model):
         return self.status == 'awaiting_response' or self.status == 'overdue'
 
     def is_overdue(self):
-        return self.due_date < timezone.now()
+        if self.due_date:
+            return self.due_date < timezone.now()
+        return False
 
     def has_been_refused(self):
         return self.status == 'refused' or self.status == 'escalated'
