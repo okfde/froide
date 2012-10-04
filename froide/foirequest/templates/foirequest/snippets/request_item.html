@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="iconed-item clearfix">
+  <div class="iconed-icon">
+    <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
+  </div>
+  <div class="iconed-description">
+    <a href="{{ object.url }}">
+      <h4>{{ object.title }}</h4>
+    </a>
+    <dl class="dl-foirequest">
+      <dt>{% blocktrans %}To:{% endblocktrans %}</dt>
+      <dd>
+        {% if object.public_body %}
+          <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+        {% else %}
+          {% blocktrans %}Not yet set{% endblocktrans %}
+        {% endif %}
+      </dd>
+    </dl>
+    <small class="muted">{{ object.readable_status }}, {% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</small>
+  </div>
+</div>
