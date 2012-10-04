@@ -57,9 +57,11 @@
               <a href="{{ featured.url }}"><i class="icon-bullhorn"></i> {% blocktrans %}Read the blog post{% endblocktrans %}</a>
             </p>
           {% endif %}
-          <p>
-            <a href="{% url 'foirequest-show' slug=featured.request.slug %}"><i class="icon-envelope"></i> {% blocktrans %}Visit this request{% endblocktrans %}</a>
-          </p>
+          {% if featured.request %}
+            <p>
+              <a href="{% url 'foirequest-show' slug=featured.request.slug %}"><i class="icon-envelope"></i> {% blocktrans %}Visit this request{% endblocktrans %}</a>
+            </p>
+          {% endif %}
         </div>
         {% else %}
         <div id="sample-letter" class="frontpage-teaser">{% blocktrans %}Freedom of Information Request
