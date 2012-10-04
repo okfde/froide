@@ -3,13 +3,15 @@ var loggedInCallback;
 
 Froide.app = Froide.app || {};
 
+Froide.app.justSelected = false;
+
 Froide.app.getPublicBodyResultListItem = function(el, result){
     var name = el.attr("data-inputname");
     var li = '<li class="result"><label class="radio">';
-    li += '<input type="radio" name="' + name + '" value="' + result.id + '"/> ';
-    li += result.name + ' (' + result.jurisdiction +')</label>';
+    li += '<input type="radio" name="' + name + '" value="' + result.id + '"/>\n';
+    li += result.name + ' (' + result.jurisdiction +') ';
     li += Mustache.to_html(Froide.template.publicBodyListingInfo, {url: result.url});
-    li += '</li>';
+    li += '</label></li>';
     return li;
 };
 
@@ -82,13 +84,16 @@ Froide.app.performPublicBodySearch = (function(){
                 return;
             } else {
                 el.find(".empty-result").hide();
+                if (Froide.app.justSelected) {
+                    return;
+                }
                 for(i = 0; i < results.length; i += 1){
                     result = results[i];
                     var li = Froide.app.getPublicBodyResultListItem(el, result);
                     el.find(".search-results").append(li);
                 }
                 el.find(".result input").change(function(e){
-                    var li = $(this).parent().parent();
+                    var li = $(this).closest('li');
                     Froide.app.selectSearchListItem(el, li);
                 });
                 el.find(".search-results").slideDown();
@@ -404,25 +409,25 @@ $(function(){
         window.location.href = "#" + $(el).attr("id");
     });
     $(".search-public_bodies-submit").click(function(e){
-        Froide.app.performPublicBodySearch($(this).parent().parent());
+        Froide.app.performPublicBodySearch($(this).closest('.public_body-chooser'));
     });
     $(".search-public_bodies").keydown(function(e){
         if(e.keyCode === 13){
             e.preventDefault();
-            Froide.app.performPublicBodySearch($(this).parent().parent());
+            Froide.app.performPublicBodySearch($(this).closest('.public_body-chooser'));
         }
     });
     $(".publicbody-search .searchexample").click(function(e){
         e.preventDefault();
         var term = $(this).text();
-        var par = $(this).parent().parent();
+        var par = $(this).closest('.public_body-chooser');
         par.find(".search-public_bodies").val(term);
-        Froide.app.performPublicBodySearch(par.parent());
+        Froide.app.performPublicBodySearch(par);
     });
 
     $(".search-public_bodies").each(function(i, input){
         if($(input).val() !== ""){
-            Froide.app.performPublicBodySearch($(this).parent().parent());
+            Froide.app.performPublicBodySearch($(this).closest('.public_body-chooser'));
         }
     });
     $("button.upload-button").click(function(e){
@@ -468,11 +473,15 @@ $(function(){
             }
             var auto = input.autocomplete({
                 serviceUrl: Froide.url.autocompletePublicBody,
-                minChars: 2,
+                minChars: 3,
                 params: params,
                 onSelect: function(value, data){
-                    var li = Froide.app.getPublicBodyResultListItem(input.parent().parent(), data);
-                    Froide.app.selectSearchListItem(input.parent().parent(), $(li));
+                    Froide.app.justSelected = true;
+                    window.setTimeout(function(){
+                        Froide.app.justSelected = false;
+                    }, 1000);
+                    var li = Froide.app.getPublicBodyResultListItem(input.closest('.public_body-chooser'), data);
+                    Froide.app.selectSearchListItem(input.closest('.public_body-chooser'), $(li));
                 }
             });
             if (juris.length){
