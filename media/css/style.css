@@ -9,6 +9,10 @@ body {
 .page-break  { display:none; }
 .print-only { display: none; }
 
+.navbar-inner {
+    background-image: none !important;
+}
+
 .navbar .brand {
     font-family: 'Kreon', arial, serif;
     text-shadow: 0 0 1px #222222;
