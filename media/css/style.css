@@ -87,6 +87,10 @@ body {
     font-size: 75%;
 }
 
+.inline {
+    display: inline;
+}
+
 
 #main {
     /*padding: 10px;*/
@@ -250,14 +254,13 @@ form.foirequest fieldset.active legend{
 }
 
 form.foirequest legend{
-    margin-left: 20px;
     padding:0;
     color: #aaa;
     font-weight:normal;
 }
 
 form.foirequest fieldset > div, form.foirequest .letter {
-    padding: 1px 0px 5px 20px;
+    padding: 1px 20px 5px 20px;
 }
 
 .js form.foirequest div.js-hidden {
@@ -271,10 +274,6 @@ form.foirequest fieldset > div, form.foirequest .letter {
     padding: 0.8em;
     border: 2px solid #b94a48;
     list-style-type:none;
-}
-
-.info-link {
-    font-size: 0.75em;
 }
 
 form.foirequest ol {
