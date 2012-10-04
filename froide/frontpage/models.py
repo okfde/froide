@@ -18,7 +18,7 @@ class FeaturedRequestManager(CurrentSiteManager):
 class FeaturedRequest(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Featured Request"),
-            null=True, on_delete=models.SET_NULL)
+            null=True, blank=True, on_delete=models.SET_NULL)
     timestamp = models.DateTimeField(_("Timestamp"))
     title = models.CharField(_("Title"), max_length=255)
     text = models.TextField(_("Text"))
