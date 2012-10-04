@@ -858,28 +858,31 @@ form.foirequest #post_address {
 }
 
 .state-header h1 {
+    font-size: 48px;
     font-weight: bold;
-    margin-bottom: 0;
     text-shadow: 0px 0px 5px #fff;
-    filter: dropshadow(color=#fff, offx=0, offy=0);
+    padding-top: 0.5em;
 }
 
 .state-header h2 {
-    font-size: 1.4em;
+    font-weight: normal;
+    font-size: 110%;
 }
 
-.state-header h1, .state-header h2 {
-    margin-top: 0;
-    padding-top: 20px;
-    color: #333;
+.state-header .state-points {
+    margin: 0 10%;
 }
 
-.state-header .container > div {
+.state-header .state-points > li {
     background-color: #fff;
     background-color: rgba(255, 255, 255, 0.8);
-    padding: 15px 15px 0.2em 15px;
 }
 
-.state-header .container > div h3 {
+.state-header .state-points h3 {
     margin-top: 0;
+    font-size: 110%;
+}
+
+.state-header .state-points .thumbnail {
+    border-color: transparent;
 }
