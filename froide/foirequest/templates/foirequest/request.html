@@ -33,7 +33,7 @@
 <div class="span9">
   <h2>{% blocktrans %}Write a request{% endblocktrans %}</h2>
   {% if public_body %}
-  <form method="post" action="{{ SITE_URL }}{% url 'foirequest-submit_request' public_body=public_body.slug %}" class="foirequest">
+  <form method="post" action="{{ SITE_URL }}{% url 'foirequest-submit_request' public_body=public_body.slug %}" class="foirequest" novalidate>
   {% else %}
   <form method="post" action="{{ SITE_URL }}{% url 'foirequest-submit_request' %}" class="foirequest">
   {% endif %}
