@@ -66,7 +66,7 @@ def show_topic(request, topic):
         "object_list": PublicBody.objects.get_list()
                     .select_related('jurisdiction')
                     .filter(topic=topic)
-                    .order_by("jurisdiction__rank", "name")
+                    .order_by("jurisdiction__rank", "jurisdiction__name", "name")
     }
     return render(request, 'publicbody/show_topic.html', context)
 
