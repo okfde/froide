@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block title %}Hamburgisches Transparenzgesetz - {{ SITE_NAME }}{% endblock %}
+
+{% block body %}
+<div class="state-header" style="background-image: url('{{ STATIC_URL }}img/jurisdictions/{{ object.slug }}_panorama.jpg')">
+  <div class="row">
+    <div class="span12 state-headline">
+      <h1>Hamburgisches<br/>Transparenzgesetz</h1>
+      <h2>Fragen Sie Behörden nach Informationen – es ist Ihr gutes Recht.</h2>
+    </div>
+  </div>
+  <ul class="state-points thumbnails">
+    <li class="span3">
+      <div class="thumbnail">
+        <h3>{% trans "Which Public Bodies?" %}</h3>
+        {% url 'publicbody-show-pb_jurisdiction' slug=object.slug as pb_url %}
+        <p>{% trans "All bodies that work on administrative tasks of this jurisdiction." %}</p>
+        <p>{% blocktrans with pb_count=pb_count url=pb_url %}Make a request to one of <a href="{{ url }}">{{ pb_count }} Public Bodies.</a>{% endblocktrans %}</p>
+      </div>
+    </li>
+    <li class="span3">
+      <div class="thumbnail">
+        <h3>{% trans "What Information?" %}</h3>
+        <p>{% trans "Contracts, memos, reports and other documents of the administration: you have the right to know." %}</p>
+        <p><a href="{% url 'foirequest-make_request' %}">{% trans "Make a request!" %}</a></p>
+      </div>
+    </li>
+    <li class="span3">
+      <div class="thumbnail">
+        <h3>{% trans "What right?" %}</h3>
+        <p>{% blocktrans with name=object.name %}The freedom of information law in {{ name }} allows you access to administrative information. {% endblocktrans %}</p>
+        <p><a href="{{ laws.0.get_absolute_url }}">{% trans "Get to know your right!" %}</a></p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <h3>Hamburg wird Transparenz-Hauptstadt</h3>
+
+<h4>Bürgerschaftsfraktionen übernehmen Forderung von Volksinitiative - Verträge müssen veröffentlicht werden</h4>
+
+<p>Hamburg (12.6.2012) - Hamburg bekommt ein deutschlandweit bislang einmaliges Transparenzgesetz. Künftig müssen Politik und Verwaltung Dokumente von öffentlichem Interesse unaufgefordert und kostenfrei im Internet zur Verfügung stellen. Die Einführung eines Informationsregisters
+war eine der Hauptforderungen der Volksinitiaitive „Transparenz schafft Vertrauen“, die jetzt von allen Bürgerschaftsfraktionen übernommen wurde.</p>
+
+<p>An diesem Mittwoch soll das Gesetz von der Bürgerschaft beschlossen werden. Ein für Sommer geplantes Volksbegehren wird damit obsolet.</p>
+
+
+<p><strong>Gregor Hackmack vom Verein Mehr Demokratie</strong>, der die Volksinitiative zusammen mit Transparency International und dem Chaos Computer Club initiiert hatte:
+<blockquote>
+  Mit der Einführung des Transparenzgesetzes wird Hamburg zur Transparenz-Hauptstadt. Wir haben aus dem Informationsrecht der Menschen eine Informationspflicht der Behörden gemacht. Das ist ein Quantensprung auf dem Weg zu einer offenen Gesellschaft.
+</blockquote>
+</p>
+
+<p>Das Hamburgische Transparenzgesetz geht weit über das bisherige Informationsfreiheitsgesetz hinaus. Viele Daten und Dokumente sind nicht mehr nur auf Antrag zugänglich, sondern für Bürgerinnen und Bürger frei im Internet verfügbar. Zu den Informationen, die dort von Amtswegen veröffentlicht werden müssen, zählen Senatsbeschlüsse, Gutachten, öffentliche Pläne, Geodaten, Subventionsvergaben und Bau- bzw. Abrissgenehmigungen. Veröffentlichungspflichtig sind  insbesondere auch alle Verträge über 100.000 Euro, die im weitesten Sinne die öffentliche Daseinsvorsorge betreffen. Wesentliche Unternehmensdaten städtischer Beteiligungen inklusive der jährlichen Vergütungen und Nebenleistungen der Leitungsebene sind ebenfalls verpflichtend zu veröffentlichen. Personenbezogene Daten sowie juristisch klar definierte Betriebs- und Geschäftsgeheimnisse bleiben aber geschützt. In Zweifelsfällen entscheidet der Hamburgische Beauftragte für Datenschutz und Informationsfreiheit.</p>
+
+<p>
+  <strong>Gerd Leilich von Transparency International:</strong>
+  <blockquote>
+    Frei zugängliche Informationen sind ein wirksames Mittel gegen Steuerverschwendung und Korruption. Da Bürger und Öffentlichkeit nun frühzeitig Einblick erhalten, werden sie auch frühzeitig auf einen Missstand aufmerksam machen können.
+  </blockquote>
+</p>
+
+<p>Daten, die nicht von der Verwaltung und öffentlichen Unternehmen im Informationsregister veröffentlicht werden müssen, können weiterhin auf Antrag zugänglich gemacht werden. Hierfür soll künftig eine Kostenschätzung vor unrealistischen Forderungen schützen.
+Sämtliche Daten werden strukturiert und maschinenlesbar zur Verfügung gestellt. Aus Sicht des Chaos Computer Club wird die gesetzliche Festschreibung von Open-Data Grundsätzen bundesweit Maßstäbe setzen.</p>
+
+<p>
+  <strong>Michael Hirdes vom CCC:</strong>
+  <blockquote>Dadurch wird sichergestellt, dass mit öffentlichen Geldern generierte Daten auch für alle Bürgerinnen und Bürger zugänglich sind.</blockquote>
+</p>
+
+<p>Der am Mittwoch in der Bürgerschaft zur Abstimmung stehende Gesetzentwurf war in weiten Teilen in einer Gemeinschaftsarbeit von Bürgerinnen und Bürgern im Internet (Wiki) sowie in Bündnistreffen erarbeitet worden. Im November und Dezember 2011 hatte das Transparenzbündnis aus Mehr Demokratie, Transparency, CCC, Piratenpartei, ödp, Die Linke, Bündnis 90/Die Grünen, attac, und Omnibus für direkte Demokratie 15.119 Unterschriften gesammelt. Daraufhin war der SPD-geführte Senat zusammen mit allen Bürgerschaftsfraktionen im Mai 2012 in die Verhandlungen
+mit der Volksinitiaitive eingestiegen.</p>
+
+<p><a href="http://www.transparenzgesetz.de/uploads/media/pressemappe_PK_12_6_2012.pdf">Pressemitteilung als PDF</a></p>
+
+    <h4>Kontakt:</h4>
+    <ul>
+
+      <li>
+        Gregor Hackmack (Mehr Demokratie e.V.)<br/>
+        Tel: 040 - 317 69 10 55<br/>
+        Mob:  0162 84 444 95<br/>
+        gregor.hackmack@mehr-demokratie.de
+      </li>
+      <li>
+        Michael Hirdes (CCC Hamburg)<br/>
+        Tel.: 040-401801-6825, Mobil 01570-3549764<br/>
+        ccc@transparenzgesetz.de
+      </li>
+      <li>
+        Gerd Leilich (Transparency Hamburg)<br/>
+        Telefon: 040- 644 60 15<br/>
+        gerd@leilich.com
+      </li>
+      <li>
+        Stefan Wehrmeyer, Projektleiter FragDenStaat.de<br/>
+        <a href="http://www.okfn.de">Open Knowledge Foundation Deutschland e.V.</a><br/>
+        <a href="mailto:stefan.wehrmeyer@okfn.org">stefan.wehrmeyer@okfn.org</a><br/>
+        Tel.: 0151 / 15 550 559
+      </li>
+    </ul>
+  </div>
+  <div class="span4">
+    <h3>Fakten zu FragDenStaat.de</h3>
+    <dl>
+      <dt>Online seit</dt>
+      <dd>1. August 2011</dd>
+      <dt>Anfragen nach dem IFG</dt>
+      <dd>mehr als 2000 Anfragen</dd>
+      <dt>FragDenStaat.de gibt es</dt>
+      <dd>in Berlin, Brandenburg, NRW<br/>
+        auf Bundesebene und jetzt auch in Hamburg</dd>
+      <dt>FragDenStaat.de wird betrieben von</dt>
+      <dd>der <a href="http://www.okfn.de">Open Knowledge Foundation e.V.</a></dd>
+      <dt>Finanziert duch</dt>
+      <dd><a href="{% url 'help-donate' %}">Spenden</a> und<br/>ehrenamtliche Arbeit</dd>
+      <dt>Unterstützt von</dt>
+      <dd>Transparency International, Mehr Demokratie und <a href="{% url 'help-about' %}#unterstuetzer">vielen weiteren Organisationen</a></dd>
+    </dl>
+  </div>
+</div>
+{% endblock %}
