@@ -58,7 +58,7 @@
             </a>
         </li>
         {% endfor %}
-        <li class="nav-hedaer">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by category{% endblocktrans %}</li>
+        <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by category{% endblocktrans %}</li>
         {% for topic in topic_list %}
           <li>
             <a href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
