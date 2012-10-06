@@ -3,15 +3,12 @@
 {% load url from future %}
 
 {% block banner %}
-  {% comment %}
   <div class="container">
     <div class="alert alert-info alert-block">
       <div class="row">
         <div class="span9">
-          <strong>
-            {% trans "Like this? Consider supporting us!" %}
-            <a href="{% url 'help-donate' %}" class="btn btn-small btn-success"><i class="icon-white icon-heart"></i> {% trans "Donate now!" %}</a>
-          </strong>
+          {% trans "Like this? Consider supporting us!" %}
+          <a href="{% url 'help-donate' %}" class="btn btn-small btn-success"><i class="icon-white icon-heart"></i> {% trans "Donate now!" %}</a>
         </div>
         <div class="span2">
           <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
@@ -21,7 +18,6 @@
       </div>
     </div>
   </div>
-  {% endcomment %}
 {% endblock %}
 
 {% block body %}
