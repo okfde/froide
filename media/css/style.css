@@ -15,8 +15,6 @@ body {
 
 .navbar .brand {
     font-family: 'Kreon', arial, serif;
-    text-shadow: 0 0 1px #222222;
-    filter: dropshadow(color=#cccccc, offx=2, offy=2);
     background: transparent url('../img/logo.png') no-repeat 3px 10px;
     padding:0 0 0 45px;
 }
