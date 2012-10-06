@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-05 00:29+0200\n"
-"PO-Revision-Date: 2012-10-05 00:30+0100\n"
+"POT-Creation-Date: 2012-10-06 11:05+0200\n"
+"PO-Revision-Date: 2012-10-06 11:07+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -3636,7 +3636,7 @@ msgstr "Versuchen Sie zum Beispiel:"
 msgid "Environment"
 msgstr "Umwelt"
 
-#: publicbody/templates/publicbody/_chooser.html:18 templates/index.html:45
+#: publicbody/templates/publicbody/_chooser.html:18 templates/index.html:40
 msgid "or"
 msgstr "oder"
 
@@ -3985,7 +3985,19 @@ msgstr "Nutzungsbedingungen"
 msgid "Privacy Statement"
 msgstr "Datenschutzerklärung"
 
-#: templates/index.html:34
+#: templates/index.html:10
+msgid "Like this? Consider supporting us!"
+msgstr "FragDenStaat.de braucht Deine Unterstützung!"
+
+#: templates/index.html:11
+msgid "Donate now!"
+msgstr "Jetzt spenden!"
+
+#: templates/index.html:15
+msgid "Flattr us!"
+msgstr "Flattr uns!"
+
+#: templates/index.html:29
 msgid ""
 "This site publishes Freedom of Information requests and helps you to make "
 "your own!"
@@ -3993,36 +4005,36 @@ msgstr ""
 "Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen und hilft "
 "Ihnen, selber Anfragen an den Staat zu stellen."
 
-#: templates/index.html:37
+#: templates/index.html:32
 #, python-format
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
 msgstr "Suchen Sie in %(foicount)s Anfragen und %(pbcount)s Behörden:"
 
-#: templates/index.html:40 templates/search/search.html:12
+#: templates/index.html:35 templates/search/search.html:12
 msgid "Search For Information"
 msgstr "Suchen!"
 
-#: templates/index.html:43
+#: templates/index.html:38
 msgid "Try the following:"
 msgstr "Versuchen Sie:"
 
-#: templates/index.html:44
+#: templates/index.html:39
 msgid "Nuclear"
 msgstr "Atom"
 
-#: templates/index.html:46
+#: templates/index.html:41
 msgid "Employment"
 msgstr "Arbeit"
 
-#: templates/index.html:60
+#: templates/index.html:55
 msgid "Read the blog post"
 msgstr "Lesen Sie den Blogeintrag"
 
-#: templates/index.html:65
+#: templates/index.html:60
 msgid "Visit this request"
 msgstr "Lesen Sie die Anfrage"
 
-#: templates/index.html:70
+#: templates/index.html:65
 msgid ""
 "Freedom of Information Request\n"
 "\n"
@@ -4040,15 +4052,15 @@ msgstr ""
 "ich beantrage Auskunft zu folgender Sachlage:\n"
 "…"
 
-#: templates/index.html:77
+#: templates/index.html:72
 msgid "Write a Request Now!"
 msgstr "Schreiben Sie jetzt eine Anfrage!"
 
-#: templates/index.html:87
+#: templates/index.html:82
 msgid "What is Freedom of Information?"
 msgstr "Was ist Informationsfreiheit?"
 
-#: templates/index.html:88
+#: templates/index.html:83
 msgid ""
 "Every citizen has the right under the Freedom of Information Laws to ask for "
 "and receive access to information from Public Bodies concerning public "
@@ -4057,15 +4069,15 @@ msgstr ""
 "Jeder Bürger hat nach den Informations&shy;gesetzen das Recht, Zugang zu "
 "Informationen der öffentlichen Hand zu erhalten."
 
-#: templates/index.html:90
+#: templates/index.html:85
 msgid "Read more about the Freedom of Information!"
 msgstr "Erfahren Sie mehr über Informations&shy;freiheit."
 
-#: templates/index.html:95
+#: templates/index.html:90
 msgid "What does this site do?"
 msgstr "Was macht diese Seite?"
 
-#: templates/index.html:96
+#: templates/index.html:91
 msgid ""
 "This site publishes Freedom of Information requests and replies so that "
 "others don't have to ask for the same information and replies can be "
@@ -4074,15 +4086,15 @@ msgstr ""
 "Diese Seite veröffentlicht Informations&shy;freiheits&shy;anfragen und ihre "
 "Antworten, so dass der Vorgang durch die Öffentlichkeit geprüft werden kann."
 
-#: templates/index.html:98
+#: templates/index.html:93
 msgid "Read more about the concept!"
 msgstr "Erfahren Sie mehr über das Konzept."
 
-#: templates/index.html:105
+#: templates/index.html:100
 msgid "Successful Requests"
 msgstr "Erfolgreiche Anfragen"
 
-#: templates/index.html:115
+#: templates/index.html:110
 msgid "Unsuccessful Requests"
 msgstr "Abgelehnte Anfragen"
 
@@ -4279,15 +4291,6 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 
 #~ msgid "Logged in as <a href=\"%(url)s\">%(username)s</a>"
 #~ msgstr "Eingeloggt als <a href=\"%(url)s\">%(username)s</a>"
-
-#~ msgid "Like this? Consider supporting us!"
-#~ msgstr "FragDenStaat.de braucht Deine Unterstützung!"
-
-#~ msgid "Donate now!"
-#~ msgstr "Jetzt spenden!"
-
-#~ msgid "Flattr us!"
-#~ msgstr "Flattr uns!"
 
 #~ msgid "Make a Request now!"
 #~ msgstr "Stellen Sie jetzt eine Anfrage!"

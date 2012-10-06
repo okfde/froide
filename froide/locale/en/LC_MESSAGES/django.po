@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-05 00:28+0200\n"
+"POT-Creation-Date: 2012-10-06 10:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3264,7 +3264,7 @@ msgstr ""
 msgid "Environment"
 msgstr ""
 
-#: publicbody/templates/publicbody/_chooser.html:18 templates/index.html:45
+#: publicbody/templates/publicbody/_chooser.html:18 templates/index.html:40
 msgid "or"
 msgstr ""
 
@@ -3589,42 +3589,54 @@ msgstr ""
 msgid "Privacy Statement"
 msgstr ""
 
-#: templates/index.html:34
+#: templates/index.html:10
+msgid "Like this? Consider supporting us!"
+msgstr ""
+
+#: templates/index.html:11
+msgid "Donate now!"
+msgstr ""
+
+#: templates/index.html:15
+msgid "Flattr us!"
+msgstr ""
+
+#: templates/index.html:29
 msgid ""
 "This site publishes Freedom of Information requests and helps you to make "
 "your own!"
 msgstr ""
 
-#: templates/index.html:37
+#: templates/index.html:32
 #, python-format
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
 msgstr ""
 
-#: templates/index.html:40 templates/search/search.html:12
+#: templates/index.html:35 templates/search/search.html:12
 msgid "Search For Information"
 msgstr ""
 
-#: templates/index.html:43
+#: templates/index.html:38
 msgid "Try the following:"
 msgstr ""
 
-#: templates/index.html:44
+#: templates/index.html:39
 msgid "Nuclear"
 msgstr ""
 
-#: templates/index.html:46
+#: templates/index.html:41
 msgid "Employment"
 msgstr ""
 
-#: templates/index.html:60
+#: templates/index.html:55
 msgid "Read the blog post"
 msgstr ""
 
-#: templates/index.html:65
+#: templates/index.html:60
 msgid "Visit this request"
 msgstr ""
 
-#: templates/index.html:70
+#: templates/index.html:65
 msgid ""
 "Freedom of Information Request\n"
 "\n"
@@ -3635,45 +3647,45 @@ msgid ""
 "    ..."
 msgstr ""
 
-#: templates/index.html:77
+#: templates/index.html:72
 msgid "Write a Request Now!"
 msgstr ""
 
-#: templates/index.html:87
+#: templates/index.html:82
 msgid "What is Freedom of Information?"
 msgstr ""
 
-#: templates/index.html:88
+#: templates/index.html:83
 msgid ""
 "Every citizen has the right under the Freedom of Information Laws to ask for "
 "and receive access to information from Public Bodies concerning public "
 "affairs."
 msgstr ""
 
-#: templates/index.html:90
+#: templates/index.html:85
 msgid "Read more about the Freedom of Information!"
 msgstr ""
 
-#: templates/index.html:95
+#: templates/index.html:90
 msgid "What does this site do?"
 msgstr ""
 
-#: templates/index.html:96
+#: templates/index.html:91
 msgid ""
 "This site publishes Freedom of Information requests and replies so that "
 "others don't have to ask for the same information and replies can be "
 "scrutinized by the public."
 msgstr ""
 
-#: templates/index.html:98
+#: templates/index.html:93
 msgid "Read more about the concept!"
 msgstr ""
 
-#: templates/index.html:105
+#: templates/index.html:100
 msgid "Successful Requests"
 msgstr ""
 
-#: templates/index.html:115
+#: templates/index.html:110
 msgid "Unsuccessful Requests"
 msgstr ""
 
