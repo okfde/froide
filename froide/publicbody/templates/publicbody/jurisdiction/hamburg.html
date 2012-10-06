@@ -19,8 +19,7 @@
         <h3>{% trans "Which Public Bodies?" %}</h3>
         {% url 'publicbody-show-pb_jurisdiction' slug=object.slug as pb_url %}
         <p>{% trans "All bodies that work on administrative tasks of this jurisdiction." %}</p>
-        <p>Stellen Sie eine Anfrage an eine von 46 Behörden.</p>
-        <!-- <p>{% blocktrans with pb_count=pb_count url=pb_url %}Make a request to one of <a href="{{ url }}">{{ pb_count }} Public Bodies.</a>{% endblocktrans %}</p> -->
+        <p>{% blocktrans with pb_count=pb_count url=pb_url %}Make a request to one of <a href="{{ url }}">{{ pb_count }} Public Bodies.</a>{% endblocktrans %}</p>
       </div>
     </li>
     <li class="span3">
