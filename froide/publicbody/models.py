@@ -323,13 +323,17 @@ class PublicBody(models.Model):
         import csv
         from StringIO import StringIO
         s = StringIO()
-        fields = ("name", "classification", "depth", "children_count", "email", "description",
-                "url", "website_dump", "contact", "address")
+        fields = ("name", "other_names", "slug", "topic__slug", "classification",
+            "depth", "children_count", "email", "description", "url", "website_dump",
+            "contact", "address")
         writer = csv.DictWriter(s, fields)
-        for pb in PublicBody.objects.all():
+        writer.writeheader()
+        for pb in PublicBody.objects.filter(jurisdiction__slug='hamburg'):
             d = {}
             for field in fields:
-                value = getattr(pb, field)
+                value = pb
+                for f in field.split('__'):
+                    value = getattr(value, f)
                 if value is None:
                     d[field] = value
                 elif isinstance(value, unicode):

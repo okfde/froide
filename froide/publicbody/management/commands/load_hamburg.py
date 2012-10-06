@@ -1,8 +1,19 @@
 # -*- encoding: utf-8 -*-
+import csv
+
 from django.core.management.base import BaseCommand
 from django.utils import translation
 from django.conf import settings
 from django.template.defaultfilters import slugify
+
+
+def csv_reader(f, dialect=csv.excel, **kwargs):
+    # csv.py doesn't do Unicode; encode temporarily as UTF-8:
+    csv_reader = csv.reader(f,
+                            dialect=dialect, **kwargs)
+    for row in csv_reader:
+        # decode UTF-8 back to Unicode, cell by cell:
+        yield [unicode(cell, 'utf-8') for cell in row]
 
 
 class Command(BaseCommand):
@@ -25,43 +36,40 @@ class Command(BaseCommand):
 
         laws = FoiLaw.objects.filter(jurisdiction=juris)
 
+        fields = ("name", "other_names", "slug", "topic__slug", "classification",
+            "depth", "children_count", "email", "description", "url", "website_dump",
+            "contact", "address")
+
         # importing Hamburg
-        keys = None
+        first = True
         with file(filepath) as f:
-            for line in f:
-                line = line.decode('utf-8')
-                if keys is None:
-                    keys = line.split(',')
+            for items in csv_reader(f):
+                if first:
+                    first = False
                     continue
-                items = dict(zip(keys, line.split(',')))
-                name = ' '.join([t.capitalize() for t in items['Name'].split(' ')]).strip()
-                href = items['Webseite'].strip() or None
-                if href and not href.startswith('http'):
-                    href = 'http://' + href
-                email = items['Email'].lower().strip() or None
-                if email and not '@' in email:
-                    email = None
-                topic = self.get_topic(name)
-                classification = items['Klassifikation'] or None
-                classification = self.get_classification(name)
+                items = dict(zip(fields, items))
+
+                topic = self.get_topic(items['topic__slug'])
+                classification = items['classification']
                 try:
-                    PublicBody.objects.get(slug=slugify(name))
+                    PublicBody.objects.get(slug=items['slug'])
+                    self.stdout.write((u"Exists %s\n" % items['name']).encode('utf-8'))
                     continue
                 except PublicBody.DoesNotExist:
                     pass
-                self.stdout.write((u"Trying: %s\n" % name).encode('utf-8'))
+                self.stdout.write((u"Trying: %s\n" % items['name']).encode('utf-8'))
                 public_body = PublicBody.objects.create(
-                    name=name,
-                    slug=slugify(name),
+                    name=items['name'],
+                    slug=items['slug'],
                     topic=topic,
-                    description="",
-                    url=href,
+                    description=items['description'],
+                    url=items['url'],
                     classification=classification,
                     classification_slug=slugify(classification),
-                    email=email,
-                    contact=items['Zustaendiger'],
-                    address=u'',
-                    website_dump='',
+                    email=items['email'],
+                    contact=items['contact'],
+                    address=items['address'],
+                    website_dump=items['website_dump'],
                     request_note='',
                     _created_by=sw,
                     _updated_by=sw,
@@ -72,34 +80,5 @@ class Command(BaseCommand):
                 public_body.laws.add(*laws)
                 self.stdout.write((u"%s\n" % public_body).encode('utf-8'))
 
-    def get_classification(self, name):
-        try:
-            return name.split(' ', 1)[0]
-        except (ValueError, IndexError):
-            return name
-
-    def get_topic(self, name):
-        name = name.lower()
-        mapping = {
-            u'gericht': u'justiz',
-            u'polizei': u'inneres',
-            u'schul': u'bildung-und-forschung',
-            u'rechnungs': u'finanzen',
-            u'staatsanwaltschaft': u'justiz',
-            u'liegenschaftsbetrieb': u'verkehr-und-bau',
-            u'hrungshilfe': u'justiz',
-            u'finanzamt': u'finanzen',
-            u'hrungsaufsichtsstelle': u'justiz',
-            u'landwirtschaftskammer': u'landwirtschaft-und-verbraucherschutz',
-            u'jugendarrestanstalt': u'justiz',
-            u'justiz': u'justiz',
-            u'umwelt': u'umwelt',
-            u'straßenbau': u'verkehr-und-bau',
-            u'wald': u'umwelt',
-            u'kriminal': u'inneres',
-            u'prüfungsamt': u'bildung-und-forschung'
-        }
-        for k, v in mapping.items():
-            if k in name:
-                return self.topic_cache[v]
-        return self.topic_cache['andere']
+    def get_topic(self, slug):
+        return self.topic_cache.get(slug, self.topic_cache['andere'])
