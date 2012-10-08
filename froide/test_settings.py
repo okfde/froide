@@ -363,9 +363,7 @@ TWITTER_ACCESS_SECRET = '2fCvKbooTtzodKW4uVknY3MVkmYVWbxLuBs5fKHcnI'
 
 
 SECRET_URLS = {
-    "admin": "admin",
-    "sentry": "sentry",
-    "databrowse": "databrowse"
+    "admin": "admin"
 }
 
 FROIDE_CONFIG = {
