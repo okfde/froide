@@ -327,7 +327,8 @@ class PublicBody(models.Model):
             "depth", "children_count", "email", "description", "url", "website_dump",
             "contact", "address")
         writer = csv.DictWriter(s, fields)
-        writer.writeheader()
+        # Fake writeheader on Python 2.6
+        writer.writerow(dict([(v, v) for v in fields]))
         for pb in PublicBody.objects.filter(jurisdiction__slug='hamburg'):
             d = {}
             for field in fields:
