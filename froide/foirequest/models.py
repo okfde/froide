@@ -828,6 +828,8 @@ Sincerely yours
             self.due_date = self.law.calculate_due_date()
         self.save()
         self.request_to_public_body.send(sender=self)
+        if self.law:
+            send_address = not self.law.email_only
         if send_now:
             messages = self.foimessage_set.all()
             assert len(messages) == 1
@@ -835,8 +837,9 @@ Sincerely yours
             message.recipient_public_body = public_body
             message.recipient = public_body.name
             message.recipient_email = public_body.email
-            # message.plaintext = FoiRequest.construct_message_body(message,
-            #   message.plaintext)
+            message.plaintext = self.construct_message_body(
+                self.description,
+                self.law, {}, send_address=send_address)
             assert not message.sent
             message.send()  # saves message
 

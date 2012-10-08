@@ -148,8 +148,8 @@ class FoiLawFactory(factory.Factory):
     created = timezone.now() - timedelta(days=600)
     updated = timezone.now() - timedelta(days=300)
     meta = False
-    letter_start = 'Dear Sir or Madam,'
-    letter_end = 'Kind regards'
+    letter_start = factory.Sequence(lambda n: 'Dear Sir or Madam, {0}'.format(n))
+    letter_end = factory.Sequence(lambda n: 'Law text {0}.\nKind Regards'.format(n))
     jurisdiction = factory.SubFactory(JurisdictionFactory)
     priority = 3
     url = "http://example.com"

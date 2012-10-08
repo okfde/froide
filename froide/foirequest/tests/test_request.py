@@ -365,7 +365,10 @@ class RequestTest(TestCase):
 
         # suggest public body
         other_req = FoiRequest.objects.filter(public_body__isnull=False)[0]
-        pb = PublicBody.objects.all()[0]
+        for pb in PublicBody.objects.all():
+            if law not in pb.laws.all():
+                break
+        assert FoiLaw.get_default_law(pb) != law
         response = self.client.post(
                 reverse('foirequest-suggest_public_body',
                 kwargs={"slug": req.slug + "garbage"}),
@@ -444,7 +447,7 @@ class RequestTest(TestCase):
         message = req.foimessage_set.all()[0]
         self.assertIn(req.law.get_letter_start_text({}), message.plaintext)
         self.assertIn(req.law.get_letter_end_text({}), message.plaintext)
-
+        self.assertNotEqual(req.law, law)
         self.assertEqual(req.public_body, pb)
         response = self.client.post(
                 reverse('foirequest-set_public_body',
