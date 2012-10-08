@@ -104,6 +104,7 @@ class AccountManager(object):
             base = first
         else:
             base = u"user"
+        base = base[:27]
         return base
 
     def confirm_account(self, secret, request_id=None):

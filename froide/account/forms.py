@@ -30,6 +30,7 @@ class NewUserForm(forms.Form):
                 'placeholder': _('Street, Post Code, City'),
             }))
     user_email = forms.EmailField(label=_('Email address'),
+            max_length=75,
             help_text=_('Not public, you will need to confirm this address.'),
             widget=forms.EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
 

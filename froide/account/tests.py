@@ -111,6 +111,21 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 400)
 
+    def test_overlong_name_signup(self):
+        post = {
+            "first_name": "Horst" * 6 + 'a',
+            "last_name": "Porst" * 6,
+            "terms": "on",
+            "user_email": 'horst.porst@example.com',
+            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville'
+        }
+        self.client.logout()
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertEqual(response.status_code, 400)
+        post['first_name'] = post['first_name'][:-1]
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertEqual(response.status_code, 302)
+
     def test_confirmation_process(self):
         self.client.logout()
         user, password = AccountManager.create_user(first_name=u"Stefan",
