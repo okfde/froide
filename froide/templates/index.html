@@ -31,7 +31,7 @@
       <form method="get" action="{% url 'foirequest-search' %}" class="form-search">
         <label>{% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}</label>
         <div class="input-append">
-          <input class="input-medium search-query span3" type="text" autofocus="autofocus" name="q" autocomplete="off"/>
+          <input class="input-medium search-query span3" type="text" name="q" autocomplete="off"/>
           <button class="btn btn-primary btn-success" type="submit"><i class="icon-white icon-search"></i> {% blocktrans %}Search For Information{% endblocktrans %}</button>
         </div>
         <span class="help-block">
