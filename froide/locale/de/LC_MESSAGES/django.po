@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-09 19:48+0200\n"
-"PO-Revision-Date: 2012-10-09 20:02+0100\n"
+"POT-Creation-Date: 2012-10-09 20:18+0200\n"
+"PO-Revision-Date: 2012-10-09 20:19+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -517,7 +517,7 @@ msgstr "Kürzliche Ereignisse"
 #: account/templates/account/profile.html:30
 #: account/templates/account/show.html:32
 #: foirequest/templates/foirequest/_requests_as_table.html:19
-#: foirequest/templates/foirequest/show.html:749
+#: foirequest/templates/foirequest/show.html:754
 #: foirequest/templates/foirequest/snippets/request_item.html:20
 #, python-format
 msgid "%(time)s ago"
@@ -574,7 +574,7 @@ msgstr "Empfänger"
 
 #: account/templates/account/show.html:63 foirequest/forms.py:265
 #: foirequest/models.py:229 foirequest/models.py:936
-#: foirequest/templates/foirequest/show.html:566
+#: foirequest/templates/foirequest/show.html:571
 msgid "Status"
 msgstr "Status"
 
@@ -783,7 +783,7 @@ msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
 #: foirequest/models.py:940
 #: foirequest/templates/foirequest/_request_form.html:11
 #: foirequest/templates/foirequest/request.html:278
-#: foirequest/templates/foirequest/show.html:547
+#: foirequest/templates/foirequest/show.html:552
 msgid "Subject"
 msgstr "Betreff"
 
@@ -834,7 +834,7 @@ msgid "Default address of %(publicbody)s"
 msgstr "Standardadresse von %(publicbody)s"
 
 #: foirequest/forms.py:174 foirequest/templates/foirequest/request.html:270
-#: foirequest/templates/foirequest/show.html:560
+#: foirequest/templates/foirequest/show.html:565
 msgid "To"
 msgstr "An"
 
@@ -999,7 +999,7 @@ msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
 #: foirequest/forms.py:384 foirequest/forms.py:385
-#: foirequest/templates/foirequest/show.html:457
+#: foirequest/templates/foirequest/show.html:462
 msgid "Tags"
 msgstr "Schlagwörter"
 
@@ -1548,7 +1548,7 @@ msgstr "Anhang"
 
 #: foirequest/models.py:1127
 #: foirequest/templates/foirequest/list_unchecked.html:24
-#: foirequest/templates/foirequest/show.html:580
+#: foirequest/templates/foirequest/show.html:585
 msgid "Attachments"
 msgstr "Anhänge"
 
@@ -1890,7 +1890,7 @@ msgid "Status:"
 msgstr "Status:"
 
 #: foirequest/templates/foirequest/_requests_as_table.html:21
-#: foirequest/templates/foirequest/show.html:805
+#: foirequest/templates/foirequest/show.html:810
 #, python-format
 msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
@@ -2131,22 +2131,22 @@ msgid "Show all Non-FoI requests"
 msgstr "Zeige andere Anfragen"
 
 #: foirequest/templates/foirequest/list.html:109
-#: foirequest/templates/foirequest/show.html:440
+#: foirequest/templates/foirequest/show.html:445
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
 #: foirequest/templates/foirequest/list.html:115
-#: foirequest/templates/foirequest/show.html:446
+#: foirequest/templates/foirequest/show.html:451
 msgid "Atom Feed"
 msgstr "Atom-Feed"
 
 #: foirequest/templates/foirequest/list_unchecked.html:14
-#: foirequest/templates/foirequest/show.html:473
+#: foirequest/templates/foirequest/show.html:478
 msgid "View on Admin site"
 msgstr "Im Admin-Bereich ansehen"
 
 #: foirequest/templates/foirequest/list_unchecked.html:17
-#: foirequest/templates/foirequest/show.html:489
+#: foirequest/templates/foirequest/show.html:494
 msgid "Mark as checked"
 msgstr "Als gesehen markieren"
 
@@ -2159,8 +2159,8 @@ msgid "View on Admin"
 msgstr "Im Admin-Bereich ansehen"
 
 #: foirequest/templates/foirequest/list_unchecked.html:30
-#: foirequest/templates/foirequest/show.html:596
-#: foirequest/templates/foirequest/show.html:607
+#: foirequest/templates/foirequest/show.html:601
+#: foirequest/templates/foirequest/show.html:612
 msgid "Preview in Browser"
 msgstr "Vorschau im Browser"
 
@@ -2178,7 +2178,7 @@ msgid "May only contain name %(name)s."
 msgstr "Darf nur den Namen %(name)s enthalten."
 
 #: foirequest/templates/foirequest/list_unchecked.html:43
-#: foirequest/templates/foirequest/show.html:628
+#: foirequest/templates/foirequest/show.html:633
 msgid "Publish this attachment"
 msgstr "Veröffentlichen Sie diesen Anhang"
 
@@ -2633,7 +2633,7 @@ msgid "Review your Request and Submit"
 msgstr "Überprüfen Sie Ihre Anfrage und senden Sie sie ab"
 
 #: foirequest/templates/foirequest/request.html:274
-#: foirequest/templates/foirequest/show.html:523
+#: foirequest/templates/foirequest/show.html:528
 msgid "From"
 msgstr "Von"
 
@@ -3020,80 +3020,87 @@ msgstr[0] "%(counter)s Interessierte(r)"
 msgstr[1] "%(counter)s Interessierte"
 
 #: foirequest/templates/foirequest/show.html:392
-#: foirequest/templates/foirequest/show.html:411
-#: foirequest/templates/foirequest/show.html:415
+#: foirequest/templates/foirequest/show.html:416
 msgid "Follow request"
 msgstr "Sie interessiert das!"
 
 #: foirequest/templates/foirequest/show.html:400
 msgid "Unfollow request"
-msgstr "Sie interessiert das nicht"
+msgstr "Kein Interesse mehr"
 
 #: foirequest/templates/foirequest/show.html:404
 msgid "You follow this request"
 msgstr "Sie interessiert das!"
 
-#: foirequest/templates/foirequest/show.html:420
-msgid "Get notified by email of changes."
-msgstr "Sie erhalten Neuigkeiten per Email."
+#: foirequest/templates/foirequest/show.html:409
+msgid "You get notified of changes."
+msgstr "Sie erhalten Benachrichtigungen."
 
-#: foirequest/templates/foirequest/show.html:430
+#: foirequest/templates/foirequest/show.html:420
+msgid "Follow request?"
+msgstr "Interessiert Sie das?"
+
+#: foirequest/templates/foirequest/show.html:425
+msgid "Get notified by email of changes."
+msgstr "Erhalten Sie Neuigkeiten per Email."
+
+#: foirequest/templates/foirequest/show.html:435
 msgid "Share this request"
 msgstr "Anfrage sharen"
 
-#: foirequest/templates/foirequest/show.html:436
+#: foirequest/templates/foirequest/show.html:441
 msgid "Feeds"
 msgstr "Feeds"
 
-#: foirequest/templates/foirequest/show.html:450
+#: foirequest/templates/foirequest/show.html:455
 msgid "Short URL"
 msgstr "Kurz-URL"
 
-#: foirequest/templates/foirequest/show.html:471
+#: foirequest/templates/foirequest/show.html:476
 msgid "Staff Actions"
 msgstr "Admin-Aktionen"
 
-#: foirequest/templates/foirequest/show.html:484
+#: foirequest/templates/foirequest/show.html:489
 msgid "Marked as checked"
 msgstr "Als gesehen markiert"
 
-#: foirequest/templates/foirequest/show.html:494
+#: foirequest/templates/foirequest/show.html:499
 msgid "Marked as NOT FoI"
 msgstr "Als nicht-IF markiert"
 
-#: foirequest/templates/foirequest/show.html:499
+#: foirequest/templates/foirequest/show.html:504
 msgid "Mark as NOT FoI"
 msgstr "Als nicht-IF markieren"
 
-#: foirequest/templates/foirequest/show.html:515
+#: foirequest/templates/foirequest/show.html:520
 msgid "Messages in this request"
 msgstr "Korrespondenz"
 
-#: foirequest/templates/foirequest/show.html:527
+#: foirequest/templates/foirequest/show.html:532
 msgid "change"
 msgstr "ändern"
 
-#: foirequest/templates/foirequest/show.html:532
+#: foirequest/templates/foirequest/show.html:537
 msgid "Set the Public Body that sent this message:"
 msgstr "Geben Sie die Behörde an, die dieses Antwort gesendet hat:"
 
-#: foirequest/templates/foirequest/show.html:534
+#: foirequest/templates/foirequest/show.html:539
 msgid "Set Sending Public Body"
 msgstr "Absender angeben"
 
-#: foirequest/templates/foirequest/show.html:551
+#: foirequest/templates/foirequest/show.html:556
 msgid "Date"
 msgstr "Datum"
 
-#: foirequest/templates/foirequest/show.html:572
+#: foirequest/templates/foirequest/show.html:577
 msgid "Admin"
 msgstr "Admin"
 
-#: foirequest/templates/foirequest/show.html:574
+#: foirequest/templates/foirequest/show.html:579
 msgid "View message in admin"
 msgstr "Nachricht im Admin"
 
-#: foirequest/templates/foirequest/show.html:615
+#: foirequest/templates/foirequest/show.html:620
 msgid ""
 "Please check this attachment and if it doesn't contain personally "
 "identifying information and if you are not explicitly forbidden to publish "
@@ -3103,7 +3110,7 @@ msgstr ""
 "Informationen enthält und Ihnen die Veröffentlichung nicht ausdrücklich "
 "verboten wurde, können Sie ihn veröffentlichen."
 
-#: foirequest/templates/foirequest/show.html:619
+#: foirequest/templates/foirequest/show.html:624
 #, python-format
 msgid ""
 "Please check this attachment and if it doesn't contain personally "
@@ -3115,16 +3122,16 @@ msgstr ""
 "Veröffentlichung nicht ausdrücklich verboten wurde, können Sie ihn "
 "veröffentlichen."
 
-#: foirequest/templates/foirequest/show.html:624
-#: foirequest/templates/foirequest/show.html:648
+#: foirequest/templates/foirequest/show.html:629
+#: foirequest/templates/foirequest/show.html:653
 msgid "This attachment has been blocked from publishing."
 msgstr "Dieser Anhang kann nicht veröffentlicht werden."
 
-#: foirequest/templates/foirequest/show.html:625
+#: foirequest/templates/foirequest/show.html:630
 msgid "As a moderator you are still able to publish it."
 msgstr "Als Moderator ist es dir dennoch möglich sie zu veröffentlichen."
 
-#: foirequest/templates/foirequest/show.html:629
+#: foirequest/templates/foirequest/show.html:634
 msgid ""
 "If it does contain personally identifying information, please inform "
 "moderators (info@fragdenstaat.de) and they will redact the document and then "
@@ -3134,35 +3141,35 @@ msgstr ""
 "Sie Moderatoren (info@fragdenstaat.de) und diese werden das Dokument für Sie "
 "schwärzen und dann veröffentlichen."
 
-#: foirequest/templates/foirequest/show.html:635
+#: foirequest/templates/foirequest/show.html:640
 msgid "Update this redacted version"
 msgstr "Bearbeiten Sie diese geschwärzte Version"
 
-#: foirequest/templates/foirequest/show.html:638
+#: foirequest/templates/foirequest/show.html:643
 msgid "Update the redacted version of this attachment"
 msgstr "Bearbeiten Sie die geschwärzte Version dieses Anhangs"
 
-#: foirequest/templates/foirequest/show.html:641
+#: foirequest/templates/foirequest/show.html:646
 msgid "Redact this attachment"
 msgstr "Schwärzen Sie diesen Anhang"
 
-#: foirequest/templates/foirequest/show.html:652
+#: foirequest/templates/foirequest/show.html:657
 msgid "This attachment can't be published."
 msgstr "Dieser Anhang kann nicht veröffentlicht werden."
 
-#: foirequest/templates/foirequest/show.html:654
+#: foirequest/templates/foirequest/show.html:659
 msgid "This attachment has not been published yet."
 msgstr "Dieser Anhang wurde noch nicht veröffentlicht."
 
-#: foirequest/templates/foirequest/show.html:670
+#: foirequest/templates/foirequest/show.html:675
 msgid "Upload Attachments"
 msgstr "Anhänge hochladen"
 
-#: foirequest/templates/foirequest/show.html:676
+#: foirequest/templates/foirequest/show.html:681
 msgid "Upload Document"
 msgstr "Dokument hochladen"
 
-#: foirequest/templates/foirequest/show.html:687
+#: foirequest/templates/foirequest/show.html:692
 msgid ""
 "This reply contains documents that every person can get individual access "
 "to. However, we are not allowed to publish these documents online."
@@ -3171,7 +3178,7 @@ msgstr ""
 "erhalten kann. Allerdings darf FragDenStaat.de diese Dokumente nicht "
 "veröffentlichen."
 
-#: foirequest/templates/foirequest/show.html:690
+#: foirequest/templates/foirequest/show.html:695
 msgid ""
 "You stated that you are not allowed to publish the received documents. If "
 "this was a mistake, please contact info@example.com."
@@ -3180,16 +3187,16 @@ msgstr ""
 "erhaltenen Dokumente zu veröffentlichen. Falls dies falsch ist, schreiben "
 "Sie bitte an info@fragdenstaat.de."
 
-#: foirequest/templates/foirequest/show.html:693
+#: foirequest/templates/foirequest/show.html:698
 msgid "You made the original request."
 msgstr "Sie haben die Originalanfrage gestellt."
 
-#: foirequest/templates/foirequest/show.html:697
+#: foirequest/templates/foirequest/show.html:702
 msgid "You made an identical request."
 msgstr "Sie haben eine identische Anfrage gestellt."
 
-#: foirequest/templates/foirequest/show.html:701
-#: foirequest/templates/foirequest/show.html:710
+#: foirequest/templates/foirequest/show.html:706
+#: foirequest/templates/foirequest/show.html:715
 msgid ""
 "You can make a request identical to this one in your name to gain individual "
 "access to the information that we are not allowed to publish here."
@@ -3197,12 +3204,12 @@ msgstr ""
 "Sie können eine identische Anfrage in Ihrem Namen stellen, um Zugang zu "
 "diesen Dokumenten zu erhalten, die wir nicht veröffentlichen dürfen."
 
-#: foirequest/templates/foirequest/show.html:702
-#: foirequest/templates/foirequest/show.html:715
+#: foirequest/templates/foirequest/show.html:707
+#: foirequest/templates/foirequest/show.html:720
 msgid "Make identical request in your name"
 msgstr "Eine identische Anfrage in Ihrem Namen stellen"
 
-#: foirequest/templates/foirequest/show.html:718
+#: foirequest/templates/foirequest/show.html:723
 #, python-format
 msgid "So far one person also requested this document."
 msgid_plural ""
@@ -3212,27 +3219,27 @@ msgstr[1] ""
 "Bisher haben <strong>%(counter)s weitere Personen</strong> dieses Dokument "
 "angefragt."
 
-#: foirequest/templates/foirequest/show.html:736
+#: foirequest/templates/foirequest/show.html:741
 msgid "Please set a new status for this request now"
 msgstr "Bitte wählen Sie jetzt einen neuen Status für diese Anfrage aus"
 
-#: foirequest/templates/foirequest/show.html:740
+#: foirequest/templates/foirequest/show.html:745
 msgid "You can write a reply by clicking here"
 msgstr "Um eine Antwort an die Behörde zu schreiben klicken Sie hier"
 
-#: foirequest/templates/foirequest/show.html:760
+#: foirequest/templates/foirequest/show.html:765
 msgid "Write a comment"
 msgstr "Schreiben Sie einen Kommentar"
 
-#: foirequest/templates/foirequest/show.html:767
+#: foirequest/templates/foirequest/show.html:772
 msgid "Please login to write a comment."
 msgstr "Um einen Kommentar zu schreiben, loggen Sie sich bitte ein."
 
-#: foirequest/templates/foirequest/show.html:777
+#: foirequest/templates/foirequest/show.html:782
 msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
-#: foirequest/templates/foirequest/show.html:820
+#: foirequest/templates/foirequest/show.html:825
 msgid "This request is identical to:"
 msgstr "Diese Anfrage ist identisch zu:"
 
