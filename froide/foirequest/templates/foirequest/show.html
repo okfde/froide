@@ -58,10 +58,9 @@
   </div>
 {% endif %}
 
-<h2>{{ object.title }}</h2>
-
 <div class="row">
   <div class="span9">
+    <h2>{{ object.title }}</h2>
     {% if object.user == user %}
       <ul class="nav nav-tabs request-nav">
         <li{% if active_tab == 'info' %} class="active"{% endif %}>
@@ -376,11 +375,12 @@
 
   <div class="span3">
     <ul class="nav nav-list">
+      <li class="nav-header">{% trans "Followers" %}</li>
       {% with count=object.follow_count %}
-        {% if count %}
-          <li class="nav-header">{% trans "Follow this request" %}</li>
-          <li class="muted">{% blocktrans count counter=count %}One person following this request{% plural %}{{ counter }} people following this request{% endblocktrans %}</li>
-        {% endif %}
+        <li>
+          <span class="badge{% if count %} badge-info{% endif %}">{% blocktrans count counter=count %}{{ counter }} follower{% plural %}{{ counter }} followers{% endblocktrans %}</span>
+          <br/><br/>
+        </li>
       {% endwith %}
 
       {% if user.is_authenticated and user != object.user %}
@@ -394,15 +394,32 @@
               {% followrequest object user "followform" %}
               {{ followform.as_p }}
               {% if followform.following %}
-                <p>
-                  {% blocktrans %}You are currently <span class="green">following</span> this request and you will get email updates.{% endblocktrans %}
-                </p>
-                <button class="btn" type="submit">{% trans "Unfollow request" %}</button>
+                <button class="input-large btn btn-info hover-btn-warning" type="submit">
+                  <span class="on-hover">
+                    <i class="icon-white icon-eye-close"></i>
+                    {% trans "Unfollow request" %}
+                  </span>
+                  <span class="on-display">
+                    <i class="icon-white icon-eye-open"></i>
+                    {% trans "You follow this request" %}
+                  </span>
+                </button>
               {% else %}
-                <p>
-                  {% blocktrans %}Follow this request and get notified by email when something changes.{% endblocktrans %}
+                <button class="input-large btn hover-btn-success" type="submit">
+                  <span class="on-hover">
+                    <i class="icon-white icon-eye-open"></i>
+                    {% trans "Follow request" %}
+                  </span>
+                  <span class="on-display">
+                    <i class="icon-eye-open"></i>
+                    {% trans "Follow request" %}
+                  </span>
+                </button>
+                <p class="muted">
+                  <small>
+                    {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+                  </small>
                 </p>
-                <button class="btn" type="submit">{% trans "Follow request" %}</button>
               {% endif %}
             {% endif %}
           </form>
@@ -712,11 +729,16 @@
             {% endif %}
           </div>
         </div>
-        {% if object.user == user and object.message_needs_status == message %}
-        <div class="alert alert-info">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          <a data-tabgo="tab" href="#set-status">{% blocktrans %}Please set a new status for this request now{% endblocktrans %}</a>
-        </div>
+        {% if object.user == user %}
+          {% if object.message_needs_status == message %}
+          <div class="alert alert-info">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <a data-tabgo="tab" href="#set-status">{% blocktrans %}Please set a new status for this request now{% endblocktrans %}</a>
+          </div>
+          {% endif %}
+          <div class="alert alert-info">
+            <a data-tabgo="tab" href="#write-message">{% blocktrans %}You can write a reply by clicking here{% endblocktrans %}</a>
+          </div>
         {% endif %}
 
         {% if message.events %}
