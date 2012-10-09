@@ -396,23 +396,28 @@
               {% if followform.following %}
                 <button class="input-large btn btn-info hover-btn-warning" type="submit">
                   <span class="on-hover">
-                    <i class="icon-white icon-eye-close"></i>
+                    <i class="icon-white icon-remove"></i>
                     {% trans "Unfollow request" %}
                   </span>
                   <span class="on-display">
-                    <i class="icon-white icon-eye-open"></i>
+                    <i class="icon-white icon-star"></i>
                     {% trans "You follow this request" %}
                   </span>
                 </button>
+                <p class="muted">
+                  <small>
+                    {% blocktrans %}You get notified of changes.{% endblocktrans %}
+                  </small>
+                </p>
               {% else %}
                 <button class="input-large btn hover-btn-success" type="submit">
                   <span class="on-hover">
-                    <i class="icon-white icon-eye-open"></i>
+                    <i class="icon-white icon-star"></i>
                     {% trans "Follow request" %}
                   </span>
                   <span class="on-display">
-                    <i class="icon-eye-open"></i>
-                    {% trans "Follow request" %}
+                    <i class="icon-star-empty"></i>
+                    {% trans "Follow request?" %}
                   </span>
                 </button>
                 <p class="muted">
