@@ -25,11 +25,12 @@ from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 from froide.redaction.utils import convert_to_pdf
 
-from .forms import RequestForm, ConcreteLawForm, TagFoiRequestForm
 from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
-from .forms import (SendMessageForm, FoiRequestStatusForm,
-        MakePublicBodySuggestionForm, PostalReplyForm, PostalAttachmentForm,
-        MessagePublicBodySenderForm, EscalationMessageForm)
+from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
+        SendMessageForm, FoiRequestStatusForm, MakePublicBodySuggestionForm,
+        PostalReplyForm, PostalAttachmentForm, MessagePublicBodySenderForm,
+        EscalationMessageForm)
+from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
@@ -80,47 +81,61 @@ def dashboard(request):
     return render(request, 'foirequest/dashboard.html', {'data': json.dumps(context)})
 
 
-def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None):
+def list_requests(request, status=None, topic=None, tag=None,
+        jurisdiction=None, not_foi=False, feed=None):
     context = {
         'filtered': True
     }
+    manager = FoiRequest.published
+    if not_foi:
+        manager = FoiRequest.published_not_foi
     topic_list = PublicBodyTopic.objects.get_list()
+    status_url = status
     if status is not None:
         status = FoiRequest.get_status_from_url(status)
-        foi_requests = FoiRequest.published.for_list_view().filter(status=status)
+        foi_requests = manager.for_list_view().filter(status=status)
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)
         })
     elif topic is not None:
         topic = get_object_or_404(PublicBodyTopic, slug=topic)
-        foi_requests = FoiRequest.published.for_list_view().filter(public_body__topic=topic)
+        foi_requests = manager.for_list_view().filter(public_body__topic=topic)
         context.update({
             'topic': topic,
         })
     elif tag is not None:
-        tag_object = get_object_or_404(Tag, slug=tag)
-        foi_requests = FoiRequest.published.for_list_view().filter(tags=tag_object)
+        tag = get_object_or_404(Tag, slug=tag)
+        foi_requests = manager.for_list_view().filter(tags=tag)
         context.update({
-            'tag': tag_object
+            'tag': tag
         })
     else:
-        foi_requests = FoiRequest.published.for_list_view()
+        foi_requests = manager.for_list_view()
         context['filtered'] = False
 
     if jurisdiction is not None:
-        jurisdiction_object = get_object_or_404(Jurisdiction, slug=jurisdiction)
-        foi_requests = foi_requests.filter(jurisdiction=jurisdiction_object)
+        jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
+        foi_requests = foi_requests.filter(jurisdiction=jurisdiction)
         context.update({
-            'jurisdiction': jurisdiction_object
+            'jurisdiction': jurisdiction
         })
     else:
         context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
         context['filtered'] = False
 
+    if feed is not None:
+        if feed == 'rss':
+            klass = LatestFoiRequestsFeed
+        else:
+            klass = LatestFoiRequestsFeedAtom
+        return klass(foi_requests, status=status_url, topic=topic,
+            tag=tag, jurisdiction=jurisdiction)(request)
+
     context.update({
         'page_title': _("FoI Requests"),
         'count': foi_requests.count(),
+        'not_foi': not_foi,
         'object_list': foi_requests,
         'status_list': [(unicode(x[0]),
             FoiRequest.get_readable_status(x[1]),
@@ -131,24 +146,10 @@ def list_requests(request, status=None, topic=None, tag=None, jurisdiction=None)
     return render(request, 'foirequest/list.html', context)
 
 
-def list_requests_not_foi(request):
-    context = {}
-    context.update({
-        'page_title': _("Non-FoI Requests"),
-        'not_foi': True,
-        'count': FoiRequest.published_not_foi.for_list_view().count(),
-        'object_list': FoiRequest.published_not_foi.for_list_view(),
-        'status_list': [(x[0],
-            FoiRequest.get_readable_status(x[1]), x[1]) for x in FoiRequest.STATUS_URLS],
-        'topic_list': PublicBodyTopic.objects.get_list()
-    })
-    return render(request, 'foirequest/list.html', context)
-
-
 def shortlink(request, obj_id):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
     if foirequest.is_visible(request.user):
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     else:
         return render_403(request)
 

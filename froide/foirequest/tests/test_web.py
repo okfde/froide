@@ -65,14 +65,23 @@ class WebTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_tagged_requests(self):
-        response = self.client.get(reverse('foirequest-list', kwargs={"tag": "awesome"}))
+        tag_slug = 'awesome'
+        response = self.client.get(reverse('foirequest-list', kwargs={"tag": tag_slug}))
         self.assertEqual(response.status_code, 404)
         req = FoiRequest.published.all()[0]
-        req.tags.add('awesome')
+        req.tags.add(tag_slug)
         req.save()
-        response = self.client.get(reverse('foirequest-list', kwargs={"tag": "awesome"}))
+        response = self.client.get(reverse('foirequest-list', kwargs={"tag": tag_slug}))
         self.assertEqual(response.status_code, 200)
         self.assertIn(req.title, response.content.decode('utf-8'))
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'tag': tag_slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
+            'tag': tag_slug
+        }))
+        self.assertEqual(response.status_code, 200)
 
     def test_list_no_identical(self):
         factories.FoiRequestFactory.create(site=self.site)
@@ -148,9 +157,51 @@ class WebTest(TestCase):
 
     def test_feed(self):
         response = self.client.get(reverse('foirequest-feed_latest'))
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, reverse('foirequest-list_feed'),
+            status_code=301)
         response = self.client.get(reverse('foirequest-feed_latest_atom'))
+        self.assertRedirects(response, reverse('foirequest-list_feed_atom'),
+            status_code=301)
+
+        response = self.client.get(reverse('foirequest-list_feed'))
         self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom'))
+        self.assertEqual(response.status_code, 200)
+
+        juris = Jurisdiction.objects.all()[0]
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'jurisdiction': juris.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
+            'jurisdiction': juris.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+
+        topic = PublicBodyTopic.objects.all()[0]
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'jurisdiction': juris.slug,
+            'topic': topic.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
+            'jurisdiction': juris.slug,
+            'topic': topic.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+
+        status = FoiRequest.STATUS_URLS[0][0]
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'jurisdiction': juris.slug,
+            'status': status
+        }))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
+            'jurisdiction': juris.slug,
+            'status': status
+        }))
+        self.assertEqual(response.status_code, 200)
+
         req = FoiRequest.objects.all()[0]
         response = self.client.get(reverse('foirequest-feed_atom',
             kwargs={"slug": req.slug}))

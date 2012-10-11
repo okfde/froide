@@ -80,9 +80,6 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_query_set().filter(
                     status="awaiting_response")
 
-    def get_for_latest_feed(self):
-        return self.get_query_set().order_by("-first_message")[:15]
-
     def by_last_update(self):
         return self.get_query_set().order_by('-last_message')
 
@@ -109,14 +106,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
                     models.Q(status="not_held")).order_by("-last_message")
 
 
-class PublishedNotFoiRequestManager(CurrentSiteManager):
+class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
     def get_query_set(self):
-        return super(CurrentSiteManager,
+        return super(PublishedFoiRequestManager,
                 self).get_query_set().filter(visibility=2, is_foi=False)\
-                        .select_related("public_body")
-
-    def for_list_view(self):
-        return self.get_query_set().order_by('-first_message')
+                        .select_related("public_body", "jurisdiction")
 
 
 class TaggedFoiRequest(TaggedItemBase):

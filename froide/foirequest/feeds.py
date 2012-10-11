@@ -9,14 +9,70 @@ from .models import FoiRequest
 
 
 class LatestFoiRequestsFeed(Feed):
-    title = _("Latest Freedom of Information Requests on %(sitename)s") % {"sitename": settings.SITE_NAME}
-    description = _("This feed contains the latest Freedom of Information requests that have been made through %(sitename)s.") % {"sitename": settings.SITE_NAME}
+    def __init__(self, items, topic=None, jurisdiction=None, tag=None, status=None):
+        self.items = items
+        self.topic = topic
+        self.jurisdiction = jurisdiction
+        self.tag = tag
+        self.status = status
+        super(LatestFoiRequestsFeed, self).__init__()
+
+    def get_filter_string(self):
+        by = []
+        if self.topic:
+            by.append(_('by topic %(topic)s') % {'topic': self.topic.name})
+        if self.status:
+            by.append(_('by status %(status)s') % {
+                'status': FoiRequest.get_readable_status(
+                    FoiRequest.get_status_from_url(self.status))
+            })
+        if self.tag:
+            by.append(_('by tag %(tag)s') % {'tag': self.tag.name})
+        if self.jurisdiction:
+            by.append(_('for %(juris)s') % {'juris': self.jurisdiction.name})
+        return ' '.join(by)
+
+    def title(self, obj):
+        by = self.get_filter_string()
+        if by:
+            return _("Freedom of Information Requests %(by)s on %(sitename)s") % {
+                "sitename": settings.SITE_NAME,
+                'by': by
+            }
+        return _("Freedom of Information Requests on %(sitename)s") % {
+            "sitename": settings.SITE_NAME
+        }
+
+    def description(self, obj):
+        by = self.get_filter_string()
+        if by:
+            return _("This feed contains the Freedom of Information requests %(by)s"
+                " that have been made through %(sitename)s.") % {
+                    "sitename": settings.SITE_NAME,
+                    'by': by
+                }
+        return _("This feed contains the latest Freedom of Information requests"
+            " that have been made through %(sitename)s.") % {
+                "sitename": settings.SITE_NAME
+            }
+
+    def get_link_kwargs(self):
+        kwargs = {}
+        if self.topic:
+            kwargs['topic'] = self.topic.slug
+        if self.jurisdiction:
+            kwargs['jurisdiction'] = self.jurisdiction.slug
+        if self.status:
+            kwargs['status'] = self.status
+        if self.tag:
+            kwargs['tag'] = self.tag.slug
+        return kwargs
 
     def link(self):
-        return reverse('foirequest-feed_latest')
+        return reverse('foirequest-list_feed', kwargs=self.get_link_kwargs())
 
     def items(self):
-        return FoiRequest.published.get_for_latest_feed()
+        return self.items.order_by("-first_message")[:15]
 
     def item_title(self, item):
         if item.public_body:
@@ -40,7 +96,7 @@ class LatestFoiRequestsFeedAtom(LatestFoiRequestsFeed):
     subtitle = LatestFoiRequestsFeed.description
 
     def link(self):
-        return reverse('foirequest-feed_latest_atom')
+        return reverse('foirequest-list_feed_atom', kwargs=self.get_link_kwargs())
 
 
 class FoiRequestFeed(Feed):

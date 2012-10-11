@@ -1,15 +1,25 @@
+from django.core.urlresolvers import reverse
 from django.conf.urls.defaults import patterns
 from django.utils.translation import pgettext
+from django.shortcuts import redirect
+
 
 from .models import FoiRequest
-from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 
 
 urlpatterns = patterns("froide.foirequest.views",
-    (r'^%s/$' % pgettext('URL part', 'not-foi'), 'list_requests_not_foi', {}, 'foirequest-list_not_foi'),
+    (r'^%s/$' % pgettext('URL part', 'not-foi'), 'list_requests',
+        {'not_foi': True}, 'foirequest-list_not_foi'),
+
+    # Old feed URL
+    (r'^%s/feed/$' % pgettext('URL part', 'latest'),
+        lambda r: redirect(reverse('foirequest-list_feed_atom'), permanent=True),
+        {}, 'foirequest-feed_latest_atom'),
+    (r'^%s/rss/$' % pgettext('URL part', 'latest'),
+        lambda r: redirect(reverse('foirequest-list_feed'), permanent=True),
+        {}, 'foirequest-feed_latest'),
+
     (r'^unchecked/$', 'list_unchecked', {}, 'foirequest-list_unchecked'),
-    (r'^%s/feed/$' % pgettext('URL part', 'latest'), LatestFoiRequestsFeedAtom(), {}, 'foirequest-feed_latest_atom'),
-    (r'^%s/rss/$' % pgettext('URL part', 'latest'), LatestFoiRequestsFeed(), {}, 'foirequest-feed_latest'),
     # Translators: part in /request/to/public-body-slug URL
     (r'^submit$', 'submit_request', {}, 'foirequest-submit_request'),
     (r'^search/json$', 'search_similar', {}, 'foirequest-search_similar'),
@@ -18,13 +28,33 @@ urlpatterns = patterns("froide.foirequest.views",
 
 foirequest_urls = [
     (r'^$', 'list_requests', {}, 'foirequest-list'),
+    (r'^feed/$', 'list_requests',
+        {'feed': 'atom'}, 'foirequest-list_feed_atom'),
+    (r'^rss/$', 'list_requests',
+        {'feed': 'rss'}, 'foirequest-list_feed'),
+
     # Translators: part in request filter URL
     (r'^%s/(?P<topic>[-\w]+)/$' % pgettext('URL part', 'topic'), 'list_requests', {},
         'foirequest-list'),
+    (r'^%s/(?P<topic>[-\w]+)/feed/$' % pgettext('URL part', 'topic'), 'list_requests',
+        {'feed': 'atom'}, 'foirequest-list_feed_atom'),
+    (r'^%s/(?P<topic>[-\w]+)/rss/$' % pgettext('URL part', 'topic'), 'list_requests',
+        {'feed': 'rss'}, 'foirequest-list_feed'),
+
     # Translators: part in request filter URL
     (r'^%s/(?P<tag>[-\w]+)/$' % pgettext('URL part', 'tag'), 'list_requests', {},
         'foirequest-list'),
-] + [(r'^(?P<status>%s)/$' % unicode(urlpart), 'list_requests', {}, 'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS]
+    (r'^%s/(?P<tag>[-\w]+)/feed/$' % pgettext('URL part', 'tag'), 'list_requests',
+        {'feed': 'atom'}, 'foirequest-list_feed_atom'),
+    (r'^%s/(?P<tag>[-\w]+)/rss/$' % pgettext('URL part', 'tag'), 'list_requests',
+        {'feed': 'rss'}, 'foirequest-list_feed'),
+
+] + [(r'^(?P<status>%s)/$' % unicode(urlpart), 'list_requests', {},
+        'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS
+] + [(r'^(?P<status>%s)/feed/$' % unicode(urlpart), 'list_requests', {'feed': 'atom'},
+        'foirequest-list_feed_atom') for urlpart, status in FoiRequest.STATUS_URLS
+] + [(r'^(?P<status>%s)/rss/$' % unicode(urlpart), 'list_requests', {'feed': 'rss'},
+        'foirequest-list_feed') for urlpart, status in FoiRequest.STATUS_URLS]
 
 urlpatterns += patterns("froide.foirequest.views",
     *foirequest_urls

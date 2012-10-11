@@ -99,21 +99,22 @@
         {% endfor %}
       {% endif %}
       <li class="divider"></li>
+      <li class="nav-header">{% blocktrans %}Feeds for these requests{% endblocktrans %}</li>
       <li>
-        <a href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
-      </li>
-      <li class="divider"></li>
-      <li>
-        <a href="{% url 'foirequest-feed_latest' %}">
+        <a href="./rss/">
           <i class="rss-icon"></i>
           {% trans "RSS Feed" %}
         </a>
       </li>
       <li>
-        <a href="{% url 'foirequest-feed_latest_atom' %}">
+        <a href="./feed/">
           <i class="atom-icon"></i>
           {% trans "Atom Feed" %}
         </a>
+      </li>
+      <li class="divider"></li>
+      <li>
+        <a href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
       </li>
     </ul>
   </div>
