@@ -4,10 +4,10 @@ import re
 from django.conf import settings
 from django.core.files import File
 from django.utils import timezone, simplejson as json
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -157,10 +157,10 @@ def shortlink(request, obj_id):
 def auth(request, obj_id, code):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
     if foirequest.is_visible(request.user):
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     if foirequest.check_auth_code(code):
         request.session['pb_auth'] = code
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     else:
         return render_403(request)
 
@@ -357,14 +357,14 @@ def submit_request(request, public_body=None):
             else:
                 messages.add_message(request, messages.INFO,
                     _('Your request has been sent.'))
-            return HttpResponseRedirect(foi_request.get_absolute_url() + _('?request-made'))
+            return redirect(foi_request.get_absolute_url() + _('?request-made'))
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
                     password=password)
             messages.add_message(request, messages.INFO,
                     _('Please check your inbox for mail from us to confirm your mail address.'))
             # user cannot access the request yet!
-            return HttpResponseRedirect("/")
+            return redirect("/")
     messages.add_message(request, messages.ERROR,
         _('There were errors in your form submission. Please review and submit again.'))
     return render(request, 'foirequest/request.html', context, status=400)
@@ -380,7 +380,7 @@ def set_public_body(request, slug):
     except ValueError:
         messages.add_message(request, messages.ERROR,
             _('Missing or invalid input!'))
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     try:
         public_body = PublicBody.objects.get(pk=public_body_pk)
     except PublicBody.DoesNotExist:
@@ -397,7 +397,7 @@ def set_public_body(request, slug):
 
     messages.add_message(request, messages.SUCCESS,
             _("Request was sent to: %(name)s.") % {"name": public_body.name})
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -421,7 +421,7 @@ def suggest_public_body(request, slug):
         else:
             messages.add_message(request, messages.WARNING,
                 _('This Public Body has already been suggested.'))
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     messages.add_message(request, messages.ERROR,
             _("You need to specify a Public Body!"))
     return render_400(request)
@@ -443,7 +443,7 @@ def set_status(request, slug):
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
         return show(request, slug, context={"status_form": form}, status=400)
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -458,7 +458,7 @@ def send_message(request, slug):
         mes = form.save(request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Message has been sent.'))
-        return HttpResponseRedirect(mes.get_absolute_url())
+        return redirect(mes)
     else:
         return show(request, slug, context={"send_message_form": form}, status=400)
 
@@ -475,7 +475,7 @@ def escalation_message(request, slug):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your Escalation Message has been sent.'))
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     else:
         return show(request, slug, context={"escalation_form": form}, status=400)
 
@@ -486,7 +486,7 @@ def make_public(request, slug):
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
     foirequest.make_public()
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -503,7 +503,7 @@ def set_law(request, slug):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A concrete law has been set for this request.'))
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -516,7 +516,7 @@ def set_tags(request, slug):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Tags have been set for this request'))
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -533,7 +533,7 @@ def set_resolution(request, slug):
     foirequest.save()
     messages.add_message(request, messages.SUCCESS,
                 _('The resolution summary has been saved.'))
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -577,7 +577,7 @@ def add_postal_reply(request, slug):
             att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A postal reply was successfully added!'))
-        return HttpResponseRedirect(message.get_absolute_url())
+        return redirect(message)
     messages.add_message(request, messages.ERROR,
             _('There were errors with your form submission!'))
     return show(request, slug, context={"postal_reply_form": form}, status=400)
@@ -610,7 +610,7 @@ def add_postal_reply_attachment(request, slug, message_id):
         att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your document was attached to the message.'))
-        return HttpResponseRedirect(message.get_absolute_url())
+        return redirect(message)
     messages.add_message(request, messages.ERROR,
             form._errors['scan'][0])
     return render_400(request)
@@ -633,7 +633,7 @@ def set_message_sender(request, slug, message_id):
     form = MessagePublicBodySenderForm(message, request.POST)
     if form.is_valid():
         form.save()
-        return HttpResponseRedirect(message.get_absolute_url())
+        return redirect(message)
     messages.add_message(request, messages.ERROR,
             form._errors['sender'][0])
     return render_400(request)
@@ -650,7 +650,7 @@ def mark_not_foi(request, slug):
     foirequest.save()
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as not a FoI request.'))
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -664,7 +664,7 @@ def mark_checked(request, slug):
     foirequest.save()
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as checked.'))
-    return HttpResponseRedirect(foirequest.get_absolute_url())
+    return redirect(foirequest)
 
 
 @require_POST
@@ -681,7 +681,7 @@ def approve_attachment(request, slug, attachment):
     att.save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
-    return HttpResponseRedirect(att.get_anchor_url())
+    return redirect(att.get_anchor_url())
 
 
 def list_unchecked(request):
@@ -736,14 +736,14 @@ def make_same_request(request, slug, message_id):
     if user.is_active:
         messages.add_message(request, messages.SUCCESS,
                 _('You successfully requested this document! Your request is displayed below.'))
-        return HttpResponseRedirect(fr.get_absolute_url())
+        return redirect(fr)
     else:
         AccountManager(user).send_confirmation_mail(request_id=fr.pk,
                 password=password)
         messages.add_message(request, messages.INFO,
                 _('Please check your inbox for mail from us to confirm your mail address.'))
         # user cannot access the request yet!
-        return HttpResponseRedirect("/")
+        return redirect("/")
 
 
 def auth_message_attachment(request, message_id, attachment_name):
@@ -811,7 +811,7 @@ def redact_attachment(request, slug, attachment_id):
             attachment.can_approve = False
             attachment.approved = False
             attachment.save()
-        return HttpResponseRedirect(att.get_anchor_url())
+        return redirect(att.get_anchor_url())
     return render(request, 'foirequest/redact.html', {
         'foirequest': foirequest,
         'attachment': attachment
