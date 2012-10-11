@@ -93,6 +93,7 @@ class AccountTest(TestCase):
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
         profile = user.get_profile()
+        self.assertIn(unicode(user), unicode(profile))
         self.assertEqual(profile.address, post['address'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
@@ -125,6 +126,23 @@ class AccountTest(TestCase):
         post['first_name'] = post['first_name'][:-1]
         response = self.client.post(reverse('account-signup'), post)
         self.assertEqual(response.status_code, 302)
+
+    def test_signup_same_name(self):
+        self.client.logout()
+        post = {
+            "first_name": "Horst",
+            "last_name": "Porst",
+            "terms": "on",
+            "user_email": 'horst.porst@example.com',
+            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville'
+        }
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertEqual(response.status_code, 302)
+        post['user_email'] = 'horst.porst2@example.com'
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(email='horst.porst2@example.com')
+        self.assertEqual(user.username, 'h.porst_1')
 
     def test_confirmation_process(self):
         self.client.logout()
@@ -313,6 +331,7 @@ class AccountTest(TestCase):
                 response.content)
         self.assertNotIn(user.last_name.encode("utf-8"),
                 response.content)
+        self.assertEqual('', user.get_profile().get_absolute_url())
 
     def test_change_address(self):
         data = {}
