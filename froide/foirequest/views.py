@@ -224,7 +224,7 @@ def search_similar(request):
     if query:
         sqs = SearchQuerySet().models(FoiRequest)
         sqs = sqs.filter(content=AutoQuery(query))
-        result = list(sqs)[:5]
+        result = list(sqs[:5])
         result = [{"title": x.title, "id": x.pk, "public_body_name": x.public_body_name, "description": x.description,
             "url": x.url, "score": x.score} for x in result]
     return HttpResponse(json.dumps(result), content_type="application/json")
@@ -234,11 +234,13 @@ def search(request):
     query = request.GET.get("q", "")
     foirequests = []
     publicbodies = []
-    for result in SearchQuerySet().auto_query(query):
-        if result.model_name == "publicbody":
-            publicbodies.append(result)
-        else:
+    if query:
+        results = SearchQuerySet().models(FoiRequest).auto_query(query)[:25]
+        for result in results:
             foirequests.append(result)
+        results = SearchQuerySet().models(PublicBody).auto_query(query)[:25]
+        for result in results:
+            publicbodies.append(result)
     context = {
         "foirequests": foirequests,
         "publicbodies": publicbodies,
