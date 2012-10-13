@@ -270,9 +270,10 @@ SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=
 
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr/fragdenstaat'
-    }
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'froide',
+    },
 }
 
 # Official Notification Mail goes through
@@ -313,12 +314,7 @@ CELERY_RESULT_BACKEND = "database"
 CELERY_RESULT_DBURI = "sqlite:///dev.db"
 
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-BROKER_BACKEND = 'django'
-BROKER_HOST = "localhost"
-BROKER_PORT = 8000
-BROKER_USER = ""
-BROKER_PASSWORD = ""
+CELERY_ALWAYS_EAGER = True
 
 # local settings
 
