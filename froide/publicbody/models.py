@@ -319,7 +319,7 @@ class PublicBody(models.Model):
         return len(PublicBody.objects.filter(parent=self))
 
     @classmethod
-    def export_csv(cls):
+    def export_csv(cls, jurisdiction=None):
         import csv
         from StringIO import StringIO
         s = StringIO()
@@ -329,7 +329,10 @@ class PublicBody(models.Model):
         writer = csv.DictWriter(s, fields)
         # Fake writeheader on Python 2.6
         writer.writerow(dict([(v, v) for v in fields]))
-        for pb in PublicBody.objects.filter(jurisdiction__slug='hamburg'):
+        pbs = PublicBody.objects.all()
+        if jurisdiction:
+            pbs = pbs.filter(jurisdiction__slug=jurisdiction)
+        for pb in pbs:
             d = {}
             for field in fields:
                 value = pb
