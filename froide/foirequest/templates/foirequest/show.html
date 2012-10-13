@@ -23,15 +23,15 @@
 
 {% if not user.is_authenticated and object.awaits_classification %}
   {% url "account-login" as login_url %}
-  <div class="alert alert-info">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
+  <div class="alert alert-info no-print">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
 {% endif %}
 
 {% if object.user == user and object.awaits_classification %}
-  <div class="alert alert-info">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status" data-tabgo="tab">set a new status for this request</a>!{% endblocktrans %}</div>
+  <div class="alert alert-info no-print">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status" data-tabgo="tab">set a new status for this request</a>!{% endblocktrans %}</div>
 {% endif %}
 
 {% if object.user == user and object.is_overdue and object.awaits_response %}
-  <div class="alert">
+  <div class="alert no-print">
     {% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!<br/>
     Please act now:{% endblocktrans %}
     <ul>
@@ -46,7 +46,7 @@
 {% endif %}
 
 {% if object.user == user and object.has_been_refused and object.law.mediator %}
-  <div class="alert alert-info">
+  <div class="alert alert-info no-print">
     {% blocktrans %}You request has been refused.{% endblocktrans %}
     <a href="#escalate" data-tabgo="tab">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
   </div>
@@ -62,7 +62,7 @@
   <div class="span9">
     <h2>{{ object.title }}</h2>
     {% if object.user == user %}
-      <ul class="nav nav-tabs request-nav">
+      <ul class="nav nav-tabs request-nav no-print">
         <li{% if active_tab == 'info' %} class="active"{% endif %}>
           <a href="#info" data-toggle="tab">
             {% trans "Request" %}
@@ -134,7 +134,7 @@
         {# End Set status #}
 
         {% if object.status == "publicbody_needed" %}
-          <div class="tab-pane{% if active_tab == 'choose-public-body' %} active{% endif %}" id="choose-public-body">
+          <div class="no-print tab-pane{% if active_tab == 'choose-public-body' %} active{% endif %}" id="choose-public-body">
             {% with suggestions_form=object.public_body_suggestions_form %}
               {% if suggestions_form %}
                 <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
@@ -327,7 +327,7 @@
           <dd>
             {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
         {% endif %}
-          <a href="{% url 'help-foi_officers' %}#frist">{% blocktrans %}How is this calculated?{% endblocktrans %}</a>
+          <a class="no-print" href="{% url 'help-foi_officers' %}#frist">{% blocktrans %}How is this calculated?{% endblocktrans %}</a>
           </dd>
       {% endif %}
       {% if object.refusal_reason %}
@@ -354,7 +354,7 @@
         {% blocktrans %}This request was not sent yet, because it still needs a Public Body as a recipient.{% endblocktrans %}
       </div>
       {% if not object.public %}
-        <div class="alert alert-info">
+        <div class="alert alert-info no-print">
           {% blocktrans %}This request is not public and will not receive suggestions for public bodies from users!{% endblocktrans %}
         </div>
       {% endif %}
@@ -374,7 +374,7 @@
   </div>
 
   <div class="span3">
-    <ul class="nav nav-list">
+    <ul class="nav nav-list no-print">
       <li class="nav-header">{% trans "Followers" %}</li>
       {% with count=object.follow_count %}
         <li>
@@ -543,7 +543,6 @@
   </div>
 
   <div class="span9">
-    <div class="page-break"></div>
     <h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
 
     {% for message in object.messages %}
@@ -715,7 +714,7 @@
             </tbody>
           </table>
           {% if message.not_publishable %}
-            <div class="alert alert-info">
+            <div class="alert no-print alert-info">
               <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, we are not allowed to publish these documents online.{% endblocktrans %}</p>
               {% if user.is_authenticated %}
                 {% if object.user == user %}
@@ -789,7 +788,7 @@
           </div>
         {% endif %}
 
-        <div class="comments-container">
+        <div class="comments-container no-print">
           {% get_comment_list for message as comment_list %}
           <div id="comments-{{ message.id }}" class="comments">
             {% include "comments/foirequest/list.html" %}
