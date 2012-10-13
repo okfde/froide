@@ -113,7 +113,8 @@ def search_json(request):
 def autocomplete(request):
     query = request.GET.get('query', '')
     jurisdiction = request.GET.get('jurisdiction', None)
-    result = SearchQuerySet().autocomplete(name_auto=query)
+    result = SearchQuerySet().models(PublicBody)
+    result = result.autocomplete(name_auto=query)
     if jurisdiction is not None:
         result = result.filter(jurisdiction=result.query.clean(jurisdiction))
     names = [u"%s (%s)" % (x.name, x.jurisdiction) for x in result]

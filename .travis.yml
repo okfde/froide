@@ -2,14 +2,14 @@ language: python
 python:
   - "2.6"
   - "2.7"
-env:
-  - DJANGO_VERSION=1.4.1
+services:
+  - elasticsearch
 before_install:
   - export PIP_USE_MIRRORS=true
   - export PIP_INDEX_URL=https://simple.crate.io/
 install:
   - pip install -e .
-  - pip install -r requirements-test.txt Django==$DJANGO_VERSION
+  - pip install -r requirements-test.txt
 script:
   - make test
 branches:

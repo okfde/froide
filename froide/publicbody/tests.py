@@ -37,18 +37,18 @@ class PublicBodyTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(pb.name, response.content.decode('utf-8'))
 
-    @skip_if_environ('FROIDE_SKIP_SOLR')
+    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_autocomplete(self):
         import json
-        response = self.client.get(
-                reverse('publicbody-autocomplete') + "?query=abc")
+        pb = PublicBody.objects.all()[0]
+        response = self.client.get('%s?query=%s' % (
+                reverse('publicbody-autocomplete'), pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(u'Selbstschutzschule', obj['suggestions'][0])  # fails if search is not available
-        self.assertIn(u'Selbstschutzschule', obj['data'][0]['name'])  # fails if search is not available
-
-        response = self.client.get(
-                reverse('publicbody-autocomplete') + "?query=abc&jurisdiction=non_existant")
+        self.assertIn(pb.name, obj['suggestions'][0])
+        self.assertIn(pb.name, obj['data'][0]['name'])
+        response = self.client.get('%s?query=%s&jurisdiction=non_existant' % (
+                reverse('publicbody-autocomplete'), pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
         self.assertEqual(obj['suggestions'], [])
@@ -57,13 +57,16 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv()
         self.assertTrue(csv)
 
-    @skip_if_environ('FROIDE_SKIP_SOLR')
+    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
-        response = self.client.get(reverse('publicbody-search_json') + "?q=abc")
-        self.assertIn("Selbstschutzschule", response.content)  # fails if search is not available
+        pb = PublicBody.objects.all()[0]
+        response = self.client.get('%s?q=%s' % (
+            reverse('publicbody-search_json'), pb.name[:6]))
+        self.assertIn(pb.name, response.content)
         self.assertEqual(response['Content-Type'], 'application/json')
-        response = self.client.get(reverse('publicbody-search_json') + "?q=abc&jurisdiction=non_existant")
-        self.assertEqual("[]", response.content)  # fails if search is not available
+        response = self.client.get('%s?q=%s&jurisdiction=non_existant' % (
+            reverse('publicbody-search_json'), pb.name[:6]))
+        self.assertEqual("[]", response.content)
 
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]
