@@ -515,6 +515,33 @@
 
 <div class="row" data-spy="scroll" data-target="#message-nav">
 
+  <div class="span3 pull-right">
+    {% if object.messages %}
+      <ul id="message-nav" class="message-nav sticky nav nav-list">
+      {% for message in object.messages %}
+        {% ifchanged message.sender %}
+          <li class="nav-header">
+            {% if message.sender_public_body %}
+              <span title="{{ message.sender_public_body.name }}">
+                {{ message.sender_public_body.name|truncatechars:30 }}
+              </span>
+            {% else %}
+              <span title="{{ message.sender }}">
+                {{ message.sender|truncatechars:30 }}
+              </span>
+            {% endif %}
+          </li>
+        {% endifchanged %}
+        <li>
+          <a href="#{{ message.get_html_id }}">
+            {{ message.timestamp|date:"SHORT_DATE_FORMAT" }}
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+
   <div class="span9">
     <div class="page-break"></div>
     <h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
@@ -782,26 +809,6 @@
       <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
     {% endfor %}
   </div>
-
-  <div class="span3">
-    {% if object.messages %}
-      <ul id="message-nav" class="sticky nav nav-list">
-      {% for message in object.messages %}
-        {% ifchanged message.sender %}
-          <li class="nav-header">
-            {{ message.sender|truncatewords:4 }}
-          </li>
-        {% endifchanged %}
-        <li>
-          <a href="#{{ message.get_html_id }}">
-            {{ message.timestamp|date:"SHORT_DATE_FORMAT" }}
-          </a>
-        </li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  </div>
-
 </div>
 
 {% if object.same_as_count %}

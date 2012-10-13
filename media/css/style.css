@@ -888,6 +888,15 @@ form.foirequest #post_address {
     border-color: transparent;
 }
 
+.message-nav li {
+    line-height: 12px;
+    margin-top: 0;
+}
+
+.message-nav li.nav-header {
+    margin-top: 0;
+}
+
 .btn .on-hover {
     display: none;
 }
