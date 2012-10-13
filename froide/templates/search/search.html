@@ -13,39 +13,44 @@
     </button>
   </div>
 </form>
-<div class="row">
-  <div class="span6">
-    <h3>{% blocktrans %}Related Freedom of Information Requests{% endblocktrans %}</h3>
-    <ul class="unstyled">
-      {% for object in foirequests %}
-        <li>
-          {% include "foirequest/snippets/request_item.html" %}
-        </li>
-      {% empty %}
-        <li>
-          {% blocktrans %}No relevant requests found for "{{ query }}".{% endblocktrans %}<br/>
-          <a href="{% url 'foirequest-list' %}">{% blocktrans %}You can browse the list of existing requests.{% endblocktrans %}</a>
-        </li>
-      {% endfor %}
-    </ul>
+{% if query %}
+  <div class="row">
+    <div class="span6">
+      <h3>{% blocktrans %}Related Freedom of Information Requests{% endblocktrans %}</h3>
+      <ul class="unstyled">
+        {% for object in foirequests %}
+          <li>
+            {% include "foirequest/snippets/request_item.html" %}
+          </li>
+        {% empty %}
+          <li>
+            {% blocktrans %}No relevant requests found for "{{ query }}".{% endblocktrans %}<br/>
+            <a href="{% url 'foirequest-list' %}">{% blocktrans %}You can browse the list of existing requests.{% endblocktrans %}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="span6">
+      <h3>{% blocktrans %}Related Public Bodies{% endblocktrans %}</h3>
+      <ul class="unstyled">
+        {% for object in publicbodies %}
+          <li>
+            {% include "publicbody/snippets/publicbody_item.html" %}
+          </li>
+        {% empty %}
+          <li>
+            {% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
+            <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
-  <div class="span6">
-    <h3>{% blocktrans %}Related Public Bodies{% endblocktrans %}</h3>
-    <ul class="unstyled">
-      {% for object in publicbodies %}
-        <li>
-          {% include "publicbody/snippets/publicbody_item.html" %}
-        </li>
-      {% empty %}
-        <li>
-          {% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}<br/>
-          <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a>
-        </li>
-      {% endfor %}
-    </ul>
+{% else %}
+  <div class="alert alert-danger">
+    {% blocktrans %}Please provide at least one search term{% endblocktrans %}
   </div>
-</div>
-
+{% endif %}
 <div>
   <h3>{% blocktrans %}Couldn't find what you were looking for?{% endblocktrans %}</h3>
   <p>
