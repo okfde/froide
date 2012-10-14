@@ -463,6 +463,8 @@ $(function(){
         $('.nav a[href="' + e.target.hash + '"]').parent().addClass("active");
     };
 
+    $('.btn').on('touchend', function(){ $(this).click(); });
+
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){
         $(".publicbody-search").each(function(i, el){
             var input = $(el).find('.search-public_bodies');
