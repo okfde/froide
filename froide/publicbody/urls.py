@@ -15,7 +15,7 @@ urlpatterns = patterns('haystack.views',
     url(r'^%s/$' % _('search'), search_view_factory(
         view_class=SearchView,
         template='publicbody/search.html',
-        searchqueryset=SearchQuerySet().models(PublicBody)[:50],
+        searchqueryset=SearchQuerySet().models(PublicBody),
         form_class=SearchForm
     ), name='publicbody-search'),
 )

@@ -24,7 +24,7 @@
   <div class="span6">
     <div class="well">
       <h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
-      <form class="form-horizontal" method="post" action="{{ SITE_URL }}{% url 'account-login' %}{% if simple %}?simple{% endif %}">
+      <form class="form-horizontal" method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
         {% csrf_token %}
         {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
         {% form form using "bootstrap/horizontal.html" %}
@@ -34,7 +34,7 @@
     </div>
     <h4>{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h4>
     <p>{% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}</p>
-    <form class="form-horizontal" method="post" action="{{ SITE_URL }}{% url 'account-send_reset_password_link' %}">
+    <form class="form-horizontal" method="post" action="{% url 'account-send_reset_password_link' %}">
       {% csrf_token %}
       {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
       {% form reset_form using "bootstrap/horizontal.html" %}
@@ -44,7 +44,7 @@
 {% if not simple %}
 <div class="span6">
   <h3>{% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}</h3>
-  <form class="form-horizontal" method="post" action="{{ SITE_URL }}{% url 'account-signup' %}">
+  <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
     {% csrf_token %}
     {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
     {% form signup_form using "bootstrap/horizontal.html" %}

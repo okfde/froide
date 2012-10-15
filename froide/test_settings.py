@@ -50,9 +50,10 @@ DATABASES = {
 TIME_ZONE = 'Europe/Berlin'
 USE_TZ = True
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'de'
+
+LOCALE_PATHS = (
+    os.path.join(PROJECT_ROOT, "locale"),
+)
 
 SITE_ID = 1
 
@@ -91,11 +92,6 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "static")
 # URL that handles the static files like app media.
 # Example: "http://media.lawrence.com"
 STATIC_URL = "/static/"
-
-# URL prefix for admin static files -- CSS, JavaScript and images.
-# Make sure to use a trailing slash.
-# Examples: "http://foo.com/static/admin/", "/static/admin/".
-ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -238,6 +234,8 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 # south settings
 

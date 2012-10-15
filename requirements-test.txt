@@ -1,2 +1,4 @@
 -r requirements.txt
-pyelasticsearch
+django-discover-runner==0.2.2
+pyelasticsearch==0.2
+selenium==2.25.0
