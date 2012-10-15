@@ -111,7 +111,7 @@ class PublicBodyTopicFactory(factory.Factory):
 class PublicBodyFactory(factory.Factory):
     FACTORY_FOR = PublicBody
 
-    name = factory.Sequence(lambda n: 'Public BOdy {0}'.format(n))
+    name = factory.Sequence(lambda n: 'Public Body {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = ''
     topic = factory.SubFactory(PublicBodyTopicFactory)
