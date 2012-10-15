@@ -506,7 +506,7 @@ form.foirequest #post_address {
     padding: 0.25em;
     border: 1px solid #ccc;
     height: 14em;
-    max-height: 14em;
+    max-height: 10em;
     overflow: auto;
 }
 

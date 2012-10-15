@@ -55,7 +55,7 @@ $(function(){
         }
         publicBodyChosen();
     });
-    
+
     $("#id_subject").blur(Froide.app.searchSimilarRequests);
 
     $("#review-button").click(function(){

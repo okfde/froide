@@ -170,7 +170,7 @@
             <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
             {{ request_form.body }}
             <div class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
-            {% blocktrans %}Kind Regards,{% endblocktrans %}</div>
+            <span id="letter-greeting">{% blocktrans %}Kind Regards,{% endblocktrans %}</span></div>
             <div id="letter_end" style="display:none" class="text">{{ request_form.default_law.letter_end_form }}</div>
             <div class="text-like">
               {% if user.is_authenticated %}
@@ -255,57 +255,49 @@
           </div>
         </div>
       </div>
-      <button type="button" id="review-button" class="btn btn-primary"><i class="icon-white icon-hand-right"></i> {% trans "Review and Submit" %}</button>
+      <a href="#step-review" id="review-button" role="button" class="btn btn-primary" data-toggle="modal">
+        <i class="icon-white icon-hand-right"></i>
+        {% trans "Review and Submit" %}
+      </a>
     </fieldset>
     <fieldset id="review-and-submit">
       <legend>{% blocktrans %}Step 4 - Review your Request and Submit{% endblocktrans %}</legend>
-      <div class="js-hidden lightbox" id="step-review">
-        <a href="#" class="close"><span class="close-button">{% blocktrans %}Close{% endblocktrans %}</span></a>
-        <div class="row">
-          <div class="span8">
-            <h4>{% blocktrans %}Review your Request and Submit{% endblocktrans %}</h4>
-            <table class="message-table">
-              <tbody>
-              <tr>
-                <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
-                <td id="review-to"></td>
-              </tr>
-              <tr>
-                <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
-                <td id="review-from"></td>
-              </tr>
-              <tr>
-                <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
-                <td><strong id="review-subject"></strong></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
+      <div class="modal hide fade" id="step-review">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4>{% blocktrans %}Review your Request and Submit{% endblocktrans %}</h4>
         </div>
-        <div class="row">
-         <div class="span8">
-            <div id="review-text"></div>
-         </div>
-          <div class="span4">
-            <ul id="review-warnings">
-            </ul>
-            <ul>
-              <li>{% blocktrans %}Please use proper spelling.{% endblocktrans %}</li>
-              <li>{% blocktrans %}Please stay polite.{% endblocktrans %}</li>
-            </ul>
-          </div>
+        <div class="modal-body">
+          <table class="message-table">
+            <tbody>
+            <tr>
+              <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
+              <td id="review-to"></td>
+            </tr>
+            <tr>
+              <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
+              <td id="review-from"></td>
+            </tr>
+            <tr>
+              <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
+              <td><strong id="review-subject"></strong></td>
+            </tr>
+            </tbody>
+          </table>
+          <div id="review-text"></div>
+          <ul id="review-warnings">
+          </ul>
+          <ul>
+            <li>{% blocktrans %}Please use proper spelling.{% endblocktrans %}</li>
+            <li>{% blocktrans %}Please stay polite.{% endblocktrans %}</li>
+          </ul>
         </div>
-        <div class="row">
-          <div class="span9">
-            <p>{% blocktrans %}If you are happy with your request, click below to submit it.{% endblocktrans %}</p>
-            <p>
-              <button type="submit" id="send-request-button" class="btn btn-primary">
-                <i class="icon-white icon-ok"></i>
-                {% trans "Submit Request"%}
-              </button>
-              {% blocktrans %} or <a href="#" class="close">edit your request again</a>{% endblocktrans %}
-            </p>
-          </div>
+        <div class="modal-footer">
+          <a href="#" class="btn" data-dismiss="modal">{% trans "edit your request again" %}</a>
+          <button type="submit" id="send-request-button" class="btn btn-primary">
+            <i class="icon-white icon-ok"></i>
+            {% trans "Submit Request"%}
+          </button>
         </div>
       </div>
     </fieldset>
@@ -318,5 +310,4 @@
   </ul>
 </div>
 </div>
-<div id="lightbox-background"></div>
 {% endblock %}
