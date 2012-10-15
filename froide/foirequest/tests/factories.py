@@ -289,3 +289,13 @@ def make_world():
     FoiAttachmentFactory.create(belongs_to=mes, approved=False)
     FoiAttachmentFactory.create(belongs_to=mes, approved=True)
     return site
+
+
+def rebuild_index():
+    from haystack import connections
+    from haystack.constants import DEFAULT_ALIAS
+
+    from django.core.management import call_command
+
+    connections[DEFAULT_ALIAS].get_backend().clear()
+    call_command('update_index')
