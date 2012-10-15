@@ -1,9 +1,8 @@
 from datetime import timedelta
 
-from django.conf import settings
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 from django.contrib import auth
 from django.contrib import messages
 from django.utils.translation import ugettext as _
@@ -24,10 +23,10 @@ def confirm(request, user_id, secret, request_id=None):
     if request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
                 _('You are logged in and cannot use a confirmation link.'))
-        return HttpResponseRedirect(reverse('account-show'))
+        return redirect('account-show')
     user = get_object_or_404(auth.models.User, pk=int(user_id))
     if user.is_active:
-        return HttpResponseRedirect(reverse('account-login'))
+        return redirect('account-login')
     account_manager = AccountManager(user)
     if account_manager.confirm_account(secret, request_id):
         messages.add_message(request, messages.WARNING,
@@ -42,12 +41,12 @@ def confirm(request, user_id, secret, request_id=None):
         if next:
             if 'next' in request.session:
                 del request.session['next']
-            return HttpResponseRedirect(settings.SITE_URL + next)
-        return HttpResponseRedirect(reverse('account-show') + "?new#change-password-now")
+            return redirect(next)
+        return redirect(reverse('account-show') + "?new#change-password-now")
     else:
         messages.add_message(request, messages.ERROR,
                 _('You can only use the confirmation link once, please login with your password.'))
-    return HttpResponseRedirect(reverse('account-login'))
+    return redirect('account-login')
 
 
 def go(request, user_id, secret, url):
@@ -64,12 +63,12 @@ def go(request, user_id, secret, url):
         account_manager = AccountManager(user)
         if account_manager.check_autologin_secret(secret):
             login_user(request, user)
-    return HttpResponseRedirect(url)
+    return redirect(url)
 
 
 def show(request, context=None, status=200):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('account-login'))
+        return redirect('account-login')
     my_requests = FoiRequest.objects.filter(user=request.user).order_by("-last_message")
     if not context:
         context = {}
@@ -112,7 +111,7 @@ def logout(request):
     auth.logout(request)
     messages.add_message(request, messages.INFO,
             _('You have been logged out.'))
-    return HttpResponseRedirect("/")
+    return redirect("/")
 
 
 def login(request, base="base.html", context=None,
@@ -130,7 +129,7 @@ def login(request, base="base.html", context=None,
         simple = True
     else:
         if request.user.is_authenticated():
-            return HttpResponseRedirect(reverse('account-show'))
+            return redirect('account-show')
     if request.method == "POST" and status == 200:
         status = 400  # if ok, we are going to redirect anyways
         next = request.POST.get('next')
@@ -146,18 +145,17 @@ def login(request, base="base.html", context=None,
                     if not profile.address:
                         messages.add_message(request, messages.WARNING,
                             _('A recent change requires you to set your address! Please enter it below!'))
-                        return HttpResponseRedirect(settings.SITE_URL + reverse('account-show') +
+                        return redirect(reverse('account-show') +
                                     "?address#change-address-now")
 
                     messages.add_message(request, messages.INFO,
                             _('You are now logged in.'))
                     if simple:
-                        return HttpResponseRedirect(
-                                settings.SITE_URL + reverse('account-login') + "?simple")
+                        return redirect(reverse('account-login') + "?simple")
                     else:
                         if next:
-                            return HttpResponseRedirect(settings.SITE_URL + next)
-                        return HttpResponseRedirect(settings.SITE_URL + reverse('account-show'))
+                            return redirect(next)
+                        return redirect('account-show')
                 else:
                     messages.add_message(request, messages.ERROR,
                             _('Please activate your mail address before logging in.'))
@@ -177,11 +175,11 @@ def login(request, base="base.html", context=None,
 @require_POST
 def signup(request):
     next = request.POST.get('next')
-    next_url = (settings.SITE_URL + next) if next else '/'
+    next_url = next if next else '/'
     if request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot signup.'))
-        return HttpResponseRedirect(next_url)
+        return redirect(next_url)
     form = UserLoginForm()
     signup_form = NewUserForm(request.POST)
     next = request.POST.get('next')
@@ -192,7 +190,7 @@ def signup(request):
                 _('Please check your emails for a mail from us with a confirmation link.'))
         if next:
             request.session['next'] = next
-        return HttpResponseRedirect(next_url)
+        return redirect(next_url)
     return render(request, 'account/login.html', {
         "form": form,
         "signup_form": signup_form,
@@ -212,18 +210,18 @@ def change_password(request):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been changed.'))
-        return HttpResponseRedirect(reverse('account-show'))
+        return redirect('account-show')
     return show(request, context={"password_change_form": form}, status=400)
 
 
 @require_POST
 def send_reset_password_link(request):
     next = request.POST.get('next')
-    next_url = (settings.SITE_URL + next) if next else '/'
+    next_url = next if next else '/'
     if request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot get a password reset link.'))
-        return HttpResponseRedirect(next_url)
+        return redirect(next_url)
     form = auth.forms.PasswordResetForm(request.POST)
     if form.is_valid():
         if next:
@@ -231,7 +229,7 @@ def send_reset_password_link(request):
         form.save(use_https=True, email_template_name="account/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
                 _('Check your mail, we sent you a password reset link.'))
-        return HttpResponseRedirect(next_url)
+        return redirect(next_url)
     return login(request, context={"reset_form": form}, status=400)
 
 
@@ -249,7 +247,7 @@ def password_reset_confirm(request, uidb36=None, token=None):
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been set and you are now logged in.'))
         if 'next' in request.session:
-            response['Location'] = settings.SITE_URL + request.session['next']
+            response['Location'] = request.session['next']
             del request.session['next']
     return response
 
@@ -265,7 +263,7 @@ def change_address(request):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your address has been changed.'))
-        return HttpResponseRedirect(reverse('account-show'))
+        return redirect('account-show')
     return show(request, context={"address_change_form": form}, status=400)
 
 

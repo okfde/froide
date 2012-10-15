@@ -111,7 +111,7 @@ class PublicBodyTopicFactory(factory.Factory):
 class PublicBodyFactory(factory.Factory):
     FACTORY_FOR = PublicBody
 
-    name = factory.Sequence(lambda n: 'Public BOdy {0}'.format(n))
+    name = factory.Sequence(lambda n: 'Public Body {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = ''
     topic = factory.SubFactory(PublicBodyTopicFactory)
@@ -289,3 +289,13 @@ def make_world():
     FoiAttachmentFactory.create(belongs_to=mes, approved=False)
     FoiAttachmentFactory.create(belongs_to=mes, approved=True)
     return site
+
+
+def rebuild_index():
+    from haystack import connections
+    from haystack.constants import DEFAULT_ALIAS
+
+    from django.core.management import call_command
+
+    connections[DEFAULT_ALIAS].get_backend().clear()
+    call_command('update_index')

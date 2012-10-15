@@ -2,7 +2,7 @@ BeautifulSoup==3.2.1
 Django==1.4.1
 Fabric==1.2.0
 Jinja2==2.6
-Markdown==2.0.3
+Markdown==2.2.0
 Pygments==1.4
 South==0.7.6
 Sphinx==1.1
