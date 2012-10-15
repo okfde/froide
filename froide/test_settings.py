@@ -235,6 +235,8 @@ CACHES = {
     }
 }
 
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
+
 # south settings
 
 SOUTH_TESTS_MIGRATE = False
