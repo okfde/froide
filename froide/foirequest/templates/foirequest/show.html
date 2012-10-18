@@ -21,6 +21,12 @@
 
 {% block body %}
 
+{% if not object.public %}
+ <div class="alert no-print">
+  {% blocktrans %}This request is currently not public. Please consider making it public eventually.{% endblocktrans %}
+</div>
+{% endif %}
+
 {% if not user.is_authenticated and object.awaits_classification %}
   {% url "account-login" as login_url %}
   <div class="alert alert-info no-print">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
