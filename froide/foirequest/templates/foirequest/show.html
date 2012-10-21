@@ -107,7 +107,7 @@
             </a>
           </li>
         {% endif %}
-        {% if object.status_is_final or object.law.meta %}
+        {% if object.status_is_final or object.law.meta or not object.public %}
           <li>
             <a href="#more" data-toggle="tab">
               {% blocktrans %}More...{% endblocktrans %}
@@ -216,7 +216,7 @@
         {# End Reply, end if object.public_body #}
 
         {# If Meta Law #}
-        {% if object.law.meta or object.status_is_final %}
+        {% if object.law.meta or object.status_is_final or not object.public %}
           <div class="tab-pane no-print" id="more">
             {% if object.law.meta %}
               <h4>{% trans "Set Law" %}</h4>
@@ -238,20 +238,18 @@
               </form>
             {% endif %}
             {# End Write Resolution #}
+            {% if not object.public %}
+              <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+                {% csrf_token %}
+                <p>
+                  {% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
+                  <button type="submit" class="btn">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
+                </p>
+              </form>
+            {% endif %}
           </div>
         {% endif %}
 
-        {% if not object.public %}
-          <div class="tab-pane no-print">
-            <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-              {% csrf_token %}
-              <p>
-                {% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
-                <button type="submit" class="btn">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
-              </p>
-            </form>
-          </div>
-        {% endif %}
         <div class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
       {% endif %}{# endif: object.user == user #}
 
