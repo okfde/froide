@@ -23,3 +23,6 @@ class FoiRequestIndex(CelerySearchIndex, indexes.Indexable):
     def index_queryset(self):
         """Used when the entire index for model is updated."""
         return self.get_model().published.get_for_search_index()
+
+    def should_update(self, instance, **kwargs):
+        return self.instance.visibility > 1
