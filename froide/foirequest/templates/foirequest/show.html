@@ -519,7 +519,7 @@
 
 <div class="row" data-spy="scroll" data-target="#message-nav">
 
-  <div class="span3 pull-right">
+  <div class="span3 pull-right no-print">
     {% if object.messages %}
       <ul id="message-nav" class="message-nav sticky nav nav-list">
       {% for message in object.messages %}
@@ -810,7 +810,7 @@
         </div>
       </div>
       {% if not forloop.last %}
-        <div class="page-break"></div>
+        <!-- <div class="page-break"></div> -->
       {% endif %}
       {% empty %}
       <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
