@@ -10,7 +10,9 @@
     <dl class="dl-foirequest">
       <dt>{% blocktrans %}To:{% endblocktrans %}</dt>
       <dd>
-        {% if object.public_body %}
+        {% if object.public_body_name %}
+        {{ object.public_body_name }}
+        {% elif object.public_body %}
           <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
           <span class="muted">({{ object.public_body.jurisdiction.name }})</span>
         {% else %}
