@@ -12,7 +12,7 @@
 
 
 {% block extra_head %}
-{% if not object.is_foi %}
+{% if not object.is_foi or object.same_as %}
 <meta name="robots" content="noindex"/>
 {% endif %}
 <link rel="self" type="text/html" href="{% url 'foirequest-show' slug=object.slug %}"/>
