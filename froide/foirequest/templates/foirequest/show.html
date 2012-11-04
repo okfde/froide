@@ -12,6 +12,9 @@
 
 
 {% block extra_head %}
+{% if not object.is_foi %}
+<meta name="robots" content="noindex"/>
+{% endif %}
 <link rel="self" type="text/html" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link rel="canonical" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
