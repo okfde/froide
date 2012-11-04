@@ -93,7 +93,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
                 models.Q(status='refused'))[:count]
 
     def get_for_search_index(self):
-        return self.get_query_set()
+        return self.get_query_set().filter(same_as__isnull=True)
 
     def successful(self):
         return self.by_last_update().filter(

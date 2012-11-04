@@ -25,4 +25,5 @@ class FoiRequestIndex(CelerySearchIndex, indexes.Indexable):
         return self.get_model().published.get_for_search_index()
 
     def should_update(self, instance, **kwargs):
-        return instance.visibility > 1 and instance.is_foi
+        return (instance.visibility > 1 and
+            instance.is_foi and instance.same_as is None)
