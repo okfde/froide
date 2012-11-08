@@ -8,7 +8,7 @@ from django.template import TemplateDoesNotExist
 
 from haystack.query import SearchQuerySet
 
-from froide.foirequest.models import FoiRequest, FoiMessage
+from froide.foirequest.models import FoiRequest
 from froide.helper.json_view import (JSONResponseDetailView,
         JSONResponseListView)
 from froide.helper.utils import render_400, render_403
@@ -85,15 +85,6 @@ class PublicBodyDetailView(JSONResponseDetailView):
         context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
         if self.format == "html":
             context['foi_requests'] = FoiRequest.published.filter(public_body=context['object']).order_by('last_message')[:10]
-            msgs = {}
-            blacklist = set()
-            for m in FoiMessage.objects.filter(request__public_body=context['object']).order_by('timestamp'):
-                if m.status is None:
-                    blacklist.add(m.request_id)
-                elif m.request_id not in blacklist:
-                    msgs.setdefault(m.request_id, [])
-                    msgs[m.request_id].append((m.status, str(m.timestamp).split('.')[0]))
-            context['message_data'] = json.dumps(msgs.values())
         return context
 
 
