@@ -7,6 +7,10 @@
 
 {% block metadescription %}{% blocktrans with name=profile_user.get_full_name %}Requests and activities of {{ name }}{% endblocktrans %}{% endblock %}
 
+{% block extra_head %}
+<meta name="robots" content="noindex"/>
+{% endblock %}
+
 {% block body %}
 <h2>{% blocktrans with name=profile_user.get_full_name %}Profile of {{ name }}{% endblocktrans %}</h2>
 
