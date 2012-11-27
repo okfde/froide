@@ -163,15 +163,17 @@ class FoiLaw(models.Model):
             "email_only": self.email_only
         }
 
-    def calculate_due_date(self, date=None):
+    def calculate_due_date(self, date=None, value=None):
         if date is None:
             date = timezone.now()
+        if value is None:
+            value = self.max_response_time
         if self.max_response_time_unit == "month_de":
-            return calculate_month_range_de(date, self.max_response_time)
+            return calculate_month_range_de(date, value)
         elif self.max_response_time_unit == "day":
-            return date + timedelta(days=self.max_response_time)
+            return date + timedelta(days=value)
         elif self.max_response_time_unit == "working_day":
-            return calculate_workingday_range(date, self.max_response_time)
+            return calculate_workingday_range(date, value)
 
 
 class PublicBodyTopicManager(models.Manager):
