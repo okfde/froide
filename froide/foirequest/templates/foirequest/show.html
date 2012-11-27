@@ -512,6 +512,12 @@
             </form>
           </li>
         {% endif %}
+        <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+          {% csrf_token %}
+          {% trans "Extend deadline by months" %}
+          <input type="number" name="months" value="6" class="span1"/>
+          <button class="btn" type="submit">{% trans "Extend Deadline" %}</button>
+        </form>
       {% endif %}
     </ul>
   </div>

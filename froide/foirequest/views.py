@@ -818,3 +818,20 @@ def redact_attachment(request, slug, attachment_id):
         'foirequest': foirequest,
         'attachment': attachment
     })
+
+
+def extend_deadline(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff:
+        return render_403(request)
+    months = int(request.POST.get('months', 6))
+    foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
+    if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
+        foirequest.status = 'awaiting_response'
+    foirequest.save()
+    messages.add_message(request, messages.INFO,
+            _('Deadline has been extended'))
+    FoiEvent.objects.create_event('deadline_extended', foirequest)
+    return redirect(foirequest)
