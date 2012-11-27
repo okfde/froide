@@ -1239,7 +1239,9 @@ class FoiEvent(models.Model):
         "add_postal_reply": _(
             u"%(user)s added a reply that was received via snail mail."),
         "escalated": _(
-            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s.")
+            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s."),
+        "deadline_extended": _(
+            u"The deadline of request %(request)s has been extended.")
     }
 
     class Meta:
