@@ -228,10 +228,10 @@ class PublicBody(models.Model):
 
     _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
-            on_delete=models.SET_NULL)
+            on_delete=models.SET_NULL, default=1)
     _updated_by = models.ForeignKey(User, verbose_name=_("Updated by"),
             blank=True, null=True, related_name='public_body_updaters',
-            on_delete=models.SET_NULL)
+            on_delete=models.SET_NULL, default=1)
     confirmed = models.BooleanField(_("confirmed"), default=True)
 
     number_of_requests = models.IntegerField(_("Number of requests"),
