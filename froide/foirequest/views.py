@@ -832,6 +832,6 @@ def extend_deadline(request, slug):
         foirequest.status = 'awaiting_response'
     foirequest.save()
     messages.add_message(request, messages.INFO,
-            _('Deadline has been extended'))
+            _('Deadline has been extended.'))
     FoiEvent.objects.create_event('deadline_extended', foirequest)
     return redirect(foirequest)
