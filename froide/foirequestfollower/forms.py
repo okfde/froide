@@ -22,6 +22,8 @@ class FollowRequestForm(forms.Form):
         email = self.cleaned_data.get('email', None)
         if not self.user.is_authenticated() and email is None:
             raise forms.ValidationError(_("Missing email address!"))
+        if not self.foirequest.is_visible(self.user):
+            raise forms.ValidationError(_("You cannot access this request!"))
         if not self.user.is_authenticated():
             try:
                 User.objects.get(email=email)
