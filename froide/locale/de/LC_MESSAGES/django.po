@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-27 18:31+0100\n"
-"PO-Revision-Date: 2012-11-27 18:36+0100\n"
+"POT-Creation-Date: 2012-12-03 14:47+0100\n"
+"PO-Revision-Date: 2012-12-03 14:50+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -287,75 +287,75 @@ msgstr ""
 msgid "Your account is not active."
 msgstr "Ihr Nutzerkonto ist nicht aktiviert."
 
-#: account/views.py:113
+#: account/views.py:115
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
-#: account/views.py:147
+#: account/views.py:149
 msgid ""
 "A recent change requires you to set your address! Please enter it below!"
 msgstr ""
 "Eine kürzlich stattgefundene Änderung erfordert, dass Sie Ihre Adresse "
 "angeben. Bitte tragen Sie sie unten ein."
 
-#: account/views.py:152 account/templates/account/login.html:8
+#: account/views.py:154 account/templates/account/login.html:8
 msgid "You are now logged in."
 msgstr "Sie sind jetzt eingeloggt."
 
-#: account/views.py:161
+#: account/views.py:163
 msgid "Please activate your mail address before logging in."
 msgstr "Bitte bestätigen Sie Ihre Mailadresse bevor Sie sich einloggen."
 
-#: account/views.py:164
+#: account/views.py:166
 msgid "E-mail and password do not match."
 msgstr "E-Mailadresse und Passwort passen nicht zusammen."
 
-#: account/views.py:181
+#: account/views.py:183
 msgid "You are currently logged in, you cannot signup."
 msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 
-#: account/views.py:190
+#: account/views.py:192
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine Mail mit einem "
 "Bestätigungslink von uns erhalten."
 
-#: account/views.py:206
+#: account/views.py:208
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihr Passwort nicht ändern."
 
-#: account/views.py:212
+#: account/views.py:214
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: account/views.py:223
+#: account/views.py:225
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Sie sind gerade eingeloggt, Sie können keinen Passwort-Zurücksetzen-Link "
 "erhalten."
 
-#: account/views.py:231
+#: account/views.py:233
 msgid "Check your mail, we sent you a password reset link."
 msgstr ""
 "Überprüfen Sie Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetzen-"
 "Link geschickt."
 
-#: account/views.py:248
+#: account/views.py:250
 msgid "Your password has been set and you are now logged in."
 msgstr "Ihre Password wurde gesetzt und Sie sind jetzt eingeloggt."
 
-#: account/views.py:259
+#: account/views.py:261
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre Adresse nicht "
 "ändern."
 
-#: account/views.py:265
+#: account/views.py:267
 msgid "Your address has been changed."
 msgstr "Ihre Adresse wurde geändert."
 
-#: account/views.py:271
+#: account/views.py:273
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -515,7 +515,7 @@ msgid "Recent events"
 msgstr "Kürzliche Ereignisse"
 
 #: account/templates/account/profile.html:34
-#: account/templates/account/show.html:32
+#: account/templates/account/show.html:36
 #: foirequest/templates/foirequest/_requests_as_table.html:19
 #: foirequest/templates/foirequest/show.html:797
 #: foirequest/templates/foirequest/snippets/request_item.html:23
@@ -523,22 +523,26 @@ msgstr "Kürzliche Ereignisse"
 msgid "%(time)s ago"
 msgstr "%(time)s her"
 
-#: account/templates/account/show.html:8
+#: account/templates/account/show.html:7
 msgid "Your Account"
 msgstr "Ihr Account"
 
-#: account/templates/account/show.html:11
+#: account/templates/account/show.html:12
 #, python-format
 msgid "One request that needs your attention"
 msgid_plural "%(counter)s requests that need your attention"
 msgstr[0] "Eine Anfrage braucht Ihre Aufmerksamkeit"
 msgstr[1] "%(counter)s Anfragen brauchen Ihre Aufmerksamkeit"
 
-#: account/templates/account/show.html:25
+#: account/templates/account/show.html:27
 msgid "Your followed requests"
 msgstr "Anfragen, denen Sie folgen"
 
-#: account/templates/account/show.html:42
+#: account/templates/account/show.html:30
+msgid "Recent event on your followed requests:"
+msgstr "Kürzliche Änderungen bei Anfragen, die Sie interessieren:"
+
+#: account/templates/account/show.html:47
 #, python-format
 msgid "Your are following one request, but there are no recent events."
 msgid_plural ""
@@ -546,11 +550,23 @@ msgid_plural ""
 msgstr[0] "Sie folgen einer Anfrage, aber es gibt nichts Neues."
 msgstr[1] "Sie folgen %(counter)s Anfragen, aber es gibt nichts Neues."
 
-#: account/templates/account/show.html:44
+#: account/templates/account/show.html:49
 msgid "You don't follow any requests."
 msgstr "Sie folgen keinen Anfragen."
 
-#: account/templates/account/show.html:54
+#: account/templates/account/show.html:53
+msgid "Show all the requests that you are following."
+msgstr "Alle Anfragen, die Sie interessieren, anzeigen."
+
+#: account/templates/account/show.html:63
+msgid ""
+"You don't follow any requests. Click the follow button on a request page to "
+"follow it."
+msgstr ""
+"Sie erhalten keine Neuigkeiten für Anfragen. Klicken Sie den \"Interessiert "
+"Sie das?\"-Button auf einer Anfrageseite."
+
+#: account/templates/account/show.html:73
 #, python-format
 msgid ""
 "Your account is not active. You need to click on the link we send to your "
@@ -559,96 +575,96 @@ msgstr ""
 "Ihr Account ist nicht aktiv. Sie müssen auf den Link klicken, den wir an "
 "Ihre E-Mailadresse %(email)s gesendet haben."
 
-#: account/templates/account/show.html:58
+#: account/templates/account/show.html:77
 msgid "Your Freedom of Information Requests"
 msgstr "Ihre Informationsfreiheitsanfragen"
 
-#: account/templates/account/show.html:61 foirequest/models.py:213
+#: account/templates/account/show.html:80 foirequest/models.py:213
 #: frontpage/models.py:23
 msgid "Title"
 msgstr "Titel"
 
-#: account/templates/account/show.html:62 foirequest/models.py:923
+#: account/templates/account/show.html:81 foirequest/models.py:923
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: account/templates/account/show.html:63 foirequest/forms.py:265
+#: account/templates/account/show.html:82 foirequest/forms.py:265
 #: foirequest/models.py:223 foirequest/models.py:930
 #: foirequest/templates/foirequest/show.html:610
 msgid "Status"
 msgstr "Status"
 
-#: account/templates/account/show.html:64
+#: account/templates/account/show.html:83
 msgid "Last Message"
 msgstr "Letzte Nachricht"
 
-#: account/templates/account/show.html:65 foirequest/models.py:209
+#: account/templates/account/show.html:84 foirequest/models.py:209
 msgid "Public"
 msgstr "Öffentlich"
 
-#: account/templates/account/show.html:78
+#: account/templates/account/show.html:97
 #: foirequest/templates/foirequest/_requests_as_table.html:15
 #: foirequest/templates/foirequest/show.html:323
 #: foirequest/templates/foirequest/snippets/request_item.html:19
 msgid "Not yet set"
 msgstr "Noch nicht festgelegt"
 
-#: account/templates/account/show.html:86
+#: account/templates/account/show.html:105
 #, python-format
 msgid "until %(date)s"
 msgstr "bis %(date)s"
 
-#: account/templates/account/show.html:91
+#: account/templates/account/show.html:110
 msgid "Yes"
 msgstr "Ja"
 
-#: account/templates/account/show.html:92
+#: account/templates/account/show.html:111
 msgid "No"
 msgstr "Nein"
 
-#: account/templates/account/show.html:101
+#: account/templates/account/show.html:120
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: account/templates/account/show.html:102
+#: account/templates/account/show.html:121
 msgid "Your name:"
 msgstr "Ihr Name:"
 
-#: account/templates/account/show.html:103
+#: account/templates/account/show.html:122
 msgid "Your email address:"
 msgstr "Ihre E-Mailadresse:"
 
-#: account/templates/account/show.html:105
+#: account/templates/account/show.html:124
 msgid "Your name is hidden on the web (this page is only visible to you)."
 msgstr ""
 "Ihr Name wird auf der Seite nicht öffentlich angezeigt (diese Seite ist nur "
 "für Sie sichtbar)."
 
-#: account/templates/account/show.html:108
+#: account/templates/account/show.html:127
 msgid "Your address:"
 msgstr "Ihre Postanschrift:"
 
-#: account/templates/account/show.html:111
+#: account/templates/account/show.html:130
 msgid "You should change your password now."
 msgstr "Sie sollten Ihr Passwort jetzt ändern."
 
-#: account/templates/account/show.html:113
+#: account/templates/account/show.html:132
 msgid "Change your password"
 msgstr "Ändern Sie Ihr Passwort"
 
-#: account/templates/account/show.html:123
+#: account/templates/account/show.html:142
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: account/templates/account/show.html:131
+#: account/templates/account/show.html:150
 msgid "You need to enter your address."
 msgstr "Sie müssen Ihre Adresse eingeben."
 
-#: account/templates/account/show.html:133
+#: account/templates/account/show.html:152
 msgid "Change your address"
 msgstr "Ändern Sie Ihre Adresse"
 
-#: account/templates/account/show.html:143
+#: account/templates/account/show.html:162
 msgid "Change address"
 msgstr "Adresse ändern"
 
@@ -2854,8 +2870,8 @@ msgid "Send a message"
 msgstr "Nachricht schreiben"
 
 #: foirequest/templates/foirequest/show.html:109
-msgid "Denied?"
-msgstr "Anfrage abgelehnt?"
+msgid "Mediation"
+msgstr "Vermittlung"
 
 #: foirequest/templates/foirequest/show.html:116
 msgid "More..."
@@ -3315,7 +3331,11 @@ msgstr "E-Mailadresse"
 msgid "Missing email address!"
 msgstr "Fehlende E-Mailadresse!"
 
-#: foirequestfollower/forms.py:32
+#: foirequestfollower/forms.py:26
+msgid "You cannot access this request!"
+msgstr "Sie können auf diese Anfrage nicht zugreifen!"
+
+#: foirequestfollower/forms.py:34
 #, python-format
 msgid ""
 "This email address already has an account. <a href=\"%s?simple\" class="
@@ -3326,7 +3346,7 @@ msgstr ""
 "\"target-small\">Bitte loggen Sie sich mit dieser E-Mailadresse ein um "
 "Benachrichtigungen zu erhalten.</a>"
 
-#: foirequestfollower/forms.py:35
+#: foirequestfollower/forms.py:37
 msgid "You cannot follow your own requests."
 msgstr "Sie erhalten schon Benachrichtigungen für Ihre Anfragen."
 
@@ -4274,6 +4294,9 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 #: templates/search/search.html:57
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
+
+#~ msgid "Denied?"
+#~ msgstr "Anfrage abgelehnt?"
 
 #~ msgid "Close"
 #~ msgstr "Schließen"
