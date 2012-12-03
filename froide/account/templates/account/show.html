@@ -4,9 +4,10 @@
 {% load markup %}
 
 {% block body %}
-<div>
-    <h2>{% trans "Your Account" %}</h2>
-    <div class="span12">
+<h2>{% trans "Your Account" %}</h2>
+<div class="row">
+  <div class="span12">
+    {% if own_requests %}
       <h3>
         {% blocktrans count counter=own_requests|length %}One request that needs your attention{% plural %}{{ counter }} requests that need your attention{% endblocktrans %}
       </h3>
@@ -17,36 +18,54 @@
           </li>
         {% endfor %}
       </ul>
-    </div>
+    {% endif %}
+  </div>
 </div>
-<div>
-    <div class="span12">
-        <h3>
-          {% trans "Your followed requests" %}
-        </h3>
-        <ul>
-        {% for event in followed_events %}
-            <li id="{{ event.get_html_id }}">
-                <a href="{{ event.get_absolute_url }}">
-                    <span class="no-print" title="{{ event.timestamp }}">
-                        {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
-                    </span>
-                    <span class="print-only">
-                        {{ event.timestamp|date:"DATETIME_FORMAT" }}
-                    </span>
-                </a>: {{ event.as_html }}
-            </li>
-        {% empty %}
-            <li>
-            {% if following %}
-                {% blocktrans count counter=following %}Your are following one request, but there are no recent events.{% plural %}You are following {{ counter }} requests, but there are no recent events.{% endblocktrans %}
-            {% else %}
-                {% trans "You don't follow any requests." %}
-            {% endif %}
-            </li>
-        {% endfor %}
-        </ul>
+<div class="row">
+  <div class="span12">
+    <h3>
+      {% trans "Your followed requests" %}
+    </h3>
+    {% if followed_events %}
+      <p>{% trans "Recent event on your followed requests:" %}</p>
+      <ul>
+      {% for event in followed_events %}
+        <li id="{{ event.get_html_id }}">
+            <a href="{{ event.get_absolute_url }}">
+                <span class="no-print" title="{{ event.timestamp }}">
+                    {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
+                </span>
+                <span class="print-only">
+                    {{ event.timestamp|date:"DATETIME_FORMAT" }}
+                </span>
+            </a>: {{ event.as_html }}
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      {% if following %}
+          {% blocktrans count counter=following %}Your are following one request, but there are no recent events.{% plural %}You are following {{ counter }} requests, but there are no recent events.{% endblocktrans %}
+      {% else %}
+          {% trans "You don't follow any requests." %}
+      {% endif %}
+    {% endif %}
+    <p>
+      <a href="#followed-requests" class="toggle">{% trans "Show all the requests that you are following." %}</a>
+    </p>
+    <div id="followed-requests" style="display:none">
+      <ul>
+      {% for followed in followed_requests %}
+        {% with object=followed.request %}
+          {% include "foirequest/snippets/request_item.html" %}
+        {% endwith %}
+      {% empty %}
+        <li>
+          {% trans "You don't follow any requests. Click the follow button on a request page to follow it." %}
+        </li>
+      {% endfor %}
+      </ul>
     </div>
+  </div>
 </div>
 
 

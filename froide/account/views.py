@@ -75,8 +75,9 @@ def show(request, context=None, status=200):
     if 'new' in request.GET:
         request.user.is_new = True
     own_foirequests = FoiRequest.objects.get_dashboard_requests(request.user)
-    followed_foirequest_ids = map(lambda x: x.request_id,
-        FoiRequestFollower.objects.filter(user=request.user))
+    followed_requests = FoiRequestFollower.objects.filter(user=request.user)\
+        .select_related('request')
+    followed_foirequest_ids = map(lambda x: x.request_id, followed_requests)
     following = False
     events = []
     if followed_foirequest_ids:
@@ -86,6 +87,7 @@ def show(request, context=None, status=200):
             request__in=followed_foirequest_ids, timestamp__gte=since)[:10]
     context.update({
         'own_requests': own_foirequests,
+        'followed_requests': followed_requests,
         'followed_events': events,
         'following': following,
         'foirequests': my_requests
