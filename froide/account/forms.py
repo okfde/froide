@@ -9,6 +9,7 @@ from django.conf import settings
 from froide.helper.widgets import AgreeCheckboxInput
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
+HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 
 
 class NewUserForm(forms.Form):
@@ -33,6 +34,11 @@ class NewUserForm(forms.Form):
             max_length=75,
             help_text=_('Not public, you will need to confirm this address.'),
             widget=forms.EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
+
+    if HAVE_ORGANIZATION:
+        organization = forms.CharField(required=False,
+                label=_("Organization"),
+                help_text=_('Optional. Affiliation will be shown next to your name'))
 
     if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(required=False,

@@ -25,6 +25,8 @@ user_activated_signal = dispatch.Signal(providing_args=[])
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
+    organization = models.CharField(blank=True, max_length=255)
+    organization_url = models.URLField(blank=True, max_length=255)
     private = models.BooleanField(default=False)
     address = models.TextField(blank=True)
 
@@ -40,7 +42,10 @@ class Profile(models.Model):
         if self.private:
             return unicode(_(u"Name Not Public"))
         else:
-            return self.user.get_full_name()
+            if self.organization:
+                return u'%s (%s)' % (self.user.get_full_name(), self.organization)
+            else:
+                return self.user.get_full_name()
 
     def apply_message_redaction(self, content):
         if self.address:
@@ -184,9 +189,9 @@ class AccountManager(object):
         user.set_password(password)
         user.save()
         profile = user.get_profile()
-        if 'address' in data:
-            profile.address = data['address']
-        if data['private']:
-            profile.private = True
+        for key in data:
+            if key in ('first_name', 'last_name', 'user_email', 'password'):
+                continue
+            setattr(profile, key, data[key])
         profile.save()
         return user, password
