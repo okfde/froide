@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-03 14:47+0100\n"
-"PO-Revision-Date: 2012-12-03 14:50+0100\n"
+"POT-Creation-Date: 2012-12-06 11:39+0100\n"
+"PO-Revision-Date: 2012-12-06 11:41+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -109,27 +109,27 @@ msgstr "suche"
 msgid "help"
 msgstr "hilfe"
 
-#: account/forms.py:16
+#: account/forms.py:17
 msgid "First name"
 msgstr "Vorname"
 
-#: account/forms.py:17
+#: account/forms.py:18
 msgid "First Name"
 msgstr "Vorname"
 
-#: account/forms.py:20
+#: account/forms.py:21
 msgid "Last name"
 msgstr "Nachname"
 
-#: account/forms.py:21
+#: account/forms.py:22
 msgid "Last Name"
 msgstr "Nachname"
 
-#: account/forms.py:25 account/forms.py:94
+#: account/forms.py:26 account/forms.py:100
 msgid "Mailing Address"
 msgstr "Postadresse"
 
-#: account/forms.py:26
+#: account/forms.py:27
 msgid ""
 "Your address will not be displayed publicly and is only needed in case a "
 "public body needs to send you paper."
@@ -137,27 +137,35 @@ msgstr ""
 "Ihre Adresse wird nicht öffentlich angezeigt und wird nur für den Fall "
 "verwendet, dass eine Behörde Ihnen etwas per Post zusenden muss."
 
-#: account/forms.py:30 account/forms.py:96
+#: account/forms.py:31 account/forms.py:102
 msgid "Street, Post Code, City"
 msgstr "Straße, Hausnummer, PLZ, Ort"
 
-#: account/forms.py:32 account/forms.py:87
+#: account/forms.py:33 account/forms.py:93
 msgid "Email address"
 msgstr "E-Mailadresse"
 
-#: account/forms.py:34
+#: account/forms.py:35
 msgid "Not public, you will need to confirm this address."
 msgstr "Nicht öffentlich, Sie müssen diese Adresse bestätigen."
 
-#: account/forms.py:35 account/forms.py:86
+#: account/forms.py:36 account/forms.py:92
 msgid "mail@ddress.net"
 msgstr "email@dresse.net"
 
-#: account/forms.py:39
+#: account/forms.py:40
+msgid "Organization"
+msgstr "Organisation"
+
+#: account/forms.py:41
+msgid "Optional. Affiliation will be shown next to your name"
+msgstr "Optional. Ihre Organisation wird neben Ihrem Namen angezeigt."
+
+#: account/forms.py:45
 msgid "Hide my name on the web"
 msgstr "Zeige meinen Namen auf der Seite nicht an"
 
-#: account/forms.py:40
+#: account/forms.py:46
 msgid ""
 "If you check this, your name will still appear in requests to public bodies, "
 "but we will do our best to not display it publicly. However, we cannot "
@@ -167,15 +175,15 @@ msgstr ""
 "nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen "
 "<b>keine</b> komplette Anonymität garantieren."
 
-#: account/forms.py:42
+#: account/forms.py:48
 msgid "Terms and Conditions and Privacy Statement"
 msgstr "Nutzungs- und Datenschutzbedingungen"
 
-#: account/forms.py:44
+#: account/forms.py:50
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
 msgstr "Sie müssen unsere Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: account/forms.py:46
+#: account/forms.py:52
 #, python-format
 msgid ""
 "You agree to our <a href=\"%(url_terms)s\" class=\"target-new\">Terms and "
@@ -186,7 +194,7 @@ msgstr ""
 "\">Nutzungsbedingungen</a> und <a href=\"%(url_privacy)s\" class=\"target-new"
 "\">Datenschutzbedingungen</a> zu."
 
-#: account/forms.py:64
+#: account/forms.py:70
 #, python-format
 msgid ""
 "This email address already has an account. <a href=\"%s?simple\" class="
@@ -195,7 +203,7 @@ msgstr ""
 "Diese E-Mailadresse hat schon einen Account. <a href=\"%s?simple\" class="
 "\"target-small\">Bitte loggen Sie sich mit dieser E-Mailadresse ein.</a>"
 
-#: account/forms.py:67
+#: account/forms.py:73
 msgid ""
 "This email address is already registered, but not yet confirmed! Please "
 "click on the confirmation link in the mail we send you."
@@ -203,49 +211,49 @@ msgstr ""
 "Diese E-Mailadresse ist bereits registriert, aber noch nicht bestätigt! "
 "Bitte klicken Sie auf den Bestätigungslink, den wir Ihnen zugemailt haben."
 
-#: account/forms.py:73 account/forms.py:89
+#: account/forms.py:79 account/forms.py:95
 msgid "Password"
 msgstr "Passwort"
 
-#: account/forms.py:75
+#: account/forms.py:81
 msgid "Password (repeat)"
 msgstr "Passwort (wiederholen)"
 
-#: account/forms.py:80
+#: account/forms.py:86
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
 
-#: account/forms.py:95
+#: account/forms.py:101
 msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
-#: account/models.py:32
+#: account/models.py:34
 #, python-format
 msgid "Profile of <%(user)s>"
 msgstr "Profil von <%(user)s>"
 
-#: account/models.py:41
+#: account/models.py:43
 msgid "Name Not Public"
 msgstr "Anfragesteller/in"
 
-#: account/models.py:50
+#: account/models.py:55
 msgid "<< Address removed >>"
 msgstr "<< Adresse entfernt >>"
 
-#: account/models.py:53
+#: account/models.py:58
 msgid "<< Email removed >>"
 msgstr "<< E-Mail entfernt >>"
 
-#: account/models.py:60 account/models.py:62 account/models.py:64
+#: account/models.py:65 account/models.py:67 account/models.py:69
 msgid "<< Name removed >>"
 msgstr "Anonymer Nutzer"
 
-#: account/models.py:69
+#: account/models.py:74
 msgid "<< Greeting >>"
 msgstr "<< Anrede >>"
 
 #. Translators: Mail subject
-#: account/models.py:157
+#: account/models.py:162
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
