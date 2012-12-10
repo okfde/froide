@@ -607,7 +607,7 @@ Sincerely yours
         message.send()
         return message
 
-    def add_escalation_message(self, subject, message):
+    def add_escalation_message(self, subject, message, send_address=False):
         message_body = message
         message = FoiMessage(request=self)
         message.subject = subject
@@ -620,7 +620,8 @@ Sincerely yours
         message.recipient_public_body = self.law.mediator
         message.recipient = self.law.mediator.name
         message.timestamp = timezone.now()
-        message.plaintext = self.construct_standard_message_body(message_body)
+        message.plaintext = self.construct_standard_message_body(message_body,
+            send_address=send_address)
         message.send()
         self.status = 'escalated'
         self.save()
