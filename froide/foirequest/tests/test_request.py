@@ -1010,3 +1010,31 @@ class RequestTest(TestCase):
         self.assertEqual(same_req2.status, "awaiting_response")
         self.assertEqual(same_req2.visibility, 2)
         self.assertEqual(len(mail.outbox), 3)
+
+
+class MediatorTest(TestCase):
+
+    def setUp(self):
+        factories.make_world()
+
+    def test_hiding_content(self):
+        req = FoiRequest.objects.all()[0]
+        mediator = req.law.mediator
+        req.add_escalation_message('Escalate', 'Content')
+        req = FoiRequest.objects.all()[0]
+        req.add_message_from_email({
+            'msgobj': None,
+            'date': timezone.now(),
+            'subject': 'Reply',
+            'body': 'Content',
+            'html': 'html',
+            'from': ('Name', mediator.email),
+            'to': [req.secret_address],
+            'cc': [],
+            'resent_to': [],
+            'resent_cc': [],
+            'attachments': []
+        }, '')
+        req = FoiRequest.objects.all()[0]
+        last = req.messages[-1]
+        self.assertTrue(last.content_hidden)

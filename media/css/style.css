@@ -594,7 +594,7 @@ form.foirequest #post_address {
     margin-bottom: 0.4em;
 }
 
-.message-content > div {
+.content-text {
     white-space: nowrap;
     white-space: pre-wrap;
     word-wrap: break-word;

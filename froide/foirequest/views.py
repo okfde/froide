@@ -686,6 +686,21 @@ def approve_attachment(request, slug, attachment):
     return redirect(att.get_anchor_url())
 
 
+@require_POST
+def approve_message(request, slug, message):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff and foirequest.user != request.user:
+        return render_403(request)
+    mes = get_object_or_404(FoiMessage, id=int(message))
+    mes.content_hidden = False
+    mes.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('Content published.'))
+    return redirect(mes.get_absolute_url())
+
+
 def list_unchecked(request):
     if not request.user.is_staff:
         return render_403(request)

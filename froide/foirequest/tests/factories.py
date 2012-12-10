@@ -122,7 +122,7 @@ class PublicBodyFactory(factory.Factory):
     classification = 'Ministry'
     classification_slug = 'ministry'
 
-    email = factory.Sequence(lambda n: 'pb-{0}@example.com'.format(n))
+    email = factory.Sequence(lambda n: 'pb-{0}@{0}.example.com'.format(n))
     contact = 'Some contact stuff'
     address = 'An address'
     website_dump = ''
@@ -266,10 +266,20 @@ def make_world():
     UserFactory.create(is_staff=True, username='dummy_staff')
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
-    ifg_bund = FoiLawFactory.create(site=site, jurisdiction=bund, name='IFG Bund')
-    uig_bund = FoiLawFactory.create(site=site, jurisdiction=bund, name='UIG Bund')
-    meta_bund = FoiLawFactory.create(site=site, jurisdiction=bund, meta=True,
-        name='IFG-UIG Bund')
+    mediator_bund = PublicBodyFactory.create(jurisdiction=bund, site=site)
+    ifg_bund = FoiLawFactory.create(site=site, jurisdiction=bund,
+        name='IFG Bund',
+        mediator=mediator_bund
+    )
+    uig_bund = FoiLawFactory.create(site=site, jurisdiction=bund,
+        name='UIG Bund',
+        mediator=mediator_bund
+    )
+    meta_bund = FoiLawFactory.create(site=site, jurisdiction=bund,
+        meta=True,
+        name='IFG-UIG Bund',
+        mediator=mediator_bund
+    )
     meta_bund.combined.add(ifg_bund, uig_bund)
     ifg_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG NRW')
     uig_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='UIG NRW')

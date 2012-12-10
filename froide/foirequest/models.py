@@ -494,6 +494,25 @@ class FoiRequest(models.Model):
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
 
+    def find_public_body_for_email(self, email):
+        if not email or not '@' in email:
+            return self.public_body
+        messages = list(reversed(self.messages))
+        domain = email.split('@', 1)[1]
+        for m in messages:
+            if m.is_response:
+                if m.sender_email == email:
+                    return m.sender_public_body
+                if m.sender_email.split('@')[1] == domain:
+                    return m.sender_public_body
+        for m in messages:
+            if not m.is_response:
+                if m.recipient_email == email:
+                    return m.recipient_public_body
+                if m.recipient_email.split('@')[1] == domain:
+                    return m.recipient_public_body
+        return self.public_body
+
     def get_send_message_form(self):
         from .forms import SendMessageForm
         last_message = list(self.messages)[-1]
@@ -535,7 +554,9 @@ Sincerely yours
         message.is_response = True
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
-        message.sender_public_body = self.public_body
+        message.sender_public_body = self.find_public_body_for_email(message.sender_email)
+        if message.sender_public_body == self.law.mediator:
+            message.content_hidden = True
         message.timestamp = email['date']
         message.recipient_email = self.secret_address
         message.recipient = self.user.get_profile().display_name()
@@ -908,6 +929,8 @@ class FoiMessage(models.Model):
     is_postal = models.BooleanField(_("Postal?"),
             default=False)
     is_escalation = models.BooleanField(_("Escalation?"),
+            default=False)
+    content_hidden = models.BooleanField(_("Content hidden?"),
             default=False)
     sender_user = models.ForeignKey(User, blank=True, null=True,
             on_delete=models.SET_NULL,

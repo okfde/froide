@@ -23,6 +23,7 @@ urlpatterns = patterns("froide.foirequest.views",
     url(r"^(?P<slug>[-\w]+)/mark/checked/$", 'mark_checked', name="foirequest-mark_checked"),
     url(r"^(?P<slug>[-\w]+)/extend-deadline/$", 'extend_deadline', name="foirequest-extend_deadline"),
     url(r"^(?P<slug>[-\w]+)/approve/(?P<attachment>\d+)/$", 'approve_attachment', name="foirequest-approve_attachment"),
+    url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message>\d+)/$", 'approve_message', name="foirequest-approve_message"),
     url(r"^(?P<slug>[-\w]+)/make-same/(?P<message_id>\d+)/$", 'make_same_request', name="foirequest-make_same_request"),
 
     # Redaction
