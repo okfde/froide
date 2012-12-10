@@ -49,12 +49,12 @@ def remove_quote(text, replacement=u"", quote_prefix=u">",
     i = len(lines)
     for i, line in enumerate(lines):
         for qs in quote_separators:
-            if qs.match(line) is not None and "".join(lines[:i]).strip():
+            if qs.match(line) is not None and "".join(lines[:(i + 1)]).strip():
                 found = True
                 break
         if found:
             break
-    lines = lines[:i]
+    lines = lines[:(i + 1)]
     return u"\n".join(lines)
 
 
