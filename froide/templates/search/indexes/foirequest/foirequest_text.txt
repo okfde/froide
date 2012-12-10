@@ -6,7 +6,7 @@
 {% endfor %}
 
 {% for message in object.messages %}
-    {{ message.get_content }}
+    {% if not message.content_hidden %}{{ message.get_content }}{% endif %}
     {% for att in message.foiattachment_set.all %}
         {{ att.index_content }}
     {% endfor %}
