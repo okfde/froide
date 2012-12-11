@@ -584,6 +584,9 @@
                     {% endif %}
                   {% else %}
                     {{ message.sender }}
+                    {% if message.sender_public_body %}
+                     – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+                    {% endif %}
                   {% endif %}
                 </td>
               </tr>
