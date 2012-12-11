@@ -769,7 +769,7 @@
           <hr/>
           <div id="{{ message.get_html_id }}-content" class="message-content">
             {% if forloop.counter0 == 0 %}
-              <div>{% highlight_request message %}<div>
+              <div class="content-text">{% highlight_request message %}<div>
 <a class="toggle no-print muted hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
 {% blocktrans %}Kind Regards,{% endblocktrans %}
 {{ message.sender }}</div>
