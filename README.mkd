@@ -4,7 +4,7 @@ Froide
 [![Build Status](https://secure.travis-ci.org/stefanw/froide.png)](http://travis-ci.org/#!/stefanw/froide)
 
 
-Froide is a Freedom Of Information Portal written in Python using Django 1.4.2.
+Froide is a Freedom Of Information Portal written in Python using Django 1.4.3.
 The name comes from Freedom of Information (de). Also Froide
 sounds like Freude which is German for joy.
 
