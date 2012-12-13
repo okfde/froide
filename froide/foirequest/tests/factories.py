@@ -280,6 +280,7 @@ def make_world():
         name='IFG-UIG Bund',
         mediator=mediator_bund
     )
+    mediator_bund.laws.add(ifg_bund, uig_bund, meta_bund)
     meta_bund.combined.add(ifg_bund, uig_bund)
     ifg_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG NRW')
     uig_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='UIG NRW')

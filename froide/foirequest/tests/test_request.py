@@ -602,6 +602,7 @@ class RequestTest(TestCase):
             'resent_cc': [],
             'attachments': []
         }, "FAKE_ORIGINAL")
+        req = FoiRequest.objects.get(title=post['subject'])
         self.assertEqual(len(req.messages), 2)
         self.assertEqual(len(mail.outbox), 3)
         notification = mail.outbox[-1]
