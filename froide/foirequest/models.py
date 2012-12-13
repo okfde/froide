@@ -503,13 +503,15 @@ class FoiRequest(models.Model):
             if m.is_response:
                 if m.sender_email == email:
                     return m.sender_public_body
-                if m.sender_email.split('@')[1] == domain:
+                if ('@' in m.sender_email and
+                        m.sender_email.split('@')[1] == domain):
                     return m.sender_public_body
         for m in messages:
             if not m.is_response:
                 if m.recipient_email == email:
                     return m.recipient_public_body
-                if m.recipient_email.split('@')[1] == domain:
+                if ('@' in m.sender_email and
+                        m.recipient_email.split('@')[1] == domain):
                     return m.recipient_public_body
         return self.public_body
 
