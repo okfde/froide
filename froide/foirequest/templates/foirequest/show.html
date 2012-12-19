@@ -784,14 +784,14 @@
                       <button class="btn" type="submit">{% trans "I want to publish this message" %}</button>
                     </form>
                   </div>
-                  <div class="content-text">{{ message.get_content|urlize }}</div>
+                  <div class="content-text">{{ message.get_real_content|urlize }}</div>
                 {% else %}
                   <div class="alert alert-warning">
                     <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
                   </div>
                 {% endif %}
               {% else %}
-                <div class="content-text">{{ message.get_content|urlize }}</div>
+                <div class="content-text">{% if user == object.user or user.is_staff %}{{ message.get_real_content|urlize }}{% else %}{{ message.get_content|urlize }}{% endif %}</div>
               {% endif %}
             {% endif %}
           </div>
