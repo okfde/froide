@@ -20,7 +20,7 @@ from django.utils.timesince import timesince
 from django.utils.http import urlquote
 from django.core.mail import send_mail, mail_managers
 from django.utils.safestring import mark_safe
-from django.utils.html import escape
+from django.utils.html import escape, conditional_escape
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils import timezone
 
@@ -30,7 +30,7 @@ from taggit.models import TaggedItemBase
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (replace_email_name,
-        replace_email, remove_signature, remove_quote)
+        replace_email, remove_signature, fake_replacer, replacer)
 
 from .foi_mail import send_foi_mail
 
@@ -1064,8 +1064,8 @@ class FoiMessage(models.Model):
             profile = self.request.user.get_profile()
             content = profile.apply_message_redaction(content)
 
-        content = replace_email_name(content, _("<<name and email address>>"))
-        content = replace_email(content, _("<<email address>>"))
+        content = replace_email_name(content)
+        content = replace_email(content)
         return content
 
     def get_content(self):
@@ -1076,17 +1076,22 @@ class FoiMessage(models.Model):
             profile = self.request.user.get_profile()
             content = profile.apply_message_redaction(content)
 
-        content = replace_email_name(content, _("<<name and email address>>"))
-        content = replace_email(content, _("<<email address>>"))
+        content = replace_email_name(content)
+        content = replace_email(content)
         content = remove_signature(content)
-        content = remove_quote(content)
         return content
 
     def get_real_content(self):
         content = self.content
-        content = replace_email(content, _("<<email address>>"))
-        content = remove_quote(content)
-        return content
+
+        if self.request.user:
+            profile = self.request.user.get_profile()
+            content = profile.apply_message_redaction(content,
+                replacer=fake_replacer,
+                redact_greeting=False, redact_closing=False)
+
+        content = replace_email(content, replacer)
+        return mark_safe(conditional_escape(content))
 
     def clean(self):
         from django.core.exceptions import ValidationError

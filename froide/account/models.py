@@ -14,6 +14,8 @@ from django.core.mail import send_mail
 from django.contrib.auth.forms import SetPasswordForm
 from django.utils.crypto import constant_time_compare
 
+from froide.helper.text_utils import replacer
+
 
 @dispatch.receiver(post_save, sender=User, dispatch_uid="account.models.create_profile")
 def create_profile(sender, instance=None, created=False, **kwargs):
@@ -47,36 +49,39 @@ class Profile(models.Model):
             else:
                 return self.user.get_full_name()
 
-    def apply_message_redaction(self, content):
+    def apply_message_redaction(self, content,
+            replacer=replacer,
+            redact_closing=True,
+            redact_greeting=True):
+
         if self.address:
             for line in self.address.splitlines():
                 if line.strip():
-                    content = content.replace(line,
-                            unicode(_("<< Address removed >>")))
+                    content = content.replace(line, replacer(line, _("Address")))
         if self.user.email:
-            content = content.replace(self.user.email,
-                    unicode(_("<< Email removed >>")))
+            content = content.replace(self.user.email, replacer(self.user.email, _('Email')))
         if not self.private:
             return content
+
+        if redact_greeting:
+            for greeting in settings.POSSIBLE_GREETINGS:
+                match = greeting.search(content, re.I)
+                if match is not None and len(match.groups()):
+                    content = content.replace(match.group(1),
+                        replacer(match.group(1), _("Greeting")))
+
         last_name = self.user.last_name
         first_name = self.user.first_name
         full_name = self.user.get_full_name()
-        content = content.replace(full_name,
-                unicode(_("<< Name removed >>")))
-        content = content.replace(last_name,
-                unicode(_("<< Name removed >>")))
-        content = content.replace(first_name,
-                unicode(_("<< Name removed >>")))
-        for greeting in settings.POSSIBLE_GREETINGS:
-            match = greeting.search(content, re.I)
-            if match is not None and len(match.groups()):
-                content = content.replace(match.group(1),
-                    unicode(_("<< Greeting >>")))
+        content = content.replace(full_name, replacer(full_name, _("Name")))
+        content = content.replace(last_name, replacer(last_name, _("Name")))
+        content = content.replace(first_name, replacer(first_name, _("Name")))
 
-        for closing in settings.POSSIBLE_CLOSINGS:
-            match = closing.search(content, re.I)
-            if match is not None:
-                content = content[:match.end()]
+        if redact_closing:
+            for closing in settings.POSSIBLE_CLOSINGS:
+                match = closing.search(content, re.I)
+                if match is not None:
+                    content = content[:match.end()]
 
         return content
 

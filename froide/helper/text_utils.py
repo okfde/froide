@@ -1,6 +1,10 @@
 import re
 import htmlentitydefs
 
+from django.utils.translation import ugettext_lazy as _
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
+
 ##
 # From http://effbot.org/zone/re-sub.htm#unescape-html
 # Removes HTML or XML character references and entities from a text string.
@@ -29,6 +33,23 @@ def unescape(text):
                 pass
         return text  # leave as is
     return re.sub("&#?\w+;", fixup, text)
+
+
+dummy = _(u'Redacted content')
+fake_dummy = _(u"Only visible to you")
+# WRAP = u'<span class="redacted" rel="tooltip" title="{title}">{content}</span>'
+# FAKE_WRAP = u'<span class="redacted-fake" rel="tooltip" title="{title}">{content}</span>'
+
+WRAP = u'{title}'
+FAKE_WRAP = u'@{content}@'
+
+
+def fake_replacer(s, title=fake_dummy, wrap=FAKE_WRAP):
+    return wrap.format(title=title, content=s)
+
+
+def replacer(s, title=dummy, wrap=WRAP, replace_char='X'):
+    return wrap.format(content=replace_char * len(s), title=title)
 
 
 def remove_quote(text, replacement=u"", quote_prefix=u">",
@@ -74,11 +95,11 @@ def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
 EMAIL_NAME_RE = re.compile(r'[,:]? "?.*?"? <[^@]+@[^>]+>')
 
 
-def replace_email_name(text, replacement=u""):
-    return EMAIL_NAME_RE.sub(replacement, text)
+def replace_email_name(text, replacer=replacer):
+    return EMAIL_NAME_RE.sub(lambda x: replacer(x.group(0)), text)
 
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 
-def replace_email(text, replacement=u""):
-    return EMAIL_RE.sub(replacement, text)
+def replace_email(text, replacer=replacer):
+    return EMAIL_RE.sub(lambda x: replacer(x.group(0)), text)
