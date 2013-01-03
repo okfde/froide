@@ -94,15 +94,20 @@ class EmailParser(object):
         for s, enc in decodefrag:
             if enc:
                 try:
-                    s = unicode(s, enc)
+                    s = unicode(s, enc, errors='replace')
                 except UnicodeDecodeError:
                     # desperate move here
                     try:
                         s = s.decode("latin1")
                     except:
                         pass
+            else:
+                try:
+                    s = s.decode("latin1")
+                except:
+                    s = unicode(s, errors='ignore')
             fragments.append(s)
-        field = ''.join(fragments)
+        field = u''.join(fragments)
         return field.replace('\n\t', " ")
 
     def get_address_list(self, msgobj, field):
@@ -131,13 +136,13 @@ class EmailParser(object):
                 charset = part.get_content_charset() or 'ascii'
                 body.append(unicode(
                     part.get_payload(decode=True),
-                    charset, 'replace').encode('utf8', 'replace'))
+                    charset, 'replace'))
             elif part.get_content_type() == "text/html":
                 charset = part.get_content_charset() or 'ascii'
                 html.append(unicode(
                     part.get_payload(decode=True),
                     charset,
-                    'replace').encode('utf8', 'replace'))
+                    'replace'))
 
     def parse(self, content):
         p = Parser()
@@ -147,8 +152,8 @@ class EmailParser(object):
         body = []
         html = []
         self.parse_body(msgobj.walk(), attachments, body, html)
-        body = '\n'.join(body)
-        html = '\n'.join(html)
+        body = u'\n'.join(body)
+        html = u'\n'.join(html)
 
         tos = self.get_address_list(msgobj, 'To')
         tos.extend(self.get_address_list(msgobj, 'X-Original-To'))
