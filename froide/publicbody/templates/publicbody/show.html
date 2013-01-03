@@ -11,6 +11,12 @@
 <p>
   <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
 </p>
+{% else %}
+  {% if object.request_note %}
+    <div class="alert">
+      {{ object.request_note_markdown|safe }}
+    </div>
+  {% endif %}
 {% endif %}
 <dl>
   <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
