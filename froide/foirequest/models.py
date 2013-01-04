@@ -510,7 +510,7 @@ class FoiRequest(models.Model):
             if not m.is_response:
                 if m.recipient_email == email:
                     return m.recipient_public_body
-                if ('@' in m.sender_email and
+                if ('@' in m.recipient_email and
                         m.recipient_email.split('@')[1] == domain):
                     return m.recipient_public_body
         return self.public_body
