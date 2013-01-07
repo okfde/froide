@@ -209,8 +209,7 @@ class PublicBody(models.Model):
     description = models.TextField(_("Description"), blank=True)
     topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),
             null=True, on_delete=models.SET_NULL)
-    url = models.URLField(_("URL"), null=True, blank=True,
-            verify_exists=False, max_length=500)
+    url = models.URLField(_("URL"), null=True, blank=True, max_length=500)
     parent = models.ForeignKey('PublicBody', null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
             related_name="children")
