@@ -472,6 +472,10 @@ def escalation_message(request, slug):
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
+    if not foirequest.can_be_escalated():
+        messages.add_message(request, messages.ERROR,
+                _('Your request cannot be escalated.'))
+        return show(request, slug, status=400)
     form = EscalationMessageForm(foirequest, request.POST)
     if form.is_valid():
         form.save()
