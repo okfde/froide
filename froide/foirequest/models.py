@@ -1290,7 +1290,7 @@ class FoiEvent(models.Model):
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
-        return "%s-%d" % (_("event"), self.id)
+        return u"%s-%d" % (unicode(_("event")), self.id)
 
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),
