@@ -114,7 +114,7 @@ class EmailParser(object):
         address_list = getaddresses(msgobj.get_all(field, []))
         fixed = []
         for addr in address_list:
-            fixed.append((self.parse_header_field(addr[0]), addr[1]))
+            fixed.append((self.parse_header_field(addr[0]), addr[1].lower()))
         return fixed
 
     def parse_date(self, date_str):
