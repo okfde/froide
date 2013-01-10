@@ -108,7 +108,7 @@ class EmailParser(object):
                     s = unicode(s, errors='ignore')
             fragments.append(s)
         field = u''.join(fragments)
-        return field.replace('\n\t', " ")
+        return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
     def get_address_list(self, msgobj, field):
         address_list = getaddresses(msgobj.get_all(field, []))
