@@ -1016,7 +1016,7 @@ class RequestTest(TestCase):
 class MediatorTest(TestCase):
 
     def setUp(self):
-        factories.make_world()
+        self.site = factories.make_world()
 
     def test_hiding_content(self):
         req = FoiRequest.objects.all()[0]
@@ -1039,3 +1039,21 @@ class MediatorTest(TestCase):
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertTrue(last.content_hidden)
+
+    def test_no_public_body(self):
+        user = User.objects.get(username='sw')
+        req = factories.FoiRequestFactory.create(
+            user=user,
+            public_body=None,
+            status='public_body_needed',
+            site=self.site
+        )
+        req.save()
+        self.client.login(username='sw', password='froide')
+        response = self.client.get(req.get_absolute_url())
+        self.assertNotIn('Mediation', response.content)
+        response = self.client.post(reverse('foirequest-escalation_message',
+            kwargs={'slug': req.slug}))
+        self.assertEqual(response.status_code, 400)
+        message = list(response.context['messages'])[0]
+        self.assertIn('cannot be escalated', message.message)

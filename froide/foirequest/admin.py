@@ -72,7 +72,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
             'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
                     self.model._meta.get_field(
-                        'same_as').rel, using=db).render(
+                        'same_as').rel, self.admin_site, using=db).render(
                             'req_id', None).replace('../../..', '../..')),
             'applabel': opts.app_label
         }

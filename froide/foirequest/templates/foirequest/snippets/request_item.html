@@ -20,6 +20,9 @@
         {% endif %}
       </dd>
     </dl>
-    <small class="muted">{{ object.readable_status }}, {% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</small>
+    <small class="muted">
+      {{ object.readable_status }}, {% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}
+      {% if object.same_as_count %} - <a class="muted" href="{{ object.url }}#identical">{% blocktrans count counter=object.same_as_count %}{{ counter }} identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>{% endif %}
+    </small>
   </div>
 </div>

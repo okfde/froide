@@ -382,6 +382,10 @@ class FoiRequest(models.Model):
     def awaits_response(self):
         return self.status == 'awaiting_response' or self.status == 'overdue'
 
+    def can_be_escalated(self):
+        return not self.needs_public_body() and (
+            self.is_overdue() or self.reply_received())
+
     def is_overdue(self):
         if self.due_date:
             return self.due_date < timezone.now()
@@ -510,7 +514,7 @@ class FoiRequest(models.Model):
             if not m.is_response:
                 if m.recipient_email == email:
                     return m.recipient_public_body
-                if ('@' in m.sender_email and
+                if ('@' in m.recipient_email and
                         m.recipient_email.split('@')[1] == domain):
                     return m.recipient_public_body
         return self.public_body

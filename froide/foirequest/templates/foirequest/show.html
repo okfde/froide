@@ -103,7 +103,7 @@
             </a>
           </li>
         {% endif %}
-        {% if object.law.mediator %}
+        {% if object.law.mediator and object.can_be_escalated %}
           <li{% if active_tab == 'escalate' %} class="active"{% endif %}>
             <a href="#escalate" data-toggle="tab">
               {% trans "Mediation" %}
@@ -158,7 +158,7 @@
         {% endif %}
 
         {# Escalate #}
-        {% if object.law.mediator %}
+        {% if object.law.mediator and object.can_be_escalated %}
           <div class="tab-pane no-print{% if active_tab == 'escalate' %} active{% endif %}" id="escalate">
             <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
               {% csrf_token %}
