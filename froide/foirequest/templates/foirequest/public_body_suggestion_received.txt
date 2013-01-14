@@ -7,7 +7,7 @@ you received a suggestion for a Public Body on your request '{{ title }}'.{% end
 {{ suggestion.reason }}
 
 {% blocktrans %}If you want to use this Public Body, go to your request and chose the Public Body from the list. Here is a link to your request:{% endblocktrans %}
-{{ url }}
+{{ go_url }}
 
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}

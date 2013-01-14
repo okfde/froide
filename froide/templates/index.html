@@ -3,21 +3,7 @@
 {% load url from future %}
 
 {% block banner %}
-  <div class="container">
-    <div class="alert alert-info alert-block">
-      <div class="row">
-        <div class="span9">
-          {% trans "Like this? Consider supporting us!" %}
-          <a href="{% url 'help-donate' %}" class="btn btn-small btn-success"><i class="icon-white icon-heart"></i> {% trans "Donate now!" %}</a>
-        </div>
-        <div class="span2">
-          <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
-            <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+    {% include "fundingnotice.html" %}
 {% endblock %}
 
 {% block body %}
