@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 import re
 
+from .settings import *  # noqa
+
+# Add your theme to the top of installed apps
+# INSTALLED_APPS = ['your_theme'] + INSTALLED_APPS
+
+
 DEBUG = True
 TEMPLATE_DEBUG = True
 
