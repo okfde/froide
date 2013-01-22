@@ -70,7 +70,7 @@ class MailTest(TestCase):
         self.assertEqual(len(email['attachments']), 1)
 
     def test_long_attachment_names(self):
-        req = FoiRequest.objects.all()[0]
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         with file(p("test_mail_04.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
@@ -80,7 +80,7 @@ class MailTest(TestCase):
         self.assertEqual(mail['attachments'][0].name, u'Kooperationen des MSW, Antrag '
                 'nach Informationsfreiheitsgesetz NRW, Stefan Safario vom 06.12.2012 - AW vom '
                 '08.01.2013 - RS.pdf')
-        req.add_message_from_email(mail, content)
+        request.add_message_from_email(mail, content)
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
