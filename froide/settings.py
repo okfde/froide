@@ -144,7 +144,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, "templates"),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -180,7 +180,7 @@ INSTALLED_APPS = (
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -365,8 +365,3 @@ djcelery.setup_loader()
 
 CELERY_RESULT_BACKEND = "database"
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-try:
-    from local_settings import *  # noqa
-except ImportError:
-    pass
