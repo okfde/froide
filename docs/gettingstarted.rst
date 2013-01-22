@@ -28,23 +28,26 @@ Install the requirements inside the virtual env with `pip`::
 
 If only your global `pip` is available, run `easy_install pip`. The dependency installation takes a couple of seconds, but after that everything is in place.
 
-Copy `local_settings.py.example` to `local_settings.py`::
+Copy `custom_settings.py.example` to `custom_settings.py`::
 
     cd froide
-    cp local_settings.py.example local_settings.py
+    cp custom_settings.py.example custom_settings.py
 
-The development environment uses SQLite. You can change that in `local_settings.py`, if you want, but you don't have to.
+The development environment uses SQLite. You can override the default Django settings values for froide in your `custom_settings.py`, if you want, but you don't have to.
+
+Your `custom_settings.py` file (you can name it differently) is your Django settings file that you must give on each Django manage.py command. You can also set the `DJANGO_SETTINGS_MODULE` environment variable.
+
 Sync and migrate and *do NOT* create a superuser just yet::
 
-    python manage.py syncdb --noinput --migrate
+    python manage.py syncdb --noinput --migrate --settings=froide.custom_settings
 
 Now you can create a superuser account::
 
-    python manage.py createsuperuser
+    python manage.py createsuperuser --settings=froide.custom_settings
 
 That's it for a setup that basically works. Run this::
 
-    python manage.py runserver
+    python manage.py runserver --settings=froide.custom_settings
 
 and go to `http://localhost:8000 <http://localhost:8000>`_. You should
 be greeted by a working Froide installation. It doesn't have any data
@@ -55,13 +58,13 @@ For more information on the different models you find in the admin visit :doc:`m
 Run tests
 ---------
 
-Froide has a test suite. Copy `test_settings.py.example` to `test_settings.py`. `test_settings.py` does not import your `local_settings.py` changes.
+Froide has a test suite. Copy `test_settings.py.example` to `test_settings.py`. `test_settings.py` does not use your `custom_settings.py` changes.
 
-You can then run the shell script for tests::
+You can then run for tests::
 
-    sh runtests.sh
+    make test
 
-This also does timing and a test coverage analysis that you can then
+This also does test coverage analysis that you can then
 find at `htmlcov/index.html`.
 Note some tests will not work without a search engine like solr running.
 
