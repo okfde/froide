@@ -19,15 +19,18 @@
   <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
   <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
-  <meta name="google-site-verification" content="upljx19ZJVGT73Sx1miWKLOWBKga4LQJ_hqFl0vhhJE" />
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
   <meta name="language" content="{{ LANGUAGE_CODE }}" />
+
   {# Translators: meta keywords #}
   <meta name="keywords" content="{% trans "Freedom of Information Requests, Freedom of Information Law, Public Body Information" %}" />
-
   {# Translators: meta description #}
   <meta name="description" content="{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  {% block additional_meta %}
+  {% endblock %}
+
+
   <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" />
   <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png"/>
 
@@ -104,7 +107,7 @@
       </div>
     </div>
   </div>
-  {% block banner %}{% endblock %}
+  {% block index_banner %}{% endblock %}
 
   {% if messages %}
   <div class="container">
@@ -124,37 +127,33 @@
 
 <hr/>
 <footer class="container" id="footer">
+  {% block footer %}
     <div class="row">
       <div class="span9">
+        {% block footer_description %}
         <p>
           {% url 'help-donate' as about_url %}
-          {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://stefanwehrmeyer.com">Stefan Wehrmeyer</a>. If you want to support Froide, please visit the <a href="{{url}}">repository on GitHub</a>.{% endblocktrans %}
+          {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://www.okfn.org">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="{{url}}">repository on GitHub</a>.{% endblocktrans %}
         </p>
+        {% endblock %}
       </div>
       <div class="span3">
-        <a href="http://www.okfn.de"><img src="{{ STATIC_URL }}img/okf.png" /></a>
+        {% block footer_logo %}
+        <a href="http://www.okfn.de">
+          <img src="{{ STATIC_URL }}img/okf.png" />
+        </a>
+        {% endblock %}
       </div>
     </div>
     <hr/>
     <div class="row">
       <ul class="span12 unstyled pagination-centered">
+        {% block footer_menu %}
         <li>
           <a href="{% url 'help-about' %}">{% trans "About" %}</a>
         </li>
-        <li>
-          <a href="http://blog.fragdenstaat.de/">{% trans "Blog" %}</a>
-        </li>
-        <li>
-          <a href="https://twitter.com/fragdenstaat">@fragdenstaat</a>
-        </li>
-        <li>
-          <a href="http://lists.okfn.org/mailman/listinfo/fragdenstaat">
-            {% trans "Mailinglist!" %}
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'help-about' %}#impressum">{% trans "Impressum" %}</a>
-        </li>
+        {% block footer_menu_custom %}
+        {% endblock %}
         <li>
           <a href="{% url 'help-index' %}">{% trans "Help" %}</a>
         <li>
@@ -163,21 +162,21 @@
         <li>
           <a href="{% url 'help-privacy' %}">{% trans "Privacy Statement" %}</a>
         </li>
+        {% endblock %}
       </ul>
     </div>
+    {% endblock %}
   </footer>
 
   <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery.js"%3E%3C/script%3E'))</script>
   <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
   <script src="{{ STATIC_URL }}js/libs/jquery.autocomplete.js"></script>
-  
-  
+
   <!-- scripts concatenated and minified via ant build script-->
   <script src="{{ STATIC_URL }}js/script.js"></script>
   <!-- end concatenated and minified scripts-->
-  
-  
+
   <!--[if lt IE 7 ]>
     <script src="{{ STATIC_URL }}js/libs/dd_belatedpng.js"></script>
     <script> DD_belatedPNG.fix('img, .png_bg'); </script>
@@ -185,18 +184,8 @@
   {% block extra_footer %}
   {% endblock %}
   {% if not debug %}
-    <!-- Piwik --> 
-    <script type="text/javascript">
-    var pkBaseURL = (("https:" == document.location.protocol) ? "https://fragdenstaat.de/piwik/" : "http://fragdenstaat.de/piwik/");
-    document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-    </script><script type="text/javascript">
-    try {
-    var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-    piwikTracker.trackPageView();
-    piwikTracker.enableLinkTracking();
-    } catch( err ) {}
-    </script><noscript><p><img src="https://fragdenstaat.de/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
-    <!-- End Piwik Tracking Code -->
-    {% endif %}
+    {% block tracking_code %}
+    {% endblock %}
+  {% endif %}
 </body>
 </html>

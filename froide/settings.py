@@ -77,7 +77,7 @@ X_ACCEL_REDIRECT_PREFIX = '/protected'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "static")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "public")
 
 # URL that handles the static files like app media.
 # Example: "http://media.lawrence.com"
@@ -85,7 +85,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, "..", "media"),
+    os.path.join(PROJECT_ROOT, "static"),
 )
 
 
@@ -123,9 +123,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
+    'django.template.loaders.filesystem.Loader',
 )
 
 MIDDLEWARE_CLASSES = [
@@ -144,7 +143,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, "templates"),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -171,6 +170,7 @@ INSTALLED_APPS = (
     'taggit',
     'django_gravatar',
     'floppyforms',
+    'overextends',
 
     # local
     'froide.foirequest',
@@ -180,7 +180,7 @@ INSTALLED_APPS = (
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -365,8 +365,3 @@ djcelery.setup_loader()
 
 CELERY_RESULT_BACKEND = "database"
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-try:
-    from local_settings import *  # noqa
-except ImportError:
-    pass

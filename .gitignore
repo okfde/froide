@@ -7,8 +7,7 @@ local_*.py
 data/
 solr/
 files/
-artwork/
-documents/
 .coverage
 */_build/
-froide/htmlcov/
+htmlcov/
+public/
