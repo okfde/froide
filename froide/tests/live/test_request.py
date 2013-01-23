@@ -54,6 +54,8 @@ class TestMakingRequest(LiveServerTestCase):
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.search-results .result'))
         self.selenium.find_element_by_css_selector('.search-results .result label').click()
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
         self.selenium.find_element_by_id('continue-foicheck').click()
         req_title = 'FoiRequest Number'
@@ -88,6 +90,8 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('foirequest-make_request',
                 kwargs={'public_body': self.pb.slug})))
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
         self.selenium.find_element_by_id('continue-foicheck').click()
         req_title = 'FoiRequest Number'
@@ -134,6 +138,8 @@ class TestMakingRequest(LiveServerTestCase):
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.search-results .result'))
         self.selenium.find_element_by_css_selector('.search-results .result label').click()
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
         self.selenium.find_element_by_id('continue-foicheck').click()
         req_title = 'FoiRequest Number'
