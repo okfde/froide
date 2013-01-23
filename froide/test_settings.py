@@ -87,7 +87,7 @@ X_ACCEL_REDIRECT_PREFIX = '/protected'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "static")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "public")
 
 # URL that handles the static files like app media.
 # Example: "http://media.lawrence.com"
@@ -95,7 +95,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, "..", "media"),
+    os.path.join(PROJECT_ROOT, "static"),
 )
 
 
