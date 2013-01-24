@@ -16,6 +16,7 @@ from froide.helper.cache import cache_anonymous_page
 
 from .models import (PublicBody,
     PublicBodyTopic, FoiLaw, Jurisdiction)
+from .csv_import import CSVImporter
 
 
 class PublicBodyListView(JSONResponseListView):
@@ -139,3 +140,25 @@ def confirm(request):
     return HttpResponseRedirect(
         urlresolvers.reverse('admin:publicbody_publicbody_change',
             args=(pb.id,)))
+
+
+def import_csv(request):
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff and not request.user.is_superuser:
+        return render_403(request)
+    if not request.method == 'POST':
+        return render_403(request)
+    importer = CSVImporter()
+    url = request.POST.get('url')
+    try:
+        if not url:
+            raise ValueError(_('You need to provide a url.'))
+        importer.import_from_url(url)
+    except Exception as e:
+        messages.add_message(request, messages.ERROR, e.message)
+    else:
+        messages.add_message(request, messages.SUCCESS,
+            _('Public Bodies were imported.'))
+    return HttpResponseRedirect(
+        urlresolvers.reverse('admin:publicbody_publicbody_changelist'))
