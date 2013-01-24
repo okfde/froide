@@ -17,6 +17,7 @@ Freedom of Information Portal.
 
    about
    gettingstarted
+   importpublicbodies
    models
    configuration
    development
