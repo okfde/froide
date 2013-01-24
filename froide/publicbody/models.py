@@ -178,12 +178,7 @@ class FoiLaw(models.Model):
 
 class PublicBodyTopicManager(models.Manager):
     def get_list(self):
-        """This is an unportable hack in order to put
-        the 'Andere' (other) topic (currently first item in list)
-        at the end of the list
-        TODO: solve this via some kind of boost field"""
-        topics = list(self.get_query_set().order_by("name"))
-        return topics[1:] + topics[:1]
+        return list(self.get_query_set().order_by("rank", "name"))
 
 
 class PublicBodyTopic(models.Model):
@@ -191,6 +186,7 @@ class PublicBodyTopic(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     count = models.IntegerField(_("Count"), default=0)
+    rank = models.IntegerField(_("Rank"), default=0)
 
     objects = PublicBodyTopicManager()
 
