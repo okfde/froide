@@ -1,17 +1,26 @@
+---
 language: python
 python:
-  - "2.7"
+- '2.7'
+- '2.6'
 services:
-  - elasticsearch
+- elasticsearch
 before_install:
-  - export PIP_USE_MIRRORS=true
-  - export PIP_INDEX_URL=https://simple.crate.io/
+- export PIP_USE_MIRRORS=true
+- export PIP_INDEX_URL=https://simple.crate.io/
 install:
-  - make createenv
-  - source froideenv/bin/activate
-  - pip install -e .
+- make createenv
+- source froideenv/bin/activate
+- pip install -e .
 script:
-  - make test
+- make test
 branches:
   only:
-    - master
+  - master
+env:
+  global:
+  - secure: ! 'YDgxL3JEj4O68n/HlOMIbUYPcNvCzYuXSI+0v7Ugc5u/eN3F/fAgVbeE9L1z
+
+      UlQ8uf6s71dARsjr0u65/oadMm+5DLAdQi23iQhqjQ6ymRaLcuJ/w8R7bEPU
+
+      1di12QzJ8M1ZNHJSwnEOh6rcRric9gv+KEMfGEuhxKbFJr10V98='
