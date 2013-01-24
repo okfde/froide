@@ -1,17 +1,26 @@
+---
 language: python
 python:
-  - "2.6"
-  - "2.7"
+- '2.7'
+- '2.6'
 services:
-  - elasticsearch
+- elasticsearch
 before_install:
-  - export PIP_USE_MIRRORS=true
-  - export PIP_INDEX_URL=https://simple.crate.io/
+- export PIP_USE_MIRRORS=true
+- export PIP_INDEX_URL=https://simple.crate.io/
 install:
-  - pip install -e .
-  - pip install -r requirements-test.txt
+- pip install terrarium boto
+- terrarium key requirements-test.txt
+- terrarium --target froideenv --remote-key-format "u/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://resources.opendatalabs.org.s3.amazonaws.com/u/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --target froideenv --storage-dir . install requirements-test.txt)
+- source froideenv/bin/activate
+- pip install -e .
 script:
-  - make test
+- make test
 branches:
   only:
-    - master
+  - master
+env:
+  global:
+  - S3_BUCKET=resources.opendatalabs.org
+  - S3_ACCESS_KEY=AKIAIR7376XDHJS5KUIQ
+  - secure: "X3xh20YCd5dGYsRj12+ma4pQa4dIclsoDbHZ23vGRcxQdRAIsCv60aIlmEnA\nOwDVjcLivTs6QI+AXNfbsqCatt3MDG0o3zM4IDEciPJL7z6mADtGKiSNDyQ0\nNSGn9JeNU/oN9ZlFM01hJkHY42Ir4XJQkRhFjk0XBDvyk5vG7+g="
