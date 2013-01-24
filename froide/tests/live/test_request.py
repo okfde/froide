@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 from django.contrib.auth.models import User
 
-from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
 from froide.foirequest.tests import factories
