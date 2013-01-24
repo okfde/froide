@@ -7,8 +7,6 @@ services:
 before_install:
   - export PIP_USE_MIRRORS=true
   - export PIP_INDEX_URL=https://simple.crate.io/
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
 install:
   - pip install -e .
   - pip install -r requirements-test.txt
