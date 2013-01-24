@@ -8,7 +8,7 @@ before_install:
   - export PIP_USE_MIRRORS=true
   - export PIP_INDEX_URL=https://simple.crate.io/
 install:
-  - make install
+  - make createenv
   - source froideenv/bin/activate
   - pip install -e .
 script:
