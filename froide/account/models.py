@@ -195,7 +195,7 @@ class AccountManager(object):
                             count = User.objects.filter(username__startswith=username).count()
                         else:
                             count += 1
-                    user.username += postfix
+                    user.username = username + postfix
                     user.save()
                 except IntegrityError:
                     transaction.rollback()
