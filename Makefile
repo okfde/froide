@@ -3,6 +3,7 @@ export DJANGO_SETTINGS_MODULE=froide.test_settings
 createenv:
 	pip install terrarium
 	wget "http://resources.opendatalabs.org.s3.amazonaws.com/u/stwe/froideenv/x86_64-2.7-0a8de6e150ea2c40eb2ffa80ce6a1762"
+	terrarium key requirements-test.txt
 	terrarium --target froideenv --storage-dir . install requirements-test.txt
 
 test:
