@@ -19,6 +19,8 @@ branches:
   - master
 env:
   global:
+  - S3_BUCKET=resources.opendatalabs.org
+  - S3_ACCESS_KEY=AKIAIR7376XDHJS5KUIQ
   - secure: ! 'YDgxL3JEj4O68n/HlOMIbUYPcNvCzYuXSI+0v7Ugc5u/eN3F/fAgVbeE9L1z
 
       UlQ8uf6s71dARsjr0u65/oadMm+5DLAdQi23iQhqjQ6ymRaLcuJ/w8R7bEPU
