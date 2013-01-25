@@ -9,7 +9,9 @@ before_install:
 - export PIP_USE_MIRRORS=true
 - export PIP_INDEX_URL=https://simple.crate.io/
 install:
-- make createenv
+- pip install terrarium boto
+- terrarium key requirements-test.txt
+- terrarium --target froideenv --s --remote-key-format "u/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://resources.opendatalabs.org.s3.amazonaws.com/u/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --target froideenv --storage-dir . install requirements-test.txt)
 - source froideenv/bin/activate
 - pip install -e .
 script:
