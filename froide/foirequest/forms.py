@@ -282,6 +282,12 @@ class FoiRequestStatusForm(forms.Form):
             help_text=_('Please specify what the Public Body charges for the information.')
         )
 
+        def clean_costs(self):
+            costs = self.cleaned_data['costs']
+            if costs is None:
+                return 0.0
+            return costs
+
     def clean(self):
         pk = self.cleaned_data.get('redirected', None)
         status = self.cleaned_data.get('status', None)
