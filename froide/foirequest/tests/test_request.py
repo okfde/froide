@@ -1012,6 +1012,26 @@ class RequestTest(TestCase):
         self.assertEqual(same_req2.visibility, 2)
         self.assertEqual(len(mail.outbox), 3)
 
+    def test_empty_costs(self):
+        req = FoiRequest.objects.all()[0]
+        user = User.objects.get(username='sw')
+        req.status = 'awaits_classification'
+        req.user = user
+        req.save()
+        factories.FoiMessageFactory.create(
+            status=None,
+            request=req
+        )
+        self.client.login(username='sw', password='froide')
+        status = 'not_held'
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": ""})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.costs, 0.0)
+        self.assertEqual(req.status, status)
+
 
 class MediatorTest(TestCase):
 
