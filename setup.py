@@ -23,7 +23,7 @@ setup(
     url='https://github.com/stefanw/froide',
     license='MIT',
     description="German Freedom of Information Portal",
-    long_description=read('README.mkd'),
+    long_description=read('README.md'),
     author='Stefan Wehrmeyer',
     author_email='mail@stefanwehrmeyer.com',
     packages=[
