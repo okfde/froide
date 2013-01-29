@@ -827,9 +827,7 @@
             <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
             <div class="comment-form" id="comment-form-{{ message.id }}">
               {% if user.is_authenticated %}
-                {% with next=object.get_absolute_url %}
-                  {% render_comment_form for message %}
-                {% endwith %}
+                {% include "comments/foirequest/form.html" %}
               {% else %}
                 <a href="{% url 'account-login' %}" class="no-print">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
               {% endif %}
