@@ -27,17 +27,36 @@
 
 {% block body %}
 <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
-{% if foirequest.user.get_profile.private %}
-  <p>{% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}:<br/><strong>name, address and email address</strong>.{% endblocktrans %}</p>
+
+{% if foirequest.user == user %}
+  {% if foirequest.user.get_profile.private %}
+    <p>{% trans "Please remove all your personally identifying information." %}</p>
+  {% else %}
+    <p>{% trans "Please remove all your personally identifying information except your name." %}</p>
+  {% endif %}
 {% else %}
-  <p>{% blocktrans with name=foirequest.user.get_full_name %}Please remove the following personally identifying information of {{ name }}:<br/><strong>address and email address</strong>. You can leave the name.{% endblocktrans %}</p>
+  {% if foirequest.user.get_profile.private %}
+  <p>
+    {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}.{% endblocktrans %}
+  </p>
+  {% else %}
+    <p>
+      {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }} except the name itself.{% endblocktrans %}
+    </p>
+  {% endif %}
 {% endif %}
-<span class="help">{% trans "To redact draw black rectangles over information" %}</span>
+<div class="well">
+  <h3>{% trans "How to redact" %}</h3>
+  <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Draw a rectangle over the area by clicking the mouse and dragging it. Be sure to also black out the email address of {{ name }} if it is visible.{% endblocktrans %}</p>
+  <p>{% blocktrans %}The original version of the document will still be available to you (but not to the public). If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}</p>
+</div>
 <form id="redaction-form" method="post">
   {% csrf_token %}
-  <p><a href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>&nbsp;
-    <a href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>&nbsp;
-    <input type="button" id="submit-form" value="{% trans "Save and publish" %}"/>
+  <button class="btn btn-primary" id="submit-form">
+    {% trans "Save and publish blacked out version" %}
+  </button>
+  <a class="btn" href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Try again" %}</a>
+  <a class="btn" href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>
 </form>
 <div id="sending-form" style="display:none">
   <p>{% trans "Redaction process started, please wait..." %}</p>
