@@ -71,7 +71,8 @@
 <div id="lightbox-background"></div>
 <script>
   var pageRedactions = {};
-  var sendRedaction = function(){
+  var sendRedaction = function(e){
+    e.preventDefault();
     var form = document.getElementById('redaction-form');
     $('#redaction-form').hide();
     $('#sending-form').show();
