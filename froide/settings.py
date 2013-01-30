@@ -313,6 +313,7 @@ FROIDE_PUBLIC_BODY_BOOSTS = {
 }
 
 SITE_NAME = 'FroIde'
+SITE_EMAIL = 'info@example.com'
 SITE_URL = 'http://localhost:8000'
 
 FROIDE_DRYRUN = False

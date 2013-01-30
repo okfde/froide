@@ -45,6 +45,7 @@ CACHES = {
 }
 
 SITE_NAME = "Your Site Name"
+SITE_EMAIL = "info@example.com"
 SITE_URL = 'http://localhost:8000'
 
 rec = re.compile

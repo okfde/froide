@@ -7,6 +7,7 @@ def froide(request):
 
 def site_settings(request):
     return {"SITE_NAME": settings.SITE_NAME,
+            "SITE_EMAIL": settings.SITE_EMAIL,
             "SITE_URL": settings.SITE_URL,
             "FROIDE_DRYRUN": settings.FROIDE_DRYRUN,
             "FROIDE_DRYRUN_DOMAIN": settings.FROIDE_DRYRUN_DOMAIN,

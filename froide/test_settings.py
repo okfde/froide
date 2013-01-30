@@ -343,6 +343,7 @@ MIDDLEWARE_CLASSES = [
 MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
 SITE_NAME = "Frag den Staat"
+SITE_EMAIL = "info@example.com"
 SITE_URL = 'http://localhost:8000'
 
 rec = re.compile
