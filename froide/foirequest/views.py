@@ -178,6 +178,8 @@ def show(request, slug, template_name="foirequest/show.html",
             .filter(belongs_to__request=obj).all()
     for message in obj.messages:
         message.request = obj
+        if message.not_publishable:
+            obj.not_publishable_message = message
         message.all_attachments = filter(
             lambda x: x.belongs_to_id == message.id, all_attachments)
         for att in message.all_attachments:
