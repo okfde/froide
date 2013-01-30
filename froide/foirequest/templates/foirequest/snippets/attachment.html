@@ -17,7 +17,7 @@
             </p>
           {% else %}
             <p>
-              {% blocktrans with name=object.user.get_full_name %}Please check this attachment for personally identifying information (besides your name ({{ name }}). Then publish the document (unless you are explicitly forbidden from publishing) or redact the information.{% endblocktrans %}
+              {% blocktrans with name=object.user.get_full_name %}Please check this attachment for personally identifying information (besides your name {{ name }}). Then publish the document (unless you are explicitly forbidden from publishing) or redact the information.{% endblocktrans %}
             </p>
           {% endif %}
           {% if not attachment.can_approve %}
