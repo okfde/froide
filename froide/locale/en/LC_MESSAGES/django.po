@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-30 13:14+0100\n"
+"POT-Creation-Date: 2013-01-30 16:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -537,7 +537,7 @@ msgstr ""
 
 #: account/templates/account/show.html:82 foirequest/forms.py:265
 #: foirequest/models.py:223 foirequest/models.py:964
-#: foirequest/templates/foirequest/show.html:613
+#: foirequest/templates/foirequest/show.html:650
 msgid "Status"
 msgstr ""
 
@@ -772,7 +772,7 @@ msgstr ""
 #: foirequest/models.py:968
 #: foirequest/templates/foirequest/_request_form.html:11
 #: foirequest/templates/foirequest/request.html:282
-#: foirequest/templates/foirequest/show.html:594
+#: foirequest/templates/foirequest/show.html:631
 msgid "Subject"
 msgstr ""
 
@@ -823,7 +823,7 @@ msgid "Default address of %(publicbody)s"
 msgstr ""
 
 #: foirequest/forms.py:174 foirequest/templates/foirequest/request.html:274
-#: foirequest/templates/foirequest/show.html:607
+#: foirequest/templates/foirequest/show.html:644
 msgid "To"
 msgstr ""
 
@@ -968,7 +968,7 @@ msgid "Scanned Document"
 msgstr ""
 
 #: foirequest/forms.py:390 foirequest/forms.py:391
-#: foirequest/templates/foirequest/show.html:469
+#: foirequest/templates/foirequest/show.html:506
 msgid "Tags"
 msgstr ""
 
@@ -1493,7 +1493,7 @@ msgstr ""
 
 #: foirequest/models.py:1155
 #: foirequest/templates/foirequest/list_unchecked.html:24
-#: foirequest/templates/foirequest/show.html:627
+#: foirequest/templates/foirequest/show.html:664
 msgid "Attachments"
 msgstr ""
 
@@ -1656,140 +1656,140 @@ msgstr ""
 msgid "FoI Requests"
 msgstr ""
 
-#: foirequest/views.py:356
+#: foirequest/views.py:358
 msgid "Others can now suggest the Public Bodies for your request."
 msgstr ""
 
-#: foirequest/views.py:359
+#: foirequest/views.py:361
 msgid ""
 "Your request will be sent as soon as the newly created Public Body was "
 "confirmed by an administrator."
 msgstr ""
 
-#: foirequest/views.py:363
+#: foirequest/views.py:365
 msgid "Your request has been sent."
 msgstr ""
 
-#: foirequest/views.py:364
+#: foirequest/views.py:366
 msgid "?request-made"
 msgstr ""
 
-#: foirequest/views.py:369 foirequest/views.py:767
+#: foirequest/views.py:371 foirequest/views.py:769
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr ""
 
-#: foirequest/views.py:373
+#: foirequest/views.py:375
 msgid ""
 "There were errors in your form submission. Please review and submit again."
 msgstr ""
 
-#: foirequest/views.py:386 foirequest/views.py:392
+#: foirequest/views.py:388 foirequest/views.py:394
 msgid "Missing or invalid input!"
 msgstr ""
 
-#: foirequest/views.py:396
+#: foirequest/views.py:398
 msgid "This request doesn't need a Public Body!"
 msgstr ""
 
-#: foirequest/views.py:403
+#: foirequest/views.py:405
 #, python-format
 msgid "Request was sent to: %(name)s."
 msgstr ""
 
-#: foirequest/views.py:424
+#: foirequest/views.py:426
 msgid "Your Public Body suggestion has been added."
 msgstr ""
 
-#: foirequest/views.py:427
+#: foirequest/views.py:429
 msgid "This Public Body has already been suggested."
 msgstr ""
 
-#: foirequest/views.py:430
+#: foirequest/views.py:432
 msgid "You need to specify a Public Body!"
 msgstr ""
 
-#: foirequest/views.py:445
+#: foirequest/views.py:447
 msgid "Status of request has been updated."
 msgstr ""
 
-#: foirequest/views.py:448
+#: foirequest/views.py:450
 msgid "Invalid value for form submission!"
 msgstr ""
 
-#: foirequest/views.py:464
+#: foirequest/views.py:466
 msgid "Your Message has been sent."
 msgstr ""
 
-#: foirequest/views.py:479
+#: foirequest/views.py:481
 msgid "Your request cannot be escalated."
 msgstr ""
 
-#: foirequest/views.py:485
+#: foirequest/views.py:487
 msgid "Your Escalation Message has been sent."
 msgstr ""
 
-#: foirequest/views.py:513
+#: foirequest/views.py:515
 msgid "A concrete law has been set for this request."
 msgstr ""
 
-#: foirequest/views.py:526
+#: foirequest/views.py:528
 msgid "Tags have been set for this request"
 msgstr ""
 
-#: foirequest/views.py:543
+#: foirequest/views.py:545
 msgid "The resolution summary has been saved."
 msgstr ""
 
-#: foirequest/views.py:587
+#: foirequest/views.py:589
 msgid "A postal reply was successfully added!"
 msgstr ""
 
-#: foirequest/views.py:590
+#: foirequest/views.py:592
 msgid "There were errors with your form submission!"
 msgstr ""
 
-#: foirequest/views.py:620
+#: foirequest/views.py:622
 msgid "Your document was attached to the message."
 msgstr ""
 
-#: foirequest/views.py:660
+#: foirequest/views.py:662
 msgid "Request marked as not a FoI request."
 msgstr ""
 
-#: foirequest/views.py:674
+#: foirequest/views.py:676
 msgid "Request marked as checked."
 msgstr ""
 
-#: foirequest/views.py:691
+#: foirequest/views.py:693
 msgid "Attachment approved."
 msgstr ""
 
-#: foirequest/views.py:706
+#: foirequest/views.py:708
 msgid "Content published."
 msgstr ""
 
-#: foirequest/views.py:745
+#: foirequest/views.py:747
 msgid "You already made an identical request"
 msgstr ""
 
-#: foirequest/views.py:748
+#: foirequest/views.py:750
 #, python-format
 msgid ""
 "Please see this request on FragDenStaat.de where you granted access to this "
 "information: %(url)s"
 msgstr ""
 
-#: foirequest/views.py:761
+#: foirequest/views.py:763
 msgid ""
 "You successfully requested this document! Your request is displayed below."
 msgstr ""
 
-#: foirequest/views.py:823
+#: foirequest/views.py:825
 #, python-format
 msgid "%s_redacted.pdf"
 msgstr ""
 
-#: foirequest/views.py:856
+#: foirequest/views.py:858
 msgid "Deadline has been extended."
 msgstr ""
 
@@ -2033,12 +2033,12 @@ msgid "Feeds for these requests"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:111
-#: foirequest/templates/foirequest/show.html:452
+#: foirequest/templates/foirequest/show.html:489
 msgid "RSS Feed"
 msgstr ""
 
 #: foirequest/templates/foirequest/list.html:117
-#: foirequest/templates/foirequest/show.html:458
+#: foirequest/templates/foirequest/show.html:495
 msgid "Atom Feed"
 msgstr ""
 
@@ -2047,12 +2047,12 @@ msgid "Show all Non-FoI requests"
 msgstr ""
 
 #: foirequest/templates/foirequest/list_unchecked.html:14
-#: foirequest/templates/foirequest/show.html:485
+#: foirequest/templates/foirequest/show.html:522
 msgid "View on Admin site"
 msgstr ""
 
 #: foirequest/templates/foirequest/list_unchecked.html:17
-#: foirequest/templates/foirequest/show.html:501
+#: foirequest/templates/foirequest/show.html:538
 msgid "Mark as checked"
 msgstr ""
 
@@ -2194,19 +2194,25 @@ msgid ""
 "site moderator."
 msgstr ""
 
-#: foirequest/templates/foirequest/redact.html:56
+#: foirequest/templates/foirequest/redact.html:52
+msgid ""
+"Note: in order to redact documents an up-to-date version of a modern browser "
+"is required. Using Internet Explorer will likely not work."
+msgstr ""
+
+#: foirequest/templates/foirequest/redact.html:57
 msgid "Save and publish blacked out version"
 msgstr ""
 
-#: foirequest/templates/foirequest/redact.html:58
+#: foirequest/templates/foirequest/redact.html:59
 msgid "Try again"
 msgstr ""
 
-#: foirequest/templates/foirequest/redact.html:59
+#: foirequest/templates/foirequest/redact.html:60
 msgid "Cancel"
 msgstr ""
 
-#: foirequest/templates/foirequest/redact.html:62
+#: foirequest/templates/foirequest/redact.html:63
 msgid "Redaction process started, please wait..."
 msgstr ""
 
@@ -2483,7 +2489,7 @@ msgid "Review your Request and Submit"
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:278
-#: foirequest/templates/foirequest/show.html:567
+#: foirequest/templates/foirequest/show.html:604
 msgid "From"
 msgstr ""
 
@@ -2798,153 +2804,154 @@ msgid ""
 "to be confirmed."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:385
-msgid "Followers"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:388
-#, python-format
-msgid "%(counter)s follower"
-msgid_plural "%(counter)s followers"
-msgstr[0] ""
-msgstr[1] ""
-
-#: foirequest/templates/foirequest/show.html:399
-#: foirequest/templates/foirequest/show.html:423
-msgid "Follow request"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:407
-msgid "Unfollow request"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:411
-msgid "You follow this request"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:416
-msgid "You get notified of changes."
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:427
-msgid "Follow request?"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:432
-msgid "Get notified by email of changes."
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:442
-msgid "Share this request"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:448
-msgid "Feeds"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:462
-msgid "Short URL"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:483
-msgid "Staff Actions"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:496
-msgid "Marked as checked"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:506
-msgid "Marked as NOT FoI"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:511
-msgid "Mark as NOT FoI"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:517
-msgid "Extend deadline by months"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:519
-msgid "Extend Deadline"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:559
-msgid "Messages in this request"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:571
-msgid "change"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:576
-msgid "Set the Public Body that sent this message:"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:578
-msgid "Set Sending Public Body"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:598
-msgid "Date"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:619
-msgid "Admin"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:621
-msgid "View message in admin"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:639
-msgid "Upload Attachments"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:645
-msgid "Upload Document"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:656
+#: foirequest/templates/foirequest/show.html:384
 msgid ""
-"This reply contains documents that every person can get individual access "
-"to. However, we are not allowed to publish these documents online."
+"This request received documents that we are not allowed to publish. However, "
+"every person can get individual access to these documents by requesting them "
+"below."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:659
+#: foirequest/templates/foirequest/show.html:387
+#, python-format
 msgid ""
 "You stated that you are not allowed to publish the received documents. If "
-"this was a mistake, please contact info@example.com."
+"this was a mistake, please contact %(email)s."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:662
+#: foirequest/templates/foirequest/show.html:390
 msgid "You made the original request."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:666
+#: foirequest/templates/foirequest/show.html:394
 msgid "You made an identical request."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:670
-#: foirequest/templates/foirequest/show.html:679
+#: foirequest/templates/foirequest/show.html:398
+#: foirequest/templates/foirequest/show.html:407
 msgid ""
-"You can make a request identical to this one in your name to gain individual "
-"access to the information that we are not allowed to publish here."
+"Make an identical request in your name to get access to the information."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:671
-#: foirequest/templates/foirequest/show.html:684
+#: foirequest/templates/foirequest/show.html:399
+#: foirequest/templates/foirequest/show.html:412
 msgid "Make identical request in your name"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:687
+#: foirequest/templates/foirequest/show.html:415
 #, python-format
 msgid "So far one person also requested this document."
 msgid_plural ""
 "So far <strong>%(counter)s people</strong> requested this document."
 msgstr[0] ""
 msgstr[1] ""
+
+#: foirequest/templates/foirequest/show.html:422
+msgid "Followers"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:425
+#, python-format
+msgid "%(counter)s follower"
+msgid_plural "%(counter)s followers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: foirequest/templates/foirequest/show.html:436
+#: foirequest/templates/foirequest/show.html:460
+msgid "Follow request"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:444
+msgid "Unfollow request"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:448
+msgid "You follow this request"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:453
+msgid "You get notified of changes."
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:464
+msgid "Follow request?"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:469
+msgid "Get notified by email of changes."
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:479
+msgid "Share this request"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:485
+msgid "Feeds"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:499
+msgid "Short URL"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:520
+msgid "Staff Actions"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:533
+msgid "Marked as checked"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:543
+msgid "Marked as NOT FoI"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:548
+msgid "Mark as NOT FoI"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:554
+msgid "Extend deadline by months"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:556
+msgid "Extend Deadline"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:596
+msgid "Messages in this request"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:608
+msgid "change"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:613
+msgid "Set the Public Body that sent this message:"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:615
+msgid "Set Sending Public Body"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:635
+msgid "Date"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:656
+msgid "Admin"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:658
+msgid "View message in admin"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:676
+msgid "Upload Attachments"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:682
+msgid "Upload Document"
+msgstr ""
 
 #: foirequest/templates/foirequest/show.html:703
 msgid ""
