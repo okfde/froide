@@ -1,0 +1,10 @@
+{% load i18n %}
+<a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
+    {{ attachment.name }} ({{ attachment.size|filesizeformat }})
+  </a>
+  {% if attachment.can_preview %}
+    -
+    <a class="target-new" href="{{ attachment.get_preview_url }}">
+      {% trans "Preview in Browser" %}
+    </a>
+  {% endif %}
