@@ -1,4 +1,4 @@
 -r requirements.txt
 django-discover-runner==0.2.2
 pyelasticsearch==0.2
-selenium==2.25.0
+selenium==2.29.0
