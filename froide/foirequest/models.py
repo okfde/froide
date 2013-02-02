@@ -741,8 +741,12 @@ Sincerely yours
         send_address = True
         if request.law:
             send_address = not request.law.email_only
-        message.plaintext = request.construct_message_body(form_data['body'],
-                foi_law, post_data, send_address=send_address)
+        message.plaintext = request.construct_message_body(
+                form_data['body'],
+                foi_law,
+                post_data=post_data,
+                full_text=form_data['full_text'],
+                send_address=send_address)
         if public_body_object is not None:
             message.recipient_public_body = public_body_object
             message.recipient = public_body_object.name
@@ -758,16 +762,27 @@ Sincerely yours
             message.send()
         return request
 
-    def construct_message_body(self, text, foilaw, post_data, send_address=True):
+    def construct_message_body(self, text, foilaw, post_data,
+            full_text=False, send_address=True):
+
         letter_start, letter_end = "", ""
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
             letter_end = foilaw.get_letter_end_text(post_data)
+        if full_text:
+            body = text
+        else:
+            body = (
+                "{letter_start}\n\n{body}\n\n{letter_end}"
+            ).format(
+                letter_start=letter_start,
+                body=text,
+                letter_end=letter_end
+            )
+
         return render_to_string("foirequest/foi_request_mail.txt",
                 {"request": self,
-                "letter_start": letter_start,
-                "letter_end": letter_end,
-                "body": text,
+                "body": body,
                 "send_address": send_address
             })
 
@@ -865,7 +880,10 @@ Sincerely yours
             message.recipient_email = public_body.email
             message.plaintext = self.construct_message_body(
                 self.description,
-                self.law, {}, send_address=send_address)
+                self.law,
+                post_data={},
+                full_text=False,
+                send_address=send_address)
             assert not message.sent
             message.send()  # saves message
 

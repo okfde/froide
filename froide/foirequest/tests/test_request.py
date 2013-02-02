@@ -1032,6 +1032,25 @@ class RequestTest(TestCase):
         self.assertEqual(req.costs, 0.0)
         self.assertEqual(req.status, status)
 
+    def test_full_text_request(self):
+        self.client.login(username="dummy", password="froide")
+        pb = PublicBody.objects.all()[0]
+        law = pb.default_law
+        post = {"subject": "A Public Body Request",
+                "body": "This is another test body",
+                "full_text": "true",
+                "law": str(law.id),
+                "public_body": str(pb.id),
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        message = req.foimessage_set.all()[0]
+        self.assertIn(post['body'], message.plaintext)
+        self.assertNotIn(law.get_letter_start_text({}), message.plaintext)
+        self.assertNotIn(law.get_letter_end_text({}), message.plaintext)
+
 
 class MediatorTest(TestCase):
 

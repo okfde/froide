@@ -350,8 +350,14 @@ def submit_request(request, public_body=None):
             else:
                 foilaw = request_form.foi_law
 
-        foi_request = FoiRequest.from_request_form(user, public_body,
-                foilaw, form_data=request_form.cleaned_data, post_data=request.POST)
+        foi_request = FoiRequest.from_request_form(
+                user,
+                public_body,
+                foilaw,
+                form_data=request_form.cleaned_data,
+                post_data=request.POST
+        )
+
         if user.is_active:
             if sent_to_pb == 0:
                 messages.add_message(request, messages.INFO,
