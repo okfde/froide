@@ -4,7 +4,7 @@
 {% load markup %}
 {% load comments %}
 {% load floppyforms %}
-{% load foirequest_tags follower_tags account_tags %}
+{% load foirequest_tags account_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -429,49 +429,7 @@
 
       {% if user.is_authenticated and user != object.user %}
         <li>
-          <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
-            {% csrf_token %}
-            {% if followform %}
-              {{ followform.as_p }}
-              <button type="submit" class="btn">{% trans "Follow request" %}</button>
-            {% else %}
-              {% followrequest object user "followform" %}
-              {{ followform.as_p }}
-              {% if followform.following %}
-                <button class="input-large btn btn-info hover-btn-warning" type="submit">
-                  <span class="on-hover">
-                    <i class="icon-white icon-remove"></i>
-                    {% trans "Unfollow request" %}
-                  </span>
-                  <span class="on-display">
-                    <i class="icon-white icon-star"></i>
-                    {% trans "You follow this request" %}
-                  </span>
-                </button>
-                <p class="muted">
-                  <small>
-                    {% blocktrans %}You get notified of changes.{% endblocktrans %}
-                  </small>
-                </p>
-              {% else %}
-                <button class="input-large btn hover-btn-success" type="submit">
-                  <span class="on-hover">
-                    <i class="icon-white icon-star"></i>
-                    {% trans "Follow request" %}
-                  </span>
-                  <span class="on-display">
-                    <i class="icon-star-empty"></i>
-                    {% trans "Follow request?" %}
-                  </span>
-                </button>
-                <p class="muted">
-                  <small>
-                    {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
-                  </small>
-                </p>
-              {% endif %}
-            {% endif %}
-          </form>
+          {% include "foirequestfollower/follow_form.html" %}
         </li>
       {% endif %}
 
@@ -533,20 +491,26 @@
           <li>{% trans "Marked as checked" %}</li>
         {% else %}
           <li>
-            <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
+            <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn" type="submit">{% trans "Mark as checked" %}</button>
             </form>
+            <div style="display:none" id="mark-checked-form-success">
+              {% trans "Marked as checked" %}
+            </div>
           </li>
         {% endif %}
         {% if not object.is_foi %}
           <li>{% trans "Marked as NOT FoI" %}</li>
         {% else %}
           <li>
-            <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn" type="submit">{% trans "Mark as NOT FoI" %}</button>
             </form>
+            <div style="display:none" id="mark-not-foi-form-success">
+              {% trans "Marked as NOT FoI" %}
+            </div>
           </li>
         {% endif %}
         <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">

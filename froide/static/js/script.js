@@ -440,6 +440,23 @@ $(function(){
         $('.nav a[href="' + e.target.hash + '"]').parent().addClass("active");
     };
 
+    $('form.ajaxified').submit(function(e){
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function(response) {
+                var id = form.attr('id');
+                form.hide();
+                $('#' + id + '-success').fadeIn();
+            }
+        });
+        form.find('button').attr('disabled', 'disabled');
+        form.find('input').attr('disabled', 'disabled');
+    });
+
     $('.btn').on('touchend', function(){ $(this).click(); });
 
     if (Froide && Froide.url && Froide.url.autocompletePublicBody){

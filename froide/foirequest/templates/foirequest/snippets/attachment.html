@@ -9,7 +9,7 @@
   {% if user == object.user or user.is_staff %}
     <li class="alert alert-success">
       {% if attachment.can_approve or user.is_staff %}
-        <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+        <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
           {% csrf_token %}
           {% if object.user.get_profile.private %}
             <p>
@@ -33,6 +33,9 @@
           <a class="btn btn-inverse" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">{% trans "Redact this attachment" %}
           </a>
         </form>
+        <div style="display:none" id="approve-attachment-{{ attachment.pk }}-form-success">
+          {% include "foirequest/snippets/attachment_item.html" %}
+        </div>
       {% else %}
         <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
       {% endif %}
