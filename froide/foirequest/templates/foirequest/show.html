@@ -491,20 +491,26 @@
           <li>{% trans "Marked as checked" %}</li>
         {% else %}
           <li>
-            <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
+            <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn" type="submit">{% trans "Mark as checked" %}</button>
             </form>
+            <div style="display:none" id="mark-checked-form-success">
+              {% trans "Marked as checked" %}
+            </div>
           </li>
         {% endif %}
         {% if not object.is_foi %}
           <li>{% trans "Marked as NOT FoI" %}</li>
         {% else %}
           <li>
-            <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn" type="submit">{% trans "Mark as NOT FoI" %}</button>
             </form>
+            <div style="display:none" id="mark-not-foi-form-success">
+              {% trans "Marked as NOT FoI" %}
+            </div>
           </li>
         {% endif %}
         <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
