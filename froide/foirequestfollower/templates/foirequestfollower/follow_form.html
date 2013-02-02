@@ -44,16 +44,15 @@
   {% endif %}
 </form>
 <div id="followrequest-form-success" style="display:none">
-  {% if not followform.following %}
-  <button class="btn btn-success" disabled="disabled">
-    <i class="icon-white icon-star"></i>
-    {% trans "You follow this request" %}
-  </button>
-  {% else %}
-    <p class="muted">
-      <small>
+  <p class="muted">
+    <small>
+      {% if not followform.following %}
+        <i class="icon-ok"></i>
+        {% trans "You will receive notifications!" %}
+      {% else %}
+        <i class="icon-remove"></i>
         {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
-      </small>
-    </p>
-  {% endif %}
+      {% endif %}
+    </small>
+  </p>
 </div>
