@@ -13,7 +13,7 @@ from django.utils import timezone
 from froide.helper.email_utils import EmailParser
 
 from froide.foirequest.tasks import _process_mail
-from froide.foirequest.models import FoiRequest
+from froide.foirequest.models import (FoiRequest, FoiMessage, DeferredMessage)
 from froide.foirequest.tests import factories
 
 FILE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -87,3 +87,30 @@ class MailTest(TestCase):
         self.assertEqual(messages[1].subject, mail['subject'])
         self.assertEqual(len(messages[1].attachments), 2)
         self.assertEqual(messages[1].attachments[0].name, u"KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf")
+
+
+class DeferredMessageTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address="sw+yurpykc1hr@fragdenstaat.de")
+        factories.FoiMessageFactory.create(request=self.req)
+
+    def test_deferred(self):
+        count_messages = len(self.req.messages)
+        name, domain = self.req.secret_address.split('@')
+        bad_mail = '@'.join((name + 'x', domain))
+        with file(p("test_mail_01.txt")) as f:
+            mail = f.read().decode('utf-8')
+        mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
+        _process_mail(mail.encode('utf-8'))
+        self.assertEqual(count_messages,
+            FoiMessage.objects.filter(request=self.req).count())
+        dms = DeferredMessage.objects.filter(recipient=bad_mail)
+        self.assertEqual(len(dms), 1)
+        dm = dms[0]
+        dm.redeliver(self.req)
+        req = FoiRequest.objects.get(id=self.req.id)
+        self.assertEqual(len(req.messages), count_messages + 1)
+        dm = DeferredMessage.objects.get(id=dm.id)
+        self.assertEqual(dm.request, req)
