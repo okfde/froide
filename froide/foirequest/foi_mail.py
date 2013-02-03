@@ -36,8 +36,7 @@ def send_foi_mail(subject, message, from_email, recipient_list,
 
 
 def _process_mail(mail_string):
-
-    from .models import FoiRequest
+    from .models import FoiRequest, DeferredMessage
 
     parser = EmailParser()
     email = parser.parse(mail_string)
@@ -48,9 +47,11 @@ def _process_mail(mail_string):
     received_list = filter(mail_filter, received_list)
 
     # make original mail storeable as unicode
+    b64_encoded = False
     try:
         mail_string = mail_string.decode("utf-8")
     except UnicodeDecodeError:
+        b64_encoded = True
         mail_string = base64.b64encode(mail_string).decode("utf-8")
 
     already = set()
@@ -59,13 +60,24 @@ def _process_mail(mail_string):
         if secret_mail in already:
             continue
         already.add(secret_mail)
+        if not secret_mail.endswith('@%s' % settings.FOI_EMAIL_DOMAIN):
+            continue
         try:
             foi_request = FoiRequest.objects.get_by_secret_mail(secret_mail)
         except FoiRequest.DoesNotExist:
-            if secret_mail.endswith('@%s' % settings.FOI_EMAIL_DOMAIN):
+            try:
+                deferred = DeferredMessage.objects.get(recipient=secret_mail, request__isnull=False)
+                foi_request = deferred.request
+            except DeferredMessage.DoesNotExist:
+                if not b64_encoded:
+                    mail_string = base64.b64encode(mail_string).decode("utf-8")
+                DeferredMessage.objects.create(
+                    recipient=secret_mail,
+                    mail=mail_string,
+                )
                 mail_managers(_('Unknown FoI-Mail Recipient'),
                     unknown_foimail_message % {'address': secret_mail})
-            continue
+                continue
         foi_request.add_message_from_email(email, mail_string)
 
 
