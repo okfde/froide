@@ -166,6 +166,10 @@
         <div class="span5">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
           {{ request_form.body.errors }}
+          <label>
+            <input type="checkbox" id="full-letter" name="full_letter"/>
+            {% trans "I want to write the full request myself" %}
+          </label>
           <div class="letter">
             <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
             {{ request_form.body }}

@@ -39,6 +39,8 @@ class RequestForm(forms.Form):
                     'placeholder': _("Specify your request here..."),
                     "class": "span4"
                 }))
+    full_text = forms.BooleanField(required=False, initial=False,
+            label=_("Write complete request by yourself."))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
