@@ -177,6 +177,8 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
 class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
+    list_display = ('recipient', 'timestamp',)
+    raw_id_fields = ('request',)
     actions = ['redeliver']
 
     def redeliver(self, request, queryset):
