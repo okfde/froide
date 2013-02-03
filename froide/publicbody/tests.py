@@ -54,8 +54,9 @@ class PublicBodyTest(TestCase):
         self.assertEqual(obj['suggestions'], [])
 
     def test_csv(self):
-        csv = PublicBody.export_csv()
-        self.assertTrue(csv)
+        csv = PublicBody.export_csv(PublicBody.objects.all())
+        self.assertEqual(PublicBody.objects.all().count() + 1,
+            len(csv.splitlines()))
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
