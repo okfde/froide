@@ -1,5 +1,4 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.contrib import messages
@@ -34,8 +33,7 @@ def follow(request, slug):
             else:
                 messages.add_message(request, messages.INFO,
                         _("You are following this request. If you want to unfollow it, click the unfollow link in the emails you received."))
-
-        return HttpResponseRedirect(foirequest.get_absolute_url())
+        return redirect(foirequest)
     else:
         return show(request, slug, context={"followform": form}, status=400)
 
@@ -52,4 +50,4 @@ def unfollow_by_link(request, follow_id, check):
     else:
         messages.add_message(request, messages.ERROR,
             _("There was something wrong with your link. Perhaps try again."))
-    return HttpResponseRedirect(follower.request.get_absolute_url())
+    return redirect(follower.request)
