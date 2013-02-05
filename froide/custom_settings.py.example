@@ -59,6 +59,11 @@ SECRET_URLS = {
     "databrows": "databrowse"
 }
 
+# Possibly set this for https deployments
+# see https://docs.djangoproject.com/en/1.4/ref/settings/#secure-proxy-ssl-header
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+
+
 FROIDE_CONFIG = {
     "create_new_publicbody": True,
     "publicbody_empty": True,
