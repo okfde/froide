@@ -1359,8 +1359,10 @@ class DeferredMessage(models.Model):
         verbose_name_plural = _('Undelivered Messages')
 
     def __unicode__(self):
-        return _(u"Undelievered Message to %s (%s)") % (self.recipient,
-            self.request)
+        return _(u"Undelievered Message to %(recipient)s (%(request)s)") % {
+            'recipient': self.recipient,
+            'request': self.request
+        }
 
     def redeliver(self, request):
         from .tasks import process_mail

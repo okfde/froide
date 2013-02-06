@@ -202,7 +202,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
             for deferred in queryset:
                 deferred.redeliver(req)
 
-            self.message_user(request, _("Successfully triggered relivery."))
+            self.message_user(request, _("Successfully triggered redelivery."))
 
             return None
 
