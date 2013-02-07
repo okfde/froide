@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-06 12:20+0100\n"
-"PO-Revision-Date: 2013-02-06 12:25+0100\n"
+"POT-Creation-Date: 2013-02-07 16:11+0100\n"
+"PO-Revision-Date: 2013-02-07 16:14+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -596,7 +596,7 @@ msgstr "Titel"
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: account/templates/account/show.html:82 foirequest/forms.py:265
+#: account/templates/account/show.html:82 foirequest/forms.py:266
 #: foirequest/models.py:224 foirequest/models.py:965
 #: foirequest/templates/foirequest/show.html:614
 msgid "Status"
@@ -840,12 +840,12 @@ msgstr ""
 msgid "Unknown FoI-Mail Recipient"
 msgstr "Unbekannter IFG-Mail-Empfänger"
 
-#: foirequest/forms.py:30
+#: foirequest/forms.py:31
 msgid "Search for a topic or a public body:"
 msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
 
-#: foirequest/forms.py:32 foirequest/forms.py:34 foirequest/forms.py:162
-#: foirequest/forms.py:224 foirequest/forms.py:352 foirequest/forms.py:354
+#: foirequest/forms.py:33 foirequest/forms.py:35 foirequest/forms.py:163
+#: foirequest/forms.py:225 foirequest/forms.py:359 foirequest/forms.py:361
 #: foirequest/models.py:969
 #: foirequest/templates/foirequest/_request_form.html:11
 #: foirequest/templates/foirequest/request.html:282
@@ -853,62 +853,62 @@ msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
 msgid "Subject"
 msgstr "Betreff"
 
-#: foirequest/forms.py:36
+#: foirequest/forms.py:37
 msgid "Body"
 msgstr "Nachricht"
 
-#: foirequest/forms.py:39
+#: foirequest/forms.py:40
 msgid "Specify your request here..."
 msgstr "Beschreiben Sie Ihre Anfrage hier ..."
 
-#: foirequest/forms.py:43
+#: foirequest/forms.py:44
 msgid "This request will be public immediately."
 msgstr "Diese Anfrage wird sofort öffentlich sein."
 
-#: foirequest/forms.py:54 foirequest/forms.py:309
+#: foirequest/forms.py:55 foirequest/forms.py:310
 msgid "Information Law"
 msgstr "Informationsgesetz"
 
-#: foirequest/forms.py:72
+#: foirequest/forms.py:73
 msgid "You are not allowed to create a new public body"
 msgstr "Sie dürfen keine neuen Behörden erstellen."
 
-#: foirequest/forms.py:76
+#: foirequest/forms.py:77
 msgid "You must specify a public body"
 msgstr "Sie müssen eine Behörde angeben"
 
-#: foirequest/forms.py:82 foirequest/forms.py:86 foirequest/forms.py:153
-#: foirequest/forms.py:213 foirequest/forms.py:217 foirequest/forms.py:300
+#: foirequest/forms.py:83 foirequest/forms.py:87 foirequest/forms.py:154
+#: foirequest/forms.py:214 foirequest/forms.py:218 foirequest/forms.py:301
 msgid "Invalid value"
 msgstr "Ungültiger Wert"
 
-#: foirequest/forms.py:111 foirequest/forms.py:120
+#: foirequest/forms.py:112 foirequest/forms.py:121
 msgid "Invalid Information Law"
 msgstr "Ungültiges Informationsgesetz"
 
-#: foirequest/forms.py:136
+#: foirequest/forms.py:137
 msgid "Sending Public Body"
 msgstr "Absender (Behörde)"
 
-#: foirequest/forms.py:165 foirequest/forms.py:229
+#: foirequest/forms.py:166 foirequest/forms.py:230
 msgid "Your message"
 msgstr "Ihre Nachricht"
 
-#: foirequest/forms.py:172
+#: foirequest/forms.py:173
 #, python-format
 msgid "Default address of %(publicbody)s"
 msgstr "Standardadresse von %(publicbody)s"
 
-#: foirequest/forms.py:174 foirequest/templates/foirequest/request.html:274
+#: foirequest/forms.py:175 foirequest/templates/foirequest/request.html:274
 #: foirequest/templates/foirequest/show.html:608
 msgid "To"
 msgstr "An"
 
-#: foirequest/forms.py:179
+#: foirequest/forms.py:180
 msgid "Send physical address"
 msgstr "Adresse mitsenden"
 
-#: foirequest/forms.py:180
+#: foirequest/forms.py:181
 msgid ""
 "If the public body is asking for your post address, check this and we will "
 "append it to your message."
@@ -916,36 +916,36 @@ msgstr ""
 "Falls die Behörde Ihre Postanschrift benötigt, setzen Sie einen Haken und "
 "wir werden Ihre Anschrift an die Nachricht anhängen."
 
-#: foirequest/forms.py:204
+#: foirequest/forms.py:205
 msgid "Please specify a reason why this is the right Public Body:"
 msgstr "Begründen Sie, warum dies die richtige Behörde ist:"
 
-#: foirequest/forms.py:205
+#: foirequest/forms.py:206
 msgid "Reason"
 msgstr "Begründung"
 
-#: foirequest/forms.py:242
+#: foirequest/forms.py:243
 msgid "Suggestions"
 msgstr "Vorschläge"
 
-#: foirequest/forms.py:249 publicbody/models.py:294
+#: foirequest/forms.py:250 publicbody/models.py:294
 msgid "More Info"
 msgstr "Details"
 
-#: foirequest/forms.py:250
+#: foirequest/forms.py:251
 #, python-format
 msgid "Reason for this suggestion: %(reason)s"
 msgstr "Grund für diesen Vorschlag: %(reason)s"
 
-#: foirequest/forms.py:258 foirequest/templates/foirequest/show.html:341
+#: foirequest/forms.py:259 foirequest/templates/foirequest/show.html:341
 msgid "Refusal Reason"
 msgstr "Verweigerungsgrund"
 
-#: foirequest/forms.py:259
+#: foirequest/forms.py:260
 msgid "No or other reason given"
 msgstr "Kein oder anderer Grund"
 
-#: foirequest/forms.py:262
+#: foirequest/forms.py:263
 msgid ""
 "When you are (partially) denied access to information, the Public Body "
 "should always state the reason."
@@ -953,15 +953,15 @@ msgstr ""
 "Wenn Ihnen (auch nur teilweise) Auskunft verweigert wird, sollte die Behörde "
 "immer eine Begründung angeben."
 
-#: foirequest/forms.py:269
+#: foirequest/forms.py:270
 msgid "In what kind of state is this request?"
 msgstr "In welchem Zustand ist diese Anfrage?"
 
-#: foirequest/forms.py:271
+#: foirequest/forms.py:272
 msgid "Redirected to"
 msgstr "Weitergeleitet an"
 
-#: foirequest/forms.py:274
+#: foirequest/forms.py:275
 msgid ""
 "If your message is redirected to a different Public Body, please specify the "
 "new Public Body"
@@ -969,34 +969,34 @@ msgstr ""
 "Wenn Ihre Anfrage zu einer anderen Behörde weitergeleitet wurde, bitte geben "
 "Sie die neue Behörde an"
 
-#: foirequest/forms.py:278
+#: foirequest/forms.py:279
 msgid "Costs"
 msgstr "Kosten"
 
-#: foirequest/forms.py:282
+#: foirequest/forms.py:283
 msgid "Please specify what the Public Body charges for the information."
 msgstr ""
 "Bitte geben Sie an, welchen Betrag die Behörde für diese Information "
 "verlangt."
 
-#: foirequest/forms.py:296
+#: foirequest/forms.py:297
 msgid "Provide the redirected public body!"
 msgstr "Bitte geben Sie die neue Behörde an!"
 
-#: foirequest/forms.py:316
+#: foirequest/forms.py:317
 msgid "Invalid FoI Request for this operation"
 msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
 
-#: foirequest/forms.py:336
-msgid "Unknown Upload Content-Type"
-msgstr "Unbekannter Uploade-Content-Typ"
-
-#: foirequest/forms.py:338
-msgid "The scanned letter must be either PDF, JPG or PNG!"
-msgstr ""
-"Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein!"
-
 #: foirequest/forms.py:343
+#, python-format
+msgid ""
+"The scanned letter must be either PDF, JPG or PNG, but was detected as "
+"%(content_type)s!"
+msgstr ""
+"Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, "
+"wurde aber als %(content_type)s erkannt!"
+
+#: foirequest/forms.py:350
 msgid ""
 "Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/"
 "black out all private information concerning you</strong>. All uploaded "
@@ -1007,41 +1007,41 @@ msgstr ""
 "Informationen (z.B. Ihre Adresse).</strong> Alle hochgeladenen Dokumente "
 "werden veröffentlicht!"
 
-#: foirequest/forms.py:346
+#: foirequest/forms.py:353
 msgid "Send Date"
 msgstr "Sendedatum"
 
-#: foirequest/forms.py:347
+#: foirequest/forms.py:354
 msgid "Please give the date the reply was sent."
 msgstr "Bitte geben Sie das Datum an, an dem der Brief versendet wurde."
 
-#: foirequest/forms.py:349 foirequest/forms.py:351
+#: foirequest/forms.py:356 foirequest/forms.py:358
 msgid "Sender Name"
 msgstr "Absender"
 
-#: foirequest/forms.py:355
+#: foirequest/forms.py:362
 msgid "Letter"
 msgstr "Brief"
 
-#: foirequest/forms.py:357
+#: foirequest/forms.py:364
 msgid "Letter text you have received"
 msgstr "Der Textinhalt des Briefes, den Sie erhalten haben"
 
-#: foirequest/forms.py:361
+#: foirequest/forms.py:368
 msgid "The text can be left empty, instead you can upload scanned documents."
 msgstr ""
 "Der Text kann leer bleiben, wenn Sie stattdessen den gescannten Brief "
 "hochladen."
 
-#: foirequest/forms.py:362
+#: foirequest/forms.py:369
 msgid "Scanned Letter"
 msgstr "Gescannter Brief"
 
-#: foirequest/forms.py:364
+#: foirequest/forms.py:371
 msgid "You are not allowed to publish some received documents"
 msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen"
 
-#: foirequest/forms.py:366
+#: foirequest/forms.py:373
 msgid ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
@@ -1050,26 +1050,26 @@ msgstr ""
 "Dokumenten untersagt (z.B. wegen des Urheberrechts), machen Sie hier einen "
 "Haken."
 
-#: foirequest/forms.py:372
+#: foirequest/forms.py:379
 msgid "Your reply date is in the future, that is not possible."
 msgstr "Ihr Sendedatum ist in der Zukunft, das ist nicht möglich."
 
-#: foirequest/forms.py:380
+#: foirequest/forms.py:387
 msgid "You need to provide either the letter text or a scanned document."
 msgstr ""
 "Bitte geben Sie entweder den Brieftext an oder laden Sie ein gescanntes "
 "Dokument hoch."
 
-#: foirequest/forms.py:385
+#: foirequest/forms.py:392
 msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
-#: foirequest/forms.py:390 foirequest/forms.py:391
+#: foirequest/forms.py:397 foirequest/forms.py:398
 #: foirequest/templates/foirequest/show.html:464
 msgid "Tags"
 msgstr "Schlagwörter"
 
-#: foirequest/forms.py:392
+#: foirequest/forms.py:399
 msgid "Comma separated and quoted"
 msgstr "Komma-separiert und ggf. in \"\""
 
@@ -4403,6 +4403,9 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 #: templates/search/search.html:57
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
+
+#~ msgid "Unknown Upload Content-Type"
+#~ msgstr "Unbekannter Uploade-Content-Typ"
 
 #~ msgid ""
 #~ "This reply contains documents that every person can get individual access "
