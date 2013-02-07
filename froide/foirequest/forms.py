@@ -1,4 +1,5 @@
 import json
+import magic
 
 import floppyforms as forms
 
@@ -332,10 +333,16 @@ class PostalScanMixin(object):
     def clean_scan(self):
         scan = self.cleaned_data.get("scan")
         if scan:
-            if not scan.content_type in FoiAttachment.POSTAL_CONTENT_TYPES:
-                mail_admins(_('Unknown Upload Content-Type'), scan.content_type)
+            scan.seek(0)
+            content_type = magic.from_buffer(scan.read(1024), mime=True)
+            scan.seek(0)
+            if content_type:
+                scan.content_type = content_type
+            if not content_type in FoiAttachment.POSTAL_CONTENT_TYPES:
                 raise forms.ValidationError(
-                        _("The scanned letter must be either PDF, JPG or PNG!"))
+                        _('The scanned letter must be either PDF, JPG or PNG,'
+                          ' but was detected as %(content_type)s!') %
+                            {'content_type': content_type})
         return scan
 
 
