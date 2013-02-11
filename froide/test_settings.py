@@ -7,6 +7,8 @@ DEBUG = False
 
 TEMPLATE_DEBUG = True
 
+FROIDE_THEME = None
+
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 ADMINS = (

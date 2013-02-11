@@ -12,7 +12,15 @@ from froide.publicbody.models import Jurisdiction
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
-urlpatterns = patterns('',
+urlpatterns = patterns('')
+
+if settings.FROIDE_THEME:
+    urlpatterns += patterns('',
+        url(r'^', include('%s.urls' % settings.FROIDE_THEME)),
+    )
+
+urlpatterns += patterns('',
+    # Translators: URL part
     url(r'^$', 'froide.foirequest.views.index', name='index'),
     url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard')
 )

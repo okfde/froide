@@ -9,6 +9,8 @@ TEMPLATE_DEBUG = True
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+FROIDE_THEME = None
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
