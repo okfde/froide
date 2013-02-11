@@ -232,6 +232,7 @@ Froide.app.performReview = (function(){
         $("#review-subject").text($("#id_subject").val());
         text = resolve_forms($('#letter_start').clone());
         text += '\n\n<div class="highlight">' + $("#id_body").val() + "</div>\n\n";
+        text += $('#letter_end').text()+'\n\n';
         text += $('#letter-greeting').text();
         text += "\n" + getFullName();
         text += "\n\n" + getAddress();
