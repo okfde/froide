@@ -292,6 +292,8 @@ def submit_request(request, public_body=None):
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
+        if not public_body.email:
+            raise Http404
         all_laws = FoiLaw.objects.filter(jurisdiction=public_body.jurisdiction)
     else:
         all_laws = FoiLaw.objects.all()
@@ -583,7 +585,7 @@ def add_postal_reply(request, slug):
                     size=scan.size,
                     filetype=scan.content_type)
             att.file.save(scan_name, scan)
-            att.approved = True
+            att.approved = False
             att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A postal reply was successfully added!'))
@@ -616,7 +618,7 @@ def add_postal_reply_attachment(request, slug, message_id):
                 size=scan.size,
                 filetype=scan.content_type)
         att.file.save(scan_name, scan)
-        att.approved = True
+        att.approved = False
         att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your document was attached to the message.'))

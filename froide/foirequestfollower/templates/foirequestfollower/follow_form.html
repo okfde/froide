@@ -1,0 +1,58 @@
+{% load url from future %}
+{% load follower_tags i18n %}
+<form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" class="ajaxified" id="followrequest-form">
+  {% csrf_token %}
+  {% if followform %}
+    {{ followform.as_p }}
+    <button type="submit" class="btn">{% trans "Follow request" %}</button>
+  {% else %}
+    {% followrequest object user "followform" %}
+    {{ followform.as_p }}
+    {% if followform.following %}
+      <button class="input-large btn btn-info hover-btn-warning" type="submit">
+        <span class="on-hover">
+          <i class="icon-white icon-remove"></i>
+          {% trans "Unfollow request" %}
+        </span>
+        <span class="on-display">
+          <i class="icon-white icon-star"></i>
+          {% trans "You follow this request" %}
+        </span>
+      </button>
+      <p class="muted">
+        <small>
+          {% blocktrans %}You get notified of changes.{% endblocktrans %}
+        </small>
+      </p>
+    {% else %}
+      <button class="input-large btn hover-btn-success" type="submit">
+        <span class="on-hover">
+          <i class="icon-white icon-star"></i>
+          {% trans "Follow request?" %}
+        </span>
+        <span class="on-display">
+          <i class="icon-star-empty"></i>
+          {% trans "Follow request?" %}
+        </span>
+      </button>
+      <p class="muted">
+        <small>
+          {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+        </small>
+      </p>
+    {% endif %}
+  {% endif %}
+</form>
+<div id="followrequest-form-success" style="display:none">
+  <p class="muted">
+    <small>
+      {% if not followform.following %}
+        <i class="icon-ok"></i>
+        {% trans "You will receive notifications!" %}
+      {% else %}
+        <i class="icon-remove"></i>
+        {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
+      {% endif %}
+    </small>
+  </p>
+</div>

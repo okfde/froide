@@ -9,6 +9,8 @@ TEMPLATE_DEBUG = True
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+FROIDE_THEME = None
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -43,6 +45,8 @@ LANGUAGE_CODE = 'en-us'
 LOCALE_PATHS = (
     os.path.join(PROJECT_ROOT, "locale"),
 )
+
+GEOIP_PATH = None
 
 SITE_ID = 1
 
@@ -180,6 +184,7 @@ INSTALLED_APPS = [
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
+    'froide.foisite',
 ]
 
 # A sample logging configuration. The only tangible logging

@@ -7,6 +7,8 @@ DEBUG = False
 
 TEMPLATE_DEBUG = True
 
+FROIDE_THEME = None
+
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 ADMINS = (
@@ -68,6 +70,8 @@ USE_L10N = True
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "..", "files")
+
+GEOIP_PATH = None
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -183,6 +187,7 @@ INSTALLED_APPS = (
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
+    'froide.foisite',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -227,6 +232,8 @@ LOGGING = {
 }
 
 SESSION_COOKIE_AGE = 3628800  # six weeks
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 CACHES = {
     'default': {

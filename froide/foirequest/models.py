@@ -1,3 +1,4 @@
+import base64
 import random
 from datetime import timedelta
 import json
@@ -1343,6 +1344,35 @@ class FoiEvent(models.Model):
 
     def as_html(self):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
+
+
+class DeferredMessage(models.Model):
+    recipient = models.CharField(max_length=255, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    request = models.ForeignKey(FoiRequest, null=True, blank=True)
+    mail = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ('timestamp',)
+        get_latest_by = 'timestamp'
+        verbose_name = _('Undelivered Message')
+        verbose_name_plural = _('Undelivered Messages')
+
+    def __unicode__(self):
+        return _(u"Undelievered Message to %(recipient)s (%(request)s)") % {
+            'recipient': self.recipient,
+            'request': self.request
+        }
+
+    def redeliver(self, request):
+        from .tasks import process_mail
+
+        self.request = request
+        self.save()
+        mail = base64.b64decode(self.mail)
+        mail = mail.replace(self.recipient, self.request.secret_address)
+        process_mail.delay(mail.encode('utf-8'))
+
 
 # Import Signals here so models are available
 import froide.foirequest.signals  # noqa

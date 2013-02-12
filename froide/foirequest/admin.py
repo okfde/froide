@@ -9,7 +9,8 @@ from django.contrib.admin import helpers
 from taggit.utils import parse_tags
 
 from froide.foirequest.models import (FoiRequest, FoiMessage,
-        FoiAttachment, FoiEvent, PublicBodySuggestion)
+        FoiAttachment, FoiEvent, PublicBodySuggestion,
+        DeferredMessage)
 from froide.foirequest.tasks import count_same_foirequests
 
 
@@ -173,8 +174,59 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
     raw_id_fields = ('request', 'public_body', 'user')
 
 
+class DeferredMessageAdmin(admin.ModelAdmin):
+    model = DeferredMessage
+
+    list_display = ('recipient', 'timestamp',)
+    raw_id_fields = ('request',)
+    actions = ['redeliver']
+
+    def redeliver(self, request, queryset):
+        """
+        Redeliver undelivered mails
+
+        """
+        opts = self.model._meta
+        # Check that the user has change permission for the actual model
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        # User has already chosen the other req
+        if request.POST.get('req_id'):
+            req_id = int(request.POST.get('req_id'))
+            try:
+                req = FoiRequest.objects.get(id=req_id)
+            except (ValueError, FoiRequest.DoesNotExist,):
+                raise PermissionDenied
+
+            for deferred in queryset:
+                deferred.redeliver(req)
+
+            self.message_user(request, _("Successfully triggered redelivery."))
+
+            return None
+
+        db = router.db_for_write(self.model)
+        context = {
+            'opts': opts,
+            'queryset': queryset,
+            'media': self.media,
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
+                    self.model._meta.get_field(
+                        'request').rel, self.admin_site, using=db).render(
+                            'req_id', None).replace('../../..', '../..')),
+            'applabel': opts.app_label
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(request, 'foirequest/admin_redeliver.html',
+            context, current_app=self.admin_site.name)
+    redeliver.short_description = _("Redeliver to...")
+
 admin.site.register(FoiRequest, FoiRequestAdmin)
 admin.site.register(FoiMessage, FoiMessageAdmin)
 admin.site.register(FoiAttachment, FoiAttachmentAdmin)
 admin.site.register(FoiEvent, FoiEventAdmin)
 admin.site.register(PublicBodySuggestion, PublicBodySuggestionAdmin)
+admin.site.register(DeferredMessage, DeferredMessageAdmin)
