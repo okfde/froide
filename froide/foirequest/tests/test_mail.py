@@ -12,7 +12,7 @@ from django.utils import timezone
 
 from froide.helper.email_utils import EmailParser
 
-from froide.foirequest.tasks import _process_mail
+from froide.foirequest.tasks import process_mail
 from froide.foirequest.models import (FoiRequest, FoiMessage, DeferredMessage)
 from froide.foirequest.tests import factories
 
@@ -32,7 +32,7 @@ class MailTest(TestCase):
 
     def test_working(self):
         with file(p("test_mail_01.txt")) as f:
-            _process_mail(f.read())
+            process_mail.delay(f.read())
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -43,7 +43,7 @@ class MailTest(TestCase):
 
     def test_working_with_attachment(self):
         with file(p("test_mail_02.txt")) as f:
-            _process_mail(f.read())
+            process_mail.delay(f.read())
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -56,7 +56,7 @@ class MailTest(TestCase):
         request.delete()
         mail.outbox = []
         with file(p("test_mail_01.txt")) as f:
-            _process_mail(f.read())
+            process_mail.delay(f.read())
         self.assertEqual(len(mail.outbox), len(settings.MANAGERS))
         self.assertTrue(all([_('Unknown FoI-Mail Recipient') in m.subject for m in mail.outbox]))
         recipients = [m.to[0] for m in mail.outbox]
@@ -103,7 +103,7 @@ class DeferredMessageTest(TestCase):
         with file(p("test_mail_01.txt")) as f:
             mail = f.read().decode('utf-8')
         mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
-        _process_mail(mail.encode('utf-8'))
+        process_mail.delay(mail.encode('utf-8'))
         self.assertEqual(count_messages,
             FoiMessage.objects.filter(request=self.req).count())
         dms = DeferredMessage.objects.filter(recipient=bad_mail)
