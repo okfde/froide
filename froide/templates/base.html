@@ -40,9 +40,11 @@
 </head>
 
 <body>
+  {% block dryrun_block %}
   {% if FROIDE_DRYRUN %}
   <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ FROIDE_DRYRUN_DOMAIN }}</div>
   {% endif %}
+  {% endblock %}
   <div class="navbar">
     <div class="navbar-inner">
       <div class="container">
@@ -108,6 +110,7 @@
     </div>
   </div>
   {% block index_banner %}{% endblock %}
+  {% block foisite_advice %}{% endblock %}
 
   {% if messages %}
   <div class="container">
