@@ -233,6 +233,8 @@ LOGGING = {
 
 SESSION_COOKIE_AGE = 3628800  # six weeks
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
 CACHES = {
     'default': {
         # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import random
 import string
+import base64
 
 import factory
 
@@ -14,7 +15,7 @@ from django.utils import timezone
 from froide.account.models import Profile
 from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
 from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
-    PublicBodySuggestion)
+    PublicBodySuggestion, DeferredMessage)
 
 
 class SiteFactory(factory.Factory):
@@ -195,6 +196,20 @@ class FoiRequestFactory(factory.Factory):
     jurisdiction = factory.SubFactory(JurisdictionFactory)
 
     site = factory.SubFactory(SiteFactory)
+
+
+class DeferredMessageFactory(factory.Factory):
+    FACTORY_FOR = DeferredMessage
+
+    recipient = factory.Sequence(lambda n: 'blub%s@fragdenstaat.de'.format(n))
+    timestamp = timezone.now() - timedelta(hours=1)
+    request = None
+    mail = factory.LazyAttribute(lambda o:
+        base64.b64encode('''To: <%s>
+Subject: Latest Improvements
+Date: Mon, 5 Jul 2010 07:54:40 +0200
+
+Test'''.format(o.recipient)))
 
 
 class PublicBodySuggestionFactory(factory.Factory):
