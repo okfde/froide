@@ -8,6 +8,7 @@ services:
 before_install:
 - export PIP_USE_MIRRORS=true
 - export PIP_INDEX_URL=https://simple.crate.io/
+- phantomjs --webdriver= &
 install:
 - pip install terrarium boto
 - terrarium key requirements-test.txt
