@@ -26,15 +26,17 @@ def p(path):
 class MailTest(TestCase):
     def setUp(self):
         site = factories.make_world()
+        date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
         req = factories.FoiRequestFactory.create(site=site,
-            secret_address="sw+yurpykc1hr@fragdenstaat.de")
-        factories.FoiMessageFactory.create(request=req)
+            secret_address="sw+yurpykc1hr@fragdenstaat.de",
+            first_message=date, last_message=date)
+        factories.FoiMessageFactory.create(request=req, timestamp=date)
 
     def test_working(self):
         with file(p("test_mail_01.txt")) as f:
             process_mail.delay(f.read())
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
-        messages = request.foimessage_set.all()
+        messages = request.messages
         self.assertEqual(len(messages), 2)
         self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
         message = messages[1]
