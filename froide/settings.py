@@ -46,6 +46,8 @@ LOCALE_PATHS = (
     os.path.join(PROJECT_ROOT, "locale"),
 )
 
+GEOIP_PATH = None
+
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -182,6 +184,7 @@ INSTALLED_APPS = [
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
+    'froide.foisite',
 ]
 
 # A sample logging configuration. The only tangible logging
