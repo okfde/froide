@@ -3,6 +3,8 @@
 {% load url from future %}
 {% load i18n %}
 
+{% block title %}{{object.name}} - {{SITE_NAME}}{% endblock %}
+
 {% block body %}
 <div class="state-header" style="background-image: url('{{ STATIC_URL }}img/jurisdictions/{{ object.slug }}_panorama.jpg')">
   <div class="row">
