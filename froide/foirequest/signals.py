@@ -164,7 +164,7 @@ def create_event_message_received(sender, **kwargs):
 def create_event_status_changed(sender, **kwargs):
     status = kwargs['status']
     data = kwargs['data']
-    if data['costs'] > 0:
+    if data.get('costs', 0) > 0:
         FoiEvent.objects.create_event("reported_costs", sender,
                 user=sender.user,
                 public_body=sender.public_body, amount=data['costs'])
