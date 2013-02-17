@@ -1,8 +1,10 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.gis.geoip import GeoIP
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.geoip import HAS_GEOIP
+if HAS_GEOIP:
+    from django.contrib.gis.geoip import GeoIP
 
 
 class FoiSite(models.Model):
@@ -27,7 +29,7 @@ class FoiSite(models.Model):
 
 class SiteAdivsor(object):
     def __init__(self):
-        self.geoip = GeoIP()
+        self.geoip = GeoIP() if HAS_GEOIP else None
         self.sites = None
 
     def update(self):
@@ -40,8 +42,8 @@ class SiteAdivsor(object):
     def get_site(self, ip):
         if self.sites is None:
             self.update()
-        result = self.geoip.country(ip)
-        return self.sites.get(result['country_code'], None)
+        result = self.geoip.country(ip) if self.geoip else None
+        return self.sites.get(result['country_code'], None) if result else None
 
 
 class DummyAdvisor(object):
