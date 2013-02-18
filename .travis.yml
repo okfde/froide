@@ -13,7 +13,7 @@ before_install:
 install:
 - pip install terrarium boto
 - terrarium key requirements-test.txt
-- terrarium --target froideenv --remote-key-format "u/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://resources.opendatalabs.org.s3.amazonaws.com/u/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --no-upload --s3-bucket "" --target froideenv --storage-dir . install requirements-test.txt)
+- terrarium --virtualenv-log-level 10 --pip-log-level 10 --target froideenv --remote-key-format "u/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://resources.opendatalabs.org.s3.amazonaws.com/u/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --pip-log-level 10 --virtualenv-log-level 10 --no-upload --s3-bucket "" --target froideenv --storage-dir . install requirements-test.txt)
 - source froideenv/bin/activate
 - which python
 - python setup.py develop --prefix=`pwd`/froideenv
