@@ -7,7 +7,22 @@ from django.utils.translation import ugettext as _
 from django.contrib import admin
 admin.autodiscover()
 
+from tastypie.api import Api
+
 from froide.publicbody.models import Jurisdiction
+from froide.publicbody.api import (PublicBodyResource,
+    JurisdictionResource, FoiLawResource)
+from froide.foirequest.api import (FoiRequestResource,
+    FoiMessageResource, FoiAttachmentResource)
+
+
+v1_api = Api(api_name='v1')
+v1_api.register(PublicBodyResource())
+v1_api.register(JurisdictionResource())
+v1_api.register(FoiLawResource())
+v1_api.register(FoiRequestResource())
+v1_api.register(FoiMessageResource())
+v1_api.register(FoiAttachmentResource())
 
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
@@ -18,6 +33,15 @@ if settings.FROIDE_THEME:
     urlpatterns += patterns('',
         url(r'^', include('%s.urls' % settings.FROIDE_THEME)),
     )
+
+if settings.FROIDE_CONFIG.get('api_activated', True):
+    urlpatterns += patterns('',
+        url(r'^api/', include(v1_api.urls)),
+        url(r'api/v1/docs/', include('tastypie_swagger.urls',
+            namespace='tastypie_swagger')),
+
+    )
+
 
 urlpatterns += patterns('',
     # Translators: URL part

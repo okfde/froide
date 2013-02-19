@@ -306,6 +306,9 @@ SECRET_URLS = {
     "sentry": "sentry"
 }
 
+TASTYPIE_SWAGGER_API_MODULE = 'froide.urls.v1_api'
+
+
 FROIDE_CONFIG = {
     "create_new_publicbody": True,
     "publicbody_empty": True,
