@@ -175,6 +175,7 @@ INSTALLED_APPS = [
     'django_gravatar',
     'floppyforms',
     'overextends',
+    'tastypie',
 
     # local
     'froide.foirequest',
@@ -185,6 +186,10 @@ INSTALLED_APPS = [
     'froide.foiidea',
     'froide.redaction',
     'froide.foisite',
+    'froide.helper',
+
+    # override templates
+    'tastypie_swagger',
 ]
 
 # A sample logging configuration. The only tangible logging
