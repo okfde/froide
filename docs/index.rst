@@ -20,6 +20,7 @@ Freedom of Information Portal.
    importpublicbodies
    models
    configuration
+   api
    development
    productionsetup
 
