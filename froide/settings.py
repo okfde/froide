@@ -176,6 +176,7 @@ INSTALLED_APPS = [
     'floppyforms',
     'overextends',
     'tastypie',
+    'tastypie_swagger',
 
     # local
     'froide.foirequest',
@@ -187,9 +188,6 @@ INSTALLED_APPS = [
     'froide.redaction',
     'froide.foisite',
     'froide.helper',
-
-    # override templates
-    'tastypie_swagger',
 ]
 
 # A sample logging configuration. The only tangible logging
