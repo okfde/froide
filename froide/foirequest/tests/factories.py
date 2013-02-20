@@ -228,7 +228,7 @@ class FoiMessageFactory(factory.Factory):
     sender_user = None
     sender_email = 'sender@example.com'
     sender_name = 'Sender name'
-    sender_public_body = None
+    sender_public_body = factory.SubFactory(PublicBodyFactory)
 
     recipient = 'Recipient name'
     recipient_email = 'recipient@example.com'

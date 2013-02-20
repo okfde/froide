@@ -178,6 +178,9 @@ INSTALLED_APPS = (
     'taggit',
     'django_gravatar',
     'floppyforms',
+    'overextends',
+    'tastypie',
+    'tastypie_swagger',
 
     # local
     'froide.foirequest',
