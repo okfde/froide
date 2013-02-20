@@ -247,6 +247,7 @@ CACHES = {
 
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
+TEST_SELENIUM_DRIVER = 'phantomjs'
 # south settings
 
 SOUTH_TESTS_MIGRATE = False

@@ -1,10 +1,10 @@
 import time
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 from django.contrib.auth.models import User
 
-from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
 from froide.foirequest.tests import factories
@@ -12,11 +12,24 @@ from froide.foirequest.models import FoiRequest
 from froide.publicbody.models import PublicBody
 
 
+def get_selenium():
+    driver = getattr(settings, 'TEST_SELENIUM_DRIVER', 'firefox')
+    if driver == 'firefox':
+        from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxDriver
+        return FirefoxDriver()
+    elif driver == 'chrome':
+        from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
+        return ChromeDriver()
+    elif driver == 'phantomjs':
+        from selenium.webdriver import PhantomJS
+        return PhantomJS()
+
+
 class TestMakingRequest(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.selenium = WebDriver()
+        cls.selenium = get_selenium()
         cls.selenium.implicitly_wait(5)
         super(TestMakingRequest, cls).setUpClass()
 
