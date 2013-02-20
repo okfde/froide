@@ -27,9 +27,11 @@ class FoiMessageResource(ModelResource):
     attachments = fields.ToManyField(FoiAttachmentResource,
         'foiattachment_set', full=True, related_name='belongs_to')
     recipient_public_body = fields.ToOneField(
-        'froide.publicbody.api.PublicBodyResource', null=True)
+        'froide.publicbody.api.PublicBodyResource',
+        'recipient_public_body', null=True)
     sender_public_body = fields.ToOneField(
-        'froide.publicbody.api.PublicBodyResource', null=True)
+        'froide.publicbody.api.PublicBodyResource',
+        'sender_public_body', null=True)
 
     class Meta:
         allowed_methods = ['get', 'put', 'delete']
