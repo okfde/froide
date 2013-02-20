@@ -15,12 +15,27 @@ from .models import FoiRequest, FoiMessage, FoiAttachment
 
 
 class FoiAttachmentResource(ModelResource):
+    belongs_to = fields.ToOneField(
+        'froide.foirequest.api.FoiMessageResource',
+        'belongs_to', null=True)
+
     class Meta:
         allowed_methods = ['get', 'put', 'post', 'delete']
         queryset = FoiAttachment.objects.filter(belongs_to__request__visibility=2, approved=True)
         resource_name = 'attachment'
         authentication = AnonymousGetAuthentication()
         authorization = DjangoAuthorization()
+        fields = ['belongs_to', 'name', 'filetype',
+            'approved', 'is_redacted', 'size'
+        ]
+
+    def dehydrate(self, bundle):
+        if bundle.obj:
+            bundle.data.update({
+                'url': bundle.obj.get_absolute_url(),
+                'site_url': bundle.obj.get_anchor_url()
+            })
+        return bundle
 
 
 class FoiMessageResource(ModelResource):
