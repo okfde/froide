@@ -31,7 +31,7 @@ from taggit.models import TaggedItemBase
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (replace_email_name,
-        replace_email, remove_signature, remove_quote)
+        replace_email, remove_signature, remove_quote, strip_all_tags)
 
 from .foi_mail import send_foi_mail
 
