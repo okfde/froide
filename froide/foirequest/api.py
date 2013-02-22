@@ -141,6 +141,8 @@ class FoiRequestResource(ModelResource):
         objects = []
 
         for result in page.object_list:
+            if result is None:
+                continue
             bundle = self.build_bundle(obj=result.object, request=request)
             bundle = self.full_dehydrate(bundle)
             objects.append(bundle)
