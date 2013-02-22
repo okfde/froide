@@ -237,7 +237,9 @@ class FoiMessageFactory(factory.Factory):
 
     timestamp = factory.Sequence(lambda n: timezone.now() - timedelta(days=1000 - int(n)))
     subject = 'subject'
+    subject_redacted = 'subject'
     plaintext = 'plaintext'
+    plaintext_redacted = 'plaintext'
     html = ''
     original = 'E-mailOriginal'
     redacted = False

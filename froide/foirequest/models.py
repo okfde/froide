@@ -31,7 +31,7 @@ from taggit.models import TaggedItemBase
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (replace_email_name,
-        replace_email, remove_signature, remove_quote)
+        replace_email, remove_signature, remove_quote, strip_all_tags)
 
 from .foi_mail import send_foi_mail
 
@@ -560,7 +560,7 @@ Sincerely yours
 
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)
-        message.subject = email['subject']
+        message.subject = email['subject'][:250]
         message.is_response = True
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
@@ -571,7 +571,11 @@ Sincerely yours
         message.recipient_email = self.secret_address
         message.recipient = self.user.get_profile().display_name()
         message.plaintext = email['body']
-        message.html = html2markdown(email['html'])
+        message.html = email['html']
+        if not message.plaintext and message.html:
+            message.plaintext = strip_all_tags(email['html'])
+        message.subject_redacted = message.redact_subject()[:250]
+        message.plaintext_redacted = message.redact_plaintext()
         message.original = mail_string
         message.save()
         self.status = 'awaiting_classification'
@@ -604,6 +608,7 @@ Sincerely yours
         message_body = message
         message = FoiMessage(request=self)
         message.subject = subject
+        message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.sender_user = user
         message.sender_name = user.get_profile().display_name()
@@ -615,6 +620,7 @@ Sincerely yours
         message.plaintext = self.construct_standard_message_body(
             message_body,
             send_address=send_address)
+        message.plaintext_redacted = message.redact_plaintext()
         message.send()
         return message
 
@@ -622,6 +628,7 @@ Sincerely yours
         message_body = message
         message = FoiMessage(request=self)
         message.subject = subject
+        message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.is_escalation = True
         message.sender_user = self.user
@@ -633,6 +640,7 @@ Sincerely yours
         message.timestamp = timezone.now()
         message.plaintext = self.construct_standard_message_body(message_body,
             send_address=send_address)
+        message.plaintext_redacted = message.redact_plaintext()
         message.send()
         self.status = 'escalated'
         self.save()
@@ -739,11 +747,13 @@ Sincerely yours
                 timestamp=now,
                 status="awaiting_response",
                 subject=request.title)
+        message.subject_redacted = message.redact_subject()
         send_address = True
         if request.law:
             send_address = not request.law.email_only
         message.plaintext = request.construct_message_body(form_data['body'],
                 foi_law, post_data, send_address=send_address)
+        message.plaintext_redacted = message.redact_plaintext()
         if public_body_object is not None:
             message.recipient_public_body = public_body_object
             message.recipient = public_body_object.name
@@ -752,7 +762,7 @@ Sincerely yours
         else:
             message.recipient = ""
             message.recipient_email = ""
-        message.original = message.plaintext
+        message.original = ''
         message.save()
         cls.request_created.send(sender=request, reference=form_data.get('reference'))
         if send_now:
@@ -967,7 +977,9 @@ class FoiMessage(models.Model):
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
+    subject_redacted = models.CharField(_("Redacted Subject"), blank=True, max_length=255)
     plaintext = models.TextField(_("plain text"), blank=True, null=True)
+    plaintext_redacted = models.TextField(_("redacted plain text"), blank=True, null=True)
     html = models.TextField(_("HTML"), blank=True, null=True)
     original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
@@ -1065,7 +1077,13 @@ class FoiMessage(models.Model):
             self._attachments = list(self.foiattachment_set.all())
         return self._attachments
 
-    def get_subject(self):
+    def get_subject(self, user=None):
+        if not self.subject_redacted and self.subject:
+            self.subject_redacted = self.redact_subject()
+            self.save()
+        return self.subject_redacted
+
+    def redact_subject(self):
         content = self.subject
         # content = remove_quote(content,
         #        replacement=_(u"Quoted part removed"))
@@ -1077,8 +1095,14 @@ class FoiMessage(models.Model):
         content = replace_email(content, _("<<email address>>"))
         return content
 
-    def get_content(self):
-        content = self.content
+    def get_content(self, user=None):
+        if not self.plaintext_redacted and self.plaintext:
+            self.plaintext_redacted = self.redact_plaintext()
+            self.save()
+        return self.plaintext_redacted
+
+    def redact_plaintext(self):
+        content = self.plaintext
         # content = remove_quote(content,
         #        replacement=_(u"Quoted part removed"))
         if self.request.user:

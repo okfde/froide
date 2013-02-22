@@ -1,13 +1,22 @@
 import re
 import htmlentitydefs
 
+from lxml import html
+from lxml.html.clean import clean_html
+
+
+def strip_all_tags(html_string):
+    tree = html.document_fromstring(html_string)
+    tree = clean_html(tree)
+    return tree.getroot().xpath('//body')[0].text_content().strip()
+
+
 ##
 # From http://effbot.org/zone/re-sub.htm#unescape-html
 # Removes HTML or XML character references and entities from a text string.
 #
 # @param text The HTML (or XML) source text.
 # @return The plain text, as a Unicode string, if necessary.
-
 
 def unescape(text):
     def fixup(m):
