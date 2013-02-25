@@ -46,6 +46,9 @@ class Jurisdiction(models.Model):
         return reverse('publicbody-show_jurisdiction',
             kwargs={'slug': self.slug})
 
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
 
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
@@ -109,6 +112,9 @@ class FoiLaw(models.Model):
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
+
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     @property
     def formatted_description(self):
@@ -289,6 +295,9 @@ class PublicBody(models.Model):
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
+
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_label(self):
         return mark_safe('%(name)s - <a href="%(url)s" class="target-new info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})

@@ -7,6 +7,7 @@ from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator as TastyPaginator
 from tastypie import fields, utils
 from tastypie.authorization import DjangoAuthorization
+from tastypie.constants import ALL, ALL_WITH_RELATIONS
 
 from froide.helper.api_utils import AnonymousGetAuthentication
 
@@ -18,9 +19,14 @@ class JurisdictionResource(ModelResource):
         # allowed_methods = ['get']
         queryset = Jurisdiction.objects.get_visible()
         resource_name = 'jurisdiction'
-        fields = ['name', 'rank', 'description', 'slug']
+        fields = ['id', 'name', 'rank', 'description', 'slug']
         authentication = AnonymousGetAuthentication()
         authorization = DjangoAuthorization()
+
+    def dehydrate(self, bundle):
+        if bundle.obj:
+            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+        return bundle
 
 
 class FoiLawResource(ModelResource):
@@ -34,7 +40,7 @@ class FoiLawResource(ModelResource):
     class Meta:
         queryset = FoiLaw.objects.all()
         resource_name = 'law'
-        fields = ['name', 'slug', 'description', 'long_description',
+        fields = ['id', 'name', 'slug', 'description', 'long_description',
             'created', 'updated', 'request_note', 'meta',
             'combined', 'letter_start', 'letter_end', 'jurisdiction',
             'priority', 'url', 'max_response_time',
@@ -42,6 +48,11 @@ class FoiLawResource(ModelResource):
         ]
         authentication = AnonymousGetAuthentication()
         authorization = DjangoAuthorization()
+
+    def dehydrate(self, bundle):
+        if bundle.obj:
+            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+        return bundle
 
 
 class PublicBodyResource(ModelResource):
@@ -57,16 +68,30 @@ class PublicBodyResource(ModelResource):
     class Meta:
         queryset = PublicBody.objects.all()
         resource_name = 'publicbody'
-        fields = ['name', 'slug', 'other_names',
+        fields = ['id', 'name', 'slug', 'other_names',
             'description', 'url', 'parent', 'root',
             'depth', 'classification', 'classification_slug',
             'email', 'contact', 'address', 'website_dump',
             'request_note', 'number_of_requests',
             'laws', 'jurisdiction'
         ]
+        filtering = {
+            "other_names": ALL,
+            "name": ALL,
+            "slug": ALL,
+            "number_of_requests": ALL,
+            "jurisdiction": ALL_WITH_RELATIONS,
+            "root": ALL_WITH_RELATIONS,
+            "parent": ALL_WITH_RELATIONS
+        }
         paginator_class = TastyPaginator
         authentication = AnonymousGetAuthentication()
         authorization = DjangoAuthorization()
+
+    def dehydrate(self, bundle):
+        if bundle.obj:
+            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+        return bundle
 
     def prepend_urls(self):
         return [

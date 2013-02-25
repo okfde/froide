@@ -6,7 +6,7 @@ from haystack.query import SearchQuerySet
 from tastypie.paginator import Paginator as TastyPaginator
 from tastypie.resources import ModelResource
 from tastypie import fields, utils
-from tastypie.constants import ALL
+from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import DjangoAuthorization
 
 from froide.helper.api_utils import AnonymousGetAuthentication
@@ -25,7 +25,7 @@ class FoiAttachmentResource(ModelResource):
         resource_name = 'attachment'
         authentication = AnonymousGetAuthentication()
         authorization = DjangoAuthorization()
-        fields = ['belongs_to', 'name', 'filetype',
+        fields = ['id', 'belongs_to', 'name', 'filetype',
             'approved', 'is_redacted', 'size'
         ]
 
@@ -52,7 +52,7 @@ class FoiMessageResource(ModelResource):
         allowed_methods = ['get', 'put', 'delete']
         queryset = FoiMessage.objects.filter(request__visibility=2)
         resource_name = 'message'
-        fields = ['request', 'sent', 'is_response', 'is_postal',
+        fields = ['id', 'request', 'sent', 'is_response', 'is_postal',
             'is_escalation', 'content_hidden', 'sender_public_body',
             'recipient_public_body', 'status', 'timestamp',
             'redacted', 'not_publishable'
@@ -67,6 +67,7 @@ class FoiMessageResource(ModelResource):
                 # FIXME: encapsulate that logic
                 'content': bundle.obj.get_content() if not bundle.obj.content_hidden else None,
                 'sender': bundle.obj.sender,
+                'url': bundle.obj.get_absolute_domain_url(),
                 'status_name': FoiRequest.get_status_description(
                     bundle.obj.status)
             })
@@ -90,6 +91,7 @@ class FoiRequestResource(ModelResource):
         queryset = FoiRequest.objects.filter(visibility=2)
         resource_name = 'request'
         fields = [
+            'id',
             'jurisdiction',
             'is_foi', 'checked', 'refusal_reason',
             'costs',
@@ -105,8 +107,17 @@ class FoiRequestResource(ModelResource):
             'title'
         ]
         filtering = {
-            "slug": ('exact', 'startswith',),
-            "title": ALL,
+            'slug': ALL,
+            'title': ALL,
+            'first_message': ALL,
+            'is_foi': ALL,
+            'checked': ALL,
+            'jurisdiction': ALL,
+            'jurisdiction': ALL,
+            'public': ALL,
+            'same_as': ALL,
+            'status': ALL,
+            'public_body': ALL_WITH_RELATIONS
         }
         authentication = AnonymousGetAuthentication()
         authorization = DjangoAuthorization()
@@ -116,6 +127,7 @@ class FoiRequestResource(ModelResource):
         if bundle.obj:
             bundle.data['description'] = bundle.obj.get_description()
             bundle.data['status_name'] = bundle.obj.readable_status
+            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
             bundle.data['tags'] = [{'slug': t.slug, 'name': t.name}
                 for t in bundle.obj.tags.all()
             ]
