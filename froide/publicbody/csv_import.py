@@ -23,6 +23,8 @@ class CSVImporter(object):
 
     def import_from_url(self, url):
         response = requests.get(url)
+        # Force requests to evaluate as UTF-8
+        response.encoding = 'utf-8'
         self.import_from_file(StringIO(response.text.encode('utf-8')))
 
     def import_from_file(self, csv_file):
