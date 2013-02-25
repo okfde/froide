@@ -50,7 +50,10 @@ class CSVImporter(object):
             row[n] = row.get(n, '')
 
         try:
-            PublicBody.objects.get(slug=row['slug'])
+            pb = PublicBody.objects.get(slug=row['slug'])
+            # If it exists, update it
+            row.pop('id')  # Do not update id though
+            PublicBody.objects.filter(id=pb.id).update(**row)
             return
         except PublicBody.DoesNotExist:
             pass
