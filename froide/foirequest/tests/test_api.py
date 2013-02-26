@@ -3,7 +3,7 @@ from __future__ import with_statement
 from django.test import TestCase
 
 from froide.foirequest.tests import factories
-from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.foirequest.models import FoiRequest, FoiAttachment
 
 
 class ApiTest(TestCase):
