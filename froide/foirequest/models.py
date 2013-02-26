@@ -1220,6 +1220,9 @@ class FoiAttachment(models.Model):
         else:
             return self.file.url
 
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
     def is_visible(self, user, foirequest):
         if self.approved:
             return True

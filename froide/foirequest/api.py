@@ -32,7 +32,7 @@ class FoiAttachmentResource(ModelResource):
     def dehydrate(self, bundle):
         if bundle.obj:
             bundle.data.update({
-                'url': bundle.obj.get_absolute_url(),
+                'url': bundle.obj.get_absolute_domain_url(),
                 'site_url': bundle.obj.get_anchor_url()
             })
         return bundle
