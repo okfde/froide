@@ -50,11 +50,6 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    *[(r'^(?P<slug>%s)/' % j.slug,
-        include('froide.publicbody.jurisdiction_urls')) for j in Jurisdiction.objects.all()]
-)
-
-urlpatterns += patterns('',
     # Translators: request URL
     url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),
     # Translators: URL part
@@ -117,3 +112,8 @@ def handler500(request):
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Catch all Jurisdiction patterns
+urlpatterns += patterns('',
+    (r'^(?P<slug>[\w-]+)/', include('froide.publicbody.jurisdiction_urls'))
+)
