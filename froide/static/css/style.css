@@ -897,6 +897,11 @@ form.foirequest #post_address {
     margin-top: 0;
 }
 
+input.copyinput {
+    cursor: text;
+    background-color: #fff;
+}
+
 .btn .on-hover {
     display: none;
 }

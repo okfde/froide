@@ -458,7 +458,7 @@
 
       <li class="nav-header">{% trans "Short URL" %}</li>
       <li>
-        <input type="text" readonly value="{{ object.get_absolute_domain_short_url }}"/>
+        <input type="text" class="copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
       </li>
 
       {% with object.tags.all as tags %}
