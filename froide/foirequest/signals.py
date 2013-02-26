@@ -5,17 +5,16 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from haystack import connections
+from haystack.utils import get_identifier
+
+from celery_haystack.utils import get_update_task
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 
 
 def trigger_index_update(klass, instance_pk):
-    fake_instance = klass()
-    fake_instance.pk = instance_pk
-    uni = connections['default'].get_unified_index()
-    index = uni.get_index(klass)
-    index.enqueue_save(fake_instance)
+    task = get_update_task()
+    task.delay('update', get_identifier(klass(id=instance_pk)))
 
 
 @receiver(FoiRequest.became_overdue,

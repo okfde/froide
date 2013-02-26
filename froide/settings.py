@@ -365,7 +365,9 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     }
 }
+HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
+CELERY_HAYSTACK_MODELS = ('foirequest.FoiRequest', 'publicbody.PublicBody')
 
 ########## Froide settings ########
 

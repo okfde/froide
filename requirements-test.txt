@@ -1,4 +1,7 @@
 -r requirements.txt
-django-discover-runner==0.2.2
-pyelasticsearch==0.2
-selenium==2.29.0
+django-discover-runner==0.3
+pyelasticsearch==0.3
+selenium==2.30.0
+pep8==1.4.4
+factory-boy==1.1.4
+coverage==3.6
