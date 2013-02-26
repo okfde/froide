@@ -1,7 +1,7 @@
 import hmac
 import re
 
-from django.db import models
+from django.db import models, transaction, IntegrityError
 from django.conf import settings
 from django import dispatch
 from django.utils.translation import ugettext_lazy as _
@@ -169,25 +169,40 @@ class AccountManager(object):
                 last_name=data['last_name'],
                 email=data['user_email'])
         username_base = cls.get_username_base(user.first_name, user.last_name)
-        count = 0
-        while True:
-            if count:
-                username = "%s_%s" % (username_base, count)
-            else:
-                username = username_base
-            try:
-                User.objects.get(username=username)
-            except User.DoesNotExist:
-                break
-            count += 1
-        user.username = username
+
         user.is_active = False
         if "password" in data:
             password = data['password']
         else:
             password = User.objects.make_random_password()
         user.set_password(password)
-        user.save()
+
+        # ensure username is unique
+        while True:
+            username = username_base
+            first_round = True
+            count = 0
+            postfix = ""
+            with transaction.commit_manually():
+                try:
+                    while True:
+                        if not first_round:
+                            postfix = "_%d" % count
+                        if not User.objects.filter(username=username + postfix).exists():
+                            break
+                        if first_round:
+                            first_round = False
+                            count = User.objects.filter(username__startswith=username).count()
+                        else:
+                            count += 1
+                    user.username = username + postfix
+                    user.save()
+                except IntegrityError:
+                    transaction.rollback()
+                else:
+                    transaction.commit()
+                    break
+
         profile = user.get_profile()
         for key in data:
             if key in ('first_name', 'last_name', 'user_email', 'password'):

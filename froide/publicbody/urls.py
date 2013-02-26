@@ -36,4 +36,5 @@ urlpatterns += patterns("froide.publicbody.views",
     url(r"^(?P<slug>[-\w]+).(?P<format>json)$",
             PublicBodyDetailView.as_view(), name="publicbody-show_json"),
     url(r"^confirm/$", 'confirm', name="publicbody-confirm"),
+    url(r"^import/$", 'import_csv', name="publicbody-import"),
 )

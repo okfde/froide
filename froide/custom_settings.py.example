@@ -1,0 +1,111 @@
+# -*- coding: utf-8 -*-
+import re
+
+from .settings import *  # noqa
+
+# Add your theme to the top of installed apps
+# INSTALLED_APPS = ['your_theme'] + INSTALLED_APPS
+
+
+DEBUG = True
+TEMPLATE_DEBUG = True
+
+LANGUAGE_CODE = "en"
+
+ADMINS = (
+    ('Your Name', 'mail@example.com'),
+)
+MANAGERS = (
+    ('Your Team', 'team@example.com'),
+)
+
+INTERNAL_IPS = ('127.0.0.1',)
+
+USE_X_ACCEL_REDIRECT = False
+X_ACCEL_REDIRECT_PREFIX = '/protected'
+
+MIDDLEWARE_CLASSES = [
+    'django.middleware.common.CommonMiddleware',
+    'djangosecure.middleware.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'pagination.middleware.PaginationMiddleware',
+]
+MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+SESSION_COOKIE_SECURE = False
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
+
+SITE_NAME = "Your Site Name"
+SITE_EMAIL = "info@example.com"
+SITE_URL = 'http://localhost:8000'
+
+rec = re.compile
+# define your greetings and closing regexes
+POSSIBLE_GREETINGS = [rec(u"Sehr geehrt(er? (?:Herr|Frau) .*?)")]
+POSSIBLE_CLOSINGS = [rec(u"Mit freundlichen Grüßen,?")]
+
+SECRET_URLS = {
+    "admin": "admin",
+    "sentry": "sentry",
+    "databrows": "databrowse"
+}
+
+# Possibly set this for https deployments
+# see https://docs.djangoproject.com/en/1.4/ref/settings/#secure-proxy-ssl-header
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+
+
+FROIDE_CONFIG = {
+    "create_new_publicbody": True,
+    "publicbody_empty": True,
+    "user_can_hide_web": True,
+    "public_body_officials_public": False,
+    "public_body_officials_email_public": False,
+    "payment_possible": True,
+    "currency": "Euro",
+    "default_law": 1
+}
+
+
+# boost public bodies by their classification
+FROIDE_PUBLIC_BODY_BOOSTS = {
+    u"Ministry": 1.9,
+    u"Council": 0.8
+}
+
+DEFAULT_FROM_EMAIL = 'info@example.com'
+SERVER_EMAIL = 'error@example.com'
+EMAIL_SUBJECT_PREFIX = '[Froide] '
+
+# dev use:
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = "smtp.example.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "mail@foi.example.com"
+EMAIL_HOST_PASSWORD = "password"
+EMAIL_USE_TLS = True
+
+FOI_EMAIL_DOMAIN = "foi.example.com"
+FOI_EMAIL_PORT_IMAP = 993
+FOI_EMAIL_HOST_IMAP = "imap.example.com"
+FOI_EMAIL_ACCOUNT_NAME = "foirelay@foi.example.com"
+FOI_EMAIL_ACCOUNT_PASSWORD = "password"
+FOI_EMAIL_USE_SSL = True
+
+FOI_EMAIL_FIXED_FROM_ADDRESS = True
+FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
+FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
+FOI_EMAIL_HOST = "smtp.example.com"
+FOI_EMAIL_PORT = 537
+FOI_EMAIL_USE_TLS = True
+

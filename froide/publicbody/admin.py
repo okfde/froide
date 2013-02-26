@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.http import HttpResponse
+from django.utils.translation import ugettext as _
+
 from froide.publicbody.models import (PublicBody, FoiLaw, PublicBodyTopic,
         Jurisdiction)
 
@@ -13,6 +16,12 @@ class PublicBodyAdmin(admin.ModelAdmin):
     search_fields = ['name', "description"]
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
+    actions = ['export_csv']
+
+    def export_csv(self, request, queryset):
+        return HttpResponse(PublicBody.export_csv(queryset),
+            content_type='text/csv')
+    export_csv.short_description = _("Export to CSV")
 
 
 class FoiLawAdmin(admin.ModelAdmin):

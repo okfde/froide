@@ -46,6 +46,9 @@ class Jurisdiction(models.Model):
         return reverse('publicbody-show_jurisdiction',
             kwargs={'slug': self.slug})
 
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
 
 class PublicBodyManager(CurrentSiteManager):
     def get_query_set(self):
@@ -109,6 +112,9 @@ class FoiLaw(models.Model):
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
+
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     @property
     def formatted_description(self):
@@ -178,12 +184,7 @@ class FoiLaw(models.Model):
 
 class PublicBodyTopicManager(models.Manager):
     def get_list(self):
-        """This is an unportable hack in order to put
-        the 'Andere' (other) topic (currently first item in list)
-        at the end of the list
-        TODO: solve this via some kind of boost field"""
-        topics = list(self.get_query_set().order_by("name"))
-        return topics[1:] + topics[:1]
+        return list(self.get_query_set().order_by("rank", "name"))
 
 
 class PublicBodyTopic(models.Model):
@@ -191,6 +192,7 @@ class PublicBodyTopic(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     count = models.IntegerField(_("Count"), default=0)
+    rank = models.IntegerField(_("Rank"), default=0)
 
     objects = PublicBodyTopicManager()
 
@@ -293,6 +295,9 @@ class PublicBody(models.Model):
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
 
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
     def get_label(self):
         return mark_safe('%(name)s - <a href="%(url)s" class="target-new info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
 
@@ -320,31 +325,32 @@ class PublicBody(models.Model):
         return len(PublicBody.objects.filter(parent=self))
 
     @classmethod
-    def export_csv(cls, jurisdiction=None):
-        import csv
+    def export_csv(cls, queryset):
+        import unicodecsv
         from StringIO import StringIO
+
         s = StringIO()
-        fields = ("name", "other_names", "slug", "topic__slug", "classification",
-            "depth", "children_count", "email", "description", "url", "website_dump",
-            "contact", "address")
-        writer = csv.DictWriter(s, fields)
-        # Fake writeheader on Python 2.6
+        fields = ("id", "name", "email", "jurisdiction__slug",
+            "other_names", "description", "topic__slug", "url",
+            "parent__name", "classification", "contact",
+            "address", "website_dump", "request_note"
+        )
+
+        writer = unicodecsv.DictWriter(s, fields, encoding='utf-8')
         writer.writerow(dict([(v, v) for v in fields]))
-        pbs = PublicBody.objects.all()
-        if jurisdiction:
-            pbs = pbs.filter(jurisdiction__slug=jurisdiction)
-        for pb in pbs:
+        for pb in queryset:
             d = {}
             for field in fields:
                 value = pb
                 for f in field.split('__'):
                     value = getattr(value, f)
+                    if value is None:
+                        break
                 if value is None:
-                    d[field] = value
-                elif isinstance(value, unicode):
-                    d[field] = value.encode("utf-8")
+                    d[field] = ""
                 else:
-                    d[field] = unicode(value).encode("utf-8")
+                    d[field] = value
             writer.writerow(d)
+
         s.seek(0)
         return s.read()

@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from froide.foirequest.tests import factories
 from froide.helper.test_utils import skip_if_environ
 
-from .models import PublicBody, FoiLaw
+from .models import PublicBody, FoiLaw, Jurisdiction
 
 
 class PublicBodyTest(TestCase):
@@ -54,8 +54,9 @@ class PublicBodyTest(TestCase):
         self.assertEqual(obj['suggestions'], [])
 
     def test_csv(self):
-        csv = PublicBody.export_csv()
-        self.assertTrue(csv)
+        csv = PublicBody.export_csv(PublicBody.objects.all())
+        self.assertEqual(PublicBody.objects.all().count() + 1,
+            len(csv.splitlines()))
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
@@ -74,3 +75,33 @@ class PublicBodyTest(TestCase):
         response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn(law.name, response.content.decode('utf-8'))
+
+
+class ApiTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+
+    def test_list(self):
+        response = self.client.get('/api/v1/publicbody/?format=json')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/v1/jurisdiction/?format=json')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/v1/law/?format=json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail(self):
+        pb = PublicBody.objects.all()[0]
+        response = self.client.get('/api/v1/publicbody/%d/?format=json' % pb.pk)
+        self.assertEqual(response.status_code, 200)
+
+        law = FoiLaw.objects.all()[0]
+        response = self.client.get('/api/v1/law/%d/?format=json' % law.pk)
+        self.assertEqual(response.status_code, 200)
+
+        jur = Jurisdiction.objects.all()[0]
+        response = self.client.get('/api/v1/jurisdiction/%d/?format=json' % jur.pk)
+        self.assertEqual(response.status_code, 200)
+
+    def test_search(self):
+        response = self.client.get('/api/v1/publicbody/search/?format=json&q=Body')
+        self.assertEqual(response.status_code, 200)

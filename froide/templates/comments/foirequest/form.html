@@ -1,0 +1,20 @@
+{% load comments i18n %}
+{% get_comment_form for message as form %}
+<form action="{% comment_form_target %}" method="post">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ message.get_absolute_url }}" />
+  {% for field in form %}
+    {% if field.is_hidden %}
+      {{ field }}
+    {% endif %}
+    {% endfor %}
+    {% if form.comment.errors %}{{ form.comment.errors }}{% endif %}
+    <p{% if form.comment.errors %} class="error"{% endif %}>
+    {% blocktrans with name=user.get_full_name %}Comment by {{ name }}:{% endblocktrans %}<br/>
+    {{ form.comment }}<br/>
+    {% if user.get_profile.private %}
+    <span class="red">{% trans "Despite your privacy settings, your real name will be published with comment.<br/>There are <strong>no anonymous comments</strong>." %}</span><br/>
+    {% endif %}
+    <button type="submit" name="post" class="btn"><i class="icon-comment"></i> {% trans "Post Comment" %}</button>
+  </p>
+</form>
+

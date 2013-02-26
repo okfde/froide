@@ -7,12 +7,44 @@ from django.utils.translation import ugettext as _
 from django.contrib import admin
 admin.autodiscover()
 
+from tastypie.api import Api
+
 from froide.publicbody.models import Jurisdiction
+from froide.publicbody.api import (PublicBodyResource,
+    JurisdictionResource, FoiLawResource)
+from froide.foirequest.api import (FoiRequestResource,
+    FoiMessageResource, FoiAttachmentResource)
+
+
+v1_api = Api(api_name='v1')
+v1_api.register(PublicBodyResource())
+v1_api.register(JurisdictionResource())
+v1_api.register(FoiLawResource())
+v1_api.register(FoiRequestResource())
+v1_api.register(FoiMessageResource())
+v1_api.register(FoiAttachmentResource())
 
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
-urlpatterns = patterns('',
+urlpatterns = patterns('')
+
+if settings.FROIDE_THEME:
+    urlpatterns += patterns('',
+        url(r'^', include('%s.urls' % settings.FROIDE_THEME)),
+    )
+
+if settings.FROIDE_CONFIG.get('api_activated', True):
+    urlpatterns += patterns('',
+        url(r'^api/', include(v1_api.urls)),
+        url(r'api/v1/docs/', include('tastypie_swagger.urls',
+            namespace='tastypie_swagger')),
+
+    )
+
+
+urlpatterns += patterns('',
+    # Translators: URL part
     url(r'^$', 'froide.foirequest.views.index', name='index'),
     url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard')
 )
@@ -29,6 +61,8 @@ urlpatterns += patterns('',
     url(r'^%s/' % _('requests'), include('froide.foirequest.urls')),
     # Translators: request URL
     url(r'^%s/' % _('request'), include('froide.foirequest.request_urls')),
+    # Translators: Short-request URL
+    url(r"^%s/(?P<obj_id>\d+)$" % _('r'), 'froide.foirequest.views.shortlink', name="foirequest-shortlink"),
     # Translators: follow request URL
     url(r'^%s/' % _('follow'), include('froide.foirequestfollower.urls')),
 

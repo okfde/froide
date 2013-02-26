@@ -22,3 +22,12 @@ def render_405(request):
 def render_403(request, message=''):
     return render_code(403, request,
             context={"message": message})
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

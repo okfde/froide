@@ -3,6 +3,7 @@ from __future__ import with_statement
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 
 from froide.publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
@@ -286,3 +287,48 @@ class MediaServingTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(att.get_absolute_url() + 'a')
         self.assertEqual(response.status_code, 404)
+
+
+class PerformanceTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+
+    def test_queries_foirequest(self):
+        """
+        FoiRequest page should query for non-loggedin users
+        - FoiRequest (+1)
+        - FoiMessages of that request (+1)
+        - FoiAttachments of that request (+1)
+        - FoiEvents of that request (+1)
+        - FoiRequestFollowerCount (+1)
+        - Tags (+1)
+        - ContentType + Comments for each FoiMessage (+3)
+        """
+        req = factories.FoiRequestFactory.create(site=self.site)
+        factories.FoiMessageFactory.create(request=req)
+        mes2 = factories.FoiMessageFactory.create(request=req)
+        factories.FoiAttachmentFactory.create(belongs_to=mes2)
+        ContentType.objects.clear_cache()
+        with self.assertNumQueries(9):
+            self.client.get(req.get_absolute_url())
+
+    def test_queries_foirequest_loggedin(self):
+        """
+        FoiRequest page should query for non-staff loggedin users
+        - Django session + Django user + profile (+3)
+        - FoiRequest (+1)
+        - FoiMessages of that request (+1)
+        - FoiAttachments of that request (+1)
+        - FoiEvents of that request (+1)
+        - FoiRequestFollowerCount + if following (+2)
+        - Tags (+1)
+        - ContentType + Comments for each FoiMessage (+3)
+        """
+        req = factories.FoiRequestFactory.create(site=self.site)
+        factories.FoiMessageFactory.create(request=req)
+        mes2 = factories.FoiMessageFactory.create(request=req)
+        factories.FoiAttachmentFactory.create(belongs_to=mes2)
+        self.client.login(username='dummy', password='froide')
+        ContentType.objects.clear_cache()
+        with self.assertNumQueries(13):
+            self.client.get(req.get_absolute_url())

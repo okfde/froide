@@ -9,6 +9,8 @@ TEMPLATE_DEBUG = True
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
+FROIDE_THEME = None
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -44,6 +46,8 @@ LOCALE_PATHS = (
     os.path.join(PROJECT_ROOT, "locale"),
 )
 
+GEOIP_PATH = None
+
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -77,7 +81,7 @@ X_ACCEL_REDIRECT_PREFIX = '/protected'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "static")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "public")
 
 # URL that handles the static files like app media.
 # Example: "http://media.lawrence.com"
@@ -85,7 +89,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, "..", "media"),
+    os.path.join(PROJECT_ROOT, "static"),
 )
 
 
@@ -123,9 +127,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
+    'froide.helper.theme_utils.ThemeLoader',
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = [
@@ -144,7 +148,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, "templates"),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -171,6 +175,9 @@ INSTALLED_APPS = (
     'taggit',
     'django_gravatar',
     'floppyforms',
+    'overextends',
+    'tastypie',
+    'tastypie_swagger',
 
     # local
     'froide.foirequest',
@@ -180,7 +187,9 @@ INSTALLED_APPS = (
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
-)
+    'froide.foisite',
+    'froide.helper',
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -249,6 +258,9 @@ RAVEN_CONFIG = {
 CSRF_COOKIE_SECURE = True
 CSRF_FAILURE_VIEW = 'froide.account.views.csrf_failure'
 
+# Change this
+# ALLOWED_HOSTS = ()
+
 SESSION_COOKIE_AGE = 3628800  # six weeks
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
@@ -296,6 +308,9 @@ SECRET_URLS = {
     "sentry": "sentry"
 }
 
+TASTYPIE_SWAGGER_API_MODULE = 'froide.urls.v1_api'
+
+
 FROIDE_CONFIG = {
     "create_new_publicbody": True,
     "publicbody_empty": True,
@@ -313,6 +328,7 @@ FROIDE_PUBLIC_BODY_BOOSTS = {
 }
 
 SITE_NAME = 'FroIde'
+SITE_EMAIL = 'info@example.com'
 SITE_URL = 'http://localhost:8000'
 
 FROIDE_DRYRUN = False
@@ -365,8 +381,3 @@ djcelery.setup_loader()
 
 CELERY_RESULT_BACKEND = "database"
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-try:
-    from local_settings import *  # noqa
-except ImportError:
-    pass

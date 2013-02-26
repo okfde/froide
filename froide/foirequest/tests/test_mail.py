@@ -12,8 +12,8 @@ from django.utils import timezone
 
 from froide.helper.email_utils import EmailParser
 
-from froide.foirequest.tasks import _process_mail
-from froide.foirequest.models import FoiRequest
+from froide.foirequest.tasks import process_mail
+from froide.foirequest.models import (FoiRequest, FoiMessage, DeferredMessage)
 from froide.foirequest.tests import factories
 
 FILE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -26,15 +26,17 @@ def p(path):
 class MailTest(TestCase):
     def setUp(self):
         site = factories.make_world()
+        date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
         req = factories.FoiRequestFactory.create(site=site,
-            secret_address="sw+yurpykc1hr@fragdenstaat.de")
-        factories.FoiMessageFactory.create(request=req)
+            secret_address="sw+yurpykc1hr@fragdenstaat.de",
+            first_message=date, last_message=date)
+        factories.FoiMessageFactory.create(request=req, timestamp=date)
 
     def test_working(self):
         with file(p("test_mail_01.txt")) as f:
-            _process_mail(f.read())
+            process_mail.delay(f.read())
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
-        messages = request.foimessage_set.all()
+        messages = request.messages
         self.assertEqual(len(messages), 2)
         self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
         message = messages[1]
@@ -43,7 +45,7 @@ class MailTest(TestCase):
 
     def test_working_with_attachment(self):
         with file(p("test_mail_02.txt")) as f:
-            _process_mail(f.read())
+            process_mail.delay(f.read())
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -56,7 +58,7 @@ class MailTest(TestCase):
         request.delete()
         mail.outbox = []
         with file(p("test_mail_01.txt")) as f:
-            _process_mail(f.read())
+            process_mail.delay(f.read())
         self.assertEqual(len(mail.outbox), len(settings.MANAGERS))
         self.assertTrue(all([_('Unknown FoI-Mail Recipient') in m.subject for m in mail.outbox]))
         recipients = [m.to[0] for m in mail.outbox]
@@ -68,3 +70,49 @@ class MailTest(TestCase):
         with file(p("test_mail_03.txt")) as f:
             email = parser.parse(f.read())
         self.assertEqual(len(email['attachments']), 1)
+
+    def test_long_attachment_names(self):
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        with file(p("test_mail_04.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(content)
+        self.assertEqual(mail['subject'], u'Kooperationen des Ministerium für Schule und '
+                u'Weiterbildung des Landes Nordrhein-Westfalen mit außerschulischen Partnern')
+        self.assertEqual(mail['attachments'][0].name, u'Kooperationen des MSW, Antrag '
+                'nach Informationsfreiheitsgesetz NRW, Stefan Safario vom 06.12.2012 - AW vom '
+                '08.01.2013 - RS.pdf')
+        request.add_message_from_email(mail, content)
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        messages = request.foimessage_set.all()
+        self.assertEqual(len(messages), 2)
+        self.assertEqual(messages[1].subject, mail['subject'])
+        self.assertEqual(len(messages[1].attachments), 2)
+        self.assertEqual(messages[1].attachments[0].name, u"KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf")
+
+
+class DeferredMessageTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address="sw+yurpykc1hr@fragdenstaat.de")
+        factories.FoiMessageFactory.create(request=self.req)
+
+    def test_deferred(self):
+        count_messages = len(self.req.messages)
+        name, domain = self.req.secret_address.split('@')
+        bad_mail = '@'.join((name + 'x', domain))
+        with file(p("test_mail_01.txt")) as f:
+            mail = f.read().decode('utf-8')
+        mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
+        process_mail.delay(mail.encode('utf-8'))
+        self.assertEqual(count_messages,
+            FoiMessage.objects.filter(request=self.req).count())
+        dms = DeferredMessage.objects.filter(recipient=bad_mail)
+        self.assertEqual(len(dms), 1)
+        dm = dms[0]
+        dm.redeliver(self.req)
+        req = FoiRequest.objects.get(id=self.req.id)
+        self.assertEqual(len(req.messages), count_messages + 1)
+        dm = DeferredMessage.objects.get(id=dm.id)
+        self.assertEqual(dm.request, req)

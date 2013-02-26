@@ -178,8 +178,12 @@ def show(request, slug, template_name="foirequest/show.html",
             .filter(belongs_to__request=obj).all()
     for message in obj.messages:
         message.request = obj
-        message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
-                all_attachments)
+        if message.not_publishable:
+            obj.not_publishable_message = message
+        message.all_attachments = filter(
+            lambda x: x.belongs_to_id == message.id, all_attachments)
+        for att in message.all_attachments:
+            att.belongs_to = message
 
     events = FoiEvent.objects.filter(request=obj).select_related(
             "user", "user__profile", "request",
@@ -288,6 +292,8 @@ def submit_request(request, public_body=None):
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
+        if not public_body.email:
+            raise Http404
         all_laws = FoiLaw.objects.filter(jurisdiction=public_body.jurisdiction)
     else:
         all_laws = FoiLaw.objects.all()
@@ -472,6 +478,10 @@ def escalation_message(request, slug):
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
+    if not foirequest.can_be_escalated():
+        messages.add_message(request, messages.ERROR,
+                _('Your request cannot be escalated.'))
+        return show(request, slug, status=400)
     form = EscalationMessageForm(foirequest, request.POST)
     if form.is_valid():
         form.save()
@@ -575,7 +585,7 @@ def add_postal_reply(request, slug):
                     size=scan.size,
                     filetype=scan.content_type)
             att.file.save(scan_name, scan)
-            att.approved = True
+            att.approved = False
             att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A postal reply was successfully added!'))
@@ -608,7 +618,7 @@ def add_postal_reply_attachment(request, slug, message_id):
                 size=scan.size,
                 filetype=scan.content_type)
         att.file.save(scan_name, scan)
-        att.approved = True
+        att.approved = False
         att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your document was attached to the message.'))

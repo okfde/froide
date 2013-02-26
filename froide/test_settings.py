@@ -7,6 +7,8 @@ DEBUG = False
 
 TEMPLATE_DEBUG = True
 
+FROIDE_THEME = None
+
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 ADMINS = (
@@ -69,6 +71,8 @@ USE_L10N = True
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "..", "files")
 
+GEOIP_PATH = None
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
@@ -87,7 +91,7 @@ X_ACCEL_REDIRECT_PREFIX = '/protected'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "static")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "..", "public")
 
 # URL that handles the static files like app media.
 # Example: "http://media.lawrence.com"
@@ -95,7 +99,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, "..", "media"),
+    os.path.join(PROJECT_ROOT, "static"),
 )
 
 
@@ -174,6 +178,9 @@ INSTALLED_APPS = (
     'taggit',
     'django_gravatar',
     'floppyforms',
+    'overextends',
+    'tastypie',
+    'tastypie_swagger',
 
     # local
     'froide.foirequest',
@@ -183,6 +190,7 @@ INSTALLED_APPS = (
     'froide.account',
     'froide.foiidea',
     'froide.redaction',
+    'froide.foisite',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -228,6 +236,8 @@ LOGGING = {
 
 SESSION_COOKIE_AGE = 3628800  # six weeks
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
 CACHES = {
     'default': {
         # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -237,6 +247,7 @@ CACHES = {
 
 TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
+TEST_SELENIUM_DRIVER = 'phantomjs'
 # south settings
 
 SOUTH_TESTS_MIGRATE = False
@@ -343,6 +354,7 @@ MIDDLEWARE_CLASSES = [
 MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
 SITE_NAME = "Frag den Staat"
+SITE_EMAIL = "info@example.com"
 SITE_URL = 'http://localhost:8000'
 
 rec = re.compile

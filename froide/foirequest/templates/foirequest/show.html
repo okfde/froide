@@ -4,7 +4,7 @@
 {% load markup %}
 {% load comments %}
 {% load floppyforms %}
-{% load foirequest_tags follower_tags account_tags %}
+{% load foirequest_tags account_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -103,7 +103,7 @@
             </a>
           </li>
         {% endif %}
-        {% if object.law.mediator %}
+        {% if object.law.mediator and object.can_be_escalated %}
           <li{% if active_tab == 'escalate' %} class="active"{% endif %}>
             <a href="#escalate" data-toggle="tab">
               {% trans "Mediation" %}
@@ -158,7 +158,7 @@
         {% endif %}
 
         {# Escalate #}
-        {% if object.law.mediator %}
+        {% if object.law.mediator and object.can_be_escalated %}
           <div class="tab-pane no-print{% if active_tab == 'escalate' %} active{% endif %}" id="escalate">
             <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
               {% csrf_token %}
@@ -378,6 +378,45 @@
       </div>
     </div>
     {% endif %}
+
+    {% if object.not_publishable_message %}
+      <div class="alert no-print alert-info" id="make-same-request">
+        <p>{% blocktrans %}This request received documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them below.{% endblocktrans %}</p>
+        {% if user.is_authenticated %}
+          {% if object.user == user %}
+            <p>{% blocktrans with email=SITE_EMAIL %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact {{ email }}.{% endblocktrans %}</p>
+          {% else %}
+            {% if object.same_as.user == user %}
+              <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
+            {% else %}
+              {% check_same_request object user "same_request" %}
+              {% if same_request %}
+                <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+              {% else %}
+                <form method="post" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}">
+                  {% csrf_token %}
+                  <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
+                  <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
+                  <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
+                  <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
+                </form>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        {% else %}
+          <form method="post" id="make-same-request" class="form-horizontal no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}#make-same-request">
+            {% csrf_token %}
+            <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
+            {% if not new_user_form %}
+              {% get_new_user_form "new_user_form" %}
+            {% endif %}
+            {% form new_user_form using "bootstrap/horizontal.html" %}
+            <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
+          </form>
+        {% endif %}
+        <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
+      </div>
+    {% endif %}
   </div>
 
   <div class="span3">
@@ -392,49 +431,7 @@
 
       {% if user.is_authenticated and user != object.user %}
         <li>
-          <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" id="followrequest-form">
-            {% csrf_token %}
-            {% if followform %}
-              {{ followform.as_p }}
-              <button type="submit" class="btn">{% trans "Follow request" %}</button>
-            {% else %}
-              {% followrequest object user "followform" %}
-              {{ followform.as_p }}
-              {% if followform.following %}
-                <button class="input-large btn btn-info hover-btn-warning" type="submit">
-                  <span class="on-hover">
-                    <i class="icon-white icon-remove"></i>
-                    {% trans "Unfollow request" %}
-                  </span>
-                  <span class="on-display">
-                    <i class="icon-white icon-star"></i>
-                    {% trans "You follow this request" %}
-                  </span>
-                </button>
-                <p class="muted">
-                  <small>
-                    {% blocktrans %}You get notified of changes.{% endblocktrans %}
-                  </small>
-                </p>
-              {% else %}
-                <button class="input-large btn hover-btn-success" type="submit">
-                  <span class="on-hover">
-                    <i class="icon-white icon-star"></i>
-                    {% trans "Follow request" %}
-                  </span>
-                  <span class="on-display">
-                    <i class="icon-star-empty"></i>
-                    {% trans "Follow request?" %}
-                  </span>
-                </button>
-                <p class="muted">
-                  <small>
-                    {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
-                  </small>
-                </p>
-              {% endif %}
-            {% endif %}
-          </form>
+          {% include "foirequestfollower/follow_form.html" %}
         </li>
       {% endif %}
 
@@ -461,7 +458,7 @@
 
       <li class="nav-header">{% trans "Short URL" %}</li>
       <li>
-        <input type="text" readonly value="{{ object.get_absolute_domain_short_url }}"/>
+        <input type="text" class="copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
       </li>
 
       {% with object.tags.all as tags %}
@@ -496,20 +493,26 @@
           <li>{% trans "Marked as checked" %}</li>
         {% else %}
           <li>
-            <form method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
+            <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn" type="submit">{% trans "Mark as checked" %}</button>
             </form>
+            <div style="display:none" id="mark-checked-form-success">
+              {% trans "Marked as checked" %}
+            </div>
           </li>
         {% endif %}
         {% if not object.is_foi %}
           <li>{% trans "Marked as NOT FoI" %}</li>
         {% else %}
           <li>
-            <form method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn" type="submit">{% trans "Mark as NOT FoI" %}</button>
             </form>
+            <div style="display:none" id="mark-not-foi-form-success">
+              {% trans "Marked as NOT FoI" %}
+            </div>
           </li>
         {% endif %}
         <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
@@ -628,85 +631,7 @@
                   <td>
                     <ul>
                       {% for attachment in message.all_attachments %}
-                        {% if attachment.approved or user.is_staff or user == request.user %}
-                          <li>
-                            {% if not attachment.approved %}
-                              <div class="alert">
-                            {% endif %}
-                            {% if attachment.approved %}
-                              <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
-                                {{ attachment.name }} ({{ attachment.size|filesizeformat }})
-                              </a>
-                              {% if attachment.can_preview %}
-                                -
-                                <a class="target-new" href="{{ attachment.get_preview_url }}">
-                                  {% trans "Preview in Browser" %}
-                                </a>
-                              {% endif %}
-                            {% else %}
-                              {% if user == object.user or user.is_staff %}
-                                <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
-                                  {{ attachment.name }} ({{ attachment.size|filesizeformat }})
-                                </a>
-                                {% if attachment.can_preview %}
-                                  -
-                                  <a class="target-new" href="{{ attachment.get_preview_url }}">
-                                    {% trans "Preview in Browser" %}
-                                  </a>
-                                {% endif %}
-                                {% if attachment.can_approve or user.is_staff %}
-                                  <form class="no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
-                                    {% csrf_token %}
-                                    {% if object.user.get_profile.private %}
-                                      <p>
-                                        {% trans "Please check this attachment and if it doesn't contain personally identifying information and if you are not explicitly forbidden to publish it, click the button below." %}
-                                      </p>
-                                    {% else %}
-                                      <p>
-                                        {% blocktrans with name=object.user.get_full_name %}Please check this attachment and if it doesn't contain personally identifying information beyond the name ({{ name }}) and if publication is not explicitly forbidden, click the button below.{% endblocktrans %}
-                                      </p>
-                                    {% endif %}
-                                    {% if not attachment.can_approve %}
-                                      <p>
-                                        <strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>
-                                        {% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}
-                                      </p>
-                                    {% endif %}
-                                    <button class="btn" type="submit">{% trans "Publish this attachment" %}</button>
-                                    <p>{% trans "If it does contain personally identifying information, please inform moderators (info@fragdenstaat.de) and they will redact the document and then publish it for you." %}</p>
-
-                                    {% if user.is_staff %}
-                                      <p>
-                                        <a href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-                                        {% if attachment.is_redacted %}
-                                          {% trans "Update this redacted version" %}
-                                        {% endif %}
-                                        {% if attachment.redacted %}
-                                          {% trans "Update the redacted version of this attachment" %}
-                                        {% endif %}
-                                        {% if not attachment.redacted and not attachment.is_redacted %}
-                                          {% trans "Redact this attachment" %}
-                                        {% endif %}
-                                        </a>
-                                      </p>
-                                    {% endif %}
-                                  </form>
-                                {% else %}
-                                  <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
-                                {% endif %}
-                              {% else %}
-                                {% if not attachment.can_approve %}
-                                  <span>{% trans "This attachment can't be published." %}</span>
-                                {% else %}
-                                  <span>{% trans "This attachment has not been published yet." %}</span>
-                                {% endif %}
-                              {% endif %}
-                              {% if not attachment.approved %}
-                                </div>
-                              {% endif %}
-                            {% endif %}
-                          </li>
-                        {% endif %}
+                        {% include "foirequest/snippets/attachment.html" %}
                       {% endfor %}
                     </ul>
                   </td>
@@ -729,43 +654,6 @@
               {% endif %}
             </tbody>
           </table>
-          {% if message.not_publishable %}
-            <div class="alert no-print alert-info">
-              <p>{% blocktrans %}This reply contains documents that every person can get individual access to. However, we are not allowed to publish these documents online.{% endblocktrans %}</p>
-              {% if user.is_authenticated %}
-                {% if object.user == user %}
-                  <p>{% blocktrans %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact info@example.com.{% endblocktrans %}</p>
-                {% else %}
-                  {% if object.same_as.user == user %}
-                    <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
-                  {% else %}
-                    {% check_same_request object user "same_request" %}
-                    {% if same_request %}
-                      <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
-                    {% else %}
-                      <form method="post" class="no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}">
-                        {% csrf_token %}
-                        <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
-                        <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
-                      </form>
-                    {% endif %}
-                  {% endif %}
-                {% endif %}
-              {% else %}
-                <form method="post" id="make-same-request" class="form-horizontal no-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=message.id %}#make-same-request">
-                  {% csrf_token %}
-                  <p>{% blocktrans %}You can make a request identical to this one in your name to gain individual access to the information that we are not allowed to publish here.{% endblocktrans %}</p>
-                  {% if not new_user_form %}
-                    {% get_new_user_form "new_user_form" %}
-                  {% endif %}
-                  {% form new_user_form using "bootstrap/horizontal.html" %}
-                  <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
-                </form>
-              {% endif %}
-              <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
-            </div>
-          {% endif %}
-
           <hr/>
           <div id="{{ message.get_html_id }}-content" class="message-content">
             {% if forloop.counter0 == 0 %}
@@ -827,9 +715,7 @@
             <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
             <div class="comment-form" id="comment-form-{{ message.id }}">
               {% if user.is_authenticated %}
-                {% with next=object.get_absolute_url %}
-                  {% render_comment_form for message %}
-                {% endwith %}
+                {% include "comments/foirequest/form.html" %}
               {% else %}
                 <a href="{% url 'account-login' %}" class="no-print">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
               {% endif %}

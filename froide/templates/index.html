@@ -1,32 +1,21 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load url from future %}
+{% block title %}{{SITE_NAME}}{% endblock %}
 
-{% block banner %}
-  <div class="container">
-    <div class="alert alert-info alert-block">
-      <div class="row">
-        <div class="span9">
-          {% trans "Like this? Consider supporting us!" %}
-          <a href="{% url 'help-donate' %}" class="btn btn-small btn-success"><i class="icon-white icon-heart"></i> {% trans "Donate now!" %}</a>
-        </div>
-        <div class="span2">
-          <a style="float:right" href="http://flattr.com/thing/520066/FragDenStaat-de" target="_blank">
-            <img src="{{ STATIC_URL }}img/flattr.png" alt="{% trans "Flattr us!" %}" title="{% trans "Flattr us!" %}" border="0" />
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-{% endblock %}
+{% block index_banner %}{% endblock %}
 
 {% block body %}
 
 <div class="heroine-unit" id="main-folders">
   <div class="row">
     <div class="span6">
-      <h1>{{ SITE_NAME }}!</h1>
-      <p>{% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}</p>
+      <h1>{% block site_name %}{{ SITE_NAME }}{% endblock %}</h1>
+      {% block site_description %}
+        <p>
+          {% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}
+        </p>
+      {% endblock %}
       <br/>
       <form method="get" action="{% url 'foirequest-search' %}" class="form-search">
         <label>{% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}</label>
@@ -35,10 +24,12 @@
           <button class="btn btn-primary btn-success" type="submit"><i class="icon-white icon-search"></i> {% blocktrans %}Search For Information{% endblocktrans %}</button>
         </div>
         <span class="help-block">
-          {% blocktrans %}Try the following:{% endblocktrans %} 
-          <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
-          {% trans "or" %}
-          <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
+          {% block example_search_terms %}
+            {% blocktrans %}Try the following:{% endblocktrans %}
+            <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
+            {% trans "or" %}
+            <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
+          {% endblock %}
         </span>
       </form>
     </div>
@@ -79,19 +70,23 @@
 
 <div class="row">
   <div class="span6">
+    {% block index_sub_left %}
     <h3>{% blocktrans %}What is Freedom of Information?{% endblocktrans %}</h3>
     <p>{% blocktrans %}Every citizen has the right under the Freedom of Information Laws to ask for and receive access to information from Public Bodies concerning public affairs.{% endblocktrans %}
     <br/>
      <a class="target-new" href="http://de.wikipedia.org/wiki/Informationsfreiheit">{% blocktrans %}Read more about the Freedom of Information!{% endblocktrans %}</a>
     </p>
+    {% endblock %}
   </div>
 
   <div class="span6">
+    {% block index_sub_right %}
     <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
     <p>{% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information and replies can be scrutinized by the public.{% endblocktrans %}
     <br/>
      <a href="{% url 'help-index' %}">{% blocktrans %}Read more about the concept!{% endblocktrans %}</a>
     </p>
+    {% endblock %}
   </div>
 </div>
 

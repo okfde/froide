@@ -108,13 +108,13 @@ class EmailParser(object):
                     s = unicode(s, errors='ignore')
             fragments.append(s)
         field = u''.join(fragments)
-        return field.replace('\n\t', " ")
+        return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
     def get_address_list(self, msgobj, field):
         address_list = getaddresses(msgobj.get_all(field, []))
         fixed = []
         for addr in address_list:
-            fixed.append((self.parse_header_field(addr[0]), addr[1]))
+            fixed.append((self.parse_header_field(addr[0]), addr[1].lower()))
         return fixed
 
     def parse_date(self, date_str):
