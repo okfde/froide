@@ -441,6 +441,10 @@ $(function(){
         $('.nav a[href="' + e.target.hash + '"]').parent().addClass("active");
     };
 
+    $('.copyinput').click(function(e){
+        $(this).select();
+    });
+
     $('form.ajaxified').submit(function(e){
         e.preventDefault();
         var form = $(this);
