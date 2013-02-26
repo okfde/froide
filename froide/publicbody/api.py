@@ -81,8 +81,10 @@ class PublicBodyResource(ModelResource):
             "slug": ALL,
             "number_of_requests": ALL,
             "jurisdiction": ALL_WITH_RELATIONS,
-            "root": ALL_WITH_RELATIONS,
-            "parent": ALL_WITH_RELATIONS
+            # Technically possible, but API docs
+            # generation currently crashes here
+            # "root": ALL_WITH_RELATIONS,
+            # "parent": ALL_WITH_RELATIONS
         }
         paginator_class = TastyPaginator
         authentication = AnonymousGetAuthentication()
