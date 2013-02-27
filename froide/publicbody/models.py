@@ -8,6 +8,7 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
@@ -84,9 +85,9 @@ class FoiLaw(models.Model):
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
-            null=True, blank=True)
+            null=True, blank=True, default=30)
     max_response_time_unit = models.CharField(_("Unit of Response Time"),
-            blank=True, max_length=32,
+            blank=True, max_length=32, default='day'
             choices=(('day', _('Day(s)')),
                 ('working_day', _('Working Day(s)')),
                 ('month_de', _('Month(s) (DE)')),
@@ -152,7 +153,10 @@ class FoiLaw(models.Model):
     def get_default_law(cls, pb=None):
         if pb:
             return cls.objects.filter(jurisdiction=pb.jurisdiction).order_by('-meta')[0]
-        return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
+        try:
+            return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
+        except FoiLaw.DoesNotExist:
+            raise ImproperlyConfigured(u'You need to setup a default FoiLaw object and reference id in settings')
 
     def as_dict(self):
         return {
