@@ -361,13 +361,6 @@ rec = re.compile
 POSSIBLE_GREETINGS = [rec(u"Sehr geehrt(er? (?:Herr|Frau) .*)")]
 POSSIBLE_CLOSINGS = [rec(u"Mit freundlichen Gr\xfc\xdfen,?")]
 
-
-TWITTER_CONSUMER_KEY = "4yuJF1vAnAYU0THU4v6ZPQ"
-TWITTER_CONSUMER_SECRET = "sW9tWul2La2UpULVCEqFs7t1o3lczKqvM4LwFvup1SI"
-TWITTER_ACCESS_KEY = '297351336-OrhX7oQHwSHMYBUO3A0i4GT9Ws6COBwaGcjVZtwM'
-TWITTER_ACCESS_SECRET = '2fCvKbooTtzodKW4uVknY3MVkmYVWbxLuBs5fKHcnI'
-
-
 SECRET_URLS = {
     "admin": "admin"
 }
