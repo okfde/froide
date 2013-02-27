@@ -35,7 +35,9 @@ class JurisdictionAdmin(admin.ModelAdmin):
 
 
 class PublicBodyTopicAdmin(admin.ModelAdmin):
-    pass
+    prepopulated_fields = {
+        "slug": ("name",)
+    }
 
 admin.site.register(PublicBody, PublicBodyAdmin)
 admin.site.register(FoiLaw, FoiLawAdmin)
