@@ -87,7 +87,7 @@ class FoiLaw(models.Model):
     max_response_time = models.IntegerField(_("Maximal Response Time"),
             null=True, blank=True, default=30)
     max_response_time_unit = models.CharField(_("Unit of Response Time"),
-            blank=True, max_length=32, default='day'
+            blank=True, max_length=32, default='day',
             choices=(('day', _('Day(s)')),
                 ('working_day', _('Working Day(s)')),
                 ('month_de', _('Month(s) (DE)')),
