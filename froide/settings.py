@@ -389,7 +389,8 @@ FROIDE_CONFIG = {
     "request_public_after_due_days": 14,
     "payment_possible": True,
     "currency": "Euro",
-    "default_law": 1
+    "default_law": 1,
+    'search_engine_query': "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"
 }
 
 # name classification values and their boost values
@@ -400,8 +401,6 @@ rec = re.compile
 
 POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
 POSSIBLE_CLOSINGS = [rec(u"Sincerely yours,?")]
-
-SEARCH_ENGINE_QUERY = "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=de&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"
 
 
 ####### Email ##############
