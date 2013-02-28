@@ -189,14 +189,18 @@ if FROIDE_THEME is not None:
 
 ######### Logging ##########
 
-# Enable more granular logging
-# e.g. logging with Raven
+# A sample logging configuration.
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': True,
 #     'root': {
 #         'level': 'WARNING',
-#         'handlers': ['sentry'],
+#         'handlers': [],
+#     },
+#     'filters': {
+#         'require_debug_false': {
+#             '()': 'django.utils.log.RequireDebugFalse'
+#         }
 #     },
 #     'formatters': {
 #         'verbose': {
@@ -206,11 +210,8 @@ if FROIDE_THEME is not None:
 #     'handlers': {
 #         'mail_admins': {
 #             'level': 'ERROR',
+#             'filters': ['require_debug_false'],
 #             'class': 'django.utils.log.AdminEmailHandler'
-#         },
-#         'sentry': {
-#             'level': 'ERROR',
-#             'class': 'raven.contrib.django.handlers.SentryHandler',
 #         },
 #         'console': {
 #             'level': 'DEBUG',
@@ -230,16 +231,6 @@ if FROIDE_THEME is not None:
 #         },
 #         'django.db.backends': {
 #             'level': 'ERROR',
-#             'handlers': ['console'],
-#             'propagate': False,
-#         },
-#         'raven': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#             'propagate': False,
-#         },
-#         'sentry.errors': {
-#             'level': 'DEBUG',
 #             'handlers': ['console'],
 #             'propagate': False,
 #         }

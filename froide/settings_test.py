@@ -73,8 +73,6 @@ TEST_RUNNER = 'discover_runner.DiscoverRunner'
 # 'chrome' or 'firefox' or 'phantomjs'
 TEST_SELENIUM_DRIVER = 'phantomjs'
 
-# south settings
-
 SOUTH_TESTS_MIGRATE = False
 
 USE_X_ACCEL_REDIRECT = True
