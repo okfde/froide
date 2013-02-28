@@ -10,7 +10,7 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
@@ -142,12 +142,14 @@ class FoiLaw(models.Model):
     def get_refusal_reason_choices(self):
         not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
         if self.meta:
-            return not_applicable +\
-                    [(l[0], "%s: %s" % (law.name, l[1])) for law in self.combined.all()
-                         for l in law.get_refusal_reason_choices()[1:]]
+            return (not_applicable +
+                    [(l[0], "%s: %s" % (law.name, l[1]))
+                    for law in self.combined.all()
+                    for l in law.get_refusal_reason_choices()[1:]])
         else:
-            return not_applicable + \
-                [(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()]
+            return (not_applicable +
+                    [(x, Truncator(x).words(12))
+                    for x in self.refusal_reasons.splitlines()])
 
     @classmethod
     def get_default_law(cls, pb=None):
