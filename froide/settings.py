@@ -178,11 +178,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'froide.helper.theme_utils.ThemeLoader',
+TEMPLATE_LOADERS = [
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-)
+]
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',

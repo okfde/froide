@@ -28,6 +28,10 @@ from .settings import *  # noqa
 #    }
 # }
 
+if FROIDE_THEME is not None:
+    TEMPLATE_LOADERS += (['froide.helper.theme_utils.ThemeLoader'] +
+                         TEMPLATE_LOADERS)
+
 
 ############## Site Configuration #########
 
