@@ -93,12 +93,6 @@ if USE_X_ACCEL_REDIRECT:
             include('froide.foirequest.media_urls'))
     )
 
-try:
-    from custom_urls import urlpatterns as custom_urlpatterns
-    urlpatterns += custom_urlpatterns
-except ImportError:
-    pass
-
 
 def handler500(request):
     """
