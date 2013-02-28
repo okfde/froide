@@ -121,7 +121,7 @@ class AccountManager(object):
         return True
 
     def get_autologin_url(self, url):
-        return  settings.SITE_URL + reverse('account-go', kwargs={"user_id": self.user.id,
+        return settings.SITE_URL + reverse('account-go', kwargs={"user_id": self.user.id,
             "secret": self.generate_autologin_secret(),
             "url": url})
 

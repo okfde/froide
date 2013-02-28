@@ -35,8 +35,6 @@ from froide.helper.text_utils import (replace_email_name,
 
 from .foi_mail import send_foi_mail
 
-html2markdown = lambda x: x
-
 
 class FoiRequestManager(CurrentSiteManager):
     def get_for_homepage(self, count=5):

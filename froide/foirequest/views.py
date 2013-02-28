@@ -319,9 +319,9 @@ def submit_request(request, public_body=None):
     if not request_form.is_valid():
         error = True
     else:
-        if public_body is None and \
-                request_form.cleaned_data['public_body'] != '' and \
-                request_form.cleaned_data['public_body'] != 'new':
+        if (public_body is None and
+                request_form.cleaned_data['public_body'] != '' and
+                request_form.cleaned_data['public_body'] != 'new'):
             public_body = request_form.public_body_object
 
     context['user_form'] = None
