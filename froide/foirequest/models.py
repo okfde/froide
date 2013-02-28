@@ -1039,7 +1039,7 @@ class FoiMessage(models.Model):
     @property
     def sender(self):
         if self.sender_user:
-            return self.sender_user.get_profile().display_name
+            return self.sender_user.get_profile().display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
                 False):
             return make_address(self.sender_email, self.sender_name)
@@ -1052,7 +1052,7 @@ class FoiMessage(models.Model):
     @property
     def real_sender(self):
         if self.sender_user:
-            return self.sender_user.get_profile().display_name
+            return self.sender_user.get_profile().display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
                 False):
             return make_address(self.sender_email, self.sender_name)

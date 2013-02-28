@@ -76,6 +76,22 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(marker, response.content)
 
+    def test_username_hidden(self):
+        user = factories.UserFactory.create(
+            first_name='Reinhardt'
+        )
+        profile = user.get_profile()
+        profile.private = True
+        profile.save()
+        mes = factories.FoiMessageFactory.create(
+            content_hidden=True,
+            sender_user=user
+        )
+        response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(user.username, response.content)
+        self.assertNotIn(user.first_name, response.content)
+
     def test_search(self):
         response = self.client.get('/api/v1/request/search/?format=json&q=Number')
         self.assertEqual(response.status_code, 200)
