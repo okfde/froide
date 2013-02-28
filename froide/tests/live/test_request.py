@@ -14,15 +14,15 @@ from froide.publicbody.models import PublicBody
 
 def get_selenium():
     driver = getattr(settings, 'TEST_SELENIUM_DRIVER', 'firefox')
-    if driver == 'firefox':
-        from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxDriver
-        return FirefoxDriver()
-    elif driver == 'chrome':
+    if driver == 'chrome':
         from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
         return ChromeDriver()
     elif driver == 'phantomjs':
         from selenium.webdriver import PhantomJS
         return PhantomJS()
+    else:
+        from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxDriver
+        return FirefoxDriver()
 
 
 class TestMakingRequest(LiveServerTestCase):
