@@ -103,8 +103,7 @@ if FROIDE_THEME is not None:
 ### URLs that can be translated to a secret value
 
 # SECRET_URLS = {
-#     "admin": "admin",
-#     "sentry": "sentry"
+#     "admin": "admin"
 # }
 
 

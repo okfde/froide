@@ -142,8 +142,7 @@ X_ACCEL_REDIRECT_PREFIX = '/protected'
 ### URLs that can be translated to a secret value
 
 SECRET_URLS = {
-    "admin": "admin",
-    "sentry": "sentry"
+    "admin": "admin"
 }
 
 
