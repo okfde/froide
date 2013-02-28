@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.comments',
 
@@ -58,6 +57,7 @@ INSTALLED_APPS = [
     'froide.foiidea',
     'froide.redaction',
     'froide.foisite',
+    'froide.helper',
 ]
 
 CACHES = {

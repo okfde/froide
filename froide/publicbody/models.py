@@ -14,10 +14,10 @@ from django.utils.text import truncate_words
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
-from django.contrib.markup.templatetags.markup import markdown
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
+from froide.helper.templatetags.markup import markdown
 from froide.helper.form_generator import FormGenerator
 
 
