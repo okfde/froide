@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView

@@ -20,16 +20,6 @@ from .settings import *  # noqa
 #     }
 # }
 
-# # Add Raven to your app
-# INSTALLED_APPS += [
-#     'raven.contrib.django',
-#     'raven.contrib.django.celery'
-# ]
-#
-# RAVEN_CONFIG = {
-#     'dsn': 'http://user:secret@localhost:9000/'
-# }
-
 # # Add real cache
 # CACHES = {
 #    'default': {
