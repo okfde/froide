@@ -28,6 +28,8 @@ class AdminActionTest(TestCase):
     def test_mark_same_as(self):
         req = self.factory.post('/', {})
         req.user = self.user
+        factories.FoiRequestFactory(site=self.site)
+        factories.FoiRequestFactory(site=self.site)
         frs = FoiRequest.objects.all()[:2]
         result = self.request_admin.mark_same_as(req, frs)
         self.assertEqual(result.status_code, 200)
@@ -51,6 +53,33 @@ class AdminActionTest(TestCase):
         frs[1] = FoiRequest.objects.get(id=frs[1].id)
         self.assertEqual(frs[0].same_as, same_as)
         self.assertEqual(frs[1].same_as, same_as)
+
+    def test_tag_all(self):
+        req = self.factory.post('/', {})
+        req.user = self.user
+        factories.FoiRequestFactory(site=self.site)
+        factories.FoiRequestFactory(site=self.site)
+        frs = FoiRequest.objects.all()[:2]
+        result = self.request_admin.tag_all(req, frs)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(frs[0].tags.count(), 0)
+        self.assertEqual(frs[1].tags.count(), 0)
+
+        req = self.factory.post('/', {'tags': 'one, two'})
+        req.user = self.user
+        req._messages = default_storage(req)
+
+        frs = FoiRequest.objects.filter(
+            id__in=[frs[0].id, frs[1].id])
+
+        result = self.request_admin.tag_all(req, frs)
+        self.assertIsNone(result)
+        frs = list(frs)
+        frs[0] = FoiRequest.objects.get(id=frs[0].id)
+        frs[1] = FoiRequest.objects.get(id=frs[1].id)
+        self.assertEqual(frs[0].tags.count(), 2)
+        self.assertEqual(frs[1].tags.count(), 2)
+        self.assertEqual(set([t.name for t in frs[0].tags.all()]), set(['one', 'two']))
 
     def check_attribute_change_action(self, klass, factory,
          admin_action, attr, initial, final,

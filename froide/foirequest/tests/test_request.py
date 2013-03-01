@@ -14,6 +14,7 @@ from django.utils import timezone
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.helper.test_utils import skip_if_environ
 
 
 class RequestTest(TestCase):
@@ -1046,6 +1047,14 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.costs, 0.0)
         self.assertEqual(req.status, status)
+
+    @skip_if_environ('FROIDE_SKIP_SEARCH')
+    def test_search(self):
+        pb = PublicBody.objects.all()[0]
+        response = self.client.get('%s?q=%s' % (
+            reverse('foirequest-search'), pb.name[:6]))
+        self.assertIn(pb.name, response.content)
+        self.assertEqual(response.status_code, 200)
 
 
 class MediatorTest(TestCase):
