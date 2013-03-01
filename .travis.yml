@@ -15,7 +15,7 @@ install:
 - terrarium --virtualenv-log-level 30 --pip-log-level 30 --target froideenv --remote-key-format "users/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://assets.okfnlabs.org.s3.amazonaws.com/users/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --pip-log-level 30 --virtualenv-log-level 30 --no-upload --s3-bucket "" --target froideenv --storage-dir . install requirements-test.txt)
 - source froideenv/bin/activate
 - which python
-- pip install -e .
+- sudo pip install -e .
 script:
 - make test
 branches:
