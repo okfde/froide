@@ -99,7 +99,7 @@ _html_theme = 'sphinx-theme-okfn'
 if os.path.exists(os.path.join(os.path.abspath('_themes'), _html_theme)):
     html_theme = _html_theme
     html_theme_options = {
-        'logo_icon': '_static/froide.png',
+        'logo_icon': 'froide.png',
         'show_okfn_logo': False,
         'show_version': True
     }
