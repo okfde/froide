@@ -22,6 +22,7 @@ Freedom of Information Portal.
    theming
    api
    development
+   upgrade
    productionsetup
 
 
