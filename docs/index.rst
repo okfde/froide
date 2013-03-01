@@ -19,6 +19,7 @@ Freedom of Information Portal.
    gettingstarted
    importpublicbodies
    configuration
+   theming
    api
    development
    productionsetup
