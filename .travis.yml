@@ -13,7 +13,7 @@ before_install:
 install:
 - pip install https://github.com/stefanw/terrarium/archive/develop.zip boto
 - terrarium key requirements-test.txt
-- terrarium --virtualenv-log-level 20 --pip-log-level 20 --target froideenv --remote-key-format "u/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://resources.opendatalabs.org.s3.amazonaws.com/u/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --pip-log-level 20 --virtualenv-log-level 20 --no-upload --s3-bucket "" --target froideenv --storage-dir . install requirements-test.txt)
+- terrarium --virtualenv-log-level 20 --pip-log-level 20 --target froideenv --remote-key-format "users/stwe/froideenv/%(arch)s-%(python_vmajor)s.%(python_vminor)s-%(digest)s" install requirements-test.txt || (wget "http://assets.okfnlabs.org.s3.amazonaws.com/users/stwe/froideenv/`terrarium key requirements-test.txt`" ; terrarium --pip-log-level 20 --virtualenv-log-level 20 --no-upload --s3-bucket "" --target froideenv --storage-dir . install requirements-test.txt)
 - source froideenv/bin/activate
 - which python
 - pip install -e .
@@ -24,6 +24,6 @@ branches:
   - master
 env:
   global:
-  - S3_BUCKET=resources.opendatalabs.org
+  - S3_BUCKET=assets.okfnlabs.org
   - S3_ACCESS_KEY=AKIAIY6JZKLHFPB3KTQA
   - secure: "B0JCveS4EwWZybclbEpFN1e/Am6uTTBU9qFJTFs0fyj8LBmdUl14YcWK+24O\nBiX9C3QUsfzHP5SoMEo3GgYZzLMIKRX8wr/UdspyW6sBh8VyPqfaanWys9xn\nGETJBJA30cYpUEwfEsNko/xz7TpW3dfP6O2hweSFuPo/Uzjt1tg="
