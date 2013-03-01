@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.gis.geoip import GeoIP
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,6 +22,11 @@ class FoiSite(models.Model):
     def save(self, *args, **kwargs):
         self.country_code = self.country_code.upper()
         super(FoiSite, self).save(*args, **kwargs)
+
+try:
+    from django.contrib.gis.geoip import GeoIP
+except ImportError:
+    GeoIP = None  # noqa
 
 
 class SiteAdivsor(object):
@@ -52,7 +56,7 @@ class DummyAdvisor(object):
         pass
 
 
-if getattr(settings, 'GEOIP_PATH', False):
+if GeoIP and getattr(settings, 'GEOIP_PATH', False):
     advisor = SiteAdivsor()
 else:
     advisor = DummyAdvisor()
