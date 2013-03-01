@@ -17,6 +17,7 @@ body {
     font-family: 'Kreon', arial, serif;
     background: transparent url('../img/logo.png') no-repeat 3px 10px;
     padding:0 0 0 45px;
+    margin-left: 0px;
 }
 
 .navbar .brand,
@@ -25,7 +26,31 @@ body {
     color: #06C;
 }
 
-@media (min-width: 768px) and (max-width: 1020px) {
+.navbar .nav>li>a {
+    padding: 20px 15px 20px;
+}
+
+.navbar-search {
+    margin-top: 15px;
+}
+
+.navbar .btn, .navbar .btn-group {
+    margin-top: 16px;
+}
+
+@media (max-width: 440px) {
+    .nav .first-divider {
+        display: none;
+    }
+    .navbar .brand {
+        height: 60px;
+    }
+    .navbar .brand h1 {
+        display: none;
+    }
+}
+
+@media (min-width: 979px) and (max-width: 1080px) {
     .nav .first-divider {
         display: none;
     }
@@ -82,11 +107,13 @@ body {
 .account-snippet .account-name {
     float:left;
     font-size: 60%;
-    margin: -4px 0 0;
+    margin: 5px 0 0;
+    line-height: 110%;
 }
 
 .account-login {
     font-size: 75%;
+    line-height: 110%;
 }
 
 .inline {

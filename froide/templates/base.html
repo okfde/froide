@@ -6,8 +6,8 @@
   <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
   {% block header_font %}
   {% endblock %}
-  <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-  <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+  <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
   <meta name="language" content="{{ LANGUAGE_CODE }}" />
@@ -69,8 +69,8 @@
                 <img width="30" src="{% gravatar_url user.email 30 %}" alt="{{ user.get_full_name }}"/>
                 <p class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
                   {{ user.last_name|truncatechars:12 }}
-                  <b class="caret"></b>
                 </p>
+                <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
                 <li>
@@ -90,7 +90,7 @@
             {% else %}
               <li>
                 <a class="account-login" href="{% url 'account-login' %}">
-                  {% blocktrans %}Log In / Sign up{% endblocktrans %}
+                  {% blocktrans %}Log In /<br/>Sign up{% endblocktrans %}
                 </a>
               </li>
             {% endif %}
