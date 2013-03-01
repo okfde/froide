@@ -93,10 +93,14 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 sys.path.append(os.path.abspath('_themes'))
 html_theme_path = ['_themes']
-html_theme = 'sphinx-theme-okfn'
-html_theme_options = {
-    'logo_icon': '_static/froide.png',
-}
+
+_html_theme = 'sphinx-theme-okfn'
+
+if os.path.exists(os.path.join(os.path.abspath('_themes'), _html_theme)):
+    html_theme = _html_theme
+    html_theme_options = {
+        'logo_icon': '_static/froide.png',
+    }
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
