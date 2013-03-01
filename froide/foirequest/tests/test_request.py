@@ -517,6 +517,12 @@ class RequestTest(TestCase):
         attachment = message.foiattachment_set.all()[0]
         self.assertEqual(attachment.file.size, file_size)
         self.assertEqual(attachment.size, file_size)
+        self.assertEqual(attachment.name, 'test.pdf')
+
+        # Change name in order to upload it again
+        attachment.name = 'other_test.pdf'
+        attachment.save()
+
         f = file(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": "9" * 5}),
@@ -555,6 +561,15 @@ class RequestTest(TestCase):
             kwargs={"slug": req.slug, "message_id": message.pk}))
         self.assertEqual(response.status_code, 400)
 
+        f = file(path, "rb")
+        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+            kwargs={"slug": req.slug, "message_id": message.pk}),
+            {"scan": f})
+        f.close()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(message.foiattachment_set.all()), 2)
+
+        # Adding the same document again should override the first one
         f = file(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),

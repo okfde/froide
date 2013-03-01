@@ -613,15 +613,20 @@ def add_postal_reply_attachment(request, slug, message_id):
         scan = request.FILES['scan']
         scan_name = scan.name.rsplit(".", 1)
         scan_name = ".".join([slugify(n) for n in scan_name])
-        att = FoiAttachment(belongs_to=message,
-                name=scan_name,
-                size=scan.size,
-                filetype=scan.content_type)
+        try:
+            att = FoiAttachment.objects.get(belongs_to=message, name=scan_name)
+            message = _('Your document was added to the message and replaced '
+                'an existing attachment with the same name.')
+        except FoiAttachment.DoesNotExist:
+            att = FoiAttachment(belongs_to=message, name=scan_name)
+            message = _('Your document was added to the message as a '
+                'new attachment.')
+        att.size = scan.size
+        att.filetype = scan.content_type
         att.file.save(scan_name, scan)
         att.approved = False
         att.save()
-        messages.add_message(request, messages.SUCCESS,
-                _('Your document was attached to the message.'))
+        messages.add_message(request, messages.SUCCESS, message)
         return redirect(message)
     messages.add_message(request, messages.ERROR,
             form._errors['scan'][0])
