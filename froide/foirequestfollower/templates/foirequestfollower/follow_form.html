@@ -1,4 +1,3 @@
-{% load url from future %}
 {% load follower_tags i18n %}
 <form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" class="ajaxified" id="followrequest-form">
   {% csrf_token %}
