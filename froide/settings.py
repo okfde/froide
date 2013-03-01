@@ -32,14 +32,11 @@ INSTALLED_APPS = [
     'django.contrib.comments',
 
     # external
-    'gunicorn',
     'south',
     'haystack',
     'djcelery',
     'djcelery_email',
     'debug_toolbar',
-    # 'raven.contrib.django',
-    # 'raven.contrib.django.celery',
     'celery_haystack',
     'pagination',
     'djangosecure',
@@ -47,6 +44,8 @@ INSTALLED_APPS = [
     'django_gravatar',
     'floppyforms',
     'overextends',
+    'tastypie',
+    'tastypie_swagger',
 
     # local
     'froide.foirequest',
@@ -199,38 +198,6 @@ DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False
 }
 
-
-<<<<<<< HEAD
-    # external
-    'gunicorn',
-    'south',
-    'haystack',
-    'djcelery',
-    'djcelery_email',
-    'debug_toolbar',
-    'raven.contrib.django',
-    'raven.contrib.django.celery',
-    'celery_haystack',
-    'pagination',
-    'djangosecure',
-    'taggit',
-    'django_gravatar',
-    'floppyforms',
-    'overextends',
-    'tastypie',
-    'tastypie_swagger',
-
-    # local
-    'froide.foirequest',
-    'froide.foirequestfollower',
-    'froide.frontpage',
-    'froide.publicbody',
-    'froide.account',
-    'froide.foiidea',
-    'froide.redaction',
-    'froide.foisite',
-    'froide.helper',
-=======
 ########## I18N and L10N ##################
 
 # Local time zone for this installation. Choices can be found here:
@@ -271,7 +238,6 @@ HOLIDAYS = [
     (1, 1),  # New Year's Day
     (12, 25),  # Christmas
     (12, 26)  # Second day of Christmas
->>>>>>> 9a2f470... Change settings layout
 ]
 
 # Weekends are non-working days
