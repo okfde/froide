@@ -380,27 +380,25 @@ FROIDE_THEME = None
 TASTYPIE_SWAGGER_API_MODULE = 'froide.urls.v1_api'
 
 
-FROIDE_CONFIG = {
-    "create_new_publicbody": True,
-    "publicbody_empty": True,
-    "user_can_hide_web": True,
-    "public_body_officials_public": True,
-    "public_body_officials_email_public": False,
-    "request_public_after_due_days": 14,
-    "payment_possible": True,
-    "currency": "Euro",
-    "default_law": 1,
-    'search_engine_query': "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images"
-}
-
-# name classification values and their boost values
-# for search engine indexing
-FROIDE_PUBLIC_BODY_BOOSTS = {}
-
 rec = re.compile
 
-POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
-POSSIBLE_CLOSINGS = [rec(u"Sincerely yours,?")]
+FROIDE_CONFIG = dict(
+    create_new_publicbody=True,
+    publicbody_empty=True,
+    user_can_hide_web=True,
+    public_body_officials_public=True,
+    public_body_officials_email_public=False,
+    request_public_after_due_days=14,
+    payment_possible=True,
+    currency="Euro",
+    default_law=1,
+    search_engine_query="http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images",
+    greetings=[rec(u"Dear (?:Mr\.?|Ms\.? .*?)")],
+    closings=[rec(u"Sincerely yours,?")],
+    public_body_boosts={},
+    dryrun=False,
+    dryrun_domain="testmail.example.com"
+)
 
 
 ####### Email ##############
@@ -437,10 +435,6 @@ FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
 FOI_EMAIL_HOST = "smtp.example.com"
 FOI_EMAIL_PORT = 537
 FOI_EMAIL_USE_TLS = True
-
-
-FROIDE_DRYRUN = False
-FROIDE_DRYRUN_DOMAIN = "testmail.example.com"
 
 # The FoI Mail can use a different account
 FOI_EMAIL_DOMAIN = "example.com"

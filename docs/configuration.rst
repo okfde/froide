@@ -51,8 +51,13 @@ regexes that also find the name::
     import re
     rec = re.compile
     # define your greetings and closing regexes
-    POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
-    POSSIE_CLOSINGS = [rec(u"Sincerely yours,?")]
+
+    FROIDE_CONFIG.update(
+        dict(
+            greetings=[rec(u"Dear (?:Mr\.?|Ms\.? .*?)")],
+            closings=[rec(u"Sincerely yours,?")]
+        )
+    )
 
 You should replace this with a list of the most common expressions in
 your language.
@@ -63,14 +68,43 @@ Index Boosting of Public Bodies
 Some Public Bodies are more important and should appear first in
 searches (if their name and description match the search terms). You can
 provide a mapping of public body classifications (e.g. ministry,
-council etc.) to their search boost factor via the `FROIDE_PUBLIC_BODY_BOOSTS` setting::
+council etc.) to their search boost factor via the `public_body_boosts`
+key in the `FROIDE_CONFIG` setting::
 
     # boost public bodies by their classification
-    FROIDE_PUBLIC_BODY_BOOSTS = {
-        u"Ministry": 1.9,
-        u"Council": 0.8
-    }
+    FROIDE_CONFIG.update(
+        'public_body_boosts': {
+            u"Ministry": 1.9,
+            u"Council": 0.8
+        }
+    })
 
+
+Public Body E-Mail Dry-run
+--------------------------
+
+You can set your site up and test it out in a production environment
+while sending public body emails not to the public bodies but to
+another mail server. Use the following settings::
+
+    FROIDE_CONFIG.update(
+        dict(
+            dryrun=False,
+            dryrun_domain="testmail.example.com"
+        )
+    )
+
+This converts public body email addresses from
+
+    public-body@example.com
+
+to
+
+    public-body+example.com@testmail.example.com
+
+right before the mail is
+sent out (the changed address is not stored). This allows for some
+testing of sending and receiving mails to and from public bodies wihtout spamming them.
 
 
 Settings for Sending E-Mail
@@ -115,29 +149,6 @@ and displayed on the website if their `To` field matches::
     FOI_EMAIL_HOST_IMAP = "imap.example.com"
     FOI_EMAIL_ACCOUNT_NAME = "foirelay@foi.example.com"
     FOI_EMAIL_ACCOUNT_PASSWORD = "password"
-
-
-Public Body E-Mail Dry-run
---------------------------
-
-You can set your site up and test it out in a production environment
-while sending public body emails not to the public bodies but to
-another mail server. Use the following settings::
-
-    FROIDE_DRYRUN = True
-    FROIDE_DRYRUN_DOMAIN = "mymail.example.com"
-
-This converts public body email addresses from
-
-    public-body@example.com
-
-to
-
-    public-body+example.com@mymail.example.com
-
-right before the mail is
-sent out (the changed address is not stored). This allows for some
-testing of sending and receiving mails to and from public bodies wihtout spamming them.
 
 
 Some more settings

@@ -31,8 +31,8 @@
 
 <body>
   {% block dryrun_block %}
-  {% if FROIDE_DRYRUN %}
-  <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ FROIDE_DRYRUN_DOMAIN }}</div>
+  {% if froide.dryrun %}
+  <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ froide.dryrun_domain }}</div>
   {% endif %}
   {% endblock %}
   <div class="navbar">

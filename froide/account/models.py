@@ -67,16 +67,17 @@ class Profile(models.Model):
                 unicode(_("<< Name removed >>")))
         content = content.replace(first_name,
                 unicode(_("<< Name removed >>")))
-        for greeting in settings.POSSIBLE_GREETINGS:
-            match = greeting.search(content, re.I)
-            if match is not None and len(match.groups()):
-                content = content.replace(match.group(1),
-                    unicode(_("<< Greeting >>")))
-
-        for closing in settings.POSSIBLE_CLOSINGS:
-            match = closing.search(content, re.I)
-            if match is not None:
-                content = content[:match.end()]
+        if settings.FROIDE_CONFIG.get('greetings'):
+            for greeting in settings.FROIDE_CONFIG['greetings']:
+                match = greeting.search(content, re.I)
+                if match is not None and len(match.groups()):
+                    content = content.replace(match.group(1),
+                        unicode(_("<< Greeting >>")))
+        if settings.FROIDE_CONFIG.get('closings'):
+            for closing in settings.FROIDE_CONFIG['closings']:
+                match = closing.search(content, re.I)
+                if match is not None:
+                    content = content[:match.end()]
 
         return content
 

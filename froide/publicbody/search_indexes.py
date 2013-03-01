@@ -4,7 +4,7 @@ from haystack import indexes
 
 from .models import PublicBody
 
-PUBLIC_BODY_BOOSTS = getattr(settings, "FROIDE_PUBLIC_BODY_BOOSTS", {})
+PUBLIC_BODY_BOOSTS = settings.FROIDE_CONFIG.get("public_body_boosts", {})
 
 
 class PublicBodyIndex(indexes.SearchIndex, indexes.Indexable):

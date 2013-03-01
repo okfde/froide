@@ -1130,9 +1130,9 @@ class FoiMessage(models.Model):
         return PostalAttachmentForm()
 
     def send(self):
-        if settings.FROIDE_DRYRUN:
+        if settings.FROIDE_CONFIG['dryrun']:
             recp = self.recipient_email.replace("@", "+")
-            self.recipient_email = "%s@%s" % (recp, settings.FROIDE_DRYRUN_DOMAIN)
+            self.recipient_email = "%s@%s" % (recp, settings.FROIDE_CONFIG['dryrun_domain'])
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
