@@ -16,8 +16,22 @@ Then you can run the tests::
 
     make test
 
-This also does test coverage analysis that you can then
-find at `htmlcov/index.html`.
+This also does test coverage analysis. You can generate an HTML report with::
+
+  coverage html --omit="*/migrations/*"
+
+You can then find the test HTML coverage report at `htmlcov/index.html`.
+
+If you want to run tests for modules, classes or methods your can run them like this::
+
+  # Run everything
+  python manage.py test froide --settings=froide.settings_test
+  # Run only app tests
+  python manage.py test froide.foirequest --settings=froide.settings_test
+  # run only one test module in app
+  python manage.py test froide.foirequest.tests.test_admin.AdminActionTest --settings=froide.settings_test
+  # run only one method
+  python manage.py test froide.foirequest.tests.test_admin.AdminActionTest.test_approve --settings=froide.settings_test
 
 
 Build docs
