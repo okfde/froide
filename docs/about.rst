@@ -2,9 +2,8 @@
 About
 =====
 
-Froide was designed to mimic the functionality of `What do they know <http://whatdotheyknow.com>`_ – a Freedom of Information portal in the UK written in Ruby on Rails 2.3. At the time when a German FoI portal was needed, the general FoI solution forked from WDTK called `Alaveteli <http://alaveteli.org>`_ was hard to install and not ready for reuse.
-That's why Froide was developed as a fresh start, fully
-internationalized and configurable written in Django 1.3 to power `Frag den Staat <https://fragdenstaat.de>`_.
+Froide is a Freedom of Information portal software written in Python with Django 1.5.
+
 
 Development Goals
 -----------------
@@ -36,20 +35,26 @@ Features
   request-unique email address (using SMTP) and the platform will receive answers on
   that mail address (by accessing an IMAP account).
 - Search functionality for Requests and Public Bodies.
-- Error Reporting interface via Sentry.
+- A read/write REST-API
+- Redaction of PDFs
 
 Dependencies
 ------------
 
 A detailed list of Python package dependencies can be found in `requirements.txt`, but here is a general overview:
 
-- Django 1.3 - the Web framework
-- South 0.7.3 - the database migration framework (development dependency)
-- Sphinx 1.0.7 - the documentation tool (development dependency)
-- Celery 2.2.5 - task queue for background processing
-- Haystack 1.2.0 - abstraction layer for search
+- Django 1.5 - the Web framework
+- Celery 3.X - task queue for background processing
+- Haystack 2.X-beta - abstraction layer for search
 
-A development goal is that, even though a task queue (like Celery) and a search server (like Solr) are highly recommended, they are not necessary for either development or production setup and can be replaced with Cronjobs and database queries respectively (results/performance will probably degrade, but it should work).
+A development goal is that, even though a task queue (like Celery) and a search server (like Solr) are highly recommended, they are not necessary for either development or production setup and can be replaced with Cronjobs and database queries respectively (results/performance will probably degrade, but it will work nonetheless).
+
+History
+-------
+
+Froide was designed to mimic the functionality of `What do they know <http://whatdotheyknow.com>`_ – a Freedom of Information portal in the UK written in Ruby on Rails 2.3. At the time when a German FoI portal was needed, the general FoI solution forked from WDTK called `Alaveteli <http://alaveteli.org>`_ was hard to install and not ready for reuse.
+That's why Froide was developed in spring 2011 as a fresh start, fully
+internationalized and configurable written in Django 1.3 to power `Frag den Staat <https://fragdenstaat.de>`_ which launched in August 2011.
 
 Name
 ----

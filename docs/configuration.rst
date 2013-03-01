@@ -4,7 +4,7 @@ Configuration
 
 Froide can be configured in many ways to reflect the needs of your local FoI portal.
 
-All configuration is kept in the Django `settings.py` file. Individual settings can be overwritten by placing a `local_settings.py` file on the Python path (e.g. in the same directory) and redefining the configuration key in there.
+The `custom_settings.py.example` file that comes with froide has all the settings from the `settings.py` file but they are commented out. You can copy this file to `custom_settings.py`
 
 Froide Configuration
 --------------------
@@ -36,6 +36,9 @@ The following keys in that dictionary must be present:
 **default_law**
   *integer* The id of the Freedom of Information law in the database
   that is used by default (e.g. 1)
+
+**search_engine_query**
+  *string* You can give a URL with string formatting placeholders `query` and `domain` in them that will be presented to the user as the URL for web searches. The default is a Google search.
 
 
 Greeting Regexes
@@ -77,7 +80,7 @@ You must adapt the standard Django parameters for sending email.
 Configure the backend depending on your environment (development vs.
 production)::
 
-    # development environment:
+    # development/testing environment:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # production environment:
     EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
@@ -136,52 +139,17 @@ right before the mail is
 sent out (the changed address is not stored). This allows for some
 testing of sending and receiving mails to and from public bodies wihtout spamming them.
 
-Setting Up Search with Solr
----------------------------
-
-Froide uses `django-haystack` to interface with a search. Solr is
-recommended, but thanks to `django-haystack` you can use something
-else as well.
-
-Haystack configuration for solr works like so::
-
-    HAYSTACK_SITECONF = 'froide.search_sites'
-    HAYSTACK_SEARCH_ENGINE = 'solr'
-    HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
-
-If you have a solr multicore setup, your solr URL would probably look more like this::
-
-    HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/froide'
-
-For details, please refer to the `Haystack Documentation <http://haystacksearch.org>`_.
-
-Setting Up Background Processing with Celery
---------------------------------------------
-
-The following part in `settings.py` does the configuration of Celery.
-Overwrite the `CELERY*` values with your own in `local_settings.py`::
-
-    import djcelery
-    djcelery.setup_loader()
-
-    CELERY_IMPORTS = ("foirequest.tasks", )
-
-    CELERY_RESULT_BACKEND = "database"
-    CELERY_RESULT_DBURI = "sqlite:///dev.db"
-
-    CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-For details please refer to the `django-celery documentation <http://django-celery.readthedocs.org/en/latest/index.html>`_.
 
 Some more settings
 ------------------
 
-Configure the name and default domain URL (without trailing slash) of your site with the following settings::
+Configure the name, default domain URL and default email (without trailing slash) of your site with the following settings::
 
     SITE_NAME = 'FroIde'
     SITE_URL = 'http://localhost:8000'
+    SITE_EMAIL = 'info@example.com'
 
-You can give a URL with string formatting placeholders `query` and `domain` in them that will be presented to the user as the URL for web searches via the setting `SEARCH_ENGINE_QUERY`. The default is a Google search.
+More suggestions of settings you can change can be found in the `custom_settings.py.example` file that comes with froide.
 
 
 Securing your site
@@ -193,11 +161,10 @@ parts configurable by `local_settings` you can use the following
 setting::
 
     SECRET_URLS = {
-        "admin": "my-secret-admin",
-        "sentry": "my-secret-sentry"
+        "admin": "my-secret-admin"
     }
 
-It's also recommended to protect the admin and sentry further via HTTP
+It's also recommended to protect the admin further via HTTP
 auth in your production reverse proxy (e.g. nginx).
 
 The app `djangosecure <https://github.com/carljm/django-secure/>`_ is part of Froide
@@ -212,3 +179,5 @@ Some Django settings related to security and SSL::
     SESSION_COOKIE_AGE = 3628800 # six weeks for usability
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = True
+
+Make sure that your frontend server transports the information that HTTPS is used to the web server.

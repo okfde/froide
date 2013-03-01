@@ -247,6 +247,10 @@ if FROIDE_THEME is not None:
 # SESSION_COOKIE_HTTPONLY = True
 # SESSION_COOKIE_SECURE = False
 
+# Only in production, but don't forget
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+# ALLOWED_HOSTS = ('example.com',)
+
 # # Django-Secure options
 # SECURE_FRAME_DENY = True
 
