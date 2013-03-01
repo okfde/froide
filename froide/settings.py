@@ -154,8 +154,8 @@ AUTH_PROFILE_MODULE = 'account.Profile'
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
