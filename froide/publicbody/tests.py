@@ -40,7 +40,7 @@ class PublicBodyTest(TestCase):
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_autocomplete(self):
         import json
-        pb = PublicBody.objects.all()[0]
+        pb = factories.PublicBodyFactory.create(name='specialbody')
         response = self.client.get('%s?query=%s' % (
                 reverse('publicbody-autocomplete'), pb.name))
         self.assertEqual(response.status_code, 200)
@@ -60,13 +60,13 @@ class PublicBodyTest(TestCase):
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
-        pb = PublicBody.objects.all()[0]
+        pb = factories.PublicBodyFactory.create(name='peculiarentity')
         response = self.client.get('%s?q=%s' % (
-            reverse('publicbody-search_json'), pb.name[:6]))
+            reverse('publicbody-search_json'), pb.name))
         self.assertIn(pb.name, response.content)
         self.assertEqual(response['Content-Type'], 'application/json')
         response = self.client.get('%s?q=%s&jurisdiction=non_existant' % (
-            reverse('publicbody-search_json'), pb.name[:6]))
+            reverse('publicbody-search_json'), pb.name))
         self.assertEqual("[]", response.content)
 
     def test_show_law(self):
