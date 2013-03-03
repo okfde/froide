@@ -569,6 +569,7 @@ def add_postal_reply(request, slug):
         message.plaintext = ""
         if form.cleaned_data.get('text'):
             message.plaintext = form.cleaned_data.get('text')
+        message.plaintext_redacted = message.get_content()
         message.not_publishable = form.cleaned_data['not_publishable']
         message.save()
         foirequest.last_message = message.timestamp
