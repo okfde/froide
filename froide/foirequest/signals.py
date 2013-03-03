@@ -114,7 +114,7 @@ def decrement_request_count(sender, instance=None, **kwargs):
 def foimessage_delayed_update(instance=None, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
-    instance.request.save()
+    trigger_index_update(FoiRequest, instance.request_id)
 
 
 @receiver(signals.post_delete, sender=FoiMessage,
@@ -128,7 +128,7 @@ def foimessage_delayed_remove(instance, **kwargs):
 def foiattachment_delayed_update(instance, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
-    instance.belongs_to.request.save()
+    trigger_index_update(FoiRequest, instance.belongs_to.request_id)
 
 
 @receiver(signals.post_delete, sender=FoiAttachment,
