@@ -74,7 +74,9 @@ class FoiRequestAdmin(admin.ModelAdmin):
             'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
                     self.model._meta.get_field(
                         'same_as').rel, self.admin_site, using=db).render(
-                            'req_id', None).replace('../../..', '../..')),
+                            'req_id', None,
+                            {'id': 'id_req_id'})
+                            .replace('../../..', '../..')),
             'applabel': opts.app_label
         }
 
@@ -215,7 +217,9 @@ class DeferredMessageAdmin(admin.ModelAdmin):
             'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
                     self.model._meta.get_field(
                         'request').rel, self.admin_site, using=db).render(
-                            'req_id', None).replace('../../..', '../..')),
+                            'req_id', None,
+                            {'id': 'id_req_id'})
+                            .replace('../../..', '../..')),
             'applabel': opts.app_label
         }
 
