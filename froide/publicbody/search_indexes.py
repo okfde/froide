@@ -1,13 +1,14 @@
 from django.conf import settings
 
 from haystack import indexes
+from celery_haystack.indexes import CelerySearchIndex
 
 from .models import PublicBody
 
 PUBLIC_BODY_BOOSTS = settings.FROIDE_CONFIG.get("public_body_boosts", {})
 
 
-class PublicBodyIndex(indexes.SearchIndex, indexes.Indexable):
+class PublicBodyIndex(CelerySearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', boost=1.5)
     jurisdiction = indexes.CharField(model_attr='jurisdiction__name', default='')

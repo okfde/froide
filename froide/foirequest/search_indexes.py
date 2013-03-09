@@ -1,9 +1,11 @@
 from haystack import indexes
 
+from celery_haystack.indexes import CelerySearchIndex
+
 from .models import FoiRequest
 
 
-class FoiRequestIndex(indexes.SearchIndex, indexes.Indexable):
+class FoiRequestIndex(CelerySearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     title = indexes.CharField(model_attr='title')
     description = indexes.CharField(model_attr='description')

@@ -85,8 +85,6 @@ HAYSTACK_CONNECTIONS = {
 
 HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
-CELERY_HAYSTACK_MODELS = ('foirequest.FoiRequest', 'publicbody.PublicBody')
-
 CELERY_RESULT_BACKEND = "database"
 CELERY_RESULT_DBURI = "sqlite:///dev.db"
 

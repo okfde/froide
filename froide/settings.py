@@ -337,8 +337,6 @@ HAYSTACK_CONNECTIONS = {
 }
 HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
-CELERY_HAYSTACK_MODELS = ('foirequest.FoiRequest', 'publicbody.PublicBody')
-
 ########## Froide settings ########
 
 FROIDE_THEME = None
