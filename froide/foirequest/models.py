@@ -1076,7 +1076,7 @@ class FoiMessage(models.Model):
         return self._attachments
 
     def get_subject(self, user=None):
-        if not self.subject_redacted and self.subject:
+        if self.subject_redacted is None:
             self.subject_redacted = self.redact_subject()
             self.save()
         return self.subject_redacted
@@ -1094,7 +1094,7 @@ class FoiMessage(models.Model):
         return content
 
     def get_content(self, user=None):
-        if not self.plaintext_redacted and self.plaintext:
+        if self.plaintext_redacted is None:
             self.plaintext_redacted = self.redact_plaintext()
             self.save()
         return self.plaintext_redacted
