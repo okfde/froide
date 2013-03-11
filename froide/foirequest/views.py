@@ -866,3 +866,18 @@ def extend_deadline(request, slug):
             _('Deadline has been extended.'))
     FoiEvent.objects.create_event('deadline_extended', foirequest)
     return redirect(foirequest)
+
+
+@require_POST
+def resend_message(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff:
+        return render_403(request)
+    try:
+        mes = FoiMessage.objects.get(sent=False, request=foirequest, pk=int(request.POST.get('message', 0)))
+    except FoiMessage.DoesNotExist:
+        raise Http404
+    mes.send(notify=False)
+    return redirect('admin:foirequest_foimessage_change', mes.id)

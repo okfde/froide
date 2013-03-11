@@ -1129,7 +1129,7 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
-    def send(self):
+    def send(self, notify=True):
         if settings.FROIDE_CONFIG['dryrun']:
             recp = self.recipient_email.replace("@", "+")
             self.recipient_email = "%s@%s" % (recp, settings.FROIDE_CONFIG['dryrun_domain'])
@@ -1140,7 +1140,8 @@ class FoiMessage(models.Model):
                 [self.recipient_email])
         self.sent = True
         self.save()
-        FoiRequest.message_sent.send(sender=self.request, message=self)
+        if notify:
+            FoiRequest.message_sent.send(sender=self.request, message=self)
 
 
 def upload_to(instance, filename):
