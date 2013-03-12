@@ -41,7 +41,7 @@ class CSVImporter(object):
         # resolve foreign keys
         row['topic'] = self.get_topic(row.pop('topic__slug'))
         row['jurisdiction'] = self.get_jurisdiction(row.pop('jurisdiction__slug'))
-        parent = row.pop('parent__name')
+        parent = row.pop('parent__name', None)
         if parent:
             row['parent'] = PublicBody.objects.get(slug=slugify(parent))
 
