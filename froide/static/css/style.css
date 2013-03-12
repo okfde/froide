@@ -30,6 +30,10 @@ body {
     padding: 20px 15px 20px;
 }
 
+.navbar .divider-vertical {
+    height: 60px;
+}
+
 .navbar-search {
     margin-top: 15px;
 }
