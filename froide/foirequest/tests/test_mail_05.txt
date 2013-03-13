@@ -1,0 +1,125 @@
+Return-Path: <kundendialog@example.com>
+X-Original-To: sw+yurpykc1hr@fragdenstaat.de
+Delivered-To: foimail@fragdenstaat.de
+Received: from localhost (localhost [127.0.0.1])
+  by fragdenstaat.de (Postfix) with ESMTP id 7ACDF95C080
+  for <sw+yurpykc1hr@fragdenstaat.de>; Tue, 12 Mar 2013 11:53:18 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at fragdenstaat.de
+Received: from fragdenstaat.de ([127.0.0.1])
+  by localhost (fragdenstaat.de [127.0.0.1]) (amavisd-new, port 10024)
+  with ESMTP id 3EwQfTnlR8PL for <sw+yurpykc1hr@fragdenstaat.de>;
+  Tue, 12 Mar 2013 11:53:12 +0100 (CET)
+Received: from bmi2.example.com (bmi.example.com [213.238.45.78])
+  by fragdenstaat.de (Postfix) with ESMTP id 6C2BD95C072
+  for <sw+yurpykc1hr@fragdenstaat.de>; Tue, 12 Mar 2013 11:53:11 +0100 (CET)
+Received: from [127.0.0.1] (helo=localhost.localdomain)
+  by bmi2.example.com with esmtp (Exim 4.72)
+  (envelope-from <kundendialog@example.com>)
+  id 1UFMpS-0005NM-Tf
+  for sw+yurpykc1hr@fragdenstaat.de; Tue, 12 Mar 2013 11:53:10 +0100
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/html; charset="utf-8"
+X-Mailer: MIME::Lite 3.027 (F2.77; T1.32; A2.08; B3.13; Q3.13)
+Date: Tue, 12 Mar 2013 11:53:10 +0100
+To: sw+yurpykc1hr@fragdenstaat.de
+Reply-To: kundendialog@example.com
+From: kundendialog@example.com
+Subject: Ihr Anliegen vom 06.02.2013
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Bmi-Web Mail</title>
+ </head>
+<body>
+<div align="center">
+
+
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="white">
+  <tr>
+    <td><div align="left">Ihre Nachricht vom: 06.02.2013<br />
+Unser Zeichen: 13000382 KD/Ne<br />
+<br />
+Datum: 12.03.2013<br />
+<br />
+Sehr geehrter Herr  Punkt,<br />
+<br />
+wir danken Ihnen für Ihr Schreiben vom 12.03.2013, in dem Sie die Beantwortung Ihre Anfrage vom 06.02.2013 anmahnen.<br />
+Hierzu möchten wir Ihnen mitteilen das wir Ihnen fristgerecht zum 06.03.2013 geantwortet haben. Den Antworttext fügen wir nochmals bei.<br />
+<br />
+"Ihre Nachricht vom: 06.02.2013<br />
+Unser Zeichen: 13000382 KD/Ne<br />
+<br />
+Datum: 06.03.2013<br />
+<br />
+Sehr geehrter Herr Bauer, <br />
+<br />
+wir kommen zurück auf Ihr Auskunftsersuchen nach dem Hamburgischen Transparenzgesetz (HmbTG), das am 06.02.2013 bei uns eingegangen ist. Wunschgemäß erteilen wir die erbetenen Auskünfte in elektronische Form (E-Mail). Zur besseren Verständlichkeit haben wir unseren Antworten Ihre Fragen noch einmal gegenübergestellt. <br />
+<br />
+Frage: <br />
+<br />
+Welche Einnahmen hat der HVV im letzten abgeschlossenen Geschäftsjahr durch den Verkauf von Einzel- und Zeitkarten erlöst, und welche Ausgaben standen dem durch den Betrieb der notwendigen Infrastruktur wie Verkaufsautomaten und Servicestellen, Server und Apps Handy-Ticket u.ä. sowie durchgeführte Ticket-Kontrollen gegenüber?<br />
+<br />
+Antwort:<br />
+<br />
+Die (verbundweiten) Einnahmen betrugen im letzten abgeschlossenen Geschäftsjahr 2011 652,2 Mio. Euro, siehe auch S. 26 des auf der HVV-Internetseite veröffentlichten Geschäftsberichts für das Jahr 2011, <br />
+<br />
+http://www.example.com/pdf/wissenwertes/hvv_bericht_2011.pdf. <br />
+<br />
+Information über die Ausgaben durch den Betrieb der notwendigen Infrastruktur wie Verkaufsautomaten und Servicestellen, Server und Apps Handy-Ticket u.ä. sowie durchgeführte Ticket-Kontrollen sind bei der HVV GmbH nicht vorhanden. Die HVV GmbH ist als Regieorganisation nicht der Auftraggeber der im HVV verkehrenden Verkehrsunternehmen und verfügt daher nicht über diese Daten, siehe auch Darstellung der Organisationsstruktur im ÖPNV auf der HVV-Internetseite, <br />
+<br />
+http://www.example.com/ueber-uns/organisation/.<br />
+<br />
+Selbst wenn die begehrten Informationen bei der HVV GmbH vorhanden wären, würde es sich nach unserer Ansicht um nach § 7 des HmbTG von der Auskunftspflicht ausgenommene Betriebs- und Geschäftsgeheimnisse handeln. <br />
+<br />
+Frage: <br />
+<br />
+In welcher Höhe bezuschusst die FHH den Öffentlichen Nahverkehr in Hamburg, z.B. um ein betriebliches Defizit auszugleichen?<br />
+<br />
+Antwort:<br />
+Die von den einzelnen Aufgabenträgern im HVV gewährten Ausgleichsleistungen können dem auf der HVV-Internetseite veröffentlichten Berichten nach der VO 1370 entnommen werden, <br />
+http://www.example.com/aktuelles/publikationen/.<br />
+Kosten<br />
+Die Beantwortung der Anfrage erfolgt kostenfrei, da sie durch den Verweis auf bereits vorhandene und frei zugängliche Datensammlungen möglich ist. <br />
+<br />
+Mit freundlichen Grüßen<br />
+<br />
+Hamburger Verkehrsverbund GmbH<br />
+Kundendialog<br />
+Gerhard Neumann<br />
+<br />
+***************************************************************<br />
+Hamburger Verkehrsverbund GmbH, Steindamm 94, 20099 Hamburg<br />
+Telefon: (040) 32 57 75-555, Telefax: (040) 32 57 75-820<br />
+<br />
+www.example.com<br />
+kundendialog@example.com<br />
+<br />
+Geschäftsführer: Lutz Aigner (Sprecher), Dietrich Hartmann<br />
+Aufsichtsratsvorsitzender: Staatsrat Andreas Rieckhof<br />
+<br />
+Amtsgericht Hamburg HRB 10 497<br />
+ID-Nr. DE 179 732 501"<br />
+<br />
+<br />
+Wir hoffen, Ihnen mit unseren Ausführungen weitergeholfen zu haben und wünschen Ihnen stets eine gute Fahrt in unseren Verkehrsmitteln.<br />
+ <br />
+Mit freundlichen Grüßen<br />
+<br />
+Peter Punkt GmbH<br />
+Kundendialog<br />
+Peter Punkt<br />
+<br />
+</div></td>
+  </tr>
+</table>
+
+
+</div>
+</body>
+</html>
