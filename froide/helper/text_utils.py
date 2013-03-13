@@ -8,7 +8,7 @@ from lxml.html.clean import clean_html
 def strip_all_tags(html_string):
     tree = html.document_fromstring(html_string)
     tree = clean_html(tree)
-    return tree.getroot().xpath('//body')[0].text_content().strip()
+    return tree.xpath('//body')[0].text_content().strip()
 
 
 ##

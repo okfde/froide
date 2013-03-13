@@ -90,6 +90,19 @@ class MailTest(TestCase):
         self.assertEqual(len(messages[1].attachments), 2)
         self.assertEqual(messages[1].attachments[0].name, u"KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf")
 
+    def test_strip_html(self):
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        with file(p("test_mail_05.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(content)
+        request.add_message_from_email(mail, content)
+        messages = request.foimessage_set.all()
+        self.assertEqual(len(messages), 2)
+        mes = messages[1]
+        self.assertTrue(len(mes.plaintext_redacted) > 0)
+        self.assertTrue(len(mes.plaintext) > 0)
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):
