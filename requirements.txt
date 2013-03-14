@@ -26,4 +26,4 @@ django-overextends==0.2.2
 unicodecsv==0.9.0
 python-magic==0.4.3
 django-tastypie==0.9.12
--e git://github.com/minism/django-tastypie-swagger.git@django-1.5#egg=django-tastypie-swagger
+-e git://github.com/stefanw/django-tastypie-swagger.git@django-1.5#egg=django-tastypie-swagger
