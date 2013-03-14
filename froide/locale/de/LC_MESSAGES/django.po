@@ -148,7 +148,7 @@ msgstr "Straße, Hausnummer, PLZ, Ort"
 
 #: account/forms.py:33 account/forms.py:93
 msgid "Email address"
-msgstr "E-Mailadresse"
+msgstr "E-Mail-Adresse"
 
 #: account/forms.py:35
 msgid "Not public, you will need to confirm this address."
@@ -168,7 +168,7 @@ msgstr "Optional. Ihre Organisation wird neben Ihrem Namen angezeigt."
 
 #: account/forms.py:45
 msgid "Hide my name on the web"
-msgstr "Zeige meinen Namen auf der Seite nicht an"
+msgstr "Zeige meinen Namen auf der Seite nicht an."
 
 #: account/forms.py:46
 msgid ""
@@ -205,15 +205,15 @@ msgid ""
 "This email address already has an account. <a href=\"%s?simple\" class="
 "\"target-small\">Please login using that email address.</a>"
 msgstr ""
-"Diese E-Mailadresse hat schon einen Account. <a href=\"%s?simple\" class="
-"\"target-small\">Bitte loggen Sie sich mit dieser E-Mailadresse ein.</a>"
+"Diese E-Mail-Adresse hat schon einen Account. <a href=\"%s?simple\" class="
+"\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse ein.</a>"
 
 #: account/forms.py:73
 msgid ""
 "This email address is already registered, but not yet confirmed! Please "
 "click on the confirmation link in the mail we send you."
 msgstr ""
-"Diese E-Mailadresse ist bereits registriert, aber noch nicht bestätigt! "
+"Diese E-Mail-Adresse ist bereits registriert, aber noch nicht bestätigt! "
 "Bitte klicken Sie auf den Bestätigungslink, den wir Ihnen zugemailt haben."
 
 #: account/forms.py:79 account/forms.py:95
@@ -273,7 +273,7 @@ msgid ""
 "Your email address is now confirmed and you are logged in. You should change "
 "your password now by filling out the form below."
 msgstr ""
-"Ihre E-Mailadresse ist jetzt bestätigt und Sie sind eingeloggt. Sie sollten "
+"Ihre E-Mail-Adresse ist jetzt bestätigt und Sie sind eingeloggt. Sie sollten "
 "jetzt Ihr Passwort ändern, indem Sie das markierte Formular ausfüllen."
 
 #: account/views.py:39
@@ -294,7 +294,7 @@ msgid ""
 "using this link."
 msgstr ""
 "Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich "
-"erst aus bevor Sie den E-Mail-Link benutzen."
+"erst aus, bevor Sie den E-Mail-Link benutzen."
 
 #: account/views.py:61
 msgid "Your account is not active."
@@ -309,7 +309,7 @@ msgid ""
 "A recent change requires you to set your address! Please enter it below!"
 msgstr ""
 "Eine kürzlich stattgefundene Änderung erfordert, dass Sie Ihre Adresse "
-"angeben. Bitte tragen Sie sie unten ein."
+"angeben. Bitte tragen Sie diese unten ein."
 
 #: account/views.py:154 account/templates/account/login.html:7
 msgid "You are now logged in."
@@ -317,11 +317,11 @@ msgstr "Sie sind jetzt eingeloggt."
 
 #: account/views.py:163
 msgid "Please activate your mail address before logging in."
-msgstr "Bitte bestätigen Sie Ihre Mailadresse bevor Sie sich einloggen."
+msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich einloggen."
 
 #: account/views.py:166
 msgid "E-mail and password do not match."
-msgstr "E-Mailadresse und Passwort passen nicht zusammen."
+msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
 
 #: account/views.py:183
 msgid "You are currently logged in, you cannot signup."
@@ -330,7 +330,7 @@ msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 #: account/views.py:192
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
-"Bitte überprüfen Sie Ihre E-Mails. Sie haben eine Mail mit einem "
+"Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem "
 "Bestätigungslink von uns erhalten."
 
 #: account/views.py:208
@@ -345,14 +345,14 @@ msgstr "Ihr Passwort wurde geändert."
 #: account/views.py:225
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
-"Sie sind gerade eingeloggt, Sie können keinen Passwort-Zurücksetzen-Link "
+"Sie sind gerade eingeloggt. Sie können keinen Passwort-Zurücksetzen-Link "
 "erhalten."
 
 #: account/views.py:233
 msgid "Check your mail, we sent you a password reset link."
 msgstr ""
-"Überprüfen Sie Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetzen-"
-"Link geschickt."
+"Überprüfen Sie Ihre E-Mails. Wir haben Ihnen einen Link geschickt, "
+"mit dem Sie Ihr Passwort zurücksetzen können."
 
 #: account/views.py:250
 msgid "Your password has been set and you are now logged in."
@@ -393,7 +393,7 @@ msgid ""
 msgstr ""
 "Hallo %(name)s,\n"
 "\n"
-"dies ist eine E-Mail von %(site_name)s, um Ihre E-Mailadresse zu "
+"dies ist eine E-Mail von %(site_name)s, um Ihre E-Mail-Adresse zu "
 "bestätigen.\n"
 "Bitte besuchen Sie folgenden Link:\n"
 "\n"
@@ -439,7 +439,7 @@ msgstr "Falls Sie Ihr Passwort vergessen haben..."
 #: account/templates/account/login.html:35
 msgid "... we can send you a reset link to your email address."
 msgstr ""
-"...können wir Ihnen einen Zurücksetzen-Link an Ihre E-Mailadresse schicken."
+"...können wir Ihnen einen Zurücksetzen-Link an Ihre E-Mail-Adresse schicken."
 
 #: account/templates/account/login.html:40
 msgid "Send reset link"
@@ -466,7 +466,7 @@ msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
 msgstr ""
-"Bitte geben Sie Ihr Passwort zweimal ein, so dass wir sicher sein können, "
+"Bitte geben Sie Ihr Passwort zweimal ein, damit wir sicher sein können, "
 "dass Sie es richtig eingegeben haben."
 
 #: account/templates/account/password_reset_confirm.html:16
@@ -483,14 +483,14 @@ msgstr "Ändere mein Passwort"
 
 #: account/templates/account/password_reset_confirm.html:24
 msgid "Password reset unsuccessful"
-msgstr "Passwort-Zurücksetzen fehlgeschlagen"
+msgstr "Zurücksetzen des Passworts fehlgeschlagen."
 
 #: account/templates/account/password_reset_confirm.html:26
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
 msgstr ""
-"Der Passwort-Zurücksetzen-Link war ungültig, möglicherweise wurde er schon "
+"Der Link zum Zurücksetzen des Passworts war ungültig. Möglicherweise wurde er schon "
 "einmal benutzt. Bitte lassen Sie sich noch einen Link schicken."
 
 #: account/templates/account/password_reset_email.txt:2
@@ -544,8 +544,8 @@ msgstr "Ihr Account"
 #, python-format
 msgid "One request that needs your attention"
 msgid_plural "%(counter)s requests that need your attention"
-msgstr[0] "Eine Anfrage braucht Ihre Aufmerksamkeit"
-msgstr[1] "%(counter)s Anfragen brauchen Ihre Aufmerksamkeit"
+msgstr[0] "Eine Anfrage braucht Ihre Aufmerksamkeit!"
+msgstr[1] "%(counter)s Anfragen brauchen Ihre Aufmerksamkeit!"
 
 #: account/templates/account/show.html:26
 msgid "Your followed requests"
@@ -586,7 +586,7 @@ msgid ""
 "address %(email)s."
 msgstr ""
 "Ihr Account ist nicht aktiv. Sie müssen auf den Link klicken, den wir an "
-"Ihre E-Mailadresse %(email)s gesendet haben."
+"Ihre E-Mail-Adresse %(email)s gesendet haben."
 
 #: account/templates/account/show.html:76
 msgid "Your Freedom of Information Requests"
@@ -645,7 +645,7 @@ msgstr "Ihr Name:"
 
 #: account/templates/account/show.html:121
 msgid "Your email address:"
-msgstr "Ihre E-Mailadresse:"
+msgstr "Ihre E-Mail-Adresse:"
 
 #: account/templates/account/show.html:123
 msgid "Your name is hidden on the web (this page is only visible to you)."
@@ -761,11 +761,11 @@ msgstr "Markiere ausgewählte Anhänge als genehmigt"
 #: foirequest/admin.py:156
 #, python-format
 msgid "%d attachment(s) successfully marked as not approvable."
-msgstr "%d Anhänge als nicht nicht genehmigbar markiert."
+msgstr "%d Anhänge als nicht genehmigungsfähig markiert."
 
 #: foirequest/admin.py:157
 msgid "Mark selected as NOT approvable"
-msgstr "Markiere ausgewählte Anhänge als NICHT genehmigbar"
+msgstr "Markiere ausgewählte Anhänge als NICHT genehmigungsfähig."
 
 #: foirequest/admin.py:205
 msgid "Successfully triggered redelivery."
@@ -971,8 +971,8 @@ msgid ""
 "If your message is redirected to a different Public Body, please specify the "
 "new Public Body"
 msgstr ""
-"Wenn Ihre Anfrage zu einer anderen Behörde weitergeleitet wurde, bitte geben "
-"Sie die neue Behörde an"
+"Falls Ihre Anfrage zu einer anderen Behörde weitergeleitet wurde, geben Sie "
+"bitte die neue Behörde an."
 
 #: foirequest/forms.py:279
 msgid "Costs"
@@ -1044,7 +1044,7 @@ msgstr "Gescannter Brief"
 
 #: foirequest/forms.py:371
 msgid "You are not allowed to publish some received documents"
-msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen"
+msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen."
 
 #: foirequest/forms.py:373
 msgid ""
@@ -1097,7 +1097,7 @@ msgstr "Warte auf Nutzerbestätigung"
 
 #: foirequest/models.py:126
 msgid "The requester's email address is yet to be confirmed."
-msgstr "Die E-mailadresse des Anfragestellenden muss noch bestätigt werden."
+msgstr "Die E-Mail-Adresse des Anfragestellenden muss noch bestätigt werden."
 
 #: foirequest/models.py:127
 msgid "Public Body needed"
@@ -1121,7 +1121,7 @@ msgstr ""
 
 #: foirequest/models.py:133
 msgid "Request awaits classification"
-msgstr "Anfrage muss klassifiziert werden"
+msgstr "Anfrage muss klassifiziert werden."
 
 #: foirequest/models.py:134
 msgid "A message was received and the user needs to set a new status."
@@ -1389,7 +1389,7 @@ msgstr "Anfrage '%s'"
 #: foirequest/models.py:349 foirequest/models.py:1093
 #: foirequest/models.py:1111 foirequest/models.py:1118
 msgid "<<email address>>"
-msgstr "<<E-Mailadresse>>"
+msgstr "<<E-Mail-Adresse>>"
 
 #: foirequest/models.py:527
 #, python-format
@@ -1582,7 +1582,7 @@ msgstr "nachricht-%(id)d"
 
 #: foirequest/models.py:1092 foirequest/models.py:1110
 msgid "<<name and email address>>"
-msgstr "<<Name und E-Mailadresse>>"
+msgstr "<<Name und E-Mail-Adresse>>"
 
 #: foirequest/models.py:1152
 msgid "Belongs to request"
@@ -1843,14 +1843,14 @@ msgstr "?anfrage-gestellt"
 #: foirequest/views.py:373 foirequest/views.py:776
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr ""
-"Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mailadresse."
+"Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mail-Adresse."
 
 #: foirequest/views.py:377
 msgid ""
 "There were errors in your form submission. Please review and submit again."
 msgstr ""
-"Ihre Formulareingabe enthielt Fehler. Bitte überprüfen Sie und senden Sie "
-"das Formular noch einmal."
+"Ihre Formulareingabe enthielt Fehler. Bitte überprüfen Sie ihre Eingabe und "
+"senden Sie das Formular noch einmal."
 
 #: foirequest/views.py:390 foirequest/views.py:396
 msgid "Missing or invalid input!"
@@ -1903,7 +1903,7 @@ msgstr "Ein konkretes Gesetz wurde für diese Anfrage festgelegt."
 
 #: foirequest/views.py:530
 msgid "Tags have been set for this request"
-msgstr "Die Tags dieser Anfrage wurden gespeichert."
+msgstr "Die Schlagworte dieser Anfrage wurden gespeichert."
 
 #: foirequest/views.py:547
 msgid "The resolution summary has been saved."
@@ -1989,7 +1989,7 @@ msgstr "und Ihr Nachname"
 
 #: foirequest/templates/foirequest/_request_form.html:27
 msgid "Your Email Address"
-msgstr "Ihre E-Mailadresse"
+msgstr "Ihre E-Mail-Adresse"
 
 #: foirequest/templates/foirequest/_request_form.html:33
 msgid "Preview Request"
@@ -2057,7 +2057,7 @@ msgstr "Stelle diese Nachrichten erneut zu..."
 
 #: foirequest/templates/foirequest/admin_redeliver.html:37
 msgid "...to this FOI request:"
-msgstr "…an diese IFG-Anfrage"
+msgstr "...an diese IFG-Anfrage"
 
 #: foirequest/templates/foirequest/admin_redeliver.html:41
 msgid "Redeliver messages"
@@ -2065,19 +2065,19 @@ msgstr "Nachrichten erneut zustellen"
 
 #: foirequest/templates/foirequest/admin_tag_all.html:18
 msgid "Add tags to multiple requests"
-msgstr "Fügen Sie Tags zu mehreren Anfragen hinzu"
+msgstr "Fügen Sie Schlagworte zu mehreren Anfragen hinzu"
 
 #: foirequest/templates/foirequest/admin_tag_all.html:25
 msgid "Add these tags to all selected requests:"
-msgstr "Füge diese Tags zu allen gewählten Anfragen hinzu:"
+msgstr "Füge diese Schlagworte zu allen gewählten Anfragen hinzu:"
 
 #: foirequest/templates/foirequest/admin_tag_all.html:26
 msgid "Enter Tags here"
-msgstr "Hier Tags eingeben"
+msgstr "Hier Schlagworte eingeben"
 
 #: foirequest/templates/foirequest/admin_tag_all.html:40
 msgid "Add tags to these requests"
-msgstr "Fügen Sie Tags zu diesen Anfragen hinzu"
+msgstr "Fügen Sie Schlagworte zu diesen Anfragen hinzu"
 
 #: foirequest/templates/foirequest/became_overdue.txt:1
 #, python-format
@@ -2467,7 +2467,7 @@ msgid ""
 msgstr ""
 "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
 "die geschwärzt werden müssen. Ziehen Sie durch Klicken und Bewegen der Maus "
-"ein Viereck über die Stelle. Entfernen Sie bitte auch die Emailaddresse von "
+"ein Viereck über die Stelle. Entfernen Sie bitte auch die E-Mail-Adresse von "
 "%(name)s, falls diese sichtbar ist."
 
 #: foirequest/templates/foirequest/redact.html:50
@@ -2485,7 +2485,7 @@ msgid ""
 "Note: in order to redact documents an up-to-date version of a modern browser "
 "is required. Using Internet Explorer will likely not work."
 msgstr ""
-"Hinweis: um Dokumente zu schwärzen, müssen Sie eine aktuelle Version eines "
+"Hinweis: Um Dokumente zu schwärzen, müssen Sie eine aktuelle Version eines "
 "modernen Browsers verwenden. Der Internet Explorer wird wahrscheinlich nicht "
 "funktionieren."
 
@@ -2524,7 +2524,7 @@ msgstr "Durchsuchen Sie das Internet nach Informationen"
 
 #: foirequest/templates/foirequest/request.html:19
 msgid "Search Public Body Website"
-msgstr "Durchsuchen Sie die Behörden-Website"
+msgstr "Durchsuchen Sie die Website der Behörde"
 
 #: foirequest/templates/foirequest/request.html:21
 msgid ""
@@ -2698,7 +2698,7 @@ msgstr "Lesen Sie andere Anfragen an diese Behörde"
 
 #: foirequest/templates/foirequest/request.html:154
 msgid "Try a Google Search for your topic"
-msgstr "Probieren Sie eine Google Suche nach diesem Thema"
+msgstr "Probieren Sie eine Google-Suche nach diesem Thema"
 
 #: foirequest/templates/foirequest/request.html:157
 msgid ""
@@ -2719,7 +2719,7 @@ msgstr "Ihr Anfrage:"
 #: foirequest/templates/foirequest/request.html:175
 #: foirequest/templates/foirequest/show.html:660
 msgid "[... Show complete request text]"
-msgstr "[… Zeige kompletten Anfragetext]"
+msgstr "[... Zeige kompletten Anfragetext]"
 
 #: foirequest/templates/foirequest/request.html:176
 #: foirequest/templates/foirequest/show.html:661
@@ -2781,11 +2781,11 @@ msgstr "Ihre Postadresse:"
 #: foirequest/templates/foirequest/request.html:217
 #: foirequest/templates/foirequest/show.html:399
 msgid "Your Email Address:"
-msgstr "Ihre E-Mailadresse:"
+msgstr "Ihre E-Mail-Adresse:"
 
 #: foirequest/templates/foirequest/request.html:224
 msgid "Your email address"
-msgstr "Ihre E-Mailadresse"
+msgstr "Ihre E-Mail-Adresse"
 
 #: foirequest/templates/foirequest/request.html:228
 msgid "Your mailing address"
@@ -3423,15 +3423,15 @@ msgstr[1] "%(counter)s identische Anfragen"
 
 #: foirequestfollower/forms.py:18
 msgid "Your Email address"
-msgstr "Ihre E-Mailadresse"
+msgstr "Ihre E-Mail-Adresse"
 
 #: foirequestfollower/forms.py:19
 msgid "email address"
-msgstr "E-Mailadresse"
+msgstr "E-Mail-Adresse"
 
 #: foirequestfollower/forms.py:24
 msgid "Missing email address!"
-msgstr "Fehlende E-Mailadresse!"
+msgstr "Fehlende E-Mail-Adresse!"
 
 #: foirequestfollower/forms.py:26
 msgid "You cannot access this request!"
@@ -3444,8 +3444,8 @@ msgid ""
 "\"target-small\">Please login using that email address in order to follow "
 "this account.</a>"
 msgstr ""
-"Diese E-Mailadresse hat schon einen Account. <a href=\"%s?simple\" class="
-"\"target-small\">Bitte loggen Sie sich mit dieser E-Mailadresse ein um "
+"Diese E-Mail-Adresse hat schon einen Account. <a href=\"%s?simple\" class="
+"\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse ein um "
 "Benachrichtigungen zu erhalten.</a>"
 
 #: foirequestfollower/forms.py:37
@@ -3703,7 +3703,7 @@ msgstr "Kurze Beschreibung"
 
 #: publicbody/forms.py:11
 msgid "Email Address for Freedom of Information Requests"
-msgstr "E-Mailadresse für Informationsfreiheitsanfragen"
+msgstr "E-Mail-Adresse für Informationsfreiheitsanfragen"
 
 #: publicbody/forms.py:12
 msgid "Homepage URL of Public Body"
@@ -4238,7 +4238,7 @@ msgid ""
 "your own!"
 msgstr ""
 "Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen und hilft "
-"Ihnen, selber Anfragen an den Staat zu stellen."
+"Ihnen, eigene Anfragen an den Staat zu stellen."
 
 #: templates/index.html:20
 #, python-format
@@ -4463,7 +4463,7 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 #~ "s:<br/><strong>address and email address</strong>. You can leave the name."
 #~ msgstr ""
 #~ "Bitte entfernen Sie die folgenden personenbezogenen Daten von %(name)s:"
-#~ "<br/><strong>Adresse und Emailadresse</strong>. Sie können den Namen "
+#~ "<br/><strong>Adresse und EMail-Adresse</strong>. Sie können den Namen "
 #~ "stehen lassen."
 
 #~ msgid "To redact draw black rectangles over information"
@@ -5001,7 +5001,7 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 #~ msgstr "Bitte geben Sie einen Namen an"
 
 #~ msgid "Please specify an email"
-#~ msgstr "Bitte geben Sie eine E-Mailadresse an"
+#~ msgstr "Bitte geben Sie eine E-Mail-Adresse an"
 
 #~ msgid "Please specify an url"
 #~ msgstr "Bitte geben Sie eine URL an"
