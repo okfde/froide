@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-02 02:43+0100\n"
+"POT-Creation-Date: 2013-03-14 21:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -473,7 +473,7 @@ msgstr ""
 #: account/templates/account/profile.html:33
 #: account/templates/account/show.html:35
 #: foirequest/templates/foirequest/_requests_as_table.html:18
-#: foirequest/templates/foirequest/show.html:703
+#: foirequest/templates/foirequest/show.html:706
 #: foirequest/templates/foirequest/snippets/request_item.html:24
 #, python-format
 msgid "%(time)s ago"
@@ -674,41 +674,41 @@ msgstr ""
 msgid "Successfully marked requests as identical."
 msgstr ""
 
-#: foirequest/admin.py:85
+#: foirequest/admin.py:87
 msgid "Mark selected requests as identical to..."
 msgstr ""
 
-#: foirequest/admin.py:103
+#: foirequest/admin.py:105
 msgid "Successfully added tags to requests"
 msgstr ""
 
-#: foirequest/admin.py:119
+#: foirequest/admin.py:121
 msgid "Tag all requests with..."
 msgstr ""
 
-#: foirequest/admin.py:151
+#: foirequest/admin.py:153
 #, python-format
 msgid "%d attachment(s) successfully approved."
 msgstr ""
 
-#: foirequest/admin.py:152
+#: foirequest/admin.py:154
 msgid "Mark selected as approved"
 msgstr ""
 
-#: foirequest/admin.py:156
+#: foirequest/admin.py:158
 #, python-format
 msgid "%d attachment(s) successfully marked as not approvable."
 msgstr ""
 
-#: foirequest/admin.py:157
+#: foirequest/admin.py:159
 msgid "Mark selected as NOT approvable"
 msgstr ""
 
-#: foirequest/admin.py:205
+#: foirequest/admin.py:207
 msgid "Successfully triggered redelivery."
 msgstr ""
 
-#: foirequest/admin.py:225
+#: foirequest/admin.py:229
 msgid "Redeliver to..."
 msgstr ""
 
@@ -1191,7 +1191,7 @@ msgstr ""
 msgid "Resolution Summary"
 msgstr ""
 
-#: foirequest/models.py:218 foirequest/models.py:927 foirequest/models.py:1268
+#: foirequest/models.py:218 foirequest/models.py:927 foirequest/models.py:1269
 #: publicbody/models.py:263
 msgid "Public Body"
 msgstr ""
@@ -1204,7 +1204,7 @@ msgstr ""
 msgid "Visibility"
 msgstr ""
 
-#: foirequest/models.py:229 foirequest/models.py:930 foirequest/models.py:1265
+#: foirequest/models.py:229 foirequest/models.py:930 foirequest/models.py:1266
 #: foirequestfollower/models.py:44 frontpage/models.py:28
 msgid "User"
 msgstr ""
@@ -1272,7 +1272,7 @@ msgid "Site"
 msgstr ""
 
 #: foirequest/models.py:273 foirequest/models.py:925 foirequest/models.py:945
-#: foirequest/models.py:1262 foirequestfollower/models.py:43
+#: foirequest/models.py:1263 foirequestfollower/models.py:43
 msgid "Freedom of Information Request"
 msgstr ""
 
@@ -1410,7 +1410,7 @@ msgstr ""
 msgid "Public Body Recipient"
 msgstr ""
 
-#: foirequest/models.py:976 foirequest/models.py:1271 frontpage/models.py:22
+#: foirequest/models.py:976 foirequest/models.py:1272 frontpage/models.py:22
 msgid "Timestamp"
 msgstr ""
 
@@ -1464,177 +1464,177 @@ msgstr ""
 msgid "<<name and email address>>"
 msgstr ""
 
-#: foirequest/models.py:1152
+#: foirequest/models.py:1153
 msgid "Belongs to request"
 msgstr ""
 
-#: foirequest/models.py:1153 foisite/models.py:10 publicbody/models.py:31
+#: foirequest/models.py:1154 foisite/models.py:10 publicbody/models.py:31
 #: publicbody/models.py:72 publicbody/models.py:197 publicbody/models.py:214
 #: publicbody/templates/publicbody/pb_jurisdiction.html:13
 #: publicbody/templates/publicbody/show_topic.html:21
 msgid "Name"
 msgstr ""
 
-#: foirequest/models.py:1154
+#: foirequest/models.py:1155
 msgid "File"
 msgstr ""
 
-#: foirequest/models.py:1155
+#: foirequest/models.py:1156
 msgid "Size"
 msgstr ""
 
-#: foirequest/models.py:1156
+#: foirequest/models.py:1157
 msgid "File type"
 msgstr ""
 
-#: foirequest/models.py:1157
+#: foirequest/models.py:1158
 msgid "Format"
 msgstr ""
 
-#: foirequest/models.py:1158
+#: foirequest/models.py:1159
 msgid "User can approve"
 msgstr ""
 
-#: foirequest/models.py:1159
+#: foirequest/models.py:1160
 msgid "Approved"
 msgstr ""
 
-#: foirequest/models.py:1160
+#: foirequest/models.py:1161
 msgid "Redacted Version"
 msgstr ""
 
-#: foirequest/models.py:1162
+#: foirequest/models.py:1163
 msgid "Is redacted"
 msgstr ""
 
-#: foirequest/models.py:1177
+#: foirequest/models.py:1178
 msgid "Attachment"
 msgstr ""
 
-#: foirequest/models.py:1178
+#: foirequest/models.py:1179
 #: foirequest/templates/foirequest/list_unchecked.html:23
 #: foirequest/templates/foirequest/show.html:629
 msgid "Attachments"
 msgstr ""
 
-#: foirequest/models.py:1200
+#: foirequest/models.py:1201
 #, python-format
 msgid "attachment-%(id)d"
 msgstr ""
 
-#: foirequest/models.py:1238
+#: foirequest/models.py:1239
 msgid "See FoiMessage"
 msgstr ""
 
-#: foirequest/models.py:1269
+#: foirequest/models.py:1270
 msgid "Is Public?"
 msgstr ""
 
-#: foirequest/models.py:1270
+#: foirequest/models.py:1271
 msgid "Event Name"
 msgstr ""
 
-#: foirequest/models.py:1272
+#: foirequest/models.py:1273
 msgid "Context JSON"
 msgstr ""
 
-#: foirequest/models.py:1278
+#: foirequest/models.py:1279
 #, python-format
 msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr ""
 
-#: foirequest/models.py:1280
+#: foirequest/models.py:1281
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr ""
 
-#: foirequest/models.py:1282
+#: foirequest/models.py:1283
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr ""
 
-#: foirequest/models.py:1284
+#: foirequest/models.py:1285
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr ""
 
-#: foirequest/models.py:1286
+#: foirequest/models.py:1287
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
 msgstr ""
 
-#: foirequest/models.py:1288
+#: foirequest/models.py:1289
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr ""
 
-#: foirequest/models.py:1290
+#: foirequest/models.py:1291
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
 msgstr ""
 
-#: foirequest/models.py:1292
+#: foirequest/models.py:1293
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr ""
 
-#: foirequest/models.py:1294
+#: foirequest/models.py:1295
 #, python-format
 msgid ""
 "%(public_body)s answered partially, but denied access to all information on "
 "the grounds of %(reason)s."
 msgstr ""
 
-#: foirequest/models.py:1296
+#: foirequest/models.py:1297
 msgid "This request became overdue"
 msgstr ""
 
-#: foirequest/models.py:1298
+#: foirequest/models.py:1299
 #, python-format
 msgid ""
 "%(user)s set '%(name)s' as the information law for the request %(request)s."
 msgstr ""
 
-#: foirequest/models.py:1300
+#: foirequest/models.py:1301
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr ""
 
-#: foirequest/models.py:1302
+#: foirequest/models.py:1303
 #, python-format
 msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
 "request %(request)s."
 msgstr ""
 
-#: foirequest/models.py:1304
+#: foirequest/models.py:1305
 #, python-format
 msgid "The deadline of request %(request)s has been extended."
 msgstr ""
 
-#: foirequest/models.py:1309
+#: foirequest/models.py:1310
 msgid "Request Event"
 msgstr ""
 
-#: foirequest/models.py:1310
+#: foirequest/models.py:1311
 msgid "Request Events"
 msgstr ""
 
 #. Translators: Hash part of Event URL
-#: foirequest/models.py:1323
+#: foirequest/models.py:1324
 msgid "event"
 msgstr ""
 
-#: foirequest/models.py:1383
+#: foirequest/models.py:1384
 msgid "Undelivered Message"
 msgstr ""
 
-#: foirequest/models.py:1384
+#: foirequest/models.py:1385
 msgid "Undelivered Messages"
 msgstr ""
 
-#: foirequest/models.py:1387
+#: foirequest/models.py:1388
 #, python-format
 msgid "Undelievered Message to %(recipient)s (%(request)s)"
 msgstr ""
@@ -1707,7 +1707,7 @@ msgstr ""
 msgid "?request-made"
 msgstr ""
 
-#: foirequest/views.py:373 foirequest/views.py:776
+#: foirequest/views.py:373 foirequest/views.py:777
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr ""
 
@@ -1773,63 +1773,67 @@ msgstr ""
 msgid "The resolution summary has been saved."
 msgstr ""
 
-#: foirequest/views.py:591
+#: foirequest/views.py:592
 msgid "A postal reply was successfully added!"
 msgstr ""
 
-#: foirequest/views.py:594
+#: foirequest/views.py:595
 msgid "There were errors with your form submission!"
 msgstr ""
 
-#: foirequest/views.py:618
+#: foirequest/views.py:619
 msgid ""
 "Your document was added to the message and replaced an existing attachment "
 "with the same name."
 msgstr ""
 
-#: foirequest/views.py:622
+#: foirequest/views.py:623
 msgid "Your document was added to the message as a new attachment."
 msgstr ""
 
-#: foirequest/views.py:669
+#: foirequest/views.py:670
 msgid "Request marked as not a FoI request."
 msgstr ""
 
-#: foirequest/views.py:683
+#: foirequest/views.py:684
 msgid "Request marked as checked."
 msgstr ""
 
-#: foirequest/views.py:700
+#: foirequest/views.py:701
 msgid "Attachment approved."
 msgstr ""
 
-#: foirequest/views.py:715
+#: foirequest/views.py:716
 msgid "Content published."
 msgstr ""
 
-#: foirequest/views.py:754
+#: foirequest/views.py:755
 msgid "You already made an identical request"
 msgstr ""
 
-#: foirequest/views.py:757
+#: foirequest/views.py:758
 #, python-format
 msgid ""
 "Please see this request on FragDenStaat.de where you granted access to this "
 "information: %(url)s"
 msgstr ""
 
-#: foirequest/views.py:770
+#: foirequest/views.py:771
 msgid ""
 "You successfully requested this document! Your request is displayed below."
 msgstr ""
 
-#: foirequest/views.py:832
+#: foirequest/views.py:833
 #, python-format
 msgid "%s_redacted.pdf"
 msgstr ""
 
-#: foirequest/views.py:865
+#: foirequest/views.py:866
 msgid "Deadline has been extended."
+msgstr ""
+
+#: foirequest/templates/admin/foirequest/foimessage/change_form.html:7
+msgid "Resend message"
 msgstr ""
 
 #: foirequest/templates/foirequest/_request_form.html:15
@@ -1868,7 +1872,7 @@ msgid "Status:"
 msgstr ""
 
 #: foirequest/templates/foirequest/_requests_as_table.html:20
-#: foirequest/templates/foirequest/show.html:737
+#: foirequest/templates/foirequest/show.html:740
 #, python-format
 msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
@@ -1883,57 +1887,57 @@ msgstr ""
 msgid "No requests yet."
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_mark_same_as.html:15
-#: foirequest/templates/foirequest/admin_redeliver.html:15
-#: foirequest/templates/foirequest/admin_tag_all.html:15
+#: foirequest/templates/foirequest/admin_mark_same_as.html:16
+#: foirequest/templates/foirequest/admin_redeliver.html:16
+#: foirequest/templates/foirequest/admin_tag_all.html:16
 msgid "Home"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_mark_same_as.html:18
+#: foirequest/templates/foirequest/admin_mark_same_as.html:19
 msgid "Mark multiple requests identical"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_mark_same_as.html:25
+#: foirequest/templates/foirequest/admin_mark_same_as.html:26
 msgid "These FoI request..."
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_mark_same_as.html:34
+#: foirequest/templates/foirequest/admin_mark_same_as.html:35
 msgid "...are identical to this one:"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_mark_same_as.html:38
+#: foirequest/templates/foirequest/admin_mark_same_as.html:39
 msgid "Mark as identical to chosen request"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_redeliver.html:18
+#: foirequest/templates/foirequest/admin_redeliver.html:19
 msgid "Redeliver deferred messages"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_redeliver.html:27
+#: foirequest/templates/foirequest/admin_redeliver.html:28
 msgid "Redeliver these messages..."
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_redeliver.html:37
+#: foirequest/templates/foirequest/admin_redeliver.html:38
 msgid "...to this FOI request:"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_redeliver.html:41
+#: foirequest/templates/foirequest/admin_redeliver.html:42
 msgid "Redeliver messages"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_tag_all.html:18
+#: foirequest/templates/foirequest/admin_tag_all.html:19
 msgid "Add tags to multiple requests"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_tag_all.html:25
+#: foirequest/templates/foirequest/admin_tag_all.html:26
 msgid "Add these tags to all selected requests:"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_tag_all.html:26
+#: foirequest/templates/foirequest/admin_tag_all.html:27
 msgid "Enter Tags here"
 msgstr ""
 
-#: foirequest/templates/foirequest/admin_tag_all.html:40
+#: foirequest/templates/foirequest/admin_tag_all.html:41
 msgid "Add tags to these requests"
 msgstr ""
 
@@ -2455,12 +2459,12 @@ msgid "Your Request:"
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:175
-#: foirequest/templates/foirequest/show.html:660
+#: foirequest/templates/foirequest/show.html:667
 msgid "[... Show complete request text]"
 msgstr ""
 
 #: foirequest/templates/foirequest/request.html:176
-#: foirequest/templates/foirequest/show.html:661
+#: foirequest/templates/foirequest/show.html:668
 msgid "Kind Regards,"
 msgstr ""
 
@@ -2988,42 +2992,42 @@ msgstr ""
 msgid "Upload Document"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:668
+#: foirequest/templates/foirequest/show.html:659
+msgid "Please click here to set a new status for this request now"
+msgstr ""
+
+#: foirequest/templates/foirequest/show.html:675
 msgid ""
 "This message may contain information that you may wish to not publish until "
 "after the whole request finished. The following message is therefore "
 "currently only visible to you."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:671
+#: foirequest/templates/foirequest/show.html:678
 msgid "I want to publish this message"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:677
+#: foirequest/templates/foirequest/show.html:684
 msgid "This message is not yet public."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:690
-msgid "Please set a new status for this request now"
-msgstr ""
-
-#: foirequest/templates/foirequest/show.html:694
+#: foirequest/templates/foirequest/show.html:696
 msgid "You can write a reply by clicking here"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:714
+#: foirequest/templates/foirequest/show.html:717
 msgid "Write a comment"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:719
+#: foirequest/templates/foirequest/show.html:722
 msgid "Please login to write a comment."
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:729
+#: foirequest/templates/foirequest/show.html:732
 msgid "No messages yet"
 msgstr ""
 
-#: foirequest/templates/foirequest/show.html:752
+#: foirequest/templates/foirequest/show.html:755
 msgid "This request is identical to:"
 msgstr ""
 
