@@ -653,6 +653,13 @@
               {% endif %}
             </tbody>
           </table>
+          {% if object.user == user %}
+            {% if object.message_needs_status == message %}
+              <div class="alert alert-error">
+                <a data-tabgo="tab" href="#set-status">{% blocktrans %}Please click here to set a new status for this request now{% endblocktrans %}</a>
+              </div>
+            {% endif %}
+          {% endif %}
           <hr/>
           <div id="{{ message.get_html_id }}-content" class="message-content">
             {% if forloop.counter0 == 0 %}
@@ -684,15 +691,11 @@
           </div>
         </div>
         {% if object.user == user %}
-          {% if object.message_needs_status == message %}
-          <div class="alert alert-info">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <a data-tabgo="tab" href="#set-status">{% blocktrans %}Please set a new status for this request now{% endblocktrans %}</a>
-          </div>
+          {% if message.is_response %}
+            <div class="alert alert-info">
+              <a data-tabgo="tab" href="#write-message">{% blocktrans %}You can write a reply by clicking here{% endblocktrans %}</a>
+            </div>
           {% endif %}
-          <div class="alert alert-info">
-            <a data-tabgo="tab" href="#write-message">{% blocktrans %}You can write a reply by clicking here{% endblocktrans %}</a>
-          </div>
         {% endif %}
 
         {% if message.events %}
