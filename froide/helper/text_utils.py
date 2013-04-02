@@ -80,7 +80,7 @@ def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
         lines.append(line)
     return u"\n".join(lines)
 
-EMAIL_NAME_RE = re.compile(r'[,:]? "?.*?"? <[^@]+@[^>]+>')
+EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 
 
 def replace_email_name(text, replacement=u""):
