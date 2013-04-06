@@ -26,7 +26,11 @@ def highlight_request(message):
 
 
 def check_same_request(context, foirequest, user, var_name):
-    same_requests = FoiRequest.objects.filter(user=user, same_as=foirequest)
+    if foirequest.same_as_id:
+        foirequest_id = foirequest.same_as_id
+    else:
+        foirequest_id = foirequest.id
+    same_requests = FoiRequest.objects.filter(user=user, same_as_id=foirequest_id)
     if same_requests:
         context[var_name] = same_requests[0]
     else:
