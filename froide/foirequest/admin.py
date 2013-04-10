@@ -12,6 +12,7 @@ from froide.foirequest.models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
         DeferredMessage)
 from froide.foirequest.tasks import count_same_foirequests
+from froide.helper.admin_utils import NullFilterSpec
 
 
 class FoiMessageInline(admin.StackedInline):
@@ -176,10 +177,18 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
     raw_id_fields = ('request', 'public_body', 'user')
 
 
+class RequestNullFilter(NullFilterSpec):
+    title = _(u'Has request')
+    parameter_name = u'request'
+
+
 class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
-    list_display = ('recipient', 'timestamp',)
+    list_filter = (RequestNullFilter,)
+    date_hierarchy = 'timestamp'
+    ordering = ('-timestamp',)
+    list_display = ('recipient', 'timestamp', 'request')
     raw_id_fields = ('request',)
     actions = ['redeliver']
 
