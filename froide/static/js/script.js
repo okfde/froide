@@ -363,7 +363,7 @@ $(function(){
         win.focus();
     });
     $(".sticky").each(function(i, el){
-         $(el).scrollToFixed({marginTop: 10});
+        $(el).scrollToFixed({marginTop: 10, minWidth: 768});
     });
     $("a.show-target").live("click", function(e){
         var obj = $('#' + $(this).attr("href").split('#')[1]).find(".toggle");
