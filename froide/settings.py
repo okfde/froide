@@ -91,7 +91,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 LOCALE_PATHS = (
-    os.path.join(PROJECT_ROOT, "locale"),
+    os.path.join(PROJECT_ROOT, '..', "locale"),
 )
 
 GEOIP_PATH = None

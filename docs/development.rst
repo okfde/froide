@@ -34,6 +34,13 @@ If you want to run tests for modules, classes or methods your can run them like 
   python manage.py test froide.foirequest.tests.test_admin.AdminActionTest.test_approve --settings=froide.settings_test
 
 
+
+Build translation
+-----------------
+
+  python manage.py makemessages -a -i docs --settings=your_settings
+
+
 Build docs
 ----------
 
