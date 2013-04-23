@@ -84,7 +84,8 @@ def show(request, context=None, status=200):
         following = len(followed_foirequest_ids)
         since = request.user.last_login - timedelta(days=14)
         events = FoiEvent.objects.filter(public=True,
-            request__in=followed_foirequest_ids, timestamp__gte=since)[:10]
+                request__in=followed_foirequest_ids,
+                timestamp__gte=since)[:10]
     context.update({
         'own_requests': own_foirequests,
         'followed_requests': followed_requests,

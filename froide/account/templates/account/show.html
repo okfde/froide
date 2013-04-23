@@ -28,16 +28,25 @@
     {% if followed_events %}
       <p>{% trans "Recent event on your followed requests:" %}</p>
       <ul>
-      {% for event in followed_events %}
-        <li id="{{ event.get_html_id }}">
-            <a href="{{ event.get_absolute_url }}">
-                <span class="no-print" title="{{ event.timestamp }}">
-                    {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
-                </span>
-                <span class="print-only">
-                    {{ event.timestamp|date:"DATETIME_FORMAT" }}
-                </span>
-            </a>: {{ event.as_html }}
+      {% regroup followed_events by request as event_list %}
+      {% for req in event_list %}
+        <li>
+          <a href="{{ req.grouper.get_absolute_url }}">
+            {{ req.grouper.title }}
+          </a>
+          <ul>
+            {% for event in req.list %}
+            <li>
+              <span class="no-print" title="{{ event.timestamp }}">
+                {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
+              </span>
+              <span class="print-only">
+                  {{ event.timestamp|date:"DATETIME_FORMAT" }}
+              </span>
+              : {{ event.as_html }}
+            </li>
+            {% endfor %}
+          </ul>
         </li>
       {% endfor %}
       </ul>
