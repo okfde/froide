@@ -139,8 +139,8 @@
   <fieldset id="write-request">
     <legend>{% blocktrans %}Step 3 - Write the Request{% endblocktrans %}</legend>
     <div class="js-hidden" id="step-message">
-      <div class="row">
-        <div class="span9">
+      <div class="row-fluid">
+        <div class="span12">
           <div class="">
             <p>{% blocktrans %}Please have a look if the information you are looking for is already available online.{% endblocktrans %}</p>
             <ul id="check-list">
@@ -165,8 +165,8 @@
           {% endif %}
         </div>
       </div>
-      <div class="row">
-        <div class="span5">
+      <div class="row-fluid">
+        <div class="span7">
           <label for="id_body">{% blocktrans %}Your Request:{% endblocktrans %}</label>
           {{ request_form.body.errors }}
           <div class="letter">
@@ -185,15 +185,15 @@
                   {{ user_form.first_name.errors }}
                   {{ user_form.last_name.errors }}
                   <p>
-                    {{ user_form.first_name }}
-                    {{ user_form.last_name }}
+                    <div class="inline">{{ user_form.first_name }}</div>
+                    <div class="inline">{{ user_form.last_name }}</div>
                   </p>
                 </div>
               {% endif %}
             </div>
           </div>
         </div>
-        <div class="span4">
+        <div class="span5">
           <div id="law-description"{% if not request_form.default_law.description %} style="display:none"{% endif %}>
             <h4>{% blocktrans %}Legal Explanation:{% endblocktrans %}</h4>
               <div id="law-description-text">{{ request_form.default_law.description|markdown }}</div>
@@ -211,15 +211,15 @@
       </div>
       <hr/>
       {% if user.is_authenticated %}
-        <div class="user_data_form row">
-          <div class="span5">
+        <div class="user_data_form row-fluid">
+          <div class="span8">
             <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
             <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
           </div>
         </div>
       {% else %}
-        <div class="row">
-          <div class="span9">
+        <div class="row-fluid">
+          <div class="span12">
             <div class="well user_data_form">
               <label for="id_user_email">{% blocktrans %}Your email address{% endblocktrans %}</label>
               {{ user_form.user_email.errors }}
@@ -245,8 +245,8 @@
           </div>
         </div>
       {% endif %}
-      <div class="row">
-        <div class="span9">
+      <div class="row-fluid">
+        <div class="span12">
           <div class="well">
             <label class="checkbox">
               {{ request_form.public }}
