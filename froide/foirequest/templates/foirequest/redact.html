@@ -165,7 +165,9 @@
     var isDown = false;
     canvas.addEventListener('mousedown', function annotationImageOver(e) {
       isDown = true;
-      redactions.push([e.offsetX, e.offsetY, 0, 0]);
+      var x = e.offsetX == undefined ? e.layerX : e.offsetX;
+      var y = e.offsetY == undefined ? e.layerY : e.offsetY;
+      redactions.push([x, y, 0, 0]);
       drawRedactions();
     }, false);
     canvas.addEventListener('mousemove', function annotationImageOver(e) {
@@ -173,8 +175,10 @@
         return;
       }
       var r = redactions[redactions.length - 1];
-      r[2] = e.offsetX - r[0];
-      r[3] = e.offsetY - r[1];
+      var x = e.offsetX == undefined ? e.layerX : e.offsetX;
+      var y = e.offsetY == undefined ? e.layerY : e.offsetY;
+      r[2] = x - r[0];
+      r[3] = y - r[1];
       drawRedactions();
     }, false);
   canvas.addEventListener('mouseup', function annotationImageOver(e) {
@@ -182,8 +186,10 @@
       return;
     }
     var r = redactions[redactions.length - 1];
-    r[2] = e.offsetX - r[0];
-    r[3] = e.offsetY - r[1];
+    var x = e.offsetX == undefined ? e.layerX : e.offsetX;
+    var y = e.offsetY == undefined ? e.layerY : e.offsetY;
+    r[2] = x - r[0];
+    r[3] = y - r[1];
     isDown = false;
     drawRedactions();
     }, false);
