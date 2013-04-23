@@ -16,18 +16,18 @@ class NewUserForm(forms.Form):
     first_name = forms.CharField(max_length=30,
             label=_('First name'),
             widget=forms.TextInput(attrs={'placeholder': _('First Name'),
-                'class': 'span2'}))
+                'class': 'span5'}))
     last_name = forms.CharField(max_length=30,
             label=_('Last name'),
             widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
-                'class': 'span2'}))
+                'class': 'span5'}))
     address = forms.CharField(max_length=300,
             required=False,
             label=_('Mailing Address'),
             help_text=_('Your address will not be displayed publicly and is only needed in case a public body needs to send you paper.'),
             widget=forms.Textarea(attrs={
                 'rows': '3',
-                'class': 'span3',
+                'class': 'span7',
                 'placeholder': _('Street, Post Code, City'),
             }))
     user_email = forms.EmailField(label=_('Email address'),

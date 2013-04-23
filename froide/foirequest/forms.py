@@ -33,12 +33,12 @@ class RequestForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(
                 attrs={'placeholder': _("Subject"),
-                "class": "span5"}))
+                "class": "span8"}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
                 attrs={
                     'placeholder': _("Specify your request here..."),
-                    "class": "span4"
+                    "class": "span11"
                 }))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request will be public immediately."))
