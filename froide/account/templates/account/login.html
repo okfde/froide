@@ -46,9 +46,7 @@
   <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
     {% csrf_token %}
     {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-    <div class="row-fluid">
     {% form signup_form using "bootstrap/horizontal.html" %}
-    </div>
     <button type="submit" class="btn">{% blocktrans %}Sign Up{% endblocktrans %}</button>
   </form>
 </div>
