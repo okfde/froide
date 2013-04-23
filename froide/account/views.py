@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
@@ -82,11 +82,11 @@ def show(request, context=None, status=200):
     events = []
     if followed_foirequest_ids:
         following = len(followed_foirequest_ids)
-        since = request.user.last_login - timedelta(days=14)
+        since = datetime.utcnow() - timedelta(days=14)
         events = FoiEvent.objects.filter(public=True,
                 request__in=followed_foirequest_ids,
                 timestamp__gte=since).order_by(
-                    'request', 'timestamp')[:10]
+                    'request', 'timestamp')
     context.update({
         'own_requests': own_foirequests,
         'followed_requests': followed_requests,
