@@ -81,11 +81,14 @@ class FoiRequestFollowerTest(TestCase):
     def test_updates(self):
         mail.outbox = []
         req = FoiRequest.objects.all()[0]
+        comment_user = factories.UserFactory()
         user = User.objects.get(username='dummy')
         self.client.login(username='dummy', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
+        self.client.logout()
+        self.client.login(username=comment_user.username, password='froide')
         mes = list(req.messages)[-1]
         d = {
             'name': 'Jim Bob',
@@ -101,3 +104,38 @@ class FoiRequestFollowerTest(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to[0], req.user.email)
         self.assertEqual(mail.outbox[1].to[0], user.email)
+
+    def test_updates_avoid(self):
+        mail.outbox = []
+        req = FoiRequest.objects.all()[0]
+        mes = list(req.messages)[-1]
+        self.client.login(username=req.user.username, password='froide')
+        d = {
+            'name': 'Jim Bob',
+            'email': 'jim.bob@example.com',
+            'url': '',
+            'comment': 'This is my comment',
+        }
+        f = CommentForm(mes)
+        d.update(f.initial)
+        self.client.post(reverse("comments-post-comment"), d)
+
+        _batch_update()
+
+        self.assertEqual(len(mail.outbox), 0)
+
+        mail.outbox = []
+        self.client.logout()
+
+        # follow request
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(reverse('foirequestfollower-follow',
+                kwargs={"slug": req.slug}))
+        self.assertEqual(response.status_code, 302)
+
+        f = CommentForm(mes)
+        d.update(f.initial)
+        self.client.post(reverse("comments-post-comment"), d)
+
+        _batch_update()
+        self.assertEqual(len(mail.outbox), 1)
