@@ -566,6 +566,7 @@ def add_postal_reply(request, slug):
         date = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
         message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = form.cleaned_data.get('subject', '')
+        message.subject_redacted = message.redact_subject()[:250]
         message.plaintext = ""
         if form.cleaned_data.get('text'):
             message.plaintext = form.cleaned_data.get('text')
