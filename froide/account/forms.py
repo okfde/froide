@@ -10,6 +10,7 @@ from froide.helper.widgets import AgreeCheckboxInput
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
+ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
 
 
 class NewUserForm(forms.Form):
@@ -24,7 +25,7 @@ class NewUserForm(forms.Form):
     address = forms.CharField(max_length=300,
             required=False,
             label=_('Mailing Address'),
-            help_text=_('Your address will not be displayed publicly and is only needed in case a public body needs to send you paper.'),
+            help_text=_('Optional. Your address will not be displayed publicly and is only needed in case a public body needs to send you paper.'),
             widget=forms.Textarea(attrs={
                 'rows': '3',
                 'class': 'input-large',
@@ -32,7 +33,8 @@ class NewUserForm(forms.Form):
             }))
     user_email = forms.EmailField(label=_('Email address'),
             max_length=75,
-            help_text=_('Not public, you will need to confirm this address.'),
+            help_text=_('Not public. The given address will '
+                        'need to be confirmed.'),
             widget=forms.EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
 
     if HAVE_ORGANIZATION:
@@ -51,6 +53,13 @@ class NewUserForm(forms.Form):
             widget=AgreeCheckboxInput(
                 agree_to=_(u'You agree to our <a href="%(url_terms)s" class="target-new">Terms and Conditions</a> and <a href="%(url_privacy)s" class="target-new">Privacy Statement</a>'),
                 url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
+
+    def __init__(self, *args, **kwargs):
+        super(NewUserForm, self).__init__(*args, **kwargs)
+        if ALLOW_PSEUDONYM:
+            self.fields["last_name"].help_text = mark_safe(
+                    _('<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.')
+                    .format(url=reverse("help-your_privacy") + '#pseudonym'))
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()

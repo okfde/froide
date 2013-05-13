@@ -180,13 +180,18 @@
                 <p id="fullname">{{ user.get_full_name }}</p>
               {% else %}
                 <div class="user_data_form">
-                  <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %} 
+                  <label class="inline" for="id_first_name">{% blocktrans %}Your first name{% endblocktrans %}</label> {% blocktrans %}and{% endblocktrans %}
                   <label class="inline" for="id_last_name">{% blocktrans %}last name{% endblocktrans %}</label>
                   {{ user_form.first_name.errors }}
                   {{ user_form.last_name.errors }}
                   <p>
                     <div class="inline">{{ user_form.first_name }}</div>
                     <div class="inline">{{ user_form.last_name }}</div>
+                    {% if user_form.last_name.help_text %}
+                      <span class="help-block">
+                        {{ user_form.last_name.help_text }}
+                      </span>
+                    {% endif %}
                   </p>
                 </div>
               {% endif %}

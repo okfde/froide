@@ -361,7 +361,8 @@ FROIDE_CONFIG = dict(
     closings=[rec(u"Sincerely yours,?")],
     public_body_boosts={},
     dryrun=False,
-    dryrun_domain="testmail.example.com"
+    dryrun_domain="testmail.example.com",
+    allow_pseudonym=False
 )
 
 
