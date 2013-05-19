@@ -13,7 +13,7 @@ The format of the CSV file should be like `in this Google Docs Spreadsheet <http
 Prerequisites
 -------------
 
-You need at least one `PublicBodyTopic` and one `Jurisdiction` present. The jurisdiction's slug must be explictly referenced in the CSV. If no public body topic slug is given in the CSV, it will fall back to the lowest ranking `PublicBodyTopic` as default (the "other" or miscellaneous topic).
+You need at least one User, one `PublicBodyTopic` and one `Jurisdiction` present in the database. The jurisdiction's slug must be explictly referenced in the CSV. If no public body topic slug is given in the CSV, it will fall back to the lowest ranking `PublicBodyTopic` as default (then used as the "other" or miscellaneous topic).
 
 
 Format
