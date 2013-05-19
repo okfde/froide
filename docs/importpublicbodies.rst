@@ -9,6 +9,13 @@ public bodies as a CSV file into Froide.
 
 The format of the CSV file should be like `in this Google Docs Spreadsheet <https://docs.google.com/spreadsheet/ccc?key=0AhDkodM9ozpddGNTaGJoa203aEJaRXVfM0Q0d1RjNUE#gid=0>`_. You could for example copy it and either fill in public bodies collaboratively or programmatically.
 
+
+Prerequisites
+-------------
+
+You need at least one `PublicBodyTopic` and one `Jurisdiction` present. The jurisdiction's slug must be explictly referenced in the CSV. If no public body topic slug is given in the CSV, it will fall back to the lowest ranking `PublicBodyTopic` as default (the "other" or miscellaneous topic).
+
+
 Format
 ------
 
