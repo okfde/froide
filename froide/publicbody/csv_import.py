@@ -50,10 +50,16 @@ class CSVImporter(object):
             row[n] = row.get(n, '')
 
         try:
-            pb = PublicBody.objects.get(slug=row['slug'])
+            if 'id' in row:
+                pb = PublicBody.objects.get(id=row['id'])
+            else:
+                pb = PublicBody.objects.get(slug=row['slug'])
             # If it exists, update it
-            row.pop('id')  # Do not update id though
+            row.pop('id', None)  # Do not update id though
+            row['_updated_by'] = self.user
             PublicBody.objects.filter(id=pb.id).update(**row)
+            pb.laws.clear()
+            pb.laws.add(*row['jurisdiction'].laws)
             return
         except PublicBody.DoesNotExist:
             pass
@@ -76,7 +82,7 @@ class CSVImporter(object):
     def get_topic(self, slug):
         if not slug:
             if self.default_topic is None:
-                self.default_topic = PublicBodyTopic.objects.all().order_by('-rank,id')[0]
+                self.default_topic = PublicBodyTopic.objects.all().order_by('-rank', 'id')[0]
             return self.default_topic
         if slug not in self.topic_cache:
             self.topic_cache[slug] = PublicBodyTopic.objects.get(slug=slug)

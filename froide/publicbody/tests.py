@@ -1,3 +1,5 @@
+import StringIO
+
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -5,11 +7,12 @@ from froide.foirequest.tests import factories
 from froide.helper.test_utils import skip_if_environ
 
 from .models import PublicBody, FoiLaw, Jurisdiction
+from .csv_import import CSVImporter
 
 
 class PublicBodyTest(TestCase):
     def setUp(self):
-        factories.make_world()
+        self.site = factories.make_world()
 
     def test_web_page(self):
         response = self.client.get(reverse('publicbody-list'))
@@ -57,6 +60,35 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv(PublicBody.objects.all())
         self.assertEqual(PublicBody.objects.all().count() + 1,
             len(csv.splitlines()))
+
+    def test_csv_export_import(self):
+        csv = PublicBody.export_csv(PublicBody.objects.all())
+        prev_count = PublicBody.objects.all().count()
+        imp = CSVImporter()
+        imp.import_from_file(StringIO.StringIO(csv))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count)
+
+    def test_csv_existing_import(self):
+        factories.PublicBodyFactory.create(site=self.site, name='Public Body 76 X')
+        factories.PublicBodyTopicFactory.create(slug='public-body-topic-76-x')
+        prev_count = PublicBody.objects.all().count()
+        # Existing entity via slug, no id reference
+        csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
+Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
+        imp = CSVImporter()
+        imp.import_from_file(StringIO.StringIO(csv))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count)
+
+    def test_csv_new_import(self):
+        prev_count = PublicBody.objects.all().count()
+        csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
+Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
+        imp = CSVImporter()
+        imp.import_from_file(StringIO.StringIO(csv))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count - 1, prev_count)
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
