@@ -404,6 +404,10 @@ FOI_EMAIL_USE_TLS = True
 # The FoI Mail can use a different account
 FOI_EMAIL_DOMAIN = "example.com"
 
+FOI_EMAIL_FUNC = None
+# Example:
+# FOI_EMAIL_FUNC = lambda user_name, secret: "%s.%s@%s" % (user_name, secret, FOI_EMAIL_DOMAIN)
+
 # Is the message you can send from fixed
 # or can you send from any address you like?
 FOI_EMAIL_FIXED_FROM_ADDRESS = True

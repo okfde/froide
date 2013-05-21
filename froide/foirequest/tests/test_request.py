@@ -346,6 +346,27 @@ class RequestTest(TestCase):
             self.assertEqual(message.to[0], pb.email)
         self.assertEqual(message.subject, req.title)
 
+    def test_foi_email_settings(self):
+        pb = PublicBody.objects.all()[0]
+        self.client.login(username="dummy", password="froide")
+        post = {"subject": "Another Third Test-Subject",
+                "body": "This is another test body",
+                "public_body": str(pb.pk),
+                'law': str(pb.default_law.pk),
+                "public": "on"}
+        email_func = lambda u, s: 'email+%s@foi.example.com' % u
+        with self.settings(
+            FOI_EMAIL_FIXED_FROM_ADDRESS=False,
+            FOI_EMAIL_FUNC=email_func
+        ):
+            response = self.client.post(
+                    reverse('foirequest-submit_request'), post)
+            self.assertEqual(response.status_code, 302)
+            req = FoiRequest.objects.get(title=post['subject'])
+            self.assertTrue(req.messages[0].sent)
+            addr = email_func(req.user.username, '')
+            self.assertEqual(req.secret_address, addr)
+
     def test_logged_in_request_no_public_body(self):
         self.client.login(username="dummy", password="froide")
         post = {"subject": "An Empty Public Body Request",

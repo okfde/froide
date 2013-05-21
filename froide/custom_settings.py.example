@@ -345,6 +345,10 @@ if FROIDE_THEME is not None:
 # The FoI Mail can use a different account
 # FOI_EMAIL_DOMAIN = "example.com"
 
-# Is the message you can send from fixed
+# Custom FOI email sender address:
+# FOI_EMAIL_FUNC = lambda user_name, secret: "%s.%s@%s" % (user_name, secret, FOI_EMAIL_DOMAIN)
+
+# Is the message you can send from fixed (put custom
+# address in Reply-To header)
 # or can you send from any address you like?
 # FOI_EMAIL_FIXED_FROM_ADDRESS = True

@@ -649,6 +649,8 @@ Sincerely yours
         possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
         user_name = user.username.replace('_', '.')
         secret = "".join([random.choice(possible_chars) for i in range(10)])
+        if getattr(settings, 'FOI_EMAIL_FUNC') and settings.FOI_EMAIL_FUNC:
+            return settings.FOI_EMAIL_FUNC(user_name, secret)
         return "%s.%s@%s" % (user_name, secret, settings.FOI_EMAIL_DOMAIN)
 
     @classmethod
