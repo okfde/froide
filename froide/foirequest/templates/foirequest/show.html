@@ -598,11 +598,15 @@
               </tr>
               <tr>
                 <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
-                {% if message.is_postal %}
-                  <td>{{ message.timestamp|date:"DATE_FORMAT" }}</td>
-                {% else %}
-                  <td>{{ message.timestamp|date:"DATETIME_FORMAT" }}</td>
-                {% endif %}
+                <td>
+                  <a href="#{{ message.get_html_id }}">
+                    {% if message.is_postal %}
+                      {{ message.timestamp|date:"DATE_FORMAT" }}
+                    {% else %}
+                      {{ message.timestamp|date:"DATETIME_FORMAT" }}
+                    {% endif %}
+                  </a>
+                </td>
               </tr>
               {% if not message.is_response %}
                 <tr>
