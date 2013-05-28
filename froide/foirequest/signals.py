@@ -224,3 +224,17 @@ def create_event_add_postal_reply(sender, **kwargs):
 def create_event_escalated(sender, **kwargs):
     FoiEvent.objects.create_event("escalated", sender,
             user=sender.user, public_body=sender.law.mediator)
+
+
+@receiver(signals.post_save, sender=FoiAttachment,
+        dispatch_uid="foiattachment_convert_attachment")
+def foiattachment_convert_attachment(instance=None, created=False, **kwargs):
+    if kwargs.get('raw', False):
+        return
+
+    from .tasks import convert_attachment_task
+
+    if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
+            instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
+        if instance.converted_id is None:
+            convert_attachment_task.delay(instance.id)

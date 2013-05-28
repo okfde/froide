@@ -8,11 +8,12 @@ from django.contrib.admin import helpers
 
 from taggit.utils import parse_tags
 
-from froide.foirequest.models import (FoiRequest, FoiMessage,
+from froide.helper.admin_utils import NullFilterSpec
+
+from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
         DeferredMessage)
-from froide.foirequest.tasks import count_same_foirequests
-from froide.helper.admin_utils import NullFilterSpec
+from .tasks import count_same_foirequests, convert_attachment
 
 
 class FoiMessageInline(admin.StackedInline):
@@ -124,7 +125,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
 
 class FoiAttachmentInline(admin.TabularInline):
     model = FoiAttachment
-    raw_id_fields = ('redacted',)
+    raw_id_fields = ('redacted', 'converted')
 
 
 class FoiMessageAdmin(admin.ModelAdmin):
@@ -142,12 +143,12 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):
-    raw_id_fields = ('belongs_to', 'redacted',)
+    raw_id_fields = ('belongs_to', 'redacted', 'converted')
     ordering = ('-id',)
     list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
     list_filter = ('can_approve', 'approved',)
     search_fields = ['name']
-    actions = ['approve', 'cannot_approve']
+    actions = ['approve', 'cannot_approve', 'convert']
 
     def approve(self, request, queryset):
         rows_updated = queryset.update(approved=True)
@@ -158,6 +159,16 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         rows_updated = queryset.update(can_approve=False)
         self.message_user(request, _("%d attachment(s) successfully marked as not approvable." % rows_updated))
     cannot_approve.short_description = _("Mark selected as NOT approvable")
+
+    def convert(self, request, queryset):
+        if not queryset:
+            return
+        instance = queryset[0]
+        if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
+                instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
+            convert_attachment(instance)
+            self.message_user(request, _("Converted to PDF."))
+    convert.short_description = _("Convert to PDF")
 
 
 class FoiEventAdmin(admin.ModelAdmin):

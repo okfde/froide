@@ -1169,15 +1169,35 @@ class FoiAttachment(models.Model):
         related_name='original_set')
     is_converted = models.BooleanField(_("Is redacted"), default=False)
 
-    PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
-            'application/msword', 'application/msexcel', 'application/vnd.msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/x-pdf', 'pdf/application', 'application/acrobat',
-            'applications/vnd.pdf', 'text/pdf', 'text/x-pdf'
+    CONVERTABLE_FILETYPES = (
+        'application/msword',
+        'application/vnd.msword',
+        '.doc',
+        '.docx',
     )
 
-    POSTAL_CONTENT_TYPES = PREVIEWABLE_FILETYPES + ("image/png", "image/jpeg", "image/jpg",
-            "image/jpg", "application/text-plain:formatted", "text/plain")
+    PREVIEWABLE_FILETYPES = (
+        'application/msexcel',
+        'application/vnd.ms-excel',
+        'application/msword',
+        'application/vnd.msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/pdf',
+        'application/x-pdf',
+        'pdf/application',
+        'application/acrobat',
+        'applications/vnd.pdf',
+        'text/pdf',
+        'text/x-pdf'
+    )
+
+    POSTAL_CONTENT_TYPES = PREVIEWABLE_FILETYPES + (
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "application/text-plain:formatted",
+        "text/plain"
+    )
 
     class Meta:
         ordering = ('name',)

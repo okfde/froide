@@ -302,7 +302,9 @@ if FROIDE_THEME is not None:
 #     closings=[rec(u"Sincerely yours,?")],
 #     public_body_boosts={},
 #     dryrun=False,
-#     dryrun_domain="testmail.example.com"
+#     dryrun_domain="testmail.example.com",
+#     doc_conversion_binary=None,
+#     doc_conversion_call_func=None
 # ))
 
 

@@ -50,11 +50,21 @@ class MailTest(TestCase):
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         self.assertEqual(messages[1].subject, u"Fwd: Informationsfreiheitsgesetz des Bundes, Antragsvordruck für Open Data")
-        self.assertEqual(len(messages[1].attachments), 1)
-        self.assertEqual(messages[1].attachments[0].name, u"TI-IFG-AntragVordruck.docx")
+        self.assertEqual(len(messages[1].attachments), 2)
+        self.assertEqual(messages[1].attachments[0].name,
+                         u"TI-IFG-AntragVordruck.docx")
+        self.assertTrue(messages[1].attachments[1].name.endswith(u".pdf"))
+        self.assertFalse(messages[1].attachments[0].is_converted)
+        self.assertTrue(messages[1].attachments[1].is_converted)
+        self.assertTrue(messages[1].attachments[1].converted is None)
+        self.assertEqual(
+            messages[1].attachments[0].converted,
+            messages[1].attachments[1]
+        )
 
     def test_wrong_address(self):
-        request = FoiRequest.objects.get_by_secret_mail(u"sw+yurpykc1hr@fragdenstaat.de")
+        request = FoiRequest.objects.get_by_secret_mail(
+                u"sw+yurpykc1hr@fragdenstaat.de")
         request.delete()
         mail.outbox = []
         with file(p("test_mail_01.txt")) as f:

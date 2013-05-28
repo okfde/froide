@@ -362,7 +362,9 @@ FROIDE_CONFIG = dict(
     public_body_boosts={},
     dryrun=False,
     dryrun_domain="testmail.example.com",
-    allow_pseudonym=False
+    allow_pseudonym=False,
+    doc_conversion_binary=None,  # replace with libreoffice instance
+    doc_conversion_call_func=None  # see settings_test for use
 )
 
 

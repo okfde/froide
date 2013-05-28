@@ -50,6 +50,18 @@ LOGGING = {
     }
 }
 
+
+def fake_convert_pdf(infile, outpath):
+    _, filename = os.path.split(infile)
+    name, ext = filename.rsplit('.', 1)
+    output = os.path.join(outpath, '%s.pdf' % name)
+    args = ['cp', infile, output]
+    return args, output
+
+FROIDE_CONFIG.update(dict(
+    doc_conversion_call_func=fake_convert_pdf,
+))
+
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 CACHES = {
