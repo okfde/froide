@@ -1161,8 +1161,13 @@ class FoiAttachment(models.Model):
     can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
     redacted = models.ForeignKey('self', verbose_name=_("Redacted Version"),
-        null=True, blank=True, on_delete=models.SET_NULL)
+        null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='unredacted_set')
     is_redacted = models.BooleanField(_("Is redacted"), default=False)
+    converted = models.ForeignKey('self', verbose_name=_("Converted Version"),
+        null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='original_set')
+    is_converted = models.BooleanField(_("Is redacted"), default=False)
 
     PREVIEWABLE_FILETYPES = ('application/vnd.ms-excel', 'application/pdf',
             'application/msword', 'application/msexcel', 'application/vnd.msword',
