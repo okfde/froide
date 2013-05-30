@@ -47,6 +47,7 @@
           <h1>{{ SITE_NAME }}</h1>
         </a>
         <div class="nav-collapse collapse">
+          {% block nav %}
           <ul class="nav">
             <li class="first-divider divider-vertical"></li>
             <li class="{% block nav_requests %}{% endblock %}">
@@ -59,6 +60,7 @@
               <a href="{% url 'foirequest-make_request' %}"><span>{% blocktrans %}Make a Request!{% endblocktrans %}</span></a>
             </li>
           </ul>
+          {% endblock nav %}
           <form class="navbar-search pull-left" action="{% url 'foirequest-search' %}" method="get">
             <input class="span2 search-query" type="text" name="q" placeholder="{% trans "Search" %}"/>
           </form>
