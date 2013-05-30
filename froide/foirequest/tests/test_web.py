@@ -84,6 +84,20 @@ class WebTest(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
+    def test_publicbody_requests(self):
+        fake_slug = 'fake-slug'
+        response = self.client.get(reverse('foirequest-list', kwargs={"public_body": fake_slug}))
+        self.assertEqual(response.status_code, 404)
+        req = FoiRequest.published.all()[0]
+        pb = req.public_body
+        response = self.client.get(reverse('foirequest-list', kwargs={"public_body": pb.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(req.title, response.content.decode('utf-8'))
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={"public_body": pb.slug}))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={"public_body": pb.slug}))
+        self.assertEqual(response.status_code, 200)
+
     def test_list_no_identical(self):
         factories.FoiRequestFactory.create(site=self.site)
         reqs = FoiRequest.published.all()
