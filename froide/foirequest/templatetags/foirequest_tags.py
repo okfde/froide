@@ -1,6 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.template.defaultfilters import urlizetrunc
 
 from froide.helper.text_utils import unescape
 
@@ -20,7 +21,7 @@ def highlight_request(message):
     offset = index + len(description)
     return mark_safe('<div class="foldin">%s</div><div class="highlight">%s</div><div class="foldin-bottom print-show" style="display:none" id="letter_end">%s</div>' % (
             escape(content[:index]),
-            escape(description),
+            urlizetrunc(escape(description), 40),
             escape(content[offset:]))
     )
 
