@@ -305,6 +305,10 @@ class FoiRequest(models.Model):
                 "recipient_public_body").order_by("timestamp"))
         return self._messages
 
+    def get_messages(self):
+        self._messages = None
+        return self.messages
+
     @property
     def status_settable(self):
         return self.awaits_classification()
@@ -576,6 +580,7 @@ Sincerely yours
         message.plaintext_redacted = message.redact_plaintext()
         message.original = mail_string
         message.save()
+        self._messages = None
         self.status = 'awaiting_classification'
         self.last_message = message.timestamp
         self.save()
@@ -1142,6 +1147,7 @@ class FoiMessage(models.Model):
                 [self.recipient_email])
         self.sent = True
         self.save()
+        self.request._messages = None
         if notify:
             FoiRequest.message_sent.send(sender=self.request, message=self)
 

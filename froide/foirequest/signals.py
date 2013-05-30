@@ -59,7 +59,8 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
 @receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
-    if len(sender.messages) == 1:
+    messages = sender.get_messages()
+    if len(messages) == 1:
         subject = _("Your Freedom of Information Request was sent")
         template = "foirequest/emails/confirm_foi_request_sent.txt"
     else:
