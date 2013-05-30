@@ -15,7 +15,8 @@ from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
-from .forms import UserLoginForm, NewUserForm, UserChangeAddressForm
+from .forms import (UserLoginForm, NewUserForm,
+        UserChangeAddressForm, UserDeleteForm)
 from .models import AccountManager, User
 
 
@@ -273,3 +274,53 @@ def change_address(request):
 
 def csrf_failure(request, reason=''):
     return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})
+
+
+def account_settings(request, context=None, status=200):
+    if not request.user.is_authenticated():
+        return redirect('account-login')
+    if not context:
+        context = {}
+    if 'new' in request.GET:
+        request.user.is_new = True
+    if not 'user_delete_form' in context:
+        context['user_delete_form'] = UserDeleteForm(request.user)
+    return render(request, 'account/settings.html', context, status=status)
+
+
+@require_POST
+def delete_account(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are not currently logged in, you cannot delete your account.'))
+        return render_403(request)
+    form = UserDeleteForm(request.user, request.POST)
+    if not form.is_valid():
+        messages.add_message(request, messages.ERROR,
+                _('Password or confirmation phrase were wrong. Account was not deleted.'))
+        return account_settings(
+            request,
+            context={
+                'user_delete_form': form
+            },
+            status=400
+        )
+    # Removing all personal data from account
+    user = request.user
+    profile = user.get_profile()
+    profile.organization = ''
+    profile.organization_url = ''
+    profile.private = True
+    profile.address = ''
+    profile.save()
+    user.first_name = ''
+    user.last_name = ''
+    user.is_active = False
+    user.email = ''
+    user.username = 'u%s' % user.pk
+    user.save()
+    auth.logout(request)
+    messages.add_message(request, messages.INFO,
+            _('Your account has been deleted and you have been logged out.'))
+
+    return redirect('/')

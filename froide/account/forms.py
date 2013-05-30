@@ -3,10 +3,13 @@ import floppyforms as forms
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.conf import settings
 
 from froide.helper.widgets import AgreeCheckboxInput
+
+from .widgets import ConfirmationWidget
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
@@ -119,3 +122,43 @@ class UserChangeAddressForm(forms.Form):
     def save(self):
         self.profile.address = self.cleaned_data['address']
         self.profile.save()
+
+
+class UserDeleteForm(forms.Form):
+    CONFIRMATION_PHRASE = unicode(_('Freedom of Information Act'))
+
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        label=_('Password'),
+        help_text=_('Please type your password to confirm.')
+    )
+    confirmation = forms.CharField(
+        widget=ConfirmationWidget(
+            {'placeholder': CONFIRMATION_PHRASE}
+        ),
+        label=_('Confirmation Phrase'),
+        help_text=_('Type the phrase above exactly as displayed.'))
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(UserDeleteForm, self).__init__(*args, **kwargs)
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        user = auth.authenticate(
+            username=self.user.email,
+            password=password
+        )
+        if not user:
+            raise forms.ValidationError(
+                _('You provided the wrong password!')
+            )
+        return ''
+
+    def clean_confirmation(self):
+        confirmation = self.cleaned_data['confirmation']
+        if confirmation != self.CONFIRMATION_PHRASE:
+            raise forms.ValidationError(
+                _('You did not type the confirmation phrase exactly right!')
+            )
+        return ''

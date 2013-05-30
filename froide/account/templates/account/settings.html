@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load floppyforms %}
+
+{% block body %}
+<h2>{% trans "Account Settings" %}</h2>
+
+<div class="row">
+  <div class="span12">
+    <dl class="dl-horizontal">
+      <dt>
+        {% blocktrans %}Your name:{% endblocktrans %}
+      </dt>
+      <dd>{{ user.get_full_name }}</dd>
+
+      <dt>
+        {% blocktrans %}Your email address:{% endblocktrans %}
+      </dt>
+      <dd>{{ user.email }}</dd>
+      <dt>
+        {% blocktrans %}Your address:{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ user.get_profile.address|linebreaks }}
+      </dd>
+      <dt>
+        {% trans "Account Privacy:" %}
+      </dt>
+      <dd>
+      {% if user.get_profile.private %}
+        <i class="icon icon-lock"></i>
+        {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
+      {% else %}
+        {% blocktrans %}Your name is visible.{% endblocktrans %}
+      {% endif %}
+      </dd>
+    </dl>
+
+    <div id="change-password-now" class="section focussed">
+      {% if user.is_new %}
+        <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>
+      {% else %}
+        <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
+        <div id="change-password"{% if not password_change_form %} class="js-hidden"{% endif %}>
+        {% endif %}
+          <form action="{% url 'account-change_password' %}" method="post">
+            {% csrf_token %}
+            {% if password_change_form %}
+              {{ password_change_form.as_p }}
+            {% else %}
+              {{ user.get_profile.get_password_change_form.as_p }}
+            {% endif %}
+            <button type="submit" class="btn">{% blocktrans %}Change password{% endblocktrans %}</button>
+          </form>
+        {% if not user.is_new %}
+          </div>
+        {% endif %}
+    </div>
+
+    <div id="change-address-now" class="section focussed">
+      {% if not user.get_profile.address %}
+        <h3>
+          {% blocktrans %}You need to enter your address.{% endblocktrans %}
+        </h3>
+      {% else %}
+        <a href="#change-address" class="toggle">
+          {% blocktrans %}Change your address{% endblocktrans %}
+        </a>
+        <div id="change-address"{% if not address_change_form %} class="js-hidden"{% endif %}>
+        {% endif %}
+          <form action="{% url 'account-change_address' %}" method="post">
+          {% csrf_token %}
+          {% if address_change_form %}
+            {{ address_change_form.as_p }}
+          {% else %}
+            {{ user.get_profile.get_address_change_form.as_p }}
+          {% endif %}
+          <button type="submit" class="btn">{% blocktrans %}Change address{% endblocktrans %}</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="delete-account-section" class="section">
+      <a href="#delete-account" class="toggle">
+        {% blocktrans %}Delete your account{% endblocktrans %}
+      </a>
+      <div id="delete-account" {% if not user_delete_form.is_bound %} class="js-hidden"{% endif %}>
+        <div class="alert alert-error">
+          <h4>
+            <i class="icon icon-fire"></i>
+            {% trans "Danger: deleting your account cannot be undone." %}
+            <i class="icon icon-fire"></i>
+          </h4>
+          <form action="{% url 'account-delete_account' %}" method="post">
+            {% csrf_token %}
+            {% form user_delete_form using "bootstrap/horizontal.html" %}
+            <p>
+              {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
+            </p>
+            <button type="submit" class="btn btn-danger">
+              <i class="icon icon-white icon-warning-sign"></i>
+              {% blocktrans %}Delete account{% endblocktrans %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

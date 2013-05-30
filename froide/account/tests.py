@@ -423,3 +423,55 @@ class AccountTest(TestCase):
         response = self.client.get(reverse('account-profile',
             kwargs={'slug': user2.username}))
         self.assertEqual(response.status_code, 404)
+
+    def test_account_delete(self):
+        response = self.client.get(reverse('account-settings'))
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'froide',
+                'confirmation': 'Freedom of Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 403)
+
+        user = User.objects.get(username='sw')
+        self.client.login(username='sw', password='froide')
+
+        response = self.client.get(reverse('account-settings'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'bad-password',
+                'confirmation': 'Freedom of Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'froide',
+                'confirmation': 'Strange Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'froide',
+                'confirmation': 'Freedom of Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+
+        user = User.objects.get(pk=user.pk)
+        profile = user.get_profile()
+        self.assertEqual(user.first_name, '')
+        self.assertEqual(user.last_name, '')
+        self.assertEqual(user.email, '')
+        self.assertEqual(user.username, 'u%s' % user.pk)
+        self.assertEqual(profile.address, '')
+        self.assertEqual(profile.organization, '')
+        self.assertEqual(profile.organization_url, '')
+        self.assertTrue(profile.private)
