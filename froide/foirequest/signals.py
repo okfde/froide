@@ -22,7 +22,7 @@ def trigger_index_update(klass, instance_pk):
 def send_notification_became_overdue(sender, **kwargs):
     send_mail(_("%(site_name)s: Request became overdue")
                 % {"site_name": settings.SITE_NAME},
-            render_to_string("foirequest/became_overdue.txt",
+            render_to_string("foirequest/emails/became_overdue.txt",
                 {"request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
@@ -34,7 +34,7 @@ def send_notification_became_overdue(sender, **kwargs):
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
     send_mail(_("You received a reply to your Freedom of Information Request"),
-            render_to_string("foirequest/message_received_notification.txt",
+            render_to_string("foirequest/emails/message_received_notification.txt",
                 {"message": message, "request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_short_url()),
                     "site_name": settings.SITE_NAME}),
@@ -47,7 +47,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
 def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
     if sender.user != suggestion.user:
         send_mail(_("Your request received a suggestion for a Public Body"),
-                render_to_string("foirequest/public_body_suggestion_received.txt",
+                render_to_string("foirequest/emails/public_body_suggestion_received.txt",
                     {"suggestion": suggestion, "request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(
                             sender.get_absolute_short_url()),
@@ -61,10 +61,10 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     if len(sender.messages) == 1:
         subject = _("Your Freedom of Information Request was sent")
-        template = "foirequest/confirm_foi_request_sent.txt"
+        template = "foirequest/emails/confirm_foi_request_sent.txt"
     else:
         subject = _("Your Message was sent")
-        template = "foirequest/confirm_foi_message_sent.txt"
+        template = "foirequest/emails/confirm_foi_message_sent.txt"
     send_mail(subject,
             render_to_string(template,
                 {"request": sender, "message": message,

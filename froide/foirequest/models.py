@@ -527,7 +527,7 @@ class FoiRequest(models.Model):
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
         if self.is_overdue() and self.awaits_response():
-            message = render_to_string('foirequest/overdue_reply.txt', {
+            message = render_to_string('foirequest/emails/overdue_reply.txt', {
                 'foirequest': self
             })
         else:
@@ -774,7 +774,7 @@ Sincerely yours
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
             letter_end = foilaw.get_letter_end_text(post_data)
-        return render_to_string("foirequest/foi_request_mail.txt",
+        return render_to_string("foirequest/emails/foi_request_mail.txt",
                 {"request": self,
                 "letter_start": letter_start,
                 "letter_end": letter_end,
@@ -783,7 +783,7 @@ Sincerely yours
             })
 
     def construct_standard_message_body(self, text, send_address=True):
-        return render_to_string("foirequest/mail_with_userinfo.txt",
+        return render_to_string("foirequest/emails/mail_with_userinfo.txt",
                 {"request": self, "body": text, 'send_address': send_address})
 
     def determine_visibility(self):
@@ -902,7 +902,7 @@ Sincerely yours
     def send_classification_reminder(self):
         send_mail(_("%(site_name)s: Please classify the reply to your request")
                     % {"site_name": settings.SITE_NAME},
-                render_to_string("foirequest/classification_reminder.txt",
+                render_to_string("foirequest/emails/classification_reminder.txt",
                     {"request": self,
                         "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
                         "site_name": settings.SITE_NAME}),
@@ -912,7 +912,7 @@ Sincerely yours
     def send_update(self, event_string):
         send_mail(_("%(site_name)s: Update on request %(request)s") %
                 {"request": self.title, "site_name": settings.SITE_NAME},
-                render_to_string("foirequest/request_update.txt",
+                render_to_string("foirequest/emails/request_update.txt",
                     {"request": self,
                     "user": self.user,
                     "message": event_string,
