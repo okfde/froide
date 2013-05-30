@@ -85,8 +85,24 @@ class PublicBodyDetailView(JSONResponseDetailView):
     def get_context_data(self, **kwargs):
         context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
         if self.format == "html":
-            context['foi_requests'] = FoiRequest.published.filter(public_body=context['object']).order_by('last_message')[:10]
+            context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
         return context
+
+
+def show_foirequests(request, slug):
+    public_body = get_object_or_404(PublicBody, slug=slug)
+    objects = FoiRequest.published.filter(
+        public_body=public_body
+    )
+    return render(
+        request,
+        'publicbody/show_foirequests.html',
+        {
+            'public_body': public_body,
+            'object_list': objects,
+            'count': objects.count(),
+        }
+    )
 
 
 def search_json(request):

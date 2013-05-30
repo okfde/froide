@@ -82,7 +82,7 @@ def dashboard(request):
 
 
 def list_requests(request, status=None, topic=None, tag=None,
-        jurisdiction=None, not_foi=False, feed=None):
+        jurisdiction=None, public_body=None, not_foi=False, feed=None):
     context = {
         'filtered': True
     }
@@ -120,6 +120,14 @@ def list_requests(request, status=None, topic=None, tag=None,
         context.update({
             'jurisdiction': jurisdiction
         })
+    elif public_body is not None:
+        public_body = get_object_or_404(PublicBody, slug=public_body)
+        foi_requests = foi_requests.filter(public_body=public_body)
+        context.update({
+            'public_body': public_body
+        })
+        context['filtered'] = True
+        context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
     else:
         context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
         context['filtered'] = False

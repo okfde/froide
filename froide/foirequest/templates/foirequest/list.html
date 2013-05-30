@@ -27,6 +27,9 @@
 {% if topic %}
   <h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
 {% endif %}
+{% if public_body %}
+  <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
+{% endif %}
 {% if filtered and jurisdiction %}
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}

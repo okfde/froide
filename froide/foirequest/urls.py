@@ -49,6 +49,14 @@ foirequest_urls = [
     (r'^%s/(?P<tag>[-\w]+)/rss/$' % pgettext('URL part', 'tag'), 'list_requests',
         {'feed': 'rss'}, 'foirequest-list_feed'),
 
+    # Translators: part in request filter URL
+    (r'^%s/(?P<public_body>[-\w]+)/$' % pgettext('URL part', 'to'), 'list_requests', {},
+        'foirequest-list'),
+    (r'^%s/(?P<public_body>[-\w]+)/feed/$' % pgettext('URL part', 'to'), 'list_requests',
+        {'feed': 'atom'}, 'foirequest-list_feed_atom'),
+    (r'^%s/(?P<public_body>[-\w]+)/rss/$' % pgettext('URL part', 'to'), 'list_requests',
+        {'feed': 'rss'}, 'foirequest-list_feed'),
+
 ] + [(r'^(?P<status>%s)/$' % unicode(urlpart), 'list_requests', {},
         'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS
 ] + [(r'^(?P<status>%s)/feed/$' % unicode(urlpart), 'list_requests', {'feed': 'atom'},

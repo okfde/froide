@@ -10,6 +10,9 @@
 <p>
   <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
 </p>
+<p>
+  <a href="{% url 'foirequest-list' public_body=object.slug %}">{% trans "All FOI requests for this public body" %}</a>
+</p>
 {% else %}
   {% if object.request_note %}
     <div class="alert">
@@ -43,18 +46,6 @@
   <dd>{{ object.geography }}</dd>{% endcomment %}
 </dl>
 
-<h3>{% blocktrans %}Latest Freedom of Information Requests for this entity{% endblocktrans %}</h3>
-<ul>
-  {% for foirequest in foi_requests %}
-  <li>
-  <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
-  </li>
-  {% empty %}
-  <li>{% blocktrans %}No requests so far.{% endblocktrans %} 
-  <a href="{% url 'foirequest-make_request' public_body=object.slug %}">
-    {% blocktrans %}Make a request now!{% endblocktrans %}</a></li>
-  {% endfor %}
-</ul>
 {% endblock %}
 
 {% block extra_footer %}
