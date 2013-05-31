@@ -15,8 +15,8 @@ from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
-from .forms import (UserLoginForm, NewUserForm,
-        UserChangeAddressForm, UserDeleteForm)
+from .forms import (UserLoginForm, NewUserForm, UserEmailConfirmationForm,
+        UserChangeAddressForm, UserDeleteForm, UserChangeEmailForm)
 from .models import AccountManager, User
 
 
@@ -285,7 +285,44 @@ def account_settings(request, context=None, status=200):
         request.user.is_new = True
     if not 'user_delete_form' in context:
         context['user_delete_form'] = UserDeleteForm(request.user)
+    if not 'change_email_form' in context:
+        context['change_email_form'] = UserChangeEmailForm()
     return render(request, 'account/settings.html', context, status=status)
+
+
+def change_email(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are not currently logged in, you cannot change your email address.'))
+        return render_403(request)
+    if request.POST:
+        form = UserChangeEmailForm(request.POST)
+        if not form.is_valid():
+            messages.add_message(request, messages.ERROR,
+                    _('Your email address could not be changed.'))
+            return account_settings(
+                request,
+                context={
+                    'change_email_form': form
+                },
+                status=400
+            )
+        AccountManager(request.user).send_email_change_mail(
+            form.cleaned_data['email']
+        )
+        messages.add_message(request, messages.SUCCESS,
+                    _('We sent a confirmation email to your new address. Please click the link in there.'))
+        return redirect('account-settings')
+
+    form = UserEmailConfirmationForm(request.user, request.GET)
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your email address has been changed.'))
+
+    messages.add_message(request, messages.ERROR,
+            _('The email confirmation link was invalid or expired.'))
+    return redirect('account-settings')
 
 
 @require_POST

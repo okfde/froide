@@ -10,6 +10,7 @@ from django.conf import settings
 from froide.helper.widgets import AgreeCheckboxInput
 
 from .widgets import ConfirmationWidget
+from .models import AccountManager
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
@@ -122,6 +123,54 @@ class UserChangeAddressForm(forms.Form):
     def save(self):
         self.profile.address = self.cleaned_data['address']
         self.profile.save()
+
+
+class UserChangeEmailForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(
+        attrs={'placeholder': _('mail@ddress.net')}),
+        label=_('New email address'))
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError(
+                _('A user with that email address already exists!')
+            )
+
+        return email
+
+
+class UserEmailConfirmationForm(forms.Form):
+    email = forms.EmailField()
+    secret = forms.CharField(min_length=32, max_length=32)
+    user_id = forms.IntegerField()
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(UserEmailConfirmationForm, self).__init__(*args, **kwargs)
+
+    def clean_user_id(self):
+        user_id = self.cleaned_data['user_id']
+        if user_id != self.user.pk:
+            raise forms.ValidationError(
+                _('Logged in user does not match this link!')
+            )
+        return user_id
+
+    def clean(self):
+        check = AccountManager(self.user).check_confirmation_secret(
+            self.cleaned_data['secret'],
+            self.cleaned_data['email'],
+        )
+        if not check:
+            raise forms.ValidationError(
+                _('Link is invalid or has expired!')
+            )
+        return self.cleaned_data
+
+    def save(self):
+        self.user.email = self.cleaned_data['email']
+        self.user.save()
 
 
 class UserDeleteForm(forms.Form):

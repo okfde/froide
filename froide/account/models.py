@@ -1,5 +1,6 @@
 import hmac
 import re
+import urllib
 
 from django.db import models, transaction, IntegrityError
 from django.conf import settings
@@ -135,13 +136,16 @@ class AccountManager(object):
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
         return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
 
-    def check_confirmation_secret(self, secret, request_id):
-        return constant_time_compare(self.generate_confirmation_secret(request_id), secret)
+    def check_confirmation_secret(self, secret, *args):
+        return constant_time_compare(
+                secret,
+                self.generate_confirmation_secret(*args)
+        )
 
-    def generate_confirmation_secret(self, request_id=None):
+    def generate_confirmation_secret(self, *args):
         to_sign = [str(self.user.pk), self.user.email]
-        if request_id is not None:
-            to_sign.append(str(request_id))
+        for a in args:
+            to_sign.append(str(a))
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
         return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
@@ -163,6 +167,29 @@ class AccountManager(object):
         send_mail(unicode(_("%(site_name)s: please confirm your account") % {
                     "site_name": settings.SITE_NAME}),
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+
+    def send_email_change_mail(self, email):
+        secret = self.generate_confirmation_secret(email)
+        url_kwargs = {
+            "user_id": self.user.pk,
+            "secret": secret,
+            "email": email
+        }
+        url = '%s%s?%s' % (
+            settings.SITE_URL,
+            reverse('account-change_email'),
+            urllib.urlencode(url_kwargs)
+        )
+        message = render_to_string('account/change_email.txt',
+                {'url': url,
+                'name': self.user.get_full_name(),
+                'site_name': settings.SITE_NAME,
+                'site_url': settings.SITE_URL
+            })
+        # Translators: Mail subject
+        send_mail(unicode(_("%(site_name)s: please confirm your new email address") % {
+                    "site_name": settings.SITE_NAME}),
+                message, settings.DEFAULT_FROM_EMAIL, [email])
 
     @classmethod
     def create_user(cls, **data):

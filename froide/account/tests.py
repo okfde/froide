@@ -1,5 +1,6 @@
 import re
 import datetime
+import urllib
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -423,6 +424,69 @@ class AccountTest(TestCase):
         response = self.client.get(reverse('account-profile',
             kwargs={'slug': user2.username}))
         self.assertEqual(response.status_code, 404)
+
+    def test_change_email(self):
+        mail.outbox = []
+        new_email = 'newemail@example.com'
+        user = User.objects.get(username='sw')
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': 'not-email',
+            }
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(len(mail.outbox), 0)
+
+        self.client.login(username='sw', password='froide')
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': 'not-email',
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(mail.outbox), 0)
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': new_email,
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertNotEqual(user.email, new_email)
+        self.assertEqual(len(mail.outbox), 1)
+
+        url_kwargs = {
+            "user_id": user.pk,
+            "secret": 'f' * 32,
+            "email": new_email
+        }
+        url = '%s?%s' % (
+            reverse('account-change_email'),
+            urllib.urlencode(url_kwargs)
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertNotEqual(user.email, new_email)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], new_email)
+        match = re.search(r'https?\://[^/]+(/.*)', email.body)
+        url = match.group(1)
+
+        bad_url = url.replace('user_id=%d' % user.pk, 'user_id=999999')
+        response = self.client.get(bad_url)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertNotEqual(user.email, new_email)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertEqual(user.email, new_email)
 
     def test_account_delete(self):
         response = self.client.get(reverse('account-settings'))

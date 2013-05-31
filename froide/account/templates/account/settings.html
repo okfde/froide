@@ -80,6 +80,20 @@
       </div>
     </div>
 
+    <div id="change-email-section" class="section">
+      <a href="#change-email" class="toggle">
+        {% blocktrans %}Change your email address{% endblocktrans %}
+      </a>
+      <div id="change-email"{% if not change_email_form.is_bound %} class="js-hidden"{% endif %}>
+        <form action="{% url 'account-change_email' %}" method="post">
+          {% csrf_token %}
+          {% form change_email_form using "bootstrap/horizontal.html" %}
+          <p>{% trans "You will get an email to your new address and need to click a link in there." %}</p>
+          <button type="submit" class="btn">{% blocktrans %}Change email{% endblocktrans %}</button>
+        </form>
+      </div>
+    </div>
+
     <div id="delete-account-section" class="section">
       <a href="#delete-account" class="toggle">
         {% blocktrans %}Delete your account{% endblocktrans %}
