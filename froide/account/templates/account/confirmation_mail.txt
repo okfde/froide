@@ -1,4 +1,4 @@
-{% load i18n %}{% blocktrans %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% blocktrans %}Hello {{ name }},
 
 This is an email from {{ site_name }} to confirm your email address.
 Please visit the link below:
@@ -11,3 +11,4 @@ Your password is: {{ password }}
 {% endblocktrans %}{% endif %}
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
+{% endautoescape %}
