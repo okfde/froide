@@ -117,7 +117,8 @@ body {
 
 .account-login {
     font-size: 75%;
-    line-height: 90%;
+    line-height: 110%;
+    padding: 15px 15px 10px !important;
 }
 
 .inline {
