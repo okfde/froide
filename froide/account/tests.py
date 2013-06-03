@@ -450,6 +450,13 @@ class AccountTest(TestCase):
 
         response = self.client.post(reverse('account-change_email'),
             {
+                'email': user.email
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(reverse('account-change_email'),
+            {
                 'email': new_email,
             }
         )
