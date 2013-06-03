@@ -9,23 +9,13 @@ from django.template import TemplateDoesNotExist
 from haystack.query import SearchQuerySet
 
 from froide.foirequest.models import FoiRequest
-from froide.helper.json_view import (JSONResponseDetailView,
-        JSONResponseListView)
+from froide.helper.json_view import JSONResponseDetailView
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 
 from .models import (PublicBody,
     PublicBodyTopic, FoiLaw, Jurisdiction)
 from .csv_import import CSVImporter
-
-
-class PublicBodyListView(JSONResponseListView):
-    model = PublicBody
-    template_name = "publicbody/list.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(PublicBodyListView, self).get_context_data(**kwargs)
-        return context
 
 
 def index(request):
@@ -87,22 +77,6 @@ class PublicBodyDetailView(JSONResponseDetailView):
         if self.format == "html":
             context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
         return context
-
-
-def show_foirequests(request, slug):
-    public_body = get_object_or_404(PublicBody, slug=slug)
-    objects = FoiRequest.published.filter(
-        public_body=public_body
-    )
-    return render(
-        request,
-        'publicbody/show_foirequests.html',
-        {
-            'public_body': public_body,
-            'object_list': objects,
-            'count': objects.count(),
-        }
-    )
 
 
 def search_json(request):

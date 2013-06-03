@@ -1,4 +1,5 @@
 import StringIO
+import tempfile
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -90,6 +91,35 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
 
+    def test_command(self):
+        from django.core.management import call_command
+        csv_file = tempfile.NamedTemporaryFile()
+        csv_file.write(PublicBody.export_csv(PublicBody.objects.all()))
+
+        call_command('import_csv', csv_file.name)
+
+        csv_file.close()
+
+    def test_csv_import_request(self):
+        url = reverse('publicbody-import')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.logout()
+        self.client.login(username='sw', password='froide')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.post(url, {'url': 'test'})
+        self.assertEqual(response.status_code, 302)
+
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         pb = factories.PublicBodyFactory.create(name='peculiarentity')
@@ -107,6 +137,21 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn(law.name, response.content.decode('utf-8'))
+
+    def test_show_jurisdiction(self):
+        juris = Jurisdiction.objects.all()[0]
+        response = self.client.get(juris.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(juris.name, response.content.decode('utf-8'))
+        new_juris = factories.JurisdictionFactory.create(name='peculiar')
+        response = self.client.get(new_juris.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+
+    def test_show_public_bodies_of_jurisdiction(self):
+        juris = Jurisdiction.objects.all()[0]
+        response = self.client.get(reverse('publicbody-show-pb_jurisdiction',
+                kwargs={'slug': juris.slug}))
+        self.assertEqual(response.status_code, 200)
 
 
 class ApiTest(TestCase):
