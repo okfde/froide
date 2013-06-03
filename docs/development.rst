@@ -38,7 +38,9 @@ If you want to run tests for modules, classes or methods your can run them like 
 Build translation
 -----------------
 
-  python manage.py makemessages -a -i docs --settings=your_settings
+Make .po files like this::
+
+    python manage.py makemessages -a -i docs --settings=your_settings
 
 
 Build docs
