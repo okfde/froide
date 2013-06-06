@@ -113,6 +113,14 @@ class MailTest(TestCase):
         self.assertTrue(len(mes.plaintext_redacted) > 0)
         self.assertTrue(len(mes.plaintext) > 0)
 
+    def test_attachment_name_broken_encoding(self):
+        with file(p("test_mail_06.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(content)
+            self.assertEqual(len(mail['attachments']), 1)
+            self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):

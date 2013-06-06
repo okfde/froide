@@ -12,6 +12,7 @@ from email.Header import decode_header
 from email.Parser import Parser
 from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
+import re
 
 import pytz
 
@@ -55,7 +56,7 @@ class EmailParser(object):
             value = value.strip()
             if value.startswith('"') and value.endswith('"'):
                 value = value[1:-1]
-            dispo_dict[name] = value
+            dispo_dict[name] = self.parse_header_field(value)
         return dispo_name, dispo_dict
 
     def parse_attachment(self, message_part):
@@ -74,9 +75,8 @@ class EmailParser(object):
                 attachment.create_date = None
                 attachment.mod_date = None
                 attachment.read_date = None
-
                 if "filename" in dispo_dict:
-                    attachment.name = self.parse_header_field(dispo_dict['filename'])
+                    attachment.name = dispo_dict['filename']
                 elif "create-date" in dispo_dict:
                     attachment.create_date = dispo_dict['create-date']  # TODO: datetime
                 elif "modification-date" in dispo_dict:
@@ -89,6 +89,11 @@ class EmailParser(object):
     def parse_header_field(self, field):
         if field is None:
             return None
+
+        # preprocess head field
+        # see http://stackoverflow.com/questions/7331351/python-email-header-decoding-utf-8
+        field = re.sub(r"(=\?.*\?=)(?!$)", r"\1 ", field)
+
         decodefrag = decode_header(field)
         fragments = []
         for s, enc in decodefrag:
