@@ -146,7 +146,7 @@ def import_csv(request):
             raise ValueError(_('You need to provide a url.'))
         importer.import_from_url(url)
     except Exception as e:
-        messages.add_message(request, messages.ERROR, e.message)
+        messages.add_message(request, messages.ERROR, str(e))
     else:
         messages.add_message(request, messages.SUCCESS,
             _('Public Bodies were imported.'))
