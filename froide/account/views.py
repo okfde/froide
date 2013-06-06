@@ -319,9 +319,9 @@ def change_email(request):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your email address has been changed.'))
-
-    messages.add_message(request, messages.ERROR,
-            _('The email confirmation link was invalid or expired.'))
+    else:
+        messages.add_message(request, messages.ERROR,
+                _('The email confirmation link was invalid or expired.'))
     return redirect('account-settings')
 
 
