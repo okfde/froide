@@ -571,7 +571,8 @@ Sincerely yours
             message.content_hidden = True
         message.timestamp = email['date']
         message.recipient_email = self.secret_address
-        message.recipient = self.user.get_profile().display_name()
+        profile = self.user.get_profile()
+        message.recipient = profile.display_name()
         message.plaintext = email['body']
         message.html = email['html']
         if not message.plaintext and message.html:
@@ -592,6 +593,14 @@ Sincerely yours
                     filetype=attachment.content_type)
             if att.name is None:
                 att.name = _("attached_file_%d") % i
+            att.name = profile.apply_message_redaction(att.name,
+                {
+                    'email': False,
+                    'address': False,
+                    # Translators: replacement for person name in filename
+                    'name': unicode(_('NAME'))
+                }
+            )
             att.name = re.sub('[^\w\.\-]', '', att.name)
             att.name = att.name[:255]
             if att.name.endswith('pdf') or 'pdf' in att.filetype:

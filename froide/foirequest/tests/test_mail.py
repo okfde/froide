@@ -121,6 +121,26 @@ class MailTest(TestCase):
             self.assertEqual(len(mail['attachments']), 1)
             self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
 
+    def test_attachment_name_redaction(self):
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        user = factories.UserFactory.create(last_name='Username')
+        profile = user.get_profile()
+        profile.private = True
+        profile.save()
+        request.user = user
+        request.save()
+        with file(p("test_mail_06.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(content)
+            self.assertEqual(len(mail['attachments']), 1)
+            self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+        request.add_message_from_email(mail, content)
+        messages = request.foimessage_set.all()
+        self.assertEqual(len(messages), 2)
+        mes = messages[1]
+        self.assertEqual(mes.attachments[0].name, u'EingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf')
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):

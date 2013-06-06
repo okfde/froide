@@ -48,32 +48,48 @@ class Profile(models.Model):
             else:
                 return self.user.get_full_name()
 
-    def apply_message_redaction(self, content):
-        if self.address:
+    def apply_message_redaction(self, content, replacements=None):
+        if replacements is None:
+            replacements = {}
+
+        if self.address and replacements.get('address') is not False:
             for line in self.address.splitlines():
                 if line.strip():
                     content = content.replace(line,
-                            unicode(_("<< Address removed >>")))
-        if self.user.email:
+                            replacements.get('address',
+                                unicode(_("<< Address removed >>")))
+                    )
+
+        if self.user.email and replacements.get('email') is not False:
             content = content.replace(self.user.email,
+                    replacements.get('email',
                     unicode(_("<< Email removed >>")))
-        if not self.private:
+            )
+
+        if not self.private or replacements.get('name') is False:
             return content
+
         last_name = self.user.last_name
         first_name = self.user.first_name
         full_name = self.user.get_full_name()
-        content = content.replace(full_name,
+
+        name_replacement = replacements.get('name',
                 unicode(_("<< Name removed >>")))
-        content = content.replace(last_name,
-                unicode(_("<< Name removed >>")))
-        content = content.replace(first_name,
-                unicode(_("<< Name removed >>")))
+
+        content = content.replace(full_name, name_replacement)
+        content = content.replace(last_name, name_replacement)
+        content = content.replace(first_name, name_replacement)
+
+        greeting_replacement = replacements.get('greeting',
+                unicode(_("<< Greeting >>")))
+
         if settings.FROIDE_CONFIG.get('greetings'):
             for greeting in settings.FROIDE_CONFIG['greetings']:
                 match = greeting.search(content, re.I)
                 if match is not None and len(match.groups()):
                     content = content.replace(match.group(1),
-                        unicode(_("<< Greeting >>")))
+                        greeting_replacement)
+
         if settings.FROIDE_CONFIG.get('closings'):
             for closing in settings.FROIDE_CONFIG['closings']:
                 match = closing.search(content, re.I)
