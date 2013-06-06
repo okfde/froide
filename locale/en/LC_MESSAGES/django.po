@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-06 19:09+0200\n"
+"POT-Creation-Date: 2013-06-06 21:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -275,31 +275,30 @@ msgstr ""
 msgid "Name Not Public"
 msgstr ""
 
-#: froide/account/models.py:56
+#: froide/account/models.py:60
 msgid "<< Address removed >>"
 msgstr ""
 
-#: froide/account/models.py:59
+#: froide/account/models.py:66
 msgid "<< Email removed >>"
 msgstr ""
 
-#: froide/account/models.py:66 froide/account/models.py:68
-#: froide/account/models.py:70
+#: froide/account/models.py:77
 msgid "<< Name removed >>"
 msgstr ""
 
-#: froide/account/models.py:76
+#: froide/account/models.py:84
 msgid "<< Greeting >>"
 msgstr ""
 
 #. Translators: Mail subject
-#: froide/account/models.py:167
+#: froide/account/models.py:183
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr ""
 
 #. Translators: Mail subject
-#: froide/account/models.py:190
+#: froide/account/models.py:206
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr ""
@@ -726,13 +725,13 @@ msgid "Title"
 msgstr ""
 
 #: froide/account/templates/account/show.html:100
-#: froide/foirequest/models.py:973
+#: froide/foirequest/models.py:982
 msgid "Recipient"
 msgstr ""
 
 #: froide/account/templates/account/show.html:101
 #: froide/foirequest/forms.py:266 froide/foirequest/models.py:222
-#: froide/foirequest/models.py:980
+#: froide/foirequest/models.py:989
 #: froide/foirequest/templates/foirequest/show.html:619
 msgid "Status"
 msgstr ""
@@ -949,7 +948,7 @@ msgstr ""
 #: froide/foirequest/forms.py:33 froide/foirequest/forms.py:35
 #: froide/foirequest/forms.py:163 froide/foirequest/forms.py:225
 #: froide/foirequest/forms.py:359 froide/foirequest/forms.py:361
-#: froide/foirequest/models.py:984
+#: froide/foirequest/models.py:993
 #: froide/foirequest/templates/foirequest/_request_form.html:11
 #: froide/foirequest/templates/foirequest/request.html:290
 #: froide/foirequest/templates/foirequest/show.html:596
@@ -1367,8 +1366,8 @@ msgstr ""
 msgid "Resolution Summary"
 msgstr ""
 
-#: froide/foirequest/models.py:218 froide/foirequest/models.py:934
-#: froide/foirequest/models.py:1302 froide/publicbody/models.py:263
+#: froide/foirequest/models.py:218 froide/foirequest/models.py:943
+#: froide/foirequest/models.py:1311 froide/publicbody/models.py:263
 msgid "Public Body"
 msgstr ""
 
@@ -1380,8 +1379,8 @@ msgstr ""
 msgid "Visibility"
 msgstr ""
 
-#: froide/foirequest/models.py:229 froide/foirequest/models.py:937
-#: froide/foirequest/models.py:1299 froide/foirequestfollower/models.py:44
+#: froide/foirequest/models.py:229 froide/foirequest/models.py:946
+#: froide/foirequest/models.py:1308 froide/foirequestfollower/models.py:44
 #: froide/frontpage/models.py:28
 msgid "User"
 msgstr ""
@@ -1449,8 +1448,8 @@ msgstr ""
 msgid "Site"
 msgstr ""
 
-#: froide/foirequest/models.py:273 froide/foirequest/models.py:932
-#: froide/foirequest/models.py:952 froide/foirequest/models.py:1296
+#: froide/foirequest/models.py:273 froide/foirequest/models.py:941
+#: froide/foirequest/models.py:961 froide/foirequest/models.py:1305
 #: froide/foirequestfollower/models.py:43
 msgid "Freedom of Information Request"
 msgstr ""
@@ -1465,8 +1464,8 @@ msgstr ""
 msgid "Request '%s'"
 msgstr ""
 
-#: froide/foirequest/models.py:353 froide/foirequest/models.py:1100
-#: froide/foirequest/models.py:1118 froide/foirequest/models.py:1125
+#: froide/foirequest/models.py:353 froide/foirequest/models.py:1109
+#: froide/foirequest/models.py:1127 froide/foirequest/models.py:1134
 msgid "<<email address>>"
 msgstr ""
 
@@ -1507,149 +1506,154 @@ msgid ""
 "%(name)s"
 msgstr ""
 
-#: froide/foirequest/models.py:594
+#: froide/foirequest/models.py:595
 #, python-format
 msgid "attached_file_%d"
 msgstr ""
 
-#: froide/foirequest/models.py:605
+#. Translators: replacement for person name in filename
+#: froide/foirequest/models.py:601
+msgid "NAME"
+msgstr ""
+
+#: froide/foirequest/models.py:614
 msgid "Message contains PDF"
 msgstr ""
 
-#: froide/foirequest/models.py:681 froide/foirequest/models.py:685
+#: froide/foirequest/models.py:690 froide/foirequest/models.py:694
 msgid "Unknown"
 msgstr ""
 
-#: froide/foirequest/models.py:908
+#: froide/foirequest/models.py:917
 #, python-format
 msgid "%(site_name)s: Please classify the reply to your request"
 msgstr ""
 
-#: froide/foirequest/models.py:918 froide/foirequestfollower/models.py:99
+#: froide/foirequest/models.py:927 froide/foirequestfollower/models.py:99
 #, python-format
 msgid "%(site_name)s: Update on request %(request)s"
 msgstr ""
 
-#: froide/foirequest/models.py:938
+#: froide/foirequest/models.py:947
 msgid "Timestamp of Suggestion"
 msgstr ""
 
-#: froide/foirequest/models.py:940
+#: froide/foirequest/models.py:949
 msgid "Reason this Public Body fits the request"
 msgstr ""
 
-#: froide/foirequest/models.py:946
+#: froide/foirequest/models.py:955
 msgid "Public Body Suggestion"
 msgstr ""
 
-#: froide/foirequest/models.py:947
+#: froide/foirequest/models.py:956
 msgid "Public Body Suggestions"
 msgstr ""
 
-#: froide/foirequest/models.py:953
+#: froide/foirequest/models.py:962
 msgid "has message been sent?"
 msgstr ""
 
-#: froide/foirequest/models.py:954
+#: froide/foirequest/models.py:963
 msgid "Is this message a response?"
 msgstr ""
 
-#: froide/foirequest/models.py:956
+#: froide/foirequest/models.py:965
 msgid "Postal?"
 msgstr ""
 
-#: froide/foirequest/models.py:958
+#: froide/foirequest/models.py:967
 msgid "Escalation?"
 msgstr ""
 
-#: froide/foirequest/models.py:960
+#: froide/foirequest/models.py:969
 msgid "Content hidden?"
 msgstr ""
 
-#: froide/foirequest/models.py:964
+#: froide/foirequest/models.py:973
 msgid "From User"
 msgstr ""
 
-#: froide/foirequest/models.py:965
+#: froide/foirequest/models.py:974
 msgid "From Email"
 msgstr ""
 
-#: froide/foirequest/models.py:967
+#: froide/foirequest/models.py:976
 msgid "From Name"
 msgstr ""
 
-#: froide/foirequest/models.py:971
+#: froide/foirequest/models.py:980
 msgid "From Public Body"
 msgstr ""
 
-#: froide/foirequest/models.py:975
+#: froide/foirequest/models.py:984
 msgid "Recipient Email"
 msgstr ""
 
-#: froide/foirequest/models.py:979
+#: froide/foirequest/models.py:988
 msgid "Public Body Recipient"
 msgstr ""
 
-#: froide/foirequest/models.py:983 froide/foirequest/models.py:1305
+#: froide/foirequest/models.py:992 froide/foirequest/models.py:1314
 #: froide/frontpage/models.py:22
 msgid "Timestamp"
 msgstr ""
 
-#: froide/foirequest/models.py:985
+#: froide/foirequest/models.py:994
 msgid "Redacted Subject"
 msgstr ""
 
-#: froide/foirequest/models.py:986
+#: froide/foirequest/models.py:995
 msgid "plain text"
 msgstr ""
 
-#: froide/foirequest/models.py:987
+#: froide/foirequest/models.py:996
 msgid "redacted plain text"
 msgstr ""
 
-#: froide/foirequest/models.py:988
+#: froide/foirequest/models.py:997
 msgid "HTML"
 msgstr ""
 
-#: froide/foirequest/models.py:989
+#: froide/foirequest/models.py:998
 msgid "Original"
 msgstr ""
 
-#: froide/foirequest/models.py:990
+#: froide/foirequest/models.py:999
 msgid "Was Redacted?"
 msgstr ""
 
-#: froide/foirequest/models.py:991
+#: froide/foirequest/models.py:1000
 msgid "Not publishable"
 msgstr ""
 
-#: froide/foirequest/models.py:997
+#: froide/foirequest/models.py:1006
 msgid "Freedom of Information Message"
 msgstr ""
 
-#: froide/foirequest/models.py:998
+#: froide/foirequest/models.py:1007
 msgid "Freedom of Information Messages"
-msgstr ""
-
-#: froide/foirequest/models.py:1005
-#, python-format
-msgid "Message in '%(request)s' at %(time)s"
 msgstr ""
 
 #: froide/foirequest/models.py:1014
 #, python-format
+msgid "Message in '%(request)s' at %(time)s"
+msgstr ""
+
+#: froide/foirequest/models.py:1023
+#, python-format
 msgid "message-%(id)d"
 msgstr ""
 
-#: froide/foirequest/models.py:1099 froide/foirequest/models.py:1117
+#: froide/foirequest/models.py:1108 froide/foirequest/models.py:1126
 msgid "<<name and email address>>"
 msgstr ""
 
-#: froide/foirequest/models.py:1161
+#: froide/foirequest/models.py:1170
 msgid "Belongs to request"
 msgstr ""
 
-#: froide/foirequest/models.py:1162 froide/foisite/models.py:10
+#: froide/foirequest/models.py:1171 froide/foisite/models.py:10
 #: froide/publicbody/models.py:31 froide/publicbody/models.py:72
 #: froide/publicbody/models.py:197 froide/publicbody/models.py:214
 #: froide/publicbody/templates/publicbody/pb_jurisdiction.html:13
@@ -1657,170 +1661,170 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: froide/foirequest/models.py:1163
+#: froide/foirequest/models.py:1172
 msgid "File"
 msgstr ""
 
-#: froide/foirequest/models.py:1164
+#: froide/foirequest/models.py:1173
 msgid "Size"
 msgstr ""
 
-#: froide/foirequest/models.py:1165
+#: froide/foirequest/models.py:1174
 msgid "File type"
 msgstr ""
 
-#: froide/foirequest/models.py:1166
+#: froide/foirequest/models.py:1175
 msgid "Format"
 msgstr ""
 
-#: froide/foirequest/models.py:1167
+#: froide/foirequest/models.py:1176
 msgid "User can approve"
 msgstr ""
 
-#: froide/foirequest/models.py:1168
+#: froide/foirequest/models.py:1177
 msgid "Approved"
 msgstr ""
 
-#: froide/foirequest/models.py:1169
+#: froide/foirequest/models.py:1178
 msgid "Redacted Version"
 msgstr ""
 
-#: froide/foirequest/models.py:1172 froide/foirequest/models.py:1176
+#: froide/foirequest/models.py:1181 froide/foirequest/models.py:1185
 msgid "Is redacted"
 msgstr ""
 
-#: froide/foirequest/models.py:1173
+#: froide/foirequest/models.py:1182
 msgid "Converted Version"
 msgstr ""
 
-#: froide/foirequest/models.py:1211
+#: froide/foirequest/models.py:1220
 msgid "Attachment"
 msgstr ""
 
-#: froide/foirequest/models.py:1212
+#: froide/foirequest/models.py:1221
 #: froide/foirequest/templates/foirequest/list_unchecked.html:23
 #: froide/foirequest/templates/foirequest/show.html:633
 msgid "Attachments"
 msgstr ""
 
-#: froide/foirequest/models.py:1234
+#: froide/foirequest/models.py:1243
 #, python-format
 msgid "attachment-%(id)d"
 msgstr ""
 
-#: froide/foirequest/models.py:1272
+#: froide/foirequest/models.py:1281
 msgid "See FoiMessage"
 msgstr ""
 
-#: froide/foirequest/models.py:1303
+#: froide/foirequest/models.py:1312
 msgid "Is Public?"
 msgstr ""
 
-#: froide/foirequest/models.py:1304
+#: froide/foirequest/models.py:1313
 msgid "Event Name"
 msgstr ""
 
-#: froide/foirequest/models.py:1306
+#: froide/foirequest/models.py:1315
 msgid "Context JSON"
 msgstr ""
 
-#: froide/foirequest/models.py:1312
+#: froide/foirequest/models.py:1321
 #, python-format
 msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr ""
 
-#: froide/foirequest/models.py:1314
+#: froide/foirequest/models.py:1323
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr ""
 
-#: froide/foirequest/models.py:1316
+#: froide/foirequest/models.py:1325
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr ""
 
-#: froide/foirequest/models.py:1318
+#: froide/foirequest/models.py:1327
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr ""
 
-#: froide/foirequest/models.py:1320
+#: froide/foirequest/models.py:1329
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
 msgstr ""
 
-#: froide/foirequest/models.py:1322
+#: froide/foirequest/models.py:1331
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr ""
 
-#: froide/foirequest/models.py:1324
+#: froide/foirequest/models.py:1333
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
 msgstr ""
 
-#: froide/foirequest/models.py:1326
+#: froide/foirequest/models.py:1335
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr ""
 
-#: froide/foirequest/models.py:1328
+#: froide/foirequest/models.py:1337
 #, python-format
 msgid ""
 "%(public_body)s answered partially, but denied access to all information on "
 "the grounds of %(reason)s."
 msgstr ""
 
-#: froide/foirequest/models.py:1330
+#: froide/foirequest/models.py:1339
 msgid "This request became overdue"
 msgstr ""
 
-#: froide/foirequest/models.py:1332
+#: froide/foirequest/models.py:1341
 #, python-format
 msgid ""
 "%(user)s set '%(name)s' as the information law for the request %(request)s."
 msgstr ""
 
-#: froide/foirequest/models.py:1334
+#: froide/foirequest/models.py:1343
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr ""
 
-#: froide/foirequest/models.py:1336
+#: froide/foirequest/models.py:1345
 #, python-format
 msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
 "request %(request)s."
 msgstr ""
 
-#: froide/foirequest/models.py:1338
+#: froide/foirequest/models.py:1347
 #, python-format
 msgid "The deadline of request %(request)s has been extended."
 msgstr ""
 
-#: froide/foirequest/models.py:1343
+#: froide/foirequest/models.py:1352
 msgid "Request Event"
 msgstr ""
 
-#: froide/foirequest/models.py:1344
+#: froide/foirequest/models.py:1353
 msgid "Request Events"
 msgstr ""
 
 #. Translators: Hash part of Event URL
-#: froide/foirequest/models.py:1357
+#: froide/foirequest/models.py:1366
 msgid "event"
 msgstr ""
 
-#: froide/foirequest/models.py:1417
+#: froide/foirequest/models.py:1426
 msgid "Undelivered Message"
 msgstr ""
 
-#: froide/foirequest/models.py:1418
+#: froide/foirequest/models.py:1427
 msgid "Undelivered Messages"
 msgstr ""
 
-#: froide/foirequest/models.py:1421
+#: froide/foirequest/models.py:1430
 #, python-format
 msgid "Undelievered Message to %(recipient)s (%(request)s)"
 msgstr ""
