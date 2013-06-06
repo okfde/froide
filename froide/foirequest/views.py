@@ -56,6 +56,7 @@ def dashboard(request):
     user = {}
     start_date = timezone.utc.localize(datetime.datetime(2011, 7, 30))
     for u in User.objects.filter(
+            is_active=True,
             date_joined__gte=start_date):
         d = u.date_joined.date().isoformat()
         user.setdefault(d, 0)
@@ -66,10 +67,16 @@ def dashboard(request):
         total += user['num']
         user['total'] = total
     foirequest = {}
-    for u in FoiRequest.objects.filter(
+    foi_query = FoiRequest.objects.filter(
             is_foi=True,
             public_body__isnull=False,
-            first_message__gte=start_date):
+            first_message__gte=start_date
+    )
+    if request.GET.get('notsameas'):
+        foi_query = foi_query.filter(same_as__isnull=True)
+    if request.GET.get('public'):
+        foi_query = foi_query.filter(public=True)
+    for u in foi_query:
         d = u.first_message.date().isoformat()
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
