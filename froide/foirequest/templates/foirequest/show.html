@@ -25,7 +25,13 @@
 
 {% if not object.public %}
  <div class="alert no-print">
-  {% blocktrans %}This request is currently not public. Please consider making it public eventually.{% endblocktrans %}
+  <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+    {% csrf_token %}
+    <p>
+      {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
+    </p>
+    <button type="submit" class="btn">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
+  </form>
 </div>
 {% endif %}
 
@@ -240,15 +246,6 @@
               </form>
             {% endif %}
             {# End Write Resolution #}
-            {% if not object.public %}
-              <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-                {% csrf_token %}
-                <p>
-                  {% blocktrans %}This request is <strong>not public</strong> at the moment. You can make this request public by clicking the button below.{% endblocktrans %}<br/>
-                  <button type="submit" class="btn">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
-                </p>
-              </form>
-            {% endif %}
           </div>
         {% endif %}
 
