@@ -546,19 +546,16 @@ class FoiRequest(models.Model):
         subject = _('Complaint about request "%(title)s"'
                 ) % {"title": self.title}
         return EscalationMessageForm(self,
-                initial={"subject": subject,
-                    "message": _('''Dear Sir or Madam,
-
-I'd like to complain about the handling of the request under the %(law)s documented here:
-
-%(link)s
-
-I believe this request has been mishandled because ...
-
-Sincerely yours
-%(name)s''') % {"law": self.law.name,
-"link": self.get_accessible_link(),
-"name": self.user.get_full_name()}})
+                initial={
+                    "subject": subject,
+                    "message": render_to_string(
+                            "foirequest/emails/mediation_message.txt",
+                        {
+                            "law": self.law.name,
+                            "link": self.get_accessible_link(),
+                            "name": self.user.get_full_name()
+                        }
+                    )})
 
     def add_message_from_email(self, email, mail_string):
         message = FoiMessage(request=self)

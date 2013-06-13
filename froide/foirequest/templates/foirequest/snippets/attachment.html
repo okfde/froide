@@ -37,6 +37,7 @@
         </div>
       {% else %}
         <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
+        {% include "foirequest/snippets/attachment_item.html" %}
       {% endif %}
     </li>
   {% else %}
