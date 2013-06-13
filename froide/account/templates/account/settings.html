@@ -12,7 +12,14 @@
         {% blocktrans %}Your name:{% endblocktrans %}
       </dt>
       <dd>{{ user.get_full_name }}</dd>
-
+      {% if user.get_profile.organisation %}
+      <dt>
+        {% blocktrans %}Your Organisation:{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ user.get_profile.organisation }}
+      </dd>
+      {% endif %}
       <dt>
         {% blocktrans %}Your email address:{% endblocktrans %}
       </dt>

@@ -2,7 +2,8 @@
 
 
 {% blocktrans %}Post Address:{% endblocktrans %}
-{{ request.user.get_full_name }}
+{{ request.user.get_full_name }}{% if request.user.get_profile.organization %}
+{{ request.user.get_profile.organization }}{% endif %}
 {{ request.user.get_profile.address }}{% endif %}
 
 {% include "foirequest/mail_footer.txt" %}

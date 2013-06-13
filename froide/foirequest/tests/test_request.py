@@ -24,8 +24,12 @@ class RequestTest(TestCase):
 
     def test_public_body_logged_in_request(self):
         ok = self.client.login(username='sw', password='froide')
-        user = User.objects.get(username='sw')
         self.assertTrue(ok)
+
+        user = User.objects.get(username='sw')
+        profile = user.get_profile()
+        profile.organization = 'ACME Org'
+        profile.save()
 
         pb = PublicBody.objects.all()[0]
         old_number = pb.number_of_requests
@@ -43,6 +47,8 @@ class RequestTest(TestCase):
         self.assertEqual(req.title, post['subject'])
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
+        self.assertIn('\n%s\n' % user.get_full_name(), message.plaintext)
+        self.assertIn('\n%s\n' % profile.organization, message.plaintext)
         self.client.logout()
         response = self.client.post(reverse('foirequest-make_public',
                 kwargs={"slug": req.slug}), {})
