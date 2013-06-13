@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}Dear Sir or Madam,
+{% load i18n %}{% autoescape off %}{% blocktrans %}Dear Sir or Madam,
 
 I'd like to complain about the handling of the request under the {{ law }} documented here:
 
@@ -7,5 +7,5 @@ I'd like to complain about the handling of the request under the {{ law }} docum
 I believe this request has been mishandled because ...
 
 Sincerely yours
-{{ name }}
+{{ name }}{% endblocktrans %}
 {% endautoescape %}
