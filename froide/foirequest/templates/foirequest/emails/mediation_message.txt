@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}Dear Sir or Madam,
+
+I'd like to complain about the handling of the request under the {{ law }} documented here:
+
+{{ link }}
+
+I believe this request has been mishandled because ...
+
+Sincerely yours
+{{ name }}
+{% endautoescape %}
