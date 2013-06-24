@@ -12,6 +12,7 @@ from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.foirequest.tests import factories
 
 from .models import AccountManager
+from .utils import merge_accounts
 
 
 class AccountTest(TestCase):
@@ -546,3 +547,30 @@ class AccountTest(TestCase):
         self.assertEqual(profile.organization, '')
         self.assertEqual(profile.organization_url, '')
         self.assertTrue(profile.private)
+
+    def test_merge_account(self):
+        from froide.foirequestfollower.models import FoiRequestFollower
+        from froide.foirequestfollower.tests import FoiRequestFollowerFactory
+
+        new_user = factories.UserFactory.create()
+        new_req = factories.FoiRequestFactory.create()
+        req = FoiRequest.objects.all()[0]
+        old_user = req.user
+        FoiRequestFollowerFactory.create(
+            user=new_user,
+            request=new_req
+        )
+        FoiRequestFollowerFactory.create(
+            user=old_user,
+            request=new_req
+        )
+        mes = req.messages
+        self.assertEqual(mes[0].sender_user, old_user)
+        merge_accounts(old_user, new_user)
+
+        self.assertEqual(1,
+            FoiRequestFollower.objects.filter(request=new_req).count())
+        req = FoiRequest.objects.get(pk=req.pk)
+        mes = req.messages
+        self.assertEqual(req.user, new_user)
+        self.assertEqual(mes[0].sender_user, new_user)

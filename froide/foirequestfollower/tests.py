@@ -1,6 +1,8 @@
 from __future__ import with_statement
 import re
 
+import factory
+
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core import mail
@@ -12,6 +14,15 @@ from froide.foirequest.tests import factories
 
 from .models import FoiRequestFollower
 from .tasks import _batch_update
+
+
+class FoiRequestFollowerFactory(factory.Factory):
+    FACTORY_FOR = FoiRequestFollower
+
+    request = factory.SubFactory(factories.FoiRequestFactory)
+    user = factory.SubFactory(factories.UserFactory)
+    email = ''
+    confirmed = True
 
 
 class FoiRequestFollowerTest(TestCase):
