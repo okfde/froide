@@ -30,7 +30,7 @@ class TestMakingRequest(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         cls.selenium = get_selenium()
-        cls.selenium.implicitly_wait(5)
+        cls.selenium.implicitly_wait(10)
         super(TestMakingRequest, cls).setUpClass()
 
     @classmethod
@@ -76,6 +76,9 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('review-button').is_displayed()
+        )
         self.selenium.find_element_by_id('id_first_name')\
             .send_keys('Peter')
         self.selenium.find_element_by_id('id_last_name')\
@@ -112,6 +115,9 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('review-button').is_displayed()
+        )
         user_first_name = 'Peter'
         user_last_name = 'Parker'
         self.selenium.find_element_by_id('id_first_name')\
@@ -156,10 +162,16 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('option-check_foi').click()
         self.selenium.find_element_by_id('continue-foicheck').click()
         req_title = 'FoiRequest Number'
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('id_body').is_displayed()
+        )
         self.selenium.find_element_by_id('id_subject').send_keys(req_title)
         self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('review-button').is_displayed()
+        )
         self.selenium.find_element_by_id('review-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
