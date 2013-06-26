@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-13 22:45+0200\n"
-"PO-Revision-Date: 2013-06-13 22:41+0100\n"
+"POT-Creation-Date: 2013-06-26 11:44+0200\n"
+"PO-Revision-Date: 2013-06-26 11:55+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -2410,39 +2410,21 @@ msgstr "Veröffentlichen Sie diesen Anhang"
 msgid "No request present!"
 msgstr "Mit keiner Anfrage verknüpft!"
 
-#: froide/foirequest/templates/foirequest/redact.html:28
+#: froide/foirequest/templates/foirequest/redact.html:4
+#, python-format
+msgid "Redacting attachment %(name)s"
+msgstr "Schwärzen des Anhangs %(name)s"
+
+#: froide/foirequest/templates/foirequest/redact.html:8
 #, python-format
 msgid "Redact \"%(name)s\""
 msgstr "\"%(name)s\" schwärzen"
 
-#: froide/foirequest/templates/foirequest/redact.html:32
-msgid "Please remove all your personally identifying information."
-msgstr "Bitte entfernen Sie alle Ihre personenbezogenen Informationen."
-
-#: froide/foirequest/templates/foirequest/redact.html:34
-msgid ""
-"Please remove all your personally identifying information except your name."
-msgstr "Bitte entfernen Sie alle personenbezogenen Daten bis auf Ihren Namen."
-
-#: froide/foirequest/templates/foirequest/redact.html:39
-#, python-format
-msgid "Please remove all personally identifying information of %(name)s."
-msgstr "Bitte entfernen Sie alle personenbezogenen Daten von %(name)s."
-
-#: froide/foirequest/templates/foirequest/redact.html:43
-#, python-format
-msgid ""
-"Please remove all personally identifying information of %(name)s except the "
-"name itself."
-msgstr ""
-"Bitte entfernen Sie alle personenbezogenen Daten von %(name)s bis auf den "
-"Namen selbst."
-
-#: froide/foirequest/templates/foirequest/redact.html:48
+#: froide/foirequest/templates/foirequest/redact.html:12
 msgid "How to redact"
 msgstr "So schwärzen Sie das Dokument"
 
-#: froide/foirequest/templates/foirequest/redact.html:49
+#: froide/foirequest/templates/foirequest/redact.html:13
 #, python-format
 msgid ""
 "Go to each page of the PDF and locate the parts that need to be blacked out. "
@@ -2454,7 +2436,7 @@ msgstr ""
 "ein Viereck über die Stelle. Entfernen Sie bitte auch die Emailaddresse von "
 "%(name)s, falls diese sichtbar ist."
 
-#: froide/foirequest/templates/foirequest/redact.html:50
+#: froide/foirequest/templates/foirequest/redact.html:14
 msgid ""
 "The original version of the document will still be available to you (but not "
 "to the public). If the document does not load correctly, cancel and inform a "
@@ -2464,7 +2446,7 @@ msgstr ""
 "nicht für die Öffentlichkeit). Falls das Dokument nicht ordentlich lädt, "
 "brechen Sie ab und informieren Sie einen Moderator der Seite."
 
-#: froide/foirequest/templates/foirequest/redact.html:51
+#: froide/foirequest/templates/foirequest/redact.html:15
 msgid ""
 "Note: in order to redact documents an up-to-date version of a modern browser "
 "is required. Using Internet Explorer will likely not work."
@@ -2473,21 +2455,76 @@ msgstr ""
 "modernen Browsers verwenden. Der Internet Explorer wird wahrscheinlich nicht "
 "funktionieren."
 
+#: froide/foirequest/templates/foirequest/redact.html:20
+msgid "What you need to redact"
+msgstr "Was Sie schwärzen sollten"
+
+#: froide/foirequest/templates/foirequest/redact.html:26
+msgid "Please remove all your personally identifying information."
+msgstr "Bitte entfernen Sie alle Ihre personenbezogenen Informationen."
+
+#: froide/foirequest/templates/foirequest/redact.html:28
+msgid ""
+"Please remove all your personally identifying information except your name."
+msgstr "Bitte entfernen Sie alle personenbezogenen Daten bis auf Ihren Namen."
+
+#: froide/foirequest/templates/foirequest/redact.html:32
+#, python-format
+msgid "Please remove all personally identifying information of %(name)s."
+msgstr "Bitte entfernen Sie alle personenbezogenen Daten von %(name)s."
+
+#: froide/foirequest/templates/foirequest/redact.html:34
+#, python-format
+msgid ""
+"Please remove all personally identifying information of %(name)s except the "
+"name itself."
+msgstr ""
+"Bitte entfernen Sie alle personenbezogenen Daten von %(name)s bis auf den "
+"Namen selbst."
+
+#: froide/foirequest/templates/foirequest/redact.html:38
+msgid "Please remove email addresses of this site."
+msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
+
+#: froide/foirequest/templates/foirequest/redact.html:40
+msgid "Please remove hand-written signatures."
+msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften"
+
+#: froide/foirequest/templates/foirequest/redact.html:51
+msgid "Previous Page"
+msgstr "vorherige Seite"
+
+#: froide/foirequest/templates/foirequest/redact.html:52
+msgid "Next Page"
+msgstr "nächste Seite"
+
 #: froide/foirequest/templates/foirequest/redact.html:56
+msgid "Page"
+msgstr "Seite"
+
+#: froide/foirequest/templates/foirequest/redact.html:58
+msgid "of"
+msgstr "von"
+
+#: froide/foirequest/templates/foirequest/redact.html:64
 msgid "Save and publish blacked out version"
 msgstr "Speichern und geschwärzte Version veröffentlichen"
 
-#: froide/foirequest/templates/foirequest/redact.html:58
-msgid "Try again"
-msgstr "Noch mal von vorne"
+#: froide/foirequest/templates/foirequest/redact.html:68
+msgid "Reset"
+msgstr "Zurücksetzen"
 
-#: froide/foirequest/templates/foirequest/redact.html:59
+#: froide/foirequest/templates/foirequest/redact.html:69
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: froide/foirequest/templates/foirequest/redact.html:62
+#: froide/foirequest/templates/foirequest/redact.html:76
 msgid "Redaction process started, please wait..."
 msgstr "Schwärzung erfolgt, bitte warten..."
+
+#: froide/foirequest/templates/foirequest/redact.html:77
+msgid "Loading PDF..."
+msgstr "Lade PDF..."
 
 #: froide/foirequest/templates/foirequest/request.html:14
 #: froide/foirequest/templates/foirequest/request.html:128
@@ -4672,6 +4709,9 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 
+#~ msgid "Try again"
+#~ msgstr "Noch mal von vorne"
+
 #~ msgid ""
 #~ "This request is currently not public. Please consider making it public "
 #~ "eventually."
@@ -4732,9 +4772,8 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 #~ "diesen Dokumenten zu erhalten, die wir nicht veröffentlichen dürfen."
 
 #~ msgid ""
-#~ "Please remove the following personally identifying information of "
-#~ "%(name)s:<br/><strong>address and email address</strong>. You can leave "
-#~ "the name."
+#~ "Please remove the following personally identifying information of %(name)"
+#~ "s:<br/><strong>address and email address</strong>. You can leave the name."
 #~ msgstr ""
 #~ "Bitte entfernen Sie die folgenden personenbezogenen Daten von %(name)s:"
 #~ "<br/><strong>Adresse und Emailadresse</strong>. Sie können den Namen "
@@ -4744,9 +4783,6 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 #~ msgstr ""
 #~ "Ziehen Sie ein schwarzes Rechteck über das Dokument um Stellen zu "
 #~ "schwärzen"
-
-#~ msgid "Reset"
-#~ msgstr "Zurücksetzen"
 
 #~ msgid ""
 #~ "If it does contain personally identifying information, please inform "
