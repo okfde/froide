@@ -141,6 +141,14 @@ class MailTest(TestCase):
         mes = messages[1]
         self.assertEqual(mes.attachments[0].name, u'EingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf')
 
+    def test_attachment_name_parsing(self):
+        with file(p("test_mail_07.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(content)
+            self.assertEqual(len(mail['attachments']), 1)
+            self.assertEqual(mail['attachments'][0].name, u'Bescheid Fäker.pdf')
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):

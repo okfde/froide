@@ -113,6 +113,8 @@ class AccountTest(TestCase):
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
         self.client.logout()
+        user = User.objects.get(id=user.pk)
+        self.assertTrue(user.is_active)
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 400)
 

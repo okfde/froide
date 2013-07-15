@@ -77,11 +77,17 @@ class EmailParser(object):
                 attachment.read_date = None
                 if "filename" in dispo_dict:
                     attachment.name = dispo_dict['filename']
-                elif "create-date" in dispo_dict:
+                else:
+                    content_type = message_part.get("Content-Type", None)
+                    if content_type:
+                        _, content_dict = self.parse_dispositions(content_type)
+                        if 'name' in content_dict:
+                            attachment.name = content_dict['name']
+                if "create-date" in dispo_dict:
                     attachment.create_date = dispo_dict['create-date']  # TODO: datetime
-                elif "modification-date" in dispo_dict:
+                if "modification-date" in dispo_dict:
                     attachment.mod_date = dispo_dict['modification-date']  # TODO: datetime
-                elif "read-date" in dispo_dict:
+                if "read-date" in dispo_dict:
                     attachment.read_date = dispo_dict['read-date']  # TODO: datetime
                 return attachment
         return None
@@ -112,7 +118,7 @@ class EmailParser(object):
                 except:
                     s = unicode(s, errors='ignore')
             fragments.append(s)
-        field = u''.join(fragments)
+        field = u' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
     def get_address_list(self, msgobj, field):
