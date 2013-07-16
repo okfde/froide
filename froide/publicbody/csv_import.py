@@ -50,7 +50,7 @@ class CSVImporter(object):
             row[n] = row.get(n, '')
 
         try:
-            if 'id' in row:
+            if 'id' in row and row['id']:
                 pb = PublicBody.objects.get(id=row['id'])
             else:
                 pb = PublicBody.objects.get(slug=row['slug'])
