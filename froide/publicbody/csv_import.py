@@ -63,6 +63,7 @@ class CSVImporter(object):
             return
         except PublicBody.DoesNotExist:
             pass
+        row.pop('id', None)  # Remove id if present
         public_body = PublicBody(**row)
         public_body._created_by = self.user
         public_body._updated_by = self.user
