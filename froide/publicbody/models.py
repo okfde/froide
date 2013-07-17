@@ -336,10 +336,11 @@ class PublicBody(models.Model):
         from StringIO import StringIO
 
         s = StringIO()
-        fields = ("id", "name", "email", "jurisdiction__slug",
-            "other_names", "description", "topic__slug", "url",
-            "parent__name", "classification", "contact",
-            "address", "website_dump", "request_note"
+        fields = ("id", "name", "email", "contact",
+            "address", "url", "classification",
+            "jurisdiction__slug", "topic__slug",
+            "other_names", "website_dump", "description",
+            "request_note", "parent__name",
         )
 
         writer = unicodecsv.DictWriter(s, fields, encoding='utf-8')
