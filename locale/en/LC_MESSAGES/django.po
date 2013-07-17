@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-26 11:44+0200\n"
+"POT-Creation-Date: 2013-07-17 18:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3176,8 +3176,9 @@ msgid "Post Address:"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/emails/mail_footer.txt:2
+#: froide/foirequest/templates/foirequest/emails/request_footer.txt:2
 msgid ""
-"Legal Advice: This mail was sent through a Freedom Of Information Portal. "
+"Legal Note: This mail was sent through a Freedom Of Information Portal. "
 "Replies might be published automatically.\n"
 msgstr ""
 
@@ -3247,11 +3248,6 @@ msgstr ""
 msgid ""
 "If you want to use this Public Body, go to your request and chose the Public "
 "Body from the list. Here is a link to your request:"
-msgstr ""
-
-#: froide/foirequest/templates/foirequest/emails/request_footer.txt:2
-msgid ""
-"Legal Advice: This request was sent by a Freedom of Information Portal\n"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt:1
