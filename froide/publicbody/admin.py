@@ -13,6 +13,7 @@ class PublicBodyAdmin(admin.ModelAdmin):
     }
     list_display = ('name', 'email', 'url', 'classification', 'topic', 'jurisdiction',)
     list_filter = ('topic', 'jurisdiction', 'classification')
+    list_max_show_all = 5000
     search_fields = ['name', "description"]
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
