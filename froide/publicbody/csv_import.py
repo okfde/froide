@@ -35,6 +35,7 @@ class CSVImporter(object):
     def import_row(self, row):
         # generate slugs
         row['name'] = row['name'].strip()
+        row['email'] = row['email'].lower()
         row['slug'] = slugify(row['name'])
         row['classification_slug'] = slugify(row['classification'])
 
