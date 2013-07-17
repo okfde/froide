@@ -110,6 +110,7 @@ class RequestTest(TestCase):
         self.assertEqual(req.visibility, 1)
         self.assertEqual(len(mail.outbox), 3)
         message = mail.outbox[1]
+        self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(req.secret_address, message.extra_headers.get('Reply-To', ''))
         if settings.FROIDE_CONFIG['dryrun']:
             self.assertEqual(message.to[0], "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_CONFIG['dryrun_domain']))
@@ -184,6 +185,7 @@ class RequestTest(TestCase):
         self.assertEqual(old_len + 2, new_len)
         message = filter(lambda x: post['subject'] == x.subject, mail.outbox)[-1]
         self.assertTrue(message.body.startswith(post['message']))
+        self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(user.get_profile().address, message.body)
         self.assertIn(new_foi_email, message.to[0])
         req._messages = None

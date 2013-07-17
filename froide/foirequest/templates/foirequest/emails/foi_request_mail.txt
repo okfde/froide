@@ -11,5 +11,5 @@
 {{ request.user.get_profile.organization }}{% endif %}
 {{ request.user.get_profile.address }}
 {% endif %}{% endif %}
-{% include "foirequest/request_footer.txt" %}
+{% include "foirequest/emails/request_footer.txt" %}
 {% endautoescape %}

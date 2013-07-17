@@ -6,5 +6,5 @@
 {{ request.user.get_profile.organization }}{% endif %}
 {{ request.user.get_profile.address }}{% endif %}
 
-{% include "foirequest/mail_footer.txt" %}
+{% include "foirequest/emails/mail_footer.txt" %}
 {% endautoescape %}

@@ -5,7 +5,7 @@ from .settings import *  # noqa
 
 DEBUG = False
 
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 
 DATABASES = {
     'default': {
