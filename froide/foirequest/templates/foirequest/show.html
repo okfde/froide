@@ -460,6 +460,18 @@
         <input type="text" class="copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
       </li>
 
+      {% if not object.public %}
+
+      <li class="nav-header">{% trans "Secret Short URL" %}</li>
+      <li>
+        <span class="small help">
+          {% trans "This URL gives read access to others." %}
+        </span>
+        <input type="text" class="copyinput" readonly="readonly" value="{{ object.get_accessible_link }}"/>
+      </li>
+
+      {% endif %}
+
       {% with object.tags.all as tags %}
         {% if tags %}
           <li class="nav-header">{% trans "Tags" %}</li>

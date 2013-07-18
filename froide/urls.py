@@ -58,6 +58,8 @@ urlpatterns += patterns('',
     url(r'^%s/' % _('request'), include('froide.foirequest.request_urls')),
     # Translators: Short-request URL
     url(r"^%s/(?P<obj_id>\d+)$" % _('r'), 'froide.foirequest.views.shortlink', name="foirequest-shortlink"),
+    # Translators: Short-request auth URL
+    url(r"^%s/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$" % _('r'), 'froide.foirequest.views.auth', name="foirequest-auth"),
     # Translators: follow request URL
     url(r'^%s/' % _('follow'), include('froide.foirequestfollower.urls')),
 

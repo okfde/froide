@@ -5,7 +5,7 @@ from .feeds import FoiRequestFeed, FoiRequestFeedAtom
 
 urlpatterns = patterns("froide.foirequest.views",
     url(r"^(?P<obj_id>\d+)$", 'shortlink', name="foirequest-notsolonglink"),
-    url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'auth', name="foirequest-auth"),
+    url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", 'auth', name="foirequest-longerauth"),
     url(r"^(?P<slug>[-\w]+)/$", 'show', name="foirequest-show"),
     url(r"^(?P<slug>[-\w]+)/suggest/public-body/$", 'suggest_public_body', name="foirequest-suggest_public_body"),
     url(r"^(?P<slug>[-\w]+)/set/public-body/$", 'set_public_body', name="foirequest-set_public_body"),
