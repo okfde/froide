@@ -98,7 +98,7 @@ class EmailParser(object):
 
         # preprocess head field
         # see http://stackoverflow.com/questions/7331351/python-email-header-decoding-utf-8
-        field = re.sub(r"(=\?.*\?=)(?!$)", r"\1 ", field)
+        field = re.sub(r"(=\?.*\?=)(?! |$|.*\?=)", r"\1 ", field)
 
         decodefrag = decode_header(field)
         fragments = []
