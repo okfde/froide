@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 12:38+0200\n"
-"PO-Revision-Date: 2013-07-18 12:39+0100\n"
+"POT-Creation-Date: 2013-07-20 20:38+0200\n"
+"PO-Revision-Date: 2013-07-20 20:39+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -890,75 +890,83 @@ msgstr "Bitte loggen Sie sich ein, um Ideen beizusteuern."
 msgid "Read the news and make requests!"
 msgstr "Lesen Sie Nachrichten und stellen Sie Anfragen!"
 
-#: froide/foirequest/admin.py:40
+#: froide/foirequest/admin.py:41
 #, python-format
 msgid "%d request(s) successfully marked as checked."
 msgstr "%d Anfrage(n) wurden als gesehen markiert."
 
-#: froide/foirequest/admin.py:41
+#: froide/foirequest/admin.py:42
 msgid "Mark selected requests as checked"
 msgstr "Markiere ausgewählte Informationsfreiheitsanfragen als gesehen"
 
-#: froide/foirequest/admin.py:45
+#: froide/foirequest/admin.py:46
 #, python-format
 msgid "%d request(s) successfully marked as not FoI."
 msgstr "%d "
 
-#: froide/foirequest/admin.py:46
+#: froide/foirequest/admin.py:47
 msgid "Mark selected requests as not FoI"
 msgstr "Markiere ausgewählte Anfragen als nicht-IF"
 
-#: froide/foirequest/admin.py:66
+#: froide/foirequest/admin.py:67
 msgid "Successfully marked requests as identical."
 msgstr "Markierung als identisch war erfolgreich."
 
-#: froide/foirequest/admin.py:89
+#: froide/foirequest/admin.py:90
 msgid "Mark selected requests as identical to..."
 msgstr "Markiere ausgewählte Anfragen als identisch zu..."
 
-#: froide/foirequest/admin.py:107
+#: froide/foirequest/admin.py:108
 msgid "Successfully added tags to requests"
 msgstr "Schlagworte wurden erfolgreich zur Anfrage hinzugefügt"
 
-#: froide/foirequest/admin.py:123
+#: froide/foirequest/admin.py:124
 msgid "Tag all requests with..."
 msgstr "Anfragen mit Schlagworten versehen…"
 
-#: froide/foirequest/admin.py:155
+#: froide/foirequest/admin.py:134 froide/publicbody/admin.py:35
+msgid "Removed from search index"
+msgstr "Aus Such-Index entfernt"
+
+#: froide/foirequest/admin.py:135 froide/publicbody/admin.py:36
+msgid "Remove from search index"
+msgstr "Entferne aus Such-Index"
+
+#: froide/foirequest/admin.py:167
 #, python-format
 msgid "%d attachment(s) successfully approved."
 msgstr "%d Anhänge erfolgreich genehmigt."
 
-#: froide/foirequest/admin.py:156
+#: froide/foirequest/admin.py:168
 msgid "Mark selected as approved"
 msgstr "Markiere ausgewählte Anhänge als genehmigt"
 
-#: froide/foirequest/admin.py:160
+#: froide/foirequest/admin.py:172
 #, python-format
 msgid "%d attachment(s) successfully marked as not approvable."
 msgstr "%d Anhänge als nicht genehmigungsfähig markiert."
 
-#: froide/foirequest/admin.py:161
+#: froide/foirequest/admin.py:173
 msgid "Mark selected as NOT approvable"
 msgstr "Markiere ausgewählte Anhänge als NICHT genehmigungsfähig"
 
-#: froide/foirequest/admin.py:170
+#: froide/foirequest/admin.py:182
 msgid "Converted to PDF."
 msgstr "In PDF konvertiert."
 
-#: froide/foirequest/admin.py:171
+#: froide/foirequest/admin.py:183
 msgid "Convert to PDF"
 msgstr "In PDF konvertieren"
 
-#: froide/foirequest/admin.py:192
+#: froide/foirequest/admin.py:204
 msgid "Has request"
 msgstr "Hat Anfrage"
 
-#: froide/foirequest/admin.py:227
+#: froide/foirequest/admin.py:239
 msgid "Successfully triggered redelivery."
 msgstr "Erneute Zustellung erfolgreich ausgelöst."
 
-#: froide/foirequest/admin.py:249
+#: froide/foirequest/admin.py:261
 msgid "Redeliver to..."
 msgstr "Erneut zustellen…"
 

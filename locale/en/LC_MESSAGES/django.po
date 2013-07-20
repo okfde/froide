@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-18 12:38+0200\n"
+"POT-Creation-Date: 2013-07-20 20:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -804,75 +804,83 @@ msgstr ""
 msgid "Read the news and make requests!"
 msgstr ""
 
-#: froide/foirequest/admin.py:40
+#: froide/foirequest/admin.py:41
 #, python-format
 msgid "%d request(s) successfully marked as checked."
 msgstr ""
 
-#: froide/foirequest/admin.py:41
+#: froide/foirequest/admin.py:42
 msgid "Mark selected requests as checked"
 msgstr ""
 
-#: froide/foirequest/admin.py:45
+#: froide/foirequest/admin.py:46
 #, python-format
 msgid "%d request(s) successfully marked as not FoI."
 msgstr ""
 
-#: froide/foirequest/admin.py:46
+#: froide/foirequest/admin.py:47
 msgid "Mark selected requests as not FoI"
 msgstr ""
 
-#: froide/foirequest/admin.py:66
+#: froide/foirequest/admin.py:67
 msgid "Successfully marked requests as identical."
 msgstr ""
 
-#: froide/foirequest/admin.py:89
+#: froide/foirequest/admin.py:90
 msgid "Mark selected requests as identical to..."
 msgstr ""
 
-#: froide/foirequest/admin.py:107
+#: froide/foirequest/admin.py:108
 msgid "Successfully added tags to requests"
 msgstr ""
 
-#: froide/foirequest/admin.py:123
+#: froide/foirequest/admin.py:124
 msgid "Tag all requests with..."
 msgstr ""
 
-#: froide/foirequest/admin.py:155
+#: froide/foirequest/admin.py:134 froide/publicbody/admin.py:35
+msgid "Removed from search index"
+msgstr ""
+
+#: froide/foirequest/admin.py:135 froide/publicbody/admin.py:36
+msgid "Remove from search index"
+msgstr ""
+
+#: froide/foirequest/admin.py:167
 #, python-format
 msgid "%d attachment(s) successfully approved."
 msgstr ""
 
-#: froide/foirequest/admin.py:156
+#: froide/foirequest/admin.py:168
 msgid "Mark selected as approved"
 msgstr ""
 
-#: froide/foirequest/admin.py:160
+#: froide/foirequest/admin.py:172
 #, python-format
 msgid "%d attachment(s) successfully marked as not approvable."
 msgstr ""
 
-#: froide/foirequest/admin.py:161
+#: froide/foirequest/admin.py:173
 msgid "Mark selected as NOT approvable"
 msgstr ""
 
-#: froide/foirequest/admin.py:170
+#: froide/foirequest/admin.py:182
 msgid "Converted to PDF."
 msgstr ""
 
-#: froide/foirequest/admin.py:171
+#: froide/foirequest/admin.py:183
 msgid "Convert to PDF"
 msgstr ""
 
-#: froide/foirequest/admin.py:192
+#: froide/foirequest/admin.py:204
 msgid "Has request"
 msgstr ""
 
-#: froide/foirequest/admin.py:227
+#: froide/foirequest/admin.py:239
 msgid "Successfully triggered redelivery."
 msgstr ""
 
-#: froide/foirequest/admin.py:249
+#: froide/foirequest/admin.py:261
 msgid "Redeliver to..."
 msgstr ""
 
