@@ -17,12 +17,23 @@ class PublicBodyAdmin(admin.ModelAdmin):
     search_fields = ['name', "description"]
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
-    actions = ['export_csv']
+    actions = ['export_csv', 'remove_from_index']
 
     def export_csv(self, request, queryset):
         return HttpResponse(PublicBody.export_csv(queryset),
             content_type='text/csv')
     export_csv.short_description = _("Export to CSV")
+
+    def remove_from_index(self, request, queryset):
+        from haystack import connections as haystack_connections
+
+        for obj in queryset:
+            for using in haystack_connections.connections_info.keys():
+                backend = haystack_connections[using].get_backend()
+                backend.remove(obj)
+
+        self.message_user(request, _("Removed from search index"))
+    remove_from_index.short_description = _("Remove from search index")
 
 
 class FoiLawAdmin(admin.ModelAdmin):

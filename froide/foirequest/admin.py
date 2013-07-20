@@ -31,7 +31,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
-    actions = ['mark_checked', 'mark_not_foi', 'tag_all', 'mark_same_as']
+    actions = ['mark_checked', 'mark_not_foi', 'tag_all',
+               'mark_same_as', 'remove_from_index']
     raw_id_fields = ('same_as', 'public_body', 'user',)
     save_on_top = True
 
@@ -121,6 +122,17 @@ class FoiRequestAdmin(admin.ModelAdmin):
             context, current_app=self.admin_site.name)
 
     tag_all.short_description = _("Tag all requests with...")
+
+    def remove_from_index(self, request, queryset):
+        from haystack import connections as haystack_connections
+
+        for obj in queryset:
+            for using in haystack_connections.connections_info.keys():
+                backend = haystack_connections[using].get_backend()
+                backend.remove(obj)
+
+        self.message_user(request, _("Removed from search index"))
+    remove_from_index.short_description = _("Remove from search index")
 
 
 class FoiAttachmentInline(admin.TabularInline):
