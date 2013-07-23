@@ -376,7 +376,7 @@ class FoiRequest(models.Model):
                 user.is_authenticated() and
                 self.user == user):
             return True
-        if user and user.is_superuser:
+        if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
             return True
         if self.visibility == 1 and pb_auth is not None:
             return self.check_auth_code(pb_auth)
@@ -1268,7 +1268,7 @@ class FoiAttachment(models.Model):
                 user.is_authenticated() and
                 foirequest.user == user):
             return True
-        if user and user.is_superuser:
+        if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
             return True
         return False
 
