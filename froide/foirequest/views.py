@@ -99,8 +99,8 @@ def list_requests(request, status=None, topic=None, tag=None,
     topic_list = PublicBodyTopic.objects.get_list()
     status_url = status
     if status is not None:
-        status = FoiRequest.get_status_from_url(status)
-        foi_requests = manager.for_list_view().filter(status=status)
+        key, status = FoiRequest.get_status_from_url(status)
+        foi_requests = manager.for_list_view().filter(**{key: status})
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)
@@ -153,8 +153,8 @@ def list_requests(request, status=None, topic=None, tag=None,
         'not_foi': not_foi,
         'object_list': foi_requests,
         'status_list': [(unicode(x[0]),
-            FoiRequest.get_readable_status(x[1]),
-            x[1]) for x in FoiRequest.STATUS_URLS],
+            FoiRequest.get_readable_status(x[2]),
+            x[2]) for x in FoiRequest.STATUS_URLS],
         'topic_list': topic_list
     })
 
@@ -455,11 +455,9 @@ def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
-    if not foirequest.message_needs_status():
-        return render_400(request)
     form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():
-        foirequest.set_status(form)
+        form.set_status()
         messages.add_message(request, messages.SUCCESS,
                 _('Status of request has been updated.'))
     else:
@@ -547,19 +545,19 @@ def set_tags(request, slug):
 
 
 @require_POST
-def set_resolution(request, slug):
+def set_summary(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.status_is_final():
         return render_400(request)
-    resolution = request.POST.get('resolution', None)
-    if resolution is None:
+    summary = request.POST.get('summary', None)
+    if summary is None:
         return render_400(request)
-    foirequest.resolution = resolution
+    foirequest.summary = summary
     foirequest.save()
     messages.add_message(request, messages.SUCCESS,
-                _('The resolution summary has been saved.'))
+                _('The outcome summary has been saved.'))
     return redirect(foirequest)
 
 

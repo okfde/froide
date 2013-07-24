@@ -844,28 +844,28 @@ class RequestTest(TestCase):
         self.assertIn('SomeTag', [t.name for t in tags])
         self.assertIn('Another Tag', [t.name for t in tags])
 
-    def test_set_resolution(self):
+    def test_set_summary(self):
         req = FoiRequest.objects.all()[0]
 
         # Bad method
-        response = self.client.get(reverse('foirequest-set_resolution',
+        response = self.client.get(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 405)
 
         # Bad slug
-        response = self.client.post(reverse('foirequest-set_resolution',
+        response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug + 'blub'}))
         self.assertEqual(response.status_code, 404)
 
         # Not logged in
         self.client.logout()
-        response = self.client.post(reverse('foirequest-set_resolution',
+        response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
 
         # Not user of request
         self.client.login(username='dummy', password='froide')
-        response = self.client.post(reverse('foirequest-set_resolution',
+        response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
 
@@ -874,23 +874,23 @@ class RequestTest(TestCase):
         self.client.login(username='sw', password='froide')
         req.status = 'awaiting_response'
         req.save()
-        response = self.client.post(reverse('foirequest-set_resolution',
+        response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
         # No resolution given
-        req.status = 'successful'
+        req.status = 'resolved'
         req.save()
-        response = self.client.post(reverse('foirequest-set_resolution',
+        response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
         res = "This is resolved"
-        response = self.client.post(reverse('foirequest-set_resolution',
-                kwargs={"slug": req.slug}), {"resolution": res})
+        response = self.client.post(reverse('foirequest-set_summary',
+                kwargs={"slug": req.slug}), {"summary": res})
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(id=req.id)
-        self.assertEqual(req.resolution, res)
+        self.assertEqual(req.summary, res)
 
     def test_approve_attachment(self):
         req = FoiRequest.objects.all()[0]
@@ -1068,14 +1068,77 @@ class RequestTest(TestCase):
             request=req
         )
         self.client.login(username='sw', password='froide')
-        status = 'not_held'
+        status = 'awaiting_response'
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
-                {"status": status, "costs": ""})
+                {"status": status, "costs": "", 'resolution': ''})
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.costs, 0.0)
         self.assertEqual(req.status, status)
+
+    def test_resolution(self):
+        req = FoiRequest.objects.all()[0]
+        user = User.objects.get(username='sw')
+        req.status = 'awaits_classification'
+        req.user = user
+        req.save()
+        factories.FoiMessageFactory.create(
+            status=None,
+            request=req
+        )
+        self.client.login(username='sw', password='froide')
+        status = 'resolved'
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": "", 'resolution': ''})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": "", 'resolution': 'bogus'})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": "", 'resolution': 'successful'})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.costs, 0.0)
+        self.assertEqual(req.status, 'resolved')
+        self.assertEqual(req.resolution, 'successful')
+
+    def test_redirect(self):
+        req = FoiRequest.objects.all()[0]
+        user = User.objects.get(username='sw')
+        req.status = 'awaits_classification'
+        req.user = user
+        req.save()
+        factories.FoiMessageFactory.create(
+            status=None,
+            request=req
+        )
+        pb = PublicBody.objects.all()[1]
+        old_due = req.due_date
+        self.assertNotEqual(req.public_body, pb)
+        self.client.login(username='sw', password='froide')
+        status = 'request_redirected'
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": "", 'resolution': ''})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": "", 'redirected': '9' * 7})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(reverse('foirequest-set_status',
+                kwargs={"slug": req.slug}),
+                {"status": status, "costs": "", 'redirected': str(pb.pk)})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.costs, 0.0)
+        self.assertEqual(req.status, 'awaiting_response')
+        self.assertEqual(req.resolution, '')
+        self.assertEqual(req.public_body, pb)
+        self.assertNotEqual(old_due, req.due_date)
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):

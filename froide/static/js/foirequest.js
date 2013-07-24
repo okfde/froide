@@ -25,7 +25,7 @@ $(function(){
         Froide.app.searchSimilarRequests();
         Froide.app.activateFoiCheck();
     };
-    
+
     $("#continue-foicheck").click(function(e){
         e.preventDefault();
         if ($("#option-check_foi_personal").attr("checked")){

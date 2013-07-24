@@ -255,6 +255,7 @@ class PublicBodySuggestionsForm(forms.Form):
 class FoiRequestStatusForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
+        self.foirequest = foirequest
         self.fields['refusal_reason'] = forms.ChoiceField(
             label=_("Refusal Reason"),
             choices=[('', _('No or other reason given'))] +
@@ -264,10 +265,17 @@ class FoiRequestStatusForm(forms.Form):
         )
 
     status = forms.ChoiceField(label=_("Status"),
-            # widget=forms.RadioSelect,
-            choices=[('', '-------')] +
-                    map(lambda x: (x[0], x[1]), FoiRequest.USER_SET_CHOICES),
-            help_text=_('In what kind of state is this request?'))
+            widget=forms.RadioSelect,
+            choices=[('awaiting_response', _('This request is still ongoing.')),
+                ('resolved', _('This request is finished.')),
+                ('request_redirected', _('This request has been redirected to a different public body.'))
+            ]
+    )
+
+    resolution = forms.ChoiceField(label=_('Resolution'),
+        choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION_FIELD_CHOICES,
+        required=False,
+        help_text=_('How would you describe the current outcome of this request?'))
     redirected = forms.IntegerField(
         label=_("Redirected to"),
         required=False,
@@ -299,7 +307,44 @@ class FoiRequestStatusForm(forms.Form):
                 self._redirected_public_body = PublicBody.objects.get(id=pk)
             except PublicBody.DoesNotExist:
                 raise forms.ValidationError(_("Invalid value"))
+        if status == 'resolved':
+            if not self.cleaned_data.get('resolution', ''):
+                raise forms.ValidationError(_('Please give a resolution to this request'))
         return self.cleaned_data
+
+    def set_status(self):
+        data = self.cleaned_data
+        status = data['status']
+        resolution = data['resolution']
+        foirequest = self.foirequest
+
+        message = foirequest.message_needs_status()
+        if message:
+            message.status = status
+            message.save()
+
+        if status == "request_redirected":
+            foirequest.due_date = foirequest.law.calculate_due_date()
+            foirequest.public_body = self._redirected_public_body
+            status = 'awaiting_response'
+
+        foirequest.status = status
+        foirequest.resolution = resolution
+
+        foirequest.costs = data['costs']
+        if resolution == "refused" or resolution == "partially_successful":
+            foirequest.refusal_reason = data['refusal_reason']
+        else:
+            foirequest.refusal_reason = u""
+
+        foirequest.save()
+        status = data.pop("status")
+        if status == 'resolved':
+            foirequest.status_changed.send(
+                sender=foirequest,
+                status=resolution,
+                data=data
+            )
 
 
 class ConcreteLawForm(forms.Form):

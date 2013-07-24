@@ -316,11 +316,13 @@ Froide.app.publicBodyChosen = (function(){
 Froide.app.statusSet = (function(){
     return function(){
         $(".status-refusal").hide();
-        $(".status-redirected").hide();
-        var status = $("#id_status").val();
-        if (/refus/.exec(status) !== null || /partial/.exec(status) !== null) {
+        var resolution = $("#id_resolution").val();
+        if (/refus/.exec(resolution) !== null || /partial/.exec(resolution) !== null) {
             $(".status-refusal").slideDown();
-        } else if (/redirect/.exec(status) !== null){
+        }
+        var redirected = $("input[name='status'][value='request_redirected']").prop('checked');
+        $(".status-redirected").hide();
+        if (redirected){
             $(".status-redirected").slideDown();
         }
     };

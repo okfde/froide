@@ -1012,3 +1012,12 @@ input.copyinput {
   bottom: 0;
   cursor: crosshair;
 }
+
+.control-group .controls ul {
+    list-style-type: none;
+}
+
+.control-group .controls ul li input[type="radio"],
+.control-group .controls ul li input[type="checkbox"] {
+    margin-top: 0;
+}
