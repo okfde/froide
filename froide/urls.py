@@ -9,7 +9,6 @@ admin.autodiscover()
 
 from tastypie.api import Api
 
-from froide.publicbody.models import Jurisdiction
 from froide.publicbody.api import (PublicBodyResource,
     JurisdictionResource, FoiLawResource)
 from froide.foirequest.api import (FoiRequestResource,

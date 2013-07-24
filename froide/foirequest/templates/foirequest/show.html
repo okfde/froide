@@ -84,7 +84,7 @@
             {% trans "Request" %}
           </a>
         </li>
-        {% if object.message_needs_status %}
+        {% if object.reply_received %}
         <li{% if active_tab == 'set-status' %} class="active"{% endif %}>
           <a href="#set-status" data-toggle="tab">
             {% trans "Set status" %}
@@ -129,24 +129,24 @@
       <div class="tab-content well request-well">
 
         {# Set status #}
-        {% with status_message=object.message_needs_status %}
+        <div id="set-status" class="tab-pane no-print{% if active_tab == 'set-status' %} active{% endif %}">
           {% if status_message %}
-            <div id="set-status" class="tab-pane no-print{% if active_tab == 'set-status' %} active{% endif %}">
-              <h4>{% blocktrans with url=status_message.get_absolute_url %}Please <a href="{{ url }}">read the reply</a> and choose a new status {% endblocktrans %}</h4>
-              <form class="form-horizontal" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
-                {% csrf_token %}
-                {% if status_form %}
-                  {% include "foirequest/_set_status.html" %}
-                {% else %}
-                  {% with status_form=object.get_status_form %}
-                    {% include "foirequest/_set_status.html" %}
-                  {% endwith %}
-                {% endif %}
-                <button class="btn" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
-              </form>
-            </div>
+            <h4>{% blocktrans with url=status_message.get_absolute_url %}Please <a href="{{ url }}">read the reply</a> and choose a new status {% endblocktrans %}</h4>
+          {% else %}
+            <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4>
           {% endif %}
-        {% endwith %}
+          <form class="form-horizontal" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+            {% csrf_token %}
+            {% if status_form %}
+              {% include "foirequest/_set_status.html" %}
+            {% else %}
+              {% with status_form=object.get_status_form %}
+                {% include "foirequest/_set_status.html" %}
+              {% endwith %}
+            {% endif %}
+            <button class="btn" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+          </form>
+        </div>
         {# End Set status #}
 
         {% if object.status == "publicbody_needed" %}
@@ -240,10 +240,10 @@
             {# Write Resolution #}
             {% if object.status_is_final %}
               <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
-              <form method="post" action="{% url 'foirequest-set_resolution' slug=object.slug %}">
+              <form method="post" action="{% url 'foirequest-set_summary' slug=object.slug %}">
                 {% csrf_token %}
                 <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
-                <textarea rows="8" class="span6" name="resolution">{% if object.resolution %}{{ object.resolution }}{% endif %}</textarea><br/>
+                <textarea rows="8" class="span6" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea><br/>
                 <button type="submit" class="btn">{% blocktrans %}Save Summary{% endblocktrans %}</button>
               </form>
             {% endif %}
@@ -350,9 +350,9 @@
         <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
         <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
         {% endif %}
-      {% if object.resolution %}
+      {% if object.summary %}
         <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
-        <dd>{{ object.resolution|urlizetrunc:40|linebreaks }}</dd>
+        <dd>{{ object.summary|urlizetrunc:40|linebreaks }}</dd>
       {% endif %}
     </dl>
 
@@ -787,7 +787,10 @@
     $("#public_body-chooser input[name='public_body']").live("change", function(e){
       Froide.app.publicBodyChosen($("#public_body-chooser input[name='public_body']:checked").val());
     });
-    $("#id_status").change(function(){
+    $("#id_resolution").change(function(){
+      Froide.app.statusSet();
+    });
+    $("input[name='status']").change(function(){
       Froide.app.statusSet();
     });
     Froide.app.statusSet();

@@ -37,7 +37,7 @@ class WebTest(TestCase):
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
-        for urlpart, status in FoiRequest.STATUS_URLS:
+        for urlpart, _, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": unicode(urlpart)}))
             self.assertEqual(response.status_code, 200)
@@ -55,7 +55,7 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list'),
                 kwargs={'jurisdiction': juris.slug})
         self.assertEqual(response.status_code, 200)
-        for urlpart, status in FoiRequest.STATUS_URLS:
+        for urlpart, _, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": urlpart, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)

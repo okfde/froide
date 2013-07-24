@@ -233,7 +233,7 @@ class FoiMessageFactory(factory.Factory):
     recipient = 'Recipient name'
     recipient_email = 'recipient@example.com'
     recipient_public_body = None
-    status = FoiRequest.STATUS_USER_CHOICES[0][0]
+    status = 'awaiting_response'
 
     timestamp = factory.Sequence(lambda n: timezone.now() - timedelta(days=1000 - int(n)))
     subject = 'subject'

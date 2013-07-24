@@ -56,7 +56,7 @@ class FoiRequestManager(CurrentSiteManager):
     def get_asleep(self):
         six_months_ago = timezone.now() - timedelta(days=30 * 6)
         return self.get_query_set()\
-            .filter(status__in=FoiRequest.NON_FINAL_STATUS,
+            .filter(status__neq='resolved',
                 last_message__lt=six_months_ago)
 
     def get_unclassified(self):
@@ -66,7 +66,8 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_dashboard_requests(self, user):
         return self.get_query_set().filter(user=user).filter(
-            Q(status="awaiting_classification") | Q(status='overdue'))
+            Q(status="awaiting_classification"))
+        # TODO: add overdue
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
@@ -87,22 +88,22 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
     def get_for_homepage(self, count=5):
         return self.by_last_update().filter(
-                models.Q(status='successful') |
-                models.Q(status='partially_successful') |
-                models.Q(status='refused'))[:count]
+                models.Q(resolution='successful') |
+                models.Q(resolution='partially_successful') |
+                models.Q(resolution='refused'))[:count]
 
     def get_for_search_index(self):
         return self.get_query_set().filter(same_as__isnull=True)
 
     def successful(self):
         return self.by_last_update().filter(
-                    models.Q(status="successful") |
-                    models.Q(status="partially_successful")).order_by("-last_message")
+                    models.Q(resolution="successful") |
+                    models.Q(resolution="partially_successful")).order_by("-last_message")
 
     def unsuccessful(self):
         return self.by_last_update().filter(
-                    models.Q(status="refused") |
-                    models.Q(status="not_held")).order_by("-last_message")
+                    models.Q(resolution="refused") |
+                    models.Q(resolution="not_held")).order_by("-last_message")
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
@@ -121,86 +122,99 @@ class TaggedFoiRequest(TaggedItemBase):
 
 
 class FoiRequest(models.Model):
-    ADMIN_SET_CHOICES = (
-        ('awaiting_user_confirmation', _('Awaiting user confirmation'),
-            _("The requester's email address is yet to be confirmed.")),
-        ('publicbody_needed', _('Public Body needed'),
-            _('This request still needs a Public Body.')),
+    STATUS_CHOICES = (
+        ('awaiting_user_confirmation',
+            _('Awaiting user confirmation'),
+            _("The requester's email address is yet to be confirmed."),
+            False
+        ),
+        ('publicbody_needed',
+            _('Public Body needed'),
+            _('This request still needs a Public Body.'),
+            False
+        ),
         ('awaiting_publicbody_confirmation',
             _('Awaiting Public Body confirmation'),
-            _('The Public Body of this request has been created by the user and still needs to be confirmed.')),
+            _('The Public Body of this request has been created by the user and still needs to be confirmed.'),
+            False
+        ),
+        ('awaiting_response',
+            _('Awaiting response'),
+            _('This request is still waiting for a response from the Public Body.'),
+            True
+        ),
         ('awaiting_classification',
             _('Request awaits classification'),
-            _('A message was received and the user needs to set a new status.')),
-        ('overdue', _('Response overdue'),
-            _('The request has not been answered in the legal time limit.')),
-        ('escalated', _('Request escalated'),
-            _('The request has been escalated to the mediating entity.')),
-        ('asleep', _('Request asleep'),
-            _('The request is not resolved and has not been active for a while.')),
-    )
-    USER_SET_CHOICES = (
-        ('awaiting_response', _('Awaiting response'),
-                _('This request is still waiting for a response from the Public Body.')),
-        # ('awaiting_clarification',
-        #         _('Awaiting clarification from Public Body'),
-        #         _('A response was not satisfying to the requester and he requested more information.')),
-        ('request_redirected',
-                _('Request was redirected to another Public Body'),
-                _('The current Public Body redirected the request to another Public Body.')),
-        ('successful',
-                _('Request Successful'),
-                _('The request has been successul.')),
-        ('partially_successful',
-                _('Request partially successful'),
-                _('The request has been partially successful (some information was provided, but not all)')),
-        ('not_held',
-                _('Information not held'),
-                _('The Public Body stated that it does not possess the information.')),
-        ('refused',
-                _('Request refused'),
-                _('The Public Body refuses to provide the information.')),
-        ('user_withdrew_costs',
-                _('Request was withdrawn due to costs'),
-                _('User withdrew the request due to the associated costs.')),
-        ('user_withdrew',
-                _('Request was withdrawn'),
-                _('User withdrew the request for other reasons.')),
+            _('A message was received and the user needs to set a new status.'),
+            False
+        ),
+        ('asleep',
+            _('Request asleep'),
+            _('The request is not resolved and has not been active for a while.'),
+            False
+        ),
+        ('resolved',
+            _('Request resolved'),
+            _('The request is resolved.'),
+            False
+        ),
     )
 
-    MESSAGE_STATUS_TO_REQUEST_STATUS = {
-        "request_redirected": "awaiting_response"
-    }
-    NON_FINAL_STATUS = ('awaiting_response', 'request_redirected',
-            'overdue', 'asleep', 'awaiting_classification', 'publicbody_needed')
+    RESOLUTION_CHOICES = (
+        ('successful',
+            _('Request Successful'),
+            _('The request has been successul.'),
+            True
+        ),
+        ('partially_successful',
+            _('Request partially successful'),
+            _('The request has been partially successful (some information was provided, but not all)'),
+            True),
+        ('not_held',
+            _('Information not held'),
+            _('The Public Body stated that it does not possess the information.'),
+            True,
+        ),
+        ('refused',
+            _('Request refused'),
+            _('The Public Body refuses to provide the information.'),
+            True
+        ),
+        ('user_withdrew_costs',
+            _('Request was withdrawn due to costs'),
+            _('User withdrew the request due to the associated costs.'),
+            True
+        ),
+        ('user_withdrew',
+            _('Request was withdrawn'),
+            _('User withdrew the request for other reasons.'),
+            True
+        ),
+    )
 
     STATUS_URLS = [
-            (_("successful"), 'successful'),
-            (_("partially-successful"), 'partially_successful'),
-            (_("refused"), 'refused'),
-            (_("escalated"), 'escalated'),
-            (_("withdrawn"), 'user_withdrew'),
-            (_("withdrawn-costs"), 'user_withdrew_costs'),
-            (_("publicbody-needed"), 'publicbody_needed'),
-            (_("awaiting-response"), 'awaiting_response'),
-            (_("overdue"), 'overdue'),
-            (_("asleep"), 'asleep'),
-            (_("not-held"), 'not_held')
+        (_("successful"), 'resolution', 'successful'),
+        (_("partially-successful"), 'resolution', 'partially_successful'),
+        (_("refused"), 'resolution', 'refused'),
+        # (_("escalated"), 'status', 'escalated'),
+        (_("withdrawn"), 'resolution', 'user_withdrew'),
+        (_("withdrawn-costs"), 'resolution', 'user_withdrew_costs'),
+        (_("publicbody-needed"), 'status', 'publicbody_needed'),
+        (_("awaiting-response"), 'status', 'awaiting_response'),
+        # (_("overdue"), 'status', 'overdue'),
+        (_("asleep"), 'resolution', 'asleep'),
+        (_("not-held"), 'resolution', 'not_held')
     ]
 
-    # STATUS_URLS += [(_('requires-payment'), 'requires_payment')]
     _STATUS_URLS_DICT = None
 
-    @classmethod
-    def get_status_from_url(cls, status):
-        if cls._STATUS_URLS_DICT is None:
-            cls._STATUS_URLS_DICT = dict([
-                (unicode(x), y) for x, y in cls.STATUS_URLS])
-        return cls._STATUS_URLS_DICT[status]
+    STATUS_FIELD_CHOICES = [(x[0], x[1]) for x in STATUS_CHOICES]
+    RESOLUTION_FIELD_CHOICES = [(x[0], x[1]) for x in RESOLUTION_CHOICES]
 
-    STATUS_CHOICES = [(x[0], x[1]) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES]
-    STATUS_USER_CHOICES = [(x[0], x[1]) for x in USER_SET_CHOICES]
-    STATUS_CHOICES_DICT = dict([(x[0], (x[1], x[2])) for x in ADMIN_SET_CHOICES + USER_SET_CHOICES])
+    STATUS_RESOLUTION = STATUS_CHOICES + RESOLUTION_CHOICES
+
+    STATUS_RESOLUTION_DICT = dict([(x[0], x[1:]) for x in STATUS_RESOLUTION])
+    USER_STATUS_CHOICES = [(x[0], x[1]) for x in STATUS_RESOLUTION if x[3]]
 
     VISIBILITY_CHOICES = (
         (0, _("Invisible")),
@@ -212,15 +226,17 @@ class FoiRequest(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
-    resolution = models.TextField(_("Resolution Summary"),
-            blank=True, null=True)
+    summary = models.TextField(_("Summary"), blank=True)
+
     public_body = models.ForeignKey(PublicBody, null=True, blank=True,
             on_delete=models.SET_NULL, verbose_name=_("Public Body"))
 
-    public = models.BooleanField(_("published?"), default=True)
-
     status = models.CharField(_("Status"), max_length=50,
-            choices=STATUS_CHOICES)
+            choices=STATUS_FIELD_CHOICES)
+    resolution = models.CharField(_("Resolution"),
+        max_length=50, choices=RESOLUTION_FIELD_CHOICES, blank=True)
+
+    public = models.BooleanField(_("published?"), default=True)
     visibility = models.SmallIntegerField(_("Visibility"), default=0,
             choices=VISIBILITY_CHOICES)
 
@@ -290,6 +306,13 @@ class FoiRequest(models.Model):
     def __unicode__(self):
         return _(u"Request '%s'") % self.title
 
+    @classmethod
+    def get_status_from_url(cls, status):
+        if cls._STATUS_URLS_DICT is None:
+            cls._STATUS_URLS_DICT = dict([
+                (unicode(x[0]), x[1:]) for x in cls.STATUS_URLS])
+        return cls._STATUS_URLS_DICT[status]
+
     @property
     def same_as_set(self):
         return FoiRequest.objects.filter(same_as=self)
@@ -308,6 +331,10 @@ class FoiRequest(models.Model):
     def get_messages(self):
         self._messages = None
         return self.messages
+
+    @property
+    def status_representation(self):
+        return self.status if self.status != 'resolved' else self.resolution
 
     @property
     def status_settable(self):
@@ -365,7 +392,7 @@ class FoiRequest(models.Model):
         return mes[0]
 
     def status_is_final(self):
-        return not self.status in self.NON_FINAL_STATUS
+        return self.status == 'resolved'
 
     def is_visible(self, user, pb_auth=None):
         if self.visibility == 0:
@@ -435,33 +462,10 @@ class FoiRequest(models.Model):
     def get_status_form(self):
         from .forms import FoiRequestStatusForm
         return FoiRequestStatusForm(self,
-                    initial={"status": self.status,
+                    initial={"status": 'awaiting_response',
+                        'resolution': self.resolution,
                         "costs": self.costs,
                         "refusal_reason": self.refusal_reason})
-
-    def set_status(self, form):
-        data = form.cleaned_data
-        message = self.message_needs_status()
-        if message:
-            message.status = data['status']
-            message.save()
-        else:
-            return
-        self.status = self.MESSAGE_STATUS_TO_REQUEST_STATUS.get(data['status'], data['status'])
-        message = self.message_needs_status()
-        self.costs = data['costs']
-        if data['status'] == "refused" or data['status'] == "partially_successful":
-            self.refusal_reason = data['refusal_reason']
-        else:
-            self.refusal_reason = u""
-        if data['status'] == "request_redirected":
-            self.due_date = self.law.calculate_due_date()
-            self.public_body = form._redirected_public_body
-        if message is not None:
-            self.set_awaits_classification()
-        self.save()
-        status = data.pop("status")
-        self.status_changed.send(sender=self, status=status, data=data)
 
     def possible_reply_addresses(self):
         addresses = {}
@@ -676,19 +680,19 @@ class FoiRequest(models.Model):
 
     @property
     def readable_status(self):
-        return FoiRequest.get_readable_status(self.status)
+        return FoiRequest.get_readable_status(self.status_representation)
 
     @property
     def status_description(self):
-        return FoiRequest.get_status_description(self.status)
+        return FoiRequest.get_status_description(self.status_representation)
 
     @classmethod
     def get_readable_status(cls, status):
-        return unicode(cls.STATUS_CHOICES_DICT.get(status, (_("Unknown"), None))[0])
+        return unicode(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
 
     @classmethod
     def get_status_description(cls, status):
-        return unicode(cls.STATUS_CHOICES_DICT.get(status, (None, _("Unknown")))[1])
+        return unicode(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
@@ -984,7 +988,7 @@ class FoiMessage(models.Model):
             null=True, on_delete=models.SET_NULL,
             verbose_name=_("Public Body Recipient"), related_name='received_messages')
     status = models.CharField(_("Status"), max_length=50, null=True, blank=True,
-            choices=FoiRequest.STATUS_USER_CHOICES, default=None)
+            choices=FoiRequest.STATUS_FIELD_CHOICES, default=None)
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
@@ -1377,9 +1381,12 @@ class FoiEvent(models.Model):
         pb = ""
         if self.public_body:
             pb = self.public_body.name
-        context.update({"user": user, "public_body": pb,
-            "since": timesince(self.timestamp), "date": self.timestamp,
-            "request": self.request.title})
+        context.update({
+            "user": user, "public_body": pb,
+            "since": timesince(self.timestamp),
+            "date": self.timestamp,
+            "request": self.request.title
+        })
         self._context = context
         return context
 

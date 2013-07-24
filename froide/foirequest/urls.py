@@ -57,12 +57,14 @@ foirequest_urls = [
     (r'^%s/(?P<public_body>[-\w]+)/rss/$' % pgettext('URL part', 'to'), 'list_requests',
         {'feed': 'rss'}, 'foirequest-list_feed'),
 
-] + [(r'^(?P<status>%s)/$' % unicode(urlpart), 'list_requests', {},
-        'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS
-] + [(r'^(?P<status>%s)/feed/$' % unicode(urlpart), 'list_requests', {'feed': 'atom'},
-        'foirequest-list_feed_atom') for urlpart, status in FoiRequest.STATUS_URLS
-] + [(r'^(?P<status>%s)/rss/$' % unicode(urlpart), 'list_requests', {'feed': 'rss'},
-        'foirequest-list_feed') for urlpart, status in FoiRequest.STATUS_URLS]
+] + [(r'^(?P<status>%s)/$' % unicode(urlinfo[0]), 'list_requests', {},
+        'foirequest-list') for urlinfo in FoiRequest.STATUS_URLS
+] + [(r'^(?P<status>%s)/feed/$' % unicode(urlinfo[0]), 'list_requests',
+        {'feed': 'atom'},
+        'foirequest-list_feed_atom') for urlinfo in FoiRequest.STATUS_URLS
+] + [(r'^(?P<status>%s)/rss/$' % unicode(urlinfo[0]), 'list_requests',
+        {'feed': 'rss'},
+        'foirequest-list_feed') for urlinfo in FoiRequest.STATUS_URLS]
 
 urlpatterns += patterns("froide.foirequest.views",
     *foirequest_urls

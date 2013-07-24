@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="iconed-item clearfix">
   <div class="iconed-icon">
-    <img src="{{ STATIC_URL }}img/status/{{ object.status }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
+    <img src="{{ STATIC_URL }}img/status/{{ object.status_representation }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
   </div>
   <div class="iconed-description">
     <a href="{{ object.url }}">

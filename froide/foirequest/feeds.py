@@ -25,7 +25,7 @@ class LatestFoiRequestsFeed(Feed):
         if self.status:
             by.append(_('by status %(status)s') % {
                 'status': FoiRequest.get_readable_status(
-                    FoiRequest.get_status_from_url(self.status))
+                    FoiRequest.get_status_from_url(self.status)[1])
             })
         if self.tag:
             by.append(_('by tag %(tag)s') % {'tag': self.tag.name})
