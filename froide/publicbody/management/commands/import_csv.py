@@ -1,6 +1,4 @@
 # -*- encoding: utf-8 -*-
-import sys
-
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import translation
@@ -17,7 +15,7 @@ class Command(BaseCommand):
         importer = CSVImporter()
 
         if len(args) != 1:
-            sys.stderr.write((u"Give URL or filename!\n").encode('utf-8'))
+            self.stderr.write((u"Give URL or filename!\n").encode('utf-8'))
             return 1
 
         if args[0].startswith('http://') or args[0].startswith('https://'):
@@ -25,4 +23,4 @@ class Command(BaseCommand):
         else:
             importer.import_from_file(file(args[0]))
 
-        sys.stdout.write((u"Import done.\n").encode('utf-8'))
+        self.stdout.write((u"Import done.\n").encode('utf-8'))
