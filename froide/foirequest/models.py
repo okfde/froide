@@ -212,15 +212,17 @@ class FoiRequest(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
-    resolution = models.TextField(_("Resolution Summary"),
-            blank=True, null=True)
+    summary = models.TextField(_("Summary"), blank=True)
+
     public_body = models.ForeignKey(PublicBody, null=True, blank=True,
             on_delete=models.SET_NULL, verbose_name=_("Public Body"))
 
-    public = models.BooleanField(_("published?"), default=True)
-
     status = models.CharField(_("Status"), max_length=50,
-            choices=STATUS_CHOICES)
+            choices=STATUS_FIELD_CHOICES)
+    resolution = models.CharField(_("Resolution"),
+        max_length=50, choices=RESOLUTION_FIELD_CHOICES, blank=True)
+
+    public = models.BooleanField(_("published?"), default=True)
     visibility = models.SmallIntegerField(_("Visibility"), default=0,
             choices=VISIBILITY_CHOICES)
 
