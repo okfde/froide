@@ -461,8 +461,12 @@ class FoiRequest(models.Model):
 
     def get_status_form(self):
         from .forms import FoiRequestStatusForm
+        if self.resolution:
+            status = 'resolved'
+        else:
+            status = 'awaiting_response'
         return FoiRequestStatusForm(self,
-                    initial={"status": 'awaiting_response',
+                    initial={"status": status,
                         'resolution': self.resolution,
                         "costs": self.costs,
                         "refusal_reason": self.refusal_reason})
