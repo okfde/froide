@@ -915,6 +915,10 @@ class FoiRequest(models.Model):
         self.became_asleep.send(sender=self)
 
     def send_classification_reminder(self):
+        if not self.user.is_active:
+            return
+        if not self.user.email:
+            return
         send_mail(_("%(site_name)s: Please classify the reply to your request")
                     % {"site_name": settings.SITE_NAME},
                 render_to_string("foirequest/emails/classification_reminder.txt",
@@ -925,6 +929,10 @@ class FoiRequest(models.Model):
                 [self.user.email])
 
     def send_update(self, event_string):
+        if not self.user.is_active:
+            return
+        if not self.user.email:
+            return
         send_mail(_("%(site_name)s: Update on request %(request)s") %
                 {"request": self.title, "site_name": settings.SITE_NAME},
                 render_to_string("foirequest/emails/request_update.txt",
