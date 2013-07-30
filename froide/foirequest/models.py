@@ -288,6 +288,9 @@ class FoiRequest(models.Model):
         get_latest_by = 'last_message'
         verbose_name = _('Freedom of Information Request')
         verbose_name_plural = _('Freedom of Information Requests')
+        permissions = (
+            ("see_private", _("Can see private requests")),
+        )
 
     # Custom Signals
     message_sent = django.dispatch.Signal(providing_args=["message"])
