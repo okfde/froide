@@ -3,13 +3,16 @@ from email.utils import parseaddr
 
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails, make_address)
 
 
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
-No corresponding request could be identified, please investigate!''')
+No corresponding request could be identified, please investigate!
+%(url)s
+''')
 
 
 def send_foi_mail(subject, message, from_email, recipient_list,
@@ -76,7 +79,11 @@ def _process_mail(mail_string):
                     mail=mail_string,
                 )
                 mail_managers(_('Unknown FoI-Mail Recipient'),
-                    unknown_foimail_message % {'address': secret_mail})
+                    unknown_foimail_message % {
+                        'address': secret_mail,
+                        'url': settings.SITE_URL + reverse('admin:foirequest_deferredmessage_changelist')
+                    }
+                )
                 continue
         foi_request.add_message_from_email(email, mail_string)
 
