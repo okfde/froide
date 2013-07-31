@@ -1,14 +1,16 @@
-{% load i18n %}{% autoescape off %}{% blocktrans with title=request.title site_name=site_name name=user.get_full_name message=message unfollow_link=unfollow_link link=request.get_absolute_domain_url %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% if user %}{% blocktrans with name=user.get_full_name %}Hello {{ name }},{% endblocktrans %}{% else %}{% trans "Hello," %}{% endif %}
 
-there is an update for the request "{{ title }}" on {{ site_name }}.
-{{ message }}
+{% blocktrans count count as count %}in the last 24 hours there was an update on one request that you follow.{% plural %}in the last 24 hours there were updates to {{ count }} requests that you follow.{% endblocktrans %}
+{% for request, container in req_event_dict.items %}
+{% blocktrans with title=request.title %}Updates to the request "{{ title }}"{% endblocktrans %}:
+{% for event in container.events %} - {{ event }}
+{% endfor %}
+{% blocktrans with link=request.get_absolute_domain_short_url %}Visit this request: {{ link }}{% endblocktrans %}
+{% blocktrans with unfollow_link=container.unfollow_link %}If you want to unfollow this request, click this link:
+{{ unfollow_link }}{% endblocktrans %}
 
-Click this link to go to the request:
-{{ link }}
-
-If you don't want to receive any email updates for this request, click the link below:
-{{ unfollow_link }}
-
+{% endfor %}
+{% blocktrans with site_name=site_name %}
 Cheers,
 {{ site_name }}
 {% endblocktrans %}{% endautoescape %}

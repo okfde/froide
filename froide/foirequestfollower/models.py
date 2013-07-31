@@ -2,7 +2,7 @@ import hmac
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
@@ -35,7 +35,13 @@ class FoiRequestFollowerManager(models.Manager):
 
     def send_update(self, request, update_message):
         for follower in FoiRequestFollower.objects.filter(request=request, confirmed=True):
-            follower.send_update(update_message)
+            FoiRequestFollower.send_update({
+                request: {
+                    'unfollow_link': follower.get_unfollow_link(),
+                    'events': [update_message]
+                }
+            },
+                user=follower.user, email=follower.email)
 
 
 class FoiRequestFollower(models.Model):
@@ -91,21 +97,30 @@ class FoiRequestFollower(models.Model):
             settings.DEFAULT_FROM_EMAIL,
             [self.email])
 
-    def send_update(self, message):
-        if self.user is None and not self.confirmed:
+    @classmethod
+    def send_update(cls, req_event_dict, user=None, email=None):
+        if user is None and email is None:
             return
-        if not self.request.is_visible(None):
-            return
-        send_mail(_("%(site_name)s: Update on request %(request)s") %
-                {"request": self.request.title, "site_name": settings.SITE_NAME},
+        count = len(req_event_dict)
+        subject = ungettext_lazy(
+            "%(site_name)s: Update on one followed request",
+            "%(site_name)s: Update on %(count)s followed requests",
+            count) % {
+                'site_name': settings.SITE_NAME,
+                'count': count
+            }
+        send_mail(subject,
             render_to_string("foirequestfollower/update_follower.txt",
-                {"request": self.request,
-                "user": self.user,
-                "message": message,
-                "unfollow_link": self.get_unfollow_link(),
-                "site_name": settings.SITE_NAME}),
+                {
+                    "req_event_dict": req_event_dict,
+                    "count": count,
+                    "user": user,
+                    "site_name": settings.SITE_NAME
+                }
+            ),
             settings.DEFAULT_FROM_EMAIL,
-            [self.email or self.user.email])
+            [email or user.email]
+        )
 
 
 @receiver(FoiRequest.message_received,

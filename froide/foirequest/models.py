@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import Q
 from django.db import transaction, IntegrityError
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
@@ -935,21 +935,40 @@ class FoiRequest(models.Model):
                 settings.DEFAULT_FROM_EMAIL,
                 [self.user.email])
 
-    def send_update(self, event_string):
-        if not self.user.is_active:
+    @classmethod
+    def send_update(cls, req_event_dict, user=None):
+        if user is None:
             return
-        if not self.user.email:
-            return
-        send_mail(_("%(site_name)s: Update on request %(request)s") %
-                {"request": self.title, "site_name": settings.SITE_NAME},
-                render_to_string("foirequest/emails/request_update.txt",
-                    {"request": self,
-                    "user": self.user,
-                    "message": event_string,
-                    "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
-                settings.DEFAULT_FROM_EMAIL,
-                [self.user.email])
+        count = len(req_event_dict)
+        subject = ungettext_lazy(
+            "%(site_name)s: Update on one of your request",
+            "%(site_name)s: Update on %(count)s of your requests",
+            count) % {
+                'site_name': settings.SITE_NAME,
+                'count': count
+            }
+
+        # Add additional info to template context
+        user_profile = user.get_profile()
+        for request in req_event_dict:
+            req_event_dict[request].update({
+                'go_url': user_profile.get_autologin_url(
+                    request.get_absolute_short_url()
+                )
+            })
+
+        send_mail(subject,
+            render_to_string("foirequest/emails/request_update.txt",
+                {
+                    "user": user,
+                    "count": count,
+                    "req_event_dict": req_event_dict,
+                    "site_name": settings.SITE_NAME
+                }
+            ),
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email]
+        )
 
 
 class PublicBodySuggestion(models.Model):
