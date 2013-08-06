@@ -464,10 +464,10 @@ class FoiRequest(models.Model):
 
     def get_status_form(self):
         from .forms import FoiRequestStatusForm
-        if self.resolution:
-            status = 'resolved'
+        if self.status not in ('awaiting_response', 'resolved'):
+            status = ''
         else:
-            status = 'awaiting_response'
+            status = self.status
         return FoiRequestStatusForm(self,
                     initial={"status": status,
                         'resolution': self.resolution,
