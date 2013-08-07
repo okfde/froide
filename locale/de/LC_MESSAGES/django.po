@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: froide-2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-01 00:08+0200\n"
-"PO-Revision-Date: 2013-08-01 00:14+0100\n"
+"PO-Revision-Date: 2013-08-07 15:09+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: OKF-DE <info@fragdenstaat.de>\n"
 "Language: de\n"
@@ -1187,7 +1187,7 @@ msgstr "Noch kein Ergebnis"
 
 #: froide/foirequest/forms.py:278
 msgid "How would you describe the current outcome of this request?"
-msgstr "Wie würdest du das Ergebnis dieser Anfrage beschreiben?"
+msgstr "Wie würden Sie das Ergebnis dieser Anfrage beschreiben?"
 
 #: froide/foirequest/forms.py:280
 msgid "Redirected to"
