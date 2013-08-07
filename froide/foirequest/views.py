@@ -98,9 +98,10 @@ def list_requests(request, status=None, topic=None, tag=None,
         manager = FoiRequest.published_not_foi
     topic_list = PublicBodyTopic.objects.get_list()
     status_url = status
+    foi_requests = manager.for_list_view()
     if status is not None:
-        key, status = FoiRequest.get_status_from_url(status)
-        foi_requests = manager.for_list_view().filter(**{key: status})
+        func, status = FoiRequest.get_status_from_url(status)
+        foi_requests = foi_requests.filter(func(status))
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)

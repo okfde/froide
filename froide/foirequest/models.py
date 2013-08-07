@@ -65,9 +65,12 @@ class FoiRequestManager(CurrentSiteManager):
                 last_message__lt=some_days_ago)
 
     def get_dashboard_requests(self, user):
+        now = timezone.now()
         return self.get_query_set().filter(user=user).filter(
-            Q(status="awaiting_classification"))
-        # TODO: add overdue
+            Q(status="awaiting_classification") | (
+                Q(due_date__lt=now) & Q(status='awaiting_response')
+            )
+        )
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
@@ -192,18 +195,24 @@ class FoiRequest(models.Model):
         ),
     )
 
+    resolution_filter = lambda x: Q(resolution=x)
+    status_filter = lambda x: Q(status=x)
+
     STATUS_URLS = [
-        (_("successful"), 'resolution', 'successful'),
-        (_("partially-successful"), 'resolution', 'partially_successful'),
-        (_("refused"), 'resolution', 'refused'),
+        (_("successful"), resolution_filter, 'successful'),
+        (_("partially-successful"), resolution_filter, 'partially_successful'),
+        (_("refused"), resolution_filter, 'refused'),
         # (_("escalated"), 'status', 'escalated'),
-        (_("withdrawn"), 'resolution', 'user_withdrew'),
-        (_("withdrawn-costs"), 'resolution', 'user_withdrew_costs'),
-        (_("publicbody-needed"), 'status', 'publicbody_needed'),
-        (_("awaiting-response"), 'status', 'awaiting_response'),
-        # (_("overdue"), 'status', 'overdue'),
-        (_("asleep"), 'resolution', 'asleep'),
-        (_("not-held"), 'resolution', 'not_held')
+        (_("withdrawn"), resolution_filter, 'user_withdrew'),
+        (_("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
+        (_("publicbody-needed"), status_filter, 'publicbody_needed'),
+        (_("awaiting-response"), status_filter, 'awaiting_response'),
+        (_("overdue"), (lambda x:
+            Q(due_date__lt=timezone.now()) & Q(status='awaiting_response')),
+            'overdue'),
+        (_("asleep"), resolution_filter, 'asleep'),
+        (_("not-held"), resolution_filter, 'not_held'),
+        (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
     ]
 
     _STATUS_URLS_DICT = None
@@ -214,6 +223,18 @@ class FoiRequest(models.Model):
     STATUS_RESOLUTION = STATUS_CHOICES + RESOLUTION_CHOICES
 
     STATUS_RESOLUTION_DICT = dict([(x[0], x[1:]) for x in STATUS_RESOLUTION])
+    STATUS_RESOLUTION_DICT.update({
+        'overdue': (
+            _('Response overdue'),
+            _('The request has not been answered in time.'),
+            False
+        ),
+        'has_fee': (
+            _('Fee charged'),
+            _('This request is connected with a fee.'),
+            False
+        )
+    })
     USER_STATUS_CHOICES = [(x[0], x[1]) for x in STATUS_RESOLUTION if x[3]]
 
     VISIBILITY_CHOICES = (
@@ -337,6 +358,9 @@ class FoiRequest(models.Model):
 
     @property
     def status_representation(self):
+        now = timezone.now()
+        if self.status == 'awaiting_response' and now > self.due_date:
+            return 'overdue'
         return self.status if self.status != 'resolved' else self.resolution
 
     @property
