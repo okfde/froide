@@ -217,7 +217,7 @@ class FoiRequest(models.Model):
         (_("overdue"), (lambda x:
             Q(due_date__lt=timezone.now()) & Q(status='awaiting_response')),
             'overdue'),
-        (_("asleep"), resolution_filter, 'asleep'),
+        (_("asleep"), status_filter, 'asleep'),
         (_("not-held"), resolution_filter, 'not_held'),
         (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
     ]
