@@ -4,7 +4,6 @@ import magic
 import floppyforms as forms
 
 from django.conf import settings
-from django.core.mail import mail_admins
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
@@ -338,6 +337,7 @@ class FoiRequestStatusForm(forms.Form):
             foirequest.refusal_reason = u""
 
         foirequest.save()
+
         status = data.pop("status")
         if status == 'resolved':
             foirequest.status_changed.send(
