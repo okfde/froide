@@ -2,7 +2,7 @@
 
 Your request "{{ title }}" is not marked as resolved and has not seen any activity in the last 6 months. Therefore your request has been marked asleep.
 
-If you have received a response and your request is resolved, please mark it as such here:
+If you have received a response and your request is resolved, please add the response and mark the request resolved here:
 {{ url }}
 
 Cheers,
