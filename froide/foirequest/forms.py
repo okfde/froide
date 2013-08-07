@@ -267,7 +267,7 @@ class FoiRequestStatusForm(forms.Form):
             widget=forms.RadioSelect,
             choices=[('awaiting_response', _('This request is still ongoing.')),
                 ('resolved', _('This request is finished.')),
-                ('request_redirected', _('This request has been redirected to a different public body.'))
+                # ('request_redirected', _('This request has been redirected to a different public body.'))
             ]
     )
 
