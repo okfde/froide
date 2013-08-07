@@ -57,8 +57,11 @@ class FoiRequestManager(CurrentSiteManager):
     def get_asleep(self):
         six_months_ago = timezone.now() - timedelta(days=30 * 6)
         return self.get_query_set()\
-            .filter(status__neq='resolved',
-                last_message__lt=six_months_ago)
+            .filter(
+                last_message__lt=six_months_ago
+            ).filter(
+                status='awaiting_response'
+            )
 
     def get_to_be_asleep(self):
         return self.get_asleep().exclude(status='asleep')
