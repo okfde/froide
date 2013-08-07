@@ -20,6 +20,10 @@ def trigger_index_update(klass, instance_pk):
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="send_notification_became_overdue")
 def send_notification_became_overdue(sender, **kwargs):
+    if not sender.user.is_active:
+        return
+    if not sender.user.email:
+        return
     send_mail(_("%(site_name)s: Request became overdue")
                 % {"site_name": settings.SITE_NAME},
             render_to_string("foirequest/emails/became_overdue.txt",
@@ -30,9 +34,30 @@ def send_notification_became_overdue(sender, **kwargs):
             [sender.user.email])
 
 
+@receiver(FoiRequest.became_asleep,
+        dispatch_uid="send_notification_became_asleep")
+def send_notification_became_asleep(sender, **kwargs):
+    if not sender.user.is_active:
+        return
+    if not sender.user.email:
+        return
+    send_mail(_("%(site_name)s: Request became asleep")
+                % {"site_name": settings.SITE_NAME},
+            render_to_string("foirequest/emails/became_asleep.txt",
+                {"request": sender,
+                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
+                    "site_name": settings.SITE_NAME}),
+            settings.DEFAULT_FROM_EMAIL,
+            [sender.user.email])
+
+
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
+    if not sender.user.is_active:
+        return
+    if not sender.user.email:
+        return
     send_mail(_("You received a reply to your Freedom of Information Request"),
             render_to_string("foirequest/emails/message_received_notification.txt",
                 {"message": message, "request": sender,

@@ -38,7 +38,7 @@ def fetch_mail():
 @task
 def detect_overdue():
     translation.activate(settings.LANGUAGE_CODE)
-    for foirequest in FoiRequest.objects.get_overdue():
+    for foirequest in FoiRequest.objects.get_to_be_overdue():
         foirequest.set_overdue()
 
 

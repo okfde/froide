@@ -50,14 +50,18 @@ class FoiRequestManager(CurrentSiteManager):
         now = timezone.now()
         return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
 
-    def get_to_be_asleep(self):
-        return self.get_asleep().exclude(status='asleep')
+    def get_to_be_overdue(self):
+        yesterday = timezone.now() - timedelta(days=1)
+        return self.get_overdue().filter(due_date__gt=yesterday)
 
     def get_asleep(self):
         six_months_ago = timezone.now() - timedelta(days=30 * 6)
         return self.get_query_set()\
             .filter(status__neq='resolved',
                 last_message__lt=six_months_ago)
+
+    def get_to_be_asleep(self):
+        return self.get_asleep().exclude(status='asleep')
 
     def get_unclassified(self):
         some_days_ago = timezone.now() - timedelta(days=4)
@@ -933,12 +937,7 @@ class FoiRequest(models.Model):
         self.made_public.send(sender=self)
 
     def set_overdue(self):
-        if not self.awaits_response():
-            return None
-        self.status = "overdue"
-        self.save()
         self.became_overdue.send(sender=self)
-        # self.status_changed.send(sender=self, status=self.status, data={})
 
     def set_asleep(self):
         self.status = "asleep"
