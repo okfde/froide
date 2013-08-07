@@ -26,8 +26,10 @@ class FoiRequestAdmin(admin.ModelAdmin):
     inlines = [
         FoiMessageInline,
     ]
-    list_display = ('title', 'first_message', 'user', 'checked', 'public_body', 'status',)
-    list_filter = ('checked', 'first_message', 'last_message', 'status', 'is_foi', 'public')
+    list_display = ('title', 'first_message', 'user', 'checked',
+        'public_body', 'status',)
+    list_filter = ('checked', 'first_message', 'last_message', 'status',
+        'resolution', 'is_foi', 'public')
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
