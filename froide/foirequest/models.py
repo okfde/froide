@@ -930,6 +930,7 @@ class FoiRequest(models.Model):
             message.plaintext = self.construct_message_body(
                 self.description,
                 self.law, {}, send_address=send_address)
+            message.plaintext_redacted = message.redact_plaintext()
             assert not message.sent
             message.send()  # saves message
 

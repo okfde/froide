@@ -1193,3 +1193,66 @@ class MediatorTest(TestCase):
         self.assertEqual(response.status_code, 400)
         message = list(response.context['messages'])[0]
         self.assertIn('cannot be escalated', message.message)
+
+
+class JurisdictionTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.pb = PublicBody.objects.filter(jurisdiction__slug='nrw')[0]
+
+    def test_letter_public_body(self):
+        self.client.login(username='sw', password='froide')
+        post = {
+            "subject": "Jurisdiction-Test-Subject",
+            "body": "This is a test body",
+            "law": str(self.pb.default_law.pk)
+        }
+        response = self.client.post(
+            reverse('foirequest-submit_request',
+                kwargs={"public_body": self.pb.slug}
+        ), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title='Jurisdiction-Test-Subject')
+        law = FoiLaw.objects.get(meta=True, jurisdiction__slug='nrw')
+        self.assertEqual(req.law, law)
+        mes = req.messages[0]
+        self.assertIn(law.letter_end, mes.plaintext)
+
+    def test_letter_set_public_body(self):
+        self.client.login(username='sw', password='froide')
+        post = {
+            "subject": "Jurisdiction-Test-Subject",
+            "body": "This is a test body",
+            'law': str(FoiLaw.get_default_law().pk),
+            'publicbody': ''
+        }
+        response = self.client.post(
+            reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(
+            title=post['subject']
+        )
+        default_law = FoiLaw.get_default_law()
+        self.assertEqual(req.law, default_law)
+        mes = req.messages[0]
+        self.assertIn(default_law.letter_end, mes.plaintext)
+        self.assertIn(default_law.letter_end, mes.plaintext_redacted)
+
+        response = self.client.post(
+                reverse('foirequest-suggest_public_body',
+                kwargs={"slug": req.slug}),
+                {"public_body": str(self.pb.pk),
+                "reason": "A good reason"})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(
+                reverse('foirequest-set_public_body',
+                kwargs={"slug": req.slug}),
+                {"suggestion": str(self.pb.pk)})
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        law = FoiLaw.objects.get(meta=True, jurisdiction__slug='nrw')
+        self.assertEqual(req.law, law)
+        mes = req.messages[0]
+        self.assertNotEqual(default_law.letter_end, law.letter_end)
+        self.assertIn(law.letter_end, mes.plaintext)
+        self.assertIn(law.letter_end, mes.plaintext_redacted)
