@@ -60,6 +60,7 @@ def fake_convert_pdf(infile, outpath):
 
 FROIDE_CONFIG.update(dict(
     doc_conversion_call_func=fake_convert_pdf,
+    default_law=10000
 ))
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'

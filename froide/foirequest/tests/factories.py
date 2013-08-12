@@ -150,7 +150,7 @@ class FoiLawFactory(factory.Factory):
     updated = timezone.now() - timedelta(days=300)
     meta = False
     letter_start = factory.Sequence(lambda n: 'Dear Sir or Madam, {0}'.format(n))
-    letter_end = factory.Sequence(lambda n: 'Law text {0}.\nKind Regards'.format(n))
+    letter_end = factory.LazyAttribute(lambda o: 'Requesting according to {0}.\n\n Regards\nUsername'.format(o.name))
     jurisdiction = factory.SubFactory(JurisdictionFactory)
     priority = 3
     url = "http://example.com"
@@ -296,7 +296,8 @@ def make_world():
     meta_bund = FoiLawFactory.create(site=site, jurisdiction=bund,
         meta=True,
         name='IFG-UIG Bund',
-        mediator=mediator_bund
+        mediator=mediator_bund,
+        pk=10000
     )
     mediator_bund.laws.add(ifg_bund, uig_bund, meta_bund)
     meta_bund.combined.add(ifg_bund, uig_bund)
