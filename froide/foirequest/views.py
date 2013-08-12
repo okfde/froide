@@ -319,18 +319,18 @@ def submit_request(request, public_body=None):
             True, request.POST)
     context['request_form'] = request_form
     context['public_body_form'] = PublicBodyForm()
-    if public_body is None and \
-                request.POST.get('public_body') == "new":
-            pb_form = PublicBodyForm(request.POST)
-            context["public_body_form"] = pb_form
-            if pb_form.is_valid():
-                data = pb_form.cleaned_data
-                data['confirmed'] = False
-                # Take the first jurisdiction there is
-                data['jurisdiction'] = Jurisdiction.objects.all()[0]
-                public_body = PublicBody(**data)
-            else:
-                error = True
+    if (public_body is None and
+            request.POST.get('public_body') == "new"):
+        pb_form = PublicBodyForm(request.POST)
+        context["public_body_form"] = pb_form
+        if pb_form.is_valid():
+            data = pb_form.cleaned_data
+            data['confirmed'] = False
+            # Take the first jurisdiction there is
+            data['jurisdiction'] = Jurisdiction.objects.all()[0]
+            public_body = PublicBody(**data)
+        else:
+            error = True
 
     if not request_form.is_valid():
         error = True
