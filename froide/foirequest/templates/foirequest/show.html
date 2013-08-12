@@ -117,7 +117,7 @@
             </a>
           </li>
         {% endif %}
-        {% if object.status_is_final or object.law.meta or not object.public %}
+        {% if object.response_messages and object.law.meta and object.status_is_final %}
           <li>
             <a href="#more" data-toggle="tab">
               {% blocktrans %}More...{% endblocktrans %}
@@ -226,9 +226,9 @@
         {# End Reply, end if object.public_body #}
 
         {# If Meta Law #}
-        {% if object.law.meta or object.status_is_final or not object.public %}
+        {% if object.response_messages and object.law.meta and object.status_is_final %}
           <div class="tab-pane no-print" id="more">
-            {% if object.law.meta %}
+            {% if object.law.meta and object.response_messages %}
               <h4>{% trans "Set Law" %}</h4>
               <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
                 {% csrf_token %}
