@@ -79,6 +79,8 @@ class Profile(models.Model):
         content = content.replace(full_name, name_replacement)
         content = content.replace(last_name, name_replacement)
         content = content.replace(first_name, name_replacement)
+        if self.organization:
+            content = content.replace(self.organization, name_replacement)
 
         greeting_replacement = replacements.get('greeting',
                 unicode(_("<< Greeting >>")))
