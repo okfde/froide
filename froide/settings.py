@@ -301,6 +301,7 @@ LOGGING = {
 ######### Security ###########
 
 CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = True
 CSRF_FAILURE_VIEW = 'froide.account.views.csrf_failure'
 
 # Change this
