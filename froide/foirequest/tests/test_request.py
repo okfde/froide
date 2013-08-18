@@ -661,7 +661,7 @@ class RequestTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
         message = req.messages[1]
-        self.assertIn(req.get_absolute_short_url(), response.url)
+        self.assertIn(req.get_absolute_short_url(), response['Location'])
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
         form = MessagePublicBodySenderForm(message)
@@ -798,7 +798,7 @@ class RequestTest(TestCase):
                 }
         )
         self.assertEqual(response.status_code, 302)
-        self.assertIn(req.get_absolute_url(), response.url)
+        self.assertIn(req.get_absolute_url(), response['Location'])
         self.assertEqual(req.law.mediator, req.messages[-1].recipient_public_body)
         self.assertEqual(len(mail.outbox), 2)
 
@@ -1008,7 +1008,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         user = User.objects.get(username='dummy')
         same_req = FoiRequest.objects.get(same_as=req, user=user)
-        self.assertIn(same_req.get_absolute_url(), response.url)
+        self.assertIn(same_req.get_absolute_url(), response['Location'])
 
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug, "message_id": mes.id}))

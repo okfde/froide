@@ -142,7 +142,7 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-shortlink',
                 kwargs={"obj_id": req.id}))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, req.get_absolute_url())
+        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
         req.visibility = 1
         req.save()
         response = self.client.get(reverse('foirequest-shortlink',
@@ -162,13 +162,13 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-auth',
             kwargs={'obj_id': req.id, 'code': req.get_auth_code()}))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, req.get_absolute_url())
+        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
         # Check logged in with wrong code
         self.client.login(username="sw", password="froide")
         response = self.client.get(reverse('foirequest-auth',
             kwargs={'obj_id': req.id, 'code': '0a'}))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, req.get_absolute_url())
+        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
 
     def test_feed(self):
         response = self.client.get(reverse('foirequest-feed_latest'))
