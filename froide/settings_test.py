@@ -72,7 +72,6 @@ CACHES = {
     }
 }
 
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 # 'chrome' or 'firefox' or 'phantomjs'
 TEST_SELENIUM_DRIVER = 'phantomjs'
