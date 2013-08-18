@@ -14,8 +14,7 @@ urlpatterns = patterns("froide.account.views",
     (r'^confirm/(?P<user_id>\d+)/(?P<secret>\w{32})/$', 'confirm', {}, 'account-confirm'),
     (r'^confirm/(?P<user_id>\d+)/(?P<request_id>\d+)/(?P<secret>\w{32})/$', 'confirm',
         {}, 'account-confirm'),
-    (r'^reset/(?P<uidb36>[0-9A-Za-z]{1,13})-(?P<token>[0-9A-Za-z]{1,13}-'
-        '[0-9A-Za-z]{1,20})/$', 'password_reset_confirm', {},
+    (r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', 'password_reset_confirm', {},
     'account-password_reset_confirm'),
     (r'^go/(?P<user_id>\d+)/(?P<secret>\w{32})(?P<url>/.*)$', 'go', {}, 'account-go'),
 

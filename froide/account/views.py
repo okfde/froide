@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
-from django.utils.http import base36_to_int
+from django.utils.http import urlsafe_base64_decode, is_safe_url
 
 from froide.foirequestfollower.models import FoiRequestFollower
 from froide.foirequest.models import FoiRequest, FoiEvent
@@ -238,21 +238,25 @@ def send_reset_password_link(request):
     return login(request, context={"reset_form": form}, status=400)
 
 
-def password_reset_confirm(request, uidb36=None, token=None):
-    response = django_password_reset_confirm(request, uidb36=uidb36, token=token,
+def password_reset_confirm(request, uidb64=None, token=None):
+    # TODO: Fix this code
+    # - don't sniff response
+    # - make redirect
+
+    response = django_password_reset_confirm(request, uidb64=uidb64, token=token,
             template_name='account/password_reset_confirm.html',
             post_reset_redirect=reverse('account-show'))
-    # TODO: this is not the smartest of ideas
-    # if django view returns 302, it is assumed that everything was fine
-    # currently this seems safe to assume.
+
     if response.status_code == 302:
-        uid_int = base36_to_int(uidb36)
-        user = auth.models.User.objects.get(id=uid_int)
+        uid = urlsafe_base64_decode(uidb64)
+        user = auth.models.User.objects.get(pk=uid)
         login_user(request, user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been set and you are now logged in.'))
-        if 'next' in request.session:
-            response['Location'] = request.session['next']
+        if 'next' in request.session and is_safe_url(
+                    url=request.session['next'],
+                    host=request.get_host()):
+            response.url = request.session['next']
             del request.session['next']
     return response
 

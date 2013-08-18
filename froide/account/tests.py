@@ -267,19 +267,19 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         message = mail.outbox[0]
         match = re.search('/account/reset/([^/]+)/', message.body)
-        uidb36, token = match.group(1).split("-", 1)
+        uidb64, token = match.group(1).split("-", 1)
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": "2y1-d0b8c8b186fdc63ccc6"}))
+            kwargs={"uidb64": uidb64, "token": "2y1-d0b8c8b186fdc63ccc6"}))
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['validlink'])
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}))
+            kwargs={"uidb64": uidb64, "token": token}))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['validlink'])
         data = {"new_password1": "froide4",
                 "new_password2": "froide4"}
         response = self.client.post(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}), data)
+            kwargs={"uidb64": uidb64, "token": token}), data)
         self.assertEqual(response.status_code, 302)
         # we are already logged in after redirect
         # due to extra magic in wrapping view
@@ -302,15 +302,15 @@ class AccountTest(TestCase):
         self.assertTrue(response['Location'].endswith(url))
         message = mail.outbox[0]
         match = re.search('/account/reset/([^/]+)/', message.body)
-        uidb36, token = match.group(1).split("-", 1)
+        uidb64, token = match.group(1).split("-", 1)
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}))
+            kwargs={"uidb64": uidb64, "token": token}))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['validlink'])
         data = {"new_password1": "froide4",
                 "new_password2": "froide4"}
         response = self.client.post(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}), data)
+            kwargs={"uidb64": uidb64, "token": token}), data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].endswith(url))
 
