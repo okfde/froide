@@ -51,7 +51,7 @@ class AccountTest(TestCase):
                 "password": "froide"})
         # already logged in, login again gives 302
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('account-show'), response['location'])
+        self.assertIn(reverse('account-show'), response.url)
         response = self.client.get(reverse('account-logout'))
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('account-login') + "?simple")
@@ -61,7 +61,7 @@ class AccountTest(TestCase):
                 {"email": "mail@stefanwehrmeyer.com",
                 "password": "froide"})
         self.assertTrue(response.status_code, 302)
-        self.assertIn("simple", response['location'])
+        self.assertIn("simple", response.url)
         user = User.objects.get(email="mail@stefanwehrmeyer.com")
         user.is_active = False
         user.save()
@@ -163,8 +163,8 @@ class AccountTest(TestCase):
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('account-show'), response['Location'])
-        response = self.client.get(response['Location'])
+        self.assertIn(reverse('account-show'), response.url)
+        response = self.client.get(response.url)
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
@@ -191,7 +191,7 @@ class AccountTest(TestCase):
                 'secret': match.group(1)}))
         # user is inactive, but link was already used
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('account-login'), response['Location'])
+        self.assertIn(reverse('account-login'), response.url)
 
     def test_next_link_login(self):
         mes = FoiMessage.objects.all()[0]
@@ -205,7 +205,7 @@ class AccountTest(TestCase):
                 'next': url,
                 "password": "froide"})
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertEqual(response.url, url)
 
     def test_next_link_signup(self):
         self.client.logout()
@@ -229,7 +229,7 @@ class AccountTest(TestCase):
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertEqual(response.url, url)
 
     def test_change_password(self):
         response = self.client.get(reverse('account-change_password'))
@@ -299,7 +299,7 @@ class AccountTest(TestCase):
         }
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertEqual(response.url, url)
         message = mail.outbox[0]
         match = re.search('/account/reset/([^/]+)/', message.body)
         uidb64, token = match.group(1).split("-", 1)
@@ -312,7 +312,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-password_reset_confirm',
             kwargs={"uidb64": uidb64, "token": token}), data)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertEqual(response.url, url)
 
     def test_private_name(self):
         user = User.objects.get(username="dummy")
