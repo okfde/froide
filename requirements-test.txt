@@ -1,6 +1,6 @@
 -r requirements.txt
-pyelasticsearch==0.3
-selenium==2.30.0
-pep8==1.4.4
-factory-boy==1.1.4
+pyelasticsearch==0.6
+selenium==2.35.0
+pep8==1.4.6
+factory-boy==2.1.2
 coverage==3.6
