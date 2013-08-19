@@ -95,6 +95,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         from django.core.management import call_command
         csv_file = tempfile.NamedTemporaryFile()
         csv_file.write(PublicBody.export_csv(PublicBody.objects.all()))
+        csv_file.flush()
 
         call_command('import_csv', csv_file.name)
 
