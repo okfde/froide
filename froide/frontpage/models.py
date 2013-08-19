@@ -1,6 +1,6 @@
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 
@@ -23,9 +23,12 @@ class FeaturedRequest(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     text = models.TextField(_("Text"))
     url = models.CharField(_("URL"), max_length=255, blank=True)
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            null=True,
             on_delete=models.SET_NULL,
-            verbose_name=_("User"))
+            verbose_name=_("User")
+    )
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
 

@@ -329,7 +329,7 @@ class PerformanceTest(TestCase):
     def test_queries_foirequest_loggedin(self):
         """
         FoiRequest page should query for non-staff loggedin users
-        - Django session + Django user + profile (+3)
+        - Django session + Django user (+3)
         - FoiRequest (+1)
         - FoiMessages of that request (+1)
         - FoiAttachments of that request (+1)
@@ -344,5 +344,6 @@ class PerformanceTest(TestCase):
         factories.FoiAttachmentFactory.create(belongs_to=mes2)
         self.client.login(username='dummy', password='froide')
         ContentType.objects.clear_cache()
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             self.client.get(req.get_absolute_url())
+            pass

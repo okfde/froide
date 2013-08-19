@@ -4,12 +4,14 @@ from StringIO import StringIO
 import unicodecsv
 import requests
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 
 from froide.publicbody.models import (PublicBody, PublicBodyTopic,
     Jurisdiction, FoiLaw)
+
+User = get_user_model()
 
 
 class CSVImporter(object):

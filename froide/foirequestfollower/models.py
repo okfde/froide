@@ -3,7 +3,6 @@ import hmac
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.template.loader import render_to_string
@@ -47,7 +46,7 @@ class FoiRequestFollowerManager(models.Manager):
 class FoiRequestFollower(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
-    user = models.ForeignKey(User, null=True, blank=True, verbose_name=_("User"))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, verbose_name=_("User"))
     email = models.CharField(max_length=255, blank=True)
     confirmed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(_("Timestamp of Following"),

@@ -9,7 +9,6 @@ from django.db.models import Q
 from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
@@ -268,7 +267,7 @@ class FoiRequest(models.Model):
     visibility = models.SmallIntegerField(_("Visibility"), default=0,
             choices=VISIBILITY_CHOICES)
 
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
 
@@ -1003,7 +1002,7 @@ class PublicBodySuggestion(models.Model):
             verbose_name=_("Freedom of Information Request"))
     public_body = models.ForeignKey(PublicBody,
             verbose_name=_("Public Body"))
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
     timestamp = models.DateTimeField(_("Timestamp of Suggestion"),
@@ -1030,9 +1029,13 @@ class FoiMessage(models.Model):
             default=False)
     content_hidden = models.BooleanField(_("Content hidden?"),
             default=False)
-    sender_user = models.ForeignKey(User, blank=True, null=True,
+    sender_user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            blank=True,
+            null=True,
             on_delete=models.SET_NULL,
-            verbose_name=_("From User"))
+            verbose_name=_("From User")
+    )
     sender_email = models.CharField(_("From Email"),
             blank=True, max_length=255)
     sender_name = models.CharField(_("From Name"),
@@ -1365,7 +1368,7 @@ class FoiEventManager(models.Manager):
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL, blank=True,
             verbose_name=_("User"))
     public_body = models.ForeignKey(PublicBody, null=True,

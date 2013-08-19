@@ -147,7 +147,8 @@ SECRET_URLS = {
 
 ######### Backends, Finders, Processors, Classes ####
 
-AUTH_PROFILE_MODULE = 'account.Profile'
+AUTH_USER_MODEL = 'account.User'
+
 
 # List of finder classes that know how to find static files in
 # various locations.

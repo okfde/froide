@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
@@ -235,10 +234,12 @@ class PublicBody(models.Model):
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
 
-    _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
+    _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
             on_delete=models.SET_NULL, default=1)
-    _updated_by = models.ForeignKey(User, verbose_name=_("Updated by"),
+    _updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            verbose_name=_("Updated by"),
             blank=True, null=True, related_name='public_body_updaters',
             on_delete=models.SET_NULL, default=1)
     confirmed = models.BooleanField(_("confirmed"), default=True)
@@ -272,11 +273,11 @@ class PublicBody(models.Model):
 
     @property
     def created_by(self):
-        return self._created_by or AnonymousUser()
+        return self._created_by
 
     @property
     def updated_by(self):
-        return self._updated_by or AnonymousUser()
+        return self._updated_by
 
     @property
     def domain(self):

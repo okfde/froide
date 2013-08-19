@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib import auth
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from froide.helper.widgets import AgreeCheckboxInput
@@ -73,9 +73,10 @@ class NewUserForm(forms.Form):
 
     def clean_user_email(self):
         email = self.cleaned_data['user_email']
+        user_model = get_user_model()
         try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
+            user = user_model.objects.get(email=email)
+        except user_model.DoesNotExist:
             pass
         else:
             if user.is_active:
@@ -132,7 +133,7 @@ class UserChangeEmailForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        if User.objects.filter(email=email).exists():
+        if get_user_model().objects.filter(email=email).exists():
             raise forms.ValidationError(
                 _('A user with that email address already exists!')
             )

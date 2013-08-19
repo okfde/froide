@@ -1,10 +1,14 @@
 from django.contrib import admin
-from froide.account.models import Profile
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from froide.account.models import User
 
 
-class ProfileAdmin(admin.ModelAdmin):
-    raw_id_fields = ('user',)
-    search_fields = ['user__username', 'user__first_name', 'user__last_name', 'user__email']
-    list_display = ('user', 'address')
+class UserAdmin(DjangoUserAdmin):
+    fieldsets = list(DjangoUserAdmin.fieldsets) + [
+        (_('Profile info'), {'fields': ('address', 'organization',
+            'organization_url', 'private')})
+    ]
 
-admin.site.register(Profile, ProfileAdmin)
+
+admin.site.register(User, UserAdmin)

@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
@@ -33,6 +33,7 @@ from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
+User = get_user_model()
 
 
 @cache_anonymous_page(15 * 60)

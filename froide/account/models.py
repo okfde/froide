@@ -6,47 +6,45 @@ from django.db import models, transaction, IntegrityError
 from django.conf import settings
 from django import dispatch
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.contrib.auth.forms import SetPasswordForm
 from django.utils.crypto import constant_time_compare
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.models import AbstractUser, UserManager
 
-
-@dispatch.receiver(post_save, sender=User, dispatch_uid="account.models.create_profile")
-def create_profile(sender, instance=None, created=False, **kwargs):
-    if created and not kwargs.get('raw', False):
-        Profile.objects.create(user=instance)
 
 user_activated_signal = dispatch.Signal(providing_args=[])
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User)
+class User(AbstractUser):
     organization = models.CharField(blank=True, max_length=255)
     organization_url = models.URLField(blank=True, max_length=255)
     private = models.BooleanField(default=False)
     address = models.TextField(blank=True)
 
-    def __unicode__(self):
-        return unicode(_(u"Profile of <%(user)s>") % {"user": self.user})
+    objects = UserManager()
+
+    class Meta:
+        db_table = 'auth_user'
+
+    def get_profile(self):
+        return self
 
     def get_absolute_url(self):
         if self.private:
             return ""
-        return reverse('account-profile', kwargs={'slug': self.user.username})
+        return reverse('account-profile', kwargs={'slug': self.username})
 
     def display_name(self):
         if self.private:
             return unicode(_(u"Name Not Public"))
         else:
             if self.organization:
-                return u'%s (%s)' % (self.user.get_full_name(), self.organization)
+                return u'%s (%s)' % (self.get_full_name(), self.organization)
             else:
-                return self.user.get_full_name()
+                return self.get_full_name()
 
     def apply_message_redaction(self, content, replacements=None):
         if replacements is None:
@@ -60,8 +58,8 @@ class Profile(models.Model):
                                 unicode(_("<< Address removed >>")))
                     )
 
-        if self.user.email and replacements.get('email') is not False:
-            content = content.replace(self.user.email,
+        if self.email and replacements.get('email') is not False:
+            content = content.replace(self.email,
                     replacements.get('email',
                     unicode(_("<< Email removed >>")))
             )
@@ -69,9 +67,9 @@ class Profile(models.Model):
         if not self.private or replacements.get('name') is False:
             return content
 
-        last_name = self.user.last_name
-        first_name = self.user.first_name
-        full_name = self.user.get_full_name()
+        last_name = self.last_name
+        first_name = self.first_name
+        full_name = self.get_full_name()
 
         name_replacement = replacements.get('name',
                 unicode(_("<< Name removed >>")))
@@ -101,15 +99,18 @@ class Profile(models.Model):
         return content
 
     def get_autologin_url(self, url):
-        account_manager = AccountManager(self.user)
+        account_manager = AccountManager(self)
         return account_manager.get_autologin_url(url)
 
     def get_password_change_form(self, *args, **kwargs):
-        return SetPasswordForm(self.user, *args, **kwargs)
+        return SetPasswordForm(self, *args, **kwargs)
 
     def get_address_change_form(self, *args, **kwargs):
         from froide.account.forms import UserChangeAddressForm
         return UserChangeAddressForm(self, *args, **kwargs)
+
+# Backwards compatibility
+Profile = User
 
 
 class AccountManager(object):
@@ -223,6 +224,11 @@ class AccountManager(object):
             password = User.objects.make_random_password()
         user.set_password(password)
 
+        user.private = data['private']
+
+        for key in ('address', 'organization', 'organization_url'):
+            setattr(user, key, data.get(key, ''))
+
         # ensure username is unique
         while True:
             username = username_base
@@ -245,14 +251,9 @@ class AccountManager(object):
                     user.save()
                 except IntegrityError:
                     transaction.rollback()
+                    raise
                 else:
                     transaction.commit()
                     break
 
-        profile = user.get_profile()
-        for key in data:
-            if key in ('first_name', 'last_name', 'user_email', 'password'):
-                continue
-            setattr(profile, key, data[key])
-        profile.save()
         return user, password

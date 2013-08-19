@@ -17,7 +17,7 @@ from froide.helper.utils import render_403
 
 from .forms import (UserLoginForm, NewUserForm, UserEmailConfirmationForm,
         UserChangeAddressForm, UserDeleteForm, UserChangeEmailForm)
-from .models import AccountManager, User
+from .models import AccountManager
 
 
 def confirm(request, user_id, secret, request_id=None):
@@ -25,7 +25,7 @@ def confirm(request, user_id, secret, request_id=None):
         messages.add_message(request, messages.ERROR,
                 _('You are logged in and cannot use a confirmation link.'))
         return redirect('account-show')
-    user = get_object_or_404(auth.models.User, pk=int(user_id))
+    user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
     if user.is_active:
         return redirect('account-login')
     account_manager = AccountManager(user)
@@ -56,7 +56,7 @@ def go(request, user_id, secret, url):
             messages.add_message(request, messages.INFO,
                 _('You are logged in with a different user account. Please logout first before using this link.'))
     else:
-        user = get_object_or_404(auth.models.User, pk=int(user_id))
+        user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
         if not user.is_active:
             messages.add_message(request, messages.ERROR,
                 _('Your account is not active.'))
@@ -99,7 +99,7 @@ def show(request, context=None, status=200):
 
 
 def profile(request, slug):
-    user = get_object_or_404(User, username=slug)
+    user = get_object_or_404(auth.get_user_model(), username=slug)
     profile = user.get_profile()
     if profile.private:
         raise Http404
@@ -233,7 +233,9 @@ def send_reset_password_link(request):
             request.session['next'] = next
         form.save(use_https=True, email_template_name="account/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
-                _('Check your mail, we sent you a password reset link.'))
+                ("Check your mail, we sent you a password reset link."
+                " If you don't receive an email, check if you entered your"
+                " email correctly or if you really have an account "))
         return redirect(next_url)
     return login(request, context={"reset_form": form}, status=400)
 
@@ -249,14 +251,14 @@ def password_reset_confirm(request, uidb64=None, token=None):
 
     if response.status_code == 302:
         uid = urlsafe_base64_decode(uidb64)
-        user = auth.models.User.objects.get(pk=uid)
+        user = auth.get_user_model().objects.get(pk=uid)
         login_user(request, user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been set and you are now logged in.'))
         if 'next' in request.session and is_safe_url(
                     url=request.session['next'],
                     host=request.get_host()):
-            response.url = request.session['next']
+            response['Location'] = request.session['next']
             del request.session['next']
     return response
 

@@ -6,7 +6,7 @@ import os
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core import mail
 from django.utils import timezone
@@ -15,6 +15,8 @@ from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.helper.test_utils import skip_if_environ
+
+User = get_user_model()
 
 
 class RequestTest(TestCase):

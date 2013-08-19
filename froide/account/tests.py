@@ -4,7 +4,7 @@ import urllib
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core import mail
 
 from froide.publicbody.models import PublicBody
@@ -13,6 +13,8 @@ from froide.foirequest.tests import factories
 
 from .models import AccountManager
 from .utils import merge_accounts
+
+User = get_user_model()
 
 
 class AccountTest(TestCase):
@@ -261,7 +263,8 @@ class AccountTest(TestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
         response = self.client.post(reverse('account-send_reset_password_link'), data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
         data['email'] = 'mail@stefanwehrmeyer.com'
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
@@ -302,8 +305,9 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/', message.body)
-        uidb64, token = match.group(1).split("-", 1)
+        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        uidb64 = match.group(1)
+        token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
             kwargs={"uidb64": uidb64, "token": token}))
         self.assertEqual(response.status_code, 200)

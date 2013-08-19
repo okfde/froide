@@ -1,7 +1,7 @@
 from django.contrib.auth.backends import ModelBackend
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.auth import models, load_backend, login
+from django.contrib.auth import load_backend, login, get_user_model
 from django.conf import settings
 
 
@@ -11,11 +11,12 @@ class EmailBackend(ModelBackend):
             validate_email(username)
         except ValidationError:
             return None
+        user_model = get_user_model()
         try:
-            user = models.User.objects.get(email=username)
+            user = user_model.objects.get(email=username)
             if user.check_password(password):
                 return user
-        except models.User.DoesNotExist:
+        except user_model.DoesNotExist:
             return None
         return None
 
