@@ -1147,7 +1147,7 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         response = self.client.get('%s?q=%s' % (
             reverse('foirequest-search'), pb.name[:6]))
-        self.assertIn(pb.name, response.content)
+        self.assertIn(pb.name, response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
 
 
