@@ -19,10 +19,18 @@ PDFRedact.prototype.setup = function(){
   var self = this;
   self.isDown = false;
 
+  var getOffset = function(e){
+    return [
+      (e.offsetX || e.originalEvent.layerX),
+      (e.offsetY || e.originalEvent.layerY)
+    ];
+  }
+
   $(this.canvas).on('mousedown', function(e) {
       self.isDown = true;
-      var x = e.offsetX === undefined ? e.layerX : e.offsetX;
-      var y = e.offsetY === undefined ? e.layerY : e.offsetY;
+      var offset = getOffset(e);
+      var x = offset[0];
+      var y = offset[1];
       self.pageRedactions[self.currentPage].push([x, y, 0, 0]);
       self.drawRedaction();
   });
@@ -33,8 +41,9 @@ PDFRedact.prototype.setup = function(){
       }
       var redactions = self.pageRedactions[self.currentPage];
       var r = redactions[redactions.length - 1];
-      var x = e.offsetX === undefined ? e.layerX : e.offsetX;
-      var y = e.offsetY === undefined ? e.layerY : e.offsetY;
+      var offset = getOffset(e);
+      var x = offset[0];
+      var y = offset[1];
       r[2] = x - r[0];
       r[3] = y - r[1];
       self.drawRedaction();
@@ -46,8 +55,9 @@ PDFRedact.prototype.setup = function(){
     }
     var redactions = self.pageRedactions[self.currentPage];
     var r = redactions[redactions.length - 1];
-    var x = e.offsetX === undefined ? e.layerX : e.offsetX;
-    var y = e.offsetY === undefined ? e.layerY : e.offsetY;
+    var offset = getOffset(e);
+    var x = offset[0];
+    var y = offset[1];
     r[2] = x - r[0];
     r[3] = y - r[1];
     self.isDown = false;
