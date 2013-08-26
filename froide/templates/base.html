@@ -7,8 +7,9 @@
   {% block header_font %}
   {% endblock %}
   <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-  <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
+  {% block extra_css %}
+  {% endblock %}
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
   <meta name="language" content="{{ LANGUAGE_CODE }}" />
 
@@ -29,78 +30,81 @@
   {% endblock %}
 </head>
 
-<body>
+<body{% block body_extra_attribuets %}{% endblock %}>
   {% block dryrun_block %}
   {% if froide.dryrun %}
   <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ froide.dryrun_domain }}</div>
   {% endif %}
   {% endblock %}
-  <div class="navbar">
-    <div class="navbar-inner">
-      <div class="container">
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+
+  <div class="navbar {% block navbar-class %}navbar-default{% endblock %}">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a href="{% url 'index' %}" class="brand">
-          <h1>{{ SITE_NAME }}</h1>
+        <a class="navbar-brand" href="{% url 'index' %}">
+          <span>{{ SITE_NAME }}</span>
         </a>
-        <div class="nav-collapse collapse">
-          {% block nav %}
-          <ul class="nav">
-            <li class="first-divider divider-vertical"></li>
-            <li class="{% block nav_requests %}{% endblock %}">
-              <a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
-            </li>
-            <li class="{% block nav_publicbodies %}{% endblock %}">
-              <a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a>
-           </li>
-            <li class="special-nav-item {% block nav_makerequest %}{% endblock %}">
-              <a href="{% url 'foirequest-make_request' %}"><span>{% blocktrans %}Make a Request!{% endblocktrans %}</span></a>
-            </li>
-          </ul>
-          {% endblock nav %}
-          <form class="navbar-search pull-left" action="{% url 'foirequest-search' %}" method="get">
-            <input class="span2 search-query" type="text" name="q" placeholder="{% trans "Search" %}"/>
-          </form>
-          <ul class="nav pull-right">
-            {% if user.is_authenticated %}
-            <li class="dropdown">
-              <a href="#" class="account-snippet" data-toggle="dropdown">
-                <img width="30" src="{% gravatar_url user.email 30 %}" alt="{{ user.get_full_name }}"/>
-                <p class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
-                  {{ user.last_name|truncatechars:12 }}
-                </p>
-                <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <a href="{% url 'account-show' %}">{% trans "Account" %}</a>
-                </li>
-                {% if not user.get_profile.private %}
-                <li>
-                  <a href="{{ user.get_profile.get_absolute_url }}">{% trans "Public Profile" %}</a>
-                </li>
-                {% endif %}
-                <li class="divider"></li>
-                <li>
-                  <a href="{% url 'account-logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a>
-                </li>
-              </ul>
-            </li>
-            {% else %}
-              <li>
-                <a class="account-login" href="{% url 'account-login' %}">
-                  {% blocktrans %}Log In /<br/>Sign up{% endblocktrans %}
-                </a>
-              </li>
-            {% endif %}
-          </ul>
-        </div>
       </div>
+      <div class="navbar-collapse collapse">
+        {% block nav %}
+        <ul class="nav navbar-nav">
+          <li class="{% block nav_requests %}{% endblock %}">
+            <a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
+          </li>
+          <li class="{% block nav_publicbodies %}{% endblock %}">
+            <a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a>
+         </li>
+          <li class="special-nav-item {% block nav_makerequest %}{% endblock %}">
+            <a href="{% url 'foirequest-make_request' %}"><span>{% blocktrans %}Make a Request!{% endblocktrans %}</span></a>
+          </li>
+        </ul>
+        {% endblock nav %}
+        <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'foirequest-search' %}">
+          <div class="form-group">
+            <input class="col-lg-3 search-query form-control" type="text" name="q" placeholder="{% trans "Search" %}"/>
+          </div>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+          <li class="dropdown">
+            <a class="dropdown-toggle account-dropdown" data-toggle="dropdown" href="#">
+              <img width="30" src="{% gravatar_url user.email 30 %}" alt="{{ user.get_full_name }}"/>
+              <small class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
+                {{ user.last_name|truncatechars:12 }}
+              </small>
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{% url 'account-show' %}">{% trans "Account" %}</a>
+              </li>
+              {% if not user.get_profile.private %}
+              <li>
+                <a href="{{ user.get_profile.get_absolute_url }}">{% trans "Public Profile" %}</a>
+              </li>
+              {% endif %}
+              <li class="divider"></li>
+              <li>
+                <a href="{% url 'account-logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a>
+              </li>
+            </ul>
+          </li>
+          {% else %}
+            <li>
+              <a class="account-login" href="{% url 'account-login' %}">
+                {% blocktrans %}Log In /<br/>Sign up{% endblocktrans %}
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </div><!--/.nav-collapse -->
     </div>
   </div>
+
   {% block index_banner %}{% endblock %}
   {% block foisite_advice %}{% endblock %}
 
@@ -120,11 +124,11 @@
   {% endblock %}
   </div>
 
-<hr/>
-<footer class="container" id="footer">
-  {% block footer %}
+  <footer class="container" id="footer">
+    <hr/>
+    {% block footer %}
     <div class="row">
-      <div class="span9">
+      <div class="col-lg-9">
         {% block footer_description %}
         <p>
           {% url 'help-donate' as about_url %}
@@ -132,7 +136,7 @@
         </p>
         {% endblock %}
       </div>
-      <div class="span3">
+      <div class="col-lg-3">
         {% block footer_logo %}
         <a href="http://www.okfn.de">
           <img src="{{ STATIC_URL }}img/okf.png" />
@@ -142,7 +146,7 @@
     </div>
     <hr/>
     <div class="row">
-      <ul class="span12 unstyled pagination-centered">
+      <ul class="col-lg-12 unstyled pagination-centered">
         {% block footer_menu %}
         <li>
           <a href="{% url 'help-about' %}">{% trans "About" %}</a>
@@ -164,7 +168,11 @@
   </footer>
 
   <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery.js"%3E%3C/script%3E'))</script>
-  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+  {% if debug %}
+    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+  {% else %}
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+  {% endif %}
   <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
   <script src="{{ STATIC_URL }}js/libs/jquery.autocomplete.js"></script>
 

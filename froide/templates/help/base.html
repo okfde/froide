@@ -5,12 +5,12 @@
 
 {% block body %}
 <div class="row">
-	<div class="span9">
+	<div class="col-lg-9">
 	  {% block helpbody %}{% endblock %}
 	</div>
-	<div class="span3">
+	<div class="col-lg-3">
 	  <h3>{% blocktrans %}Help Pages{% endblocktrans %}</h3>
-	  <ul class="nav nav-list">
+	  <ul class="nav nav-compact">
 	    <li>
 	    	<a href="{% url 'help-index' %}">{% trans "General Information" %}</a>
 	    </li>

@@ -7,7 +7,7 @@
   <div class="span10">
     <h2>{% blocktrans %}Search Results for &quot;{{ query }}&quot; in Public Bodies{% endblocktrans %}</h2>
     {% include "publicbody/_search_form.html" %}
-    <ul class="unstyled">
+    <ul class="list-unstyled">
       {% for object in page.object_list %}
         <li>
           {% include "publicbody/snippets/publicbody_item.html" %}

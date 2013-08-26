@@ -16,7 +16,7 @@
 <div class="row">
   <div class="span6">
     <h3>{% blocktrans count counter=requests|length %}One Request{% plural %}{{ counter }} requests{% endblocktrans %}</h3>
-    <ul class="unstyled">
+    <ul class="list-unstyled">
       {% for object in requests %}
         <li>
           {% include "foirequest/snippets/request_item.html" %}

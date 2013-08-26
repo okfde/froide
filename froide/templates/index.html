@@ -8,7 +8,7 @@
 
 <div class="heroine-unit" id="main-folders">
   <div class="row">
-    <div class="span6">
+    <div class="col-lg-6">
       <h1>{% block site_name %}{{ SITE_NAME }}{% endblock %}</h1>
       {% block site_description %}
         <p>
@@ -16,11 +16,18 @@
         </p>
       {% endblock %}
       <br/>
-      <form method="get" action="{% url 'foirequest-search' %}" class="form-search">
-        <label>{% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}</label>
-        <div class="input-append">
-          <input class="input-medium search-query span3" type="text" name="q" autocomplete="off"/>
-          <button class="btn btn-primary btn-success" type="submit"><i class="icon-white icon-search"></i> {% blocktrans %}Search For Information{% endblocktrans %}</button>
+      <form method="get" action="{% url 'foirequest-search' %}">
+        <label for="index-search">
+          {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
+        </label>
+        <div class="input-group">
+          <input id="index-search"class="form-control col-lg-3" type="text" name="q" autocomplete="off"/>
+          <span class="input-group-btn">
+            <button class="btn btn-success" type="submit">
+              <span class="glyphicon glyphicon-search"></span>
+              {% blocktrans %}Search For Information{% endblocktrans %}
+            </button>
+          </span>
         </div>
         <span class="help-block">
           {% block example_search_terms %}
@@ -32,7 +39,7 @@
         </span>
       </form>
     </div>
-    <div class="span5">
+    <div class="col-lg-6">
       <div id="main-foirequests" class="well">
         {% if featured %}
         <div class="frontpage-teaser">
@@ -42,12 +49,18 @@
           </p>
           {% if featured.url %}
             <p>
-              <a href="{{ featured.url }}"><i class="icon-bullhorn"></i> {% blocktrans %}Read the blog post{% endblocktrans %}</a>
+              <a href="{{ featured.url }}">
+                <span class="glyphicon glyphicon-bullhorn"></span>
+                {% blocktrans %}Read the blog post{% endblocktrans %}
+              </a>
             </p>
           {% endif %}
           {% if featured.request %}
             <p>
-              <a href="{% url 'foirequest-show' slug=featured.request.slug %}"><i class="icon-envelope"></i> {% blocktrans %}Visit this request{% endblocktrans %}</a>
+              <a href="{% url 'foirequest-show' slug=featured.request.slug %}">
+                <span class="glyphicon glyphicon-envelope"></span>
+                {% blocktrans %}Visit this request{% endblocktrans %}
+              </a>
             </p>
           {% endif %}
         </div>
@@ -68,7 +81,7 @@
 </div>
 
 <div class="row">
-  <div class="span6">
+  <div class="col-lg-6">
     {% block index_sub_left %}
     <h3>{% blocktrans %}What is Freedom of Information?{% endblocktrans %}</h3>
     <p>{% blocktrans %}Every citizen has the right under the Freedom of Information Laws to ask for and receive access to information from Public Bodies concerning public affairs.{% endblocktrans %}
@@ -78,7 +91,7 @@
     {% endblock %}
   </div>
 
-  <div class="span6">
+  <div class="col-lg-6">
     {% block index_sub_right %}
     <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
     <p>{% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information and replies can be scrutinized by the public.{% endblocktrans %}
@@ -90,21 +103,21 @@
 </div>
 
 <div class="row">
-  <div class="span6">
+  <div class="col-lg-6">
     <h3>{% blocktrans %}Successful Requests{% endblocktrans %}</h3>
-    <ul class="unstyled">
-        {% for object in successful_foi_requests %}
-        <li>
+    <ul class="media-list">
+      {% for object in successful_foi_requests %}
+        <li class="media">
           {% include "foirequest/snippets/request_item.html" %}
         </li>
       {% endfor %}
     </ul>
   </div>
-  <div class="span6">
+  <div class="col-lg-6">
     <h3>{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h3>
-    <ul class="unstyled">
+    <ul class="media-list">
       {% for object in unsuccessful_foi_requests %}
-        <li>
+        <li class="media">
           {% include "foirequest/snippets/request_item.html" %}
         </li>
       {% endfor %}

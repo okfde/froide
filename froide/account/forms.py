@@ -21,30 +21,39 @@ class NewUserForm(forms.Form):
     first_name = forms.CharField(max_length=30,
             label=_('First name'),
             widget=forms.TextInput(attrs={'placeholder': _('First Name'),
-                'class': 'input-medium'}))
+                'class': 'form-control'}))
     last_name = forms.CharField(max_length=30,
             label=_('Last name'),
             widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
-                'class': 'input-medium'}))
+                'class': 'form-control'}))
     address = forms.CharField(max_length=300,
             required=False,
             label=_('Mailing Address'),
             help_text=_('Optional. Your address will not be displayed publicly and is only needed in case a public body needs to send you paper.'),
             widget=forms.Textarea(attrs={
                 'rows': '3',
-                'class': 'input-large',
+                'class': 'form-control',
                 'placeholder': _('Street, Post Code, City'),
             }))
     user_email = forms.EmailField(label=_('Email address'),
             max_length=75,
             help_text=_('Not public. The given address will '
                         'need to be confirmed.'),
-            widget=forms.EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
+            widget=forms.EmailInput(attrs=
+                {
+                    'placeholder': _('mail@ddress.net'),
+                    'class': 'form-control'
+                }
+            ))
 
     if HAVE_ORGANIZATION:
         organization = forms.CharField(required=False,
                 label=_("Organization"),
-                help_text=_('Optional. Affiliation will be shown next to your name'))
+                help_text=_('Optional. Affiliation will be shown next to your name'),
+                widget=forms.TextInput(attrs={
+                    'placeholder': _('Organization'),
+                    'class': 'form-control'})
+            )
 
     if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(required=False,
@@ -103,10 +112,25 @@ class NewUserWithPasswordForm(NewUserForm):
 
 class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(
-        attrs={'placeholder': _('mail@ddress.net')}),
+        attrs={
+            'placeholder': _('mail@ddress.net'),
+            'class': 'form-control'
+        }),
         label=_('Email address'))
-    password = forms.CharField(widget=forms.PasswordInput,
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control'
+        }),
         label=_('Password'))
+
+
+class PasswordResetForm(auth.forms.PasswordResetForm):
+    email = forms.EmailField(widget=forms.EmailInput(
+        attrs={
+            'placeholder': _('mail@ddress.net'),
+            'class': 'form-control'
+        }),
+        label=_('Email address'))
 
 
 class UserChangeAddressForm(forms.Form):

@@ -288,18 +288,20 @@ def make_request(request, public_body=None):
     if 'body' in request.GET:
         initial['body'] = request.GET['body']
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
+    public_body_search = request.GET.get("topic", "")
+    initial['public_body_search'] = public_body_search
     rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
             True, initial=initial)
-    topic = request.GET.get("topic", "")
     user_form = None
     if not request.user.is_authenticated():
         user_form = NewUserForm()
-    return render(request, 'foirequest/request.html',
-            {"public_body": public_body,
-            "public_body_form": public_body_form,
-            "request_form": rq_form,
-            "user_form": user_form,
-            "topic": topic})
+    return render(request, 'foirequest/request.html', {
+        "public_body": public_body,
+        "public_body_form": public_body_form,
+        "request_form": rq_form,
+        "user_form": user_form,
+        "public_body_search": public_body_search
+    })
 
 
 @require_POST

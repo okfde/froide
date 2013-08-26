@@ -446,13 +446,16 @@ class FoiRequest(models.Model):
         return self.status == 'publicbody_needed'
 
     def awaits_response(self):
-        return self.status == 'awaiting_response' or self.status == 'overdue'
+        return self.status == 'awaiting_response'
 
     def can_be_escalated(self):
         return not self.needs_public_body() and (
             self.is_overdue() or self.reply_received())
 
     def is_overdue(self):
+        return self.was_overdue() and self.awaits_response()
+
+    def was_overdue(self):
         if self.due_date:
             return self.due_date < timezone.now()
         return False

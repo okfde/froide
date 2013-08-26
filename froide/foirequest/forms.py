@@ -32,15 +32,18 @@ class RequestForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(
                 attrs={'placeholder': _("Subject"),
-                "class": "span8"}))
+                "class": "form-control"}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
                 attrs={
                     'placeholder': _("Specify your request here..."),
-                    "class": "span11"
+                    "class": "form-control"
                 }))
     public = forms.BooleanField(required=False, initial=True,
-            label=_("This request will be public immediately."))
+            label=_("This request is public."),
+            help_text=_("If you don't want your request to be public right now,"
+                        " uncheck this. You can always decide to make it public later.")
+            )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
@@ -50,7 +53,11 @@ class RequestForm(forms.Form):
         self.default_law = default_law
 
         self.fields["public_body"].widget.set_initial_jurisdiction(
-                kwargs.get('initial', {}).pop('jurisdiction', None))
+            kwargs.get('initial', {}).pop('jurisdiction', None)
+        )
+        self.fields["public_body"].widget.set_initial_search(
+            kwargs.get('initial', {}).pop('public_body_search', None)
+        )
         self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
             required=False,
             widget=forms.RadioSelect if not hidden else forms.HiddenInput,

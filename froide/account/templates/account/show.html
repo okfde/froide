@@ -4,26 +4,26 @@
 
 {% block body %}
 <div class="row">
-  <div class="span8">
+  <div class="col-lg-8">
     <h2>{% trans "Your Account" %}</h2>
   </div>
-  <div class="span4">
-    <a href="{% url 'account-settings' %}" class="btn pull-right">
-      <i class="icon icon-wrench"></i>
+  <div class="col-lg-4">
+    <a href="{% url 'account-settings' %}" class="btn btn-default pull-right">
+      <span class="glyphicon glyphicon-wrench"></span>
       {% trans "Your account settings" %}
     </a>
   </div>
 </div>
 
 <div class="row">
-  <div class="span12">
+  <div class="col-lg-12">
     {% if own_requests %}
       <h3>
         {% blocktrans count counter=own_requests|length %}One request that needs your attention{% plural %}{{ counter }} requests that need your attention{% endblocktrans %}
       </h3>
-      <ul class="unstyled">
+      <ul class="media-list">
         {% for object in own_requests %}
-          <li>
+          <li class="media">
             {% include "foirequest/snippets/request_item.html" %}
           </li>
         {% endfor %}
@@ -31,8 +31,9 @@
     {% endif %}
   </div>
 </div>
+
 <div class="row">
-  <div class="span12">
+  <div class="col-lg-12">
     <h3>
       {% trans "Your followed requests" %}
     </h3>
@@ -72,11 +73,13 @@
       <a href="#followed-requests" class="toggle">{% trans "Show all the requests that you are following." %}</a>
     </p>
     <div id="followed-requests" style="display:none">
-      <ul>
+      <ul class="media-list">
       {% for followed in followed_requests %}
+        <li class="media">
         {% with object=followed.request %}
           {% include "foirequest/snippets/request_item.html" %}
         {% endwith %}
+        </li>
       {% empty %}
         <li>
           {% trans "You don't follow any requests. Click the follow button on a request page to follow it." %}
@@ -91,43 +94,42 @@
 {% if not user.is_active %}
   <p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>
 {% else %}
-<div class="span12">
+<div class="col-lg-12">
   <table class="table table-hover">
     <caption>{% blocktrans %}Your Freedom of Information Requests{% endblocktrans %}</caption>
     <thead>
       <tr>
         <th>{% blocktrans %}Title{% endblocktrans %}</th>
-        <th>{% blocktrans %}Recipient{% endblocktrans %}</th>
-        <th>{% blocktrans %}Status{% endblocktrans %}</th>
-        <th>{% blocktrans %}Last Message{% endblocktrans %}</th>
+        <th>{% blocktrans %}Due Date{% endblocktrans %}</th>
         <th>{% blocktrans %}Public{% endblocktrans %}</th>
       </tr>
     </thead>
     <tbody>
   {% for foirequest in foirequests %}
-    <tr>
-      <td>
-        <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+    <tr class="{% if foirequest.awaits_classification %}warning{% endif %}">
+      <td class="media">
+        {% with object=foirequest %}
+          {% include "foirequest/snippets/request_item.html" %}
+        {% endwith %}
       </td>
       <td>
-        {% if foirequest.public_body %}
-        <a href="{{ foirequest.public_body.get_absolute_url }}">{{ foirequest.public_body.name }}</a>
-        {% else %}
-        {% blocktrans %}Not yet set{% endblocktrans %}
-        {% endif %}
-      </td>
-      <td>
-        {{ foirequest.readable_status }}
         {% if foirequest.status == "awaiting_response" %}
           {% if foirequest.due_date %}
-          <br/>
-          {% blocktrans with date=foirequest.due_date|date:"DATE_FORMAT" %}until {{ date }}{% endblocktrans %}
+            <small>
+              {% blocktrans with date=foirequest.due_date|date:"DATE_FORMAT" %}until {{ date }}{% endblocktrans %}
+            </small>
           {% endif %}
         {% endif %}
       </td>
-      <td>{{ foirequest.last_message|date:"DATE_FORMAT" }}</td>
-      <td>{% if foirequest.public %}{% blocktrans %}Yes{% endblocktrans %}
-        {% else %}{% blocktrans %}No{% endblocktrans %}{% endif %}
+      <td>
+        {% if not foirequest.public %}
+        <form action="{% url 'foirequest-make_public' slug=foirequest.slug %}" method="post">
+          {% csrf_token %}
+            <button type="submit" class="btn btn-default">
+              {% blocktrans %}Publish{% endblocktrans %}
+            </button>
+          </form>
+        {% endif %}
       </td>
     </tr>
   {% endfor %}

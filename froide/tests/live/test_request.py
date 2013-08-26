@@ -55,7 +55,7 @@ class TestMakingRequest(LiveServerTestCase):
         password_input = self.selenium.find_element_by_id("id_password")
         password_input.send_keys('froide')
         self.selenium.find_element_by_xpath(
-            '//form/button[.="Log In"]').click()
+            '//form//button[contains(text(), "Log In")]').click()
 
     def do_logout(self):
         self.selenium.get('%s%s' % (self.live_server_url, reverse('account-logout')))
@@ -67,8 +67,8 @@ class TestMakingRequest(LiveServerTestCase):
         search_pbs.send_keys(self.pb.name)
         self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.search-results .result'))
-        self.selenium.find_element_by_css_selector('.search-results .result label').click()
+            lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
+        self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
@@ -157,8 +157,8 @@ class TestMakingRequest(LiveServerTestCase):
         search_pbs.send_keys(self.pb.name)
         self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.search-results .result'))
-        self.selenium.find_element_by_css_selector('.search-results .result label').click()
+            lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
+        self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()

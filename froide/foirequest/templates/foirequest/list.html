@@ -34,10 +34,10 @@
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}
 <div class="row">
-  <div class="span8">
-    <ul class="unstyled">
+  <div class="col-lg-8">
+    <ul class="media-list">
       {% for object in object_list %}
-      <li>
+      <li class="media">
         {% include "foirequest/snippets/request_item.html" %}
       </li>
     {% endfor %}
@@ -45,11 +45,13 @@
     {% paginate %}
   </div>
 
-  <div class="span4">
+  <div class="col-lg-4">
     <p>
-      <span class="badge">{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
+      <span class="badge">
+        {% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}
+      </span>
     </p>
-    <ul class="nav nav-list">
+    <ul class="nav nav-compact">
       {% if filtered or not_foi or jurisdiction %}
         <li>
           <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>

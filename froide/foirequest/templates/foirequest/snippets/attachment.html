@@ -8,7 +8,7 @@
   {% if user == object.user or user.is_staff %}
     <li class="alert alert-success">
       {% if attachment.can_approve or user.is_staff %}
-        <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified no-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+        <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
           {% csrf_token %}
           {% if object.user.get_profile.private %}
             <p>

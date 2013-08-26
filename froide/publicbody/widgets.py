@@ -9,9 +9,13 @@ from .models import PublicBody, Jurisdiction
 
 class PublicBodySelect(forms.Widget):
     initial_jurisdiction = None
+    initial_search = None
 
     def set_initial_jurisdiction(self, juris):
         self.initial_jurisdiction = juris
+
+    def set_initial_search(self, search):
+        self.initial_search = search
 
     def render(self, name, value=None, attrs=None, choices=()):
         pb, pb_desc = None, None
@@ -33,7 +37,11 @@ class PublicBodySelect(forms.Widget):
             else:
                 juris_widget = juris_widget.render('jurisdiction', pb.jurisdiction.name)
             juris_widget = mark_safe(juris_widget)
-        return render_to_string('publicbody/_chooser.html', {'name': name,
-            'value': value, "value_label": pb_desc,
+        return render_to_string('publicbody/_chooser.html', {
+            'name': name,
+            'value': value,
+            'value_label': pb_desc,
+            'search': self.initial_search,
             'juris_widget': juris_widget,
-            'STATIC_URL': settings.STATIC_URL})
+            'STATIC_URL': settings.STATIC_URL
+        })

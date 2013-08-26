@@ -15,8 +15,9 @@ from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
-from .forms import (UserLoginForm, NewUserForm, UserEmailConfirmationForm,
-        UserChangeAddressForm, UserDeleteForm, UserChangeEmailForm)
+from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
+        UserEmailConfirmationForm, UserChangeAddressForm, UserDeleteForm,
+        UserChangeEmailForm)
 from .models import AccountManager
 
 
@@ -125,7 +126,7 @@ def login(request, base="base.html", context=None,
     if not context:
         context = {}
     if not "reset_form" in context:
-        context['reset_form'] = auth.forms.PasswordResetForm()
+        context['reset_form'] = PasswordResetForm()
     if not "signup_form" in context:
         context['signup_form'] = NewUserForm()
 
