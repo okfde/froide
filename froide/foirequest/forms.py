@@ -39,6 +39,8 @@ class RequestForm(forms.Form):
                     'placeholder': _("Specify your request here..."),
                     "class": "form-control"
                 }))
+    full_text = forms.BooleanField(required=False, initial=False,
+            label=_("Don't wrap in template"))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request is public."),
             help_text=_("If you don't want your request to be public right now,"

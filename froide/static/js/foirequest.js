@@ -60,6 +60,27 @@ $(function(){
 
     $("#id_subject").blur(Froide.app.searchSimilarRequests);
 
+    (function(){
+        var combinedLetter;
+        $('#id_full_text').change(function(e){
+            if (!combinedLetter) {
+                combinedLetter = $('#letter_start').text() +
+                    '\n\n\n' +$('#letter_end').text();
+            }
+            var checked = $(this).prop('checked');
+            var body = $('#id_body').val();
+
+            $('#letter_start').toggle(!checked);
+            $('#letter_complete_end').toggle(!checked);
+
+            if (checked && body === '') {
+                $('#id_body').val(combinedLetter);
+            } else if(!checked && body === combinedLetter) {
+                $('#id_body').val('');
+            }
+        });
+    }());
+
     $("#review-button").click(function(){
         Froide.app.performReview();
     });

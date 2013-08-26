@@ -203,6 +203,17 @@ input:focus {
     display: none;
 }
 
+.full-text-checkbox {
+
+    padding: 5px 20px 0 0;
+}
+
+.full-text-checkbox > label {
+    color: #aaa;
+    font-size: 80%;
+    font-weight: normal;
+}
+
 .foirequest .text {
     white-space: nowrap;
     white-space: pre-line;
