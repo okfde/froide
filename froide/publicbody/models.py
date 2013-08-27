@@ -146,7 +146,7 @@ class FoiLaw(models.Model):
         return markdown(self.description)
 
     def get_refusal_reason_choices(self):
-        not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
+        not_applicable = [('n/a', _("No law can be applied"))]
         if self.meta:
             return (not_applicable +
                     [(l[0], "%s: %s" % (law.name, l[1]))
