@@ -102,3 +102,4 @@ CELERY_RESULT_DBURI = "sqlite:///dev.db"
 
 CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
 CELERY_ALWAYS_EAGER = True
+CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
