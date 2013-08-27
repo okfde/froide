@@ -16,7 +16,7 @@
   Froide.regex = Froide.regex || {};
   Froide.regex.greetings = [{% blocktrans %}/Dear Sir or Madam/{% endblocktrans %}gi];
   Froide.regex.closings = [{% blocktrans %}/Kind Regards/{% endblocktrans %}gi];
-  Froide.template.searchInternet = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information" %} </a></li>';
+  Froide.template.searchInternet = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information about:" %} {% templatetag openvariable %}query{% templatetag closevariable %}</a></li>';
   Froide.template.searchPublicBodyWebsite = '<li><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search Public Body Website" %}</a></li>';
   Froide.template.searchEngineUrl = '{% search_engine_query %}';
   Froide.template.foundEmail = "{% trans "We found an email address in your text: {{ email }}. Do not sent personal data to the Public Body." %}";
@@ -271,19 +271,17 @@
             </div>
 
             <div class="well letter ">
-              <div id="letter_start" class="text">{{ request_form.default_law.letter_start_form }}</div>
+              <div id="letter_start" class="text"{% if request_form.full_text.value %} style="display:none"{% endif %}>{{ request_form.default_law.letter_start_form }}</div>
 
               <div{% if request_form.body.errors %} class="has-error"{% endif %}>{{ request_form.body }}</div>
-              <div id="letter_complete_end"><div id="letter_short_end" class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
+              <div id="letter_complete_end"{% if request_form.full_text.value %} style="display:none"{% endif %}><div id="letter_short_end" class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
                 <span id="letter-greeting">{% blocktrans %}Kind Regards,{% endblocktrans %}</span>
               </div>
 
               <div id="letter_end" style="display:none" class="text">{{ request_form.default_law.letter_end_form }}</div></div>
 
               {% if user.is_authenticated %}
-                <p id="fullname">
-                  {{ user.get_full_name }}
-                </p>
+                <p id="fullname">{{ user.get_full_name }}</p>
               {% else %}
                 <div class="user_data_form">
                   <div class="form-group{% if user_form.first_name.errors %} has-error{% endif %}">
@@ -332,7 +330,7 @@
                   {% blocktrans %}Your post address{% endblocktrans %}
                 </label>
                 {% if user.is_authenticated %}
-                  <p id="post_address" class="form-control-static">{{ user.address }}</p>
+                  <p id="post_address" class="text form-control-static">{{ user.address }}</p>
                 {% else %}
                   {{ user_form.address }}
                   <p class="help-block">{{ user_form.address.help_text }}</p>

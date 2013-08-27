@@ -31,8 +31,21 @@ Froide.app.searchSimilarRequests = function(){
         q.push(jQuery.trim(t.parent().text()));
     }
     var subject = $("#id_subject").val();
-    if (subject.length > 0){
+    if (subject.length > 0) {
         q.push(subject);
+        $('#check-list').append(
+            Mustache.to_html(
+                Froide.template.searchInternet,
+                {
+                    url: Mustache.to_html(
+                        Froide.template.searchEngineUrl,
+                        {query: subject, domain: ""}
+                    ),
+                    query: subject
+                }
+            )
+        );
+
     }
     if (q.length === 0){
         return;
@@ -64,6 +77,9 @@ Froide.app.performPublicBodySearch = (function(){
             juris = juris.val();
             params.jurisdiction = juris;
         }
+        if (query === '') {
+            return;
+        }
         if (lastPublicBodyQuery === query && lastJurisdiction === juris){
             el.find(".search-results").slideDown();
             return;
@@ -93,7 +109,7 @@ Froide.app.performPublicBodySearch = (function(){
                     var li = Froide.app.getPublicBodyResultListItem(el, result);
                     el.find(".search-results").append(li);
                 }
-                el.find(".result input").change(function(e){
+                el.find(".search-result input").change(function(e){
                     var li = $(this).closest('li');
                     Froide.app.selectSearchListItem(el, li);
                 });
@@ -105,6 +121,8 @@ Froide.app.performPublicBodySearch = (function(){
 
 Froide.app.performReview = (function(){
     var regex_email = /[^\s]+@[^\.\s]+\.\w+/;
+
+    var fullText = $('#id_full_text').prop('checked');
 
     var resolve_forms = function(html){
         html = $(html);
@@ -231,10 +249,15 @@ Froide.app.performReview = (function(){
         $("#review-from").text(getFullName() + " <" + getEmail() +">");
         $("#review-to").text(getPublicBody());
         $("#review-subject").text($("#id_subject").val());
-        text = resolve_forms($('#letter_start').clone());
-        text += '\n\n<div class="highlight">' + $("#id_body").val() + "</div>\n\n";
-        text += $('#letter_end').text();
-        text += "\n\n" + getFullName();
+        text = '';
+        if (fullText) {
+            text += '<div class="highlight">' + $("#id_body").val() + "</div>";
+        } else {
+            text += resolve_forms($('#letter_start').clone());
+            text += '\n\n<div class="highlight">' + $("#id_body").val() + "</div>\n\n";
+            text += $('#letter_end').text();
+        }
+        text += "\n" + getFullName();
         text += "\n\n" + getAddress();
         $("#review-text").html(text);
     };
@@ -257,12 +280,14 @@ Froide.app.publicBodyChosen = (function(){
             return;
         }
         var list = $("#check-list").html("");
-        var query = $("#search-public_bodies").val();
-        // if(query !== ""){
-        //     list.append(Mustache.to_html(Froide.template.searchInternet,
-        //             {url: Mustache.to_html(Froide.template.searchEngineUrl,
-        //             {query: query, domain: ""})}));
-        // }
+        var query = $(".search-public_bodies").val();
+        if (query) {
+            list.append(Mustache.to_html(Froide.template.searchInternet,
+                    {url: Mustache.to_html(Froide.template.searchEngineUrl,
+                        {query: query, domain: ""}),
+                    query: query
+                }));
+        }
         if (currentPublicBodyChoice !== undefined &&
                 currentPublicBodyChoice !== "" &&
                 currentPublicBodyChoice !== "new"){
@@ -396,7 +421,7 @@ $(function(){
             Froide.app.performPublicBodySearch($(this).closest('.public_body-chooser'));
         }
     });
-    $(".publicbody-search .searchexample").click(function(e){
+    $(".publicbody-search .search-examples a").click(function(e){
         e.preventDefault();
         var term = $(this).text();
         var par = $(this).closest('.public_body-chooser');
