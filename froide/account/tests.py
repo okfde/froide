@@ -1,6 +1,10 @@
 import re
 import datetime
-import urllib
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 from django.utils.six import text_type as str
 from django.test import TestCase
@@ -481,7 +485,7 @@ class AccountTest(TestCase):
         }
         url = '%s?%s' % (
             reverse('account-change_email'),
-            urllib.urlencode(url_kwargs)
+            urlencode(url_kwargs)
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
