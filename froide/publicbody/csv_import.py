@@ -1,15 +1,10 @@
 # -*- encoding: utf-8 -*-
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
-
-
 import requests
 
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
+from django.utils.six import StringIO
 
 from froide.publicbody.models import (PublicBody, PublicBodyTopic,
     Jurisdiction, FoiLaw)

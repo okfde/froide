@@ -1,12 +1,7 @@
 import json
 import tempfile
 
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
-
-from django.utils.six import text_type as str
+from django.utils.six import StringIO, text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -46,7 +41,7 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv(PublicBody.objects.all())
         prev_count = PublicBody.objects.all().count()
         imp = CSVImporter()
-        imp.import_from_file(StringIO.StringIO(csv))
+        imp.import_from_file(StringIO(csv))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 
@@ -58,7 +53,7 @@ class PublicBodyTest(TestCase):
         csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
-        imp.import_from_file(StringIO.StringIO(csv))
+        imp.import_from_file(StringIO(csv))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 
@@ -67,14 +62,14 @@ Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://examp
         csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
-        imp.import_from_file(StringIO.StringIO(csv))
+        imp.import_from_file(StringIO(csv))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
 
     def test_command(self):
         from django.core.management import call_command
         csv_file = tempfile.NamedTemporaryFile()
-        csv_file.write(PublicBody.export_csv(PublicBody.objects.all()))
+        csv_file.write(PublicBody.export_csv(PublicBody.objects.all()).encode('utf-8'))
         csv_file.flush()
 
         call_command('import_csv', csv_file.name)

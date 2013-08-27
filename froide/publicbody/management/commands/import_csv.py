@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils import translation
+from django.utils import translation, six
 
 
 class Command(BaseCommand):
@@ -21,6 +21,9 @@ class Command(BaseCommand):
         if args[0].startswith('http://') or args[0].startswith('https://'):
             importer.import_from_url(args[0])
         else:
-            importer.import_from_file(file(args[0]))
+            if six.PY3:
+                importer.import_from_file(open(args[0], newline='', encoding='utf-8'))
+            else:
+                importer.import_from_file(open(args[0]))
 
-        self.stdout.write((u"Import done.\n").encode('utf-8'))
+        self.stdout.write(u"Import done.\n")

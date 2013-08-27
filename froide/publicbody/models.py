@@ -342,14 +342,12 @@ class PublicBody(models.Model):
 
     @classmethod
     def export_csv(cls, queryset):
-        try:
-            from io import StringIO
-        except ImportError:
-            from StringIO import StringIO
+        from django.utils import six
 
         from froide.helper.csvcompat import get_csv_dictwriter
 
-        s = StringIO()
+        s = six.StringIO()
+
         fields = ("id", "name", "email", "contact",
             "address", "url", "classification",
             "jurisdiction__slug", "topic__slug",
@@ -358,7 +356,7 @@ class PublicBody(models.Model):
         )
 
         writer = get_csv_dictwriter(s, fields, encoding='utf-8')
-        writer.writerow(dict([(v, v) for v in fields]))
+        writer.writeheader()
         for pb in queryset:
             d = {}
             for field in fields:
@@ -374,4 +372,6 @@ class PublicBody(models.Model):
             writer.writerow(d)
 
         s.seek(0)
-        return s.read()
+        if six.PY3:
+            return s.read()
+        return s.read().decode('utf-8')
