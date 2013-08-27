@@ -199,8 +199,8 @@ class SendMessageForm(forms.Form):
             recipient_email = self.foirequest.public_body.email
             recipient_pb = self.foirequest.public_body
         else:
-            message = filter(lambda x: x.id == self.cleaned_data["to"],
-                    list(self.foirequest.messages))[0]
+            message = list(filter(lambda x: x.id == self.cleaned_data["to"],
+                    list(self.foirequest.messages)))[0]
             recipient_name = message.sender_name
             recipient_email = message.sender_email
             recipient_pb = message.sender_public_body
@@ -366,7 +366,7 @@ class ConcreteLawForm(forms.Form):
         self.possible_laws = foirequest.law.combined.all()
         self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
                 choices=[('', '-------')] +
-                    map(lambda x: (x.pk, x.name), self.possible_laws),
+                    list(map(lambda x: (x.pk, x.name), self.possible_laws)),
                 coerce=int, empty_value='')
 
     def clean(self):

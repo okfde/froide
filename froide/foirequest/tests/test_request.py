@@ -179,13 +179,13 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
         post["subject"] = "Re: Custom subject"
-        post["to"] = str(req.possible_reply_addresses().values()[0].id)
+        post["to"] = str(list(req.possible_reply_addresses().values())[0].id)
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
         new_len = len(mail.outbox)
         self.assertEqual(old_len + 2, new_len)
-        message = filter(lambda x: post['subject'] == x.subject, mail.outbox)[-1]
+        message = list(filter(lambda x: post['subject'] == x.subject, mail.outbox))[-1]
         self.assertTrue(message.body.startswith(post['message']))
         self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(user.get_profile().address, message.body)
@@ -299,17 +299,17 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(id=req.id)
         self.assertTrue(pb.confirmed)
         self.assertTrue(req.messages[0].sent)
-        message_count = len(filter(
+        message_count = len(list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox))
+                mail.outbox)))
         self.assertEqual(message_count, 1)
         # resent
         response = self.client.post(reverse('publicbody-confirm'),
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 302)
-        message_count = len(filter(
+        message_count = len(list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox))
+                mail.outbox)))
         self.assertEqual(message_count, 1)
 
     def test_logged_in_request_with_public_body(self):
@@ -344,9 +344,9 @@ class RequestTest(TestCase):
         self.assertTrue(req.messages[0].sent)
         self.assertEqual(req.law, pb.default_law)
 
-        messages = filter(
+        messages = list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox)
+                mail.outbox))
         self.assertEqual(len(messages), 1)
         message = messages[0]
         if settings.FROIDE_CONFIG['dryrun']:

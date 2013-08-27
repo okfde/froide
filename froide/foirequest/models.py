@@ -417,13 +417,13 @@ class FoiRequest(models.Model):
         return replace_email(self.description, _("<<email address>>"))
 
     def response_messages(self):
-        return filter(lambda m: m.is_response, self.messages)
+        return list(filter(lambda m: m.is_response, self.messages))
 
     def reply_received(self):
         return len(self.response_messages()) > 0
 
     def message_needs_status(self):
-        mes = filter(lambda m: m.status is None, self.response_messages())
+        mes = list(filter(lambda m: m.status is None, self.response_messages()))
         if not mes:
             return None
         return mes[0]
