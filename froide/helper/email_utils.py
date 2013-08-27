@@ -10,7 +10,7 @@ import time
 
 try:
     from email.header import decode_header
-    from email.parser import Parser
+    from email.parser import BytesParser as Parser
 except ImportError:
     from email.Header import decode_header
     from email.Parser import Parser
@@ -19,12 +19,7 @@ from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
 import re
 
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
-
-from django.utils.six import text_type as str
+from django.utils.six import BytesIO, text_type as str, binary_type as bytes
 
 import pytz
 
@@ -80,7 +75,7 @@ class EmailParser(object):
                 file_data = message_part.get_payload(decode=True)
                 if file_data is None:
                     file_data = ""
-                attachment = StringIO(file_data)
+                attachment = BytesIO(file_data)
                 attachment.content_type = message_part.get_content_type()
                 attachment.size = len(file_data)
                 attachment.name = None
@@ -126,10 +121,11 @@ class EmailParser(object):
                         pass
             else:
                 try:
-                    s = s.decode("latin1")
-                except:
+                    if not isinstance(s, str):
+                        s = s.decode("latin1")
+                except UnicodeDecodeError:
                     s = str(s, errors='ignore')
-            fragments.append(s)
+            fragments.append(s.strip(' '))
         field = u' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
@@ -167,9 +163,14 @@ class EmailParser(object):
                     charset,
                     'replace'))
 
-    def parse(self, content):
+    def get(self, field):
+        if isinstance(field, bytes):
+            return field
+        return str(field)
+
+    def parse(self, bytesfile):
         p = Parser()
-        msgobj = p.parsestr(content)
+        msgobj = p.parse(bytesfile)
         subject = self.parse_header_field(msgobj['Subject'])
         attachments = []
         body = []
@@ -184,9 +185,9 @@ class EmailParser(object):
         resent_tos = self.get_address_list(msgobj, 'resent-to')
         resent_ccs = self.get_address_list(msgobj, 'resent-cc')
 
-        from_field = parseaddr(msgobj.get('From'))
+        from_field = parseaddr(self.get(msgobj.get('From')))
         from_field = (self.parse_header_field(from_field[0]), from_field[1])
-        date = self.parse_date(msgobj.get("Date"))
+        date = self.parse_date(self.get(msgobj.get("Date")))
         return {
             'msgobj': msgobj,
             'date': date,

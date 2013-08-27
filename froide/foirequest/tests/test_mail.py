@@ -9,6 +9,7 @@ from django.core import mail
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils import timezone
+from django.utils.six import BytesIO
 
 from froide.helper.email_utils import EmailParser
 
@@ -33,7 +34,7 @@ class MailTest(TestCase):
         factories.FoiMessageFactory.create(request=req, timestamp=date)
 
     def test_working(self):
-        with file(p("test_mail_01.txt")) as f:
+        with open(p("test_mail_01.txt"), 'rb') as f:
             process_mail.delay(f.read())
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.messages
@@ -44,8 +45,13 @@ class MailTest(TestCase):
                 datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
 
     def test_working_with_attachment(self):
-        with file(p("test_mail_02.txt")) as f:
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        messages = request.foimessage_set.all()
+        self.assertEqual(len(messages), 1)
+
+        with open(p("test_mail_02.txt"), 'rb') as f:
             process_mail.delay(f.read())
+
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -67,7 +73,7 @@ class MailTest(TestCase):
                 u"sw+yurpykc1hr@fragdenstaat.de")
         request.delete()
         mail.outbox = []
-        with file(p("test_mail_01.txt")) as f:
+        with open(p("test_mail_01.txt"), 'rb') as f:
             process_mail.delay(f.read())
         self.assertEqual(len(mail.outbox), len(settings.MANAGERS))
         self.assertTrue(all([_('Unknown FoI-Mail Recipient') in m.subject for m in mail.outbox]))
@@ -77,16 +83,16 @@ class MailTest(TestCase):
 
     def test_inline_attachments(self):
         parser = EmailParser()
-        with file(p("test_mail_03.txt")) as f:
-            email = parser.parse(f.read())
+        with open(p("test_mail_03.txt"), 'rb') as f:
+            email = parser.parse(f)
         self.assertEqual(len(email['attachments']), 1)
 
     def test_long_attachment_names(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
-        with file(p("test_mail_04.txt"), 'rb') as f:
+        with open(p("test_mail_04.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(content)
+            mail = parser.parse(BytesIO(content))
         self.assertEqual(mail['subject'], u'Kooperationen des Ministerium für Schule und '
                 u'Weiterbildung des Landes Nordrhein-Westfalen mit außerschulischen Partnern')
         self.assertEqual(mail['attachments'][0].name, u'Kooperationen des MSW, Antrag '
@@ -102,10 +108,10 @@ class MailTest(TestCase):
 
     def test_strip_html(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
-        with file(p("test_mail_05.txt"), 'rb') as f:
+        with open(p("test_mail_05.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(content)
+            mail = parser.parse(BytesIO(content))
         request.add_message_from_email(mail, content)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -114,10 +120,10 @@ class MailTest(TestCase):
         self.assertTrue(len(mes.plaintext) > 0)
 
     def test_attachment_name_broken_encoding(self):
-        with file(p("test_mail_06.txt"), 'rb') as f:
+        with open(p("test_mail_06.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(content)
+            mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
             self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
 
@@ -129,10 +135,10 @@ class MailTest(TestCase):
         profile.save()
         request.user = user
         request.save()
-        with file(p("test_mail_06.txt"), 'rb') as f:
+        with open(p("test_mail_06.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(content)
+            mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
             self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
         request.add_message_from_email(mail, content)
@@ -142,12 +148,19 @@ class MailTest(TestCase):
         self.assertEqual(mes.attachments[0].name, u'EingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf')
 
     def test_attachment_name_parsing(self):
-        with file(p("test_mail_07.txt"), 'rb') as f:
+        with open(p("test_mail_07.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(content)
+            mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
             self.assertEqual(mail['attachments'][0].name, u'Bescheid Fäker.pdf')
+
+    def test_address_list(self):
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(BytesIO(content))
+            self.assertEqual(len(mail['cc']), 5)
 
 
 class DeferredMessageTest(TestCase):
@@ -161,10 +174,10 @@ class DeferredMessageTest(TestCase):
         count_messages = len(self.req.messages)
         name, domain = self.req.secret_address.split('@')
         bad_mail = '@'.join((name + 'x', domain))
-        with file(p("test_mail_01.txt")) as f:
-            mail = f.read().decode('utf-8')
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            mail = f.read().decode('ascii')
         mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
-        process_mail.delay(mail.encode('utf-8'))
+        process_mail.delay(mail.encode('ascii'))
         self.assertEqual(count_messages,
             FoiMessage.objects.filter(request=self.req).count())
         dms = DeferredMessage.objects.filter(recipient=bad_mail)
