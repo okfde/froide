@@ -1,5 +1,6 @@
 import re
 import htmlentitydefs
+from django.utils.six import text_type as str
 
 from lxml import html
 from lxml.html.clean import clean_html
@@ -84,10 +85,10 @@ EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 
 
 def replace_email_name(text, replacement=u""):
-    return EMAIL_NAME_RE.sub(replacement, text)
+    return EMAIL_NAME_RE.sub(str(replacement), text)
 
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 
 def replace_email(text, replacement=u""):
-    return EMAIL_RE.sub(replacement, text)
+    return EMAIL_RE.sub(str(replacement), text)

@@ -1,6 +1,7 @@
 import datetime
 import re
 
+from django.utils.six import text_type as str
 from django.conf import settings
 from django.core.files import File
 from django.utils import timezone, simplejson as json
@@ -153,7 +154,7 @@ def list_requests(request, status=None, topic=None, tag=None,
         'count': foi_requests.count(),
         'not_foi': not_foi,
         'object_list': foi_requests,
-        'status_list': [(unicode(x[0]),
+        'status_list': [(str(x[0]),
             FoiRequest.get_readable_status(x[2]),
             x[2]) for x in FoiRequest.STATUS_URLS],
         'topic_list': topic_list

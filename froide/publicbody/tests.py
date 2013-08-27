@@ -2,6 +2,7 @@ import json
 import StringIO
 import tempfile
 
+from django.utils.six import text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -98,7 +99,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
 
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]
-        self.assertIn(law.jurisdiction.name, unicode(law))
+        self.assertIn(law.jurisdiction.name, str(law))
         response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn(law.name, response.content.decode('utf-8'))

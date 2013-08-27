@@ -2,6 +2,7 @@ import re
 import datetime
 import urllib
 
+from django.utils.six import text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
@@ -98,7 +99,7 @@ class AccountTest(TestCase):
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
         profile = user.get_profile()
-        self.assertIn(unicode(user), unicode(profile))
+        self.assertIn(str(user), str(profile))
         self.assertEqual(profile.address, post['address'])
         self.assertEqual(profile.organization, post['organization'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])

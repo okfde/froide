@@ -14,6 +14,8 @@ from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
 import re
 
+from django.utils.six import text_type as str
+
 import pytz
 
 
@@ -105,7 +107,7 @@ class EmailParser(object):
         for s, enc in decodefrag:
             if enc:
                 try:
-                    s = unicode(s, enc, errors='replace')
+                    s = str(s, enc, errors='replace')
                 except UnicodeDecodeError:
                     # desperate move here
                     try:
@@ -116,7 +118,7 @@ class EmailParser(object):
                 try:
                     s = s.decode("latin1")
                 except:
-                    s = unicode(s, errors='ignore')
+                    s = str(s, errors='ignore')
             fragments.append(s)
         field = u' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
@@ -145,12 +147,12 @@ class EmailParser(object):
                 attachments.append(attachment)
             elif part.get_content_type() == "text/plain":
                 charset = part.get_content_charset() or 'ascii'
-                body.append(unicode(
+                body.append(str(
                     part.get_payload(decode=True),
                     charset, 'replace'))
             elif part.get_content_type() == "text/html":
                 charset = part.get_content_charset() or 'ascii'
-                html.append(unicode(
+                html.append(str(
                     part.get_payload(decode=True),
                     charset,
                     'replace'))

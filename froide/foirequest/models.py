@@ -4,6 +4,7 @@ from datetime import timedelta
 import json
 import re
 
+from django.utils.six import string_types, text_type as str
 from django.db import models
 from django.db.models import Q
 from django.db import transaction, IntegrityError
@@ -340,7 +341,7 @@ class FoiRequest(models.Model):
     def get_status_from_url(cls, status):
         if cls._STATUS_URLS_DICT is None:
             cls._STATUS_URLS_DICT = dict([
-                (unicode(x[0]), x[1:]) for x in cls.STATUS_URLS])
+                (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
         return cls._STATUS_URLS_DICT[status]
 
     @property
@@ -476,7 +477,7 @@ class FoiRequest(models.Model):
     def followed_by(self, user):
         from froide.foirequestfollower.models import FoiRequestFollower
         try:
-            if isinstance(user, basestring):
+            if isinstance(user, string_types):
                 return FoiRequestFollower.objects.get(request=self,
                         email=user, confirmed=True)
             else:
@@ -639,7 +640,7 @@ class FoiRequest(models.Model):
                     'email': False,
                     'address': False,
                     # Translators: replacement for person name in filename
-                    'name': unicode(_('NAME'))
+                    'name': str(_('NAME'))
                 }
             )
             att.name = re.sub('[^\w\.\-]', '', att.name)
@@ -728,11 +729,11 @@ class FoiRequest(models.Model):
 
     @classmethod
     def get_readable_status(cls, status):
-        return unicode(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
 
     @classmethod
     def get_status_description(cls, status):
-        return unicode(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
@@ -1450,7 +1451,7 @@ class FoiEvent(models.Model):
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
-        return u"%s-%d" % (unicode(_("event")), self.id)
+        return u"%s-%d" % (str(_("event")), self.id)
 
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),

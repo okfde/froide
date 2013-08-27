@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+from django.utils.six import text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -39,7 +40,7 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
         for urlpart, _, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
-                kwargs={"status": unicode(urlpart)}))
+                kwargs={"status": str(urlpart)}))
             self.assertEqual(response.status_code, 200)
 
         for topic in PublicBodyTopic.objects.all():

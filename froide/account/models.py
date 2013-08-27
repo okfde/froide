@@ -1,6 +1,7 @@
 import hmac
 import re
 import urllib
+from django.utils.six import text_type as str
 
 from django.db import models, transaction, IntegrityError
 from django.conf import settings
@@ -39,7 +40,7 @@ class User(AbstractUser):
 
     def display_name(self):
         if self.private:
-            return unicode(_(u"Name Not Public"))
+            return str(_(u"Name Not Public"))
         else:
             if self.organization:
                 return u'%s (%s)' % (self.get_full_name(), self.organization)
@@ -55,13 +56,13 @@ class User(AbstractUser):
                 if line.strip():
                     content = content.replace(line,
                             replacements.get('address',
-                                unicode(_("<< Address removed >>")))
+                                str(_("<< Address removed >>")))
                     )
 
         if self.email and replacements.get('email') is not False:
             content = content.replace(self.email,
                     replacements.get('email',
-                    unicode(_("<< Email removed >>")))
+                    str(_("<< Email removed >>")))
             )
 
         if not self.private or replacements.get('name') is False:
@@ -72,7 +73,7 @@ class User(AbstractUser):
         full_name = self.get_full_name()
 
         name_replacement = replacements.get('name',
-                unicode(_("<< Name removed >>")))
+                str(_("<< Name removed >>")))
 
         content = content.replace(full_name, name_replacement)
         content = content.replace(last_name, name_replacement)
@@ -81,7 +82,7 @@ class User(AbstractUser):
             content = content.replace(self.organization, name_replacement)
 
         greeting_replacement = replacements.get('greeting',
-                unicode(_("<< Greeting >>")))
+                str(_("<< Greeting >>")))
 
         if settings.FROIDE_CONFIG.get('greetings'):
             for greeting in settings.FROIDE_CONFIG['greetings']:
@@ -183,7 +184,7 @@ class AccountManager(object):
                 'site_url': settings.SITE_URL
             })
         # Translators: Mail subject
-        send_mail(unicode(_("%(site_name)s: please confirm your account") % {
+        send_mail(str(_("%(site_name)s: please confirm your account") % {
                     "site_name": settings.SITE_NAME}),
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
 
@@ -206,7 +207,7 @@ class AccountManager(object):
                 'site_url': settings.SITE_URL
             })
         # Translators: Mail subject
-        send_mail(unicode(_("%(site_name)s: please confirm your new email address") % {
+        send_mail(str(_("%(site_name)s: please confirm your new email address") % {
                     "site_name": settings.SITE_NAME}),
                 message, settings.DEFAULT_FROM_EMAIL, [email])
 

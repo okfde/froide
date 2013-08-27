@@ -1,3 +1,4 @@
+from django.utils.six import text_type as str
 from django.core.urlresolvers import reverse
 from django.conf.urls import patterns
 from django.utils.translation import pgettext
@@ -56,12 +57,12 @@ foirequest_urls = [
     (r'^%s/(?P<public_body>[-\w]+)/rss/$' % pgettext('URL part', 'to'), 'list_requests',
         {'feed': 'rss'}, 'foirequest-list_feed'),
 
-] + [(r'^(?P<status>%s)/$' % unicode(urlinfo[0]), 'list_requests', {},
+] + [(r'^(?P<status>%s)/$' % str(urlinfo[0]), 'list_requests', {},
         'foirequest-list') for urlinfo in FoiRequest.STATUS_URLS
-] + [(r'^(?P<status>%s)/feed/$' % unicode(urlinfo[0]), 'list_requests',
+] + [(r'^(?P<status>%s)/feed/$' % str(urlinfo[0]), 'list_requests',
         {'feed': 'atom'},
         'foirequest-list_feed_atom') for urlinfo in FoiRequest.STATUS_URLS
-] + [(r'^(?P<status>%s)/rss/$' % unicode(urlinfo[0]), 'list_requests',
+] + [(r'^(?P<status>%s)/rss/$' % str(urlinfo[0]), 'list_requests',
         {'feed': 'rss'},
         'foirequest-list_feed') for urlinfo in FoiRequest.STATUS_URLS]
 

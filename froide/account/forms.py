@@ -1,5 +1,6 @@
 import floppyforms as forms
 
+from django.utils.six import text_type as str
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
@@ -199,7 +200,7 @@ class UserEmailConfirmationForm(forms.Form):
 
 
 class UserDeleteForm(forms.Form):
-    CONFIRMATION_PHRASE = unicode(_('Freedom of Information Act'))
+    CONFIRMATION_PHRASE = str(_('Freedom of Information Act'))
 
     password = forms.CharField(
         widget=forms.PasswordInput,
