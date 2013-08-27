@@ -8,7 +8,6 @@ celery==3.0.22
 -e git://github.com/stefanw/celery-haystack.git@latest-deploy#egg=celery_haystack
 django-celery==3.0.21
 django-celery-email==1.0.3
-https://github.com/django-debug-toolbar/django-debug-toolbar/archive/master.zip
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
 django-secure==1.0
 django-taggit==0.10

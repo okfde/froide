@@ -123,14 +123,6 @@ if FROIDE_THEME is not None:
 #     'pagination.middleware.PaginationMiddleware',
 # ]
 
-# MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
-
-########## Debug ###########
-
-# DEBUG_TOOLBAR_CONFIG = {
-#     "INTERCEPT_REDIRECTS": False
-# }
-
 
 ########## I18N and L10N ##################
 

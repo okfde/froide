@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'haystack',
     'djcelery',
     'djcelery_email',
-    'debug_toolbar',
     'celery_haystack',
     'djangosecure',
     'taggit',
@@ -189,13 +188,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
-MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
-########## Debug ###########
-
-DEBUG_TOOLBAR_CONFIG = {
-    "INTERCEPT_REDIRECTS": False
-}
 
 ########## I18N and L10N ##################
 
