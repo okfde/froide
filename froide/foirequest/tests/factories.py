@@ -157,11 +157,11 @@ class DeferredMessageFactory(factory.DjangoModelFactory):
     timestamp = timezone.now() - timedelta(hours=1)
     request = None
     mail = factory.LazyAttribute(lambda o:
-        base64.b64encode('''To: <%s>
+        base64.b64encode(b'To: <' + o.recipient.encode('ascii') + b'''>
 Subject: Latest Improvements
 Date: Mon, 5 Jul 2010 07:54:40 +0200
 
-Test'''.format(o.recipient)))
+Test'''))
 
 
 class PublicBodySuggestionFactory(factory.DjangoModelFactory):

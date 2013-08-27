@@ -73,7 +73,7 @@ def _process_mail(mail_string):
                 foi_request = deferred.request
             except DeferredMessage.DoesNotExist:
                 if not b64_encoded:
-                    mail_string = base64.b64encode(mail_string).decode("utf-8")
+                    mail_string = base64.b64encode(mail_string.encode('utf-8')).decode("utf-8")
                 DeferredMessage.objects.create(
                     recipient=secret_mail,
                     mail=mail_string,
