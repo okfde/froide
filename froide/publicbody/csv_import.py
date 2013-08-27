@@ -31,7 +31,7 @@ class CSVImporter(object):
         response = requests.get(url)
         # Force requests to evaluate as UTF-8
         response.encoding = 'utf-8'
-        self.import_from_file(StringIO(response.text.encode('utf-8')))
+        self.import_from_file(StringIO(response.text))
 
     def import_from_file(self, csv_file):
         reader = get_csv_dictreader(csv_file, encoding='utf-8')

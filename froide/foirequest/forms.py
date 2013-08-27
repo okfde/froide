@@ -392,6 +392,7 @@ class PostalScanMixin(object):
         if scan:
             scan.seek(0)
             content_type = magic.from_buffer(scan.read(1024), mime=True)
+            content_type = content_type.decode('utf-8')
             scan.seek(0)
             if content_type:
                 scan.content_type = content_type
