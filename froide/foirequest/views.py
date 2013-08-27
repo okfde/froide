@@ -1,11 +1,12 @@
 import datetime
 import re
+import json
 
 from django.utils.six import text_type as str
 from django.conf import settings
 from django.core.files import File
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils import timezone, simplejson as json
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
