@@ -154,7 +154,10 @@ class AccountManager(object):
         to_sign = [str(self.user.pk)]
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
-        return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
+        return hmac.new(
+                settings.SECRET_KEY.encode('utf-8'),
+                (".".join(to_sign)).encode('utf-8')
+            ).hexdigest()
 
     def check_confirmation_secret(self, secret, *args):
         return constant_time_compare(
@@ -168,7 +171,10 @@ class AccountManager(object):
             to_sign.append(str(a))
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
-        return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
+        return hmac.new(
+                settings.SECRET_KEY.encode('utf-8'),
+                (".".join(to_sign)).encode('utf-8')
+            ).hexdigest()
 
     def send_confirmation_mail(self, request_id=None, password=None):
         secret = self.generate_confirmation_secret(request_id)

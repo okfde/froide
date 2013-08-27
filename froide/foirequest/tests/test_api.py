@@ -74,7 +74,7 @@ class ApiTest(TestCase):
         )
         response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(marker, response.content)
+        self.assertNotIn(marker, response.content.decode('utf-8'))
 
     def test_username_hidden(self):
         user = factories.UserFactory.create(
