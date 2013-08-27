@@ -15,7 +15,7 @@ if getattr(settings, 'FROIDE_THEME', None) is not None:
     app = settings.FROIDE_THEME
     try:
         mod = import_module(app)
-    except ImportError, e:
+    except ImportError as e:
         raise ImproperlyConfigured('ImportError %s: %s' % (app, e.args[0]))
     theme_template_dir = os.path.join(
             os.path.dirname(mod.__file__), 'templates')
