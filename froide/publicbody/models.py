@@ -337,8 +337,12 @@ class PublicBody(models.Model):
 
     @classmethod
     def export_csv(cls, queryset):
-        import unicodecsv
-        from StringIO import StringIO
+        try:
+            from io import StringIO
+        except ImportError:
+            from StringIO import StringIO
+
+        from froide.helper.csvcompat import get_csv_dictwriter
 
         s = StringIO()
         fields = ("id", "name", "email", "contact",
@@ -348,7 +352,7 @@ class PublicBody(models.Model):
             "request_note", "parent__name",
         )
 
-        writer = unicodecsv.DictWriter(s, fields, encoding='utf-8')
+        writer = get_csv_dictwriter(s, fields, encoding='utf-8')
         writer.writerow(dict([(v, v) for v in fields]))
         for pb in queryset:
             d = {}

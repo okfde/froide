@@ -1,7 +1,10 @@
 # -*- encoding: utf-8 -*-
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
-import unicodecsv
+
 import requests
 
 from django.contrib.auth import get_user_model
@@ -10,6 +13,7 @@ from django.template.defaultfilters import slugify
 
 from froide.publicbody.models import (PublicBody, PublicBodyTopic,
     Jurisdiction, FoiLaw)
+from froide.helper.csvcompat import get_csv_dictreader
 
 User = get_user_model()
 
@@ -30,7 +34,7 @@ class CSVImporter(object):
         self.import_from_file(StringIO(response.text.encode('utf-8')))
 
     def import_from_file(self, csv_file):
-        reader = unicodecsv.DictReader(csv_file, encoding='utf-8')
+        reader = get_csv_dictreader(csv_file, encoding='utf-8')
         for row in reader:
             self.import_row(row)
 
