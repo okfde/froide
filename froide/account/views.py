@@ -79,7 +79,7 @@ def show(request, context=None, status=200):
     own_foirequests = FoiRequest.objects.get_dashboard_requests(request.user)
     followed_requests = FoiRequestFollower.objects.filter(user=request.user)\
         .select_related('request')
-    followed_foirequest_ids = map(lambda x: x.request_id, followed_requests)
+    followed_foirequest_ids = list(map(lambda x: x.request_id, followed_requests))
     following = False
     events = []
     if followed_foirequest_ids:
