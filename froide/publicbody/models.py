@@ -13,6 +13,7 @@ from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
@@ -26,6 +27,7 @@ class JurisdictionManager(models.Manager):
                 .filter(hidden=False).order_by('rank', 'name')
 
 
+@python_2_unicode_compatible
 class Jurisdiction(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -39,7 +41,7 @@ class Jurisdiction(models.Model):
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -67,6 +69,7 @@ class PublicBodyManager(CurrentSiteManager):
         return self.get_query_set()
 
 
+@python_2_unicode_compatible
 class FoiLaw(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -107,7 +110,7 @@ class FoiLaw(models.Model):
         verbose_name = _("Freedom of Information Law")
         verbose_name_plural = _("Freedom of Information Laws")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     def get_absolute_url(self):
@@ -196,6 +199,7 @@ class PublicBodyTopicManager(models.Manager):
         return list(self.get_query_set().order_by("rank", "name"))
 
 
+@python_2_unicode_compatible
 class PublicBodyTopic(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -209,10 +213,11 @@ class PublicBodyTopic(models.Model):
         verbose_name = _("Topic")
         verbose_name_plural = _("Topics")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
+@python_2_unicode_compatible
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)
@@ -272,7 +277,7 @@ class PublicBody(models.Model):
             'description', 'topic_name', 'url', 'email', 'contact',
             'address', 'domain')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     @property

@@ -24,6 +24,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
@@ -131,6 +132,7 @@ class TaggedFoiRequest(TaggedItemBase):
         verbose_name_plural = _('FoI Request Tags')
 
 
+@python_2_unicode_compatible
 class FoiRequest(models.Model):
     STATUS_CHOICES = (
         ('awaiting_user_confirmation',
@@ -334,7 +336,7 @@ class FoiRequest(models.Model):
     add_postal_reply = django.dispatch.Signal(providing_args=[])
     escalated = django.dispatch.Signal(providing_args=[])
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u"Request '%s'") % self.title
 
     @classmethod
@@ -1040,6 +1042,7 @@ class PublicBodySuggestion(models.Model):
         verbose_name_plural = _('Public Body Suggestions')
 
 
+@python_2_unicode_compatible
 class FoiMessage(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -1098,7 +1101,7 @@ class FoiMessage(models.Model):
     def content(self):
         return self.plaintext
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u"Message in '%(request)s' at %(time)s"
                 ) % {"request": self.request,
                     "time": self.timestamp}
@@ -1253,6 +1256,7 @@ def upload_to(instance, filename):
     return "%s/%s/%s" % (settings.FOI_MEDIA_PATH, instance.belongs_to.id, instance.name)
 
 
+@python_2_unicode_compatible
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(FoiMessage, null=True,
             verbose_name=_("Belongs to request"))
@@ -1308,7 +1312,7 @@ class FoiAttachment(models.Model):
         verbose_name = _('Attachment')
         verbose_name_plural = _('Attachments')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s) of %s" % (self.name, self.size, self.belongs_to)
 
     def index_content(self):
@@ -1388,6 +1392,7 @@ class FoiEventManager(models.Manager):
                         "request")
 
 
+@python_2_unicode_compatible
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -1440,7 +1445,7 @@ class FoiEvent(models.Model):
         verbose_name = _('Request Event')
         verbose_name_plural = _('Request Events')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s - %s" % (self.event_name, self.request)
 
     def save(self, *args, **kwargs):
@@ -1505,6 +1510,7 @@ class FoiEvent(models.Model):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
 
+@python_2_unicode_compatible
 class DeferredMessage(models.Model):
     recipient = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -1517,7 +1523,7 @@ class DeferredMessage(models.Model):
         verbose_name = _('Undelivered Message')
         verbose_name_plural = _('Undelivered Messages')
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u"Undelievered Message to %(recipient)s (%(request)s)") % {
             'recipient': self.recipient,
             'request': self.request

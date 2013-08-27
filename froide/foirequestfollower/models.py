@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.utils.encoding import python_2_unicode_compatible
 
 from froide.foirequest.models import FoiRequest
 
@@ -43,6 +44,7 @@ class FoiRequestFollowerManager(models.Manager):
                 user=follower.user, email=follower.email)
 
 
+@python_2_unicode_compatible
 class FoiRequestFollower(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -60,7 +62,7 @@ class FoiRequestFollower(models.Model):
         verbose_name = _('Request Follower')
         verbose_name_plural = _('Request Followers')
 
-    def __unicode__(self):
+    def __str__(self):
         return _("%(user)s follows %(request)s") % {
                 "user": self.email or str(self.user),
                 "request": self.request}
