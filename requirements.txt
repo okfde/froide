@@ -10,8 +10,6 @@ django-celery==3.0.21
 django-celery-email==1.0.3
 https://github.com/django-debug-toolbar/django-debug-toolbar/archive/master.zip
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
-django-pagination==1.0.7
-django-paging==0.2.5
 django-secure==1.0
 django-taggit==0.10
 feedparser==5.1.3

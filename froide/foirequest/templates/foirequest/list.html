@@ -1,6 +1,5 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
-{% load pagination_tags %}
 
 {% block extra_head %}
 <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
@@ -8,7 +7,6 @@
 {% endblock %}
 
 {% block body %}
-{% autopaginate object_list %}
 
 {% if not filtered and jurisdiction %}
   <h2>{% blocktrans with name=jurisdiction.name %}{{ name }}: all requests{% endblocktrans %}</h2>
@@ -42,7 +40,7 @@
       </li>
     {% endfor %}
     </ul>
-    {% paginate %}
+    {% include "pagination/pagination.html" with page_obj=object_list %}
   </div>
 
   <div class="col-lg-4">

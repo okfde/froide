@@ -4,6 +4,7 @@ import re
 from django.utils.six import text_type as str
 from django.conf import settings
 from django.core.files import File
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone, simplejson as json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
@@ -149,9 +150,20 @@ def list_requests(request, status=None, topic=None, tag=None,
         return klass(foi_requests, status=status_url, topic=topic,
             tag=tag, jurisdiction=jurisdiction)(request)
 
+    count = foi_requests.count()
+
+    page = request.GET.get('page')
+    paginator = Paginator(foi_requests, 20)
+    try:
+        foi_requests = paginator.page(page)
+    except PageNotAnInteger:
+        foi_requests = paginator.page(1)
+    except EmptyPage:
+        foi_requests = paginator.page(paginator.num_pages)
+
     context.update({
         'page_title': _("FoI Requests"),
-        'count': foi_requests.count(),
+        'count': count,
         'not_foi': not_foi,
         'object_list': foi_requests,
         'status_list': [(str(x[0]),
