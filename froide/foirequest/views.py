@@ -332,6 +332,7 @@ def submit_request(request, public_body=None):
             data['confirmed'] = False
             # Take the first jurisdiction there is
             data['jurisdiction'] = Jurisdiction.objects.all()[0]
+            data['slug'] = slugify(data['name'])
             public_body = PublicBody(**data)
         else:
             error = True
