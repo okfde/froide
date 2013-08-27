@@ -1,6 +1,10 @@
 import json
-import StringIO
 import tempfile
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 from django.utils.six import text_type as str
 from django.test import TestCase

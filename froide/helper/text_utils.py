@@ -1,5 +1,10 @@
 import re
-import htmlentitydefs
+
+try:
+    from html.entities import name2codepoint
+except ImportError:
+    from htmlentitydefs import name2codepoint
+
 from django.utils.six import text_type as str
 
 from lxml import html
@@ -34,7 +39,7 @@ def unescape(text):
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = unichr(name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text  # leave as is

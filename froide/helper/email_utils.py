@@ -7,12 +7,22 @@ Licensed under MIT
 """
 from datetime import datetime, timedelta
 import time
-from StringIO import StringIO
-from email.Header import decode_header
-from email.Parser import Parser
+
+try:
+    from email.header import decode_header
+    from email.parser import Parser
+except ImportError:
+    from email.Header import decode_header
+    from email.Parser import Parser
+
 from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
 import re
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 from django.utils.six import text_type as str
 

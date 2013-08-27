@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.conf import settings
 
 from haystack import indexes
@@ -28,5 +30,5 @@ class PublicBodyIndex(CelerySearchIndex, indexes.Indexable):
         data = super(PublicBodyIndex, self).prepare(obj)
         if obj.classification in PUBLIC_BODY_BOOSTS:
             data['boost'] = PUBLIC_BODY_BOOSTS[obj.classification]
-            print "Boosting %s at %f" % (obj, data['boost'])
+            print("Boosting %s at %f" % (obj, data['boost']))
         return data

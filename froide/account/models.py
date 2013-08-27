@@ -1,8 +1,12 @@
 import hmac
 import re
-import urllib
-from django.utils.six import text_type as str
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+from django.utils.six import text_type as str
 from django.db import models, transaction, IntegrityError
 from django.conf import settings
 from django import dispatch
@@ -204,7 +208,7 @@ class AccountManager(object):
         url = '%s%s?%s' % (
             settings.SITE_URL,
             reverse('account-change_email'),
-            urllib.urlencode(url_kwargs)
+            urlencode(url_kwargs)
         )
         message = render_to_string('account/change_email.txt',
                 {'url': url,
