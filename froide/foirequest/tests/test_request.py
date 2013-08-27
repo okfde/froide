@@ -510,7 +510,7 @@ class RequestTest(TestCase):
 
         path = os.path.join(settings.PROJECT_ROOT, "testdata", "test.pdf")
         file_size = os.path.getsize(path)
-        f = file(path, "rb")
+        f = open(path, "rb")
         post = {"date": "3000-01-01",  # far future
                 "sender": "Some Sender",
                 "subject": "",
@@ -555,14 +555,14 @@ class RequestTest(TestCase):
         attachment.name = 'other_test.pdf'
         attachment.save()
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": "9" * 5}),
             {"scan": f})
         f.close()
         self.assertEqual(response.status_code, 404)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         self.client.logout()
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
@@ -570,7 +570,7 @@ class RequestTest(TestCase):
         f.close()
         self.assertEqual(response.status_code, 403)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         self.client.login(username="dummy", password="froide")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
@@ -578,7 +578,7 @@ class RequestTest(TestCase):
         f.close()
         self.assertEqual(response.status_code, 403)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         self.client.logout()
         self.client.login(username='sw', password='froide')
         message = req.foimessage_set.all()[0]
@@ -593,7 +593,7 @@ class RequestTest(TestCase):
             kwargs={"slug": req.slug, "message_id": message.pk}))
         self.assertEqual(response.status_code, 400)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
             {"scan": f})
@@ -602,7 +602,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
         # Adding the same document again should override the first one
-        f = file(path, "rb")
+        f = open(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
             {"scan": f})
@@ -1211,7 +1211,7 @@ class MediatorTest(TestCase):
         req.save()
         self.client.login(username='sw', password='froide')
         response = self.client.get(req.get_absolute_url())
-        self.assertNotIn('Mediation', response.content)
+        self.assertNotIn('Mediation', response.content.decode('utf-8'))
         response = self.client.post(reverse('foirequest-escalation_message',
             kwargs={'slug': req.slug}))
         self.assertEqual(response.status_code, 400)
