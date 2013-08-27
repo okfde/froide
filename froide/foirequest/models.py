@@ -367,9 +367,10 @@ class FoiRequest(models.Model):
 
     @property
     def status_representation(self):
-        now = timezone.now()
-        if self.status == 'awaiting_response' and now > self.due_date:
-            return 'overdue'
+        if self.due_date is not None:
+            now = timezone.now()
+            if self.status == 'awaiting_response' and now > self.due_date:
+                return 'overdue'
         return self.status if self.status != 'resolved' else self.resolution
 
     @property
