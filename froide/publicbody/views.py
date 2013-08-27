@@ -81,8 +81,10 @@ class PublicBodyDetailView(JSONResponseDetailView):
 
 def search_json(request):
     query = request.GET.get("q", "")
+    if not query:
+        return HttpResponse(json.dumps([]), content_type="application/json")
+
     jurisdiction = request.GET.get('jurisdiction', None)
-    # query = " AND ".join(query.split())
     result = SearchQuerySet().models(PublicBody).auto_query(query)
     if jurisdiction is not None:
         result = result.filter(jurisdiction=result.query.clean(jurisdiction))
