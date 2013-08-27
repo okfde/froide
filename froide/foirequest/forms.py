@@ -169,6 +169,7 @@ class MessagePublicBodySenderForm(forms.Form):
 
 
 class SendMessageForm(forms.Form):
+    to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int, required=True)
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(attrs={"class": "span5"}))
     message = forms.CharField(widget=forms.Textarea(attrs={"class": "span5"}),
@@ -177,12 +178,13 @@ class SendMessageForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
-        choices = [(m.id, m.reply_address_entry) for k, m in
-            foirequest.possible_reply_addresses().items()]
-        choices.append((0, _("Default address of %(publicbody)s") % {
-                "publicbody": foirequest.public_body.name}))
-        self.fields.insert(0, 'to', forms.TypedChoiceField(label=_("To"),
-                choices=choices, coerce=int, required=True))
+
+        choices = [(0, _("Default address of %(publicbody)s") % {
+                "publicbody": foirequest.public_body.name
+        })]
+        choices.extend([(m.id, m.reply_address_entry) for k, m in
+                foirequest.possible_reply_addresses().items()])
+        self.fields['to'].choices = choices
 
         if foirequest.law and foirequest.law.email_only:
             self.fields['send_address'] = forms.BooleanField(
