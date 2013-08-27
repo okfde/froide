@@ -646,7 +646,7 @@ class FoiRequest(models.Model):
                     'name': str(_('NAME'))
                 }
             )
-            att.name = re.sub('[^\w\.\-]', '', att.name)
+            att.name = re.sub('[^A-Za-z0-9_\.\-]', '', att.name)
             att.name = att.name[:255]
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
