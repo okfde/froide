@@ -23,16 +23,6 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-show',
                 kwargs={"slug": pb.slug}))
         self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('publicbody-show_json',
-                kwargs={"pk": pb.pk, "format": "json"}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertIn('"name":', response.content)
-        self.assertIn('"laws": [{', response.content)
-        response = self.client.get(reverse('publicbody-show_json',
-                kwargs={"slug": pb.slug, "format": "json"}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_topic(self):
         pb = PublicBody.objects.all()[0]

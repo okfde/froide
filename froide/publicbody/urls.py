@@ -25,8 +25,6 @@ urlpatterns += patterns("froide.publicbody.views",
     # Translators: part in Public Body URL
     url(r"^%s/(?P<topic>[-\w]+)$" % pgettext('URL part', 'topic'),
             'show_topic', name="publicbody-show_topic"),
-    url(r"^(?P<pk>\d+).(?P<format>json)$", PublicBodyDetailView.as_view(),
-            name="publicbody-show_json"),
     url(r"^(?P<slug>[-\w]+)$", PublicBodyDetailView.as_view(),
             name="publicbody-show"),
     url(r"^(?P<slug>[-\w]+).(?P<format>json)$",

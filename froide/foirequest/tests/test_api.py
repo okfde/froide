@@ -97,10 +97,10 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_search_similar(self):
-        simple_search_url = '/api/v1/request/simple_search/?format=json'
+        simple_search_url = '/api/v1/request/simplesearch/?format=json'
         response = self.client.get(simple_search_url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual('[]', response.content.decode('utf-8'))
+        self.assertEqual('{"objects": []}', response.content.decode('utf-8'))
         self.assertEqual(response['Content-Type'], 'application/json')
         req = FoiRequest.objects.all()[0]
         response = self.client.get('%s&q=%s' % (

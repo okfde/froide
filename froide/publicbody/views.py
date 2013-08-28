@@ -72,8 +72,7 @@ class PublicBodyDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
-        if self.format == "html":
-            context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
+        context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
         return context
 
 
