@@ -84,22 +84,18 @@
           <div id="request-note" class="notice" style="display:none"></div>
           {% if froide.publicbody_empty %}
             <div class="search-result">
-              <div class="radio">
-                <label>
-                  <input type="radio" id="option-emptypublicbody" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
-                  {% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
-                </label>
-              </div>
+              <label>
+                <input type="radio" id="option-emptypublicbody" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
+                {% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
+              </label>
             </div>
           {% endif %}
           {% if froide.create_new_publicbody %}
             <div class="search-result">
-              <div class="radio">
-                <label>
-                  <input id="option-newpublicbody" type="radio" name="public_body" value="new" {% if request_form.public_body.value == "new" %}checked="checked"{% endif %}/>
-                  {% blocktrans %}Create a new public body on the fly.{% endblocktrans %}
-                </label>
-              </div>
+              <label>
+                <input id="option-newpublicbody" type="radio" name="public_body" value="new" {% if request_form.public_body.value == "new" %}checked="checked"{% endif %}/>
+                {% blocktrans %}Create a new public body on the fly.{% endblocktrans %}
+              </label>
             </div>
             <div id="new-public_body" style="display:none">
               {{ public_body_form.as_p }}
