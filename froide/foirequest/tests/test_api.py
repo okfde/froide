@@ -95,3 +95,20 @@ class ApiTest(TestCase):
     def test_search(self):
         response = self.client.get('/api/v1/request/search/?format=json&q=Number')
         self.assertEqual(response.status_code, 200)
+
+    def test_search_similar(self):
+        simple_search_url = '/api/v1/request/simple_search/?format=json'
+        response = self.client.get(simple_search_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual('[]', response.content.decode('utf-8'))
+        self.assertEqual(response['Content-Type'], 'application/json')
+        req = FoiRequest.objects.all()[0]
+        response = self.client.get('%s&q=%s' % (
+            simple_search_url, req.title))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn('title', content)
+        self.assertIn('description', content)
+        self.assertIn('public_body_name', content)
+        self.assertIn('url', content)
+

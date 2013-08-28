@@ -135,8 +135,12 @@ class FoiLaw(models.Model):
         return FormGenerator(self.letter_end, post).render()
 
     @property
-    def request_note_markdown(self):
+    def request_note_html(self):
         return markdown(self.request_note)
+
+    @property
+    def description_html(self):
+        return markdown(self.description)
 
     def get_refusal_reason_choices(self):
         not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
@@ -162,8 +166,8 @@ class FoiLaw(models.Model):
     def as_dict(self):
         return {
             "pk": self.pk, "name": self.name,
-            "description_markdown": markdown(self.description),
-            "request_note_markdown": self.request_note_markdown,
+            "description_html": self.description_html,
+            "request_note_html": self.request_note_html,
             "description": self.description,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
@@ -264,7 +268,7 @@ class PublicBody(models.Model):
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
 
-    serializable_fields = ('name', 'slug', 'request_note_markdown',
+    serializable_fields = ('name', 'slug', 'request_note_html',
             'description', 'topic_name', 'url', 'email', 'contact',
             'address', 'domain')
 
@@ -292,7 +296,7 @@ class PublicBody(models.Model):
         return None
 
     @property
-    def request_note_markdown(self):
+    def request_note_html(self):
         return markdown(self.request_note)
 
     @property

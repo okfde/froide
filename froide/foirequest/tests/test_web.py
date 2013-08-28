@@ -248,22 +248,6 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_search_similar(self):
-        response = self.client.get(reverse('foirequest-search_similar'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual('[]', response.content.decode('utf-8'))
-        self.assertEqual(response['Content-Type'], 'application/json')
-        req = FoiRequest.objects.all()[0]
-        response = self.client.get('%s?q=%s' % (
-            reverse('foirequest-search_similar'), req.title))
-        self.assertEqual(response.status_code, 200)
-        content = response.content.decode('utf-8')
-        self.assertIn('title', content)
-        self.assertIn('description', content)
-        self.assertIn('public_body_name', content)
-        self.assertIn('url', content)
-
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)

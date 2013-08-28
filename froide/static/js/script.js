@@ -9,9 +9,9 @@ Froide.app.getPublicBodyResultListItem = function(el, result){
     return Mustache.to_html(Froide.template.publicBodyListingInfo, {
         data_name: el.attr("data-inputname"),
         result_id: result.id,
-        result_url: result.url,
+        result_url: result.site_url,
         result_name: result.name,
-        result_jurisdiction: result.jurisdiction
+        result_jurisdiction: result.jurisdiction.name
     });
 };
 
@@ -51,7 +51,8 @@ Froide.app.searchSimilarRequests = function(){
         return;
     }
     query = q[q.length - 1];
-    $.getJSON(Froide.url.searchRequests, {"q": query}, function(results){
+    $.getJSON(Froide.url.searchRequests, {"q": query}, function(data){
+        var results = data.objects;
         if (results.length === 0){
             $("#similar-requests-container").css({"visibility": "hidden"});
         } else {
@@ -86,8 +87,8 @@ Froide.app.performPublicBodySearch = (function(){
         }
         el.find(".search-spinner").fadeIn();
         el.find(".search-results").hide();
-        $.getJSON(Froide.url.searchPublicBody, params, function(results){
-            var result, i;
+        $.getJSON(Froide.url.searchPublicBody, params, function(data){
+            var result, i, results = data.objects;
             lastPublicBodyQuery = query;
             lastJurisdiction = juris;
             el.find(".search-spinner").hide();
@@ -292,8 +293,8 @@ Froide.app.publicBodyChosen = (function(){
                 currentPublicBodyChoice !== "" &&
                 currentPublicBodyChoice !== "new"){
             (function(lastChoice){
-                $.getJSON(Froide.url.showPublicBody.replace(/0\.json/,
-                    currentPublicBodyChoice +".json"),{},
+                $.getJSON(Froide.url.showPublicBody.replace(/0/,
+                    currentPublicBodyChoice), {},
                     function(result){
                         if (lastChoice !== currentPublicBodyChoice){
                             return;
@@ -301,13 +302,14 @@ Froide.app.publicBodyChosen = (function(){
                         if (lastChoice === doneChoice){
                             return;
                         }
-                        var request_note = result.laws[0].request_note_markdown + result.request_note_markdown;
+                        var request_note = result.default_law.request_note_html + result.request_note_html;
                         if (request_note){
                             $("#request-note").html(request_note).slideDown();
                         } else {
                             $("#request-note").hide();
                         }
                         if (result.url){
+                            result.domain = result.url.split('/')[2];
                             list.append('<li><a href="'+result.url+'">' +
                                 Mustache.to_html(Froide.template.visitPublicBodyWebsite) +
                             '</a></li>');
@@ -325,11 +327,11 @@ Froide.app.publicBodyChosen = (function(){
                             // TODO: Create law chooser here
                         var chosenLaw = $('#id_law');
                         if(chosenLaw.length){
-                            chosenLaw.val(result.laws[0].pk);
+                            chosenLaw.val(result.default_law.id);
                         } else {
-                            $("#public-body").append('<input id="chosen-law" type="hidden" name="law" value="'+result.laws[0].pk+'"/>');
+                            $("#public-body").append('<input id="chosen-law" type="hidden" name="law" value="'+result.default_law.id+'"/>');
                         }
-                        showFormForLaw(result.laws[0]);
+                        showFormForLaw(result.default_law);
                         doneChoice = lastChoice;
                     });
             }(currentPublicBodyChoice));

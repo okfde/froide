@@ -1,3 +1,4 @@
+import json
 import StringIO
 import tempfile
 
@@ -40,22 +41,6 @@ class PublicBodyTest(TestCase):
             kwargs={"topic": topic.slug}))
         self.assertEqual(response.status_code, 200)
         self.assertIn(pb.name, response.content.decode('utf-8'))
-
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_autocomplete(self):
-        import json
-        pb = factories.PublicBodyFactory.create(name='specialbody')
-        response = self.client.get('%s?query=%s' % (
-                reverse('publicbody-autocomplete'), pb.name))
-        self.assertEqual(response.status_code, 200)
-        obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(pb.name, obj['suggestions'][0])
-        self.assertIn(pb.name, obj['data'][0]['name'])
-        response = self.client.get('%s?query=%s&jurisdiction=non_existant' % (
-                reverse('publicbody-autocomplete'), pb.name))
-        self.assertEqual(response.status_code, 200)
-        obj = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(obj['suggestions'], [])
 
     def test_csv(self):
         csv = PublicBody.export_csv(PublicBody.objects.all())
@@ -121,17 +106,6 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.post(url, {'url': 'test'})
         self.assertEqual(response.status_code, 302)
 
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_search(self):
-        pb = factories.PublicBodyFactory.create(name='peculiarentity')
-        response = self.client.get('%s?q=%s' % (
-            reverse('publicbody-search_json'), pb.name))
-        self.assertIn(pb.name, response.content)
-        self.assertEqual(response['Content-Type'], 'application/json')
-        response = self.client.get('%s?q=%s&jurisdiction=non_existant' % (
-            reverse('publicbody-search_json'), pb.name))
-        self.assertEqual("[]", response.content)
-
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]
         self.assertIn(law.jurisdiction.name, unicode(law))
@@ -183,3 +157,18 @@ class ApiTest(TestCase):
     def test_search(self):
         response = self.client.get('/api/v1/publicbody/search/?format=json&q=Body')
         self.assertEqual(response.status_code, 200)
+
+    @skip_if_environ('FROIDE_SKIP_SEARCH')
+    def test_autocomplete(self):
+        pb = factories.PublicBodyFactory.create(name='specialbody')
+        response = self.client.get('%s&query=%s' % (
+                '/api/v1/publicbody/autocomplete/?format=json', pb.name))
+        self.assertEqual(response.status_code, 200)
+        obj = json.loads(response.content.decode('utf-8'))
+        self.assertIn(pb.name, obj['suggestions'][0])
+        self.assertIn(pb.name, obj['data'][0]['name'])
+        response = self.client.get('%s&query=%s&jurisdiction=non_existant' % (
+                '/api/v1/publicbody/autocomplete/?format=json', pb.name))
+        self.assertEqual(response.status_code, 200)
+        obj = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(obj['suggestions'], [])

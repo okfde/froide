@@ -32,8 +32,8 @@ class FoiAttachmentResource(ModelResource):
     def dehydrate(self, bundle):
         if bundle.obj:
             bundle.data.update({
-                'url': bundle.obj.get_absolute_domain_url(),
-                'site_url': bundle.obj.get_anchor_url()
+                'site_url': bundle.obj.get_absolute_domain_url(),
+                'anchor_url': bundle.obj.get_anchor_url()
             })
         return bundle
 
@@ -127,7 +127,7 @@ class FoiRequestResource(ModelResource):
         if bundle.obj:
             bundle.data['description'] = bundle.obj.get_description()
             bundle.data['status_name'] = bundle.obj.readable_status
-            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+            bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
             bundle.data['tags'] = [{'slug': t.slug, 'name': t.name}
                 for t in bundle.obj.tags.all()
             ]
@@ -135,8 +135,34 @@ class FoiRequestResource(ModelResource):
 
     def prepend_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/search%s$" % (self._meta.resource_name, utils.trailing_slash()), self.wrap_view('get_search'), name="api_get_search"),
+            url(r"^(?P<resource_name>%s)/search%s$" % (
+                    self._meta.resource_name,
+                    utils.trailing_slash()
+                ), self.wrap_view('get_search'), name="api_get_search"),
+            url(r"^(?P<resource_name>%s)/simplesearch%s$" % (
+                    self._meta.resource_name,
+                    utils.trailing_slash()
+                ), self.wrap_view('get_simple_search'), name="api_get_simple_search"),
         ]
+
+    def get_simple_search(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+        query = request.GET.get("q", None)
+        result = []
+        if query:
+            sqs = SearchQuerySet().models(FoiRequest)
+            sqs = sqs.auto_query(query)
+            result = list(sqs[:5])
+            result = [{
+                "title": x.title,
+                "id": x.pk,
+                "public_body_name": x.public_body_name,
+                "description": x.description,
+                "url": x.url,
+                "score": x.score
+            } for x in result]
+
+        return self.create_response(request, {'objects': result})
 
     def get_search(self, request, **kwargs):
         self.method_check(request, allowed=['get'])

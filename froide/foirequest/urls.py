@@ -22,7 +22,6 @@ urlpatterns = patterns("froide.foirequest.views",
     (r'^unchecked/$', 'list_unchecked', {}, 'foirequest-list_unchecked'),
     # Translators: part in /request/to/public-body-slug URL
     (r'^submit$', 'submit_request', {}, 'foirequest-submit_request'),
-    (r'^search/json$', 'search_similar', {}, 'foirequest-search_similar'),
 )
 
 

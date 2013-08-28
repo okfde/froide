@@ -10,7 +10,7 @@
 <script type="text/javascript">
   var Froide = Froide || {};
   Froide.url = Froide.url || {};
-  Froide.url.searchRequests = "{% url 'foirequest-search_similar' %}";
+  Froide.url.searchRequests = "{% url 'api_get_simple_search' api_name='v1' resource_name='request' %}"
   Froide.template = Froide.template || {};
   Froide.template.visitPublicBodyWebsite = '{% blocktrans %}Visit the website of this Public Body{% endblocktrans %}';
   Froide.regex = Froide.regex || {};

@@ -13,7 +13,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 
 from haystack.query import SearchQuerySet
-from haystack.inputs import AutoQuery
 from taggit.models import Tag
 
 from froide.account.forms import NewUserForm
@@ -237,18 +236,6 @@ def show(request, slug, template_name="foirequest/show.html",
         "active_tab": active_tab
     })
     return render(request, template_name, context, status=status)
-
-
-def search_similar(request):
-    query = request.GET.get("q", None)
-    result = []
-    if query:
-        sqs = SearchQuerySet().models(FoiRequest)
-        sqs = sqs.filter(content=AutoQuery(query))
-        result = list(sqs[:5])
-        result = [{"title": x.title, "id": x.pk, "public_body_name": x.public_body_name, "description": x.description,
-            "url": x.url, "score": x.score} for x in result]
-    return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 def search(request):
