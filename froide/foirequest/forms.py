@@ -40,7 +40,8 @@ class RequestForm(forms.Form):
                     "class": "form-control"
                 }))
     full_text = forms.BooleanField(required=False, initial=False,
-            label=_("Don't wrap in template"))
+            label=_("Don't wrap in template"),
+            widget=forms.CheckboxInput(attrs={'tabindex': '-1'}))
     public = forms.BooleanField(required=False, initial=True,
             label=_("This request is public."),
             help_text=_("If you don't want your request to be public right now,"
