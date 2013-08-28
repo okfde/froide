@@ -111,4 +111,3 @@ class ApiTest(TestCase):
         self.assertIn('description', content)
         self.assertIn('public_body_name', content)
         self.assertIn('url', content)
-
