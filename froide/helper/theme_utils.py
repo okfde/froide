@@ -6,6 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils._os import safe_join
 from django.utils.importlib import import_module
 from django.template.loaders.app_directories import Loader
+from django.utils import six
 
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 
@@ -20,7 +21,8 @@ if getattr(settings, 'FROIDE_THEME', None) is not None:
     theme_template_dir = os.path.join(
             os.path.dirname(mod.__file__), 'templates')
     if os.path.isdir(theme_template_dir):
-        theme_template_dir = theme_template_dir.decode(fs_encoding)
+        if not six.PY3:
+            theme_template_dir = theme_template_dir.decode(fs_encoding)
     else:
         theme_template_dir = None
 
