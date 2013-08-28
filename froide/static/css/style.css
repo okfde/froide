@@ -195,6 +195,10 @@ input:focus {
     padding: 15px 0 0 0;
 }
 
+.foirequest fieldset {
+    margin-top: 1em;
+}
+
 .foirequest fieldset.active legend{
     display: block;
 }
@@ -220,45 +224,6 @@ input:focus {
     word-wrap: break-word;
 }
 
-/*
-form.foirequest fieldset.active > div{
-    background-color: #FFE9EE;
-}
-
-
-form.foirequest fieldset > div, form.foirequest .letter {
-    padding: 1px 20px 5px 20px;
-}
-
-.js form.foirequest div.js-hidden {
-    display:none;
-}
-
-form.foirequest ol {
-    margin:0;
-    padding-left:0px;
-    list-style-type:none;
-}
-
-form.foirequest > ol > li{
-    margin-bottom:2em;
-}
-
-.public_body-chooser ul {
-    list-style-type:none;
-    padding:0;
-    margin:0;
-    border:1px solid #ccc;
-}
-
-.publicbody-search {
-    margin:0.5em 0;
-}
-
-.search-public_bodies {
-    width:60%;
-}
-*/
 
 .search-results {
     max-height: 12em;
@@ -320,82 +285,6 @@ form.foirequest > ol > li{
 .autocomplete > div.selected {
     background:#F0F0F0;
 }
-
-/*
-.search-spinner {
-    margin: 0 20px;
-}
-
-#new-public_body {
-    width:80%;
-    font-size:0.75em;
-    margin-left:2em;
-    padding:5px;
-    border-bottom:1px solid #aaa;
-    border-left:1px solid #aaa;
-    border-right:1px solid #aaa;
-    background-color: #ddd;
-}
-
-#new-public_body textarea {
-    height:3em;
-    width:auto;
-}*/
-/*
-form.foirequest div.error {
-    width:40%;
-}
-
-form.foirequest div.error ul{
-    margin: 0;
-}
-
-form.foirequest .lawinfo {
-    display: block;
-    color: #666;
-    font-weight: normal;
-}
-
-form.foirequest .letter {
-    background-color: white;
-}
-
-form.foirequest .letter textarea {
-    margin: 0;
-    font-size:14px;
-    background-color: white;
-    height: 80px;
-    color: #333;
-}
-
-form.foirequest .text a {
-    color: #999;
-    font-size: 80%;
-    text-decoration: none
-}
-
-
-form.foirequest .text-like {
-    background-color: white;
-    font-size:14px;
-}
-
-form.foirequest .text em {
-    font-size: 1.2em;
-    font-weight: bold;
-    font-style: normal;
-}
-
-form.foirequest .text label {
-    white-space: normal;
-    display: block;
-    margin:0;
-}
-
-form.foirequest #post_address {
-    white-space: nowrap;
-    white-space: pre-line;
-}*/
 
 .js .js-hidden {
     display:none;
