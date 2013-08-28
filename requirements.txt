@@ -1,14 +1,17 @@
 https://www.djangoproject.com/download/1.6b2/tarball/#egg=Django
 Jinja2==2.7.1
+-e git://github.com/stefanw/sphinx-me.git@python-3#egg=sphinx_me
 Markdown==2.3.1
 Pygments==1.6
 South==0.8.2
 Sphinx==1.1
 celery==3.0.22
--e git://github.com/stefanw/celery-haystack.git@latest-deploy#egg=celery_haystack
 django-celery==3.0.21
-django-celery-email==1.0.3
+-e git://github.com/stefanw/celery-haystack.git@latest-deploy#egg=celery_haystack
+-e git://github.com/stefanw/django-celery-email.git@python3#egg=django_celery_email
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
+django-pagination==1.0.7
+django-paging==0.2.5
 django-secure==1.0
 django-taggit==0.10
 feedparser==5.1.3
@@ -19,9 +22,9 @@ pytz==2013b
 requests==1.2.3
 django-gravatar2==1.0.6
 django-floppyforms==1.1
-django-overextends==0.2.2
-unicodecsv==0.9.4
+-e git://github.com/stefanw/django-overextends.git@python-3#egg=django_overextends
 python-magic==0.4.3
 django-tastypie==0.10.0
 python-mimeparse>=0.1.4
-django-tastypie-swagger==0.1.1
+-e git://github.com/stefanw/django-tastypie-swagger.git@python-3#egg=django_tastypie_swagger
+anyjson==0.3.3

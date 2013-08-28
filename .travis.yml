@@ -3,6 +3,7 @@ language: python
 python:
 - '2.7'
 - '2.6'
+- '3.3'
 services:
 - elasticsearch
 before_install:
@@ -17,8 +18,4 @@ script:
 branches:
   only:
   - master
-env:
-  global:
-  - S3_BUCKET=assets.okfnlabs.org
-  - S3_ACCESS_KEY=AKIAIY6JZKLHFPB3KTQA
-  - secure: "B0JCveS4EwWZybclbEpFN1e/Am6uTTBU9qFJTFs0fyj8LBmdUl14YcWK+24O\nBiX9C3QUsfzHP5SoMEo3GgYZzLMIKRX8wr/UdspyW6sBh8VyPqfaanWys9xn\nGETJBJA30cYpUEwfEsNko/xz7TpW3dfP6O2hweSFuPo/Uzjt1tg="
+  - python3
