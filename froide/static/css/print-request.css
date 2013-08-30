@@ -16,15 +16,6 @@
 	page-break-before:always;
 }
 
-.print-only {
-	display: inline !important;
-}
-
-.print-show {
-	display: block !important;
-}
-
-
 h2 {
 	text-align: left;
 }
