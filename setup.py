@@ -5,7 +5,7 @@ from setuptools import setup
 
 def read(*parts):
     file_path = path.join(path.dirname(__file__), *parts)
-    return codecs.open(file_path).read()
+    return codecs.open(file_path, encoding='utf-8').read()
 
 
 setup(
@@ -31,6 +31,6 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
-        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Internet :: WWW/HTTP'
     ]
 )
