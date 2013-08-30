@@ -344,7 +344,10 @@ class PublicBody(models.Model):
     def export_csv(cls, queryset):
         from django.utils import six
 
-        from froide.helper.csvcompat import get_csv_dictwriter
+        if six.PY3:
+            import csv
+        else:
+            import unicodecsv as csv
 
         s = six.StringIO()
 
@@ -355,7 +358,7 @@ class PublicBody(models.Model):
             "request_note", "parent__name",
         )
 
-        writer = get_csv_dictwriter(s, fields, encoding='utf-8')
+        writer = csv.DictWriter(s, fields)
         writer.writeheader()
         for pb in queryset:
             d = {}

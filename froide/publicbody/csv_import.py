@@ -4,11 +4,16 @@ import requests
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
-from django.utils.six import StringIO
+from django.utils.six import StringIO, PY3
+
+if PY3:
+    import csv
+else:
+    import unicodecsv as csv
+
 
 from froide.publicbody.models import (PublicBody, PublicBodyTopic,
     Jurisdiction, FoiLaw)
-from froide.helper.csvcompat import get_csv_dictreader
 
 User = get_user_model()
 
@@ -29,7 +34,7 @@ class CSVImporter(object):
         self.import_from_file(StringIO(response.text))
 
     def import_from_file(self, csv_file):
-        reader = get_csv_dictreader(csv_file, encoding='utf-8')
+        reader = csv.DictReader(csv_file)
         for row in reader:
             self.import_row(row)
 
