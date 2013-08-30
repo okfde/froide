@@ -1,6 +1,5 @@
 https://www.djangoproject.com/download/1.6b2/tarball/#egg=Django
 Jinja2==2.7.1
--e git://github.com/stefanw/sphinx-me.git@python-3#egg=sphinx_me
 Markdown==2.3.1
 Pygments==1.6
 South==0.8.2
@@ -22,7 +21,7 @@ pytz==2013b
 requests==1.2.3
 django-gravatar2==1.0.6
 django-floppyforms==1.1
--e git://github.com/stefanw/django-overextends.git@python-3#egg=django_overextends
+django_overextends==0.3.0
 python-magic==0.4.3
 django-tastypie==0.10.0
 python-mimeparse>=0.1.4
