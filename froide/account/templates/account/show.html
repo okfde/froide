@@ -49,10 +49,10 @@
           <ul>
             {% for event in req.list %}
             <li>
-              <span class="no-print" title="{{ event.timestamp }}">
+              <span class="hidden-print" title="{{ event.timestamp }}">
                 {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
               </span>
-              <span class="print-only">
+              <span class="visible-print">
                   {{ event.timestamp|date:"DATETIME_FORMAT" }}
               </span>
               : {{ event.as_html }}

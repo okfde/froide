@@ -6,7 +6,7 @@
   </li>
 {% else %}
   {% if user == object.user or user.is_staff %}
-    <li class="alert alert-success">
+    <li class="alert alert-success hidden-print">
       {% if attachment.can_approve or user.is_staff %}
         <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
           {% csrf_token %}

@@ -51,7 +51,7 @@
     {% render_comment_form for object %}
   {% endwith %}
   {% else %}
-  <a href="{% url 'account-login' %}" class="no-print">{% blocktrans %}Please login to provide an idea.{% endblocktrans %}</a><br/>
+  <a href="{% url 'account-login' %}" class="hidden-print">{% blocktrans %}Please login to provide an idea.{% endblocktrans %}</a><br/>
   {% endif %}
   </div>
 </div>
