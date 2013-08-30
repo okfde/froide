@@ -20,7 +20,7 @@
 {% endif %}
 {% else %}
 <div class="row">
-  <div class="col-lg-6">
+  <div class="col-lg-6 col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h2 class="panel-title">
@@ -28,6 +28,11 @@
         </h2>
       </div>
       <div class="panel-body">
+        <p class="visible-sm visible-xs">
+          <a href="#signup">
+            {% blocktrans %}Don't have an account? Click here to sign up!{% endblocktrans %}
+          </a>
+        </p>
         <form class="form-horizontal" method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
           {% csrf_token %}
           {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
@@ -66,7 +71,7 @@
     </div>
   </div>
   {% if not simple %}
-    <div class="col-lg-6">
+    <div id="signup" class="col-lg-6 col-md-6">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">
