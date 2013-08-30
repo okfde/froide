@@ -170,8 +170,8 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "span5"}))
-    message = forms.CharField(widget=forms.Textarea(attrs={"class": "span5"}),
+            widget=forms.TextInput(attrs={"class": "form-control"}))
+    message = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control"}),
             label=_("Your message"))
 
     def __init__(self, foirequest, *args, **kwargs):
@@ -232,10 +232,10 @@ class MakePublicBodySuggestionForm(forms.Form):
 
 class EscalationMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "span5"}))
+            widget=forms.TextInput(attrs={"class": "form-control"}))
     message = forms.CharField(
             widget=forms.Textarea(
-                attrs={"class": "span5"}),
+                attrs={"class": "form-control"}),
             label=_("Your message"), )
 
     def __init__(self, foirequest, *args, **kwargs):
@@ -404,20 +404,20 @@ class PostalScanMixin(object):
 class PostalReplyForm(forms.Form, PostalScanMixin):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>. All uploaded documents will be published!"))
     date = forms.DateField(
-            widget=forms.TextInput(attrs={"class": "input-small"}),
+            widget=forms.TextInput(attrs={"class": "form-control"}),
             label=_("Send Date"),
             help_text=_("Please give the date the reply was sent."),
             localize=True)
     sender = forms.CharField(label=_("Sender Name"),
-            widget=forms.TextInput(attrs={"class": "span5",
+            widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Sender Name")}), required=True)
     subject = forms.CharField(label=_("Subject"), required=False,
-            widget=forms.TextInput(attrs={"class": "span5",
+            widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Subject")}))
     text = forms.CharField(label=_("Letter"),
             widget=forms.Textarea(attrs={"placeholder":
                 _("Letter text you have received"),
-                "class": "span5"
+                "class": "form-control"
             }),
             required=False,
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
