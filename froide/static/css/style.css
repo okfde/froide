@@ -710,7 +710,6 @@ input:focus {
 
 .state-header {
     background: center top no-repeat;
-    margin-bottom: 2em;
 }
 
 .state-header .state-headline {
@@ -722,6 +721,7 @@ input:focus {
     font-weight: bold;
     text-shadow: 0px 0px 5px #fff;
     padding-top: 0.5em;
+    margin-top: 0;
 }
 
 .state-header h2 {
@@ -729,22 +729,19 @@ input:focus {
     font-size: 110%;
 }
 
-.state-header .state-points {
-    margin: 0 10%;
+.state-headline-white {
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
-.state-header .state-points > li {
+.above-panorama {
+  padding-bottom: 1em;
+}
+
+.above-panorama .thumbnail {
+    border-color: transparent;
     background-color: #fff;
     background-color: rgba(255, 255, 255, 0.8);
-}
-
-.state-header .state-points h3 {
-    margin-top: 0;
-    font-size: 110%;
-}
-
-.state-header .state-points .thumbnail {
-    border-color: transparent;
 }
 
 .message-nav.affix {
