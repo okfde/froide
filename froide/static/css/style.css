@@ -775,7 +775,7 @@ input:focus {
 }
 
 .message-nav li a {
-    padding: 0px 15px 10px !important;
+    padding: 5px 15px 5px !important;
 }
 
 .message-nav li.active a {

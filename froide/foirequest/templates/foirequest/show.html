@@ -558,7 +558,7 @@ data-spy="scroll" data-target="#message-nav-container"
 
 <hr/>
 
-<div class="row">
+<div class="row" id="correspondence">
 
   <div id="message-nav-container" class="col-lg-3 col-lg-push-9 col-md-3 col-md-push-9 hidden-print">
     {% if object.messages %}
@@ -803,17 +803,19 @@ data-spy="scroll" data-target="#message-nav-container"
     });
     $messageNav = $('#message-nav');
     $messageNav.css('left', $messageNav.offset().left +'px');
+
     $messageNav.affix({
       offset: {
-        top: function () {
-          var offsetTop = $messageNav.offset().top;
-          return (this.top = offsetTop - 10)
-        }
-      , bottom: function () {
-          return (this.bottom = $('#footer').outerHeight(true))
+        top: function(){
+          var offsetTop = $('#correspondence').offset().top;
+          return offsetTop - 10;
+        },
+        bottom: function () {
+          return $('#footer').outerHeight(true);
         }
       }
     });
+
     $("#id_resolution").change(function(){
       Froide.app.statusSet();
     });
