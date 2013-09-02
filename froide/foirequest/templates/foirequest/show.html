@@ -443,10 +443,27 @@ data-spy="scroll" data-target="#message-nav-container"
       {% endif %}
 
       {% if object.visibility == 2 %}
+      {% block social_sharing %}
         <li class="nav-header">{% trans "Share this request" %}</li>
         <li>
-          <div class="socialshareprivacy"></div><br/>
+          <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}">
+            <span class="glyphicon glyphicon-share"></span>
+            {% trans "Twitter" %}
+          </a>
         </li>
+        <li>
+          <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}">
+            <span class="glyphicon glyphicon-share"></span>
+            {% trans "Facebook" %}
+          </a>
+        </li>
+        <li>
+          <a href="https://plus.google.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}">
+            <span class="glyphicon glyphicon-share"></span>
+            {% trans "Google+" %}
+          </a>
+        </li>
+        {% endblock %}
       {% endif %}
 
       <li class="nav-header">{% trans "Feeds" %}</li>
@@ -793,7 +810,6 @@ data-spy="scroll" data-target="#message-nav-container"
 {% endblock %}
 
 {% block extra_footer %}
-{# <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.socialshareprivacy.min.js"></script> #}
 <script type="text/javascript">
   var STATIC_URL = "{{ STATIC_URL }}";
   $(function(){
@@ -827,26 +843,6 @@ data-spy="scroll" data-target="#message-nav-container"
       $('.now-loggedin').hide();
       location.href = $("link[rel='self']").attr("href");
     };
-    // if($('.socialshareprivacy').length > 0){
-    //   $('.socialshareprivacy').socialSharePrivacy({
-    //     css_path: STATIC_URL + "js/libs/socialshareprivacy/socialshareprivacy.css",
-    //     uri: "{{ SITE_URL }}{{ object.get_absolute_url }}",
-    //     services: {
-    //       facebook: {
-    //         perma_option: 'off',
-    //         dummy_img: STATIC_URL + "js/libs/socialshareprivacy/images/dummy_facebook.png"
-    //       },
-    //       twitter: {
-    //         perma_option: 'off',
-    //         dummy_img: STATIC_URL + "js/libs/socialshareprivacy/images/dummy_twitter.png"
-    //       },
-    //       gplus: {
-    //         perma_option: 'off',
-    //         dummy_img: STATIC_URL + "js/libs/socialshareprivacy/images/dummy_gplus.png"
-    //       }
-    //     }
-    //   });
-    // }
   });
 </script>
 {% endblock %}
