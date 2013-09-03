@@ -20,6 +20,8 @@ DATABASES = {
     }
 }
 
+CONN_MAX_AGE = None
+
 
 INSTALLED_APPS = [
     'django.contrib.auth',
