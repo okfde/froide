@@ -1,4 +1,4 @@
-Django==1.5.2
+Django==1.5.4
 Jinja2==2.6
 Markdown==2.2.1
 Pygments==1.6
