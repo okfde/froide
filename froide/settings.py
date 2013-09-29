@@ -3,6 +3,8 @@
 import os.path
 import re
 
+import dj_database_url
+
 ########### Basic Stuff ###############
 
 DEBUG = True
@@ -20,6 +22,11 @@ DATABASES = {
     }
 }
 
+# Parse DB config from DATABASE_URL environment variable (if present)
+# Needed for e.g. Heroku
+dbconfig = dj_database_url.config()
+if dbconfig:
+    DATABASES['default'] =  dbconfig
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -413,3 +420,12 @@ FOI_EMAIL_FUNC = None
 # Is the message you can send from fixed
 # or can you send from any address you like?
 FOI_EMAIL_FIXED_FROM_ADDRESS = True
+
+
+## Heroku stuff
+## See https://devcenter.heroku.com/articles/getting-started-with-django
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ALLOWED_HOSTS = ['*']
+
