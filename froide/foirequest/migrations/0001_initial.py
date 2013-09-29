@@ -6,6 +6,13 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        # be aggressive in asserting the dep
+        # (dep is probably weaker than this i.e. lower number from publicbody
+        # and higher from foirequest ...)
+        ('publicbody', '0020_auto__chg_field_publicbody_jurisdiction__chg_field_publicbody_site__ch.py'),
+    )
+
     def forwards(self, orm):
         
         # Adding model 'FoiRequest'
