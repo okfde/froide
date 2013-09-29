@@ -1,5 +1,0 @@
-gunicorn
-dj-database-url
-dj-static
-static
-

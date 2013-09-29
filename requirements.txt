@@ -28,5 +28,6 @@ python-magic==0.4.3
 django-tastypie==0.9.12
 -e git://github.com/stefanw/django-tastypie-swagger.git@django-1.5#egg=django-tastypie-swagger
 
-# Heroku
--r requirements-heroku.txt
+## Heroku
+dj-database-url
+gunicorn
