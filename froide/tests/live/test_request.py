@@ -70,6 +70,8 @@ class TestMakingRequest(LiveServerTestCase):
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_id('continue-foicheck'))
         self.selenium.find_element_by_id('continue-foicheck').click()
         req_title = 'FoiRequest Number'
         self.selenium.find_element_by_id('id_subject').send_keys(req_title)
