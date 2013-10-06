@@ -5,8 +5,11 @@
 {% blocktrans with title=request.title %}Updates to the request "{{ title }}"{% endblocktrans %}:
 {% for event in container.events %} - {{ event }}
 {% endfor %}
-{% blocktrans with link=request.get_absolute_domain_short_url %}Visit this request: {{ link }}{% endblocktrans %}
-{% blocktrans with unfollow_link=container.unfollow_link %}If you want to unfollow this request, click this link:
+{% blocktrans with link=request.get_absolute_domain_short_url %}Visit this request:
+
+{{ link }}{% endblocktrans %}
+
+{% blocktrans with unfollow_link=container.unfollow_link %}If you want to UNFOLLOW this request, click this link:
 {{ unfollow_link }}{% endblocktrans %}
 
 {% endfor %}
