@@ -91,10 +91,12 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_user_email')\
             .send_keys(user_email)
         self.selenium.find_element_by_id('id_terms').click()
+        self.selenium.get_screenshot_as_file('/Users/sw/Desktop/test_98a.png')
         self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
-        time.sleep(0.5)
+        self.selenium.find_element_by_id('step-review')
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -135,9 +137,9 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_public').click()
         self.selenium.find_element_by_id('id_private').click()
         self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
-        time.sleep(0.5)
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -177,9 +179,11 @@ class TestMakingRequest(LiveServerTestCase):
             lambda driver: driver.find_element_by_id('review-button').is_displayed()
         )
         self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
-        time.sleep(0.5)
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('#messages'))
