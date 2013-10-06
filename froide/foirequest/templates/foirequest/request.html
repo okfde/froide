@@ -266,11 +266,11 @@
               </label>
             </div>
 
-            <div class="well letter ">
+            <div class="well letter">
               <div id="letter_start" class="text"{% if request_form.full_text.value %} style="display:none"{% endif %}>{{ request_form.default_law.letter_start_form }}</div>
 
               <div{% if request_form.body.errors %} class="has-error"{% endif %}>{{ request_form.body }}</div>
-              <div id="letter_complete_end"{% if request_form.full_text.value %} style="display:none"{% endif %}><div id="letter_short_end" class="text"><a class="toggle hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
+              <div id="letter_complete_end"{% if request_form.full_text.value %} style="display:none"{% endif %}><div id="letter_short_end" class="text"><small class="pull-right"><a class="toggle hideparent text-muted" href="#letter_end">{% trans "[... Show complete request text]" %}</a></small>
                 <span id="letter-greeting">{% blocktrans %}Kind Regards,{% endblocktrans %}</span>
               </div>
 
@@ -300,144 +300,144 @@
                     {% endif %}
                     </div>
                   </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="user_data_form">
+                {{ user_form.user_email.errors }}
+                <div class="form-group{% if user_form.user_email.errors %} has-error{% endif %}">
+                  <label for="id_user_email" class="control-label">
+                    {% blocktrans %}Your email address{% endblocktrans %}
+                  </label>
+                  {% if user.is_authenticated %}
+                    <p id="email_address" class="form-control-static">{{ user.email }}</p>
+                  {% else %}
+                    {{ user_form.user_email }}
+                  {% endif %}
+                </div>
+
+                <div class="form-group{% if user_form.address.errors %} has-error{% endif %}">
+                  {{ user_form.address.errors }}
+                  <label for="id_address" class="control-label">
+                    {% blocktrans %}Your post address{% endblocktrans %}
+                  </label>
+                  {% if user.is_authenticated %}
+                    <p id="post_address" class="text form-control-static">{{ user.address }}</p>
+                  {% else %}
+                    {{ user_form.address }}
+                    <p class="help-block">{{ user_form.address.help_text }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <div class="row">
+            <div class="col-lg-12">
+              {% if user_form.private %}
+                <div class="well">
+                  <div class="checkbox">
+                    <label>
+                      {{ user_form.private }} {{ user_form.private.label }}
+                    </label>
+                    <p class="help-block">
+                      {{ user_form.private.help_text }}
+                    </p>
+                  </div>
                 </div>
               {% endif %}
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="user_data_form">
-              {{ user_form.user_email.errors }}
-              <div class="form-group{% if user_form.user_email.errors %} has-error{% endif %}">
-                <label for="id_user_email" class="control-label">
-                  {% blocktrans %}Your email address{% endblocktrans %}
-                </label>
-                {% if user.is_authenticated %}
-                  <p id="email_address" class="form-control-static">{{ user.email }}</p>
-                {% else %}
-                  {{ user_form.user_email }}
-                {% endif %}
-              </div>
-
-              <div class="form-group{% if user_form.address.errors %} has-error{% endif %}">
-                {{ user_form.address.errors }}
-                <label for="id_address" class="control-label">
-                  {% blocktrans %}Your post address{% endblocktrans %}
-                </label>
-                {% if user.is_authenticated %}
-                  <p id="post_address" class="text form-control-static">{{ user.address }}</p>
-                {% else %}
-                  {{ user_form.address }}
-                  <p class="help-block">{{ user_form.address.help_text }}</p>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr/>
-        <div class="row">
-          <div class="col-lg-12">
-            {% if user_form.private %}
-              <div class="well">
-                <div class="checkbox">
-                  <label>
-                    {{ user_form.private }} {{ user_form.private.label }}
-                  </label>
-                  <p class="help-block">
-                    {{ user_form.private.help_text }}
-                  </p>
-                </div>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="well">
-              <div class="checkbox">
-                <label>
-                  {{ request_form.public }}
-                  {{ request_form.public.label }}
-                </label>
-                <p class="help-block">
-                  {{ request_form.public.help_text }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <p>
-                  {% blocktrans %}Do you want to make sure that the information you are requesting isn't already available?{% endblocktrans %}
-                </p>
-                <div class="row">
-                  <div class="col-lg-6">
-                    <h4>
-                      {% blocktrans %}Similar Requests{% endblocktrans %}
-                    </h4>
-                    <div id="similar-requests-container">
-                      <ul id="similar-requests">
-                        <li>
-                          {% blocktrans %}None found{% endblocktrans %}
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <h4>
-                      {% blocktrans %}Related Websites{% endblocktrans %}
-                    </h4>
-                    <ul id="check-list">
-                      {% if public_body_search %}
-                        <li>
-                          <a class="target-new" href="#">
-                            {% blocktrans with topic=public_body_search %}Search this site for {{ topic }}{% endblocktrans %}
-                          </a>
-                        </li>
-                      {% endif %}
-                      {% if public_body %}
-                        <li>
-                          <a class="target-new" href="{{ public_body.get_absolute_url }}#">
-                            {% blocktrans %}Explore other requests made to this Public Body{% endblocktrans %}
-                          </a>
-                        </li>
-                      {% endif %}
-                      {% if public_body and public_body_search %}
-                        <li>
-                          <a class="target-new" href="{% search_engine_query public_body_search public_body.domain %}">
-                            {% blocktrans %}Try a Web Search for your topic{% endblocktrans %}
-                          </a>
-                        </li>
-                      {% endif %}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% if not user.is_authenticated %}
           <div class="row">
             <div class="col-lg-12">
               <div class="well">
-                {% if user_form.terms %}
-                  {{ user_form.terms.errors }}
-                  <div class="checkbox">
-                    {{ user_form.terms }}
-                  </div>
-                {% endif %}
+                <div class="checkbox">
+                  <label>
+                    {{ request_form.public }}
+                    {{ request_form.public.label }}
+                  </label>
+                  <p class="help-block">
+                    {{ request_form.public.help_text }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        {% endif %}
-        <a href="#step-review" id="review-button" role="button" class="btn btn-primary btn-lg" data-toggle="modal">
-          <span class="glyphicon glyphicon-hand-right"></i>
-          {% trans "Review and Submit" %}
-        </a>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <p>
+                    {% blocktrans %}Do you want to make sure that the information you are requesting isn't already available?{% endblocktrans %}
+                  </p>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <h4>
+                        {% blocktrans %}Similar Requests{% endblocktrans %}
+                      </h4>
+                      <div id="similar-requests-container">
+                        <ul id="similar-requests">
+                          <li>
+                            {% blocktrans %}None found{% endblocktrans %}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <h4>
+                        {% blocktrans %}Related Websites{% endblocktrans %}
+                      </h4>
+                      <ul id="check-list">
+                        {% if public_body_search %}
+                          <li>
+                            <a class="target-new" href="#">
+                              {% blocktrans with topic=public_body_search %}Search this site for {{ topic }}{% endblocktrans %}
+                            </a>
+                          </li>
+                        {% endif %}
+                        {% if public_body %}
+                          <li>
+                            <a class="target-new" href="{{ public_body.get_absolute_url }}#">
+                              {% blocktrans %}Explore other requests made to this Public Body{% endblocktrans %}
+                            </a>
+                          </li>
+                        {% endif %}
+                        {% if public_body and public_body_search %}
+                          <li>
+                            <a class="target-new" href="{% search_engine_query public_body_search public_body.domain %}">
+                              {% blocktrans %}Try a Web Search for your topic{% endblocktrans %}
+                            </a>
+                          </li>
+                        {% endif %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% if not user.is_authenticated %}
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="well">
+                  {% if user_form.terms %}
+                    {{ user_form.terms.errors }}
+                    <div class="checkbox">
+                      {{ user_form.terms }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          <a href="#step-review" id="review-button" role="button" class="btn btn-primary btn-lg" data-toggle="modal">
+            <span class="glyphicon glyphicon-hand-right"></span>
+            {% trans "Review and Submit" %}
+          </a>
+        </div>
       </fieldset>
 
       <fieldset id="review-and-submit">
