@@ -3,6 +3,7 @@ from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
 import os.path
+import sys
 import re
 
 rec = re.compile
@@ -518,6 +519,13 @@ class Heroku(SSLSite, Production):
     ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
+
+    @property
+    def LOGGING(self):
+        logging = super(Heroku, self).LOGGING
+        logging['handlers']['console']['stream'] = sys.stdout
+        logging['loggers']['django.request']['handlers'] = ['console']
+        return logging
 
 try:
     from .local_settings import *  # noqa
