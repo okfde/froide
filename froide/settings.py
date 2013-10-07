@@ -504,7 +504,8 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
     pass
 
 
-class SimpleHeroku(Production):
+class Heroku(SSLSite, Production):
+    ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
 
