@@ -293,6 +293,16 @@ class Base(Configuration):
 
     SOUTH_TESTS_MIGRATE = False
 
+    SOUTH_MIGRATION_MODULES = {
+        'account': 'ignore',
+        'foirequest': 'ignore',
+        'foiidea': 'ignore',
+        'publicbody': 'ignore',
+        'foirequestfollower': 'ignore',
+        'frontpage': 'ignore',
+        'foisite': 'ignore'
+    }
+
     ######### Celery #############
 
     CELERY_RESULT_BACKEND = values.Value("database")
