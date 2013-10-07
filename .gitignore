@@ -11,3 +11,7 @@ files/
 */_build/
 htmlcov/
 public/
+build/
+dist/
+*.egg-info
+*.log
