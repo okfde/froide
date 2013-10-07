@@ -28,3 +28,6 @@ python-mimeparse>=0.1.4
 -e git://github.com/stefanw/django-tastypie-swagger.git@python-3#egg=django_tastypie_swagger
 -e git://github.com/stefanw/python-unicodecsv.git@python-3#egg=unicodecsv
 anyjson==0.3.3
+dj-database-url==0.2.2
+django-cache-url==0.6.0
+-e git+git@github.com:stefanw/django-configurations.git@deploy#egg=django-configurations
