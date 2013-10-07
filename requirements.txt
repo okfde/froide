@@ -9,8 +9,6 @@ django-celery==3.0.21
 -e git://github.com/stefanw/celery-haystack.git@latest-deploy#egg=celery_haystack
 -e git://github.com/stefanw/django-celery-email.git@python3#egg=django_celery_email
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
-django-pagination==1.0.7
-django-paging==0.2.5
 django-secure==1.0
 django-taggit==0.10
 feedparser==5.1.3
