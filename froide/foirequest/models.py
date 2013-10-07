@@ -997,6 +997,18 @@ class FoiRequest(models.Model):
             [user.email]
         )
 
+    def days_to_resolution(self):
+        final = None
+        resolutions = dict(self.RESOLUTION_FIELD_CHOICES)
+        for mes in self.response_messages():
+            if (mes.status == 'resolved' or
+                        mes.status in resolutions):
+                final = mes.timestamp
+                break
+        if final is None:
+            return None
+        return (mes.timestamp - self.first_message).days
+
 
 class PublicBodySuggestion(models.Model):
     request = models.ForeignKey(FoiRequest,
