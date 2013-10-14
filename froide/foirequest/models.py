@@ -618,7 +618,6 @@ class FoiRequest(models.Model):
             message.plaintext = strip_all_tags(email['html'])
         message.subject_redacted = message.redact_subject()[:250]
         message.plaintext_redacted = message.redact_plaintext()
-        message.original = mail_string
         message.save()
         self._messages = None
         self.status = 'awaiting_classification'
