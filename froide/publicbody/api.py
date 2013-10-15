@@ -122,9 +122,21 @@ class PublicBodyResource(ModelResource):
         if jurisdiction is not None:
             sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
 
-        names = [u"%s (%s)" % (x.name, x.jurisdiction) for x in sqs]
-        data = [{"name": x.name, "jurisdiction": x.jurisdiction,
-            "id": x.pk, "url": x.url} for x in sqs]
+        names = []
+        data = []
+        if len(sqs):
+            # Sniffing results of different search engine backends
+            # Real search engine vs. simple backend
+            # FIXME: Make this better
+            pb = sqs[0]
+            if pb.jurisdiction is not None:
+                jur_get = lambda pb: pb.jurisdiction
+            else:
+                jur_get = lambda pb: pb.object.jurisdiction.name
+
+            names = [u"%s (%s)" % (x.name, jur_get(x)) for x in sqs]
+            data = [{"name": x.name, "jurisdiction": jur_get(x),
+                "id": x.pk, "url": x.url} for x in sqs]
         response = {
             "query": query,
             "suggestions": names,
