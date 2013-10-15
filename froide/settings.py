@@ -3,6 +3,8 @@
 import os.path
 import re
 
+import dj_database_url
+
 ########### Basic Stuff ###############
 
 DEBUG = True
@@ -20,6 +22,11 @@ DATABASES = {
     }
 }
 
+# Parse DB config from DATABASE_URL environment variable (if present)
+# Needed for e.g. Heroku
+dbconfig = dj_database_url.config()
+if dbconfig:
+    DATABASES['default'] =  dbconfig
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -72,9 +79,9 @@ CACHES = {
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'make_me_unique!!'
 
-SITE_NAME = 'Froide'
-SITE_EMAIL = 'info@example.com'
-SITE_URL = 'http://localhost:8000'
+SITE_NAME = os.environ.get('SITE_NAME', 'Froide')
+SITE_EMAIL = os.environ.get('SITE_EMAIL', 'info@example.com')
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
 
 SITE_ID = 1
 
@@ -372,18 +379,23 @@ FROIDE_CONFIG = dict(
 
 # Django settings
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_SUBJECT_PREFIX = '[Froide] '
+if DEBUG and SITE_URL == 'http://localhost:5000':
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_SUBJECT_PREFIX = '[%s] ' % SITE_NAME
 SERVER_EMAIL = 'error@example.com'
 DEFAULT_FROM_EMAIL = 'info@example.com'
 
 # Official Notification Mail goes through
 # the normal Django SMTP Backend
-EMAIL_HOST = ""
-EMAIL_PORT = 587
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER',
+    os.environ.get('SENDGRID_USERNAME', ''))
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD',
+    os.environ.get('SENDGRID_PASSWORD', ''))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', False)
 
 # Froide special case settings
 # IMAP settings for fetching mail
@@ -396,12 +408,15 @@ FOI_EMAIL_USE_SSL = True
 
 # SMTP settings for setting FoI mail
 # like Django
-FOI_EMAIL_HOST_USER = FOI_EMAIL_ACCOUNT_NAME
-FOI_EMAIL_HOST_FROM = FOI_EMAIL_HOST_USER
-FOI_EMAIL_HOST_PASSWORD = FOI_EMAIL_ACCOUNT_PASSWORD
-FOI_EMAIL_HOST = "smtp.example.com"
-FOI_EMAIL_PORT = 537
-FOI_EMAIL_USE_TLS = True
+FOI_EMAIL_HOST = os.environ.get('FOI_EMAIL_HOST', EMAIL_HOST)
+FOI_EMAIL_HOST_USER = os.environ.get('FOI_EMAIL_HOST_USER',
+        EMAIL_HOST_USER or FOI_EMAIL_ACCOUNT_NAME)
+FOI_EMAIL_HOST_FROM = os.environ.get('FOI_EMAIL_HOST_FROM',
+        EMAIL_HOST_USER or FOI_EMAIL_HOST_USER)
+FOI_EMAIL_HOST_PASSWORD = os.environ.get('FOI_EMAIL_HOST_PASSWORD',
+        EMAIL_HOST_PASSWORD or FOI_EMAIL_ACCOUNT_PASSWORD)
+FOI_EMAIL_PORT = EMAIL_PORT
+FOI_EMAIL_USE_TLS = EMAIL_USE_TLS
 
 # The FoI Mail can use a different account
 FOI_EMAIL_DOMAIN = "example.com"
@@ -413,3 +428,12 @@ FOI_EMAIL_FUNC = None
 # Is the message you can send from fixed
 # or can you send from any address you like?
 FOI_EMAIL_FIXED_FROM_ADDRESS = True
+
+
+## Heroku stuff
+## See https://devcenter.heroku.com/articles/getting-started-with-django
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+ALLOWED_HOSTS = ['*']
+

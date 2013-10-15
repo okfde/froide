@@ -16,6 +16,30 @@ Docs
 
 Froide is supported by the [Open Knowledge Foundation](http://okfn.org/).
 
+Deployments on Heroku
+~~~~~~~~~~~~~~~~~~~~~
+
+Deploying on Heroku
+
+    # you would rename your app from myfroide to something different
+    heroku create myfroide
+
+    # have to push our heroku branch
+    git push heroku 81-heroku:master
+
+    # run relevant getting start commands
+    heroku run python manage.py syncdb --noinput --migrate
+
+#### Configuration
+
+Setting up config vars on Heroku see <https://devcenter.heroku.com/articles/config-vars>
+
+Specific things you'll want to tweak are (this could go in your .env file):
+
+    SITE_NAME=...
+    # Email settings - e.g. for sendgrid
+    EMAIL_HOST="smtp.sendgrid.net"
+    EMAIL_PORT=25
 
 License
 -------
