@@ -446,6 +446,10 @@ class FoiRequest(models.Model):
             return self.check_auth_code(pb_auth)
         return False
 
+    def in_search_index(self):
+        return (self.visibility > 1 and
+            self.is_foi and self.same_as is None)
+
     def needs_public_body(self):
         return self.status == 'publicbody_needed'
 
