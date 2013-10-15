@@ -146,14 +146,6 @@ def login(request, base="base.html", context=None,
             if user is not None:
                 if user.is_active:
                     auth.login(request, user)
-                    # profile address migration
-                    profile = user.get_profile()
-                    if not profile.address:
-                        messages.add_message(request, messages.WARNING,
-                            _('A recent change requires you to set your address! Please enter it below!'))
-                        return redirect(reverse('account-show') +
-                                    "?address#change-address-now")
-
                     messages.add_message(request, messages.INFO,
                             _('You are now logged in.'))
                     if simple:
