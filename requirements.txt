@@ -7,7 +7,7 @@ Sphinx==1.1
 celery==3.0.22
 django-celery==3.0.21
 -e git://github.com/stefanw/celery-haystack.git@latest-deploy#egg=celery_haystack
--e git://github.com/stefanw/django-celery-email.git@python3#egg=django_celery_email
+django-celery-email==1.0.4
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
 django-secure==1.0
 django-taggit==0.10

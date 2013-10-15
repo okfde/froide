@@ -22,7 +22,7 @@
   <div class="row">
     <div class="col-lg-10 col-lg-offset-1">
       <div class="row above-panorama">
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-4 col-sm-4">
           <div class="thumbnail">
             <div class="caption">
               <h3>
@@ -38,7 +38,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-4 col-sm-4">
           <div class="thumbnail">
             <div class="caption">
               <h3>
@@ -53,7 +53,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-4 col-sm-4">
           <div class="thumbnail">
             <div class="caption">
               <h3>
@@ -99,8 +99,10 @@
         {% for law in laws %}
           {% block jurisdiction_sidebar_laws_law %}
           <p>
-            <strong>{{ law.name }}:</strong>
-            {% blocktrans with date=law.created %}cam into effect on {{ date }}{% endblocktrans %}
+            <strong>{{ law.name }}</strong>
+            {% if law.created %}
+              {% blocktrans with date=law.created %}came into effect on {{ date }}{% endblocktrans %}
+            {% endif %}
             -
             <a href="{{ law.get_absolute_url }}">
               {% trans "get to know this law..." %}
