@@ -515,7 +515,7 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
     pass
 
 
-class Heroku(SSLSite, Production):
+class Heroku(Production):
     ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
@@ -526,6 +526,10 @@ class Heroku(SSLSite, Production):
         logging['handlers']['console']['stream'] = sys.stdout
         logging['loggers']['django.request']['handlers'] = ['console']
         return logging
+
+
+class HerokuSSL(SSLSite, Heroku):
+    pass
 
 try:
     from .local_settings import *  # noqa
