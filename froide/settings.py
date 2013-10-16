@@ -3,6 +3,7 @@ from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
 import os.path
+import sys
 import re
 
 rec = re.compile
@@ -293,6 +294,16 @@ class Base(Configuration):
 
     SOUTH_TESTS_MIGRATE = False
 
+    SOUTH_MIGRATION_MODULES = {
+        'account': 'ignore',
+        'foirequest': 'ignore',
+        'foiidea': 'ignore',
+        'publicbody': 'ignore',
+        'foirequestfollower': 'ignore',
+        'frontpage': 'ignore',
+        'foisite': 'ignore'
+    }
+
     ######### Celery #############
 
     CELERY_RESULT_BACKEND = values.Value("database")
@@ -504,9 +515,21 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
     pass
 
 
-class SimpleHeroku(Production):
+class Heroku(Production):
+    ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
+
+    @property
+    def LOGGING(self):
+        logging = super(Heroku, self).LOGGING
+        logging['handlers']['console']['stream'] = sys.stdout
+        logging['loggers']['django.request']['handlers'] = ['console']
+        return logging
+
+
+class HerokuSSL(SSLSite, Heroku):
+    pass
 
 try:
     from .local_settings import *  # noqa
