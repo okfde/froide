@@ -465,7 +465,7 @@ def set_status(request, slug):
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
         return show(request, slug, context={"status_form": form}, status=400)
-    return redirect(foirequest)
+    return redirect(foirequest.get_absolute_url() + '#')
 
 
 @require_POST
