@@ -15,6 +15,10 @@ from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, Foi
     PublicBodySuggestion, DeferredMessage)
 
 
+def hashname(num):
+    return base64.b64encode(str(num).encode('utf-8'))
+
+
 class SiteFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Site
     name = factory.Sequence(lambda n: 'Site %s' % n)
@@ -64,7 +68,7 @@ class PublicBodyTopicFactory(factory.DjangoModelFactory):
 class PublicBodyFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PublicBody
 
-    name = factory.Sequence(lambda n: 'Public Body {0}'.format(n))
+    name = factory.Sequence(lambda n: 'Public Body {0}'.format(hashname(n)))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = ''
     topic = factory.SubFactory(PublicBodyTopicFactory)
