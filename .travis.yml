@@ -18,4 +18,5 @@ script:
 branches:
   only:
   - master
-  - python3
+  - django1.6
+  - heroku
