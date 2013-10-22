@@ -1,10 +1,11 @@
 import floppyforms as forms
 
+from django.utils.six import text_type as str
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from django.contrib import auth
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from froide.helper.widgets import AgreeCheckboxInput
@@ -21,30 +22,39 @@ class NewUserForm(forms.Form):
     first_name = forms.CharField(max_length=30,
             label=_('First name'),
             widget=forms.TextInput(attrs={'placeholder': _('First Name'),
-                'class': 'input-medium'}))
+                'class': 'form-control'}))
     last_name = forms.CharField(max_length=30,
             label=_('Last name'),
             widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
-                'class': 'input-medium'}))
+                'class': 'form-control'}))
     address = forms.CharField(max_length=300,
             required=False,
             label=_('Mailing Address'),
             help_text=_('Optional. Your address will not be displayed publicly and is only needed in case a public body needs to send you paper.'),
             widget=forms.Textarea(attrs={
                 'rows': '3',
-                'class': 'input-large',
+                'class': 'form-control',
                 'placeholder': _('Street, Post Code, City'),
             }))
     user_email = forms.EmailField(label=_('Email address'),
             max_length=75,
             help_text=_('Not public. The given address will '
                         'need to be confirmed.'),
-            widget=forms.EmailInput(attrs={'placeholder': _('mail@ddress.net')}))
+            widget=forms.EmailInput(attrs=
+                {
+                    'placeholder': _('mail@ddress.net'),
+                    'class': 'form-control'
+                }
+            ))
 
     if HAVE_ORGANIZATION:
         organization = forms.CharField(required=False,
                 label=_("Organization"),
-                help_text=_('Optional. Affiliation will be shown next to your name'))
+                help_text=_('Optional. Affiliation will be shown next to your name'),
+                widget=forms.TextInput(attrs={
+                    'placeholder': _('Organization'),
+                    'class': 'form-control'})
+            )
 
     if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(required=False,
@@ -73,9 +83,10 @@ class NewUserForm(forms.Form):
 
     def clean_user_email(self):
         email = self.cleaned_data['user_email']
+        user_model = get_user_model()
         try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
+            user = user_model.objects.get(email=email)
+        except user_model.DoesNotExist:
             pass
         else:
             if user.is_active:
@@ -102,10 +113,25 @@ class NewUserWithPasswordForm(NewUserForm):
 
 class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(
-        attrs={'placeholder': _('mail@ddress.net')}),
+        attrs={
+            'placeholder': _('mail@ddress.net'),
+            'class': 'form-control'
+        }),
         label=_('Email address'))
-    password = forms.CharField(widget=forms.PasswordInput,
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control'
+        }),
         label=_('Password'))
+
+
+class PasswordResetForm(auth.forms.PasswordResetForm):
+    email = forms.EmailField(widget=forms.EmailInput(
+        attrs={
+            'placeholder': _('mail@ddress.net'),
+            'class': 'form-control'
+        }),
+        label=_('Email address'))
 
 
 class UserChangeAddressForm(forms.Form):
@@ -132,7 +158,7 @@ class UserChangeEmailForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        if User.objects.filter(email=email).exists():
+        if get_user_model().objects.filter(email=email).exists():
             raise forms.ValidationError(
                 _('A user with that email address already exists!')
             )
@@ -174,7 +200,7 @@ class UserEmailConfirmationForm(forms.Form):
 
 
 class UserDeleteForm(forms.Form):
-    CONFIRMATION_PHRASE = unicode(_('Freedom of Information Act'))
+    CONFIRMATION_PHRASE = str(_('Freedom of Information Act'))
 
     password = forms.CharField(
         widget=forms.PasswordInput,

@@ -40,4 +40,4 @@ class RequestTest(TestCase):
             site=self.site)
         response = self.client.get(reverse('index') + "?bust_cache=true")
         self.assertEqual(response.status_code, 200)
-        self.assertIn(title2, response.content)
+        self.assertIn(title2, response.content.decode('utf-8'))

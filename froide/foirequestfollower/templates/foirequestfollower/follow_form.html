@@ -3,7 +3,7 @@
   {% csrf_token %}
   {% if followform %}
     {{ followform.as_p }}
-    <button type="submit" class="btn">{% trans "Follow request" %}</button>
+    <button type="submit" class="btn btn-default">{% trans "Follow request" %}</button>
   {% else %}
     {% followrequest object user "followform" %}
     {{ followform.as_p }}

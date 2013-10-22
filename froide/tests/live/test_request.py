@@ -3,13 +3,15 @@ import time
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from selenium.webdriver.support.wait import WebDriverWait
 
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest
 from froide.publicbody.models import PublicBody
+
+User = get_user_model()
 
 
 def get_selenium():
@@ -53,7 +55,7 @@ class TestMakingRequest(LiveServerTestCase):
         password_input = self.selenium.find_element_by_id("id_password")
         password_input.send_keys('froide')
         self.selenium.find_element_by_xpath(
-            '//form/button[.="Log In"]').click()
+            '//form//button[contains(text(), "Log In")]').click()
 
     def do_logout(self):
         self.selenium.get('%s%s' % (self.live_server_url, reverse('account-logout')))
@@ -65,8 +67,8 @@ class TestMakingRequest(LiveServerTestCase):
         search_pbs.send_keys(self.pb.name)
         self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.search-results .result'))
-        self.selenium.find_element_by_css_selector('.search-results .result label').click()
+            lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
+        self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
@@ -89,10 +91,12 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_user_email')\
             .send_keys(user_email)
         self.selenium.find_element_by_id('id_terms').click()
+        self.selenium.get_screenshot_as_file('/Users/sw/Desktop/test_98a.png')
         self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
-        time.sleep(0.5)
+        self.selenium.find_element_by_id('step-review')
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -133,9 +137,9 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_public').click()
         self.selenium.find_element_by_id('id_private').click()
         self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
-        time.sleep(0.5)
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -157,8 +161,8 @@ class TestMakingRequest(LiveServerTestCase):
         search_pbs.send_keys(self.pb.name)
         self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.search-results .result'))
-        self.selenium.find_element_by_css_selector('.search-results .result label').click()
+            lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
+        self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
         self.selenium.find_element_by_id('option-check_foi').click()
@@ -175,9 +179,11 @@ class TestMakingRequest(LiveServerTestCase):
             lambda driver: driver.find_element_by_id('review-button').is_displayed()
         )
         self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#review-text .highlight'))
-        time.sleep(0.5)
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('#messages'))

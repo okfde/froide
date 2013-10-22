@@ -7,12 +7,19 @@ Licensed under MIT
 """
 from datetime import datetime, timedelta
 import time
-from StringIO import StringIO
-from email.Header import decode_header
-from email.Parser import Parser
+
+try:
+    from email.header import decode_header
+    from email.parser import BytesParser as Parser
+except ImportError:
+    from email.Header import decode_header
+    from email.Parser import Parser
+
 from email.utils import parseaddr, parsedate_tz, getaddresses
 import imaplib
 import re
+
+from django.utils.six import BytesIO, text_type as str, binary_type as bytes
 
 import pytz
 
@@ -68,7 +75,7 @@ class EmailParser(object):
                 file_data = message_part.get_payload(decode=True)
                 if file_data is None:
                     file_data = ""
-                attachment = StringIO(file_data)
+                attachment = BytesIO(file_data)
                 attachment.content_type = message_part.get_content_type()
                 attachment.size = len(file_data)
                 attachment.name = None
@@ -105,7 +112,7 @@ class EmailParser(object):
         for s, enc in decodefrag:
             if enc:
                 try:
-                    s = unicode(s, enc, errors='replace')
+                    s = str(s, enc, errors='replace')
                 except UnicodeDecodeError:
                     # desperate move here
                     try:
@@ -114,10 +121,11 @@ class EmailParser(object):
                         pass
             else:
                 try:
-                    s = s.decode("latin1")
-                except:
-                    s = unicode(s, errors='ignore')
-            fragments.append(s)
+                    if not isinstance(s, str):
+                        s = s.decode("latin1")
+                except UnicodeDecodeError:
+                    s = str(s, errors='ignore')
+            fragments.append(s.strip(' '))
         field = u' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
@@ -145,19 +153,24 @@ class EmailParser(object):
                 attachments.append(attachment)
             elif part.get_content_type() == "text/plain":
                 charset = part.get_content_charset() or 'ascii'
-                body.append(unicode(
+                body.append(str(
                     part.get_payload(decode=True),
                     charset, 'replace'))
             elif part.get_content_type() == "text/html":
                 charset = part.get_content_charset() or 'ascii'
-                html.append(unicode(
+                html.append(str(
                     part.get_payload(decode=True),
                     charset,
                     'replace'))
 
-    def parse(self, content):
+    def get(self, field):
+        if isinstance(field, bytes):
+            return field
+        return str(field)
+
+    def parse(self, bytesfile):
         p = Parser()
-        msgobj = p.parsestr(content)
+        msgobj = p.parse(bytesfile)
         subject = self.parse_header_field(msgobj['Subject'])
         attachments = []
         body = []
@@ -172,9 +185,9 @@ class EmailParser(object):
         resent_tos = self.get_address_list(msgobj, 'resent-to')
         resent_ccs = self.get_address_list(msgobj, 'resent-cc')
 
-        from_field = parseaddr(msgobj.get('From'))
+        from_field = parseaddr(self.get(msgobj.get('From')))
         from_field = (self.parse_header_field(from_field[0]), from_field[1])
-        date = self.parse_date(msgobj.get("Date"))
+        date = self.parse_date(self.get(msgobj.get("Date")))
         return {
             'msgobj': msgobj,
             'date': date,

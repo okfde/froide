@@ -32,15 +32,21 @@ class RequestForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(
                 attrs={'placeholder': _("Subject"),
-                "class": "span8"}))
+                "class": "form-control"}))
     body = forms.CharField(label=_("Body"),
             widget=forms.Textarea(
                 attrs={
                     'placeholder': _("Specify your request here..."),
-                    "class": "span11"
+                    "class": "form-control"
                 }))
+    full_text = forms.BooleanField(required=False, initial=False,
+            label=_("Don't wrap in template"),
+            widget=forms.CheckboxInput(attrs={'tabindex': '-1'}))
     public = forms.BooleanField(required=False, initial=True,
-            label=_("This request will be public immediately."))
+            label=_("This request is public."),
+            help_text=_("If you don't want your request to be public right now,"
+                        " uncheck this. You can always decide to make it public later.")
+            )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
@@ -50,7 +56,11 @@ class RequestForm(forms.Form):
         self.default_law = default_law
 
         self.fields["public_body"].widget.set_initial_jurisdiction(
-                kwargs.get('initial', {}).pop('jurisdiction', None))
+            kwargs.get('initial', {}).pop('jurisdiction', None)
+        )
+        self.fields["public_body"].widget.set_initial_search(
+            kwargs.get('initial', {}).pop('public_body_search', None)
+        )
         self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
             required=False,
             widget=forms.RadioSelect if not hidden else forms.HiddenInput,
@@ -159,20 +169,22 @@ class MessagePublicBodySenderForm(forms.Form):
 
 
 class SendMessageForm(forms.Form):
+    to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int, required=True)
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "span5"}))
-    message = forms.CharField(widget=forms.Textarea(attrs={"class": "span5"}),
+            widget=forms.TextInput(attrs={"class": "form-control"}))
+    message = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control"}),
             label=_("Your message"))
 
     def __init__(self, foirequest, *args, **kwargs):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
-        choices = [(m.id, m.reply_address_entry) for k, m in
-            foirequest.possible_reply_addresses().items()]
-        choices.append((0, _("Default address of %(publicbody)s") % {
-                "publicbody": foirequest.public_body.name}))
-        self.fields.insert(0, 'to', forms.TypedChoiceField(label=_("To"),
-                choices=choices, coerce=int, required=True))
+
+        choices = [(0, _("Default address of %(publicbody)s") % {
+                "publicbody": foirequest.public_body.name
+        })]
+        choices.extend([(m.id, m.reply_address_entry) for k, m in
+                foirequest.possible_reply_addresses().items()])
+        self.fields['to'].choices = choices
 
         if foirequest.law and foirequest.law.email_only:
             self.fields['send_address'] = forms.BooleanField(
@@ -187,8 +199,8 @@ class SendMessageForm(forms.Form):
             recipient_email = self.foirequest.public_body.email
             recipient_pb = self.foirequest.public_body
         else:
-            message = filter(lambda x: x.id == self.cleaned_data["to"],
-                    list(self.foirequest.messages))[0]
+            message = list(filter(lambda x: x.id == self.cleaned_data["to"],
+                    list(self.foirequest.messages)))[0]
             recipient_name = message.sender_name
             recipient_email = message.sender_email
             recipient_pb = message.sender_public_body
@@ -222,10 +234,10 @@ class MakePublicBodySuggestionForm(forms.Form):
 
 class EscalationMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
-            widget=forms.TextInput(attrs={"class": "span5"}))
+            widget=forms.TextInput(attrs={"class": "form-control"}))
     message = forms.CharField(
             widget=forms.Textarea(
-                attrs={"class": "span5"}),
+                attrs={"class": "form-control"}),
             label=_("Your message"), )
 
     def __init__(self, foirequest, *args, **kwargs):
@@ -354,7 +366,7 @@ class ConcreteLawForm(forms.Form):
         self.possible_laws = foirequest.law.combined.all()
         self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
                 choices=[('', '-------')] +
-                    map(lambda x: (x.pk, x.name), self.possible_laws),
+                    list(map(lambda x: (x.pk, x.name), self.possible_laws)),
                 coerce=int, empty_value='')
 
     def clean(self):
@@ -380,6 +392,7 @@ class PostalScanMixin(object):
         if scan:
             scan.seek(0)
             content_type = magic.from_buffer(scan.read(1024), mime=True)
+            content_type = content_type.decode('utf-8')
             scan.seek(0)
             if content_type:
                 scan.content_type = content_type
@@ -394,20 +407,20 @@ class PostalScanMixin(object):
 class PostalReplyForm(forms.Form, PostalScanMixin):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>. All uploaded documents will be published!"))
     date = forms.DateField(
-            widget=forms.TextInput(attrs={"class": "input-small"}),
+            widget=forms.TextInput(attrs={"class": "form-control"}),
             label=_("Send Date"),
             help_text=_("Please give the date the reply was sent."),
             localize=True)
     sender = forms.CharField(label=_("Sender Name"),
-            widget=forms.TextInput(attrs={"class": "span5",
+            widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Sender Name")}), required=True)
     subject = forms.CharField(label=_("Subject"), required=False,
-            widget=forms.TextInput(attrs={"class": "span5",
+            widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Subject")}))
     text = forms.CharField(label=_("Letter"),
             widget=forms.Textarea(attrs={"placeholder":
                 _("Letter text you have received"),
-                "class": "span5"
+                "class": "form-control"
             }),
             required=False,
             help_text=_("The text can be left empty, instead you can upload scanned documents."))

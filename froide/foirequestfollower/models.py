@@ -3,11 +3,11 @@ import hmac
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.utils.encoding import python_2_unicode_compatible
 
 from froide.foirequest.models import FoiRequest
 
@@ -44,10 +44,11 @@ class FoiRequestFollowerManager(models.Manager):
                 user=follower.user, email=follower.email)
 
 
+@python_2_unicode_compatible
 class FoiRequestFollower(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
-    user = models.ForeignKey(User, null=True, blank=True, verbose_name=_("User"))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, verbose_name=_("User"))
     email = models.CharField(max_length=255, blank=True)
     confirmed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(_("Timestamp of Following"),
@@ -61,7 +62,7 @@ class FoiRequestFollower(models.Model):
         verbose_name = _('Request Follower')
         verbose_name_plural = _('Request Followers')
 
-    def __unicode__(self):
+    def __str__(self):
         return _("%(user)s follows %(request)s") % {
                 "user": self.email or str(self.user),
                 "request": self.request}
@@ -78,7 +79,10 @@ class FoiRequestFollower(models.Model):
 
     def get_follow_secret(self):
         to_sign = [self.email, str(self.request.id), str(self.id)]
-        return hmac.new(settings.SECRET_KEY, ".".join(to_sign)).hexdigest()
+        return hmac.new(
+                settings.SECRET_KEY.encode('utf-8'),
+                (".".join(to_sign)).encode('utf-8')
+            ).hexdigest()
 
     def check_and_unfollow(self, check):
         secret = self.get_follow_secret()

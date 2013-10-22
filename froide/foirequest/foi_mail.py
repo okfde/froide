@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
+from django.utils.six import BytesIO
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails, make_address)
 
@@ -42,7 +43,7 @@ def _process_mail(mail_string):
     from .models import FoiRequest, DeferredMessage
 
     parser = EmailParser()
-    email = parser.parse(mail_string)
+    email = parser.parse(BytesIO(mail_string))
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?
@@ -73,7 +74,7 @@ def _process_mail(mail_string):
                 foi_request = deferred.request
             except DeferredMessage.DoesNotExist:
                 if not b64_encoded:
-                    mail_string = base64.b64encode(mail_string).decode("utf-8")
+                    mail_string = base64.b64encode(mail_string.encode('utf-8')).decode("utf-8")
                 DeferredMessage.objects.create(
                     recipient=secret_mail,
                     mail=mail_string,

@@ -5,35 +5,29 @@ import base64
 
 import factory
 
-from django.conf import settings
-from django.db.models import get_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from froide.account.models import Profile
 from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
 from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
     PublicBodySuggestion, DeferredMessage)
 
 
-class SiteFactory(factory.Factory):
+def random_name(num=10):
+    return ''.join([random.choice(string.ascii_lowercase) for _ in range(num)])
+
+
+class SiteFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Site
     name = factory.Sequence(lambda n: 'Site %s' % n)
     domain = factory.Sequence(lambda n: 'domain%s.example.com' % n)
 
 
-class ProfileFactory(factory.Factory):
-    FACTORY_FOR = Profile
+class UserFactory(factory.DjangoModelFactory):
+    FACTORY_FOR = get_user_model()
 
-    user = None
-    private = False
-    address = 'Dummystreet5\n12345 Town'
-
-
-class UserFactory(factory.Factory):
-    FACTORY_FOR = User
     first_name = 'Jane'
     last_name = factory.Sequence(lambda n: 'D%se' % ('o' * min(20, int(n))))
     username = factory.Sequence(lambda n: 'user_%s' % n)
@@ -46,51 +40,13 @@ class UserFactory(factory.Factory):
     is_superuser = False
     last_login = datetime(2000, 1, 1).replace(tzinfo=timezone.utc)
     date_joined = datetime(1999, 1, 1).replace(tzinfo=timezone.utc)
-    # profile = factory.RelatedFactory(ProfileFactory, 'user')
+    private = False
+    address = 'Dummystreet5\n12345 Town'
+    organization = ''
+    organization_url = ''
 
 
-def user_create(cls, **kwargs):
-    # From https://github.com/votizen/django-factory_boy/blob/master/django_factory_boy/auth.py
-    # figure out the profile's related name and strip profile's kwargs
-    profile_model, profile_kwargs = None, {}
-    try:
-        app_label, model_name = settings.AUTH_PROFILE_MODULE.split('.')
-    except (ValueError, AttributeError):
-        pass
-    else:
-        try:
-            profile_model = get_model(app_label, model_name)
-        except ImportError:
-            pass
-    if profile_model:
-        user_field = profile_model._meta.get_field_by_name('user')[0]
-        related_name = user_field.related_query_name()
-        profile_prefix = '%s__' % related_name
-        for k in kwargs.keys():
-            if k.startswith(profile_prefix):
-                profile_key = k.replace(profile_prefix, '', 1)
-                profile_kwargs[profile_key] = kwargs.pop(k)
-    else:
-        print "no profile model"
-    # create the user
-    user = cls._default_manager.create(**kwargs)
-
-    if profile_model and profile_kwargs:
-        # update or create the profile model
-        profile, created = profile_model._default_manager.get_or_create(
-            user=user, defaults=profile_kwargs)
-        if not created:
-            for k, v in profile_kwargs.items():
-                setattr(profile, k, v)
-            profile.save()
-        setattr(user, related_name, profile)
-        setattr(user, '_profile_cache', profile)
-
-    return user
-# UserFactory.set_creation_function(user_create)
-
-
-class JurisdictionFactory(factory.Factory):
+class JurisdictionFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Jurisdiction
 
     name = factory.Sequence(lambda n: 'Jurisdiction {0}'.format(n))
@@ -100,7 +56,7 @@ class JurisdictionFactory(factory.Factory):
     rank = factory.Sequence(lambda n: n)
 
 
-class PublicBodyTopicFactory(factory.Factory):
+class PublicBodyTopicFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PublicBodyTopic
 
     name = factory.Sequence(lambda n: 'Public Body Topic {0}'.format(n))
@@ -109,10 +65,10 @@ class PublicBodyTopicFactory(factory.Factory):
     count = 5
 
 
-class PublicBodyFactory(factory.Factory):
+class PublicBodyFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PublicBody
 
-    name = factory.Sequence(lambda n: 'Public Body {0}'.format(n))
+    name = factory.Sequence(lambda n: 'Public Body {0}'.format(random_name()))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = ''
     topic = factory.SubFactory(PublicBodyTopicFactory)
@@ -139,7 +95,7 @@ class PublicBodyFactory(factory.Factory):
     jurisdiction = factory.SubFactory(JurisdictionFactory)
 
 
-class FoiLawFactory(factory.Factory):
+class FoiLawFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiLaw
 
     name = factory.Sequence(lambda n: 'FoiLaw {0}'.format(n))
@@ -157,13 +113,13 @@ class FoiLawFactory(factory.Factory):
     max_response_time = 1
     max_response_time_unit = 'month_de'
     refusal_reasons = 'No way\nNo say'
-    mediator = factory.SubFactory(PublicBodyFactory)
+    mediator = None
     email_only = False
 
     site = factory.SubFactory(SiteFactory)
 
 
-class FoiRequestFactory(factory.Factory):
+class FoiRequestFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiRequest
 
     title = factory.Sequence(lambda n: 'My FoiRequest Number {0}'.format(n))
@@ -198,25 +154,25 @@ class FoiRequestFactory(factory.Factory):
     site = factory.SubFactory(SiteFactory)
 
 
-class DeferredMessageFactory(factory.Factory):
+class DeferredMessageFactory(factory.DjangoModelFactory):
     FACTORY_FOR = DeferredMessage
 
     recipient = factory.Sequence(lambda n: 'blub%s@fragdenstaat.de'.format(n))
     timestamp = timezone.now() - timedelta(hours=1)
     request = None
     mail = factory.LazyAttribute(lambda o:
-        base64.b64encode('''To: <%s>
+        base64.b64encode(b'To: <' + o.recipient.encode('ascii') + b'''>
 Subject: Latest Improvements
 Date: Mon, 5 Jul 2010 07:54:40 +0200
 
-Test'''.format(o.recipient)))
+Test'''))
 
 
-class PublicBodySuggestionFactory(factory.Factory):
+class PublicBodySuggestionFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PublicBodySuggestion
 
 
-class FoiMessageFactory(factory.Factory):
+class FoiMessageFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiMessage
 
     request = factory.SubFactory(FoiRequestFactory)
@@ -246,7 +202,7 @@ class FoiMessageFactory(factory.Factory):
     not_publishable = False
 
 
-class FoiAttachmentFactory(factory.Factory):
+class FoiAttachmentFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiAttachment
 
     belongs_to = factory.SubFactory(FoiMessageFactory)
@@ -259,7 +215,7 @@ class FoiAttachmentFactory(factory.Factory):
     approved = True
 
 
-class FoiEventFactory(factory.Factory):
+class FoiEventFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiEvent
 
     request = factory.SubFactory(FoiRequestFactory)
@@ -306,6 +262,7 @@ def make_world():
     meta_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG-UIG NRW',
         meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
+
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)

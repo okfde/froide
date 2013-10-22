@@ -2,23 +2,33 @@
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Search Results for "{{ query }}"{% endblocktrans %}</h2>
-<form method="get" action="{% url 'foirequest-search' %}" class="form-search">
-  <div class="input-append">
-    <input type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off" class="search-query"/>
-    <button class="btn" type="submit">
-      <i class="icon-search"></i>
-      {% blocktrans %}Search For Information{% endblocktrans %}
-    </button>
-  </div>
-</form>
+
+<h2>
+  {% blocktrans %}Search Results for "{{ query }}"{% endblocktrans %}
+</h2>
+
+<div class="row">
+  <form class="col-lg-4 col-lg-offset-4" method="get" action="{% url 'foirequest-search' %}">
+    <div class="input-group">
+      <input class="form-control" type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off"/>
+      <span class="input-group-btn">
+        <button class="btn btn-success" type="submit">
+          <span class="glyphicon glyphicon-search"></span>
+          {% blocktrans %}Search For Information{% endblocktrans %}
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
 {% if query %}
   <div class="row">
-    <div class="span6">
-      <h3>{% blocktrans %}Related Freedom of Information Requests{% endblocktrans %}</h3>
-      <ul class="unstyled">
+    <div class="col-lg-6">
+      <h3>
+        {% blocktrans %}Related Freedom of Information Requests{% endblocktrans %}
+      </h3>
+      <ul class="media-list">
         {% for object in foirequests %}
-          <li>
+          <li class="media">
             {% include "foirequest/snippets/request_item.html" %}
           </li>
         {% empty %}
@@ -29,11 +39,11 @@
         {% endfor %}
       </ul>
     </div>
-    <div class="span6">
+    <div class="col-lg-6">
       <h3>{% blocktrans %}Related Public Bodies{% endblocktrans %}</h3>
-      <ul class="unstyled">
+      <ul class="media-list">
         {% for object in publicbodies %}
-          <li>
+          <li class="media">
             {% include "publicbody/snippets/publicbody_item.html" %}
           </li>
         {% empty %}
@@ -51,9 +61,13 @@
   </div>
 {% endif %}
 <div>
-  <h3>{% blocktrans %}Couldn't find what you were looking for?{% endblocktrans %}</h3>
+  <h3>
+    {% blocktrans %}Couldn't find what you were looking for?{% endblocktrans %}
+  </h3>
   <p>
-    <a class="btn btn-primary" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Make a Freedom of Information Request now!{% endblocktrans %}</a>
+    <a class="btn btn-primary" href="{% url 'foirequest-make_request' %}">
+      {% blocktrans %}Make a Freedom of Information Request now!{% endblocktrans %}
+    </a>
   </p>
 </div>
 

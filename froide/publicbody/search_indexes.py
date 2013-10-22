@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.conf import settings
 
 from haystack import indexes
@@ -12,8 +14,8 @@ class PublicBodyIndex(CelerySearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', boost=1.5)
     jurisdiction = indexes.CharField(model_attr='jurisdiction__name', default='')
-    topic_auto = indexes.EdgeNgramField(model_attr='topic_name')
-    topic_slug = indexes.CharField(model_attr='topic__slug')
+    topic_auto = indexes.EdgeNgramField(model_attr='topic__name', default='')
+    topic_slug = indexes.CharField(model_attr='topic__slug', default='')
     name_auto = indexes.EdgeNgramField(model_attr='name')
     url = indexes.CharField(model_attr='get_absolute_url')
 
@@ -28,5 +30,5 @@ class PublicBodyIndex(CelerySearchIndex, indexes.Indexable):
         data = super(PublicBodyIndex, self).prepare(obj)
         if obj.classification in PUBLIC_BODY_BOOSTS:
             data['boost'] = PUBLIC_BODY_BOOSTS[obj.classification]
-            print "Boosting %s at %f" % (obj, data['boost'])
+            print("Boosting %s at %f" % (obj, data['boost']))
         return data

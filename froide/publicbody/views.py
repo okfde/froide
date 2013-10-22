@@ -1,15 +1,15 @@
+import json
+
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.core import urlresolvers
-from django.utils import simplejson as json
 from django.utils.translation import ugettext as _, ungettext
 from django.contrib import messages
 from django.template import TemplateDoesNotExist
 
-from haystack.query import SearchQuerySet
 
 from froide.foirequest.models import FoiRequest
-from froide.helper.json_view import JSONResponseDetailView
+from django.views.generic import DetailView
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 
@@ -68,45 +68,14 @@ def show_foilaw(request, slug):
     return render(request, 'publicbody/show_foilaw.html', context)
 
 
-class PublicBodyDetailView(JSONResponseDetailView):
+class PublicBodyDetailView(DetailView):
     model = PublicBody
     template_name = "publicbody/show.html"
 
     def get_context_data(self, **kwargs):
         context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
-        if self.format == "html":
-            context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
+        context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
         return context
-
-
-def search_json(request):
-    query = request.GET.get("q", "")
-    jurisdiction = request.GET.get('jurisdiction', None)
-    # query = " AND ".join(query.split())
-    result = SearchQuerySet().models(PublicBody).auto_query(query)
-    if jurisdiction is not None:
-        result = result.filter(jurisdiction=result.query.clean(jurisdiction))
-    result = [{"name": x.name, "jurisdiction": x.jurisdiction,
-            "id": x.pk, "url": x.url, "score": x.score} for x in list(result)]
-
-    return HttpResponse(json.dumps(result), content_type="application/json")
-
-
-def autocomplete(request):
-    query = request.GET.get('query', '')
-    jurisdiction = request.GET.get('jurisdiction', None)
-    result = SearchQuerySet().models(PublicBody)
-    result = result.autocomplete(name_auto=query)
-    if jurisdiction is not None:
-        result = result.filter(jurisdiction=result.query.clean(jurisdiction))
-    names = [u"%s (%s)" % (x.name, x.jurisdiction) for x in result]
-    data = [{"name": x.name, "jurisdiction": x.jurisdiction,
-            "id": x.pk, "url": x.url} for x in result]
-    response = {"query": query,
-        "suggestions": names,
-        "data": data
-    }
-    return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 def confirm(request):

@@ -1,19 +1,21 @@
 import datetime
 import re
+import json
 
+from django.utils.six import text_type as str
 from django.conf import settings
 from django.core.files import File
-from django.utils import timezone, simplejson as json
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
 from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from haystack.query import SearchQuerySet
-from haystack.inputs import AutoQuery
 from taggit.models import Tag
 
 from froide.account.forms import NewUserForm
@@ -33,6 +35,7 @@ from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
+User = get_user_model()
 
 
 @cache_anonymous_page(15 * 60)
@@ -148,12 +151,23 @@ def list_requests(request, status=None, topic=None, tag=None,
         return klass(foi_requests, status=status_url, topic=topic,
             tag=tag, jurisdiction=jurisdiction)(request)
 
+    count = foi_requests.count()
+
+    page = request.GET.get('page')
+    paginator = Paginator(foi_requests, 20)
+    try:
+        foi_requests = paginator.page(page)
+    except PageNotAnInteger:
+        foi_requests = paginator.page(1)
+    except EmptyPage:
+        foi_requests = paginator.page(paginator.num_pages)
+
     context.update({
         'page_title': _("FoI Requests"),
-        'count': foi_requests.count(),
+        'count': count,
         'not_foi': not_foi,
         'object_list': foi_requests,
-        'status_list': [(unicode(x[0]),
+        'status_list': [(str(x[0]),
             FoiRequest.get_readable_status(x[2]),
             x[2]) for x in FoiRequest.STATUS_URLS],
         'topic_list': topic_list
@@ -238,18 +252,6 @@ def show(request, slug, template_name="foirequest/show.html",
     return render(request, template_name, context, status=status)
 
 
-def search_similar(request):
-    query = request.GET.get("q", None)
-    result = []
-    if query:
-        sqs = SearchQuerySet().models(FoiRequest)
-        sqs = sqs.filter(content=AutoQuery(query))
-        result = list(sqs[:5])
-        result = [{"title": x.title, "id": x.pk, "public_body_name": x.public_body_name, "description": x.description,
-            "url": x.url, "score": x.score} for x in result]
-    return HttpResponse(json.dumps(result), content_type="application/json")
-
-
 def search(request):
     query = request.GET.get("q", "")
     foirequests = []
@@ -287,18 +289,20 @@ def make_request(request, public_body=None):
     if 'body' in request.GET:
         initial['body'] = request.GET['body']
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
+    public_body_search = request.GET.get("topic", "")
+    initial['public_body_search'] = public_body_search
     rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
             True, initial=initial)
-    topic = request.GET.get("topic", "")
     user_form = None
     if not request.user.is_authenticated():
         user_form = NewUserForm()
-    return render(request, 'foirequest/request.html',
-            {"public_body": public_body,
-            "public_body_form": public_body_form,
-            "request_form": rq_form,
-            "user_form": user_form,
-            "topic": topic})
+    return render(request, 'foirequest/request.html', {
+        "public_body": public_body,
+        "public_body_form": public_body_form,
+        "request_form": rq_form,
+        "user_form": user_form,
+        "public_body_search": public_body_search
+    })
 
 
 @require_POST
@@ -328,6 +332,7 @@ def submit_request(request, public_body=None):
             data['confirmed'] = False
             # Take the first jurisdiction there is
             data['jurisdiction'] = Jurisdiction.objects.all()[0]
+            data['slug'] = slugify(data['name'])
             public_body = PublicBody(**data)
         else:
             error = True
@@ -368,8 +373,14 @@ def submit_request(request, public_body=None):
             else:
                 foilaw = request_form.foi_law
 
-        foi_request = FoiRequest.from_request_form(user, public_body,
-                foilaw, form_data=request_form.cleaned_data, post_data=request.POST)
+        foi_request = FoiRequest.from_request_form(
+                user,
+                public_body,
+                foilaw,
+                form_data=request_form.cleaned_data,
+                post_data=request.POST
+        )
+
         if user.is_active:
             if sent_to_pb == 0:
                 messages.add_message(request, messages.INFO,
@@ -770,7 +781,10 @@ def make_same_request(request, slug, message_id):
                 _("You already made an identical request"))
             return render_400(request)
     body = u"%s\n\n%s" % (foirequest.description,
-            _('Please see this request on FragDenStaat.de where you granted access to this information: %(url)s') % {'url': foirequest.get_absolute_domain_short_url()})
+            _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
+                'url': foirequest.get_absolute_domain_short_url(),
+                'site_name': settings.SITE_NAME
+            })
     fr = FoiRequest.from_request_form(
         user, foirequest.public_body,
         foirequest.law,

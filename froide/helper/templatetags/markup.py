@@ -1,6 +1,6 @@
 from django import template
 from django.conf import settings
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -31,7 +31,7 @@ def markdown(value, arg=''):
     except ImportError:
         if settings.DEBUG:
             raise template.TemplateSyntaxError("Error in 'markdown' filter: The Python markdown library isn't installed.")
-        return force_unicode(value)
+        return force_text(value)
     else:
         extensions = [e for e in arg.split(",") if e]
         if len(extensions) > 0 and extensions[0] == "safe":
@@ -40,7 +40,7 @@ def markdown(value, arg=''):
         else:
             safe_mode = False
         if safe_mode:
-            return mark_safe(markdown.markdown(force_unicode(value), extensions, safe_mode=safe_mode,
+            return mark_safe(markdown.markdown(force_text(value), extensions, safe_mode=safe_mode,
                 enable_attributes=False))
         else:
-            return mark_safe(markdown.markdown(force_unicode(value), extensions, safe_mode=safe_mode))
+            return mark_safe(markdown.markdown(force_text(value), extensions, safe_mode=safe_mode))

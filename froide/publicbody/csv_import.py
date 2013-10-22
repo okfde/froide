@@ -1,15 +1,21 @@
 # -*- encoding: utf-8 -*-
-from StringIO import StringIO
-
-import unicodecsv
 import requests
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
+from django.utils.six import StringIO, PY3
+
+if PY3:
+    import csv
+else:
+    import unicodecsv as csv
+
 
 from froide.publicbody.models import (PublicBody, PublicBodyTopic,
     Jurisdiction, FoiLaw)
+
+User = get_user_model()
 
 
 class CSVImporter(object):
@@ -25,10 +31,10 @@ class CSVImporter(object):
         response = requests.get(url)
         # Force requests to evaluate as UTF-8
         response.encoding = 'utf-8'
-        self.import_from_file(StringIO(response.text.encode('utf-8')))
+        self.import_from_file(StringIO(response.text))
 
     def import_from_file(self, csv_file):
-        reader = unicodecsv.DictReader(csv_file, encoding='utf-8')
+        reader = csv.DictReader(csv_file)
         for row in reader:
             self.import_row(row)
 

@@ -14,6 +14,9 @@ Received: from unknown (HELO ZEUS) (85.183.22.56)
   by start.example.com with SMTP; 5 Jul 2010 05:54:45 -0000
 From: "=?Windows-1252?Q?J=F6rg=20Gahl-Killen?=" <hb@example.com>
 To: <sw+yurpykc1hr@fragdenstaat.de>
+Cc: Peter Freudenberg <peter@example.org>, Stefan Wehrmeyer <stefan.wehrmeyer@example.org>, 
+	Harry Porters <harry.porters@example.org>, Julia Romeo <julia.romeo@example.org>, 
+	UKF DE Executive Board <ukf-de-board@lists.example.org>
 Subject: Latest Improvements
 Date: Mon, 5 Jul 2010 07:54:40 +0200
 Message-ID: <002e01cb1c06$8f9ec680$320abd$@example.com>

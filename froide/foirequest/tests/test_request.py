@@ -6,7 +6,7 @@ import os
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core import mail
 from django.utils import timezone
@@ -15,6 +15,8 @@ from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.helper.test_utils import skip_if_environ
+
+User = get_user_model()
 
 
 class RequestTest(TestCase):
@@ -177,13 +179,13 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
         post["subject"] = "Re: Custom subject"
-        post["to"] = str(req.possible_reply_addresses().values()[0].id)
+        post["to"] = str(list(req.possible_reply_addresses().values())[0].id)
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
         new_len = len(mail.outbox)
         self.assertEqual(old_len + 2, new_len)
-        message = filter(lambda x: post['subject'] == x.subject, mail.outbox)[-1]
+        message = list(filter(lambda x: post['subject'] == x.subject, mail.outbox))[-1]
         self.assertTrue(message.body.startswith(post['message']))
         self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(user.get_profile().address, message.body)
@@ -297,17 +299,17 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(id=req.id)
         self.assertTrue(pb.confirmed)
         self.assertTrue(req.messages[0].sent)
-        message_count = len(filter(
+        message_count = len(list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox))
+                mail.outbox)))
         self.assertEqual(message_count, 1)
         # resent
         response = self.client.post(reverse('publicbody-confirm'),
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 302)
-        message_count = len(filter(
+        message_count = len(list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox))
+                mail.outbox)))
         self.assertEqual(message_count, 1)
 
     def test_logged_in_request_with_public_body(self):
@@ -342,9 +344,9 @@ class RequestTest(TestCase):
         self.assertTrue(req.messages[0].sent)
         self.assertEqual(req.law, pb.default_law)
 
-        messages = filter(
+        messages = list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox)
+                mail.outbox))
         self.assertEqual(len(messages), 1)
         message = messages[0]
         if settings.FROIDE_CONFIG['dryrun']:
@@ -508,7 +510,7 @@ class RequestTest(TestCase):
 
         path = os.path.join(settings.PROJECT_ROOT, "testdata", "test.pdf")
         file_size = os.path.getsize(path)
-        f = file(path, "rb")
+        f = open(path, "rb")
         post = {"date": "3000-01-01",  # far future
                 "sender": "Some Sender",
                 "subject": "",
@@ -553,14 +555,14 @@ class RequestTest(TestCase):
         attachment.name = 'other_test.pdf'
         attachment.save()
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": "9" * 5}),
             {"scan": f})
         f.close()
         self.assertEqual(response.status_code, 404)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         self.client.logout()
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
@@ -568,7 +570,7 @@ class RequestTest(TestCase):
         f.close()
         self.assertEqual(response.status_code, 403)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         self.client.login(username="dummy", password="froide")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
@@ -576,7 +578,7 @@ class RequestTest(TestCase):
         f.close()
         self.assertEqual(response.status_code, 403)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         self.client.logout()
         self.client.login(username='sw', password='froide')
         message = req.foimessage_set.all()[0]
@@ -591,7 +593,7 @@ class RequestTest(TestCase):
             kwargs={"slug": req.slug, "message_id": message.pk}))
         self.assertEqual(response.status_code, 400)
 
-        f = file(path, "rb")
+        f = open(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
             {"scan": f})
@@ -600,7 +602,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
         # Adding the same document again should override the first one
-        f = file(path, "rb")
+        f = open(path, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
             {"scan": f})
@@ -1145,8 +1147,30 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         response = self.client.get('%s?q=%s' % (
             reverse('foirequest-search'), pb.name[:6]))
-        self.assertIn(pb.name, response.content)
+        self.assertIn(pb.name, response.content.decode('utf-8'))
         self.assertEqual(response.status_code, 200)
+
+    def test_full_text_request(self):
+        self.client.login(username="dummy", password="froide")
+        pb = PublicBody.objects.all()[0]
+        law = pb.default_law
+        post = {"subject": "A Public Body Request",
+                "body": "This is another test body",
+                "full_text": "true",
+                "law": str(law.id),
+                "public_body": str(pb.id),
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(title=post['subject'])
+        message = req.foimessage_set.all()[0]
+        self.assertIn(post['body'], message.plaintext)
+        self.assertIn(post['body'], message.plaintext_redacted)
+        self.assertNotIn(law.get_letter_start_text({}), message.plaintext)
+        self.assertNotIn(law.get_letter_start_text({}), message.plaintext_redacted)
+        self.assertNotIn(law.get_letter_end_text({}), message.plaintext)
+        self.assertNotIn(law.get_letter_end_text({}), message.plaintext_redacted)
 
 
 class MediatorTest(TestCase):
@@ -1187,7 +1211,7 @@ class MediatorTest(TestCase):
         req.save()
         self.client.login(username='sw', password='froide')
         response = self.client.get(req.get_absolute_url())
-        self.assertNotIn('Mediation', response.content)
+        self.assertNotIn('Mediation', response.content.decode('utf-8'))
         response = self.client.post(reverse('foirequest-escalation_message',
             kwargs={'slug': req.slug}))
         self.assertEqual(response.status_code, 400)

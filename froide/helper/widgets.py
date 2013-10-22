@@ -21,5 +21,5 @@ class AgreeCheckboxInput(forms.CheckboxInput):
 
     def render(self, name, value, attrs=None):
         html = super(AgreeCheckboxInput, self).render(name, value, attrs)
-        return mark_safe(u'<label class="checkbox">%s %s</label>' % (html, self.agree_to %
+        return mark_safe(u'<label>%s %s</label>' % (html, self.agree_to %
                 dict([(k, reverse(v)) for k, v in self.url_names.items()])))

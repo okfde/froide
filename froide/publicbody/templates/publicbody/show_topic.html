@@ -3,38 +3,61 @@
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans count counter=topic.count with name=topic.name %}
+<div class="row">
+  <div class="col-lg-12">
+    <h2>
+      {% blocktrans count counter=topic.count with name=topic.name %}
 {{ counter }} Public Body in Topic '{{ name }}'{% plural %}
-{{ counter }} Public Bodies in Topic '{{ name }}'{% endblocktrans %}</h2>
+{{ counter }} Public Bodies in Topic '{{ name }}'{% endblocktrans %}
+    </h2>
+  </div>
+</div>
 
-{% include "publicbody/_search_form.html" %}
+<div class="row">
+  <div class="col-lg-12">
+    <div class="row">
+      {% include "publicbody/_search_form.html" %}
+    </div>
+    <p>
+      <a href="{% url 'publicbody-list' %}">
+        {% blocktrans %}back to list of topics{% endblocktrans %}
+      </a>
+    </p>
+  </div>
+</div>
 
-<br/>
-<p><a href="{% url 'publicbody-list' %}">{% blocktrans %}back to list of topics{% endblocktrans %}</a></p>
-
-{% regroup object_list by jurisdiction as juris_list %}
-{% for juris in juris_list %}
-<h3>{{ juris.grouper.name }}</h3>
-<table>
-  <thead>
-    <tr>
-      <th>{% blocktrans %}Name{% endblocktrans %}</th>
-      <th>{% blocktrans %}Classification{% endblocktrans %}</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for publicbody in juris.list %}
-    <tr>
-      <td>
-        <a href="{% url 'publicbody-show' slug=publicbody.slug %}">{{ publicbody.name }}</a>
-        <a title="{% blocktrans %}Click here to make a request to this Public Body{% endblocktrans %}" href="{% url 'foirequest-make_request' public_body=publicbody.slug %}">
-           <img src="{{ STATIC_URL }}img/tiny_request.png" alt="{% blocktrans %}Make a Request{% endblocktrans %}" />
-         </a>
-      </td>
-      <td>{{ publicbody.classification }}</td>
-    </tr>
+<div class="row">
+  <div class="col-lg-12">
+    {% regroup object_list by jurisdiction as juris_list %}
+    {% for juris in juris_list %}
+      <h3>{{ juris.grouper.name }}</h3>
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>{% blocktrans %}Name{% endblocktrans %}</th>
+            <th>{% blocktrans %}Classification{% endblocktrans %}</th>
+            <th>{% trans "Make Request" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for publicbody in juris.list %}
+          <tr>
+            <td>
+              <a href="{% url 'publicbody-show' slug=publicbody.slug %}">
+                {{ publicbody.name }}
+              </a>
+            </td>
+            <td>{{ publicbody.classification }}</td>
+            <td class="text-center">
+              <a title="{% blocktrans %}Click here to make a request to this Public Body{% endblocktrans %}" href="{% url 'foirequest-make_request' public_body=publicbody.slug %}">
+                 <span class="glyphicon glyphicon-envelope"></span>
+              </a>
+             </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     {% endfor %}
-  </tbody>
-</table>
-{% endfor %}
+  </div>
+</div>
 {% endblock %}

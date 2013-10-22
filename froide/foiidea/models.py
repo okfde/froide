@@ -9,10 +9,13 @@ from django.utils import timezone
 from django.contrib.comments import signals as comment_signals
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
+from django.utils.encoding import python_2_unicode_compatible
+
 
 epoch = timezone.utc.localize(datetime(1970, 1, 1))
 
 
+@python_2_unicode_compatible
 class Source(models.Model):
     name = models.CharField(max_length=255)
     homepage = models.URLField()
@@ -20,7 +23,7 @@ class Source(models.Model):
     crawler = models.CharField(max_length=255, default='rss')
     last_crawled = models.DateTimeField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -35,6 +38,7 @@ class ArticleManager(models.Manager):
             a.save()
 
 
+@python_2_unicode_compatible
 class Article(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
@@ -52,7 +56,7 @@ class Article(models.Model):
     class Meta:
         ordering = ['-order']
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s: %s" % (self.source, self.title)
 
     def get_absolute_url(self):

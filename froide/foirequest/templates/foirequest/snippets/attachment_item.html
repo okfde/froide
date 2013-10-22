@@ -3,8 +3,9 @@
     {{ attachment.name }} ({{ attachment.size|filesizeformat }})
   </a>
   {% if attachment.can_preview %}
-    -
-    <a class="target-new" href="{{ attachment.get_preview_url }}">
-      {% trans "Preview in Browser" %}
-    </a>
+    <span class="hidden-print">-
+      <a class="target-new" href="{{ attachment.get_preview_url }}">
+        {% trans "Preview in Browser" %}
+      </a>
+    <span>
   {% endif %}

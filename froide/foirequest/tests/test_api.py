@@ -22,8 +22,8 @@ class ApiTest(TestCase):
         req = FoiRequest.objects.all()[0]
         response = self.client.get('/api/v1/request/%d/?format=json' % req.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(req.title, response.content)
-        self.assertNotIn(req.secret_address, response.content)
+        self.assertIn(req.title, response.content.decode('utf-8'))
+        self.assertNotIn(req.secret_address, response.content.decode('utf-8'))
         prof = req.user.get_profile()
         prof.private = True
         prof.save()
@@ -39,9 +39,9 @@ class ApiTest(TestCase):
         )
         response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(req.user.get_full_name(), response.content)
-        self.assertNotIn(req.secret_address, response.content)
-        self.assertNotIn(prof.address, response.content)
+        self.assertNotIn(req.user.get_full_name(), response.content.decode('utf-8'))
+        self.assertNotIn(req.secret_address, response.content.decode('utf-8'))
+        self.assertNotIn(prof.address, response.content.decode('utf-8'))
 
         att = FoiAttachment.objects.all()[0]
         att.approved = True
@@ -74,7 +74,7 @@ class ApiTest(TestCase):
         )
         response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(marker, response.content)
+        self.assertNotIn(marker, response.content.decode('utf-8'))
 
     def test_username_hidden(self):
         user = factories.UserFactory.create(
@@ -89,9 +89,25 @@ class ApiTest(TestCase):
         )
         response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(user.username, response.content)
-        self.assertNotIn(user.first_name, response.content)
+        self.assertNotIn(user.username, response.content.decode('utf-8'))
+        self.assertNotIn(user.first_name, response.content.decode('utf-8'))
 
     def test_search(self):
         response = self.client.get('/api/v1/request/search/?format=json&q=Number')
         self.assertEqual(response.status_code, 200)
+
+    def test_search_similar(self):
+        simple_search_url = '/api/v1/request/simplesearch/?format=json'
+        response = self.client.get(simple_search_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual('{"objects": []}', response.content.decode('utf-8'))
+        self.assertEqual(response['Content-Type'], 'application/json')
+        req = FoiRequest.objects.all()[0]
+        response = self.client.get('%s&q=%s' % (
+            simple_search_url, req.title))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn('title', content)
+        self.assertIn('description', content)
+        self.assertIn('public_body_name', content)
+        self.assertIn('url', content)

@@ -91,7 +91,7 @@ def convert_attachment(att):
         return
 
     path, filename = os.path.split(result_file)
-    new_file = File(file(result_file))
+    new_file = File(open(result_file, 'rb'))
 
     if att.converted:
         new_att = att.converted
