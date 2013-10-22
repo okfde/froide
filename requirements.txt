@@ -28,4 +28,4 @@ python-mimeparse>=0.1.4
 anyjson==0.3.3
 dj-database-url==0.2.2
 django-cache-url==0.6.0
--e git+git@github.com:stefanw/django-configurations.git@deploy#egg=django-configurations
+-e git://github.com/stefanw/django-configurations.git@deploy#egg=django-configurations
