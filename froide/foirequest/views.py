@@ -837,7 +837,7 @@ def redact_attachment(request, slug, attachment_id):
         path = convert_to_pdf(request.POST)
         if path is None:
             return render_400(request)
-        name, extensions = attachment.name.rsplit('.', 1)
+        name = attachment.name.rsplit('.', 1)[0]
         name = re.sub('[^\w\.\-]', '', name)
         pdf_file = File(file(path))
         if already:
