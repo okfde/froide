@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import random
 import string
 import base64
+import os
 
 import factory
 
@@ -9,10 +10,15 @@ from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.conf import settings
 
 from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
 from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
     PublicBodySuggestion, DeferredMessage)
+
+
+TEST_PDF_URL = os.path.join("tests", "testdata", "test.pdf")
+TEST_PDF_PATH = os.path.join(settings.PROJECT_ROOT, TEST_PDF_URL)
 
 
 def random_name(num=10):
@@ -206,8 +212,8 @@ class FoiAttachmentFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiAttachment
 
     belongs_to = factory.SubFactory(FoiMessageFactory)
-    name = factory.Sequence(lambda n: "file_{0}".format(n))
-    file = factory.LazyAttribute(lambda o: 'files/foi/{0}/file_{0}.pdf'.format(o.belongs_to.id))
+    name = factory.Sequence(lambda n: "file_{0}.pdf".format(n))
+    file = TEST_PDF_URL
     size = 500
     filetype = 'application/pdf'
     format = 'pdf'
