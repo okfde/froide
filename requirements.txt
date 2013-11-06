@@ -1,4 +1,4 @@
-https://www.djangoproject.com/download/1.6b2/tarball/#egg=Django
+https://www.djangoproject.com/download/1.6c1/tarball/#egg=Django
 Jinja2==2.7.1
 Markdown==2.3.1
 Pygments==1.6

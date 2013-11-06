@@ -4,6 +4,8 @@ import re
 from datetime import datetime, timedelta
 import os
 
+from mock import patch
+
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
@@ -508,9 +510,8 @@ class RequestTest(TestCase):
             datetime(2011, 1, 1, 0, 0, 0))
         message.save()
 
-        path = os.path.join(settings.PROJECT_ROOT, "testdata", "test.pdf")
-        file_size = os.path.getsize(path)
-        f = open(path, "rb")
+        file_size = os.path.getsize(factories.TEST_PDF_PATH)
+        f = open(factories.TEST_PDF_PATH, "rb")
         post = {"date": "3000-01-01",  # far future
                 "sender": "Some Sender",
                 "subject": "",
@@ -555,14 +556,14 @@ class RequestTest(TestCase):
         attachment.name = 'other_test.pdf'
         attachment.save()
 
-        f = open(path, "rb")
+        f = open(factories.TEST_PDF_PATH, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": "9" * 5}),
             {"scan": f})
         f.close()
         self.assertEqual(response.status_code, 404)
 
-        f = open(path, "rb")
+        f = open(factories.TEST_PDF_PATH, "rb")
         self.client.logout()
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
@@ -570,7 +571,7 @@ class RequestTest(TestCase):
         f.close()
         self.assertEqual(response.status_code, 403)
 
-        f = open(path, "rb")
+        f = open(factories.TEST_PDF_PATH, "rb")
         self.client.login(username="dummy", password="froide")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
@@ -578,7 +579,7 @@ class RequestTest(TestCase):
         f.close()
         self.assertEqual(response.status_code, 403)
 
-        f = open(path, "rb")
+        f = open(factories.TEST_PDF_PATH, "rb")
         self.client.logout()
         self.client.login(username='sw', password='froide')
         message = req.foimessage_set.all()[0]
@@ -593,7 +594,7 @@ class RequestTest(TestCase):
             kwargs={"slug": req.slug, "message_id": message.pk}))
         self.assertEqual(response.status_code, 400)
 
-        f = open(path, "rb")
+        f = open(factories.TEST_PDF_PATH, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
             {"scan": f})
@@ -602,7 +603,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
         # Adding the same document again should override the first one
-        f = open(path, "rb")
+        f = open(factories.TEST_PDF_PATH, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}),
             {"scan": f})
@@ -1172,9 +1173,116 @@ class RequestTest(TestCase):
         self.assertNotIn(law.get_letter_end_text({}), message.plaintext)
         self.assertNotIn(law.get_letter_end_text({}), message.plaintext_redacted)
 
+    def test_empty_pb_email(self):
+        self.client.login(username='sw', password='froide')
+        pb = PublicBody.objects.all()[0]
+        pb.email = ''
+        pb.save()
+        post = {
+            "subject": "Test-Subject",
+            "body": "This is a test body",
+            "law": str(pb.default_law.pk)
+        }
+        response = self.client.post(
+            reverse('foirequest-submit_request',
+                kwargs={"public_body": pb.slug}
+        ), post)
+        self.assertEqual(response.status_code, 404)
+        post = {
+            "subject": "Test-Subject",
+            "body": "This is a test body",
+            "law": str(pb.default_law.pk),
+            "public_body": str(pb.pk),
+        }
+        response = self.client.post(
+            reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('public_body', response.context['request_form'].errors)
+        self.assertEqual(len(response.context['request_form'].errors), 1)
+
+    @patch('froide.foirequest.views.convert_to_pdf',
+           lambda x: factories.TEST_PDF_PATH)
+    def test_redact_attachment(self):
+        foirequest = FoiRequest.objects.all()[0]
+        message = foirequest.messages[0]
+        att = factories.FoiAttachmentFactory.create(belongs_to=message)
+        url = reverse('foirequest-redact_attachment', kwargs={
+            'slug': foirequest.slug,
+            'attachment_id': '8' * 5
+        })
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='sw', password='froide')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        url = reverse('foirequest-redact_attachment', kwargs={
+            'slug': foirequest.slug,
+            'attachment_id': str(att.id)
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(url, {})
+        self.assertEqual(response.status_code, 302)
+
+        old_att = FoiAttachment.objects.get(id=att.id)
+        self.assertFalse(old_att.can_approve)
+
+    def test_extend_deadline(self):
+        foirequest = FoiRequest.objects.all()[0]
+        old_due_date = foirequest.due_date
+        url = reverse('foirequest-extend_deadline', kwargs={'slug': foirequest.slug})
+        post = {"months": ""}
+
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 400)
+
+        post = {'months': '2'}
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 302)
+        foirequest = FoiRequest.objects.get(id=foirequest.id)
+        self.assertEqual(foirequest.due_date, foirequest.law.calculate_due_date(old_due_date, 2))
+
+    def test_resend_message(self):
+        foirequest = FoiRequest.objects.all()[0]
+        message = foirequest.messages[0]
+        message.sent = False
+        message.save()
+        url = reverse('foirequest-resend_message', kwargs={'slug': foirequest.slug})
+        post = {'message': ''}
+
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 400)
+
+        post = {'message': '8' * 6}
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 400)
+
+        post = {'message': str(message.pk)}
+        response = self.client.post(url, post)
+        self.assertEqual(response.status_code, 302)
+
 
 class MediatorTest(TestCase):
-
     def setUp(self):
         self.site = factories.make_world()
 

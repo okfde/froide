@@ -813,7 +813,6 @@ def auth_message_attachment(request, message_id, attachment_name):
     '''
     nginx auth view
     '''
-
     message = get_object_or_404(FoiMessage, id=int(message_id))
     attachment = get_object_or_404(FoiAttachment, belongs_to=message,
         name=attachment_name)
@@ -881,13 +880,19 @@ def redact_attachment(request, slug, attachment_id):
     })
 
 
+@require_POST
 def extend_deadline(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated():
         return render_403(request)
     if not request.user.is_staff:
         return render_403(request)
-    months = int(request.POST.get('months', 6))
+    try:
+        months = int(request.POST.get('months', 6))
+    except ValueError:
+        messages.add_message(request, messages.ERROR,
+                    _('Invalid input!'))
+        return render_400(request)
     foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
     if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
         foirequest.status = 'awaiting_response'
@@ -907,7 +912,9 @@ def resend_message(request, slug):
         return render_403(request)
     try:
         mes = FoiMessage.objects.get(sent=False, request=foirequest, pk=int(request.POST.get('message', 0)))
-    except FoiMessage.DoesNotExist:
-        raise Http404
+    except (FoiMessage.DoesNotExist, ValueError):
+        messages.add_message(request, messages.ERROR,
+                    _('Invalid input!'))
+        return render_400(request)
     mes.send(notify=False)
     return redirect('admin:foirequest_foimessage_change', mes.id)
