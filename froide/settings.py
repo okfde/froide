@@ -2,7 +2,7 @@
 from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
-import os.path
+import os
 import sys
 import re
 
@@ -384,9 +384,9 @@ class Base(Configuration):
     # The FoI Mail can use a different account
     FOI_EMAIL_DOMAIN = values.Value("example.com")
 
-    FOI_EMAIL_FUNC = None
+    FOI_EMAIL_TEMPLATE = None
     # Example:
-    # FOI_EMAIL_FUNC = lambda user_name, secret: "%s.%s@%s" % (user_name, secret, FOI_EMAIL_DOMAIN)
+    # FOI_EMAIL_TEMPLATE = lambda user_name, secret: "{username}.{secret}@{domain}" % (user_name, secret, FOI_EMAIL_DOMAIN)
 
     # Is the message you can send from fixed
     # or can you send from any address you like?
@@ -531,6 +531,21 @@ class Heroku(Production):
         "postmark_inbound": "postmark_inbound",
         "postmark_bounce": "postmark_bounce"
     })
+
+    @property
+    def FOI_EMAIL_TEMPLATE(self):
+        postmark = os.environ.get('POSTMARK_INBOUND_ADDRESS')
+        if postmark is None:
+            raise ValueError('POSTMARK_INBOUND_ADDRESS variable not available. Install Postmark!')
+        postmark_id, domain = postmark.split('@')
+        template = '{postmark_id}+{secret}@{domain}'
+
+        def func(username, secret):
+            return template.format(postmark_id=postmark_id,
+                                   secret=secret,
+                                   domain=domain)
+
+        return func
 
     @property
     def LOGGING(self):

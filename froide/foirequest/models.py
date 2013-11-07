@@ -710,11 +710,16 @@ class FoiRequest(models.Model):
     @classmethod
     def generate_secret_address(cls, user):
         possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
-        user_name = user.username.replace('_', '.')
+        username = user.username.replace('_', '.')
         secret = "".join([random.choice(possible_chars) for i in range(10)])
-        if getattr(settings, 'FOI_EMAIL_FUNC') and settings.FOI_EMAIL_FUNC:
-            return settings.FOI_EMAIL_FUNC(user_name, secret)
-        return "%s.%s@%s" % (user_name, secret, settings.FOI_EMAIL_DOMAIN)
+        template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
+        if template is not None and callable(template):
+            return settings.FOI_EMAIL_TEMPLATE(username=username, secret=secret)
+        elif template is not None:
+            return settings.FOI_EMAIL_TEMPLATE.format(username=username,
+                                                      secret=secret,
+                                                      domain=settings.FOI_EMAIL_DOMAIN)
+        return "%s.%s@%s" % (username, secret, settings.FOI_EMAIL_DOMAIN)
 
     @classmethod
     def generate_unique_secret_address(cls, user):

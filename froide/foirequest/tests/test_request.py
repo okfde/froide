@@ -366,10 +366,10 @@ class RequestTest(TestCase):
                 "public_body": str(pb.pk),
                 'law': str(pb.default_law.pk),
                 "public": "on"}
-        email_func = lambda u, s: 'email+%s@foi.example.com' % u
+        email_func = lambda username, secret: 'email+%s@foi.example.com' % username
         with self.settings(
             FOI_EMAIL_FIXED_FROM_ADDRESS=False,
-            FOI_EMAIL_FUNC=email_func
+            FOI_EMAIL_TEMPLATE=email_func
         ):
             response = self.client.post(
                     reverse('foirequest-submit_request'), post)
