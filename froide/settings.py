@@ -427,6 +427,12 @@ class Test(Base):
 
     USE_X_ACCEL_REDIRECT = True
 
+    SECRET_URLS = values.DictValue({
+        "admin": "admin",
+        "postmark_inbound": "postmark_inbound",
+        "postmark_bounce": "postmark_bounce"
+    })
+
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     DEFAULT_FROM_EMAIL = 'info@example.com'
 
@@ -519,6 +525,12 @@ class Heroku(Production):
     ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
+
+    SECRET_URLS = values.DictValue({
+        "admin": "admin",
+        "postmark_inbound": "postmark_inbound",
+        "postmark_bounce": "postmark_bounce"
+    })
 
     @property
     def LOGGING(self):

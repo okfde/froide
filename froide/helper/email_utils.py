@@ -8,6 +8,8 @@ Licensed under MIT
 from datetime import datetime, timedelta
 import time
 
+import base64
+
 try:
     from email.header import decode_header
     from email.parser import BytesParser as Parser
@@ -129,8 +131,8 @@ class EmailParser(object):
         field = u' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
-    def get_address_list(self, msgobj, field):
-        address_list = getaddresses(msgobj.get_all(field, []))
+    def get_address_list(self, values):
+        address_list = getaddresses(values)
         fixed = []
         for addr in address_list:
             fixed.append((self.parse_header_field(addr[0]), addr[1].lower()))
@@ -179,11 +181,11 @@ class EmailParser(object):
         body = u'\n'.join(body)
         html = u'\n'.join(html)
 
-        tos = self.get_address_list(msgobj, 'To')
-        tos.extend(self.get_address_list(msgobj, 'X-Original-To'))
-        ccs = self.get_address_list(msgobj, 'Cc')
-        resent_tos = self.get_address_list(msgobj, 'resent-to')
-        resent_ccs = self.get_address_list(msgobj, 'resent-cc')
+        tos = self.get_address_list(msgobj.get_all('To', []))
+        tos.extend(self.get_address_list(msgobj.get_all('X-Original-To', [])))
+        ccs = self.get_address_list(msgobj.get_all('Cc', []))
+        resent_tos = self.get_address_list(msgobj.get_all('resent-to', []))
+        resent_ccs = self.get_address_list(msgobj.get_all('resent-cc', []))
 
         from_field = parseaddr(self.get(msgobj.get('From')))
         from_field = (self.parse_header_field(from_field[0]), from_field[1])
@@ -202,14 +204,35 @@ class EmailParser(object):
             'attachments': attachments
         }
 
- # uses the email flatten
- #        out_file = StringIO.StringIO()
- #        message_gen = Generator(out_file, mangle_from_=False, maxheaderlen=60)
- #        message_gen.flatten(message)
- #        message_text = out_file.getvalue()
+    def parse_postmark(self, obj):
+        from_field = (obj['FromFull']['Name'], obj['FromFull']['Email'])
+        tos = [(o['Name'], o['Email']) for o in obj['ToFull']]
+        ccs = [(o['Name'], o['Email']) for o in obj['CcFull']]
+        attachments = []
+        for a in obj['Attachments']:
+            attachment = BytesIO(base64.b64decode(a['Content']))
+            attachment.content_type = a['ContentType']
+            attachment.size = a['ContentLength']
+            attachment.name = a['Name']
+            attachment.create_date = None
+            attachment.mod_date = None
+            attachment.read_date = None
+            attachments.append(attachment)
 
- #        fixes mime encoding issues (for display within html)
- #        clean_text = quopri.decodestring(message_text)
+        return {
+            'msgobj': obj,
+            'date': self.parse_date(obj['Date']),
+            'subject': obj['Subject'],
+            'body': obj['TextBody'],
+            'html': obj['HtmlBody'],
+            'from': from_field,
+            'to': tos,
+            'cc': ccs,
+            'resent_to': [],
+            'resent_cc': [],
+            'attachments': attachments
+        }
+
 
 if __name__ == '__main__':
     p = EmailParser()

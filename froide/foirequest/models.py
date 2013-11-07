@@ -609,7 +609,7 @@ class FoiRequest(models.Model):
                         }
                     )})
 
-    def add_message_from_email(self, email, mail_string):
+    def add_message_from_email(self, email, mail_string=None):
         message = FoiMessage(request=self)
         message.subject = email['subject'][:250]
         message.is_response = True
@@ -628,7 +628,7 @@ class FoiRequest(models.Model):
             message.plaintext = strip_all_tags(email['html'])
         message.subject_redacted = message.redact_subject()[:250]
         message.plaintext_redacted = message.redact_plaintext()
-        message.original = mail_string
+        message.original = mail_string or ''
         message.save()
         self._messages = None
         self.status = 'awaiting_classification'

@@ -1,4 +1,5 @@
 import base64
+import json
 from email.utils import parseaddr
 
 from django.conf import settings
@@ -7,7 +8,8 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.utils.six import BytesIO
 
-from froide.helper.email_utils import (EmailParser, get_unread_mails, make_address)
+from froide.helper.email_utils import (EmailParser, get_unread_mails,
+                                       make_address)
 
 
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
@@ -39,24 +41,32 @@ def send_foi_mail(subject, message, from_email, recipient_list,
     return email.send()
 
 
-def _process_mail(mail_string):
+def _process_mail(mail_string, mail_type=None):
+    parser = EmailParser()
+    if mail_type is None:
+        email = parser.parse(BytesIO(mail_string))
+    elif mail_type == 'postmark':
+        email = parser.parse_postmark(json.loads(mail_string))
+    return _deliver_mail(email, mail_string=mail_string)
+
+
+def _deliver_mail(email, mail_string=None):
     from .models import FoiRequest, DeferredMessage
 
-    parser = EmailParser()
-    email = parser.parse(BytesIO(mail_string))
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?
     mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_EMAIL_DOMAIN)
     received_list = filter(mail_filter, received_list)
 
-    # make original mail storeable as unicode
-    b64_encoded = False
-    try:
-        mail_string = mail_string.decode("utf-8")
-    except UnicodeDecodeError:
-        b64_encoded = True
-        mail_string = base64.b64encode(mail_string).decode("utf-8")
+    if mail_string is not None:
+        # make original mail storeable as unicode
+        b64_encoded = False
+        try:
+            mail_string = mail_string.decode("utf-8")
+        except UnicodeDecodeError:
+            b64_encoded = True
+            mail_string = base64.b64encode(mail_string).decode("utf-8")
 
     already = set()
     for received in received_list:
@@ -73,8 +83,9 @@ def _process_mail(mail_string):
                 deferred = DeferredMessage.objects.get(recipient=secret_mail, request__isnull=False)
                 foi_request = deferred.request
             except DeferredMessage.DoesNotExist:
-                if not b64_encoded:
-                    mail_string = base64.b64encode(mail_string.encode('utf-8')).decode("utf-8")
+                if mail_string is not None:
+                    if not b64_encoded:
+                        mail_string = base64.b64encode(mail_string.encode('utf-8')).decode("utf-8")
                 DeferredMessage.objects.create(
                     recipient=secret_mail,
                     mail=mail_string,

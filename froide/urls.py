@@ -86,6 +86,18 @@ urlpatterns += patterns('',
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls))
 )
 
+if SECRET_URLS.get('postmark_inbound'):
+    urlpatterns += patterns('',
+        url(r'^postmark/%s/' % SECRET_URLS['postmark_inbound'],
+            'froide.foirequest.views.postmark_inbound', name="foirequest-postmark_inbound")
+    )
+
+if SECRET_URLS.get('postmark_bounce'):
+    urlpatterns += patterns('',
+        url(r'^postmark/%s/' % SECRET_URLS['postmark_bounce'],
+            'froide.foirequest.views.postmark_bounce', name="foirequest-postmark_bounce")
+    )
+
 USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
 
 if USE_X_ACCEL_REDIRECT:

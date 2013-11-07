@@ -33,6 +33,7 @@ from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
         PostalReplyForm, PostalAttachmentForm, MessagePublicBodySenderForm,
         EscalationMessageForm)
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
+from .tasks import process_mail
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 User = get_user_model()
@@ -918,3 +919,14 @@ def resend_message(request, slug):
         return render_400(request)
     mes.send(notify=False)
     return redirect('admin:foirequest_foimessage_change', mes.id)
+
+
+@require_POST
+def postmark_inbound(request, bounce=False):
+    process_mail.delay(request.body, mail_type='postmark')
+    return HttpResponse()
+
+
+@require_POST
+def postmark_bounce(request):
+    return postmark_inbound(request, bounce=True)

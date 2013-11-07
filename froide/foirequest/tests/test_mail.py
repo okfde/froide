@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 
-import os
 from datetime import datetime
+import json
+import os
 
 from django.test import TestCase
 from django.core import mail
@@ -10,6 +11,7 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 from django.utils.six import BytesIO
+from django.core.urlresolvers import reverse
 
 from froide.helper.email_utils import EmailParser
 
@@ -188,3 +190,111 @@ class DeferredMessageTest(TestCase):
         self.assertEqual(len(req.messages), count_messages + 1)
         dm = DeferredMessage.objects.get(id=dm.id)
         self.assertEqual(dm.request, req)
+
+
+class PostMarkMailTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
+        req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address="sw+yurpykc1hr@fragdenstaat.de",
+            first_message=date, last_message=date)
+        factories.FoiMessageFactory.create(request=req, timestamp=date)
+        self.post_data = {
+            "From": "myUser@example.com",
+            "FromFull": {
+                "Email": "myUser@example.com",
+                "Name": "John Doe"
+            },
+            "To": "sw+yurpykc1hr@fragdenstaat.de",
+            "ToFull": [
+                {
+                    "Email": "sw+yurpykc1hr@fragdenstaat.de",
+                    "Name": ""
+                }
+            ],
+            "Cc": "\"Full name\" <sample.cc@example.com>, \"Another Cc\" <another.cc@example.com>",
+            "CcFull": [
+                {
+                    "Email": "sample.cc@example.com",
+                    "Name": "Full name"
+                },
+                {
+                    "Email": "another.cc@example.com",
+                    "Name": "Another Cc"
+                }
+            ],
+            "ReplyTo": "myUsersReplyAddress@example.com",
+            "Subject": "This is an inbound message",
+            "MessageID": "22c74902-a0c1-4511-804f2-341342852c90",
+            "Date": "Thu, 5 Apr 2012 16:59:01 +0200",
+            "MailboxHash": "ahoy",
+            "TextBody": "[ASCII]",
+            "HtmlBody": "[HTML(encoded)]",
+            "Tag": "",
+            "Headers": [
+                {
+                    "Name": "X-Spam-Checker-Version",
+                    "Value": "SpamAssassin 3.3.1 (2010-03-16) onrs-ord-pm-inbound1.wildbit.com"
+                },
+                {
+                    "Name": "X-Spam-Status",
+                    "Value": "No"
+                },
+                {
+                    "Name": "X-Spam-Score",
+                    "Value": "-0.1"
+                },
+                {
+                    "Name": "X-Spam-Tests",
+                    "Value": "DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,SPF_PASS"
+                },
+                {
+                    "Name": "Received-SPF",
+                    "Value": "Pass (sender SPF authorized) identity=mailfrom; client-ip=209.85.160.180; helo=mail-gy0-f180.google.com; envelope-from=myUser@theirDomain.com; receiver=451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com"
+                },
+                {
+                    "Name": "DKIM-Signature",
+                    "Value": "v=1; a=rsa-sha256; c=relaxed\/relaxed;                d=wildbit.com; s=google;                h=mime-version:reply-to:date:message-id:subject:from:to:cc                 :content-type;                bh=cYr\/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;                b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u                 iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT                 Q9ou6L1hgy\/MbKChnp2kxHOtYNOrrszY3JfQM="
+                },
+                {
+                    "Name": "MIME-Version",
+                    "Value": "1.0"
+                },
+                {
+                    "Name": "Message-ID",
+                    "Value": "<CAGXpo2WKfxHWZ5UFYCR3H_J9SNMG+5AXUovfEFL6DjWBJSyZaA@mail.example.com>"
+                }
+            ],
+            "Attachments": [
+                {
+                    "Name": "myimage.png",
+                    "Content": "[BASE64-ENCODED CONTENT]",
+                    "ContentType": "image/png",
+                    "ContentLength": 4096,
+                    "ContentID": "myimage.png@01CE7342.75E71F80"
+                },
+                {
+                    "Name": "mypaper.doc",
+                    "Content": "[BASE64-ENCODED CONTENT]",
+                    "ContentType": "application/msword",
+                    "ContentLength": 16384,
+                    "ContentID": ""
+                }
+            ]
+        }
+
+    def test_postmark_post(self, url=None):
+        if url is None:
+            url = reverse('foirequest-postmark_inbound')
+        response = self.client.post(
+            url,
+            json.dumps(self.post_data),
+            content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        mes = request.messages[-1]
+        self.assertEqual(mes.sender_email, 'myUser@example.com')
+
+    def test_postmark_bounce(self):
+        self.test_postmark_post(url=reverse('foirequest-postmark_bounce'))

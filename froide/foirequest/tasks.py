@@ -13,12 +13,12 @@ from .file_utils import convert_to_pdf
 
 
 @task
-def process_mail(mail):
+def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
-    def run(mail_string):
+    def run(*args, **kwargs):
         try:
-            _process_mail(mail_string)
+            _process_mail(*args, **kwargs)
         except Exception:
             transaction.rollback()
             raise
@@ -26,7 +26,7 @@ def process_mail(mail):
             transaction.commit()
             return None
     run = transaction.commit_manually(run)
-    run(mail)
+    run(*args, **kwargs)
 
 
 @task
