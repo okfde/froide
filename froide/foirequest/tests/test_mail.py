@@ -17,11 +17,11 @@ from froide.foirequest.tasks import process_mail
 from froide.foirequest.models import (FoiRequest, FoiMessage, DeferredMessage)
 from froide.foirequest.tests import factories
 
-FILE_ROOT = os.path.abspath(os.path.dirname(__file__))
+TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), 'testdata'))
 
 
 def p(path):
-    return os.path.join(FILE_ROOT, path)
+    return os.path.join(TEST_DATA_ROOT, path)
 
 
 class MailTest(TestCase):
