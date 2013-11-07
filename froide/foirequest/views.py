@@ -538,10 +538,11 @@ def set_law(request, slug):
     if not foirequest.law.meta:
         return render_400(request)
     form = ConcreteLawForm(foirequest, request.POST)
-    if form.is_valid():
-        form.save()
-        messages.add_message(request, messages.SUCCESS,
-                _('A concrete law has been set for this request.'))
+    if not form.is_valid():
+        return render_400(request)
+    form.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('A concrete law has been set for this request.'))
     return redirect(foirequest)
 
 

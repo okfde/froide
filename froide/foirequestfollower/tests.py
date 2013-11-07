@@ -40,12 +40,8 @@ class FoiRequestFollowerTest(TestCase):
                 kwargs={"slug": req.slug}))
         # Can't follow my own requests
         self.assertEqual(response.status_code, 400)
-        try:
-            FoiRequestFollower.objects.get(request=req, user=user)
-        except FoiRequestFollower.DoesNotExist:
-            pass
-        else:
-            self.assertTrue(False)
+        followers = FoiRequestFollower.objects.filter(request=req, user=user)
+        self.assertEqual(followers.count(), 0)
         self.client.logout()
         user = User.objects.get(username='dummy')
         self.client.login(username='dummy', password='froide')

@@ -197,6 +197,11 @@ class RequestTest(TestCase):
         self.assertEqual(foimessage.recipient_public_body, req.public_body)
         self.assertTrue(req.law.meta)
         other_laws = req.law.combined.all()
+
+        response = self.client.post(reverse('foirequest-set_law',
+                kwargs={"slug": req.slug}), {'law': '9' * 5})
+        self.assertEqual(response.status_code, 400)
+
         post = {"law": str(other_laws[0].pk)}
         response = self.client.post(reverse('foirequest-set_law',
                 kwargs={"slug": req.slug}), post)
@@ -1280,6 +1285,30 @@ class RequestTest(TestCase):
         post = {'message': str(message.pk)}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
+
+    def test_approve_message(self):
+        foirequest = FoiRequest.objects.all()[0]
+        message = foirequest.messages[0]
+        message.content_hidden = True
+        message.save()
+        url = reverse('foirequest-approve_message', kwargs={
+            'slug': foirequest.slug,
+            'message': message.pk
+        })
+
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='dummy', password='froide')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='sw', password='froide')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+
+        message = FoiMessage.objects.get(pk=message.pk)
+        self.assertFalse(message.content_hidden)
 
 
 class MediatorTest(TestCase):

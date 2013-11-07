@@ -35,6 +35,15 @@ class WebTest(TestCase):
             kwargs={'public_body': p.slug}))
         self.assertEqual(response.status_code, 404)
 
+    def test_request_prefilled(self):
+        p = PublicBody.objects.all()[0]
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body': p.slug}) + '?body=THEBODY&subject=THESUBJECT')
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn('THEBODY', content)
+        self.assertIn('THESUBJECT', content)
+
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
@@ -49,6 +58,9 @@ class WebTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
         response = self.client.get(reverse('foirequest-list_not_foi'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('foirequest-list') + '?page=99999')
         self.assertEqual(response.status_code, 200)
 
     def test_list_jurisdiction_requests(self):
