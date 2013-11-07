@@ -629,7 +629,7 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         post = {"subject": "A simple test request",
                 "body": "This is another test body",
-                "law": str(FoiLaw.get_default_law().id),
+                "law": str(pb.default_law.id),
                 "public_body": str(pb.id),
                 "public": "on"}
         response = self.client.post(
@@ -1119,7 +1119,7 @@ class RequestTest(TestCase):
             status=None,
             request=req
         )
-        pb = PublicBody.objects.all()[1]
+        pb = factories.PublicBodyFactory.create()
         # old_due = req.due_date
         self.assertNotEqual(req.public_body, pb)
         self.client.login(username='sw', password='froide')
