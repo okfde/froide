@@ -4325,9 +4325,6 @@ msgstr ""
 msgid "Comment by %(name)s:"
 msgstr ""
 
-
-
-
 #: froide/templates/comments/foirequest/form.html:15
 msgid ""
 "Despite your privacy settings, your real name will be published with comment."
