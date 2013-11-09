@@ -19,7 +19,7 @@ No corresponding request could be identified, please investigate!
 
 
 def send_foi_mail(subject, message, from_email, recipient_list,
-              fail_silently=False, **kwargs):
+                  attachments=None, fail_silently=False, **kwargs):
     connection = get_connection(username=settings.FOI_EMAIL_HOST_USER,
             password=settings.FOI_EMAIL_HOST_PASSWORD,
             host=settings.FOI_EMAIL_HOST,
@@ -38,6 +38,9 @@ def send_foi_mail(subject, message, from_email, recipient_list,
         headers['Reply-To'] = from_email
     email = EmailMessage(subject, message, from_email, recipient_list,
                         connection=connection, headers=headers)
+    if attachments is not None:
+        for name, data, mime_type in attachments:
+            email.attach(name, data, mime_type)
     return email.send()
 
 
