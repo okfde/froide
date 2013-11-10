@@ -849,11 +849,11 @@ msgstr "Tee pyyntö kohteelle %(name)s"
 
 #: froide/foiidea/templates/foiidea/_article.html:45
 msgid "Ideas for requests:"
-msgstr "Pyyntöideoita"
+msgstr "Pyyntöideoita:"
 
 #: froide/foiidea/templates/foiidea/_article.html:48
 msgid "Provide an idea for a request based on this article"
-msgstr "LIsää pyyntöidea tämän artikkelin pohjalta"
+msgstr "Lisää pyyntöidea tämän artikkelin pohjalta"
 
 #: froide/foiidea/templates/foiidea/_article.html:55
 msgid "Please login to provide an idea."
@@ -921,15 +921,15 @@ msgstr "%d liitettä merkitty hyväksymättömiksi"
 
 #: froide/foirequest/admin.py:175
 msgid "Mark selected as NOT approvable"
-msgstr "Merkitse hyväksymättömäksi"
+msgstr "Merkitse hyväksymättömissä olevaksi"
 
 #: froide/foirequest/admin.py:184
 msgid "Converted to PDF."
-msgstr "Muunnettu PDF-formaattiin."
+msgstr "Muunnettu PDF-muotoon."
 
 #: froide/foirequest/admin.py:185
 msgid "Convert to PDF"
-msgstr "Muunna PDF:ksi"
+msgstr "Muunna PDF-muotoon"
 
 #: froide/foirequest/admin.py:206
 msgid "Has request"
@@ -937,11 +937,11 @@ msgstr "Pyyntö"
 
 #: froide/foirequest/admin.py:241
 msgid "Successfully triggered redelivery."
-msgstr "Liipaistu toimitettavaksi uudelleen."
+msgstr "Uudelleenlähetys onnistunui."
 
 #: froide/foirequest/admin.py:263
 msgid "Redeliver to..."
-msgstr "Toimita uudelleen..."
+msgstr "Uudelleenlähetä..."
 
 #: froide/foirequest/feeds.py:24
 #, python-format
@@ -971,36 +971,36 @@ msgstr "%(public_body)s:lle"
 #: froide/foirequest/feeds.py:41
 #, python-format
 msgid "Freedom of Information Requests %(by)s on %(sitename)s"
-msgstr ""
+msgstr "Tietopyyntöjä %(by)s toimesta %(sitename)s-sivuilla"
 
 #: froide/foirequest/feeds.py:45
 #, python-format
 msgid "Freedom of Information Requests on %(sitename)s"
-msgstr ""
+msgstr "Tietopyyntöjä %(sitename)s-sivuilla"
 
 #: froide/foirequest/feeds.py:52
 #, python-format
 msgid ""
 "This feed contains the Freedom of Information requests %(by)s that have been "
 "made through %(sitename)s."
-msgstr ""
+msgstr "Tämä syöte sisältää tietopyynnöt käyttäjän %(by)s toimesta joita on tehty %(sitename)s-sivuilla."
 
 #: froide/foirequest/feeds.py:57
 #, python-format
 msgid ""
 "This feed contains the latest Freedom of Information requests that have been "
 "made through %(sitename)s."
-msgstr ""
+msgstr "Tämä syöte sisältää tietopyynnöt joita on tehty %(sitename)s-sivuilla."
 
 #: froide/foirequest/feeds.py:86
 #: froide/foirequest/templates/foirequest/show.html:298
 msgid "Not yet known"
-msgstr "Ei tiedetty vielä"
+msgstr "Ei vielä tiedossa"
 
 #: froide/foirequest/feeds.py:87
 #, python-format
 msgid "'%(title)s' to %(publicbody)s"
-msgstr ""
+msgstr "'%(title)s' %(publicbody)slle"
 
 #: froide/foirequest/foi_mail.py:12
 #, python-format
@@ -1008,11 +1008,13 @@ msgid ""
 "We received an FoI mail to this address: %(address)s.\n"
 "No corresponding request could be identified, please investigate!\n"
 "%(url)s\n"
-msgstr ""
+msgstr "Vastaanotimme tietopyyntöviestin osoitteeseen: %(address)s.\n"
+"Vastaavia pyyntöjä ei tunnistettu, ole hyvä ja tutki!\n"
+"%(url)s\n"
 
 #: froide/foirequest/foi_mail.py:81 froide/foirequest/tests/test_mail.py:73
 msgid "Unknown FoI-Mail Recipient"
-msgstr ""
+msgstr "Tuntematon tietopyynnön vastaanottaja"
 
 #: froide/foirequest/forms.py:30
 msgid "Search for a topic or a public body:"
@@ -1042,11 +1044,11 @@ msgstr "Tämä pyyntö tulee olemaan julkinen heti"
 
 #: froide/foirequest/forms.py:54 froide/foirequest/forms.py:355
 msgid "Information Law"
-msgstr "Laki"
+msgstr "Julkisuuslaki"
 
 #: froide/foirequest/forms.py:72
 msgid "You are not allowed to create a new public body"
-msgstr "Et saa luoda uutta viranomaista"
+msgstr "Sinulla ei ole luvitusta luoda uutta viranomaista"
 
 #: froide/foirequest/forms.py:76
 msgid "You must specify a public body"
@@ -1060,7 +1062,7 @@ msgstr "Virheellinen arvo"
 
 #: froide/foirequest/forms.py:111 froide/foirequest/forms.py:120
 msgid "Invalid Information Law"
-msgstr "Väärä laki"
+msgstr "Virheellinen laki"
 
 #: froide/foirequest/forms.py:136
 msgid "Sending Public Body"
@@ -1128,8 +1130,8 @@ msgid ""
 "When you are (partially) denied access to information, the Public Body "
 "should always state the reason."
 msgstr ""
-"Jos pääsyäsi tietoon on rajoitett(edes osittain),"
-"viranomaisen tulisi aina kertoa syy."
+"Jos pääsyäsi tietoon on rajoitettu, edes osittain,"
+"viranomaisen tulee aina nimetä rajoittamiselle tarkka syy."
 
 #: froide/foirequest/forms.py:268
 msgid "This request is still ongoing."
@@ -1230,14 +1232,14 @@ msgstr "Skannattu kirje"
 
 #: froide/foirequest/forms.py:416
 msgid "You are not allowed to publish some received documents"
-msgstr "Et saa julkistaa joitain saamiasi dokumentteja"
+msgstr "Sinulla ei ole luvitusta julkaista joitain saamiasi dokumentteja"
 
 #: froide/foirequest/forms.py:418
 msgid ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
 msgstr "Jos saamasi vastaus ehdottomasti kieltää sinua julkaisemasta"
-"kaikkia saatuja asiakirjoja (esim. tekijänoikeus-syistä), valitse tämä."
+"kaikkia saatuja asiakirjoja - vaikkapa tekijänoikeussyistä - valitse tämä."
 
 #: froide/foirequest/forms.py:424
 msgid "Your reply date is in the future, that is not possible."
@@ -1258,7 +1260,7 @@ msgstr "Tagit"
 
 #: froide/foirequest/forms.py:444
 msgid "Comma separated and quoted"
-msgstr "Pilkkuerotettu sekä siteerattu"
+msgstr "Pilkkueroteltu sekä siteerattu"
 
 #. Translators: part in request filter URL
 #: froide/foirequest/make_request_urls.py:8
@@ -1300,7 +1302,7 @@ msgstr "Odotetaan viranomaisen vahvistusta"
 msgid ""
 "The Public Body of this request has been created by the user and still needs "
 "to be confirmed."
-msgstr "Tämän pyynnön viranomaine on käyttäjän lisäämä.  Ja se täytyy vielä vahvistaa. "
+msgstr "Pyynnön viranomainen on käyttäjän käsin lisäämä, ja täytyy vielä vahvistaa. "
 
 #: froide/foirequest/models.py:152
 msgid "Awaiting response"
@@ -1316,7 +1318,7 @@ msgstr "Tietopyyntö odottaa luokittelua"
 
 #: froide/foirequest/models.py:158
 msgid "A message was received and the user needs to set a new status."
-msgstr "Viesti on otettu vastaan ja käyttäjän pitää asettaa tietopyynnölle uusi tila."
+msgstr "Viesti on otettu vastaan, käyttäjän pitää asettaa tietopyynnölle uusi tila."
 
 #: froide/foirequest/models.py:162
 msgid "Request asleep"
@@ -1336,7 +1338,7 @@ msgstr "Tietopyyntö on ratkaistu"
 
 #: froide/foirequest/models.py:175
 msgid "Request Successful"
-msgstr "Tietopyyntö on onnistunut. "
+msgstr "Tietopyyntö onnistui. "
 
 #: froide/foirequest/models.py:176
 msgid "The request has been successul."
@@ -1344,13 +1346,13 @@ msgstr "Tietopyyntö on onnistunut"
 
 #: froide/foirequest/models.py:180
 msgid "Request partially successful"
-msgstr "Tietopyyntö on osittain onnistunut"
+msgstr "Tietopyyntö onnistui osittain"
 
 #: froide/foirequest/models.py:181
 msgid ""
 "The request has been partially successful (some information was provided, "
 "but not all)"
-msgstr "Tietopyyntö on osittain onnistunut (osa tiedoista toimitettiin, mutta ei kaikkea)"
+msgstr "Tietopyyntö onnistui osittain, tiedoista osa toimitettiin, osa jäi puuttumaan"
 
 #: froide/foirequest/models.py:184
 msgid "Information not held"
@@ -1366,39 +1368,39 @@ msgstr "Tietopyyntö evätty"
 
 #: froide/foirequest/models.py:190
 msgid "The Public Body refuses to provide the information."
-msgstr ""
+msgstr "Viranomainen kieltäytyy luovuttamasta tietoa."
 
 #: froide/foirequest/models.py:194
 msgid "Request was withdrawn due to costs"
-msgstr ""
+msgstr "Pyyntö peruttu kulujen vuoksi."
 
 #: froide/foirequest/models.py:195
 msgid "User withdrew the request due to the associated costs."
-msgstr ""
+msgstr "Käyttäjä perui pyynnön kulujen vuoksi."
 
 #: froide/foirequest/models.py:199
 msgid "Request was withdrawn"
-msgstr ""
+msgstr "Pyyntö peruttiin"
 
 #: froide/foirequest/models.py:200
 msgid "User withdrew the request for other reasons."
-msgstr ""
+msgstr "Käyttäjä perui pyynnön muista syistä."
 
 #: froide/foirequest/models.py:209
 msgid "successful"
-msgstr ""
+msgstr "onnistui"
 
 #: froide/foirequest/models.py:210
 msgid "partially-successful"
-msgstr ""
+msgstr "onnistui osittain"
 
 #: froide/foirequest/models.py:211
 msgid "refused"
-msgstr ""
+msgstr "evätty"
 
 #: froide/foirequest/models.py:213
 msgid "withdrawn"
-msgstr ""
+msgstr "peruttu"
 
 #: froide/foirequest/models.py:214
 msgid "withdrawn-costs"
@@ -1591,16 +1593,22 @@ msgid ""
 "Sincerely yours\n"
 "%(name)s\n"
 msgstr ""
+"Hyvä \n"
+"\n"
+"...\n"
+"\n"
+"Ystävällisin terveisin\n"
+"%(name)s\n"
 
 #: froide/foirequest/models.py:588
 #, python-format
 msgid "Complaint about request \"%(title)s\""
-msgstr ""
+msgstr "Valitus pyynnöstä \"%(title)s\""
 
 #: froide/foirequest/models.py:634
 #, python-format
 msgid "attached_file_%d"
-msgstr ""
+msgstr "attached_file_%d"
 
 #. Translators: replacement for person name in filename
 #: froide/foirequest/models.py:640
@@ -1609,79 +1617,79 @@ msgstr ""
 
 #: froide/foirequest/models.py:653
 msgid "Message contains PDF"
-msgstr ""
+msgstr "Viesti sisältää PDF-tiedoston"
 
 #: froide/foirequest/models.py:729 froide/foirequest/models.py:733
 msgid "Unknown"
-msgstr ""
+msgstr "Tuntematon"
 
 #: froide/foirequest/models.py:956
 #, python-format
 msgid "%(site_name)s: Please classify the reply to your request"
-msgstr ""
+msgstr "%(site_name)s: Ole hyvä, luokittele pyynnön vastaus"
 
 #: froide/foirequest/models.py:971
 #, python-format
 msgid "%(site_name)s: Update on one of your request"
 msgid_plural "%(site_name)s: Update on %(count)s of your requests"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(site_name)s: Päivitys yhdellä pyynnöistäsi"
+msgstr[1] "%(site_name)s: Päivitys %(count)s pyynnölläsi"
 
 #: froide/foirequest/models.py:1009
 msgid "Timestamp of Suggestion"
-msgstr ""
+msgstr "Ehdotuksen ajankohta"
 
 #: froide/foirequest/models.py:1011
 msgid "Reason this Public Body fits the request"
-msgstr ""
+msgstr "Perustelu, miksi tämä viranomainen soveltuu pyynnölle"
 
 #: froide/foirequest/models.py:1017
 msgid "Public Body Suggestion"
-msgstr ""
+msgstr "Ehdotettu viranomainen"
 
 #: froide/foirequest/models.py:1018
 msgid "Public Body Suggestions"
-msgstr ""
+msgstr "Ehdotetut viranomaiset"
 
 #: froide/foirequest/models.py:1024
 msgid "has message been sent?"
-msgstr ""
+msgstr "onko viesti lähetetty"
 
 #: froide/foirequest/models.py:1025
 msgid "Is this message a response?"
-msgstr ""
+msgstr "Onko tämä viesti vastaus?"
 
 #: froide/foirequest/models.py:1027
 msgid "Postal?"
-msgstr ""
+msgstr "Postinumero?"
 
 #: froide/foirequest/models.py:1029
 msgid "Escalation?"
-msgstr ""
+msgstr "Eskalointi?"
 
 #: froide/foirequest/models.py:1031
 msgid "Content hidden?"
-msgstr ""
+msgstr "Sisältö piilotettu?"
 
 #: froide/foirequest/models.py:1035
 msgid "From User"
-msgstr ""
+msgstr "Käyttäjältä"
 
 #: froide/foirequest/models.py:1036
 msgid "From Email"
-msgstr ""
+msgstr "Sähköpostista"
 
 #: froide/foirequest/models.py:1038
 msgid "From Name"
-msgstr ""
+msgstr "Henkilöltä nimeltään"
 
 #: froide/foirequest/models.py:1042
 msgid "From Public Body"
-msgstr ""
+msgstr "Viranomaisorganisaatiolta"
 
 #: froide/foirequest/models.py:1046
 msgid "Recipient Email"
-msgstr ""
+msgstr "Vastaaottajan sähköposti"
 
 #: froide/foirequest/models.py:1050
 msgid "Public Body Recipient"
@@ -1694,7 +1702,7 @@ msgstr "aikaleima"
 
 #: froide/foirequest/models.py:1056
 msgid "Redacted Subject"
-msgstr ""
+msgstr "Anonymisoitu otsikko"
 
 #: froide/foirequest/models.py:1057
 msgid "plain text"
@@ -1722,25 +1730,25 @@ msgstr "Ei julkistettavissa"
 
 #: froide/foirequest/models.py:1068
 msgid "Freedom of Information Message"
-msgstr ""
+msgstr "Tietopyyntöviesti"
 
 #: froide/foirequest/models.py:1069
 msgid "Freedom of Information Messages"
-msgstr ""
+msgstr "Tietopyyntöviestit"
 
 #: froide/foirequest/models.py:1076
 #, python-format
 msgid "Message in '%(request)s' at %(time)s"
-msgstr ""
+msgstr "'%(request)s' pyyntöä %(time)s ajassa"
 
 #: froide/foirequest/models.py:1085
 #, python-format
 msgid "message-%(id)d"
-msgstr ""
+msgstr "message-%(id)d"
 
 #: froide/foirequest/models.py:1170 froide/foirequest/models.py:1188
 msgid "<<name and email address>>"
-msgstr ""
+msgstr "<<nimi ja sähköposti>>"
 
 #: froide/foirequest/models.py:1232
 msgid "Belongs to request"
@@ -1829,38 +1837,39 @@ msgstr ""
 #: froide/foirequest/models.py:1385
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
-msgstr ""
+msgstr "%(user)s käyttäjää raportoi tälle pyynnölle kustannukseksi %(amount)s."
 
 #: froide/foirequest/models.py:1387
 #, python-format
 msgid "Received an email from %(public_body)s."
-msgstr ""
+msgstr "Vastaanotti sähköpostin %(public_body)s lta."
 
 #: froide/foirequest/models.py:1389
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
-msgstr ""
+msgstr "%(user)s lähetti viestin %(public_body)s."
 
 #: froide/foirequest/models.py:1391
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
-msgstr ""
+msgstr "Viesti välitettiin %(public_body)s jonka vuoksi määräaika on asetettu uudelleen."
 
 #: froide/foirequest/models.py:1393
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
-msgstr ""
+msgstr "%(user)s asetti tilaksi '%(status)s'."
 
 #: froide/foirequest/models.py:1395
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
-msgstr ""
+msgstr "%(user)s  on pyytänyt '%(request)s' julkiseksi."
 
 #: froide/foirequest/models.py:1397
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr ""
+"%(public_body)s kieltäytyi luovuttamasta tietoja %(reason)s perusteella."
 
 #: froide/foirequest/models.py:1399
 #, python-format
@@ -1868,21 +1877,24 @@ msgid ""
 "%(public_body)s answered partially, but denied access to all information on "
 "the grounds of %(reason)s."
 msgstr ""
+"%(public_body)s vastasi osittain, mutta epäsi pääsyn tietoon kokonaisuudessaan"
+"%(reason)s perusteella."
 
 #: froide/foirequest/models.py:1401
 msgid "This request became overdue"
-msgstr ""
+msgstr "Tämän pyynnön määräaika on täyttynyt."
 
 #: froide/foirequest/models.py:1403
 #, python-format
 msgid ""
 "%(user)s set '%(name)s' as the information law for the request %(request)s."
 msgstr ""
+"%(user)s asetti '%(name)s' lakiperustaksi %(request)s pyynnölle."
 
 #: froide/foirequest/models.py:1405
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
-msgstr ""
+msgstr "%(user)s lisäsi vastauksen joka oli vastaanotettu paperipostilla."
 
 #: froide/foirequest/models.py:1407
 #, python-format
@@ -1890,11 +1902,12 @@ msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
 "request %(request)s."
 msgstr ""
+"%(user)s täytti valituksen %(public_body)s lle asian käsittelystä %(request)s pyynnössä."
 
 #: froide/foirequest/models.py:1409
 #, python-format
 msgid "The deadline of request %(request)s has been extended."
-msgstr ""
+msgstr "Määräaikaa pyynnölle %(request)s on jatkettu"
 
 #: froide/foirequest/models.py:1414
 msgid "Request Event"
@@ -1925,12 +1938,12 @@ msgstr "Toimittamattomat viestit %(recipient)s -vastaanottajille (%(request)s)"
 #: froide/foirequest/signals.py:27
 #, python-format
 msgid "%(site_name)s: Request became overdue"
-msgstr ""
+msgstr "%(site_name)s: Pyynnön määräaika on täyttynyt"
 
 #: froide/foirequest/signals.py:44
 #, python-format
 msgid "%(site_name)s: Request became asleep"
-msgstr ""
+msgstr "%(site_name)s: Pyyntö on pysäytetty"
 
 #: froide/foirequest/signals.py:61
 msgid "You received a reply to your Freedom of Information Request"
