@@ -2988,23 +2988,27 @@ msgid ""
 "from the reply under which law the request was answered, please choose this "
 "law below. If it is not obvious, leave it as it is."
 msgstr ""
+"Tässä tietopyynnössä viitataan useampiin lain kohtiin. Jos vastauksesta "
+"käy ilmi, minkä lain kohdan mukaisesti siihen on vastattu, niin valitse se "
+"laki alta. Muussa tapauksessa jätä valinnat ennalleen."
 
 #: froide/foirequest/templates/foirequest/show.html:237
 msgid "Set Concrete Law"
-msgstr ""
+msgstr "Aseta konkreettinen lain kohta"
 
 #: froide/foirequest/templates/foirequest/show.html:242
 msgid "Resolution Summary"
-msgstr ""
+msgstr "Yhteenveto ratkaisusta"
 
 #: froide/foirequest/templates/foirequest/show.html:245
 msgid ""
 "Have you received the information you need? What have you learned from it?"
 msgstr ""
+"Saitko tarvitsemasi tiedon? Mitä opit prosessista?"
 
 #: froide/foirequest/templates/foirequest/show.html:247
 msgid "Save Summary"
-msgstr ""
+msgstr "Tallenna yhteenveto"
 
 #: froide/foirequest/templates/foirequest/show.html:260
 msgid "You can suggest a public body for this request."
@@ -3231,7 +3235,7 @@ msgstr "Admin"
 
 #: froide/foirequest/templates/foirequest/show.html:641
 msgid "View message in admin"
-msgstr ""
+msgstr "Näytä viesti ylläpitäjän näkymässä"
 
 #: froide/foirequest/templates/foirequest/show.html:659
 msgid "Upload Attachments"
@@ -3299,6 +3303,18 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s"
 msgstr ""
+"Hei %(name)s,\n"
+"\n"
+"Tietopyyntöäsi \"%(title)s\" ei ole merkitty ratkaistuksi, eikä pyyntöön liity "
+"mitään toimintoja viimeisen 6 kuukauden aikana. Tämän takia tietopyyntösi on "
+"tulkittu ei-aktiiviseksi.\n"
+"\n"
+"Jos olet saanut vastauksen tietopyyntöön ja pyyntö on ratkaistu, ole ystävällinen "
+"ja liitä vastaus ja merkitse tietopyyntö ratkaistuksi tästä:\n"
+"%(url)s\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/became_overdue.txt:1
 #, python-format
@@ -3318,6 +3334,20 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s"
 msgstr ""
+"Hei %(name)s,\n"
+"\n"
+"Tietopyyntöösi \"%(title)s\" ei ole vastattu määräajassa ja se on merkitty myöhästyneeksi.\n"
+"Suosittelemme, että lähetät viranomaiselle toisen viestin tarkistaaksesi tietopyynnön tila "
+"ja varmistaaksesi, että pyyntö on mennyt perille.\n"
+"\n"
+"Jos olet saanut vastauksen paperipostissa, ole ystävällinen "
+"ja liitä vastaus tietopyyntö.fi -palvelussa olevaan pyyntöön.\n"
+"\n"
+"Tässä on linkki tietopyyntöösi:\n"
+"%(url)s\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/classification_reminder.txt:1
 #, python-format
@@ -3334,6 +3364,17 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s"
 msgstr ""
+"Hei %(name)s,\n"
+"\n"
+"tämä on muistutusviesti, että tietopyyntöösi \"%(title)s\" on vastattu ja sinun tulisi "
+"asettaa pyynnölle uusi tila tietopyyntö.fi -palvelussa.\n"
+"\n"
+"Mene tietopyyntösi sivulle nyt:\n"
+"%(url)s\n"
+"\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/confirm_foi_message_sent.txt:1
 #, python-format
@@ -3348,6 +3389,15 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s\n"
 msgstr ""
+"Hei %(name)s,\n"
+"\n"
+"tietopyyntöviestisi \"%(title)s\" on lähetetty. "
+"Ilmoitamme, kun saat vastauksen.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(site_name)s\n"
 
 #: froide/foirequest/templates/foirequest/emails/confirm_foi_request_sent.txt:1
 #, python-format
@@ -3362,12 +3412,21 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s\n"
 msgstr ""
+"Hei %(name)s,\n"
+"\n"
+"tietopyyntösi \"%(title)s\" on lähetetty. Ilmoitamme, kun saat "
+"vastauksen.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(site_name)s\n"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_end.txt:1
 msgid ""
 "\n"
 "Sincerely yours,"
-msgstr ""
+msgstr "Ystävällisin terveisin,"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_start.txt:1
 msgid ""
@@ -3376,11 +3435,14 @@ msgid ""
 "I'd like to make a request under a (yet to be determined) freedom of "
 "information law."
 msgstr ""
+"Hyvä vastaanottaja,\n"
+"\n"
+"haluaisin tehdä julkisuuslain mukaisen tietopyynnön."
 
 #: froide/foirequest/templates/foirequest/emails/foi_request_mail.txt:9
 #: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:4
 msgid "Post Address:"
-msgstr ""
+msgstr "Postiosoite:"
 
 #: froide/foirequest/templates/foirequest/emails/mail_footer.txt:2
 #: froide/foirequest/templates/foirequest/emails/request_footer.txt:2
@@ -3388,6 +3450,8 @@ msgid ""
 "Legal Note: This mail was sent through a Freedom Of Information Portal. "
 "Replies might be published automatically.\n"
 msgstr ""
+"Huomautus: Tämä sähköposti on lähetetty Tietopyyntö -portaalista. "
+"Vastaukset saatetaan julkaista automaattisesti.\n"
 
 #: froide/foirequest/templates/foirequest/emails/mediation_message.txt:1
 #, python-format
@@ -3404,6 +3468,20 @@ msgid ""
 "Sincerely yours\n"
 "%(name)s"
 msgstr ""
+"Hyvä vastaanottaja,\n"
+"\n"
+"epäilen, ettei tietopyyntöäni käsitelty lain: %(law)s "
+"edellyttämällä tavalla, joka on kerrottu täällä:\n"
+"\n"
+"%(link)s\n"
+"\n"
+"Uskon, että käsittelyssä on tapahtunut virhe, koska ...\n"
+"\n"
+"Tietopyyntö tulee käsitellään uudelleen ja mikäli vastaus on "
+"kieltävä pyydän saada valituskepoisen päätöksen kirjallisessa muodossa.\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(name)s"
 
 #: froide/foirequest/templates/foirequest/emails/message_received_notification.txt:1
 #, python-format
@@ -3421,6 +3499,18 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s"
 msgstr ""
+"Hei %(name)s,\n"
+"\n"
+"olet saanut vastauksen tietopyyntöösi \"%(title)s\". Lue vastaus ja "
+"muuta tarvittaessa tietopyynnön tila tietopyyntö.fi -palvelussa. Voit "
+"myös lähettää palvelun kautta toisen viestin.\n"
+"\n"
+"Klikkaa alla olevaa linkkiä lukeaksesi vastauksen ja asettaaksesi tietopyynnön tilan oikeaksi:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Ystävällisin terveisin,\n"
+"%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/overdue_reply.txt:1
 #, python-format
@@ -3442,8 +3532,6 @@ msgstr ""
 "\n"
 "Ystävällisin terveisin,\n"
 "%(name)s"
-
-
 
 #: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:1
 #, python-format
