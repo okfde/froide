@@ -3426,7 +3426,9 @@ msgstr ""
 msgid ""
 "\n"
 "Sincerely yours,"
-msgstr "Ystävällisin terveisin,"
+msgstr ""
+"\n"
+"Ystävällisin terveisin,"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_start.txt:1
 msgid ""
@@ -3834,8 +3836,10 @@ msgid ""
 msgid_plural ""
 "in the last 24 hours there were updates to %(count)s requests that you "
 "follow."
-msgstr[0] "viimeisen vuorokauden aikana yhtä seuraamaasi pyyntöä päivitettiin"
-msgstr[1] "viimeisen vuorokauden aikana %(count)d seuraamaasi pyyntöä päivitettiin"
+msgstr[0] ""
+"viimeisen vuorokauden aikana yhtä seuraamaasi pyyntöä päivitettiin."
+msgstr[1] ""
+"viimeisen vuorokauden aikana %(count)s seuraamaasi pyyntöä päivitettiin."
 
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:5
 #, python-format
