@@ -596,7 +596,7 @@ msgid ""
 "You're receiving this e-mail because you requested a password reset for your "
 "account at %(site_name)s."
 msgstr "Sait tämän sähköpostin koska pyysit salasanan resetointia "
-"%(site_name)-sivustolla."
+"%(site_name)s -sivustolla."
 
 #: froide/account/templates/account/password_reset_email.txt:4
 msgid "Please go to the following page and choose a new password:"
@@ -2287,7 +2287,7 @@ msgstr "Pyyntöjä kategoriassa \"%(name)s\""
 #: froide/foirequest/templates/foirequest/list.html:31
 #, python-format
 msgid "Requests to %(name)s"
-msgstr "Pyyntöjä %(name)lle"
+msgstr "Pyyntöjä %(name)slle"
 
 #: froide/foirequest/templates/foirequest/list.html:34
 #, python-format
@@ -2393,12 +2393,12 @@ msgstr "Ei tietopyyntöä!"
 #: froide/foirequest/templates/foirequest/redact.html:4
 #, python-format
 msgid "Redacting attachment %(name)s"
-msgstr "Anonymisoidaan liite %(name)"
+msgstr "Anonymisoidaan liite %(name)s"
 
 #: froide/foirequest/templates/foirequest/redact.html:8
 #, python-format
 msgid "Redact \"%(name)s\""
-msgstr "Anonymisoi \"%(name)n tiedot\""
+msgstr "Anonymisoi \"%(name)sn tiedot\""
 
 #: froide/foirequest/templates/foirequest/redact.html:12
 msgid "How to redact"
@@ -2412,7 +2412,7 @@ msgid ""
 "sure to also black out the email address of %(name)s if it is visible."
 msgstr "Käy kullakin sivulla ja etsi mustattavat kohdat. Piirrä hiirellä " 
 "nelikulmio alueen yli valitsemalla ja raahaamalla mustattavan alueen yli."
-"Muista peittää myös %(name)n sähköpostiosoite jos se on näkyvissä."
+"Muista peittää myös %(name)sn sähköpostiosoite jos se on näkyvissä."
 
 #: froide/foirequest/templates/foirequest/redact.html:14
 msgid ""
@@ -3835,7 +3835,7 @@ msgid_plural ""
 "in the last 24 hours there were updates to %(count)s requests that you "
 "follow."
 msgstr[0] "viimeisen vuorokauden aikana yhtä seuraamaasi pyyntöä päivitettiin"
-msgstr[1] "viimeisen vuorokauden aikana %(count) seuraamaasi pyyntöä päivitettiin"
+msgstr[1] "viimeisen vuorokauden aikana %(count)d seuraamaasi pyyntöä päivitettiin"
 
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:5
 #, python-format
