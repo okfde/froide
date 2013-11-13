@@ -212,7 +212,7 @@ USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fi-FI'
 
 
 # If you set this to False, Django will make some optimizations so as not
