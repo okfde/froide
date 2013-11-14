@@ -19,8 +19,8 @@ Tietopyyntö-fi-konseptia koeponnistettiin Facebook-ryhmällä. Testi osoitti yh
 
 Pohjoismainen julkisuusperiaate on vienyt meitä eteenpäin tähänkin saakka. Tietopyyntö.fi auttaa tuomaan tätä 1700-luvulta periytyvää periaatetta tälle vuosisadalle. Tavoitteena on, että julkiset tiedot saisi tulevaisuudessa verkon kautta erikseen pyytämättä.
 
-Toteutus
-========
+Osallistu toteutukseen
+======================
 
 ![](https://raw.github.com/okffi/tietopyynto/master/Tietopyynto2.png)
 
@@ -28,7 +28,8 @@ Tietopyyntöpalveluille on olemassa useampiakin avoimen lähdekoodin alustoja od
 
 Tietopyyntö.fi -palvelun saaminen kansalaisten käyttöön edellyttää pieniä parannuksia käyttöliittymään (graafikon työpanosta), tuotantopalvelimen ylläpitoa, testausta ja markkinointia. Eräs työintensiivisimmistä tehtävistä olisi koota palveluun valmiiksi suomen julkishallinnon organisaatioiden luettelo, jossa olisi organisaatioiden kirjaamojen sähköpostiosoitteet. Tällaista tietovarantoa ei ole valmiina, joten se pitäisi koota useammista lähteistä ja täydentää joukkoistamalla.
 
-- Tule mukaan tietopyyntö.fi -tiimiin https://github.com/okffi/froide/issues/6
+- Osallistu käännöstyöhön (Ruotsin kieliversion teko ja suomiversion parantelu) [Transifex -palvelussa](https://www.transifex.com/projects/p/froide-2/) (Kirjaudu palveluun kohdasta Sign Up ja pyydä päästä kääntäjäksi projektiin - meilaa antti.poikola(A)gmail.com)
+- [Tule mukaan tietopyyntö.fi -tiimiin osallistumalla GitHub -keskusteluihin](https://github.com/okffi/froide/issues/6)
 
 
 Froide
