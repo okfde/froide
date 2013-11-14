@@ -1,7 +1,7 @@
 Tietopyyntö.fi
 ==============
 
-![](Tietopyynto1.png)
+![](https://raw.github.com/okffi/tietopyynto/master/Tietopyynto1.png)
 
 [2 minuutin video Youtubessa](http://www.youtube.com/watch?v=xvTc1HaMZn0)
 
@@ -22,7 +22,7 @@ Pohjoismainen julkisuusperiaate on vienyt meitä eteenpäin tähänkin saakka. T
 Toteutus
 ========
 
-![](Tietopyynto2.png)
+![](https://raw.github.com/okffi/tietopyynto/master/Tietopyynto2.png)
 
 Tietopyyntöpalveluille on olemassa useampiakin avoimen lähdekoodin alustoja odottamassa sovittamista Suomeen. Yksi lupaavimmista on [saksalaislähtöinen Froide](http://stefanw.github.io/froide/), jolla on toteutettu mm. [fragdenstaat.de](https://fragdenstaat.de/) -palvelu. Froide on jo vapaaehtoisvoimin [käännetty suomeksi](https://www.transifex.com/projects/p/froide-2/language/fi/) ja kehitysmielessä sitä on kokeiltu. Tuotantokäyttöön ottamista varten suurimmat 
 
