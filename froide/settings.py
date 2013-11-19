@@ -8,9 +8,6 @@ import re
 
 rec = re.compile
 
-import djcelery
-djcelery.setup_loader()
-
 gettext = lambda s: s
 
 # Django settings for froide project.
@@ -301,7 +298,7 @@ class Base(Configuration):
 
     ######### Celery #############
 
-    CELERY_RESULT_BACKEND = values.Value("database")
+    CELERY_RESULT_BACKEND = values.Value('djcelery.backends.database:DatabaseBackend')
     CELERYBEAT_SCHEDULER = values.Value("djcelery.schedulers.DatabaseScheduler")
     CELERY_ALWAYS_EAGER = values.BooleanValue(True)
 

@@ -1,18 +1,18 @@
 import os
 
-from celery.task import task
-
 from django.conf import settings
 from django.utils import translation
 from django.db import transaction
 from django.core.files import File
+
+from froide.celery import app as celery_app
 
 from .models import FoiRequest, FoiAttachment
 from .foi_mail import _process_mail, _fetch_mail
 from .file_utils import convert_to_pdf
 
 
-@task
+@celery_app.task
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
@@ -29,34 +29,34 @@ def process_mail(*args, **kwargs):
     run(*args, **kwargs)
 
 
-@task
+@celery_app.task
 def fetch_mail():
     for rfc_data in _fetch_mail():
         process_mail.delay(rfc_data)
 
 
-@task
+@celery_app.task
 def detect_overdue():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_to_be_overdue():
         foirequest.set_overdue()
 
 
-@task
+@celery_app.task
 def detect_asleep():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_to_be_asleep():
         foirequest.set_asleep()
 
 
-@task
+@celery_app.task
 def classification_reminder():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_unclassified():
         foirequest.send_classification_reminder()
 
 
-@task
+@celery_app.task
 def count_same_foirequests(instance_id):
     translation.activate(settings.LANGUAGE_CODE)
     try:
@@ -66,7 +66,7 @@ def count_same_foirequests(instance_id):
         pass
 
 
-@task
+@celery_app.task
 def convert_attachment_task(instance_id):
     try:
         att = FoiAttachment.objects.get(pk=instance_id)

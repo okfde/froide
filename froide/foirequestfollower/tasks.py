@@ -1,8 +1,6 @@
 from datetime import timedelta
 from collections import defaultdict
 
-from celery.task import task
-
 from django.utils.six import iteritems
 from django.utils.translation import ugettext as _
 from django.utils import translation
@@ -12,12 +10,13 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
+from froide.celery import app as celery_app
 from froide.foirequest.models import FoiRequest, FoiEvent, FoiMessage
 
 from .models import FoiRequestFollower
 
 
-@task
+@celery_app.task
 def update_followers(request_id, message):
     translation.activate(settings.LANGUAGE_CODE)
     try:
@@ -27,7 +26,7 @@ def update_followers(request_id, message):
         pass
 
 
-@task
+@celery_app.task
 def update_followers_postal_reply(request_id):
     try:
         foirequest = FoiRequest.objects.get(id=request_id)
@@ -38,7 +37,7 @@ def update_followers_postal_reply(request_id):
             "request": foirequest.title})
 
 
-@task
+@celery_app.task
 def batch_update():
     return _batch_update()
 
