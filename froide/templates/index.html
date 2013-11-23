@@ -43,7 +43,10 @@
       <div id="main-foirequests" class="well">
         {% if featured %}
         <div class="frontpage-teaser">
-          <h3>{{ featured.title }}</h3>
+          <h3>
+            <small>{% trans "Featured Request" %}</small><br/>
+            {{ featured.title }}
+          </h3>
           <p>
             {{ featured.text|truncatewords:55|linebreaksbr }}
           </p>

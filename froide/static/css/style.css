@@ -154,6 +154,14 @@ strong {
     color: #333;
 }
 
+.frontpage-teaser small {
+  text-align: right;
+}
+
+.frontpage-teaser h3 {
+  margin-top: 0;
+}
+
 #sample-letter {
     font-family: Georgia,serif;
     font-size: 1em;
