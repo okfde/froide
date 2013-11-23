@@ -191,3 +191,11 @@ class TestMakingRequest(LiveServerTestCase):
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_response')
+
+    def test_collapsed_menu(self):
+        self.selenium.get('%s%s' % (self.live_server_url,
+            reverse('index')))
+        self.selenium.find_element_by_css_selector('.navbar-toggle').click()
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_css_selector('.navbar-form').is_displayed()
+        )
