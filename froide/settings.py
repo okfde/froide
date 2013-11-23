@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from configurations import Configuration, importer, values
+from configurations import Configuration, pristinemethod, importer, values
 importer.install(check_options=True)
 
 import os
@@ -540,6 +540,7 @@ class Heroku(Production):
         postmark_id, domain = postmark.split('@')
         template = '{postmark_id}+{secret}@{domain}'
 
+        @pristinemethod
         def func(username, secret):
             return template.format(postmark_id=postmark_id,
                                    secret=secret,
