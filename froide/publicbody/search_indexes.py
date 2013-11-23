@@ -16,7 +16,7 @@ class PublicBodyIndex(CelerySearchIndex, indexes.Indexable):
     jurisdiction = indexes.CharField(model_attr='jurisdiction__name', default='')
     topic_auto = indexes.EdgeNgramField(model_attr='topic__name', default='')
     topic_slug = indexes.CharField(model_attr='topic__slug', default='')
-    name_auto = indexes.EdgeNgramField(model_attr='name')
+    name_auto = indexes.NgramField(model_attr='name')
     url = indexes.CharField(model_attr='get_absolute_url')
 
     def get_model(self):

@@ -14,6 +14,9 @@ from froide.helper.api_utils import AnonymousGetAuthentication
 from .models import PublicBody, Jurisdiction, FoiLaw
 
 
+AUTOCOMPLETE_MAX_CHAR = 15
+AUTOCOMPLETE_MIN_CHAR = 3
+
 class JurisdictionResource(ModelResource):
     class Meta:
         # allowed_methods = ['get']
@@ -117,10 +120,14 @@ class PublicBodyResource(ModelResource):
         self.method_check(request, allowed=['get'])
 
         query = request.GET.get('query', '')
-        sqs = SearchQuerySet().models(PublicBody).autocomplete(name_auto=query)
-        jurisdiction = request.GET.get('jurisdiction', None)
-        if jurisdiction is not None:
-            sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
+        short_query = ' '.join([q[:AUTOCOMPLETE_MAX_CHAR] for q in query.split()
+                                if len(q) >= AUTOCOMPLETE_MIN_CHAR])
+        sqs = []
+        if short_query:
+            sqs = SearchQuerySet().models(PublicBody).autocomplete(name_auto=short_query)
+            jurisdiction = request.GET.get('jurisdiction', None)
+            if jurisdiction is not None:
+                sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
 
         names = []
         data = []
