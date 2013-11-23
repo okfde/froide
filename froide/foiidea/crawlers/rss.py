@@ -1,4 +1,9 @@
-from StringIO import StringIO
+from __future__ import print_function
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 from lxml import etree
 import feedparser
@@ -19,4 +24,4 @@ def convert_to_items(data):
 
 if __name__ == '__main__':
     import sys
-    print list(convert_to_items(file(sys.argv[1]).read()))
+    print(list(convert_to_items(file(sys.argv[1]).read())))

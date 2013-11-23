@@ -4,12 +4,12 @@ from datetime import timedelta
 import json
 import re
 
+from django.utils.six import string_types, text_type as str
 from django.db import models
 from django.db.models import Q
 from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
@@ -24,6 +24,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
@@ -131,6 +132,7 @@ class TaggedFoiRequest(TaggedItemBase):
         verbose_name_plural = _('FoI Request Tags')
 
 
+@python_2_unicode_compatible
 class FoiRequest(models.Model):
     STATUS_CHOICES = (
         ('awaiting_user_confirmation',
@@ -268,7 +270,7 @@ class FoiRequest(models.Model):
     visibility = models.SmallIntegerField(_("Visibility"), default=0,
             choices=VISIBILITY_CHOICES)
 
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
 
@@ -334,14 +336,14 @@ class FoiRequest(models.Model):
     add_postal_reply = django.dispatch.Signal(providing_args=[])
     escalated = django.dispatch.Signal(providing_args=[])
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u"Request '%s'") % self.title
 
     @classmethod
     def get_status_from_url(cls, status):
         if cls._STATUS_URLS_DICT is None:
             cls._STATUS_URLS_DICT = dict([
-                (unicode(x[0]), x[1:]) for x in cls.STATUS_URLS])
+                (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
         return cls._STATUS_URLS_DICT[status]
 
     @property
@@ -365,9 +367,10 @@ class FoiRequest(models.Model):
 
     @property
     def status_representation(self):
-        now = timezone.now()
-        if self.status == 'awaiting_response' and now > self.due_date:
-            return 'overdue'
+        if self.due_date is not None:
+            now = timezone.now()
+            if self.status == 'awaiting_response' and now > self.due_date:
+                return 'overdue'
         return self.status if self.status != 'resolved' else self.resolution
 
     @property
@@ -414,13 +417,13 @@ class FoiRequest(models.Model):
         return replace_email(self.description, _("<<email address>>"))
 
     def response_messages(self):
-        return filter(lambda m: m.is_response, self.messages)
+        return list(filter(lambda m: m.is_response, self.messages))
 
     def reply_received(self):
         return len(self.response_messages()) > 0
 
     def message_needs_status(self):
-        mes = filter(lambda m: m.status is None, self.response_messages())
+        mes = list(filter(lambda m: m.status is None, self.response_messages()))
         if not mes:
             return None
         return mes[0]
@@ -443,17 +446,24 @@ class FoiRequest(models.Model):
             return self.check_auth_code(pb_auth)
         return False
 
+    def in_search_index(self):
+        return (self.visibility > 1 and
+            self.is_foi and self.same_as is None)
+
     def needs_public_body(self):
         return self.status == 'publicbody_needed'
 
     def awaits_response(self):
-        return self.status == 'awaiting_response' or self.status == 'overdue'
+        return self.status == 'awaiting_response'
 
     def can_be_escalated(self):
         return not self.needs_public_body() and (
             self.is_overdue() or self.reply_received())
 
     def is_overdue(self):
+        return self.was_overdue() and self.awaits_response()
+
+    def was_overdue(self):
         if self.due_date:
             return self.due_date < timezone.now()
         return False
@@ -474,7 +484,7 @@ class FoiRequest(models.Model):
     def followed_by(self, user):
         from froide.foirequestfollower.models import FoiRequestFollower
         try:
-            if isinstance(user, basestring):
+            if isinstance(user, string_types):
                 return FoiRequestFollower.objects.get(request=self,
                         email=user, confirmed=True)
             else:
@@ -599,7 +609,7 @@ class FoiRequest(models.Model):
                         }
                     )})
 
-    def add_message_from_email(self, email, mail_string):
+    def add_message_from_email(self, email, mail_string=None):
         message = FoiMessage(request=self)
         message.subject = email['subject'][:250]
         message.is_response = True
@@ -636,10 +646,10 @@ class FoiRequest(models.Model):
                     'email': False,
                     'address': False,
                     # Translators: replacement for person name in filename
-                    'name': unicode(_('NAME'))
+                    'name': str(_('NAME'))
                 }
             )
-            att.name = re.sub('[^\w\.\-]', '', att.name)
+            att.name = re.sub('[^A-Za-z0-9_\.\-]', '', att.name)
             att.name = att.name[:255]
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
@@ -699,11 +709,16 @@ class FoiRequest(models.Model):
     @classmethod
     def generate_secret_address(cls, user):
         possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
-        user_name = user.username.replace('_', '.')
+        username = user.username.replace('_', '.')
         secret = "".join([random.choice(possible_chars) for i in range(10)])
-        if getattr(settings, 'FOI_EMAIL_FUNC') and settings.FOI_EMAIL_FUNC:
-            return settings.FOI_EMAIL_FUNC(user_name, secret)
-        return "%s.%s@%s" % (user_name, secret, settings.FOI_EMAIL_DOMAIN)
+        template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
+        if template is not None and callable(template):
+            return settings.FOI_EMAIL_TEMPLATE(username=username, secret=secret)
+        elif template is not None:
+            return settings.FOI_EMAIL_TEMPLATE.format(username=username,
+                                                      secret=secret,
+                                                      domain=settings.FOI_EMAIL_DOMAIN)
+        return "%s.%s@%s" % (username, secret, settings.FOI_EMAIL_DOMAIN)
 
     @classmethod
     def generate_unique_secret_address(cls, user):
@@ -725,11 +740,11 @@ class FoiRequest(models.Model):
 
     @classmethod
     def get_readable_status(cls, status):
-        return unicode(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
 
     @classmethod
     def get_status_description(cls, status):
-        return unicode(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
 
     @classmethod
     def from_request_form(cls, user, public_body_object, foi_law,
@@ -803,8 +818,12 @@ class FoiRequest(models.Model):
         send_address = True
         if request.law:
             send_address = not request.law.email_only
-        message.plaintext = request.construct_message_body(form_data['body'],
-                foi_law, post_data, send_address=send_address)
+        message.plaintext = request.construct_message_body(
+                form_data['body'],
+                foi_law,
+                post_data=post_data,
+                full_text=form_data.get('full_text', False),
+                send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
         if public_body_object is not None:
             message.recipient_public_body = public_body_object
@@ -821,18 +840,29 @@ class FoiRequest(models.Model):
             message.send()
         return request
 
-    def construct_message_body(self, text, foilaw, post_data, send_address=True):
+    def construct_message_body(self, text, foilaw, post_data,
+            full_text=False, send_address=True):
+
         letter_start, letter_end = "", ""
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
             letter_end = foilaw.get_letter_end_text(post_data)
-        return render_to_string("foirequest/emails/foi_request_mail.txt",
-                {"request": self,
-                "letter_start": letter_start,
-                "letter_end": letter_end,
-                "body": text,
-                "send_address": send_address
-            })
+        if full_text:
+            body = text
+        else:
+            body = (
+                "{letter_start}\n\n{body}\n\n{letter_end}"
+            ).format(
+                letter_start=letter_start,
+                body=text,
+                letter_end=letter_end
+            )
+
+        return render_to_string("foirequest/emails/foi_request_mail.txt", {
+            "request": self,
+            "body": body,
+            "send_address": send_address
+        })
 
     def construct_standard_message_body(self, text, send_address=True):
         return render_to_string("foirequest/emails/mail_with_userinfo.txt",
@@ -928,8 +958,12 @@ class FoiRequest(models.Model):
             message.recipient_email = public_body.email
             message.plaintext = self.construct_message_body(
                 self.description,
-                self.law, {}, send_address=send_address)
+                self.law,
+                post_data={},
+                full_text=False,
+                send_address=send_address)
             message.plaintext_redacted = message.redact_plaintext()
+
             assert not message.sent
             message.send()  # saves message
 
@@ -1014,7 +1048,7 @@ class PublicBodySuggestion(models.Model):
             verbose_name=_("Freedom of Information Request"))
     public_body = models.ForeignKey(PublicBody,
             verbose_name=_("Public Body"))
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
     timestamp = models.DateTimeField(_("Timestamp of Suggestion"),
@@ -1029,6 +1063,7 @@ class PublicBodySuggestion(models.Model):
         verbose_name_plural = _('Public Body Suggestions')
 
 
+@python_2_unicode_compatible
 class FoiMessage(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
@@ -1041,9 +1076,13 @@ class FoiMessage(models.Model):
             default=False)
     content_hidden = models.BooleanField(_("Content hidden?"),
             default=False)
-    sender_user = models.ForeignKey(User, blank=True, null=True,
+    sender_user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            blank=True,
+            null=True,
             on_delete=models.SET_NULL,
-            verbose_name=_("From User"))
+            verbose_name=_("From User")
+    )
     sender_email = models.CharField(_("From Email"),
             blank=True, max_length=255)
     sender_name = models.CharField(_("From Name"),
@@ -1083,7 +1122,7 @@ class FoiMessage(models.Model):
     def content(self):
         return self.plaintext
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u"Message in '%(request)s' at %(time)s"
                 ) % {"request": self.request,
                     "time": self.timestamp}
@@ -1238,6 +1277,7 @@ def upload_to(instance, filename):
     return "%s/%s/%s" % (settings.FOI_MEDIA_PATH, instance.belongs_to.id, instance.name)
 
 
+@python_2_unicode_compatible
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(FoiMessage, null=True,
             verbose_name=_("Belongs to request"))
@@ -1293,7 +1333,7 @@ class FoiAttachment(models.Model):
         verbose_name = _('Attachment')
         verbose_name_plural = _('Attachments')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s) of %s" % (self.name, self.size, self.belongs_to)
 
     def index_content(self):
@@ -1373,10 +1413,11 @@ class FoiEventManager(models.Manager):
                         "request")
 
 
+@python_2_unicode_compatible
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"))
-    user = models.ForeignKey(User, null=True,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL, blank=True,
             verbose_name=_("User"))
     public_body = models.ForeignKey(PublicBody, null=True,
@@ -1425,7 +1466,7 @@ class FoiEvent(models.Model):
         verbose_name = _('Request Event')
         verbose_name_plural = _('Request Events')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s - %s" % (self.event_name, self.request)
 
     def save(self, *args, **kwargs):
@@ -1436,7 +1477,7 @@ class FoiEvent(models.Model):
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
-        return u"%s-%d" % (unicode(_("event")), self.id)
+        return u"%s-%d" % (str(_("event")), self.id)
 
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),
@@ -1490,6 +1531,7 @@ class FoiEvent(models.Model):
         return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
 
 
+@python_2_unicode_compatible
 class DeferredMessage(models.Model):
     recipient = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -1502,7 +1544,7 @@ class DeferredMessage(models.Model):
         verbose_name = _('Undelivered Message')
         verbose_name_plural = _('Undelivered Messages')
 
-    def __unicode__(self):
+    def __str__(self):
         return _(u"Undelievered Message to %(recipient)s (%(request)s)") % {
             'recipient': self.recipient,
             'request': self.request
@@ -1513,7 +1555,7 @@ class DeferredMessage(models.Model):
 
         self.request = request
         self.save()
-        mail = base64.b64decode(self.mail)
+        mail = base64.b64decode(self.mail).decode('utf-8')
         mail = mail.replace(self.recipient, self.request.secret_address)
         process_mail.delay(mail.encode('utf-8'))
 

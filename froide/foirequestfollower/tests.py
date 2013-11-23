@@ -6,7 +6,7 @@ import factory
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core import mail
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.comments.forms import CommentForm
 from django.contrib.comments.models import Comment
 
@@ -16,8 +16,10 @@ from froide.foirequest.tests import factories
 from .models import FoiRequestFollower
 from .tasks import _batch_update
 
+User = get_user_model()
 
-class FoiRequestFollowerFactory(factory.Factory):
+
+class FoiRequestFollowerFactory(factory.DjangoModelFactory):
     FACTORY_FOR = FoiRequestFollower
 
     request = factory.SubFactory(factories.FoiRequestFactory)
@@ -38,12 +40,8 @@ class FoiRequestFollowerTest(TestCase):
                 kwargs={"slug": req.slug}))
         # Can't follow my own requests
         self.assertEqual(response.status_code, 400)
-        try:
-            FoiRequestFollower.objects.get(request=req, user=user)
-        except FoiRequestFollower.DoesNotExist:
-            pass
-        else:
-            self.assertTrue(False)
+        followers = FoiRequestFollower.objects.filter(request=req, user=user)
+        self.assertEqual(followers.count(), 0)
         self.client.logout()
         user = User.objects.get(username='dummy')
         self.client.login(username='dummy', password='froide')

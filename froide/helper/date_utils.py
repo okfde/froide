@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 from datetime import timedelta, datetime
 import calendar
 
@@ -72,4 +74,4 @@ def calc_easter(year):
     return (year, month, day)
 
 if __name__ == '__main__':
-    print calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1)
+    print(calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1))

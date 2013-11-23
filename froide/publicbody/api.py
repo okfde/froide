@@ -25,7 +25,7 @@ class JurisdictionResource(ModelResource):
 
     def dehydrate(self, bundle):
         if bundle.obj:
-            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+            bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
         return bundle
 
 
@@ -51,7 +51,10 @@ class FoiLawResource(ModelResource):
 
     def dehydrate(self, bundle):
         if bundle.obj:
-            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+            additional = ('letter_start_form', 'letter_end_form', 'request_note_html')
+            for a in additional:
+                bundle.data[a] = getattr(bundle.obj, a)
+            bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
         return bundle
 
 
@@ -60,6 +63,8 @@ class PublicBodyResource(ModelResource):
         full=True)
     jurisdiction = fields.ToOneField(JurisdictionResource,
         'jurisdiction', full=True, null=True)
+    default_law = fields.ToOneField(FoiLawResource, 'default_law',
+        full=True)
     parent = fields.ToOneField('froide.publicbody.api.PublicBodyResource',
         'parent', null=True)
     root = fields.ToOneField('froide.publicbody.api.PublicBodyResource',
@@ -92,19 +97,60 @@ class PublicBodyResource(ModelResource):
 
     def dehydrate(self, bundle):
         if bundle.obj:
-            bundle.data['url'] = bundle.obj.get_absolute_domain_url()
+            bundle.data['request_note_html'] = bundle.obj.request_note_html
+            bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
         return bundle
 
     def prepend_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/search%s$" % (self._meta.resource_name, utils.trailing_slash()), self.wrap_view('get_search'), name="api_get_search"),
+            url(r"^(?P<resource_name>%s)/search%s$" % (
+                    self._meta.resource_name,
+                    utils.trailing_slash()
+                ), self.wrap_view('get_search'), name="api_get_search"),
+            url(r"^(?P<resource_name>%s)/autocomplete%s$" % (
+                    self._meta.resource_name,
+                    utils.trailing_slash()
+                ), self.wrap_view('get_autocomplete'), name="api_get_autocomplete"),
         ]
+
+    def get_autocomplete(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+
+        query = request.GET.get('query', '')
+        sqs = SearchQuerySet().models(PublicBody).autocomplete(name_auto=query)
+        jurisdiction = request.GET.get('jurisdiction', None)
+        if jurisdiction is not None:
+            sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
+
+        names = []
+        data = []
+        if len(sqs):
+            # Sniffing results of different search engine backends
+            # Real search engine vs. simple backend
+            # FIXME: Make this better
+            pb = sqs[0]
+            if pb.jurisdiction is not None:
+                jur_get = lambda pb: pb.jurisdiction
+            else:
+                jur_get = lambda pb: pb.object.jurisdiction.name
+
+            names = [u"%s (%s)" % (x.name, jur_get(x)) for x in sqs]
+            data = [{"name": x.name, "jurisdiction": jur_get(x),
+                "id": x.pk, "url": x.url} for x in sqs]
+        response = {
+            "query": query,
+            "suggestions": names,
+            "data": data
+        }
+
+        return self.create_response(request, response)
 
     def get_search(self, request, **kwargs):
         self.method_check(request, allowed=['get'])
 
-        # Do the query.
-        sqs = SearchQuerySet().models(PublicBody).load_all().auto_query(request.GET.get('q', ''))
+        query = request.GET.get('q', '')
+
+        sqs = SearchQuerySet().models(PublicBody).load_all().auto_query(query)
         paginator = Paginator(sqs, 20)
 
         try:

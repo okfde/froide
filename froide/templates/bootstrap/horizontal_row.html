@@ -3,11 +3,11 @@
 {% block field %}
 {% block errors %}{% include "floppyforms/errors.html" with errors=field.errors %}{% endblock %}
 
- <div class="control-group{% if classes %} {{ classes }}{% endif %}">
-    {% block label %}{% if field|id %}<label class="control-label" for="{{ field|id }}">{% endif %}{{ label }}{% if label|last not in ".:!?" %}:{% endif %}{% if field|id %}</label>{% endif %}{% endblock %}
-    <div class="controls">
+ <div class="form-group{% if classes %} {{ classes }}{% endif %}">
+    {% block label %}{% if field|id %}<label class="col-lg-4 control-label" for="{{ field|id }}">{% endif %}{{ label }}{% if label|last not in ".:!?" %}:{% endif %}{% if field|id %}</label>{% endif %}{% endblock %}
+    <div class="col-lg-8">
     {% block widget %}{% formfield field %}{% endblock %}
-    {% block help_text %}{% if help_text %}<span class="{% if help_text|length > 80 %}help-block{% else %}help-inline{% endif %}">{{ help_text }}</span>{% endif %}{% endblock %}
+    {% block help_text %}{% if help_text %}<span class="help-block">{{ help_text }}</span>{% endif %}{% endblock %}
     {% block hidden_fields %}{% for field in hidden_fields %}{{ field.as_hidden }}{% endfor %}{% endblock %}
     </div>
 </div>{% endblock %}

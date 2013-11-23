@@ -8,16 +8,17 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
-from django.utils.http import base36_to_int
+from django.utils.http import urlsafe_base64_decode, is_safe_url
 
 from froide.foirequestfollower.models import FoiRequestFollower
 from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
-from .forms import (UserLoginForm, NewUserForm, UserEmailConfirmationForm,
-        UserChangeAddressForm, UserDeleteForm, UserChangeEmailForm)
-from .models import AccountManager, User
+from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
+        UserEmailConfirmationForm, UserChangeAddressForm, UserDeleteForm,
+        UserChangeEmailForm)
+from .models import AccountManager
 
 
 def confirm(request, user_id, secret, request_id=None):
@@ -25,7 +26,7 @@ def confirm(request, user_id, secret, request_id=None):
         messages.add_message(request, messages.ERROR,
                 _('You are logged in and cannot use a confirmation link.'))
         return redirect('account-show')
-    user = get_object_or_404(auth.models.User, pk=int(user_id))
+    user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
     if user.is_active:
         return redirect('account-login')
     account_manager = AccountManager(user)
@@ -56,7 +57,7 @@ def go(request, user_id, secret, url):
             messages.add_message(request, messages.INFO,
                 _('You are logged in with a different user account. Please logout first before using this link.'))
     else:
-        user = get_object_or_404(auth.models.User, pk=int(user_id))
+        user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
         if not user.is_active:
             messages.add_message(request, messages.ERROR,
                 _('Your account is not active.'))
@@ -78,7 +79,7 @@ def show(request, context=None, status=200):
     own_foirequests = FoiRequest.objects.get_dashboard_requests(request.user)
     followed_requests = FoiRequestFollower.objects.filter(user=request.user)\
         .select_related('request')
-    followed_foirequest_ids = map(lambda x: x.request_id, followed_requests)
+    followed_foirequest_ids = list(map(lambda x: x.request_id, followed_requests))
     following = False
     events = []
     if followed_foirequest_ids:
@@ -99,7 +100,7 @@ def show(request, context=None, status=200):
 
 
 def profile(request, slug):
-    user = get_object_or_404(User, username=slug)
+    user = get_object_or_404(auth.get_user_model(), username=slug)
     profile = user.get_profile()
     if profile.private:
         raise Http404
@@ -125,7 +126,7 @@ def login(request, base="base.html", context=None,
     if not context:
         context = {}
     if not "reset_form" in context:
-        context['reset_form'] = auth.forms.PasswordResetForm()
+        context['reset_form'] = PasswordResetForm()
     if not "signup_form" in context:
         context['signup_form'] = NewUserForm()
 
@@ -145,14 +146,6 @@ def login(request, base="base.html", context=None,
             if user is not None:
                 if user.is_active:
                     auth.login(request, user)
-                    # profile address migration
-                    profile = user.get_profile()
-                    if not profile.address:
-                        messages.add_message(request, messages.WARNING,
-                            _('A recent change requires you to set your address! Please enter it below!'))
-                        return redirect(reverse('account-show') +
-                                    "?address#change-address-now")
-
                     messages.add_message(request, messages.INFO,
                             _('You are now logged in.'))
                     if simple:
@@ -233,25 +226,31 @@ def send_reset_password_link(request):
             request.session['next'] = next
         form.save(use_https=True, email_template_name="account/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
-                _('Check your mail, we sent you a password reset link.'))
+                ("Check your mail, we sent you a password reset link."
+                " If you don't receive an email, check if you entered your"
+                " email correctly or if you really have an account "))
         return redirect(next_url)
     return login(request, context={"reset_form": form}, status=400)
 
 
-def password_reset_confirm(request, uidb36=None, token=None):
-    response = django_password_reset_confirm(request, uidb36=uidb36, token=token,
+def password_reset_confirm(request, uidb64=None, token=None):
+    # TODO: Fix this code
+    # - don't sniff response
+    # - make redirect
+
+    response = django_password_reset_confirm(request, uidb64=uidb64, token=token,
             template_name='account/password_reset_confirm.html',
             post_reset_redirect=reverse('account-show'))
-    # TODO: this is not the smartest of ideas
-    # if django view returns 302, it is assumed that everything was fine
-    # currently this seems safe to assume.
+
     if response.status_code == 302:
-        uid_int = base36_to_int(uidb36)
-        user = auth.models.User.objects.get(id=uid_int)
+        uid = urlsafe_base64_decode(uidb64)
+        user = auth.get_user_model().objects.get(pk=uid)
         login_user(request, user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been set and you are now logged in.'))
-        if 'next' in request.session:
+        if 'next' in request.session and is_safe_url(
+                    url=request.session['next'],
+                    host=request.get_host()):
             response['Location'] = request.session['next']
             del request.session['next']
     return response

@@ -1,11 +1,21 @@
 from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Article
 
 
 def index(request):
+    page = request.GET.get('page')
+    paginator = Paginator(Article.objects.get_ordered(), 20)
+    try:
+        articles = paginator.page(page)
+    except PageNotAnInteger:
+        articles = paginator.page(1)
+    except EmptyPage:
+        articles = paginator.page(paginator.num_pages)
+
     return render(request, 'foiidea/index.html', {
-        'object_list': Article.objects.get_ordered()
+        'object_list': articles
     })
 
 

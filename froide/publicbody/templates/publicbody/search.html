@@ -4,29 +4,39 @@
 {% block body %}
 
 <div class="row">
-  <div class="span10">
-    <h2>{% blocktrans %}Search Results for &quot;{{ query }}&quot; in Public Bodies{% endblocktrans %}</h2>
-    {% include "publicbody/_search_form.html" %}
-    <ul class="unstyled">
-      {% for object in page.object_list %}
-        <li>
-          {% include "publicbody/snippets/publicbody_item.html" %}
-        </li>
-
-      {% empty %}
-        <li>
-          <p>
-            {% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}
-          </p>
-          <p>
-            <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a>
-          </p>
-        </li>
-      {% endfor %}
-    </ul>
+  <div class="col-lg-10">
+    <h2>
+      {% blocktrans %}Search Results for &quot;{{ query }}&quot; in Public Bodies{% endblocktrans %}
+    </h2>
   </div>
 </div>
 
+<div class="row">
+  <div class="col-lg-10">
+    {% include "publicbody/_search_form.html" %}
+  </div>
+</div>
+
+<div class="row top-buffer">
+  <div class="col-lg-10">
+    {% if page.object_list %}
+    <ul class="list-media">
+      {% for object in page.object_list %}
+        <li class="media">
+          {% include "publicbody/snippets/publicbody_item.html" %}
+        </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p>
+        {% blocktrans %}No relevant Public bodies found for "{{ query }}".{% endblocktrans %}
+      </p>
+      <p>
+        <a href="{% url 'publicbody-list' %}">{% blocktrans %}You can browse the list of Public Bodies.{% endblocktrans %}</a>
+      </p>
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}
 

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 
 
@@ -140,6 +142,6 @@ and I like it
 Cheers!'''
     form = FormGenerator(s, {'fg_radio_1': 'ice cream', 'fg_check_3': 'yeah', 'fg_check_1': "on",
             "fg_radio_2": "baked"})
-    print repr(form.render_html())
-    print "-" * 30
-    print form.render()
+    print(repr(form.render_html()))
+    print("-" * 30)
+    print(form.render())

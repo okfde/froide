@@ -22,15 +22,9 @@ urlpatterns = patterns('haystack.views',
 
 urlpatterns += patterns("froide.publicbody.views",
     url(r"^$", 'index', name="publicbody-list"),
-    url(r"^autocomplete/$", "autocomplete", name="publicbody-autocomplete"),
-    # Translators: part in Public Body URL
-    url(r"^%s/json/$" % _('search'), "search_json",
-            name="publicbody-search_json"),
     # Translators: part in Public Body URL
     url(r"^%s/(?P<topic>[-\w]+)$" % pgettext('URL part', 'topic'),
             'show_topic', name="publicbody-show_topic"),
-    url(r"^(?P<pk>\d+).(?P<format>json)$", PublicBodyDetailView.as_view(),
-            name="publicbody-show_json"),
     url(r"^(?P<slug>[-\w]+)$", PublicBodyDetailView.as_view(),
             name="publicbody-show"),
     url(r"^(?P<slug>[-\w]+).(?P<format>json)$",

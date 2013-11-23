@@ -6,8 +6,8 @@
 <h2>{% trans "Account Settings" %}</h2>
 
 <div class="row">
-  <div class="span12">
-    <dl class="dl-horizontal">
+  <div class="col-lg-12">
+    <dl>
       <dt>
         {% blocktrans %}Your name:{% endblocktrans %}
       </dt>
@@ -35,7 +35,7 @@
       </dt>
       <dd>
       {% if user.get_profile.private %}
-        <i class="icon icon-lock"></i>
+        <span class="glyphicon glyphicon-lock"></span>
         {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
       {% else %}
         {% blocktrans %}Your name is visible.{% endblocktrans %}
@@ -57,7 +57,7 @@
             {% else %}
               {{ user.get_profile.get_password_change_form.as_p }}
             {% endif %}
-            <button type="submit" class="btn">{% blocktrans %}Change password{% endblocktrans %}</button>
+            <button type="submit" class="btn btn-default">{% blocktrans %}Change password{% endblocktrans %}</button>
           </form>
         {% if not user.is_new %}
           </div>
@@ -82,7 +82,7 @@
           {% else %}
             {{ user.get_profile.get_address_change_form.as_p }}
           {% endif %}
-          <button type="submit" class="btn">{% blocktrans %}Change address{% endblocktrans %}</button>
+          <button type="submit" class="btn btn-default">{% blocktrans %}Change address{% endblocktrans %}</button>
         </form>
       </div>
     </div>
@@ -96,7 +96,7 @@
           {% csrf_token %}
           {% form change_email_form using "bootstrap/horizontal.html" %}
           <p>{% trans "You will get an email to your new address and need to click a link in there." %}</p>
-          <button type="submit" class="btn">{% blocktrans %}Change email{% endblocktrans %}</button>
+          <button type="submit" class="btn btn-default">{% blocktrans %}Change email{% endblocktrans %}</button>
         </form>
       </div>
     </div>
@@ -108,9 +108,9 @@
       <div id="delete-account" {% if not user_delete_form.is_bound %} class="js-hidden"{% endif %}>
         <div class="alert alert-error">
           <h4>
-            <i class="icon icon-fire"></i>
+            <span class="glyphicon glyphicon-fire"></span>
             {% trans "Danger: deleting your account cannot be undone." %}
-            <i class="icon icon-fire"></i>
+            <span class="glyphicon glyphicon-fire"></span>
           </h4>
           <form action="{% url 'account-delete_account' %}" method="post">
             {% csrf_token %}

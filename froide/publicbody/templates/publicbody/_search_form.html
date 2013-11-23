@@ -1,10 +1,14 @@
 {% load i18n %}
-<form method="get" action="{% url 'publicbody-search' %}" class="form-search">
-  <div class="input-append">
-    <input type="search" placeholder="{% trans "Search Terms" %}" name="q" value="{{ query }}" autocomplete="off" class="search-query"/>
-    <button type="submit" class="btn">
-    	<i class="icon-search"></i>
-    	{% blocktrans %}Search all Public Bodies{% endblocktrans %}
-    </button>
+<form method="get" action="{% url 'publicbody-search' %}">
+  <div class="col-lg-6">
+    <div class="input-group">
+      <input class="form-control" type="search" placeholder="{% trans "Search Terms" %}" name="q" value="{{ query }}" autocomplete="off"/>
+      <span class="input-group-btn">
+        <button class="btn btn-success" type="submit">
+          <span class="glyphicon glyphicon-search"></span>
+          {% blocktrans %}Search all Public Bodies{% endblocktrans %}
+        </button>
+      </span>
+    </div>
   </div>
 </form>

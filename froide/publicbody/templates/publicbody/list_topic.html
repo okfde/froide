@@ -3,22 +3,26 @@
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Public Bodies by Topic{% endblocktrans %}</h2>
 
-{% include "publicbody/_search_form.html" %}
+<div class="row">
+  <div class="col-lg-12">
+    <h2>
+      {% blocktrans %}Public Bodies by Topic{% endblocktrans %}
+    </h2>
+    <div class="row">
+      {% include "publicbody/_search_form.html" %}
+    </div>
+  </div>
+</div>
 
-<ul class="thumbnails">
+<div class="row">
   {% for topic in topics %}
-  <li class="span3">
-  	<a class="thumbnail iconed-item clearfix" href="{% url 'publicbody-show_topic' topic=topic.slug %}">
-  		<div class="iconed-icon fixed-height">
+    <div class="col-sm-4 col-md-3 col-lg-3">
+  	  <a class="thumbnail publicbody-item" href="{% url 'publicbody-show_topic' topic=topic.slug %}">
     		<img src="{{ STATIC_URL }}img/topics/{{ topic.slug }}.png" alt="{{ topic.name }}"/>
-    	</div>
-    	<div class="iconed-description">
-    		<h4>{{ topic.name }}</h4>
-    	</div>
-    </a>
-  </li>
+        <h4 class="text-center">{{ topic.name }}</h4>
+      </a>
+    </div>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

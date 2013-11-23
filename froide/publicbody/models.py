@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
@@ -14,6 +13,7 @@ from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
@@ -27,6 +27,7 @@ class JurisdictionManager(models.Manager):
                 .filter(hidden=False).order_by('rank', 'name')
 
 
+@python_2_unicode_compatible
 class Jurisdiction(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -40,7 +41,7 @@ class Jurisdiction(models.Model):
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -68,6 +69,7 @@ class PublicBodyManager(CurrentSiteManager):
         return self.get_query_set()
 
 
+@python_2_unicode_compatible
 class FoiLaw(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -108,7 +110,7 @@ class FoiLaw(models.Model):
         verbose_name = _("Freedom of Information Law")
         verbose_name_plural = _("Freedom of Information Laws")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     def get_absolute_url(self):
@@ -136,11 +138,15 @@ class FoiLaw(models.Model):
         return FormGenerator(self.letter_end, post).render()
 
     @property
-    def request_note_markdown(self):
+    def request_note_html(self):
         return markdown(self.request_note)
 
+    @property
+    def description_html(self):
+        return markdown(self.description)
+
     def get_refusal_reason_choices(self):
-        not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
+        not_applicable = [('n/a', _("No law can be applied"))]
         if self.meta:
             return (not_applicable +
                     [(l[0], "%s: %s" % (law.name, l[1]))
@@ -163,8 +169,8 @@ class FoiLaw(models.Model):
     def as_dict(self):
         return {
             "pk": self.pk, "name": self.name,
-            "description_markdown": markdown(self.description),
-            "request_note_markdown": self.request_note_markdown,
+            "description_html": self.description_html,
+            "request_note_html": self.request_note_html,
             "description": self.description,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
@@ -193,6 +199,7 @@ class PublicBodyTopicManager(models.Manager):
         return list(self.get_query_set().order_by("rank", "name"))
 
 
+@python_2_unicode_compatible
 class PublicBodyTopic(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -206,10 +213,11 @@ class PublicBodyTopic(models.Model):
         verbose_name = _("Topic")
         verbose_name_plural = _("Topics")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
+@python_2_unicode_compatible
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)
@@ -235,10 +243,12 @@ class PublicBody(models.Model):
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
 
-    _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
+    _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
             on_delete=models.SET_NULL, default=1)
-    _updated_by = models.ForeignKey(User, verbose_name=_("Updated by"),
+    _updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            verbose_name=_("Updated by"),
             blank=True, null=True, related_name='public_body_updaters',
             on_delete=models.SET_NULL, default=1)
     confirmed = models.BooleanField(_("confirmed"), default=True)
@@ -263,20 +273,20 @@ class PublicBody(models.Model):
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
 
-    serializable_fields = ('name', 'slug', 'request_note_markdown',
+    serializable_fields = ('name', 'slug', 'request_note_html',
             'description', 'topic_name', 'url', 'email', 'contact',
             'address', 'domain')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     @property
     def created_by(self):
-        return self._created_by or AnonymousUser()
+        return self._created_by
 
     @property
     def updated_by(self):
-        return self._updated_by or AnonymousUser()
+        return self._updated_by
 
     @property
     def domain(self):
@@ -291,7 +301,7 @@ class PublicBody(models.Model):
         return None
 
     @property
-    def request_note_markdown(self):
+    def request_note_html(self):
         return markdown(self.request_note)
 
     @property
@@ -332,10 +342,15 @@ class PublicBody(models.Model):
 
     @classmethod
     def export_csv(cls, queryset):
-        import unicodecsv
-        from StringIO import StringIO
+        from django.utils import six
 
-        s = StringIO()
+        if six.PY3:
+            import csv
+        else:
+            import unicodecsv as csv
+
+        s = six.StringIO()
+
         fields = ("id", "name", "email", "contact",
             "address", "url", "classification",
             "jurisdiction__slug", "topic__slug",
@@ -343,8 +358,8 @@ class PublicBody(models.Model):
             "request_note", "parent__name",
         )
 
-        writer = unicodecsv.DictWriter(s, fields, encoding='utf-8')
-        writer.writerow(dict([(v, v) for v in fields]))
+        writer = csv.DictWriter(s, fields)
+        writer.writeheader()
         for pb in queryset:
             d = {}
             for field in fields:
@@ -360,4 +375,6 @@ class PublicBody(models.Model):
             writer.writerow(d)
 
         s.seek(0)
-        return s.read()
+        if six.PY3:
+            return s.read()
+        return s.read().decode('utf-8')

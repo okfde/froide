@@ -3,13 +3,15 @@ from __future__ import with_statement
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.messages.storage import default_storage
 
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, FoiAttachment, DeferredMessage
 from froide.foirequest.admin import (FoiRequestAdmin,
     FoiAttachmentAdmin, DeferredMessageAdmin)
+
+User = get_user_model()
 
 
 class AdminActionTest(TestCase):

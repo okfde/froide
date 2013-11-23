@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+from django.utils.six import text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -34,12 +35,21 @@ class WebTest(TestCase):
             kwargs={'public_body': p.slug}))
         self.assertEqual(response.status_code, 404)
 
+    def test_request_prefilled(self):
+        p = PublicBody.objects.all()[0]
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body': p.slug}) + '?body=THEBODY&subject=THESUBJECT')
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn('THEBODY', content)
+        self.assertIn('THESUBJECT', content)
+
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
         for urlpart, _, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
-                kwargs={"status": unicode(urlpart)}))
+                kwargs={"status": str(urlpart)}))
             self.assertEqual(response.status_code, 200)
 
         for topic in PublicBodyTopic.objects.all():
@@ -48,6 +58,9 @@ class WebTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
         response = self.client.get(reverse('foirequest-list_not_foi'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('foirequest-list') + '?page=99999')
         self.assertEqual(response.status_code, 200)
 
     def test_list_jurisdiction_requests(self):
@@ -248,22 +261,6 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_search_similar(self):
-        response = self.client.get(reverse('foirequest-search_similar'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual('[]', response.content.decode('utf-8'))
-        self.assertEqual(response['Content-Type'], 'application/json')
-        req = FoiRequest.objects.all()[0]
-        response = self.client.get('%s?q=%s' % (
-            reverse('foirequest-search_similar'), req.title))
-        self.assertEqual(response.status_code, 200)
-        content = response.content.decode('utf-8')
-        self.assertIn('title', content)
-        self.assertIn('description', content)
-        self.assertIn('public_body_name', content)
-        self.assertIn('url', content)
-
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)
@@ -329,7 +326,7 @@ class PerformanceTest(TestCase):
     def test_queries_foirequest_loggedin(self):
         """
         FoiRequest page should query for non-staff loggedin users
-        - Django session + Django user + profile (+3)
+        - Django session + Django user (+3)
         - FoiRequest (+1)
         - FoiMessages of that request (+1)
         - FoiAttachments of that request (+1)
@@ -344,5 +341,6 @@ class PerformanceTest(TestCase):
         factories.FoiAttachmentFactory.create(belongs_to=mes2)
         self.client.login(username='dummy', password='froide')
         ContentType.objects.clear_cache()
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             self.client.get(req.get_absolute_url())
+            pass

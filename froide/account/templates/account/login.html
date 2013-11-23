@@ -20,37 +20,80 @@
 {% endif %}
 {% else %}
 <div class="row">
-  <div class="span6">
-    <div class="well">
-      <h2>{% blocktrans %}Please Log In{% endblocktrans %}</h2>
-      <form class="form-horizontal" method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
-        {% csrf_token %}
-        {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-        {% form form using "bootstrap/horizontal.html" %}
-
-        <button type="submit" class="btn">{% blocktrans %}Log In{% endblocktrans %}</button>
-      </form>
+  <div class="col-lg-6 col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2 class="panel-title">
+          {% blocktrans %}Please Log In{% endblocktrans %}
+        </h2>
+      </div>
+      <div class="panel-body">
+        <p class="visible-sm visible-xs">
+          <a href="#signup">
+            {% blocktrans %}Don't have an account? Click here to sign up!{% endblocktrans %}
+          </a>
+        </p>
+        <form class="form-horizontal" method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
+          {% csrf_token %}
+          {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+          {% form form using "bootstrap/horizontal.html" %}
+          <div class="clearfix">
+            <button type="submit" class="btn btn-primary btn-lg pull-right">
+              {% blocktrans %}Log In{% endblocktrans %}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-    <h4>{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h4>
-    <p>{% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}</p>
-    <form class="form-horizontal" method="post" action="{% url 'account-send_reset_password_link' %}">
-      {% csrf_token %}
-      {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-      {% form reset_form using "bootstrap/horizontal.html" %}
-      <button type="submit" class="btn">{% blocktrans %}Send reset link{% endblocktrans %}</button>
-    </form>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          {% blocktrans %}In case you forgot your password...{% endblocktrans %}
+        </h4>
+      </div>
+      <div class="panel-body">
+        <p>
+          {% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}
+        </p>
+        <form class="form-horizontal" method="post" action="{% url 'account-send_reset_password_link' %}">
+          {% csrf_token %}
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+          {% endif %}
+          {% form reset_form using "bootstrap/horizontal.html" %}
+          <div class="clearfix">
+            <button type="submit" class="btn btn-default pull-right">
+              {% blocktrans %}Send reset link{% endblocktrans %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-{% if not simple %}
-<div class="span6">
-  <h3>{% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}</h3>
-  <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
-    {% csrf_token %}
-    {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-    {% form signup_form using "bootstrap/horizontal.html" %}
-    <button type="submit" class="btn">{% blocktrans %}Sign Up{% endblocktrans %}</button>
-  </form>
-</div>
-{% endif %}
+  {% if not simple %}
+    <div id="signup" class="col-lg-6 col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            {% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}
+          </h3>
+        </div>
+      <div class="panel-body">
+        <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
+          {% csrf_token %}
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+          {% endif %}
+          {% form signup_form using "bootstrap/horizontal.html" %}
+          <div class="clearfix">
+            <button type="submit" class="btn btn-success pull-right btn-lg">
+              {% blocktrans %}Sign Up{% endblocktrans %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
 </div>
 {% endif %}
 {% endblock %}

@@ -1,6 +1,7 @@
-import StringIO
+import json
 import tempfile
 
+from django.utils.six import StringIO, text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -22,16 +23,6 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-show',
                 kwargs={"slug": pb.slug}))
         self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('publicbody-show_json',
-                kwargs={"pk": pb.pk, "format": "json"}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/json')
-        self.assertIn('"name":', response.content)
-        self.assertIn('"laws": [{', response.content)
-        response = self.client.get(reverse('publicbody-show_json',
-                kwargs={"slug": pb.slug, "format": "json"}))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_topic(self):
         pb = PublicBody.objects.all()[0]
@@ -40,22 +31,6 @@ class PublicBodyTest(TestCase):
             kwargs={"topic": topic.slug}))
         self.assertEqual(response.status_code, 200)
         self.assertIn(pb.name, response.content.decode('utf-8'))
-
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_autocomplete(self):
-        import json
-        pb = factories.PublicBodyFactory.create(name='specialbody')
-        response = self.client.get('%s?query=%s' % (
-                reverse('publicbody-autocomplete'), pb.name))
-        self.assertEqual(response.status_code, 200)
-        obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(pb.name, obj['suggestions'][0])
-        self.assertIn(pb.name, obj['data'][0]['name'])
-        response = self.client.get('%s?query=%s&jurisdiction=non_existant' % (
-                reverse('publicbody-autocomplete'), pb.name))
-        self.assertEqual(response.status_code, 200)
-        obj = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(obj['suggestions'], [])
 
     def test_csv(self):
         csv = PublicBody.export_csv(PublicBody.objects.all())
@@ -66,7 +41,7 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv(PublicBody.objects.all())
         prev_count = PublicBody.objects.all().count()
         imp = CSVImporter()
-        imp.import_from_file(StringIO.StringIO(csv))
+        imp.import_from_file(StringIO(csv))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 
@@ -78,7 +53,7 @@ class PublicBodyTest(TestCase):
         csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
-        imp.import_from_file(StringIO.StringIO(csv))
+        imp.import_from_file(StringIO(csv))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 
@@ -87,14 +62,15 @@ Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://examp
         csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
-        imp.import_from_file(StringIO.StringIO(csv))
+        imp.import_from_file(StringIO(csv))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
 
     def test_command(self):
         from django.core.management import call_command
         csv_file = tempfile.NamedTemporaryFile()
-        csv_file.write(PublicBody.export_csv(PublicBody.objects.all()))
+        csv_file.write(PublicBody.export_csv(PublicBody.objects.all()).encode('utf-8'))
+        csv_file.flush()
 
         call_command('import_csv', csv_file.name)
 
@@ -120,20 +96,9 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.post(url, {'url': 'test'})
         self.assertEqual(response.status_code, 302)
 
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_search(self):
-        pb = factories.PublicBodyFactory.create(name='peculiarentity')
-        response = self.client.get('%s?q=%s' % (
-            reverse('publicbody-search_json'), pb.name))
-        self.assertIn(pb.name, response.content)
-        self.assertEqual(response['Content-Type'], 'application/json')
-        response = self.client.get('%s?q=%s&jurisdiction=non_existant' % (
-            reverse('publicbody-search_json'), pb.name))
-        self.assertEqual("[]", response.content)
-
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]
-        self.assertIn(law.jurisdiction.name, unicode(law))
+        self.assertIn(law.jurisdiction.name, str(law))
         response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn(law.name, response.content.decode('utf-8'))
@@ -182,3 +147,18 @@ class ApiTest(TestCase):
     def test_search(self):
         response = self.client.get('/api/v1/publicbody/search/?format=json&q=Body')
         self.assertEqual(response.status_code, 200)
+
+    @skip_if_environ('FROIDE_SKIP_SEARCH')
+    def test_autocomplete(self):
+        pb = factories.PublicBodyFactory.create(name='specialbody')
+        response = self.client.get('%s&query=%s' % (
+                '/api/v1/publicbody/autocomplete/?format=json', pb.name))
+        self.assertEqual(response.status_code, 200)
+        obj = json.loads(response.content.decode('utf-8'))
+        self.assertIn(pb.name, obj['suggestions'][0])
+        self.assertIn(pb.name, obj['data'][0]['name'])
+        response = self.client.get('%s&query=%s&jurisdiction=non_existant' % (
+                '/api/v1/publicbody/autocomplete/?format=json', pb.name))
+        self.assertEqual(response.status_code, 200)
+        obj = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(obj['suggestions'], [])
