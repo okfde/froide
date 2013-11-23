@@ -551,7 +551,7 @@ class FoiRequest(models.Model):
 
     def get_postal_reply_form(self):
         from .forms import PostalReplyForm
-        return PostalReplyForm(initial={"date": timezone.now().date()})
+        return PostalReplyForm()
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
