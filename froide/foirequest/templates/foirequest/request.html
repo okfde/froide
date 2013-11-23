@@ -85,8 +85,7 @@
           {% if froide.publicbody_empty %}
             <div class="search-result">
               <label>
-                <input type="radio" id="option-emptypublicbody" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>
-                {% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
+                <input type="radio" id="option-emptypublicbody" name="public_body" value="" {% if request_form.public_body.value == "" %}checked="checked"{% endif %}/>{% blocktrans %}Don't select a public body for now. Let others help to find the right Public Body later.{% endblocktrans %}
               </label>
             </div>
           {% endif %}
