@@ -42,7 +42,15 @@ Froide.template.publicBodyListingInfo = '<li class="search-result">' +
   <div class="search-spinner" style="display:none">
     <img src="{{ STATIC_URL }}img/spinner.gif" alt="Loading..."/>
   </div>
-  <ul class="search-results list-unstyled" style="display:none">
+  <ul class="search-results list-unstyled"{% if not value %} style="display:none"{% endif %}>
+    {% if value %}
+      <li class="search-result">
+        <label>
+          <input type="radio" name="{{ name }}" value="{{ value }}" checked="checked"/>
+          {{ value_label }}
+        </label>
+      </li>
+    {% endif %}
   </ul>
   <div class="empty-result panel panel-warning" style="display:none">
      <div class="panel-heading">
@@ -55,14 +63,4 @@ Froide.template.publicBodyListingInfo = '<li class="search-result">' +
       {% blocktrans with url=help_about_url %}Are we missing a public body? <a href="{{ url }}">Please let us know!</a>{% endblocktrans %}
     </div>
   </div>
-  {% if value %}
-  <ul class="search-results">
-    <li>
-      <label>
-        <input type="radio" name="{{ name }}" value="{{ value }}" checked="checked"/>
-        {{ value_label }}
-      </label>
-    </li>
-  </ul>
-  {% endif %}
 </div>
