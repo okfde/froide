@@ -89,7 +89,6 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.find_element_by_id('id_user_email')\
             .send_keys(user_email)
         self.selenium.find_element_by_id('id_terms').click()
-        self.selenium.get_screenshot_as_file('/Users/sw/Desktop/test_98a.png')
         self.selenium.find_element_by_id('review-button').click()
         self.selenium.find_element_by_id('step-review')
         WebDriverWait(self.selenium, 10).until(
