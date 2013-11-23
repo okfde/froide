@@ -667,7 +667,7 @@ class FoiRequest(models.Model):
             subject, message, recipient_pb=None, send_address=True):
         message_body = message
         message = FoiMessage(request=self)
-        message.subject = subject
+        message.subject = u'%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.sender_user = user
@@ -687,7 +687,7 @@ class FoiRequest(models.Model):
     def add_escalation_message(self, subject, message, send_address=False):
         message_body = message
         message = FoiMessage(request=self)
-        message.subject = subject
+        message.subject = u'%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.is_escalation = True
@@ -806,14 +806,15 @@ class FoiRequest(models.Model):
                     break
 
         message = FoiMessage(request=request,
-                sent=False,
-                is_response=False,
-                sender_user=user,
-                sender_email=request.secret_address,
-                sender_name=user.get_profile().display_name(),
-                timestamp=now,
-                status="awaiting_response",
-                subject=request.title)
+            sent=False,
+            is_response=False,
+            sender_user=user,
+            sender_email=request.secret_address,
+            sender_name=user.get_profile().display_name(),
+            timestamp=now,
+            status="awaiting_response",
+            subject=u'%s [#%s]' % (request.title, request.pk)
+        )
         message.subject_redacted = message.redact_subject()
         send_address = True
         if request.law:

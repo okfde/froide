@@ -24,8 +24,10 @@ def send_notification_became_overdue(sender, **kwargs):
         return
     if not sender.user.email:
         return
-    send_mail(_("%(site_name)s: Request became overdue")
-                % {"site_name": settings.SITE_NAME},
+    send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: Request became overdue")
+                    % {"site_name": settings.SITE_NAME},
+                sender.pk),
             render_to_string("foirequest/emails/became_overdue.txt",
                 {"request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
@@ -41,8 +43,10 @@ def send_notification_became_asleep(sender, **kwargs):
         return
     if not sender.user.email:
         return
-    send_mail(_("%(site_name)s: Request became asleep")
-                % {"site_name": settings.SITE_NAME},
+    send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: Request became asleep")
+                    % {"site_name": settings.SITE_NAME},
+                sender.pk),
             render_to_string("foirequest/emails/became_asleep.txt",
                 {"request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
@@ -58,7 +62,10 @@ def notify_user_message_received(sender, message=None, **kwargs):
         return
     if not sender.user.email:
         return
-    send_mail(_("You received a reply to your Freedom of Information Request"),
+    send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: New reply to your request")
+                    % {"site_name": settings.SITE_NAME},
+                sender.pk),
             render_to_string("foirequest/emails/message_received_notification.txt",
                 {"message": message, "request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_short_url()),
@@ -71,7 +78,10 @@ def notify_user_message_received(sender, message=None, **kwargs):
         dispatch_uid="notify_user_public_body_suggested")
 def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
     if sender.user != suggestion.user:
-        send_mail(_("Your request received a suggestion for a Public Body"),
+        send_mail(u'{0} [#{1}]'.format(
+                    _("%(site_name)s: New suggestion for a Public Body")
+                        % {"site_name": settings.SITE_NAME},
+                    sender.pk),
                 render_to_string("foirequest/emails/public_body_suggestion_received.txt",
                     {"suggestion": suggestion, "request": sender,
                     "go_url": sender.user.get_profile().get_autologin_url(
@@ -86,12 +96,13 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     messages = sender.get_messages()
     if len(messages) == 1:
-        subject = _("Your Freedom of Information Request was sent")
+        subject = _("%(site_name)s: Your Freedom of Information Request was sent")
         template = "foirequest/emails/confirm_foi_request_sent.txt"
     else:
-        subject = _("Your Message was sent")
+        subject = _("%(site_name)s: Your Message was sent")
         template = "foirequest/emails/confirm_foi_message_sent.txt"
-    send_mail(subject,
+    subject = subject % {"site_name": settings.SITE_NAME}
+    send_mail(u'{0} [#{1}]'.format(subject, sender.pk),
             render_to_string(template,
                 {"request": sender, "message": message,
                     "site_name": settings.SITE_NAME}),

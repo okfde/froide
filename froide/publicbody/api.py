@@ -13,9 +13,9 @@ from froide.helper.api_utils import AnonymousGetAuthentication
 
 from .models import PublicBody, Jurisdiction, FoiLaw
 
-
 AUTOCOMPLETE_MAX_CHAR = 15
 AUTOCOMPLETE_MIN_CHAR = 3
+
 
 class JurisdictionResource(ModelResource):
     class Meta:

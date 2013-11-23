@@ -63,6 +63,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.published.get(id=req.id)
         self.assertTrue(req.public)
+        self.assertTrue(req.messages[-1].subject.endswith('[#%s]' % req.pk))
 
     def test_public_body_new_user_request(self):
         self.client.logout()
@@ -187,7 +188,8 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         new_len = len(mail.outbox)
         self.assertEqual(old_len + 2, new_len)
-        message = list(filter(lambda x: post['subject'] == x.subject, mail.outbox))[-1]
+        message = list(filter(lambda x: x.subject.startswith(post['subject']), mail.outbox))[-1]
+        self.assertTrue(message.subject.endswith('[#%s]' % req.pk))
         self.assertTrue(message.body.startswith(post['message']))
         self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(user.get_profile().address, message.body)
