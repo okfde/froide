@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 
 try:
@@ -6,6 +7,8 @@ except ImportError:
     from htmlentitydefs import name2codepoint
 
 from django.utils.six import text_type as str
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 
 from lxml import html
 from lxml.html.clean import clean_html
@@ -46,45 +49,47 @@ def unescape(text):
     return re.sub("&#?\w+;", fixup, text)
 
 
-def remove_quote(text, replacement=u"", quote_prefix=u">",
-        quote_separators=None):
-    if quote_separators is None:
-        quote_separators = [re.compile('\s*-{5}\w+ \w+-{5}\s*', re.UNICODE)]
+def shorten_text(text, quote_prefix=u">", separators=None,
+                 wrapper_start=u'<a href="#" class="show-text">…</a><div class="hidden-text">',
+                 wrapper_end='</div>'):
+    if separators is None:
+        separators = [re.compile('\s*-{5}\w+ \w+-{5}\s*', re.UNICODE), re.compile(r'^--\s*$')]
     lines = []
-    put_replacement = True
-    for line in text.splitlines():
+    hidden = []
+    hide_rest = False
+    text_lines = text.splitlines()
+    for i, line in enumerate(text_lines):
+        for qs in separators:
+            if qs.match(line) is not None:
+                hidden.extend(text_lines[i:])
+                hide_rest = True
+                break
+        if hide_rest:
+            break
         if line.strip().startswith(quote_prefix):
-            if put_replacement:
-                lines.append(replacement)
-                put_replacement = False
-        else:
-            lines.append(line)
-            put_replacement = True
-    found = False
-    i = len(lines)
-    for i, line in enumerate(lines):
-        for qs in quote_separators:
-            if qs.match(line) is not None and "".join(lines[:(i + 1)]).strip():
-                found = True
-                break
-        if found:
-            break
-    lines = lines[:(i + 1)]
-    return u"\n".join(lines)
-
-
-def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
-    lines = []
-    found = False
-    for line in text.splitlines():
-        for divider in dividers:
-            if divider.match(line) is not None:
-                found = True
-                break
-        if found:
-            break
+            hidden.append(line)
+            lines.append(None)
+            continue
         lines.append(line)
-    return u"\n".join(lines)
+        hidden.append(None)
+
+    new_text = []
+    hiding = False
+    for i, hidden_line in enumerate(hidden):
+        if hidden_line is None:
+            if hiding:
+                hiding = False
+                new_text.append(wrapper_end)
+            new_text.append(escape(lines[i]))
+        else:
+            if not hiding:
+                new_text.append(wrapper_start)
+                hiding = True
+            new_text.append(escape(hidden_line))
+    if hiding:
+        new_text.append(wrapper_end)
+
+    return mark_safe(u"\n".join(new_text))
 
 EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 

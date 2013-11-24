@@ -397,6 +397,10 @@ $(function(){
         var obj = $('#' + $(this).attr("href").split('#')[1]).find(".toggle");
         $(obj.attr("href")).show();
     });
+    $('a.show-text').on('click', function(e){
+        e.preventDefault();
+        $(this).parent().find('.hidden-text').toggle();
+    });
     $(document).on("click", "a.toggle", function(e){
         e.preventDefault();
         var obj = $('#' + $(this).attr("href").split('#')[1]);

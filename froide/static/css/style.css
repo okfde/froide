@@ -296,6 +296,16 @@ input:focus {
     background:#F0F0F0;
 }
 
+.hidden-text {
+  display: none;
+}
+
+.show-text {
+  background-color: #eee;
+  padding: 0.5em 1em;
+  display: block;
+}
+
 .js .js-hidden {
     display:none;
 }
