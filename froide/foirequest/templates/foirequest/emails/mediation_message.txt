@@ -4,6 +4,8 @@ I'd like to complain about the handling of the request under the {{ law }} docum
 
 {{ link }}
 
+You can also find all documents related to this request attached to this email.
+
 I believe this request has been mishandled because ...
 
 Sincerely yours

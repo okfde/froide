@@ -34,7 +34,7 @@ from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (replace_email_name,
         replace_email, remove_signature, remove_quote, strip_all_tags)
 
-from .foi_mail import send_foi_mail
+from .foi_mail import send_foi_mail, package_foirequest
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -700,7 +700,10 @@ class FoiRequest(models.Model):
         message.plaintext = self.construct_standard_message_body(message_body,
             send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
-        message.send()
+        filename = _('request_%(num)s.zip' % {'num': self.pk})
+        zip_bytes = package_foirequest(self)
+        attachments = [(filename, zip_bytes, 'application/zip')]
+        message.send(attachments=attachments)
         self.escalated.send(sender=self)
 
     @classmethod
@@ -1277,7 +1280,7 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
-    def send(self, notify=True):
+    def send(self, notify=True, attachments=None):
         if settings.FROIDE_CONFIG['dryrun']:
             recp = self.recipient_email.replace("@", "+")
             self.recipient_email = "%s@%s" % (recp, settings.FROIDE_CONFIG['dryrun_domain'])
@@ -1285,7 +1288,7 @@ class FoiMessage(models.Model):
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
         send_foi_mail(self.subject, self.plaintext, from_addr,
-                [self.recipient_email])
+                [self.recipient_email], attachments=attachments)
         self.sent = True
         self.save()
         self.request._messages = None
