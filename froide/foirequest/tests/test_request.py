@@ -1432,6 +1432,9 @@ class PackageFoiRequestTest(TestCase):
         fr = FoiRequest.objects.all()[0]
         bytes = package_foirequest(fr)
         zfile = zipfile.ZipFile(BytesIO(bytes), 'r')
-        filenames = ['2011-03-01_requester.txt', '2011-03-02_publicbody.txt',
-                     '2011-03-02-file_1.pdf', '2011-03-02-file_2.pdf']
-        self.assertEqual(zfile.namelist(), filenames)
+        filenames = ['20\d{2}-\d{2}-\d{2}_requester\.txt', '20\d{2}-\d{2}-\d{2}_publicbody\.txt',
+                     '20\d{2}-\d{2}-\d{2}-file_\d+\.pdf', '20\d{2}-\d{2}-\d{2}-file_\d+\.pdf']
+        zip_names = zfile.namelist()
+        self.assertEqual(len(filenames), len(zip_names))
+        for zname, fname in zip(zip_names, filenames):
+            self.assertTrue(bool(re.match('^%s$' % fname, zname)))
