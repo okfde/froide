@@ -211,7 +211,6 @@ class FoiRequest(models.Model):
         (_("successful"), resolution_filter, 'successful'),
         (_("partially-successful"), resolution_filter, 'partially_successful'),
         (_("refused"), resolution_filter, 'refused'),
-        # (_("escalated"), 'status', 'escalated'),
         (_("withdrawn"), resolution_filter, 'user_withdrew'),
         (_("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
         (_("publicbody-needed"), status_filter, 'publicbody_needed'),
@@ -469,7 +468,7 @@ class FoiRequest(models.Model):
         return False
 
     def has_been_refused(self):
-        return self.status == 'refused' or self.status == 'escalated'
+        return self.resolution == 'refused' or self.resolution == 'partially_successful'
 
     def awaits_classification(self):
         return self.status == 'awaiting_classification'
@@ -702,8 +701,6 @@ class FoiRequest(models.Model):
             send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
         message.send()
-        self.status = 'escalated'
-        self.save()
         self.escalated.send(sender=self)
 
     @classmethod
