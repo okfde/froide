@@ -17,8 +17,8 @@ from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, Foi
     PublicBodySuggestion, DeferredMessage)
 
 
-TEST_PDF_URL = os.path.join("tests", "testdata", "test.pdf")
-TEST_PDF_PATH = os.path.join(settings.PROJECT_ROOT, TEST_PDF_URL)
+TEST_PDF_URL = "test.pdf"
+TEST_PDF_PATH = os.path.join(settings.MEDIA_ROOT, TEST_PDF_URL)
 
 
 def random_name(num=10):
