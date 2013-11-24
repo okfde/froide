@@ -417,8 +417,11 @@ class Test(Base):
         ))
         return config
 
-    MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+    @property
+    def MEDIA_ROOT(self):
+        return os.path.abspath(os.path.join(super(Test, self).PROJECT_ROOT, "tests", "testdata"))
 
+    MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
 
     TEST_SELENIUM_DRIVER = values.Value('phantomjs')
