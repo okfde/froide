@@ -1,6 +1,8 @@
-{% load i18n %}{% autoescape off %}{{ body }}{% if send_address %}
+{% load i18n %}{% autoescape off %}{{ body }}
 
-
+{% blocktrans with num=request.pk %}Request Number: {{ num }}{% endblocktrans %}
+{% blocktrans with email=request.secret_address %}Reply To: {{ email }}{% endblocktrans %}
+{% if send_address %}
 {% blocktrans %}Post Address:{% endblocktrans %}
 {{ request.user.get_full_name }}{% if request.user.get_profile.organization %}
 {{ request.user.get_profile.organization }}{% endif %}
