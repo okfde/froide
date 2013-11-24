@@ -1179,7 +1179,7 @@ class FoiMessage(models.Model):
             return self.sender_public_body.name
 
     @property
-    def real_sender(self):
+    def user_real_sender(self):
         if self.sender_user:
             return self.sender_user.get_profile().display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
@@ -1189,6 +1189,18 @@ class FoiMessage(models.Model):
             return self.sender_name
         else:
             return self.sender_public_body.name
+
+    @property
+    def real_sender(self):
+        if self.sender_user:
+            return self.sender_user.get_profile().get_full_name()
+        name = self.sender_name
+        if not name:
+            name = self.sender_public_body.name
+        if self.sender_email:
+            name += u' <%s>' % self.sender_email
+        name += u' (%s)' % self.sender_public_body.name
+        return name
 
     @property
     def reply_address_entry(self):

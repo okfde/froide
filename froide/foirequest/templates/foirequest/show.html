@@ -617,7 +617,7 @@ data-spy="scroll" data-target="#message-nav-container"
                 <td class="value-padding-right">
                   {% if object.user == user %}
                     {% if message.is_response %}
-                      {{ message.real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
+                      {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
                       <div id="change-pb-{{ message.id }}" style="display:none" class="hidden-print">
                         {% with message_pb_form=message.get_public_body_sender_form %}
                           <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
@@ -629,7 +629,7 @@ data-spy="scroll" data-target="#message-nav-container"
                         {% endwith %}
                       </div>
                     {% else %}
-                      {{ message.real_sender }}
+                      {{ message.user_real_sender }}
                     {% endif %}
                   {% else %}
                     {{ message.sender }}
