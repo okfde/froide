@@ -842,8 +842,7 @@ class FoiRequest(models.Model):
         return request
 
     def construct_message_body(self, text, foilaw, post_data,
-            full_text=False, send_address=True):
-
+                               full_text=False, send_address=True):
         letter_start, letter_end = "", ""
         if foilaw:
             letter_start = foilaw.get_letter_start_text(post_data)
@@ -852,7 +851,7 @@ class FoiRequest(models.Model):
             body = text
         else:
             body = (
-                "{letter_start}\n\n{body}\n\n{letter_end}"
+                u"{letter_start}\n\n{body}\n\n{letter_end}"
             ).format(
                 letter_start=letter_start,
                 body=text,

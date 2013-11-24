@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import with_statement
 
 import re
@@ -40,8 +41,11 @@ class RequestTest(TestCase):
 
         pb = PublicBody.objects.all()[0]
         old_number = pb.number_of_requests
-        post = {"subject": "Test-Subject", "body": "This is a test body",
-                "law": str(pb.default_law.pk)}
+        post = {
+            "subject": "Test-Subject",
+            "body": u"This is another test body with Ümläut€n",
+            "law": str(pb.default_law.pk)
+        }
         response = self.client.post(reverse('foirequest-submit_request',
                 kwargs={"public_body": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -1166,7 +1170,7 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         law = pb.default_law
         post = {"subject": "A Public Body Request",
-                "body": "This is another test body",
+                "body": u"This is another test body with Ümläut€n",
                 "full_text": "true",
                 "law": str(law.id),
                 "public_body": str(pb.id),
