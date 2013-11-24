@@ -184,7 +184,7 @@ class FoiMessageFactory(factory.DjangoModelFactory):
     request = factory.SubFactory(FoiRequestFactory)
 
     sent = True
-    is_response = True
+    is_response = factory.LazyAttribute(lambda o: not o.sender_user)
     is_postal = False
     is_escalation = False
     sender_user = None
@@ -277,7 +277,8 @@ def make_world():
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)
-    FoiMessageFactory.create(request=req, sender_user=user1, recipient_public_body=pb_bund_1)
+    FoiMessageFactory.create(request=req, sender_user=user1,
+                             recipient_public_body=pb_bund_1)
     mes = FoiMessageFactory.create(request=req, sender_public_body=pb_bund_1)
     FoiAttachmentFactory.create(belongs_to=mes, approved=False)
     FoiAttachmentFactory.create(belongs_to=mes, approved=True)
