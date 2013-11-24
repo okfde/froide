@@ -125,15 +125,15 @@ def package_foirequest(foirequest):
     zfile_obj = BytesIO()
     zfile = zipfile.ZipFile(zfile_obj, 'w')
     last_date = None
-    date_count = 0
+    date_count = 1
     for message in foirequest.messages:
         current_date = message.timestamp.date()
         date_prefix = current_date.isoformat()
         if current_date == last_date:
             date_count += 1
-            date_prefix += '_%d' % date_count
         else:
-            date_count = 0
+            date_count = 1
+        date_prefix += '_%d' % date_count
         last_date = current_date
 
         att_queryset = message.foiattachment_set.filter(
