@@ -1,0 +1,13 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with from=message.real_sender %}From: {{ from }}{% endblocktrans %}
+{% if message.is_postal %}{% blocktrans with date=message.timestamp|date:"DATE_FORMAT" %}Date: {{ date }}
+Via: Postal Mail{% endblocktrans %}{% else %}{% blocktrans with date=message.timestamp|date:"DATETIME_FORMAT" %}Date: {{ date }}
+Via: Email{% endblocktrans %}{% endif %}
+{% blocktrans with url=message.get_accessible_link %}URL: {{ url }}{% endblocktrans %}
+{% blocktrans with subject=message.subject %}Subject: {{ subject }}{% endblocktrans %}
+
+{{ message.plaintext }}
+{% if attachments %}
+=========
+{% trans "Attachments:" %}
+{% for att in attachments %}[{{ forloop.counter }}] {{ att.name }}
+{% endfor %}{% endif %}{% endautoescape %}

@@ -1,5 +1,6 @@
 import base64
 import json
+import zipfile
 from email.utils import parseaddr
 
 from django.conf import settings
@@ -118,3 +119,35 @@ def fetch_and_process():
         _process_mail(rfc_data)
         count += 1
     return count
+
+
+def package_foirequest(foirequest):
+    zfile_obj = BytesIO()
+    with zipfile.ZipFile(zfile_obj, 'w') as zfile:
+        last_date = None
+        date_count = 0
+        for message in foirequest.messages:
+            current_date = message.timestamp.date()
+            date_prefix = current_date.isoformat()
+            if current_date == last_date:
+                date_count += 1
+                date_prefix += '_%d' % date_count
+            else:
+                date_count = 0
+            last_date = current_date
+
+            att_queryset = message.foiattachment_set.filter(
+                is_redacted=False,
+                is_converted=False
+            )
+            if message.is_response:
+                filename = '%s_%s.txt' % (date_prefix, _('publicbody'))
+            else:
+                filename = '%s_%s.txt' % (date_prefix, _('requester'))
+
+            zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
+
+            for attachment in att_queryset:
+                filename = '%s-%s' % (date_prefix, attachment.name)
+                zfile.write(attachment.file.path, arcname=filename)
+    return zfile_obj.getvalue()

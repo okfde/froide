@@ -3,6 +3,7 @@ from __future__ import with_statement
 import re
 from datetime import datetime, timedelta
 import os
+import zipfile
 
 from mock import patch
 
@@ -12,9 +13,11 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core import mail
 from django.utils import timezone
+from django.utils.six import BytesIO
 
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
+from froide.foirequest.foi_mail import package_foirequest
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.helper.test_utils import skip_if_environ
 
@@ -1419,3 +1422,16 @@ class JurisdictionTest(TestCase):
         self.assertNotEqual(default_law.letter_end, law.letter_end)
         self.assertIn(law.letter_end, mes.plaintext)
         self.assertIn(law.letter_end, mes.plaintext_redacted)
+
+
+class PackageFoiRequestTest(TestCase):
+    def setUp(self):
+        factories.make_world()
+
+    def test_package(self):
+        fr = FoiRequest.objects.all()[0]
+        bytes = package_foirequest(fr)
+        zfile = zipfile.ZipFile(BytesIO(bytes), 'r')
+        filenames = ['2011-03-01_requester.txt', '2011-03-02_publicbody.txt',
+                     '2011-03-02-file_1.pdf', '2011-03-02-file_2.pdf']
+        self.assertEqual(zfile.namelist(), filenames)

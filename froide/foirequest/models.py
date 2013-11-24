@@ -1144,6 +1144,10 @@ class FoiMessage(models.Model):
         return "%s#%s" % (self.request.get_absolute_domain_url(),
                 self.get_html_id())
 
+    def get_accessible_link(self):
+        return "%s#%s" % (self.request.get_accessible_link(),
+                self.get_html_id())
+
     def get_public_body_sender_form(self):
         from froide.foirequest.forms import MessagePublicBodySenderForm
         return MessagePublicBodySenderForm(self)
@@ -1155,6 +1159,12 @@ class FoiMessage(models.Model):
                 "name": escape(self.recipient_public_body.name)})
         else:
             return self.recipient
+
+    def get_formated(self, attachments):
+        return render_to_string('foirequest/emails/formated_message.txt', {
+                'message': self,
+                'attachments': attachments
+            })
 
     def get_quoted(self):
         return "\n".join([">%s" % l for l in self.plaintext.splitlines()])
