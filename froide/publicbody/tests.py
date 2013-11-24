@@ -150,7 +150,7 @@ class ApiTest(TestCase):
 
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_autocomplete(self):
-        pb = factories.PublicBodyFactory.create(name='specialbody')
+        pb = factories.PublicBodyFactory.create(name='ZZZ-Body')
         response = self.client.get('%s&query=%s' % (
                 '/api/v1/publicbody/autocomplete/?format=json', pb.name))
         self.assertEqual(response.status_code, 200)
