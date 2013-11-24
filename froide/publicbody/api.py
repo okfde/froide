@@ -125,6 +125,7 @@ class PublicBodyResource(ModelResource):
         sqs = []
         if short_query:
             sqs = SearchQuerySet().models(PublicBody).autocomplete(name_auto=short_query)
+            sqs = sqs.order_by('name')
             jurisdiction = request.GET.get('jurisdiction', None)
             if jurisdiction is not None:
                 sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
@@ -141,9 +142,10 @@ class PublicBodyResource(ModelResource):
             else:
                 jur_get = lambda pb: pb.object.jurisdiction.name
 
+            sqs = sorted(sqs, key=lambda x: x.name)
             names = [u"%s (%s)" % (x.name, jur_get(x)) for x in sqs]
             data = [{"name": x.name, "jurisdiction": jur_get(x),
-                "id": x.pk, "url": x.url} for x in sqs]
+                     "id": x.pk, "url": x.url} for x in sqs]
         response = {
             "query": query,
             "suggestions": names,
