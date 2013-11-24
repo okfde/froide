@@ -791,6 +791,8 @@ class RequestTest(TestCase):
 
     def test_escalation_message(self):
         req = FoiRequest.objects.all()[0]
+        zip_bytes = package_foirequest(req)
+        req._messages = None  # Reset messages cache
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug + 'blub'}))
         self.assertEqual(response.status_code, 404)
@@ -818,6 +820,11 @@ class RequestTest(TestCase):
         self.assertIn(req.get_absolute_url(), response['Location'])
         self.assertEqual(req.law.mediator, req.messages[-1].recipient_public_body)
         self.assertEqual(len(mail.outbox), 2)
+        message = list(filter(lambda x: x.to[0] == req.law.mediator.email, mail.outbox))[-1]
+        self.assertEqual(message.attachments[0][0], 'request_%s.zip' % req.pk)
+        self.assertEqual(message.attachments[0][2], 'application/zip')
+        self.assertEqual(zipfile.ZipFile(BytesIO(message.attachments[0][1]), 'r').namelist(),
+                         zipfile.ZipFile(BytesIO(zip_bytes), 'r').namelist())
 
     def test_set_tags(self):
         req = FoiRequest.objects.all()[0]
@@ -1436,8 +1443,8 @@ class PackageFoiRequestTest(TestCase):
         fr = FoiRequest.objects.all()[0]
         bytes = package_foirequest(fr)
         zfile = zipfile.ZipFile(BytesIO(bytes), 'r')
-        filenames = ['20\d{2}-\d{2}-\d{2}_requester\.txt', '20\d{2}-\d{2}-\d{2}_publicbody\.txt',
-                     '20\d{2}-\d{2}-\d{2}-file_\d+\.pdf', '20\d{2}-\d{2}-\d{2}-file_\d+\.pdf']
+        filenames = ['20\d{2}-\d{2}-\d{2}_1_requester\.txt', '20\d{2}-\d{2}-\d{2}_1_publicbody\.txt',
+                     '20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf', '20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf']
         zip_names = zfile.namelist()
         self.assertEqual(len(filenames), len(zip_names))
         for zname, fname in zip(zip_names, filenames):

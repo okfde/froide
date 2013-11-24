@@ -700,7 +700,7 @@ class FoiRequest(models.Model):
         message.plaintext = self.construct_standard_message_body(message_body,
             send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
-        filename = _('request_%(num)s.zip' % {'num': self.pk})
+        filename = _('request_%(num)s.zip') % {'num': self.pk}
         zip_bytes = package_foirequest(self)
         attachments = [(filename, zip_bytes, 'application/zip')]
         message.send(attachments=attachments)
