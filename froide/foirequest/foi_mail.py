@@ -123,31 +123,32 @@ def fetch_and_process():
 
 def package_foirequest(foirequest):
     zfile_obj = BytesIO()
-    with zipfile.ZipFile(zfile_obj, 'w') as zfile:
-        last_date = None
-        date_count = 0
-        for message in foirequest.messages:
-            current_date = message.timestamp.date()
-            date_prefix = current_date.isoformat()
-            if current_date == last_date:
-                date_count += 1
-                date_prefix += '_%d' % date_count
-            else:
-                date_count = 0
-            last_date = current_date
+    zfile = zipfile.ZipFile(zfile_obj, 'w')
+    last_date = None
+    date_count = 0
+    for message in foirequest.messages:
+        current_date = message.timestamp.date()
+        date_prefix = current_date.isoformat()
+        if current_date == last_date:
+            date_count += 1
+            date_prefix += '_%d' % date_count
+        else:
+            date_count = 0
+        last_date = current_date
 
-            att_queryset = message.foiattachment_set.filter(
-                is_redacted=False,
-                is_converted=False
-            )
-            if message.is_response:
-                filename = '%s_%s.txt' % (date_prefix, _('publicbody'))
-            else:
-                filename = '%s_%s.txt' % (date_prefix, _('requester'))
+        att_queryset = message.foiattachment_set.filter(
+            is_redacted=False,
+            is_converted=False
+        )
+        if message.is_response:
+            filename = '%s_%s.txt' % (date_prefix, _('publicbody'))
+        else:
+            filename = '%s_%s.txt' % (date_prefix, _('requester'))
 
-            zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
+        zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
 
-            for attachment in att_queryset:
-                filename = '%s-%s' % (date_prefix, attachment.name)
-                zfile.write(attachment.file.path, arcname=filename)
+        for attachment in att_queryset:
+            filename = '%s-%s' % (date_prefix, attachment.name)
+            zfile.write(attachment.file.path, arcname=filename)
+    zfile.close()
     return zfile_obj.getvalue()
