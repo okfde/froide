@@ -34,6 +34,7 @@ from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
         EscalationMessageForm)
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from .tasks import process_mail
+from .foi_mail import package_foirequest
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 User = get_user_model()
@@ -931,3 +932,12 @@ def postmark_inbound(request, bounce=False):
 @require_POST
 def postmark_bounce(request):
     return postmark_inbound(request, bounce=True)
+
+
+def download_foirequest(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_staff and not request.user == foirequest.user:
+        return render_403(request)
+    response = HttpResponse(package_foirequest(foirequest), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="%s.zip"' % foirequest.pk
+    return response

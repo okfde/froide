@@ -26,6 +26,7 @@ urlpatterns = patterns("froide.foirequest.views",
     url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message>\d+)/$", 'approve_message', name="foirequest-approve_message"),
     url(r"^(?P<slug>[-\w]+)/make-same/(?P<message_id>\d+)/$", 'make_same_request', name="foirequest-make_same_request"),
     url(r"^(?P<slug>[-\w]+)/resend/$", 'resend_message', name="foirequest-resend_message"),
+    url(r"^(?P<slug>[-\w]+)/download/$", 'download_foirequest', name="foirequest-download"),
     # Redaction
     url(r"^(?P<slug>[-\w]+)/redact/(?P<attachment_id>\d+)/$", 'redact_attachment', name="foirequest-redact_attachment"),
 )

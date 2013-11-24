@@ -485,6 +485,16 @@ data-spy="scroll" data-target="#message-nav-container"
         <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
       </li>
 
+      {% if user == object.user or user.is_staff %}
+      <li class="nav-header">{% trans "Download" %}</li>
+      <li>
+        <a class="btn btn-default" href="{% url 'foirequest-download' slug=object.slug %}">
+          <span class="glyphicon glyphicon-download"></span>
+          {% trans "Download request as ZIP-file" %}
+        </a>
+      </li>
+      {% endif %}
+
       {% if not object.public %}
 
       <li class="nav-header">{% trans "Secret Short URL" %}</li>
