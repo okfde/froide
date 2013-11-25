@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.contrib import auth
 from django.contrib import messages
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
 from django.utils.http import urlsafe_base64_decode, is_safe_url

@@ -6,7 +6,7 @@ from email.utils import parseaddr
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import override, ugettext, ugettext_lazy as _
 from django.utils.six import BytesIO
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails,
@@ -94,12 +94,13 @@ def _deliver_mail(email, mail_string=None):
                     recipient=secret_mail,
                     mail=mail_string,
                 )
-                mail_managers(_('Unknown FoI-Mail Recipient'),
-                    unknown_foimail_message % {
-                        'address': secret_mail,
-                        'url': settings.SITE_URL + reverse('admin:foirequest_deferredmessage_changelist')
-                    }
-                )
+                with override(settings.LANGUAGE_CODE):
+                    mail_managers(_('Unknown FoI-Mail Recipient'),
+                        unknown_foimail_message % {
+                            'address': secret_mail,
+                            'url': settings.SITE_URL + reverse('admin:foirequest_deferredmessage_changelist')
+                        }
+                    )
                 continue
         foi_request.add_message_from_email(email, mail_string)
 
@@ -123,32 +124,33 @@ def fetch_and_process():
 
 def package_foirequest(foirequest):
     zfile_obj = BytesIO()
-    zfile = zipfile.ZipFile(zfile_obj, 'w')
-    last_date = None
-    date_count = 1
-    for message in foirequest.messages:
-        current_date = message.timestamp.date()
-        date_prefix = current_date.isoformat()
-        if current_date == last_date:
-            date_count += 1
-        else:
-            date_count = 1
-        date_prefix += '_%d' % date_count
-        last_date = current_date
+    with override(settings.LANGUAGE_CODE):
+        zfile = zipfile.ZipFile(zfile_obj, 'w')
+        last_date = None
+        date_count = 1
+        for message in foirequest.messages:
+            current_date = message.timestamp.date()
+            date_prefix = current_date.isoformat()
+            if current_date == last_date:
+                date_count += 1
+            else:
+                date_count = 1
+            date_prefix += '_%d' % date_count
+            last_date = current_date
 
-        att_queryset = message.foiattachment_set.filter(
-            is_redacted=False,
-            is_converted=False
-        )
-        if message.is_response:
-            filename = '%s_%s.txt' % (date_prefix, _('publicbody'))
-        else:
-            filename = '%s_%s.txt' % (date_prefix, _('requester'))
+            att_queryset = message.foiattachment_set.filter(
+                is_redacted=False,
+                is_converted=False
+            )
+            if message.is_response:
+                filename = '%s_%s.txt' % (date_prefix, ugettext('publicbody'))
+            else:
+                filename = '%s_%s.txt' % (date_prefix, ugettext('requester'))
 
-        zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
+            zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
 
-        for attachment in att_queryset:
-            filename = '%s-%s' % (date_prefix, attachment.name)
-            zfile.write(attachment.file.path, arcname=filename)
-    zfile.close()
+            for attachment in att_queryset:
+                filename = '%s-%s' % (date_prefix, attachment.name)
+                zfile.write(attachment.file.path, arcname=filename)
+        zfile.close()
     return zfile_obj.getvalue()

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.http import HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from froide.publicbody.models import (PublicBody, FoiLaw, PublicBodyTopic,
         Jurisdiction)
