@@ -23,7 +23,9 @@
     <ul class="list-media">
       {% for object in page.object_list %}
         <li class="media">
-          {% include "publicbody/snippets/publicbody_item.html" %}
+          {% with object=object.object %}
+            {% include "publicbody/snippets/publicbody_item.html" %}
+          {% endwith %}
         </li>
       {% endfor %}
     </ul>
