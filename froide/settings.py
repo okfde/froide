@@ -564,24 +564,11 @@ class HerokuPostmark(Heroku):
         "postmark_bounce": "postmark_bounce"
     })
 
-    @property
-    def FOI_EMAIL_TEMPLATE(self):
-        postmark = os.environ.get('POSTMARK_INBOUND_ADDRESS')
-        if postmark is None:
-            raise ValueError('POSTMARK_INBOUND_ADDRESS variable not available. Install Postmark!')
-        postmark_id, domain = postmark.split('@')
-        template = '{postmark_id}+{secret}@{domain}'
+    FOI_EMAIL_TEMPLATE = values.Value('mail+{secret}@{domain}')
+    FOI_EMAIL_DOMAIN = values.Value('inbound.postmarkapp.com')
 
-        @pristinemethod
-        def func(username, secret):
-            return template.format(postmark_id=postmark_id,
-                                   secret=secret,
-                                   domain=domain)
-
-        return func
-
-    SERVER_EMAIL = os_env('POSTMARK_INBOUND_ADDRESS')
-    DEFAULT_FROM_EMAIL = os_env('POSTMARK_INBOUND_ADDRESS')
+    SERVER_EMAIL = values.Value(os_env('POSTMARK_INBOUND_ADDRESS'))
+    DEFAULT_FROM_EMAIL = values.Value(os_env('POSTMARK_INBOUND_ADDRESS'))
 
     # Official Notification Mail goes through
     # the normal Django SMTP Backend
@@ -592,17 +579,13 @@ class HerokuPostmark(Heroku):
     EMAIL_USE_TLS = values.BooleanValue(True)
 
     # SMTP settings for sending FoI mail
-    FOI_EMAIL_HOST_USER = os_env('POSTMARK_API_KEY')
+    FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(False)
     FOI_EMAIL_HOST_FROM = os_env('POSTMARK_INBOUND_ADDRESS')
+    FOI_EMAIL_HOST_USER = os_env('POSTMARK_API_KEY')
     FOI_EMAIL_HOST_PASSWORD = os_env('POSTMARK_API_KEY')
     FOI_EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
     FOI_EMAIL_PORT = values.IntegerValue(2525)
     FOI_EMAIL_USE_TLS = values.BooleanValue(True)
-
-    # The FoI Mail can use a different account
-    @property
-    def FOI_EMAIL_DOMAIN(self):
-        return os_env('POSTMARK_INBOUND_ADDRESS').split('@')[1]
 
     @property
     def LOGGING(self):
