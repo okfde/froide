@@ -1,11 +1,22 @@
 {% load i18n %}
-<a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
-    {{ attachment.name }} ({{ attachment.size|filesizeformat }})
+
+<a class="pull-left" href="{{ attachment.get_absolute_url }}">
+  <div class="media-object">
+    <span class="glyphicon glyphicon-paperclip"></span>
+  </div>
+</a>
+<div class="media-body">
+  <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
+    <h4 class="media-heading">
+      {{ attachment.name }}
+    </h4>
   </a>
+  ({{ attachment.size|filesizeformat }})
   {% if attachment.can_preview %}
     <span class="hidden-print">-
       <a class="target-new" href="{{ attachment.get_preview_url }}">
         {% trans "Preview in Browser" %}
       </a>
-    <span>
+    </span>
   {% endif %}
+</div>

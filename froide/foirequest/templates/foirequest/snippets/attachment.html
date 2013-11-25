@@ -1,54 +1,40 @@
 {% load i18n %}
 
-{% if attachment.approved %}
-  <li>
-    {% include "foirequest/snippets/attachment_item.html" %}
-  </li>
-{% else %}
-  {% if user == object.user or user.is_staff %}
-    <li class="alert alert-success hidden-print">
-      {% if attachment.can_approve or user.is_staff %}
-        <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
-          {% csrf_token %}
-          {% if object.user.get_profile.private %}
-            <p>
-              {% trans "Please check this attachment for personally identifying information. Then publish the document (unless you are explicitly forbidden from publishing) or redact the information." %}
-            </p>
-          {% else %}
-            <p>
-              {% blocktrans with name=object.user.get_full_name %}Please check this attachment for personally identifying information (besides your name {{ name }}). Then publish the document (unless you are explicitly forbidden from publishing) or redact the information.{% endblocktrans %}
-            </p>
-          {% endif %}
-          {% if not attachment.can_approve %}
-            <p>
-              <strong>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</strong>
-              {% blocktrans %}As a moderator you are still able to publish it.{% endblocktrans %}
-            </p>
-          {% endif %}
+  <li class="well well-sm hidden-print">
+    {% if attachment.can_approve %}
+      <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+        {% csrf_token %}
+        {% if object.user.get_profile.private %}
           <p>
-            {% include "foirequest/snippets/attachment_item.html" %}
+            {% trans "Please check this attachment for personally identifying information. Then publish the document (unless you are explicitly forbidden from publishing) or redact the information." %}
           </p>
-          <button class="btn btn-success" type="submit">{% trans "Publish this attachment" %}</button>
-          <a class="btn btn-inverse" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">{% trans "Redact this attachment" %}
-          </a>
-        </form>
-        <div style="display:none" id="approve-attachment-{{ attachment.pk }}-form-success">
+        {% else %}
+          <p>
+            {% blocktrans with name=object.user.get_full_name %}Please check this attachment for personally identifying information (besides your name {{ name }}). Then publish the document (unless you are explicitly forbidden from publishing) or redact the information.{% endblocktrans %}
+          </p>
+        {% endif %}
+        <div class="media">
           {% include "foirequest/snippets/attachment_item.html" %}
         </div>
-      {% else %}
-        <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
+        <button class="btn btn-success" type="submit">{% trans "Publish this attachment" %}</button>
+        <a class="btn btn-inverse" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">{% trans "Redact this attachment" %}
+        </a>
+      </form>
+      <div class="media" style="display:none" id="approve-attachment-{{ attachment.pk }}-form-success">
         {% include "foirequest/snippets/attachment_item.html" %}
-      {% endif %}
-    </li>
-  {% else %}
-    {% if not attachment.redacted %}
-      <li>
-        {% if attachment.can_approve %}
-          <span>{% trans "This attachment has not been published yet." %}</span>
+      </div>
+    {% else %}
+      {% if attachment.redacted %}
+        <p>{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}</p>
+      {% else %}
+        {% if attachment.converted %}
+          <p>{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}</p>
         {% else %}
-          <span>{% trans "This attachment can't be published." %}</span>
+          <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
         {% endif %}
-      </li>
+      {% endif %}
+      <div class="media">
+        {% include "foirequest/snippets/attachment_item.html" %}
+      </div>
     {% endif %}
-  {% endif %}
-{% endif %}
+  </li>
