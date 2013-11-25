@@ -225,7 +225,20 @@ data-spy="scroll" data-target="#message-nav-container"
                   {% form send_message_form using "bootstrap/horizontal.html" %}
                 {% endwith %}
               {% endif %}
-              <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+              <div class="row">
+                <div class="col-lg-offset-4 col-lg-8">
+                  <p class="help-block">
+                    {% if user.address %}
+                      {% blocktrans %}Your address:{% endblocktrans %}<br/>
+                      {{ user.address|linebreaksbr }}
+                    {% else %}
+                      {% url "account-settings" as settings_url %}
+                      {% blocktrans with url=settings_url %}You do not have a postal address set. <a href="{{ url }}#change-address">You can enter enter an address here.</a>{% endblocktrans %}
+                    {% endif %}
+                  </p>
+                  <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+                </div>
+              </div>
             </form>
           </div>
         {% endif %}
