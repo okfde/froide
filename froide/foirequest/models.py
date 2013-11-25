@@ -222,6 +222,7 @@ class FoiRequest(models.Model):
         (_("not-held"), resolution_filter, 'not_held'),
         (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
     ]
+    STATUS_URLS = [(str(s), t, u) for s, t, u in STATUS_URLS]
 
     _STATUS_URLS_DICT = None
 
@@ -343,7 +344,7 @@ class FoiRequest(models.Model):
         if cls._STATUS_URLS_DICT is None:
             cls._STATUS_URLS_DICT = dict([
                 (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
-        return cls._STATUS_URLS_DICT[status]
+        return cls._STATUS_URLS_DICT.get(status)
 
     @property
     def same_as_set(self):

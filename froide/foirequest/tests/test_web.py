@@ -51,6 +51,11 @@ class WebTest(TestCase):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": str(urlpart)}))
             self.assertEqual(response.status_code, 200)
+        url = reverse('foirequest-list',
+                kwargs={"status": 'successful'})
+        url = url.replace('successful', 'non-existing')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
         for topic in PublicBodyTopic.objects.all():
             response = self.client.get(reverse('foirequest-list',

@@ -105,7 +105,10 @@ def list_requests(request, status=None, topic=None, tag=None,
     status_url = status
     foi_requests = manager.for_list_view()
     if status is not None:
-        func, status = FoiRequest.get_status_from_url(status)
+        func_status = FoiRequest.get_status_from_url(status)
+        if func_status is None:
+            raise Http404
+        func, status = func_status
         foi_requests = foi_requests.filter(func(status))
         context.update({
             'status': FoiRequest.get_readable_status(status),

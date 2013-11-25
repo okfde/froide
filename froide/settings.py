@@ -11,6 +11,8 @@ rec = re.compile
 import djcelery
 djcelery.setup_loader()
 
+gettext = lambda s: s
+
 # Django settings for froide project.
 
 
@@ -196,9 +198,6 @@ class Base(Configuration):
     # Language code for this installation. All choices can be found here:
     # http://www.i18nguy.com/unicode/language-identifiers.html
     LANGUAGE_CODE = values.Value('en-us')
-
-    gettext = lambda s: s
-
     LANGUAGES = (
         ('en', gettext('English')),
         ('de', gettext('German')),
@@ -478,6 +477,9 @@ class Test(Base):
 
 class German(object):
     LANGUAGE_CODE = "de"
+    LANGUAGES = (
+        ('de', gettext('German')),
+    )
 
     DATE_FORMAT = "d. F Y"
     SHORT_DATE_FORMAT = "d.m.Y"
