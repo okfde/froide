@@ -552,6 +552,12 @@ class Heroku(Production):
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
 
+
+def os_env(name):
+    return os.environ.get(name)
+
+
+class HerokuPostmark(Heroku):
     SECRET_URLS = values.DictValue({
         "admin": "admin",
         "postmark_inbound": "postmark_inbound",
@@ -574,6 +580,30 @@ class Heroku(Production):
 
         return func
 
+    SERVER_EMAIL = os_env('POSTMARK_INBOUND_ADDRESS')
+    DEFAULT_FROM_EMAIL = os_env('POSTMARK_INBOUND_ADDRESS')
+
+    # Official Notification Mail goes through
+    # the normal Django SMTP Backend
+    EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
+    EMAIL_PORT = values.IntegerValue(2525)
+    EMAIL_HOST_USER = os_env('POSTMARK_API_KEY')
+    EMAIL_HOST_PASSWORD = os_env('POSTMARK_API_KEY')
+    EMAIL_USE_TLS = values.BooleanValue(True)
+
+    # SMTP settings for sending FoI mail
+    FOI_EMAIL_HOST_USER = os_env('POSTMARK_API_KEY')
+    FOI_EMAIL_HOST_FROM = os_env('POSTMARK_INBOUND_ADDRESS')
+    FOI_EMAIL_HOST_PASSWORD = os_env('POSTMARK_API_KEY')
+    FOI_EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
+    FOI_EMAIL_PORT = values.IntegerValue(2525)
+    FOI_EMAIL_USE_TLS = values.BooleanValue(True)
+
+    # The FoI Mail can use a different account
+    @property
+    def FOI_EMAIL_DOMAIN(self):
+        return os_env('POSTMARK_INBOUND_ADDRESS').split('@')[1]
+
     @property
     def LOGGING(self):
         logging = super(Heroku, self).LOGGING
@@ -584,6 +614,11 @@ class Heroku(Production):
 
 class HerokuSSL(SSLSite, Heroku):
     pass
+
+
+class HerokuSSLPostmark(SSLSite, HerokuPostmark):
+    pass
+
 
 try:
     from .local_settings import *  # noqa
