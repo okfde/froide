@@ -48,6 +48,11 @@ urlpatterns += patterns('',
     url(r'^dashboard/$', 'froide.foirequest.views.dashboard', name='dashboard')
 )
 
+if len(settings.LANGUAGES) > 1:
+    urlpatterns += patterns('',
+        (r'^i18n/', include('django.conf.urls.i18n'))
+    )
+
 urlpatterns += patterns('',
     # Translators: request URL
     url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),

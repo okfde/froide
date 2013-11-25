@@ -172,9 +172,10 @@ class Base(Configuration):
     ]
 
     MIDDLEWARE_CLASSES = [
-        'django.middleware.common.CommonMiddleware',
         'djangosecure.middleware.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
@@ -195,6 +196,15 @@ class Base(Configuration):
     # Language code for this installation. All choices can be found here:
     # http://www.i18nguy.com/unicode/language-identifiers.html
     LANGUAGE_CODE = values.Value('en-us')
+
+    gettext = lambda s: s
+
+    LANGUAGES = (
+        ('en', gettext('English')),
+        ('de', gettext('German')),
+        ('fi', gettext('Finnish')),
+        ('sv', gettext('Swedish')),
+    )
 
     # If you set this to False, Django will make some optimizations so as not
     # to load the internationalization machinery.
@@ -289,6 +299,8 @@ class Base(Configuration):
 
     # Django-Secure options
     SECURE_FRAME_DENY = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
 
     ######### South #############
 
@@ -453,6 +465,15 @@ class Test(Base):
     CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+
+    MIDDLEWARE_CLASSES = [
+        'djangosecure.middleware.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+    ]
 
 
 class German(object):

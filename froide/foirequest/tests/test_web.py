@@ -343,4 +343,3 @@ class PerformanceTest(TestCase):
         ContentType.objects.clear_cache()
         with self.assertNumQueries(12):
             self.client.get(req.get_absolute_url())
-            pass

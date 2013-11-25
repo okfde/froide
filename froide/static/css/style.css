@@ -68,7 +68,7 @@ body {
 
 .account-dropdown {
     padding: 0 !important;
-    margin: 8px 0;
+    margin: 14px 0;
     background-color: transparent !important;
 }
 
@@ -79,7 +79,7 @@ body {
 .account-dropdown .account-name {
     float: left;
     font-size: 60%;
-    margin: 4px 0 0 5px;
+    margin: 2px 0 0 5px;
     line-height: 110%;
 }
 
