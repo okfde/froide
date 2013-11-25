@@ -9,6 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
@@ -935,12 +936,14 @@ def resend_message(request, slug):
 
 
 @require_POST
+@csrf_exempt
 def postmark_inbound(request, bounce=False):
     process_mail.delay(request.body, mail_type='postmark')
     return HttpResponse()
 
 
 @require_POST
+@csrf_exempt
 def postmark_bounce(request):
     return postmark_inbound(request, bounce=True)
 
