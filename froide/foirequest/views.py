@@ -407,7 +407,7 @@ def submit_request(request, public_body=None):
             else:
                 messages.add_message(request, messages.INFO,
                     _('Your request has been sent.'))
-            return redirect(foi_request.get_absolute_url() + _('?request-made'))
+            return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
                     password=password)
