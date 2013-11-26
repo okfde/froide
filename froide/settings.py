@@ -564,7 +564,7 @@ class HerokuPostmark(Heroku):
         "postmark_bounce": "postmark_bounce"
     })
 
-    FOI_EMAIL_TEMPLATE = values.Value('mail+{secret}@{domain}')
+    FOI_EMAIL_TEMPLATE = values.Value('request+{secret}@{domain}')
     FOI_EMAIL_DOMAIN = values.Value('inbound.postmarkapp.com')
 
     SERVER_EMAIL = values.Value(os_env('POSTMARK_INBOUND_ADDRESS'))
