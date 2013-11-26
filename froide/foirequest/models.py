@@ -1312,7 +1312,7 @@ class FoiAttachment(models.Model):
     converted = models.ForeignKey('self', verbose_name=_("Converted Version"),
         null=True, blank=True, on_delete=models.SET_NULL,
         related_name='original_set')
-    is_converted = models.BooleanField(_("Is redacted"), default=False)
+    is_converted = models.BooleanField(_("Is converted"), default=False)
 
     CONVERTABLE_FILETYPES = (
         'application/msword',
