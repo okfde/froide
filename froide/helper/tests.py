@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from .text_utils import replace_email_name
+from .form_generator import FormGenerator
 
 
 class TestAPIDocs(TestCase):
@@ -18,3 +19,41 @@ class TestTextReplacement(TestCase):
         content = 'This is a very long string with a name <and.email@adress.in> it'
         content = replace_email_name(content, 'REPLACEMENT')
         self.assertEqual(content, 'This is a very long string with a name REPLACEMENT it')
+
+
+class TestFormGenerator(TestCase):
+    def test_render(self):
+        s = '''I choose
+    ( o ) ice cream
+    (   ) waffles
+with
+    [ x ] chocolate sauce
+    [ x ] caramel cream
+    [   ] extra sugar
+and I like it
+    ( o ) baked
+    (   ) cooked
+.
+Cheers!'''
+        form = FormGenerator(s, {
+            'fg_radio_1': 'ice cream',
+            'fg_check_3': 'yeah',
+            'fg_check_1': 'on',
+            'fg_radio_2': 'baked'
+        })
+        self.assertEqual(form.render_html(), '''I choose <label for="fg_option_1">
+<input type="radio" id="fg_option_1" checked="checked" name="fg_radio_1"
+ value="ice cream"/> ice cream</label> <label for="fg_option_2">
+<input type="radio" id="fg_option_2" name="fg_radio_1" value="waffles"/>
+ waffles</label> with <label for="fg_check_1">
+<input type="checkbox" id="fg_check_1" checked="checked" name="fg_check_1"
+ value="chocolate sauce"/> chocolate sauce</label> <label for="fg_check_2">
+<input type="checkbox" id="fg_check_2" checked="checked" name="fg_check_2"
+ value="caramel cream"/> caramel cream</label> <label for="fg_check_3">
+<input type="checkbox" id="fg_check_3" name="fg_check_3" value="extra sugar"/>
+ extra sugar</label> and I like it <label for="fg_option_3">
+<input type="radio" id="fg_option_3" checked="checked" name="fg_radio_2"
+ value="baked"/> baked</label> <label for="fg_option_4">
+<input type="radio" id="fg_option_4" name="fg_radio_2" value="cooked"/>
+ cooked</label>.'''.replace('\n', '') + '\nCheers!''')
+        self.assertEqual(form.render(), 'I choose ice cream with chocolate sauce extra sugar and I like it baked.\nCheers!')
