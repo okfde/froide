@@ -269,11 +269,16 @@ def make_world():
         meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
 
+    topic_1 = PublicBodyTopicFactory.create()
+    topic_2 = PublicBodyTopicFactory.create()
+
     for _ in range(5):
-        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
+        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site,
+                                             topic=topic_1)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)
     for _ in range(5):
-        pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site)
+        pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site,
+                                            topic=topic_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)

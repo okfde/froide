@@ -1,14 +1,16 @@
 import json
 import tempfile
 
-from django.utils.six import StringIO, text_type as str
+from django.utils.six import BytesIO, StringIO, text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+
+from mock import patch
 
 from froide.foirequest.tests import factories
 from froide.helper.test_utils import skip_if_environ
 
-from .models import PublicBody, FoiLaw, Jurisdiction
+from .models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
 from .csv_import import CSVImporter
 
 
@@ -66,7 +68,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
 
-    def test_command(self):
+    def test_csv_command(self):
         from django.core.management import call_command
         csv_file = tempfile.NamedTemporaryFile()
         csv_file.write(PublicBody.export_csv(PublicBody.objects.all()).encode('utf-8'))
@@ -117,6 +119,19 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.get(reverse('publicbody-show-pb_jurisdiction',
                 kwargs={'slug': juris.slug}))
         self.assertEqual(response.status_code, 200)
+
+    def test_count_topic_command(self):
+        from django.core.management import call_command
+        pb = PublicBody.objects.all()[0]
+        topic = pb.topic
+        topic.count = 0
+        topic.save()
+        fake_stdout = BytesIO()
+        with patch('sys.stdout', fake_stdout):
+            call_command('count_topic')
+        topic = PublicBodyTopic.objects.get(pk=topic.pk)
+        self.assertEqual(topic.count,
+                         PublicBody.objects.filter(topic=topic).count())
 
 
 class ApiTest(TestCase):
