@@ -53,7 +53,6 @@ class Base(Configuration):
         'froide.frontpage',
         'froide.publicbody',
         'froide.account',
-        'froide.foiidea',
         'froide.redaction',
         'froide.foisite',
         'froide.helper',

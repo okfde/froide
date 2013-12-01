@@ -81,8 +81,6 @@ urlpatterns += patterns('',
     # Translators: URL part
     (r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
-    (r'^%s/' % _('news'), include('froide.foiidea.urls')),
-    # Translators: URL part
     (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
     # Translators: URL part
     (r'^%s/' % _('help'), include('froide.help_urls')),
