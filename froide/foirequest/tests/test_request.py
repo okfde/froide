@@ -104,6 +104,8 @@ class RequestTest(TestCase):
         self.assertEqual(req.visibility, 0)
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
+        self.assertIn(post['body'], message.content)
+        self.assertIn(post['body'], message.get_real_content())
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
@@ -560,6 +562,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
         f.close()
+
         message = req.foimessage_set.all()[1]
         attachment = message.foiattachment_set.all()[0]
         self.assertEqual(attachment.file.size, file_size)
@@ -569,6 +572,9 @@ class RequestTest(TestCase):
         # Change name in order to upload it again
         attachment.name = 'other_test.pdf'
         attachment.save()
+
+        postal_attachment_form = message.get_postal_attachment_form()
+        self.assertTrue(postal_attachment_form)
 
         f = open(factories.TEST_PDF_PATH, "rb")
         response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
@@ -1033,6 +1039,10 @@ class RequestTest(TestCase):
         user = User.objects.get(username='dummy')
         same_req = FoiRequest.objects.get(same_as=req, user=user)
         self.assertIn(same_req.get_absolute_url(), response['Location'])
+        self.assertEqual(list(req.same_as_set), [same_req])
+        self.assertEqual(same_req.identical_count(), 1)
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.identical_count(), 1)
 
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug, "message_id": mes.id}))
@@ -1107,7 +1117,7 @@ class RequestTest(TestCase):
         req.status = 'awaits_classification'
         req.user = user
         req.save()
-        factories.FoiMessageFactory.create(
+        mes = factories.FoiMessageFactory.create(
             status=None,
             request=req
         )
@@ -1129,6 +1139,8 @@ class RequestTest(TestCase):
         self.assertEqual(req.costs, 0.0)
         self.assertEqual(req.status, 'resolved')
         self.assertEqual(req.resolution, 'successful')
+        self.assertEqual(req.days_to_resolution(),
+                         (mes.timestamp - req.first_message).days)
 
     def test_redirect(self):
         req = FoiRequest.objects.all()[0]
@@ -1231,6 +1243,8 @@ class RequestTest(TestCase):
             'slug': foirequest.slug,
             'attachment_id': '8' * 5
         })
+
+        self.assertIn(att.name, repr(att))
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
