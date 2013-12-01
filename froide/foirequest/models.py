@@ -568,7 +568,12 @@ class FoiRequest(models.Model):
         subject = _("Re: %(subject)s"
                 ) % {"subject": last_message.subject}
         if self.is_overdue() and self.awaits_response():
+            days = (timezone.now() - self.due_date).days + 1
             message = render_to_string('foirequest/emails/overdue_reply.txt', {
+                'due': ungettext_lazy(
+                    "%(count)s day",
+                    "%(count)s days",
+                    days) % {'count': days},
                 'foirequest': self
             })
         else:
@@ -972,14 +977,19 @@ class FoiRequest(models.Model):
             return
         if not self.user.email:
             return
-        send_mail(_("%(site_name)s: Please classify the reply to your request")
+        send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: Please classify the reply to your request")
                     % {"site_name": settings.SITE_NAME},
-                render_to_string("foirequest/emails/classification_reminder.txt",
-                    {"request": self,
-                        "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
-                        "site_name": settings.SITE_NAME}),
-                settings.DEFAULT_FROM_EMAIL,
-                [self.user.email])
+                self.pk
+            ),
+            render_to_string("foirequest/emails/classification_reminder.txt", {
+                "request": self,
+                "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
+                "site_name": settings.SITE_NAME
+            }),
+            settings.DEFAULT_FROM_EMAIL,
+            [self.user.email]
+        )
 
     @classmethod
     def send_update(cls, req_event_dict, user=None):
@@ -1155,7 +1165,7 @@ class FoiMessage(models.Model):
             })
 
     def get_quoted(self):
-        return "\n".join([">%s" % l for l in self.plaintext.splitlines()])
+        return u"\n".join([u">%s" % l for l in self.plaintext.splitlines()])
 
     def needs_status_input(self):
         return self.request.message_needs_status() == self
