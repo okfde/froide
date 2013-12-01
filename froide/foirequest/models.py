@@ -38,11 +38,6 @@ from .foi_mail import send_foi_mail, package_foirequest
 
 
 class FoiRequestManager(CurrentSiteManager):
-    def get_for_homepage(self, count=5):
-        return self.get_query_set().order_by("-last_message")[:count]
-
-    def related_from_slug(self, slug):
-        return self.get_query_set().filter(slug=slug).select_related()
 
     def get_by_secret_mail(self, mail):
         return self.get_query_set().get(secret_address=mail)
@@ -87,21 +82,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
                 self).get_query_set().filter(visibility=2, is_foi=True)\
                         .select_related("public_body", "jurisdiction")
 
-    def awaiting_response(self):
-        return self.get_query_set().filter(
-                    status="awaiting_response")
-
     def by_last_update(self):
         return self.get_query_set().order_by('-last_message')
 
     def for_list_view(self):
         return self.by_last_update().filter(same_as__isnull=True)
-
-    def get_for_homepage(self, count=5):
-        return self.by_last_update().filter(
-                models.Q(resolution='successful') |
-                models.Q(resolution='partially_successful') |
-                models.Q(resolution='refused'))[:count]
 
     def get_for_search_index(self):
         return self.get_query_set().filter(same_as__isnull=True)
@@ -1423,11 +1408,6 @@ class FoiEventManager(models.Manager):
         event.context_json = json.dumps(context)
         event.save()
         return event
-
-    def get_for_homepage(self):
-        return self.get_query_set().filter(public=True)\
-                .select_related("user", "user__profile", "public_body",
-                        "request")
 
 
 @python_2_unicode_compatible
