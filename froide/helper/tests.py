@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from .text_utils import replace_email_name
 from .form_generator import FormGenerator
@@ -19,6 +20,19 @@ class TestTextReplacement(TestCase):
         content = 'This is a very long string with a name <and.email@adress.in> it'
         content = replace_email_name(content, 'REPLACEMENT')
         self.assertEqual(content, 'This is a very long string with a name REPLACEMENT it')
+
+
+class TestThemeLoader(TestCase):
+
+    @override_settings(FROIDE_THEME='froide.foirequest')
+    def test_loader(self):
+        from .theme_utils import ThemeLoader
+
+        tl = ThemeLoader()
+        sources = list(tl.get_template_sources('index.html'))
+        self.assertEqual(len(sources), 1)
+        self.assertTrue(sources[0].startswith('/'))
+        self.assertTrue(sources[0].endswith('froide/foirequest/templates/index.html'))
 
 
 class TestFormGenerator(TestCase):
