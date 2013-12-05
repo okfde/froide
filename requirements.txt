@@ -31,3 +31,4 @@ django-cache-url==0.6.0
 django-configurations==0.7
 gunicorn==18.0
 dj-static==0.0.5
+django-storages==1.1.8

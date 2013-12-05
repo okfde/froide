@@ -46,6 +46,7 @@ class Base(Configuration):
         'overextends',
         'tastypie',
         'tastypie_swagger',
+        'storages',
 
         # local
         'froide.foirequest',
@@ -546,10 +547,26 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
     pass
 
 
+class AmazonS3(object):
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+    AWS_ACCESS_KEY_ID = values.Value('')
+    AWS_SECRET_ACCESS_KEY = values.Value('')
+    AWS_STORAGE_BUCKET_NAME = values.Value('')
+
+
 class Heroku(Production):
     ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
     CELERY_ALWAYS_EAGER = True
+
+    @property
+    def LOGGING(self):
+        logging = super(Heroku, self).LOGGING
+        logging['handlers']['console']['stream'] = sys.stdout
+        logging['loggers']['django.request']['handlers'] = ['console']
+        return logging
 
 
 def os_env(name):
@@ -586,12 +603,9 @@ class HerokuPostmark(Heroku):
     FOI_EMAIL_PORT = values.IntegerValue(2525)
     FOI_EMAIL_USE_TLS = values.BooleanValue(True)
 
-    @property
-    def LOGGING(self):
-        logging = super(Heroku, self).LOGGING
-        logging['handlers']['console']['stream'] = sys.stdout
-        logging['loggers']['django.request']['handlers'] = ['console']
-        return logging
+
+class HerokuPostmarkS3(AmazonS3, HerokuPostmark):
+    pass
 
 
 class HerokuSSL(SSLSite, Heroku):
