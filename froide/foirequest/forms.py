@@ -301,7 +301,7 @@ class FoiRequestStatusForm(forms.Form):
             label=_("Costs"),
             required=False, min_value=0.0,
             localize=True,
-            widget=PriceInput(attrs={"size": "4"}),
+            widget=PriceInput,
             help_text=_('Please specify what the Public Body charges for the information.')
         )
 

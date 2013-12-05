@@ -9,7 +9,7 @@ class PriceInput(forms.TextInput):
 
     def get_context(self, name, value, attrs):
         ctx = super(PriceInput, self).get_context(name, value, attrs)
-        ctx['attrs']['class'] = 'input-mini'
+        ctx['attrs']['class'] = 'col-xs-2'
         return ctx
 
 
