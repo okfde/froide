@@ -66,7 +66,7 @@ data-spy="scroll" data-target="#message-nav-container"
 {% block foirequest_header %}{% endblock %}
 
 <div class="row">
-  <div class="col-lg-9">
+  <div class="col-lg-9 col-md-9">
 
     <h2>{{ object.title }}</h2>
 
@@ -455,7 +455,7 @@ data-spy="scroll" data-target="#message-nav-container"
     {% endif %}
   </div>
 
-  <div class="col-lg-3">
+  <div class="col-lg-3 col-md-3">
     <ul class="nav nav-compact hidden-print">
       <li class="nav-header">{% trans "Followers" %}</li>
       {% with count=object.follow_count %}
