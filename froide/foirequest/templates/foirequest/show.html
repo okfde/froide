@@ -1,5 +1,6 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
+{% load static from staticfiles %}
 {% load markup %}
 {% load floppyforms %}
 {% load foirequest_tags account_tags %}
@@ -17,7 +18,7 @@
 <link rel="canonical" href="{% url 'foirequest-show' slug=object.slug %}"/>
 <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
 <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" />
-<link rel="stylesheet" href="{{ STATIC_URL }}css/print-request.css" type="text/css" media="print" />
+<link rel="stylesheet" href="{% static "css/print-request.css" %}" type="text/css" media="print" />
 {% endblock %}
 
 {% block body_extra_attribuets %}

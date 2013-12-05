@@ -1,4 +1,4 @@
-{% load i18n %}{% load gravatar %}<!DOCTYPE html>
+{% load i18n %}{% load static from staticfiles %}{% load gravatar %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" class="no-js">
   <head>
   <meta charset="utf-8">
@@ -6,8 +6,8 @@
   <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
   {% block header_font %}
   {% endblock %}
-  <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
+  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static "css/style.css" %}" />
   {% block extra_css %}
   {% endblock %}
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
@@ -22,10 +22,10 @@
   {% endblock %}
 
 
-  <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico" />
-  <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png"/>
+  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}" />
+  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}"/>
 
-  <script src="{{ STATIC_URL }}js/libs/modernizr-1.6.min.js"></script>
+  <script src="{% static "js/libs/modernizr-1.6.min.js" %}"></script>
   {% block extra_head %}
   {% endblock %}
 </head>
@@ -173,7 +173,7 @@
       <div class="col-lg-3">
         {% block footer_logo %}
         <a href="http://www.okfn.de">
-          <img src="{{ STATIC_URL }}img/okf.png" />
+          <img src="{% static "img/okf.png" %}" />
         </a>
         {% endblock %}
       </div>
@@ -201,17 +201,17 @@
     {% endblock %}
   </footer>
 
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery.js"%3E%3C/script%3E'))</script>
-  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/jquery.autocomplete.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="{% static "js/libs/jquery.js" %}"%3E%3C/script%3E'))</script>
+  <script src="{% static "js/bootstrap.min.js" %}"></script>
+  <script src="{% static "js/libs/mustache.js" %}"></script>
+  <script src="{% static "js/libs/jquery.autocomplete.js" %}"></script>
 
   <!-- scripts concatenated and minified via ant build script-->
-  <script src="{{ STATIC_URL }}js/script.js"></script>
+  <script src="{% static "js/script.js" %}"></script>
   <!-- end concatenated and minified scripts-->
 
   <!--[if lt IE 7 ]>
-    <script src="{{ STATIC_URL }}js/libs/dd_belatedpng.js"></script>
+    <script src="{% static "js/libs/dd_belatedpng.js" %}"></script>
     <script> DD_belatedPNG.fix('img, .png_bg'); </script>
   <![endif]-->
   {% block extra_footer %}

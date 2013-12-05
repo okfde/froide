@@ -1,4 +1,4 @@
-{% load i18n %}<!DOCTYPE html>
+{% load i18n %}{% load static from staticfiles %}<!DOCTYPE html>
 <html lang="en" class="no-js">
   <head>
   <meta charset="utf-8">
@@ -10,27 +10,27 @@
         font-family: 'Kreon';
         font-style: normal;
         font-weight: 700;
-        src: local('Kreon bold'), local('Kreon-bold'), url('{{ STATIC_URL }}font/Kreon-Bold.woff') format('woff');
-        src: local('Kreon regular'), local('Kreon-regular'), url('{{ STATIC_URL }}font/Kreon-Regular.woff') format('woff');
+        src: local('Kreon bold'), local('Kreon-bold'), url('{% static "font/Kreon-Bold.woff" %}') format('woff');
+        src: local('Kreon regular'), local('Kreon-regular'), url('{% static "font/Kreon-Regular.woff" %}') format('woff');
       }
     </style>
   {% else %}
   <link href='http://fonts.googleapis.com/css?family=Kreon:bold' rel='stylesheet' type='text/css'>
   {% endif %}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />	
-  <!--[if lt IE 8]><link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  <link rel="stylesheet" href="{% static "css/blueprint/screen.css" %}" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="{% static "css/blueprint/print.css" %}" type="text/css" media="print" />	
+  <!--[if lt IE 8]><link rel="stylesheet" href="{% static "css/blueprint/ie.css" %}" type="text/css" media="screen, projection"><![endif]-->
+  <link rel="stylesheet" href="{% static "css/style.css" %}">
 
 
   <meta name="description" content="">
   <meta name="author" content="">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.ico">
-  <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png">
+  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
+  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
 
-  <script src="{{ STATIC_URL }}js/libs/modernizr-1.6.min.js"></script>
+  <script src="{% static "js/libs/modernizr-1.6.min.js" %}"></script>
   {% block extra_head %}
   {% endblock %}
 </head>
@@ -50,17 +50,17 @@
 
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="{{ STATIC_URL }}js/libs/jquery-1.4.2.js"%3E%3C/script%3E'))</script>
-  <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="{% static "js/libs/jquery-1.4.2.js" %}"%3E%3C/script%3E'))</script>
+  <script src="{% static "js/libs/mustache.js" %}"></script>
   
   
   <!-- scripts concatenated and minified via ant build script-->
-  <script src="{{ STATIC_URL }}js/script.js"></script>
+  <script src="{% static "js/script.js" %}"></script>
   <!-- end concatenated and minified scripts-->
   
   
   <!--[if lt IE 7 ]>
-    <script src="{{ STATIC_URL }}js/libs/dd_belatedpng.js"></script>
+    <script src="{% static "js/libs/dd_belatedpng.js" %}"></script>
     <script> DD_belatedPNG.fix('img, .png_bg'); </script>
   <![endif]-->
   {% block extra_footer %}

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static from staticfiles %}
 
 {% block body %}
 <h2>{% blocktrans with name=obj.name %}Write a request to {{ name }}{% endblocktrans %}</h2>
@@ -9,6 +10,6 @@
 {% endblock %}
 
 {% block extra_footer %}
-  <script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
+  <script src="{% static "js/foirequest.js" %}" type="text/javascript"></script>
 {% endblock %}
 

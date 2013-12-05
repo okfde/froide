@@ -1,6 +1,7 @@
 {% extends 'publicbody/base.html' %}
 
 {% load i18n %}
+{% load static from staticfiles %}
 {% load markup %}
 
 {% block body %}
@@ -49,5 +50,5 @@
 {% endblock %}
 
 {% block extra_footer %}
-  <script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
+  <script src="{% static "js/foirequest.js" %}" type="text/javascript"></script>
 {% endblock %}
