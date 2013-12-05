@@ -169,7 +169,8 @@ class MessagePublicBodySenderForm(forms.Form):
 
 
 class SendMessageForm(forms.Form):
-    to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int, required=True)
+    to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int,
+            required=True, widget=forms.Select(attrs={"class": "form-control"}))
     subject = forms.CharField(label=_("Subject"),
             widget=forms.TextInput(attrs={"class": "form-control"}))
     message = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control"}),
@@ -272,6 +273,7 @@ class FoiRequestStatusForm(forms.Form):
             choices=[('', _('No or other reason given'))] +
                 foirequest.law.get_refusal_reason_choices(),
             required=False,
+            widget=forms.Select(attrs={'class': 'form-control'}),
             help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
         )
 
@@ -286,6 +288,7 @@ class FoiRequestStatusForm(forms.Form):
     resolution = forms.ChoiceField(label=_('Resolution'),
         choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION_FIELD_CHOICES,
         required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
         help_text=_('How would you describe the current outcome of this request?'))
     redirected = forms.IntegerField(
         label=_("Redirected to"),
@@ -405,9 +408,12 @@ class PostalScanMixin(object):
 
 
 class PostalReplyForm(forms.Form, PostalScanMixin):
-    scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>. All uploaded documents will be published!"))
+    scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>."))
     date = forms.DateField(
-            widget=forms.TextInput(attrs={"class": "form-control"}),
+            widget=forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _('mm/dd/YYYY')
+            }),
             label=_("Send Date"),
             help_text=_("Please give the date the reply was sent."),
             localize=True)
