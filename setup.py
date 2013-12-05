@@ -1,25 +1,38 @@
+#!/usr/bin/env python
+
 import codecs
-from os import path
-from setuptools import setup
+import re
+import os
+
+from setuptools import setup, find_packages
 
 
 def read(*parts):
-    file_path = path.join(path.dirname(__file__), *parts)
-    return codecs.open(file_path, encoding='utf-8').read()
+    filename = os.path.join(os.path.dirname(__file__), *parts)
+    with codecs.open(filename, encoding='utf-8') as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
 
 
 setup(
     name="froide",
-    version='4.0.0-alpha',
+    version=find_version("froide", "__init__.py"),
     url='https://github.com/stefanw/froide',
     license='MIT',
     description="German Freedom of Information Portal",
     long_description=read('README.md'),
     author='Stefan Wehrmeyer',
     author_email='mail@stefanwehrmeyer.com',
-    packages=[
-        'froide',
-    ],
+    packages=find_packages(),
+    include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
