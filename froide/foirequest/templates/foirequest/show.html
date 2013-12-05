@@ -83,7 +83,10 @@ data-spy="scroll" data-target="#message-nav-container"
     {% endif %}
 
     {% if object.user == user %}
-      <ul class="nav nav-tabs request-nav hidden-print">
+      <div class="row">
+        <div class="col-lg-3 col-md-3">
+
+      <ul class="nav nav-pills nav-stacked request-nav hidden-print">
         <li{% if active_tab == 'info' %} class="active"{% endif %}>
           <a href="#info" data-toggle="tab">
             {% trans "Request" %}
@@ -148,6 +151,9 @@ data-spy="scroll" data-target="#message-nav-container"
         {% endif %}
       </ul>
 
+        </div>
+
+        <div class="col-lg-9 col-md-9">
       <div class="tab-content well request-well">
 
         {# Set status #}
@@ -454,6 +460,10 @@ data-spy="scroll" data-target="#message-nav-container"
       </div>
     {% endif %}
   </div>
+  {% if object.user == user %}
+  </div>
+  </div>
+  {% endif %}
 
   <div class="col-lg-3 col-md-3">
     <ul class="nav nav-compact hidden-print">
