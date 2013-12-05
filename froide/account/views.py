@@ -113,6 +113,7 @@ def profile(request, slug):
     })
 
 
+@require_POST
 def logout(request):
     auth.logout(request)
     messages.add_message(request, messages.INFO,

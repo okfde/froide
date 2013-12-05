@@ -60,6 +60,8 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('account-show'), response.url)
         response = self.client.get(reverse('account-logout'))
+        self.assertEqual(response.status_code, 405)
+        response = self.client.post(reverse('account-logout'))
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('account-login') + "?simple")
         self.assertIn("simple_base.html", map(lambda x: x.name,

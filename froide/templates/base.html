@@ -118,7 +118,12 @@
               {% endif %}
               <li class="divider"></li>
               <li>
-                <a href="{% url 'account-logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a>
+                <form action="{% url 'account-logout' %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link">
+                    {% blocktrans %}Logout{% endblocktrans %}
+                  </button>
+                </form>
               </li>
             </ul>
           </li>
