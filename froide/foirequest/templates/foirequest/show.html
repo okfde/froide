@@ -67,7 +67,7 @@ data-spy="scroll" data-target="#message-nav-container"
 {% block foirequest_header %}{% endblock %}
 
 <div class="row">
-  <div class="col-lg-9">
+  <div class="col-lg-9 col-md-9">
 
     <h2>{{ object.title }}</h2>
 
@@ -84,7 +84,10 @@ data-spy="scroll" data-target="#message-nav-container"
     {% endif %}
 
     {% if object.user == user %}
-      <ul class="nav nav-tabs request-nav hidden-print">
+      <div class="row">
+        <div class="col-lg-3 col-md-3">
+
+      <ul class="nav nav-pills nav-stacked request-nav hidden-print">
         <li{% if active_tab == 'info' %} class="active"{% endif %}>
           <a href="#info" data-toggle="tab">
             {% trans "Request" %}
@@ -124,7 +127,7 @@ data-spy="scroll" data-target="#message-nav-container"
           </li>
         {% endif %}
 
-        {% if object.can_be_escalated %}
+        {% if froide.can_make_meta_request and object.can_be_escalated %}
           <li>
             <a href="#meta-request" data-toggle="tab">
               {% trans "Make Meta Request" %}
@@ -149,6 +152,9 @@ data-spy="scroll" data-target="#message-nav-container"
         {% endif %}
       </ul>
 
+        </div>
+
+        <div class="col-lg-9 col-md-9">
       <div class="tab-content well request-well">
 
         {# Set status #}
@@ -192,6 +198,7 @@ data-spy="scroll" data-target="#message-nav-container"
           <div class="tab-pane hidden-print{% if active_tab == 'escalate' %} active{% endif %}" id="escalate">
             <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
               {% csrf_token %}
+              <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
               <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled.{% endblocktrans %}</p>
               {% if escalation_form %}
                 {% form escalation_form using "bootstrap/horizontal.html" %}
@@ -200,28 +207,53 @@ data-spy="scroll" data-target="#message-nav-container"
                   {% form escalation_form using "bootstrap/horizontal.html" %}
                 {% endwith %}
               {% endif %}
-              {% if not object.public %}
-                <span class="help-block">{% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}</span>
-              {% endif %}
-              <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+              <div class="row">
+                <div class="col-lg-offset-4 col-lg-8">
+                  {% if not object.public %}
+                    <span class="help-block">
+                      {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
+                    </span>
+                  {% endif %}
+                  <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+                </div>
+              </div>
             </form>
           </div>
         {% endif %}
         {# End Escalate #}
 
+        {# Make Meta Request #}
+        {% if froide.can_make_meta_request and object.can_be_escalated %}
+          <div class="tab-pane hidden-print{% if active_tab == 'meta-request' %} active{% endif %}" id="meta-request">
+            <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+              {% csrf_token %}
+              <h4>{% blocktrans %}Make a meta request{% endblocktrans %}</h4>
+              <p>
+                {% blocktrans with title=object.title %}By making a meta request you will make a normal FOI request for the internal communication related to the handling of your original request "{{ title }}". Please only make a meta request if you reasonably suspect an internal mishandling of your request.{% endblocktrans %}
+              </p>
+              <button class="btn btn-primary">{% blocktrans %}Send Meta Request{% endblocktrans %}</button>
+            </form>
+          </div>
+        {% endif %}
+
         {# Postal Reply #}
         {% if object.public_body %}
           <div class="tab-pane hidden-print{% if active_tab == 'add-postal-reply' %} active{% endif %}" id="add-postal-reply">
             <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
-                {% if postal_reply_form %}
+              <h4>{% blocktrans %}Upload postal replies you received{% endblocktrans %}</h4>
+              {% if postal_reply_form %}
+                {% form postal_reply_form using "bootstrap/horizontal.html" %}
+              {% else %}
+                {% with postal_reply_form=object.get_postal_reply_form %}
                   {% form postal_reply_form using "bootstrap/horizontal.html" %}
-                {% else %}
-                  {% with postal_reply_form=object.get_postal_reply_form %}
-                    {% form postal_reply_form using "bootstrap/horizontal.html" %}
-                  {% endwith %}
-                {% endif %}
-              <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Reply{% endblocktrans %}</button>
-              <span class="help-block">{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</span>
+                {% endwith %}
+              {% endif %}
+              <div class="row">
+                <div class="col-lg-offset-4 col-lg-8">
+                  <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Reply{% endblocktrans %}</button>
+                  <span class="help-block">{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</span>
+                </div>
+              </div>
             </form>
           </div>
           {# End Postal Reply #}
@@ -230,6 +262,7 @@ data-spy="scroll" data-target="#message-nav-container"
           <div class="tab-pane hidden-print{% if active_tab == 'write-message' %} active{% endif %}" id="write-message">
             <form class="form-horizontal" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">
               {% csrf_token %}
+              <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
               {% if object.is_overdue %}
                 <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
               {% else %}
@@ -455,8 +488,12 @@ data-spy="scroll" data-target="#message-nav-container"
       </div>
     {% endif %}
   </div>
+  {% if object.user == user %}
+  </div>
+  </div>
+  {% endif %}
 
-  <div class="col-lg-3">
+  <div class="col-lg-3 col-md-3">
     <ul class="nav nav-compact hidden-print">
       <li class="nav-header">{% trans "Followers" %}</li>
       {% with count=object.follow_count %}
