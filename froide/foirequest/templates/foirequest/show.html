@@ -122,10 +122,27 @@ data-spy="scroll" data-target="#message-nav-container"
             </a>
           </li>
         {% endif %}
-        {% if object.response_messages or object.law.meta and object.status_is_final %}
+
+        {% if object.can_be_escalated %}
           <li>
-            <a href="#more" data-toggle="tab">
-              {% blocktrans %}More...{% endblocktrans %}
+            <a href="#meta-request" data-toggle="tab">
+              {% trans "Make Meta Request" %}
+            </a>
+          </li>
+        {% endif %}
+
+        {% if object.response_messages and object.law.meta %}
+          <li>
+            <a href="#concrete-law" data-toggle="tab">
+              {% blocktrans %}Set law{% endblocktrans %}
+            </a>
+          </li>
+        {% endif %}
+
+        {% if object.status_is_final %}
+          <li>
+            <a href="#resolution-summary" data-toggle="tab">
+              {% blocktrans %}Write summary{% endblocktrans %}
             </a>
           </li>
         {% endif %}
@@ -244,28 +261,28 @@ data-spy="scroll" data-target="#message-nav-container"
         {# End Reply, end if object.public_body #}
 
         {# If Meta Law #}
-        {% if object.response_messages and object.law.meta and object.status_is_final %}
-          <div class="tab-pane hidden-print" id="more">
-            {% if object.law.meta and object.response_messages %}
-              <h4>{% trans "Set Law" %}</h4>
-              <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
-                {% csrf_token %}
-                <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-                {{ object.get_concrete_law_form.as_p }}
-                <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
-              </form>
-            {% endif %}
-            {# Write Resolution #}
-            {% if object.status_is_final %}
-              <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
-              <form method="post" action="{% url 'foirequest-set_summary' slug=object.slug %}">
-                {% csrf_token %}
-                <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
-                <textarea rows="8" class="" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea><br/>
-                <button type="submit" class="btn btn-primary">{% blocktrans %}Save Summary{% endblocktrans %}</button>
-              </form>
-            {% endif %}
-            {# End Write Resolution #}
+        {% if object.response_messages and object.law.meta %}
+          <div class="tab-pane hidden-print" id="concrete-law">
+            <h4>{% trans "Set Law" %}</h4>
+            <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
+              {{ object.get_concrete_law_form.as_p }}
+              <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
+            </form>
+          </div>
+        {% endif %}
+
+        {# Write Resolution #}
+        {% if object.status_is_final %}
+          <div class="tab-pane hidden-print" id="resolution-summary">
+            <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
+            <form method="post" action="{% url 'foirequest-set_summary' slug=object.slug %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+              <textarea rows="8" class="form-control" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea><br/>
+              <button type="submit" class="btn btn-primary">{% blocktrans %}Save Summary{% endblocktrans %}</button>
+            </form>
           </div>
         {% endif %}
 
