@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from configurations import Configuration, pristinemethod, importer, values
+from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
 import os
@@ -396,6 +396,24 @@ class Base(Configuration):
 
 class Dev(Base):
     pass
+
+
+class ThemeBase(object):
+
+    @property
+    def INSTALLED_APPS(self):
+        installed = super(ThemeBase, self).INSTALLED_APPS
+        installed.default += [
+            self.FROIDE_THEME
+        ]
+        return installed.default
+
+    @property
+    def TEMPLATE_LOADERS(self):
+        old = super(ThemeBase, self).TEMPLATE_LOADERS
+        if self.FROIDE_THEME is not None:
+            return (['froide.helper.theme_utils.ThemeLoader'] + old)
+        return old
 
 
 class Test(Base):
