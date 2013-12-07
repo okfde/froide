@@ -12,6 +12,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'froide.settings')
 os.environ.setdefault('DJANGO_CONFIGURATION', 'Production')
 
 from configurations.wsgi import get_wsgi_application
-from dj_static import Cling
+application = get_wsgi_application()
 
-application = Cling(get_wsgi_application())
+try:
+    from dj_static import Cling
+    application = Cling(application)
+except ImportError:
+    pass
