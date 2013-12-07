@@ -1361,8 +1361,8 @@ class FoiAttachment(models.Model):
 
     def get_preview_url(self):
         return "https://docs.google.com/viewer?url=%s%s" % (
-            settings.SITE_URL,
-                urlquote(self.get_absolute_url()))
+            urlquote(self.file.url)
+        )
 
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
@@ -1378,16 +1378,19 @@ class FoiAttachment(models.Model):
 
     def get_absolute_url(self):
         if settings.USE_X_ACCEL_REDIRECT:
-            return reverse('foirequest-auth_message_attachment',
-                kwargs={
-                    'message_id': self.belongs_to_id,
-                    'attachment_name': self.name
-                })
+            return '%s%s' % (settings.SITE_URL,
+                reverse('foirequest-auth_message_attachment',
+                    kwargs={
+                        'message_id': self.belongs_to_id,
+                        'attachment_name': self.name
+                    }
+                )
+            )
         else:
             return self.file.url
 
     def get_absolute_domain_url(self):
-        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+        return self.get_absolute_url()
 
     def is_visible(self, user, foirequest):
         if self.approved:
