@@ -328,7 +328,6 @@ class Base(Configuration):
             'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
         }
     }
-    HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
     ########## Tastypie #########
 

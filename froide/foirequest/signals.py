@@ -7,12 +7,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from haystack.utils import get_identifier
 
-from celery_haystack.utils import get_update_task
-
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 
 
 def trigger_index_update(klass, instance_pk):
+    try:
+        from celery_haystack.utils import get_update_task
+    except ImportError:
+        return
     task = get_update_task()
     task.delay('update', get_identifier(klass(id=instance_pk)))
 

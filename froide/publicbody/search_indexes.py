@@ -3,14 +3,18 @@ from __future__ import print_function
 from django.conf import settings
 
 from haystack import indexes
-from celery_haystack.indexes import CelerySearchIndex
+
+try:
+    from celery_haystack.indexes import CelerySearchIndex as SearchIndex
+except ImportError:
+    SearchIndex = indexes.SearchIndex
 
 from .models import PublicBody
 
 PUBLIC_BODY_BOOSTS = settings.FROIDE_CONFIG.get("public_body_boosts", {})
 
 
-class PublicBodyIndex(CelerySearchIndex, indexes.Indexable):
+class PublicBodyIndex(SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', boost=1.5)
     jurisdiction = indexes.CharField(model_attr='jurisdiction__name', default='')
