@@ -164,7 +164,7 @@ class FoiLaw(models.Model):
         try:
             return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
         except FoiLaw.DoesNotExist:
-            raise ImproperlyConfigured(u'You need to setup a default FoiLaw object and reference id in settings')
+            return None
 
     def as_dict(self):
         return {

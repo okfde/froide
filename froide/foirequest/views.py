@@ -306,8 +306,14 @@ def make_request(request, public_body=None):
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
     public_body_search = request.GET.get("topic", "")
     initial['public_body_search'] = public_body_search
-    rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
-            True, initial=initial)
+
+    default_law = FoiLaw.get_default_law(public_body)
+    if default_law is None:
+        messages.add_message(request, messages.INFO,
+            _('You need to setup a default FOI Law object'))
+        return render(request, '500.html')
+
+    rq_form = RequestForm(all_laws, default_law, True, initial=initial)
     user_form = None
     if not request.user.is_authenticated():
         user_form = NewUserForm()
