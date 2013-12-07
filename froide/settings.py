@@ -37,9 +37,6 @@ class Base(Configuration):
         'south',
         'haystack',
         'djcelery',
-        'djcelery_email',
-        'celery_haystack',
-        'djangosecure',
         'taggit',
         'django_gravatar',
         'floppyforms',
@@ -174,7 +171,6 @@ class Base(Configuration):
     ]
 
     MIDDLEWARE_CLASSES = [
-        'djangosecure.middleware.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -295,11 +291,6 @@ class Base(Configuration):
     SESSION_COOKIE_AGE = values.IntegerValue(3628800)  # six weeks
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
-
-    # Django-Secure options
-    SECURE_FRAME_DENY = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_BROWSER_XSS_FILTER = True
 
     ######### South #############
 
@@ -527,7 +518,6 @@ class Production(Base):
     DEBUG = False
     TEMPLATE_DEBUG = False
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
-    EMAIL_BACKEND = values.Value('djcelery_email.backends.CeleryEmailBackend')
     CELERY_ALWAYS_EAGER = values.BooleanValue(False)
 
 
