@@ -7,7 +7,8 @@ from django.utils.translation import ugettext as _
 
 
 def help_view(request, template=None, language=None):
-    language = language or request.LANGUAGE_CODE
+    language = language or getattr(request, 'LANGUAGE_CODE',
+                                   settings.LANGUAGE_CODE)
     template_name = 'help/{}/{}'.format(language, template)
     try:
         return render(request, template_name)
