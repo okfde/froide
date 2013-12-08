@@ -466,7 +466,7 @@ class Test(Base):
             'INDEX_NAME': 'froide',
         },
     }
-    HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
+
     CELERY_RESULT_BACKEND = "database"
     CELERY_RESULT_DBURI = "sqlite:///dev.db"
     CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
@@ -474,7 +474,6 @@ class Test(Base):
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
     MIDDLEWARE_CLASSES = [
-        'djangosecure.middleware.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
