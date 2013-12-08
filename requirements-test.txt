@@ -5,3 +5,4 @@ pep8==1.4.6
 factory-boy==2.2.1
 coverage==3.7
 transifex-client==0.9.1
+mock==1.0.1
