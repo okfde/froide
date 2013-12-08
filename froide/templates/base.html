@@ -118,9 +118,9 @@
               {% endif %}
               <li class="divider"></li>
               <li>
-                <form action="{% url 'account-logout' %}" method="post">
+                <form action="{% url 'account-logout' %}" method="post" class="text-center">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-link">
+                  <button type="submit" class="btn btn-default">
                     {% blocktrans %}Logout{% endblocktrans %}
                   </button>
                 </form>

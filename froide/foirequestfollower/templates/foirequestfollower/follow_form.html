@@ -8,17 +8,17 @@
     {% followrequest object user "followform" %}
     {{ followform.as_p }}
     {% if followform.following %}
-      <button class="input-large btn btn-info hover-btn-warning" type="submit">
+      <button class="input-large btn btn-default hover-btn-danger" type="submit">
         <span class="on-hover">
-          <i class="icon-white icon-remove"></i>
+          <span class="glyphicon glyphicon-remove"></span>
           {% trans "Unfollow request" %}
         </span>
         <span class="on-display">
-          <i class="icon-white icon-star"></i>
+          <span class="glyphicon glyphicon-star"></span>
           {% trans "You follow this request" %}
         </span>
       </button>
-      <p class="muted">
+      <p class="help-block">
         <small>
           {% blocktrans %}You get notified of changes.{% endblocktrans %}
         </small>
@@ -26,15 +26,15 @@
     {% else %}
       <button class="input-large btn hover-btn-success" type="submit">
         <span class="on-hover">
-          <i class="icon-white icon-star"></i>
+          <span class="glyphicon glyphicon-star"></span>
           {% trans "Follow request?" %}
         </span>
         <span class="on-display">
-          <i class="icon-star-empty"></i>
+          <span class="glyphicon glyphicon-star-empty"></span>
           {% trans "Follow request?" %}
         </span>
       </button>
-      <p class="muted">
+      <p class="help-block">
         <small>
           {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
         </small>
@@ -46,10 +46,10 @@
   <p class="muted">
     <small>
       {% if not followform.following %}
-        <i class="icon-ok"></i>
+        <span class="glyphicon glyphicon-ok"></span>
         {% trans "You will receive notifications!" %}
       {% else %}
-        <i class="icon-remove"></i>
+        <span class="glyphicon glyphicon-remove"></span>
         {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
       {% endif %}
     </small>
