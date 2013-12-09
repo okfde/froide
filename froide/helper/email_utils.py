@@ -236,6 +236,6 @@ class EmailParser(object):
 
 if __name__ == '__main__':
     p = EmailParser()
-    email = p.parse(file('../foirequest/tests/test_mail_03.txt').read())
+    email = p.parse(open('../foirequest/tests/test_mail_03.txt').read())
     for i, at in enumerate(email['attachments']):
-        file(getattr(at, 'name', 'test'), 'w').write(at.read())
+        open(getattr(at, 'name', 'test'), 'w').write(at.read())

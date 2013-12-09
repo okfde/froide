@@ -528,11 +528,13 @@ class RequestTest(TestCase):
 
         file_size = os.path.getsize(factories.TEST_PDF_PATH)
         f = open(factories.TEST_PDF_PATH, "rb")
-        post = {"date": "3000-01-01",  # far future
-                "sender": "Some Sender",
-                "subject": "",
-                "text": "Some Text",
-                "scan": ""}
+        post = {
+            "date": "3000-01-01",  # far future
+            "sender": "Some Sender",
+            "subject": "",
+            "text": "Some Text",
+            "scan": ""
+        }
 
         self.client.logout()
         response = self.client.post(reverse("foirequest-add_postal_reply",

@@ -15,7 +15,7 @@ def convert_to_pdf(post):
             continue
         prefix, data = data.split(',', 1)
         filename = os.path.join(path, 'page_%03d.png' % pagenr)
-        file(filename, 'w').write(base64.b64decode(data))
+        open(filename, 'w').write(base64.b64decode(data))
         pagenr += 1
     filename = os.path.join(path, 'page_*')
     output_file = os.path.join(path, 'final.pdf')

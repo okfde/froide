@@ -50,7 +50,7 @@ def _process_mail(mail_string, mail_type=None):
     if mail_type is None:
         email = parser.parse(BytesIO(mail_string))
     elif mail_type == 'postmark':
-        email = parser.parse_postmark(json.loads(mail_string))
+        email = parser.parse_postmark(json.loads(mail_string.decode('utf-8')))
     return _deliver_mail(email, mail_string=mail_string)
 
 

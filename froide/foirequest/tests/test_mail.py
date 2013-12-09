@@ -289,7 +289,7 @@ class PostMarkMailTest(TestCase):
             url = reverse('foirequest-postmark_inbound')
         response = self.client.post(
             url,
-            json.dumps(self.post_data),
+            json.dumps(self.post_data).encode('utf-8'),
             content_type='application/json')
         self.assertEqual(response.status_code, 200)
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
