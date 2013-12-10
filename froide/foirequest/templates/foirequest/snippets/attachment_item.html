@@ -12,11 +12,4 @@
     </h4>
   </a>
   ({{ attachment.size|filesizeformat }})
-  {% if attachment.can_preview %}
-    <span class="hidden-print">-
-      <a class="target-new" href="{{ attachment.get_preview_url }}">
-        {% trans "Preview in Browser" %}
-      </a>
-    </span>
-  {% endif %}
 </div>

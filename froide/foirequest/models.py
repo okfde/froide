@@ -1359,13 +1359,6 @@ class FoiAttachment(models.Model):
     def can_preview(self):
         return self.has_public_access() and self.filetype in self.PREVIEWABLE_FILETYPES
 
-    def get_preview_url(self):
-        if self.file:
-            return "https://docs.google.com/viewer?url=%s%s" % (
-                urlquote(self.file.url)
-            )
-        return None
-
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
 
