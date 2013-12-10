@@ -1,7 +1,7 @@
 import json
 import tempfile
 
-from django.utils.six import BytesIO, StringIO, text_type as str
+from django.utils.six import PY3, BytesIO, StringIO, text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
@@ -43,7 +43,11 @@ class PublicBodyTest(TestCase):
         csv = PublicBody.export_csv(PublicBody.objects.all())
         prev_count = PublicBody.objects.all().count()
         imp = CSVImporter()
-        imp.import_from_file(StringIO(csv))
+        if PY3:
+            csv_file = StringIO(csv)
+        else:
+            csv_file = BytesIO(csv.encode('utf-8'))
+        imp.import_from_file(csv_file)
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 

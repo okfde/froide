@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from datetime import datetime, timedelta
 import random
 import string
@@ -74,7 +75,7 @@ class PublicBodyTopicFactory(factory.DjangoModelFactory):
 class PublicBodyFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PublicBody
 
-    name = factory.Sequence(lambda n: 'Public Body {0}'.format(random_name()))
+    name = factory.Sequence(lambda n: u'Pübli€ Body {0}'.format(random_name()))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = ''
     topic = factory.SubFactory(PublicBodyTopicFactory)
