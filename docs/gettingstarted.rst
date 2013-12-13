@@ -12,8 +12,12 @@ Set up the development environment
 You should be using a Python virtual environment.
 Setup a virtual environment for development with `virtualenv`like so::
 
-    virtualenv --no-site-packages ~/pyenv
-    . ~/pyenv/bin/activate
+    # Install virtualenv
+    curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.10.1.tar.gz
+    tar -xvf virtualenv-1.10.1.tar.gz
+    python virtualenv-1.10.1/virtualenv.py pyenv
+    # Activate it
+    source pyenv/bin/activate
 
 Get the source code with Git from the GitHub repository::
 
@@ -41,8 +45,16 @@ You can quit the server (Ctrl+C) and create a superuser account::
     python manage.py createsuperuser
 
 
+.. _add-basic-database-objects:
+
 Add basic database objects
 --------------------------
+
+The following guide creates some database objects that are needed for running a Froide instance. You can also take shortcut and load example objects::
+
+    python manage.py loaddata publicbody.json
+
+However, if you want to set stuff up properly, continue reading.
 
 Run the web server again and login to the admin interface at `http://localhost:8000/admin/ <http://localhost:8000/admin/>`_ with the credentials of your superuser.
 

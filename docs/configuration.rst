@@ -178,10 +178,6 @@ setting::
 It's also recommended to protect the admin further via HTTP
 auth in your production reverse proxy (e.g. nginx).
 
-The app `djangosecure <https://github.com/carljm/django-secure/>`_ is part of Froide
-and it is highly recommended to
-deploy the site with SSL (`get a free SSL certificate from StartSSL <https://github.com/ioerror/duraconf/blob/master/startssl/README.markdown>`_).
-
 Some Django settings related to security and SSL::
 
     CSRF_COOKIE_SECURE = True

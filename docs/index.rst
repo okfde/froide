@@ -6,10 +6,10 @@
 Welcome to froide's documentation!
 ==================================
 
-Froide is a Freedom of Information portal written in Python using the Django Web framework. It manages public bodies, FoI requests and much more. Users can send emails to public bodies and receive answers via the platform.
+Froide is a Freedom of Information portal written in Python using the Django Web framework. It manages contactable entities, requests and much more. Users can send emails to these entities and receive public answers via the platform.
 
 It was developed to power `Frag den Staat <https://fragdenstaat.de>`_ – the German
-Freedom of Information Portal.
+Freedom of Information Portal, but is internationalized, localized and themable.
 
 
 .. toctree::
@@ -17,6 +17,7 @@ Freedom of Information Portal.
 
    about
    gettingstarted
+   herokudeployment
    importpublicbodies
    configuration
    theming

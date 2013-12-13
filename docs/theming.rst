@@ -4,29 +4,29 @@ Theming Froide
 
 If want to customize the look of your own Froide instance or add other pages to it, you can create a theme and install it in your Froide instance.
 
-See the `FragDenStaat.de Theme <https://github.com/okfde/fragdenstaat_de>`_ as an example.
+See the `FragDenStaat.de Theme <https://github.com/okfde/fragdenstaat_de>`_ as a real-life example or use the `Basic Froide Theme <https://github.com/okfn/froide-theme>`_ as a starting point.
 
 Basics
 ------
 
-A theme is normal Python Package and Django App. The app's templates, static files and urls will be found first be Froide and therefore override the normal files of Froide.
+A theme is normal Django project with a theme app. The app's templates, static files and urls will be found first by Froide and therefore override the normal files of Froide. A hook in the root url conf allows to override or extend the site with more URLs.
 
 URLs
 ----
 
-You can add custom URLs to your Froide instance by placing an `urls.py` file in the app.
+You can add custom URLs to your Froide instance by placing an `urls.py` file in the theme app.
 The url patterns will be hooked to the root of the Froide URLs and are the first to be considered for routing.
 An example might look like this::
 
   from django.conf.urls import patterns, url
   from django.http import HttpResponseRedirect
 
-  urlpatterns = patterns('fragdenstaat_de.views',
-      url(r'^nordrhein-westfalen/', lambda request: HttpResponseRedirect('/nrw/'),
-          name="jurisdiction-nrw-redirect")
+  urlpatterns = patterns('froide_theme.theme.views',
+      url(r'^long-custom-url/', lambda request: HttpResponseRedirect('/url/'),
+          name="longurl-redirect")
   )
 
-This is simply a custom redirect for a jurisdiction URL but you can also hook up your own views.
+This is simply a custom redirect for a URL but you can also hook up your own views.
 
 Static files
 ------------
@@ -34,6 +34,7 @@ Static files
 You can override the serving of existing static files by placing a `static` folder in your theme app.
 If you put a file like `img/logo.png` in the `static` folder of your theme, Froide will serve the theme logo
 instead of the standard Froide logo. You can also override and add CSS and JavaScript files like this.
+
 
 Templates
 ---------
