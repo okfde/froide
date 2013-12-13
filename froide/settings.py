@@ -138,6 +138,7 @@ class Base(Configuration):
     ######### Backends, Finders, Processors, Classes ####
 
     AUTH_USER_MODEL = values.Value('account.User')
+    CUSTOM_AUTH_USER_MODEL_DB = values.Value('')
 
     # List of finder classes that know how to find static files in
     # various locations.

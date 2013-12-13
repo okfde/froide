@@ -31,8 +31,9 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    class Meta:
-        db_table = 'auth_user'
+    if settings.CUSTOM_AUTH_USER_MODEL_DB:
+        class Meta:
+            db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
 
     def get_profile(self):
         return self
