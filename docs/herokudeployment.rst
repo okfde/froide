@@ -100,6 +100,26 @@ Enable mail attachment storage and faster static file serving
     heroku config:set DJANGO_CONFIGURATION=ThemeHerokuPostmarkS3
 
 
+Translations
+------------
+
+The froide distribution does not come with compiled translation files. Since Herokus does not support creating compilation files remotely, they must be put into Git and pushed.
+
+To create compiled translation files locally, run::
+
+    python manage.py compilemessages
+
+Notice the paths that were output. Copy all required languages from the froide ``locale`` folder into your own ``locale`` folder::
+
+    cp -r /some-path/locale/* locale/
+
+Then add them to Git:
+
+    git add locale/*
+    git commit -m"Add compiled translation files"
+    git push heroku master
+
+
 Worker Threads
 --------------
 
