@@ -31,7 +31,7 @@
 </head>
 
 <body{% block body_extra_attribuets %}{% endblock %}>
-  {% block dryrun_block %}
+  {% block top_block %}
   {% if froide.dryrun %}
   <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ froide.dryrun_domain }}</div>
   {% endif %}
@@ -201,6 +201,7 @@
     {% endblock %}
   </footer>
 
+{% block scripts %}
   <script>!window.jQuery && document.write(unescape('%3Cscript src="{% static "js/libs/jquery.js" %}"%3E%3C/script%3E'))</script>
   <script src="{% static "js/bootstrap.min.js" %}"></script>
   <script src="{% static "js/libs/mustache.js" %}"></script>
@@ -214,6 +215,7 @@
     <script src="{% static "js/libs/dd_belatedpng.js" %}"></script>
     <script> DD_belatedPNG.fix('img, .png_bg'); </script>
   <![endif]-->
+{% endblock %}
   {% block extra_footer %}
   {% endblock %}
   {% if not debug %}
