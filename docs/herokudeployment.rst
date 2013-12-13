@@ -97,6 +97,7 @@ Enable mail attachment storage and faster static file serving
     heroku config:set DJANGO_AWS_STORAGE_BUCKET_NAME=<YOUR BUCKET NAME>
     # Must end with a /
     heroku config:set DJANGO_STATIC_URL=http://your-bucket-name.s3.amazonaws.com/
+    heroku config:set DJANGO_CONFIGURATION=ThemeHerokuPostmarkS3
 
 
 Worker Threads
