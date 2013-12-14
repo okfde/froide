@@ -36,7 +36,10 @@ Install your Froide instance on Heroku
 
 6. Set some configuration, change the ``DJANGO_SECRET_KEY`` value to something secret and give the correct Heroku App URL in ``DJANGO_SITE_URL``::
 
-    heroku config:set DJANGO_SETTINGS_MODULE=froide_theme.settings DJANGO_CONFIGURATION=ThemeHerokuPostmark DJANGO_SECRET_KEY="Your RANDOM secret key" DJANGO_SITE_URL="http://<your-heroku-name>.herokuapp.com"
+    heroku config:set DJANGO_SETTINGS_MODULE=froide_theme.settings
+    heroku config:set DJANGO_CONFIGURATION=ThemeHerokuPostmark
+    heroku config:set DJANGO_SECRET_KEY="Your RANDOM secret key"
+    heroku config:set DJANGO_SITE_URL="http://<your-heroku-name>.herokuapp.com"
 
 7. Initialize the Heroku database by running::
 
@@ -46,7 +49,7 @@ Congratulations, you can already access your Froide instance at::
 
      http://<your-heroku-name>.herokuapp.com/
 
-You can continue you further here or read up on post-installation setup in :ref:`add-basic-database-objects`.
+You can continue reading further here or read up on post-installation setup in :ref:`add-basic-database-objects`.
 
 
 Set up Email Sending and receiving
@@ -68,11 +71,13 @@ You will need access to a domain and its DNS settings.
     # Inbound  Hook
     http://<your-heroku-name>.herokuapp.com/postmark/postmark_inbound/
 
+   You should change these URLs through the ``SECRET_URLS`` setting of Froide.
+
 4. Setup the MX records for your domain and make the API call like `described in this article <http://developer.postmarkapp.com/developer-inbound-mx.html>`_. The "Token" mentioned is your API key that you can find on the postmark page under Credentials.
 
-5. For setting up sender signatures you should allow some hours to pass so that MX records are recognized. In Postmark click on "Sender Signatures" and add a new signature for your domain. You should setup two signatures: one for regular notification mails (e.g. mail@inbound.example.com) and the other for sending out requests (request@inbound.example.com). You should also setup the DKIM and SPF records for you domain and verify them.
+5. For setting up sender signatures you should allow some hours to pass so that MX records are recognized. In Postmark click on "Sender Signatures" and add a new signature for your domain. You should setup two signatures: one for regular notification mails (e.g. mail@example.com, incoming mails going to a regular inbox of yours) and the other for sending out requests (request@inbound.example.com, incoming mails going to Postmark). You should also setup the DKIM and SPF records for your domain and verify them.
 
-   Since the confirmation mails for sending signatures should go to Postmark, check the "Inbound" tab of your "Activity" page of your Postmark account and use the confirmation link in the incoming email. This can take some time because of DNS propagation. You may have to resend the confirmation emails.
+   Since the confirmation mail for sending signatures of your request address will go to Postmark, check the "Inbound" tab of your "Activity" page of your Postmark account and use the confirmation link in the incoming email. This can take some time because of DNS propagation. You may have to resend the confirmation emails.
 
 6. Set the following config values in Heroku::
 
@@ -113,17 +118,25 @@ Notice the paths that were output. Copy all required languages from the froide `
 
     cp -r /some-path/locale/* locale/
 
-Then add them to Git:
+Then add them to Git::
 
     git add locale/*
     git commit -m"Add compiled translation files"
     git push heroku master
 
 
-Worker Threads
---------------
+Worker Processes
+----------------
 
-To keep the cost for initial setup minimal, there are no worker processes.
-However, you can setup a queueing add-on (or, though not recommended, use database as queue) and then put a worker processe in your Procfile to run ``celery worker`` and another for ``celery beat``.
+To keep the cost for initial setup minimal, there are no predefined worker processes.
+However, you can setup a queueing add-on (or, though not recommended, use database as queue) and then put a worker processe in your Procfile to run ``celery worker`` and another for worker process for scheduling (``celery beat``).
 
 For regular scheduling tasks like reminders, this is the way to go.
+
+
+Search Engine Options
+---------------------
+
+The default setup uses the database as the search engine. Any Solr or Haystack Heroku Add-On can be used to replace this by setting the correct ``HAYSTACK_CONNECTIONS`` setting.
+
+Froide also contains support for instant queued indexing through `https://github.com/jezdez/celery-haystack <celery-haystack>`_ that activates when the app is installed.
