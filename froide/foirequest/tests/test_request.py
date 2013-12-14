@@ -1181,6 +1181,7 @@ class RequestTest(TestCase):
     @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         pb = PublicBody.objects.all()[0]
+        factories.rebuild_index()
         response = self.client.get('%s?q=%s' % (
             reverse('foirequest-search'), pb.name[:6]))
         self.assertIn(pb.name, response.content.decode('utf-8'))

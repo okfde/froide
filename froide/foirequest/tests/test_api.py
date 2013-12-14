@@ -1,5 +1,10 @@
 from __future__ import with_statement
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 from django.test import TestCase
 
 from froide.foirequest.tests import factories
@@ -103,8 +108,10 @@ class ApiTest(TestCase):
         self.assertEqual('{"objects": []}', response.content.decode('utf-8'))
         self.assertEqual(response['Content-Type'], 'application/json')
         req = FoiRequest.objects.all()[0]
-        response = self.client.get('%s&q=%s' % (
-            simple_search_url, req.title))
+        factories.rebuild_index()
+        response = self.client.get('%s&%s' % (
+            simple_search_url, urlencode({'q': req.title})
+        ))
         self.assertEqual(response.status_code, 200)
         content = response.content.decode('utf-8')
         self.assertIn('title', content)
