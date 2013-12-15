@@ -139,4 +139,4 @@ Search Engine Options
 
 The default setup uses the database as the search engine. Any Solr or Haystack Heroku Add-On can be used to replace this by setting the correct ``HAYSTACK_CONNECTIONS`` setting.
 
-Froide also contains support for instant queued indexing through `https://github.com/jezdez/celery-haystack <celery-haystack>`_ that activates when the app is installed.
+Froide also contains support for instant queued indexing through `celery-haystack <https://github.com/jezdez/celery-haystack>`_ that activates when the app is installed.
