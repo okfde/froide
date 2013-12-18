@@ -22,7 +22,7 @@ class Dev(Base):
         installed = super(Dev, self).INSTALLED_APPS
         if self.FROIDE_THEME is not None:
             return installed.default + [self.FROIDE_THEME]
-        return installed
+        return installed.default
 
     ############## Site Configuration #########
 
