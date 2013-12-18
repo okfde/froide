@@ -120,10 +120,6 @@ class FoiLaw(models.Model):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     @property
-    def formatted_description(self):
-        return markdown(self.description)
-
-    @property
     def letter_start_form(self):
         return mark_safe(FormGenerator(self.letter_start).render_html())
 

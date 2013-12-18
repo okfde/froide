@@ -272,8 +272,8 @@ Froide.app.publicBodyChosen = (function(){
     var showFormForLaw = function(law){
         $('#letter_start').html(law.letter_start_form);
         $('#letter_end').html(law.letter_end_form);
-        if (law.description_markdown.length) {
-            $('#law-description-text').html(law.description_markdown);
+        if (law.description_html.length) {
+            $('#law-description-text').html(law.description_html);
             $('#law-description').show();
         } else {
             $('#law-description').hide();

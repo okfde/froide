@@ -68,7 +68,7 @@ class RequestForm(forms.Form):
             choices=((l.pk, mark_safe(
                 '%(name)s<span class="lawinfo">%(description)s</span>' %
                     {"name": escape(l.name),
-                    "description": l.formatted_description
+                    "description": l.description_html
                 })) for l in list_of_laws))
 
     def laws_to_json(self):
