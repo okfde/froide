@@ -25,6 +25,28 @@ def get_selenium():
         return FirefoxDriver()
 
 
+class JavaScriptException(Exception):
+    pass
+
+
+class CheckJSErrors(object):
+    def __init__(self, driver):
+        self.driver = driver
+
+    def __enter__(self):
+        self.driver.execute_script('''
+            window.onerror=function(msg){
+                $('body').attr('jserror', msg);
+            };
+        ''')
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        body = self.driver.find_elements_by_xpath('//body[@jserror]')
+        if body:
+            msg = body[0].get_attribute('jserror')
+            raise JavaScriptException(msg)
+
+
 class TestMakingRequest(LiveServerTestCase):
 
     @classmethod
@@ -61,39 +83,40 @@ class TestMakingRequest(LiveServerTestCase):
     def test_make_not_logged_in_request(self):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('foirequest-make_request')))
-        search_pbs = self.selenium.find_element_by_id('id_public_body')
-        search_pbs.send_keys(self.pb.name)
-        self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
-        self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
-        self.selenium.find_element_by_id('option-check_foi').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('continue-foicheck'))
-        self.selenium.find_element_by_id('continue-foicheck').click()
-        req_title = 'FoiRequest Number'
-        self.selenium.find_element_by_id('id_subject').send_keys(req_title)
-        self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('review-button').is_displayed()
-        )
-        self.selenium.find_element_by_id('id_first_name')\
-            .send_keys('Peter')
-        self.selenium.find_element_by_id('id_last_name')\
-            .send_keys('Parker')
-        user_email = 'peter.parker@example.com'
-        self.selenium.find_element_by_id('id_user_email')\
-            .send_keys(user_email)
-        self.selenium.find_element_by_id('id_terms').click()
-        self.selenium.find_element_by_id('review-button').click()
-        self.selenium.find_element_by_id('step-review')
-        WebDriverWait(self.selenium, 10).until(
-            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+        with CheckJSErrors(self.selenium):
+            search_pbs = self.selenium.find_element_by_id('id_public_body')
+            search_pbs.send_keys(self.pb.name)
+            self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
+            self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
+            self.selenium.find_element_by_id('option-check_foi').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('continue-foicheck'))
+            self.selenium.find_element_by_id('continue-foicheck').click()
+            req_title = 'FoiRequest Number'
+            self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('review-button').is_displayed()
+            )
+            self.selenium.find_element_by_id('id_first_name')\
+                .send_keys('Peter')
+            self.selenium.find_element_by_id('id_last_name')\
+                .send_keys('Parker')
+            user_email = 'peter.parker@example.com'
+            self.selenium.find_element_by_id('id_user_email')\
+                .send_keys(user_email)
+            self.selenium.find_element_by_id('id_terms').click()
+            self.selenium.find_element_by_id('review-button').click()
+            self.selenium.find_element_by_id('step-review')
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -109,34 +132,37 @@ class TestMakingRequest(LiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('foirequest-make_request',
                 kwargs={'public_body': self.pb.slug})))
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
-        self.selenium.find_element_by_id('option-check_foi').click()
-        self.selenium.find_element_by_id('continue-foicheck').click()
-        req_title = 'FoiRequest Number'
-        self.selenium.find_element_by_id('id_subject').send_keys(req_title)
-        self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('review-button').is_displayed()
-        )
-        user_first_name = 'Peter'
-        user_last_name = 'Parker'
-        self.selenium.find_element_by_id('id_first_name')\
-            .send_keys(user_first_name)
-        self.selenium.find_element_by_id('id_last_name')\
-            .send_keys(user_last_name)
-        user_email = 'peter.parker@example.com'
-        self.selenium.find_element_by_id('id_user_email')\
-            .send_keys(user_email)
-        self.selenium.find_element_by_id('id_terms').click()
-        self.selenium.find_element_by_id('id_public').click()
-        self.selenium.find_element_by_id('id_private').click()
-        self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 10).until(
-            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+
+        with CheckJSErrors(self.selenium):
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
+            self.selenium.find_element_by_id('option-check_foi').click()
+            self.selenium.find_element_by_id('continue-foicheck').click()
+            req_title = 'FoiRequest Number'
+            self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('review-button').is_displayed()
+            )
+            user_first_name = 'Peter'
+            user_last_name = 'Parker'
+            self.selenium.find_element_by_id('id_first_name')\
+                .send_keys(user_first_name)
+            self.selenium.find_element_by_id('id_last_name')\
+                .send_keys(user_last_name)
+            user_email = 'peter.parker@example.com'
+            self.selenium.find_element_by_id('id_user_email')\
+                .send_keys(user_email)
+            self.selenium.find_element_by_id('id_terms').click()
+            self.selenium.find_element_by_id('id_public').click()
+            self.selenium.find_element_by_id('id_private').click()
+            self.selenium.find_element_by_id('review-button').click()
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -154,31 +180,33 @@ class TestMakingRequest(LiveServerTestCase):
         self.do_login()
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('foirequest-make_request')))
-        search_pbs = self.selenium.find_element_by_id('id_public_body')
-        search_pbs.send_keys(self.pb.name)
-        self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
-        self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
-        self.selenium.find_element_by_id('option-check_foi').click()
-        self.selenium.find_element_by_id('continue-foicheck').click()
-        req_title = 'FoiRequest Number'
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('id_body').is_displayed()
-        )
-        self.selenium.find_element_by_id('id_subject').send_keys(req_title)
-        self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_id('review-button').is_displayed()
-        )
-        self.selenium.find_element_by_id('review-button').click()
-        WebDriverWait(self.selenium, 10).until(
-            lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-        self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+        with CheckJSErrors(self.selenium):
+            search_pbs = self.selenium.find_element_by_id('id_public_body')
+            search_pbs.send_keys(self.pb.name)
+            self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
+            self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
+            self.selenium.find_element_by_id('option-check_foi').click()
+            self.selenium.find_element_by_id('continue-foicheck').click()
+            req_title = 'FoiRequest Number'
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('id_body').is_displayed()
+            )
+            self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('review-button').is_displayed()
+            )
+            self.selenium.find_element_by_id('review-button').click()
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+
         WebDriverWait(self.selenium, 10).until(
             lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
         self.selenium.find_element_by_id('send-request-button').click()
