@@ -125,8 +125,6 @@ Froide.app.performPublicBodySearch = (function(){
 Froide.app.performReview = (function(){
     var regex_email = /[^\s]+@[^\.\s]+\.\w+/;
 
-    var fullText = $('#id_full_text').prop('checked');
-
     var resolve_forms = function(html){
         html = $(html);
         html.find('label input').each(function(i, el){
@@ -148,27 +146,25 @@ Froide.app.performReview = (function(){
         return undefined;
     };
 
-    var no_greetings = function(str){
-        var result, i;
-        for (i = 0; i< Froide.regex.greetings.length; i += 1){
-            result = Froide.regex.greetings[i].exec(str);
-            if (result !== null){
-                return Mustache.to_html(Froide.template.foundGreeting, {find: result[0]});
+    var checkRegexWithError = function(regexList, errorTemplate){
+        return function(str){
+            var result, i;
+            for (i = 0; i< regexList.length; i += 1){
+                result = regexList[i].exec(str);
+                if (result !== null){
+                    return Mustache.to_html(errorTemplate, {find: result[0]});
+                }
             }
-        }
-        return undefined;
+            return undefined;
+        };
+    }
+    var no_greetings = function(str){
+        return checkRegexWithError(Froide.regex.greetings, Froide.template.foundGreeting)(str);
+    };
+    var no_closings = function(str){
+        return checkRegexWithError(Froide.regex.closings, Froide.template.foundClosing)(str);
     };
 
-    var no_closings = function(str){
-        var result, i;
-        for (i = 0; i< Froide.regex.closings.length; i += 1){
-            result = Froide.regex.closings[i].exec(str);
-            if (result !== null){
-                return Mustache.to_html(Froide.template.foundClosing, {find: result[0]});
-            }
-        }
-        return undefined;
-    };
 
     var non_empty = function(str){
         if (str.replace(/\s/g, "").length === 0){
@@ -187,10 +183,6 @@ Froide.app.performReview = (function(){
             return Froide.template.emptySubject;
         }
         return undefined;
-    };
-    var formChecks = {
-        "id_subject": [non_empty_subject],
-        "id_body": [non_empty_body, no_email, no_greetings, no_closings]
     };
 
     var getFullName = function(){
@@ -229,6 +221,16 @@ Froide.app.performReview = (function(){
         var text, result, inputId, i, warnings = [],
             reviewWarnings = $("#review-warnings"),
             subject, from, to;
+        var fullText = $('#id_full_text').prop('checked');
+
+        var formChecks = {
+            "id_subject": [non_empty_subject],
+            "id_body": [non_empty_body, no_email]
+        }
+        if (!fullText) {
+            formChecks['id_body'].push(no_greetings);
+            formChecks['id_body'].push(no_closings);
+        }
         reviewWarnings.html("");
 
         for (inputId in formChecks){
