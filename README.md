@@ -4,7 +4,7 @@ Froide
 [![Build Status](https://travis-ci.org/stefanw/froide.png?branch=master)](https://travis-ci.org/stefanw/froide)
 
 
-Froide is a Freedom Of Information Portal written in Python using Django 1.5.
+Froide is a Freedom Of Information Portal written in Python using Django 1.6.
 
 It is used by the German and the Austrian FOI site, but it is fully
 internationalized and written in English.
@@ -14,7 +14,7 @@ Docs
 
 [Read the documentation](http://readthedocs.org/docs/froide/en/latest/) including a [Getting Started Guide](http://readthedocs.org/docs/froide/en/latest/gettingstarted/).
 
-Froide is supported by the [Open Knowledge Foundation](http://okfn.org/).
+Froide is supported by the [Open Knowledge Foundation Germany](http://www.okfn.de/) and [Open Knowledge Foundation International](http://okfn.org/).
 
 
 License
