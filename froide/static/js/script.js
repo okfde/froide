@@ -33,7 +33,9 @@ Froide.app.searchSimilarRequests = function(){
     var subject = $("#id_subject").val();
     if (subject.length > 0) {
         q.push(subject);
-        $('#check-list').append(
+        var checkList = $('#check-list');
+        checkList.find('.search-internet').remove();
+        checkList.append(
             Mustache.to_html(
                 Froide.template.searchInternet,
                 {
@@ -266,6 +268,7 @@ Froide.app.performReview = (function(){
 
 Froide.app.publicBodyChosen = (function(){
     var doneChoice;
+    var checkList = $("#check-list");
     var showFormForLaw = function(law){
         $('#letter_start').html(law.letter_start_form);
         $('#letter_end').html(law.letter_end_form);
@@ -280,10 +283,11 @@ Froide.app.publicBodyChosen = (function(){
         if(publicBodyPrefilled){
             return;
         }
-        var list = $("#check-list").html("");
+        checkList.html("");
         var query = $(".search-public_bodies").val();
         if (query) {
-            list.append(Mustache.to_html(Froide.template.searchInternet,
+            checkList.find('.search-internet').remove();
+            checkList.append(Mustache.to_html(Froide.template.searchInternet,
                     {url: Mustache.to_html(Froide.template.searchEngineUrl,
                         {query: query, domain: ""}),
                     query: query
@@ -310,14 +314,16 @@ Froide.app.publicBodyChosen = (function(){
                         }
                         if (result.url){
                             result.domain = result.url.split('/')[2];
-                            list.append('<li><a href="'+result.url+'">' +
+                            checkList.find('.visit-public-body-website').remove();
+                            checkList.append('<li class="visit-public-body-website"><a href="'+result.url+'">' +
                                 Mustache.to_html(Froide.template.visitPublicBodyWebsite) +
                             '</a></li>');
                             $("#publicbody-link").attr("href", result.url);
                             $("#publicbody-link").html(Mustache.to_html(Froide.template.visitPublicBodyWebsite));
                         }
                         if (result.domain){
-                            list.append(Mustache.to_html(
+                            checkList.find('.search-public-body-website').remove();
+                            checkList.append(Mustache.to_html(
                                 Froide.template.searchPublicBodyWebsite,
                                 {url: Mustache.to_html(
                                     Froide.template.searchEngineUrl,
