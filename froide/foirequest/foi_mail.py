@@ -21,12 +21,15 @@ No corresponding request could be identified, please investigate!
 
 def send_foi_mail(subject, message, from_email, recipient_list,
                   attachments=None, fail_silently=False, **kwargs):
-    connection = get_connection(username=settings.FOI_EMAIL_HOST_USER,
-            password=settings.FOI_EMAIL_HOST_PASSWORD,
-            host=settings.FOI_EMAIL_HOST,
-            port=settings.FOI_EMAIL_PORT,
-            use_tls=settings.FOI_EMAIL_USE_TLS,
-            fail_silently=fail_silently)
+    connection = get_connection(
+        backend=getattr(settings, 'FOI_EMAIL_BACKEND', settings.EMAIL_BACKEND),
+        username=settings.FOI_EMAIL_HOST_USER,
+        password=settings.FOI_EMAIL_HOST_PASSWORD,
+        host=settings.FOI_EMAIL_HOST,
+        port=settings.FOI_EMAIL_PORT,
+        use_tls=settings.FOI_EMAIL_USE_TLS,
+        fail_silently=fail_silently
+    )
     headers = {}
     if "message_id" in kwargs:
         headers['Message-ID'] = kwargs.pop("message_id")
