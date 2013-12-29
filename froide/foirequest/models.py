@@ -548,6 +548,8 @@ class FoiRequest(models.Model):
         domain = email.split('@', 1)[1]
         for m in messages:
             if m.is_response:
+                if not m.sender_public_body:
+                    continue
                 if m.sender_email == email:
                     return m.sender_public_body
                 if ('@' in m.sender_email and
@@ -555,6 +557,8 @@ class FoiRequest(models.Model):
                     return m.sender_public_body
         for m in messages:
             if not m.is_response:
+                if not m.recipient_public_body:
+                    continue
                 if m.recipient_email == email:
                     return m.recipient_public_body
                 if ('@' in m.recipient_email and
@@ -1181,7 +1185,9 @@ class FoiMessage(models.Model):
                 False) and self.sender_name:
             return self.sender_name
         else:
-            return self.sender_public_body.name
+            if self.sender_public_body:
+                return self.sender_public_body.name
+            return self.sender_public_body
 
     @property
     def user_real_sender(self):
@@ -1193,18 +1199,21 @@ class FoiMessage(models.Model):
         if self.sender_name:
             return self.sender_name
         else:
-            return self.sender_public_body.name
+            if self.sender_public_body:
+                return self.sender_public_body.name
+            return self.sender_public_body
 
     @property
     def real_sender(self):
         if self.sender_user:
             return self.sender_user.get_profile().get_full_name()
         name = self.sender_name
-        if not name:
+        if not name and self.sender_public_body:
             name = self.sender_public_body.name
         if self.sender_email:
             name += u' <%s>' % self.sender_email
-        name += u' (%s)' % self.sender_public_body.name
+        if self.sender_public_body:
+            name += u' (%s)' % self.sender_public_body.name
         return name
 
     @property
