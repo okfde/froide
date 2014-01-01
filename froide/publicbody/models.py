@@ -7,13 +7,15 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+
+from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
@@ -213,6 +215,14 @@ class PublicBodyTopic(models.Model):
         return self.name
 
 
+class TaggedPublicBody(TaggedItemBase):
+    content_object = models.ForeignKey('PublicBody')
+
+    class Meta:
+        verbose_name = _('Public Body Tag')
+        verbose_name_plural = _('Public Body Tags')
+
+
 @python_2_unicode_compatible
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
@@ -259,6 +269,7 @@ class PublicBody(models.Model):
 
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
+    tags = TaggableManager(through=TaggedPublicBody, blank=True)
 
     non_filtered_objects = models.Manager()
     objects = PublicBodyManager()
