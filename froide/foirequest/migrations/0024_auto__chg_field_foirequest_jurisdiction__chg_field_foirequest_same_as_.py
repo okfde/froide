@@ -4,6 +4,9 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+APP_MODEL, APP_MODEL_NAME = 'account.User', 'account.user'
+
 
 class Migration(SchemaMigration):
 
@@ -22,7 +25,7 @@ class Migration(SchemaMigration):
         db.alter_column('foirequest_foirequest', 'public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBody'], null=True, on_delete=models.SET_NULL))
 
         # Changing field 'FoiRequest.user'
-        db.alter_column('foirequest_foirequest', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, on_delete=models.SET_NULL))
+        db.alter_column('foirequest_foirequest', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True, on_delete=models.SET_NULL))
 
         # Changing field 'FoiRequest.law'
         db.alter_column('foirequest_foirequest', 'law_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.FoiLaw'], null=True, on_delete=models.SET_NULL))
@@ -31,7 +34,7 @@ class Migration(SchemaMigration):
         db.alter_column('foirequest_foievent', 'public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBody'], null=True, on_delete=models.SET_NULL))
 
         # Changing field 'FoiEvent.user'
-        db.alter_column('foirequest_foievent', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, on_delete=models.SET_NULL))
+        db.alter_column('foirequest_foievent', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True, on_delete=models.SET_NULL))
 
         # Changing field 'FoiAttachment.redacted'
         db.alter_column('foirequest_foiattachment', 'redacted_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['foirequest.FoiAttachment'], null=True, on_delete=models.SET_NULL))
@@ -45,13 +48,13 @@ class Migration(SchemaMigration):
         db.alter_column('foirequest_foimessage', 'sender_public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, on_delete=models.SET_NULL, to=orm['publicbody.PublicBody']))
 
         # Changing field 'FoiMessage.sender_user'
-        db.alter_column('foirequest_foimessage', 'sender_user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, on_delete=models.SET_NULL))
+        db.alter_column('foirequest_foimessage', 'sender_user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True, on_delete=models.SET_NULL))
 
         # Changing field 'FoiMessage.recipient_public_body'
         db.alter_column('foirequest_foimessage', 'recipient_public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, on_delete=models.SET_NULL, to=orm['publicbody.PublicBody']))
 
         # Changing field 'PublicBodySuggestion.user'
-        db.alter_column('foirequest_publicbodysuggestion', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, on_delete=models.SET_NULL))
+        db.alter_column('foirequest_publicbodysuggestion', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True, on_delete=models.SET_NULL))
 
     def backwards(self, orm):
 
@@ -68,7 +71,7 @@ class Migration(SchemaMigration):
         db.alter_column('foirequest_foirequest', 'public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBody'], null=True))
 
         # Changing field 'FoiRequest.user'
-        db.alter_column('foirequest_foirequest', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
+        db.alter_column('foirequest_foirequest', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True))
 
         # Changing field 'FoiRequest.law'
         db.alter_column('foirequest_foirequest', 'law_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.FoiLaw'], null=True))
@@ -77,7 +80,7 @@ class Migration(SchemaMigration):
         db.alter_column('foirequest_foievent', 'public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['publicbody.PublicBody'], null=True))
 
         # Changing field 'FoiEvent.user'
-        db.alter_column('foirequest_foievent', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
+        db.alter_column('foirequest_foievent', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True))
 
         # Changing field 'FoiAttachment.redacted'
         db.alter_column('foirequest_foiattachment', 'redacted_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['foirequest.FoiAttachment'], null=True))
@@ -89,13 +92,13 @@ class Migration(SchemaMigration):
         db.alter_column('foirequest_foimessage', 'sender_public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['publicbody.PublicBody']))
 
         # Changing field 'FoiMessage.sender_user'
-        db.alter_column('foirequest_foimessage', 'sender_user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
+        db.alter_column('foirequest_foimessage', 'sender_user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True))
 
         # Changing field 'FoiMessage.recipient_public_body'
         db.alter_column('foirequest_foimessage', 'recipient_public_body_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['publicbody.PublicBody']))
 
         # Changing field 'PublicBodySuggestion.user'
-        db.alter_column('foirequest_publicbodysuggestion', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True))
+        db.alter_column('foirequest_publicbodysuggestion', 'user_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[APP_MODEL], null=True))
 
     models = {
         'auth.group': {
@@ -111,8 +114,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
+        APP_MODEL_NAME: {
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
@@ -157,7 +160,7 @@ class Migration(SchemaMigration):
             'public_body': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['publicbody.PublicBody']", 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
             'request': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['foirequest.FoiRequest']"}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'})
         },
         'foirequest.foimessage': {
             'Meta': {'ordering': "('timestamp',)", 'object_name': 'FoiMessage'},
@@ -178,7 +181,7 @@ class Migration(SchemaMigration):
             'sender_email': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'sender_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'sender_public_body': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'send_messages'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['publicbody.PublicBody']"}),
-            'sender_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
+            'sender_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'on_delete': 'models.SET_NULL', 'blank': 'True'}),
             'sent': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'subject': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -209,7 +212,7 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'on_delete': 'models.SET_NULL'}),
             'visibility': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'})
         },
         'foirequest.publicbodysuggestion': {
@@ -219,7 +222,7 @@ class Migration(SchemaMigration):
             'reason': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'request': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['foirequest.FoiRequest']"}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'on_delete': 'models.SET_NULL'})
         },
         'foirequest.taggedfoirequest': {
             'Meta': {'object_name': 'TaggedFoiRequest'},
@@ -262,8 +265,8 @@ class Migration(SchemaMigration):
         },
         'publicbody.publicbody': {
             'Meta': {'ordering': "('name',)", 'object_name': 'PublicBody'},
-            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'public_body_creators'", 'on_delete': 'models.SET_NULL', 'default': '1', 'to': "orm['auth.User']", 'blank': 'True', 'null': 'True'}),
-            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'public_body_updaters'", 'on_delete': 'models.SET_NULL', 'default': '1', 'to': "orm['auth.User']", 'blank': 'True', 'null': 'True'}),
+            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'public_body_creators'", 'on_delete': 'models.SET_NULL', 'default': '1', 'to': "orm['%s']" % APP_MODEL, 'blank': 'True', 'null': 'True'}),
+            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'public_body_updaters'", 'on_delete': 'models.SET_NULL', 'default': '1', 'to': "orm['%s']" % APP_MODEL, 'blank': 'True', 'null': 'True'}),
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'classification': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'classification_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255'}),

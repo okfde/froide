@@ -4,6 +4,8 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+
 
 class Migration(SchemaMigration):
 
@@ -27,7 +29,7 @@ class Migration(SchemaMigration):
 
     models = {
         u'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'auth_user'"},
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
