@@ -4,6 +4,9 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+
+
 class Migration(DataMigration):
 
     def forwards(self, orm):
@@ -37,7 +40,7 @@ class Migration(DataMigration):
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['account.User']", 'unique': 'True'})
         },
         u'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'auth_user'"},
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),

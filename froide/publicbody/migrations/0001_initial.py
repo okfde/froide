@@ -4,7 +4,17 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+APP_MODEL, APP_MODEL_NAME = 'account.User', 'account.user'
+
+
 class Migration(SchemaMigration):
+    depends_on = (
+        # be aggressive in asserting the dep
+        # (dep is probably weaker than this i.e. lower number from publicbody
+        # and higher from foirequest ...)
+        ('account', '0008_auto__del_profile.py'),
+    )
 
     def forwards(self, orm):
         
@@ -43,8 +53,8 @@ class Migration(SchemaMigration):
             ('contact', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('address', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('website_dump', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('_created_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='public_body_creators', null=True, to=orm['auth.User'])),
-            ('_updated_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='public_body_updaters', null=True, to=orm['auth.User'])),
+            ('_created_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='public_body_creators', null=True, to=orm[APP_MODEL])),
+            ('_updated_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='public_body_updaters', null=True, to=orm[APP_MODEL])),
             ('confirmed', self.gf('django.db.models.fields.BooleanField')(default=True)),
             ('number_of_requests', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('site', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['sites.Site'], null=True)),
@@ -87,8 +97,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
+        APP_MODEL_NAME: {
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
@@ -127,8 +137,8 @@ class Migration(SchemaMigration):
         },
         'publicbody.publicbody': {
             'Meta': {'object_name': 'PublicBody'},
-            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'to': "orm['auth.User']"}),
-            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'to': "orm['auth.User']"}),
+            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'to': "orm['%s']" % APP_MODEL}),
+            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'to': "orm['%s']" % APP_MODEL}),
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'classification': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'classification_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),

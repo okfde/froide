@@ -4,43 +4,44 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding field 'User.organization'
-        db.add_column('auth_user', 'organization',
+        db.add_column(USER_DB_NAME, 'organization',
                       self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True),
                       keep_default=False)
 
         # Adding field 'User.organization_url'
-        db.add_column('auth_user', 'organization_url',
+        db.add_column(USER_DB_NAME, 'organization_url',
                       self.gf('django.db.models.fields.URLField')(default='', max_length=255, blank=True),
                       keep_default=False)
 
         # Adding field 'User.private'
-        db.add_column('auth_user', 'private',
+        db.add_column(USER_DB_NAME, 'private',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
         # Adding field 'User.address'
-        db.add_column('auth_user', 'address',
+        db.add_column(USER_DB_NAME, 'address',
                       self.gf('django.db.models.fields.TextField')(default='', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'User.organization'
-        db.delete_column('auth_user', 'organization')
+        db.delete_column(USER_DB_NAME, 'organization')
 
         # Deleting field 'User.organization_url'
-        db.delete_column('auth_user', 'organization_url')
+        db.delete_column(USER_DB_NAME, 'organization_url')
 
         # Deleting field 'User.private'
-        db.delete_column('auth_user', 'private')
+        db.delete_column(USER_DB_NAME, 'private')
 
         # Deleting field 'User.address'
-        db.delete_column('auth_user', 'address')
+        db.delete_column(USER_DB_NAME, 'address')
 
 
     models = {
@@ -54,7 +55,7 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['account.User']", 'unique': 'True'})
         },
         u'account.user': {
-            'Meta': {'object_name': 'User', 'db_table': "'auth_user'"},
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),

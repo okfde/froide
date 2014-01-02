@@ -4,6 +4,9 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+APP_MODEL, APP_MODEL_NAME = 'account.User', 'account.user'
+
 
 class Migration(SchemaMigration):
 
@@ -31,8 +34,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
+        APP_MODEL_NAME: {
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
@@ -79,7 +82,7 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'on_delete': 'models.SET_NULL'}),
             'visibility': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'})
         },
         'frontpage.featuredrequest': {
@@ -91,7 +94,7 @@ class Migration(SchemaMigration):
             'timestamp': ('django.db.models.fields.DateTimeField', [], {}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'on_delete': 'models.SET_NULL'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'on_delete': 'models.SET_NULL'})
         },
         'publicbody.foilaw': {
             'Meta': {'object_name': 'FoiLaw'},
@@ -128,8 +131,8 @@ class Migration(SchemaMigration):
         },
         'publicbody.publicbody': {
             'Meta': {'ordering': "('name',)", 'object_name': 'PublicBody'},
-            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['auth.User']"}),
-            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['auth.User']"}),
+            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['%s']" % APP_MODEL}),
+            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['%s']" % APP_MODEL}),
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'classification': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'classification_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255'}),
