@@ -24,7 +24,7 @@ urlpatterns += patterns("froide.publicbody.views",
 
     url(r"^$", 'index', name="publicbody-list"),
     # Translators: part in Public Body URL
-    url(r"^%s/(?P<tag>[-\w]+)/$" % pgettext('URL part', 'topic'),
+    url(r"^%s/(?P<topic>[-\w]+)/$" % pgettext('URL part', 'topic'),
             'index', name="publicbody-list"),
     url(r"^(?P<jurisdiction>[-\w]+)/$",
             'index', name="publicbody-list"),

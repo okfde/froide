@@ -17,16 +17,16 @@ from .models import (PublicBody,
 from .csv_import import CSVImporter
 
 
-def index(request, jurisdiction=None, tag=None):
+def index(request, jurisdiction=None, topic=None):
     publicbodies = PublicBody.objects.get_list()
 
     if jurisdiction is not None:
         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
         publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
 
-    if tag is not None:
-        tag = get_object_or_404(PublicBodyTag, slug=tag)
-        publicbodies = publicbodies.filter(tags=tag)
+    if topic is not None:
+        topic = get_object_or_404(PublicBodyTag, slug=topic)
+        publicbodies = publicbodies.filter(tags=topic)
 
     page = request.GET.get('page')
     paginator = Paginator(publicbodies, 50)
@@ -41,7 +41,7 @@ def index(request, jurisdiction=None, tag=None):
         'object_list': publicbodies,
         'jurisdictions': Jurisdiction.objects.get_visible(),
         'jurisdiction': jurisdiction,
-        'topic': tag,
+        'topic': topic,
         'topics': PublicBodyTag.objects.filter(is_topic=True)
     })
 
