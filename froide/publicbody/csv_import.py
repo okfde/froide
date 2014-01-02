@@ -6,14 +6,15 @@ from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.utils.six import StringIO, BytesIO, PY3
 
+from taggit.utils import parse_tags
+
 if PY3:
     import csv
 else:
     import unicodecsv as csv
 
 
-from froide.publicbody.models import (PublicBody, PublicBodyTopic,
-    Jurisdiction, FoiLaw)
+from froide.publicbody.models import (PublicBody, PublicBodyTag, Jurisdiction, FoiLaw)
 
 User = get_user_model()
 
@@ -57,7 +58,10 @@ class CSVImporter(object):
         row['classification_slug'] = slugify(row['classification'])
 
         # resolve foreign keys
-        row['topic'] = self.get_topic(row.pop('topic__slug'))
+        tags = parse_tags(row.pop('tags', ''))
+        topic_slug = row.pop('topic__slug', None)
+        if topic_slug is not None:
+            tags.add(self.get_topic(topic_slug))
         row['jurisdiction'] = self.get_jurisdiction(row.pop('jurisdiction__slug'))
         parent = row.pop('parent__name', None)
         if parent:
@@ -78,6 +82,7 @@ class CSVImporter(object):
             PublicBody.objects.filter(id=pb.id).update(**row)
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
+            pb.tags.set(*list(tags))
             return
         except PublicBody.DoesNotExist:
             pass
@@ -89,6 +94,7 @@ class CSVImporter(object):
         public_body.site = self.site
         public_body.save()
         public_body.laws.add(*row['jurisdiction'].laws)
+        public_body.tags.set(*list(tags))
 
     def get_jurisdiction(self, slug):
         if slug not in self.jur_cache:
@@ -99,10 +105,6 @@ class CSVImporter(object):
         return self.jur_cache[slug]
 
     def get_topic(self, slug):
-        if not slug:
-            if self.default_topic is None:
-                self.default_topic = PublicBodyTopic.objects.all().order_by('-rank', 'id')[0]
-            return self.default_topic
         if slug not in self.topic_cache:
-            self.topic_cache[slug] = PublicBodyTopic.objects.get(slug=slug)
+            self.topic_cache[slug] = PublicBodyTag.objects.get(slug=slug, is_topic=True)
         return self.topic_cache[slug]

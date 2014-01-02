@@ -13,7 +13,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.conf import settings
 
-from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBodyTopic, PublicBody
+from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBody, PublicBodyTag
 from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
     PublicBodySuggestion, DeferredMessage)
 
@@ -63,13 +63,11 @@ class JurisdictionFactory(factory.DjangoModelFactory):
     rank = factory.Sequence(lambda n: n)
 
 
-class PublicBodyTopicFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = PublicBodyTopic
+class PublicBodyTagFactory(factory.DjangoModelFactory):
+    FACTORY_FOR = PublicBodyTag
 
-    name = factory.Sequence(lambda n: 'Public Body Topic {0}'.format(n))
+    name = factory.Sequence(lambda n: 'Public Body Tag {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
-    description = ''
-    count = 5
 
 
 class PublicBodyFactory(factory.DjangoModelFactory):
@@ -78,7 +76,6 @@ class PublicBodyFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: u'Pübli€ Body {0}'.format(random_name()))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
     description = ''
-    topic = factory.SubFactory(PublicBodyTopicFactory)
     url = 'http://example.com'
     parent = None
     root = None
@@ -270,16 +267,16 @@ def make_world():
         meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
 
-    topic_1 = PublicBodyTopicFactory.create()
-    topic_2 = PublicBodyTopicFactory.create()
+    topic_1 = PublicBodyTagFactory.create(is_topic=True)
+    topic_2 = PublicBodyTagFactory.create(is_topic=True)
 
     for _ in range(5):
-        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site,
-                                             topic=topic_1)
+        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
+        pb_bund_1.tags.add(topic_1)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)
     for _ in range(5):
-        pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site,
-                                            topic=topic_2)
+        pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site)
+        pb_nrw_1.tags.add(topic_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)

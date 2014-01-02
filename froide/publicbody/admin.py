@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
-from froide.publicbody.models import (PublicBody, FoiLaw, PublicBodyTopic,
-        Jurisdiction)
+from froide.publicbody.models import (PublicBody,
+    PublicBodyTag, TaggedPublicBody, FoiLaw, Jurisdiction)
 
 
 class PublicBodyAdmin(admin.ModelAdmin):
@@ -11,8 +11,8 @@ class PublicBodyAdmin(admin.ModelAdmin):
         "slug": ("name",),
         'classification_slug': ('classification',)
     }
-    list_display = ('name', 'email', 'url', 'classification', 'topic', 'jurisdiction',)
-    list_filter = ('topic', 'jurisdiction', 'classification')
+    list_display = ('name', 'email', 'url', 'classification', 'jurisdiction',)
+    list_filter = ('tags', 'jurisdiction', 'classification')
     list_max_show_all = 5000
     search_fields = ['name', "description", 'classification']
     exclude = ('confirmed',)
@@ -46,12 +46,20 @@ class JurisdictionAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
-class PublicBodyTopicAdmin(admin.ModelAdmin):
-    prepopulated_fields = {
-        "slug": ("name",)
-    }
+class PublicBodyTagAdmin(admin.ModelAdmin):
+    list_display = ["name", "slug", "is_topic", "rank"]
+    list_filter = ['is_topic', 'rank']
+    ordering = ["rank", "name"]
+    search_fields = ["name"]
+    prepopulated_fields = {"slug": ["name"]}
+
+
+class TaggedPublicBodyAdmin(admin.ModelAdmin):
+    raw_id_fields = ('content_object', 'tag')
+
 
 admin.site.register(PublicBody, PublicBodyAdmin)
 admin.site.register(FoiLaw, FoiLawAdmin)
 admin.site.register(Jurisdiction, JurisdictionAdmin)
-admin.site.register(PublicBodyTopic, PublicBodyTopicAdmin)
+admin.site.register(PublicBodyTag, PublicBodyTagAdmin)
+admin.site.register(TaggedPublicBody, TaggedPublicBodyAdmin)

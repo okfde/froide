@@ -22,7 +22,7 @@ from taggit.models import Tag
 from froide.account.forms import NewUserForm
 from froide.account.models import AccountManager
 from froide.publicbody.forms import PublicBodyForm
-from froide.publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
+from froide.publicbody.models import PublicBody, PublicBodyTag, FoiLaw, Jurisdiction
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
@@ -102,7 +102,7 @@ def list_requests(request, status=None, topic=None, tag=None,
     manager = FoiRequest.published
     if not_foi:
         manager = FoiRequest.published_not_foi
-    topic_list = PublicBodyTopic.objects.get_list()
+    topic_list = PublicBodyTag.objects.filter(is_topic=True)
     status_url = status
     foi_requests = manager.for_list_view()
     if status is not None:
@@ -116,8 +116,8 @@ def list_requests(request, status=None, topic=None, tag=None,
             'status_description': FoiRequest.get_status_description(status)
         })
     elif topic is not None:
-        topic = get_object_or_404(PublicBodyTopic, slug=topic)
-        foi_requests = manager.for_list_view().filter(public_body__topic=topic)
+        topic = get_object_or_404(PublicBodyTag, slug=topic)
+        foi_requests = manager.for_list_view().filter(public_body__tags=topic)
         context.update({
             'topic': topic,
         })

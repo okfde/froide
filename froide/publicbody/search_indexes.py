@@ -18,8 +18,6 @@ class PublicBodyIndex(SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     name = indexes.CharField(model_attr='name', boost=1.5)
     jurisdiction = indexes.CharField(model_attr='jurisdiction__name', default='')
-    topic_auto = indexes.EdgeNgramField(model_attr='topic__name', default='')
-    topic_slug = indexes.CharField(model_attr='topic__slug', default='')
     name_auto = indexes.NgramField(model_attr='name')
     url = indexes.CharField(model_attr='get_absolute_url')
 

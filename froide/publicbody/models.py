@@ -15,7 +15,8 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 from taggit.managers import TaggableManager
-from taggit.models import TaggedItemBase
+from taggit.models import TagBase, ItemBase
+from taggit.utils import edit_string_for_tags
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
@@ -52,23 +53,6 @@ class Jurisdiction(models.Model):
 
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
-
-
-class PublicBodyManager(CurrentSiteManager):
-    def get_query_set(self):
-        return super(PublicBodyManager, self).get_query_set()\
-                .exclude(email="")\
-                .filter(email__isnull=False)
-
-    def get_list(self):
-        return self.get_query_set()\
-            .filter(jurisdiction__hidden=False)
-
-    def get_for_homepage(self, count=5):
-        return self.get_query_set().order_by('-number_of_requests')[:count]
-
-    def get_for_search_index(self):
-        return self.get_query_set()
 
 
 @python_2_unicode_compatible
@@ -192,35 +176,57 @@ class FoiLaw(models.Model):
             return calculate_workingday_range(date, value)
 
 
-class PublicBodyTopicManager(models.Manager):
+class PublicBodyTagManager(models.Manager):
     def get_list(self):
-        return list(self.get_query_set().order_by("rank", "name"))
+        return list(self.get_query_set().filter(is_topic=True).order_by('rank', 'name'))
 
 
-@python_2_unicode_compatible
-class PublicBodyTopic(models.Model):
-    name = models.CharField(_("Name"), max_length=255)
-    slug = models.SlugField(_("Slug"), max_length=255)
-    description = models.TextField(_("Description"), blank=True)
-    count = models.IntegerField(_("Count"), default=0)
-    rank = models.IntegerField(_("Rank"), default=0)
+class PublicBodyTag(TagBase):
+    is_topic = models.BooleanField(_('as topic'), default=False)
+    rank = models.SmallIntegerField(_('rank'), default=0)
 
-    objects = PublicBodyTopicManager()
+    objects = PublicBodyTagManager()
 
     class Meta:
-        verbose_name = _("Topic")
-        verbose_name_plural = _("Topics")
-
-    def __str__(self):
-        return self.name
+        verbose_name = _("Public Body Tag")
+        verbose_name_plural = _("Public Body Tags")
 
 
-class TaggedPublicBody(TaggedItemBase):
+class TaggedPublicBody(ItemBase):
+    tag = models.ForeignKey(PublicBodyTag,
+                            related_name="publicbodies")
     content_object = models.ForeignKey('PublicBody')
 
     class Meta:
-        verbose_name = _('Public Body Tag')
-        verbose_name_plural = _('Public Body Tags')
+        verbose_name = _('Tagged Public Body')
+        verbose_name_plural = _('Tagged Public Bodies')
+
+    @classmethod
+    def tags_for(cls, model, instance=None):
+        if instance is not None:
+            return cls.tag_model().objects.filter(**{
+                '%s__content_object' % cls.tag_relname(): instance
+            })
+        return cls.tag_model().objects.filter(**{
+            '%s__content_object__isnull' % cls.tag_relname(): False
+        }).distinct()
+
+
+class PublicBodyManager(CurrentSiteManager):
+    def get_query_set(self):
+        return super(PublicBodyManager, self).get_query_set()\
+                .exclude(email="")\
+                .filter(email__isnull=False)
+
+    def get_list(self):
+        return self.get_query_set()\
+            .filter(jurisdiction__hidden=False)
+
+    def get_for_homepage(self, count=5):
+        return self.get_query_set().order_by('-number_of_requests')[:count]
+
+    def get_for_search_index(self):
+        return self.get_query_set()
 
 
 @python_2_unicode_compatible
@@ -229,8 +235,6 @@ class PublicBody(models.Model):
     other_names = models.TextField(_("Other names"), default="", blank=True)
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
-    topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),
-            null=True, on_delete=models.SET_NULL)
     url = models.URLField(_("URL"), null=True, blank=True, max_length=500)
     parent = models.ForeignKey('PublicBody', null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
@@ -281,7 +285,7 @@ class PublicBody(models.Model):
         verbose_name_plural = _("Public Bodies")
 
     serializable_fields = ('name', 'slug', 'request_note_html',
-            'description', 'topic_name', 'url', 'email', 'contact',
+            'description', 'url', 'email', 'contact',
             'address', 'domain')
 
     def __str__(self):
@@ -299,12 +303,6 @@ class PublicBody(models.Model):
     def domain(self):
         if self.url:
             return self.url.split("/")[2]
-        return None
-
-    @property
-    def topic_name(self):
-        if self.topic:
-            return self.topic.name
         return None
 
     @property
@@ -360,7 +358,7 @@ class PublicBody(models.Model):
 
         fields = ("id", "name", "email", "contact",
             "address", "url", "classification",
-            "jurisdiction__slug", "topic__slug",
+            "jurisdiction__slug", "tags",
             "other_names", "website_dump", "description",
             "request_note", "parent__name",
         )
@@ -368,8 +366,12 @@ class PublicBody(models.Model):
         writer = csv.DictWriter(s, fields)
         writer.writeheader()
         for pb in queryset:
-            d = {}
+            d = {
+                'tags': edit_string_for_tags(pb.tags.all())
+            }
             for field in fields:
+                if field in d:
+                    continue
                 value = pb
                 for f in field.split('__'):
                     value = getattr(value, f)

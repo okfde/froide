@@ -5,12 +5,10 @@ from django.utils.six import PY3, BytesIO, StringIO, text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from mock import patch
-
 from froide.foirequest.tests import factories
 from froide.helper.test_utils import skip_if_environ
 
-from .models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
+from .models import PublicBody, FoiLaw, Jurisdiction
 from .csv_import import CSVImporter
 
 
@@ -28,9 +26,9 @@ class PublicBodyTest(TestCase):
 
     def test_topic(self):
         pb = PublicBody.objects.all()[0]
-        topic = pb.topic
+        tags = pb.tags.filter(is_topic=True)
         response = self.client.get(reverse('publicbody-show_topic',
-            kwargs={"topic": topic.slug}))
+            kwargs={"topic": tags[0].slug}))
         self.assertEqual(response.status_code, 200)
         self.assertIn(pb.name, response.content.decode('utf-8'))
 
@@ -53,10 +51,12 @@ class PublicBodyTest(TestCase):
 
     def test_csv_existing_import(self):
         factories.PublicBodyFactory.create(site=self.site, name='Public Body 76 X')
-        factories.PublicBodyTopicFactory.create(slug='public-body-topic-76-x')
+        # reenable when django-taggit support atomic transaction wrapping
+        # factories.PublicBodyTagFactory.create(slug='public-body-topic-76-x', is_topic=True)
+
         prev_count = PublicBody.objects.all().count()
         # Existing entity via slug, no id reference
-        csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
+        csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
         imp.import_from_file(StringIO(csv))
@@ -65,7 +65,7 @@ Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://examp
 
     def test_csv_new_import(self):
         prev_count = PublicBody.objects.all().count()
-        csv = '''name,email,jurisdiction__slug,other_names,description,topic__slug,url,parent__name,classification,contact,address,website_dump,request_note
+        csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
         imp.import_from_file(StringIO(csv))
@@ -94,7 +94,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         self.client.logout()
         self.client.login(username='sw', password='froide')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 405)
 
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
@@ -123,19 +123,6 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.get(reverse('publicbody-show-pb_jurisdiction',
                 kwargs={'slug': juris.slug}))
         self.assertEqual(response.status_code, 200)
-
-    def test_count_topic_command(self):
-        from django.core.management import call_command
-        pb = PublicBody.objects.all()[0]
-        topic = pb.topic
-        topic.count = 0
-        topic.save()
-        fake_stdout = BytesIO()
-        with patch('sys.stdout', fake_stdout):
-            call_command('count_topic')
-        topic = PublicBodyTopic.objects.get(pk=topic.pk)
-        self.assertEqual(topic.count,
-                         PublicBody.objects.filter(topic=topic).count())
 
 
 class ApiTest(TestCase):
