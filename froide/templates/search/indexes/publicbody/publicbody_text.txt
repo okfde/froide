@@ -1,2 +1,3 @@
-{{ object.name }} {{ object.other_names }} {{ object.jurisdiction }} {{ object.description }} {{ object.topic_name }} {{ object.website_dump }}
+{{ object.name }} {{ object.other_names }} {{ object.jurisdiction }}
+{{ object.description }} {% for tag in object.tags.all %} {{ tag.name }}{% endfor %} {{ object.website_dump }}
  {{ object.contact }} {{ object.address }} {{ object.classification }} {{ object.url }}
