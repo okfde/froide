@@ -31,21 +31,33 @@
     </div>
   </div>
   <div class="col-md-3 col-lg-3">
+    <h3>{% trans "Jurisdictions" %}</h3>
     <div class="list-group">
       {% for juris in jurisdictions %}
-          <a class="list-group-item{% if jurisdiction == juris %} active{% endif %}" href="{% url 'publicbody-list' jurisdiction=juris.slug %}">
-            <span class="badge">{{ juris.publicbody_set.count }}</span>
-            <img src="{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png" alt="{{ juris.name }}"/>
-            {{ juris.name }}
-          </a>
+        {% if topic %}
+          {% url 'publicbody-list' jurisdiction=juris.slug topic=topic.slug as jur_url %}
+        {% else %}
+          {% url 'publicbody-list' jurisdiction=juris.slug as jur_url %}
+        {% endif %}
+        <a class="list-group-item{% if jurisdiction == juris %} active{% endif %}" href="{{ jur_url }}">
+          <span class="badge">{{ juris.publicbody_set.count }}</span>
+          <img src="{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png" alt="{{ juris.name }}"/>
+          {{ juris.name }}
+        </a>
       {% endfor %}
     </div>
+    <h3>{% trans "Topics" %}</h3>
     <div class="list-group">
       {% for top in topics %}
-          <a class="list-group-item{% if topic == top %} active{% endif %}" href="{% url 'publicbody-list' tag=top.slug %}">
-            <span class="badge">{{ top.publicbodies.count }}</span>
-            {{ top.name }}
-          </a>
+        {% if jurisdiction %}
+          {% url 'publicbody-list' jurisdiction=jurisdiction.slug topic=top.slug as top_url %}
+        {% else %}
+          {% url 'publicbody-list' topic=top.slug as top_url %}
+        {% endif %}
+        <a class="list-group-item{% if topic == top %} active{% endif %}" href="{{ top_url }}">
+          <span class="badge">{{ top.publicbodies.count }}</span>
+          {{ top.name }}
+        </a>
       {% endfor %}
     </div>
   </div>
