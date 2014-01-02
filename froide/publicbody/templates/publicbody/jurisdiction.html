@@ -28,7 +28,7 @@
               <h3>
                 {% trans "Which Public Bodies?" %}
               </h3>
-              {% url 'publicbody-show-pb_jurisdiction' slug=object.slug as pb_url %}
+              {% url 'publicbody-list' jurisdiction=object.slug as pb_url %}
               <p>
                 {% trans "All bodies that work on administrative tasks of this jurisdiction." %}
               </p>

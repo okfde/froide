@@ -3,31 +3,52 @@
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Public Bodies by Topic{% endblocktrans %}</h2>
 
-<form>
-  <input type="search"/>
-  <input type="submit"/>
-</form>
+<div class="row">
+  <div class="col-md-9 col-lg-9">
+    <h2>
+      {% blocktrans %}Public Bodies{% endblocktrans %}
+    </h2>
+  </div>
+</div>
 
-<p><a href="">{% blocktrans %}in alphabetical order{% endblocktrans %}</a> or <a href=""></a></p>
+<div class="row">
+  <div class="col-md-9 col-lg-9">
+    <div class="row">
+      {% include "publicbody/_search_form.html" %}
+    </div>
+    <div class="row top-buffer">
+      <div class="col-lg-12">
+        <ul class="media-list">
+          {% for object in object_list %}
+          <li class="media">
+            {% include "publicbody/snippets/publicbody_item.html" %}
+          </li>
+        {% endfor %}
+        </ul>
+        {% include "pagination/pagination.html" with page_obj=object_list %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-lg-3">
+    <div class="list-group">
+      {% for juris in jurisdictions %}
+          <a class="list-group-item{% if jurisdiction == juris %} active{% endif %}" href="{% url 'publicbody-list' jurisdiction=juris.slug %}">
+            <span class="badge">{{ juris.publicbody_set.count }}</span>
+            <img src="{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png" alt="{{ juris.name }}"/>
+            {{ juris.name }}
+          </a>
+      {% endfor %}
+    </div>
+    <div class="list-group">
+      {% for top in topics %}
+          <a class="list-group-item{% if topic == top %} active{% endif %}" href="{% url 'publicbody-list' tag=top.slug %}">
+            <span class="badge">{{ top.publicbodies.count }}</span>
+            {{ top.name }}
+          </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 
-
-<ul class="topic-list">
-  {% regroup object_list by topic as classified_list %}
-  {% for classified in classified_list %}
-  <li class="span-8{% if forloop.counter|divisibleby:3 %} last{% endif %}">
-  <h4 class="{{ classified.grouper }}"><a href="">{{ classified.grouper }}</a></h4>
-  </li>
-  {% endfor %}
-</ul>
 {% endblock %}
-{#
-    <ul>
-      {% for object in classified.list %}
-    <li><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></li>
-    {% empty %}
-    <li>{% blocktrans %}No Public Bodies yet{% endblocktrans %}</li>
-  {% endfor %}
-  </ul>
-  #}

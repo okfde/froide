@@ -1,24 +1,49 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.views.decorators.http import require_POST
+from django.views.generic import DetailView
 from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.contrib import messages
 from django.template import TemplateDoesNotExist
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from froide.foirequest.models import FoiRequest
-from django.views.generic import DetailView
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 
 from .models import (PublicBody,
-    PublicBodyTopic, FoiLaw, Jurisdiction)
+    PublicBodyTag, FoiLaw, Jurisdiction)
 from .csv_import import CSVImporter
 
 
-def index(request):
-    context = {"topics": PublicBodyTopic.objects.get_list()}
-    return render(request, 'publicbody/list_topic.html', context)
+def index(request, jurisdiction=None, tag=None):
+    publicbodies = PublicBody.objects.get_list()
+
+    if jurisdiction is not None:
+        jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
+        publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
+
+    if tag is not None:
+        tag = get_object_or_404(PublicBodyTag, slug=tag)
+        publicbodies = publicbodies.filter(tags=tag)
+
+    page = request.GET.get('page')
+    paginator = Paginator(publicbodies, 50)
+    try:
+        publicbodies = paginator.page(page)
+    except PageNotAnInteger:
+        publicbodies = paginator.page(1)
+    except EmptyPage:
+        publicbodies = paginator.page(paginator.num_pages)
+
+    return render(request, 'publicbody/list.html', {
+        'object_list': publicbodies,
+        'jurisdictions': Jurisdiction.objects.get_visible(),
+        'jurisdiction': jurisdiction,
+        'topic': tag,
+        'topics': PublicBodyTag.objects.filter(is_topic=True)
+    })
 
 
 @cache_anonymous_page(15 * 60)
@@ -39,43 +64,22 @@ def show_jurisdiction(request, slug):
             'publicbody/jurisdiction.html', context)
 
 
-def show_pb_jurisdiction(request, slug):
-    jurisdiction = get_object_or_404(Jurisdiction, slug=slug)
-    context = {
-        "object": jurisdiction,
-        "publicbodies": PublicBody.objects.filter(jurisdiction=jurisdiction)
-    }
-    return render(request, 'publicbody/pb_jurisdiction.html', context)
-
-
-def show_topic(request, topic):
-    topic = get_object_or_404(PublicBodyTopic, slug=topic)
-    context = {
-        "topic": topic,
-        "object_list": PublicBody.objects.get_list()
-                    .select_related('jurisdiction')
-                    .filter(topic=topic)
-                    .order_by("jurisdiction__rank", "jurisdiction__name", "name")
-    }
-    return render(request, 'publicbody/show_topic.html', context)
-
-
 def show_foilaw(request, slug):
     law = get_object_or_404(FoiLaw, slug=slug)
     context = {"object": law}
     return render(request, 'publicbody/show_foilaw.html', context)
 
 
-class PublicBodyDetailView(DetailView):
-    model = PublicBody
-    template_name = "publicbody/show.html"
+def show_publicbody(request, slug):
+    obj = get_object_or_404(PublicBody, slug=slug)
+    context = {
+        'object': obj,
+        'foi_requests': FoiRequest.published.filter(public_body=obj)[:10]
+    }
+    return render(request, 'publicbody/show.html', context)
 
-    def get_context_data(self, **kwargs):
-        context = super(PublicBodyDetailView, self).get_context_data(**kwargs)
-        context['foi_requests'] = FoiRequest.published.filter(public_body=context['object'])[:10]
-        return context
 
-
+@require_POST
 def confirm(request):
     if not request.user.is_authenticated():
         return render_403(request)
@@ -99,6 +103,7 @@ def confirm(request):
             args=(pb.id,)))
 
 
+@require_POST
 def import_csv(request):
     if not request.user.is_authenticated():
         return render_403(request)

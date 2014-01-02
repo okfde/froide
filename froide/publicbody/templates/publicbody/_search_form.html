@@ -10,5 +10,13 @@
         </button>
       </span>
     </div>
+    {% comment %}
+    <select class="form-control" name="jurisdiction">
+      <option value="">{% trans "All jurisdictions" %}</option>
+      {% for juris in jurisdictions %}
+      <option value="{{ juris.name }}">{{ juris.name }}</option>
+      {% endfor %}
+    </select>
+    {% endcomment %}
   </div>
 </form>

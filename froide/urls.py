@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
+from django.core.urlresolvers import reverse
 from django.conf.urls.static import static
 from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.utils.translation import ugettext as _
 
@@ -69,7 +71,11 @@ urlpatterns += patterns('',
 
 
     # Translators: URL part
-    url(r'^%s/' % _('entity'), include('froide.publicbody.urls')),
+    url(r"^%s/(?P<slug>[-\w]+)/$" % _('entity'), 'froide.publicbody.views.show_publicbody',
+            name="publicbody-show"),
+    url(r"^%s/$" % _('entity'), lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
+    # Translators: URL part
+    url(r'^%s/' % _('entities'), include('froide.publicbody.urls')),
     # Translators: URL part
     url(r'^%s/' % _('law'), include('froide.publicbody.law_urls')),
 

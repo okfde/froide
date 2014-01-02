@@ -1,8 +1,5 @@
 {% load i18n %}
 
-<a class="pull-left" href="{{ object.get_absolute_url }}">
-  <img src="{{ STATIC_URL }}img/topics/{{ object.topic.slug }}.png" alt="{{ object.topic.name }}" title="{{ object.topic.name }}"/>
-</a>
 <div class="media-body">
   <h4 class="media-heading">
     <a href="{{ object.get_absolute_url }}">
@@ -10,7 +7,12 @@
     </a>
     <br/>
     <small>
-      {{ object.jurisdiction.name }}
+      {{ object.jurisdiction.name }},
+        {% if object.number_of_requests %}
+          {% blocktrans count num=object.number_of_requests %}{{ num }} request{% plural %}{{ num }} requests{% endblocktrans %}
+        {% else %}
+          {% trans "no requests yet" %}
+        {% endif %}
     </small>
   </h4>
 </div>

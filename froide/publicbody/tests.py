@@ -120,8 +120,8 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
 
     def test_show_public_bodies_of_jurisdiction(self):
         juris = Jurisdiction.objects.all()[0]
-        response = self.client.get(reverse('publicbody-show-pb_jurisdiction',
-                kwargs={'slug': juris.slug}))
+        response = self.client.get(reverse('publicbody-list',
+                kwargs={'jurisdiction': juris.slug}))
         self.assertEqual(response.status_code, 200)
 
 
