@@ -2,7 +2,7 @@
 <ul class="pagination">
     {% if page_obj.has_previous %}
         <li>
-            <a href="?page={{ page_obj.previous_page_number }}" class="prev" title="{% trans "previous" %}">&laquo;</a>
+            <a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" class="prev" title="{% trans "previous" %}">&laquo;</a>
         </li>
     {% else %}
         <li class="disabled">
@@ -19,14 +19,14 @@
         {% endif %}
     {% endfor %}
 
-    {% if page_obj.number > 5 %}
+    {% if page_obj.number > 5 and page_obj.paginator.num_pages > 6 %}
         <li>
             <span>&hellip;</span>
         </li>
     {% endif %}
 
     {% for page in page_obj.paginator.page_range|slice:"-3:" %}
-        {% if page < page_obj.number %}
+        {% if page < page_obj.number and page > 3 %}
             <li>
                 <a href="?page={{ page }}{{ getvars }}{{ hashtag }}">
                     {{ page }}
@@ -70,14 +70,14 @@
         {% endif %}
     {% endfor %}
 
-    {% if page_obj.number < page_obj.paginator.num_pages|add:"-4" %}
+    {% if page_obj.number < page_obj.paginator.num_pages|add:"-4" and page_obj.paginator.num_pages > 6 %}
         <li>
             <span>&hellip;</span>
         </li>
     {% endif %}
 
     {% for page in page_obj.paginator.page_range|slice:"-3:" %}
-        {% if page > page_obj.number %}
+        {% if page > page_obj.number and page > 3 %}
             <li>
                 <a href="?page={{ page }}{{ getvars }}{{ hashtag }}">
                     {{ page }}
@@ -87,7 +87,7 @@
     {% endfor %}
     {% if page_obj.has_next %}
         <li>
-            <a href="?page={{ page_obj.next_page_number }}" class="next" title="{% trans "next" %}">&raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}{{ getvars }}{{ hashtag }}" class="next" title="{% trans "next" %}">&raquo;</a>
         </li>
     {% else %}
         <li class="disabled">
