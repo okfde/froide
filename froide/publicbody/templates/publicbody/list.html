@@ -44,7 +44,7 @@
           {% url 'publicbody-list' jurisdiction=juris.slug as jur_url %}
         {% endif %}
         <a class="list-group-item{% if jurisdiction == juris %} active{% endif %}" href="{{ jur_url }}">
-          <span class="badge">{{ juris.publicbody_set.count }}</span>
+          <span class="badge">{{ juris.num_publicbodies }}</span>
           <img src="{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png" alt="{{ juris.name }}"/>
           {{ juris.name }}
         </a>
@@ -63,7 +63,8 @@
           {% url 'publicbody-list' topic=top.slug as top_url %}
         {% endif %}
         <a class="list-group-item{% if topic == top %} active{% endif %}" href="{{ top_url }}">
-          <span class="badge">{{ top.publicbodies.count }}</span>
+          <span class="badge">{{ top.num_publicbodies }}</span>
+          <img src="{{ STATIC_URL }}img/topics/{{ top.slug }}_small.png" alt="{{ juris.name }}"/>
           {{ top.name }}
         </a>
       {% endfor %}

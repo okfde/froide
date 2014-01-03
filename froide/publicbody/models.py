@@ -26,8 +26,11 @@ from froide.helper.form_generator import FormGenerator
 
 class JurisdictionManager(models.Manager):
     def get_visible(self):
-        return super(JurisdictionManager, self).get_query_set()\
+        return self.get_query_set()\
                 .filter(hidden=False).order_by('rank', 'name')
+
+    def get_list(self):
+        return self.get_visible().annotate(num_publicbodies=models.Count('publicbody'))
 
 
 @python_2_unicode_compatible
@@ -177,8 +180,11 @@ class FoiLaw(models.Model):
 
 
 class PublicBodyTagManager(models.Manager):
-    def get_list(self):
-        return list(self.get_query_set().filter(is_topic=True).order_by('rank', 'name'))
+    def get_topic_list(self):
+        return (self.get_query_set().filter(is_topic=True)
+            .order_by('rank', 'name')
+            .annotate(num_publicbodies=models.Count('publicbodies'))
+        )
 
 
 class PublicBodyTag(TagBase):
@@ -220,10 +226,8 @@ class PublicBodyManager(CurrentSiteManager):
 
     def get_list(self):
         return self.get_query_set()\
-            .filter(jurisdiction__hidden=False)
-
-    def get_for_homepage(self, count=5):
-        return self.get_query_set().order_by('-number_of_requests')[:count]
+            .filter(jurisdiction__hidden=False)\
+            .select_related('jurisdiction')
 
     def get_for_search_index(self):
         return self.get_query_set()

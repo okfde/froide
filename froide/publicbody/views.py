@@ -39,10 +39,10 @@ def index(request, jurisdiction=None, topic=None):
 
     return render(request, 'publicbody/list.html', {
         'object_list': publicbodies,
-        'jurisdictions': Jurisdiction.objects.get_visible(),
+        'jurisdictions': Jurisdiction.objects.get_list(),
         'jurisdiction': jurisdiction,
         'topic': topic,
-        'topics': PublicBodyTag.objects.filter(is_topic=True)
+        'topics': PublicBodyTag.objects.get_topic_list()
     })
 
 
