@@ -34,8 +34,12 @@
     <h3>{% trans "Jurisdictions" %}</h3>
     <div class="list-group">
       {% for juris in jurisdictions %}
-        {% if topic %}
+        {% if topic and jurisdiction == juris %}
+          {% url 'publicbody-list' topic=topic.slug as jur_url %}
+        {% elif topic %}
           {% url 'publicbody-list' jurisdiction=juris.slug topic=topic.slug as jur_url %}
+        {% elif jurisdiction == juris %}
+          {% url 'publicbody-list' as jur_url %}
         {% else %}
           {% url 'publicbody-list' jurisdiction=juris.slug as jur_url %}
         {% endif %}
@@ -49,8 +53,12 @@
     <h3>{% trans "Topics" %}</h3>
     <div class="list-group">
       {% for top in topics %}
-        {% if jurisdiction %}
+        {% if jurisdiction and topic == top %}
+          {% url 'publicbody-list' jurisdiction=jurisdiction.slug as top_url %}
+        {% elif jurisdiction %}
           {% url 'publicbody-list' jurisdiction=jurisdiction.slug topic=top.slug as top_url %}
+        {% elif topic == top %}
+          {% url 'publicbody-list' as top_url %}
         {% else %}
           {% url 'publicbody-list' topic=top.slug as top_url %}
         {% endif %}
