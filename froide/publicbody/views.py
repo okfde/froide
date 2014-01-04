@@ -1,14 +1,11 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView
-from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.contrib import messages
 from django.template import TemplateDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from haystack.forms import FacetedSearchForm
+from haystack.query import SearchQuerySet
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.utils import render_400, render_403
@@ -20,29 +17,23 @@ from .csv_import import CSVImporter
 
 
 def index(request, jurisdiction=None, topic=None):
-    facets = []
-
     if jurisdiction is not None:
         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
-        facets.append('jurisdiction:%s' % jurisdiction.name)
 
     if topic is not None:
         topic = get_object_or_404(PublicBodyTag, slug=topic)
-        facets.append('topic:%s' % topic.name)
 
     query = request.GET.get('q', '')
     if query:
-        form = FacetedSearchForm(
-            request.GET,
-            load_all=True,
-            selected_facets=facets)
-        publicbodies = form.search().models(PublicBody)
+        publicbodies = SearchQuerySet().models(PublicBody).auto_query(query)
     else:
         publicbodies = PublicBody.objects.get_list()
-        if topic:
-            publicbodies = publicbodies.filter(tags=topic)
-        if jurisdiction:
-            publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
+
+    if topic:
+        publicbodies = publicbodies.filter(tags=topic.name if query else topic)
+    if jurisdiction:
+        publicbodies = publicbodies.filter(
+                jurisdiction=jurisdiction.name if query else jurisdiction)
 
     page = request.GET.get('page')
     paginator = Paginator(publicbodies, 50)
@@ -52,7 +43,6 @@ def index(request, jurisdiction=None, topic=None):
         publicbodies = paginator.page(1)
     except EmptyPage:
         publicbodies = paginator.page(paginator.num_pages)
-
 
     return render(request, 'publicbody/list.html', {
         'object_list': publicbodies,
@@ -116,9 +106,7 @@ def confirm(request):
                 ungettext('%(count)d message was sent.',
                     '%(count)d messages were sent', result
                     ) % {"count": result})
-    return HttpResponseRedirect(
-        urlresolvers.reverse('admin:publicbody_publicbody_change',
-            args=(pb.id,)))
+    return redirect('admin:publicbody_publicbody_change', args=(pb.id,))
 
 
 @require_POST
@@ -140,5 +128,4 @@ def import_csv(request):
     else:
         messages.add_message(request, messages.SUCCESS,
             _('Public Bodies were imported.'))
-    return HttpResponseRedirect(
-        urlresolvers.reverse('admin:publicbody_publicbody_changelist'))
+    return redirect('admin:publicbody_publicbody_changelist')

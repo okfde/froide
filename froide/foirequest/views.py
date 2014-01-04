@@ -102,7 +102,7 @@ def list_requests(request, status=None, topic=None, tag=None,
     manager = FoiRequest.published
     if not_foi:
         manager = FoiRequest.published_not_foi
-    topic_list = PublicBodyTag.objects.filter(is_topic=True)
+    topic_list = PublicBodyTag.objects.get_topic_list()
     status_url = status
     foi_requests = manager.for_list_view()
     if status is not None:
