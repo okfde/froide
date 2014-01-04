@@ -121,7 +121,7 @@ class TestMakingRequest(LiveServerTestCase):
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
         new_user = User.objects.get(email=user_email)
-        self.assertEqual(new_user.get_profile().private, False)
+        self.assertEqual(new_user.private, False)
         req = FoiRequest.objects.get(user=new_user)
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, True)
@@ -169,7 +169,7 @@ class TestMakingRequest(LiveServerTestCase):
         new_user = User.objects.get(email=user_email)
         self.assertEqual(new_user.first_name, user_first_name)
         self.assertEqual(new_user.last_name, user_last_name)
-        self.assertEqual(new_user.get_profile().private, True)
+        self.assertEqual(new_user.private, True)
         req = FoiRequest.objects.get(user=new_user)
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, False)

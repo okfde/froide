@@ -28,13 +28,13 @@
         <ul>
           <li>
             {% if foirequest.user == user %}
-              {% if foirequest.user.get_profile.private %}
+              {% if foirequest.user.private %}
                 {% trans "Please remove all your personally identifying information." %}
               {% else %}
                 {% trans "Please remove all your personally identifying information except your name." %}
               {% endif %}
             {% else %}
-              {% if foirequest.user.get_profile.private %}
+              {% if foirequest.user.private %}
                 {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}.{% endblocktrans %}
               {% else %}
                   {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }} except the name itself.{% endblocktrans %}

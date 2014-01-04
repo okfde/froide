@@ -111,9 +111,9 @@
               <li>
                 <a href="{% url 'account-show' %}">{% trans "Account" %}</a>
               </li>
-              {% if not user.get_profile.private %}
+              {% if not user.private %}
               <li>
-                <a href="{{ user.get_profile.get_absolute_url }}">{% trans "Public Profile" %}</a>
+                <a href="{{ user.get_absolute_url }}">{% trans "Public Profile" %}</a>
               </li>
               {% endif %}
               <li class="divider"></li>

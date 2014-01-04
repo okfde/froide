@@ -236,10 +236,8 @@ def make_world():
 
     user1 = UserFactory.create(is_staff=True, username='sw',
         email='mail@stefanwehrmeyer.com',
-        first_name='Stefan', last_name='Wehrmeyer')
-    p = user1.get_profile()
-    p.address = 'DummyStreet23\n12345 Town'
-    p.save()
+        first_name='Stefan', last_name='Wehrmeyer',
+        address='DummyStreet23\n12345 Town')
     UserFactory.create(username='dummy', first_name='Dummy', last_name='D.')
     UserFactory.create(is_staff=True, username='dummy_staff')
     bund = JurisdictionFactory.create(name='Bund')

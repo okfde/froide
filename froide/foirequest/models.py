@@ -18,7 +18,6 @@ import django.dispatch
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
-from django.utils.http import urlquote
 from django.core.mail import send_mail, mail_managers
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
@@ -614,8 +613,7 @@ class FoiRequest(models.Model):
             message.content_hidden = True
         message.timestamp = email['date']
         message.recipient_email = self.secret_address
-        profile = self.user.get_profile()
-        message.recipient = profile.display_name()
+        message.recipient = self.user.display_name()
         message.plaintext = email['body']
         message.html = email['html']
         if not message.plaintext and message.html:
@@ -635,7 +633,7 @@ class FoiRequest(models.Model):
                     filetype=attachment.content_type)
             if att.name is None:
                 att.name = _("attached_file_%d") % i
-            att.name = profile.apply_message_redaction(att.name,
+            att.name = self.user.apply_message_redaction(att.name,
                 {
                     'email': False,
                     'address': False,
@@ -665,7 +663,7 @@ class FoiRequest(models.Model):
         message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.sender_user = user
-        message.sender_name = user.get_profile().display_name()
+        message.sender_name = user.display_name()
         message.sender_email = self.secret_address
         message.recipient_email = recipient_email
         message.recipient_public_body = recipient_pb
@@ -686,7 +684,7 @@ class FoiRequest(models.Model):
         message.is_response = False
         message.is_escalation = True
         message.sender_user = self.user
-        message.sender_name = self.user.get_profile().display_name()
+        message.sender_name = self.user.display_name()
         message.sender_email = self.secret_address
         message.recipient_email = self.law.mediator.email
         message.recipient_public_body = self.law.mediator
@@ -805,7 +803,7 @@ class FoiRequest(models.Model):
             is_response=False,
             sender_user=user,
             sender_email=request.secret_address,
-            sender_name=user.get_profile().display_name(),
+            sender_name=user.display_name(),
             timestamp=now,
             status="awaiting_response",
             subject=u'%s [#%s]' % (request.title, request.pk)
@@ -988,7 +986,7 @@ class FoiRequest(models.Model):
             ),
             render_to_string("foirequest/emails/classification_reminder.txt", {
                 "request": self,
-                "go_url": self.user.get_profile().get_autologin_url(self.get_absolute_short_url()),
+                "go_url": self.user.get_autologin_url(self.get_absolute_short_url()),
                 "site_name": settings.SITE_NAME
             }),
             settings.DEFAULT_FROM_EMAIL,
@@ -1009,10 +1007,9 @@ class FoiRequest(models.Model):
             }
 
         # Add additional info to template context
-        user_profile = user.get_profile()
         for request in req_event_dict:
             req_event_dict[request].update({
-                'go_url': user_profile.get_autologin_url(
+                'go_url': user.get_autologin_url(
                     request.get_absolute_short_url()
                 )
             })
@@ -1177,7 +1174,7 @@ class FoiMessage(models.Model):
     @property
     def sender(self):
         if self.sender_user:
-            return self.sender_user.get_profile().display_name()
+            return self.sender_user.display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
                 False):
             return make_address(self.sender_email, self.sender_name)
@@ -1192,7 +1189,7 @@ class FoiMessage(models.Model):
     @property
     def user_real_sender(self):
         if self.sender_user:
-            return self.sender_user.get_profile().display_name()
+            return self.sender_user.display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
                 False):
             return make_address(self.sender_email, self.sender_name)
@@ -1206,7 +1203,7 @@ class FoiMessage(models.Model):
     @property
     def real_sender(self):
         if self.sender_user:
-            return self.sender_user.get_profile().get_full_name()
+            return self.sender_user.get_full_name()
         name = self.sender_name
         if not name and self.sender_public_body:
             name = self.sender_public_body.name
@@ -1239,8 +1236,7 @@ class FoiMessage(models.Model):
     def redact_subject(self):
         content = self.subject
         if self.request.user:
-            profile = self.request.user.get_profile()
-            content = profile.apply_message_redaction(content)
+            content = self.request.user.apply_message_redaction(content)
 
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
@@ -1255,8 +1251,7 @@ class FoiMessage(models.Model):
     def redact_plaintext(self):
         content = self.plaintext
         if self.request.user:
-            profile = self.request.user.get_profile()
-            content = profile.apply_message_redaction(content)
+            content = self.request.user.apply_message_redaction(content)
 
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
@@ -1505,7 +1500,7 @@ class FoiEvent(models.Model):
         context = json.loads(self.context_json)
         user = ""
         if self.user:
-            user = self.user.get_profile().display_name()
+            user = self.user.display_name()
         pb = ""
         if self.public_body:
             pb = self.public_body.name
@@ -1527,9 +1522,8 @@ class FoiEvent(models.Model):
             return mark_safe('<a href="%s">%s</a>' % (url, escape(title)))
         context = self.get_context()
         if self.user:
-            profile = self.user.get_profile()
-            if not profile.private:
-                context['user'] = link(profile.get_absolute_url(),
+            if not self.user.private:
+                context['user'] = link(self.user.get_absolute_url(),
                         context['user'])
         if self.public_body:
             context['public_body'] = link(self.public_body.get_absolute_url(),

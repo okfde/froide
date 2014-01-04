@@ -4,7 +4,7 @@
     {% if attachment.can_approve %}
       <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
         {% csrf_token %}
-        {% if object.user.get_profile.private %}
+        {% if object.user.private %}
           <p>
             {% trans "Please check this attachment for personally identifying information. Then publish the document (unless you are explicitly forbidden from publishing) or redact the information." %}
           </p>

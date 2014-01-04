@@ -35,9 +35,8 @@ class RequestTest(TestCase):
         self.assertTrue(ok)
 
         user = User.objects.get(username='sw')
-        profile = user.get_profile()
-        profile.organization = 'ACME Org'
-        profile.save()
+        user.organization = 'ACME Org'
+        user.save()
 
         pb = PublicBody.objects.all()[0]
         old_number = pb.number_of_requests
@@ -59,7 +58,7 @@ class RequestTest(TestCase):
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
         self.assertIn('\n%s\n' % user.get_full_name(), message.plaintext)
-        self.assertIn('\n%s\n' % profile.organization, message.plaintext)
+        self.assertIn('\n%s\n' % user.organization, message.plaintext)
         self.client.logout()
         response = self.client.post(reverse('foirequest-make_public',
                 kwargs={"slug": req.slug}), {})
@@ -201,7 +200,7 @@ class RequestTest(TestCase):
         self.assertTrue(message.subject.endswith('[#%s]' % req.pk))
         self.assertTrue(message.body.startswith(post['message']))
         self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
-        self.assertIn(user.get_profile().address, message.body)
+        self.assertIn(user.address, message.body)
         self.assertIn(new_foi_email, message.to[0])
         req._messages = None
         foimessage = list(req.messages)[-1]

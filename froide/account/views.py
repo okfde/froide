@@ -101,8 +101,7 @@ def show(request, context=None, status=200):
 
 def profile(request, slug):
     user = get_object_or_404(auth.get_user_model(), username=slug)
-    profile = user.get_profile()
-    if profile.private:
+    if user.private:
         raise Http404
     foirequests = FoiRequest.published.filter(user=user).order_by('-first_message')
     foievents = FoiEvent.objects.filter(public=True, user=user)[:20]
@@ -204,7 +203,7 @@ def change_password(request):
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your password.'))
         return render_403(request)
-    form = request.user.get_profile().get_password_change_form(request.POST)
+    form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
         messages.add_message(request, messages.SUCCESS,
@@ -263,7 +262,7 @@ def change_address(request):
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your address.'))
         return render_403(request)
-    form = UserChangeAddressForm(request.user.get_profile(), request.POST)
+    form = UserChangeAddressForm(request.user, request.POST)
     if form.is_valid():
         form.save()
         messages.add_message(request, messages.SUCCESS,
@@ -344,12 +343,11 @@ def delete_account(request):
         )
     # Removing all personal data from account
     user = request.user
-    profile = user.get_profile()
-    profile.organization = ''
-    profile.organization_url = ''
-    profile.private = True
-    profile.address = ''
-    profile.save()
+    user.organization = ''
+    user.organization_url = ''
+    user.private = True
+    user.address = ''
+    user.save()
     user.first_name = ''
     user.last_name = ''
     user.is_active = False

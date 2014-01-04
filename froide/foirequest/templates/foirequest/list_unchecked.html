@@ -33,7 +33,7 @@
         {% endif %}
         {% if attachment.belongs_to.request.slug %}
           <form method="post" action="{% url 'foirequest-approve_attachment' slug=attachment.belongs_to.request.slug attachment=attachment.pk %}">{% csrf_token %}
-            {% if attachment.belongs_to.request.user.get_profile.private %}
+            {% if attachment.belongs_to.request.user.private %}
               <p>{% trans "May not contain private information" %}</p>
             {% else %}
     	        <p>{% blocktrans with name=attachment.belongs_to.request.user.get_full_name %}May only contain name {{ name }}.{% endblocktrans %}</p>

@@ -35,9 +35,6 @@ class User(AbstractUser):
         class Meta:
             db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
 
-    def get_profile(self):
-        return self
-
     def get_absolute_url(self):
         if self.private:
             return ""
@@ -114,9 +111,6 @@ class User(AbstractUser):
     def get_address_change_form(self, *args, **kwargs):
         from froide.account.forms import UserChangeAddressForm
         return UserChangeAddressForm(self, *args, **kwargs)
-
-# Backwards compatibility
-Profile = User
 
 
 class AccountManager(object):

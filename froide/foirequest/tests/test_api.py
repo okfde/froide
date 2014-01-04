@@ -29,9 +29,8 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(req.title, response.content.decode('utf-8'))
         self.assertNotIn(req.secret_address, response.content.decode('utf-8'))
-        prof = req.user.get_profile()
-        prof.private = True
-        prof.save()
+        req.user.private = True
+        req.user.save()
 
         mes = factories.FoiMessageFactory.create(
             request=req,
@@ -39,14 +38,14 @@ class ApiTest(TestCase):
             plaintext=u'Hallo %s,\n%s\n%s' % (
                 req.user.get_full_name(),
                 req.secret_address,
-                prof.address
+                req.user.address
             )
         )
         response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(req.user.get_full_name(), response.content.decode('utf-8'))
         self.assertNotIn(req.secret_address, response.content.decode('utf-8'))
-        self.assertNotIn(prof.address, response.content.decode('utf-8'))
+        self.assertNotIn(req.user.address, response.content.decode('utf-8'))
 
         att = FoiAttachment.objects.all()[0]
         att.approved = True
@@ -85,9 +84,8 @@ class ApiTest(TestCase):
         user = factories.UserFactory.create(
             first_name='Reinhardt'
         )
-        profile = user.get_profile()
-        profile.private = True
-        profile.save()
+        user.private = True
+        user.save()
         mes = factories.FoiMessageFactory.create(
             content_hidden=True,
             sender_user=user

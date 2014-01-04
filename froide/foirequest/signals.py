@@ -30,10 +30,11 @@ def send_notification_became_overdue(sender, **kwargs):
                 _("%(site_name)s: Request became overdue")
                     % {"site_name": settings.SITE_NAME},
                 sender.pk),
-            render_to_string("foirequest/emails/became_overdue.txt",
-                {"request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+            render_to_string("foirequest/emails/became_overdue.txt", {
+                "request": sender,
+                "go_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
@@ -49,10 +50,13 @@ def send_notification_became_asleep(sender, **kwargs):
                 _("%(site_name)s: Request became asleep")
                     % {"site_name": settings.SITE_NAME},
                 sender.pk),
-            render_to_string("foirequest/emails/became_asleep.txt",
-                {"request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+            render_to_string("foirequest/emails/became_asleep.txt", {
+                "request": sender,
+                "go_url": sender.user.get_autologin_url(
+                    sender.get_absolute_short_url()
+                ),
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
@@ -68,10 +72,14 @@ def notify_user_message_received(sender, message=None, **kwargs):
                 _("%(site_name)s: New reply to your request")
                     % {"site_name": settings.SITE_NAME},
                 sender.pk),
-            render_to_string("foirequest/emails/message_received_notification.txt",
-                {"message": message, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+            render_to_string("foirequest/emails/message_received_notification.txt", {
+                "message": message,
+                "request": sender,
+                "go_url": sender.user.get_autologin_url(
+                    message.get_absolute_short_url()
+                ),
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
@@ -84,11 +92,14 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
                     _("%(site_name)s: New suggestion for a Public Body")
                         % {"site_name": settings.SITE_NAME},
                     sender.pk),
-                render_to_string("foirequest/emails/public_body_suggestion_received.txt",
-                    {"suggestion": suggestion, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(
-                            sender.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+                render_to_string("foirequest/emails/public_body_suggestion_received.txt", {
+                    "suggestion": suggestion,
+                    "request": sender,
+                    "go_url": sender.user.get_autologin_url(
+                        sender.get_absolute_short_url()
+                    ),
+                    "site_name": settings.SITE_NAME
+                }),
                 settings.DEFAULT_FROM_EMAIL,
                 [sender.user.email])
 
@@ -105,9 +116,11 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         template = "foirequest/emails/confirm_foi_message_sent.txt"
     subject = subject % {"site_name": settings.SITE_NAME}
     send_mail(u'{0} [#{1}]'.format(subject, sender.pk),
-            render_to_string(template,
-                {"request": sender, "message": message,
-                    "site_name": settings.SITE_NAME}),
+            render_to_string(template, {
+                "request": sender,
+                "message": message,
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 

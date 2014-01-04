@@ -104,10 +104,8 @@ class AccountTest(TestCase):
         user = User.objects.get(email=post['user_email'])
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
-        profile = user.get_profile()
-        self.assertIn(str(user), str(profile))
-        self.assertEqual(profile.address, post['address'])
-        self.assertEqual(profile.organization, post['organization'])
+        self.assertEqual(user.address, post['address'])
+        self.assertEqual(user.organization, post['organization'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
         # sign up with email that is not confirmed
@@ -328,9 +326,8 @@ class AccountTest(TestCase):
 
     def test_private_name(self):
         user = User.objects.get(username="dummy")
-        profile = user.get_profile()
-        profile.private = True
-        profile.save()
+        user.private = True
+        user.save()
         self.client.login(username='dummy', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Request - Private name",
@@ -349,7 +346,7 @@ class AccountTest(TestCase):
                 response.content)
         self.assertNotIn(user.last_name.encode("utf-8"),
                 response.content)
-        self.assertEqual('', user.get_profile().get_absolute_url())
+        self.assertEqual('', user.get_absolute_url())
 
     def test_change_address(self):
         data = {}
@@ -366,18 +363,16 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-change_address'), data)
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(username='sw')
-        profile = user.get_profile()
-        self.assertEqual(profile.address, data['address'])
+        self.assertEqual(user.address, data['address'])
 
     def test_go(self):
         user = User.objects.get(username='dummy')
         other_user = User.objects.get(username='sw')
         # test url is not cached and does not cause 404
         test_url = reverse('foirequest-make_request')
-        profile = user.get_profile()
 
         # Try logging in via link: success
-        autologin = profile.get_autologin_url(test_url)
+        autologin = user.get_autologin_url(test_url)
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
@@ -389,7 +384,7 @@ class AccountTest(TestCase):
         # Try logging in via link: other user is authenticated
         ok = self.client.login(username='sw', password='froide')
         self.assertTrue(ok)
-        autologin = profile.get_autologin_url(test_url)
+        autologin = user.get_autologin_url(test_url)
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
@@ -399,7 +394,7 @@ class AccountTest(TestCase):
         self.client.logout()
 
         # Try logging in via link: user not active
-        autologin = profile.get_autologin_url(test_url)
+        autologin = user.get_autologin_url(test_url)
         user.is_active = False
         user.save()
         response = self.client.get(autologin)
@@ -433,9 +428,8 @@ class AccountTest(TestCase):
             kwargs={'slug': user.username}))
         self.assertEqual(response.status_code, 200)
         user2 = factories.UserFactory.create()
-        profile = user2.get_profile()
-        profile.private = True
-        profile.save()
+        user2.private = True
+        user2.save()
         response = self.client.get(reverse('account-profile',
             kwargs={'slug': user2.username}))
         self.assertEqual(response.status_code, 404)
@@ -552,15 +546,14 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
         user = User.objects.get(pk=user.pk)
-        profile = user.get_profile()
         self.assertEqual(user.first_name, '')
         self.assertEqual(user.last_name, '')
         self.assertEqual(user.email, '')
         self.assertEqual(user.username, 'u%s' % user.pk)
-        self.assertEqual(profile.address, '')
-        self.assertEqual(profile.organization, '')
-        self.assertEqual(profile.organization_url, '')
-        self.assertTrue(profile.private)
+        self.assertEqual(user.address, '')
+        self.assertEqual(user.organization, '')
+        self.assertEqual(user.organization_url, '')
+        self.assertTrue(user.private)
 
     def test_merge_account(self):
         from froide.foirequestfollower.models import FoiRequestFollower

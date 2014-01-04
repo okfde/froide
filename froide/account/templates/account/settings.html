@@ -12,12 +12,12 @@
         {% blocktrans %}Your name:{% endblocktrans %}
       </dt>
       <dd>{{ user.get_full_name }}</dd>
-      {% if user.get_profile.organisation %}
+      {% if user.organisation %}
       <dt>
         {% blocktrans %}Your Organisation:{% endblocktrans %}
       </dt>
       <dd>
-        {{ user.get_profile.organisation }}
+        {{ user.organisation }}
       </dd>
       {% endif %}
       <dt>
@@ -28,13 +28,13 @@
         {% blocktrans %}Your address:{% endblocktrans %}
       </dt>
       <dd>
-        {{ user.get_profile.address|linebreaks }}
+        {{ user.address|linebreaks }}
       </dd>
       <dt>
         {% trans "Account Privacy:" %}
       </dt>
       <dd>
-      {% if user.get_profile.private %}
+      {% if user.private %}
         <span class="glyphicon glyphicon-lock"></span>
         {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
       {% else %}
@@ -55,7 +55,7 @@
             {% if password_change_form %}
               {{ password_change_form.as_p }}
             {% else %}
-              {{ user.get_profile.get_password_change_form.as_p }}
+              {{ user.get_password_change_form.as_p }}
             {% endif %}
             <button type="submit" class="btn btn-default">{% blocktrans %}Change password{% endblocktrans %}</button>
           </form>
@@ -65,7 +65,7 @@
     </div>
 
     <div id="change-address-now" class="section focussed">
-      {% if not user.get_profile.address %}
+      {% if not user.address %}
         <h3>
           {% blocktrans %}You need to enter your address.{% endblocktrans %}
         </h3>
@@ -80,7 +80,7 @@
           {% if address_change_form %}
             {{ address_change_form.as_p }}
           {% else %}
-            {{ user.get_profile.get_address_change_form.as_p }}
+            {{ user.get_address_change_form.as_p }}
           {% endif %}
           <button type="submit" class="btn btn-default">{% blocktrans %}Change address{% endblocktrans %}</button>
         </form>

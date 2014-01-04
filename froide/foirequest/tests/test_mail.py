@@ -132,9 +132,8 @@ class MailTest(TestCase):
     def test_attachment_name_redaction(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         user = factories.UserFactory.create(last_name='Username')
-        profile = user.get_profile()
-        profile.private = True
-        profile.save()
+        user.private = True
+        user.save()
         request.user = user
         request.save()
         with open(p("test_mail_06.txt"), 'rb') as f:

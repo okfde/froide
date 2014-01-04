@@ -12,7 +12,7 @@
         "email": '{{ user.email|escapejs }}',
         'name': '{{ user.first_name|escapejs }}',
         'last_name': '{{ user.last_name|escapejs }}',
-        'address': '{{ user.get_profile.address|escapejs }}'
+        'address': '{{ user.address|escapejs }}'
       });
     }
     window.close();

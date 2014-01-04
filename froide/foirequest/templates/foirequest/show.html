@@ -466,7 +466,7 @@ data-spy="scroll" data-target="#message-nav-container"
                 <form method="post" class="hidden-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}">
                   {% csrf_token %}
                   <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
-                  <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.get_profile.address }}</span></strong></p>
+                  <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.address }}</span></strong></p>
                   <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
                   <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
                 </form>
