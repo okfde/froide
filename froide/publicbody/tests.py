@@ -20,17 +20,26 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
         pb = PublicBody.objects.all()[0]
+        tag = pb.tags.all()[0]
+        response = self.client.get(reverse('publicbody-list', kwargs={
+            'topic': tag.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(pb.name, response.content.decode('utf-8'))
+        response = self.client.get(reverse('publicbody-list', kwargs={
+            'jurisdiction': pb.jurisdiction.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(pb.name, response.content.decode('utf-8'))
+        response = self.client.get(reverse('publicbody-list', kwargs={
+            'jurisdiction': pb.jurisdiction.slug,
+            'topic': tag.slug
+        }))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(pb.name, response.content.decode('utf-8'))
         response = self.client.get(reverse('publicbody-show',
                 kwargs={"slug": pb.slug}))
         self.assertEqual(response.status_code, 200)
-
-    def test_topic(self):
-        pb = PublicBody.objects.all()[0]
-        tags = pb.tags.filter(is_topic=True)
-        response = self.client.get(reverse('publicbody-show_topic',
-            kwargs={"topic": tags[0].slug}))
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(pb.name, response.content.decode('utf-8'))
 
     def test_csv(self):
         csv = PublicBody.export_csv(PublicBody.objects.all())
