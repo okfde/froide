@@ -72,7 +72,7 @@
         {% endif %}
         <a class="list-group-item{% if jurisdiction == juris %} active{% endif %}" href="{{ jur_url }}{% if query %}?q={{ query }}{% endif %}">
           <span class="badge">{{ juris.num_publicbodies }}</span>
-          <img src="{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png" alt="{{ juris.name }}"/>
+          <span class="small-icon jurisdiction-{{ juris.slug }}"></span>
           {{ juris.name }}
         </a>
       {% endfor %}
@@ -91,7 +91,7 @@
         {% endif %}
         <a class="list-group-item{% if topic == top %} active{% endif %}" href="{{ top_url }}{% if query %}?q={{ query }}{% endif %}">
           <span class="badge">{{ top.num_publicbodies }}</span>
-          <img src="{{ STATIC_URL }}img/topics/{{ top.slug }}_small.png" alt="{{ juris.name }}"/>
+          <span class="small-icon topic-{{ top.slug }}"></span>
           {{ top.name }}
         </a>
       {% endfor %}

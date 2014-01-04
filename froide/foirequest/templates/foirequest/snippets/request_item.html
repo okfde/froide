@@ -1,8 +1,6 @@
 {% load i18n %}
 {% if object.status_representation %}
-<a class="pull-left" href="{{ object.url }}">
-  <img class="media-object" src="{{ STATIC_URL }}img/status/{{ object.status_representation }}.png" alt="{{ object.readable_status }}" title="{{ object.readable_status }}"/>
-</a>
+<a class="pull-left icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
 {% endif %}
 <div class="media-body">
   <h4 class="media-heading">

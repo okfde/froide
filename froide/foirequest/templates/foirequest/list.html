@@ -60,7 +60,7 @@
         {% for urlpart,readable_status,status in status_list %}
           <li>
             <a href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')"></i>
+              <span class="small-icon status-{{ status }}"></span>
               {{ readable_status }}
             </a>
         </li>
@@ -69,7 +69,7 @@
         {% for topic in topic_list %}
           <li>
             <a href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')"></i>
+              <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
           </li>
@@ -80,7 +80,7 @@
           {% for juris in jurisdiction_list %}
             <li>
               <a href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
-                <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png')"></i>
+                <span class="small-icon jurisdiction-{{ juris.slug }}"></span>
                 {{ juris.name }}
               </a>
             </li>
@@ -90,7 +90,7 @@
         {% for urlpart,readable_status,status in status_list %}
           <li>
             <a href="{% url 'foirequest-list' status=urlpart %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')"></i>
+              <span class="small-icon status-{{ status }}"></span>
               {{ readable_status }}
             </a>
           </li>
@@ -99,7 +99,7 @@
         {% for topic in topic_list %}
           <li>
             <a href="{% url 'foirequest-list' topic=topic.slug %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')"></i>
+              <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
           </li>
