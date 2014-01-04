@@ -106,7 +106,7 @@ def confirm(request):
                 ungettext('%(count)d message was sent.',
                     '%(count)d messages were sent', result
                     ) % {"count": result})
-    return redirect('admin:publicbody_publicbody_change', args=(pb.id,))
+    return redirect('admin:publicbody_publicbody_change', pb.id)
 
 
 @require_POST
