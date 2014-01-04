@@ -57,11 +57,13 @@ class CSVImporter(object):
         row['slug'] = slugify(row['name'])
         row['classification_slug'] = slugify(row['classification'])
 
-        # resolve foreign keys
         tags = parse_tags(row.pop('tags', ''))
+        # Backwards compatible handling of topic__slug
         topic_slug = row.pop('topic__slug', None)
         if topic_slug is not None:
-            tags.add(self.get_topic(topic_slug))
+            tags.append(self.get_topic(topic_slug))
+
+        # resolve foreign keys
         row['jurisdiction'] = self.get_jurisdiction(row.pop('jurisdiction__slug'))
         parent = row.pop('parent__name', None)
         if parent:
@@ -82,7 +84,7 @@ class CSVImporter(object):
             PublicBody.objects.filter(id=pb.id).update(**row)
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
-            pb.tags.set(*list(tags))
+            pb.tags.set(*tags)
             return
         except PublicBody.DoesNotExist:
             pass
