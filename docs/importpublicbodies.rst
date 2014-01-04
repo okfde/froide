@@ -13,7 +13,7 @@ The format of the CSV file should be like `in this Google Docs Spreadsheet <http
 Prerequisites
 -------------
 
-You need at least one User, one `PublicBodyTopic` and one `Jurisdiction` present in the database. The jurisdiction's slug must be explictly referenced in the CSV. If no public body topic slug is given in the CSV, it will fall back to the lowest ranking `PublicBodyTopic` as default (then used as the "other" or miscellaneous topic).
+You need at least one User and one `Jurisdiction` present in the database. The jurisdiction's slug must be explictly referenced in the CSV.
 
 
 Format
@@ -31,8 +31,9 @@ other_names
   (optional) Possible other, alternative names for the public body separated by commas.
 description
   (optional) A text description of the public body.
-topic__slug
-  (optional) Slug for this public body's topic. If not given, the public body topic with the highest rank attribute will be chosen.
+tags
+  (optional) A comma-separated (possibly quoted) list of tags for this public body.
+  Tags may already exist or not.
 url
   (optional) Website for this public body.
 parent__name
