@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-13 16:17+0100\n"
+"POT-Creation-Date: 2014-01-05 19:31+0100\n"
 "PO-Revision-Date: 2013-12-13 15:08+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: Finnish (Finland) (http://www.transifex.com/projects/p/froide/"
@@ -27,13 +27,13 @@ msgid ""
 "\"&gt;the Open Knowledge Foundation&lt;/a&gt;."
 msgstr ""
 
-#: docs/_build/html/_sources/theming.txt:52
+#: docs/_build/html/_sources/theming.txt:53
 msgid ""
 "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
 "\">the Open Knowledge Foundation</a>."
 msgstr ""
 
-#: froide/_local_settings_.py:11 froide/settings.py:200 froide/settings.py:489
+#: froide/_local_settings.py:11 froide/settings.py:200 froide/settings.py:479
 msgid "German"
 msgstr ""
 
@@ -84,58 +84,64 @@ msgid "Swedish"
 msgstr ""
 
 #. Translators: request URL
-#: froide/urls.py:58
+#: froide/urls.py:60
 msgid "make-request"
 msgstr "tee-tietopyynto"
 
 #. Translators: URL part
-#: froide/urls.py:60
+#: froide/urls.py:62
 msgid "requests"
 msgstr "tietopyynnot"
 
 #. Translators: request URL
-#: froide/urls.py:62
+#: froide/urls.py:64
 msgid "request"
 msgstr "tietopyynto"
 
 #. Translators: Short-request URL
 #. Translators: Short-request auth URL
-#: froide/urls.py:64 froide/urls.py:66
+#: froide/urls.py:66 froide/urls.py:68
 msgid "r"
 msgstr "r"
 
 #. Translators: follow request URL
-#: froide/urls.py:68
+#: froide/urls.py:70
 msgid "follow"
 msgstr "seuraa"
 
 #. Translators: URL part
-#: froide/urls.py:72 froide/publicbody/jurisdiction_urls.py:10
+#: froide/urls.py:74 froide/urls.py:76
+#: froide/publicbody/jurisdiction_urls.py:10
 msgid "entity"
 msgstr "viranomainen"
 
 #. Translators: URL part
-#: froide/urls.py:74
+#: froide/urls.py:78 froide/publicbody/jurisdiction_urls.py:15
+msgid "entities"
+msgstr "yksiköt"
+
+#. Translators: URL part
+#: froide/urls.py:80
 msgid "law"
 msgstr "laki"
 
 #. Translators: URL part
-#: froide/urls.py:80
+#: froide/urls.py:86
 msgid "account"
 msgstr "tili"
 
 #. Translators: URL part
-#: froide/urls.py:82
+#: froide/urls.py:88
 msgid "profile"
 msgstr "profiili"
 
 #. Translators: URL part
-#: froide/urls.py:84 froide/publicbody/urls.py:15
+#: froide/urls.py:90
 msgid "search"
 msgstr "etsi"
 
 #. Translators: URL part
-#: froide/urls.py:86
+#: froide/urls.py:92
 msgid "help"
 msgstr "apua"
 
@@ -315,34 +321,34 @@ msgstr "Annoit väärän salasanan!"
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "Et kirjoittanut vahvistuslausetta täsmälleen oikein!"
 
-#: froide/account/models.py:48
+#: froide/account/models.py:45
 msgid "Name Not Public"
 msgstr "Nimeä ei näytetä julkisesti"
 
-#: froide/account/models.py:64
+#: froide/account/models.py:61
 msgid "<< Address removed >>"
 msgstr "<< Osoite poistettu >>"
 
-#: froide/account/models.py:70
+#: froide/account/models.py:67
 msgid "<< Email removed >>"
 msgstr "<< Sähköposti poistettu >>"
 
-#: froide/account/models.py:81
+#: froide/account/models.py:78
 msgid "<< Name removed >>"
 msgstr "<< Nimi poistettu >>"
 
-#: froide/account/models.py:90
+#: froide/account/models.py:87
 msgid "<< Greeting >>"
 msgstr "<< Tervehdys >>"
 
 #. Translators: Mail subject
-#: froide/account/models.py:198
+#: froide/account/models.py:192
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: vahvista käyttäjätilisi"
 
 #. Translators: Mail subject
-#: froide/account/models.py:221
+#: froide/account/models.py:215
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s: vahvista uusi sähköpostiosoitteesi"
@@ -383,69 +389,69 @@ msgstr ""
 msgid "Your account is not active."
 msgstr "Käyttäjätilisi on nyt aktivoitu."
 
-#: froide/account/views.py:120
+#: froide/account/views.py:119
 msgid "You have been logged out."
 msgstr "Olet kirjautunut ulos."
 
-#: froide/account/views.py:151 froide/account/templates/account/login.html:7
+#: froide/account/views.py:150 froide/account/templates/account/login.html:7
 msgid "You are now logged in."
 msgstr "Olet nyt kirjautunut sisään."
 
-#: froide/account/views.py:160
+#: froide/account/views.py:159
 msgid "Please activate your mail address before logging in."
 msgstr "Aktivoi sähköpostiosoitteesi ennen sisäänkirjautumista."
 
-#: froide/account/views.py:163
+#: froide/account/views.py:162
 msgid "E-mail and password do not match."
 msgstr "Sähköpostiosoite ja salasana eivät täsmää."
 
-#: froide/account/views.py:180
+#: froide/account/views.py:179
 msgid "You are currently logged in, you cannot signup."
 msgstr ""
 "Olet tällä hetkellä kirjautuneena palveluun, et voi luoda uutta tunnusta."
 
-#: froide/account/views.py:189
+#: froide/account/views.py:188
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Tarkista sähköpostisi ja etsi lähettämämme viesti, joka sisältää "
 "vahvistuslinkin."
 
-#: froide/account/views.py:205
+#: froide/account/views.py:204
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 "Et ole tällä hetkellä kirjautuneena palveluun, et voi vaihtaa salasanaa."
 
-#: froide/account/views.py:211
+#: froide/account/views.py:210
 msgid "Your password has been changed."
 msgstr "Salasanasi on vaihdettu."
 
-#: froide/account/views.py:222
+#: froide/account/views.py:221
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Olet tällä hetkellä kirjautuneena palveluun, et voi saada "
 "salasananvaihtolinkkiä."
 
-#: froide/account/views.py:230
+#: froide/account/views.py:229
 msgid ""
 "Check your mail, we sent you a password reset link. If you don't receive an "
 "email, check if you entered your email correctly or if you really have an "
 "account "
 msgstr ""
 
-#: froide/account/views.py:251
+#: froide/account/views.py:250
 msgid "Your password has been set and you are now logged in."
 msgstr "Salasanasi on asetettu ja olet nyt kirjautunut"
 
-#: froide/account/views.py:264
+#: froide/account/views.py:263
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 "Et ole tällä hetkellä kirjautuneena palveluun, et voi muuttaa osoitettasi."
 
-#: froide/account/views.py:270
+#: froide/account/views.py:269
 msgid "Your address has been changed."
 msgstr "Osoitteesi on muutettu."
 
-#: froide/account/views.py:276
+#: froide/account/views.py:275
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -456,17 +462,17 @@ msgstr ""
 "niitä. Evästeiden käyttäminen sivustolla on turvallista. Tekninen syy "
 "evästeiden käyttöön on: %(reason)s"
 
-#: froide/account/views.py:296
+#: froide/account/views.py:295
 msgid "You are not currently logged in, you cannot change your email address."
 msgstr ""
 "Et ole tällä hetkellä kirjautuneena palveluun, et voi vaihtaa "
 "sähköpostiosoitettasi."
 
-#: froide/account/views.py:302
+#: froide/account/views.py:301
 msgid "Your email address could not be changed."
 msgstr "Sähköpostiosoitettasi ei voitu vaihtaa."
 
-#: froide/account/views.py:314
+#: froide/account/views.py:313
 msgid ""
 "We sent a confirmation email to your new address. Please click the link in "
 "there."
@@ -474,26 +480,26 @@ msgstr ""
 "Lähetimme vahvistusviestin uuteen sähköpostiosoitteeseesi. Klikkaa viestissä "
 "olevaa vahvistuslinkkiä."
 
-#: froide/account/views.py:321
+#: froide/account/views.py:320
 msgid "Your email address has been changed."
 msgstr "Sähköpostiosoitteesi on vaihdettu."
 
-#: froide/account/views.py:324
+#: froide/account/views.py:323
 msgid "The email confirmation link was invalid or expired."
 msgstr ""
 "Sähköpostin vahvistuslinkki oli vanhentunut tai virheellisesti kopioitu."
 
-#: froide/account/views.py:332
+#: froide/account/views.py:331
 msgid "You are not currently logged in, you cannot delete your account."
 msgstr ""
 "Et ole tällä hetkellä kirjautuneena palveluun, et voi lopettaa "
 "käyttäjätiliäsi."
 
-#: froide/account/views.py:337
+#: froide/account/views.py:336
 msgid "Password or confirmation phrase were wrong. Account was not deleted."
 msgstr "Salasana tai vahvistuslause oli väärin. Käyttäjätiliä ei lopetettu."
 
-#: froide/account/views.py:361
+#: froide/account/views.py:359
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Käyttäjätilisi on lopetettu ja sinut on kirjattu ulos."
 
@@ -667,9 +673,8 @@ msgstr "Viimeisimmät tapahtumat"
 
 #: froide/account/templates/account/profile.html:42
 #: froide/account/templates/account/show.html:53
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:18
 #: froide/foirequest/templates/foirequest/snippets/message.html:166
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:25
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:23
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time) sitten"
@@ -831,17 +836,17 @@ msgid "Your Freedom of Information Requests"
 msgstr "Tietopyyntösi"
 
 #: froide/account/templates/account/show.html:102
-#: froide/foirequest/models.py:241 froide/frontpage/models.py:23
+#: froide/foirequest/models.py:240 froide/frontpage/models.py:23
 msgid "Title"
 msgstr "Otsikko"
 
 #: froide/account/templates/account/show.html:103
-#: froide/foirequest/models.py:268
+#: froide/foirequest/models.py:267
 msgid "Due Date"
 msgstr "Määräpäivä"
 
 #: froide/account/templates/account/show.html:104
-#: froide/foirequest/models.py:237
+#: froide/foirequest/models.py:236
 msgid "Public"
 msgstr "Julkinen"
 
@@ -1006,15 +1011,15 @@ msgstr ""
 "Vastaavia pyyntöjä ei tunnistettu, ole hyvä ja tutki!\n"
 "%(url)s\n"
 
-#: froide/foirequest/foi_mail.py:98 froide/foirequest/tests/test_mail.py:81
+#: froide/foirequest/foi_mail.py:101 froide/foirequest/tests/test_mail.py:81
 msgid "Unknown FoI-Mail Recipient"
 msgstr "Tuntematon tietopyynnön vastaanottaja"
 
-#: froide/foirequest/foi_mail.py:146
+#: froide/foirequest/foi_mail.py:149
 msgid "publicbody"
 msgstr ""
 
-#: froide/foirequest/foi_mail.py:148
+#: froide/foirequest/foi_mail.py:151
 msgid "requester"
 msgstr ""
 
@@ -1025,7 +1030,7 @@ msgstr "Hae aihetta tai viranomaista"
 #: froide/foirequest/forms.py:32 froide/foirequest/forms.py:34
 #: froide/foirequest/forms.py:174 froide/foirequest/forms.py:237
 #: froide/foirequest/forms.py:423 froide/foirequest/forms.py:425
-#: froide/foirequest/models.py:1101
+#: froide/foirequest/models.py:1102
 #: froide/foirequest/templates/foirequest/_request_form.html:11
 #: froide/foirequest/templates/foirequest/request.html:465
 #: froide/foirequest/templates/foirequest/snippets/message.html:37
@@ -1120,7 +1125,7 @@ msgstr "Syy"
 msgid "Suggestions"
 msgstr "Ehdotukset"
 
-#: froide/foirequest/forms.py:262 froide/publicbody/models.py:318
+#: froide/foirequest/forms.py:262 froide/publicbody/models.py:327
 msgid "More Info"
 msgstr "Lisätietoja"
 
@@ -1146,8 +1151,8 @@ msgstr ""
 "Jos pääsyäsi tietoon on rajoitettu, edes osittain,viranomaisen tulee aina "
 "nimetä rajoittamiselle tarkka syy."
 
-#: froide/foirequest/forms.py:280 froide/foirequest/models.py:249
-#: froide/foirequest/models.py:1097
+#: froide/foirequest/forms.py:280 froide/foirequest/models.py:248
+#: froide/foirequest/models.py:1098
 #: froide/foirequest/templates/foirequest/snippets/message.html:60
 msgid "Status"
 msgstr "Tila"
@@ -1160,7 +1165,7 @@ msgstr "Tämä tietopyyntö on yhä kesken."
 msgid "This request is finished."
 msgstr "Tämä tietopyyntö on valmis."
 
-#: froide/foirequest/forms.py:288 froide/foirequest/models.py:251
+#: froide/foirequest/forms.py:288 froide/foirequest/models.py:250
 msgid "Resolution"
 msgstr "Päätös."
 
@@ -1297,325 +1302,323 @@ msgctxt "URL part"
 msgid "to"
 msgstr "kenelle"
 
-#: froide/foirequest/models.py:116
+#: froide/foirequest/models.py:115
 msgid "FoI Request Tag"
 msgstr "Tietopyynnön avainsana"
 
-#: froide/foirequest/models.py:117
+#: froide/foirequest/models.py:116
 msgid "FoI Request Tags"
 msgstr "Tietopyynnön avainsanat"
 
-#: froide/foirequest/models.py:124
+#: froide/foirequest/models.py:123
 msgid "Awaiting user confirmation"
 msgstr "Odotetaan käyttäjän vahvistusta"
 
-#: froide/foirequest/models.py:125
+#: froide/foirequest/models.py:124
 msgid "The requester's email address is yet to be confirmed."
 msgstr "Pyynnön tekijän sähköpostiosoitetta ei ole vielä varmistettu."
 
-#: froide/foirequest/models.py:129
+#: froide/foirequest/models.py:128
 msgid "Public Body needed"
 msgstr "Tarvittava viranomainen"
 
-#: froide/foirequest/models.py:130
+#: froide/foirequest/models.py:129
 msgid "This request still needs a Public Body."
 msgstr "Tämä pyyntö tarvitsee viranomaisen."
 
-#: froide/foirequest/models.py:134
+#: froide/foirequest/models.py:133
 msgid "Awaiting Public Body confirmation"
 msgstr "Odotetaan viranomaisen vahvistusta"
 
-#: froide/foirequest/models.py:135
+#: froide/foirequest/models.py:134
 msgid ""
 "The Public Body of this request has been created by the user and still needs "
 "to be confirmed."
 msgstr ""
 "Pyynnön viranomainen on käyttäjän käsin lisäämä, ja täytyy vielä vahvistaa. "
 
-#: froide/foirequest/models.py:139
+#: froide/foirequest/models.py:138
 msgid "Awaiting response"
 msgstr "Odotetaan vastausta"
 
-#: froide/foirequest/models.py:140
+#: froide/foirequest/models.py:139
 msgid "This request is still waiting for a response from the Public Body."
 msgstr "Tämä tietopyyntö odotaa yhä vastausta viranomaiselta."
 
-#: froide/foirequest/models.py:144
+#: froide/foirequest/models.py:143
 msgid "Request awaits classification"
 msgstr "Tietopyyntö odottaa luokittelua"
 
-#: froide/foirequest/models.py:145
+#: froide/foirequest/models.py:144
 msgid "A message was received and the user needs to set a new status."
 msgstr ""
 "Viesti on otettu vastaan, käyttäjän pitää asettaa tietopyynnölle uusi tila."
 
-#: froide/foirequest/models.py:149
+#: froide/foirequest/models.py:148
 msgid "Request asleep"
 msgstr "Tietopyyntö ei ole aktiivinen."
 
-#: froide/foirequest/models.py:150
+#: froide/foirequest/models.py:149
 msgid "The request is not resolved and has not been active for a while."
 msgstr "Tietopyyntö on ratkaisematta eikä ole ollut aktiivinen pitkään aikaan."
 
-#: froide/foirequest/models.py:154
+#: froide/foirequest/models.py:153
 msgid "Request resolved"
 msgstr "Tietopyyntö ratkaistu"
 
-#: froide/foirequest/models.py:155
+#: froide/foirequest/models.py:154
 msgid "The request is resolved."
 msgstr "Tietopyyntö on ratkaistu"
 
-#: froide/foirequest/models.py:162
+#: froide/foirequest/models.py:161
 msgid "Request Successful"
 msgstr "Tietopyyntö onnistui. "
 
-#: froide/foirequest/models.py:163
+#: froide/foirequest/models.py:162
 msgid "The request has been successul."
 msgstr "Tietopyyntö on onnistunut"
 
-#: froide/foirequest/models.py:167
+#: froide/foirequest/models.py:166
 msgid "Request partially successful"
 msgstr "Tietopyyntö onnistui osittain"
 
-#: froide/foirequest/models.py:168
+#: froide/foirequest/models.py:167
 msgid ""
 "The request has been partially successful (some information was provided, "
 "but not all)"
 msgstr ""
 "Tietopyyntö onnistui osittain, tiedoista osa toimitettiin, osa jäi puuttumaan"
 
-#: froide/foirequest/models.py:171
+#: froide/foirequest/models.py:170
 msgid "Information not held"
 msgstr "Tietoa ei ole"
 
-#: froide/foirequest/models.py:172
+#: froide/foirequest/models.py:171
 msgid "The Public Body stated that it does not possess the information."
 msgstr "Viranomaisen mukaan sillä ei ole kyseistä tietoa "
 
-#: froide/foirequest/models.py:176
+#: froide/foirequest/models.py:175
 msgid "Request refused"
 msgstr "Tietopyyntö evätty"
 
-#: froide/foirequest/models.py:177
+#: froide/foirequest/models.py:176
 msgid "The Public Body refuses to provide the information."
 msgstr "Viranomainen kieltäytyy luovuttamasta tietoa."
 
-#: froide/foirequest/models.py:181
+#: froide/foirequest/models.py:180
 msgid "Request was withdrawn due to costs"
 msgstr "Pyyntö peruttu kulujen vuoksi."
 
-#: froide/foirequest/models.py:182
+#: froide/foirequest/models.py:181
 msgid "User withdrew the request due to the associated costs."
 msgstr "Käyttäjä perui pyynnön kulujen vuoksi."
 
-#: froide/foirequest/models.py:186
+#: froide/foirequest/models.py:185
 msgid "Request was withdrawn"
 msgstr "Pyyntö peruttiin"
 
-#: froide/foirequest/models.py:187
+#: froide/foirequest/models.py:186
 msgid "User withdrew the request for other reasons."
 msgstr "Käyttäjä perui pyynnön muista syistä."
 
-#: froide/foirequest/models.py:196
+#: froide/foirequest/models.py:195
 msgid "successful"
 msgstr "onnistui"
 
-#: froide/foirequest/models.py:197
+#: froide/foirequest/models.py:196
 msgid "partially-successful"
 msgstr "onnistui-osittain"
 
-#: froide/foirequest/models.py:198
+#: froide/foirequest/models.py:197
 msgid "refused"
 msgstr "evätty"
 
-#: froide/foirequest/models.py:199
+#: froide/foirequest/models.py:198
 msgid "withdrawn"
 msgstr "peruttu"
 
-#: froide/foirequest/models.py:200
+#: froide/foirequest/models.py:199
 msgid "withdrawn-costs"
 msgstr "peruttu-maksullisuuden-takia"
 
-#: froide/foirequest/models.py:201
+#: froide/foirequest/models.py:200
 msgid "publicbody-needed"
 msgstr "viranomainen-puuttuu"
 
-#: froide/foirequest/models.py:202
+#: froide/foirequest/models.py:201
 msgid "awaiting-response"
 msgstr "odottaa-vastausta"
 
-#: froide/foirequest/models.py:203
+#: froide/foirequest/models.py:202
 msgid "overdue"
 msgstr "myöhästynyt"
 
-#: froide/foirequest/models.py:206
+#: froide/foirequest/models.py:205
 msgid "asleep"
 msgstr "ei-aktiivinen"
 
-#: froide/foirequest/models.py:207
+#: froide/foirequest/models.py:206
 msgid "not-held"
 msgstr "pyydettyä-tietoa-ei-ole"
 
-#: froide/foirequest/models.py:208
+#: froide/foirequest/models.py:207
 msgid "has-fee"
 msgstr "maksullinen"
 
-#: froide/foirequest/models.py:222
+#: froide/foirequest/models.py:221
 msgid "Response overdue"
 msgstr "Vastaus myöhässä"
 
-#: froide/foirequest/models.py:223
+#: froide/foirequest/models.py:222
 msgid "The request has not been answered in time."
 msgstr "Tietopyyntöön ei ole vastattu ajoissa"
 
-#: froide/foirequest/models.py:227
+#: froide/foirequest/models.py:226
 msgid "Fee charged"
 msgstr "Maksu on veloitettu"
 
-#: froide/foirequest/models.py:228
+#: froide/foirequest/models.py:227
 msgid "This request is connected with a fee."
 msgstr "Tämä teitopyyntö vaatii maksun"
 
-#: froide/foirequest/models.py:235
+#: froide/foirequest/models.py:234
 msgid "Invisible"
 msgstr "Piilotettu"
 
-#: froide/foirequest/models.py:236
+#: froide/foirequest/models.py:235
 msgid "Visible to Requester"
 msgstr "Näkyvissä tietopyynnön tekijälle"
 
-#: froide/foirequest/models.py:242 froide/publicbody/models.py:33
-#: froide/publicbody/models.py:75 froide/publicbody/models.py:205
-#: froide/publicbody/models.py:224
+#: froide/foirequest/models.py:241 froide/publicbody/models.py:39
+#: froide/publicbody/models.py:64 froide/publicbody/models.py:240
 msgid "Slug"
 msgstr "Lyhenne"
 
-#: froide/foirequest/models.py:243 froide/publicbody/models.py:34
-#: froide/publicbody/models.py:76 froide/publicbody/models.py:206
-#: froide/publicbody/models.py:225
+#: froide/foirequest/models.py:242 froide/publicbody/models.py:40
+#: froide/publicbody/models.py:65 froide/publicbody/models.py:241
 msgid "Description"
 msgstr "Kuvaus"
 
-#: froide/foirequest/models.py:244
+#: froide/foirequest/models.py:243
 msgid "Summary"
 msgstr "Tiivistelmä"
 
-#: froide/foirequest/models.py:247 froide/foirequest/models.py:1046
-#: froide/foirequest/models.py:1431 froide/publicbody/models.py:273
+#: froide/foirequest/models.py:246 froide/foirequest/models.py:1047
+#: froide/foirequest/models.py:1435 froide/publicbody/models.py:288
 msgid "Public Body"
 msgstr "Viranomainen"
 
-#: froide/foirequest/models.py:254
+#: froide/foirequest/models.py:253
 msgid "published?"
 msgstr "julkaistu?"
 
-#: froide/foirequest/models.py:255
+#: froide/foirequest/models.py:254
 msgid "Visibility"
 msgstr "Näkyvyys"
 
-#: froide/foirequest/models.py:260 froide/foirequest/models.py:1049
-#: froide/foirequest/models.py:1428 froide/foirequestfollower/models.py:51
+#: froide/foirequest/models.py:259 froide/foirequest/models.py:1050
+#: froide/foirequest/models.py:1432 froide/foirequestfollower/models.py:51
 #: froide/frontpage/models.py:30
 msgid "User"
 msgstr "Käyttäjä"
 
-#: froide/foirequest/models.py:262
+#: froide/foirequest/models.py:261
 msgid "Date of first message"
 msgstr "Viestin päiväys"
 
-#: froide/foirequest/models.py:264
+#: froide/foirequest/models.py:263
 msgid "Date of last message"
 msgstr "Viimeisimmän viestin päiväys"
 
-#: froide/foirequest/models.py:266
+#: froide/foirequest/models.py:265
 msgid "Resolution date"
 msgstr "Ratkaisupäivä"
 
-#: froide/foirequest/models.py:271
+#: froide/foirequest/models.py:270
 msgid "Secret address"
 msgstr "Salainen osoite"
 
-#: froide/foirequest/models.py:273
+#: froide/foirequest/models.py:272
 msgid "Secret"
 msgstr "Salainen"
 
-#: froide/foirequest/models.py:277
+#: froide/foirequest/models.py:276
 msgid "Identical request"
 msgstr "Pyyntö on samankaltainen"
 
-#: froide/foirequest/models.py:278
+#: froide/foirequest/models.py:277
 msgid "Identical request count"
 msgstr "Sama tietoyyntöjen määrä"
 
-#: froide/foirequest/models.py:282 froide/publicbody/models.py:110
+#: froide/foirequest/models.py:281 froide/publicbody/models.py:99
 msgid "Freedom of Information Law"
 msgstr "Julkisuuslaki"
 
-#: froide/foirequest/models.py:283
+#: froide/foirequest/models.py:282
 msgid "Cost of Information"
 msgstr "Tiedon hinta"
 
-#: froide/foirequest/models.py:284
+#: froide/foirequest/models.py:283
 msgid "Refusal reason"
 msgstr "Kiletäytymisen syy"
 
-#: froide/foirequest/models.py:286
+#: froide/foirequest/models.py:285
 msgid "checked"
 msgstr "tarkistettu"
 
-#: froide/foirequest/models.py:287
+#: froide/foirequest/models.py:286
 msgid "is FoI request"
 msgstr "on tietopyyntö"
 
-#: froide/foirequest/models.py:289 froide/publicbody/models.py:41
-#: froide/publicbody/models.py:85 froide/publicbody/models.py:261
+#: froide/foirequest/models.py:288 froide/publicbody/models.py:47
+#: froide/publicbody/models.py:74 froide/publicbody/models.py:275
 #: froide/publicbody/templates/publicbody/show.html:25
 msgid "Jurisdiction"
 msgstr "Toimialue"
 
-#: froide/foirequest/models.py:293 froide/frontpage/models.py:33
-#: froide/publicbody/models.py:105 froide/publicbody/models.py:258
+#: froide/foirequest/models.py:292 froide/frontpage/models.py:33
+#: froide/publicbody/models.py:94 froide/publicbody/models.py:272
 msgid "Site"
 msgstr "Sijainti"
 
-#: froide/foirequest/models.py:304 froide/foirequest/models.py:1044
-#: froide/foirequest/models.py:1065 froide/foirequest/models.py:1425
+#: froide/foirequest/models.py:303 froide/foirequest/models.py:1045
+#: froide/foirequest/models.py:1066 froide/foirequest/models.py:1429
 #: froide/foirequestfollower/models.py:50
 msgid "Freedom of Information Request"
 msgstr "Tietopyyntö"
 
-#: froide/foirequest/models.py:305 froide/templates/base.html:6
+#: froide/foirequest/models.py:304 froide/templates/base.html:6
 #: froide/templates/simple_base.html:6
 msgid "Freedom of Information Requests"
 msgstr "Teitopyyntö"
 
-#: froide/foirequest/models.py:307
+#: froide/foirequest/models.py:306
 msgid "Can see private requests"
 msgstr "Voi lukea yksityisiä tietopyyntöjä"
 
-#: froide/foirequest/models.py:325
+#: froide/foirequest/models.py:324
 #, python-format
 msgid "Request '%s'"
 msgstr "Pyyntö '%s'"
 
-#: froide/foirequest/models.py:402 froide/foirequest/models.py:1237
-#: froide/foirequest/models.py:1253 froide/foirequest/models.py:1258
+#: froide/foirequest/models.py:401 froide/foirequest/models.py:1242
+#: froide/foirequest/models.py:1257 froide/foirequest/models.py:1262
 msgid "<<email address>>"
 msgstr "<<sähköpostiosoite>>"
 
-#: froide/foirequest/models.py:568
+#: froide/foirequest/models.py:571
 #, python-format
 msgid "Re: %(subject)s"
 msgstr "Re: %(subject)s"
 
-#: froide/foirequest/models.py:574
+#: froide/foirequest/models.py:577
 #, python-format
 msgid "%(count)s day"
 msgid_plural "%(count)s days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: froide/foirequest/models.py:580
+#: froide/foirequest/models.py:583
 #, python-format
 msgid ""
 "Dear Sir or Madam,\n"
@@ -1632,293 +1635,291 @@ msgstr ""
 "Ystävällisin terveisin\n"
 "%(name)s\n"
 
-#: froide/foirequest/models.py:588
+#: froide/foirequest/models.py:591
 #, python-format
 msgid "Complaint about request \"%(title)s\""
 msgstr "Valitus pyynnöstä \"%(title)s\""
 
-#: froide/foirequest/models.py:633
+#: froide/foirequest/models.py:635
 #, python-format
 msgid "attached_file_%d"
 msgstr "attached_file_%d"
 
 #. Translators: replacement for person name in filename
-#: froide/foirequest/models.py:639
+#: froide/foirequest/models.py:641
 msgid "NAME"
 msgstr "NIMI"
 
-#: froide/foirequest/models.py:652
+#: froide/foirequest/models.py:654
 msgid "Message contains PDF"
 msgstr "Viesti sisältää PDF-tiedoston"
 
-#: froide/foirequest/models.py:694
+#: froide/foirequest/models.py:696
 #, python-format
 msgid "request_%(num)s.zip"
 msgstr ""
 
-#: froide/foirequest/models.py:734 froide/foirequest/models.py:738
+#: froide/foirequest/models.py:736 froide/foirequest/models.py:740
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: froide/foirequest/models.py:981
+#: froide/foirequest/models.py:983
 #, python-format
 msgid "%(site_name)s: Please classify the reply to your request"
 msgstr "%(site_name)s: Ole hyvä, luokittele pyynnön vastaus"
 
-#: froide/foirequest/models.py:1000
+#: froide/foirequest/models.py:1002
 #, python-format
 msgid "%(site_name)s: Update on one of your request"
 msgid_plural "%(site_name)s: Update on %(count)s of your requests"
 msgstr[0] "%(site_name)s: Päivitys yhdellä pyynnöistäsi"
 msgstr[1] "%(site_name)s: Päivitys %(count)s pyynnölläsi"
 
-#: froide/foirequest/models.py:1050
+#: froide/foirequest/models.py:1051
 msgid "Timestamp of Suggestion"
 msgstr "Ehdotuksen ajankohta"
 
-#: froide/foirequest/models.py:1052
+#: froide/foirequest/models.py:1053
 msgid "Reason this Public Body fits the request"
 msgstr "Perustelu, miksi tämä viranomainen soveltuu pyynnölle"
 
-#: froide/foirequest/models.py:1058
+#: froide/foirequest/models.py:1059
 msgid "Public Body Suggestion"
 msgstr "Ehdotettu viranomainen"
 
-#: froide/foirequest/models.py:1059
+#: froide/foirequest/models.py:1060
 msgid "Public Body Suggestions"
 msgstr "Ehdotetut viranomaiset"
 
-#: froide/foirequest/models.py:1066
+#: froide/foirequest/models.py:1067
 msgid "has message been sent?"
 msgstr "onko viesti lähetetty"
 
-#: froide/foirequest/models.py:1067
+#: froide/foirequest/models.py:1068
 msgid "Is this message a response?"
 msgstr "Onko tämä viesti vastaus?"
 
-#: froide/foirequest/models.py:1069
+#: froide/foirequest/models.py:1070
 msgid "Postal?"
 msgstr "Postinumero?"
 
-#: froide/foirequest/models.py:1071
+#: froide/foirequest/models.py:1072
 msgid "Escalation?"
 msgstr "Eskalointi?"
 
-#: froide/foirequest/models.py:1073
+#: froide/foirequest/models.py:1074
 msgid "Content hidden?"
 msgstr "Sisältö piilotettu?"
 
-#: froide/foirequest/models.py:1080
+#: froide/foirequest/models.py:1081
 msgid "From User"
 msgstr "Käyttäjältä"
 
-#: froide/foirequest/models.py:1082
+#: froide/foirequest/models.py:1083
 msgid "From Email"
 msgstr "Sähköpostista"
 
-#: froide/foirequest/models.py:1084
+#: froide/foirequest/models.py:1085
 msgid "From Name"
 msgstr "Henkilöltä nimeltään"
 
-#: froide/foirequest/models.py:1088
+#: froide/foirequest/models.py:1089
 msgid "From Public Body"
 msgstr "Viranomaisorganisaatiolta"
 
-#: froide/foirequest/models.py:1090
+#: froide/foirequest/models.py:1091
 msgid "Recipient"
 msgstr "Vastaanottaja"
 
-#: froide/foirequest/models.py:1092
+#: froide/foirequest/models.py:1093
 msgid "Recipient Email"
 msgstr "Vastaaottajan sähköposti"
 
-#: froide/foirequest/models.py:1096
+#: froide/foirequest/models.py:1097
 msgid "Public Body Recipient"
 msgstr "Viranomaisen vastaanottaja"
 
-#: froide/foirequest/models.py:1100 froide/foirequest/models.py:1434
+#: froide/foirequest/models.py:1101 froide/foirequest/models.py:1438
 #: froide/frontpage/models.py:22
 msgid "Timestamp"
 msgstr "aikaleima"
 
-#: froide/foirequest/models.py:1102
+#: froide/foirequest/models.py:1103
 msgid "Redacted Subject"
 msgstr "Anonymisoitu otsikko"
 
-#: froide/foirequest/models.py:1103
+#: froide/foirequest/models.py:1104
 msgid "plain text"
 msgstr "pelkkä teksti"
 
-#: froide/foirequest/models.py:1104
+#: froide/foirequest/models.py:1105
 msgid "redacted plain text"
 msgstr "tekstimuotoon muunnettu asiakirja"
 
-#: froide/foirequest/models.py:1105
+#: froide/foirequest/models.py:1106
 msgid "HTML"
 msgstr "HTML"
 
-#: froide/foirequest/models.py:1106
+#: froide/foirequest/models.py:1107
 msgid "Original"
 msgstr "Alkuperäinen"
 
-#: froide/foirequest/models.py:1107
+#: froide/foirequest/models.py:1108
 msgid "Was Redacted?"
 msgstr "Oli poistettu?"
 
-#: froide/foirequest/models.py:1108
+#: froide/foirequest/models.py:1109
 msgid "Not publishable"
 msgstr "Ei julkistettavissa"
 
-#: froide/foirequest/models.py:1114
+#: froide/foirequest/models.py:1115
 msgid "Freedom of Information Message"
 msgstr "Tietopyyntöviesti"
 
-#: froide/foirequest/models.py:1115
+#: froide/foirequest/models.py:1116
 msgid "Freedom of Information Messages"
 msgstr "Tietopyyntöviestit"
 
-#: froide/foirequest/models.py:1122
+#: froide/foirequest/models.py:1123
 #, python-format
 msgid "Message in '%(request)s' at %(time)s"
 msgstr "'%(request)s' pyyntöä %(time)s ajassa"
 
-#: froide/foirequest/models.py:1131
+#: froide/foirequest/models.py:1132
 #, python-format
 msgid "message-%(id)d"
 msgstr "message-%(id)d"
 
-#: froide/foirequest/models.py:1236 froide/foirequest/models.py:1252
+#: froide/foirequest/models.py:1241 froide/foirequest/models.py:1256
 msgid "<<name and email address>>"
 msgstr "<<nimi ja sähköposti>>"
 
-#: froide/foirequest/models.py:1295
+#: froide/foirequest/models.py:1299
 msgid "Belongs to request"
 msgstr "Kuuluu pyyntöön"
 
-#: froide/foirequest/models.py:1296 froide/foisite/models.py:12
-#: froide/publicbody/models.py:32 froide/publicbody/models.py:74
-#: froide/publicbody/models.py:204 froide/publicbody/models.py:222
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:20
-#: froide/publicbody/templates/publicbody/show_topic.html:37
+#: froide/foirequest/models.py:1300 froide/foisite/models.py:12
+#: froide/publicbody/models.py:38 froide/publicbody/models.py:63
+#: froide/publicbody/models.py:238
 msgid "Name"
 msgstr "Nimi"
 
-#: froide/foirequest/models.py:1297
+#: froide/foirequest/models.py:1301
 msgid "File"
 msgstr "Tiedosto"
 
-#: froide/foirequest/models.py:1298
+#: froide/foirequest/models.py:1302
 msgid "Size"
 msgstr "Koko"
 
-#: froide/foirequest/models.py:1299
+#: froide/foirequest/models.py:1303
 msgid "File type"
 msgstr "Tiedostotyyppi"
 
-#: froide/foirequest/models.py:1300
+#: froide/foirequest/models.py:1304
 msgid "Format"
 msgstr "Formaatti"
 
-#: froide/foirequest/models.py:1301
+#: froide/foirequest/models.py:1305
 msgid "User can approve"
 msgstr "Käyttäjä voi hyväksyä"
 
-#: froide/foirequest/models.py:1302
+#: froide/foirequest/models.py:1306
 msgid "Approved"
 msgstr "Hyväksytty"
 
-#: froide/foirequest/models.py:1303
+#: froide/foirequest/models.py:1307
 msgid "Redacted Version"
 msgstr "Lyhennetty versio"
 
-#: froide/foirequest/models.py:1306
+#: froide/foirequest/models.py:1310
 msgid "Is redacted"
 msgstr "on lyhennetty"
 
-#: froide/foirequest/models.py:1307
+#: froide/foirequest/models.py:1311
 msgid "Converted Version"
 msgstr "Muunnettu versio"
 
-#: froide/foirequest/models.py:1310
+#: froide/foirequest/models.py:1314
 msgid "Is converted"
 msgstr ""
 
-#: froide/foirequest/models.py:1345
+#: froide/foirequest/models.py:1349
 msgid "Attachment"
 msgstr "Liite"
 
-#: froide/foirequest/models.py:1346
+#: froide/foirequest/models.py:1350
 #: froide/foirequest/templates/foirequest/list_unchecked.html:22
 #: froide/foirequest/templates/foirequest/snippets/message.html:74
 msgid "Attachments"
 msgstr "Liitteet"
 
-#: froide/foirequest/models.py:1363
+#: froide/foirequest/models.py:1367
 #, python-format
 msgid "attachment-%(id)d"
 msgstr "liite-%(id)d"
 
-#: froide/foirequest/models.py:1405
+#: froide/foirequest/models.py:1409
 msgid "See FoiMessage"
 msgstr "Katso tietopyyntöön liittyvä viesti"
 
-#: froide/foirequest/models.py:1432
+#: froide/foirequest/models.py:1436
 msgid "Is Public?"
 msgstr "Julkinen?"
 
-#: froide/foirequest/models.py:1433
+#: froide/foirequest/models.py:1437
 msgid "Event Name"
 msgstr "Tapahtuman nimi"
 
-#: froide/foirequest/models.py:1435
+#: froide/foirequest/models.py:1439
 msgid "Context JSON"
 msgstr "Konteksti JSON"
 
-#: froide/foirequest/models.py:1441
+#: froide/foirequest/models.py:1445
 #, python-format
 msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr "%(user)s ehdotti %(public_body)s tietopyyntöä '%(request)s'"
 
-#: froide/foirequest/models.py:1443
+#: froide/foirequest/models.py:1447
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr "%(user)s käyttäjää raportoi tälle pyynnölle kustannukseksi %(amount)s."
 
-#: froide/foirequest/models.py:1445
+#: froide/foirequest/models.py:1449
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr "Vastaanotti sähköpostin %(public_body)s lta."
 
-#: froide/foirequest/models.py:1447
+#: froide/foirequest/models.py:1451
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr "%(user)s lähetti viestin %(public_body)s."
 
-#: froide/foirequest/models.py:1449
+#: froide/foirequest/models.py:1453
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
 msgstr ""
 "Viesti välitettiin %(public_body)s jonka vuoksi määräaika on asetettu "
 "uudelleen."
 
-#: froide/foirequest/models.py:1451
+#: froide/foirequest/models.py:1455
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr "%(user)s asetti tilaksi '%(status)s'."
 
-#: froide/foirequest/models.py:1453
+#: froide/foirequest/models.py:1457
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
 msgstr "%(user)s  on pyytänyt '%(request)s' julkiseksi."
 
-#: froide/foirequest/models.py:1455
+#: froide/foirequest/models.py:1459
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr ""
 "%(public_body)s kieltäytyi luovuttamasta tietoja %(reason)s perusteella."
 
-#: froide/foirequest/models.py:1457
+#: froide/foirequest/models.py:1461
 #, python-format
 msgid ""
 "%(public_body)s answered partially, but denied access to all information on "
@@ -1927,22 +1928,22 @@ msgstr ""
 "%(public_body)s vastasi osittain, mutta epäsi pääsyn tietoon "
 "kokonaisuudessaan%(reason)s perusteella."
 
-#: froide/foirequest/models.py:1459
+#: froide/foirequest/models.py:1463
 msgid "This request became overdue"
 msgstr "Tämän pyynnön määräaika on täyttynyt."
 
-#: froide/foirequest/models.py:1461
+#: froide/foirequest/models.py:1465
 #, python-format
 msgid ""
 "%(user)s set '%(name)s' as the information law for the request %(request)s."
 msgstr "%(user)s asetti '%(name)s' lakiperustaksi %(request)s pyynnölle."
 
-#: froide/foirequest/models.py:1463
+#: froide/foirequest/models.py:1467
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr "%(user)s lisäsi vastauksen joka oli vastaanotettu paperipostilla."
 
-#: froide/foirequest/models.py:1465
+#: froide/foirequest/models.py:1469
 #, python-format
 msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
@@ -1951,33 +1952,33 @@ msgstr ""
 "%(user)s täytti valituksen %(public_body)s lle asian käsittelystä "
 "%(request)s pyynnössä."
 
-#: froide/foirequest/models.py:1467
+#: froide/foirequest/models.py:1471
 #, python-format
 msgid "The deadline of request %(request)s has been extended."
 msgstr "Määräaikaa pyynnölle %(request)s on jatkettu"
 
-#: froide/foirequest/models.py:1472
+#: froide/foirequest/models.py:1476
 msgid "Request Event"
 msgstr "Tietopyyntöön liittyvä tapahtuma"
 
-#: froide/foirequest/models.py:1473
+#: froide/foirequest/models.py:1477
 msgid "Request Events"
 msgstr "Tietopyyntöön liittyvät tapahtumat"
 
 #. Translators: Hash part of Event URL
-#: froide/foirequest/models.py:1486
+#: froide/foirequest/models.py:1490
 msgid "event"
 msgstr "tapahtuma"
 
-#: froide/foirequest/models.py:1550
+#: froide/foirequest/models.py:1553
 msgid "Undelivered Message"
 msgstr "Toimittamaton viesti"
 
-#: froide/foirequest/models.py:1551
+#: froide/foirequest/models.py:1554
 msgid "Undelivered Messages"
 msgstr "Toimittamattomat viestit"
 
-#: froide/foirequest/models.py:1554
+#: froide/foirequest/models.py:1557
 #, python-format
 msgid "Undelievered Message to %(recipient)s (%(request)s)"
 msgstr "Toimittamattomat viestit %(recipient)s -vastaanottajille (%(request)s)"
@@ -1987,27 +1988,27 @@ msgstr "Toimittamattomat viestit %(recipient)s -vastaanottajille (%(request)s)"
 msgid "%(site_name)s: Request became overdue"
 msgstr "%(site_name)s: Pyynnön määräaika on täyttynyt"
 
-#: froide/foirequest/signals.py:49
+#: froide/foirequest/signals.py:50
 #, python-format
 msgid "%(site_name)s: Request became asleep"
 msgstr "%(site_name)s: Pyyntö on pysäytetty"
 
-#: froide/foirequest/signals.py:68
+#: froide/foirequest/signals.py:72
 #, python-format
 msgid "%(site_name)s: New reply to your request"
 msgstr ""
 
-#: froide/foirequest/signals.py:84
+#: froide/foirequest/signals.py:92
 #, python-format
 msgid "%(site_name)s: New suggestion for a Public Body"
 msgstr ""
 
-#: froide/foirequest/signals.py:101
+#: froide/foirequest/signals.py:112
 #, python-format
 msgid "%(site_name)s: Your Freedom of Information Request was sent"
 msgstr ""
 
-#: froide/foirequest/signals.py:104
+#: froide/foirequest/signals.py:115
 #, python-format
 msgid "%(site_name)s: Your Message was sent"
 msgstr ""
@@ -2025,7 +2026,8 @@ msgstr "viimeisin"
 #. Translators: part in request filter URL
 #. Translators: part in Public Body URL
 #: froide/foirequest/urls.py:37 froide/foirequest/urls.py:39
-#: froide/foirequest/urls.py:41 froide/publicbody/urls.py:26
+#: froide/foirequest/urls.py:41 froide/publicbody/urls.py:17
+#: froide/publicbody/urls.py:22
 msgctxt "URL part"
 msgid "topic"
 msgstr "aihe"
@@ -2230,37 +2232,6 @@ msgstr "Esikatsele pyyntöä"
 #: froide/foirequest/templates/foirequest/_request_form.html:37
 msgid "How to make a successful FOI Request"
 msgstr "Kuinka tehdä hyvä tietopyyntö"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:11
-#: froide/foirequest/templates/foirequest/request.html:57
-msgid "To:"
-msgstr "Kenelle:"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:14
-#: froide/foirequest/templates/foirequest/show.html:390
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:21
-msgid "Not yet set"
-msgstr "Ei vielä asetettu"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:16
-msgid "Status:"
-msgstr "Tilanne:"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:20
-#: froide/foirequest/templates/foirequest/show.html:698
-#, python-format
-msgid "One identical request"
-msgid_plural "%(counter)s identical requests"
-msgstr[0] "Yksi samankaltainen tietopyyntö"
-msgstr[1] "%(counter)s samankaltaista tietopyyntöä"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:28
-msgid "No requests with this status yet."
-msgstr "Tässä tilassa olevia tietopyyntöjä ei ole"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:30
-msgid "No requests yet."
-msgstr "Ei pyyntöjä vielä."
 
 #: froide/foirequest/templates/foirequest/admin_mark_same_as.html:16
 #: froide/foirequest/templates/foirequest/admin_redeliver.html:16
@@ -2622,6 +2593,10 @@ msgstr "Kirjoita pyyntö"
 #: froide/foirequest/templates/foirequest/request.html:50
 msgid "Choose a Public Body"
 msgstr ""
+
+#: froide/foirequest/templates/foirequest/request.html:57
+msgid "To:"
+msgstr "Kenelle:"
 
 #: froide/foirequest/templates/foirequest/request.html:68
 msgid "Hinweis zu dieser Behörde"
@@ -3136,6 +3111,11 @@ msgstr "Käytetyt lait:"
 msgid "Law used:"
 msgstr "Käytetty laki:"
 
+#: froide/foirequest/templates/foirequest/show.html:390
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:19
+msgid "Not yet set"
+msgstr "Ei vielä asetettu"
+
 #: froide/foirequest/templates/foirequest/show.html:392
 msgid "Status of this request:"
 msgstr "Pyynnön tilanne:"
@@ -3333,6 +3313,13 @@ msgstr "Viestit tässä tietopyynnössä"
 #: froide/foirequest/templates/foirequest/show.html:693
 msgid "No messages yet"
 msgstr "Ei viestejä vielä"
+
+#: froide/foirequest/templates/foirequest/show.html:698
+#, python-format
+msgid "One identical request"
+msgid_plural "%(counter)s identical requests"
+msgstr[0] "Yksi samankaltainen tietopyyntö"
+msgstr[1] "%(counter)s samankaltaista tietopyyntöä"
 
 #: froide/foirequest/templates/foirequest/show.html:711
 msgid "This request is identical to:"
@@ -3786,11 +3773,11 @@ msgstr "Kirjoita kommentti"
 msgid "Please login to write a comment."
 msgstr "Kirjaudu sisään jättääksesi kommentti."
 
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:14
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:12
 msgid "to"
 msgstr ""
 
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:27
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:25
 #, python-format
 msgid "%(counter)s identical request"
 msgid_plural "%(counter)s identical requests"
@@ -4026,7 +4013,7 @@ msgid "Country Name"
 msgstr "Maan nimi"
 
 #: froide/foisite/models.py:13 froide/frontpage/models.py:25
-#: froide/publicbody/models.py:88 froide/publicbody/models.py:228
+#: froide/publicbody/models.py:77 froide/publicbody/models.py:242
 msgid "URL"
 msgstr "URL"
 
@@ -4093,181 +4080,188 @@ msgstr "Sähköpostiosoite tietopyynnöille"
 msgid "Homepage URL of Public Body"
 msgstr "Viranomaisen sivusto"
 
-#. Translators: URL part
-#: froide/publicbody/jurisdiction_urls.py:14
-msgid "entities"
-msgstr "yksiköt"
-
-#: froide/publicbody/models.py:35
+#: froide/publicbody/models.py:41
 msgid "Hidden"
 msgstr "Piilotettu"
 
-#: froide/publicbody/models.py:42
+#: froide/publicbody/models.py:48
+#: froide/publicbody/templates/publicbody/list.html:61
 msgid "Jurisdictions"
 msgstr "Toimialueet"
 
-#: froide/publicbody/models.py:77
+#: froide/publicbody/models.py:66
 msgid "Website Text"
 msgstr "Sivuston teksti"
 
-#: froide/publicbody/models.py:78
+#: froide/publicbody/models.py:67
 msgid "Creation Date"
 msgstr "Luotu"
 
-#: froide/publicbody/models.py:79
+#: froide/publicbody/models.py:68
 msgid "Updated Date"
 msgstr "Päivitetty"
 
-#: froide/publicbody/models.py:80 froide/publicbody/models.py:244
+#: froide/publicbody/models.py:69 froide/publicbody/models.py:258
 msgid "request note"
 msgstr "tietopyyntöteksti"
 
-#: froide/publicbody/models.py:81
+#: froide/publicbody/models.py:70
 msgid "Meta Law"
 msgstr "Meta laki"
 
-#: froide/publicbody/models.py:82
+#: froide/publicbody/models.py:71
 msgid "Combined Laws"
 msgstr "Yhdistetyt lait"
 
-#: froide/publicbody/models.py:83
+#: froide/publicbody/models.py:72
 msgid "Start of Letter"
 msgstr "Kirjeen alku"
 
-#: froide/publicbody/models.py:84
+#: froide/publicbody/models.py:73
 msgid "End of Letter"
 msgstr "Kirjeen loppu"
 
-#: froide/publicbody/models.py:87
+#: froide/publicbody/models.py:76
 msgid "Priority"
 msgstr "Tärkeellisyys"
 
-#: froide/publicbody/models.py:89
+#: froide/publicbody/models.py:78
 msgid "Maximal Response Time"
 msgstr "Maksimivastausaika"
 
-#: froide/publicbody/models.py:91
+#: froide/publicbody/models.py:80
 msgid "Unit of Response Time"
 msgstr "Vastausajan yksikkö"
 
-#: froide/publicbody/models.py:93
+#: froide/publicbody/models.py:82
 msgid "Day(s)"
 msgstr "Päivä(t)"
 
-#: froide/publicbody/models.py:94
+#: froide/publicbody/models.py:83
 msgid "Working Day(s)"
 msgstr "Työpäivä(t)"
 
-#: froide/publicbody/models.py:95
+#: froide/publicbody/models.py:84
 msgid "Month(s) (DE)"
 msgstr "Kuukausi/kuukaudet (FI)"
 
-#: froide/publicbody/models.py:98
+#: froide/publicbody/models.py:87
 msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 msgstr ""
 "Mahdollinen syy kieltävään vastaukseen, esimerkiksi Henkilötietolaki 11 §"
 
-#: froide/publicbody/models.py:100
+#: froide/publicbody/models.py:89
 msgid "Mediator"
 msgstr "Välittäjä"
 
-#: froide/publicbody/models.py:104
+#: froide/publicbody/models.py:93
 msgid "E-Mail only"
 msgstr "Vain sähköposti"
 
-#: froide/publicbody/models.py:111 froide/publicbody/models.py:265
+#: froide/publicbody/models.py:100 froide/publicbody/models.py:279
 msgid "Freedom of Information Laws"
 msgstr "Julkisuuslainsäädäntö"
 
-#: froide/publicbody/models.py:149
+#: froide/publicbody/models.py:134
 msgid "No law can be applied"
 msgstr "Tähän ei voida soveltaa julkisuuslainsäädäntöä"
 
+#: froide/publicbody/models.py:191
+#, fuzzy
+msgid "as topic"
+msgstr "aihe"
+
+#: froide/publicbody/models.py:192
+msgid "rank"
+msgstr ""
+
+#: froide/publicbody/models.py:197
+#, fuzzy
+msgid "Public Body Tag"
+msgstr "Viranomainen"
+
+#: froide/publicbody/models.py:198
+#, fuzzy
+msgid "Public Body Tags"
+msgstr "Viranomainen"
+
 #: froide/publicbody/models.py:207
-msgid "Count"
-msgstr "Lukumäärä"
+#, fuzzy
+msgid "Tagged Public Body"
+msgstr "Viranomainen"
 
 #: froide/publicbody/models.py:208
-msgid "Rank"
-msgstr "Organisaation taso"
+#, fuzzy
+msgid "Tagged Public Bodies"
+msgstr "Asiaan liittyvät julkiset tahot"
 
-#: froide/publicbody/models.py:213 froide/publicbody/models.py:226
-msgid "Topic"
-msgstr "Aihe"
-
-#: froide/publicbody/models.py:214
-msgid "Topics"
-msgstr "Aiheet"
-
-#: froide/publicbody/models.py:223
+#: froide/publicbody/models.py:239
 msgid "Other names"
 msgstr "Viranomaisen muut käytetyt nimet"
 
-#: froide/publicbody/models.py:236
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:21
-#: froide/publicbody/templates/publicbody/show_topic.html:38
+#: froide/publicbody/models.py:250
 msgid "Classification"
 msgstr "Luokka"
 
-#: froide/publicbody/models.py:238
+#: froide/publicbody/models.py:252
 msgid "Classification Slug"
 msgstr "Luokan lyhenne"
 
-#: froide/publicbody/models.py:240
+#: froide/publicbody/models.py:254
 msgid "Email"
 msgstr "Sähköposti"
 
-#: froide/publicbody/models.py:241
+#: froide/publicbody/models.py:255
 msgid "Contact"
 msgstr "Yhteystieto"
 
-#: froide/publicbody/models.py:242
+#: froide/publicbody/models.py:256
 msgid "Address"
 msgstr "Osoite"
 
-#: froide/publicbody/models.py:243
+#: froide/publicbody/models.py:257
 msgid "Website Dump"
 msgstr "Verkkosivuston sisältödumppi"
 
-#: froide/publicbody/models.py:247
+#: froide/publicbody/models.py:261
 msgid "Created by"
 msgstr "Luonut"
 
-#: froide/publicbody/models.py:251
+#: froide/publicbody/models.py:265
 msgid "Updated by"
 msgstr "Päivittänyt"
 
-#: froide/publicbody/models.py:254
+#: froide/publicbody/models.py:268
 msgid "confirmed"
 msgstr "vahvistettu"
 
-#: froide/publicbody/models.py:256
+#: froide/publicbody/models.py:270
 msgid "Number of requests"
 msgstr "Tietopyyntöjen lukumäärä"
 
-#: froide/publicbody/models.py:274
+#: froide/publicbody/models.py:289
 #: froide/publicbody/templates/publicbody/base.html:5
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:8
+#: froide/publicbody/templates/publicbody/list.html:10
 #: froide/templates/base.html:59
 msgid "Public Bodies"
 msgstr "Viranomaiset"
 
-#: froide/publicbody/views.py:91
+#: froide/publicbody/views.py:103
 msgid "This request was already confirmed."
 msgstr "Tämä tietopyyntö on jo vahvistettu"
 
-#: froide/publicbody/views.py:94
+#: froide/publicbody/views.py:106
 #, python-format
 msgid "%(count)d message was sent."
 msgid_plural "%(count)d messages were sent"
 msgstr[0] "Lähetettiin %(count)d viesti."
 msgstr[1] "Lähetettiin %(count)d viestiä."
 
-#: froide/publicbody/views.py:113
+#: froide/publicbody/views.py:124
 msgid "You need to provide a url."
 msgstr "Sinun täytyy antaa web-osoite."
 
-#: froide/publicbody/views.py:119
+#: froide/publicbody/views.py:130
 msgid "Public Bodies were imported."
 msgstr "Viranomaiset tuotiin onnistuneesti."
 
@@ -4319,14 +4313,6 @@ msgid ""
 msgstr ""
 "Puuttuuko tietokannastamme viranomainen? <a href=\"%(url)s\">Kerro meille!</"
 "a>"
-
-#: froide/publicbody/templates/publicbody/_search_form.html:5
-msgid "Search Terms"
-msgstr "Hae asiasanalla"
-
-#: froide/publicbody/templates/publicbody/_search_form.html:9
-msgid "Search all Public Bodies"
-msgstr "Hae viranomaista"
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html:14
 #, python-format
@@ -4409,44 +4395,28 @@ msgstr "tutustu tähän lakiin..."
 msgid "Requests in %(name)s"
 msgstr "Tietopyynnöt %(name)s -palvelussa"
 
-#: froide/publicbody/templates/publicbody/list.html:6
-#: froide/publicbody/templates/publicbody/list_topic.html:10
-msgid "Public Bodies by Topic"
-msgstr "Viranomaiset aiheen mukaisessa järjestyksessä"
+#: froide/publicbody/templates/publicbody/list.html:21
+msgid "Search Terms"
+msgstr "Hae asiasanalla"
 
-#: froide/publicbody/templates/publicbody/list.html:13
-msgid "in alphabetical order"
-msgstr "aakkosjärjestyksessä"
+#: froide/publicbody/templates/publicbody/list.html:25
+#, fuzzy
+msgid "Search Public Bodies"
+msgstr "Hae viranomaista"
 
-#: froide/publicbody/templates/publicbody/list.html:30
-msgid "No Public Bodies yet"
-msgstr "Tietokannassa ei ole vielä julkishallinnon organisaatioita"
+#: froide/publicbody/templates/publicbody/list.html:59
+#, fuzzy
+msgid "Show all public bodies"
+msgstr "Hae viranomaista"
 
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:29
-#: froide/publicbody/templates/publicbody/show_topic.html:52
-msgid "Click here to make a request to this Public Body"
-msgstr "Klikkaa tästä tehdäksesi tietopyynnön tälle viranomaiselle"
+#: froide/publicbody/templates/publicbody/list.html:80
+msgid "Topics"
+msgstr "Aiheet"
 
 #: froide/publicbody/templates/publicbody/request.html:6
 #, python-format
 msgid "Write a request to %(name)s"
 msgstr "Kirjoita tietopyyntö %(name)s"
-
-#: froide/publicbody/templates/publicbody/search.html:9
-#, python-format
-msgid "Search Results for &quot;%(query)s&quot; in Public Bodies"
-msgstr "Hakutulokset hauelle &quot;%(query)s&quot; viranomaisluettelussa"
-
-#: froide/publicbody/templates/publicbody/search.html:34
-#: froide/templates/search/search.html:51
-#, python-format
-msgid "No relevant Public bodies found for \"%(query)s\"."
-msgstr "Asiaan liittyviä viranomaisia ei löytynyt haulle \"%(query)s\"."
-
-#: froide/publicbody/templates/publicbody/search.html:37
-#: froide/templates/search/search.html:52
-msgid "You can browse the list of Public Bodies."
-msgstr "Voit selata viranomaislistaa."
 
 #: froide/publicbody/templates/publicbody/show.html:12
 msgid "Make a Request to this public body!"
@@ -4501,28 +4471,17 @@ msgstr "Viimeisin päivitys"
 msgid "Mediating authority"
 msgstr "Välittävä viranomainen"
 
-#: froide/publicbody/templates/publicbody/show_topic.html:9
-#, python-format
-msgid ""
-"\n"
-"%(counter)s Public Body in Topic '%(name)s'"
-msgid_plural ""
-"\n"
-"%(counter)s Public Bodies in Topic '%(name)s'"
-msgstr[0] ""
-"\n"
-"%(counter)s viranomainen liittyy aiheeseen '%(name)s'"
-msgstr[1] ""
-"\n"
-"%(counter)s viranomaista liittyy aiheeseen '%(name)s'"
+#: froide/publicbody/templates/publicbody/snippets/publicbody_item.html:12
+#, fuzzy, python-format
+msgid "%(num)s request"
+msgid_plural "%(num)s requests"
+msgstr[0] "%(counter)s tietopyyntö"
+msgstr[1] "%(counter)s tietopyyntöä"
 
-#: froide/publicbody/templates/publicbody/show_topic.html:23
-msgid "back to list of topics"
-msgstr "takaisin aihelistaukseen"
-
-#: froide/publicbody/templates/publicbody/show_topic.html:39
-msgid "Make Request"
-msgstr "Tee tietopyyntö"
+#: froide/publicbody/templates/publicbody/snippets/publicbody_item.html:14
+#, fuzzy
+msgid "no requests yet"
+msgstr "Ei pyyntöjä vielä."
 
 #: froide/templates/400.html:5
 msgid "400 - Bad Request"
@@ -4825,6 +4784,15 @@ msgstr "Selaa tehtyjä tietopyyntöjä."
 msgid "Related Public Bodies"
 msgstr "Asiaan liittyvät julkiset tahot"
 
+#: froide/templates/search/search.html:51
+#, python-format
+msgid "No relevant Public bodies found for \"%(query)s\"."
+msgstr "Asiaan liittyviä viranomaisia ei löytynyt haulle \"%(query)s\"."
+
+#: froide/templates/search/search.html:52
+msgid "You can browse the list of Public Bodies."
+msgstr "Voit selata viranomaislistaa."
+
 #: froide/templates/search/search.html:60
 msgid "Please provide at least one search term"
 msgstr "Anna vähintään yksi hakusana"
@@ -4836,6 +4804,55 @@ msgstr "Etkö löytänyt etsimääsi?"
 #: froide/templates/search/search.html:69
 msgid "Make a Freedom of Information Request now!"
 msgstr "Tee tietopyytö!"
+
+#~ msgid "Status:"
+#~ msgstr "Tilanne:"
+
+#~ msgid "No requests with this status yet."
+#~ msgstr "Tässä tilassa olevia tietopyyntöjä ei ole"
+
+#~ msgid "Count"
+#~ msgstr "Lukumäärä"
+
+#~ msgid "Rank"
+#~ msgstr "Organisaation taso"
+
+#~ msgid "Topic"
+#~ msgstr "Aihe"
+
+#~ msgid "Public Bodies by Topic"
+#~ msgstr "Viranomaiset aiheen mukaisessa järjestyksessä"
+
+#~ msgid "in alphabetical order"
+#~ msgstr "aakkosjärjestyksessä"
+
+#~ msgid "No Public Bodies yet"
+#~ msgstr "Tietokannassa ei ole vielä julkishallinnon organisaatioita"
+
+#~ msgid "Click here to make a request to this Public Body"
+#~ msgstr "Klikkaa tästä tehdäksesi tietopyynnön tälle viranomaiselle"
+
+#~ msgid "Search Results for &quot;%(query)s&quot; in Public Bodies"
+#~ msgstr "Hakutulokset hauelle &quot;%(query)s&quot; viranomaisluettelussa"
+
+#~ msgid ""
+#~ "\n"
+#~ "%(counter)s Public Body in Topic '%(name)s'"
+#~ msgid_plural ""
+#~ "\n"
+#~ "%(counter)s Public Bodies in Topic '%(name)s'"
+#~ msgstr[0] ""
+#~ "\n"
+#~ "%(counter)s viranomainen liittyy aiheeseen '%(name)s'"
+#~ msgstr[1] ""
+#~ "\n"
+#~ "%(counter)s viranomaista liittyy aiheeseen '%(name)s'"
+
+#~ msgid "back to list of topics"
+#~ msgstr "takaisin aihelistaukseen"
+
+#~ msgid "Make Request"
+#~ msgstr "Tee tietopyyntö"
 
 #~ msgid "More..."
 #~ msgstr "More..."

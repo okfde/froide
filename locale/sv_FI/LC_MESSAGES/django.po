@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-13 16:17+0100\n"
+"POT-Creation-Date: 2014-01-05 19:31+0100\n"
 "PO-Revision-Date: 2013-12-13 15:08+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: Swedish (Finland) (http://www.transifex.com/projects/p/froide/"
@@ -31,13 +31,13 @@ msgid ""
 "\"&gt;the Open Knowledge Foundation&lt;/a&gt;."
 msgstr ""
 
-#: docs/_build/html/_sources/theming.txt:52
+#: docs/_build/html/_sources/theming.txt:53
 msgid ""
 "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
 "\">the Open Knowledge Foundation</a>."
 msgstr ""
 
-#: froide/_local_settings_.py:11 froide/settings.py:200 froide/settings.py:489
+#: froide/_local_settings.py:11 froide/settings.py:200 froide/settings.py:479
 msgid "German"
 msgstr "Tyska"
 
@@ -88,58 +88,64 @@ msgid "Swedish"
 msgstr "Svenska"
 
 #. Translators: request URL
-#: froide/urls.py:58
+#: froide/urls.py:60
 msgid "make-request"
 msgstr "gör-begäran"
 
 #. Translators: URL part
-#: froide/urls.py:60
+#: froide/urls.py:62
 msgid "requests"
 msgstr "Begäranden"
 
 #. Translators: request URL
-#: froide/urls.py:62
+#: froide/urls.py:64
 msgid "request"
 msgstr "begäran"
 
 #. Translators: Short-request URL
 #. Translators: Short-request auth URL
-#: froide/urls.py:64 froide/urls.py:66
+#: froide/urls.py:66 froide/urls.py:68
 msgid "r"
 msgstr ""
 
 #. Translators: follow request URL
-#: froide/urls.py:68
+#: froide/urls.py:70
 msgid "follow"
 msgstr "följa"
 
 #. Translators: URL part
-#: froide/urls.py:72 froide/publicbody/jurisdiction_urls.py:10
+#: froide/urls.py:74 froide/urls.py:76
+#: froide/publicbody/jurisdiction_urls.py:10
 msgid "entity"
 msgstr "enhet"
 
 #. Translators: URL part
-#: froide/urls.py:74
+#: froide/urls.py:78 froide/publicbody/jurisdiction_urls.py:15
+msgid "entities"
+msgstr "enheter"
+
+#. Translators: URL part
+#: froide/urls.py:80
 msgid "law"
 msgstr "lag"
 
 #. Translators: URL part
-#: froide/urls.py:80
+#: froide/urls.py:86
 msgid "account"
 msgstr "konto"
 
 #. Translators: URL part
-#: froide/urls.py:82
+#: froide/urls.py:88
 msgid "profile"
 msgstr "profil"
 
 #. Translators: URL part
-#: froide/urls.py:84 froide/publicbody/urls.py:15
+#: froide/urls.py:90
 msgid "search"
 msgstr "sök"
 
 #. Translators: URL part
-#: froide/urls.py:86
+#: froide/urls.py:92
 msgid "help"
 msgstr "hjälp"
 
@@ -315,34 +321,34 @@ msgstr "Du gav fel lösenord!"
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "Du skrev fel fras för bekräftelse!"
 
-#: froide/account/models.py:48
+#: froide/account/models.py:45
 msgid "Name Not Public"
 msgstr "Namnet är inte offentligt"
 
-#: froide/account/models.py:64
+#: froide/account/models.py:61
 msgid "<< Address removed >>"
 msgstr "Adressen borttagen"
 
-#: froide/account/models.py:70
+#: froide/account/models.py:67
 msgid "<< Email removed >>"
 msgstr "E-postadressen borttagen"
 
-#: froide/account/models.py:81
+#: froide/account/models.py:78
 msgid "<< Name removed >>"
 msgstr "Namnet borttaget"
 
-#: froide/account/models.py:90
+#: froide/account/models.py:87
 msgid "<< Greeting >>"
 msgstr "Hälsning"
 
 #. Translators: Mail subject
-#: froide/account/models.py:198
+#: froide/account/models.py:192
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: var god, bekräfta ditt konto"
 
 #. Translators: Mail subject
-#: froide/account/models.py:221
+#: froide/account/models.py:215
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s: var god bekräfta din nya e-postadress"
@@ -383,67 +389,67 @@ msgstr ""
 msgid "Your account is not active."
 msgstr "Ditt konto är inte aktivt."
 
-#: froide/account/views.py:120
+#: froide/account/views.py:119
 msgid "You have been logged out."
 msgstr "Du har blivit utloggad."
 
-#: froide/account/views.py:151 froide/account/templates/account/login.html:7
+#: froide/account/views.py:150 froide/account/templates/account/login.html:7
 msgid "You are now logged in."
 msgstr "Du är inloggad."
 
-#: froide/account/views.py:160
+#: froide/account/views.py:159
 msgid "Please activate your mail address before logging in."
 msgstr "Var god aktivera din adress innan du loggar in."
 
-#: froide/account/views.py:163
+#: froide/account/views.py:162
 msgid "E-mail and password do not match."
 msgstr "E-postadressen och lösenordet stämmer inte överens."
 
-#: froide/account/views.py:180
+#: froide/account/views.py:179
 msgid "You are currently logged in, you cannot signup."
 msgstr "Du är redan inloggad och kan därför inte registrera dig."
 
-#: froide/account/views.py:189
+#: froide/account/views.py:188
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Var god och kontrollera din e-post och använd länken vi sänt dig för att "
 "bekräfta din adress."
 
-#: froide/account/views.py:205
+#: froide/account/views.py:204
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 "Du är för tillfället inte inloggad och kan därför inte ändra ditt lösenord."
 
-#: froide/account/views.py:211
+#: froide/account/views.py:210
 msgid "Your password has been changed."
 msgstr "Ditt lösenord är nu ändrat."
 
-#: froide/account/views.py:222
+#: froide/account/views.py:221
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Du är inloggad och kan därför inte få en länk för att återställa ditt "
 "lösenord."
 
-#: froide/account/views.py:230
+#: froide/account/views.py:229
 msgid ""
 "Check your mail, we sent you a password reset link. If you don't receive an "
 "email, check if you entered your email correctly or if you really have an "
 "account "
 msgstr ""
 
-#: froide/account/views.py:251
+#: froide/account/views.py:250
 msgid "Your password has been set and you are now logged in."
 msgstr "Lösenordet är sparat och du är nu inloggad."
 
-#: froide/account/views.py:264
+#: froide/account/views.py:263
 msgid "You are not currently logged in, you cannot change your address."
 msgstr "Du är för tillfället inte inloggad och kan inte ändra din adress."
 
-#: froide/account/views.py:270
+#: froide/account/views.py:269
 msgid "Your address has been changed."
 msgstr "Din adress är ändrad."
 
-#: froide/account/views.py:276
+#: froide/account/views.py:275
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -454,16 +460,16 @@ msgstr ""
 "använda denna webbplats! Kakorna överförs säkert. Den tekniska orsaken är: "
 "%(reason)s "
 
-#: froide/account/views.py:296
+#: froide/account/views.py:295
 msgid "You are not currently logged in, you cannot change your email address."
 msgstr ""
 "Du är för tillfället inte inloggad och kan inte ändra din e-postadress."
 
-#: froide/account/views.py:302
+#: froide/account/views.py:301
 msgid "Your email address could not be changed."
 msgstr "Din e-postadress kunde inte ändras."
 
-#: froide/account/views.py:314
+#: froide/account/views.py:313
 msgid ""
 "We sent a confirmation email to your new address. Please click the link in "
 "there."
@@ -471,25 +477,25 @@ msgstr ""
 "Vi har sänt ett meddelande till din nya e-postadress. Var god, klicka på "
 "länken för bekräftelse som finns i meddelandet."
 
-#: froide/account/views.py:321
+#: froide/account/views.py:320
 msgid "Your email address has been changed."
 msgstr "Din e-postadress har ändrats."
 
-#: froide/account/views.py:324
+#: froide/account/views.py:323
 msgid "The email confirmation link was invalid or expired."
 msgstr "Länken för bekräftelse var ogiltig eller föråldrad."
 
-#: froide/account/views.py:332
+#: froide/account/views.py:331
 msgid "You are not currently logged in, you cannot delete your account."
 msgstr ""
 "Du är för tillfället inte inloggad och kan därför inte radera ditt konto."
 
-#: froide/account/views.py:337
+#: froide/account/views.py:336
 msgid "Password or confirmation phrase were wrong. Account was not deleted."
 msgstr ""
 "Lösenordet eller frasen för bekräftelse var fel. Kontot har inte raderats."
 
-#: froide/account/views.py:361
+#: froide/account/views.py:359
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Ditt konto har raderats och du är nu utloggad."
 
@@ -666,9 +672,8 @@ msgstr "Senaste händelser"
 
 #: froide/account/templates/account/profile.html:42
 #: froide/account/templates/account/show.html:53
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:18
 #: froide/foirequest/templates/foirequest/snippets/message.html:166
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:25
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:23
 #, python-format
 msgid "%(time)s ago"
 msgstr "%(time)s sedan"
@@ -826,17 +831,17 @@ msgid "Your Freedom of Information Requests"
 msgstr "Dina offentlighetsbegäranden"
 
 #: froide/account/templates/account/show.html:102
-#: froide/foirequest/models.py:241 froide/frontpage/models.py:23
+#: froide/foirequest/models.py:240 froide/frontpage/models.py:23
 msgid "Title"
 msgstr "Titel"
 
 #: froide/account/templates/account/show.html:103
-#: froide/foirequest/models.py:268
+#: froide/foirequest/models.py:267
 msgid "Due Date"
 msgstr "Förfallodag"
 
 #: froide/account/templates/account/show.html:104
-#: froide/foirequest/models.py:237
+#: froide/foirequest/models.py:236
 msgid "Public"
 msgstr "Offentlig"
 
@@ -1004,15 +1009,15 @@ msgstr ""
 "Ingen motsvarande begäran kunde hittas. Var vänlig och utred detta!\n"
 "%(url)s\n"
 
-#: froide/foirequest/foi_mail.py:98 froide/foirequest/tests/test_mail.py:81
+#: froide/foirequest/foi_mail.py:101 froide/foirequest/tests/test_mail.py:81
 msgid "Unknown FoI-Mail Recipient"
 msgstr "Okänd mottagare av offentlighetsbegäran."
 
-#: froide/foirequest/foi_mail.py:146
+#: froide/foirequest/foi_mail.py:149
 msgid "publicbody"
 msgstr "Myndighet"
 
-#: froide/foirequest/foi_mail.py:148
+#: froide/foirequest/foi_mail.py:151
 msgid "requester"
 msgstr "begäran"
 
@@ -1023,7 +1028,7 @@ msgstr "Sök ämne eller myndighet:"
 #: froide/foirequest/forms.py:32 froide/foirequest/forms.py:34
 #: froide/foirequest/forms.py:174 froide/foirequest/forms.py:237
 #: froide/foirequest/forms.py:423 froide/foirequest/forms.py:425
-#: froide/foirequest/models.py:1101
+#: froide/foirequest/models.py:1102
 #: froide/foirequest/templates/foirequest/_request_form.html:11
 #: froide/foirequest/templates/foirequest/request.html:465
 #: froide/foirequest/templates/foirequest/snippets/message.html:37
@@ -1119,7 +1124,7 @@ msgstr "Orsak"
 msgid "Suggestions"
 msgstr "Förslag"
 
-#: froide/foirequest/forms.py:262 froide/publicbody/models.py:318
+#: froide/foirequest/forms.py:262 froide/publicbody/models.py:327
 msgid "More Info"
 msgstr "Mer information"
 
@@ -1145,8 +1150,8 @@ msgstr ""
 "Om du (delvis) nekas tillgång till information, måste myndigheten alltid "
 "ange en orsak."
 
-#: froide/foirequest/forms.py:280 froide/foirequest/models.py:249
-#: froide/foirequest/models.py:1097
+#: froide/foirequest/forms.py:280 froide/foirequest/models.py:248
+#: froide/foirequest/models.py:1098
 #: froide/foirequest/templates/foirequest/snippets/message.html:60
 msgid "Status"
 msgstr "Status"
@@ -1159,7 +1164,7 @@ msgstr "Denna begäran är ännu öppen."
 msgid "This request is finished."
 msgstr "Denna begäran är slutförd."
 
-#: froide/foirequest/forms.py:288 froide/foirequest/models.py:251
+#: froide/foirequest/forms.py:288 froide/foirequest/models.py:250
 msgid "Resolution"
 msgstr "Utfall"
 
@@ -1292,35 +1297,35 @@ msgctxt "URL part"
 msgid "to"
 msgstr "till"
 
-#: froide/foirequest/models.py:116
+#: froide/foirequest/models.py:115
 msgid "FoI Request Tag"
 msgstr "Nyckelord för offentlighetsbegäran"
 
-#: froide/foirequest/models.py:117
+#: froide/foirequest/models.py:116
 msgid "FoI Request Tags"
 msgstr "Nyckelord för offentlighetsbegäran"
 
-#: froide/foirequest/models.py:124
+#: froide/foirequest/models.py:123
 msgid "Awaiting user confirmation"
 msgstr "Inväntar användarbekräftelse"
 
-#: froide/foirequest/models.py:125
+#: froide/foirequest/models.py:124
 msgid "The requester's email address is yet to be confirmed."
 msgstr "Begärarens e-postadress är ännu inte bekräftad."
 
-#: froide/foirequest/models.py:129
+#: froide/foirequest/models.py:128
 msgid "Public Body needed"
 msgstr "Myndighet behövs"
 
-#: froide/foirequest/models.py:130
+#: froide/foirequest/models.py:129
 msgid "This request still needs a Public Body."
 msgstr "Begäran behöver fortfarande en myndighet."
 
-#: froide/foirequest/models.py:134
+#: froide/foirequest/models.py:133
 msgid "Awaiting Public Body confirmation"
 msgstr "Inväntar bekräftelse av myndighet"
 
-#: froide/foirequest/models.py:135
+#: froide/foirequest/models.py:134
 msgid ""
 "The Public Body of this request has been created by the user and still needs "
 "to be confirmed."
@@ -1328,290 +1333,288 @@ msgstr ""
 "Myndigheten för denna begäran har skapats av användaren och behöver "
 "bekräftas."
 
-#: froide/foirequest/models.py:139
+#: froide/foirequest/models.py:138
 msgid "Awaiting response"
 msgstr "Inväntar svar"
 
-#: froide/foirequest/models.py:140
+#: froide/foirequest/models.py:139
 msgid "This request is still waiting for a response from the Public Body."
 msgstr "Denna begäran väntar fortfarande på ett svar från myndigheten."
 
-#: froide/foirequest/models.py:144
+#: froide/foirequest/models.py:143
 msgid "Request awaits classification"
 msgstr "Begäran väntar på klassificering"
 
-#: froide/foirequest/models.py:145
+#: froide/foirequest/models.py:144
 msgid "A message was received and the user needs to set a new status."
 msgstr ""
 "Ett meddelande har mottagits och användaren bör ställa in en ny status."
 
-#: froide/foirequest/models.py:149
+#: froide/foirequest/models.py:148
 msgid "Request asleep"
 msgstr "Begäran vilar"
 
-#: froide/foirequest/models.py:150
+#: froide/foirequest/models.py:149
 msgid "The request is not resolved and has not been active for a while."
 msgstr "Begäran har inte behandlats och har inte varit aktiv på ett tag."
 
-#: froide/foirequest/models.py:154
+#: froide/foirequest/models.py:153
 msgid "Request resolved"
 msgstr "Begäran slutförd"
 
-#: froide/foirequest/models.py:155
+#: froide/foirequest/models.py:154
 msgid "The request is resolved."
 msgstr "Begäran är slutförd."
 
-#: froide/foirequest/models.py:162
+#: froide/foirequest/models.py:161
 msgid "Request Successful"
 msgstr "Begäran besvarad"
 
-#: froide/foirequest/models.py:163
+#: froide/foirequest/models.py:162
 msgid "The request has been successul."
 msgstr "Begäran har besvarats."
 
-#: froide/foirequest/models.py:167
+#: froide/foirequest/models.py:166
 msgid "Request partially successful"
 msgstr "Begäran delvis besvarad"
 
-#: froide/foirequest/models.py:168
+#: froide/foirequest/models.py:167
 msgid ""
 "The request has been partially successful (some information was provided, "
 "but not all)"
 msgstr ""
 "Begäran har delvis blivit besvarad (viss information sändes, men inte all)"
 
-#: froide/foirequest/models.py:171
+#: froide/foirequest/models.py:170
 msgid "Information not held"
 msgstr "Information finns inte"
 
-#: froide/foirequest/models.py:172
+#: froide/foirequest/models.py:171
 msgid "The Public Body stated that it does not possess the information."
 msgstr "Den myndighet uppgav att de inte har informationen."
 
-#: froide/foirequest/models.py:176
+#: froide/foirequest/models.py:175
 msgid "Request refused"
 msgstr "Begäran avslagen"
 
-#: froide/foirequest/models.py:177
+#: froide/foirequest/models.py:176
 msgid "The Public Body refuses to provide the information."
 msgstr "Myndigheten ger inte ut informationen."
 
-#: froide/foirequest/models.py:181
+#: froide/foirequest/models.py:180
 msgid "Request was withdrawn due to costs"
 msgstr "Begäran tillbakadrogs på grund av kostnader"
 
-#: froide/foirequest/models.py:182
+#: froide/foirequest/models.py:181
 msgid "User withdrew the request due to the associated costs."
 msgstr "Användaren drog tillbaka begäran på grund av de anslutna kostnaderna."
 
-#: froide/foirequest/models.py:186
+#: froide/foirequest/models.py:185
 msgid "Request was withdrawn"
 msgstr "Begäran dragen tillbaka"
 
-#: froide/foirequest/models.py:187
+#: froide/foirequest/models.py:186
 msgid "User withdrew the request for other reasons."
 msgstr "Användaren drog tillbaka begäran av andra orsaker."
 
-#: froide/foirequest/models.py:196
+#: froide/foirequest/models.py:195
 msgid "successful"
 msgstr "besvarad"
 
-#: froide/foirequest/models.py:197
+#: froide/foirequest/models.py:196
 msgid "partially-successful"
 msgstr "delvis besvarad"
 
-#: froide/foirequest/models.py:198
+#: froide/foirequest/models.py:197
 msgid "refused"
 msgstr "avslagen"
 
-#: froide/foirequest/models.py:199
+#: froide/foirequest/models.py:198
 msgid "withdrawn"
 msgstr "tillbakadragen"
 
-#: froide/foirequest/models.py:200
+#: froide/foirequest/models.py:199
 msgid "withdrawn-costs"
 msgstr "tillbakadragen-kostnader"
 
-#: froide/foirequest/models.py:201
+#: froide/foirequest/models.py:200
 msgid "publicbody-needed"
 msgstr "myndighet-behövs"
 
-#: froide/foirequest/models.py:202
+#: froide/foirequest/models.py:201
 msgid "awaiting-response"
 msgstr "inväntar-svar"
 
-#: froide/foirequest/models.py:203
+#: froide/foirequest/models.py:202
 msgid "overdue"
 msgstr "försenad"
 
-#: froide/foirequest/models.py:206
+#: froide/foirequest/models.py:205
 msgid "asleep"
 msgstr "vilar"
 
-#: froide/foirequest/models.py:207
+#: froide/foirequest/models.py:206
 msgid "not-held"
 msgstr "finns-ej"
 
-#: froide/foirequest/models.py:208
+#: froide/foirequest/models.py:207
 msgid "has-fee"
 msgstr "har-kostnad"
 
-#: froide/foirequest/models.py:222
+#: froide/foirequest/models.py:221
 msgid "Response overdue"
 msgstr "Svaret är försenat"
 
-#: froide/foirequest/models.py:223
+#: froide/foirequest/models.py:222
 msgid "The request has not been answered in time."
 msgstr "Denna begäran har inte besvarats i tid."
 
-#: froide/foirequest/models.py:227
+#: froide/foirequest/models.py:226
 msgid "Fee charged"
 msgstr "Avgift"
 
-#: froide/foirequest/models.py:228
+#: froide/foirequest/models.py:227
 msgid "This request is connected with a fee."
 msgstr "Till denna begäran hör en avgift."
 
-#: froide/foirequest/models.py:235
+#: froide/foirequest/models.py:234
 msgid "Invisible"
 msgstr "Osynlig"
 
-#: froide/foirequest/models.py:236
+#: froide/foirequest/models.py:235
 msgid "Visible to Requester"
 msgstr "Synlig för begärare"
 
-#: froide/foirequest/models.py:242 froide/publicbody/models.py:33
-#: froide/publicbody/models.py:75 froide/publicbody/models.py:205
-#: froide/publicbody/models.py:224
+#: froide/foirequest/models.py:241 froide/publicbody/models.py:39
+#: froide/publicbody/models.py:64 froide/publicbody/models.py:240
 msgid "Slug"
 msgstr "Förkortning"
 
-#: froide/foirequest/models.py:243 froide/publicbody/models.py:34
-#: froide/publicbody/models.py:76 froide/publicbody/models.py:206
-#: froide/publicbody/models.py:225
+#: froide/foirequest/models.py:242 froide/publicbody/models.py:40
+#: froide/publicbody/models.py:65 froide/publicbody/models.py:241
 msgid "Description"
 msgstr "Beskrivning"
 
-#: froide/foirequest/models.py:244
+#: froide/foirequest/models.py:243
 msgid "Summary"
 msgstr "Sammanfattning"
 
-#: froide/foirequest/models.py:247 froide/foirequest/models.py:1046
-#: froide/foirequest/models.py:1431 froide/publicbody/models.py:273
+#: froide/foirequest/models.py:246 froide/foirequest/models.py:1047
+#: froide/foirequest/models.py:1435 froide/publicbody/models.py:288
 msgid "Public Body"
 msgstr "Myndighet"
 
-#: froide/foirequest/models.py:254
+#: froide/foirequest/models.py:253
 msgid "published?"
 msgstr "publicerad?"
 
-#: froide/foirequest/models.py:255
+#: froide/foirequest/models.py:254
 msgid "Visibility"
 msgstr "Synlighet"
 
-#: froide/foirequest/models.py:260 froide/foirequest/models.py:1049
-#: froide/foirequest/models.py:1428 froide/foirequestfollower/models.py:51
+#: froide/foirequest/models.py:259 froide/foirequest/models.py:1050
+#: froide/foirequest/models.py:1432 froide/foirequestfollower/models.py:51
 #: froide/frontpage/models.py:30
 msgid "User"
 msgstr "Användare"
 
-#: froide/foirequest/models.py:262
+#: froide/foirequest/models.py:261
 msgid "Date of first message"
 msgstr "Datum för det första meddelandet"
 
-#: froide/foirequest/models.py:264
+#: froide/foirequest/models.py:263
 msgid "Date of last message"
 msgstr "Datum för det sista meddelandet"
 
-#: froide/foirequest/models.py:266
+#: froide/foirequest/models.py:265
 msgid "Resolution date"
 msgstr "Datum för beslut"
 
-#: froide/foirequest/models.py:271
+#: froide/foirequest/models.py:270
 msgid "Secret address"
 msgstr "Hemlig adress"
 
-#: froide/foirequest/models.py:273
+#: froide/foirequest/models.py:272
 msgid "Secret"
 msgstr "Hemlig"
 
-#: froide/foirequest/models.py:277
+#: froide/foirequest/models.py:276
 msgid "Identical request"
 msgstr "Identisk begäran"
 
-#: froide/foirequest/models.py:278
+#: froide/foirequest/models.py:277
 msgid "Identical request count"
 msgstr "Antal identiska begäranden"
 
-#: froide/foirequest/models.py:282 froide/publicbody/models.py:110
+#: froide/foirequest/models.py:281 froide/publicbody/models.py:99
 msgid "Freedom of Information Law"
 msgstr "Lagen om offentlighet i myndigheternas verksamhet"
 
-#: froide/foirequest/models.py:283
+#: froide/foirequest/models.py:282
 msgid "Cost of Information"
 msgstr "Informationskostnader"
 
-#: froide/foirequest/models.py:284
+#: froide/foirequest/models.py:283
 msgid "Refusal reason"
 msgstr "Orsak till avslag"
 
-#: froide/foirequest/models.py:286
+#: froide/foirequest/models.py:285
 msgid "checked"
 msgstr "granskad"
 
-#: froide/foirequest/models.py:287
+#: froide/foirequest/models.py:286
 msgid "is FoI request"
 msgstr "är offentlighetsbegäran"
 
-#: froide/foirequest/models.py:289 froide/publicbody/models.py:41
-#: froide/publicbody/models.py:85 froide/publicbody/models.py:261
+#: froide/foirequest/models.py:288 froide/publicbody/models.py:47
+#: froide/publicbody/models.py:74 froide/publicbody/models.py:275
 #: froide/publicbody/templates/publicbody/show.html:25
 msgid "Jurisdiction"
 msgstr "Område"
 
-#: froide/foirequest/models.py:293 froide/frontpage/models.py:33
-#: froide/publicbody/models.py:105 froide/publicbody/models.py:258
+#: froide/foirequest/models.py:292 froide/frontpage/models.py:33
+#: froide/publicbody/models.py:94 froide/publicbody/models.py:272
 msgid "Site"
 msgstr "Webbplats"
 
-#: froide/foirequest/models.py:304 froide/foirequest/models.py:1044
-#: froide/foirequest/models.py:1065 froide/foirequest/models.py:1425
+#: froide/foirequest/models.py:303 froide/foirequest/models.py:1045
+#: froide/foirequest/models.py:1066 froide/foirequest/models.py:1429
 #: froide/foirequestfollower/models.py:50
 msgid "Freedom of Information Request"
 msgstr "Offentlighetsbegäran"
 
-#: froide/foirequest/models.py:305 froide/templates/base.html:6
+#: froide/foirequest/models.py:304 froide/templates/base.html:6
 #: froide/templates/simple_base.html:6
 msgid "Freedom of Information Requests"
 msgstr "Offentlighetsbegäranden"
 
-#: froide/foirequest/models.py:307
+#: froide/foirequest/models.py:306
 msgid "Can see private requests"
 msgstr "Kan se privata begäranden"
 
-#: froide/foirequest/models.py:325
+#: froide/foirequest/models.py:324
 #, python-format
 msgid "Request '%s'"
 msgstr "Begäranden '%s'"
 
-#: froide/foirequest/models.py:402 froide/foirequest/models.py:1237
-#: froide/foirequest/models.py:1253 froide/foirequest/models.py:1258
+#: froide/foirequest/models.py:401 froide/foirequest/models.py:1242
+#: froide/foirequest/models.py:1257 froide/foirequest/models.py:1262
 msgid "<<email address>>"
 msgstr "<<email address>>"
 
-#: froide/foirequest/models.py:568
+#: froide/foirequest/models.py:571
 #, python-format
 msgid "Re: %(subject)s"
 msgstr "Ang: %(subject)s"
 
-#: froide/foirequest/models.py:574
+#: froide/foirequest/models.py:577
 #, python-format
 msgid "%(count)s day"
 msgid_plural "%(count)s days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: froide/foirequest/models.py:580
+#: froide/foirequest/models.py:583
 #, python-format
 msgid ""
 "Dear Sir or Madam,\n"
@@ -1629,291 +1632,289 @@ msgstr ""
 "\n"
 "%(name)s\n"
 
-#: froide/foirequest/models.py:588
+#: froide/foirequest/models.py:591
 #, python-format
 msgid "Complaint about request \"%(title)s\""
 msgstr "Besvär angående begäran \"%(title)s\""
 
-#: froide/foirequest/models.py:633
+#: froide/foirequest/models.py:635
 #, python-format
 msgid "attached_file_%d"
 msgstr "attached_file_%d"
 
 #. Translators: replacement for person name in filename
-#: froide/foirequest/models.py:639
+#: froide/foirequest/models.py:641
 msgid "NAME"
 msgstr "NAMN"
 
-#: froide/foirequest/models.py:652
+#: froide/foirequest/models.py:654
 msgid "Message contains PDF"
 msgstr "Meddelandet innehåller PDF"
 
-#: froide/foirequest/models.py:694
+#: froide/foirequest/models.py:696
 #, python-format
 msgid "request_%(num)s.zip"
 msgstr ""
 
-#: froide/foirequest/models.py:734 froide/foirequest/models.py:738
+#: froide/foirequest/models.py:736 froide/foirequest/models.py:740
 msgid "Unknown"
 msgstr "Okänd"
 
-#: froide/foirequest/models.py:981
+#: froide/foirequest/models.py:983
 #, python-format
 msgid "%(site_name)s: Please classify the reply to your request"
 msgstr "%(site_name)s: Var god klassificera svaret på din begäran"
 
-#: froide/foirequest/models.py:1000
+#: froide/foirequest/models.py:1002
 #, python-format
 msgid "%(site_name)s: Update on one of your request"
 msgid_plural "%(site_name)s: Update on %(count)s of your requests"
 msgstr[0] "%(site_name)s: En avisering för din begäran"
 msgstr[1] "%(site_name)s: Aviseringar för %(count)s av dina begäranden"
 
-#: froide/foirequest/models.py:1050
+#: froide/foirequest/models.py:1051
 msgid "Timestamp of Suggestion"
 msgstr "Förslagets tidsstämpel"
 
-#: froide/foirequest/models.py:1052
+#: froide/foirequest/models.py:1053
 msgid "Reason this Public Body fits the request"
 msgstr "Orsaken till att denna myndighet är lämplig för begäran"
 
-#: froide/foirequest/models.py:1058
+#: froide/foirequest/models.py:1059
 msgid "Public Body Suggestion"
 msgstr "Myndighetsförslag"
 
-#: froide/foirequest/models.py:1059
+#: froide/foirequest/models.py:1060
 msgid "Public Body Suggestions"
 msgstr "Myndighetsförslag"
 
-#: froide/foirequest/models.py:1066
+#: froide/foirequest/models.py:1067
 msgid "has message been sent?"
 msgstr "har meddelandet sänts?"
 
-#: froide/foirequest/models.py:1067
+#: froide/foirequest/models.py:1068
 msgid "Is this message a response?"
 msgstr "Är detta meddelande ett svar?"
 
-#: froide/foirequest/models.py:1069
+#: froide/foirequest/models.py:1070
 msgid "Postal?"
 msgstr "Per post?"
 
-#: froide/foirequest/models.py:1071
+#: froide/foirequest/models.py:1072
 msgid "Escalation?"
 msgstr "Eskalering?"
 
-#: froide/foirequest/models.py:1073
+#: froide/foirequest/models.py:1074
 msgid "Content hidden?"
 msgstr "Dolt innehåll?"
 
-#: froide/foirequest/models.py:1080
+#: froide/foirequest/models.py:1081
 msgid "From User"
 msgstr "Från användare"
 
-#: froide/foirequest/models.py:1082
+#: froide/foirequest/models.py:1083
 msgid "From Email"
 msgstr "Från e-post"
 
-#: froide/foirequest/models.py:1084
+#: froide/foirequest/models.py:1085
 msgid "From Name"
 msgstr "Från namn"
 
-#: froide/foirequest/models.py:1088
+#: froide/foirequest/models.py:1089
 msgid "From Public Body"
 msgstr "Från myndighet"
 
-#: froide/foirequest/models.py:1090
+#: froide/foirequest/models.py:1091
 msgid "Recipient"
 msgstr "Mottagare"
 
-#: froide/foirequest/models.py:1092
+#: froide/foirequest/models.py:1093
 msgid "Recipient Email"
 msgstr "Mottagarens e-post"
 
-#: froide/foirequest/models.py:1096
+#: froide/foirequest/models.py:1097
 msgid "Public Body Recipient"
 msgstr "Mottagande myndighet"
 
-#: froide/foirequest/models.py:1100 froide/foirequest/models.py:1434
+#: froide/foirequest/models.py:1101 froide/foirequest/models.py:1438
 #: froide/frontpage/models.py:22
 msgid "Timestamp"
 msgstr "Tidsstämpel"
 
-#: froide/foirequest/models.py:1102
+#: froide/foirequest/models.py:1103
 msgid "Redacted Subject"
 msgstr "Redigerat ämne"
 
-#: froide/foirequest/models.py:1103
+#: froide/foirequest/models.py:1104
 msgid "plain text"
 msgstr "enkel text"
 
-#: froide/foirequest/models.py:1104
+#: froide/foirequest/models.py:1105
 msgid "redacted plain text"
 msgstr "redigerad enkel text"
 
-#: froide/foirequest/models.py:1105
+#: froide/foirequest/models.py:1106
 msgid "HTML"
 msgstr "HTML"
 
-#: froide/foirequest/models.py:1106
+#: froide/foirequest/models.py:1107
 msgid "Original"
 msgstr "Original"
 
-#: froide/foirequest/models.py:1107
+#: froide/foirequest/models.py:1108
 msgid "Was Redacted?"
 msgstr "Redigerades?"
 
-#: froide/foirequest/models.py:1108
+#: froide/foirequest/models.py:1109
 msgid "Not publishable"
 msgstr "Inte publicerbar"
 
-#: froide/foirequest/models.py:1114
+#: froide/foirequest/models.py:1115
 msgid "Freedom of Information Message"
 msgstr "Meddelande om offentlighetsbegäran"
 
-#: froide/foirequest/models.py:1115
+#: froide/foirequest/models.py:1116
 msgid "Freedom of Information Messages"
 msgstr "Meddelanden om offentlighetsbegäran"
 
-#: froide/foirequest/models.py:1122
+#: froide/foirequest/models.py:1123
 #, python-format
 msgid "Message in '%(request)s' at %(time)s"
 msgstr "Meddelande i '%(request)s', %(time)s"
 
-#: froide/foirequest/models.py:1131
+#: froide/foirequest/models.py:1132
 #, python-format
 msgid "message-%(id)d"
 msgstr "meddelande-%(id)d"
 
-#: froide/foirequest/models.py:1236 froide/foirequest/models.py:1252
+#: froide/foirequest/models.py:1241 froide/foirequest/models.py:1256
 msgid "<<name and email address>>"
 msgstr "<<name and email address>>"
 
-#: froide/foirequest/models.py:1295
+#: froide/foirequest/models.py:1299
 msgid "Belongs to request"
 msgstr "Tillhör begäran"
 
-#: froide/foirequest/models.py:1296 froide/foisite/models.py:12
-#: froide/publicbody/models.py:32 froide/publicbody/models.py:74
-#: froide/publicbody/models.py:204 froide/publicbody/models.py:222
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:20
-#: froide/publicbody/templates/publicbody/show_topic.html:37
+#: froide/foirequest/models.py:1300 froide/foisite/models.py:12
+#: froide/publicbody/models.py:38 froide/publicbody/models.py:63
+#: froide/publicbody/models.py:238
 msgid "Name"
 msgstr "Namn"
 
-#: froide/foirequest/models.py:1297
+#: froide/foirequest/models.py:1301
 msgid "File"
 msgstr "Fil"
 
-#: froide/foirequest/models.py:1298
+#: froide/foirequest/models.py:1302
 msgid "Size"
 msgstr "Storlek"
 
-#: froide/foirequest/models.py:1299
+#: froide/foirequest/models.py:1303
 msgid "File type"
 msgstr "Filtyp"
 
-#: froide/foirequest/models.py:1300
+#: froide/foirequest/models.py:1304
 msgid "Format"
 msgstr "Format"
 
-#: froide/foirequest/models.py:1301
+#: froide/foirequest/models.py:1305
 msgid "User can approve"
 msgstr "Användaren kan godkänna"
 
-#: froide/foirequest/models.py:1302
+#: froide/foirequest/models.py:1306
 msgid "Approved"
 msgstr "Godkänd"
 
-#: froide/foirequest/models.py:1303
+#: froide/foirequest/models.py:1307
 msgid "Redacted Version"
 msgstr "Redigerad version"
 
-#: froide/foirequest/models.py:1306
+#: froide/foirequest/models.py:1310
 msgid "Is redacted"
 msgstr "Är redigerad"
 
-#: froide/foirequest/models.py:1307
+#: froide/foirequest/models.py:1311
 msgid "Converted Version"
 msgstr "Konverterad version"
 
-#: froide/foirequest/models.py:1310
+#: froide/foirequest/models.py:1314
 msgid "Is converted"
 msgstr ""
 
-#: froide/foirequest/models.py:1345
+#: froide/foirequest/models.py:1349
 msgid "Attachment"
 msgstr "Bilaga"
 
-#: froide/foirequest/models.py:1346
+#: froide/foirequest/models.py:1350
 #: froide/foirequest/templates/foirequest/list_unchecked.html:22
 #: froide/foirequest/templates/foirequest/snippets/message.html:74
 msgid "Attachments"
 msgstr "Bilagor"
 
-#: froide/foirequest/models.py:1363
+#: froide/foirequest/models.py:1367
 #, python-format
 msgid "attachment-%(id)d"
 msgstr "bilaga-%(id)d"
 
-#: froide/foirequest/models.py:1405
+#: froide/foirequest/models.py:1409
 msgid "See FoiMessage"
 msgstr "Se meddelande"
 
-#: froide/foirequest/models.py:1432
+#: froide/foirequest/models.py:1436
 msgid "Is Public?"
 msgstr "Är offentlig?"
 
-#: froide/foirequest/models.py:1433
+#: froide/foirequest/models.py:1437
 msgid "Event Name"
 msgstr "Namn på händelse"
 
-#: froide/foirequest/models.py:1435
+#: froide/foirequest/models.py:1439
 msgid "Context JSON"
 msgstr "Context JSON"
 
-#: froide/foirequest/models.py:1441
+#: froide/foirequest/models.py:1445
 #, python-format
 msgid "%(user)s suggested %(public_body)s for the request '%(request)s'"
 msgstr "%(user)s föreslog %(public_body)s för begäran '%(request)s'"
 
-#: froide/foirequest/models.py:1443
+#: froide/foirequest/models.py:1447
 #, python-format
 msgid "%(user)s reported costs of %(amount)s for this request."
 msgstr "%(user)s rapporterade kostnader på %(amount)s för denna begäran."
 
-#: froide/foirequest/models.py:1445
+#: froide/foirequest/models.py:1449
 #, python-format
 msgid "Received an email from %(public_body)s."
 msgstr "Mottog ett e-postmeddelande från %(public_body)s."
 
-#: froide/foirequest/models.py:1447
+#: froide/foirequest/models.py:1451
 #, python-format
 msgid "%(user)s sent a message to %(public_body)s."
 msgstr "%(user)s skickade ett meddelande till %(public_body)s."
 
-#: froide/foirequest/models.py:1449
+#: froide/foirequest/models.py:1453
 #, python-format
 msgid "Request was redirected to %(public_body)s and due date has been reset."
 msgstr ""
 "Begäran vidarebefodrades till %(public_body)s och förfallodagen har ändrats."
 
-#: froide/foirequest/models.py:1451
+#: froide/foirequest/models.py:1455
 #, python-format
 msgid "%(user)s set status to '%(status)s'."
 msgstr "%(user)s ställde in status som '%(status)s'."
 
-#: froide/foirequest/models.py:1453
+#: froide/foirequest/models.py:1457
 #, python-format
 msgid "%(user)s made the request '%(request)s' public."
 msgstr "%(user)s gjorde begäran '%(request)s' offentlig."
 
-#: froide/foirequest/models.py:1455
+#: froide/foirequest/models.py:1459
 #, python-format
 msgid ""
 "%(public_body)s refused to provide information on the grounds of %(reason)s."
 msgstr "%(public_body)s gav inte ut information på grund av %(reason)s."
 
-#: froide/foirequest/models.py:1457
+#: froide/foirequest/models.py:1461
 #, python-format
 msgid ""
 "%(public_body)s answered partially, but denied access to all information on "
@@ -1922,22 +1923,22 @@ msgstr ""
 "%(public_body)s svarade delvis, men nekade tillgång till viss information på "
 "grund av %(reason)s."
 
-#: froide/foirequest/models.py:1459
+#: froide/foirequest/models.py:1463
 msgid "This request became overdue"
 msgstr "Denna begäran förföll"
 
-#: froide/foirequest/models.py:1461
+#: froide/foirequest/models.py:1465
 #, python-format
 msgid ""
 "%(user)s set '%(name)s' as the information law for the request %(request)s."
 msgstr "%(user)s angav '%(name)s' som lag för begäran %(request)s."
 
-#: froide/foirequest/models.py:1463
+#: froide/foirequest/models.py:1467
 #, python-format
 msgid "%(user)s added a reply that was received via snail mail."
 msgstr "%(user)s lade till ett svar som mottagits per post."
 
-#: froide/foirequest/models.py:1465
+#: froide/foirequest/models.py:1469
 #, python-format
 msgid ""
 "%(user)s filed a complaint to the %(public_body)s about the handling of this "
@@ -1945,33 +1946,33 @@ msgid ""
 msgstr ""
 "%(user)s besvärade sig om behandlingen av %(request)s till %(public_body)s."
 
-#: froide/foirequest/models.py:1467
+#: froide/foirequest/models.py:1471
 #, python-format
 msgid "The deadline of request %(request)s has been extended."
 msgstr "Tidsgränsen för begäran %(request)s har förlängts."
 
-#: froide/foirequest/models.py:1472
+#: froide/foirequest/models.py:1476
 msgid "Request Event"
 msgstr "Händelse för begäran"
 
-#: froide/foirequest/models.py:1473
+#: froide/foirequest/models.py:1477
 msgid "Request Events"
 msgstr "Händelser för begäran"
 
 #. Translators: Hash part of Event URL
-#: froide/foirequest/models.py:1486
+#: froide/foirequest/models.py:1490
 msgid "event"
 msgstr "händelse"
 
-#: froide/foirequest/models.py:1550
+#: froide/foirequest/models.py:1553
 msgid "Undelivered Message"
 msgstr "Olevererat meddelande"
 
-#: froide/foirequest/models.py:1551
+#: froide/foirequest/models.py:1554
 msgid "Undelivered Messages"
 msgstr "Olevererade meddelanden"
 
-#: froide/foirequest/models.py:1554
+#: froide/foirequest/models.py:1557
 #, python-format
 msgid "Undelievered Message to %(recipient)s (%(request)s)"
 msgstr "Olevererat meddelande till %(recipient)s (%(request)s)"
@@ -1981,27 +1982,27 @@ msgstr "Olevererat meddelande till %(recipient)s (%(request)s)"
 msgid "%(site_name)s: Request became overdue"
 msgstr "%(site_name)s: Begäran förföll"
 
-#: froide/foirequest/signals.py:49
+#: froide/foirequest/signals.py:50
 #, python-format
 msgid "%(site_name)s: Request became asleep"
 msgstr "%(site_name)s: Begäran blev vilande"
 
-#: froide/foirequest/signals.py:68
+#: froide/foirequest/signals.py:72
 #, python-format
 msgid "%(site_name)s: New reply to your request"
 msgstr "%(site_name)s: Var god klassificera svaret på din begäran"
 
-#: froide/foirequest/signals.py:84
+#: froide/foirequest/signals.py:92
 #, python-format
 msgid "%(site_name)s: New suggestion for a Public Body"
 msgstr ""
 
-#: froide/foirequest/signals.py:101
+#: froide/foirequest/signals.py:112
 #, python-format
 msgid "%(site_name)s: Your Freedom of Information Request was sent"
 msgstr ""
 
-#: froide/foirequest/signals.py:104
+#: froide/foirequest/signals.py:115
 #, python-format
 msgid "%(site_name)s: Your Message was sent"
 msgstr ""
@@ -2019,7 +2020,8 @@ msgstr "senaste"
 #. Translators: part in request filter URL
 #. Translators: part in Public Body URL
 #: froide/foirequest/urls.py:37 froide/foirequest/urls.py:39
-#: froide/foirequest/urls.py:41 froide/publicbody/urls.py:26
+#: froide/foirequest/urls.py:41 froide/publicbody/urls.py:17
+#: froide/publicbody/urls.py:22
 msgctxt "URL part"
 msgid "topic"
 msgstr "ämne"
@@ -2224,37 +2226,6 @@ msgstr "Förhandsvisning av begäran"
 #: froide/foirequest/templates/foirequest/_request_form.html:37
 msgid "How to make a successful FOI Request"
 msgstr "Hur man gör en framgångsrik offentlighetsbegäran"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:11
-#: froide/foirequest/templates/foirequest/request.html:57
-msgid "To:"
-msgstr "Till:"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:14
-#: froide/foirequest/templates/foirequest/show.html:390
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:21
-msgid "Not yet set"
-msgstr "Inte ännu bestämd"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:16
-msgid "Status:"
-msgstr "Status:"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:20
-#: froide/foirequest/templates/foirequest/show.html:698
-#, python-format
-msgid "One identical request"
-msgid_plural "%(counter)s identical requests"
-msgstr[0] "En identisk begäran"
-msgstr[1] "%(counter)s identiska begäranden"
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:28
-msgid "No requests with this status yet."
-msgstr "Ingen begäran med detta status ännu."
-
-#: froide/foirequest/templates/foirequest/_requests_as_table.html:30
-msgid "No requests yet."
-msgstr "Ingen begäran ännu."
 
 #: froide/foirequest/templates/foirequest/admin_mark_same_as.html:16
 #: froide/foirequest/templates/foirequest/admin_redeliver.html:16
@@ -2620,6 +2591,10 @@ msgstr "Skriv en begäran"
 #: froide/foirequest/templates/foirequest/request.html:50
 msgid "Choose a Public Body"
 msgstr "Välj myndighet"
+
+#: froide/foirequest/templates/foirequest/request.html:57
+msgid "To:"
+msgstr "Till:"
 
 #: froide/foirequest/templates/foirequest/request.html:68
 msgid "Hinweis zu dieser Behörde"
@@ -3146,6 +3121,11 @@ msgstr "Tillämpade lagar:"
 msgid "Law used:"
 msgstr "Tillämpad lag:"
 
+#: froide/foirequest/templates/foirequest/show.html:390
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:19
+msgid "Not yet set"
+msgstr "Inte ännu bestämd"
+
 #: froide/foirequest/templates/foirequest/show.html:392
 msgid "Status of this request:"
 msgstr "Denna begärans status:"
@@ -3345,6 +3325,13 @@ msgstr "Meddelanden i denna begäran"
 #: froide/foirequest/templates/foirequest/show.html:693
 msgid "No messages yet"
 msgstr "Inga meddelanden"
+
+#: froide/foirequest/templates/foirequest/show.html:698
+#, python-format
+msgid "One identical request"
+msgid_plural "%(counter)s identical requests"
+msgstr[0] "En identisk begäran"
+msgstr[1] "%(counter)s identiska begäranden"
 
 #: froide/foirequest/templates/foirequest/show.html:711
 msgid "This request is identical to:"
@@ -3818,11 +3805,11 @@ msgstr "Skriv en kommentar"
 msgid "Please login to write a comment."
 msgstr "Logga in för att skriva en kommentar."
 
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:14
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:12
 msgid "to"
 msgstr "till"
 
-#: froide/foirequest/templates/foirequest/snippets/request_item.html:27
+#: froide/foirequest/templates/foirequest/snippets/request_item.html:25
 #, python-format
 msgid "%(counter)s identical request"
 msgid_plural "%(counter)s identical requests"
@@ -4061,7 +4048,7 @@ msgid "Country Name"
 msgstr "Land"
 
 #: froide/foisite/models.py:13 froide/frontpage/models.py:25
-#: froide/publicbody/models.py:88 froide/publicbody/models.py:228
+#: froide/publicbody/models.py:77 froide/publicbody/models.py:242
 msgid "URL"
 msgstr "URL"
 
@@ -4129,180 +4116,187 @@ msgstr "E-postadress för begäran om offentlig information"
 msgid "Homepage URL of Public Body"
 msgstr "Adress till myndighetens webbplats"
 
-#. Translators: URL part
-#: froide/publicbody/jurisdiction_urls.py:14
-msgid "entities"
-msgstr "enheter"
-
-#: froide/publicbody/models.py:35
+#: froide/publicbody/models.py:41
 msgid "Hidden"
 msgstr "Dold"
 
-#: froide/publicbody/models.py:42
+#: froide/publicbody/models.py:48
+#: froide/publicbody/templates/publicbody/list.html:61
 msgid "Jurisdictions"
 msgstr "Lagstiftning"
 
-#: froide/publicbody/models.py:77
+#: froide/publicbody/models.py:66
 msgid "Website Text"
 msgstr "Texten på webbsidan"
 
-#: froide/publicbody/models.py:78
+#: froide/publicbody/models.py:67
 msgid "Creation Date"
 msgstr "Skapades den"
 
-#: froide/publicbody/models.py:79
+#: froide/publicbody/models.py:68
 msgid "Updated Date"
 msgstr "Uppdaterades den"
 
-#: froide/publicbody/models.py:80 froide/publicbody/models.py:244
+#: froide/publicbody/models.py:69 froide/publicbody/models.py:258
 msgid "request note"
 msgstr "anteckning om begäran"
 
-#: froide/publicbody/models.py:81
+#: froide/publicbody/models.py:70
 msgid "Meta Law"
 msgstr "Övergripande lag"
 
-#: froide/publicbody/models.py:82
+#: froide/publicbody/models.py:71
 msgid "Combined Laws"
 msgstr "Kombinerade lagar"
 
-#: froide/publicbody/models.py:83
+#: froide/publicbody/models.py:72
 msgid "Start of Letter"
 msgstr "Brevets början"
 
-#: froide/publicbody/models.py:84
+#: froide/publicbody/models.py:73
 msgid "End of Letter"
 msgstr "Brevets slut"
 
-#: froide/publicbody/models.py:87
+#: froide/publicbody/models.py:76
 msgid "Priority"
 msgstr "Prioritet"
 
-#: froide/publicbody/models.py:89
+#: froide/publicbody/models.py:78
 msgid "Maximal Response Time"
 msgstr "Maximal tid för att ge svar"
 
-#: froide/publicbody/models.py:91
+#: froide/publicbody/models.py:80
 msgid "Unit of Response Time"
 msgstr "Enhet för svarstid"
 
-#: froide/publicbody/models.py:93
+#: froide/publicbody/models.py:82
 msgid "Day(s)"
 msgstr "Dag(ar)"
 
-#: froide/publicbody/models.py:94
+#: froide/publicbody/models.py:83
 msgid "Working Day(s)"
 msgstr "Vardag(ar)"
 
-#: froide/publicbody/models.py:95
+#: froide/publicbody/models.py:84
 msgid "Month(s) (DE)"
 msgstr "Månad(er)"
 
-#: froide/publicbody/models.py:98
+#: froide/publicbody/models.py:87
 msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 msgstr "Möjliga orsaker till avslag, en per rad, t ex §X.Y: Personuppgifter"
 
-#: froide/publicbody/models.py:100
+#: froide/publicbody/models.py:89
 msgid "Mediator"
 msgstr "Ombudsman"
 
-#: froide/publicbody/models.py:104
+#: froide/publicbody/models.py:93
 msgid "E-Mail only"
 msgstr "Endast per mail"
 
-#: froide/publicbody/models.py:111 froide/publicbody/models.py:265
+#: froide/publicbody/models.py:100 froide/publicbody/models.py:279
 msgid "Freedom of Information Laws"
 msgstr "Lagar om myndigheters offentlighet"
 
-#: froide/publicbody/models.py:149
+#: froide/publicbody/models.py:134
 msgid "No law can be applied"
 msgstr "Ingen lag kan tillämpas"
 
+#: froide/publicbody/models.py:191
+#, fuzzy
+msgid "as topic"
+msgstr "ämne"
+
+#: froide/publicbody/models.py:192
+msgid "rank"
+msgstr ""
+
+#: froide/publicbody/models.py:197
+#, fuzzy
+msgid "Public Body Tag"
+msgstr "Myndighet"
+
+#: froide/publicbody/models.py:198
+#, fuzzy
+msgid "Public Body Tags"
+msgstr "Myndighet"
+
 #: froide/publicbody/models.py:207
-msgid "Count"
-msgstr "Antal"
+#, fuzzy
+msgid "Tagged Public Body"
+msgstr "Myndighet"
 
 #: froide/publicbody/models.py:208
-msgid "Rank"
-msgstr "Rankning"
+#, fuzzy
+msgid "Tagged Public Bodies"
+msgstr "Relaterade myndigheter"
 
-#: froide/publicbody/models.py:213 froide/publicbody/models.py:226
-msgid "Topic"
-msgstr "Ämne"
-
-#: froide/publicbody/models.py:214
-msgid "Topics"
-msgstr "Ämnen"
-
-#: froide/publicbody/models.py:223
+#: froide/publicbody/models.py:239
 msgid "Other names"
 msgstr "Andra benämningar"
 
-#: froide/publicbody/models.py:236
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:21
-#: froide/publicbody/templates/publicbody/show_topic.html:38
+#: froide/publicbody/models.py:250
 msgid "Classification"
 msgstr "Kategori"
 
-#: froide/publicbody/models.py:238
+#: froide/publicbody/models.py:252
 msgid "Classification Slug"
 msgstr "Förkortning"
 
-#: froide/publicbody/models.py:240
+#: froide/publicbody/models.py:254
 msgid "Email"
 msgstr "Email"
 
-#: froide/publicbody/models.py:241
+#: froide/publicbody/models.py:255
 msgid "Contact"
 msgstr "Kontakt"
 
-#: froide/publicbody/models.py:242
+#: froide/publicbody/models.py:256
 msgid "Address"
 msgstr "Adress"
 
-#: froide/publicbody/models.py:243
+#: froide/publicbody/models.py:257
 msgid "Website Dump"
 msgstr "Skärmdump från webbplats"
 
-#: froide/publicbody/models.py:247
+#: froide/publicbody/models.py:261
 msgid "Created by"
 msgstr "Skapad av"
 
-#: froide/publicbody/models.py:251
+#: froide/publicbody/models.py:265
 msgid "Updated by"
 msgstr "Uppdaterad av"
 
-#: froide/publicbody/models.py:254
+#: froide/publicbody/models.py:268
 msgid "confirmed"
 msgstr "bekräftad"
 
-#: froide/publicbody/models.py:256
+#: froide/publicbody/models.py:270
 msgid "Number of requests"
 msgstr "Antal förfrågningar"
 
-#: froide/publicbody/models.py:274
+#: froide/publicbody/models.py:289
 #: froide/publicbody/templates/publicbody/base.html:5
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:8
+#: froide/publicbody/templates/publicbody/list.html:10
 #: froide/templates/base.html:59
 msgid "Public Bodies"
 msgstr "Myndigheter"
 
-#: froide/publicbody/views.py:91
+#: froide/publicbody/views.py:103
 msgid "This request was already confirmed."
 msgstr "Denna begäran är redan bekräftad."
 
-#: froide/publicbody/views.py:94
+#: froide/publicbody/views.py:106
 #, python-format
 msgid "%(count)d message was sent."
 msgid_plural "%(count)d messages were sent"
 msgstr[0] "%(count)d meddelande sänt"
 msgstr[1] "%(count)d meddelanden sändes"
 
-#: froide/publicbody/views.py:113
+#: froide/publicbody/views.py:124
 msgid "You need to provide a url."
 msgstr "Du måste ange en webbadress."
 
-#: froide/publicbody/views.py:119
+#: froide/publicbody/views.py:130
 msgid "Public Bodies were imported."
 msgstr "Myndigheter importerade."
 
@@ -4354,14 +4348,6 @@ msgid ""
 msgstr ""
 "Saknar vi en myndighet? <a href=\"%(url)s\">Var snäll och berätta det för "
 "oss!</a>"
-
-#: froide/publicbody/templates/publicbody/_search_form.html:5
-msgid "Search Terms"
-msgstr "Söktermer"
-
-#: froide/publicbody/templates/publicbody/_search_form.html:9
-msgid "Search all Public Bodies"
-msgstr "Sök bland alla myndigheter"
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html:14
 #, python-format
@@ -4444,44 +4430,28 @@ msgstr "lär känna denna lag ..."
 msgid "Requests in %(name)s"
 msgstr "Begäranden om %(name)s"
 
-#: froide/publicbody/templates/publicbody/list.html:6
-#: froide/publicbody/templates/publicbody/list_topic.html:10
-msgid "Public Bodies by Topic"
-msgstr "Myndigheter enligt ämne"
+#: froide/publicbody/templates/publicbody/list.html:21
+msgid "Search Terms"
+msgstr "Söktermer"
 
-#: froide/publicbody/templates/publicbody/list.html:13
-msgid "in alphabetical order"
-msgstr "i alfabetisk ordning"
+#: froide/publicbody/templates/publicbody/list.html:25
+#, fuzzy
+msgid "Search Public Bodies"
+msgstr "Sök bland alla myndigheter"
 
-#: froide/publicbody/templates/publicbody/list.html:30
-msgid "No Public Bodies yet"
-msgstr "Inga myndigheter finns ännu"
+#: froide/publicbody/templates/publicbody/list.html:59
+#, fuzzy
+msgid "Show all public bodies"
+msgstr "Sök bland alla myndigheter"
 
-#: froide/publicbody/templates/publicbody/pb_jurisdiction.html:29
-#: froide/publicbody/templates/publicbody/show_topic.html:52
-msgid "Click here to make a request to this Public Body"
-msgstr "Klicka här för att göra en begäran till myndigheten"
+#: froide/publicbody/templates/publicbody/list.html:80
+msgid "Topics"
+msgstr "Ämnen"
 
 #: froide/publicbody/templates/publicbody/request.html:6
 #, python-format
 msgid "Write a request to %(name)s"
 msgstr "Skriv en begäran till %(name)s"
-
-#: froide/publicbody/templates/publicbody/search.html:9
-#, python-format
-msgid "Search Results for &quot;%(query)s&quot; in Public Bodies"
-msgstr "Rslutat för &quot;%(query)s&quot; bland myndigheter"
-
-#: froide/publicbody/templates/publicbody/search.html:34
-#: froide/templates/search/search.html:51
-#, python-format
-msgid "No relevant Public bodies found for \"%(query)s\"."
-msgstr "Inga myndigheter hittade för\"%(query)s\"."
-
-#: froide/publicbody/templates/publicbody/search.html:37
-#: froide/templates/search/search.html:52
-msgid "You can browse the list of Public Bodies."
-msgstr "Du kan bläddra i listan på myndigheter."
 
 #: froide/publicbody/templates/publicbody/show.html:12
 msgid "Make a Request to this public body!"
@@ -4536,28 +4506,17 @@ msgstr "Senast uppdaterad"
 msgid "Mediating authority"
 msgstr "Förmedlad av"
 
-#: froide/publicbody/templates/publicbody/show_topic.html:9
-#, python-format
-msgid ""
-"\n"
-"%(counter)s Public Body in Topic '%(name)s'"
-msgid_plural ""
-"\n"
-"%(counter)s Public Bodies in Topic '%(name)s'"
-msgstr[0] ""
-"\n"
-"%(counter)s myndighet inom ämnet '%(name)s'"
-msgstr[1] ""
-"\n"
-"%(counter)s myndigheter inom ämnet '%(name)s'"
+#: froide/publicbody/templates/publicbody/snippets/publicbody_item.html:12
+#, fuzzy, python-format
+msgid "%(num)s request"
+msgid_plural "%(num)s requests"
+msgstr[0] "%(counter)s begäran"
+msgstr[1] "%(counter)s begäranden"
 
-#: froide/publicbody/templates/publicbody/show_topic.html:23
-msgid "back to list of topics"
-msgstr "tillbaka till listan över ämnen"
-
-#: froide/publicbody/templates/publicbody/show_topic.html:39
-msgid "Make Request"
-msgstr "Gör begäran"
+#: froide/publicbody/templates/publicbody/snippets/publicbody_item.html:14
+#, fuzzy
+msgid "no requests yet"
+msgstr "Ingen begäran ännu."
 
 #: froide/templates/400.html:5
 msgid "400 - Bad Request"
@@ -4868,6 +4827,15 @@ msgstr "Du kan bläddra i listan av begäranden."
 msgid "Related Public Bodies"
 msgstr "Relaterade myndigheter"
 
+#: froide/templates/search/search.html:51
+#, python-format
+msgid "No relevant Public bodies found for \"%(query)s\"."
+msgstr "Inga myndigheter hittade för\"%(query)s\"."
+
+#: froide/templates/search/search.html:52
+msgid "You can browse the list of Public Bodies."
+msgstr "Du kan bläddra i listan på myndigheter."
+
 #: froide/templates/search/search.html:60
 msgid "Please provide at least one search term"
 msgstr "Var god ange minst en sökterm"
@@ -4879,6 +4847,55 @@ msgstr "Hittade du inte det du sökte?"
 #: froide/templates/search/search.html:69
 msgid "Make a Freedom of Information Request now!"
 msgstr "Gör en offentlighetsbegäran nu!"
+
+#~ msgid "Status:"
+#~ msgstr "Status:"
+
+#~ msgid "No requests with this status yet."
+#~ msgstr "Ingen begäran med detta status ännu."
+
+#~ msgid "Count"
+#~ msgstr "Antal"
+
+#~ msgid "Rank"
+#~ msgstr "Rankning"
+
+#~ msgid "Topic"
+#~ msgstr "Ämne"
+
+#~ msgid "Public Bodies by Topic"
+#~ msgstr "Myndigheter enligt ämne"
+
+#~ msgid "in alphabetical order"
+#~ msgstr "i alfabetisk ordning"
+
+#~ msgid "No Public Bodies yet"
+#~ msgstr "Inga myndigheter finns ännu"
+
+#~ msgid "Click here to make a request to this Public Body"
+#~ msgstr "Klicka här för att göra en begäran till myndigheten"
+
+#~ msgid "Search Results for &quot;%(query)s&quot; in Public Bodies"
+#~ msgstr "Rslutat för &quot;%(query)s&quot; bland myndigheter"
+
+#~ msgid ""
+#~ "\n"
+#~ "%(counter)s Public Body in Topic '%(name)s'"
+#~ msgid_plural ""
+#~ "\n"
+#~ "%(counter)s Public Bodies in Topic '%(name)s'"
+#~ msgstr[0] ""
+#~ "\n"
+#~ "%(counter)s myndighet inom ämnet '%(name)s'"
+#~ msgstr[1] ""
+#~ "\n"
+#~ "%(counter)s myndigheter inom ämnet '%(name)s'"
+
+#~ msgid "back to list of topics"
+#~ msgstr "tillbaka till listan över ämnen"
+
+#~ msgid "Make Request"
+#~ msgstr "Gör begäran"
 
 #~ msgid "More..."
 #~ msgstr "More..."
