@@ -4,9 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from froide.publicbody.models import (PublicBody,
     PublicBodyTag, TaggedPublicBody, FoiLaw, Jurisdiction)
+from froide.helper.admin_utils import AdminTagAllMixIn
 
 
-class PublicBodyAdmin(admin.ModelAdmin):
+class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     prepopulated_fields = {
         "slug": ("name",),
         'classification_slug': ('classification',)
@@ -17,7 +18,7 @@ class PublicBodyAdmin(admin.ModelAdmin):
     search_fields = ['name', "description", 'classification']
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
-    actions = ['export_csv', 'remove_from_index']
+    actions = ['export_csv', 'remove_from_index', 'tag_all']
 
     def export_csv(self, request, queryset):
         return HttpResponse(PublicBody.export_csv(queryset),
