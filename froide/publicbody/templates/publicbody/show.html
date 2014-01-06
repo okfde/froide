@@ -7,6 +7,13 @@
 {% block body %}
 <h2>{{ object.name }}</h2>
 
+{% if user.is_staff %}
+  <a class="pull-right btn btn-default" href="{% url 'admin:publicbody_publicbody_change' object.id %}">
+    <span class="glyphicon glyphicon-cog"></span>
+    {% trans "View on Admin site" %}
+  </a>
+{% endif %}
+
 {% if object.email %}
 <p>
   <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
