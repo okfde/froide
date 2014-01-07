@@ -44,6 +44,19 @@ class WebTest(TestCase):
         self.assertIn('THEBODY', content)
         self.assertIn('THESUBJECT', content)
 
+    def test_request_prefilled_redirect(self):
+        p = PublicBody.objects.all()[0]
+        query = '?body=THEBODY&subject=THESUBJECT'
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body_id': str(p.pk)}) + query)
+        self.assertRedirects(
+            response,
+            reverse('foirequest-make_request', kwargs={
+                'public_body': p.slug
+                }) + query,
+            status_code=301
+        )
+
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)

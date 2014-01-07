@@ -6,6 +6,7 @@ from django.utils.six import text_type as str
 from django.conf import settings
 from django.core.files import File
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
@@ -286,7 +287,17 @@ def search(request):
     return render(request, "search/search.html", context)
 
 
-def make_request(request, public_body=None):
+def make_request(request, public_body=None, public_body_id=None):
+    if public_body_id is not None:
+        public_body = get_object_or_404(PublicBody,
+                pk=int(public_body_id))
+        url = reverse('foirequest-make_request', kwargs={
+            'public_body': public_body.slug
+        })
+        # Keep the query string for subject, body intact on redirect
+        return redirect('%s?%s' % (url, request.META['QUERY_STRING']),
+                        permanent=True)
+
     public_body_form = None
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
