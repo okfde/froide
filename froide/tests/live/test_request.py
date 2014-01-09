@@ -219,7 +219,46 @@ class TestMakingRequest(LiveServerTestCase):
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_response')
 
+    def test_make_logged_in_request_no_pb_yet(self):
+        self.do_login()
+        self.selenium.get('%s%s' % (self.live_server_url,
+            reverse('foirequest-make_request')))
+        with CheckJSErrors(self.selenium):
+            self.selenium.find_element_by_id('option-emptypublicbody').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
+            self.selenium.find_element_by_id('option-check_foi').click()
+            self.selenium.find_element_by_id('continue-foicheck').click()
+            req_title = 'FoiRequest Number'
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('id_body').is_displayed()
+            )
+            self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('review-button').is_displayed()
+            )
+            self.selenium.find_element_by_id('review-button').click()
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
+        self.selenium.find_element_by_id('send-request-button').click()
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_css_selector('#messages'))
+        req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
+        self.assertIn(req.get_absolute_url(), self.selenium.current_url)
+        self.assertEqual(req.title, req_title)
+        self.assertEqual(req.public, True)
+        self.assertTrue(req.public_body is None)
+        self.assertEqual(req.status, 'publicbody_needed')
+
     def test_collapsed_menu(self):
+        self.selenium.set_window_size(600, 800)
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('index')))
         self.selenium.find_element_by_css_selector('.navbar-toggle').click()
