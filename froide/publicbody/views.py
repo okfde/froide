@@ -82,7 +82,8 @@ def show_publicbody(request, slug):
     obj = get_object_or_404(PublicBody, slug=slug)
     context = {
         'object': obj,
-        'foi_requests': FoiRequest.published.filter(public_body=obj)[:10]
+        'foirequests': FoiRequest.published.filter(public_body=obj)[:10],
+        'foirequest_count': FoiRequest.published.filter(public_body=obj).count()
     }
     return render(request, 'publicbody/show.html', context)
 
