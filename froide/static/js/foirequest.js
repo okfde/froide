@@ -1,5 +1,9 @@
+/* jshint strict: true, quotmark: false, es3: true */
+/* global $: false, Froide: false */
+
 $(function(){
-    loggedInCallback = function(data){
+    "use strict";
+    window.loggedInCallback = function(data){
         $(".user_data_form").html("<p>"+data.name+" "+data.last_name+"</p>"+
                     "<p>"+data.address+"</p><p>"+data.email+"</p>");
     };
@@ -8,7 +12,7 @@ $(function(){
     Froide.cachedLaw = {
         letter_start_form: $('#letter_start').html(),
         letter_end_form: $('#letter_end').html(),
-        description_markdown: $('#law-description-text').html()
+        description_html: $('#law-description-text').html()
     };
 
     $(".foirequest input").keydown(function(e){
@@ -47,7 +51,7 @@ $(function(){
     });
 
 
-    $(document).on("publicBodyChosen", ".foirequest .public_body-chooser", function(e){
+    $(document).on("publicBodyChosen", ".foirequest .public_body-chooser", function(){
         $('.foirequest .search-results li').removeClass('active');
         $(".foirequest .search-results input[name='public_body']:checked").parent().parent().addClass('active');
         if ($("#option-newpublicbody").prop("checked")){
@@ -62,7 +66,7 @@ $(function(){
 
     (function(){
         var combinedLetter;
-        $('#id_full_text').change(function(e){
+        $('#id_full_text').change(function(){
             if (!combinedLetter) {
                 combinedLetter = $('#letter_start').text() +
                     '\n\n\n' +$('#letter_end').text();
@@ -85,7 +89,7 @@ $(function(){
         Froide.app.performReview();
     });
 
-    $("form.foirequest").submit(function(e){
+    $("form.foirequest").submit(function(){
         $("#send-request-button").attr("disabled", "disabled");
     });
 
@@ -95,7 +99,7 @@ $(function(){
     else if($(".foirequest input[name='public_body']:checked").length > 0){
         $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     }
-    $(document).on("change", ".foirequest input[name='public_body']", function(e){
+    $(document).on("change", ".foirequest input[name='public_body']", function(){
         $(".foirequest .public_body-chooser").trigger("publicBodyChosen");
     });
     // $("#option-newpublicbody").change(function(e){

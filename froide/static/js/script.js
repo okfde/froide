@@ -1,8 +1,12 @@
+/* jshint strict: true, quotmark: false, es3: true */
+/* global $: false, Mustache: false */
+
 var Froide = Froide || {};
-var loggedInCallback;
+
+(function(){
+"use strict";
 
 Froide.app = Froide.app || {};
-
 Froide.app.justSelected = false;
 
 Froide.app.getPublicBodyResultListItem = function(el, result){
@@ -28,7 +32,7 @@ Froide.app.searchSimilarRequests = function(){
     var q = [], t, query;
     t = $(".foirequest input[name='public_body']:checked");
     if (t && t.val()!== "" && t.val() !== "new"){
-        q.push(jQuery.trim(t.parent().text()));
+        q.push($.trim(t.parent().text()));
     }
     var subject = $("#id_subject").val();
     if (subject.length > 0) {
@@ -112,7 +116,7 @@ Froide.app.performPublicBodySearch = (function(){
                     var li = Froide.app.getPublicBodyResultListItem(el, result);
                     el.find(".search-results").append(li);
                 }
-                el.find(".search-result input").change(function(e){
+                el.find(".search-result input").change(function(){
                     var li = $(this).closest('li');
                     Froide.app.selectSearchListItem(el, li);
                 });
@@ -157,7 +161,7 @@ Froide.app.performReview = (function(){
             }
             return undefined;
         };
-    }
+    };
     var no_greetings = function(str){
         return checkRegexWithError(Froide.regex.greetings, Froide.template.foundGreeting)(str);
     };
@@ -219,17 +223,16 @@ Froide.app.performReview = (function(){
 
     return function(){
         var text, result, inputId, i, warnings = [],
-            reviewWarnings = $("#review-warnings"),
-            subject, from, to;
+            reviewWarnings = $("#review-warnings");
         var fullText = $('#id_full_text').prop('checked');
 
         var formChecks = {
             "id_subject": [non_empty_subject],
             "id_body": [non_empty_body, no_email]
-        }
+        };
         if (!fullText) {
-            formChecks['id_body'].push(no_greetings);
-            formChecks['id_body'].push(no_closings);
+            formChecks.id_body.push(no_greetings);
+            formChecks.id_body.push(no_closings);
         }
         reviewWarnings.html("");
 
@@ -401,7 +404,7 @@ $(function(){
                 'height=500,width=800,resizable=yes,scrollbars=yes');
         win.focus();
     });
-    $(document).on("click", "a.show-target", function(e){
+    $(document).on("click", "a.show-target", function(){
         var obj = $('#' + $(this).attr("href").split('#')[1]).find(".toggle");
         $(obj.attr("href")).show();
     });
@@ -426,7 +429,7 @@ $(function(){
     $(".goto-form").each(function(i, el){
         window.location.href = "#" + $(el).attr("id");
     });
-    $(".search-public_bodies-submit").click(function(e){
+    $(".search-public_bodies-submit").click(function(){
         Froide.app.performPublicBodySearch($(this).closest('.public_body-chooser'));
     });
     $(".search-public_bodies").keydown(function(e){
@@ -481,7 +484,7 @@ $(function(){
         $('.nav a[href="' + e.target.hash + '"]').parent().addClass("active");
     };
 
-    $('.copyinput').click(function(e){
+    $('.copyinput').click(function(){
         $(this).select();
     });
 
@@ -492,7 +495,7 @@ $(function(){
             type: form.attr('method'),
             url: form.attr('action'),
             data: form.serialize(),
-            success: function(response) {
+            success: function() {
                 var id = form.attr('id');
                 form.hide();
                 $('#' + id + '-success').fadeIn();
@@ -535,4 +538,4 @@ $(function(){
         });
     }
 });
-
+}());
