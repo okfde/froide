@@ -1,4 +1,4 @@
-{% load i18n %}{% load static from staticfiles %}{% load gravatar %}<!DOCTYPE html>
+{% load i18n %}{% load static from staticfiles %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" class="no-js">
   <head>
   <meta charset="utf-8">
@@ -101,7 +101,6 @@
           {% if user.is_authenticated %}
           <li class="dropdown">
             <a class="dropdown-toggle account-dropdown" data-toggle="dropdown" href="#">
-              <img width="30" src="{% gravatar_url user.email 30 %}" alt="{{ user.get_full_name }}"/>
               <small class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
                 {{ user.last_name|truncatechars:12 }}
               </small>

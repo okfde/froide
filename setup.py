@@ -43,7 +43,6 @@ setup(
         'lxml',
         'pytz',
         'requests',
-        'django-gravatar2',
         'django-floppyforms',
         'django_overextends',
         'python-magic',

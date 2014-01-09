@@ -38,7 +38,6 @@ class Base(Configuration):
         'haystack',
         'djcelery',
         'taggit',
-        'django_gravatar',
         'floppyforms',
         'overextends',
         'tastypie',
