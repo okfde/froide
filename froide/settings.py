@@ -43,6 +43,7 @@ class Base(Configuration):
         'tastypie',
         'tastypie_swagger',
         'storages',
+        'compressor',
 
         # local
         'froide.foirequest',
@@ -144,7 +145,7 @@ class Base(Configuration):
     STATICFILES_FINDERS = (
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
         'django.contrib.staticfiles.finders.FileSystemFinder',
-        # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+        'compressor.finders.CompressorFinder',
     )
 
     AUTHENTICATION_BACKENDS = [
@@ -429,6 +430,8 @@ class Test(Base):
     @property
     def MEDIA_ROOT(self):
         return os.path.abspath(os.path.join(super(Test, self).PROJECT_ROOT, "tests", "testdata"))
+
+    COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
