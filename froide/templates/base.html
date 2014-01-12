@@ -1,40 +1,14 @@
-{% load i18n %}{% load static from staticfiles %}<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" class="no-js">
-  <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
-  {% block header_font %}
-  {% endblock %}
-  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-  <link rel="stylesheet" href="{% static "css/style.css" %}" />
-  {% block extra_css %}
-  {% endblock %}
-  <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
-  <meta name="language" content="{{ LANGUAGE_CODE }}" />
+{% extends "scaffold.html" %}
 
-  {# Translators: meta keywords #}
-  <meta name="keywords" content="{% trans "Freedom of Information Requests, Freedom of Information Law, Public Body Information" %}" />
-  {# Translators: meta description #}
-  <meta name="description" content="{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  {% block additional_meta %}
-  {% endblock %}
+{% load i18n %}
+{% load static from staticfiles %}
+{% load compress %}
 
-
-  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}" />
-  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}"/>
-
-  <script src="{% static "js/libs/modernizr-1.6.min.js" %}"></script>
-  {% block extra_head %}
-  {% endblock %}
-</head>
-
-<body{% block body_extra_attribuets %}{% endblock %}>
+{% block body_tag %}
   {% block top_block %}
-  {% if froide.dryrun %}
-  <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ froide.dryrun_domain }}</div>
-  {% endif %}
+    {% if froide.dryrun %}
+    <div style="text-align:center;color:#fff;padding:3px 0 3px;width:100%;height:25px;background:#a00;">{% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ froide.dryrun_domain }}</div>
+    {% endif %}
   {% endblock %}
 
   <div class="navbar {% block navbar-class %}navbar-default{% endblock %}">
@@ -53,13 +27,19 @@
         {% block nav %}
         <ul class="nav navbar-nav">
           <li class="{% block nav_requests %}{% endblock %}">
-            <a href="{% url 'foirequest-list' %}">{% blocktrans %}Requests{% endblocktrans %}</a>
+            <a href="{% url 'foirequest-list' %}">
+              {% blocktrans %}Requests{% endblocktrans %}
+            </a>
           </li>
           <li class="{% block nav_publicbodies %}{% endblock %}">
-            <a href="{% url 'publicbody-list' %}">{% blocktrans %}Public Bodies{% endblocktrans %}</a>
+            <a href="{% url 'publicbody-list' %}">
+              {% blocktrans %}Public Bodies{% endblocktrans %}
+            </a>
          </li>
           <li class="special-nav-item {% block nav_makerequest %}{% endblock %}">
-            <a href="{% url 'foirequest-make_request' %}"><span>{% blocktrans %}Make a Request!{% endblocktrans %}</span></a>
+            <a href="{% url 'foirequest-make_request' %}">
+              <span>{% blocktrans %}Make a Request!{% endblocktrans %}</span>
+            </a>
           </li>
         </ul>
         {% endblock nav %}
@@ -141,16 +121,7 @@
   {% block index_banner %}{% endblock %}
   {% block foisite_advice %}{% endblock %}
 
-  {% if messages %}
-  <div class="container">
-    {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      {{ message }}
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
+  {% include "snippets/messages.html" %}
 
   <div id="main" class="container">
   {% block body %}
@@ -199,27 +170,14 @@
     </div>
     {% endblock %}
   </footer>
+{% endblock body_tag %}
 
 {% block scripts %}
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="{% static "js/libs/jquery.js" %}"%3E%3C/script%3E'))</script>
+  {% compress js %}
+  <script src="{% static "js/libs/jquery.js" %}"></script>
   <script src="{% static "js/bootstrap.min.js" %}"></script>
   <script src="{% static "js/libs/mustache.js" %}"></script>
   <script src="{% static "js/libs/jquery.autocomplete.js" %}"></script>
-
-  <!-- scripts concatenated and minified via ant build script-->
   <script src="{% static "js/script.js" %}"></script>
-  <!-- end concatenated and minified scripts-->
-
-  <!--[if lt IE 7 ]>
-    <script src="{% static "js/libs/dd_belatedpng.js" %}"></script>
-    <script> DD_belatedPNG.fix('img, .png_bg'); </script>
-  <![endif]-->
+  {% endcompress %}
 {% endblock %}
-  {% block extra_footer %}
-  {% endblock %}
-  {% if not debug %}
-    {% block tracking_code %}
-    {% endblock %}
-  {% endif %}
-</body>
-</html>

@@ -1,0 +1,40 @@
+{% load i18n %}{% load static from staticfiles %}{% load compress %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
+  {% block header_font %}{% endblock %}
+  {% block css %}
+  {% compress css %}
+  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static "css/style.css" %}" />
+  {% endcompress %}
+  {% block extra_css %}
+  {% endblock %}
+  {% endblock %}
+  <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
+  <meta name="language" content="{{ LANGUAGE_CODE }}" />
+
+  {# Translators: meta keywords #}
+  <meta name="keywords" content="{% trans "Freedom of Information Requests, Freedom of Information Law, Public Body Information" %}" />
+  {# Translators: meta description #}
+  <meta name="description" content="{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  {% block additional_meta %}
+  {% endblock %}
+
+  <script src="{% static "js/libs/modernizr-1.6.min.js" %}"></script>
+  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}" />
+  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}"/>
+
+  {% block extra_head %}
+  {% endblock %}
+</head>
+<body{% block body_extra_attribuets %}{% endblock %}>
+  {% block body_tag %}{% endblock %}
+  {% block scripts %}{% endblock %}
+  {% block extra_footer %}{% endblock %}
+  {% if not debug %}{% block tracking_code %}{% endblock %}{% endif %}
+</body>
+</html>
