@@ -91,7 +91,12 @@ class NewUserForm(forms.Form):
         else:
             if user.is_active:
                 raise forms.ValidationError(mark_safe(
-                    _('This email address already has an account. <a href="%s?simple" class="target-small">Please login using that email address.</a>') % reverse("account-login")))
+                    _('This email address already has an account. <a href="%(url)s?simple&email=%(email)s" class="btn btn-warning target-small">Click here to login using that email address.</a>') %
+                        {
+                            'url': reverse("account-login"),
+                            'email': email
+                        }
+                    ))
             else:
                 raise forms.ValidationError(
                     _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))

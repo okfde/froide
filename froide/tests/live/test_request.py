@@ -52,7 +52,7 @@ class TestMakingRequest(LiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         cls.selenium = get_selenium()
-        cls.selenium.implicitly_wait(10)
+        cls.selenium.implicitly_wait(3)
         super(TestMakingRequest, cls).setUpClass()
 
     @classmethod
@@ -60,10 +60,18 @@ class TestMakingRequest(LiveServerTestCase):
         cls.selenium.quit()
         super(TestMakingRequest, cls).tearDownClass()
 
+    def scrollTo(self, id=None, klass=None):
+        if id is not None:
+            self.selenium.find_element_by_id(id).location_once_scrolled_into_view
+            selector = '#' + id
+        if klass is not None:
+            self.selenium.find_element_by_class_name(klass).location_once_scrolled_into_view
+            selector = '.' + klass
+        self.selenium.execute_script("window.scrollTo(0,0);$('%s').focus();" % selector)
+
     def setUp(self):
         factories.make_world()
         factories.rebuild_index()
-        self.do_logout()
         self.user = User.objects.all()[0]
         self.pb = PublicBody.objects.all()[0]
 
@@ -76,9 +84,6 @@ class TestMakingRequest(LiveServerTestCase):
         password_input.send_keys('froide')
         self.selenium.find_element_by_xpath(
             '//form//button[contains(text(), "Log In")]').click()
-
-    def do_logout(self):
-        self.selenium.get('%s%s' % (self.live_server_url, reverse('account-logout')))
 
     def test_make_not_logged_in_request(self):
         self.selenium.get('%s%s' % (self.live_server_url,
@@ -116,7 +121,7 @@ class TestMakingRequest(LiveServerTestCase):
             self.selenium.find_element_by_id('step-review')
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+            self.scrollTo(id='send-request-button')
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -161,7 +166,7 @@ class TestMakingRequest(LiveServerTestCase):
             self.selenium.find_element_by_id('review-button').click()
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+            self.scrollTo(id='send-request-button')
 
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
@@ -205,7 +210,7 @@ class TestMakingRequest(LiveServerTestCase):
             self.selenium.find_element_by_id('review-button').click()
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+            self.scrollTo(id='send-request-button')
 
         WebDriverWait(self.selenium, 10).until(
             lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
@@ -243,7 +248,7 @@ class TestMakingRequest(LiveServerTestCase):
             self.selenium.find_element_by_id('review-button').click()
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
-            self.selenium.execute_script("window.scrollTo(0,0);$('#send-request-button').focus();")
+            self.scrollTo(id='send-request-button')
 
         WebDriverWait(self.selenium, 10).until(
             lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
@@ -254,6 +259,84 @@ class TestMakingRequest(LiveServerTestCase):
         self.assertIn(req.get_absolute_url(), self.selenium.current_url)
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, True)
+        self.assertTrue(req.public_body is None)
+        self.assertEqual(req.status, 'publicbody_needed')
+
+    def test_make_request_logged_out_with_existing_account(self):
+        self.selenium.get('%s%s' % (self.live_server_url,
+            reverse('foirequest-make_request')))
+        with CheckJSErrors(self.selenium):
+            self.selenium.find_element_by_id('option-emptypublicbody').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('option-check_foi').is_displayed())
+            self.selenium.find_element_by_id('option-check_foi').click()
+            self.selenium.find_element_by_id('continue-foicheck').click()
+            req_title = 'FoiRequest Number'
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('id_body').is_displayed()
+            )
+            self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
+            user_first_name = self.user.first_name
+            user_last_name = self.user.last_name
+            self.selenium.find_element_by_id('id_first_name')\
+                .send_keys(user_first_name)
+            self.selenium.find_element_by_id('id_last_name')\
+                .send_keys(user_last_name)
+            self.selenium.find_element_by_id("id_user_email").send_keys(self.user.email)
+            self.selenium.find_element_by_id('id_terms').click()
+            self.selenium.find_element_by_id('id_public').click()
+            self.selenium.find_element_by_id('id_private').click()
+
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('review-button').is_displayed()
+            )
+            self.selenium.find_element_by_id('review-button').click()
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+            self.scrollTo(id='send-request-button')
+
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
+        self.selenium.find_element_by_id('send-request-button').click()
+        main_window_handle = self.selenium.current_window_handle
+        login_link = '//div[@class="user_data_form"]//ul[@class="errorlist"]//a'
+        with CheckJSErrors(self.selenium):
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: self.selenium.find_element_by_xpath(login_link)
+            )
+            self.scrollTo(klass='target-small')
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: self.selenium.find_element_by_xpath(login_link).is_displayed())
+            self.selenium.find_element_by_xpath(login_link).click()
+
+        popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
+        self.selenium.switch_to_window(popup_handle)
+
+        with CheckJSErrors(self.selenium):
+            password_input = self.selenium.find_element_by_id("id_password")
+            password_input.send_keys('froide')
+
+        self.selenium.find_element_by_xpath(
+            '//form//button[contains(text(), "Log In")]').click()
+        self.selenium.switch_to_window(main_window_handle)
+
+        with CheckJSErrors(self.selenium):
+            self.selenium.find_element_by_id('review-button').click()
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
+            self.scrollTo(id='send-request-button')
+
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
+        self.selenium.find_element_by_id('send-request-button').click()
+
+        req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
+        self.assertIn(req.get_absolute_url(), self.selenium.current_url)
+        self.assertEqual(req.title, req_title)
+        self.assertEqual(req.public, False)
         self.assertTrue(req.public_body is None)
         self.assertEqual(req.status, 'publicbody_needed')
 

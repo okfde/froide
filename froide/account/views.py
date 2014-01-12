@@ -123,6 +123,7 @@ def logout(request):
 def login(request, base="base.html", context=None,
         template='account/login.html', status=200):
     simple = False
+    initial = None
     if not context:
         context = {}
     if not "reset_form" in context:
@@ -133,6 +134,8 @@ def login(request, base="base.html", context=None,
     if request.GET.get("simple") is not None:
         base = "simple_base.html"
         simple = True
+        if request.GET.get('email'):
+            initial = {'email': request.GET.get('email')}
     else:
         if request.user.is_authenticated():
             return redirect('account-show')
@@ -161,8 +164,9 @@ def login(request, base="base.html", context=None,
                 messages.add_message(request, messages.ERROR,
                         _('E-mail and password do not match.'))
     else:
-        form = UserLoginForm()
-    context.update({"form": form,
+        form = UserLoginForm(initial=initial)
+    context.update({
+        "form": form,
         "custom_base": base,
         "simple": simple,
         'next': request.GET.get('next')

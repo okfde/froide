@@ -9,10 +9,11 @@
   <script>
     if (window.opener && window.opener.loggedInCallback){
       window.opener.loggedInCallback({
-        "email": '{{ user.email|escapejs }}',
+        'email': '{{ user.email|escapejs }}',
         'name': '{{ user.first_name|escapejs }}',
         'last_name': '{{ user.last_name|escapejs }}',
-        'address': '{{ user.address|escapejs }}'
+        'address': '{{ user.address|escapejs }}',
+        'csrf_token': "{% csrf_token %}"
       });
     }
     window.close();

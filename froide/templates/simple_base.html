@@ -1,71 +1,30 @@
-{% load i18n %}{% load static from staticfiles %}<!DOCTYPE html>
-<html lang="en" class="no-js">
-  <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% trans "Freedom of Information Requests" %}</title>
-  {% if debug %}
-    <style type="text/css" media="screen">
-      @font-face {
-        font-family: 'Kreon';
-        font-style: normal;
-        font-weight: 700;
-        src: local('Kreon bold'), local('Kreon-bold'), url('{% static "font/Kreon-Bold.woff" %}') format('woff');
-        src: local('Kreon regular'), local('Kreon-regular'), url('{% static "font/Kreon-Regular.woff" %}') format('woff');
-      }
-    </style>
-  {% else %}
-  <link href='http://fonts.googleapis.com/css?family=Kreon:bold' rel='stylesheet' type='text/css'>
-  {% endif %}
-  <link rel="stylesheet" href="{% static "css/blueprint/screen.css" %}" type="text/css" media="screen, projection" />
-  <link rel="stylesheet" href="{% static "css/blueprint/print.css" %}" type="text/css" media="print" />	
-  <!--[if lt IE 8]><link rel="stylesheet" href="{% static "css/blueprint/ie.css" %}" type="text/css" media="screen, projection"><![endif]-->
-  <link rel="stylesheet" href="{% static "css/style.css" %}">
+{% extends "scaffold.html" %}
 
+{% load i18n %}
+{% load static from staticfiles %}
+{% load compress %}
 
-  <meta name="description" content="">
-  <meta name="author" content="">
+{% block body_tag %}
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
-  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
+<div id="main" class="container">
+{% include "snippets/messages.html" %}
 
-  <script src="{% static "js/libs/modernizr-1.6.min.js" %}"></script>
-  {% block extra_head %}
-  {% endblock %}
-</head>
+{% block body %}
+{% endblock %}
 
-<body>
-    <div id="small_main" class="clearfix">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% block body %}
-    {% endblock %}
-  </div>
+</div>
 
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="{% static "js/libs/jquery-1.4.2.js" %}"%3E%3C/script%3E'))</script>
+{% block scripts %}
+  {% compress js %}
+  <script src="{% static "js/libs/jquery.js" %}"></script>
+  <script src="{% static "js/bootstrap.min.js" %}"></script>
   <script src="{% static "js/libs/mustache.js" %}"></script>
-  
-  
-  <!-- scripts concatenated and minified via ant build script-->
+  <script src="{% static "js/libs/jquery.autocomplete.js" %}"></script>
   <script src="{% static "js/script.js" %}"></script>
-  <!-- end concatenated and minified scripts-->
-  
-  
-  <!--[if lt IE 7 ]>
-    <script src="{% static "js/libs/dd_belatedpng.js" %}"></script>
-    <script> DD_belatedPNG.fix('img, .png_bg'); </script>
-  <![endif]-->
-  {% block extra_footer %}
-  {% endblock %}
+  {% endcompress %}
+{% endblock %}
 
-</body>
-</html>
+{% block extra_footer %}
+{% endblock %}
 
+{% endblock %}
