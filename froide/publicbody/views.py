@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _, ungettext
 from django.contrib import messages
+from django.conf import settings
+from django.contrib.sitemaps import Sitemap
 from django.template import TemplateDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -130,3 +132,39 @@ def import_csv(request):
         messages.add_message(request, messages.SUCCESS,
             _('Public Bodies were imported.'))
     return redirect('admin:publicbody_publicbody_changelist')
+
+
+SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
+
+
+class PublicBodySitemap(Sitemap):
+    protocol = SITEMAP_PROTOCOL
+    changefreq = "monthly"
+    priority = 0.6
+
+    def items(self):
+        return PublicBody.objects.all()
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+
+class JurisdictionSitemap(Sitemap):
+    protocol = SITEMAP_PROTOCOL
+    changefreq = "yearly"
+    priority = 0.8
+
+    def items(self):
+        return Jurisdiction.objects.all()
+
+
+class FoiLawSitemap(Sitemap):
+    protocol = SITEMAP_PROTOCOL
+    changefreq = "yearly"
+    priority = 0.3
+
+    def items(self):
+        return FoiLaw.objects.all()
+
+    def lastmod(self, obj):
+        return obj.updated

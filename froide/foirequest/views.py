@@ -16,6 +16,7 @@ from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.sitemaps import Sitemap
 
 from haystack.query import SearchQuerySet
 from taggit.models import Tag
@@ -972,3 +973,18 @@ def download_foirequest(request, slug):
     response = HttpResponse(package_foirequest(foirequest), content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename="%s.zip"' % foirequest.pk
     return response
+
+
+SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
+
+
+class FoiRequestSitemap(Sitemap):
+    protocol = SITEMAP_PROTOCOL
+    changefreq = "hourly"
+    priority = 0.5
+
+    def items(self):
+        return FoiRequest.published.all()
+
+    def lastmod(self, obj):
+        return obj.last_message
