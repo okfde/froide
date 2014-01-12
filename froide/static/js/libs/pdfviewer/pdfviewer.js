@@ -1,3 +1,8 @@
+/* jshint strict: true, quotmark: false, es3: true */
+/* global $: false, PDFJS: false */
+
+(function(){
+"use strict";
 
 function SimplePDFViewer(containerId, pdfUrl){
   this.containerId = containerId;
@@ -106,3 +111,5 @@ SimplePDFViewer.prototype.renderPage = function(pageno, callback) {
 
   });
 };
+
+}());

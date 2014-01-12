@@ -1,3 +1,9 @@
+/* jshint strict: true, quotmark: false, es3: true */
+/* global $: false */
+
+(function(){
+"use strict";
+
 function PDFRedact(pdfviewer) {
   this.pdfviewer = pdfviewer;
 
@@ -24,7 +30,7 @@ PDFRedact.prototype.setup = function(){
       (e.offsetX || e.originalEvent.layerX),
       (e.offsetY || e.originalEvent.layerY)
     ];
-  }
+  };
 
   $(this.canvas).on('mousedown', function(e) {
       self.isDown = true;
@@ -131,3 +137,5 @@ PDFRedact.prototype.drawRedaction = function(page, ctx){
     ctx.fillRect(redactions[i][0], redactions[i][1], redactions[i][2], redactions[i][3]);
   }
 };
+
+}());
