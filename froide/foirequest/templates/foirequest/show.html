@@ -720,15 +720,9 @@ data-spy="scroll" data-target="#message-nav-container"
 
 {% block extra_footer %}
 <script type="text/javascript">
-  var STATIC_URL = "{{ STATIC_URL }}";
   $(function(){
-    $(document).on("change", "#public_body-chooser input[name='public_body']",
-      function(e){
-        Froide.app.publicBodyChosen($("#public_body-chooser input[name='public_body']:checked").val());
-    });
     $messageNav = $('#message-nav');
     $messageNav.css('left', $messageNav.offset().left +'px');
-
     $messageNav.affix({
       offset: {
         top: function(){
@@ -748,10 +742,6 @@ data-spy="scroll" data-target="#message-nav-container"
       Froide.app.statusSet();
     });
     Froide.app.statusSet();
-    loggedInCallback = function(data){
-      $('.now-loggedin').hide();
-      location.href = $("link[rel='self']").attr("href");
-    };
   });
 </script>
 {% endblock %}
