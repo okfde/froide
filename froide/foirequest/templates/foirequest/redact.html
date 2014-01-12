@@ -1,6 +1,7 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 {% load static from staticfiles %}
+{% load compress %}
 
 {% block title %}{% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}{% endblock %}
 
@@ -123,13 +124,14 @@
 {% endblock %}
 
 {% block extra_footer %}
-
+{% compress js %}
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/pdf.js" %}"></script>
 <script>
   PDFJS.workerSrc = '{% static "js/libs/pdfviewer/pdf.js" %}';
 </script>
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/pdfviewer.js" %}"></script>
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/redact.js" %}"></script>
+{% endcompress %}
 <script>
   (function(){
     var pdfViewer = new SimplePDFViewer(
