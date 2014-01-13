@@ -107,7 +107,8 @@ class Base(Configuration):
     )
     COMPRESS_ENABLED = False
     COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
-    COMPRESS_CSS_FILTERS = ['compressor.filters.cssmin.CSSMinFilter']
+    COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
+                            'compressor.filters.cssmin.CSSMinFilter']
     COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
     # Additional locations of template files
