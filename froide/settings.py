@@ -105,6 +105,10 @@ class Base(Configuration):
     STATICFILES_DIRS = (
         os.path.join(PROJECT_ROOT, "static"),
     )
+    COMPRESS_ENABLED = False
+    COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
+    COMPRESS_CSS_FILTERS = ['compressor.filters.cssmin.CSSMinFilter']
+    COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
     # Additional locations of template files
     TEMPLATE_DIRS = (
@@ -432,9 +436,6 @@ class Test(Base):
     def MEDIA_ROOT(self):
         return os.path.abspath(os.path.join(super(Test, self).PROJECT_ROOT, "tests", "testdata"))
 
-    COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
-    COMPRESS_PARSER = 'compressor.parser.HtmlParser'
-
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
 
@@ -531,6 +532,7 @@ class Production(Base):
     TEMPLATE_DEBUG = False
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
     CELERY_ALWAYS_EAGER = values.BooleanValue(False)
+    COMPRESS_ENABLED = True
     COMPRESS_OFFLINE = True
 
 
