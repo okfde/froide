@@ -432,6 +432,7 @@ class Test(Base):
     def MEDIA_ROOT(self):
         return os.path.abspath(os.path.join(super(Test, self).PROJECT_ROOT, "tests", "testdata"))
 
+    COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
     COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -530,6 +531,7 @@ class Production(Base):
     TEMPLATE_DEBUG = False
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
     CELERY_ALWAYS_EAGER = values.BooleanValue(False)
+    COMPRESS_OFFLINE = True
 
 
 class SSLSite(object):
