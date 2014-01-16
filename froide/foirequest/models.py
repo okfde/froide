@@ -665,7 +665,7 @@ class FoiRequest(models.Model):
         message.sender_user = user
         message.sender_name = user.display_name()
         message.sender_email = self.secret_address
-        message.recipient_email = recipient_email
+        message.recipient_email = recipient_email.strip()
         message.recipient_public_body = recipient_pb
         message.recipient = recipient_name
         message.timestamp = timezone.now()
@@ -1281,7 +1281,7 @@ class FoiMessage(models.Model):
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
         send_foi_mail(self.subject, self.plaintext, from_addr,
-                [self.recipient_email], attachments=attachments)
+                [self.recipient_email.strip()], attachments=attachments)
         self.sent = True
         self.save()
         self.request._messages = None
