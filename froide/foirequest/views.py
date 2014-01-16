@@ -105,6 +105,8 @@ def list_requests(request, status=None, topic=None, tag=None,
     if not_foi:
         manager = FoiRequest.published_not_foi
     topic_list = PublicBodyTag.objects.get_topic_list()
+    if status is None:
+        status = request.GET.get(str(_('status')), None)
     status_url = status
     foi_requests = manager.for_list_view()
     if status is not None:
