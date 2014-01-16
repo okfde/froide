@@ -112,4 +112,6 @@ SimplePDFViewer.prototype.renderPage = function(pageno, callback) {
   });
 };
 
+window.SimplePDFViewer = SimplePDFViewer;
+
 }());

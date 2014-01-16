@@ -138,4 +138,6 @@ PDFRedact.prototype.drawRedaction = function(page, ctx){
   }
 };
 
+window.PDFRedact = PDFRedact;
+
 }());
