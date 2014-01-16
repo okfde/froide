@@ -72,15 +72,17 @@ data-spy="scroll" data-target="#message-nav-container"
     <h2>{{ object.title }}</h2>
 
     {% if not object.public %}
-      <div class="well hidden-print">
-        <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-          {% csrf_token %}
-          <p>
-            {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
-          </p>
-          <button type="submit" class="btn btn-default">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
-        </form>
-      </div>
+      {% if object.user == user or user.is_staff %}
+        <div class="well hidden-print">
+          <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+            {% csrf_token %}
+            <p>
+              {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
+            </p>
+            <button type="submit" class="btn btn-default">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
+          </form>
+        </div>
+      {% endif %}
     {% endif %}
 
     {% if object.user == user %}
@@ -547,31 +549,31 @@ data-spy="scroll" data-target="#message-nav-container"
         </a>
       </li>
 
-      <li class="nav-header">{% trans "Short URL" %}</li>
+      <li class="nav-header">
+        {% trans "Short URL" %}
+      </li>
       <li>
         <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
       </li>
 
-      {% if user == object.user or user.is_staff %}
-      <li class="nav-header">{% trans "Download" %}</li>
-      <li>
-        <a class="btn btn-default" href="{% url 'foirequest-download' slug=object.slug %}">
-          <span class="glyphicon glyphicon-download"></span>
-          {% trans "Download request as ZIP-file" %}
-        </a>
-      </li>
+      {% if not object.public %}
+        <li class="nav-header">{% trans "Secret Short URL" %}</li>
+        <li>
+          <span class="small help">
+            {% trans "This URL gives read access to others." %}
+          </span>
+          <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_accessible_link }}"/>
+        </li>
       {% endif %}
 
-      {% if not object.public %}
-
-      <li class="nav-header">{% trans "Secret Short URL" %}</li>
-      <li>
-        <span class="small help">
-          {% trans "This URL gives read access to others." %}
-        </span>
-        <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_accessible_link }}"/>
-      </li>
-
+     {% if user == object.user or user.is_staff %}
+        <li class="nav-header">{% trans "Download" %}</li>
+        <li>
+          <a class="btn btn-default" href="{% url 'foirequest-download' slug=object.slug %}">
+            <span class="glyphicon glyphicon-download"></span>
+            {% trans "Download request as ZIP-file" %}
+          </a>
+        </li>
       {% endif %}
 
       {% with object.tags.all as tags %}
