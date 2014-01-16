@@ -14,7 +14,7 @@
       {{ object.public_body_name }}
       {% elif object.public_body %}
         <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
-        <span class="muted">({{ object.public_body.jurisdiction.name }})</span>
+        <span class="muted">({{ object.jurisdiction.name }})</span>
       {% else %}
         {% blocktrans %}Not yet set{% endblocktrans %}
       {% endif %}
