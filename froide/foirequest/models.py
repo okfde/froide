@@ -90,6 +90,21 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def get_for_search_index(self):
         return self.get_query_set().filter(same_as__isnull=True)
 
+    def get_resolution_count_by_public_body(self, obj):
+        res = self.get_query_set().filter(
+                status='resolved', public_body=obj
+            ).values('resolution'
+            ).annotate(
+                models.Count('resolution')
+            ).order_by('-resolution__count')
+        return [{
+            'resolution': x['resolution'],
+            'url_slug': FoiRequest.get_url_from_status(x['resolution']),
+            'name': FoiRequest.get_readable_status(x['resolution']),
+            'description': FoiRequest.get_status_description(x['resolution']),
+            'count': x['resolution__count']
+            } for x in res]
+
     def successful(self):
         return self.by_last_update().filter(
                     models.Q(resolution="successful") |
@@ -209,6 +224,7 @@ class FoiRequest(models.Model):
     STATUS_URLS = [(str(s), t, u) for s, t, u in STATUS_URLS]
 
     _STATUS_URLS_DICT = None
+    _URLS_STATUS_DICT = None
 
     STATUS_FIELD_CHOICES = [(x[0], x[1]) for x in STATUS_CHOICES]
     RESOLUTION_FIELD_CHOICES = [(x[0], x[1]) for x in RESOLUTION_CHOICES]
@@ -324,10 +340,17 @@ class FoiRequest(models.Model):
         return _(u"Request '%s'") % self.title
 
     @classmethod
-    def get_status_from_url(cls, status):
+    def get_status_from_url(cls, status_slug):
+        if cls._URLS_STATUS_DICT is None:
+            cls._URLS_STATUS_DICT = dict([
+                (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
+        return cls._URLS_STATUS_DICT.get(status_slug)
+
+    @classmethod
+    def get_url_from_status(cls, status):
         if cls._STATUS_URLS_DICT is None:
             cls._STATUS_URLS_DICT = dict([
-                (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
+                (str(x[-1]), x[0]) for x in cls.STATUS_URLS])
         return cls._STATUS_URLS_DICT.get(status)
 
     @property

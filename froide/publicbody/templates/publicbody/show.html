@@ -9,13 +9,15 @@
 
 <h2 itemprop="name">{{ object.name }}</h2>
 
+{% if object.email %}
+<p>
+  <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
+</p>
+{% endif %}
+
+
 <div class="row">
-  <div class="col-lg-5 col-md-5">
-    {% if object.email %}
-    <p>
-      <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
-    </p>
-    {% endif %}
+  <div class="col-lg-4 col-md-4">
     <dl>
       <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
       <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
@@ -48,7 +50,7 @@
       </a>
     {% endif %}
   </div>
-  <div class="col-lg-7 col-md-7">
+  <div class="col-lg-8 col-md-8">
     {% if object.request_note %}
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -60,7 +62,26 @@
       </div>
     {% endif %}
     {% if foirequest_count %}
-      <h3>{% trans "Requests to this public body" %}</h3>
+      <h3>{% trans "Summary of Results" %}</h3>
+      <table class="table">
+        {% for res in resolutions %}
+        <tr>
+          <td>
+            <a href="{% url 'foirequest-list' public_body=object.slug %}?status={{ res.url_slug }}">
+              {{ res.name }}
+            </a>
+            <br/>
+            <small class="text-muted">{{ res.description }}</small>
+          </td>
+          <td class="text-right">
+            {{ res.count }}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      <h3>
+        {% blocktrans count count=foirequest_count %}One requests to this public body{% plural %}{{ count }} requests to this public body{% endblocktrans %}
+      </h3>
       <ul class="media-list">
         {% for object in foirequests %}
           <li class="media">
@@ -68,11 +89,13 @@
           </li>
         {% endfor %}
       </ul>
-      <p>
-        <a href="{% url 'foirequest-list' public_body=object.slug %}">
-          {% trans "See all FOI requests for this public body" %}
-        </a>
-      </p>
+      {% if foirequest_count > foirequests|length %}
+        <p>
+          <a href="{% url 'foirequest-list' public_body=object.slug %}">
+            {% trans "See all FOI requests for this public body" %}
+          </a>
+        </p>
+      {% endif %}
     {% else %}
       <p>{% trans "There are no requests for this public body yet" %}</p>
     {% endif %}

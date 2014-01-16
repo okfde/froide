@@ -84,7 +84,9 @@ def show_publicbody(request, slug):
     obj = get_object_or_404(PublicBody, slug=slug)
     context = {
         'object': obj,
-        'foirequests': FoiRequest.published.filter(public_body=obj)[:10],
+        'foirequests': FoiRequest.published.filter(
+            public_body=obj).order_by('-last_message')[:10],
+        'resolutions': FoiRequest.published.get_resolution_count_by_public_body(obj),
         'foirequest_count': FoiRequest.published.filter(public_body=obj).count()
     }
     return render(request, 'publicbody/show.html', context)
