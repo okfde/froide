@@ -52,12 +52,12 @@
   </div>
   <div class="col-lg-8 col-md-8">
     {% if object.request_note %}
-      <div class="panel panel-default">
+      <div class="panel panel-info">
         <div class="panel-heading">
           <h3 class="panel-title">{% trans "Special note" %}</h3>
         </div>
         <div class="panel-body">
-          {{ object.request_note_markdown|safe }}
+          {{ object.request_note_html|safe }}
         </div>
       </div>
     {% endif %}
