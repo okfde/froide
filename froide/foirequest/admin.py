@@ -24,7 +24,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     inlines = [
         FoiMessageInline,
     ]
-    list_display = ('title', 'first_message', 'user', 'checked',
+    list_display = ('title', 'first_message', 'secret_address', 'checked',
         'public_body', 'status',)
     list_filter = ('checked', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'public')
