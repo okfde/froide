@@ -1387,6 +1387,18 @@ class MediatorTest(TestCase):
         message = list(response.context['messages'])[0]
         self.assertIn('cannot be escalated', message.message)
 
+    def test_too_long_subject(self):
+        self.client.login(username='sw', password='froide')
+        pb = PublicBody.objects.all()[0]
+        post = {
+            "subject": "Test" * 65,
+            "body": u"This is another test body with Ümläut€n",
+            "law": str(pb.default_law.pk)
+        }
+        response = self.client.post(reverse('foirequest-submit_request',
+                kwargs={"public_body": pb.slug}), post)
+        self.assertEqual(response.status_code, 400)
+
 
 class JurisdictionTest(TestCase):
     def setUp(self):

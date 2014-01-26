@@ -30,6 +30,7 @@ class RequestForm(forms.Form):
             label=_("Search for a topic or a public body:"),
             required=False)
     subject = forms.CharField(label=_("Subject"),
+            max_length=250,
             widget=forms.TextInput(
                 attrs={'placeholder': _("Subject"),
                 "class": "form-control"}))
