@@ -100,7 +100,8 @@ SimplePDFViewer.prototype.renderPage = function(pageno, callback) {
       canvasContext: self.ctx,
       viewport: viewport
     };
-    page.render(renderContext).then(function(){
+    var renderTask = page.render(renderContext);
+    renderTask.promise.then(function(){
       if (callback){
         callback();
       }
