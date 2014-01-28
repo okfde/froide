@@ -60,10 +60,8 @@ def classification_reminder():
 def count_same_foirequests(instance_id):
     translation.activate(settings.LANGUAGE_CODE)
     try:
-        req = FoiRequest.objects.get(id=instance_id)
-        count = FoiRequest.objects.filter(same_as=req).count()
-        req.same_as_count = count
-        req.save()
+        count = FoiRequest.objects.filter(same_as_id=instance_id).count()
+        FoiRequest.objects.filter(id=instance_id).update(same_as_count=count)
     except FoiRequest.DoesNotExist:
         pass
 
