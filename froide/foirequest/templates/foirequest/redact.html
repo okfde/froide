@@ -130,6 +130,9 @@
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/pdfviewer.js" %}"></script>
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/redact.js" %}"></script>
 {% endcompress %}
+<script type="text/javascript">
+  PDFJS.workerSrc = "{% static "js/libs/pdfviewer/pdf.worker.js" %}";
+</script>
 <script>
   (function(){
     var pdfViewer = new SimplePDFViewer(
