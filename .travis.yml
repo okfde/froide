@@ -7,7 +7,7 @@ python:
 services:
 - elasticsearch
 before_install:
-- psql -c "create database froide ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8';" -U postgres
+- psql -c 'create database froide;' -U postgres
 - phantomjs --version
 - phantomjs --webdriver= &
 install:

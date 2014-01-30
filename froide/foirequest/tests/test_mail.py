@@ -107,7 +107,11 @@ class MailTest(TestCase):
         self.assertEqual(len(messages), 2)
         self.assertEqual(messages[1].subject, mail['subject'])
         self.assertEqual(len(messages[1].attachments), 2)
-        self.assertEqual(messages[1].attachments[0].name, u"KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf")
+        names = set([a.name for a in messages[1].attachments])
+        self.assertEqual(names, set([
+            u'KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-Anlage.pdf',
+            u"KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf"
+        ]))
 
     def test_strip_html(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
