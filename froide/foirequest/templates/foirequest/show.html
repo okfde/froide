@@ -270,6 +270,7 @@ data-spy="scroll" data-target="#message-nav-container"
               {% else %}
                 <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
               {% endif %}
+              {% block send_message_form_pre %}{% endblock %}
               {% if send_message_form %}
                 {% form send_message_form using "bootstrap/horizontal.html" %}
               {% else %}
