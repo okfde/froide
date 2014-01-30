@@ -682,6 +682,7 @@ class FoiRequest(models.Model):
             subject, message, recipient_pb=None, send_address=True):
         message_body = message
         message = FoiMessage(request=self)
+        subject = re.sub('\s*\[#%s\]\s*$' % self.pk, '', subject)
         message.subject = u'%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False
@@ -702,6 +703,7 @@ class FoiRequest(models.Model):
     def add_escalation_message(self, subject, message, send_address=False):
         message_body = message
         message = FoiMessage(request=self)
+        subject = re.sub('\s*\[#%s\]\s*$' % self.pk, '', subject)
         message.subject = u'%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False
@@ -1263,7 +1265,7 @@ class FoiMessage(models.Model):
 
         content = replace_email_name(content, _("<<name and email address>>"))
         content = replace_email(content, _("<<email address>>"))
-        return content
+        return content[:255]
 
     def get_content(self, user=None):
         if self.plaintext_redacted is None:

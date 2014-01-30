@@ -1342,6 +1342,37 @@ class RequestTest(TestCase):
         message = FoiMessage.objects.get(pk=message.pk)
         self.assertFalse(message.content_hidden)
 
+    def test_too_long_subject(self):
+        self.client.login(username='sw', password='froide')
+        pb = PublicBody.objects.all()[0]
+        post = {
+            "subject": "Test" * 64,
+            "body": u"This is another test body with Ümläut€n",
+            "law": str(pb.default_law.pk)
+        }
+        response = self.client.post(reverse('foirequest-submit_request',
+                kwargs={"public_body": pb.slug}), post)
+        self.assertEqual(response.status_code, 400)
+
+        post = {
+            "subject": "Test" * 60 + ' a@b.de',
+            "body": u"This is another test body with Ümläut€n",
+            "law": str(pb.default_law.pk)
+        }
+        response = self.client.post(reverse('foirequest-submit_request',
+                kwargs={"public_body": pb.slug}), post)
+        self.assertEqual(response.status_code, 302)
+
+    def test_remove_double_numbering(self):
+        req = FoiRequest.objects.all()[0]
+        req.add_message(req.user, 'Test', 'test@example.com',
+            req.title + ' [#%s]' % req.pk,
+            'Test'
+        )
+        req = FoiRequest.objects.all()[0]
+        last = req.messages[-1]
+        self.assertEqual(last.subject.count('[#%s]' % req.pk), 1)
+
 
 class MediatorTest(TestCase):
     def setUp(self):
@@ -1386,18 +1417,6 @@ class MediatorTest(TestCase):
         self.assertEqual(response.status_code, 400)
         message = list(response.context['messages'])[0]
         self.assertIn('cannot be escalated', message.message)
-
-    def test_too_long_subject(self):
-        self.client.login(username='sw', password='froide')
-        pb = PublicBody.objects.all()[0]
-        post = {
-            "subject": "Test" * 65,
-            "body": u"This is another test body with Ümläut€n",
-            "law": str(pb.default_law.pk)
-        }
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
-        self.assertEqual(response.status_code, 400)
 
 
 class JurisdictionTest(TestCase):
