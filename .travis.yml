@@ -13,6 +13,7 @@ before_install:
 - phantomjs --webdriver= &
 install:
 - pip install -r requirements-test.txt
+- pip install psycopg2
 - pip install -e .
 script:
 - export DATABASE_URL=postgres://postgres@127.0.0.1/froide
