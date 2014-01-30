@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.six import BytesIO
 from django.core.urlresolvers import reverse
+from django.test.utils import override_settings
 
 from froide.helper.email_utils import EmailParser
 
@@ -162,6 +163,18 @@ class MailTest(TestCase):
             content = f.read()
             mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['cc']), 5)
+
+    @override_settings(FOI_EMAIL_DOMAIN=['fragdenstaat.de', 'example.com'])
+    def test_additional_domains(self):
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            process_mail.delay(f.read().replace(b'@fragdenstaat.de', b'@example.com'))
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        messages = request.messages
+        self.assertEqual(len(messages), 2)
+        self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
+        message = messages[1]
+        self.assertEqual(message.timestamp,
+                datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
 
 
 class DeferredMessageTest(TestCase):

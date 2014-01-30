@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
 from django.core.urlresolvers import reverse
 from django.utils.translation import override, ugettext, ugettext_lazy as _
-from django.utils.six import BytesIO
+from django.utils.six import BytesIO, string_types
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails,
                                        make_address)
@@ -63,8 +63,17 @@ def _deliver_mail(email, mail_string=None):
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
             # TODO: BCC?
-    mail_filter = lambda x: x[1].endswith("@%s" % settings.FOI_EMAIL_DOMAIN)
-    received_list = filter(mail_filter, received_list)
+
+    domains = settings.FOI_EMAIL_DOMAIN
+    if isinstance(domains, string_types):
+        domains = [domains]
+
+    mail_filter = lambda x: x[1].endswith(tuple(["@%s" % d for d in domains]))
+    received_list = [r for r in received_list if mail_filter(r)]
+
+    # normalize to first FOI_EMAIL_DOMAIN
+    received_list = [(x[0], '@'.join(
+        (x[1].split('@')[0], domains[0]))) for x in received_list]
 
     if mail_string is not None:
         # make original mail storeable as unicode
@@ -81,8 +90,6 @@ def _deliver_mail(email, mail_string=None):
         if secret_mail in already:
             continue
         already.add(secret_mail)
-        if not secret_mail.endswith('@%s' % settings.FOI_EMAIL_DOMAIN):
-            continue
         try:
             foi_request = FoiRequest.objects.get_by_secret_mail(secret_mail)
         except FoiRequest.DoesNotExist:
