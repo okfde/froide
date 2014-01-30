@@ -299,10 +299,6 @@ class Base(Configuration):
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
 
-    ######### South #############
-
-    SOUTH_TESTS_MIGRATE = False
-
     ######### Celery #############
 
     CELERY_RESULT_BACKEND = values.Value("database")
@@ -441,8 +437,6 @@ class Test(Base):
     CACHES = values.CacheURLValue('locmem://')
 
     TEST_SELENIUM_DRIVER = values.Value('phantomjs')
-
-    SOUTH_TESTS_MIGRATE = False
 
     USE_X_ACCEL_REDIRECT = True
 
