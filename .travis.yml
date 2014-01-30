@@ -7,8 +7,7 @@ python:
 services:
 - elasticsearch
 before_install:
-- psql -c 'create database test_froide;' -U postgres
-- export PIP_USE_MIRRORS=true
+- psql -c 'create database froide;' -U postgres
 - phantomjs --version
 - phantomjs --webdriver= &
 install:
