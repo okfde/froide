@@ -9,7 +9,6 @@ from django.contrib.contenttypes.models import ContentType
 from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
-from froide.helper.test_utils import skip_if_environ
 
 
 class WebTest(TestCase):
@@ -278,7 +277,6 @@ class WebTest(TestCase):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
 
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)

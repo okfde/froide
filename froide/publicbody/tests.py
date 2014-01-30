@@ -6,7 +6,6 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from froide.foirequest.tests import factories
-from froide.helper.test_utils import skip_if_environ
 
 from .models import PublicBody, FoiLaw, Jurisdiction
 from .csv_import import CSVImporter
@@ -163,7 +162,6 @@ class ApiTest(TestCase):
         response = self.client.get('/api/v1/publicbody/search/?format=json&q=Body')
         self.assertEqual(response.status_code, 200)
 
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_autocomplete(self):
         pb = PublicBody.objects.all()[0]
         factories.rebuild_index()

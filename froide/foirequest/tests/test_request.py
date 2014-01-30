@@ -20,7 +20,6 @@ from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import package_foirequest
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
-from froide.helper.test_utils import skip_if_environ
 
 User = get_user_model()
 
@@ -1177,7 +1176,6 @@ class RequestTest(TestCase):
         # self.assertEqual(req.public_body, pb)
         # self.assertNotEqual(old_due, req.due_date)
 
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         pb = PublicBody.objects.all()[0]
         factories.rebuild_index()
