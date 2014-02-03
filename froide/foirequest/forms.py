@@ -30,7 +30,7 @@ class RequestForm(forms.Form):
             label=_("Search for a topic or a public body:"),
             required=False)
     subject = forms.CharField(label=_("Subject"),
-            max_length=250,
+            max_length=230,
             widget=forms.TextInput(
                 attrs={'placeholder': _("Subject"),
                 "class": "form-control"}))
@@ -173,6 +173,7 @@ class SendMessageForm(forms.Form):
     to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int,
             required=True, widget=forms.Select(attrs={"class": "form-control"}))
     subject = forms.CharField(label=_("Subject"),
+            max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control"}))
     message = forms.CharField(widget=forms.Textarea(attrs={"class": "form-control"}),
             label=_("Your message"))
@@ -236,6 +237,7 @@ class MakePublicBodySuggestionForm(forms.Form):
 
 class EscalationMessageForm(forms.Form):
     subject = forms.CharField(label=_("Subject"),
+            max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control"}))
     message = forms.CharField(
             widget=forms.Textarea(
@@ -422,6 +424,7 @@ class PostalReplyForm(forms.Form, PostalScanMixin):
             widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Sender Name")}), required=True)
     subject = forms.CharField(label=_("Subject"), required=False,
+            max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Subject")}))
     text = forms.CharField(label=_("Letter"),
