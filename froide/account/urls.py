@@ -2,6 +2,7 @@ from django.conf.urls import patterns
 
 urlpatterns = patterns("froide.account.views",
     (r'^$', 'show', {}, 'account-show'),
+    (r'^terms/$', 'new_terms', {}, 'account-new_terms'),
     (r'^settings/$', 'account_settings', {}, 'account-settings'),
     (r'^logout/$', 'logout', {}, 'account-logout'),
     (r'^login/$', 'login', {}, 'account-login'),

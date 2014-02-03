@@ -17,7 +17,7 @@ from froide.helper.utils import render_403
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeAddressForm, UserDeleteForm,
-        UserChangeEmailForm)
+        UserChangeEmailForm, TermsForm)
 from .models import AccountManager
 
 
@@ -363,3 +363,28 @@ def delete_account(request):
             _('Your account has been deleted and you have been logged out.'))
 
     return redirect('/')
+
+
+def new_terms(request, next=None):
+    if next is None:
+        next = request.GET.get('next', '/')
+    if not is_safe_url(url=next, host=request.get_host()):
+        next = '/'
+    if not request.user.is_authenticated():
+        return redirect(next)
+    if request.user.terms:
+        return redirect(next)
+
+    form = TermsForm()
+    if request.POST:
+        form = TermsForm(request.POST)
+        if form.is_valid():
+            form.save(request.user)
+            return redirect(next)
+        else:
+            messages.add_message(request, messages.ERROR,
+                _('You need to accept our new terms to continue.'))
+    return render(request, 'account/new_terms.html', {
+        'terms_form': form,
+        'next': next
+    })

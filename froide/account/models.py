@@ -24,10 +24,12 @@ user_activated_signal = dispatch.Signal(providing_args=[])
 
 
 class User(AbstractUser):
-    organization = models.CharField(blank=True, max_length=255)
-    organization_url = models.URLField(blank=True, max_length=255)
-    private = models.BooleanField(default=False)
-    address = models.TextField(blank=True)
+    organization = models.CharField(_('Organization'), blank=True, max_length=255)
+    organization_url = models.URLField(_('Organization URL'), blank=True, max_length=255)
+    private = models.BooleanField(_('Private'), default=False)
+    address = models.TextField(_('Address'), blank=True)
+    terms = models.BooleanField(_('Accepted Terms'), default=True)
+    newsletter = models.BooleanField(_('Wants Newsletter'), default=False)
 
     objects = UserManager()
 

@@ -16,9 +16,10 @@ from .models import AccountManager
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
+HAVE_NEWSLETTER = settings.FROIDE_CONFIG.get("have_newsletter", False)
 
 
-class NewUserForm(forms.Form):
+class NewUserBaseForm(forms.Form):
     first_name = forms.CharField(max_length=30,
             label=_('First name'),
             widget=forms.TextInput(attrs={'placeholder': _('First Name'),
@@ -61,15 +62,8 @@ class NewUserForm(forms.Form):
                 label=_("Hide my name on the web"),
                 help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
-    terms = forms.BooleanField(label=_("Terms and Conditions and Privacy Statement"),
-            error_messages={'required':
-                _('You need to accept our Terms and Conditions and Priavcy Statement.')},
-            widget=AgreeCheckboxInput(
-                agree_to=_(u'You agree to our <a href="%(url_terms)s" class="target-new">Terms and Conditions</a> and <a href="%(url_privacy)s" class="target-new">Privacy Statement</a>'),
-                url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
-
     def __init__(self, *args, **kwargs):
-        super(NewUserForm, self).__init__(*args, **kwargs)
+        super(NewUserBaseForm, self).__init__(*args, **kwargs)
         if ALLOW_PSEUDONYM:
             self.fields["last_name"].help_text = mark_safe(
                     _('<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.')
@@ -101,6 +95,28 @@ class NewUserForm(forms.Form):
                 raise forms.ValidationError(
                     _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))
         return email
+
+
+class TermsForm(forms.Form):
+    terms = forms.BooleanField(label=_("Terms and Conditions and Privacy Statement"),
+        error_messages={'required':
+            _('You need to accept our Terms and Conditions and Priavcy Statement.')},
+        widget=AgreeCheckboxInput(
+            agree_to=_(u'You agree to our <a href="%(url_terms)s" class="target-new">Terms and Conditions</a> and <a href="%(url_privacy)s" class="target-new">Privacy Statement</a>'),
+            url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
+    if HAVE_NEWSLETTER:
+        newsletter = forms.BooleanField(required=False,
+            label=_("Check if you want to receive our newsletter."))
+
+    def save(self, user):
+        user.terms = True
+        if HAVE_NEWSLETTER:
+            user.newsletter = self.cleaned_data['newsletter']
+        user.save()
+
+
+class NewUserForm(NewUserBaseForm, TermsForm):
+    pass
 
 
 class NewUserWithPasswordForm(NewUserForm):
