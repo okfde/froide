@@ -726,7 +726,7 @@ class FoiRequest(models.Model):
 
     @classmethod
     def generate_secret_address(cls, user):
-        possible_chars = 'abcdefghkmnpqrstuvwxyz2345689'
+        possible_chars = 'abcdefghkmnprstuvwxyz2345689'
         username = user.username.replace('_', '.')
         secret = "".join([random.choice(possible_chars) for i in range(10)])
         template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
