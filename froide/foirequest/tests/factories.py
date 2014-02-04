@@ -242,7 +242,13 @@ def make_world():
     UserFactory.create(is_staff=True, username='dummy_staff')
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
+
+    topic_1 = PublicBodyTagFactory.create(is_topic=True)
+    topic_2 = PublicBodyTagFactory.create(is_topic=True)
+
     mediator_bund = PublicBodyFactory.create(jurisdiction=bund, site=site)
+    mediator_bund.tags.add(topic_1)
+
     ifg_bund = FoiLawFactory.create(site=site, jurisdiction=bund,
         name='IFG Bund',
         mediator=mediator_bund
@@ -264,9 +270,6 @@ def make_world():
     meta_nrw = FoiLawFactory.create(site=site, jurisdiction=nrw, name='IFG-UIG NRW',
         meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
-
-    topic_1 = PublicBodyTagFactory.create(is_topic=True)
-    topic_2 = PublicBodyTagFactory.create(is_topic=True)
 
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)

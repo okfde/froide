@@ -1353,7 +1353,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         post = {
-            "subject": "Test" * 60 + ' a@b.de',
+            "subject": "Test" * 55 + ' a@b.de',
             "body": u"This is another test body with Ümläut€n",
             "law": str(pb.default_law.pk)
         }
