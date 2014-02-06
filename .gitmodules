@@ -1,3 +1,0 @@
-[submodule "docs/_themes/sphinx-theme-okfn"]
-	path = docs/_themes/sphinx-theme-okfn
-	url = git://github.com/okfn/sphinx-theme-okfn.git

@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'froide'
-copyright = u'2013, Stefan Wehrmeyer, Open Knowledge Foundation'
+copyright = u'2014, Stefan Wehrmeyer, Open Knowledge Foundation'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -94,7 +94,7 @@ pygments_style = 'sphinx'
 sys.path.append(os.path.abspath('_themes'))
 html_theme_path = ['_themes']
 
-_html_theme = 'sphinx-theme-okfn'
+_html_theme = 'default'
 
 if os.path.exists(os.path.join(os.path.abspath('_themes'), _html_theme)):
     html_theme = _html_theme
