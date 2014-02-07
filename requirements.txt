@@ -1,7 +1,6 @@
 Django==1.6.1
 Markdown==2.3.1
 South==0.8.4
-Sphinx==1.1
 celery==3.1.8
 django-celery==3.1.1
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
