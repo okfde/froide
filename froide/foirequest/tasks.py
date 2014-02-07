@@ -12,7 +12,7 @@ from .foi_mail import _process_mail, _fetch_mail
 from .file_utils import convert_to_pdf
 
 
-@celery_app.task
+@celery_app.task(acks_late=True)
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
@@ -29,7 +29,7 @@ def process_mail(*args, **kwargs):
     run(*args, **kwargs)
 
 
-@celery_app.task
+@celery_app.task(expires=60)
 def fetch_mail():
     for rfc_data in _fetch_mail():
         process_mail.delay(rfc_data)
@@ -66,7 +66,7 @@ def count_same_foirequests(instance_id):
         pass
 
 
-@celery_app.task
+@celery_app.task(time_limit=60)
 def convert_attachment_task(instance_id):
     try:
         att = FoiAttachment.objects.get(pk=instance_id)

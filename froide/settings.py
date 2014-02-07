@@ -302,6 +302,10 @@ class Base(Configuration):
     CELERYBEAT_SCHEDULER = values.Value("djcelery.schedulers.DatabaseScheduler")
     CELERY_ALWAYS_EAGER = values.BooleanValue(True)
 
+    CELERY_ROUTES = {
+        'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
+    }
+
     ######### Haystack ###########
 
     HAYSTACK_CONNECTIONS = {
@@ -455,8 +459,7 @@ class Test(Base):
         },
     }
 
-    CELERY_RESULT_BACKEND = "database"
-    CELERY_RESULT_DBURI = "sqlite:///dev.db"
+    CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
     CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True

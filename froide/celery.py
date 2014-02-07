@@ -14,4 +14,4 @@ from django.conf import settings
 
 app = Celery('froide')
 app.config_from_object('django.conf:settings')
-app.autodiscover_tasks(settings.INSTALLED_APPS, related_name='tasks')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS, related_name='tasks')
