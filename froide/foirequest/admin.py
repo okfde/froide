@@ -11,7 +11,7 @@ from froide.helper.admin_utils import NullFilterSpec, AdminTagAllMixIn
 from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
         DeferredMessage)
-from .tasks import count_same_foirequests, convert_attachment
+from .tasks import count_same_foirequests, convert_attachment_task
 
 
 class FoiMessageInline(admin.StackedInline):
@@ -143,7 +143,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         instance = queryset[0]
         if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
                 instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
-            convert_attachment(instance)
+            convert_attachment_task.delay(instance.pk)
             self.message_user(request, _("Converted to PDF."))
     convert.short_description = _("Convert to PDF")
 
