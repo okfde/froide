@@ -1006,6 +1006,8 @@ class FoiRequest(models.Model):
         self.became_asleep.send(sender=self)
 
     def send_classification_reminder(self):
+        if self.user is None:
+            return
         if not self.user.is_active:
             return
         if not self.user.email:
