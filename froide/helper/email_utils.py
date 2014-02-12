@@ -78,7 +78,7 @@ class EmailParser(object):
                 file_data = message_part.get_payload(decode=True)
                 if file_data is None:
                     payloads = message_part.get_payload()
-                    file_data = '\n\n'.join([p.as_string() for p in payloads])
+                    file_data = '\n\n'.join([p.as_string() for p in payloads]).encode('utf-8')
                 attachment = BytesIO(file_data)
                 attachment.content_type = message_part.get_content_type()
                 attachment.size = len(file_data)
