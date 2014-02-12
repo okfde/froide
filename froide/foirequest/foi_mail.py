@@ -160,6 +160,8 @@ def package_foirequest(foirequest):
             zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
 
             for attachment in att_queryset:
+                if not attachment.file:
+                    continue
                 filename = '%s-%s' % (date_prefix, attachment.name)
                 zfile.write(attachment.file.path, arcname=filename)
         zfile.close()
