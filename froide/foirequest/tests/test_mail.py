@@ -180,6 +180,15 @@ class MailTest(TestCase):
         self.assertEqual(message.timestamp,
                 datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
 
+    def test_eml_attachments(self):
+        with open(p("test_mail_08.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(BytesIO(content))
+            subject = u'WG: Disziplinarverfahren u.a. gegen B\xfcrgermeister/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche B\xfcrgermeister/Ortsvorsteher/Landr\xe4te im Land Brandenburg in den letzten Jahren [#5617]'
+            self.assertEqual(mail['attachments'][0].name,
+                '%s.eml' % subject[:45])
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):

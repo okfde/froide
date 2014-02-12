@@ -74,9 +74,11 @@ class EmailParser(object):
             dispo_type, dispo_dict = self.parse_dispositions(content_disposition)
             if dispo_type == "attachment" or (dispo_type == 'inline' and
                     'filename' in dispo_dict):
+                content_type = message_part.get("Content-Type", None)
                 file_data = message_part.get_payload(decode=True)
                 if file_data is None:
-                    file_data = ""
+                    payloads = message_part.get_payload()
+                    file_data = '\n\n'.join([p.as_string() for p in payloads])
                 attachment = BytesIO(file_data)
                 attachment.content_type = message_part.get_content_type()
                 attachment.size = len(file_data)
@@ -86,12 +88,16 @@ class EmailParser(object):
                 attachment.read_date = None
                 if "filename" in dispo_dict:
                     attachment.name = dispo_dict['filename']
-                else:
-                    content_type = message_part.get("Content-Type", None)
-                    if content_type:
-                        _, content_dict = self.parse_dispositions(content_type)
-                        if 'name' in content_dict:
-                            attachment.name = content_dict['name']
+                if content_type:
+                    _, content_dict = self.parse_dispositions(content_type)
+                    if 'name' in content_dict:
+                        attachment.name = content_dict['name']
+                if attachment.name is None and content_type == 'message/rfc822':
+                    p = Parser()
+                    msgobj = p.parse(BytesIO(attachment.getvalue()))
+                    subject = self.parse_header_field(msgobj['Subject'])
+                    if subject:
+                        attachment.name = '%s.eml' % subject[:45]
                 if "create-date" in dispo_dict:
                     attachment.create_date = dispo_dict['create-date']  # TODO: datetime
                 if "modification-date" in dispo_dict:
