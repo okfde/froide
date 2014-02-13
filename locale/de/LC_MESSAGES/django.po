@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-17 13:44+0100\n"
-"PO-Revision-Date: 2014-01-17 17:34+0100\n"
+"PO-Revision-Date: 2014-02-13 11:41+0100\n"
 "Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/froide/language/"
 "de/)\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.3\n"
+"X-Generator: Poedit 1.6.4\n"
 
 #: docs/_build/html/theming.html:107
 msgid ""
@@ -231,7 +231,7 @@ msgstr ""
 
 #: froide/account/forms.py:64
 msgid "Terms and Conditions and Privacy Statement"
-msgstr "Nutzungs- und Datenschutzbedingungen"
+msgstr "Nutzungs- und Datenschutz&shy;bedingungen"
 
 #: froide/account/forms.py:66
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."

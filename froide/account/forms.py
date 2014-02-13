@@ -98,7 +98,7 @@ class NewUserBaseForm(forms.Form):
 
 
 class TermsForm(forms.Form):
-    terms = forms.BooleanField(label=_("Terms and Conditions and Privacy Statement"),
+    terms = forms.BooleanField(label=mark_safe(_("Terms and Conditions and Privacy Statement")),
         error_messages={'required':
             _('You need to accept our Terms and Conditions and Priavcy Statement.')},
         widget=AgreeCheckboxInput(
