@@ -111,7 +111,9 @@
                 <p class="redacting" style="display:none">{% trans "Redaction process started, please wait..." %}</p>
                 <p class="loading">{% trans "Loading PDF..." %}</p>
                 <div class="progress progress-striped active">
-                  <div id="redaction-progressbar" class="bar" style="width: 100%;"></div>
+                  <div id="redaction-progressbar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    <span class="sr-only">0% complete</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -144,18 +146,17 @@
         $('#redaction-progress').hide()
         $('#redaction-progress .loading').hide();
         $('#pdf-viewer .pdf-canvas-container').show();
-        var pdfRedact = new PDFRedact(pdfViewer);
+        var pdfRedact = new PDFRedact(pdfViewer, $('#redaction-progressbar'));
         pdfRedact.setup();
         $('#submit-form').click(function(e){
           e.preventDefault();
           $('#submit-form').prop('disabled', true);
           $('#pdf-viewer .pdf-canvas-container').hide();
-          $('#redaction-progressbar').width('0%');
+          pdfRedact.updateProgress(0);
           $('#redaction-progress').show();
           $('#redaction-progress .redacting').show();
           pdfRedact.submitRedactions(
-            $('#redaction-form'),
-            $('#redaction-progressbar')
+            $('#redaction-form')
           );
         });
       });

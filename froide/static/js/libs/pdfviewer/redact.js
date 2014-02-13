@@ -4,8 +4,9 @@
 (function(){
 "use strict";
 
-function PDFRedact(pdfviewer) {
+function PDFRedact(pdfviewer, progressbar) {
   this.pdfviewer = pdfviewer;
+  this.progressbar = progressbar;
 
   this.canvas = document.createElement('canvas');
   this.canvas.width = pdfviewer.canvas.width;
@@ -78,7 +79,17 @@ PDFRedact.prototype.setup = function(){
   });
 };
 
-PDFRedact.prototype.submitRedactions = function(form, progressbar){
+PDFRedact.prototype.updateProgress = function(percent){
+  if (!this.progressbar) {
+    return;
+  }
+  var rounded = Math.round(percent);
+  this.progressbar.css('width', rounded + '%')
+    .attr('aria-valuenow', percent)
+    .find('.sr-only').text(rounded + '% complete');
+};
+
+PDFRedact.prototype.submitRedactions = function(form){
 
   var self = this;
 
@@ -91,17 +102,11 @@ PDFRedact.prototype.submitRedactions = function(form, progressbar){
     inp.value = v;
     form.append(inp);
   };
-  var udpateProgress = function(pagenumber){
-    if (!progressbar) {
-      return;
-    }
-    progressbar.width(Math.round(pagenumber / self.pdfviewer.numPages * 100) + '%');
-  };
 
   var extractImage = function(pagenumber) {
     self.applyRedaction(pagenumber, function(data){
       addKV('page_' + pagenumber, data);
-      udpateProgress(pagenumber);
+      self.updateProgress(pagenumber / self.pdfviewer.numPages * 100);
       if (pagenumber === self.pdfviewer.numPages) {
         form.submit();
       } else {
