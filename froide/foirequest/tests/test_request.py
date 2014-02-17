@@ -68,6 +68,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.published.get(id=req.id)
         self.assertTrue(req.public)
+        self.assertTrue(req.messages[-1].subject.count('[#%s]' % req.pk), 1)
         self.assertTrue(req.messages[-1].subject.endswith('[#%s]' % req.pk))
 
     def test_public_body_new_user_request(self):
