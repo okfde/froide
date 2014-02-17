@@ -147,9 +147,10 @@ def notify_followers_send_foimessage(sender, message=None, **kwargs):
 @receiver(FoiRequest.add_postal_reply,
     dispatch_uid="notify_followers_add_postal_reply")
 def notify_followers_add_postal_reply(sender, **kwargs):
-    from .tasks import update_followers_postal_reply
+    from .tasks import update_followers
 
-    update_followers_postal_reply.apply_async(
-        args=[sender.pk],
+    update_followers.apply_async(
+        args=[sender.pk, _("The request '%(request)s' received a postal reply.") % {
+            "request": sender.title}],
         countdown=10 * 60  # Run this in 10 minutes
     )

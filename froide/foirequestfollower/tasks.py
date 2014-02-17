@@ -28,17 +28,6 @@ def update_followers(request_id, message):
 
 
 @celery_app.task
-def update_followers_postal_reply(request_id):
-    try:
-        foirequest = FoiRequest.objects.get(id=request_id)
-    except FoiRequest.DoesNotExist:
-        return
-    FoiRequestFollower.objects.send_update(foirequest,
-        _("The request '%(request)s' received a postal reply.") % {
-            "request": foirequest.title})
-
-
-@celery_app.task
 def batch_update():
     return _batch_update()
 
