@@ -757,7 +757,7 @@ def approve_attachment(request, slug, attachment):
     att = get_object_or_404(FoiAttachment, id=int(attachment))
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
-    att.approved = True
+    att.approve()
     att.save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
@@ -902,6 +902,7 @@ def redact_attachment(request, slug, attachment_id):
             )
         att.file = pdf_file
         att.size = pdf_file.size
+        att.approve()
         att.save()
         if not attachment.is_redacted:
             attachment.redacted = att

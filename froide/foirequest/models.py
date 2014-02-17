@@ -1376,6 +1376,8 @@ class FoiAttachment(models.Model):
         "text/plain"
     )
 
+    attachment_published = django.dispatch.Signal(providing_args=[])
+
     class Meta:
         ordering = ('name',)
         # order_with_respect_to = 'belongs_to'
@@ -1424,6 +1426,10 @@ class FoiAttachment(models.Model):
 
     def get_absolute_domain_url(self):
         return self.get_absolute_url()
+
+    def approve(self):
+        self.approved = True
+        self.attachment_published.send(sender=self)
 
     def is_visible(self, user, foirequest):
         if self.approved:
@@ -1482,6 +1488,8 @@ class FoiEvent(models.Model):
             u"Received an email from %(public_body)s."),
         "message_sent": _(
             u"%(user)s sent a message to %(public_body)s."),
+        "attachment_published": _(
+            u"%(user)s published an attachment on request %(request)s."),
         "request_redirected": _(
             u"Request was redirected to %(public_body)s and due date has been reset."),
         "status_changed": _(

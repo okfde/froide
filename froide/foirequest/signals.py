@@ -210,6 +210,15 @@ def create_event_message_received(sender, **kwargs):
             public_body=sender.public_body)
 
 
+@receiver(FoiAttachment.attachment_published,
+    dispatch_uid="create_event_followers_attachments_approved")
+def create_event_followers_attachments_approved(sender, **kwargs):
+    FoiEvent.objects.create_event("attachment_published",
+            sender.belongs_to.request,
+            user=sender.belongs_to.request.user,
+            public_body=sender.belongs_to.request.public_body)
+
+
 @receiver(FoiRequest.status_changed,
         dispatch_uid="create_event_status_changed")
 def create_event_status_changed(sender, **kwargs):
