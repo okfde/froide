@@ -19,6 +19,11 @@ class FoiMessageInline(admin.StackedInline):
     raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
 
 
+class SameAsNullFilter(NullFilterSpec):
+    title = _(u'Has same request')
+    parameter_name = u'same_as'
+
+
 class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     prepopulated_fields = {"slug": ("title",)}
     inlines = [
@@ -27,7 +32,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     list_display = ('title', 'first_message', 'secret_address', 'checked',
         'public_body', 'status',)
     list_filter = ('checked', 'first_message', 'last_message', 'status',
-        'resolution', 'is_foi', 'public')
+        'resolution', 'is_foi', 'public', SameAsNullFilter)
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
@@ -119,11 +124,22 @@ class FoiMessageAdmin(admin.ModelAdmin):
     ]
 
 
+class RedactedVersionNullFilter(NullFilterSpec):
+    title = _(u'Has redacted version')
+    parameter_name = u'redacted'
+
+
+class ConvertedVersionNullFilter(NullFilterSpec):
+    title = _(u'Has converted version')
+    parameter_name = u'converted'
+
+
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted')
     ordering = ('-id',)
     list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
-    list_filter = ('can_approve', 'approved',)
+    list_filter = ('can_approve', 'approved', 'is_redacted', 'is_converted',
+                   RedactedVersionNullFilter, ConvertedVersionNullFilter)
     search_fields = ['name']
     actions = ['approve', 'cannot_approve', 'convert']
 
