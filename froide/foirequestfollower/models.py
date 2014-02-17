@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.utils.crypto import constant_time_compare
 from django.utils.encoding import python_2_unicode_compatible
 
 from froide.foirequest.models import FoiRequest
@@ -86,7 +87,7 @@ class FoiRequestFollower(models.Model):
 
     def check_and_unfollow(self, check):
         secret = self.get_follow_secret()
-        if check == secret:
+        if constant_time_compare(check, secret):
             self.delete()
             return True
         return False
