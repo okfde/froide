@@ -17,7 +17,7 @@ from .models import FoiRequestFollower
 
 
 @celery_app.task
-def update_followers(request_id, message):
+def update_followers(request_id, message, template=None):
     translation.activate(settings.LANGUAGE_CODE)
     try:
         foirequest = FoiRequest.objects.get(id=request_id)
