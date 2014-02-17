@@ -21,7 +21,8 @@ def update_followers(request_id, message):
     translation.activate(settings.LANGUAGE_CODE)
     try:
         foirequest = FoiRequest.objects.get(id=request_id)
-        FoiRequest.objects.send_update(foirequest, message)
+        FoiRequestFollower.objects.send_update(foirequest, message,
+                                               template=template)
     except FoiRequest.DoesNotExist:
         pass
 
