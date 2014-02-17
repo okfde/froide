@@ -27,6 +27,9 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None):
     env = dict(os.environ)
     env.update({'HOME': outpath})
 
+    logging.info("Running: %s", ' '.join(arguments))
+    logging.info("Env: %s", env)
+
     p = subprocess.Popen(
         arguments,
         stdout=subprocess.PIPE,
