@@ -31,7 +31,8 @@ from taggit.models import TaggedItemBase
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (replace_email_name,
-        replace_email, shorten_text)
+        replace_email, strip_all_tags)
+
 
 from .foi_mail import send_foi_mail, package_foirequest
 
@@ -1285,7 +1286,7 @@ class FoiMessage(models.Model):
         if self.plaintext_redacted is None:
             self.plaintext_redacted = self.redact_plaintext()
             self.save()
-        return shorten_text(self.plaintext_redacted)
+        return self.plaintext_redacted
 
     def redact_plaintext(self):
         content = self.plaintext
@@ -1317,8 +1318,6 @@ class FoiMessage(models.Model):
 
     def get_real_content(self):
         content = self.content
-        content = replace_email(content, _("<<email address>>"))
-        content = shorten_text(content)
         return content
 
     def clean(self):

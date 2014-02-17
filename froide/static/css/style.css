@@ -739,6 +739,21 @@ input:focus {
     background-color: #C4FFD6;
 }
 
+.redacted,
+.redacted:hover,
+.redacted:active,
+.redacted::selection,
+.redacted a {
+    background-color: #000 !important;
+    color: #000 !important;
+}
+
+.redacted.redacted-hover:hover,
+.redacted.redacted-hover:hover a {
+    color: #fff !important;
+    background-color: #000 !important;
+}
+
 #followrequest-form p {
     margin: 0;
 }

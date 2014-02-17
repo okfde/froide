@@ -746,6 +746,7 @@ data-spy="scroll" data-target="#message-nav-container"
     $('form').submit(function(){
       $(this).find('button[type="submit"]').prop('disabled', true);
     });
+    $('*[data-toggle=tooltip]').tooltip();
     $messageNav = $('#message-nav');
     $messageNav.css('left', $messageNav.offset().left +'px');
     $messageNav.affix({

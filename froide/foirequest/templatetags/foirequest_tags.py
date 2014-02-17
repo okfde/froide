@@ -1,9 +1,13 @@
+# -*- encoding: utf-8 -*-
+from difflib import SequenceMatcher
+
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.template.defaultfilters import urlizetrunc
+from django.utils.translation import ugettext_lazy as _
 
-from froide.helper.text_utils import unescape
+from froide.helper.text_utils import unescape, split_text_by_separator
 
 from froide.foirequest.models import FoiRequest
 
@@ -26,6 +30,71 @@ def highlight_request(message):
     )
 
 
+def mark_differences(content_a, content_b,
+        start_tag=u'<span{attrs}> ',
+        end_tag=' </span>',
+        attrs=None,
+        min_part_len=3):
+    if attrs is None:
+        attrs = u' class="redacted"'
+    start_tag = start_tag.format(attrs=attrs)
+    opened = False
+    redact = False
+    new_content = []
+    matcher = SequenceMatcher(None, content_a, content_b)
+
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        long_enough = i2 - i1 > min_part_len
+        redact = tag != 'equal' and tag != 'delete'
+        if not redact and opened and long_enough:
+            new_content.append(end_tag)
+            opened = False
+        if not opened and redact:
+            opened = True
+            new_content.append(start_tag)
+        new_content.append(escape(content_a[i1:i2]))
+    if opened:
+        new_content.append(end_tag)
+
+    return mark_safe(''.join(new_content))
+
+
+def redact_message(message, user):
+    real_content = message.get_real_content().replace("\r\n", "\n")
+    redacted_content = message.get_content().replace("\r\n", "\n")
+
+    c_1, c_2 = split_text_by_separator(real_content)
+    r_1, r_2 = split_text_by_separator(redacted_content)
+
+    if message.request.user == user or user.is_staff:
+        content_1 = mark_differences(c_1, r_1,
+            attrs=u' class="redacted redacted-hover"'
+            ' data-toggle="tooltip" title="{title}"'.format(
+                title=_('Only visible to you')
+            ))
+        content_2 = mark_differences(c_2, r_2,
+            attrs=u' class="redacted redacted-hover"'
+            ' data-toggle="tooltip" title="{title}"'.format(
+                title=_('Only visible to you')
+            ))
+    else:
+        content_1 = mark_differences(r_1, c_1)
+        content_2 = mark_differences(r_2, c_2)
+
+    content_1 = urlizetrunc(content_1, 40, autoescape=False)
+    content_2 = urlizetrunc(content_2, 40, autoescape=False)
+
+    if content_2:
+        return u''.join([
+            content_1,
+            u'<a href="#" class="show-text">…</a><div class="hidden-text">',
+            content_2,
+            u'</div>'
+        ])
+
+    return content_1
+
+
 def check_same_request(context, foirequest, user, var_name):
     if foirequest.same_as_id:
         foirequest_id = foirequest.same_as_id
@@ -40,4 +109,5 @@ def check_same_request(context, foirequest, user, var_name):
 
 
 register.simple_tag(highlight_request)
+register.simple_tag(redact_message)
 register.simple_tag(takes_context=True)(check_same_request)
