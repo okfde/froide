@@ -156,11 +156,11 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     def convert(self, request, queryset):
         if not queryset:
             return
-        instance = queryset[0]
-        if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
-                instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
-            convert_attachment_task.delay(instance.pk)
-            self.message_user(request, _("Converted to PDF."))
+        for instance in queryset:
+            if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
+                    instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
+                convert_attachment_task.delay(instance.pk)
+        self.message_user(request, _("Conversion tasks started."))
     convert.short_description = _("Convert to PDF")
 
 
