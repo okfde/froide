@@ -9,7 +9,7 @@ class UserAdmin(DjangoUserAdmin):
         (_('Profile info'), {'fields': ('address', 'organization',
             'organization_url', 'private', 'terms', 'newsletter')})
     ]
-    list_filter = list(DjangoUserAdmin.list_filter) + ['terms', 'newsletter']
+    list_filter = list(DjangoUserAdmin.list_filter) + ['private', 'terms', 'newsletter']
 
 
 admin.site.register(User, UserAdmin)
