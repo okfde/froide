@@ -31,8 +31,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     ]
     list_display = ('title', 'first_message', 'secret_address', 'checked',
         'public_body', 'status',)
-    list_filter = ('checked', 'first_message', 'last_message', 'status',
-        'resolution', 'is_foi', 'public', SameAsNullFilter)
+    list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
+        'resolution', 'is_foi', 'checked', 'public', 'visibility', SameAsNullFilter)
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
