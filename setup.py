@@ -22,12 +22,21 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
+def gen_data_files(*dirs):
+    results = []
+
+    for src_dir in dirs:
+        for root,dirs,files in os.walk(src_dir):
+            results.append((root, map(lambda f:root + "/" + f, files)))
+    return results
+
+
 setup(
     name="froide",
     version=find_version("froide", "__init__.py"),
-    url='https://github.com/stefanw/froide',
+    url='https://github.com/ODHK/froide',
     license='MIT',
-    description="German Freedom of Information Portal",
+    description="Freedom of Information Portal for Hong Kong",
     long_description=read('README.md'),
     author='Stefan Wehrmeyer',
     author_email='mail@stefanwehrmeyer.com',
@@ -54,10 +63,10 @@ setup(
         'django-storages',
         'dj-database-url',
         'django-cache-url',
-        'django_compressor',
+        'django_compressor'
     ],
     include_package_data=True,
-    classifiers=[
+    data_files = gen_data_files("froide", "locale"),    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
