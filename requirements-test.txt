@@ -4,5 +4,5 @@ selenium==2.39.0
 flake8==2.1.0
 factory-boy==2.2.1
 coverage==3.7
--e git://github.com/stefanw/transifex-client.git@python-3#egg=transifex_client
+git+https://github.com/stefanw/transifex-client.git@python-3#egg=transifex_client
 mock==1.0.1
