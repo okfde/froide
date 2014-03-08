@@ -21,16 +21,6 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
-
-def gen_data_files(*dirs):
-    results = []
-
-    for src_dir in dirs:
-        for root,dirs,files in os.walk(src_dir):
-            results.append((root, map(lambda f:root + "/" + f, files)))
-    return results
-
-
 setup(
     name="froide",
     version=find_version("froide", "__init__.py"),
@@ -66,7 +56,7 @@ setup(
         'django_compressor'
     ],
     include_package_data=True,
-    data_files = gen_data_files("froide", "locale"),    classifiers=[
+    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
