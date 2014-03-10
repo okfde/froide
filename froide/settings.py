@@ -340,7 +340,8 @@ class Base(Configuration):
         dryrun_domain="testmail.example.com",
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
-        doc_conversion_call_func=None  # see settings_test for use
+        doc_conversion_call_func=None,  # see settings_test for use
+        show_public_body_employee_name=True
     )
 
     ####### Email ##############

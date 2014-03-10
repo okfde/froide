@@ -85,22 +85,6 @@ class User(AbstractUser):
         if self.organization:
             content = content.replace(self.organization, name_replacement)
 
-        greeting_replacement = replacements.get('greeting',
-                str(_("<< Greeting >>")))
-
-        if settings.FROIDE_CONFIG.get('greetings'):
-            for greeting in settings.FROIDE_CONFIG['greetings']:
-                match = greeting.search(content, re.I)
-                if match is not None and len(match.groups()):
-                    content = content.replace(match.group(1),
-                        greeting_replacement)
-
-        if settings.FROIDE_CONFIG.get('closings'):
-            for closing in settings.FROIDE_CONFIG['closings']:
-                match = closing.search(content, re.I)
-                if match is not None:
-                    content = content[:match.end()]
-
         return content
 
     def get_autologin_url(self, url):

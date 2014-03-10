@@ -9,7 +9,7 @@
         <tr>
           <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
           <td class="value-padding-right">
-            {% if object.user == user %}
+            {% if object.user == user or user.is_staff %}
               {% if message.is_response %}
                 {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
                 <div id="change-pb-{{ message.id }}" style="display:none" class="hidden-print">
@@ -26,9 +26,21 @@
                 {{ message.user_real_sender }}
               {% endif %}
             {% else %}
-              {{ message.sender }}
-              {% if message.sender_public_body %}
-               – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+              {% if message.is_response %}
+                {% if froide.show_public_body_employee_name %}
+                  {{ message.sender }}
+                  {% if message.sender_public_body %}
+                   – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+                  {% endif %}
+                {% else %}
+                  {% if message.sender_public_body %}
+                    <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+                  {% else %}
+                    {% trans "Public Body" %}
+                  {% endif %}
+                {% endif %}
+              {% else %}
+                {{ message.sender }}
               {% endif %}
             {% endif %}
           </td>
