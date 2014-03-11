@@ -548,8 +548,8 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
 
 
 class AmazonS3(object):
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'froide.helper.storage_utils.ForceAuthS3BotoStorage'
+    STATICFILES_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
+    DEFAULT_FILE_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 
     AWS_ACCESS_KEY_ID = values.Value('')
     AWS_SECRET_ACCESS_KEY = values.Value('')
