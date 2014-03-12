@@ -1,5 +1,4 @@
 import hmac
-import re
 
 try:
     from urllib.parse import urlencode
