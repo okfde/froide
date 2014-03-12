@@ -4596,7 +4596,7 @@ msgstr "Besonderer Hinweis"
 
 #: froide/publicbody/templates/publicbody/show.html:65
 msgid "Summary of Results"
-msgstr "Zusammenfassung der Ergbenisse"
+msgstr "Zusammenfassung der Ergebnisse"
 
 #: froide/publicbody/templates/publicbody/show.html:83
 #, python-format
