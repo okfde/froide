@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Translators:
 msgid ""
@@ -9,26 +9,25 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-12 15:38+0100\n"
-"PO-Revision-Date: 2014-03-11 17:38+0000\n"
+"PO-Revision-Date: 2014-03-12 14:41+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
-"Language-Team: Swedish (Sweden) (http://www.transifex.com/projects/p/froide/"
-"language/sv_SE/)\n"
-"Language: sv_SE\n"
+"Language-Team: Swedish (Sweden) (http://www.transifex.com/projects/p/froide/language/sv_SE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: sv_SE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: docs/_build/html/theming.html:97
 msgid ""
-"Froide is a free and Open Source Project by &lt;a href=\"http://www.okfn.org"
-"\"&gt;the Open Knowledge Foundation&lt;/a&gt;."
+"Froide is a free and Open Source Project by &lt;a "
+"href=\"http://www.okfn.org\"&gt;the Open Knowledge Foundation&lt;/a&gt;."
 msgstr ""
 
 #: docs/_build/html/_sources/theming.txt:53
 msgid ""
-"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-"\">the Open Knowledge Foundation</a>."
+"Froide is a free and Open Source Project by <a "
+"href=\"http://www.okfn.org\">the Open Knowledge Foundation</a>."
 msgstr ""
 
 #: froide/_local_settings.py:11 froide/settings.py:203 froide/settings.py:485
@@ -226,8 +225,8 @@ msgstr ""
 
 #: froide/account/forms.py:63
 msgid ""
-"If you check this, your name will still appear in requests to public bodies, "
-"but we will do our best to not display it publicly. However, we cannot "
+"If you check this, your name will still appear in requests to public bodies,"
+" but we will do our best to not display it publicly. However, we cannot "
 "guarantee your anonymity"
 msgstr ""
 
@@ -240,9 +239,9 @@ msgstr ""
 #: froide/account/forms.py:88
 #, python-format
 msgid ""
-"This email address already has an account. <a href=\"%(url)s?simple&email="
-"%(email)s\" class=\"btn btn-warning target-small\">Click here to login using "
-"that email address.</a>"
+"This email address already has an account. <a "
+"href=\"%(url)s?simple&email=%(email)s\" class=\"btn btn-warning target-"
+"small\">Click here to login using that email address.</a>"
 msgstr ""
 
 #: froide/account/forms.py:96
@@ -382,8 +381,8 @@ msgstr ""
 
 #: froide/account/views.py:35
 msgid ""
-"Your email address is now confirmed and you are logged in. You should change "
-"your password now by filling out the form below."
+"Your email address is now confirmed and you are logged in. You should change"
+" your password now by filling out the form below."
 msgstr ""
 
 #: froide/account/views.py:41
@@ -393,7 +392,8 @@ msgstr ""
 
 #: froide/account/views.py:50
 msgid ""
-"You can only use the confirmation link once, please login with your password."
+"You can only use the confirmation link once, please login with your "
+"password."
 msgstr ""
 
 #: froide/account/views.py:58
@@ -544,8 +544,7 @@ msgstr ""
 #: froide/account/templates/account/confirmation_mail.txt:8
 #, python-format
 msgid ""
-"We have also generated a random password for you. You can use it to login, "
-"but you can also change it, if you want to.\n"
+"We have also generated a random password for you. You can use it to login, but you can also change it, if you want to.\n"
 "\n"
 "Your password is: %(password)s\n"
 msgstr ""
@@ -629,8 +628,8 @@ msgstr ""
 #: froide/account/templates/account/password_reset_email.txt:2
 #, python-format
 msgid ""
-"You're receiving this e-mail because you requested a password reset for your "
-"account at %(site_name)s."
+"You're receiving this e-mail because you requested a password reset for your"
+" account at %(site_name)s."
 msgstr ""
 
 #: froide/account/templates/account/password_reset_email.txt:4
@@ -835,9 +834,8 @@ msgid "Publish"
 msgstr ""
 
 #: froide/foirequest/admin.py:23
-#, fuzzy
 msgid "Has same request"
-msgstr "Make a request"
+msgstr ""
 
 #: froide/foirequest/admin.py:46
 #, python-format
@@ -957,15 +955,15 @@ msgstr ""
 #: froide/foirequest/feeds.py:52
 #, python-format
 msgid ""
-"This feed contains the Freedom of Information requests %(by)s that have been "
-"made through %(sitename)s."
+"This feed contains the Freedom of Information requests %(by)s that have been"
+" made through %(sitename)s."
 msgstr ""
 
 #: froide/foirequest/feeds.py:57
 #, python-format
 msgid ""
-"This feed contains the latest Freedom of Information requests that have been "
-"made through %(sitename)s."
+"This feed contains the latest Freedom of Information requests that have been"
+" made through %(sitename)s."
 msgstr ""
 
 #: froide/foirequest/feeds.py:86
@@ -1029,8 +1027,8 @@ msgstr ""
 
 #: froide/foirequest/forms.py:48
 msgid ""
-"If you don't want your request to be public right now, uncheck this. You can "
-"always decide to make it public later."
+"If you don't want your request to be public right now, uncheck this. You can"
+" always decide to make it public later."
 msgstr ""
 
 #: froide/foirequest/forms.py:65 froide/foirequest/forms.py:373
@@ -1152,8 +1150,8 @@ msgstr ""
 
 #: froide/foirequest/forms.py:300
 msgid ""
-"If your message is redirected to a different Public Body, please specify the "
-"new Public Body"
+"If your message is redirected to a different Public Body, please specify the"
+" new Public Body"
 msgstr ""
 
 #: froide/foirequest/forms.py:304
@@ -1185,8 +1183,8 @@ msgstr ""
 
 #: froide/foirequest/forms.py:414
 msgid ""
-"Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/"
-"black out all private information concerning you</strong>."
+"Uploaded scans can be PDF, JPG or PNG. Please make sure to "
+"<strong>redact/black out all private information concerning you</strong>."
 msgstr ""
 
 #: froide/foirequest/forms.py:418
@@ -1291,8 +1289,8 @@ msgstr ""
 
 #: froide/foirequest/models.py:149
 msgid ""
-"The Public Body of this request has been created by the user and still needs "
-"to be confirmed."
+"The Public Body of this request has been created by the user and still needs"
+" to be confirmed."
 msgstr ""
 
 #: froide/foirequest/models.py:153
@@ -1901,8 +1899,8 @@ msgstr ""
 #: froide/foirequest/models.py:1528
 #, python-format
 msgid ""
-"%(user)s filed a complaint to the %(public_body)s about the handling of this "
-"request %(request)s."
+"%(user)s filed a complaint to the %(public_body)s about the handling of this"
+" request %(request)s."
 msgstr ""
 
 #: froide/foirequest/models.py:1530
@@ -2381,22 +2379,22 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/redact.html:62
 #, python-format
 msgid ""
-"Go to each page of the PDF and locate the parts that need to be blacked out. "
-"Draw a rectangle over the area by clicking the mouse and dragging it. Be "
+"Go to each page of the PDF and locate the parts that need to be blacked out."
+" Draw a rectangle over the area by clicking the mouse and dragging it. Be "
 "sure to also black out the email address of %(name)s if it is visible."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/redact.html:63
 msgid ""
-"The original version of the document will still be available to you (but not "
-"to the public). If the document does not load correctly, cancel and inform a "
-"site moderator."
+"The original version of the document will still be available to you (but not"
+" to the public). If the document does not load correctly, cancel and inform "
+"a site moderator."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/redact.html:64
 msgid ""
-"Note: in order to redact documents an up-to-date version of a modern browser "
-"is required. Using Internet Explorer will likely not work."
+"Note: in order to redact documents an up-to-date version of a modern browser"
+" is required. Using Internet Explorer will likely not work."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/redact.html:83
@@ -2464,8 +2462,8 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:25
 msgid ""
-"We found {{ find }} in your text, but there is already a greeting at the top "
-"of the letter!"
+"We found {{ find }} in your text, but there is already a greeting at the top"
+" of the letter!"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:26
@@ -2500,8 +2498,8 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:93
 msgid ""
-"Don't select a public body for now. Let others help to find the right Public "
-"Body later."
+"Don't select a public body for now. Let others help to find the right Public"
+" Body later."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:101
@@ -2541,8 +2539,7 @@ msgid "a matter of general interest (Freedom of Information request)"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:147
-msgid ""
-"Questions like \"How much did X cost?\" or \"Please give me a list of X?\""
+msgid "Questions like \"How much did X cost?\" or \"Please give me a list of X?\""
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:154
@@ -2570,7 +2567,8 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:178
 msgid ""
-"Please note that you shouldn't use this site to request personal information."
+"Please note that you shouldn't use this site to request personal "
+"information."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html:187
@@ -2754,8 +2752,8 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:45
 msgid ""
-"Have you received a reply by <b>postal mail</b>? &rarr; <a data-tabgo=\"tab"
-"\" href=\"#add-postal-reply\">Add it to the records below!</a>"
+"Have you received a reply by <b>postal mail</b>? &rarr; <a data-"
+"tabgo=\"tab\" href=\"#add-postal-reply\">Add it to the records below!</a>"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:48
@@ -2849,8 +2847,8 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/show.html:204
 #, python-format
 msgid ""
-"You can file a complaint to the %(entity)s if you think your request was not "
-"properly handled."
+"You can file a complaint to the %(entity)s if you think your request was not"
+" properly handled."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:216
@@ -2871,10 +2869,10 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/show.html:234
 #, python-format
 msgid ""
-"By making a meta request you will make a normal FOI request for the internal "
-"communication related to the handling of your original request \"%(title)s"
-"\". Please only make a meta request if you reasonably suspect an internal "
-"mishandling of your request."
+"By making a meta request you will make a normal FOI request for the internal"
+" communication related to the handling of your original request "
+"\"%(title)s\". Please only make a meta request if you reasonably suspect an "
+"internal mishandling of your request."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:236
@@ -2910,8 +2908,8 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/show.html:289
 #, python-format
 msgid ""
-"You do not have a postal address set. <a href=\"%(url)s#change-address\">You "
-"can enter enter an address here.</a>"
+"You do not have a postal address set. <a href=\"%(url)s#change-address\">You"
+" can enter enter an address here.</a>"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:303
@@ -3037,15 +3035,15 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:446
 msgid ""
-"The public body of this request has been created by the user and still needs "
-"to be confirmed."
+"The public body of this request has been created by the user and still needs"
+" to be confirmed."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:457
 msgid ""
-"This request received documents that we are not allowed to publish. However, "
-"every person can get individual access to these documents by requesting them "
-"below."
+"This request received documents that we are not allowed to publish. However,"
+" every person can get individual access to these documents by requesting "
+"them below."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:460
@@ -3187,12 +3185,9 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"Your request \"%(title)s\" is not marked as resolved and has not seen any "
-"activity in the last 6 months. Therefore your request has been marked "
-"asleep.\n"
+"Your request \"%(title)s\" is not marked as resolved and has not seen any activity in the last 6 months. Therefore your request has been marked asleep.\n"
 "\n"
-"If you have received a response and your request is resolved, please add the "
-"response and mark the request resolved here:\n"
+"If you have received a response and your request is resolved, please add the response and mark the request resolved here:\n"
 "%(url)s\n"
 "\n"
 "Cheers,\n"
@@ -3204,10 +3199,8 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"Your request \"%(title)s\" was not answered in the required time and became "
-"overdue.\n"
-"We recommend that you send another message to the public body to check the "
-"status of the request and if they received it.\n"
+"Your request \"%(title)s\" was not answered in the required time and became overdue.\n"
+"We recommend that you send another message to the public body to check the status of the request and if they received it.\n"
 "\n"
 "If you received a postal answer, please add it to the request.\n"
 "\n"
@@ -3223,8 +3216,7 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"This a reminder that your request \"%(title)s\" has received a reply and you "
-"need to set a new status.\n"
+"This a reminder that your request \"%(title)s\" has received a reply and you need to set a new status.\n"
 "\n"
 "Go to your request now:\n"
 "%(url)s\n"
@@ -3239,8 +3231,7 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"your message for the Freedom of Information request \"%(title)s\" has been "
-"sent. We will notify you when you get a response.\n"
+"your message for the Freedom of Information request \"%(title)s\" has been sent. We will notify you when you get a response.\n"
 "\n"
 "%(url)s\n"
 "\n"
@@ -3253,8 +3244,7 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"your request \"%(title)s\" has been sent. We will notify you when you get a "
-"response.\n"
+"your request \"%(title)s\" has been sent. We will notify you when you get a response.\n"
 "\n"
 "%(url)s\n"
 "\n"
@@ -3272,8 +3262,7 @@ msgstr ""
 msgid ""
 "Dear Sir or Madam,\n"
 "\n"
-"I'd like to make a request under a (yet to be determined) freedom of "
-"information law."
+"I'd like to make a request under a (yet to be determined) freedom of information law."
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/emails/foi_request_mail.txt:7
@@ -3336,13 +3325,11 @@ msgstr ""
 msgid ""
 "Dear Sir or Madam,\n"
 "\n"
-"I'd like to complain about the handling of the request under the %(law)s "
-"documented here:\n"
+"I'd like to complain about the handling of the request under the %(law)s documented here:\n"
 "\n"
 "%(link)s\n"
 "\n"
-"You can also find all documents related to this request attached to this "
-"email.\n"
+"You can also find all documents related to this request attached to this email.\n"
 "\n"
 "I believe this request has been mishandled because ...\n"
 "\n"
@@ -3355,9 +3342,7 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"You received a response to your request \"%(title)s\". Please read the "
-"response and change the status of the request if needed. You can also send "
-"another message.\n"
+"You received a response to your request \"%(title)s\". Please read the response and change the status of the request if needed. You can also send another message.\n"
 "\n"
 "To read your response and set the right status, click the link below:\n"
 "\n"
@@ -3372,8 +3357,7 @@ msgstr ""
 msgid ""
 "Dear Sir or Madam,\n"
 "\n"
-"My Freedom of Information request \"%(title)s\" (%(date)s, #%(num)s) was not "
-"answered in the time defined by law and is now %(due)s late.\n"
+"My Freedom of Information request \"%(title)s\" (%(date)s, #%(num)s) was not answered in the time defined by law and is now %(due)s late.\n"
 "Please update me on the status of my request as soon as possible.\n"
 "\n"
 "Sincerely yours,\n"
@@ -3398,8 +3382,8 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:9
 msgid ""
-"If you want to use this Public Body, go to your request and chose the Public "
-"Body from the list. Here is a link to your request:"
+"If you want to use this Public Body, go to your request and chose the Public"
+" Body from the list. Here is a link to your request:"
 msgstr ""
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt:1
@@ -3447,8 +3431,8 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/snippets/attachment.html:13
 #, python-format
 msgid ""
-"Please check this attachment for personally identifying information (besides "
-"your name %(name)s). Then publish the document (unless you are explicitly "
+"Please check this attachment for personally identifying information (besides"
+" your name %(name)s). Then publish the document (unless you are explicitly "
 "forbidden from publishing) or redact the information."
 msgstr ""
 
@@ -3567,8 +3551,8 @@ msgstr ""
 #: froide/foirequestfollower/forms.py:35
 #, python-format
 msgid ""
-"This email address already has an account. <a href=\"%s?simple\" class="
-"\"target-small\">Please login using that email address in order to follow "
+"This email address already has an account. <a href=\"%s?simple\" class"
+"=\"target-small\">Please login using that email address in order to follow "
 "this account.</a>"
 msgstr ""
 
@@ -3679,8 +3663,7 @@ msgstr ""
 msgid ""
 "Hi,\n"
 "\n"
-"please confirm that you want to follow the request \"%(title)s\" on "
-"%(site_name)s by clicking this link:"
+"please confirm that you want to follow the request \"%(title)s\" on %(site_name)s by clicking this link:"
 msgstr ""
 
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:6
@@ -4058,8 +4041,7 @@ msgstr ""
 
 #: froide/publicbody/templates/publicbody/_chooser.html:64
 #, python-format
-msgid ""
-"Are we missing a public body? <a href=\"%(url)s\">Please let us know!</a>"
+msgid "Are we missing a public body? <a href=\"%(url)s\">Please let us know!</a>"
 msgstr ""
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html:14
@@ -4263,14 +4245,14 @@ msgstr ""
 #: froide/templates/500.html:7
 #, python-format
 msgid ""
-"If you need assistance, you may reference this error as <strong>%(ref)s</"
-"strong>."
+"If you need assistance, you may reference this error as "
+"<strong>%(ref)s</strong>."
 msgstr ""
 
 #: froide/templates/base.html:10
 msgid ""
-"This site is currently in dry run mode. All Public Body mail will go to this "
-"mail server:"
+"This site is currently in dry run mode. All Public Body mail will go to this"
+" mail server:"
 msgstr ""
 
 #: froide/templates/base.html:31
@@ -4300,9 +4282,10 @@ msgstr ""
 #: froide/templates/base.html:139
 #, python-format
 msgid ""
-"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-"\">the Open Knowledge Foundation</a>. If you want to support Froide, please "
-"visit the <a href=\"%(url)s\">repository on GitHub</a>."
+"Froide is a free and Open Source Project by <a "
+"href=\"http://www.okfn.org\">the Open Knowledge Foundation</a>. If you want "
+"to support Froide, please visit the <a href=\"%(url)s\">repository on "
+"GitHub</a>."
 msgstr ""
 
 #: froide/templates/base.html:156
@@ -4377,8 +4360,8 @@ msgstr ""
 
 #: froide/templates/index.html:90
 msgid ""
-"Every citizen has the right under the Freedom of Information Laws to ask for "
-"and receive access to information from Public Bodies concerning public "
+"Every citizen has the right under the Freedom of Information Laws to ask for"
+" and receive access to information from Public Bodies concerning public "
 "affairs."
 msgstr ""
 
@@ -4446,8 +4429,8 @@ msgstr ""
 
 #: froide/templates/comments/foirequest/form.html:15
 msgid ""
-"Despite your privacy settings, your real name will be published with comment."
-"<br/>There are <strong>no anonymous comments</strong>."
+"Despite your privacy settings, your real name will be published with "
+"comment.<br/>There are <strong>no anonymous comments</strong>."
 msgstr ""
 
 #: froide/templates/comments/foirequest/form.html:18
@@ -4556,6 +4539,9 @@ msgstr ""
 msgid "Make a Freedom of Information Request now!"
 msgstr ""
 
+#~ msgid "Converted to PDF."
+#~ msgstr "Converted to PDF."
+
 #~ msgid "Message"
 #~ msgstr "Message"
 
@@ -4576,6 +4562,9 @@ msgstr ""
 
 #~ msgid "Topic:"
 #~ msgstr "Topic:"
+
+#~ msgid "Make a request"
+#~ msgstr "Make a request"
 
 #~ msgid "Status:"
 #~ msgstr "Status:"

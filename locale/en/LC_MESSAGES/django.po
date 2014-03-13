@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-12 15:38+0100\n"
+"POT-Creation-Date: 2014-03-13 11:27+0100\n"
 "PO-Revision-Date: 2013-11-23 13:30+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,7 +105,7 @@ msgid "Portuguese"
 msgstr ""
 
 #: froide/settings.py:210
-msgid "Chinese (Hong Kong)"
+msgid "Chinese"
 msgstr ""
 
 #. Translators: request URL
@@ -221,7 +221,7 @@ msgid "mail@ddress.net"
 msgstr "mail@ddress.net"
 
 #: froide/account/forms.py:53 froide/account/forms.py:56
-#: froide/account/models.py:27
+#: froide/account/models.py:26
 msgid "Organization"
 msgstr "Organization"
 
@@ -349,51 +349,51 @@ msgstr "You provided the wrong password!"
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "You did not type the confirmation phrase exactly right!"
 
-#: froide/account/models.py:28
+#: froide/account/models.py:27
 #, fuzzy
 msgid "Organization URL"
 msgstr "Organization"
 
-#: froide/account/models.py:29
+#: froide/account/models.py:28
 msgid "Private"
 msgstr ""
 
-#: froide/account/models.py:30 froide/publicbody/models.py:256
+#: froide/account/models.py:29 froide/publicbody/models.py:256
 msgid "Address"
 msgstr "Address"
 
-#: froide/account/models.py:31
+#: froide/account/models.py:30
 msgid "Accepted Terms"
 msgstr ""
 
-#: froide/account/models.py:32
+#: froide/account/models.py:31
 msgid "Wants Newsletter"
 msgstr ""
 
-#: froide/account/models.py:47
+#: froide/account/models.py:46
 msgid "Name Not Public"
 msgstr "Name Not Public"
 
-#: froide/account/models.py:63
+#: froide/account/models.py:62
 msgid "<< Address removed >>"
 msgstr "<< Address removed >>"
 
-#: froide/account/models.py:69
+#: froide/account/models.py:68
 msgid "<< Email removed >>"
 msgstr "<< Email removed >>"
 
-#: froide/account/models.py:80
+#: froide/account/models.py:79
 msgid "<< Name removed >>"
 msgstr "<< Name removed >>"
 
 #. Translators: Mail subject
-#: froide/account/models.py:178
+#: froide/account/models.py:177
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: please confirm your account"
 
 #. Translators: Mail subject
-#: froide/account/models.py:201
+#: froide/account/models.py:200
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s: please confirm your new email address"
