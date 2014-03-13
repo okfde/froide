@@ -207,7 +207,7 @@ class Base(Configuration):
         ('sv-fi', gettext('Swedish (Finland)')),
         ('fi-fi', gettext('Finnish (Finland)')),
         ('pt', gettext('Portuguese')),
-        ('zh-hk', gettext('Chinese (Hong Kong)')),
+        ('zh-cn', gettext('Chinese')),
     )
 
     # If you set this to False, Django will make some optimizations so as not
