@@ -174,10 +174,10 @@
 
 {% block scripts %}
   {% compress js %}
-  <script src="{% static "js/libs/jquery.js" %}"></script>
-  <script src="{% static "js/bootstrap.min.js" %}"></script>
-  <script src="{% static "js/libs/mustache.js" %}"></script>
-  <script src="{% static "js/libs/jquery.autocomplete.js" %}"></script>
-  <script src="{% static "js/script.js" %}"></script>
+  <script src="{{ STATIC_URL }}js/libs/jquery.js"></script>
+  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/mustache.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/jquery.autocomplete.js"></script>
+  <script src="{{ STATIC_URL }}js/script.js"></script>
   {% endcompress %}
 {% endblock %}
