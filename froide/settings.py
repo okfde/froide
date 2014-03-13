@@ -555,12 +555,17 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
 class AmazonS3(object):
     STATICFILES_STORAGE = values.Value('froide.helper.storage_utils.CachedS3BotoStorage')
     COMPRESS_STORAGE = values.Value('froide.helper.storage_utils.CachedS3BotoStorage')
+
+    STATIC_URL = values.Value('/static/')
+    COMPRESS_URL = values.Value(STATIC_URL)
+
     DEFAULT_FILE_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 
     AWS_ACCESS_KEY_ID = values.Value('')
     AWS_SECRET_ACCESS_KEY = values.Value('')
     AWS_STORAGE_BUCKET_NAME = values.Value('')
     AWS_S3_SECURE_URLS = values.Value(False)
+    AWS_QUERYSTRING_AUTH = values.Value(False)
 
 
 class Heroku(Production):
