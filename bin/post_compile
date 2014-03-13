@@ -51,9 +51,7 @@ python "$MANAGE_FILE" collectstatic --noinput  2>&1 |
 sed '/^Copying/d;/^$/d;/^ /d' |
 indent
 
-if [ "$DJANGO_COMPRESS_OFFLINE" = "true" ]; then
-    echo "-----> Compressing static files"
-    python "$MANAGE_FILE" compress 2>&1 | indent
-fi
+echo "-----> Compressing static files"
+python "$MANAGE_FILE" compress 2>&1 | indent
 
 echo "-----> Post-compile done"
