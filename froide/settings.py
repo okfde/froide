@@ -202,7 +202,12 @@ class Base(Configuration):
         ('en', gettext('English')),
         ('de', gettext('German')),
         ('fi', gettext('Finnish')),
-        ('sv', gettext('Swedish')),
+        ('it', gettext('Italian')),
+        ('sv-se', gettext('Swedish (Sweden)')),
+        ('sv-fi', gettext('Swedish (Finland)')),
+        ('fi-fi', gettext('Finnish (Finland)')),
+        ('pt', gettext('Portuguese')),
+        ('zh-cn', gettext('Chinese')),
     )
 
     # If you set this to False, Django will make some optimizations so as not
@@ -340,7 +345,8 @@ class Base(Configuration):
         dryrun_domain="testmail.example.com",
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
-        doc_conversion_call_func=None  # see settings_test for use
+        doc_conversion_call_func=None,  # see settings_test for use
+        show_public_body_employee_name=True
     )
 
     ####### Email ##############
@@ -547,8 +553,8 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
 
 
 class AmazonS3(object):
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    DEFAULT_FILE_STORAGE = 'froide.helper.storage_utils.ForceAuthS3BotoStorage'
+    STATICFILES_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
+    DEFAULT_FILE_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 
     AWS_ACCESS_KEY_ID = values.Value('')
     AWS_SECRET_ACCESS_KEY = values.Value('')
