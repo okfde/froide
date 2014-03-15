@@ -99,9 +99,6 @@ class Base(Configuration):
     STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, "..", "public"))
 
     # Additional locations of static files
-    STATICFILES_DIRS = (
-        os.path.join(PROJECT_ROOT, "static"),
-    )
     COMPRESS_ENABLED = False
     COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
     COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
