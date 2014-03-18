@@ -1,22 +1,21 @@
 ---
 language: python
 python:
-- '3.3'
-- '2.7'
-- '2.6'
+  - '3.3'
+  - '2.7'
+  - '2.6'
 services:
-- elasticsearch
+  - elasticsearch
 before_install:
-- psql -c 'create database froide;' -U postgres
-- phantomjs --version
-- phantomjs --webdriver= &
+  - psql -c 'create database froide;' -U postgres
+  - phantomjs --version
+  - phantomjs --webdriver= &
 install:
-- pip install -r requirements-test.txt
-- pip install psycopg2
-- pip install -e .
+  - pip install -r requirements-test.txt
+  - pip install psycopg2 coveralls
+  - pip install -e .
 script:
-- export DATABASE_URL=postgres://postgres@127.0.0.1/froide
-- make test
-branches:
-  only:
-  - master
+  - export DATABASE_URL=postgres://postgres@127.0.0.1/froide
+  - make test
+after_success:
+  - coveralls
