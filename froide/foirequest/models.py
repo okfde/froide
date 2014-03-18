@@ -1305,6 +1305,7 @@ class FoiMessage(models.Model):
                         match = closing.search(content, re.I)
                         if match is not None:
                             content = content[:match.end()]
+                            break
 
         return content
 
