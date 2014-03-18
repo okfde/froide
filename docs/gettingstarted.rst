@@ -115,6 +115,7 @@ An example configuration for solr would look like this::
         }
     }
 
+.. _background-tasks-with-celery:
 
 Background Tasks with Celery
 ----------------------------

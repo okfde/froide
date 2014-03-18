@@ -12,7 +12,7 @@ internationalized and written in English.
 Docs
 ----
 
-[Read the documentation](http://readthedocs.org/docs/froide/en/latest/) including a [Getting Started Guide](http://readthedocs.org/docs/froide/en/latest/gettingstarted/).
+[Read the documentation](http://froide.readthedocs.org/en/latest/) including a [Getting Started Guide](http://froide.readthedocs.org/en/latest/gettingstarted/) and [a Heroku deployment guide](http://froide.readthedocs.org/en/latest/herokudeployment/).
 
 Froide is supported by the [Open Knowledge Foundation Germany](http://www.okfn.de/) and [Open Knowledge Foundation International](http://okfn.org/).
 

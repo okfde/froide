@@ -108,30 +108,26 @@ Enable mail attachment storage and faster static file serving
 Translations
 ------------
 
-The froide distribution does not come with compiled translation files. Since Herokus does not support creating compilation files remotely, they must be put into Git and pushed.
-
-To create compiled translation files locally, run::
-
-    python manage.py compilemessages
-
-Notice the paths that were output. Copy all required languages from the froide ``locale`` folder into your own ``locale`` folder::
-
-    cp -r /some-path/locale/* locale/
-
-Then add them to Git::
-
-    git add locale/*
-    git commit -m"Add compiled translation files"
-    git push heroku master
+The theme app now comes with a custom ``post_compile`` Heroku script that compiles translations on Heroku automatically.
 
 
 Worker Processes
 ----------------
 
-To keep the cost for initial setup minimal, there are no predefined worker processes.
-However, you can setup a queueing add-on (or, though not recommended, use database as queue) and then put a worker processe in your Procfile to run ``celery worker`` and another for worker process for scheduling (``celery beat``).
+The Procfile defines a worker configuration. To use background processing, add one of the Heroku queueing add-ons, e.g. CloudAMQP::
 
-For regular scheduling tasks like reminders, this is the way to go.
+    heroku addons:add cloudamqp
+
+Then find out the ``CLOUDAMQP_URL``::
+
+    heroku config:get CLOUDAMQP_URL
+
+And then set the some config based on that::
+
+    heroku config:get DJANGO_BROKER_URL=<CLOUDAMQP_URL here>
+    heroku config:set CELERY_ALWAYS_EAGER=False
+
+Have a look at :ref:`background-tasks-with-celery` for further details.
 
 
 Search Engine Options
