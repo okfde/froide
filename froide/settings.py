@@ -570,7 +570,9 @@ class AmazonS3(object):
 class Heroku(Production):
     ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
-    CELERY_ALWAYS_EAGER = True
+
+    CELERY_ALWAYS_EAGER = values.BooleanValue(True)
+    BROKER_URL = values.Value('amqp://')
 
     @property
     def LOGGING(self):
