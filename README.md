@@ -1,7 +1,7 @@
 Froide
 ======
 
-[![Build Status](https://travis-ci.org/stefanw/froide.png?branch=master)](https://travis-ci.org/stefanw/froide)
+[![Build Status](https://travis-ci.org/stefanw/froide.png?branch=master)](https://travis-ci.org/stefanw/froide) [![Coverage Status](https://coveralls.io/repos/stefanw/froide/badge.png?branch=master)](https://coveralls.io/r/stefanw/froide?branch=master)
 
 
 Froide is a Freedom Of Information Portal written in Python using Django 1.6.
