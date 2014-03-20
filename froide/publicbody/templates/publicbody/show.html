@@ -27,7 +27,13 @@
       <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
       <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
       <dd>{{ object.classification }}</dd>
-
+      <dt>{% blocktrans %}Topics:{% endblocktrans %}</dt>
+      <dd>
+        {% for tag in object.tags.all %}
+          {{ tag.name }}
+          {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </dd>
       {% if object.url %}
         <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
         <dd><a href="{{ object.url }}" class="target-new">{{ object.url|truncatechars:30 }}</a></dd>
@@ -93,6 +99,17 @@
           </li>
         {% endfor %}
       </ul>
+      <p>
+        <a href="{% url 'foirequest-list_feed' public_body=object.slug %}">
+          <i class="rss-icon"></i>
+          {% trans "RSS Feed" %}
+        </a>
+        <br/>
+        <a href="{% url 'foirequest-list_feed_atom' public_body=object.slug %}">
+          <i class="atom-icon"></i>
+          {% trans "Atom Feed" %}
+        </a>
+      </p>
       {% if foirequest_count > foirequests|length %}
         <p>
           <a href="{% url 'foirequest-list' public_body=object.slug %}">
