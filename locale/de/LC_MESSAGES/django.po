@@ -671,7 +671,7 @@ msgstr "Unsere Nutzungsbedingungen haben sich geändert"
 
 #: froide/account/templates/account/new_terms.html:15
 msgid "Accept"
-msgstr "Akezptieren"
+msgstr "Akzeptieren"
 
 #: froide/account/templates/account/password_reset_confirm.html:4
 msgid "Password reset"
