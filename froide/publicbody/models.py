@@ -316,6 +316,10 @@ class PublicBody(models.Model):
         return markdown(self.request_note)
 
     @property
+    def tag_list(self):
+        return edit_string_for_tags(self.tags.all())
+
+    @property
     def default_law(self):
         return FoiLaw.get_default_law(self)
 
