@@ -996,3 +996,11 @@ fieldset[disabled] .btn-inverse.active {
 .control-group .controls ul li input[type="checkbox"] {
     margin-top: 0;
 }
+
+ul.tagit {
+    width: 100% !important;
+}
+
+.tagit-form {
+    font-size: 80%;
+}

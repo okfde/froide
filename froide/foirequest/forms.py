@@ -1,20 +1,18 @@
 import json
 import magic
 
-import floppyforms as forms
-
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
 
-from taggit.forms import TagField
-from taggit.utils import edit_string_for_tags
+import floppyforms as forms
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import PriceInput
+from froide.helper.forms import TagObjectForm
 
 from .models import FoiRequest, FoiAttachment
 
@@ -461,16 +459,5 @@ class PostalAttachmentForm(forms.Form, PostalScanMixin):
             help_text=PostalReplyForm.scan_help_text)
 
 
-class TagFoiRequestForm(forms.Form):
-    tags = TagField(label=_("Tags"),
-        widget=forms.TextInput(attrs={'placeholder': _('Tags')}),
-        help_text=_("Comma separated and quoted"))
-
-    def __init__(self, foirequest, *args, **kwargs):
-        self.foirequest = foirequest
-        kwargs['initial'] = {'tags': edit_string_for_tags([o for o in foirequest.tags.all()])}
-        super(TagFoiRequestForm, self).__init__(*args, **kwargs)
-
-    def save(self):
-        self.foirequest.tags.set(*self.cleaned_data['tags'])
-        self.foirequest.save()
+class TagFoiRequestForm(TagObjectForm):
+    resource_name = 'request'
