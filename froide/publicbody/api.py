@@ -11,7 +11,7 @@ from tastypie.constants import ALL, ALL_WITH_RELATIONS
 
 from froide.helper.api_utils import AnonymousGetAuthentication
 
-from .models import PublicBody, Jurisdiction, FoiLaw
+from .models import PublicBody, PublicBodyTag, Jurisdiction, FoiLaw
 
 AUTOCOMPLETE_MAX_CHAR = 15
 AUTOCOMPLETE_MIN_CHAR = 3
@@ -115,6 +115,10 @@ class PublicBodyResource(ModelResource):
                     self._meta.resource_name,
                     utils.trailing_slash()
                 ), self.wrap_view('get_autocomplete'), name="api_get_autocomplete"),
+            url(r"^(?P<resource_name>%s)/tags/autocomplete%s$" % (
+                    self._meta.resource_name,
+                    utils.trailing_slash()
+                ), self.wrap_view('get_tags_autocomplete'), name="api_get_tags_autocomplete"),
         ]
 
     def get_autocomplete(self, request, **kwargs):
@@ -154,6 +158,20 @@ class PublicBodyResource(ModelResource):
         }
 
         return self.create_response(request, response)
+
+    def get_tags_autocomplete(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+
+        query = request.GET.get('query', '')
+        if len(query) < 2:
+            return []
+        tags = PublicBodyTag.objects.filter(name__istartswith=query)
+        kind = request.GET.get('kind', '')
+        if kind:
+            tags = tags.filter(kind=kind)
+        tags = [t.encode('utf-8') for t in tags.values_list('name', flat=True)]
+
+        return self.create_response(request, tags)
 
     def get_search(self, request, **kwargs):
         self.method_check(request, allowed=['get'])

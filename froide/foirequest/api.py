@@ -9,6 +9,8 @@ from tastypie import fields, utils
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.authorization import DjangoAuthorization
 
+from taggit.models import Tag
+
 from froide.helper.api_utils import AnonymousGetAuthentication
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
@@ -143,6 +145,10 @@ class FoiRequestResource(ModelResource):
                     self._meta.resource_name,
                     utils.trailing_slash()
                 ), self.wrap_view('get_simple_search'), name="api_get_simple_search"),
+            url(r"^(?P<resource_name>%s)/tags/autocomplete%s$" % (
+                    self._meta.resource_name,
+                    utils.trailing_slash()
+                ), self.wrap_view('get_tags_autocomplete'), name="api_get_tags_autocomplete"),
         ]
 
     def get_simple_search(self, request, **kwargs):
@@ -190,3 +196,17 @@ class FoiRequestResource(ModelResource):
         }
 
         return self.create_response(request, object_list)
+
+    def get_tags_autocomplete(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+
+        query = request.GET.get('query', '')
+        if len(query) < 2:
+            return []
+        tags = Tag.objects.filter(name__istartswith=query)
+        kind = request.GET.get('kind', '')
+        if kind:
+            tags = tags.filter(kind=kind)
+        tags = [t.encode('utf-8') for t in tags.values_list('name', flat=True)]
+
+        return self.create_response(request, tags)
