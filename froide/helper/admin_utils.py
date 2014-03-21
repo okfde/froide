@@ -4,7 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
 
-from taggit.utils import parse_tags
+from .forms import TagObjectForm
 
 
 class AdminTagAllMixIn(object):
@@ -20,18 +20,30 @@ class AdminTagAllMixIn(object):
 
         # User has already chosen the other req
         if request.POST.get('tags'):
-            tags = parse_tags(request.POST.get('tags'))
-            for obj in queryset:
-                obj.tags.add(*tags)
-                obj.save()
-            self.message_user(request, _("Successfully added tags"))
-            # Return None to display the change list page again.
-            return None
+            form = TagObjectForm(None, request.POST, tags=[],
+                                 resource_name=self.autocomplete_resource_name)
+            if form.is_valid():
+                tags = form.cleaned_data['tags']
+                for obj in queryset:
+                    obj.tags.set(*tags)
+                    obj.save()
+                self.message_user(request, _("Successfully added tags"))
+                # Return None to display the change list page again.
+                return None
+            self.message_user(request, _("Form invalid"))
+
+        tags = set()
+        for q in queryset:
+            tags |= set([o for o in q.tags.all()])
+
+        form = TagObjectForm(None, tags=tags,
+                             resource_name=self.autocomplete_resource_name)
 
         context = {
             'opts': opts,
             'queryset': queryset,
             'media': self.media,
+            'form': form,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
             'applabel': opts.app_label
         }

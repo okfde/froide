@@ -1,12 +1,16 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.db import router
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 from django.contrib.admin import helpers
 
+import floppyforms as forms
+
 from froide.helper.admin_utils import NullFilterSpec, AdminTagAllMixIn
+from froide.helper.widgets import TagAutocompleteTagIt
 
 from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
@@ -24,7 +28,21 @@ class SameAsNullFilter(NullFilterSpec):
     parameter_name = u'same_as'
 
 
+class FoiRequestAdminForm(forms.ModelForm):
+    class Meta:
+        model = FoiRequest
+        widgets = {
+            'tags': TagAutocompleteTagIt(
+                autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={
+                    'api_name': 'v1',
+                    'resource_name': 'request'}
+                )),
+        }
+
+
 class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
+    form = FoiRequestAdminForm
+
     prepopulated_fields = {"slug": ("title",)}
     inlines = [
         FoiMessageInline,
@@ -36,6 +54,9 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
+
+    autocomplete_resource_name = 'request'
+
     actions = ['mark_checked', 'mark_not_foi', 'tag_all',
                'mark_same_as', 'remove_from_index']
     raw_id_fields = ('same_as', 'public_body', 'user',)

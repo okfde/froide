@@ -7,6 +7,7 @@
 {% url 'admin:jsi18n' as jsi18nurl %}
 <script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
 {{ media }}
+{{ form.media }}
 {% endblock %}
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
@@ -24,9 +25,9 @@
 <form action="" method="post">{% csrf_token %}
   <div>
     <p>
-      {% blocktrans %}Add these tags to all selected items:{% endblocktrans %}
+      {% blocktrans %}Set these tags for all selected items:{% endblocktrans %}
       <br/>
-      <input type="text" name="tags" size="40" placeholder="{% trans "Enter Tags here" %}"/>
+      {{ form.tags }}
     </p>
 
     <ul>
@@ -39,7 +40,7 @@
     </ul>
 
     <input type="hidden" name="action" value="tag_all" />
-    <input type="submit" value="{% trans "Add tags to these items" %}" />
+    <input type="submit" value="{% trans "Set these tags for all items" %}" />
 
   </div>
 </form>

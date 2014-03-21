@@ -1,13 +1,31 @@
 from django.contrib import admin
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
+
+import floppyforms as forms
 
 from froide.publicbody.models import (PublicBody,
     PublicBodyTag, TaggedPublicBody, FoiLaw, Jurisdiction)
 from froide.helper.admin_utils import AdminTagAllMixIn
+from froide.helper.widgets import TagAutocompleteTagIt
+
+
+class PublicBodyAdminForm(forms.ModelForm):
+    class Meta:
+        model = PublicBody
+        widgets = {
+            'tags': TagAutocompleteTagIt(
+                autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={
+                    'api_name': 'v1',
+                    'resource_name': 'publicbody'}
+                )),
+        }
 
 
 class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
+    form = PublicBodyAdminForm
+
     prepopulated_fields = {
         "slug": ("name",),
         'classification_slug': ('classification',)
@@ -18,6 +36,9 @@ class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     search_fields = ['name', "description", 'classification']
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
+
+    autocomplete_resource_name = 'publicbody'
+
     actions = ['export_csv', 'remove_from_index', 'tag_all']
 
     def export_csv(self, request, queryset):
