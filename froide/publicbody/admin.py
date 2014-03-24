@@ -30,7 +30,7 @@ class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         "slug": ("name",),
         'classification_slug': ('classification',)
     }
-    list_display = ('name', 'email', 'url', 'tag_list', 'jurisdiction',)
+    list_display = ('name', 'email', 'url', 'tag_list', 'classification', 'jurisdiction',)
     list_filter = ('tags', 'jurisdiction', 'classification')
     list_max_show_all = 5000
     search_fields = ['name', "description", 'classification']
