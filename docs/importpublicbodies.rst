@@ -39,7 +39,7 @@ url
 parent__name
   (optional) if this public body has a parent, give it's name here. The parent must be specified before in the CSV file.
 classification
-  (required) Give a classification (e.g. "ministry"). If you don't want have the information, just fill in something general like "public body".
+  (optional) Give a classification (e.g. "ministry").
 contact
   (optional) Contact information apart from post address and email. E.g. phone or fax number. May contain line breaks.
 address

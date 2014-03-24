@@ -26,7 +26,7 @@ Features
   system, and the user management and authentication.
 - Freedom of Information Laws and Public Entities are connected through a many-to-many relationship. That allows for a Public Body to be accountable under different laws.
 - A Public Body can have a parent to represent hierarchies from the real
-  world. They can also be categorized into classifications (e.g. ministry, council) and topics (e.g. environment, military) which can be defined separately.
+  world. They can also be categorized into classifications (e.g. ministry, council) and topical tags (e.g. environment, military) which can be defined separately.
 - Users can create requests without a Public Body so that others can
   suggest an appropriate recipient later.
 - Requests can optionally be kept private by users and published at a

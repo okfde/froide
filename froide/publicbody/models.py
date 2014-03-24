@@ -249,7 +249,8 @@ class PublicBody(models.Model):
     depth = models.SmallIntegerField(default=0)
     classification = models.CharField(_("Classification"), max_length=255,
             blank=True)
-    classification_slug = models.SlugField(_("Classification Slug"), max_length=255)
+    classification_slug = models.SlugField(_("Classification Slug"), max_length=255,
+            blank=True)
 
     email = models.EmailField(_("Email"), null=True, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
