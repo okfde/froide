@@ -76,6 +76,11 @@ class FoiMessageResource(ModelResource):
         return bundle
 
 
+class TagResource(ModelResource):
+    class Meta:
+        queryset = Tag.objects.all()
+
+
 class FoiRequestResource(ModelResource):
     public_body = fields.ToOneField('froide.publicbody.api.PublicBodyResource', 'public_body', null=True)
     messages = fields.ToManyField(FoiMessageResource, 'foimessage_set',
@@ -87,6 +92,7 @@ class FoiRequestResource(ModelResource):
     jurisdiction = fields.ToOneField(
         'froide.publicbody.api.JurisdictionResource',
         'jurisdiction', null=True)
+    tags = fields.ToManyField(TagResource, 'tags', full=True)
 
     class Meta:
         allowed_methods = ['get', 'put']
@@ -117,6 +123,7 @@ class FoiRequestResource(ModelResource):
             'jurisdiction': ALL,
             'jurisdiction': ALL,
             'public': ALL,
+            'tags': ALL,
             'same_as': ALL,
             'status': ALL,
             'public_body': ALL_WITH_RELATIONS
@@ -130,9 +137,6 @@ class FoiRequestResource(ModelResource):
             bundle.data['description'] = bundle.obj.get_description()
             bundle.data['status_name'] = bundle.obj.readable_status
             bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
-            bundle.data['tags'] = [{'slug': t.slug, 'name': t.name}
-                for t in bundle.obj.tags.all()
-            ]
         return bundle
 
     def prepend_urls(self):

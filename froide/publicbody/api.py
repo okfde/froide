@@ -62,6 +62,11 @@ class FoiLawResource(ModelResource):
         return bundle
 
 
+class PublicBodyTagResource(ModelResource):
+    class Meta:
+        queryset = PublicBodyTag.objects.all()
+
+
 class PublicBodyResource(ModelResource):
     laws = fields.ToManyField(FoiLawResource, 'laws',
         full=True)
@@ -73,6 +78,7 @@ class PublicBodyResource(ModelResource):
         'parent', null=True)
     root = fields.ToOneField('froide.publicbody.api.PublicBodyResource',
         'parent', null=True)
+    tags = fields.ToManyField(PublicBodyTagResource, 'tags', full=True)
 
     class Meta:
         queryset = PublicBody.objects.all()
@@ -90,6 +96,7 @@ class PublicBodyResource(ModelResource):
             "slug": ALL,
             "number_of_requests": ALL,
             "jurisdiction": ALL_WITH_RELATIONS,
+            "tags": ALL
             # Technically possible, but API docs
             # generation currently crashes here
             # "root": ALL_WITH_RELATIONS,
