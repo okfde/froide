@@ -179,7 +179,7 @@ def list_requests(request, status=None, topic=None, tag=None,
         'object_list': foi_requests,
         'status_list': [(str(x[0]),
             FoiRequest.get_readable_status(x[2]),
-            x[2]) for x in FoiRequest.STATUS_URLS],
+            x[2]) for x in FoiRequest.get_status_url()],
         'topic_list': topic_list
     })
 

@@ -223,8 +223,7 @@ class FoiRequest(models.Model):
         (_("not-held"), resolution_filter, 'not_held'),
         (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
     ]
-    STATUS_URLS = [(str(s), t, u) for s, t, u in STATUS_URLS]
-
+    _STATUS_URLS = None
     _STATUS_URLS_DICT = None
     _URLS_STATUS_DICT = None
 
@@ -342,17 +341,23 @@ class FoiRequest(models.Model):
         return _(u"Request '%s'") % self.title
 
     @classmethod
+    def get_status_url(cls):
+        if cls._STATUS_URLS is None:
+            cls._STATUS_URLS = [(str(s), t, u) for s, t, u in cls.STATUS_URLS]
+        return cls._STATUS_URLS
+
+    @classmethod
     def get_status_from_url(cls, status_slug):
         if cls._URLS_STATUS_DICT is None:
             cls._URLS_STATUS_DICT = dict([
-                (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
+                (str(x[0]), x[1:]) for x in cls.get_status_url()])
         return cls._URLS_STATUS_DICT.get(status_slug)
 
     @classmethod
     def get_url_from_status(cls, status):
         if cls._STATUS_URLS_DICT is None:
             cls._STATUS_URLS_DICT = dict([
-                (str(x[-1]), x[0]) for x in cls.STATUS_URLS])
+                (str(x[-1]), x[0]) for x in cls.get_status_url()])
         return cls._STATUS_URLS_DICT.get(status)
 
     @property
