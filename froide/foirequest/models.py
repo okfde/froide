@@ -1453,8 +1453,9 @@ class FoiAttachment(models.Model):
     def get_absolute_domain_url(self):
         return self.get_absolute_url()
 
-    def approve(self):
+    def approve_and_save(self):
         self.approved = True
+        self.save()
         self.attachment_published.send(sender=self)
 
     def is_visible(self, user, foirequest):
