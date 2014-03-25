@@ -33,7 +33,6 @@ class Base(Configuration):
         'django.contrib.sitemaps',
 
         # external
-        'south',
         'haystack',
         'djcelery',
         'taggit',
