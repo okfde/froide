@@ -1207,6 +1207,36 @@ class RequestTest(TestCase):
         self.assertNotIn(law.get_letter_end_text({}), message.plaintext)
         self.assertNotIn(law.get_letter_end_text({}), message.plaintext_redacted)
 
+    def test_redaction_config(self):
+        self.client.login(username="dummy", password="froide")
+        req = FoiRequest.objects.all()[0]
+        name = u"Petra Radetzky"
+        req.add_message_from_email({
+            'msgobj': None,
+            'date': timezone.now(),
+            'subject': 'Reply',
+            'body': (u"Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
+                     u"Mit freundlichen Grüßen\n"
+                     + name),
+            'html': 'html',
+            'from': ('Petra Radetzky', 'petra.radetsky@bund.example.org'),
+            'to': [req.secret_address],
+            'cc': [],
+            'resent_to': [],
+            'resent_cc': [],
+            'attachments': []
+        }, '')
+        req = FoiRequest.objects.all()[0]
+        last = req.messages[-1]
+        self.assertNotIn(name, last.plaintext_redacted)
+        req.add_message(req.user, 'Test', 'test@example.com',
+            u'Testing',
+            u'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
+        )
+        req = FoiRequest.objects.all()[0]
+        last = req.messages[-1]
+        self.assertNotIn('Radetzky', last.plaintext_redacted)
+
     def test_empty_pb_email(self):
         self.client.login(username='sw', password='froide')
         pb = PublicBody.objects.all()[0]

@@ -6,7 +6,7 @@ import os
 import sys
 import re
 
-rec = re.compile
+rec = lambda x: re.compile(x, re.I | re.U)
 
 gettext = lambda s: s
 
@@ -345,7 +345,6 @@ class Base(Configuration):
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
         doc_conversion_call_func=None,  # see settings_test for use
-        show_public_body_employee_name=True
     )
 
     ####### Email ##############
@@ -431,7 +430,10 @@ class Test(Base):
         config = dict(super(Test, self).FROIDE_CONFIG)
         config.update(dict(
             doc_conversion_call_func=self._fake_convert_pdf,
-            default_law=10000
+            default_law=10000,
+            greetings=[rec(u"Dear ((?:Mr\.?|Ms\.?) .*),?"), rec(u'Sehr geehrter? ((Herr|Frau) .*),?')],
+            closings=[rec(u"Sincerely yours,?"), rec(u'Mit freundlichen Grüßen')],
+            public_body_officials_public=False
         ))
         return config
 

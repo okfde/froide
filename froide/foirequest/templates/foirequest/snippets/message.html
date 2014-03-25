@@ -27,7 +27,7 @@
               {% endif %}
             {% else %}
               {% if message.is_response %}
-                {% if froide.show_public_body_employee_name %}
+                {% if froide.public_body_officials_public %}
                   {{ message.sender }}
                   {% if message.sender_public_body %}
                    – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>

@@ -1291,21 +1291,21 @@ class FoiMessage(models.Model):
 
         greeting_replacement = str(_("<< Greeting >>"))
 
-        if not settings.FROIDE_CONFIG.get('show_public_body_employee_name'):
+        if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
             if self.is_response:
-                if settings.FROIDE_CONFIG.get('greetings'):
-                    for greeting in settings.FROIDE_CONFIG['greetings']:
-                        match = greeting.search(content, re.I)
-                        if match is not None and len(match.groups()):
-                            content = content.replace(match.group(1),
-                                greeting_replacement)
-            else:
                 if settings.FROIDE_CONFIG.get('closings'):
                     for closing in settings.FROIDE_CONFIG['closings']:
-                        match = closing.search(content, re.I)
+                        match = closing.search(content)
                         if match is not None:
                             content = content[:match.end()]
                             break
+            else:
+                if settings.FROIDE_CONFIG.get('greetings'):
+                    for greeting in settings.FROIDE_CONFIG['greetings']:
+                        match = greeting.search(content)
+                        if match is not None and len(match.groups()):
+                            content = content.replace(match.group(1),
+                                greeting_replacement)
 
         return content
 
