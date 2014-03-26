@@ -194,7 +194,8 @@ class EmailParser(object):
         resent_ccs = self.get_address_list(msgobj.get_all('resent-cc', []))
 
         from_field = parseaddr(self.get(msgobj.get('From')))
-        from_field = (self.parse_header_field(from_field[0]), from_field[1])
+        from_field = (self.parse_header_field(from_field[0]),
+                      from_field[1].lower() if from_field[1] else from_field[1])
         date = self.parse_date(self.get(msgobj.get("Date")))
         return {
             'msgobj': msgobj,
