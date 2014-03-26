@@ -266,8 +266,8 @@ class PublicBody(models.Model):
             verbose_name=_("Updated by"),
             blank=True, null=True, related_name='public_body_updaters',
             on_delete=models.SET_NULL, default=1)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(_("Created at"), default=timezone.now)
+    updated_at = models.DateTimeField(_("Updated at"), default=timezone.now, auto_now=True)
     confirmed = models.BooleanField(_("confirmed"), default=True)
 
     number_of_requests = models.IntegerField(_("Number of requests"),
