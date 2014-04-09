@@ -151,8 +151,10 @@ class PublicBodyResource(ModelResource):
             pb = sqs[0]
             if pb.jurisdiction is not None:
                 jur_get = lambda pb: pb.jurisdiction
-            else:
+            elif pb.object is not None:
                 jur_get = lambda pb: pb.object.jurisdiction.name
+            else:
+                jur_get = lambda pb: None
 
             sqs = sorted(sqs, key=lambda x: x.name)
             names = [u"%s (%s)" % (x.name, jur_get(x)) for x in sqs]
