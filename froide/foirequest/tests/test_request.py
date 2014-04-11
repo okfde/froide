@@ -204,6 +204,8 @@ class RequestTest(TestCase):
         self.assertIn(new_foi_email, message.to[0])
         req._messages = None
         foimessage = list(req.messages)[-1]
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertEqual(req.last_message, foimessage.timestamp)
         self.assertEqual(foimessage.recipient_public_body, req.public_body)
         self.assertTrue(req.law.meta)
         other_laws = req.law.combined.all()

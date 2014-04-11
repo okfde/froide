@@ -105,6 +105,22 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
 
 
 @receiver(FoiRequest.message_sent,
+        dispatch_uid="set_last_message_date_on_message_sent")
+def set_last_message_date_on_message_sent(sender, message=None, **kwargs):
+    if message is not None:
+        sender.last_message = message.timestamp
+        sender.save()
+
+
+@receiver(FoiRequest.message_received,
+        dispatch_uid="set_last_message_date_on_message_received")
+def set_last_message_date_on_message_received(sender, message=None, **kwargs):
+    if message is not None:
+        sender.last_message = message.timestamp
+        sender.save()
+
+
+@receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     messages = sender.get_messages()
