@@ -581,3 +581,13 @@ class AccountTest(TestCase):
         mes = req.messages
         self.assertEqual(req.user, new_user)
         self.assertEqual(mes[0].sender_user, new_user)
+
+    def test_send_mass_mail(self):
+        from froide.account.management.commands.send_mass_mail import Command
+
+        user_count = User.objects.all().count()
+        mail.outbox = []
+        command = Command()
+        subject, content = 'Test', 'Testing-Content'
+        list(command.send_mail(subject, content))
+        self.assertEqual(len(mail.outbox), user_count)
