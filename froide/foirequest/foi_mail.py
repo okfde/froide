@@ -62,7 +62,7 @@ def _deliver_mail(email, mail_string=None):
 
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
-            # TODO: BCC?
+    # TODO: BCC?
 
     domains = settings.FOI_EMAIL_DOMAIN
     if isinstance(domains, string_types):

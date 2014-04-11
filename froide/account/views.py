@@ -126,9 +126,9 @@ def login(request, base="base.html", context=None,
     initial = None
     if not context:
         context = {}
-    if not "reset_form" in context:
+    if "reset_form" not in context:
         context['reset_form'] = PasswordResetForm()
-    if not "signup_form" in context:
+    if "signup_form" not in context:
         context['signup_form'] = NewUserForm()
 
     if request.GET.get("simple") is not None:
@@ -286,9 +286,9 @@ def account_settings(request, context=None, status=200):
         context = {}
     if 'new' in request.GET:
         request.user.is_new = True
-    if not 'user_delete_form' in context:
+    if 'user_delete_form' not in context:
         context['user_delete_form'] = UserDeleteForm(request.user)
-    if not 'change_email_form' in context:
+    if 'change_email_form' not in context:
         context['change_email_form'] = UserChangeEmailForm()
     return render(request, 'account/settings.html', context, status=status)
 

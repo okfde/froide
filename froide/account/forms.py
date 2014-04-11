@@ -41,12 +41,10 @@ class NewUserBaseForm(forms.Form):
             max_length=75,
             help_text=_('Not public. The given address will '
                         'need to be confirmed.'),
-            widget=forms.EmailInput(attrs=
-                {
+            widget=forms.EmailInput(attrs={
                     'placeholder': _('mail@ddress.net'),
                     'class': 'form-control'
-                }
-            ))
+            }))
 
     if HAVE_ORGANIZATION:
         organization = forms.CharField(required=False,
@@ -55,7 +53,7 @@ class NewUserBaseForm(forms.Form):
                 widget=forms.TextInput(attrs={
                     'placeholder': _('Organization'),
                     'class': 'form-control'})
-            )
+        )
 
     if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(required=False,
@@ -85,12 +83,10 @@ class NewUserBaseForm(forms.Form):
         else:
             if user.is_active:
                 raise forms.ValidationError(mark_safe(
-                    _('This email address already has an account. <a href="%(url)s?simple&email=%(email)s" class="btn btn-warning target-small">Click here to login using that email address.</a>') %
-                        {
+                    _('This email address already has an account. <a href="%(url)s?simple&email=%(email)s" class="btn btn-warning target-small">Click here to login using that email address.</a>') % {
                             'url': reverse("account-login"),
                             'email': email
-                        }
-                    ))
+                    }))
             else:
                 raise forms.ValidationError(
                     _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))

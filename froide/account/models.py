@@ -141,7 +141,7 @@ class AccountManager(object):
         return hmac.new(
                 settings.SECRET_KEY.encode('utf-8'),
                 (".".join(to_sign)).encode('utf-8')
-            ).hexdigest()
+        ).hexdigest()
 
     def check_confirmation_secret(self, secret, *args):
         return constant_time_compare(
@@ -158,7 +158,7 @@ class AccountManager(object):
         return hmac.new(
                 settings.SECRET_KEY.encode('utf-8'),
                 (".".join(to_sign)).encode('utf-8')
-            ).hexdigest()
+        ).hexdigest()
 
     def send_confirmation_mail(self, request_id=None, password=None):
         secret = self.generate_confirmation_secret(request_id)

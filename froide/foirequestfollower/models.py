@@ -87,7 +87,7 @@ class FoiRequestFollower(models.Model):
         return hmac.new(
                 settings.SECRET_KEY.encode('utf-8'),
                 (".".join(to_sign)).encode('utf-8')
-            ).hexdigest()
+        ).hexdigest()
 
     def check_and_unfollow(self, check):
         secret = self.get_follow_secret()

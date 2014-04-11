@@ -93,10 +93,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def get_resolution_count_by_public_body(self, obj):
         res = self.get_query_set().filter(
                 status='resolved', public_body=obj
-            ).values('resolution'
-            ).annotate(
-                models.Count('resolution')
-            ).order_by('-resolution__count')
+        ).values('resolution'
+        ).annotate(
+            models.Count('resolution')
+        ).order_by('-resolution__count')
+
         return [{
             'resolution': x['resolution'],
             'url_slug': FoiRequest.get_url_from_status(x['resolution']),
@@ -526,15 +527,16 @@ class FoiRequest(models.Model):
         addresses = {}
         for message in reversed(self.messages):
             if message.is_response:
-                if message.sender_email and not message.sender_email in addresses:
+                if message.sender_email and message.sender_email not in addresses:
                     addresses[message.sender_email] = message
         return addresses
 
     def public_body_suggestions(self):
         if not hasattr(self, "_public_body_suggestion"):
             self._public_body_suggestion = \
-                    PublicBodySuggestion.objects.filter(request=self) \
-                        .select_related("public_body", "request")
+                    PublicBodySuggestion.objects.filter(
+                        request=self
+                    ).select_related("public_body", "request")
         return self._public_body_suggestion
 
     def get_auth_code(self):
@@ -564,7 +566,7 @@ class FoiRequest(models.Model):
         return list(self.messages)[-1].get_quoted()
 
     def find_public_body_for_email(self, email):
-        if not email or not '@' in email:
+        if not email or '@' not in email:
             return self.public_body
         messages = list(reversed(self.messages))
         domain = email.split('@', 1)[1]
@@ -1015,10 +1017,11 @@ class FoiRequest(models.Model):
         if not self.user.email:
             return
         send_mail(u'{0} [#{1}]'.format(
-                _("%(site_name)s: Please classify the reply to your request")
-                    % {"site_name": settings.SITE_NAME},
+                _("%(site_name)s: Please classify the reply to your request") % {
+                    "site_name": settings.SITE_NAME
+                },
                 self.pk
-            ),
+        ),
             render_to_string("foirequest/emails/classification_reminder.txt", {
                 "request": self,
                 "go_url": self.user.get_autologin_url(self.get_absolute_short_url()),
@@ -1198,7 +1201,7 @@ class FoiMessage(models.Model):
         return render_to_string('foirequest/emails/formated_message.txt', {
                 'message': self,
                 'attachments': attachments
-            })
+        })
 
     def get_quoted(self):
         return u"\n".join([u">%s" % l for l in self.plaintext.splitlines()])

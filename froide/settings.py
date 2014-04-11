@@ -56,7 +56,7 @@ class Base(Configuration):
 
     CACHES = values.CacheURLValue('dummy://')
 
-    ############## Site Configuration #########
+    # ############# Site Configuration #########
 
     # Make this unique, and don't share it with anybody.
     SECRET_KEY = 'make_me_unique!!'
@@ -75,7 +75,7 @@ class Base(Configuration):
 
     INTERNAL_IPS = values.TupleValue(('127.0.0.1',))
 
-    ############### PATHS ###############
+    # ############## PATHS ###############
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -113,7 +113,7 @@ class Base(Configuration):
         os.path.join(PROJECT_ROOT, "templates"),
     )
 
-    ########### URLs #################
+    # ########## URLs #################
 
     ROOT_URLCONF = values.Value('froide.urls')
 
@@ -132,13 +132,13 @@ class Base(Configuration):
     USE_X_ACCEL_REDIRECT = values.BooleanValue(False)
     X_ACCEL_REDIRECT_PREFIX = values.Value('/protected')
 
-    ### URLs that can be translated to a secret value
+    # ## URLs that can be translated to a secret value
 
     SECRET_URLS = values.DictValue({
         "admin": "admin"
     })
 
-    ######### Backends, Finders, Processors, Classes ####
+    # ######## Backends, Finders, Processors, Classes ####
 
     AUTH_USER_MODEL = values.Value('account.User')
     CUSTOM_AUTH_USER_MODEL_DB = values.Value('')
@@ -183,7 +183,7 @@ class Base(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
     ]
 
-    ########## I18N and L10N ##################
+    # ######### I18N and L10N ##################
 
     # Local time zone for this installation. Choices can be found here:
     # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -237,7 +237,7 @@ class Base(Configuration):
     # Calculates other holidays based on easter sunday
     HOLIDAYS_FOR_EASTER = (0, -2, 1, 39, 50, 60)
 
-    ######### Logging ##########
+    # ######## Logging ##########
 
     # A sample logging configuration.
     LOGGING = {
@@ -287,7 +287,7 @@ class Base(Configuration):
         }
     }
 
-    ######### Security ###########
+    # ######## Security ###########
 
     CSRF_COOKIE_SECURE = False
     CSRF_COOKIE_HTTPONLY = True
@@ -300,7 +300,7 @@ class Base(Configuration):
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
 
-    ######### Celery #############
+    # ######## Celery #############
 
     CELERY_RESULT_BACKEND = values.Value('djcelery.backends.database:DatabaseBackend')
     CELERYBEAT_SCHEDULER = values.Value("djcelery.schedulers.DatabaseScheduler")
@@ -310,7 +310,7 @@ class Base(Configuration):
         'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
     }
 
-    ######### Haystack ###########
+    # ######## Haystack ###########
 
     HAYSTACK_CONNECTIONS = {
         'default': {
@@ -318,11 +318,11 @@ class Base(Configuration):
         }
     }
 
-    ########## Tastypie #########
+    # ######### Tastypie #########
 
     TASTYPIE_SWAGGER_API_MODULE = values.Value('froide.urls.v1_api')
 
-    ########## Froide settings ########
+    # ######### Froide settings ########
 
     FROIDE_THEME = None
 
@@ -347,7 +347,7 @@ class Base(Configuration):
         doc_conversion_call_func=None,  # see settings_test for use
     )
 
-    ####### Email ##############
+    # ###### Email ##############
 
     # Django settings
 

@@ -119,6 +119,6 @@ class TagAutocompleteTagIt(TextInput):
                 maxTags=self.max_tags,
                 placeholderText=_('Enter comma-separated tags here'),
                 kind=self.tag_filter or ''
-            )
+        )
 
         return mark_safe("\n".join([html, js]))

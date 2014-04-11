@@ -45,7 +45,7 @@ def _batch_update(update_requester=True, update_follower=True):
             submit_date__gte=gte_date):
         try:
             message = FoiMessage.objects.get(pk=comment.object_pk)
-            if not message.request_id in requests:
+            if message.request_id not in requests:
                 requests[message.request_id] = message.request
             updates.setdefault(message.request_id, [])
             tf = TimeFormat(comment.submit_date)
@@ -90,7 +90,7 @@ def _batch_update(update_requester=True, update_follower=True):
         for event in FoiEvent.objects.filter(timestamp__gte=gte_date).select_related("request"):
             if event.event_name in event_black_list:
                 continue
-            if not event.request_id in requests:
+            if event.request_id not in requests:
                 requests[event.request_id] = event.request
             updates.setdefault(event.request_id, [])
             tf = TimeFormat(event.timestamp)

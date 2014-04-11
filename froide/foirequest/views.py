@@ -623,7 +623,7 @@ def add_postal_reply(request, slug):
                 is_postal=True,
                 sender_name=form.cleaned_data['sender'],
                 sender_public_body=foirequest.public_body)
-        #TODO: Check if timezone support is correct
+        # TODO: Check if timezone support is correct
         date = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
         message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = form.cleaned_data.get('subject', '')

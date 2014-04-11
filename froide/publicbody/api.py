@@ -117,15 +117,15 @@ class PublicBodyResource(ModelResource):
             url(r"^(?P<resource_name>%s)/search%s$" % (
                     self._meta.resource_name,
                     utils.trailing_slash()
-                ), self.wrap_view('get_search'), name="api_get_search"),
+            ), self.wrap_view('get_search'), name="api_get_search"),
             url(r"^(?P<resource_name>%s)/autocomplete%s$" % (
                     self._meta.resource_name,
                     utils.trailing_slash()
-                ), self.wrap_view('get_autocomplete'), name="api_get_autocomplete"),
+            ), self.wrap_view('get_autocomplete'), name="api_get_autocomplete"),
             url(r"^(?P<resource_name>%s)/tags/autocomplete%s$" % (
                     self._meta.resource_name,
                     utils.trailing_slash()
-                ), self.wrap_view('get_tags_autocomplete'), name="api_get_tags_autocomplete"),
+            ), self.wrap_view('get_tags_autocomplete'), name="api_get_tags_autocomplete"),
         ]
 
     def get_autocomplete(self, request, **kwargs):
