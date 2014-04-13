@@ -1,7 +1,10 @@
+import re
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 from django.contrib.auth import get_user_model
+from django.core import mail
 
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -122,6 +125,8 @@ class TestMakingRequest(LiveServerTestCase):
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: 'in' in self.selenium.find_element_by_id('step-review').get_attribute('class'))
             self.scrollTo(id='send-request-button')
+
+        mail.outbox = []
         self.selenium.find_element_by_id('send-request-button').click()
         WebDriverWait(self.selenium, 5).until(
             lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
@@ -132,6 +137,16 @@ class TestMakingRequest(LiveServerTestCase):
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_user_confirmation')
+
+        message = mail.outbox[0]
+        match = re.search('http://[^/]+(/.+)', message.body)
+        activate_url = match.group(1)
+        self.selenium.get('%s%s' % (self.live_server_url, activate_url))
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: driver.find_element_by_css_selector('#change-password-now'))
+        self.assertIn('?new#change-password-now', self.selenium.current_url)
+        req = FoiRequest.objects.get(user=new_user)
+        self.assertEqual(req.status, 'awaiting_response')
 
     def test_make_not_logged_in_request_to_public_body(self):
         self.selenium.get('%s%s' % (self.live_server_url,

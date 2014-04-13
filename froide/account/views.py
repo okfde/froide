@@ -44,7 +44,7 @@ def confirm(request, user_id, secret, request_id=None):
             if 'next' in request.session:
                 del request.session['next']
             return redirect(next)
-        return redirect(reverse('account-show') + "?new#change-password-now")
+        return redirect(reverse('account-settings') + "?new#change-password-now")
     else:
         messages.add_message(request, messages.ERROR,
                 _('You can only use the confirmation link once, please login with your password.'))
