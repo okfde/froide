@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-21 12:10+0100\n"
-"PO-Revision-Date: 2014-04-16 06:38+0000\n"
+"PO-Revision-Date: 2014-04-16 10:55+0000\n"
 "Last-Translator: caxekis <caxekis@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) (http://www.transifex.com/projects/p/froide/language/zh_HK/)\n"
 "MIME-Version: 1.0\n"
@@ -206,7 +206,7 @@ msgstr "電郵地址"
 
 #: froide/account/forms.py:42
 msgid "Not public. The given address will need to be confirmed."
-msgstr "非公開。地址將被核實。"
+msgstr "非公開。地址有待核實。"
 
 #: froide/account/forms.py:46 froide/account/forms.py:138
 #: froide/account/forms.py:152 froide/account/forms.py:177
@@ -336,7 +336,7 @@ msgstr "組織網址"
 
 #: froide/account/models.py:28
 msgid "Private"
-msgstr "私人"
+msgstr ""
 
 #: froide/account/models.py:29 froide/publicbody/models.py:256
 msgid "Address"
@@ -344,7 +344,7 @@ msgstr "地址"
 
 #: froide/account/models.py:30
 msgid "Accepted Terms"
-msgstr "已接受的使用條款"
+msgstr "已接受條款"
 
 #: froide/account/models.py:31
 msgid "Wants Newsletter"
@@ -423,7 +423,7 @@ msgstr "登入前，請先驗證你的電郵地址。"
 
 #: froide/account/views.py:165
 msgid "E-mail and password do not match."
-msgstr "電郵地址和密碼不符"
+msgstr "電郵地址及密碼不正確"
 
 #: froide/account/views.py:183
 msgid "You are currently logged in, you cannot signup."
@@ -726,7 +726,7 @@ msgstr "更改地址"
 
 #: froide/account/templates/account/settings.html:92
 msgid "Change your email address"
-msgstr "改變你的電郵地址"
+msgstr "更改你的電郵地址"
 
 #: froide/account/templates/account/settings.html:98
 msgid ""
@@ -735,7 +735,7 @@ msgstr "你將會收到寄往你新地址的確認電郵，你按郵件內之鏈
 
 #: froide/account/templates/account/settings.html:99
 msgid "Change email"
-msgstr "改變電郵"
+msgstr "更改電郵"
 
 #: froide/account/templates/account/settings.html:106
 msgid "Delete your account"
@@ -743,7 +743,7 @@ msgstr "刪除你的帳戶"
 
 #: froide/account/templates/account/settings.html:112
 msgid "Danger: deleting your account cannot be undone."
-msgstr "注意：帳戶一經刪除，將不能撤消。"
+msgstr "小心：帳戶一經刪除，將不能復原。"
 
 #: froide/account/templates/account/settings.html:119
 msgid ""
@@ -1420,7 +1420,7 @@ msgstr "要求呈請並未獲得及時處理。"
 
 #: froide/foirequest/models.py:242
 msgid "Fee charged"
-msgstr "需收費"
+msgstr "附帶費用"
 
 #: froide/foirequest/models.py:243
 msgid "This request is connected with a fee."
@@ -2956,7 +2956,7 @@ msgstr "建議這個公共機構"
 
 #: froide/foirequest/templates/foirequest/show.html:372
 msgid "Request to:"
-msgstr "請求："
+msgstr "致："
 
 #: froide/foirequest/templates/foirequest/show.html:382
 msgid "Laws used:"
@@ -3134,7 +3134,7 @@ msgstr "標籤"
 
 #: froide/foirequest/templates/foirequest/show.html:603
 msgid "Staff Actions"
-msgstr "職員動作"
+msgstr "管理操作"
 
 #: froide/foirequest/templates/foirequest/show.html:619
 msgid "Save tags"
@@ -3451,7 +3451,7 @@ msgstr "此附件已被拒絕張貼。"
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:14
 msgid "change"
-msgstr "改變"
+msgstr "更改"
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:19
 msgid "Set the Public Body that sent this message:"
@@ -3981,7 +3981,7 @@ msgstr "請求數"
 #: froide/publicbody/templates/publicbody/list.html:10
 #: froide/templates/base.html:36
 msgid "Public Bodies"
-msgstr "公共機構"
+msgstr "公共機構名單"
 
 #: froide/publicbody/views.py:108
 msgid "This request was already confirmed."
@@ -4330,7 +4330,7 @@ msgstr "試試以下字詞："
 
 #: froide/templates/index.html:35
 msgid "Nuclear"
-msgstr "核能"
+msgstr "高鐵"
 
 #: froide/templates/index.html:37
 msgid "Employment"
