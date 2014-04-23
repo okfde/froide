@@ -129,7 +129,10 @@
 
   <footer class="container" id="footer">
     <hr/>
-    {% block footer %}
+  {% block footer %}
+    {% block footer_above %}
+    {% endblock footer_above %}
+    {% block footer_credits %}
     <div class="row">
       <div class="col-lg-9">
         {% block footer_description %}
@@ -148,6 +151,7 @@
       </div>
     </div>
     <hr/>
+    {% endblock footer_credits %}
     <div class="row">
       <ul class="col-lg-12 unstyled pagination-centered">
         {% block footer_menu %}
@@ -167,7 +171,9 @@
         {% endblock %}
       </ul>
     </div>
-    {% endblock %}
+    {% block footer_below %}
+    {% endblock footer_below %}
+  {% endblock footer %}
   </footer>
 {% endblock body_tag %}
 
