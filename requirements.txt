@@ -1,21 +1,21 @@
-Django==1.6.2
-Markdown==2.3.1
+Django==1.6.3
+Markdown==2.4
 South==0.8.4
 celery==3.1.8
-django-celery==3.1.1
+django-celery==3.1.10
 -e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
-django-taggit==0.10
-pytz==2013.8
-requests==2.0.1
+django-taggit==0.12
+pytz==2014.2
+requests==2.2.1
 django-floppyforms==1.1.1
 django_overextends==0.3.0
 python-magic==0.4.6
-django-tastypie==0.10.0
+django-tastypie==0.11.0
 python-mimeparse>=0.1.4
 -e git://github.com/stefanw/django-tastypie-swagger.git@python-3#egg=django_tastypie_swagger
 -e git://github.com/stefanw/python-unicodecsv.git@python-3#egg=unicodecsv
-django-configurations==0.7
+django-configurations==0.8
 django-storages==1.1.8
-dj-database-url==0.2.2
-django-cache-url==0.6.0
+dj-database-url==0.3.0
+django-cache-url==0.8.0
 https://github.com/django-compressor/django-compressor/archive/develop.zip#egg=django_compressor
