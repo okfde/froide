@@ -20,7 +20,7 @@ from django.template.loader import render_to_string
 from django.utils.timesince import timesince
 from django.core.mail import send_mail, mail_managers
 from django.utils.safestring import mark_safe
-from django.utils.html import escape
+from django.utils.html import escape, strip_tags
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -31,7 +31,7 @@ from taggit.models import TaggedItemBase
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (replace_email_name,
-        replace_email, shorten_text, strip_all_tags)
+        replace_email, shorten_text)
 
 from .foi_mail import send_foi_mail, package_foirequest
 
@@ -644,7 +644,7 @@ class FoiRequest(models.Model):
         message.plaintext = email['body']
         message.html = email['html']
         if not message.plaintext and message.html:
-            message.plaintext = strip_all_tags(email['html'])
+            message.plaintext = strip_tags(email['html'])
         message.subject_redacted = message.redact_subject()[:250]
         message.plaintext_redacted = message.redact_plaintext()
         message.save()
