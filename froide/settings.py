@@ -102,7 +102,7 @@ class Base(Configuration):
     STATICFILES_DIRS = (
         os.path.join(PROJECT_ROOT, "static"),
     )
-    COMPRESS_ENABLED = False
+    COMPRESS_ENABLED = values.BooleanValue(False)
     COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
     COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                             'compressor.filters.cssmin.CSSMinFilter']
@@ -535,8 +535,8 @@ class Production(Base):
     TEMPLATE_DEBUG = False
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
     CELERY_ALWAYS_EAGER = values.BooleanValue(False)
-    COMPRESS_ENABLED = True
-    COMPRESS_OFFLINE = True
+    COMPRESS_ENABLED = values.BooleanValue(True)
+    COMPRESS_OFFLINE = values.BooleanValue(True)
 
 
 class SSLSite(object):
