@@ -1,6 +1,8 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.views import redirect_to_login
 
+from froide.help_urls import help_view
+
 from .views import new_terms
 
 
@@ -11,7 +13,7 @@ class AcceptNewTermsMiddleware(object):
                 'AcceptNewTermsMiddleware depends on AuthenticationMiddleware')
         if not request.user.is_authenticated() or request.user.terms:
             return None
-        if view_func == new_terms:
+        if view_func == new_terms or view_func == help_view:
             return None
             request.path
         return redirect_to_login(request.path, login_url='account-new_terms')
