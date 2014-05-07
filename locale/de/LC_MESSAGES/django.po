@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-16 15:44+0200\n"
-"PO-Revision-Date: 2014-03-21 11:13+0000\n"
-"Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
+"POT-Creation-Date: 2014-05-07 11:15+0200\n"
+"PO-Revision-Date: 2014-05-07 11:14+0100\n"
+"Last-Translator: Stefan Wehrmeyer <mail@stefanwehrmeyer.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/froide/language/"
 "de/)\n"
 "Language: de\n"
@@ -23,6 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: docs/_build/html/theming.html:97
 msgid ""
@@ -44,7 +45,7 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:11 froide/settings.py:204 froide/settings.py:487
+#: froide/_local_settings.py:11 froide/settings.py:204 froide/settings.py:491
 msgid "German"
 msgstr "Deutsch"
 
@@ -108,11 +109,11 @@ msgstr "Schwedisch (Finnland)"
 
 #: froide/settings.py:209
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Chinesisch (Kurzzeichen)"
 
 #: froide/settings.py:210
 msgid "Chinese (Traditional, Hong Kong)"
-msgstr ""
+msgstr "Chinesisch (Traditionell, Honk Kong)"
 
 #. Translators: request URL
 #: froide/urls.py:81
@@ -196,7 +197,7 @@ msgstr "Nachname"
 msgid "Last Name"
 msgstr "Nachname"
 
-#: froide/account/forms.py:33 froide/account/forms.py:156
+#: froide/account/forms.py:33 froide/account/forms.py:157
 msgid "Mailing Address"
 msgstr "Postadresse"
 
@@ -208,12 +209,12 @@ msgstr ""
 "Optional. Ihre Adresse wird nicht öffentlich angezeigt und wird nur für den "
 "Fall verwendet, dass eine Behörde Ihnen etwas per Post zusenden muss."
 
-#: froide/account/forms.py:38 froide/account/forms.py:158
+#: froide/account/forms.py:38 froide/account/forms.py:159
 msgid "Street, Post Code, City"
 msgstr "Straße, Hausnummer, PLZ, Ort"
 
-#: froide/account/forms.py:40 froide/account/forms.py:137
-#: froide/account/forms.py:151
+#: froide/account/forms.py:40 froide/account/forms.py:138
+#: froide/account/forms.py:152
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
@@ -221,8 +222,8 @@ msgstr "E-Mail-Adresse"
 msgid "Not public. The given address will need to be confirmed."
 msgstr "Nicht öffentlich. Sie müssen diese Adresse bestätigen."
 
-#: froide/account/forms.py:45 froide/account/forms.py:134
-#: froide/account/forms.py:148 froide/account/forms.py:173
+#: froide/account/forms.py:45 froide/account/forms.py:135
+#: froide/account/forms.py:149 froide/account/forms.py:174
 msgid "mail@ddress.net"
 msgstr "email@dresse.net"
 
@@ -276,15 +277,15 @@ msgstr ""
 "Diese E-Mail-Adresse ist bereits registriert, aber noch nicht bestätigt! "
 "Bitte klicken Sie auf den Bestätigungslink, den wir Ihnen zugemailt haben."
 
-#: froide/account/forms.py:97
+#: froide/account/forms.py:98
 msgid "Terms and Conditions and Privacy Statement"
 msgstr "Nutzungs- und Datenschutz&shy;bedingungen"
 
-#: froide/account/forms.py:99
+#: froide/account/forms.py:100
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
 msgstr "Sie müssen unsere Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: froide/account/forms.py:101
+#: froide/account/forms.py:102
 #, python-format
 msgid ""
 "You agree to our <a href=\"%(url_terms)s\" class=\"target-new\">Terms and "
@@ -295,64 +296,64 @@ msgstr ""
 "\">Nutzungsbedingungen</a> und <a href=\"%(url_privacy)s\" class=\"target-new"
 "\">Datenschutzbedingungen</a> zu."
 
-#: froide/account/forms.py:105
+#: froide/account/forms.py:106
 msgid "Check if you want to receive our newsletter."
 msgstr "Setzen Sie einen Haken, wenn Sie unseren Newsletter erhalten wollen"
 
-#: froide/account/forms.py:120 froide/account/forms.py:142
-#: froide/account/forms.py:224
+#: froide/account/forms.py:121 froide/account/forms.py:143
+#: froide/account/forms.py:225
 msgid "Password"
 msgstr "Passwort"
 
-#: froide/account/forms.py:122
+#: froide/account/forms.py:123
 msgid "Password (repeat)"
 msgstr "Passwort (wiederholen)"
 
-#: froide/account/forms.py:127
+#: froide/account/forms.py:128
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
 
-#: froide/account/forms.py:157
+#: froide/account/forms.py:158
 msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
-#: froide/account/forms.py:174
+#: froide/account/forms.py:175
 msgid "New email address"
 msgstr "Neue E-Mail-Adresse"
 
-#: froide/account/forms.py:180
+#: froide/account/forms.py:181
 msgid "A user with that email address already exists!"
 msgstr "Ein Nutzer mit dieser E-Mail-Adresse existiert bereits!"
 
-#: froide/account/forms.py:199
+#: froide/account/forms.py:200
 msgid "Logged in user does not match this link!"
 msgstr "Der eingeloggte Nutzer passt nicht zu dem geklickten Link!"
 
-#: froide/account/forms.py:210
+#: froide/account/forms.py:211
 msgid "Link is invalid or has expired!"
 msgstr "Link ist ungültig oder abgelaufen!"
 
-#: froide/account/forms.py:220
+#: froide/account/forms.py:221
 msgid "Freedom of Information Act"
 msgstr "Informationsfreiheitsgesetz"
 
-#: froide/account/forms.py:225
+#: froide/account/forms.py:226
 msgid "Please type your password to confirm."
 msgstr "Bitte geben Sie Ihr Passwort zum Bestätigen ein."
 
-#: froide/account/forms.py:231
+#: froide/account/forms.py:232
 msgid "Confirmation Phrase"
 msgstr "Bestätitungs-Satz"
 
-#: froide/account/forms.py:232
+#: froide/account/forms.py:233
 msgid "Type the phrase above exactly as displayed."
 msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
 
-#: froide/account/forms.py:246
+#: froide/account/forms.py:247
 msgid "You provided the wrong password!"
 msgstr "Sie haben ein falsches Passwort angegeben!"
 
-#: froide/account/forms.py:254
+#: froide/account/forms.py:255
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "Sie haben das Bestätigungswort nicht korrekt eingegeben!"
 
@@ -561,7 +562,11 @@ msgstr ""
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Ihr Account wurde gelöscht und Sie wurden ausgeloggt."
 
-#: froide/account/views.py:386
+#: froide/account/views.py:384
+msgid "Thank you for accepting our new terms!"
+msgstr "Danke, dass Sie unsere neuen Nutzungsbedingungen akzeptiert haben!"
+
+#: froide/account/views.py:388
 msgid "You need to accept our new terms to continue."
 msgstr ""
 "Sie müssen unsere neuen Nutzungs- und Datenschutzbedingungen akzeptieren."
@@ -4422,14 +4427,12 @@ msgid "Updated by"
 msgstr "Aktualisiert von"
 
 #: froide/publicbody/models.py:269
-#, fuzzy
 msgid "Created at"
-msgstr "Erstellt von"
+msgstr "Erstellt am"
 
 #: froide/publicbody/models.py:270
-#, fuzzy
 msgid "Updated at"
-msgstr "Änderungsdatum"
+msgstr "Aktualisiert am"
 
 #: froide/publicbody/models.py:271
 msgid "confirmed"
@@ -4764,7 +4767,7 @@ msgstr "Ausloggen"
 msgid "Log In /<br/>Sign up"
 msgstr "Einloggen /<br/> Anmelden"
 
-#: froide/templates/base.html:138
+#: froide/templates/base.html:141
 #, python-format
 msgid ""
 "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
@@ -4776,19 +4779,19 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/templates/base.html:155
+#: froide/templates/base.html:159
 msgid "About"
 msgstr "Über uns"
 
-#: froide/templates/base.html:160 froide/templates/help/base.html:4
+#: froide/templates/base.html:164 froide/templates/help/base.html:4
 msgid "Help"
 msgstr "Hilfe"
 
-#: froide/templates/base.html:162
+#: froide/templates/base.html:166
 msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
-#: froide/templates/base.html:165
+#: froide/templates/base.html:169
 msgid "Privacy Statement"
 msgstr "Datenschutzerklärung"
 
@@ -5040,9 +5043,6 @@ msgstr "Konnten Sie nicht finden wonach Sie suchen?"
 #: froide/templates/search/search.html:69
 msgid "Make a Freedom of Information Request now!"
 msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
-
-#~ msgid "Chinese"
-#~ msgstr "Chinesisch"
 
 #~ msgid "Add tags to these items"
 #~ msgstr "Add tags to these requests"
