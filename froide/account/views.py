@@ -380,6 +380,8 @@ def new_terms(request, next=None):
         form = TermsForm(request.POST)
         if form.is_valid():
             form.save(request.user)
+            messages.add_message(request, messages.SUCCESS,
+                _('Thank you for accepting our new terms!'))
             return redirect(next)
         else:
             messages.add_message(request, messages.ERROR,
