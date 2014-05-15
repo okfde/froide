@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 
 from .text_utils import replace_email_name
 from .form_generator import FormGenerator
-from .date_utils import calc_easter, is_holiday, calculate_month_range_de
+from .date_utils import calc_easter, calculate_month_range_de
 
 
 class TestAPIDocs(TestCase):
