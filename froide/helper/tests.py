@@ -1,8 +1,11 @@
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 from django.test.utils import override_settings
 
 from .text_utils import replace_email_name
 from .form_generator import FormGenerator
+from .date_utils import calc_easter, is_holiday, calculate_month_range_de
 
 
 class TestAPIDocs(TestCase):
@@ -20,6 +23,41 @@ class TestTextReplacement(TestCase):
         content = 'This is a very long string with a name <and.email@adress.in> it'
         content = replace_email_name(content, 'REPLACEMENT')
         self.assertEqual(content, 'This is a very long string with a name REPLACEMENT it')
+
+
+@override_settings(
+    HOLIDAYS=[
+        (1, 1),  # New Year's Day
+        (5, 1),  # Labour Day
+        (10, 3),  # Day of German reunification
+        (12, 25),  # Christmas
+        (12, 26),  # Second day of Christmas
+    ],
+    HOLIDAYS_WEEKENDS=True,
+    HOLIDAYS_FOR_EASTER=(0, -2, 1, 39, 50, 60))
+class TestGermanDeadline(TestCase):
+    def test_german_holidays_send(self):
+        easter_sunday = calc_easter(2014)
+        easter_sunday = datetime(*easter_sunday)
+
+        thursday = easter_sunday - timedelta(days=3) + timedelta(hours=15)
+        self.assertEqual(thursday.hour, 15)
+        thursday_night = easter_sunday - timedelta(days=3) + timedelta(hours=23)
+
+        deadline = calculate_month_range_de(thursday)
+
+        deadline2 = calculate_month_range_de(thursday_night)
+        self.assertTrue(deadline2 > deadline)
+        self.assertEqual((deadline + timedelta(days=4)).date(), deadline2.date())
+
+    def test_german_holidays_receive(self):
+        easter_sunday = calc_easter(2014)
+        easter_sunday = datetime(*easter_sunday)
+
+        month_before = easter_sunday - timedelta(days=33) + timedelta(hours=15)
+        deadline = calculate_month_range_de(month_before)
+        deadline = deadline.replace(tzinfo=None)
+        self.assertTrue((deadline - month_before).days > 33)
 
 
 class TestThemeLoader(TestCase):
