@@ -1,4 +1,4 @@
-Django==1.6.3
+Django==1.6.5
 Markdown==2.4
 South==0.8.4
 celery==3.1.8
