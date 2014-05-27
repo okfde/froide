@@ -12,7 +12,7 @@ from .foi_mail import _process_mail, _fetch_mail
 from .file_utils import convert_to_pdf
 
 
-@celery_app.task(acks_late=True)
+@celery_app.task(acks_late=True, time_limit=60)
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
