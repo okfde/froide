@@ -631,7 +631,8 @@ class FoiRequest(models.Model):
 
     def add_message_from_email(self, email, mail_string=None):
         message = FoiMessage(request=self)
-        message.subject = email['subject'][:250]
+        message.subject = email['subject'] or ''
+        message.subject = message.subject[:250]
         message.is_response = True
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
