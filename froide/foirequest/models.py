@@ -1612,6 +1612,7 @@ class DeferredMessage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     request = models.ForeignKey(FoiRequest, null=True, blank=True)
     mail = models.TextField(blank=True)
+    spam = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('timestamp',)

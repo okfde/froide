@@ -49,11 +49,13 @@ class MailTest(TestCase):
 
     def test_working_with_attachment(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        domain = request.public_body.email.split('@')[1]
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 1)
 
         with open(p("test_mail_02.txt"), 'rb') as f:
-            process_mail.delay(f.read())
+            mail_string = f.read().replace(b'abcd@me.com', b'abcde@' + domain.encode('ascii'))
+            process_mail.delay(mail_string)
 
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
@@ -215,6 +217,27 @@ class DeferredMessageTest(TestCase):
         self.assertEqual(len(req.messages), count_messages + 1)
         dm = DeferredMessage.objects.get(id=dm.id)
         self.assertEqual(dm.request, req)
+
+
+class SpamMailTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address="sw+yurpykc1hr@fragdenstaat.de")
+        factories.FoiMessageFactory.create(request=self.req)
+        factories.FoiMessageFactory.create(request=self.req, is_response=True)
+
+    def test_spam(self):
+        count_messages = len(self.req.messages)
+        name, domain = self.req.secret_address.split('@')
+        recipient = 'sw+yurpykc1hr@fragdenstaat.de'
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            mail = f.read().decode('ascii').replace('hb@example.com', 'hb@bad-example.com')
+        process_mail.delay(mail.encode('ascii'))
+        self.assertEqual(count_messages,
+            FoiMessage.objects.filter(request=self.req).count())
+        dms = DeferredMessage.objects.filter(recipient=recipient, spam=True)
+        self.assertEqual(len(dms), 1)
 
 
 class PostMarkMailTest(TestCase):
