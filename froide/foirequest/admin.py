@@ -213,9 +213,11 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     list_filter = (RequestNullFilter, 'spam')
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
-    list_display = ('recipient', 'timestamp', 'request')
+    list_display = ('recipient', 'timestamp', 'request', 'spam')
     raw_id_fields = ('request',)
     actions = ['redeliver']
+
+    save_on_top = True
 
     def redeliver(self, request, queryset):
         """
