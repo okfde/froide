@@ -1636,7 +1636,7 @@ class DeferredMessage(models.Model):
         self.save()
         mail = base64.b64decode(self.mail).decode('utf-8')
         mail = mail.replace(self.recipient, self.request.secret_address)
-        process_mail.delay(mail.encode('utf-8'))
+        process_mail.delay(mail.encode('utf-8'), manual=True)
 
 
 # Import Signals here so models are available

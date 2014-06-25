@@ -51,13 +51,13 @@ def send_foi_mail(subject, message, from_email, recipient_list,
     return email.send()
 
 
-def _process_mail(mail_string, mail_type=None):
+def _process_mail(mail_string, mail_type=None, manual=False):
     parser = EmailParser()
     if mail_type is None:
         email = parser.parse(BytesIO(mail_string))
     elif mail_type == 'postmark':
         email = parser.parse_postmark(json.loads(mail_string.decode('utf-8')))
-    return _deliver_mail(email, mail_string=mail_string)
+    return _deliver_mail(email, mail_string=mail_string, manual=manual)
 
 
 def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
@@ -81,7 +81,7 @@ def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
         )
 
 
-def _deliver_mail(email, mail_string=None):
+def _deliver_mail(email, mail_string=None, manual=False):
     from .models import FoiRequest, DeferredMessage
 
     received_list = email['to'] + email['cc'] \
@@ -125,18 +125,22 @@ def _deliver_mail(email, mail_string=None):
                 continue
 
         # Check for spam
-        messages = foi_request.response_messages()
-        reply_domains = set(m.sender_email.split('@')[1] for m in messages
-                         if m.sender_email and '@' in m.sender_email)
-        reply_domains.add(foi_request.public_body.email.split('@')[1])
+        if not manual:
+            messages = foi_request.response_messages()
+            reply_domains = set(m.sender_email.split('@')[1] for m in messages
+                             if m.sender_email and '@' in m.sender_email)
+            reply_domains.add(foi_request.public_body.email.split('@')[1])
+            strip_subdomains = lambda x: '.'.join(x.split('.')[-2:])
+            # Strip subdomains
+            reply_domains = set([strip_subdomains(x) for x in reply_domains])
 
-        sender_email = email['from'][1]
-        if len(messages) > 0 and sender_email and '@' in sender_email:
-            email_domain = sender_email.split('@')[1]
-            if email_domain not in reply_domains:
-                create_deferred(secret_mail, mail_string, b64_encoded=b64_encoded,
-                    spam=True, subject=_('Possible Spam Mail received'), body=spam_message)
-                continue
+            sender_email = email['from'][1]
+            if len(messages) > 0 and sender_email and '@' in sender_email:
+                email_domain = strip_subdomains(sender_email.split('@')[1])
+                if email_domain not in reply_domains:
+                    create_deferred(secret_mail, mail_string, b64_encoded=b64_encoded,
+                        spam=True, subject=_('Possible Spam Mail received'), body=spam_message)
+                    continue
 
         foi_request.add_message_from_email(email, mail_string)
 
