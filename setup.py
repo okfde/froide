@@ -40,7 +40,6 @@ setup(
         'django-celery',
         'django-haystack',
         'django-taggit',
-        'lxml',
         'pytz',
         'requests',
         'django-floppyforms',
