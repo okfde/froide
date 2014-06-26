@@ -13,7 +13,7 @@ python-magic==0.4.6
 django-tastypie==0.11.0
 python-mimeparse>=0.1.4
 -e git://github.com/stefanw/django-tastypie-swagger.git@python-3#egg=django_tastypie_swagger
--e git://github.com/stefanw/python-unicodecsv.git@python-3#egg=unicodecsv
+https://github.com/jdunck/python-unicodecsv/archive/master.zip
 django-configurations==0.8
 django-storages==1.1.8
 dj-database-url==0.3.0
