@@ -602,7 +602,7 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s"
 msgstr ""
-"Grüße,\n"
+"Grüße\n"
 "%(site_name)s"
 
 #: froide/account/templates/account/confirmation_mail.txt:1
@@ -3478,7 +3478,7 @@ msgstr ""
 "bitte hinzu und markieren Sie die Anfrage als erledigt:\n"
 "%(url)s\n"
 "\n"
-"Beste Grüße,\n"
+"Beste Grüße\n"
 "%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/became_overdue.txt:1
@@ -3511,7 +3511,7 @@ msgstr ""
 "Hier ist ein Link zu Ihrer Anfrage:\n"
 "%(url)s\n"
 "\n"
-"Beste Grüße,\n"
+"Beste Grüße\n"
 "%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/classification_reminder.txt:1
@@ -3539,7 +3539,7 @@ msgstr ""
 "%(url)s\n"
 "\n"
 "\n"
-"Beste Grüße,\n"
+"Beste Grüße\n"
 "%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/confirm_foi_message_sent.txt:1
@@ -3562,7 +3562,7 @@ msgstr ""
 "\n"
 "%(url)s\n"
 "\n"
-"Beste Grüße,\n"
+"Beste Grüße\n"
 "%(site_name)s\n"
 
 #: froide/foirequest/templates/foirequest/emails/confirm_foi_request_sent.txt:1
@@ -3585,7 +3585,7 @@ msgstr ""
 "\n"
 "%(url)s\n"
 "\n"
-"Beste Grüße,\n"
+"Beste Grüße\n"
 "%(site_name)s\n"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_end.txt:1
@@ -3594,7 +3594,7 @@ msgid ""
 "Sincerely yours,"
 msgstr ""
 "\n"
-"Mit freundlichen Grüßen,"
+"Mit freundlichen Grüßen"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_start.txt:1
 msgid ""
@@ -3733,7 +3733,7 @@ msgstr ""
 "\n"
 "%(url)s\n"
 "\n"
-"Beste Grüße,\n"
+"Beste Grüße\n"
 "%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/overdue_reply.txt:1
@@ -3755,7 +3755,7 @@ msgstr ""
 "Sie haben die Frist mittlerweile um %(due)s überschritten.\n"
 "Bitte informieren Sie mich umgehend über den Stand meiner Anfrage.\n"
 "\n"
-"Mit freundlichen Grüßen,\n"
+"Mit freundlichen Grüßen\n"
 "%(name)s"
 
 #: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:1
@@ -3824,7 +3824,7 @@ msgid ""
 "%(site_name)s\n"
 msgstr ""
 "\n"
-"Grüße,\n"
+"Grüße\n"
 "%(site_name)s\n"
 
 #: froide/foirequest/templates/foirequest/snippets/attachment.html:9
