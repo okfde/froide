@@ -25,7 +25,7 @@ class CSVImporter(object):
     jur_cache = {}
 
     def __init__(self):
-        self.user = User.objects.all()[0]
+        self.user = User.objects.order_by('id')[0]
         self.site = Site.objects.get_current()
 
     def import_from_url(self, url):
