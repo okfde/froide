@@ -6,9 +6,12 @@
 
 {% block body %}
 
+{% block first_index_row_wrapper %}
 <div class="heroine-unit" id="main-folders">
   <div class="row">
+    {% block first_index_row %}
     <div class="col-lg-6 col-md-6">
+      {% block first_index_row_search %}
       <h1>{% block site_name %}{{ SITE_NAME }}{% endblock %}</h1>
       {% block site_description %}
         <p>
@@ -38,8 +41,10 @@
           {% endblock %}
         </span>
       </form>
+      {% endblock first_index_row_search %}
     </div>
     <div class="col-lg-6 col-md-6">
+      {% block first_index_row_featured %}
       <div id="main-foirequests" class="well">
         {% if featured %}
         <div class="frontpage-teaser">
@@ -79,9 +84,12 @@
       </div>
       {% endif %}
       </div>
+      {% endblock first_index_row_featured %}
     </div>
+    {% endblock first_index_row %}
   </div>
 </div>
+{% endblock first_index_row_wrapper %}
 
 {% block index_content_row %}
 <div class="row">
