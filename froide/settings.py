@@ -202,6 +202,7 @@ class Base(Configuration):
         ('en', gettext('English')),
         ('fi-fi', gettext('Finnish (Finland)')),
         ('de', gettext('German')),
+        ('da-dk', gettext('Danish (Denmark)')),
         ('it', gettext('Italian')),
         ('pt', gettext('Portuguese')),
         ('sv-se', gettext('Swedish (Sweden)')),
