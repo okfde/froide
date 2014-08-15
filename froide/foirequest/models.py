@@ -1627,16 +1627,17 @@ class DeferredMessage(models.Model):
         }
 
     def decoded_mail(self):
-        return base64.b64decode(self.mail).decode('utf-8')
+        return base64.b64decode(self.mail).decode('utf-8', 'ignore')
 
     def redeliver(self, request):
         from .tasks import process_mail
 
         self.request = request
         self.save()
-        mail = base64.b64decode(self.mail).decode('utf-8')
-        mail = mail.replace(self.recipient, self.request.secret_address)
-        process_mail.delay(mail.encode('utf-8'), manual=True)
+        mail = base64.b64decode(self.mail)
+        mail = mail.replace(self.recipient.encode('utf-8'),
+                            self.request.secret_address.encode('utf-8'))
+        process_mail.delay(mail, manual=True)
 
 
 # Import Signals here so models are available
