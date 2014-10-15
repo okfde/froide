@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load i18n %}
+{% load flatpages %}
 
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
 
@@ -82,6 +83,15 @@
 <div class="row">
   <div class="col-lg-offset-1 col-lg-7 col-md-7 col-md-offset-1">
     {% block jurisdiction_text %}
+      {% with page_url="/"|add:object.slug|add:"/text/" %}
+        {% get_flatpages page_url as content_page %}
+        {% if content_page %}
+          <h3>
+            {{ content_page.0.title }}
+          </h3>
+          {{ content_page.0.content|safe }}
+        {% endif %}
+      {% endwith %}
     {% endblock %}
   </div>
 
