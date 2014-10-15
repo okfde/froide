@@ -29,6 +29,7 @@ class Base(Configuration):
         'django.contrib.staticfiles',
         'django.contrib.admin',
         'django.contrib.comments',
+        'django.contrib.flatpages',
         'django.contrib.sitemaps',
 
         # external
