@@ -412,7 +412,7 @@ data-spy="scroll" data-target="#message-nav-container"
             {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
         {% endif %}
             {# Translators: URL part #}
-            <a class="hidden-print" href="{% url 'help-foi_officers' %}#{% trans "deadline" %}">
+            <a class="hidden-print" href="{% url "help-index" %}#{% trans "deadline" %}">
               {% blocktrans %}How is this calculated?{% endblocktrans %}
             </a>
           </dd>
