@@ -65,7 +65,7 @@ class NewUserBaseForm(forms.Form):
         if ALLOW_PSEUDONYM:
             self.fields["last_name"].help_text = mark_safe(
                     _('<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.')
-                    .format(url=reverse("help-your_privacy") + '#pseudonym'))
+                    .format(url=reverse("help-privacy") + '#pseudonym'))
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()
