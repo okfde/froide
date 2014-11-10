@@ -1,35 +1,33 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load flatpages %}
 
-{% block title %}{% trans "Help" %} - {{SITE_NAME}}{% endblock %}
+{% block title %}{% trans "Help" %} - {{ SITE_NAME }}{% endblock %}
 
 {% block body %}
 <div class="row">
-	<div class="col-lg-9 col-md-9">
+	<div class="col-lg-8 col-md-8">
 	  {% block helpbody %}{% endblock %}
 	</div>
-	<div class="col-lg-3 col-md-3">
+	<div class="col-lg-4 col-md-4">
+		{% block helpnav %}
 	  <h3>{% blocktrans %}Help Pages{% endblocktrans %}</h3>
 	  <ul class="nav nav-compact">
-	    <li>
-	    	<a href="{% url 'help-index' %}">{% trans "General Information" %}</a>
-	    </li>
-	    <li>
-	    	<a href="{% url 'help-about' %}">{% trans "About Froide" %}</a>
-	    </li>
-	    <li>
-	    	<a href="{% url 'help-donate' %}">{% trans "Please donate" %}</a>
-	    </li>
-	    <li>
-	    	<a href="{% url 'help-making_requests' %}">{% trans "Making Requests" %}</a>
-	    </li>
-	    <li>
-	    	<a href="{% url 'help-your_privacy' %}">{% trans "Your Privacy" %}</a>
-	    </li>
-	    <li>
-	    	<a href="{% url 'help-foi_officers' %}">{% trans "For FoI Officers" %}</a>
-	    </li>
+			{# Translators: URL part #}
+			{% trans "help" as help_url_part %}
+
+			{% with help_url="/"|add:help_url_part|add:"/" %}
+				{% get_flatpages help_url as help_pages %}
+					{% for help_page in help_pages %}
+						<li>
+							<a href="{{ help_page.url }}">
+								{{ help_page.title }}
+							</a>
+						</li>
+					{% endfor %}
+			{% endwith %}
 	  </ul>
+		{% endblock %}
 	</div>
 </div>
 {% endblock %}

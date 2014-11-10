@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load flatpages %}
+
+{% block title %}{{ flatpage.title }} - {{ SITE_NAME }}{% endblock %}
+
+{% block body %}
+{{ flatpage.content }}
+{% endblock %}

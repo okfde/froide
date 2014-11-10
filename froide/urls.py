@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib.flatpages.views import flatpage
 from django.contrib.sitemaps import Sitemap
 from django.utils.translation import ugettext as _
 
@@ -103,12 +104,31 @@ urlpatterns += patterns('',
     (r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
     (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
-    # Translators: URL part
-    (r'^%s/' % _('help'), include('froide.help_urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls))
 )
+
+# Translators: URL part
+help_url_part = _('help')
+# Translators: URL part
+about_url_part = _('about')
+# Translators: URL part
+terms_url_part = _('terms')
+# Translators: URL part
+privacy_url_part = _('privacy')
+
+urlpatterns += patterns('',
+    url(r'^%s/$' % help_url_part, flatpage,
+        {'url': '/%s/' % help_url_part}, name='help-index'),
+    url(r'^%s/%s/$' % (help_url_part, about_url_part), flatpage,
+        {'url': '/%s/%s/' % (help_url_part, about_url_part)}, name='help-about'),
+    url(r'^%s/%s/$' % (help_url_part, terms_url_part), flatpage,
+        {'url': '/%s/%s/' % (help_url_part, terms_url_part)}, name='help-terms'),
+    url(r'^%s/%s/$' % (help_url_part, privacy_url_part), flatpage,
+        {'url': '/%s/%s/' % (help_url_part, privacy_url_part)}, name='help-privacy'),
+)
+
 
 if SECRET_URLS.get('postmark_inbound'):
     urlpatterns += patterns('',

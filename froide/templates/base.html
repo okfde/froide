@@ -137,8 +137,7 @@
       <div class="col-lg-9">
         {% block footer_description %}
         <p>
-          {% url 'help-donate' as about_url %}
-          {% blocktrans with url=about_url %}Froide is a free and Open Source Project by <a href="http://www.okfn.org">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="https://github.com/stefanw/froide">repository on GitHub</a>.{% endblocktrans %}
+          {% blocktrans %}Froide is a free and Open Source Project by <a href="http://www.okfn.org">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="https://github.com/stefanw/froide">repository on GitHub</a>.{% endblocktrans %}
         </p>
         {% endblock %}
       </div>
