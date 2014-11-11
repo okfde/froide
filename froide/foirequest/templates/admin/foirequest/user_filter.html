@@ -1,0 +1,9 @@
+{% load i18n %}
+<h3>{% blocktrans with filter_title=title %} By {{ filter_title }} {% endblocktrans %}</h3>
+<ul>
+  <li>
+    <form action="{{ choices.0.query_string|iriencode }}" method="get">
+      <input type="text" name="{{ choices.0.field_path }}" value="{% if choices.0.value %}{{ choices.0.value }}{% endif %}">
+    </form>
+  </li>
+</ul>

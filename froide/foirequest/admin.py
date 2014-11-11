@@ -28,6 +28,26 @@ class SameAsNullFilter(NullFilterSpec):
     parameter_name = u'same_as'
 
 
+class RequesterFilter(admin.FieldListFilter):
+    template = "admin/foirequest/user_filter.html"
+
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        super(RequesterFilter, self).__init__(
+            field, request, params, model, model_admin, field_path)
+        self.lookup_val = request.GET.get(self.field_path, None)
+
+    def expected_parameters(self):
+        return [self.field_path]
+
+    def choices(self, cl):
+        return [{
+            'value': self.lookup_val,
+            'field_path': self.field_path,
+            'query_string': cl.get_query_string({},
+                [self.field_path]),
+        }]
+
+
 class FoiRequestAdminForm(forms.ModelForm):
     class Meta:
         model = FoiRequest
@@ -50,7 +70,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     list_display = ('title', 'first_message', 'secret_address', 'checked',
         'public_body', 'status',)
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
-        'resolution', 'is_foi', 'checked', 'public', 'visibility', SameAsNullFilter)
+        'resolution', 'is_foi', 'checked', 'public', 'visibility', SameAsNullFilter,
+        ('user', RequesterFilter))
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
