@@ -7,12 +7,20 @@
     <h2>{% trans "FoI Requests" %}</h2>
     {% for foirequest in foirequests %}
       <div class="item">
-        <h3>{{ foirequest.title }}</h3>
+        <h3>
+          <a href="{{ foirequest.get_absolute_url }}">
+            {{ foirequest.title }}
+          </a>
+        </h3>
         <p>{{ foirequest.description }}</p>
         <a href="{% url 'admin:foirequest_foirequest_change' foirequest.id %}">{% trans "View on Admin site" %}</a>
         <form method="post" action="{% url 'foirequest-mark_checked' slug=foirequest.slug %}">
           {% csrf_token %}
           <button class="btn btn-default" type="submit">{% trans "Mark as checked" %}</button>
+        </form>
+        <form class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=foirequest.slug %}">
+          {% csrf_token %}
+          <button class="btn btn-default" type="submit">{% trans "Mark as NOT FoI" %}</button>
         </form>
         <hr/>
       </div>
