@@ -1,13 +1,39 @@
 from django.contrib import admin
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-
+from django.contrib.auth.forms import UserCreationForm
 from froide.foirequest.models import FoiRequest
 
 from .models import User, AccountManager
 
 
+class CustomUserCreationForm(UserCreationForm):
+    '''
+    Copy Django's UserCreationForm over
+    Overwrite clean_username, because of Django ticket #19353
+    '''
+    class Meta(UserCreationForm.Meta):
+        model = User
+
+    def clean_username(self):
+        # Since User.username is unique, this check is redundant,
+        # but it sets a nicer error message than the ORM. See #13147.
+        username = self.cleaned_data["username"]
+        try:
+            User._default_manager.get(username=username)
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError(
+            self.error_messages['duplicate_username'],
+            code='duplicate_username',
+        )
+
+
 class UserAdmin(DjangoUserAdmin):
+    # The forms to add and change user instances
+    add_form = CustomUserCreationForm
+
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (_('Profile info'), {'fields': ('address', 'organization',
             'organization_url', 'private', 'terms', 'newsletter')})

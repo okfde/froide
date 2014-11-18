@@ -28,6 +28,24 @@ class Migration(SchemaMigration):
             ))
             db.send_create_signal('account', ['User'])
 
+        # Adding M2M table for field groups on 'User'
+        m2m_table_name = db.shorten_name(u'account_user_groups')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('user', models.ForeignKey(orm[u'account.user'], null=False)),
+            ('group', models.ForeignKey(orm[u'auth.group'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['user_id', 'group_id'])
+
+        # Adding M2M table for field user_permissions on 'User'
+        m2m_table_name = db.shorten_name(u'account_user_user_permissions')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('user', models.ForeignKey(orm[u'account.user'], null=False)),
+            ('permission', models.ForeignKey(orm[u'auth.permission'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['user_id', 'permission_id'])
+
         # Adding model 'Profile'
         db.create_table('account_profile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
