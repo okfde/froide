@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="../../">{% trans "Home" %}</a> &rsaquo;
+  <a href="../">{{ app_label|capfirst }}</a> &rsaquo;
+  <a href="./">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
+  {% trans 'Add tags to multiple items' %}
+</div>
+{% endblock %}
+
+{% block content %}
+{% with count=queryset.count %}
+<form action="" method="post">{% csrf_token %}
+  <div>
+    <p>
+      <label>{% trans "Subject" %}: <input type="text" name="subject" value=""/>
+    </p>
+    <textarea name="body" rows="8" style="width: 100%"></textarea>
+    <input type="hidden" name="action" value="send_mail" />
+    <p>
+      <input type="submit" value="{% blocktrans count count=count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />
+    </p>
+  </div>
+  {% for obj in queryset %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+  {% endfor %}
+</form>
+{% endwith %}
+{% endblock %}

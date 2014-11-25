@@ -8,16 +8,21 @@ except ImportError:
 
 from django.utils.six import text_type as str
 from django.test import TestCase
+from django.contrib.admin.sites import AdminSite
+from django.test.client import RequestFactory
 from django.core.urlresolvers import reverse
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.contrib.messages.storage import default_storage
 
 from froide.publicbody.models import PublicBody
 from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.foirequest.tests import factories
 
+
 from .models import AccountManager
 from .utils import merge_accounts
+from .admin import UserAdmin
 
 User = get_user_model()
 
@@ -591,3 +596,38 @@ class AccountTest(TestCase):
         subject, content = 'Test', 'Testing-Content'
         list(command.send_mail(subject, content))
         self.assertEqual(len(mail.outbox), user_count)
+
+
+class AdminActionTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.admin_site = AdminSite()
+        self.user_admin = UserAdmin(User, self.admin_site)
+        self.factory = RequestFactory()
+        self.user = User.objects.get(username='sw')
+        self.user.is_superuser = True
+
+    def test_send_mail(self):
+        users = User.objects.all()
+
+        req = self.factory.post('/', {})
+        req.user = self.user
+        result = self.user_admin.send_mail(req, users)
+        self.assertEqual(result.status_code, 200)
+
+        req = self.factory.post('/', {
+            'subject': 'Test',
+            'body': '^{name}|{first_name}|{last_name}|'
+        })
+        req.user = self.user
+        req._messages = default_storage(req)
+        mail.outbox = []
+
+        result = self.user_admin.send_mail(req, users)
+        self.assertIsNone(result)
+        self.assertEqual(len(mail.outbox), users.count())
+        message = mail.outbox[0]
+        user = users[0]
+        self.assertIn('|%s|' % user.first_name, message.body)
+        self.assertIn('|%s|' % user.last_name, message.body)
+        self.assertIn('^%s|' % user.get_full_name(), message.body)
