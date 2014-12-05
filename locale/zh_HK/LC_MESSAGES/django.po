@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-06 16:43+0200\n"
+"POT-Creation-Date: 2014-12-05 18:02+0100\n"
 "PO-Revision-Date: 2014-08-06 14:32+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) (http://www.transifex.com/projects/p/"
@@ -33,160 +33,147 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: docs/_build/html/theming.html:97
-msgid ""
-"Froide is a free and Open Source Project by &lt;a href=\"http://www.okfn.org"
-"\"&gt;the Open Knowledge Foundation&lt;/a&gt;."
-msgstr ""
-"Froide 是 &lt;a href=\"http://www.okfn.org\"&gt;the Open Knowledge "
-"Foundation&lt;/a&gt; 的自由及開源軟件項目。"
-
-#: docs/_build/html/_sources/theming.txt:53
-msgid ""
-"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-"\">the Open Knowledge Foundation</a>."
-msgstr ""
-"Froide 是 <a href=\"http://www.okfn.org\">Open Knowledge Foundation</a> 的自"
-"由及開源軟件項目。"
-
-#: froide/_local_settings.py:11 froide/settings.py:204 froide/settings.py:492
+#: froide/_local_settings.py:11 froide/settings.py:206 froide/settings.py:494
 msgid "German"
 msgstr "Deutsch - 德文"
 
-#. Translators: URL part of /help/
-#: froide/help_urls.py:28
-msgid "about"
-msgstr "about"
-
-#. Translators: URL part of /help/
-#: froide/help_urls.py:31
-msgid "terms"
-msgstr "terms"
-
-#. Translators: URL part of /help/
-#: froide/help_urls.py:34
-msgid "privacy"
-msgstr "privacy"
-
-#. Translators: URL part of /help/
-#: froide/help_urls.py:37
-msgid "making-requests"
-msgstr "making-requests"
-
-#. Translators: URL part of /help/
-#: froide/help_urls.py:40
-msgid "your-privacy"
-msgstr "your-privacy"
-
-#. Translators: URL part of /help/
-#: froide/help_urls.py:43
-msgid "for-foi-officers"
-msgstr "for-foi-officers"
-
-#: froide/help_urls.py:45
-msgid "donate"
-msgstr "donate"
-
-#: froide/settings.py:202
+#: froide/settings.py:203
 msgid "English"
 msgstr "English - 英文"
 
-#: froide/settings.py:203
+#: froide/settings.py:204
+msgid "Spanish"
+msgstr ""
+
+#: froide/settings.py:205
 msgid "Finnish (Finland)"
 msgstr "Suomi - 芬蘭文 (芬蘭)"
 
-#: froide/settings.py:205
+#: froide/settings.py:207
 msgid "Danish (Denmark)"
 msgstr ""
 
-#: froide/settings.py:206
+#: froide/settings.py:208
 msgid "Italian"
 msgstr "Italiano - 意大利文"
 
-#: froide/settings.py:207
+#: froide/settings.py:209
 msgid "Portuguese"
 msgstr "Português - 葡萄牙文"
 
-#: froide/settings.py:208
+#: froide/settings.py:210
 msgid "Swedish (Sweden)"
 msgstr "Svenska (Sverige) - 瑞典文 (瑞典)"
 
-#: froide/settings.py:209
+#: froide/settings.py:211
 msgid "Swedish (Finland)"
 msgstr "Svenska (Finland) - 瑞典文 (芬蘭)"
 
-#: froide/settings.py:210
+#: froide/settings.py:212
 msgid "Chinese (Simplified)"
 msgstr "中文(簡體)"
 
-#: froide/settings.py:211
+#: froide/settings.py:213
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "中文(繁體，香港)"
 
 #. Translators: request URL
-#: froide/urls.py:81
+#: froide/urls.py:82
 msgid "make-request"
 msgstr "make-request"
 
 #. Translators: URL part
-#: froide/urls.py:83
+#: froide/urls.py:84
 msgid "requests"
 msgstr "requests"
 
 #. Translators: request URL
-#: froide/urls.py:85
+#: froide/urls.py:86
 msgid "request"
 msgstr "request"
 
 #. Translators: Short-request URL
 #. Translators: Short-request auth URL
-#: froide/urls.py:87 froide/urls.py:89
+#: froide/urls.py:88 froide/urls.py:90
 msgid "r"
 msgstr "r"
 
 #. Translators: follow request URL
-#: froide/urls.py:91
+#: froide/urls.py:92
 msgid "follow"
 msgstr "follow"
 
 #. Translators: URL part
-#: froide/urls.py:93 froide/urls.py:95
+#: froide/urls.py:94 froide/urls.py:96
 #: froide/publicbody/jurisdiction_urls.py:10
 msgid "entity"
 msgstr "entity"
 
 #. Translators: URL part
-#: froide/urls.py:97 froide/publicbody/jurisdiction_urls.py:15
+#: froide/urls.py:98 froide/publicbody/jurisdiction_urls.py:15
 msgid "entities"
 msgstr "entities"
 
 #. Translators: URL part
-#: froide/urls.py:99
+#: froide/urls.py:100
 msgid "law"
 msgstr "law"
 
 #. Translators: URL part
-#: froide/urls.py:101
+#: froide/urls.py:102
 msgid "account"
 msgstr "account"
 
 #. Translators: URL part
-#: froide/urls.py:103
+#: froide/urls.py:104
 msgid "profile"
 msgstr "profile"
 
 #. Translators: URL part
-#: froide/urls.py:105
+#: froide/urls.py:106
 msgid "search"
 msgstr "search"
 
 #. Translators: URL part
-#: froide/urls.py:107
+#: froide/urls.py:113 froide/templates/help/base.html:17
 msgid "help"
 msgstr "help"
 
-#: froide/account/admin.py:9
+#. Translators: URL part
+#: froide/urls.py:115
+msgid "about"
+msgstr "about"
+
+#. Translators: URL part
+#: froide/urls.py:117
+msgid "terms"
+msgstr "terms"
+
+#. Translators: URL part
+#: froide/urls.py:119
+msgid "privacy"
+msgstr "privacy"
+
+#: froide/account/admin.py:44
 msgid "Profile info"
+msgstr ""
+
+#: froide/account/admin.py:75
+#, python-format
+msgid "%d send activation mail."
+msgstr ""
+
+#: froide/account/admin.py:76
+msgid "Resend activation mail"
+msgstr ""
+
+#: froide/account/admin.py:107
+#, python-format
+msgid "%d mails sent."
+msgstr ""
+
+#: froide/account/admin.py:119
+msgid "Send mail to users"
 msgstr ""
 
 #: froide/account/forms.py:24
@@ -256,6 +243,7 @@ msgstr ""
 "它公開顯示。然而，我們不能保證你的匿名性。"
 
 #: froide/account/forms.py:67
+#, python-brace-format
 msgid ""
 "<a target=\"_blank\" href=\"{url}\">You may use a pseudonym if you don't "
 "need to receive postal messages</a>."
@@ -541,6 +529,39 @@ msgstr ""
 #: froide/account/views.py:388
 msgid "You need to accept our new terms to continue."
 msgstr "如要繼續，你需要先同意使用條款。"
+
+#: froide/account/templates/account/admin_send_mail.html:6
+#: froide/foirequest/templates/foirequest/admin_mark_same_as.html:16
+#: froide/foirequest/templates/foirequest/admin_redeliver.html:16
+#: froide/templates/admin_utils/admin_tag_all.html:17
+msgid "Home"
+msgstr "主頁"
+
+#: froide/account/templates/account/admin_send_mail.html:9
+#: froide/templates/admin_utils/admin_tag_all.html:20
+msgid "Add tags to multiple items"
+msgstr "添加標籤到多個項目"
+
+#: froide/account/templates/account/admin_send_mail.html:18
+#: froide/foirequest/forms.py:30 froide/foirequest/forms.py:33
+#: froide/foirequest/forms.py:173 froide/foirequest/forms.py:237
+#: froide/foirequest/forms.py:429 froide/foirequest/forms.py:432
+#: froide/foirequest/models.py:1141
+#: froide/foirequest/templates/foirequest/request.html:469
+#: froide/foirequest/templates/foirequest/snippets/message.html:49
+msgid "Subject"
+msgstr "主題"
+
+#: froide/account/templates/account/admin_send_mail.html:21
+#, fuzzy
+msgid "You can use the following placeholders:"
+msgstr "你可以瀏覽公共機構的名單。"
+
+#: froide/account/templates/account/admin_send_mail.html:24
+#, python-format
+msgid "Send mail to one user"
+msgid_plural "Send mail to %(count)s users"
+msgstr[0] ""
 
 #: froide/account/templates/account/change_email.txt:1
 #, python-format
@@ -882,87 +903,92 @@ msgstr "直到 %(date)s"
 msgid "Publish"
 msgstr "發表"
 
+#: froide/account/templates/admin/account/user/change_form.html:6
+#, fuzzy
+msgid "This users requests"
+msgstr "有同一要求"
+
 #: froide/foirequest/admin.py:27
 msgid "Has same request"
 msgstr "有同一要求"
 
-#: froide/foirequest/admin.py:67
+#: froide/foirequest/admin.py:88
 #, python-format
 msgid "%d request(s) successfully marked as checked."
 msgstr "已成功標示 %d 項請求為已檢閱。"
 
-#: froide/foirequest/admin.py:68
+#: froide/foirequest/admin.py:89
 msgid "Mark selected requests as checked"
 msgstr "將所選請求標示為已檢閱"
 
-#: froide/foirequest/admin.py:72
+#: froide/foirequest/admin.py:93
 #, python-format
 msgid "%d request(s) successfully marked as not FoI."
 msgstr "已成功標示 %d 項請求為非 FoI。"
 
-#: froide/foirequest/admin.py:73
+#: froide/foirequest/admin.py:94
 msgid "Mark selected requests as not FoI"
 msgstr "將所選請求標示為非 FoI"
 
-#: froide/foirequest/admin.py:93
+#: froide/foirequest/admin.py:114
 msgid "Successfully marked requests as identical."
 msgstr "呈請已標示為重覆"
 
-#: froide/foirequest/admin.py:115
+#: froide/foirequest/admin.py:136
 msgid "Mark selected requests as identical to..."
 msgstr "標示被勾選的要求為重覆……"
 
-#: froide/foirequest/admin.py:125 froide/publicbody/admin.py:57
+#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:57
 msgid "Removed from search index"
 msgstr "已從搜索索引中刪除"
 
-#: froide/foirequest/admin.py:126 froide/publicbody/admin.py:58
+#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:58
 msgid "Remove from search index"
 msgstr "從搜索索引中刪除"
 
-#: froide/foirequest/admin.py:149
+#: froide/foirequest/admin.py:170
 msgid "Has redacted version"
 msgstr "備有修纂版本"
 
-#: froide/foirequest/admin.py:154
+#: froide/foirequest/admin.py:175
 msgid "Has converted version"
 msgstr "備有已轉換版本"
 
-#: froide/foirequest/admin.py:169
+#: froide/foirequest/admin.py:190
 #, python-format
 msgid "%d attachment(s) successfully approved."
 msgstr "%d　個附件成功獲批。"
 
-#: froide/foirequest/admin.py:170
+#: froide/foirequest/admin.py:191
 msgid "Mark selected as approved"
 msgstr "將所選請求標示為已批准"
 
-#: froide/foirequest/admin.py:174
+#: froide/foirequest/admin.py:195
 #, python-format
 msgid "%d attachment(s) successfully marked as not approvable."
 msgstr "%d　個附件成功地標記為不批准。"
 
-#: froide/foirequest/admin.py:175
+#: froide/foirequest/admin.py:196
 msgid "Mark selected as NOT approvable"
 msgstr "將所選請求標示為不可批准"
 
-#: froide/foirequest/admin.py:184
+#: froide/foirequest/admin.py:205
 msgid "Conversion tasks started."
 msgstr "轉換工作進行中"
 
-#: froide/foirequest/admin.py:185
+#: froide/foirequest/admin.py:206
 msgid "Convert to PDF"
 msgstr "轉換成為 PDF"
 
-#: froide/foirequest/admin.py:206
+#: froide/foirequest/admin.py:227
 msgid "Has request"
 msgstr "已提出要求呈請"
 
-#: froide/foirequest/admin.py:243
+#: froide/foirequest/admin.py:264
 msgid "Successfully triggered redelivery."
 msgstr "重新傳送成功。"
 
-#: froide/foirequest/admin.py:265
+#: froide/foirequest/admin.py:286
 msgid "Redeliver to..."
 msgstr "重新傳送到…"
 
@@ -1058,15 +1084,6 @@ msgstr "requester"
 #: froide/foirequest/forms.py:28
 msgid "Search for a topic or a public body:"
 msgstr "搜索主題或公共機構："
-
-#: froide/foirequest/forms.py:30 froide/foirequest/forms.py:33
-#: froide/foirequest/forms.py:173 froide/foirequest/forms.py:237
-#: froide/foirequest/forms.py:429 froide/foirequest/forms.py:432
-#: froide/foirequest/models.py:1141
-#: froide/foirequest/templates/foirequest/request.html:469
-#: froide/foirequest/templates/foirequest/snippets/message.html:49
-msgid "Subject"
-msgstr "主題"
 
 #: froide/foirequest/forms.py:35
 msgid "Body"
@@ -1858,7 +1875,7 @@ msgid "Attachment"
 msgstr "附件"
 
 #: froide/foirequest/models.py:1410
-#: froide/foirequest/templates/foirequest/list_unchecked.html:22
+#: froide/foirequest/templates/foirequest/list_unchecked.html:30
 #: froide/foirequest/templates/foirequest/snippets/message.html:86
 msgid "Attachments"
 msgstr "附件"
@@ -2206,15 +2223,14 @@ msgstr "輸入無效！"
 msgid "Deadline has been extended."
 msgstr "已延長限期。"
 
+#: froide/foirequest/templates/admin/foirequest/user_filter.html:2
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
 #: froide/foirequest/templates/admin/foirequest/foimessage/change_form.html:7
 msgid "Resend message"
 msgstr "重送訊息"
-
-#: froide/foirequest/templates/foirequest/admin_mark_same_as.html:16
-#: froide/foirequest/templates/foirequest/admin_redeliver.html:16
-#: froide/templates/admin_utils/admin_tag_all.html:17
-msgid "Home"
-msgstr "主頁"
 
 #: froide/foirequest/templates/foirequest/admin_mark_same_as.html:19
 msgid "Mark multiple requests identical"
@@ -2341,48 +2357,53 @@ msgstr "Atom Feed"
 msgid "Show all Non-FoI requests"
 msgstr "顯示全部非 FoI 請求"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:12
+#: froide/foirequest/templates/foirequest/list_unchecked.html:16
 #: froide/foirequest/templates/foirequest/show.html:607
 #: froide/publicbody/templates/publicbody/show.html:59
 msgid "View on Admin site"
 msgstr "在管理面版查看"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:15
+#: froide/foirequest/templates/foirequest/list_unchecked.html:19
 #: froide/foirequest/templates/foirequest/show.html:632
 msgid "Mark as checked"
 msgstr "標記為已檢閱"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:25
+#: froide/foirequest/templates/foirequest/list_unchecked.html:23
+#: froide/foirequest/templates/foirequest/show.html:646
+msgid "Mark as NOT FoI"
+msgstr "標記為非 FoI"
+
+#: froide/foirequest/templates/foirequest/list_unchecked.html:33
 msgid "View on Site"
 msgstr "在網站上檢示"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:26
+#: froide/foirequest/templates/foirequest/list_unchecked.html:34
 msgid "View on Admin"
 msgstr "在管理面版查看"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:28
+#: froide/foirequest/templates/foirequest/list_unchecked.html:36
 msgid "Preview in Browser"
 msgstr "以瀏覽器預覧"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:31
+#: froide/foirequest/templates/foirequest/list_unchecked.html:39
 msgid "No file present!"
 msgstr "沒有檔案！"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:37
+#: froide/foirequest/templates/foirequest/list_unchecked.html:45
 msgid "May not contain private information"
 msgstr "不應含有個人資料"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:39
+#: froide/foirequest/templates/foirequest/list_unchecked.html:47
 #, python-format
 msgid "May only contain name %(name)s."
 msgstr "只可含有姓名 %(name)s。"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:41
+#: froide/foirequest/templates/foirequest/list_unchecked.html:49
 #: froide/foirequest/templates/foirequest/snippets/attachment.html:19
 msgid "Publish this attachment"
 msgstr "張貼此附件"
 
-#: froide/foirequest/templates/foirequest/list_unchecked.html:45
+#: froide/foirequest/templates/foirequest/list_unchecked.html:53
 msgid "No request present!"
 msgstr "沒有要求呈請！"
 
@@ -3238,10 +3259,6 @@ msgstr "標記為已檢閱"
 #: froide/foirequest/templates/foirequest/show.html:649
 msgid "Marked as NOT FoI"
 msgstr "已標記為非 FoI"
-
-#: froide/foirequest/templates/foirequest/show.html:646
-msgid "Mark as NOT FoI"
-msgstr "標記為非 FoI"
 
 #: froide/foirequest/templates/foirequest/show.html:659
 msgid "Extend Deadline by Months"
@@ -4220,78 +4237,78 @@ msgid ""
 "Are we missing a public body? <a href=\"%(url)s\">Please let us know!</a>"
 msgstr "公共機構名單不齊全？<a href=\"%(url)s\">請告訴我們。</a>"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:14
+#: froide/publicbody/templates/publicbody/jurisdiction.html:17
 #, python-format
 msgid "Freedom of Information<br/>in %(name)s"
 msgstr "<br/>在　%(name)s　的資訊自由"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:18
+#: froide/publicbody/templates/publicbody/jurisdiction.html:21
 msgid "Ask Public Bodies for administrative information — it's your right."
 msgstr "向公共機構查詢政務資訊 — 這是你的權利。"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:29
+#: froide/publicbody/templates/publicbody/jurisdiction.html:32
 msgid "Which Public Bodies?"
 msgstr "哪個公共機構？"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:33
+#: froide/publicbody/templates/publicbody/jurisdiction.html:36
 msgid "All bodies that work on administrative tasks of this jurisdiction."
 msgstr "所有在此地區進行行政工作的機構。"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:36
+#: froide/publicbody/templates/publicbody/jurisdiction.html:39
 #, python-format
 msgid ""
 "Make a request to one of <a href=\"%(url)s\">%(pb_count)s Public Bodies.</a>"
 msgstr ""
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:45
+#: froide/publicbody/templates/publicbody/jurisdiction.html:48
 msgid "What Information?"
 msgstr "什麼資訊？"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:48
+#: froide/publicbody/templates/publicbody/jurisdiction.html:51
 msgid ""
 "Contracts, memos, reports and other documents of the administration: you "
 "have the right to know."
 msgstr "行政機關的的合約、備忘錄、報告書等文件 — 你有權利知道。"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:51
+#: froide/publicbody/templates/publicbody/jurisdiction.html:54
 msgid "Make a request!"
 msgstr "提出要求！"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:60
+#: froide/publicbody/templates/publicbody/jurisdiction.html:63
 msgid "What right?"
 msgstr "有什麼權利？"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:63
+#: froide/publicbody/templates/publicbody/jurisdiction.html:66
 #, python-format
 msgid ""
 "The freedom of information law in %(name)s allows you access to "
 "administrative information. "
 msgstr "%(name)s 的信息自由法容許你取得政務資訊。"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:66
+#: froide/publicbody/templates/publicbody/jurisdiction.html:69
 msgid "Get to know your right!"
 msgstr "了解更多你的權利！"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:88
+#: froide/publicbody/templates/publicbody/jurisdiction.html:102
 #, python-format
 msgid "Facts about %(name)s"
 msgstr ""
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:96
+#: froide/publicbody/templates/publicbody/jurisdiction.html:110
 #, python-format
 msgid "FOI laws in %(name)s"
 msgstr "%(name)s 的信息自由法令"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:104
+#: froide/publicbody/templates/publicbody/jurisdiction.html:118
 #, python-format
 msgid "came into effect on %(date)s"
 msgstr ""
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:108
+#: froide/publicbody/templates/publicbody/jurisdiction.html:122
 msgid "get to know this law..."
 msgstr "了解這一法律…"
 
-#: froide/publicbody/templates/publicbody/jurisdiction.html:118
+#: froide/publicbody/templates/publicbody/jurisdiction.html:132
 #, python-format
 msgid "Requests in %(name)s"
 msgstr ""
@@ -4457,30 +4474,31 @@ msgstr "登出"
 msgid "Log In /<br/>Sign up"
 msgstr "登入 /<br/>註册"
 
-#: froide/templates/base.html:141
-#, python-format
+#: froide/templates/base.html:140
+#, fuzzy
 msgid ""
 "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
 "\">the Open Knowledge Foundation</a>. If you want to support Froide, please "
-"visit the <a href=\"%(url)s\">repository on GitHub</a>."
+"visit the <a href=\"https://github.com/stefanw/froide\">repository on "
+"GitHub</a>."
 msgstr ""
 "Froide 是 <a href=\"http://www.okfn.org\">Open Knowledge Foundation</a> 的自"
 "由及開源軟件項目。有意參與 Froide 軟件項目者，請到 <a href=\"%(url)s"
 "\">GitHub 上的 repository</a>。"
 
-#: froide/templates/base.html:159
+#: froide/templates/base.html:158
 msgid "About"
 msgstr "關於"
 
-#: froide/templates/base.html:164 froide/templates/help/base.html:4
+#: froide/templates/base.html:163 froide/templates/help/base.html:5
 msgid "Help"
 msgstr "說明"
 
-#: froide/templates/base.html:166
+#: froide/templates/base.html:165
 msgid "Terms of Use"
 msgstr "使用條款"
 
-#: froide/templates/base.html:169
+#: froide/templates/base.html:168
 msgid "Privacy Statement"
 msgstr "私隱聲明"
 
@@ -4598,10 +4616,6 @@ msgid ""
 "%(site)s helps you to make freedom of information requests to public bodies"
 msgstr "%(site)s 助你向公共機構提出公開資訊呈請"
 
-#: froide/templates/admin_utils/admin_tag_all.html:20
-msgid "Add tags to multiple items"
-msgstr "添加標籤到多個項目"
-
 #: froide/templates/admin_utils/admin_tag_all.html:28
 msgid "Set these tags for all selected items:"
 msgstr "設定已選擇項目的標籤："
@@ -4640,33 +4654,9 @@ msgstr "%(date)s，%(name)s寫道："
 msgid "Read all"
 msgstr "閱讀全部"
 
-#: froide/templates/help/base.html:12
+#: froide/templates/help/base.html:14
 msgid "Help Pages"
 msgstr "幫助頁面"
-
-#: froide/templates/help/base.html:15
-msgid "General Information"
-msgstr "一般資料"
-
-#: froide/templates/help/base.html:18
-msgid "About Froide"
-msgstr "關於 Froide"
-
-#: froide/templates/help/base.html:21
-msgid "Please donate"
-msgstr "請捐款"
-
-#: froide/templates/help/base.html:24
-msgid "Making Requests"
-msgstr "提出請求"
-
-#: froide/templates/help/base.html:27
-msgid "Your Privacy"
-msgstr "你的隱私"
-
-#: froide/templates/help/base.html:30
-msgid "For FoI Officers"
-msgstr "給公開資料主任"
 
 #: froide/templates/pagination/pagination.html:5
 #: froide/templates/pagination/pagination.html:9
@@ -4728,6 +4718,51 @@ msgstr "找不到你想要的？"
 #: froide/templates/search/search.html:69
 msgid "Make a Freedom of Information Request now!"
 msgstr "現在製作一個 FOI 請求"
+
+#, fuzzy
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
+#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ msgstr ""
+#~ "Froide 是 &lt;a href=\"http://www.okfn.org\"&gt;the Open Knowledge "
+#~ "Foundation&lt;/a&gt; 的自由及開源軟件項目。"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+#~ "\">the Open Knowledge Foundation</a>."
+#~ msgstr ""
+#~ "Froide 是 <a href=\"http://www.okfn.org\">Open Knowledge Foundation</a> 的"
+#~ "自由及開源軟件項目。"
+
+#~ msgid "making-requests"
+#~ msgstr "making-requests"
+
+#~ msgid "your-privacy"
+#~ msgstr "your-privacy"
+
+#~ msgid "for-foi-officers"
+#~ msgstr "for-foi-officers"
+
+#~ msgid "donate"
+#~ msgstr "donate"
+
+#~ msgid "General Information"
+#~ msgstr "一般資料"
+
+#~ msgid "About Froide"
+#~ msgstr "關於 Froide"
+
+#~ msgid "Please donate"
+#~ msgstr "請捐款"
+
+#~ msgid "Making Requests"
+#~ msgstr "提出請求"
+
+#~ msgid "Your Privacy"
+#~ msgstr "你的隱私"
+
+#~ msgid "For FoI Officers"
+#~ msgstr "給公開資料主任"
 
 #~ msgid "Add tags to these items"
 #~ msgstr "Add tags to these requests"
