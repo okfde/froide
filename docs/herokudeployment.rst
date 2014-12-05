@@ -22,7 +22,7 @@ Install your Froide instance on Heroku
 
 3. Download and install Froide Theme::
 
-    git clone https://github.com/okfn/froide-theme.git
+    git clone https://github.com/okfde/froide-theme.git
     cd froide-theme
     pip install -r requirements.txt -e .
 

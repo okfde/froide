@@ -4,7 +4,7 @@ Theming Froide
 
 If want to customize the look of your own Froide instance or add other pages to it, you can create a theme and install it in your Froide instance.
 
-See the `FragDenStaat.de Theme <https://github.com/okfde/fragdenstaat_de>`_ as a real-life example or use the `Basic Froide Theme <https://github.com/okfn/froide-theme>`_ as a starting point.
+See the `FragDenStaat.de Theme <https://github.com/okfde/fragdenstaat_de>`_ as a real-life example or use the `Basic Froide Theme <https://github.com/okfde/froide-theme>`_ as a starting point.
 
 Basics
 ------
