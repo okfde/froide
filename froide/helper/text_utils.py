@@ -13,7 +13,7 @@ from django.utils.html import escape
 from lxml import html
 from lxml.html.clean import clean_html
 
-SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE)
+SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
 
 
 def strip_all_tags(html_string):
@@ -74,3 +74,21 @@ EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 def replace_email(text, replacement=u""):
     return EMAIL_RE.sub(str(replacement), text)
+
+
+def replace_greetings(content, greetings, replacement):
+    for greeting in greetings:
+        match = greeting.search(content)
+        if match is not None and len(match.groups()):
+            content = content.replace(match.group(1),
+                replacement)
+    return content
+
+
+def remove_closing(content, closings):
+    for closing in closings:
+        match = closing.search(content)
+        if match is not None:
+            content = content[:match.end()]
+            break
+    return content

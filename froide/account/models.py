@@ -18,6 +18,8 @@ from django.utils.crypto import constant_time_compare
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import AbstractUser, UserManager
 
+from froide.helper.text_utils import replace_greetings
+
 
 user_activated_signal = dispatch.Signal(providing_args=[])
 
@@ -71,12 +73,18 @@ class User(AbstractUser):
         if not self.private or replacements.get('name') is False:
             return content
 
+        name_replacement = replacements.get('name',
+                str(_("<< Name removed >>")))
+
+        content = replace_greetings(content,
+                settings.FROIDE_CONFIG['greetings'],
+                name_replacement)
+
+
         last_name = self.last_name
         first_name = self.first_name
         full_name = self.get_full_name()
 
-        name_replacement = replacements.get('name',
-                str(_("<< Name removed >>")))
 
         content = content.replace(full_name, name_replacement)
         content = content.replace(last_name, name_replacement)

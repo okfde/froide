@@ -750,7 +750,7 @@ input:focus {
 
 .redacted.redacted-hover:hover,
 .redacted.redacted-hover:hover a {
-    color: #fff !important;
+    color: #ddd !important;
     background-color: #000 !important;
 }
 
