@@ -72,7 +72,7 @@ class UserAdmin(DjangoUserAdmin):
                     password=password
             )
 
-        self.message_user(request, _("%d send activation mail." % rows_updated))
+        self.message_user(request, _("%d activation mails sent." % rows_updated))
     resend_activation.short_description = _("Resend activation mail")
 
     def send_mail(self, request, queryset):
