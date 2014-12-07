@@ -8,16 +8,7 @@ except ImportError:
 
 from django.utils.six import text_type as str, unichr as chr
 
-from lxml import html
-from lxml.html.clean import clean_html
-
 SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
-
-
-def strip_all_tags(html_string):
-    tree = html.document_fromstring(html_string)
-    tree = clean_html(tree)
-    return tree.xpath('//body')[0].text_content().strip()
 
 
 ##
