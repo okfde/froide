@@ -80,11 +80,9 @@ class User(AbstractUser):
                 settings.FROIDE_CONFIG['greetings'],
                 name_replacement)
 
-
         last_name = self.last_name
         first_name = self.first_name
         full_name = self.get_full_name()
-
 
         content = content.replace(full_name, name_replacement)
         content = content.replace(last_name, name_replacement)

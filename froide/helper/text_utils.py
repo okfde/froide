@@ -7,8 +7,6 @@ except ImportError:
     from htmlentitydefs import name2codepoint
 
 from django.utils.six import text_type as str, unichr as chr
-from django.utils.safestring import mark_safe
-from django.utils.html import escape
 
 from lxml import html
 from lxml.html.clean import clean_html
