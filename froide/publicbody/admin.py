@@ -32,6 +32,7 @@ class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     }
     list_display = ('name', 'email', 'url', 'tag_list', 'classification', 'jurisdiction',)
     list_filter = ('tags', 'jurisdiction', 'classification')
+    filter_horizontal = ('laws',)
     list_max_show_all = 5000
     search_fields = ['name', "description", 'classification']
     exclude = ('confirmed',)
@@ -62,6 +63,7 @@ class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'meta', 'jurisdiction',)
     raw_id_fields = ('mediator',)
+    filter_horizontal = ('combined',)
 
 
 class JurisdictionAdmin(admin.ModelAdmin):
