@@ -18,7 +18,7 @@ from django.utils.crypto import constant_time_compare
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import AbstractUser, UserManager
 
-from froide.helper.text_utils import replace_greetings
+from froide.helper.text_utils import replace_greetings, replace_word
 
 
 user_activated_signal = dispatch.Signal(providing_args=[])
@@ -45,7 +45,7 @@ class User(AbstractUser):
 
     def display_name(self):
         if self.private:
-            return str(_(u"Name Not Public"))
+            return str(_(u"<< Name Not Public >>"))
         else:
             if self.organization:
                 return u'%s (%s)' % (self.get_full_name(), self.organization)
@@ -80,15 +80,12 @@ class User(AbstractUser):
                 settings.FROIDE_CONFIG['greetings'],
                 name_replacement)
 
-        last_name = self.last_name
-        first_name = self.first_name
-        full_name = self.get_full_name()
+        content = replace_word(self.last_name, name_replacement, content)
+        content = replace_word(self.first_name, name_replacement, content)
+        content = replace_word(self.get_full_name(), name_replacement, content)
 
-        content = content.replace(full_name, name_replacement)
-        content = content.replace(last_name, name_replacement)
-        content = content.replace(first_name, name_replacement)
         if self.organization:
-            content = content.replace(self.organization, name_replacement)
+            content = replace_word(self.organization, name_replacement, content)
 
         return content
 
