@@ -54,7 +54,7 @@ def split_text_by_separator(text, separator=None):
 
 def replace_word(needle, replacement, content):
     return re.sub('(^|\W)%s($|\W)' % re.escape(needle),
-                    '\\1%s\\2' % replacement, content, flags=re.U)
+                    '\\1%s\\2' % replacement, content, re.U)
 
 
 EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
