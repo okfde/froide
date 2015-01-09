@@ -13,6 +13,8 @@ from froide.foirequest.models import FoiRequest
 
 from .models import User, AccountManager
 
+from .utils import delete_all_unexpired_sessions_for_user
+
 
 class CustomUserCreationForm(UserCreationForm):
     '''
@@ -46,7 +48,7 @@ class UserAdmin(DjangoUserAdmin):
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + ['private', 'terms', 'newsletter']
 
-    actions = ['resend_activation', 'send_mail']
+    actions = ['resend_activation', 'send_mail', 'delete_sessions']
 
     def resend_activation(self, request, queryset):
         rows_updated = 0
@@ -117,5 +119,12 @@ class UserAdmin(DjangoUserAdmin):
         return TemplateResponse(request, 'account/admin_send_mail.html',
             context, current_app=self.admin_site.name)
     send_mail.short_description = _("Send mail to users")
+
+    def delete_sessions(self, request, queryset):
+        for user in queryset:
+            delete_all_unexpired_sessions_for_user(user)
+        self.message_user(request, _("Sessions deleted."))
+        return None
+    delete_sessions.short_description = _('Delete sessions of users')
 
 admin.site.register(User, UserAdmin)
