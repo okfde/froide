@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-07 11:04+0100\n"
-"PO-Revision-Date: 2014-12-07 11:10+0100\n"
+"POT-Creation-Date: 2015-01-16 17:55+0100\n"
+"PO-Revision-Date: 2015-01-16 17:56+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/froide/language/de/)\n"
 "Language: de\n"
@@ -144,27 +144,35 @@ msgstr "nutzungsbedingungen"
 msgid "privacy"
 msgstr "datenschutzerklaerung"
 
-#: froide/account/admin.py:44
+#: froide/account/admin.py:46
 msgid "Profile info"
 msgstr "Profil-Info"
 
-#: froide/account/admin.py:75
+#: froide/account/admin.py:77
 #, python-format
 msgid "%d activation mails sent."
 msgstr "%d Aktivierungs-E-Mails versendet."
 
-#: froide/account/admin.py:76
+#: froide/account/admin.py:78
 msgid "Resend activation mail"
 msgstr "Aktivierungs-Mail neuversenden"
 
-#: froide/account/admin.py:107
+#: froide/account/admin.py:109
 #, python-format
 msgid "%d mails sent."
 msgstr "%d E-Mails gesendet."
 
-#: froide/account/admin.py:119
+#: froide/account/admin.py:121
 msgid "Send mail to users"
 msgstr "Sende E-Mail an Nutzer"
+
+#: froide/account/admin.py:126
+msgid "Sessions deleted."
+msgstr "Sessions gelöscht."
+
+#: froide/account/admin.py:128
+msgid "Delete sessions of users"
+msgstr "Sessions des Nutzers löschen"
 
 #: froide/account/forms.py:24
 msgid "First name"
@@ -362,8 +370,8 @@ msgid "Wants Newsletter"
 msgstr "Möchte Newsletter"
 
 #: froide/account/models.py:48
-msgid "Name Not Public"
-msgstr "Anfragesteller/in"
+msgid "<< Name Not Public >>"
+msgstr "<< Anfragesteller/in >>"
 
 #: froide/account/models.py:64
 msgid "<< Address removed >>"
@@ -378,13 +386,13 @@ msgid "<< Name removed >>"
 msgstr "Antragsteller/in"
 
 #. Translators: Mail subject
-#: froide/account/models.py:185
+#: froide/account/models.py:180
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
 
 #. Translators: Mail subject
-#: froide/account/models.py:208
+#: froide/account/models.py:203
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
@@ -961,11 +969,11 @@ msgstr "Markierung als identisch war erfolgreich."
 msgid "Mark selected requests as identical to..."
 msgstr "Markiere ausgewählte Anfragen als identisch zu..."
 
-#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:57
+#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:58
 msgid "Removed from search index"
 msgstr "Aus Such-Index entfernt"
 
-#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:58
+#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:59
 msgid "Remove from search index"
 msgstr "Entferne aus Such-Index"
 
@@ -4182,7 +4190,7 @@ msgstr "Komma-separiert und ggf. in \"\""
 msgid "Enter comma-separated tags here"
 msgstr "Schlagworte mit Komma getrennt eingeben"
 
-#: froide/publicbody/admin.py:47
+#: froide/publicbody/admin.py:48
 msgid "Export to CSV"
 msgstr "Exportiere als CSV"
 

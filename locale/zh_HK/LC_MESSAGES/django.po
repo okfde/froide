@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-07 11:04+0100\n"
+"POT-Creation-Date: 2015-01-16 17:55+0100\n"
 "PO-Revision-Date: 2014-08-06 14:32+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) (http://www.transifex.com/projects/p/"
@@ -154,26 +154,34 @@ msgstr "terms"
 msgid "privacy"
 msgstr "privacy"
 
-#: froide/account/admin.py:44
+#: froide/account/admin.py:46
 msgid "Profile info"
 msgstr ""
 
-#: froide/account/admin.py:75
+#: froide/account/admin.py:77
 #, python-format
 msgid "%d activation mails sent."
 msgstr ""
 
-#: froide/account/admin.py:76
+#: froide/account/admin.py:78
 msgid "Resend activation mail"
 msgstr ""
 
-#: froide/account/admin.py:107
+#: froide/account/admin.py:109
 #, python-format
 msgid "%d mails sent."
 msgstr ""
 
-#: froide/account/admin.py:119
+#: froide/account/admin.py:121
 msgid "Send mail to users"
+msgstr ""
+
+#: froide/account/admin.py:126
+msgid "Sessions deleted."
+msgstr ""
+
+#: froide/account/admin.py:128
+msgid "Delete sessions of users"
 msgstr ""
 
 #: froide/account/forms.py:24
@@ -364,7 +372,8 @@ msgid "Wants Newsletter"
 msgstr ""
 
 #: froide/account/models.py:48
-msgid "Name Not Public"
+#, fuzzy
+msgid "<< Name Not Public >>"
 msgstr "姓名不公開"
 
 #: froide/account/models.py:64
@@ -380,13 +389,13 @@ msgid "<< Name removed >>"
 msgstr "<< Name removed >>"
 
 #. Translators: Mail subject
-#: froide/account/models.py:185
+#: froide/account/models.py:180
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s ：請驗證您的帳戶"
 
 #. Translators: Mail subject
-#: froide/account/models.py:208
+#: froide/account/models.py:203
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s：請確認你的電郵地址"
@@ -938,11 +947,11 @@ msgstr "呈請已標示為重覆"
 msgid "Mark selected requests as identical to..."
 msgstr "標示被勾選的要求為重覆……"
 
-#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:57
+#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:58
 msgid "Removed from search index"
 msgstr "已從搜索索引中刪除"
 
-#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:58
+#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:59
 msgid "Remove from search index"
 msgstr "從搜索索引中刪除"
 
@@ -3993,7 +4002,7 @@ msgstr "逗號分隔"
 msgid "Enter comma-separated tags here"
 msgstr "在此輸入以半形逗號 (,) 分隔的標籤"
 
-#: froide/publicbody/admin.py:47
+#: froide/publicbody/admin.py:48
 msgid "Export to CSV"
 msgstr "以逗號分隔 (CSV) 格式匯出"
 

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-07 11:04+0100\n"
+"POT-Creation-Date: 2015-01-16 17:55+0100\n"
 "PO-Revision-Date: 2014-12-03 18:25+0000\n"
 "Last-Translator: gaba <gabelula@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/froide-3/"
@@ -146,26 +146,34 @@ msgstr "términos"
 msgid "privacy"
 msgstr "privacidad"
 
-#: froide/account/admin.py:44
+#: froide/account/admin.py:46
 msgid "Profile info"
 msgstr "Info perfil"
 
-#: froide/account/admin.py:75
+#: froide/account/admin.py:77
 #, python-format
 msgid "%d activation mails sent."
 msgstr ""
 
-#: froide/account/admin.py:76
+#: froide/account/admin.py:78
 msgid "Resend activation mail"
 msgstr ""
 
-#: froide/account/admin.py:107
+#: froide/account/admin.py:109
 #, python-format
 msgid "%d mails sent."
 msgstr ""
 
-#: froide/account/admin.py:119
+#: froide/account/admin.py:121
 msgid "Send mail to users"
+msgstr ""
+
+#: froide/account/admin.py:126
+msgid "Sessions deleted."
+msgstr ""
+
+#: froide/account/admin.py:128
+msgid "Delete sessions of users"
 msgstr ""
 
 #: froide/account/forms.py:24
@@ -365,7 +373,8 @@ msgid "Wants Newsletter"
 msgstr "Quieres Correo"
 
 #: froide/account/models.py:48
-msgid "Name Not Public"
+#, fuzzy
+msgid "<< Name Not Public >>"
 msgstr "Nombre No Publico"
 
 #: froide/account/models.py:64
@@ -381,13 +390,13 @@ msgid "<< Name removed >>"
 msgstr "<< Nombre eliminado >>"
 
 #. Translators: Mail subject
-#: froide/account/models.py:185
+#: froide/account/models.py:180
 #, python-format
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: por favor, confirmar cuenta"
 
 #. Translators: Mail subject
-#: froide/account/models.py:208
+#: froide/account/models.py:203
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s:por favor, confirmar tu nuevo correo electrónico"
@@ -978,11 +987,11 @@ msgstr "Pedidos exitosamente marcados como idénticos."
 msgid "Mark selected requests as identical to..."
 msgstr "Marcar pedidos seleccionados como idénticos a..."
 
-#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:57
+#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:58
 msgid "Removed from search index"
 msgstr "Eliminado de la busqueda"
 
-#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:58
+#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:59
 msgid "Remove from search index"
 msgstr "Eliminar de la busqueda"
 
@@ -4240,7 +4249,7 @@ msgstr "Separado por comas y citas"
 msgid "Enter comma-separated tags here"
 msgstr "Ingresa los tags separados por coma, aquí:"
 
-#: froide/publicbody/admin.py:47
+#: froide/publicbody/admin.py:48
 msgid "Export to CSV"
 msgstr "Exportar a CSV"
 
