@@ -1,3 +1,5 @@
-<div class="input-append">
-	<input type="{{ type }}" name="{{ name }}"{% if value %} value="{{ value }}"{% endif %}{% if required %} required{% endif %}{% include "floppyforms/attrs.html" %}><span class="add-on">{{ froide.currency }}</span>
+<div class="row">
+  <div class="input-group col-xs-5">
+    <input class="form-control" type="{{ type }}" name="{{ name }}"{% if value %} value="{{ value }}"{% endif %}{% if required %} required{% endif %}{% include "floppyforms/attrs.html" %}><span class="input-group-addon">{{ froide.currency }}</span>
+  </div>
 </div>

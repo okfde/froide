@@ -1,0 +1,11 @@
+{% load foisite_tags %}
+{% load i18n %}
+{% advise_foisite as foisite %}
+{% if foisite %}
+<div class="container">
+  <div class="alert alert-success">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    {% blocktrans with name=foisite.name country_name=foisite.country_name url=foisite.url %}It looks like you are visiting from {{ country_name }}. Did you know that there is an <a href="{{ url }}">FOI site for {{ country_name }} called {{ name }}</a>?{% endblocktrans %}
+  </div>
+</div>
+{% endif %}

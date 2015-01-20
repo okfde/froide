@@ -1,26 +1,32 @@
 {% extends 'foirequest/base.html' %}
-{% load url from future %}
 {% load i18n %}
-{% load pagination_tags %}
 
 {% block body %}
 <div class="row">
-  <div class="span6">
+  <div class="col-lg-6 col-md-6">
     <h2>{% trans "FoI Requests" %}</h2>
     {% for foirequest in foirequests %}
       <div class="item">
-        <h3>{{ foirequest.title }}</h3>
+        <h3>
+          <a href="{{ foirequest.get_absolute_url }}">
+            {{ foirequest.title }}
+          </a>
+        </h3>
         <p>{{ foirequest.description }}</p>
         <a href="{% url 'admin:foirequest_foirequest_change' foirequest.id %}">{% trans "View on Admin site" %}</a>
         <form method="post" action="{% url 'foirequest-mark_checked' slug=foirequest.slug %}">
           {% csrf_token %}
-          <button class="btn" type="submit">{% trans "Mark as checked" %}</button>
+          <button class="btn btn-default" type="submit">{% trans "Mark as checked" %}</button>
+        </form>
+        <form class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=foirequest.slug %}">
+          {% csrf_token %}
+          <button class="btn btn-default" type="submit">{% trans "Mark as NOT FoI" %}</button>
         </form>
         <hr/>
       </div>
     {% endfor %}
   </div>
-  <div class="span6">
+  <div class="col-lg-6 col-md-6">
     <h2>{% trans "Attachments" %}</h2>
     {% for attachment in attachments %}
       <div class="item">
@@ -35,12 +41,12 @@
         {% endif %}
         {% if attachment.belongs_to.request.slug %}
           <form method="post" action="{% url 'foirequest-approve_attachment' slug=attachment.belongs_to.request.slug attachment=attachment.pk %}">{% csrf_token %}
-            {% if attachment.belongs_to.request.user.get_profile.private %}
+            {% if attachment.belongs_to.request.user.private %}
               <p>{% trans "May not contain private information" %}</p>
             {% else %}
     	        <p>{% blocktrans with name=attachment.belongs_to.request.user.get_full_name %}May only contain name {{ name }}.{% endblocktrans %}</p>
     	      {% endif %}
-    	      <button class="btn" type="submit">{% trans "Publish this attachment" %}</button>
+    	      <button class="btn btn-default" type="submit">{% trans "Publish this attachment" %}</button>
           </form>
         {% else %}
           <div class="error">

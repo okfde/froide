@@ -1,4 +1,8 @@
 -r requirements.txt
-django-discover-runner==0.2.2
-pyelasticsearch==0.2
-selenium==2.25.0
+pyelasticsearch==0.6.1
+selenium==2.41.0
+flake8==2.1.0
+factory-boy==2.3.1
+coverage==3.7.1
+-e git://github.com/stefanw/transifex-client.git@python-3#egg=transifex_client
+mock==1.0.1

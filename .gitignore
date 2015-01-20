@@ -7,8 +7,12 @@ local_*.py
 data/
 solr/
 files/
-artwork/
-documents/
+froide/tests/testdata/*/
 .coverage
 */_build/
-froide/htmlcov/
+htmlcov/
+public/
+build/
+dist/
+*.egg-info
+*.log

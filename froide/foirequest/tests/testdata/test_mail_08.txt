@@ -1,0 +1,560 @@
+Return-Path: <Erika.Mustermann@mi.brandenburg.de>
+X-Original-To: <fragdenstaat class="de"></fragdenstaat>
+Delivered-To: foimail@fragdenstaat.de
+Received: from localhost (localhost [127.0.0.1])
+  by fragdenstaat.de (Postfix) with ESMTP id 3C7F295C08B
+  for <sw+yurpykc1hr@fragdenstaat.de>; Tue, 11 Feb 2014 09:46:10 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at fragdenstaat.de
+Received: from fragdenstaat.de ([127.0.0.1])
+  by localhost (fragdenstaat.de [127.0.0.1]) (amavisd-new, port 10024)
+  with ESMTP id 6no121m8EgNn for <sw+yurpykc1hr@fragdenstaat.de>;
+  Tue, 11 Feb 2014 09:46:05 +0100 (CET)
+X-Greylist: delayed 528 seconds by postgrey-1.34 at adenauer; Tue, 11 Feb 2014 09:46:05 CET
+Received: from mailout.brandenburg.de (mailout.brandenburg.de [194.76.232.222])
+  by fragdenstaat.de (Postfix) with ESMTP id 3993C95C06C
+  for <sw+yurpykc1hr@fragdenstaat.de>; Tue, 11 Feb 2014 09:46:05 +0100 (CET)
+X-Virus-Scanned: by amavisd-new at lvnbb.de
+From: =?iso-8859-1?Q?Mustermann=2C_Erika?= <Erika.Mustermann@mi.brandenburg.de>
+To: "'sw+yurpykc1hr@fragdenstaat.de'"
+  <sw+yurpykc1hr@fragdenstaat.de>
+Subject: =?iso-8859-1?Q?Ihre_Antr=E4ge_auf_Akteneinsicht_vom_3.2.2014?=
+Thread-Topic: =?iso-8859-1?Q?Ihre_Antr=E4ge_auf_Akteneinsicht_vom_3.2.2014?=
+Thread-Index: Ac8nA8qjVLaBPayuRDGNq5mUucgHTQ==
+Date: Tue, 11 Feb 2014 08:37:13 +0000
+Message-ID: <9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659@PMMX-MBX03.LandBB.ad.lvnbb.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-originating-ip: [10.128.29.104]
+Content-Type: multipart/mixed;
+  boundary="_006_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_"
+MIME-Version: 1.0
+
+--_006_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_
+Content-Type: multipart/alternative;
+  boundary="_000_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_"
+
+--_000_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Sehr geehrter Herr Doe,
+
+ich best=E4tige Ihnen den Eingang Ihrer im Anhang befindlichen drei Antr=E4=
+ge auf Akteneinsicht jeweils vom 3. Februar 2014 mit folgenden von Ihnen be=
+nannten Betreffzeilen:
+
+
+1.      "Disziplinarverfahren u. a. gegen B=FCrgermeister/Hauptverwaltungsb=
+eamte/Amtsdirektoren/ehrenamtliche B=FCrgermeister/Ortsvorsteher/Landr=E4te=
+ im Land Brandenburg in den letzten Jahren [#5617)"
+
+2.      "aktuelle vollst=E4ndige Liste/Auflistung von Amtstr=E4gern/kommuna=
+len Hauptverwaltungsbeamten im Land Brandenburg [#5611]"
+
+3.      "Liste/Auflistung der Besoldungsstufen der B=FCrgermeister/Hauptver=
+waltungsbeamten und ehrenamtlichen B=FCrgermeister im Land Brandenburg [#56=
+16]"
+
+Diese Antr=E4ge werden einheitlich im Referat 31 im Ministerium des Innern =
+des Landes Brandenburg (MI) bearbeitet.
+
+Aus folgenden Gr=FCnden kann Ihren Antr=E4gen nicht entsprochen werden:
+
+Zu 1. ("Disziplinarverfahren u. a. gegen B=FCrgermeister ...):
+
+Dieser Antrag wird in allen Punkten nach =A7 4 Absatz 1 Nr. 5 AIG abzulehne=
+n sein, da durch die Gew=E4hrung von Akteneinsicht Inhalte von im MI gef=FC=
+hrten Akten offenbart w=FCrden, die das MI zur Durchf=FChrung von disziplin=
+arrechtlichen Ermittlungsverfahren erstellt hat oder ihm aufgrund dieser Er=
+mittlungsverfahrens zugehen.
+
+Ich erlaube mir den Hinweis, dass gegen ehrenamtliche B=FCrgermeister und O=
+rtsvorsteher in dieser Funktion kein Disziplinarverfahren nach dem Landesdi=
+sziplinargesetz des Landes Brandenburg (LDG) eingeleitet werden kann, da de=
+r pers=F6nliche Geltungsbereich nach =A7 1 LDG nur f=FCr Beamte, Ruhestands=
+beamte, Ehrenbeamte, nicht aber f=FCr ehrenamtlich T=E4tige er=F6ffnet ist.
+
+Zu 2. ("aktuelle vollst=E4ndige Liste/Auflistung von Amtstr=E4gern/kommunal=
+en Hauptverwaltungsbeamten ..."):
+
+Dieser Antrag wird abzulehnen sein, da diese Informationen hier nicht vorli=
+egen und das MI nicht verpflichtet ist, diese Informationen neu zu erstelle=
+n. Das MI =FCbt nach =A7 110 Absatz 2,  131 Absatz 1 Satz 1 der Kommunalver=
+fassung des Landes Brandenburg (BbgKVerf) die Kommunalaufsicht =FCber die k=
+reisfreien St=E4dte und Landkreise als Gebietsk=F6rperschaften, nicht aber =
+=FCber die kreisangeh=F6rigen Gemeinden und St=E4dte aus. Von der Kommunala=
+ufsicht ist im =DCbrigen nicht die Aufsicht =FCber die Personen B=FCrgermei=
+ster und Amtsdirektoren umfasst. Selbst wenn diese Informationen vorliegen =
+w=FCrden, w=FCrde der Antrag nach =A7 6 Absatz 4 AIG abgelehnt werden, da d=
+iese Informationen von Ihnen selbst in zumutbarer Weise aus allgemein zug=
+=E4nglichen Quellen beschafft werden k=F6nnen.
+
+Zu 3. ("Liste/Auflistung der Besoldungsstufen der B=FCrgermeister ...")
+
+Dieser Antrag wird abzulehnen sein, da die Informationen zu den Fragen 1, 3=
+ und 5 hier nicht vorliegen und das MI nicht verpflichtet ist, diese Inform=
+ationen neu zu erstellen. Ich erlaube mir zu Frage 1 den Hinweis, dass ehre=
+namtliche B=FCrgermeister keine Besoldung erhalten, da es sich hierbei nich=
+t um Beamte, sondern um ehrenamtlich T=E4tige handelt. Diese erhalten nach =
+=A7 30 Absatz 4 BbgKVerf eine Aufwandsentsch=E4digung.
+
+Frage 2 betrifft nicht den Inhalt einer Akte einer aktenf=FChrenden Stelle,=
+ sondern eine Rechtsfrage, die ich wie folgt beantworte: Die Kosten f=FCr d=
+ie Besoldung der kommunalen Wahlbeamten im Land Brandenburg tr=E4gt der jew=
+eilige kommunale Dienstherr, also die kommunale Gebietsk=F6rperschaft.
+
+Frage 4, ob diese Informationen bereits unabh=E4ngig von dieser Anfrage =F6=
+ffentlich zug=E4nglich sind, beantworte ich hinsichtlich der Frage 1 wie fo=
+lgt:
+
+Nach =A7 67 Absatz 5 BbgKVerf ist die Haushaltssatzung der jeweiligen Gebie=
+tsk=F6rperschaft =F6ffentlich bekannt zu machen. Der Stellenplan, aus der s=
+ich die Besoldungsgruppe der Hauptverwaltungsbeamten ergibt, ist Bestandtei=
+l des Haushaltsplanes, der eine Anlage zur Haushaltssatzung darstellt. Eine=
+ Verpflichtung, auch den Haushaltsplan =F6ffentlich bekannt zu machen beste=
+ht nicht. Es besteht jedoch nach =A7 17 Absatz 2, Satz 2 BbgKVerf f=FCr jed=
+ermann das Recht, den Haushaltsplan innerhalb der =F6ffentlichen Sprechzeit=
+en bei der jeweiligen Gebietsk=F6rperschaft einzusehen. Die Grundgeh=E4lter=
+ der im Stellenplan ersichtlichen Besoldungsgruppe f=FCr die Hauptverwaltun=
+gsbeamten ergeben sich aus dem Brandenburgischen Besoldungsgesetz (BbgBesG)=
+, welches =F6ffentlich zug=E4nglich ist.
+
+Frage 4, ob diese Informationen bereits unabh=E4ngig von dieser Anfrage =F6=
+ffentlich zug=E4nglich sind, beantworte ich hinsichtlich der Frage 3 wie fo=
+lgt:
+
+Die von Ihnen erbetenen Informationen ergeben sich zum Teil aus dem Wortlau=
+t der brandenburgischen Einstufungsverordnung (EinstVO). Der Einstufungsver=
+ordnung k=F6nnen Sie in =A7 2 u. a. entnehmen, dass sich die besoldungsrech=
+tliche Einstufung der kommunalen Wahlbeamten nach der Einwohnerzahl der jew=
+eiligen Gebietsk=F6rperschaft richtet. Die jeweilige Einstufung der Hauptve=
+rwaltungsbeamten ist in =A7 2 EinstVO geregelt. Die Einstufungsverordnung i=
+st =F6ffentlich zug=E4nglich.
+
+Soweit Sie hinsichtlich der Ablehnung Ihres Antrages einen rechtsbehelfsf=
+=E4higen Bescheid nach dem Akteneinsichts- und Informationszugangsgesetz w=
+=FCnschen, bitte ich um entsprechende Mitteilung. In diesem Fall wird hier =
+f=FCr einen schriftlichen Bescheid Ihre postalische Anschrift ben=F6tigt.
+
+Mit freundlichen Gr=FC=DFen
+Im Auftrag
+
+Erika Mustermann
+
+Ministerium des Innern
+des Landes Brandenburg
+- Referat 31 -
+Henning-von-Tresckow- Stra=DFe 9-13
+14467 Potsdam
+
+E-Mail: erika.mustermann@mi.brandenburg.de<mailto:erika.mustermann@mi.branden=
+burg.de>
+
+
+
+--_000_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<meta name=3D"Generator" content=3D"Microsoft Word 14 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+  {font-family:Calibri;
+  panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+  {font-family:Tahoma;
+  panose-1:2 11 6 4 3 5 4 4 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+  {margin:0cm;
+  margin-bottom:.0001pt;
+  font-size:11.0pt;
+  font-family:"Calibri","sans-serif";
+  mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+  {mso-style-priority:99;
+  color:blue;
+  text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+  {mso-style-priority:99;
+  color:purple;
+  text-decoration:underline;}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+  {mso-style-priority:99;
+  mso-style-link:"Sprechblasentext Zchn";
+  margin:0cm;
+  margin-bottom:.0001pt;
+  font-size:8.0pt;
+  font-family:"Tahoma","sans-serif";
+  mso-fareast-language:EN-US;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+  {mso-style-priority:34;
+  margin-top:0cm;
+  margin-right:0cm;
+  margin-bottom:0cm;
+  margin-left:36.0pt;
+  margin-bottom:.0001pt;
+  font-size:11.0pt;
+  font-family:"Calibri","sans-serif";
+  mso-fareast-language:EN-US;}
+span.SprechblasentextZchn
+  {mso-style-name:"Sprechblasentext Zchn";
+  mso-style-priority:99;
+  mso-style-link:Sprechblasentext;
+  font-family:"Tahoma","sans-serif";
+  mso-fareast-language:EN-US;}
+span.E-MailFormatvorlage20
+  {mso-style-type:personal;
+  font-family:"Calibri","sans-serif";
+  color:windowtext;}
+span.E-MailFormatvorlage21
+  {mso-style-type:personal;
+  font-family:"Calibri","sans-serif";
+  color:#1F497D;}
+span.E-MailFormatvorlage22
+  {mso-style-type:personal;
+  font-family:"Calibri","sans-serif";
+  color:#1F497D;}
+span.E-MailFormatvorlage23
+  {mso-style-type:personal;
+  font-family:"Calibri","sans-serif";
+  color:#1F497D;}
+span.E-MailFormatvorlage24
+  {mso-style-type:personal-reply;
+  font-family:"Calibri","sans-serif";
+  color:#1F497D;}
+.MsoChpDefault
+  {mso-style-type:export-only;
+  font-size:10.0pt;}
+@page WordSection1
+  {size:612.0pt 792.0pt;
+  margin:70.85pt 70.85pt 2.0cm 70.85pt;}
+div.WordSection1
+  {page:WordSection1;}
+/* List Definitions */
+@list l0
+  {mso-list-id:1450203981;
+  mso-list-type:hybrid;
+  mso-list-template-ids:1678931124 67567631 67567641 67567643 67567631 67567=
+641 67567643 67567631 67567641 67567643;}
+@list l0:level1
+  {mso-level-tab-stop:none;
+  mso-level-number-position:left;
+  text-indent:-18.0pt;}
+@list l0:level2
+  {mso-level-number-format:alpha-lower;
+  mso-level-tab-stop:none;
+  mso-level-number-position:left;
+  text-indent:-18.0pt;}
+@list l0:level3
+  {mso-level-number-format:roman-lower;
+  mso-level-tab-stop:none;
+  mso-level-number-position:right;
+  text-indent:-9.0pt;}
+@list l0:level4
+  {mso-level-tab-stop:none;
+  mso-level-number-position:left;
+  text-indent:-18.0pt;}
+@list l0:level5
+  {mso-level-number-format:alpha-lower;
+  mso-level-tab-stop:none;
+  mso-level-number-position:left;
+  text-indent:-18.0pt;}
+@list l0:level6
+  {mso-level-number-format:roman-lower;
+  mso-level-tab-stop:none;
+  mso-level-number-position:right;
+  text-indent:-9.0pt;}
+@list l0:level7
+  {mso-level-tab-stop:none;
+  mso-level-number-position:left;
+  text-indent:-18.0pt;}
+@list l0:level8
+  {mso-level-number-format:alpha-lower;
+  mso-level-tab-stop:none;
+  mso-level-number-position:left;
+  text-indent:-18.0pt;}
+@list l0:level9
+  {mso-level-number-format:roman-lower;
+  mso-level-tab-stop:none;
+  mso-level-number-position:right;
+  text-indent:-9.0pt;}
+ol
+  {margin-bottom:0cm;}
+ul
+  {margin-bottom:0cm;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"DE" link=3D"blue" vlink=3D"purple">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Sehr geehrter Herr Doe,<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<o:p></o:p></p>
+<p class=3D"MsoNormal">ich best=E4tige Ihnen den Eingang Ihrer im Anhang be=
+findlichen drei Antr=E4ge auf Akteneinsicht jeweils vom 3. Februar 2014 mit=
+ folgenden von Ihnen benannten Betreffzeilen:<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo2"><![if !supportLists]><span style=3D"mso-list:Ignore">1.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>&#8222;Disziplinarverfahren u. a. gegen B=FCrgermei=
+ster/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche B=FCrgermeister/Or=
+tsvorsteher/Landr=E4te im Land Brandenburg in den letzten Jahren [#5617)&#8=
+220;<o:p></o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo2"><![if !supportLists]><span style=3D"mso-list:Ignore">2.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>&#8222;aktuelle vollst=E4ndige Liste/Auflistung von=
+ Amtstr=E4gern/kommunalen Hauptverwaltungsbeamten im Land Brandenburg [#561=
+1]&#8220;<o:p></o:p></p>
+<p class=3D"MsoListParagraph" style=3D"text-indent:-18.0pt;mso-list:l0 leve=
+l1 lfo2"><![if !supportLists]><span style=3D"mso-list:Ignore">3.<span style=
+=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>&#8222;Liste/Auflistung der Besoldungsstufen der B=
+=FCrgermeister/Hauptverwaltungsbeamten und ehrenamtlichen B=FCrgermeister i=
+m Land Brandenburg [#5616]&#8220;<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Diese Antr=E4ge werden einheitlich im Referat 31 im =
+Ministerium des Innern des Landes Brandenburg (MI) bearbeitet.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Aus folgenden Gr=FCnden kann Ihren Antr=E4gen nicht =
+entsprochen werden:<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Zu 1. (&#8222;Disziplinarverfahren u. a. gegen B=FCr=
+germeister &#8230;):<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Dieser Antrag wird in allen Punkten nach =A7 4 Absat=
+z 1 Nr. 5 AIG abzulehnen sein, da durch die Gew=E4hrung von Akteneinsicht I=
+nhalte von im MI gef=FChrten Akten offenbart w=FCrden, die das MI zur Durch=
+f=FChrung von disziplinarrechtlichen Ermittlungsverfahren
+ erstellt hat oder ihm aufgrund dieser Ermittlungsverfahrens zugehen.<o:p><=
+/o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Ich erlaube mir den Hinweis, dass gegen ehrenamtlich=
+e B=FCrgermeister und Ortsvorsteher in dieser Funktion kein Disziplinarverf=
+ahren nach dem Landesdisziplinargesetz des Landes Brandenburg (LDG) eingele=
+itet werden kann, da der pers=F6nliche
+ Geltungsbereich nach =A7 1 LDG nur f=FCr Beamte, Ruhestandsbeamte, Ehrenbe=
+amte, nicht aber f=FCr ehrenamtlich T=E4tige er=F6ffnet ist.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Zu 2. (&#8222;aktuelle vollst=E4ndige Liste/Auflistu=
+ng von Amtstr=E4gern/kommunalen Hauptverwaltungsbeamten &#8230;&#8220;):<o:=
+p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Dieser Antrag wird abzulehnen sein, da diese Informa=
+tionen hier nicht vorliegen und das MI nicht verpflichtet ist, diese Inform=
+ationen neu zu erstellen. Das MI =FCbt nach =A7 110 Absatz 2,&nbsp; 131 Abs=
+atz 1 Satz 1 der Kommunalverfassung des Landes
+ Brandenburg (BbgKVerf) die Kommunalaufsicht =FCber die kreisfreien St=E4dt=
+e und Landkreise als Gebietsk=F6rperschaften, nicht aber =FCber die kreisan=
+geh=F6rigen Gemeinden und St=E4dte aus. Von der Kommunalaufsicht ist im =DC=
+brigen nicht die Aufsicht =FCber die Personen B=FCrgermeister
+ und Amtsdirektoren umfasst. Selbst wenn diese Informationen vorliegen w=FC=
+rden, w=FCrde der Antrag nach =A7 6 Absatz 4 AIG abgelehnt werden, da diese=
+ Informationen von Ihnen selbst in zumutbarer Weise aus allgemein zug=E4ngl=
+ichen Quellen beschafft werden k=F6nnen.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Zu 3. (&#8222;Liste/Auflistung der Besoldungsstufen =
+der B=FCrgermeister &#8230;&#8220;)<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Dieser Antrag wird abzulehnen sein, da die Informati=
+onen zu den Fragen 1, 3 und 5 hier nicht vorliegen und das MI nicht verpfli=
+chtet ist, diese Informationen neu zu erstellen. Ich erlaube mir zu Frage 1=
+ den Hinweis, dass ehrenamtliche B=FCrgermeister
+ keine Besoldung erhalten, da es sich hierbei nicht um Beamte, sondern um e=
+hrenamtlich T=E4tige handelt. Diese erhalten nach =A7 30 Absatz 4 BbgKVerf =
+eine Aufwandsentsch=E4digung.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Frage 2 betrifft nicht den Inhalt einer Akte einer a=
+ktenf=FChrenden Stelle, sondern eine Rechtsfrage, die ich wie folgt beantwo=
+rte: Die Kosten f=FCr die Besoldung der kommunalen Wahlbeamten im Land Bran=
+denburg tr=E4gt der jeweilige kommunale
+ Dienstherr, also die kommunale Gebietsk=F6rperschaft.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Frage 4, ob diese Informationen bereits unabh=E4ngig=
+ von dieser Anfrage =F6ffentlich zug=E4nglich sind, beantworte ich hinsicht=
+lich der Frage 1 wie folgt:<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Nach =A7 67 Absatz 5 BbgKVerf ist die Haushaltssatzu=
+ng der jeweiligen Gebietsk=F6rperschaft =F6ffentlich bekannt zu machen. Der=
+ Stellenplan, aus der sich die Besoldungsgruppe der Hauptverwaltungsbeamten=
+ ergibt, ist Bestandteil des Haushaltsplanes,
+ der eine Anlage zur Haushaltssatzung darstellt. Eine Verpflichtung, auch d=
+en Haushaltsplan =F6ffentlich bekannt zu machen besteht nicht. Es besteht j=
+edoch nach =A7 17 Absatz 2<span style=3D"color:black">, Satz 2
+</span>BbgKVerf f=FCr jedermann das Recht, den Haushaltsplan innerhalb der =
+=F6ffentlichen Sprechzeiten bei der jeweiligen Gebietsk=F6rperschaft einzus=
+ehen. Die Grundgeh=E4lter der im Stellenplan ersichtlichen Besoldungsgruppe=
+ f=FCr die Hauptverwaltungsbeamten ergeben
+ sich aus dem Brandenburgischen Besoldungsgesetz (BbgBesG), welches =F6ffen=
+tlich zug=E4nglich ist. &nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Frage 4, ob diese Informationen bereits unabh=E4ngig=
+ von dieser Anfrage =F6ffentlich zug=E4nglich sind, beantworte ich hinsicht=
+lich der Frage 3 wie folgt:
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Die von Ihnen erbetenen Informationen ergeben sich z=
+um Teil aus dem Wortlaut der brandenburgischen Einstufungsverordnung (Einst=
+VO). Der Einstufungsverordnung k=F6nnen Sie in =A7 2 u. a. entnehmen, dass =
+sich die besoldungsrechtliche Einstufung
+ der kommunalen Wahlbeamten nach der Einwohnerzahl der jeweiligen Gebietsk=
+=F6rperschaft richtet. Die jeweilige Einstufung der Hauptverwaltungsbeamten=
+ ist in =A7 2 EinstVO geregelt. Die Einstufungsverordnung ist =F6ffentlich =
+zug=E4nglich.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Soweit Sie hinsichtlich der Ablehnung Ihres Antrages=
+ einen rechtsbehelfsf=E4higen Bescheid nach dem Akteneinsichts- und Informa=
+tionszugangsgesetz w=FCnschen, bitte ich um entsprechende Mitteilung. In di=
+esem Fall wird hier f=FCr einen schriftlichen
+ Bescheid Ihre postalische Anschrift ben=F6tigt.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">Mit freundli=
+chen Gr=FC=DFen<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">Im Auftrag<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE"><o:p>&nbsp;<=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">Erika Mustermann<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE"><o:p>&nbsp;<=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">Ministerium =
+des Innern
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">des Landes B=
+randenburg<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">- Referat 31=
+ -<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">Henning-von-=
+Tresckow- Stra=DFe 9-13<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">14467 Potsda=
+m<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE"><o:p>&nbsp;<=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE">E-Mail: <a h=
+ref=3D"mailto:erika.mustermann@mi.brandenburg.de">
+<span style=3D"color:windowtext">erika.mustermann@mi.brandenburg.de</span></=
+a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:DE"><o:p>&nbsp;<=
+/o:p></span></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+</body>
+</html>
+
+--_000_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_--
+
+--_006_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_
+Content-Type: message/rfc822
+Content-Disposition: attachment;
+  creation-date="Tue, 11 Feb 2014 08:31:12 GMT";
+  modification-date="Tue, 11 Feb 2014 08:31:12 GMT"
+
+From: =?utf-8?B?R3LDvG5kZWwsIEJpcmdpdA==?= <Erika.Mustermann@mi.brandenburg.de>
+To: =?utf-8?B?R3LDvG5kZWwsIEJpcmdpdA==?= <Erika.Mustermann@mi.brandenburg.de>
+Subject: =?utf-8?B?V0c6IERpc3ppcGxpbmFydmVyZmFocmVuIHUuYS4gZ2VnZW4gQsO8cmdlcm1l?=
+ =?utf-8?B?aXN0ZXIvSGF1cHR2ZXJ3YWx0dW5nc2JlYW10ZS9BbXRzZGlyZWt0b3Jlbi9l?=
+ =?utf-8?B?aHJlbmFtdGxpY2hlIELDvHJnZXJtZWlzdGVyL09ydHN2b3JzdGVoZXIvTGFu?=
+ =?utf-8?B?ZHLDpHRlIGltIExhbmQgQnJhbmRlbmJ1cmcgaW4gZGVuIGxldHp0ZW4gSmFo?=
+ =?utf-8?Q?ren_[#5617]?=
+Thread-Topic: =?utf-8?B?RGlzemlwbGluYXJ2ZXJmYWhyZW4gdS5hLiBnZWdlbiBCw7xyZ2VybWVpc3Rl?=
+ =?utf-8?B?ci9IYXVwdHZlcndhbHR1bmdzYmVhbXRlL0FtdHNkaXJla3RvcmVuL2VocmVu?=
+ =?utf-8?B?YW10bGljaGUgQsO8cmdlcm1laXN0ZXIvT3J0c3ZvcnN0ZWhlci9MYW5kcsOk?=
+ =?utf-8?B?dGUgaW0gTGFuZCBCcmFuZGVuYnVyZyBpbiBkZW4gbGV0enRlbiBKYWhyZW4g?=
+ =?utf-8?Q?[#5617]?=
+Thread-Index: AQHPICxpBMnPUOFaiUy3r3uyx1Ah8Zqi/7vggAAoTyCAAFAk0IAABJLQgAL/3QA=
+Date: Wed, 5 Feb 2014 10:39:34 +0000
+Message-ID: <9D4E4A7B99CAB04FAC0F75BC91949B0A2E700BC2@PMMX-MBX06.LandBB.ad.lvnbb.de>
+References: <20140202153513.4877.78120@localhost>
+ <15EC59D7FC6CA84F9AAC31821FB3A2A42A569A92@PMMX-MBX04.LandBB.ad.lvnbb.de>
+ <03B043C8DF620845B58714BB3CC6F14F2A5B5AC0@PMMX-MBX04.LandBB.ad.lvnbb.de>
+ <D136AF50D8D6A44688DDA4143F9457062A55BCA4@PMMX-MBX04.LandBB.ad.lvnbb.de>
+ <F37AE2CAA4211147AEDBADC316BA0C1E2A589BCE@PMMX-MBX04.LandBB.ad.lvnbb.de>
+In-Reply-To: <F37AE2CAA4211147AEDBADC316BA0C1E2A589BCE@PMMX-MBX04.LandBB.ad.lvnbb.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Exchange-Organization-AuthMechanism: 04
+X-MS-Exchange-Organization-AuthSource: PMMX-CAS08.LandBB.ad.lvnbb.de
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator:
+x-originating-ip: [10.128.29.104]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+
+DQotLS0tLVVyc3Byw7xuZ2xpY2hlIE5hY2hyaWNodC0tLS0tDQpWb246IEpvaG4gRG9lIF
+ttYWlsdG86ai5kb2UuYWJjMTIzNEBmcmFnZGVuc3RhYXQuZGVdDQpHZXNlbmRldDogU29u
+bnRhZywgMi4gRmVicnVhciAyMDE0IDE2OjM1DQpBbjogUG9zdHN0ZWxsZSBNSQ0KQmV0cm
+VmZjogRGlzemlwbGluYXJ2ZXJmYWhyZW4gdS5hLiBnZWdlbiBCw7xyZ2VybWVpc3Rlci9I
+YXVwdHZlcndhbHR1bmdzYmVhbXRlL0FtdHNkaXJla3RvcmVuL2VocmVuYW10bGljaGUgQs
+O8cmdlcm1laXN0ZXIvT3J0c3ZvcnN0ZWhlci9MYW5kcsOkdGUgaW0gTGFuZCBCcmFuZGVu
+YnVyZyBpbiBkZW4gbGV0enRlbiBKYWhyZW4gWyM1NjE3XQ0KDQpBbnRyYWcgbmFjaCBkZW
+0gQWt0ZW5laW5zaWNodHMtIHVuZCBJbmZvcm1hdGlvbnN6dWdhbmdzZ2VzZXR6IChBSUcp
+LCBVSUcsIFZJRw0KDQpTZWhyIGdlZWhydGUgRGFtZW4gdW5kIEhlcnJlbiwNCg0KYml0dG
+Ugc2VuZGVuIFNpZSBtaXIgZm9sZ2VuZGVzIHp1Og0KDQplaW5lIEF1Zmxpc3R1bmcvTGlz
+dGUgenUgZm9sZ2VuZGVuIFNhY2h2ZXJoYWx0ZW46DQoNCjEuIChlaW5nbGVpdGVuZGUpIE
+Rpc3ppcGxpbmFydmVyZmFocmVuICh1bmQgZGVyZW4gQmVncsO8bmR1bmcvQW5sYXNzKSB1
+LmEuIGdlZ2VuIELDvHJnZXJtZWlzdGVyL0hhdXB0dmVyd2FsdHVuZ3NiZWFtdGUvQW10c2
+RpcmVrdG9yZW4vZWhyZW5hbXRsaWNoZSBCw7xyZ2VybWVpc3Rlci9PcnRzdm9yc3RlaGVy
+L0xhbmRyw6R0ZSBpbSBMYW5kIEJyYW5kZW5idXJnIGV0Yy4uIGluIGRlbiBsZXR6dGVuIE
+phaHJlbg0KDQoyLiBFcmdlYm5pc3NlIGRlciAgRGlzemlwbGluYXJ2ZXJmYWhyZW4gKHVu
+ZCBkZXJlbiBCZWdyw7xuZHVuZy9Bbmxhc3MpIHUuYS4gZ2VnZW4gQsO8cmdlcm1laXN0ZX
+IvSGF1cHR2ZXJ3YWx0dW5nc2JlYW10ZS9BbXRzZGlyZWt0b3Jlbi9laHJlbmFtdGxpY2hl
+IELDvHJnZXJtZWlzdGVyL09ydHN2b3JzdGVoZXIvTGFuZHLDpHRlIGltIExhbmQgQnJhbm
+RlbmJ1cmcgZXRjLi4gaW4gZGVuIGxldHp0ZW4gSmFocmVuDQoNCjMuIFNhbmt0aW9uZW4s
+IERpc3ppcGxpbmFyc3RyYWdlbiBldGMuLi5nZWdlbiAuIGdlZ2VuIELDvHJnZXJtZWlzdG
+VyL0hhdXB0dmVyd2FsdHVuZ3NiZWFtdGUvQW10c2RpcmVrdG9yZW4vZWhyZW5hbXRsaWNo
+ZSBCw7xyZ2VybWVpc3Rlci9PcnRzdm9yc3RlaGVyL0xhbmRyw6R0ZSBpbSBMYW5kIEJyYW
+5kZW5idXJnIGV0Yy4uIGluIGRlbiBsZXR6dGVuIEphaHJlbg0KDQoNCg0KRGllcyBpc3Qg
+ZWluIEFudHJhZyBuYWNoIGRlbSBBa3RlbmVpbnNpY2h0cy0gdW5kIEluZm9ybWF0aW9uc3
+p1Z2FuZ3NnZXNldHogQnJhbmRlbmJ1cmcgKEFJRyksIGRlbSBVbXdlbHRpbmZvcm1hdGlv
+bnNnZXNldHogKHNvd2VpdCBVbXdlbHRpbmZvcm1hdGlvbmVuIGJldHJvZmZlbiBzaW5kKS
+B1bmQgZGVtIFZlcmJyYXVjaGVyaW5mb3JtYXRpb25zZ2VzZXR6IChzb3dlaXQgVmVyYnJh
+dWNoZXJpbmZvcm1hdGlvbmVuIGJldHJvZmZlbiBzaW5kKS4NCg0KTWVpbmVzIEVyYWNodG
+VucyBoYW5kZWx0IGVzIHNpY2ggYmVpIGRpZXNlciBBbmZyYWdlIHVtIGVpbmVuIGVpbmZh
+Y2hlbiBGYWxsLCBkZXIgZGFydW0gbmFjaCBkZXIgQWt0ZW5laW5zaWNodHMtIHVuZCBJbm
+Zvcm1hdGlvbnN6dWdhbmdzZ2Viw7xocmVub3JkbnVuZyAoQUlHR2ViTykga29zdGVuZnJl
+aSB6dSBiZWFudHdvcnRlbiBpc3QuDQoNClNvbGx0ZSBkaWVzZXIgQW50cmFnIElocmVzIE
+VyYWNodGVucyBnZWLDvGhyZW5wZmxpY2h0aWcgc2VpbiwgYml0dGUgaWNoLCBtaXIgZGll
+cyB2b3JhYiBtaXR6dXRlaWxlbiB1bmQgZGFiZWkgZGllIEjDtmhlIGRlciBLb3N0ZW4gYW
+56dWdlYmVuLg0KDQpNaXQgVmVyd2VpcyBhdWYgwqc2IEFicy4gMSBBSUcgYml0dGUgaWNo
+IHVtIHVudmVyesO8Z2xpY2hlIEFudHdvcnQsIHNww6R0ZXN0ZW5zIGlubmVyaGFsYiBlaW
+5lcyBNb25hdHMuDQoNClNvbGx0ZW4gU2llIGbDvHIgZGllc2VuIEFudHJhZyBuaWNodCB6
+dXN0w6RuZGlnIHNlaW4sIGJpdHRlIGljaCwgaWhuIGFuIGRpZSB6dXN0w6RuZGlnZSBCZW
+jDtnJkZSB3ZWl0ZXJ6dWxlaXRlbiB1bmQgbWljaCBkYXLDvGJlciB6dSB1bnRlcnJpY2h0
+ZW4uDQoNCkljaCBiaXR0ZSB1bSBlaW5lIEFudHdvcnQgaW4gZWxla3Ryb25pc2NoZXIgRm
+9ybSAoRS1NYWlsKSB1bmQgYmVoYWx0ZSBtaXIgdm9yLCBuYWNoIEVpbmdhbmcgSWhyZXIg
+QXVza8O8bmZ0ZSB1bSB3ZWl0ZXJlIGVyZ8OkbnplbmRlIEF1c2vDvG5mdGUgbmFjaHp1c3
+VjaGVuLg0KDQpJY2ggYml0dGUgdW0gRW1wZmFuZ3NiZXN0w6R0aWd1bmcgdW5kIGRhbmtl
+IElobmVuIGbDvHIgSWhyZSBNw7xoZS4NCg0KTWl0IGZyZXVuZGxpY2hlbiBHcsO8w59lbg
+0KDQpKb2huIERvZQ0Kai5kb2UuYWJjMTIzNEBmcmFnZGVuc3RhYXQuZGUNCg0KDQotLQ0K
+UmVjaHRzaGlud2VpczogRGllc2UgRS1NYWlsIHd1cmRlIMO8YmVyIGRlbiBXZWJzZXJ2aW
+NlIGh0dHBzOi8vZnJhZ2RlbnN0YWF0LmRlIHZlcnNlbmRldC4gQW50d29ydGVuIHdlcmRl
+biBnZ2YuIGltIEF1ZnRyYWcgZGVyIEFudHJhZ3N0ZWxsZW5kZW4gYXV0b21hdGlzY2ggYX
+VmIGRlbSBJbnRlcm5ldC1Qb3J0YWwgdmVyw7ZmZmVudGxpY2h0LiBGYWxscyBTaWUgbm9j
+aCBGcmFnZW4gaGFiZW4sIGJlc3VjaGVuIFNpZSBodHRwczovL2ZyYWdkZW5zdGFhdC5kZS
+9oaWxmZS9mdWVyLWJlaG9lcmRlbi8NCg0KDQo=
+
+--_006_9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659PMMXMBX03LandBB_

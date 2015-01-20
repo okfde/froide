@@ -1,34 +1,102 @@
 {% extends 'publicbody/base.html' %}
 
-{% load url from future %}
 {% load i18n %}
 
 {% block body %}
-<h2>{% blocktrans %}Public Bodies by Topic{% endblocktrans %}</h2>
 
-<form>
-  <input type="search"/>
-  <input type="submit"/>
-</form>
+<div class="row">
+  <div class="col-md-9 col-lg-9">
+    <h2>
+      {% blocktrans %}Public Bodies{% endblocktrans %}
+    </h2>
+  </div>
+</div>
 
-<p><a href="">{% blocktrans %}in alphabetical order{% endblocktrans %}</a> or <a href=""></a></p>
+<div class="row">
+  <div class="col-md-9 col-lg-9">
+    <div class="row">
+      <form method="get" action=".">
+        <div class="col-lg-8">
+          <div class="input-group">
+            <input class="form-control" type="search" placeholder="{% trans "Search Terms" %}" name="q" value="{{ query }}" autocomplete="off"/>
+            <span class="input-group-btn">
+              <button class="btn btn-success" type="submit">
+                <span class="glyphicon glyphicon-search"></span>
+                {% blocktrans %}Search Public Bodies{% endblocktrans %}
+              </button>
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row top-buffer">
+      <div class="col-lg-12">
+        <ul class="media-list">
+          {% for object in object_list %}
+          <li class="media">
+            {% if object.object %}
+              {% with object=object.object %}
+                {% include "publicbody/snippets/publicbody_item.html" %}
+              {% endwith %}
+            {% else %}
+              {% include "publicbody/snippets/publicbody_item.html" %}
+            {% endif %}
+          </li>
+        {% endfor %}
+        </ul>
+        {% if query %}
+          {% with getvars="&q="|add:query %}
+            {% include "pagination/pagination.html" with page_obj=object_list %}
+          {% endwith %}
+        {% else %}
+          {% include "pagination/pagination.html" with page_obj=object_list %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-lg-3">
+    {% if jurisdiction or topic %}
+      <a href="{% url 'publicbody-list' %}">{% trans "Show all public bodies" %}</a>
+    {% endif %}
+    <h3>{% trans "Jurisdictions" %}</h3>
+    <div class="list-group">
+      {% for juris in jurisdictions %}
+        {% if topic and jurisdiction == juris %}
+          {% url 'publicbody-list' topic=topic.slug as jur_url %}
+        {% elif topic %}
+          {% url 'publicbody-list' jurisdiction=juris.slug topic=topic.slug as jur_url %}
+        {% elif jurisdiction == juris %}
+          {% url 'publicbody-list' as jur_url %}
+        {% else %}
+          {% url 'publicbody-list' jurisdiction=juris.slug as jur_url %}
+        {% endif %}
+        <a class="list-group-item{% if jurisdiction == juris %} active{% endif %}" href="{{ jur_url }}{% if query %}?q={{ query }}{% endif %}">
+          <span class="badge">{{ juris.num_publicbodies }}</span>
+          <span class="small-icon jurisdiction-{{ juris.slug }}"></span>
+          {{ juris.name }}
+        </a>
+      {% endfor %}
+    </div>
+    <h3>{% trans "Topics" %}</h3>
+    <div class="list-group">
+      {% for top in topics %}
+        {% if jurisdiction and topic == top %}
+          {% url 'publicbody-list' jurisdiction=jurisdiction.slug as top_url %}
+        {% elif jurisdiction %}
+          {% url 'publicbody-list' jurisdiction=jurisdiction.slug topic=top.slug as top_url %}
+        {% elif topic == top %}
+          {% url 'publicbody-list' as top_url %}
+        {% else %}
+          {% url 'publicbody-list' topic=top.slug as top_url %}
+        {% endif %}
+        <a class="list-group-item{% if topic == top %} active{% endif %}" href="{{ top_url }}{% if query %}?q={{ query }}{% endif %}">
+          <span class="badge">{{ top.num_publicbodies }}</span>
+          <span class="small-icon topic-{{ top.slug }}"></span>
+          {{ top.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 
-
-<ul class="topic-list">
-  {% regroup object_list by topic as classified_list %}
-  {% for classified in classified_list %}
-  <li class="span-8{% if forloop.counter|divisibleby:3 %} last{% endif %}">
-  <h4 class="{{ classified.grouper }}"><a href="">{{ classified.grouper }}</a></h4>
-  </li>
-  {% endfor %}
-</ul>
 {% endblock %}
-{#
-    <ul>
-      {% for object in classified.list %}
-    <li><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></li>
-    {% empty %}
-    <li>{% blocktrans %}No Public Bodies yet{% endblocktrans %}</li>
-  {% endfor %}
-  </ul>
-  #}

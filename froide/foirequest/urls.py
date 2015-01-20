@@ -1,5 +1,6 @@
+from django.utils.six import text_type as str
 from django.core.urlresolvers import reverse
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 from django.utils.translation import pgettext
 from django.shortcuts import redirect
 
@@ -22,7 +23,6 @@ urlpatterns = patterns("froide.foirequest.views",
     (r'^unchecked/$', 'list_unchecked', {}, 'foirequest-list_unchecked'),
     # Translators: part in /request/to/public-body-slug URL
     (r'^submit$', 'submit_request', {}, 'foirequest-submit_request'),
-    (r'^search/json$', 'search_similar', {}, 'foirequest-search_similar'),
 )
 
 
@@ -49,12 +49,22 @@ foirequest_urls = [
     (r'^%s/(?P<tag>[-\w]+)/rss/$' % pgettext('URL part', 'tag'), 'list_requests',
         {'feed': 'rss'}, 'foirequest-list_feed'),
 
-] + [(r'^(?P<status>%s)/$' % unicode(urlpart), 'list_requests', {},
-        'foirequest-list') for urlpart, status in FoiRequest.STATUS_URLS
-] + [(r'^(?P<status>%s)/feed/$' % unicode(urlpart), 'list_requests', {'feed': 'atom'},
-        'foirequest-list_feed_atom') for urlpart, status in FoiRequest.STATUS_URLS
-] + [(r'^(?P<status>%s)/rss/$' % unicode(urlpart), 'list_requests', {'feed': 'rss'},
-        'foirequest-list_feed') for urlpart, status in FoiRequest.STATUS_URLS]
+    # Translators: part in request filter URL
+    (r'^%s/(?P<public_body>[-\w]+)/$' % pgettext('URL part', 'to'), 'list_requests', {},
+        'foirequest-list'),
+    (r'^%s/(?P<public_body>[-\w]+)/feed/$' % pgettext('URL part', 'to'), 'list_requests',
+        {'feed': 'atom'}, 'foirequest-list_feed_atom'),
+    (r'^%s/(?P<public_body>[-\w]+)/rss/$' % pgettext('URL part', 'to'), 'list_requests',
+        {'feed': 'rss'}, 'foirequest-list_feed'),
+
+] + [(r'^(?P<status>%s)/$' % str(urlinfo[0]), 'list_requests', {},
+        'foirequest-list') for urlinfo in FoiRequest.STATUS_URLS
+] + [(r'^(?P<status>%s)/feed/$' % str(urlinfo[0]), 'list_requests',
+        {'feed': 'atom'},
+        'foirequest-list_feed_atom') for urlinfo in FoiRequest.STATUS_URLS
+] + [(r'^(?P<status>%s)/rss/$' % str(urlinfo[0]), 'list_requests',
+        {'feed': 'rss'},
+        'foirequest-list_feed') for urlinfo in FoiRequest.STATUS_URLS]
 
 urlpatterns += patterns("froide.foirequest.views",
     *foirequest_urls

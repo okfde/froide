@@ -6,8 +6,11 @@ def froide(request):
 
 
 def site_settings(request):
-    return {"SITE_NAME": settings.SITE_NAME,
-            "SITE_URL": settings.SITE_URL,
-            "FROIDE_DRYRUN": settings.FROIDE_DRYRUN,
-            "FROIDE_DRYRUN_DOMAIN": settings.FROIDE_DRYRUN_DOMAIN,
-            "LANGUAGE_CODE": settings.LANGUAGE_CODE}
+    return {
+        "SITE_NAME": settings.SITE_NAME,
+        "SITE_EMAIL": settings.SITE_EMAIL,
+        "SITE_URL": settings.SITE_URL,
+        "CURRENT_LANGUAGE_CODE": getattr(
+            request, 'LANGUAGE_CODE', settings.LANGUAGE_CODE
+        )
+    }

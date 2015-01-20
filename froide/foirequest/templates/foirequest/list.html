@@ -1,7 +1,5 @@
 {% extends 'foirequest/base.html' %}
-{% load url from future %}
 {% load i18n %}
-{% load pagination_tags %}
 
 {% block extra_head %}
 <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
@@ -9,8 +7,9 @@
 {% endblock %}
 
 {% block body %}
-{% autopaginate object_list %}
-
+{% if public_body %}
+  <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
+{% endif %}
 {% if not filtered and jurisdiction %}
   <h2>{% blocktrans with name=jurisdiction.name %}{{ name }}: all requests{% endblocktrans %}</h2>
 {% else %}
@@ -19,7 +18,11 @@
   {% endif %}
 {% endif %}
 {% if status %}
-  <h2>{{ status }}</h2>
+  {% if filtered %}
+    <h3>{{ status }}</h3>
+  {% else %}
+    <h2>{{ status }}</h2>
+  {% endif %}
   <p>{{ status_description }}</p>
 {% endif %}
 {% if tag %}
@@ -32,22 +35,24 @@
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}
 <div class="row">
-  <div class="span8">
-    <ul class="unstyled">
+  <div class="col-lg-8">
+    <ul class="media-list">
       {% for object in object_list %}
-      <li>
+      <li class="media">
         {% include "foirequest/snippets/request_item.html" %}
       </li>
     {% endfor %}
     </ul>
-    {% paginate %}
+    {% include "pagination/pagination.html" with page_obj=object_list %}
   </div>
 
-  <div class="span4">
+  <div class="col-lg-4">
     <p>
-      <span class="badge">{% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
+      <span class="badge">
+        {% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}
+      </span>
     </p>
-    <ul class="nav nav-list">
+    <ul class="nav nav-compact">
       {% if filtered or not_foi or jurisdiction %}
         <li>
           <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
@@ -58,7 +63,7 @@
         {% for urlpart,readable_status,status in status_list %}
           <li>
             <a href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')"></i>
+              <span class="small-icon status-{{ status }}"></span>
               {{ readable_status }}
             </a>
         </li>
@@ -67,7 +72,7 @@
         {% for topic in topic_list %}
           <li>
             <a href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')"></i>
+              <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
           </li>
@@ -78,7 +83,7 @@
           {% for juris in jurisdiction_list %}
             <li>
               <a href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
-                <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/jurisdictions/{{ juris.slug }}_small.png')"></i>
+                <span class="small-icon jurisdiction-{{ juris.slug }}"></span>
                 {{ juris.name }}
               </a>
             </li>
@@ -88,7 +93,7 @@
         {% for urlpart,readable_status,status in status_list %}
           <li>
             <a href="{% url 'foirequest-list' status=urlpart %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/status/{{ status }}_small.png')"></i>
+              <span class="small-icon status-{{ status }}"></span>
               {{ readable_status }}
             </a>
           </li>
@@ -97,7 +102,7 @@
         {% for topic in topic_list %}
           <li>
             <a href="{% url 'foirequest-list' topic=topic.slug %}">
-              <i class="smallicon" style="background-image:url('{{ STATIC_URL }}img/topics/{{ topic.slug }}_small.png')"></i>
+              <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
           </li>

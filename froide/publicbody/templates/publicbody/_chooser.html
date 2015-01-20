@@ -1,35 +1,67 @@
-{% load url from future %}{% load i18n %}
+{% load i18n %}
+{% load static from staticfiles %}
 <script type="text/javascript">
   var Froide = Froide || {};
   Froide.url = Froide.url || {};
-  Froide.url.searchPublicBody = "{% url 'publicbody-search_json' %}";
-  Froide.url.autocompletePublicBody = "{% url 'publicbody-autocomplete' %}";
-  Froide.url.showPublicBody = "{% url 'publicbody-show_json' pk=0 format='json' %}";
+  Froide.url.searchPublicBody = "{% url 'api_get_search' api_name='v1' resource_name='publicbody' %}"
+  Froide.url.autocompletePublicBody = "{% url 'api_get_autocomplete' api_name='v1' resource_name='publicbody' %}";
+  Froide.url.showPublicBody = "{% url 'api_dispatch_detail' api_name='v1' resource_name='publicbody' pk='0' %}";
   Froide.template = Froide.template || {};
-Froide.template.publicBodyListingInfo = '<a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new"><i class="icon-info-sign"></i></a>';
+Froide.template.publicBodyListingInfo = '<li class="search-result">' +
+'<label>'+
+'<input type="radio" name="{% templatetag openvariable %}data_name{% templatetag closevariable %}" value="{% templatetag openvariable %}result_id{% templatetag closevariable %}"/>' +
+'{% templatetag openvariable %}result_name{% templatetag closevariable %}' +
+'<small>{% templatetag openvariable %}result_jurisdiction{% templatetag closevariable %}</small>'
+'<span class="pull-right">' +
+'<a href="{% templatetag openvariable %}result_url{% templatetag closevariable %}" class="target-new">'+
+'<span class="glyphicon glyphicon-info-sign"></span></a>'+
+'</span>' +
+'</label></li>';
 </script>
 <div class="public_body-chooser" data-inputname="{{ name }}">
   <div class="publicbody-search form-search">
-    <div class="input-append">
-      <input type="search" value="{{ topic }}" class="search-public_bodies search-query span4" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
-      <button type="button" class="btn search-public_bodies-submit"><i class="icon-search"></i>{% blocktrans %}Search{% endblocktrans %}</button>
+    <div class="input-group">
+      <input type="search" value="{% if search %}{{ search }}{% endif %}" class="search-public_bodies form-control" id="id_{{ name }}" placeholder="{% blocktrans %}Search Term{% endblocktrans %}"/>
+      <span class="input-group-btn">
+        <button type="button" class="btn btn-success search-public_bodies-submit">
+          <span class="glyphicon glyphicon-search"></span>
+          {% blocktrans %}Search{% endblocktrans %}
+        </button>
+      </span>
     </div>
-    <div class="searchexamples help-block">{% blocktrans %}Try something like:{% endblocktrans %} 
-      <a href="?topic={% trans "Environment" %}" class="searchexample">{% trans "Environment" %}</a> {% trans "or" %}
-      <a href="?topic={% trans "Ministry of Labour" %}" class="searchexample">{% trans "Ministry of Labour" %}</a><br/>
-      <a href="{% url 'help-about' %}">{% trans "Write to us if a public body is missing" %}</a>
-    </div>
+    <small class="search-examples help-block">
+      {% blocktrans %}Examples:{% endblocktrans %}
+      <a href="?topic={% trans "Environment" %}">
+        {% trans "Environment" %}
+      </a>
+      {% trans "or" %}
+      <a href="?topic={% trans "Ministry of Labour" %}">
+        {% trans "Ministry of Labour" %}
+      </a>
+    </small>
   </div>
   <div class="search-spinner" style="display:none">
-    <img src="{{ STATIC_URL }}img/spinner.gif" alt="Loading..."/>
+    <img src="{% static "img/spinner.gif" %}" alt="Loading..."/>
   </div>
-  <ul class="search-results" style="display:none">
-    <li class="empty-result" style="display:none">{% blocktrans %}No Public Bodies found for this query.{% endblocktrans %}</li>
+  <ul class="search-results list-unstyled"{% if not value %} style="display:none"{% endif %}>
+    {% if value %}
+      <li class="search-result">
+        <label>
+          <input type="radio" name="{{ name }}" value="{{ value }}" checked="checked"/>
+          {{ value_label }}
+        </label>
+      </li>
+    {% endif %}
   </ul>
-  {% if value %}
-  <label class="radio">
-    <input type="radio" name="{{ name }}" value="{{ value }}" checked="checked"/>
-    {{ value_label }}
-  </label>
-  {% endif %}
+  <div class="empty-result panel panel-warning" style="display:none">
+     <div class="panel-heading">
+      <h3 class="panel-title">
+        {% blocktrans %}No Public Bodies found for this query.{% endblocktrans %}
+      </h3>
+    </div>
+    <div class="panel-body">
+      {% url "help-about" as help_about_url %}
+      {% blocktrans with url=help_about_url %}Are we missing a public body? <a href="{{ url }}">Please let us know!</a>{% endblocktrans %}
+    </div>
+  </div>
 </div>

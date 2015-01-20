@@ -1,13 +1,14 @@
 from __future__ import with_statement
 
+from django.utils.six import text_type as str
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 
-from froide.publicbody.models import PublicBody, PublicBodyTopic, Jurisdiction
+from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
-from froide.helper.test_utils import skip_if_environ
 
 
 class WebTest(TestCase):
@@ -33,15 +34,42 @@ class WebTest(TestCase):
             kwargs={'public_body': p.slug}))
         self.assertEqual(response.status_code, 404)
 
+    def test_request_prefilled(self):
+        p = PublicBody.objects.all()[0]
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body': p.slug}) + '?body=THEBODY&subject=THESUBJECT')
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode('utf-8')
+        self.assertIn('THEBODY', content)
+        self.assertIn('THESUBJECT', content)
+
+    def test_request_prefilled_redirect(self):
+        p = PublicBody.objects.all()[0]
+        query = '?body=THEBODY&subject=THESUBJECT'
+        response = self.client.get(reverse('foirequest-make_request',
+            kwargs={'public_body_id': str(p.pk)}) + query)
+        self.assertRedirects(
+            response,
+            reverse('foirequest-make_request', kwargs={
+                'public_body': p.slug
+                }) + query,
+            status_code=301
+        )
+
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
-        for urlpart, status in FoiRequest.STATUS_URLS:
+        for urlpart, _, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
-                kwargs={"status": unicode(urlpart)}))
+                kwargs={"status": str(urlpart)}))
             self.assertEqual(response.status_code, 200)
+        url = reverse('foirequest-list',
+                kwargs={"status": 'successful'})
+        url = url.replace('successful', 'non-existing')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
-        for topic in PublicBodyTopic.objects.all():
+        for topic in PublicBodyTag.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"topic": topic.slug}))
             self.assertEqual(response.status_code, 200)
@@ -49,17 +77,20 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list_not_foi'))
         self.assertEqual(response.status_code, 200)
 
+        response = self.client.get(reverse('foirequest-list') + '?page=99999')
+        self.assertEqual(response.status_code, 200)
+
     def test_list_jurisdiction_requests(self):
         juris = Jurisdiction.objects.all()[0]
         response = self.client.get(reverse('foirequest-list'),
                 kwargs={'jurisdiction': juris.slug})
         self.assertEqual(response.status_code, 200)
-        for urlpart, status in FoiRequest.STATUS_URLS:
+        for urlpart, _, status in FoiRequest.STATUS_URLS:
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": urlpart, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)
 
-        for topic in PublicBodyTopic.objects.all():
+        for topic in PublicBodyTag.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"topic": topic.slug, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)
@@ -81,6 +112,20 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
             'tag': tag_slug
         }))
+        self.assertEqual(response.status_code, 200)
+
+    def test_publicbody_requests(self):
+        fake_slug = 'fake-slug'
+        response = self.client.get(reverse('foirequest-list', kwargs={"public_body": fake_slug}))
+        self.assertEqual(response.status_code, 404)
+        req = FoiRequest.published.all()[0]
+        pb = req.public_body
+        response = self.client.get(reverse('foirequest-list', kwargs={"public_body": pb.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(req.title, response.content.decode('utf-8'))
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={"public_body": pb.slug}))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={"public_body": pb.slug}))
         self.assertEqual(response.status_code, 200)
 
     def test_list_no_identical(self):
@@ -178,7 +223,7 @@ class WebTest(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
-        topic = PublicBodyTopic.objects.all()[0]
+        topic = PublicBodyTag.objects.filter(is_topic=True)[0]
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'jurisdiction': juris.slug,
             'topic': topic.slug
@@ -232,23 +277,6 @@ class WebTest(TestCase):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
 
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
-    def test_search_similar(self):
-        response = self.client.get(reverse('foirequest-search_similar'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual('[]', response.content.decode('utf-8'))
-        self.assertEqual(response['Content-Type'], 'application/json')
-        req = FoiRequest.objects.all()[0]
-        response = self.client.get('%s?q=%s' % (
-            reverse('foirequest-search_similar'), req.title))
-        self.assertEqual(response.status_code, 200)
-        content = response.content.decode('utf-8')
-        self.assertIn('title', content)
-        self.assertIn('description', content)
-        self.assertIn('public_body_name', content)
-        self.assertIn('url', content)
-
-    @skip_if_environ('FROIDE_SKIP_SEARCH')
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
         self.assertEqual(response.status_code, 200)
@@ -286,3 +314,48 @@ class MediaServingTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(att.get_absolute_url() + 'a')
         self.assertEqual(response.status_code, 404)
+
+
+class PerformanceTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+
+    def test_queries_foirequest(self):
+        """
+        FoiRequest page should query for non-loggedin users
+        - FoiRequest (+1)
+        - FoiMessages of that request (+1)
+        - FoiAttachments of that request (+1)
+        - FoiEvents of that request (+1)
+        - FoiRequestFollowerCount (+1)
+        - Tags (+1)
+        - ContentType + Comments for each FoiMessage (+3)
+        """
+        req = factories.FoiRequestFactory.create(site=self.site)
+        factories.FoiMessageFactory.create(request=req)
+        mes2 = factories.FoiMessageFactory.create(request=req)
+        factories.FoiAttachmentFactory.create(belongs_to=mes2)
+        ContentType.objects.clear_cache()
+        with self.assertNumQueries(9):
+            self.client.get(req.get_absolute_url())
+
+    def test_queries_foirequest_loggedin(self):
+        """
+        FoiRequest page should query for non-staff loggedin users
+        - Django session + Django user (+3)
+        - FoiRequest (+1)
+        - FoiMessages of that request (+1)
+        - FoiAttachments of that request (+1)
+        - FoiEvents of that request (+1)
+        - FoiRequestFollowerCount + if following (+2)
+        - Tags (+1)
+        - ContentType + Comments for each FoiMessage (+3)
+        """
+        req = factories.FoiRequestFactory.create(site=self.site)
+        factories.FoiMessageFactory.create(request=req)
+        mes2 = factories.FoiMessageFactory.create(request=req)
+        factories.FoiAttachmentFactory.create(belongs_to=mes2)
+        self.client.login(username='dummy', password='froide')
+        ContentType.objects.clear_cache()
+        with self.assertNumQueries(12):
+            self.client.get(req.get_absolute_url())

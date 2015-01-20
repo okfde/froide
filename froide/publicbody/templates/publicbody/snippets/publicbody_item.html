@@ -1,16 +1,18 @@
 {% load i18n %}
-<div class="iconed-item clearfix">
-  <div class="iconed-icon">
-    <img src="{{ STATIC_URL }}img/topics/{{ object.topic_slug }}.png" alt="{{ object.topic_auto }}" title="{{ object.topic_auto }}"/>
-  </div>
-  <div class="iconed-description">
-    <a href="{% if object.get_absolute_url %}{{ object.get_absolute_url }}{% else %}{{ object.url }}{% endif %}">
-      <h4>{{ object.name }}</h4>
+
+<div class="media-body">
+  <h4 class="media-heading">
+    <a href="{{ object.get_absolute_url }}">
+      {{ object.name }}
     </a>
-    {% if object.jurisdiction.name %}
-      {{ object.jurisdiction.name }}
-    {% else %}
-      {{ object.jurisdiction }}
-    {% endif %}
-  </div>
+    <br/>
+    <small>
+      {{ object.jurisdiction.name }},
+        {% if object.number_of_requests %}
+          {% blocktrans count num=object.number_of_requests %}{{ num }} request{% plural %}{{ num }} requests{% endblocktrans %}
+        {% else %}
+          {% trans "no requests yet" %}
+        {% endif %}
+    </small>
+  </h4>
 </div>

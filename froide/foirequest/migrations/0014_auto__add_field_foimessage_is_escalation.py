@@ -4,6 +4,9 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
+from froide.helper.auth_migration_util import USER_DB_NAME
+APP_MODEL, APP_MODEL_NAME = 'account.User', 'account.user'
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
@@ -32,8 +35,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
+        APP_MODEL_NAME: {
+            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
@@ -74,7 +77,7 @@ class Migration(SchemaMigration):
             'public_body': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['publicbody.PublicBody']", 'null': 'True', 'blank': 'True'}),
             'request': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['foirequest.FoiRequest']"}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'blank': 'True'})
         },
         'foirequest.foimessage': {
             'Meta': {'ordering': "('timestamp',)", 'object_name': 'FoiMessage'},
@@ -93,7 +96,7 @@ class Migration(SchemaMigration):
             'sender_email': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'sender_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'sender_public_body': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'send_messages'", 'null': 'True', 'to': "orm['publicbody.PublicBody']"}),
-            'sender_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'sender_user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True', 'blank': 'True'}),
             'sent': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'subject': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
@@ -121,7 +124,7 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '255', 'db_index': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True'}),
             'visibility': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'})
         },
         'foirequest.publicbodysuggestion': {
@@ -131,7 +134,7 @@ class Migration(SchemaMigration):
             'reason': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'request': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['foirequest.FoiRequest']"}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % APP_MODEL, 'null': 'True'})
         },
         'publicbody.foilaw': {
             'Meta': {'object_name': 'FoiLaw'},
@@ -155,8 +158,8 @@ class Migration(SchemaMigration):
         },
         'publicbody.publicbody': {
             'Meta': {'ordering': "('name',)", 'object_name': 'PublicBody'},
-            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'to': "orm['auth.User']"}),
-            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'to': "orm['auth.User']"}),
+            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'to': "orm['%s']" % APP_MODEL}),
+            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'to': "orm['%s']" % APP_MODEL}),
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'classification': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'classification_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),

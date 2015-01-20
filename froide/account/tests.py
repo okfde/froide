@@ -1,16 +1,30 @@
 import re
 import datetime
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+from django.utils.six import text_type as str
 from django.test import TestCase
+from django.contrib.admin.sites import AdminSite
+from django.test.client import RequestFactory
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core import mail
+from django.contrib.messages.storage import default_storage
 
 from froide.publicbody.models import PublicBody
 from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.foirequest.tests import factories
 
+
 from .models import AccountManager
+from .utils import merge_accounts
+from .admin import UserAdmin
+
+User = get_user_model()
 
 
 class AccountTest(TestCase):
@@ -49,8 +63,10 @@ class AccountTest(TestCase):
                 "password": "froide"})
         # already logged in, login again gives 302
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('account-show'), response['location'])
+        self.assertIn(reverse('account-show'), response.url)
         response = self.client.get(reverse('account-logout'))
+        self.assertEqual(response.status_code, 405)
+        response = self.client.post(reverse('account-logout'))
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('account-login') + "?simple")
         self.assertIn("simple_base.html", map(lambda x: x.name,
@@ -59,7 +75,7 @@ class AccountTest(TestCase):
                 {"email": "mail@stefanwehrmeyer.com",
                 "password": "froide"})
         self.assertTrue(response.status_code, 302)
-        self.assertIn("simple", response['location'])
+        self.assertIn("simple", response.url)
         user = User.objects.get(email="mail@stefanwehrmeyer.com")
         user.is_active = False
         user.save()
@@ -93,10 +109,8 @@ class AccountTest(TestCase):
         user = User.objects.get(email=post['user_email'])
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
-        profile = user.get_profile()
-        self.assertIn(unicode(user), unicode(profile))
-        self.assertEqual(profile.address, post['address'])
-        self.assertEqual(profile.organization, post['organization'])
+        self.assertEqual(user.address, post['address'])
+        self.assertEqual(user.organization, post['organization'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
         # sign up with email that is not confirmed
@@ -111,6 +125,8 @@ class AccountTest(TestCase):
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
         self.client.logout()
+        user = User.objects.get(id=user.pk)
+        self.assertTrue(user.is_active)
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 400)
 
@@ -159,8 +175,8 @@ class AccountTest(TestCase):
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('account-show'), response['Location'])
-        response = self.client.get(response['Location'])
+        self.assertIn(reverse('account-show'), response.url)
+        response = self.client.get(response.url)
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
@@ -187,7 +203,7 @@ class AccountTest(TestCase):
                 'secret': match.group(1)}))
         # user is inactive, but link was already used
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('account-login'), response['Location'])
+        self.assertIn(reverse('account-login'), response.url)
 
     def test_next_link_login(self):
         mes = FoiMessage.objects.all()[0]
@@ -201,7 +217,7 @@ class AccountTest(TestCase):
                 'next': url,
                 "password": "froide"})
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertTrue(response.url.endswith(url))
 
     def test_next_link_signup(self):
         self.client.logout()
@@ -225,7 +241,7 @@ class AccountTest(TestCase):
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertTrue(response.url.endswith(url))
 
     def test_change_password(self):
         response = self.client.get(reverse('account-change_password'))
@@ -257,25 +273,27 @@ class AccountTest(TestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
         response = self.client.post(reverse('account-send_reset_password_link'), data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
         data['email'] = 'mail@stefanwehrmeyer.com'
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/', message.body)
-        uidb36, token = match.group(1).split("-", 1)
+        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        uidb64 = match.group(1)
+        token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": "2y1-d0b8c8b186fdc63ccc6"}))
+            kwargs={"uidb64": uidb64, "token": "2y1-d0b8c8b186fdc63ccc6"}))
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['validlink'])
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}))
+            kwargs={"uidb64": uidb64, "token": token}))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['validlink'])
         data = {"new_password1": "froide4",
                 "new_password2": "froide4"}
         response = self.client.post(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}), data)
+            kwargs={"uidb64": uidb64, "token": token}), data)
         self.assertEqual(response.status_code, 302)
         # we are already logged in after redirect
         # due to extra magic in wrapping view
@@ -295,26 +313,26 @@ class AccountTest(TestCase):
         }
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertTrue(response.url.endswith(url))
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/', message.body)
-        uidb36, token = match.group(1).split("-", 1)
+        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        uidb64 = match.group(1)
+        token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}))
+            kwargs={"uidb64": uidb64, "token": token}))
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['validlink'])
         data = {"new_password1": "froide4",
                 "new_password2": "froide4"}
         response = self.client.post(reverse('account-password_reset_confirm',
-            kwargs={"uidb36": uidb36, "token": token}), data)
+            kwargs={"uidb64": uidb64, "token": token}), data)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(url))
+        self.assertTrue(response.url.endswith(url))
 
     def test_private_name(self):
         user = User.objects.get(username="dummy")
-        profile = user.get_profile()
-        profile.private = True
-        profile.save()
+        user.private = True
+        user.save()
         self.client.login(username='dummy', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Request - Private name",
@@ -333,7 +351,7 @@ class AccountTest(TestCase):
                 response.content)
         self.assertNotIn(user.last_name.encode("utf-8"),
                 response.content)
-        self.assertEqual('', user.get_profile().get_absolute_url())
+        self.assertEqual('', user.get_absolute_url())
 
     def test_change_address(self):
         data = {}
@@ -350,18 +368,16 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-change_address'), data)
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(username='sw')
-        profile = user.get_profile()
-        self.assertEqual(profile.address, data['address'])
+        self.assertEqual(user.address, data['address'])
 
     def test_go(self):
         user = User.objects.get(username='dummy')
         other_user = User.objects.get(username='sw')
         # test url is not cached and does not cause 404
         test_url = reverse('foirequest-make_request')
-        profile = user.get_profile()
 
         # Try logging in via link: success
-        autologin = profile.get_autologin_url(test_url)
+        autologin = user.get_autologin_url(test_url)
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
@@ -373,7 +389,7 @@ class AccountTest(TestCase):
         # Try logging in via link: other user is authenticated
         ok = self.client.login(username='sw', password='froide')
         self.assertTrue(ok)
-        autologin = profile.get_autologin_url(test_url)
+        autologin = user.get_autologin_url(test_url)
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
@@ -383,7 +399,7 @@ class AccountTest(TestCase):
         self.client.logout()
 
         # Try logging in via link: user not active
-        autologin = profile.get_autologin_url(test_url)
+        autologin = user.get_autologin_url(test_url)
         user.is_active = False
         user.save()
         response = self.client.get(autologin)
@@ -417,9 +433,201 @@ class AccountTest(TestCase):
             kwargs={'slug': user.username}))
         self.assertEqual(response.status_code, 200)
         user2 = factories.UserFactory.create()
-        profile = user2.get_profile()
-        profile.private = True
-        profile.save()
+        user2.private = True
+        user2.save()
         response = self.client.get(reverse('account-profile',
             kwargs={'slug': user2.username}))
         self.assertEqual(response.status_code, 404)
+
+    def test_change_email(self):
+        mail.outbox = []
+        new_email = 'newemail@example.com'
+        user = User.objects.get(username='sw')
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': 'not-email',
+            }
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(len(mail.outbox), 0)
+
+        self.client.login(username='sw', password='froide')
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': 'not-email',
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(len(mail.outbox), 0)
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': user.email
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(reverse('account-change_email'),
+            {
+                'email': new_email,
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertNotEqual(user.email, new_email)
+        self.assertEqual(len(mail.outbox), 1)
+
+        url_kwargs = {
+            "user_id": user.pk,
+            "secret": 'f' * 32,
+            "email": new_email
+        }
+        url = '%s?%s' % (
+            reverse('account-change_email'),
+            urlencode(url_kwargs)
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertNotEqual(user.email, new_email)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], new_email)
+        match = re.search(r'https?\://[^/]+(/.*)', email.body)
+        url = match.group(1)
+
+        bad_url = url.replace('user_id=%d' % user.pk, 'user_id=999999')
+        response = self.client.get(bad_url)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertNotEqual(user.email, new_email)
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(pk=user.pk)
+        self.assertEqual(user.email, new_email)
+
+    def test_account_delete(self):
+        response = self.client.get(reverse('account-settings'))
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'froide',
+                'confirmation': 'Freedom of Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 403)
+
+        user = User.objects.get(username='sw')
+        self.client.login(username='sw', password='froide')
+
+        response = self.client.get(reverse('account-settings'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'bad-password',
+                'confirmation': 'Freedom of Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'froide',
+                'confirmation': 'Strange Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(reverse('account-delete_account'),
+            {
+                'password': 'froide',
+                'confirmation': 'Freedom of Information Act'
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+
+        user = User.objects.get(pk=user.pk)
+        self.assertEqual(user.first_name, '')
+        self.assertEqual(user.last_name, '')
+        self.assertEqual(user.email, '')
+        self.assertEqual(user.username, 'u%s' % user.pk)
+        self.assertEqual(user.address, '')
+        self.assertEqual(user.organization, '')
+        self.assertEqual(user.organization_url, '')
+        self.assertTrue(user.private)
+
+    def test_merge_account(self):
+        from froide.foirequestfollower.models import FoiRequestFollower
+        from froide.foirequestfollower.tests import FoiRequestFollowerFactory
+
+        new_user = factories.UserFactory.create()
+        new_req = factories.FoiRequestFactory.create()
+        req = FoiRequest.objects.all()[0]
+        old_user = req.user
+        FoiRequestFollowerFactory.create(
+            user=new_user,
+            request=new_req
+        )
+        FoiRequestFollowerFactory.create(
+            user=old_user,
+            request=new_req
+        )
+        mes = req.messages
+        self.assertEqual(mes[0].sender_user, old_user)
+        merge_accounts(old_user, new_user)
+
+        self.assertEqual(1,
+            FoiRequestFollower.objects.filter(request=new_req).count())
+        req = FoiRequest.objects.get(pk=req.pk)
+        mes = req.messages
+        self.assertEqual(req.user, new_user)
+        self.assertEqual(mes[0].sender_user, new_user)
+
+    def test_send_mass_mail(self):
+        from froide.account.management.commands.send_mass_mail import Command
+
+        user_count = User.objects.all().count()
+        mail.outbox = []
+        command = Command()
+        subject, content = 'Test', 'Testing-Content'
+        list(command.send_mail(subject, content))
+        self.assertEqual(len(mail.outbox), user_count)
+
+
+class AdminActionTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.admin_site = AdminSite()
+        self.user_admin = UserAdmin(User, self.admin_site)
+        self.factory = RequestFactory()
+        self.user = User.objects.get(username='sw')
+        self.user.is_superuser = True
+
+    def test_send_mail(self):
+        users = User.objects.all()
+
+        req = self.factory.post('/', {})
+        req.user = self.user
+        result = self.user_admin.send_mail(req, users)
+        self.assertEqual(result.status_code, 200)
+
+        req = self.factory.post('/', {
+            'subject': 'Test',
+            'body': '^{name}|{first_name}|{last_name}|'
+        })
+        req.user = self.user
+        req._messages = default_storage(req)
+        mail.outbox = []
+
+        result = self.user_admin.send_mail(req, users)
+        self.assertIsNone(result)
+        self.assertEqual(len(mail.outbox), users.count())
+        message = mail.outbox[0]
+        user = users[0]
+        self.assertIn('|%s|' % user.first_name, message.body)
+        self.assertIn('|%s|' % user.last_name, message.body)
+        self.assertIn('^%s|' % user.get_full_name(), message.body)

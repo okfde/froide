@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load floppyforms %}
+
+{% block body %}
+<h2>{% trans "Account Settings" %}</h2>
+
+<div class="row">
+  <div class="col-lg-12">
+    <dl>
+      <dt>
+        {% blocktrans %}Your name:{% endblocktrans %}
+      </dt>
+      <dd>{{ user.get_full_name }}</dd>
+      {% if user.organisation %}
+      <dt>
+        {% blocktrans %}Your Organisation:{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ user.organisation }}
+      </dd>
+      {% endif %}
+      <dt>
+        {% blocktrans %}Your email address:{% endblocktrans %}
+      </dt>
+      <dd>{{ user.email }}</dd>
+      <dt>
+        {% blocktrans %}Your address:{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ user.address|linebreaks }}
+      </dd>
+      <dt>
+        {% trans "Account Privacy:" %}
+      </dt>
+      <dd>
+      {% if user.private %}
+        <span class="glyphicon glyphicon-lock"></span>
+        {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
+      {% else %}
+        {% blocktrans %}Your name is visible.{% endblocktrans %}
+      {% endif %}
+      </dd>
+    </dl>
+
+    <div id="change-password-now" class="section focussed">
+      {% if user.is_new %}
+        <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>
+      {% else %}
+        <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
+        <div id="change-password"{% if not password_change_form %} class="js-hidden"{% endif %}>
+        {% endif %}
+          <form action="{% url 'account-change_password' %}" method="post">
+            {% csrf_token %}
+            {% if password_change_form %}
+              {{ password_change_form.as_p }}
+            {% else %}
+              {{ user.get_password_change_form.as_p }}
+            {% endif %}
+            <button type="submit" class="btn btn-default">{% blocktrans %}Change password{% endblocktrans %}</button>
+          </form>
+        {% if not user.is_new %}
+          </div>
+        {% endif %}
+    </div>
+
+    <div id="change-address-now" class="section focussed">
+      {% if not user.address %}
+        <h3>
+          {% blocktrans %}You need to enter your address.{% endblocktrans %}
+        </h3>
+      {% else %}
+        <a href="#change-address" class="toggle">
+          {% blocktrans %}Change your address{% endblocktrans %}
+        </a>
+        <div id="change-address"{% if not address_change_form %} class="js-hidden"{% endif %}>
+        {% endif %}
+          <form action="{% url 'account-change_address' %}" method="post">
+          {% csrf_token %}
+          {% if address_change_form %}
+            {{ address_change_form.as_p }}
+          {% else %}
+            {{ user.get_address_change_form.as_p }}
+          {% endif %}
+          <button type="submit" class="btn btn-default">{% blocktrans %}Change address{% endblocktrans %}</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="change-email-section" class="section">
+      <a href="#change-email" class="toggle">
+        {% blocktrans %}Change your email address{% endblocktrans %}
+      </a>
+      <div id="change-email"{% if not change_email_form.is_bound %} class="js-hidden"{% endif %}>
+        <form action="{% url 'account-change_email' %}" method="post">
+          {% csrf_token %}
+          {% form change_email_form using "bootstrap/horizontal.html" %}
+          <p>{% trans "You will get an email to your new address and need to click a link in there." %}</p>
+          <button type="submit" class="btn btn-default">{% blocktrans %}Change email{% endblocktrans %}</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="delete-account-section" class="section">
+      <a href="#delete-account" class="toggle">
+        {% blocktrans %}Delete your account{% endblocktrans %}
+      </a>
+      <div id="delete-account" {% if not user_delete_form.is_bound %} class="js-hidden"{% endif %}>
+        <div class="alert alert-error">
+          <h4>
+            <span class="glyphicon glyphicon-fire"></span>
+            {% trans "Danger: deleting your account cannot be undone." %}
+            <span class="glyphicon glyphicon-fire"></span>
+          </h4>
+          <form action="{% url 'account-delete_account' %}" method="post">
+            {% csrf_token %}
+            {% form user_delete_form using "bootstrap/horizontal.html" %}
+            <p>
+              {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
+            </p>
+            <button type="submit" class="btn btn-danger">
+              <span class="glyphicon glyphicon-warning-sign"></span>
+              {% blocktrans %}Delete account{% endblocktrans %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

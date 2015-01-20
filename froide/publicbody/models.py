@@ -4,28 +4,36 @@ from datetime import timedelta
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
-from django.contrib.markup.templatetags.markup import markdown
+from django.utils.encoding import python_2_unicode_compatible
+
+from taggit.managers import TaggableManager
+from taggit.models import TagBase, ItemBase
+from taggit.utils import edit_string_for_tags
 
 from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
+from froide.helper.templatetags.markup import markdown
 from froide.helper.form_generator import FormGenerator
 
 
 class JurisdictionManager(models.Manager):
     def get_visible(self):
-        return super(JurisdictionManager, self).get_query_set()\
+        return self.get_query_set()\
                 .filter(hidden=False).order_by('rank', 'name')
 
+    def get_list(self):
+        return self.get_visible().annotate(num_publicbodies=models.Count('publicbody'))
 
+
+@python_2_unicode_compatible
 class Jurisdiction(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -39,31 +47,18 @@ class Jurisdiction(models.Model):
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('publicbody-show_jurisdiction',
             kwargs={'slug': self.slug})
 
-
-class PublicBodyManager(CurrentSiteManager):
-    def get_query_set(self):
-        return super(PublicBodyManager, self).get_query_set()\
-                .exclude(email="")\
-                .filter(email__isnull=False)
-
-    def get_list(self):
-        return self.get_query_set()\
-            .filter(jurisdiction__hidden=False)
-
-    def get_for_homepage(self, count=5):
-        return self.get_query_set().order_by('-number_of_requests')[:count]
-
-    def get_for_search_index(self):
-        return self.get_query_set()
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
 
+@python_2_unicode_compatible
 class FoiLaw(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -81,9 +76,9 @@ class FoiLaw(models.Model):
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
-            null=True, blank=True)
+            null=True, blank=True, default=30)
     max_response_time_unit = models.CharField(_("Unit of Response Time"),
-            blank=True, max_length=32,
+            blank=True, max_length=32, default='day',
             choices=(('day', _('Day(s)')),
                 ('working_day', _('Working Day(s)')),
                 ('month_de', _('Month(s) (DE)')),
@@ -104,15 +99,14 @@ class FoiLaw(models.Model):
         verbose_name = _("Freedom of Information Law")
         verbose_name_plural = _("Freedom of Information Laws")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
 
-    @property
-    def formatted_description(self):
-        return markdown(self.description)
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     @property
     def letter_start_form(self):
@@ -129,30 +123,39 @@ class FoiLaw(models.Model):
         return FormGenerator(self.letter_end, post).render()
 
     @property
-    def request_note_markdown(self):
+    def request_note_html(self):
         return markdown(self.request_note)
 
+    @property
+    def description_html(self):
+        return markdown(self.description)
+
     def get_refusal_reason_choices(self):
-        not_applicable = [(_("Law not applicable"), _("No law can be applied"))]
+        not_applicable = [('n/a', _("No law can be applied"))]
         if self.meta:
-            return not_applicable +\
-                    [(l[0], "%s: %s" % (law.name, l[1])) for law in self.combined.all()
-                         for l in law.get_refusal_reason_choices()[1:]]
+            return (not_applicable +
+                    [(l[0], "%s: %s" % (law.name, l[1]))
+                    for law in self.combined.all()
+                    for l in law.get_refusal_reason_choices()[1:]])
         else:
-            return not_applicable + \
-                [(x, truncate_words(x, 12)) for x in self.refusal_reasons.splitlines()]
+            return (not_applicable +
+                    [(x, Truncator(x).words(12))
+                    for x in self.refusal_reasons.splitlines()])
 
     @classmethod
     def get_default_law(cls, pb=None):
         if pb:
             return cls.objects.filter(jurisdiction=pb.jurisdiction).order_by('-meta')[0]
-        return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
+        try:
+            return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
+        except FoiLaw.DoesNotExist:
+            return None
 
     def as_dict(self):
         return {
             "pk": self.pk, "name": self.name,
-            "description_markdown": markdown(self.description),
-            "request_note_markdown": self.request_note_markdown,
+            "description_html": self.description_html,
+            "request_note_html": self.request_note_html,
             "description": self.description,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
@@ -176,41 +179,67 @@ class FoiLaw(models.Model):
             return calculate_workingday_range(date, value)
 
 
-class PublicBodyTopicManager(models.Manager):
-    def get_list(self):
-        """This is an unportable hack in order to put
-        the 'Andere' (other) topic (currently first item in list)
-        at the end of the list
-        TODO: solve this via some kind of boost field"""
-        topics = list(self.get_query_set().order_by("name"))
-        return topics[1:] + topics[:1]
+class PublicBodyTagManager(models.Manager):
+    def get_topic_list(self):
+        return (self.get_query_set().filter(is_topic=True)
+            .order_by('rank', 'name')
+            .annotate(num_publicbodies=models.Count('publicbodies'))
+        )
 
 
-class PublicBodyTopic(models.Model):
-    name = models.CharField(_("Name"), max_length=255)
-    slug = models.SlugField(_("Slug"), max_length=255)
-    description = models.TextField(_("Description"), blank=True)
-    count = models.IntegerField(_("Count"), default=0)
+class PublicBodyTag(TagBase):
+    is_topic = models.BooleanField(_('as topic'), default=False)
+    rank = models.SmallIntegerField(_('rank'), default=0)
 
-    objects = PublicBodyTopicManager()
+    objects = PublicBodyTagManager()
 
     class Meta:
-        verbose_name = _("Topic")
-        verbose_name_plural = _("Topics")
-
-    def __unicode__(self):
-        return self.name
+        verbose_name = _("Public Body Tag")
+        verbose_name_plural = _("Public Body Tags")
 
 
+class TaggedPublicBody(ItemBase):
+    tag = models.ForeignKey(PublicBodyTag,
+                            related_name="publicbodies")
+    content_object = models.ForeignKey('PublicBody')
+
+    class Meta:
+        verbose_name = _('Tagged Public Body')
+        verbose_name_plural = _('Tagged Public Bodies')
+
+    @classmethod
+    def tags_for(cls, model, instance=None):
+        if instance is not None:
+            return cls.tag_model().objects.filter(**{
+                '%s__content_object' % cls.tag_relname(): instance
+            })
+        return cls.tag_model().objects.filter(**{
+            '%s__content_object__isnull' % cls.tag_relname(): False
+        }).distinct()
+
+
+class PublicBodyManager(CurrentSiteManager):
+    def get_query_set(self):
+        return super(PublicBodyManager, self).get_query_set()\
+                .exclude(email="")\
+                .filter(email__isnull=False)
+
+    def get_list(self):
+        return self.get_query_set()\
+            .filter(jurisdiction__hidden=False)\
+            .select_related('jurisdiction')
+
+    def get_for_search_index(self):
+        return self.get_query_set()
+
+
+@python_2_unicode_compatible
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
-    topic = models.ForeignKey(PublicBodyTopic, verbose_name=_("Topic"),
-            null=True, on_delete=models.SET_NULL)
-    url = models.URLField(_("URL"), null=True, blank=True,
-            verify_exists=False, max_length=500)
+    url = models.URLField(_("URL"), null=True, blank=True, max_length=500)
     parent = models.ForeignKey('PublicBody', null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
             related_name="children")
@@ -220,7 +249,8 @@ class PublicBody(models.Model):
     depth = models.SmallIntegerField(default=0)
     classification = models.CharField(_("Classification"), max_length=255,
             blank=True)
-    classification_slug = models.SlugField(_("Classification Slug"), max_length=255)
+    classification_slug = models.SlugField(_("Classification Slug"), max_length=255,
+            blank=True)
 
     email = models.EmailField(_("Email"), null=True, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
@@ -228,12 +258,16 @@ class PublicBody(models.Model):
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
 
-    _created_by = models.ForeignKey(User, verbose_name=_("Created by"),
+    _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
             on_delete=models.SET_NULL, default=1)
-    _updated_by = models.ForeignKey(User, verbose_name=_("Updated by"),
+    _updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+            verbose_name=_("Updated by"),
             blank=True, null=True, related_name='public_body_updaters',
             on_delete=models.SET_NULL, default=1)
+    created_at = models.DateTimeField(_("Created at"), default=timezone.now)
+    updated_at = models.DateTimeField(_("Updated at"), default=timezone.now, auto_now=True)
     confirmed = models.BooleanField(_("confirmed"), default=True)
 
     number_of_requests = models.IntegerField(_("Number of requests"),
@@ -246,6 +280,7 @@ class PublicBody(models.Model):
 
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
+    tags = TaggableManager(through=TaggedPublicBody, blank=True)
 
     non_filtered_objects = models.Manager()
     objects = PublicBodyManager()
@@ -256,20 +291,20 @@ class PublicBody(models.Model):
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
 
-    serializable_fields = ('name', 'slug', 'request_note_markdown',
-            'description', 'topic_name', 'url', 'email', 'contact',
+    serializable_fields = ('name', 'slug', 'request_note_html',
+            'description', 'url', 'email', 'contact',
             'address', 'domain')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     @property
     def created_by(self):
-        return self._created_by or AnonymousUser()
+        return self._created_by
 
     @property
     def updated_by(self):
-        return self._updated_by or AnonymousUser()
+        return self._updated_by
 
     @property
     def domain(self):
@@ -278,14 +313,12 @@ class PublicBody(models.Model):
         return None
 
     @property
-    def topic_name(self):
-        if self.topic:
-            return self.topic.name
-        return None
+    def request_note_html(self):
+        return markdown(self.request_note)
 
     @property
-    def request_note_markdown(self):
-        return markdown(self.request_note)
+    def tag_list(self):
+        return edit_string_for_tags(self.tags.all())
 
     @property
     def default_law(self):
@@ -293,6 +326,9 @@ class PublicBody(models.Model):
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
+
+    def get_absolute_domain_url(self):
+        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_label(self):
         return mark_safe('%(name)s - <a href="%(url)s" class="target-new info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
@@ -321,31 +357,44 @@ class PublicBody(models.Model):
         return len(PublicBody.objects.filter(parent=self))
 
     @classmethod
-    def export_csv(cls, jurisdiction=None):
-        import csv
-        from StringIO import StringIO
-        s = StringIO()
-        fields = ("name", "other_names", "slug", "topic__slug", "classification",
-            "depth", "children_count", "email", "description", "url", "website_dump",
-            "contact", "address")
+    def export_csv(cls, queryset):
+        from django.utils import six
+
+        if six.PY3:
+            import csv
+        else:
+            import unicodecsv as csv
+
+        s = six.StringIO()
+
+        fields = ("id", "name", "email", "contact",
+            "address", "url", "classification",
+            "jurisdiction__slug", "tags",
+            "other_names", "website_dump", "description",
+            "request_note", "parent__name",
+        )
+
         writer = csv.DictWriter(s, fields)
-        # Fake writeheader on Python 2.6
-        writer.writerow(dict([(v, v) for v in fields]))
-        pbs = PublicBody.objects.all()
-        if jurisdiction:
-            pbs = pbs.filter(jurisdiction__slug=jurisdiction)
-        for pb in pbs:
-            d = {}
+        writer.writeheader()
+        for pb in queryset:
+            d = {
+                'tags': edit_string_for_tags(pb.tags.all())
+            }
             for field in fields:
+                if field in d:
+                    continue
                 value = pb
                 for f in field.split('__'):
                     value = getattr(value, f)
+                    if value is None:
+                        break
                 if value is None:
-                    d[field] = value
-                elif isinstance(value, unicode):
-                    d[field] = value.encode("utf-8")
+                    d[field] = ""
                 else:
-                    d[field] = unicode(value).encode("utf-8")
+                    d[field] = value
             writer.writerow(d)
+
         s.seek(0)
-        return s.read()
+        if six.PY3:
+            return s.read()
+        return s.read().decode('utf-8')

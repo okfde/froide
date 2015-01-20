@@ -1,0 +1,14 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.get_full_name %}Hello {{ name }},{% endblocktrans %}
+
+{% blocktrans count count as count %}in the last 24 hours there was an update on one of your requests.{% plural %}in the last 24 hours there were updates to {{ count }} of your requests.{% endblocktrans %}
+{% for request, container in req_event_dict.items %}
+{% blocktrans with title=request.title %}Updates to your request "{{ title }}"{% endblocktrans %}:
+{% for event in container.events %} - {{ event }}
+{% endfor %}
+{% blocktrans with link=container.go_url %}Visit your request: {{ link }}{% endblocktrans %}
+
+{% endfor %}
+{% blocktrans with site_name=site_name %}
+Cheers,
+{{ site_name }}
+{% endblocktrans %}{% endautoescape %}

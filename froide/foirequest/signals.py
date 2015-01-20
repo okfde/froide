@@ -5,28 +5,60 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from haystack import connections
+from haystack.utils import get_identifier
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 
 
 def trigger_index_update(klass, instance_pk):
-    fake_instance = klass()
-    fake_instance.pk = instance_pk
-    uni = connections['default'].get_unified_index()
-    index = uni.get_index(klass)
-    index.enqueue_save(fake_instance)
+    try:
+        from celery_haystack.utils import get_update_task
+    except ImportError:
+        return
+    task = get_update_task()
+    task.delay('update', get_identifier(klass(id=instance_pk)))
 
 
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="send_notification_became_overdue")
 def send_notification_became_overdue(sender, **kwargs):
-    send_mail(_("%(site_name)s: Request became overdue")
-                % {"site_name": settings.SITE_NAME},
-            render_to_string("foirequest/became_overdue.txt",
-                {"request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(sender.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+    if not sender.user.is_active:
+        return
+    if not sender.user.email:
+        return
+    send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: Request became overdue") % {
+                    "site_name": settings.SITE_NAME
+                },
+                sender.pk),
+            render_to_string("foirequest/emails/became_overdue.txt", {
+                "request": sender,
+                "go_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
+                "site_name": settings.SITE_NAME
+            }),
+            settings.DEFAULT_FROM_EMAIL,
+            [sender.user.email])
+
+
+@receiver(FoiRequest.became_asleep,
+        dispatch_uid="send_notification_became_asleep")
+def send_notification_became_asleep(sender, **kwargs):
+    if not sender.user.is_active:
+        return
+    if not sender.user.email:
+        return
+    send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: Request became asleep") % {
+                    "site_name": settings.SITE_NAME
+                },
+                sender.pk),
+            render_to_string("foirequest/emails/became_asleep.txt", {
+                "request": sender,
+                "go_url": sender.user.get_autologin_url(
+                    sender.get_absolute_short_url()
+                ),
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
@@ -34,11 +66,23 @@ def send_notification_became_overdue(sender, **kwargs):
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    send_mail(_("You received a reply to your Freedom of Information Request"),
-            render_to_string("foirequest/message_received_notification.txt",
-                {"message": message, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(message.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+    if not sender.user.is_active:
+        return
+    if not sender.user.email:
+        return
+    send_mail(u'{0} [#{1}]'.format(
+                _("%(site_name)s: New reply to your request") % {
+                    "site_name": settings.SITE_NAME
+                },
+                sender.pk),
+            render_to_string("foirequest/emails/message_received_notification.txt", {
+                "message": message,
+                "request": sender,
+                "go_url": sender.user.get_autologin_url(
+                    message.get_absolute_short_url()
+                ),
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
@@ -47,29 +91,56 @@ def notify_user_message_received(sender, message=None, **kwargs):
         dispatch_uid="notify_user_public_body_suggested")
 def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
     if sender.user != suggestion.user:
-        send_mail(_("Your request received a suggestion for a Public Body"),
-                render_to_string("foirequest/public_body_suggestion_received.txt",
-                    {"suggestion": suggestion, "request": sender,
-                    "go_url": sender.user.get_profile().get_autologin_url(
-                            sender.get_absolute_short_url()),
-                    "site_name": settings.SITE_NAME}),
+        send_mail(u'{0} [#{1}]'.format(
+                    _("%(site_name)s: New suggestion for a Public Body") % {
+                        "site_name": settings.SITE_NAME
+                    },
+                    sender.pk),
+                render_to_string("foirequest/emails/public_body_suggestion_received.txt", {
+                    "suggestion": suggestion,
+                    "request": sender,
+                    "go_url": sender.user.get_autologin_url(
+                        sender.get_absolute_short_url()
+                    ),
+                    "site_name": settings.SITE_NAME
+                }),
                 settings.DEFAULT_FROM_EMAIL,
                 [sender.user.email])
 
 
 @receiver(FoiRequest.message_sent,
+        dispatch_uid="set_last_message_date_on_message_sent")
+def set_last_message_date_on_message_sent(sender, message=None, **kwargs):
+    if message is not None:
+        sender.last_message = message.timestamp
+        sender.save()
+
+
+@receiver(FoiRequest.message_received,
+        dispatch_uid="set_last_message_date_on_message_received")
+def set_last_message_date_on_message_received(sender, message=None, **kwargs):
+    if message is not None:
+        sender.last_message = message.timestamp
+        sender.save()
+
+
+@receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
-    if len(sender.messages) == 1:
-        subject = _("Your Freedom of Information Request was sent")
-        template = "foirequest/confirm_foi_request_sent.txt"
+    messages = sender.get_messages()
+    if len(messages) == 1:
+        subject = _("%(site_name)s: Your Freedom of Information Request was sent")
+        template = "foirequest/emails/confirm_foi_request_sent.txt"
     else:
-        subject = _("Your Message was sent")
-        template = "foirequest/confirm_foi_message_sent.txt"
-    send_mail(subject,
-            render_to_string(template,
-                {"request": sender, "message": message,
-                    "site_name": settings.SITE_NAME}),
+        subject = _("%(site_name)s: Your Message was sent")
+        template = "foirequest/emails/confirm_foi_message_sent.txt"
+    subject = subject % {"site_name": settings.SITE_NAME}
+    send_mail(u'{0} [#{1}]'.format(subject, sender.pk),
+            render_to_string(template, {
+                "request": sender,
+                "message": message,
+                "site_name": settings.SITE_NAME
+            }),
             settings.DEFAULT_FROM_EMAIL,
             [sender.user.email])
 
@@ -115,7 +186,7 @@ def decrement_request_count(sender, instance=None, **kwargs):
 def foimessage_delayed_update(instance=None, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
-    instance.request.save()
+    trigger_index_update(FoiRequest, instance.request_id)
 
 
 @receiver(signals.post_delete, sender=FoiMessage,
@@ -129,7 +200,7 @@ def foimessage_delayed_remove(instance, **kwargs):
 def foiattachment_delayed_update(instance, created=False, **kwargs):
     if created and kwargs.get('raw', False):
         return
-    instance.belongs_to.request.save()
+    trigger_index_update(FoiRequest, instance.belongs_to.request_id)
 
 
 @receiver(signals.post_delete, sender=FoiAttachment,
@@ -159,12 +230,21 @@ def create_event_message_received(sender, **kwargs):
             public_body=sender.public_body)
 
 
+@receiver(FoiAttachment.attachment_published,
+    dispatch_uid="create_event_followers_attachments_approved")
+def create_event_followers_attachments_approved(sender, **kwargs):
+    FoiEvent.objects.create_event("attachment_published",
+            sender.belongs_to.request,
+            user=sender.belongs_to.request.user,
+            public_body=sender.belongs_to.request.public_body)
+
+
 @receiver(FoiRequest.status_changed,
         dispatch_uid="create_event_status_changed")
 def create_event_status_changed(sender, **kwargs):
     status = kwargs['status']
     data = kwargs['data']
-    if data['costs'] > 0:
+    if data.get('costs', 0) > 0:
         FoiEvent.objects.create_event("reported_costs", sender,
                 user=sender.user,
                 public_body=sender.public_body, amount=data['costs'])
@@ -176,10 +256,6 @@ def create_event_status_changed(sender, **kwargs):
         FoiEvent.objects.create_event("partially_successful", sender,
                 user=sender.user,
                 public_body=sender.public_body, reason=data['refusal_reason'])
-    elif status == "request_redirected":
-        FoiEvent.objects.create_event("request_redirected", sender,
-                user=sender.user,
-                public_body=sender.public_body)
     else:
         FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
             public_body=sender.public_body,
@@ -225,3 +301,17 @@ def create_event_add_postal_reply(sender, **kwargs):
 def create_event_escalated(sender, **kwargs):
     FoiEvent.objects.create_event("escalated", sender,
             user=sender.user, public_body=sender.law.mediator)
+
+
+@receiver(signals.post_save, sender=FoiAttachment,
+        dispatch_uid="foiattachment_convert_attachment")
+def foiattachment_convert_attachment(instance=None, created=False, **kwargs):
+    if kwargs.get('raw', False):
+        return
+
+    from .tasks import convert_attachment_task
+
+    if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
+            instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
+        if instance.converted_id is None:
+            convert_attachment_task.delay(instance.id)

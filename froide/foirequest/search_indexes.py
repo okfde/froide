@@ -1,11 +1,14 @@
 from haystack import indexes
 
-from celery_haystack.indexes import CelerySearchIndex
+try:
+    from celery_haystack.indexes import CelerySearchIndex as SearchIndex
+except ImportError:
+    SearchIndex = indexes.SearchIndex
 
 from .models import FoiRequest
 
 
-class FoiRequestIndex(CelerySearchIndex, indexes.Indexable):
+class FoiRequestIndex(SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document=True, use_template=True)
     title = indexes.CharField(model_attr='title')
     description = indexes.CharField(model_attr='description')
@@ -20,10 +23,9 @@ class FoiRequestIndex(CelerySearchIndex, indexes.Indexable):
     def get_model(self):
         return FoiRequest
 
-    def index_queryset(self):
+    def index_queryset(self, **kwargs):
         """Used when the entire index for model is updated."""
         return self.get_model().published.get_for_search_index()
 
     def should_update(self, instance, **kwargs):
-        return (instance.visibility > 1 and
-            instance.is_foi and instance.same_as is None)
+        return instance.in_search_index()

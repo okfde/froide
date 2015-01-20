@@ -1,25 +1,30 @@
 import datetime
 import re
+import json
 
+from django.utils.six import text_type as str
 from django.conf import settings
 from django.core.files import File
-from django.utils import timezone, simplejson as json
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.translation import ugettext_lazy as _
 from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.sitemaps import Sitemap
 
 from haystack.query import SearchQuerySet
-from haystack.inputs import AutoQuery
 from taggit.models import Tag
 
 from froide.account.forms import NewUserForm
 from froide.account.models import AccountManager
 from froide.publicbody.forms import PublicBodyForm
-from froide.publicbody.models import PublicBody, PublicBodyTopic, FoiLaw, Jurisdiction
+from froide.publicbody.models import PublicBody, PublicBodyTag, FoiLaw, Jurisdiction
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
@@ -31,8 +36,11 @@ from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
         PostalReplyForm, PostalAttachmentForm, MessagePublicBodySenderForm,
         EscalationMessageForm)
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
+from .tasks import process_mail
+from .foi_mail import package_foirequest
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
+User = get_user_model()
 
 
 @cache_anonymous_page(15 * 60)
@@ -56,6 +64,7 @@ def dashboard(request):
     user = {}
     start_date = timezone.utc.localize(datetime.datetime(2011, 7, 30))
     for u in User.objects.filter(
+            is_active=True,
             date_joined__gte=start_date):
         d = u.date_joined.date().isoformat()
         user.setdefault(d, 0)
@@ -66,10 +75,16 @@ def dashboard(request):
         total += user['num']
         user['total'] = total
     foirequest = {}
-    for u in FoiRequest.objects.filter(
+    foi_query = FoiRequest.objects.filter(
             is_foi=True,
             public_body__isnull=False,
-            first_message__gte=start_date):
+            first_message__gte=start_date
+    )
+    if request.GET.get('notsameas'):
+        foi_query = foi_query.filter(same_as__isnull=True)
+    if request.GET.get('public'):
+        foi_query = foi_query.filter(public=True)
+    for u in foi_query:
         d = u.first_message.date().isoformat()
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
@@ -82,25 +97,31 @@ def dashboard(request):
 
 
 def list_requests(request, status=None, topic=None, tag=None,
-        jurisdiction=None, not_foi=False, feed=None):
+        jurisdiction=None, public_body=None, not_foi=False, feed=None):
     context = {
         'filtered': True
     }
     manager = FoiRequest.published
     if not_foi:
         manager = FoiRequest.published_not_foi
-    topic_list = PublicBodyTopic.objects.get_list()
+    topic_list = PublicBodyTag.objects.get_topic_list()
+    if status is None:
+        status = request.GET.get(str(_('status')), None)
     status_url = status
+    foi_requests = manager.for_list_view()
     if status is not None:
-        status = FoiRequest.get_status_from_url(status)
-        foi_requests = manager.for_list_view().filter(status=status)
+        func_status = FoiRequest.get_status_from_url(status)
+        if func_status is None:
+            raise Http404
+        func, status = func_status
+        foi_requests = foi_requests.filter(func(status))
         context.update({
             'status': FoiRequest.get_readable_status(status),
             'status_description': FoiRequest.get_status_description(status)
         })
     elif topic is not None:
-        topic = get_object_or_404(PublicBodyTopic, slug=topic)
-        foi_requests = manager.for_list_view().filter(public_body__topic=topic)
+        topic = get_object_or_404(PublicBodyTag, slug=topic)
+        foi_requests = manager.for_list_view().filter(public_body__tags=topic)
         context.update({
             'topic': topic,
         })
@@ -120,6 +141,14 @@ def list_requests(request, status=None, topic=None, tag=None,
         context.update({
             'jurisdiction': jurisdiction
         })
+    elif public_body is not None:
+        public_body = get_object_or_404(PublicBody, slug=public_body)
+        foi_requests = foi_requests.filter(public_body=public_body)
+        context.update({
+            'public_body': public_body
+        })
+        context['filtered'] = True
+        context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
     else:
         context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
         context['filtered'] = False
@@ -132,14 +161,25 @@ def list_requests(request, status=None, topic=None, tag=None,
         return klass(foi_requests, status=status_url, topic=topic,
             tag=tag, jurisdiction=jurisdiction)(request)
 
+    count = foi_requests.count()
+
+    page = request.GET.get('page')
+    paginator = Paginator(foi_requests, 20)
+    try:
+        foi_requests = paginator.page(page)
+    except PageNotAnInteger:
+        foi_requests = paginator.page(1)
+    except EmptyPage:
+        foi_requests = paginator.page(paginator.num_pages)
+
     context.update({
         'page_title': _("FoI Requests"),
-        'count': foi_requests.count(),
+        'count': count,
         'not_foi': not_foi,
         'object_list': foi_requests,
-        'status_list': [(unicode(x[0]),
-            FoiRequest.get_readable_status(x[1]),
-            x[1]) for x in FoiRequest.STATUS_URLS],
+        'status_list': [(str(x[0]),
+            FoiRequest.get_readable_status(x[2]),
+            x[2]) for x in FoiRequest.STATUS_URLS],
         'topic_list': topic_list
     })
 
@@ -178,8 +218,20 @@ def show(request, slug, template_name="foirequest/show.html",
             .filter(belongs_to__request=obj).all()
     for message in obj.messages:
         message.request = obj
-        message.all_attachments = filter(lambda x: x.belongs_to_id == message.id,
-                all_attachments)
+        if message.not_publishable:
+            obj.not_publishable_message = message
+        message.all_attachments = filter(
+            lambda x: x.belongs_to_id == message.id, all_attachments)
+        message.approved_attachments = filter(
+            lambda x: x.belongs_to_id == message.id and x.approved,
+            all_attachments
+        )
+        message.not_approved_attachments = filter(
+            lambda x: x.belongs_to_id == message.id and not x.approved,
+            all_attachments
+        )
+        for att in message.all_attachments:
+            att.belongs_to = message
 
     events = FoiEvent.objects.filter(request=obj).select_related(
             "user", "user__profile", "request",
@@ -218,18 +270,6 @@ def show(request, slug, template_name="foirequest/show.html",
     return render(request, template_name, context, status=status)
 
 
-def search_similar(request):
-    query = request.GET.get("q", None)
-    result = []
-    if query:
-        sqs = SearchQuerySet().models(FoiRequest)
-        sqs = sqs.filter(content=AutoQuery(query))
-        result = list(sqs[:5])
-        result = [{"title": x.title, "id": x.pk, "public_body_name": x.public_body_name, "description": x.description,
-            "url": x.url, "score": x.score} for x in result]
-    return HttpResponse(json.dumps(result), content_type="application/json")
-
-
 def search(request):
     query = request.GET.get("q", "")
     foirequests = []
@@ -237,10 +277,11 @@ def search(request):
     if query:
         results = SearchQuerySet().models(FoiRequest).auto_query(query)[:25]
         for result in results:
-            foirequests.append(result)
+            if result.object and result.object.in_search_index():
+                foirequests.append(result.object)
         results = SearchQuerySet().models(PublicBody).auto_query(query)[:25]
         for result in results:
-            publicbodies.append(result)
+            publicbodies.append(result.object)
     context = {
         "foirequests": foirequests,
         "publicbodies": publicbodies,
@@ -249,7 +290,17 @@ def search(request):
     return render(request, "search/search.html", context)
 
 
-def make_request(request, public_body=None):
+def make_request(request, public_body=None, public_body_id=None):
+    if public_body_id is not None:
+        public_body = get_object_or_404(PublicBody,
+                pk=int(public_body_id))
+        url = reverse('foirequest-make_request', kwargs={
+            'public_body': public_body.slug
+        })
+        # Keep the query string for subject, body intact on redirect
+        return redirect('%s?%s' % (url, request.META['QUERY_STRING']),
+                        permanent=True)
+
     public_body_form = None
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
@@ -267,18 +318,26 @@ def make_request(request, public_body=None):
     if 'body' in request.GET:
         initial['body'] = request.GET['body']
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
-    rq_form = RequestForm(all_laws, FoiLaw.get_default_law(public_body),
-            True, initial=initial)
-    topic = request.GET.get("topic", "")
+    public_body_search = request.GET.get("topic", "")
+    initial['public_body_search'] = public_body_search
+
+    default_law = FoiLaw.get_default_law(public_body)
+    if default_law is None:
+        messages.add_message(request, messages.INFO,
+            _('You need to setup a default FOI Law object'))
+        return render(request, '500.html')
+
+    rq_form = RequestForm(all_laws, default_law, True, initial=initial)
     user_form = None
     if not request.user.is_authenticated():
         user_form = NewUserForm()
-    return render(request, 'foirequest/request.html',
-            {"public_body": public_body,
-            "public_body_form": public_body_form,
-            "request_form": rq_form,
-            "user_form": user_form,
-            "topic": topic})
+    return render(request, 'foirequest/request.html', {
+        "public_body": public_body,
+        "public_body_form": public_body_form,
+        "request_form": rq_form,
+        "user_form": user_form,
+        "public_body_search": public_body_search
+    })
 
 
 @require_POST
@@ -288,6 +347,8 @@ def submit_request(request, public_body=None):
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
+        if not public_body.email:
+            raise Http404
         all_laws = FoiLaw.objects.filter(jurisdiction=public_body.jurisdiction)
     else:
         all_laws = FoiLaw.objects.all()
@@ -297,25 +358,26 @@ def submit_request(request, public_body=None):
             True, request.POST)
     context['request_form'] = request_form
     context['public_body_form'] = PublicBodyForm()
-    if public_body is None and \
-                request.POST.get('public_body') == "new":
-            pb_form = PublicBodyForm(request.POST)
-            context["public_body_form"] = pb_form
-            if pb_form.is_valid():
-                data = pb_form.cleaned_data
-                data['confirmed'] = False
-                # Take the first jurisdiction there is
-                data['jurisdiction'] = Jurisdiction.objects.all()[0]
-                public_body = PublicBody(**data)
-            else:
-                error = True
+    if (public_body is None and
+            request.POST.get('public_body') == "new"):
+        pb_form = PublicBodyForm(request.POST)
+        context["public_body_form"] = pb_form
+        if pb_form.is_valid():
+            data = pb_form.cleaned_data
+            data['confirmed'] = False
+            # Take the first jurisdiction there is
+            data['jurisdiction'] = Jurisdiction.objects.all()[0]
+            data['slug'] = slugify(data['name'])
+            public_body = PublicBody(**data)
+        else:
+            error = True
 
     if not request_form.is_valid():
         error = True
     else:
-        if public_body is None and \
-                request_form.cleaned_data['public_body'] != '' and \
-                request_form.cleaned_data['public_body'] != 'new':
+        if (public_body is None and
+                request_form.cleaned_data['public_body'] != '' and
+                request_form.cleaned_data['public_body'] != 'new'):
             public_body = request_form.public_body_object
 
     context['user_form'] = None
@@ -346,8 +408,14 @@ def submit_request(request, public_body=None):
             else:
                 foilaw = request_form.foi_law
 
-        foi_request = FoiRequest.from_request_form(user, public_body,
-                foilaw, form_data=request_form.cleaned_data, post_data=request.POST)
+        foi_request = FoiRequest.from_request_form(
+                user,
+                public_body,
+                foilaw,
+                form_data=request_form.cleaned_data,
+                post_data=request.POST
+        )
+
         if user.is_active:
             if sent_to_pb == 0:
                 messages.add_message(request, messages.INFO,
@@ -359,7 +427,7 @@ def submit_request(request, public_body=None):
             else:
                 messages.add_message(request, messages.INFO,
                     _('Your request has been sent.'))
-            return redirect(foi_request.get_absolute_url() + _('?request-made'))
+            return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
                     password=password)
@@ -434,18 +502,16 @@ def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
-    if not foirequest.message_needs_status():
-        return render_400(request)
     form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():
-        foirequest.set_status(form)
+        form.set_status()
         messages.add_message(request, messages.SUCCESS,
                 _('Status of request has been updated.'))
     else:
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
         return show(request, slug, context={"status_form": form}, status=400)
-    return redirect(foirequest)
+    return redirect(foirequest.get_absolute_url() + '#-')
 
 
 @require_POST
@@ -505,10 +571,11 @@ def set_law(request, slug):
     if not foirequest.law.meta:
         return render_400(request)
     form = ConcreteLawForm(foirequest, request.POST)
-    if form.is_valid():
-        form.save()
-        messages.add_message(request, messages.SUCCESS,
-                _('A concrete law has been set for this request.'))
+    if not form.is_valid():
+        return render_400(request)
+    form.save()
+    messages.add_message(request, messages.SUCCESS,
+            _('A concrete law has been set for this request.'))
     return redirect(foirequest)
 
 
@@ -526,19 +593,19 @@ def set_tags(request, slug):
 
 
 @require_POST
-def set_resolution(request, slug):
+def set_summary(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated() or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.status_is_final():
         return render_400(request)
-    resolution = request.POST.get('resolution', None)
-    if resolution is None:
+    summary = request.POST.get('summary', None)
+    if summary is None:
         return render_400(request)
-    foirequest.resolution = resolution
+    foirequest.summary = summary
     foirequest.save()
     messages.add_message(request, messages.SUCCESS,
-                _('The resolution summary has been saved.'))
+                _('The outcome summary has been saved.'))
     return redirect(foirequest)
 
 
@@ -556,13 +623,15 @@ def add_postal_reply(request, slug):
                 is_postal=True,
                 sender_name=form.cleaned_data['sender'],
                 sender_public_body=foirequest.public_body)
-        #TODO: Check if timezone support is correct
+        # TODO: Check if timezone support is correct
         date = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
         message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = form.cleaned_data.get('subject', '')
+        message.subject_redacted = message.redact_subject()[:250]
         message.plaintext = ""
         if form.cleaned_data.get('text'):
             message.plaintext = form.cleaned_data.get('text')
+        message.plaintext_redacted = message.get_content()
         message.not_publishable = form.cleaned_data['not_publishable']
         message.save()
         foirequest.last_message = message.timestamp
@@ -579,7 +648,7 @@ def add_postal_reply(request, slug):
                     size=scan.size,
                     filetype=scan.content_type)
             att.file.save(scan_name, scan)
-            att.approved = True
+            att.approved = False
             att.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A postal reply was successfully added!'))
@@ -607,15 +676,20 @@ def add_postal_reply_attachment(request, slug, message_id):
         scan = request.FILES['scan']
         scan_name = scan.name.rsplit(".", 1)
         scan_name = ".".join([slugify(n) for n in scan_name])
-        att = FoiAttachment(belongs_to=message,
-                name=scan_name,
-                size=scan.size,
-                filetype=scan.content_type)
+        try:
+            att = FoiAttachment.objects.get(belongs_to=message, name=scan_name)
+            status_message = _('Your document was added to the message and replaced '
+                'an existing attachment with the same name.')
+        except FoiAttachment.DoesNotExist:
+            att = FoiAttachment(belongs_to=message, name=scan_name)
+            status_message = _('Your document was added to the message as a '
+                'new attachment.')
+        att.size = scan.size
+        att.filetype = scan.content_type
         att.file.save(scan_name, scan)
-        att.approved = True
+        att.approved = False
         att.save()
-        messages.add_message(request, messages.SUCCESS,
-                _('Your document was attached to the message.'))
+        messages.add_message(request, messages.SUCCESS, status_message)
         return redirect(message)
     messages.add_message(request, messages.ERROR,
             form._errors['scan'][0])
@@ -683,7 +757,7 @@ def approve_attachment(request, slug, attachment):
     att = get_object_or_404(FoiAttachment, id=int(attachment))
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
-    att.approved = True
+    att.approve()
     att.save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
@@ -743,7 +817,10 @@ def make_same_request(request, slug, message_id):
                 _("You already made an identical request"))
             return render_400(request)
     body = u"%s\n\n%s" % (foirequest.description,
-            _('Please see this request on FragDenStaat.de where you granted access to this information: %(url)s') % {'url': foirequest.get_absolute_domain_short_url()})
+            _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
+                'url': foirequest.get_absolute_domain_short_url(),
+                'site_name': settings.SITE_NAME
+            })
     fr = FoiRequest.from_request_form(
         user, foirequest.public_body,
         foirequest.law,
@@ -771,7 +848,6 @@ def auth_message_attachment(request, message_id, attachment_name):
     '''
     nginx auth view
     '''
-
     message = get_object_or_404(FoiMessage, id=int(message_id))
     attachment = get_object_or_404(FoiAttachment, belongs_to=message,
         name=attachment_name)
@@ -810,9 +886,9 @@ def redact_attachment(request, slug, attachment_id):
         path = convert_to_pdf(request.POST)
         if path is None:
             return render_400(request)
-        name, extensions = attachment.name.rsplit('.', 1)
+        name = attachment.name.rsplit('.', 1)[0]
         name = re.sub('[^\w\.\-]', '', name)
-        pdf_file = File(file(path))
+        pdf_file = File(open(path, 'rb'))
         if already:
             att = already
         else:
@@ -826,6 +902,7 @@ def redact_attachment(request, slug, attachment_id):
             )
         att.file = pdf_file
         att.size = pdf_file.size
+        att.approve()
         att.save()
         if not attachment.is_redacted:
             attachment.redacted = att
@@ -839,13 +916,19 @@ def redact_attachment(request, slug, attachment_id):
     })
 
 
+@require_POST
 def extend_deadline(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated():
         return render_403(request)
     if not request.user.is_staff:
         return render_403(request)
-    months = int(request.POST.get('months', 6))
+    try:
+        months = int(request.POST.get('months', 6))
+    except ValueError:
+        messages.add_message(request, messages.ERROR,
+                    _('Invalid input!'))
+        return render_400(request)
     foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
     if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
         foirequest.status = 'awaiting_response'
@@ -854,3 +937,57 @@ def extend_deadline(request, slug):
             _('Deadline has been extended.'))
     FoiEvent.objects.create_event('deadline_extended', foirequest)
     return redirect(foirequest)
+
+
+@require_POST
+def resend_message(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_authenticated():
+        return render_403(request)
+    if not request.user.is_staff:
+        return render_403(request)
+    try:
+        mes = FoiMessage.objects.get(sent=False, request=foirequest, pk=int(request.POST.get('message', 0)))
+    except (FoiMessage.DoesNotExist, ValueError):
+        messages.add_message(request, messages.ERROR,
+                    _('Invalid input!'))
+        return render_400(request)
+    mes.send(notify=False)
+    return redirect('admin:foirequest_foimessage_change', mes.id)
+
+
+@require_POST
+@csrf_exempt
+def postmark_inbound(request, bounce=False):
+    process_mail.delay(request.body, mail_type='postmark')
+    return HttpResponse()
+
+
+@require_POST
+@csrf_exempt
+def postmark_bounce(request):
+    return postmark_inbound(request, bounce=True)
+
+
+def download_foirequest(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not request.user.is_staff and not request.user == foirequest.user:
+        return render_403(request)
+    response = HttpResponse(package_foirequest(foirequest), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="%s.zip"' % foirequest.pk
+    return response
+
+
+SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
+
+
+class FoiRequestSitemap(Sitemap):
+    protocol = SITEMAP_PROTOCOL
+    changefreq = "hourly"
+    priority = 0.5
+
+    def items(self):
+        return FoiRequest.published.all()
+
+    def lastmod(self, obj):
+        return obj.last_message

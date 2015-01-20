@@ -1,0 +1,10 @@
+[run]
+branch = true
+source = froide
+omit =
+  */migrations/*
+  */wsgi.py
+
+[report]
+exclude_lines =
+  pragma: no cover

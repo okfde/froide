@@ -1,0 +1,45 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n %}
+{% load admin_static %}
+{% load admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+{% url 'admin:jsi18n' as jsi18nurl %}
+<script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="../../">{% trans "Home" %}</a> &rsaquo;
+  <a href="../">{{ app_label|capfirst }}</a> &rsaquo;
+  <a href="./">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
+  {% trans 'Redeliver deferred messages' %}
+</div>
+{% endblock %}
+
+{% block content %}
+  <form action="" method="post">
+    {% csrf_token %}
+    <div>
+      <p>
+        {% blocktrans %}Redeliver these messages...{% endblocktrans %}<br/>
+        <ul>
+          {% for obj in queryset %}
+            <li>
+              {{ obj }}
+              <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+            </li>
+          {% endfor %}
+        </ul>
+        <br/>
+        {% blocktrans %}...to this FOI request:{% endblocktrans %}
+        {{ req_widget }}
+      </p>
+      <input type="hidden" name="action" value="redeliver" />
+      <input type="submit" value="{% trans "Redeliver messages" %}" />
+    </div>
+  </form>
+{% endblock %}

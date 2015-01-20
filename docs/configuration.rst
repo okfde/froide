@@ -4,7 +4,7 @@ Configuration
 
 Froide can be configured in many ways to reflect the needs of your local FoI portal.
 
-All configuration is kept in the Django `settings.py` file. Individual settings can be overwritten by placing a `local_settings.py` file on the Python path (e.g. in the same directory) and redefining the configuration key in there.
+The `custom_settings.py.example` file that comes with froide has all the settings from the `settings.py` file but they are commented out. You can copy this file to `custom_settings.py`
 
 Froide Configuration
 --------------------
@@ -37,6 +37,9 @@ The following keys in that dictionary must be present:
   *integer* The id of the Freedom of Information law in the database
   that is used by default (e.g. 1)
 
+**search_engine_query**
+  *string* You can give a URL with string formatting placeholders `query` and `domain` in them that will be presented to the user as the URL for web searches. The default is a Google search.
+
 
 Greeting Regexes
 ----------------
@@ -48,8 +51,13 @@ regexes that also find the name::
     import re
     rec = re.compile
     # define your greetings and closing regexes
-    POSSIBLE_GREETINGS = [rec(u"Dear (?:Mr\.?|Ms\.? .*?)")]
-    POSSIE_CLOSINGS = [rec(u"Sincerely yours,?")]
+
+    FROIDE_CONFIG.update(
+        dict(
+            greetings=[rec(u"Dear (?:Mr\.?|Ms\.? .*?)")],
+            closings=[rec(u"Sincerely yours,?")]
+        )
+    )
 
 You should replace this with a list of the most common expressions in
 your language.
@@ -60,14 +68,43 @@ Index Boosting of Public Bodies
 Some Public Bodies are more important and should appear first in
 searches (if their name and description match the search terms). You can
 provide a mapping of public body classifications (e.g. ministry,
-council etc.) to their search boost factor via the `FROIDE_PUBLIC_BODY_BOOSTS` setting::
+council etc.) to their search boost factor via the `public_body_boosts`
+key in the `FROIDE_CONFIG` setting::
 
     # boost public bodies by their classification
-    FROIDE_PUBLIC_BODY_BOOSTS = {
-        u"Ministry": 1.9,
-        u"Council": 0.8
-    }
+    FROIDE_CONFIG.update(
+        'public_body_boosts': {
+            u"Ministry": 1.9,
+            u"Council": 0.8
+        }
+    })
 
+
+Public Body E-Mail Dry-run
+--------------------------
+
+You can set your site up and test it out in a production environment
+while sending public body emails not to the public bodies but to
+another mail server. Use the following settings::
+
+    FROIDE_CONFIG.update(
+        dict(
+            dryrun=False,
+            dryrun_domain="testmail.example.com"
+        )
+    )
+
+This converts public body email addresses from
+
+    public-body@example.com
+
+to
+
+    public-body+example.com@testmail.example.com
+
+right before the mail is
+sent out (the changed address is not stored). This allows for some
+testing of sending and receiving mails to and from public bodies wihtout spamming them.
 
 
 Settings for Sending E-Mail
@@ -77,7 +114,7 @@ You must adapt the standard Django parameters for sending email.
 Configure the backend depending on your environment (development vs.
 production)::
 
-    # development environment:
+    # development/testing environment:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # production environment:
     EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
@@ -114,74 +151,16 @@ and displayed on the website if their `To` field matches::
     FOI_EMAIL_ACCOUNT_PASSWORD = "password"
 
 
-Public Body E-Mail Dry-run
---------------------------
-
-You can set your site up and test it out in a production environment
-while sending public body emails not to the public bodies but to
-another mail server. Use the following settings::
-
-    FROIDE_DRYRUN = True
-    FROIDE_DRYRUN_DOMAIN = "mymail.example.com"
-
-This converts public body email addresses from
-
-    public-body@example.com
-
-to
-
-    public-body+example.com@mymail.example.com
-
-right before the mail is
-sent out (the changed address is not stored). This allows for some
-testing of sending and receiving mails to and from public bodies wihtout spamming them.
-
-Setting Up Search with Solr
----------------------------
-
-Froide uses `django-haystack` to interface with a search. Solr is
-recommended, but thanks to `django-haystack` you can use something
-else as well.
-
-Haystack configuration for solr works like so::
-
-    HAYSTACK_SITECONF = 'froide.search_sites'
-    HAYSTACK_SEARCH_ENGINE = 'solr'
-    HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr'
-
-If you have a solr multicore setup, your solr URL would probably look more like this::
-
-    HAYSTACK_SOLR_URL = 'http://127.0.0.1:8983/solr/froide'
-
-For details, please refer to the `Haystack Documentation <http://haystacksearch.org>`_.
-
-Setting Up Background Processing with Celery
---------------------------------------------
-
-The following part in `settings.py` does the configuration of Celery.
-Overwrite the `CELERY*` values with your own in `local_settings.py`::
-
-    import djcelery
-    djcelery.setup_loader()
-
-    CELERY_IMPORTS = ("foirequest.tasks", )
-
-    CELERY_RESULT_BACKEND = "database"
-    CELERY_RESULT_DBURI = "sqlite:///dev.db"
-
-    CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-
-For details please refer to the `django-celery documentation <http://django-celery.readthedocs.org/en/latest/index.html>`_.
-
 Some more settings
 ------------------
 
-Configure the name and default domain URL (without trailing slash) of your site with the following settings::
+Configure the name, default domain URL and default email (without trailing slash) of your site with the following settings::
 
     SITE_NAME = 'FroIde'
     SITE_URL = 'http://localhost:8000'
+    SITE_EMAIL = 'info@example.com'
 
-You can give a URL with string formatting placeholders `query` and `domain` in them that will be presented to the user as the URL for web searches via the setting `SEARCH_ENGINE_QUERY`. The default is a Google search.
+More suggestions of settings you can change can be found in the `custom_settings.py.example` file that comes with froide.
 
 
 Securing your site
@@ -193,16 +172,11 @@ parts configurable by `local_settings` you can use the following
 setting::
 
     SECRET_URLS = {
-        "admin": "my-secret-admin",
-        "sentry": "my-secret-sentry"
+        "admin": "my-secret-admin"
     }
 
-It's also recommended to protect the admin and sentry further via HTTP
+It's also recommended to protect the admin further via HTTP
 auth in your production reverse proxy (e.g. nginx).
-
-The app `djangosecure <https://github.com/carljm/django-secure/>`_ is part of Froide
-and it is highly recommended to
-deploy the site with SSL (`get a free SSL certificate from StartSSL <https://github.com/ioerror/duraconf/blob/master/startssl/README.markdown>`_).
 
 Some Django settings related to security and SSL::
 
@@ -212,3 +186,5 @@ Some Django settings related to security and SSL::
     SESSION_COOKIE_AGE = 3628800 # six weeks for usability
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = True
+
+Make sure that your frontend server transports the information that HTTPS is used to the web server.

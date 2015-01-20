@@ -1,0 +1,19 @@
+{% extends 'simple_base.html' %}
+{% load i18n %}
+{% load floppyforms %}
+
+
+{% block body %}
+<div class="row">
+  <div class="col-lg-8 col-lg-push-2">
+    <h2>{% trans "Our Terms of Use have changed" %}</h2>
+    {% block terms_details %}{% endblock %}
+    <form class="form-horizontal" method="post" action=".?next={{ next }}">
+      {% csrf_token %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+      {% form terms_form using "bootstrap/horizontal.html" %}
+      <button type="submit" class="btn btn-lg btn-primary">{% trans "Accept" %}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

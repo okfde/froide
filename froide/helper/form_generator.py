@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 
 
@@ -64,8 +66,14 @@ class HtmlFormPreprocessor(FormProcessor):
         checked = match.group(2).strip()
         if len(checked):
             checked = ' checked="checked"'
-        return '''<label for="fg_option_%(radio)d"><input type="radio" id="fg_option_%(radio)d"%(checked)s" name="fg_radio_%(option)d" value="%(label)s"/> %(label)s</label>''' % {"radio": self.radio_count, "option": count, "label": label,
-        "checked": checked}
+        return ('<label for="fg_option_%(radio)d">'
+                '<input type="radio" id="fg_option_%(radio)d"%(checked)s name="fg_radio_%(option)d" value="%(label)s"/>'
+                ' %(label)s</label>') % {
+                    "radio": self.radio_count,
+                    "option": count,
+                    "label": label,
+                    "checked": checked
+                }
 
     def make_check(self, match):
         self.check_count += 1
@@ -73,8 +81,13 @@ class HtmlFormPreprocessor(FormProcessor):
         checked = match.group(2).strip()
         if len(checked):
             checked = ' checked="checked"'
-        return '''<label for="fg_check_%(check)d"><input type="checkbox" id="fg_check_%(check)d"%(checked)s" name="fg_check_%(check)d" value="%(label)s"/> %(label)s</label>''' % {"check": self.check_count, "label": label,
-        "checked": checked}
+        return ('<label for="fg_check_%(check)d">'
+                '<input type="checkbox" id="fg_check_%(check)d"%(checked)s name="fg_check_%(check)d" value="%(label)s"/>'
+                ' %(label)s</label>') % {
+                    "check": self.check_count,
+                    "label": label,
+                    "checked": checked
+                }
 
 
 class TextFormPreprocessor(FormProcessor):
@@ -123,23 +136,3 @@ class FormGenerator(object):
     def render(self):
         p = TextFormPreprocessor(self.post)
         return "".join(p.run(self.text.splitlines()))
-
-
-if __name__ == '__main__':
-    s = '''I choose
-    ( o ) ice cream
-    (   ) waffles
-with
-    [ x ] chocolate sauce
-    [ x ] caramel cream
-    [   ] extra sugar
-and I like it
-    ( o ) baked
-    (   ) cooked
-.
-Cheers!'''
-    form = FormGenerator(s, {'fg_radio_1': 'ice cream', 'fg_check_3': 'yeah', 'fg_check_1': "on",
-            "fg_radio_2": "baked"})
-    print repr(form.render_html())
-    print "-" * 30
-    print form.render()

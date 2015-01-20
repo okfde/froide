@@ -1,2 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
 {% block nav_publicbodies %}active{% endblock %}
+{% block title %}{% trans "Public Bodies" %} - {{SITE_NAME}}{% endblock %}

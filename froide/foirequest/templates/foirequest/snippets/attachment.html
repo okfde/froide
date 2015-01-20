@@ -1,0 +1,40 @@
+{% load i18n %}
+
+  <li class="well well-sm hidden-print">
+    {% if attachment.can_approve %}
+      <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+        {% csrf_token %}
+        {% if object.user.private %}
+          <p>
+            {% trans "Please check this attachment for personally identifying information. Then publish the document (unless you are explicitly forbidden from publishing) or redact the information." %}
+          </p>
+        {% else %}
+          <p>
+            {% blocktrans with name=object.user.get_full_name %}Please check this attachment for personally identifying information (besides your name {{ name }}). Then publish the document (unless you are explicitly forbidden from publishing) or redact the information.{% endblocktrans %}
+          </p>
+        {% endif %}
+        <div class="media">
+          {% include "foirequest/snippets/attachment_item.html" %}
+        </div>
+        <button class="btn btn-success" type="submit">{% trans "Publish this attachment" %}</button>
+        <a class="btn btn-inverse" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">{% trans "Redact this attachment" %}
+        </a>
+      </form>
+      <div class="media" style="display:none" id="approve-attachment-{{ attachment.pk }}-form-success">
+        {% include "foirequest/snippets/attachment_item.html" %}
+      </div>
+    {% else %}
+      {% if attachment.redacted %}
+        <p>{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}</p>
+      {% else %}
+        {% if attachment.converted %}
+          <p>{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}</p>
+        {% else %}
+          <p>{% blocktrans %}This attachment has been blocked from publishing.{% endblocktrans %}</p>
+        {% endif %}
+      {% endif %}
+      <div class="media">
+        {% include "foirequest/snippets/attachment_item.html" %}
+      </div>
+    {% endif %}
+  </li>

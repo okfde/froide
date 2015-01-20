@@ -1,0 +1,13 @@
+{% load i18n %}{% autoescape off %}{{ body }}
+
+{{ request.user.get_full_name }}{% if request.user.organization %}
+{{ request.user.organization }}{% endif %}
+{{ request.secret_address }}
+
+{% if request.user.address %}{% if send_address %}{% blocktrans %}Post Address:{% endblocktrans %}
+{{ request.user.get_full_name }}{% if request.user.organization %}
+{{ request.user.organization }}{% endif %}
+{{ request.user.address }}
+{% endif %}{% endif %}
+{% include "foirequest/emails/request_footer.txt" %}
+{% endautoescape %}

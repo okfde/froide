@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=request.get_absolute_domain_short_url %}Hello {{ name }},
+
+your request "{{ title }}" has been sent. We will notify you when you get a response.
+
+{{ url }}
+
+Cheers,
+{{ site_name }}
+{% endblocktrans %}
+{% endautoescape %}

@@ -2,11 +2,12 @@
 {% load floppyforms %}
 {{ status_form.non_field_errors }}
 {% formrow status_form.status using "bootstrap/horizontal_row.html" %}
+<div class="status-redirected status-section">
+  {% formrow status_form.redirected using "bootstrap/horizontal_row.html" %}
+</div>
+{% formrow status_form.resolution using "bootstrap/horizontal_row.html" %}
 <div class="status-refusal status-section">
 	{% formrow status_form.refusal_reason using "bootstrap/horizontal_row.html" %}
-</div>
-<div class="status-redirected status-section">
-	{% formrow status_form.redirected using "bootstrap/horizontal_row.html" %}
 </div>
 {% if froide.payment_possible %}
 	{% formrow status_form.costs using "bootstrap/horizontal_row.html" %}

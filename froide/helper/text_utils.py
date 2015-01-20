@@ -1,5 +1,15 @@
+# -*- coding: utf-8 -*-
 import re
-import htmlentitydefs
+
+try:
+    from html.entities import name2codepoint
+except ImportError:
+    from htmlentitydefs import name2codepoint
+
+from django.utils.six import text_type as str, unichr as chr
+
+SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
+
 
 ##
 # From http://effbot.org/zone/re-sub.htm#unescape-html
@@ -16,69 +26,63 @@ def unescape(text):
             # character reference
             try:
                 if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
+                    return chr(int(text[3:-1], 16))
                 else:
-                    return unichr(int(text[2:-1]))
+                    return chr(int(text[2:-1]))
             except ValueError:
                 pass
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = chr(name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text  # leave as is
     return re.sub("&#?\w+;", fixup, text)
 
 
-def remove_quote(text, replacement=u"", quote_prefix=u">",
-        quote_separators=None):
-    if quote_separators is None:
-        quote_separators = [re.compile('\s*-{5}\w+ \w+-{5}\s*', re.UNICODE)]
-    lines = []
-    put_replacement = True
-    for line in text.splitlines():
-        if line.strip().startswith(quote_prefix):
-            if put_replacement:
-                lines.append(replacement)
-                put_replacement = False
-        else:
-            lines.append(line)
-            put_replacement = True
-    found = False
-    i = len(lines)
-    for i, line in enumerate(lines):
-        for qs in quote_separators:
-            if qs.match(line) is not None and "".join(lines[:(i + 1)]).strip():
-                found = True
-                break
-        if found:
-            break
-    lines = lines[:(i + 1)]
-    return u"\n".join(lines)
+def split_text_by_separator(text, separator=None):
+    if separator is None:
+        separator = SEPARATORS
+    split_text = separator.split(text)
+    if len(split_text) == 1:
+        split_text.append('')
+    if len(split_text) > 2:
+        split_text = [split_text[0], '\n'.join(split_text[1:])]
+    return split_text
 
 
-def remove_signature(text, dividers=[re.compile(r'^--\s+')]):
-    lines = []
-    found = False
-    for line in text.splitlines():
-        for divider in dividers:
-            if divider.match(line) is not None:
-                found = True
-                break
-        if found:
-            break
-        lines.append(line)
-    return u"\n".join(lines)
+def replace_word(needle, replacement, content):
+    return re.sub('(^|\W)%s($|\W)' % re.escape(needle),
+                    '\\1%s\\2' % replacement, content, re.U)
 
-EMAIL_NAME_RE = re.compile(r'[,:]? "?.*?"? <[^@]+@[^>]+>')
+
+EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 
 
 def replace_email_name(text, replacement=u""):
-    return EMAIL_NAME_RE.sub(replacement, text)
+    return EMAIL_NAME_RE.sub(str(replacement), text)
 
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 
 def replace_email(text, replacement=u""):
-    return EMAIL_RE.sub(replacement, text)
+    return EMAIL_RE.sub(str(replacement), text)
+
+
+def replace_greetings(content, greetings, replacement):
+    for greeting in greetings:
+        match = greeting.search(content)
+        if match is not None and len(match.groups()):
+            content = content.replace(match.group(1),
+                replacement)
+    return content
+
+
+def remove_closing(content, closings):
+    for closing in closings:
+        match = closing.search(content)
+        if match is not None:
+            content = content[:match.end()]
+            break
+    return content

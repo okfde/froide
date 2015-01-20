@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# The post_compile hook is run by heroku-buildpack-python
+
+indent() {
+    RE="s/^/       /"
+    [ $(uname) == "Darwin" ] && sed -l "$RE" || sed -u "$RE"
+}
+
+echo "-----> In post-compile hook"
+
+if [ ! -d $TARGET_DIR/gettext ]; then
+    echo "-----> Installing gettext msgfmt..."
+
+    GETTEXT_CHECKSUM="ceZfT0KqGBZyr52s/9yULR3vsmXPS5HmUcs+dup/DXg="
+    GETTEXT_TARBALL=https://s3-eu-west-1.amazonaws.com/midgard-heroku/gettext.tar.gz
+
+    # tempdir="$( mktemp -t gettext_XXXX )"
+    # rm -rf $tempdir
+    # mkdir -p $tempdir
+    pushd $BUILD_DIR >/dev/null
+    rm -f tmp-gettext.tar.gz
+
+    curl -s -L -o tmp-gettext.tar.gz "$GETTEXT_TARBALL"
+    if [ "$GETTEXT_CHECKSUM" != "$(openssl sha -sha256 -binary tmp-gettext.tar.gz | openssl base64)" ]; then
+        echo "Checksum DOES NOT match. Gettext will not be installed."
+        exit 1
+    fi
+    tar -zxvf tmp-gettext.tar.gz > /dev/null
+    rm tmp-gettext.tar.gz
+    popd >/dev/null
+
+    export PATH=$BUILD_DIR/gettext/bin:$PATH
+
+    # ln -s -f ../../vendor/gettext/bin/msgfmt .heroku/python/bin/msgfmt
+
+    echo "-----> done installing gettext msgfmt"
+fi
+
+
+MANAGE_FILE=$(find . -maxdepth 3 -type f -name 'manage.py' | head -1)
+MANAGE_FILE=${MANAGE_FILE:2}
+
+echo "-----> Compiling translation files"
+python "$MANAGE_FILE" compilemessages 2>&1 | indent
+rm -rf .heroku/vendor/gettext/
+
+echo "-----> Collecting static files"
+python "$MANAGE_FILE" collectstatic --noinput  2>&1 |
+sed '/^Copying/d;/^$/d;/^ /d' |
+indent
+
+echo "-----> Compressing static files"
+python "$MANAGE_FILE" compress 2>&1 | indent
+
+echo "-----> Post-compile done"

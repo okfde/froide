@@ -1,19 +1,29 @@
 {% extends 'base.html' %}
-{% load url from future %}
 {% load i18n %}
 {% load markup %}
 
 {% block body %}
-<h2>{% trans "Your Account" %}</h2>
 <div class="row">
-  <div class="span12">
+  <div class="col-lg-8">
+    <h2>{% trans "Your Account" %}</h2>
+  </div>
+  <div class="col-lg-4">
+    <a href="{% url 'account-settings' %}" class="btn btn-default pull-right">
+      <span class="glyphicon glyphicon-wrench"></span>
+      {% trans "Your account settings" %}
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
     {% if own_requests %}
       <h3>
         {% blocktrans count counter=own_requests|length %}One request that needs your attention{% plural %}{{ counter }} requests that need your attention{% endblocktrans %}
       </h3>
-      <ul class="unstyled">
+      <ul class="media-list">
         {% for object in own_requests %}
-          <li>
+          <li class="media">
             {% include "foirequest/snippets/request_item.html" %}
           </li>
         {% endfor %}
@@ -21,24 +31,34 @@
     {% endif %}
   </div>
 </div>
+
 <div class="row">
-  <div class="span12">
+  <div class="col-lg-12">
     <h3>
       {% trans "Your followed requests" %}
     </h3>
     {% if followed_events %}
       <p>{% trans "Recent event on your followed requests:" %}</p>
       <ul>
-      {% for event in followed_events %}
-        <li id="{{ event.get_html_id }}">
-            <a href="{{ event.get_absolute_url }}">
-                <span class="no-print" title="{{ event.timestamp }}">
-                    {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
-                </span>
-                <span class="print-only">
-                    {{ event.timestamp|date:"DATETIME_FORMAT" }}
-                </span>
-            </a>: {{ event.as_html }}
+      {% regroup followed_events by request as event_list %}
+      {% for req in event_list %}
+        <li>
+          <a href="{{ req.grouper.get_absolute_url }}">
+            {{ req.grouper.title }}
+          </a>
+          <ul>
+            {% for event in req.list %}
+            <li>
+              <span class="hidden-print" title="{{ event.timestamp }}">
+                {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
+              </span>
+              <span class="visible-print">
+                  {{ event.timestamp|date:"DATETIME_FORMAT" }}
+              </span>
+              : {{ event.as_html }}
+            </li>
+            {% endfor %}
+          </ul>
         </li>
       {% endfor %}
       </ul>
@@ -53,11 +73,13 @@
       <a href="#followed-requests" class="toggle">{% trans "Show all the requests that you are following." %}</a>
     </p>
     <div id="followed-requests" style="display:none">
-      <ul>
+      <ul class="media-list">
       {% for followed in followed_requests %}
+        <li class="media">
         {% with object=followed.request %}
           {% include "foirequest/snippets/request_item.html" %}
         {% endwith %}
+        </li>
       {% empty %}
         <li>
           {% trans "You don't follow any requests. Click the follow button on a request page to follow it." %}
@@ -72,98 +94,48 @@
 {% if not user.is_active %}
   <p>{% blocktrans with email=user.email %}Your account is not active. You need to click on the link we send to your address {{ email }}.{% endblocktrans %}</p>
 {% else %}
-<div class="span12">
+<div class="col-lg-12">
   <table class="table table-hover">
     <caption>{% blocktrans %}Your Freedom of Information Requests{% endblocktrans %}</caption>
     <thead>
       <tr>
         <th>{% blocktrans %}Title{% endblocktrans %}</th>
-        <th>{% blocktrans %}Recipient{% endblocktrans %}</th>
-        <th>{% blocktrans %}Status{% endblocktrans %}</th>
-        <th>{% blocktrans %}Last Message{% endblocktrans %}</th>
+        <th>{% blocktrans %}Due Date{% endblocktrans %}</th>
         <th>{% blocktrans %}Public{% endblocktrans %}</th>
       </tr>
     </thead>
     <tbody>
   {% for foirequest in foirequests %}
-    <tr>
-      <td>
-        <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+    <tr class="{% if foirequest.awaits_classification %}warning{% endif %}">
+      <td class="media">
+        {% with object=foirequest %}
+          {% include "foirequest/snippets/request_item.html" %}
+        {% endwith %}
       </td>
       <td>
-        {% if foirequest.public_body %}
-        <a href="{{ foirequest.public_body.get_absolute_url }}">{{ foirequest.public_body.name }}</a>
-        {% else %}
-        {% blocktrans %}Not yet set{% endblocktrans %}
-        {% endif %}
-      </td>
-      <td>
-        {{ foirequest.readable_status }}
         {% if foirequest.status == "awaiting_response" %}
           {% if foirequest.due_date %}
-          <br/>
-          {% blocktrans with date=foirequest.due_date|date:"DATE_FORMAT" %}until {{ date }}{% endblocktrans %}
+            <small>
+              {% blocktrans with date=foirequest.due_date|date:"DATE_FORMAT" %}until {{ date }}{% endblocktrans %}
+            </small>
           {% endif %}
         {% endif %}
       </td>
-      <td>{{ foirequest.last_message|date:"DATE_FORMAT" }}</td>
-      <td>{% if foirequest.public %}{% blocktrans %}Yes{% endblocktrans %}
-        {% else %}{% blocktrans %}No{% endblocktrans %}{% endif %}
+      <td>
+        {% if not foirequest.public %}
+        <form action="{% url 'foirequest-make_public' slug=foirequest.slug %}" method="post">
+          {% csrf_token %}
+            <button type="submit" class="btn btn-default">
+              {% blocktrans %}Publish{% endblocktrans %}
+            </button>
+          </form>
+        {% endif %}
       </td>
     </tr>
   {% endfor %}
     </tbody>
   </table>
 
-  <hr/>
-
-  <h3 id="settings">{% blocktrans %}Settings{% endblocktrans %}</h3>
-  <p>{% blocktrans %}Your name:{% endblocktrans %} {{ user.get_full_name }}<br/>
-  {% blocktrans %}Your email address:{% endblocktrans %} {{ user.email }}
-  {% if user.get_profile.private %}
-    {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
-  {% endif %}
-  </p>
-  <p>{% blocktrans %}Your address:{% endblocktrans %}{{ user.get_profile.address|linebreaks }}</p>
-  <div id="change-password-now" class="section focussed">
-    {% if user.is_new %}
-      <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>
-    {% else %}
-      <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
-      <div id="change-password"{% if not password_change_form %} class="js-hidden"{% endif %}>
-    {% endif %}
-      <form action="{% url 'account-change_password' %}" method="post">
-        {% csrf_token %}
-        {% if password_change_form %}
-          {{ password_change_form.as_p }}
-        {% else %}
-          {{ user.get_profile.get_password_change_form.as_p }}
-        {% endif %}
-        <button type="submit" class="btn">{% blocktrans %}Change password{% endblocktrans %}</button>
-    </form>
-    {% if not user.is_new %}
-    </div>
-    {% endif %}
-    </div>
-    <div id="change-address-now" class="section focussed">
-      {% if not user.get_profile.address %}
-      <h3>{% blocktrans %}You need to enter your address.{% endblocktrans %}</h3>
-        {% else %}
-        <a href="#change-address" class="toggle">{% blocktrans %}Change your address{% endblocktrans %}</a>
-        <div id="change-address"{% if not address_change_form %} class="js-hidden"{% endif %}>
-        {% endif %}
-        <form action="{% url 'account-change_address' %}" method="post">
-          {% csrf_token %}
-          {% if address_change_form %}
-            {{ address_change_form.as_p }}
-          {% else %}
-            {{ user.get_profile.get_address_change_form.as_p }}
-          {% endif %}
-          <button type="submit" class="btn">{% blocktrans %}Change address{% endblocktrans %}</button>
-      </form>
-      </div>
-    </div>
-  </div>
 </div>
 {% endif %}
 {% endblock %}

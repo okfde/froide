@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
@@ -9,12 +9,13 @@ from .models import FoiRequest
 
 
 class LatestFoiRequestsFeed(Feed):
-    def __init__(self, items, topic=None, jurisdiction=None, tag=None, status=None):
+    def __init__(self, items, topic=None, jurisdiction=None, public_body=None, tag=None, status=None):
         self.items = items
         self.topic = topic
         self.jurisdiction = jurisdiction
         self.tag = tag
         self.status = status
+        self.public_body = public_body
         super(LatestFoiRequestsFeed, self).__init__()
 
     def get_filter_string(self):
@@ -24,12 +25,14 @@ class LatestFoiRequestsFeed(Feed):
         if self.status:
             by.append(_('by status %(status)s') % {
                 'status': FoiRequest.get_readable_status(
-                    FoiRequest.get_status_from_url(self.status))
+                    FoiRequest.get_status_from_url(self.status)[1])
             })
         if self.tag:
             by.append(_('by tag %(tag)s') % {'tag': self.tag.name})
         if self.jurisdiction:
             by.append(_('for %(juris)s') % {'juris': self.jurisdiction.name})
+        if self.public_body:
+            by.append(_('to %(public_body)s') % {'public_body': self.public_body.name})
         return ' '.join(by)
 
     def title(self, obj):
@@ -66,6 +69,8 @@ class LatestFoiRequestsFeed(Feed):
             kwargs['status'] = self.status
         if self.tag:
             kwargs['tag'] = self.tag.slug
+        if self.public_body:
+            kwargs['public_body'] = self.public_body.slug
         return kwargs
 
     def link(self):

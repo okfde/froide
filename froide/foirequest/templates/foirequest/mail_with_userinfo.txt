@@ -1,9 +1,0 @@
-{% load i18n %}{% autoescape off %}{{ body }}{% if send_address %}
-
-
-{% blocktrans %}Post Address:{% endblocktrans %}
-{{ request.user.get_full_name }}
-{{ request.user.get_profile.address }}{% endif %}
-
-{% include "foirequest/mail_footer.txt" %}
-{% endautoescape %}

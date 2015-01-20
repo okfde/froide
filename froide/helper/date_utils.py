@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 from datetime import timedelta, datetime
 import calendar
 
@@ -10,9 +12,14 @@ PYTZ_TIME_ZONE = pytz.timezone(settings.TIME_ZONE)
 
 
 def calculate_month_range_de(date, months=1):
-    """ Should calculate after German BGB Law § 188"""
+    """ Should calculate after German BGB Law § 130 and § 188"""
     assert months < 12, "Can't calculate month_range > 12"
-    tempdate = date + timedelta(days=(31 * months))
+
+    if date.hour >= 22:  # After 22h next working day is receival
+        tempdate = advance_after_holiday(date + timedelta(days=1))
+    else:
+        tempdate = advance_after_holiday(date)
+    tempdate = tempdate + timedelta(days=(31 * months))
     m = tempdate.month
     y = tempdate.year
     d = tempdate.day
@@ -44,8 +51,8 @@ def is_holiday(date):
             settings.HOLIDAYS_FOR_EASTER:
         easter_sunday = calc_easter(date.year)
         easter_sunday = datetime(*easter_sunday)
-        easter_holidays = [easter_sunday + timedelta(days=x) for x in settings.HOLIDAYS_FOR_EASTER]
-        if date in easter_holidays:
+        easter_holidays = [(easter_sunday + timedelta(days=x)).date() for x in settings.HOLIDAYS_FOR_EASTER]
+        if date.date() in easter_holidays:
             return True
     return False
 
@@ -72,4 +79,4 @@ def calc_easter(year):
     return (year, month, day)
 
 if __name__ == '__main__':
-    print calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1)
+    print(calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1))

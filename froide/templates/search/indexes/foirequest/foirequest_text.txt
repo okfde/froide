@@ -6,8 +6,11 @@
 {% endfor %}
 
 {% for message in object.messages %}
-    {% if not message.content_hidden %}{{ message.get_content }}{% endif %}
-    {% for att in message.foiattachment_set.all %}
-        {{ att.index_content }}
-    {% endfor %}
+    {% if not message.content_hidden %}
+    {{ message.subject_redacted }}
+    {{ message.plaintext_redacted }}
+      {% for att in message.foiattachment_set.all %}
+          {{ att.index_content }}
+      {% endfor %}
+    {% endif %}
 {% endfor %}

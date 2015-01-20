@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=go_url %}Hello {{ name }},
+
+Your request "{{ title }}" is not marked as resolved and has not seen any activity in the last 6 months. Therefore your request has been marked asleep.
+
+If you have received a response and your request is resolved, please add the response and mark the request resolved here:
+{{ url }}
+
+Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
