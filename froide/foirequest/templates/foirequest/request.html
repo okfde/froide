@@ -168,7 +168,7 @@
                 {% blocktrans %}If you want to ask a question that relates to you personally, like how you can achieve something or who you have to contact, you need publicly available information from that public body:{% endblocktrans %}
               </p>
               <p>
-                <a id="publicbody-link" href="{% if public_body.url %}{{ public_body.url }}{% else %}http://www.115.de{% endif %}">
+                <a id="publicbody-link" href="{% if public_body.url %}{{ public_body.url }}{% else %}{% blocktrans %}http://www.115.de{% endblocktrans %}{% endif %}">
                   <strong>
                     {% if public_body.url %}{% blocktrans %}Visit the website of this Public Body{% endblocktrans %}{% else %}{% blocktrans %}Click here to go to 115.de - the Public Body Service Hotline{% endblocktrans %}{% endif %}
                   </strong>
