@@ -1,3 +1,4 @@
+from django.utils import six
 from django.http import StreamingHttpResponse
 
 
@@ -13,11 +14,11 @@ class FakeFile(object):
     # so temp store them in here
     def write(self, string):
         self._last_string = string
+        if six.PY3:
+            self._last_string = self._last_string.encode('utf-8')
 
 
 def export_csv(queryset, fields):
-    from django.utils import six
-
     if six.PY3:
         import csv
     else:
@@ -40,3 +41,7 @@ def export_csv(queryset, fields):
                     d[field] = six.text_type(value)
         writer.writerow(d)
         yield f._last_string
+
+
+def export_csv_bytes(generator):
+    return six.binary_type().join(generator)
