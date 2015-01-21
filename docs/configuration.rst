@@ -37,6 +37,9 @@ The following keys in that dictionary must be present:
   *integer* The id of the Freedom of Information law in the database
   that is used by default (e.g. 1)
 
+**payment_possible**
+  *boolean* Are payments possible in your jurisdiction?
+
 **search_engine_query**
   *string* You can give a URL with string formatting placeholders `query` and `domain` in them that will be presented to the user as the URL for web searches. The default is a Google search.
 
