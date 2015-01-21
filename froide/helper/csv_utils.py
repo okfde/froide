@@ -2,9 +2,8 @@ from django.utils import six
 from django.http import StreamingHttpResponse
 
 
-def export_csv_response(queryset, fields, name='export.csv'):
-    response = StreamingHttpResponse(export_csv(queryset, fields),
-                                 content_type='text/csv')
+def export_csv_response(generator, name='export.csv'):
+    response = StreamingHttpResponse(generator, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s"' % name
     return response
 
