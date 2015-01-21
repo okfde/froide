@@ -41,18 +41,18 @@ class PublicBodyTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_csv(self):
-        csv = PublicBody.export_csv(PublicBody.objects.all())
+        csv = ''.join(PublicBody.export_csv(PublicBody.objects.all()))
         self.assertEqual(PublicBody.objects.all().count() + 1,
             len(csv.splitlines()))
 
     def test_csv_export_import(self):
-        csv = PublicBody.export_csv(PublicBody.objects.all())
+        csv = ''.join(PublicBody.export_csv(PublicBody.objects.all()))
         prev_count = PublicBody.objects.all().count()
         imp = CSVImporter()
         if PY3:
             csv_file = StringIO(csv)
         else:
-            csv_file = BytesIO(csv.encode('utf-8'))
+            csv_file = BytesIO(csv)
         imp.import_from_file(csv_file)
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
@@ -83,7 +83,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
     def test_csv_command(self):
         from django.core.management import call_command
         csv_file = tempfile.NamedTemporaryFile()
-        csv_file.write(PublicBody.export_csv(PublicBody.objects.all()).encode('utf-8'))
+        csv_file.write(''.join(PublicBody.export_csv(PublicBody.objects.all())))
         csv_file.flush()
 
         call_command('import_csv', csv_file.name)

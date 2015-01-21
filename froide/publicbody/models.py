@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
+from django.utils import six
 from django.utils.html import escape
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -22,6 +23,7 @@ from froide.helper.date_utils import (calculate_workingday_range,
         calculate_month_range_de)
 from froide.helper.templatetags.markup import markdown
 from froide.helper.form_generator import FormGenerator
+from froide.helper.csv_utils import export_csv
 
 
 class JurisdictionManager(models.Manager):
@@ -356,17 +358,27 @@ class PublicBody(models.Model):
     def children_count(self):
         return len(PublicBody.objects.filter(parent=self))
 
+    def get_dict(self, fields):
+        d = {}
+        if 'tags' in fields:
+            d['tags'] = edit_string_for_tags(self.tags.all())
+
+        for field in fields:
+            if field in d:
+                continue
+            value = self
+            for f in field.split('__'):
+                value = getattr(value, f)
+                if value is None:
+                    break
+            if value is None:
+                d[field] = ""
+            else:
+                d[field] = six.text_type(value)
+        return d
+
     @classmethod
     def export_csv(cls, queryset):
-        from django.utils import six
-
-        if six.PY3:
-            import csv
-        else:
-            import unicodecsv as csv
-
-        s = six.StringIO()
-
         fields = ("id", "name", "email", "contact",
             "address", "url", "classification",
             "jurisdiction__slug", "tags",
@@ -374,27 +386,4 @@ class PublicBody(models.Model):
             "request_note", "parent__name",
         )
 
-        writer = csv.DictWriter(s, fields)
-        writer.writeheader()
-        for pb in queryset:
-            d = {
-                'tags': edit_string_for_tags(pb.tags.all())
-            }
-            for field in fields:
-                if field in d:
-                    continue
-                value = pb
-                for f in field.split('__'):
-                    value = getattr(value, f)
-                    if value is None:
-                        break
-                if value is None:
-                    d[field] = ""
-                else:
-                    d[field] = value
-            writer.writerow(d)
-
-        s.seek(0)
-        if six.PY3:
-            return s.read()
-        return s.read().decode('utf-8')
+        return export_csv(queryset, fields)

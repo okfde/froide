@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
@@ -9,6 +8,7 @@ from froide.publicbody.models import (PublicBody,
     PublicBodyTag, TaggedPublicBody, FoiLaw, Jurisdiction)
 from froide.helper.admin_utils import AdminTagAllMixIn
 from froide.helper.widgets import TagAutocompleteTagIt
+from froide.helper.csv_utils import export_csv_response
 
 
 class PublicBodyAdminForm(forms.ModelForm):
@@ -43,8 +43,7 @@ class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     actions = ['export_csv', 'remove_from_index', 'tag_all']
 
     def export_csv(self, request, queryset):
-        return HttpResponse(PublicBody.export_csv(queryset),
-            content_type='text/csv')
+        return export_csv_response(PublicBody.export_csv(queryset))
     export_csv.short_description = _("Export to CSV")
 
     def remove_from_index(self, request, queryset):
