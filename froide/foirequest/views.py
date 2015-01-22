@@ -277,11 +277,12 @@ def search(request):
     if query:
         results = SearchQuerySet().models(FoiRequest).auto_query(query)[:25]
         for result in results:
-            if result.object and result.object.in_search_index():
+            if result and result.object and result.object.in_search_index():
                 foirequests.append(result.object)
         results = SearchQuerySet().models(PublicBody).auto_query(query)[:25]
         for result in results:
-            publicbodies.append(result.object)
+            if result:
+                publicbodies.append(result.object)
     context = {
         "foirequests": foirequests,
         "publicbodies": publicbodies,
