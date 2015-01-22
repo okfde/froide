@@ -16,3 +16,4 @@ build/
 dist/
 *.egg-info
 *.log
+.pbundle
