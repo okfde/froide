@@ -7,9 +7,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.flatpages.views import flatpage
 from django.contrib.sitemaps import Sitemap
 from django.utils.translation import ugettext as _
-from django.utils.translation import activate, deactivate
-
-activate(settings.LANGUAGE_CODE)
 
 from django.contrib import admin
 admin.autodiscover()
@@ -170,5 +167,3 @@ def handler500(request):
 
     from django.shortcuts import render
     return render(request, '500.html', {'request': request}, status=500)
-
-deactivate()
