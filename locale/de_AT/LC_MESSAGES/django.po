@@ -12,19 +12,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-16 17:55+0100\n"
-"PO-Revision-Date: 2015-01-22 09:37+0000\n"
-"Last-Translator: Open Knowledge Foundation <translations@okfn.org>\n"
+"POT-Creation-Date: 2015-01-23 00:31+0100\n"
+"PO-Revision-Date: 2015-01-22 23:34+0000\n"
+"Last-Translator: fin <fin+transifex@xbhd.org>\n"
 "Language-Team: German (Austria) (http://www.transifex.com/projects/p/froide/language/de_AT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de_AT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: froide/_local_settings.py:11 froide/settings.py:206 froide/settings.py:494
-msgid "German"
-msgstr "Deutsch"
 
 #: froide/settings.py:203
 msgid "English"
@@ -37,6 +33,10 @@ msgstr "Spanisch"
 #: froide/settings.py:205
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
+
+#: froide/settings.py:206 froide/settings.py:494
+msgid "German"
+msgstr "Deutsch"
 
 #: froide/settings.py:207
 msgid "Danish (Denmark)"
@@ -143,35 +143,27 @@ msgstr "nutzungsbedingungen"
 msgid "privacy"
 msgstr "datenschutzerklaerung"
 
-#: froide/account/admin.py:46
+#: froide/account/admin.py:44
 msgid "Profile info"
 msgstr "Profil-Info"
 
-#: froide/account/admin.py:77
+#: froide/account/admin.py:75
 #, python-format
 msgid "%d activation mails sent."
 msgstr "%d Aktivierungs-E-Mails versendet."
 
-#: froide/account/admin.py:78
+#: froide/account/admin.py:76
 msgid "Resend activation mail"
 msgstr "Aktivierungs-Mail neuversenden"
 
-#: froide/account/admin.py:109
+#: froide/account/admin.py:107
 #, python-format
 msgid "%d mails sent."
 msgstr "%d E-Mails gesendet."
 
-#: froide/account/admin.py:121
+#: froide/account/admin.py:119
 msgid "Send mail to users"
 msgstr "Sende E-Mail an Nutzer"
-
-#: froide/account/admin.py:126
-msgid "Sessions deleted."
-msgstr ""
-
-#: froide/account/admin.py:128
-msgid "Delete sessions of users"
-msgstr ""
 
 #: froide/account/forms.py:24
 msgid "First name"
@@ -238,7 +230,6 @@ msgid ""
 msgstr "Ihr Name wird an die Behörde gesendet, aber wir werden ihn nach Möglichkeit nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen <b>keine</b> komplette Anonymität garantieren."
 
 #: froide/account/forms.py:67
-#, python-brace-format
 msgid ""
 "<a target=\"_blank\" href=\"{url}\">You may use a pseudonym if you don't "
 "need to receive postal messages</a>."
@@ -357,7 +348,7 @@ msgstr "Möchte Newsletter"
 
 #: froide/account/models.py:48
 msgid "<< Name Not Public >>"
-msgstr ""
+msgstr "Anfragesteller/in"
 
 #: froide/account/models.py:64
 msgid "<< Address removed >>"
@@ -2040,154 +2031,154 @@ msgstr "status"
 msgid "FoI Requests"
 msgstr "Anfragen"
 
-#: froide/foirequest/views.py:327
+#: froide/foirequest/views.py:328
 msgid "You need to setup a default FOI Law object"
 msgstr "Sie müssen mindestens ein Informationsgesetz-Objekt anlegen"
 
-#: froide/foirequest/views.py:422
+#: froide/foirequest/views.py:423
 msgid "Others can now suggest the Public Bodies for your request."
 msgstr "Andere können nun Behörden für diese Anfrage vorschlagen."
 
-#: froide/foirequest/views.py:425
+#: froide/foirequest/views.py:426
 msgid ""
 "Your request will be sent as soon as the newly created Public Body was "
 "confirmed by an administrator."
 msgstr "Ihre Anfrage wird gesendet, sobald die neu erstellte Behörde von einem Administrator bestätigt wurde."
 
-#: froide/foirequest/views.py:429
+#: froide/foirequest/views.py:430
 msgid "Your request has been sent."
 msgstr "Ihre Anfrage wurde gesendet."
 
-#: froide/foirequest/views.py:430
+#: froide/foirequest/views.py:431
 msgid "?request-made"
 msgstr "?anfrage-gestellt"
 
-#: froide/foirequest/views.py:435 froide/foirequest/views.py:842
+#: froide/foirequest/views.py:436 froide/foirequest/views.py:843
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr "Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mail-Adresse."
 
-#: froide/foirequest/views.py:439
+#: froide/foirequest/views.py:440
 msgid ""
 "There were errors in your form submission. Please review and submit again."
 msgstr "Ihre Formulareingabe enthielt Fehler. Bitte überprüfen Sie Ihre Eingabe und senden Sie das Formular noch einmal."
 
-#: froide/foirequest/views.py:452 froide/foirequest/views.py:458
+#: froide/foirequest/views.py:453 froide/foirequest/views.py:459
 msgid "Missing or invalid input!"
 msgstr "Fehlende oder ungültige Eingabe!"
 
-#: froide/foirequest/views.py:462
+#: froide/foirequest/views.py:463
 msgid "This request doesn't need a Public Body!"
 msgstr "Diese Anfrage benötigt keine Behörde!"
 
-#: froide/foirequest/views.py:469
+#: froide/foirequest/views.py:470
 #, python-format
 msgid "Request was sent to: %(name)s."
 msgstr "Anfrage wurde gesendet an: %(name)s"
 
-#: froide/foirequest/views.py:490
+#: froide/foirequest/views.py:491
 msgid "Your Public Body suggestion has been added."
 msgstr "Ihr Vorschlag für eine Behörde wurde hinzugefügt."
 
-#: froide/foirequest/views.py:493
+#: froide/foirequest/views.py:494
 msgid "This Public Body has already been suggested."
 msgstr "Diese Behörde wurde schon vorgeschlagen."
 
-#: froide/foirequest/views.py:496
+#: froide/foirequest/views.py:497
 msgid "You need to specify a Public Body!"
 msgstr "Sie müssen eine Behörde angeben!"
 
-#: froide/foirequest/views.py:509
+#: froide/foirequest/views.py:510
 msgid "Status of request has been updated."
 msgstr "Status der Anfrage wurde aktualisiert."
 
-#: froide/foirequest/views.py:512
+#: froide/foirequest/views.py:513
 msgid "Invalid value for form submission!"
 msgstr "Ungültige Eingabe im Formular!"
 
-#: froide/foirequest/views.py:528
+#: froide/foirequest/views.py:529
 msgid "Your Message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."
 
-#: froide/foirequest/views.py:543
+#: froide/foirequest/views.py:544
 msgid "Your request cannot be escalated."
 msgstr "Ihre Anfrage kann noch nicht vermittelt werden. "
 
-#: froide/foirequest/views.py:549
+#: froide/foirequest/views.py:550
 msgid "Your Escalation Message has been sent."
 msgstr "Ihre Anfrage nach Vermittlung wurde gesendet."
 
-#: froide/foirequest/views.py:578
+#: froide/foirequest/views.py:579
 msgid "A concrete law has been set for this request."
 msgstr "Ein konkretes Gesetz wurde für diese Anfrage festgelegt."
 
-#: froide/foirequest/views.py:591
+#: froide/foirequest/views.py:592
 msgid "Tags have been set for this request"
 msgstr "Die Schlagworte dieser Anfrage wurden gespeichert."
 
-#: froide/foirequest/views.py:608
+#: froide/foirequest/views.py:609
 msgid "The outcome summary has been saved."
 msgstr "Die Ergebniszusammenfassung wurde gespeichert."
 
-#: froide/foirequest/views.py:654
+#: froide/foirequest/views.py:655
 msgid "A postal reply was successfully added!"
 msgstr "Eine per Post erhaltene Antwort wurde hinzugefügt!"
 
-#: froide/foirequest/views.py:657
+#: froide/foirequest/views.py:658
 msgid "There were errors with your form submission!"
 msgstr "Ihre Angaben waren fehlerhaft!"
 
-#: froide/foirequest/views.py:681
+#: froide/foirequest/views.py:682
 msgid ""
 "Your document was added to the message and replaced an existing attachment "
 "with the same name."
 msgstr "Ihr Dokument wurde zu der Nachricht hinzugefügt und hat einen existierenden Anhang mit dem gleichen Namen ersetzt."
 
-#: froide/foirequest/views.py:685
+#: froide/foirequest/views.py:686
 msgid "Your document was added to the message as a new attachment."
 msgstr "Ihr Dokument wurde an die Nachricht als neuer Anhang angefügt."
 
-#: froide/foirequest/views.py:732
+#: froide/foirequest/views.py:733
 msgid "Request marked as not a FoI request."
 msgstr "Anfrage wurde als nicht-IF markiert."
 
-#: froide/foirequest/views.py:746
+#: froide/foirequest/views.py:747
 msgid "Request marked as checked."
 msgstr "Anfrage als gesehen markiert."
 
-#: froide/foirequest/views.py:763
+#: froide/foirequest/views.py:764
 msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
 
-#: froide/foirequest/views.py:778
+#: froide/foirequest/views.py:779
 msgid "Content published."
 msgstr "Nachricht veröffentlicht."
 
-#: froide/foirequest/views.py:817
+#: froide/foirequest/views.py:818
 msgid "You already made an identical request"
 msgstr "Sie haben schon eine identische Anfrage gestellt"
 
-#: froide/foirequest/views.py:820
+#: froide/foirequest/views.py:821
 #, python-format
 msgid ""
 "Please see this request on %(site_name)s where you granted access to this "
 "information: %(url)s"
 msgstr "Ich verweise auf eine Anfrage auf %(site_name)s, der Sie Zugang zu den angefragten Dokumenten gewährt haben: %(url)s"
 
-#: froide/foirequest/views.py:836
+#: froide/foirequest/views.py:837
 msgid ""
 "You successfully requested this document! Your request is displayed below."
 msgstr "Sie haben das Dokument nun angefragt. Ihre Anfrage finden Sie auf dieser Seite."
 
-#: froide/foirequest/views.py:897
+#: froide/foirequest/views.py:898
 #, python-format
 msgid "%s_redacted.pdf"
 msgstr "%s_geschwaerzt.pdf"
 
-#: froide/foirequest/views.py:930 froide/foirequest/views.py:953
+#: froide/foirequest/views.py:931 froide/foirequest/views.py:954
 msgid "Invalid input!"
 msgstr "Ungültige Eingabe!"
 
-#: froide/foirequest/views.py:937
+#: froide/foirequest/views.py:938
 msgid "Deadline has been extended."
 msgstr "Frist wurde verlängert."
 
@@ -2608,6 +2599,10 @@ msgid ""
 "available information from that public body:"
 msgstr "Wenn Sie eine Frage stellen wollen, die sich auf Sie selbst bezieht, wie etwa \"Wo bekomme <b>ich</b> diesen Service?\" oder \"Was muss <b>ich</b> in diesem Fall tun?\", dann brauchen Sie Informationen zu den Dienstleistungen dieser Behörde:"
 
+#: froide/foirequest/templates/foirequest/request.html:171
+msgid "http://www.115.de"
+msgstr "https://www.help.gv.at"
+
 #: froide/foirequest/templates/foirequest/request.html:173
 msgid "Click here to go to 115.de - the Public Body Service Hotline"
 msgstr "Klicken Sie hier um zu help.gv.at – dem Wegweiser durch Ämter und Behörden zu gelangen."
@@ -2628,6 +2623,10 @@ msgid ""
 "public bodies. Please ask your Member of Parliament about the topic you are "
 "interested in:"
 msgstr "Wenn Sie sich über Gründe für politische Entscheidungen informieren möchten, sollten Sie mit Ihren Vertretern im Parlament und/oder den Parteien reden. Informationen zu ihnen finden Sie auf meineabgeordneten.at:"
+
+#: froide/foirequest/templates/foirequest/request.html:195
+msgid "http://www.abgeordnetenwatch.de"
+msgstr "http://www.meineabgeordneten.at/"
 
 #: froide/foirequest/templates/foirequest/request.html:196
 msgid "Click here to go to abgeordnetenwatch.de"
