@@ -66,3 +66,5 @@ The following standard URL names are referenced from templates: ``help-index``, 
 You can create Django Flatpages for these URLs or their appropriate translations: ``/help/``, ``/help/about/``, ``/help/terms/`` and ``/help/privacy/``.
 
 You can overwrite these URLs by their name in the root URL conf of your theme. You can also overwrite their base templates.
+
+If you'd like to create help pages in addition to the already-defined ones (above), remember to add the FlatpageFallbackMiddleware to your MIDDLEWARE_CLASSES.
