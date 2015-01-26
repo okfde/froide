@@ -27,7 +27,7 @@ def index(request, jurisdiction=None, topic=None):
 
     query = request.GET.get('q', '')
     if query:
-        publicbodies = [x for x in SearchQuerySet().models(PublicBody).auto_query(query) if x]
+        publicbodies = SearchQuerySet().models(PublicBody).auto_query(query)
     else:
         publicbodies = PublicBody.objects.get_list()
 
@@ -38,7 +38,7 @@ def index(request, jurisdiction=None, topic=None):
                 jurisdiction=jurisdiction.name if query else jurisdiction)
 
     page = request.GET.get('page')
-    paginator = Paginator(publicbodies, 50)
+    paginator = Paginator([x for x in publicbodies if x], 50)
     try:
         publicbodies = paginator.page(page)
     except PageNotAnInteger:
