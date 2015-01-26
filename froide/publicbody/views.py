@@ -27,7 +27,7 @@ def index(request, jurisdiction=None, topic=None):
 
     query = request.GET.get('q', '')
     if query:
-        publicbodies = SearchQuerySet().models(PublicBody).auto_query(query)
+        publicbodies = [x for x in SearchQuerySet().models(PublicBody).auto_query(query) if x]
     else:
         publicbodies = PublicBody.objects.get_list()
 

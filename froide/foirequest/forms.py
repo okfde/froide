@@ -347,7 +347,7 @@ class FoiRequestStatusForm(forms.Form):
         foirequest.status = status
         foirequest.resolution = resolution
 
-        foirequest.costs = data['costs']
+        foirequest.costs = data.get('costs',0)
         if resolution == "refused" or resolution == "partially_successful":
             foirequest.refusal_reason = data['refusal_reason']
         else:
