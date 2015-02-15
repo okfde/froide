@@ -162,7 +162,7 @@ class FoiRequestResource(ModelResource):
         if query:
             sqs = SearchQuerySet().models(FoiRequest)
             sqs = sqs.auto_query(query)
-            result = list(sqs[:5])
+            result = [x for x in sqs[:5] if x]
             result = [{
                 "title": x.title,
                 "id": x.pk,
