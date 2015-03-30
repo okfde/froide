@@ -16,3 +16,4 @@ build/
 dist/
 *.egg-info
 *.log
+froide/tests/froide_test_whoosh_db

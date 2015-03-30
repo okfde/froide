@@ -471,7 +471,7 @@ class Test(Base):
       return  {
             'default': {
                 'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-                'PATH': os.path.join(super(Test, self).PROJECT_ROOT,'test/froide_test_whoosh_db'),
+                'PATH': os.path.join(super(Test, self).PROJECT_ROOT,'tests/froide_test_whoosh_db'),
             },
         }
 
