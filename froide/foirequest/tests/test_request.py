@@ -1218,8 +1218,8 @@ class RequestTest(TestCase):
             'date': timezone.now(),
             'subject': 'Reply',
             'body': (u"Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
-                     u"Mit freundlichen Grüßen\n"
-                     + name),
+                     u"Mit freundlichen Grüßen\n" +
+                     name),
             'html': 'html',
             'from': ('Petra Radetzky', 'petra.radetsky@bund.example.org'),
             'to': [req.secret_address],
