@@ -133,8 +133,8 @@ class RequestForm(forms.Form):
     def clean(self):
         cleaned = self.cleaned_data
         public_body = cleaned.get("public_body")
-        if public_body is not None and (public_body != "new"
-                and public_body != ""):
+        if public_body is not None and (public_body != "new" and
+                public_body != ""):
             self.foi_law = self.clean_law_for_public_body(self.public_body_object)
         else:
             self.foi_law = self.clean_law_without_public_body()
