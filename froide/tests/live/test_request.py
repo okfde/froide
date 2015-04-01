@@ -7,10 +7,12 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest
 from froide.publicbody.models import PublicBody
+
 
 User = get_user_model()
 
@@ -325,7 +327,12 @@ class TestMakingRequest(LiveServerTestCase):
             self.scrollTo(klass='target-small')
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_xpath(login_link).is_displayed())
-            self.selenium.find_element_by_xpath(login_link).click()
+
+            login_link_el = self.selenium.find_element_by_xpath(login_link);
+
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: EC.element_to_be_clickable(login_link_el))
+            login_link_el.click()
 
         popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
         self.selenium.switch_to_window(popup_handle)
