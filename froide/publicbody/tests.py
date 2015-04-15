@@ -130,6 +130,30 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
                 kwargs={'jurisdiction': juris.slug}))
         self.assertEqual(response.status_code, 200)
 
+    def test_law_assignment(self):
+        juris = Jurisdiction.objects.get(name='fakefake')
+
+        self.assertEqual(juris.default_law.name, 'IFG-UIG fakefake')
+        self.assertEqual(Jurisdiction.objects.get(name='NRW').default_law.name, 'IFG-UIG NRW')
+
+        for pb in juris.publicbody_set.all():
+            j = pb.pk-500
+            deflaw = pb.default_law
+            if j == 0:
+                self.assertEqual(deflaw.name, 'IFG fakefake')
+            elif j == 1:
+                self.assertEqual(deflaw.name, 'UIG fakefake')
+            elif j==2:
+                self.assertEqual(deflaw.name, 'IFG-UIG fakefake')
+            else:
+                self.assertEqual(deflaw.name, 'IFG-UIG fakefake')
+
+
+        juris = Jurisdiction.objects.create(name='rofl')
+        FoiLaw.objects.create(name='rofl testtest', meta=True, jurisdiction=juris)
+        FoiLaw.objects.create(name='rofl test2', meta=False, priority=1500, jurisdiction=juris)
+        self.assertEqual(juris.default_law.name, 'rofl test2')
+
 
 class ApiTest(TestCase):
     def setUp(self):

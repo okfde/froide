@@ -329,7 +329,6 @@ class TestMakingRequest(LiveServerTestCase):
                 lambda driver: self.selenium.find_element_by_xpath(login_link).is_displayed())
 
             login_link_el = self.selenium.find_element_by_xpath(login_link)
-
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: EC.element_to_be_clickable(login_link_el))
             login_link_el.click()

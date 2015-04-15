@@ -59,6 +59,10 @@ class Jurisdiction(models.Model):
     def get_absolute_domain_url(self):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
+    @property
+    def default_law(self):
+        return FoiLaw.default_from_list(self.foilaw_set.all())
+
 
 @python_2_unicode_compatible
 class FoiLaw(models.Model):
@@ -69,13 +73,13 @@ class FoiLaw(models.Model):
     created = models.DateField(_("Creation Date"), blank=True, null=True)
     updated = models.DateField(_("Updated Date"), blank=True, null=True)
     request_note = models.TextField(_("request note"), blank=True)
-    meta = models.BooleanField(_("Meta Law"), default=False)
+    meta = models.BooleanField(_("Meta Law"), default=False, help_text=_('Indicates combined laws. Also implicitly adds 1000 to priority'),)
     combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
     letter_start = models.TextField(_("Start of Letter"), blank=True)
     letter_end = models.TextField(_("End of Letter"), blank=True)
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
             null=True, on_delete=models.SET_NULL, blank=True)
-    priority = models.SmallIntegerField(_("Priority"), default=3)
+    priority = models.SmallIntegerField(_("Priority"), default=3, help_text=_('Help with selecting law when multiple are defined per jurisdiction. Meta=True adds 1000 to priority'),)
     url = models.CharField(_("URL"), max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
             null=True, blank=True, default=30)
@@ -103,6 +107,22 @@ class FoiLaw(models.Model):
 
     def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
+
+    @classmethod
+    def default_from_list(cls,lst):
+        return sorted(lst, key=lambda x:x.priority_score, reverse=True)[0]
+
+    @classmethod
+    @property
+    def global_default(cls):
+        try:
+            return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
+        except FoiLaw.DoesNotExist:
+            return None
+
+    @property
+    def priority_score(self):
+        return self.priority+(1000 if self.meta else 0)
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
@@ -147,11 +167,9 @@ class FoiLaw(models.Model):
     @classmethod
     def get_default_law(cls, pb=None):
         if pb:
-            return cls.objects.filter(jurisdiction=pb.jurisdiction).order_by('-meta')[0]
-        try:
-            return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
-        except FoiLaw.DoesNotExist:
-            return None
+            return pb.default_law
+        return cls.global_default()
+
 
     def as_dict(self):
         return {
@@ -278,10 +296,13 @@ class PublicBody(models.Model):
             null=True, on_delete=models.SET_NULL, default=settings.SITE_ID)
 
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
-            blank=True, null=True, on_delete=models.SET_NULL)
+            blank=True, null=True, on_delete=models.SET_NULL,
+            help_text=_('By default, applicable FOI laws are taken from Jurisdiction'),)
 
     laws = models.ManyToManyField(FoiLaw,
-            verbose_name=_("Freedom of Information Laws"))
+            verbose_name=_("Freedom of Information Laws"),
+            help_text=_('OPTIONAL. If one or more are set, overrides Jurisdiction-specific laws. Highest-Prioritized law is used, using FoiLaw.priority, with FoiLaw.Meta adding 1000 priority implicitly.'),
+           )
     tags = TaggableManager(through=TaggedPublicBody, blank=True)
 
     non_filtered_objects = models.Manager()
@@ -296,6 +317,7 @@ class PublicBody(models.Model):
     serializable_fields = ('name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
             'address', 'domain')
+
 
     def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)
@@ -324,7 +346,9 @@ class PublicBody(models.Model):
 
     @property
     def default_law(self):
-        return FoiLaw.get_default_law(self)
+        if self.laws.all():
+            return FoiLaw.default_from_list(self.laws.all())
+        return self.jurisdiction.default_law
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})

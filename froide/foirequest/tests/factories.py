@@ -242,6 +242,7 @@ def make_world():
     UserFactory.create(is_staff=True, username='dummy_staff')
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
+    fakejur = JurisdictionFactory.create(name='fakefake')
 
     topic_1 = PublicBodyTagFactory.create(is_topic=True)
     topic_2 = PublicBodyTagFactory.create(is_topic=True)
@@ -271,6 +272,11 @@ def make_world():
         meta=True)
     meta_nrw.combined.add(ifg_nrw, uig_nrw)
 
+    ifg1_fakejur = FoiLawFactory.create(site=site, jurisdiction=fakejur, priority=0, name='UIG fakefake')
+    ifg2_fakejur = FoiLawFactory.create(site=site, jurisdiction=fakejur, priority=100, name='IFG fakefake')
+    meta_fakejur = FoiLawFactory.create(site=site, jurisdiction=fakejur, name='IFG-UIG fakefake',
+        meta=True)
+
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
         pb_bund_1.tags.add(topic_1)
@@ -279,6 +285,14 @@ def make_world():
         pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site)
         pb_nrw_1.tags.add(topic_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
+    for i in range(5):
+        pb_fakejur_1 = PublicBodyFactory.create(jurisdiction=fakejur, site=site, pk=500+i)
+        if i==0:
+            pb_fakejur_1.laws.add(ifg1_fakejur, ifg2_fakejur)
+        elif i==1:
+            pb_fakejur_1.laws.add(ifg1_fakejur) # UIG only, for whatever reason
+        elif i==2:
+            pb_fakejur_1.laws.add(ifg1_fakejur, ifg2_fakejur, meta_fakejur)
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)
     FoiMessageFactory.create(request=req, sender_user=user1,
