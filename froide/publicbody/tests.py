@@ -19,7 +19,7 @@ class PublicBodyTest(TestCase):
     def test_web_page(self):
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
-        pb = [x for x in PublicBody.objects.all() if x.tags.all()][0] # not all publicbodies have tags
+        pb = [x for x in PublicBody.objects.all() if x.tags.all()][0]  # not all publicbodies have tags
         tag = pb.tags.all()[0]
         response = self.client.get(reverse('publicbody-list', kwargs={
             'topic': tag.slug
