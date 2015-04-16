@@ -137,7 +137,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         self.assertEqual(Jurisdiction.objects.get(name='NRW').default_law.name, 'IFG-UIG NRW')
 
         for pb in juris.publicbody_set.all():
-            j = pb.pk - 500
+            j = pb.pk - 1500
             deflaw = pb.default_law
             if j == 0:
                 self.assertEqual(deflaw.name, 'IFG fakefake')

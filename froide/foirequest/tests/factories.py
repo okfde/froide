@@ -278,7 +278,7 @@ def make_world():
         meta=True)
 
     for i in range(5):
-        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site, pk=(400 + i))
+        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site, pk=(1400 + i))
         pb_bund_1.tags.add(topic_1)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)
     for _ in range(5):
@@ -286,7 +286,7 @@ def make_world():
         pb_nrw_1.tags.add(topic_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     for i in range(5):
-        pb_fakejur_1 = PublicBodyFactory.create(jurisdiction=fakejur, site=site, pk=(500 + i))
+        pb_fakejur_1 = PublicBodyFactory.create(jurisdiction=fakejur, site=site, pk=(1500 + i))
         if i == 0:
             pb_fakejur_1.laws.add(ifg1_fakejur, ifg2_fakejur)
         elif i == 1:
