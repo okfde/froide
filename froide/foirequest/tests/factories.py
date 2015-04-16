@@ -286,12 +286,12 @@ def make_world():
         pb_nrw_1.tags.add(topic_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     for i in range(5):
-        pb_fakejur_1 = PublicBodyFactory.create(jurisdiction=fakejur, site=site, pk=500+i)
-        if i==0:
+        pb_fakejur_1 = PublicBodyFactory.create(jurisdiction=fakejur, site=site, pk=(500 + i))
+        if i == 0:
             pb_fakejur_1.laws.add(ifg1_fakejur, ifg2_fakejur)
-        elif i==1:
-            pb_fakejur_1.laws.add(ifg1_fakejur) # UIG only, for whatever reason
-        elif i==2:
+        elif i == 1:
+            pb_fakejur_1.laws.add(ifg1_fakejur)  # UIG only, for whatever reason
+        elif i == 2:
             pb_fakejur_1.laws.add(ifg1_fakejur, ifg2_fakejur, meta_fakejur)
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)

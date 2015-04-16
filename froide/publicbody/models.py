@@ -109,20 +109,21 @@ class FoiLaw(models.Model):
         return u"%s (%s)" % (self.name, self.jurisdiction)
 
     @classmethod
-    def default_from_list(cls,lst):
-        return sorted(lst, key=lambda x:x.priority_score, reverse=True)[0]
+    def default_from_list(cls, lst):
+        return sorted(lst, key=lambda x: x.priority_score, reverse=True)[0]
 
     @classmethod
-    @property
     def global_default(cls):
         try:
-            return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
+            return FoiLaw.objects.get(
+                    id=settings.FROIDE_CONFIG.get("default_law", 1)
+                   )
         except FoiLaw.DoesNotExist:
             return None
 
     @property
     def priority_score(self):
-        return self.priority+(1000 if self.meta else 0)
+        return self.priority + (1000 if self.meta else 0)
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
@@ -169,7 +170,6 @@ class FoiLaw(models.Model):
         if pb:
             return pb.default_law
         return cls.global_default()
-
 
     def as_dict(self):
         return {
@@ -317,7 +317,6 @@ class PublicBody(models.Model):
     serializable_fields = ('name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
             'address', 'domain')
-
 
     def __str__(self):
         return u"%s (%s)" % (self.name, self.jurisdiction)

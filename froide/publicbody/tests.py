@@ -19,7 +19,7 @@ class PublicBodyTest(TestCase):
     def test_web_page(self):
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
-        pb = PublicBody.objects.all()[0]
+        pb = [x for x in PublicBody.objects.all() if x.tags.all()][0] # not all publicbodies have tags
         tag = pb.tags.all()[0]
         response = self.client.get(reverse('publicbody-list', kwargs={
             'topic': tag.slug
@@ -137,17 +137,16 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         self.assertEqual(Jurisdiction.objects.get(name='NRW').default_law.name, 'IFG-UIG NRW')
 
         for pb in juris.publicbody_set.all():
-            j = pb.pk-500
+            j = pb.pk - 500
             deflaw = pb.default_law
             if j == 0:
                 self.assertEqual(deflaw.name, 'IFG fakefake')
             elif j == 1:
                 self.assertEqual(deflaw.name, 'UIG fakefake')
-            elif j==2:
+            elif j == 2:
                 self.assertEqual(deflaw.name, 'IFG-UIG fakefake')
             else:
                 self.assertEqual(deflaw.name, 'IFG-UIG fakefake')
-
 
         juris = Jurisdiction.objects.create(name='rofl')
         FoiLaw.objects.create(name='rofl testtest', meta=True, jurisdiction=juris)
