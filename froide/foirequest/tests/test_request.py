@@ -74,7 +74,7 @@ class RequestTest(TestCase):
     def test_public_body_new_user_request(self):
         self.client.logout()
         factories.UserFactory.create(email="dummy@example.com")
-        pb = PublicBody.objects.all()[0]
+        pb = PublicBody.objects.get(pk=100)
         post = {"subject": "Test-Subject With New User",
                 "body": "This is a test body with new user",
                 "first_name": "Stefan", "last_name": "Wehrmeyer",

@@ -277,8 +277,8 @@ def make_world():
     meta_fakejur = FoiLawFactory.create(site=site, jurisdiction=fakejur, name='IFG-UIG fakefake',
         meta=True)
 
-    for _ in range(5):
-        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
+    for i in range(5):
+        pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site, pk=(100 + i))
         pb_bund_1.tags.add(topic_1)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)
     for _ in range(5):
