@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-16 17:55+0100\n"
+"POT-Creation-Date: 2015-04-21 19:22+0200\n"
 "PO-Revision-Date: 2014-08-06 14:32+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: Chinese (Hong Kong) (http://www.transifex.com/projects/p/"
@@ -33,7 +33,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: froide/_local_settings.py:11 froide/settings.py:206 froide/settings.py:494
+#: docs/_build/html/theming.html:95
+#, fuzzy
+msgid ""
+"Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
+"org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+msgstr ""
+"Froide 是 &lt;a href=\"http://www.okfn.org\"&gt;the Open Knowledge "
+"Foundation&lt;/a&gt; 的自由及開源軟件項目。"
+
+#: docs/_build/html/_sources/theming.txt:53
+msgid ""
+"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+"\">the Open Knowledge Foundation</a>."
+msgstr ""
+"Froide 是 <a href=\"http://www.okfn.org\">Open Knowledge Foundation</a> 的自"
+"由及開源軟件項目。"
+
+#: froide/_local_settings.py:11 froide/settings.py:206 froide/settings.py:496
 msgid "German"
 msgstr "Deutsch - 德文"
 
@@ -78,79 +95,79 @@ msgid "Chinese (Traditional, Hong Kong)"
 msgstr "中文(繁體，香港)"
 
 #. Translators: request URL
-#: froide/urls.py:82
+#: froide/urls.py:83
 msgid "make-request"
 msgstr "make-request"
 
 #. Translators: URL part
-#: froide/urls.py:84
+#: froide/urls.py:85
 msgid "requests"
 msgstr "requests"
 
 #. Translators: request URL
-#: froide/urls.py:86
+#: froide/urls.py:87
 msgid "request"
 msgstr "request"
 
 #. Translators: Short-request URL
 #. Translators: Short-request auth URL
-#: froide/urls.py:88 froide/urls.py:90
+#: froide/urls.py:89 froide/urls.py:91
 msgid "r"
 msgstr "r"
 
 #. Translators: follow request URL
-#: froide/urls.py:92
+#: froide/urls.py:93
 msgid "follow"
 msgstr "follow"
 
 #. Translators: URL part
-#: froide/urls.py:94 froide/urls.py:96
+#: froide/urls.py:95 froide/urls.py:97
 #: froide/publicbody/jurisdiction_urls.py:10
 msgid "entity"
 msgstr "entity"
 
 #. Translators: URL part
-#: froide/urls.py:98 froide/publicbody/jurisdiction_urls.py:15
+#: froide/urls.py:99 froide/publicbody/jurisdiction_urls.py:15
 msgid "entities"
 msgstr "entities"
 
 #. Translators: URL part
-#: froide/urls.py:100
+#: froide/urls.py:101
 msgid "law"
 msgstr "law"
 
 #. Translators: URL part
-#: froide/urls.py:102
+#: froide/urls.py:103
 msgid "account"
 msgstr "account"
 
 #. Translators: URL part
-#: froide/urls.py:104
+#: froide/urls.py:105
 msgid "profile"
 msgstr "profile"
 
 #. Translators: URL part
-#: froide/urls.py:106
+#: froide/urls.py:107
 msgid "search"
 msgstr "search"
 
 #. Translators: URL part
-#: froide/urls.py:113 froide/templates/help/base.html:17
+#: froide/urls.py:114 froide/templates/help/base.html:17
 msgid "help"
 msgstr "help"
 
 #. Translators: URL part
-#: froide/urls.py:115
+#: froide/urls.py:116
 msgid "about"
 msgstr "about"
 
 #. Translators: URL part
-#: froide/urls.py:117
+#: froide/urls.py:118
 msgid "terms"
 msgstr "terms"
 
 #. Translators: URL part
-#: froide/urls.py:119
+#: froide/urls.py:120
 msgid "privacy"
 msgstr "privacy"
 
@@ -359,7 +376,7 @@ msgstr "組織網址"
 msgid "Private"
 msgstr "私人"
 
-#: froide/account/models.py:31 froide/publicbody/models.py:257
+#: froide/account/models.py:31 froide/publicbody/models.py:259
 msgid "Address"
 msgstr "地址"
 
@@ -947,57 +964,71 @@ msgstr "呈請已標示為重覆"
 msgid "Mark selected requests as identical to..."
 msgstr "標示被勾選的要求為重覆……"
 
-#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:58
+#: froide/foirequest/admin.py:146 froide/publicbody/admin.py:57
 msgid "Removed from search index"
 msgstr "已從搜索索引中刪除"
 
-#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:59
+#: froide/foirequest/admin.py:147 froide/publicbody/admin.py:58
 msgid "Remove from search index"
 msgstr "從搜索索引中刪除"
 
-#: froide/foirequest/admin.py:170
+#: froide/foirequest/admin.py:152
+msgid "Request not in correct state!"
+msgstr ""
+
+#: froide/foirequest/admin.py:154
+#, fuzzy
+msgid "Message send successfully!"
+msgstr "密碼重設失敗"
+
+#: froide/foirequest/admin.py:157
+#, fuzzy
+msgid "Confirm request if unconfirmed"
+msgstr "這個請求已經被驗證。"
+
+#: froide/foirequest/admin.py:180
 msgid "Has redacted version"
 msgstr "備有修纂版本"
 
-#: froide/foirequest/admin.py:175
+#: froide/foirequest/admin.py:185
 msgid "Has converted version"
 msgstr "備有已轉換版本"
 
-#: froide/foirequest/admin.py:190
+#: froide/foirequest/admin.py:200
 #, python-format
 msgid "%d attachment(s) successfully approved."
 msgstr "%d　個附件成功獲批。"
 
-#: froide/foirequest/admin.py:191
+#: froide/foirequest/admin.py:201
 msgid "Mark selected as approved"
 msgstr "將所選請求標示為已批准"
 
-#: froide/foirequest/admin.py:195
+#: froide/foirequest/admin.py:205
 #, python-format
 msgid "%d attachment(s) successfully marked as not approvable."
 msgstr "%d　個附件成功地標記為不批准。"
 
-#: froide/foirequest/admin.py:196
+#: froide/foirequest/admin.py:206
 msgid "Mark selected as NOT approvable"
 msgstr "將所選請求標示為不可批准"
 
-#: froide/foirequest/admin.py:205
+#: froide/foirequest/admin.py:215
 msgid "Conversion tasks started."
 msgstr "轉換工作進行中"
 
-#: froide/foirequest/admin.py:206
+#: froide/foirequest/admin.py:216
 msgid "Convert to PDF"
 msgstr "轉換成為 PDF"
 
-#: froide/foirequest/admin.py:227
+#: froide/foirequest/admin.py:237
 msgid "Has request"
 msgstr "已提出要求呈請"
 
-#: froide/foirequest/admin.py:264
+#: froide/foirequest/admin.py:274
 msgid "Successfully triggered redelivery."
 msgstr "重新傳送成功。"
 
-#: froide/foirequest/admin.py:286
+#: froide/foirequest/admin.py:296
 msgid "Redeliver to..."
 msgstr "重新傳送到…"
 
@@ -1051,7 +1082,7 @@ msgid ""
 msgstr "這串包含最近成功通過 %(sitename)s 的 FOI 請求."
 
 #: froide/foirequest/feeds.py:86
-#: froide/foirequest/templates/foirequest/show.html:377
+#: froide/foirequest/templates/foirequest/show.html:385
 msgid "Not yet known"
 msgstr "未知"
 
@@ -1060,33 +1091,33 @@ msgstr "未知"
 msgid "'%(title)s' to %(publicbody)s"
 msgstr "'%(title)s' 致 %(publicbody)s"
 
-#: froide/foirequest/foi_mail.py:16
+#: froide/foirequest/foi_mail.py:19
 #, python-format
 msgid ""
 "We received an FoI mail to this address: %(address)s.\n"
 "No corresponding request could be identified, please investigate! %(url)s\n"
 msgstr ""
 
-#: froide/foirequest/foi_mail.py:20
+#: froide/foirequest/foi_mail.py:23
 #, python-format
 msgid ""
 "We received a possible spam mail to this address: %(address)s.\n"
 "Please investigate! %(url)s\n"
 msgstr ""
 
-#: froide/foirequest/foi_mail.py:64 froide/foirequest/tests/test_mail.py:84
+#: froide/foirequest/foi_mail.py:67 froide/foirequest/tests/test_mail.py:84
 msgid "Unknown FoI-Mail Recipient"
 msgstr "未知FOI-郵件收件人"
 
-#: froide/foirequest/foi_mail.py:142
+#: froide/foirequest/foi_mail.py:182
 msgid "Possible Spam Mail received"
 msgstr ""
 
-#: froide/foirequest/foi_mail.py:186
+#: froide/foirequest/foi_mail.py:226
 msgid "publicbody"
 msgstr "publicbody"
 
-#: froide/foirequest/foi_mail.py:188
+#: froide/foirequest/foi_mail.py:228
 msgid "requester"
 msgstr "requester"
 
@@ -1179,7 +1210,7 @@ msgstr "原因"
 msgid "Suggestions"
 msgstr "建議"
 
-#: froide/foirequest/forms.py:263 froide/publicbody/models.py:334
+#: froide/foirequest/forms.py:263 froide/publicbody/models.py:336
 msgid "More Info"
 msgstr "更多資料"
 
@@ -1189,7 +1220,7 @@ msgid "Reason for this suggestion: %(reason)s"
 msgstr "這個建議的理由：%(reason)s"
 
 #: froide/foirequest/forms.py:273
-#: froide/foirequest/templates/foirequest/show.html:421
+#: froide/foirequest/templates/foirequest/show.html:429
 msgid "Refusal Reason"
 msgstr "拒絕理由"
 
@@ -1521,13 +1552,13 @@ msgstr "不可見"
 msgid "Visible to Requester"
 msgstr "請求者可見"
 
-#: froide/foirequest/models.py:259 froide/publicbody/models.py:39
-#: froide/publicbody/models.py:64 froide/publicbody/models.py:240
+#: froide/foirequest/models.py:259 froide/publicbody/models.py:41
+#: froide/publicbody/models.py:66 froide/publicbody/models.py:242
 msgid "Slug"
 msgstr "Slug"
 
-#: froide/foirequest/models.py:260 froide/publicbody/models.py:40
-#: froide/publicbody/models.py:65 froide/publicbody/models.py:241
+#: froide/foirequest/models.py:260 froide/publicbody/models.py:42
+#: froide/publicbody/models.py:67 froide/publicbody/models.py:243
 msgid "Description"
 msgstr "描述"
 
@@ -1538,7 +1569,7 @@ msgstr "概要"
 #: froide/foirequest/models.py:264 froide/foirequest/models.py:1087
 #: froide/foirequest/models.py:1495
 #: froide/foirequest/templates/foirequest/snippets/message.html:39
-#: froide/publicbody/models.py:291
+#: froide/publicbody/models.py:293
 msgid "Public Body"
 msgstr "公共機構"
 
@@ -1584,7 +1615,7 @@ msgstr "重覆要求"
 msgid "Identical request count"
 msgstr "重覆要求個案"
 
-#: froide/foirequest/models.py:299 froide/publicbody/models.py:99
+#: froide/foirequest/models.py:299 froide/publicbody/models.py:101
 msgid "Freedom of Information Law"
 msgstr "信息自由法"
 
@@ -1604,14 +1635,14 @@ msgstr "已檢閱"
 msgid "is FoI request"
 msgstr "是 FoI 請求"
 
-#: froide/foirequest/models.py:306 froide/publicbody/models.py:47
-#: froide/publicbody/models.py:74 froide/publicbody/models.py:278
+#: froide/foirequest/models.py:306 froide/publicbody/models.py:49
+#: froide/publicbody/models.py:76 froide/publicbody/models.py:280
 #: froide/publicbody/templates/publicbody/show.html:26
 msgid "Jurisdiction"
 msgstr "地區"
 
 #: froide/foirequest/models.py:310 froide/frontpage/models.py:33
-#: froide/publicbody/models.py:94 froide/publicbody/models.py:275
+#: froide/publicbody/models.py:96 froide/publicbody/models.py:277
 msgid "Site"
 msgstr "網址"
 
@@ -1834,8 +1865,8 @@ msgid "Belongs to request"
 msgstr "屬於要求"
 
 #: froide/foirequest/models.py:1354 froide/foisite/models.py:12
-#: froide/publicbody/models.py:38 froide/publicbody/models.py:63
-#: froide/publicbody/models.py:238
+#: froide/publicbody/models.py:40 froide/publicbody/models.py:65
+#: froide/publicbody/models.py:240
 msgid "Name"
 msgstr "名稱"
 
@@ -2351,13 +2382,13 @@ msgid "Feeds for these requests"
 msgstr "這個呈請的摘要"
 
 #: froide/foirequest/templates/foirequest/list.html:116
-#: froide/foirequest/templates/foirequest/show.html:550
+#: froide/foirequest/templates/foirequest/show.html:558
 #: froide/publicbody/templates/publicbody/show.html:105
 msgid "RSS Feed"
 msgstr "RSS Feed"
 
 #: froide/foirequest/templates/foirequest/list.html:122
-#: froide/foirequest/templates/foirequest/show.html:556
+#: froide/foirequest/templates/foirequest/show.html:564
 #: froide/publicbody/templates/publicbody/show.html:110
 msgid "Atom Feed"
 msgstr "Atom Feed"
@@ -2367,18 +2398,18 @@ msgid "Show all Non-FoI requests"
 msgstr "顯示全部非 FoI 請求"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:16
-#: froide/foirequest/templates/foirequest/show.html:607
+#: froide/foirequest/templates/foirequest/show.html:615
 #: froide/publicbody/templates/publicbody/show.html:59
 msgid "View on Admin site"
 msgstr "在管理面版查看"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:19
-#: froide/foirequest/templates/foirequest/show.html:632
+#: froide/foirequest/templates/foirequest/show.html:640
 msgid "Mark as checked"
 msgstr "標記為已檢閱"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:23
-#: froide/foirequest/templates/foirequest/show.html:646
+#: froide/foirequest/templates/foirequest/show.html:654
 msgid "Mark as NOT FoI"
 msgstr "標記為非 FoI"
 
@@ -3017,11 +3048,20 @@ msgid ""
 "can enter enter an address here.</a>"
 msgstr ""
 
-#: froide/foirequest/templates/foirequest/show.html:310
+#: froide/foirequest/templates/foirequest/show.html:302
+msgid "If you need to provide an alternative email address, use this one:"
+msgstr ""
+
+#: froide/foirequest/templates/foirequest/show.html:305
+#, fuzzy
+msgid "It will still go to your request here."
+msgstr "在這裡說明你的要求"
+
+#: froide/foirequest/templates/foirequest/show.html:318
 msgid "Set Law"
 msgstr ""
 
-#: froide/foirequest/templates/foirequest/show.html:313
+#: froide/foirequest/templates/foirequest/show.html:321
 msgid ""
 "This request was made under multiple information laws. If it is apparent "
 "from the reply under which law the request was answered, please choose this "
@@ -3030,123 +3070,123 @@ msgstr ""
 "這一請求是根據多條信息法。如果從請求的答覆中能明顯地反映所依據的法律，請在下"
 "面選擇這一法律。如果不是很明顯的話，請讓它保持原狀。"
 
-#: froide/foirequest/templates/foirequest/show.html:315
+#: froide/foirequest/templates/foirequest/show.html:323
 msgid "Set Concrete Law"
 msgstr "設定具體法律"
 
-#: froide/foirequest/templates/foirequest/show.html:323
+#: froide/foirequest/templates/foirequest/show.html:331
 msgid "Resolution Summary"
 msgstr "調解概要"
 
-#: froide/foirequest/templates/foirequest/show.html:326
+#: froide/foirequest/templates/foirequest/show.html:334
 msgid ""
 "Have you received the information you need? What have you learned from it?"
 msgstr "你有沒有收到你所需要的信息？你從中學到了什麼？"
 
-#: froide/foirequest/templates/foirequest/show.html:328
+#: froide/foirequest/templates/foirequest/show.html:336
 msgid "Save Summary"
 msgstr "保存概要"
 
-#: froide/foirequest/templates/foirequest/show.html:339
+#: froide/foirequest/templates/foirequest/show.html:347
 msgid "You can suggest a public body for this request."
 msgstr "你可以為這個請求建議一個公共機構."
 
-#: froide/foirequest/templates/foirequest/show.html:342
+#: froide/foirequest/templates/foirequest/show.html:350
 msgid "The following public bodies have already been suggested:"
 msgstr "以下的公共機構已經被建議："
 
-#: froide/foirequest/templates/foirequest/show.html:348
+#: froide/foirequest/templates/foirequest/show.html:356
 msgid "Details"
 msgstr "詳細資料"
 
-#: froide/foirequest/templates/foirequest/show.html:351
+#: froide/foirequest/templates/foirequest/show.html:359
 msgid "Reason given by the user:"
 msgstr "用戶給出的理由："
 
-#: froide/foirequest/templates/foirequest/show.html:355
+#: froide/foirequest/templates/foirequest/show.html:363
 msgid "There are no suggestions yet"
 msgstr "暫未有建議"
 
-#: froide/foirequest/templates/foirequest/show.html:365
+#: froide/foirequest/templates/foirequest/show.html:373
 msgid "Suggest this Public Body"
 msgstr "建議這個公共機構"
 
-#: froide/foirequest/templates/foirequest/show.html:372
+#: froide/foirequest/templates/foirequest/show.html:380
 msgid "Request to:"
 msgstr "致："
 
-#: froide/foirequest/templates/foirequest/show.html:382
+#: froide/foirequest/templates/foirequest/show.html:390
 msgid "Laws used:"
 msgstr "使用法律："
 
-#: froide/foirequest/templates/foirequest/show.html:393
-#: froide/foirequest/templates/foirequest/show.html:399
+#: froide/foirequest/templates/foirequest/show.html:401
+#: froide/foirequest/templates/foirequest/show.html:407
 msgid "Law used:"
 msgstr "引用法例："
 
-#: froide/foirequest/templates/foirequest/show.html:400
+#: froide/foirequest/templates/foirequest/show.html:408
 #: froide/foirequest/templates/foirequest/snippets/request_item.html:19
 msgid "Not yet set"
 msgstr "尚未確定"
 
-#: froide/foirequest/templates/foirequest/show.html:402
+#: froide/foirequest/templates/foirequest/show.html:410
 msgid "Status of this request:"
 msgstr "申請狀況："
 
-#: froide/foirequest/templates/foirequest/show.html:405
+#: froide/foirequest/templates/foirequest/show.html:413
 msgid "Due date:"
 msgstr "限期："
 
-#: froide/foirequest/templates/foirequest/show.html:408
+#: froide/foirequest/templates/foirequest/show.html:416
 #, python-format
 msgid "%(due)s ago"
 msgstr "%(due)s 前"
 
-#: froide/foirequest/templates/foirequest/show.html:412
+#: froide/foirequest/templates/foirequest/show.html:420
 #, python-format
 msgid "in %(due)s"
 msgstr ""
 
 #. Translators: URL part
-#: froide/foirequest/templates/foirequest/show.html:415
+#: froide/foirequest/templates/foirequest/show.html:423
 msgid "deadline"
 msgstr "限期"
 
-#: froide/foirequest/templates/foirequest/show.html:416
+#: froide/foirequest/templates/foirequest/show.html:424
 msgid "How is this calculated?"
 msgstr "是如何計算的？"
 
-#: froide/foirequest/templates/foirequest/show.html:425
+#: froide/foirequest/templates/foirequest/show.html:433
 msgid "Cost of information:"
 msgstr "信息成本："
 
-#: froide/foirequest/templates/foirequest/show.html:429
+#: froide/foirequest/templates/foirequest/show.html:437
 msgid "Summary of Request"
 msgstr "要求概要"
 
-#: froide/foirequest/templates/foirequest/show.html:433
+#: froide/foirequest/templates/foirequest/show.html:441
 msgid "Summary of Resolution"
 msgstr "決議摘要"
 
-#: froide/foirequest/templates/foirequest/show.html:441
+#: froide/foirequest/templates/foirequest/show.html:449
 msgid ""
 "This request was not sent yet, because it still needs a Public Body as a "
 "recipient."
 msgstr "這一要求尚未被發送，因為它仍然需要一個公共機構作為收件人。"
 
-#: froide/foirequest/templates/foirequest/show.html:445
+#: froide/foirequest/templates/foirequest/show.html:453
 msgid ""
 "This request is not public and will not receive suggestions for public "
 "bodies from users!"
 msgstr "這一要求是不公開的，並不會從用戶接收公共機構的建議！"
 
-#: froide/foirequest/templates/foirequest/show.html:453
+#: froide/foirequest/templates/foirequest/show.html:461
 msgid ""
 "The public body of this request has been created by the user and still needs "
 "to be confirmed."
 msgstr "此一要求的公共機構已被用戶創建，但仍然需要進一步證實。"
 
-#: froide/foirequest/templates/foirequest/show.html:464
+#: froide/foirequest/templates/foirequest/show.html:472
 msgid ""
 "This request received documents that we are not allowed to publish. However, "
 "every person can get individual access to these documents by requesting them "
@@ -3155,139 +3195,139 @@ msgstr ""
 "這個要求接收到不允許我們發布的文檔。然而，每個人都可以個別地在下面請求訪問這"
 "些文件。"
 
-#: froide/foirequest/templates/foirequest/show.html:467
+#: froide/foirequest/templates/foirequest/show.html:475
 #, python-format
 msgid ""
 "You stated that you are not allowed to publish the received documents. If "
 "this was a mistake, please contact %(email)s."
 msgstr "你已聲明你未獲允許公開已收到的文件，如有錯，請通知 %(email)s。"
 
-#: froide/foirequest/templates/foirequest/show.html:470
+#: froide/foirequest/templates/foirequest/show.html:478
 msgid "You made the original request."
 msgstr "你提交了原本的要求。"
 
-#: froide/foirequest/templates/foirequest/show.html:474
+#: froide/foirequest/templates/foirequest/show.html:482
 msgid "You made an identical request."
 msgstr "你已重覆提交要求呈請。"
 
-#: froide/foirequest/templates/foirequest/show.html:478
-#: froide/foirequest/templates/foirequest/show.html:489
+#: froide/foirequest/templates/foirequest/show.html:486
+#: froide/foirequest/templates/foirequest/show.html:497
 msgid ""
 "Make an identical request in your name to get access to the information."
 msgstr "以閣下之名提交重覆的獲取資訊的要求。"
 
-#: froide/foirequest/templates/foirequest/show.html:479
+#: froide/foirequest/templates/foirequest/show.html:487
 msgid "Your Post Address:"
 msgstr "你的郵寄地址："
 
-#: froide/foirequest/templates/foirequest/show.html:480
+#: froide/foirequest/templates/foirequest/show.html:488
 msgid "Your Email Address:"
 msgstr "你的電郵地址："
 
-#: froide/foirequest/templates/foirequest/show.html:481
-#: froide/foirequest/templates/foirequest/show.html:494
+#: froide/foirequest/templates/foirequest/show.html:489
+#: froide/foirequest/templates/foirequest/show.html:502
 msgid "Make identical request in your name"
 msgstr "以閣下之名提交重覆要求呈請"
 
-#: froide/foirequest/templates/foirequest/show.html:497
+#: froide/foirequest/templates/foirequest/show.html:505
 #, python-format
 msgid "So far one person also requested this document."
 msgid_plural ""
 "So far <strong>%(counter)s people</strong> requested this document."
 msgstr[0] "已有 <strong>%(counter)s 人</strong> 要求索閱此文件。"
 
-#: froide/foirequest/templates/foirequest/show.html:508
+#: froide/foirequest/templates/foirequest/show.html:516
 msgid "Followers"
 msgstr "追隨者"
 
-#: froide/foirequest/templates/foirequest/show.html:511
+#: froide/foirequest/templates/foirequest/show.html:519
 #, python-format
 msgid "%(counter)s follower"
 msgid_plural "%(counter)s followers"
 msgstr[0] "%(counter)s 個追隨者"
 
-#: froide/foirequest/templates/foirequest/show.html:524
+#: froide/foirequest/templates/foirequest/show.html:532
 msgid "Share this request"
 msgstr "公開此要求"
 
-#: froide/foirequest/templates/foirequest/show.html:528
+#: froide/foirequest/templates/foirequest/show.html:536
 msgid "Twitter"
 msgstr "Twitter"
 
-#: froide/foirequest/templates/foirequest/show.html:534
+#: froide/foirequest/templates/foirequest/show.html:542
 msgid "Facebook"
 msgstr "Facebook"
 
-#: froide/foirequest/templates/foirequest/show.html:540
+#: froide/foirequest/templates/foirequest/show.html:548
 msgid "Google+"
 msgstr "Google+"
 
-#: froide/foirequest/templates/foirequest/show.html:546
+#: froide/foirequest/templates/foirequest/show.html:554
 msgid "Feeds"
 msgstr "Feeds"
 
-#: froide/foirequest/templates/foirequest/show.html:561
+#: froide/foirequest/templates/foirequest/show.html:569
 msgid "Short URL"
 msgstr "好記網址"
 
-#: froide/foirequest/templates/foirequest/show.html:568
+#: froide/foirequest/templates/foirequest/show.html:576
 msgid "Secret Short URL"
 msgstr "保密的短網址"
 
-#: froide/foirequest/templates/foirequest/show.html:571
+#: froide/foirequest/templates/foirequest/show.html:579
 msgid "This URL gives read access to others."
 msgstr "這個網址會給其他人讀取權限。"
 
-#: froide/foirequest/templates/foirequest/show.html:578
+#: froide/foirequest/templates/foirequest/show.html:586
 msgid "Download"
 msgstr "下載"
 
-#: froide/foirequest/templates/foirequest/show.html:582
+#: froide/foirequest/templates/foirequest/show.html:590
 msgid "Download request as ZIP-file"
 msgstr "以 ZIP 壓縮檔下載此請求"
 
-#: froide/foirequest/templates/foirequest/show.html:589
+#: froide/foirequest/templates/foirequest/show.html:597
 #: froide/helper/forms.py:26 froide/helper/forms.py:28
 msgid "Tags"
 msgstr "標籤"
 
-#: froide/foirequest/templates/foirequest/show.html:603
+#: froide/foirequest/templates/foirequest/show.html:611
 msgid "Staff Actions"
 msgstr "管理操作"
 
-#: froide/foirequest/templates/foirequest/show.html:619
+#: froide/foirequest/templates/foirequest/show.html:627
 msgid "Save tags"
 msgstr "儲存標籤"
 
-#: froide/foirequest/templates/foirequest/show.html:626
-#: froide/foirequest/templates/foirequest/show.html:636
+#: froide/foirequest/templates/foirequest/show.html:634
+#: froide/foirequest/templates/foirequest/show.html:644
 msgid "Marked as checked"
 msgstr "標記為已檢閱"
 
-#: froide/foirequest/templates/foirequest/show.html:641
 #: froide/foirequest/templates/foirequest/show.html:649
+#: froide/foirequest/templates/foirequest/show.html:657
 msgid "Marked as NOT FoI"
 msgstr "已標記為非 FoI"
 
-#: froide/foirequest/templates/foirequest/show.html:659
+#: froide/foirequest/templates/foirequest/show.html:667
 msgid "Extend Deadline by Months"
 msgstr "延長限期 (按月)"
 
-#: froide/foirequest/templates/foirequest/show.html:702
+#: froide/foirequest/templates/foirequest/show.html:710
 msgid "Messages in this request"
 msgstr "在這個請求內的信息"
 
-#: froide/foirequest/templates/foirequest/show.html:710
+#: froide/foirequest/templates/foirequest/show.html:718
 msgid "No messages yet"
 msgstr "暫時沒有訊息"
 
-#: froide/foirequest/templates/foirequest/show.html:715
+#: froide/foirequest/templates/foirequest/show.html:723
 #, python-format
 msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
 msgstr[0] "%(counter)s 項相同的請求"
 
-#: froide/foirequest/templates/foirequest/show.html:728
+#: froide/foirequest/templates/foirequest/show.html:736
 msgid "This request is identical to:"
 msgstr "這一請求和…重覆"
 
@@ -3707,8 +3747,8 @@ msgid "%(counter)s identical request"
 msgid_plural "%(counter)s identical requests"
 msgstr[0] "%(counter)s 項相同的請求"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:84
-#: froide/foirequest/templatetags/foirequest_tags.py:89
+#: froide/foirequest/templatetags/foirequest_tags.py:85
+#: froide/foirequest/templatetags/foirequest_tags.py:90
 msgid "Only visible to you"
 msgstr ""
 
@@ -3935,7 +3975,7 @@ msgid "Country Name"
 msgstr "國家名稱"
 
 #: froide/foisite/models.py:13 froide/frontpage/models.py:25
-#: froide/publicbody/models.py:77 froide/publicbody/models.py:242
+#: froide/publicbody/models.py:79 froide/publicbody/models.py:244
 msgid "URL"
 msgstr "網址"
 
@@ -4002,7 +4042,7 @@ msgstr "逗號分隔"
 msgid "Enter comma-separated tags here"
 msgstr "在此輸入以半形逗號 (,) 分隔的標籤"
 
-#: froide/publicbody/admin.py:48
+#: froide/publicbody/admin.py:47
 msgid "Export to CSV"
 msgstr "以逗號分隔 (CSV) 格式匯出"
 
@@ -4022,164 +4062,164 @@ msgstr "FOI 請求的電郵地址"
 msgid "Homepage URL of Public Body"
 msgstr "公共機構的主頁網址"
 
-#: froide/publicbody/models.py:41
+#: froide/publicbody/models.py:43
 msgid "Hidden"
 msgstr "隱藏"
 
-#: froide/publicbody/models.py:48
+#: froide/publicbody/models.py:50
 #: froide/publicbody/templates/publicbody/list.html:61
 msgid "Jurisdictions"
 msgstr "地區"
 
-#: froide/publicbody/models.py:66
+#: froide/publicbody/models.py:68
 msgid "Website Text"
 msgstr "網站文字"
 
-#: froide/publicbody/models.py:67
+#: froide/publicbody/models.py:69
 msgid "Creation Date"
 msgstr "建立日期"
 
-#: froide/publicbody/models.py:68
+#: froide/publicbody/models.py:70
 msgid "Updated Date"
 msgstr "更新日期"
 
-#: froide/publicbody/models.py:69 froide/publicbody/models.py:259
+#: froide/publicbody/models.py:71 froide/publicbody/models.py:261
 msgid "request note"
 msgstr "請求的附註"
 
-#: froide/publicbody/models.py:70
+#: froide/publicbody/models.py:72
 msgid "Meta Law"
 msgstr "法律總集"
 
-#: froide/publicbody/models.py:71
+#: froide/publicbody/models.py:73
 msgid "Combined Laws"
 msgstr ""
 
-#: froide/publicbody/models.py:72
+#: froide/publicbody/models.py:74
 msgid "Start of Letter"
 msgstr "信件開端"
 
-#: froide/publicbody/models.py:73
+#: froide/publicbody/models.py:75
 msgid "End of Letter"
 msgstr "信件未端"
 
-#: froide/publicbody/models.py:76
+#: froide/publicbody/models.py:78
 msgid "Priority"
 msgstr "優先次序"
 
-#: froide/publicbody/models.py:78
+#: froide/publicbody/models.py:80
 msgid "Maximal Response Time"
 msgstr "最大回應時間"
 
-#: froide/publicbody/models.py:80
+#: froide/publicbody/models.py:82
 msgid "Unit of Response Time"
 msgstr "回應時間的單位"
 
-#: froide/publicbody/models.py:82
+#: froide/publicbody/models.py:84
 msgid "Day(s)"
 msgstr "日"
 
-#: froide/publicbody/models.py:83
+#: froide/publicbody/models.py:85
 msgid "Working Day(s)"
 msgstr "工作日"
 
-#: froide/publicbody/models.py:84
+#: froide/publicbody/models.py:86
 msgid "Month(s) (DE)"
 msgstr "月"
 
-#: froide/publicbody/models.py:87
+#: froide/publicbody/models.py:89
 msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 msgstr "可能的拒絕理由，每行一個，如 §X.Y：隱私問題"
 
-#: froide/publicbody/models.py:89
+#: froide/publicbody/models.py:91
 msgid "Mediator"
 msgstr "中間人"
 
-#: froide/publicbody/models.py:93
+#: froide/publicbody/models.py:95
 msgid "E-Mail only"
 msgstr "只用電子郵件"
 
-#: froide/publicbody/models.py:100 froide/publicbody/models.py:282
+#: froide/publicbody/models.py:102 froide/publicbody/models.py:284
 msgid "Freedom of Information Laws"
 msgstr "信息自由法"
 
-#: froide/publicbody/models.py:134
+#: froide/publicbody/models.py:136
 msgid "No law can be applied"
 msgstr "沒有適用的法律"
 
-#: froide/publicbody/models.py:191
+#: froide/publicbody/models.py:193
 msgid "as topic"
 msgstr ""
 
-#: froide/publicbody/models.py:192
+#: froide/publicbody/models.py:194
 msgid "rank"
 msgstr "rank"
 
-#: froide/publicbody/models.py:197
+#: froide/publicbody/models.py:199
 msgid "Public Body Tag"
 msgstr "公共機構標籤"
 
-#: froide/publicbody/models.py:198
+#: froide/publicbody/models.py:200
 msgid "Public Body Tags"
 msgstr "公共機構標籤"
 
-#: froide/publicbody/models.py:207
+#: froide/publicbody/models.py:209
 msgid "Tagged Public Body"
 msgstr "已標籤之公共機構"
 
-#: froide/publicbody/models.py:208
+#: froide/publicbody/models.py:210
 msgid "Tagged Public Bodies"
 msgstr "已標籤之公共機構"
 
-#: froide/publicbody/models.py:239
+#: froide/publicbody/models.py:241
 msgid "Other names"
 msgstr "其他名字"
 
-#: froide/publicbody/models.py:250
+#: froide/publicbody/models.py:252
 msgid "Classification"
 msgstr "分類"
 
-#: froide/publicbody/models.py:252
+#: froide/publicbody/models.py:254
 msgid "Classification Slug"
 msgstr ""
 
-#: froide/publicbody/models.py:255
+#: froide/publicbody/models.py:257
 msgid "Email"
 msgstr "電郵"
 
-#: froide/publicbody/models.py:256
+#: froide/publicbody/models.py:258
 msgid "Contact"
 msgstr "連絡"
 
-#: froide/publicbody/models.py:258
+#: froide/publicbody/models.py:260
 msgid "Website Dump"
 msgstr "網站快照"
 
-#: froide/publicbody/models.py:262
+#: froide/publicbody/models.py:264
 msgid "Created by"
 msgstr "原始作者："
 
-#: froide/publicbody/models.py:266
+#: froide/publicbody/models.py:268
 msgid "Updated by"
 msgstr "最後修改："
 
-#: froide/publicbody/models.py:269
+#: froide/publicbody/models.py:271
 msgid "Created at"
 msgstr "創建於"
 
-#: froide/publicbody/models.py:270
+#: froide/publicbody/models.py:272
 msgid "Updated at"
 msgstr "更新於"
 
-#: froide/publicbody/models.py:271
+#: froide/publicbody/models.py:273
 msgid "confirmed"
 msgstr "confirmed"
 
-#: froide/publicbody/models.py:273
+#: froide/publicbody/models.py:275
 msgid "Number of requests"
 msgstr "要求宗數"
 
-#: froide/publicbody/models.py:292
+#: froide/publicbody/models.py:294
 #: froide/publicbody/templates/publicbody/base.html:5
 #: froide/publicbody/templates/publicbody/list.html:10
 #: froide/templates/base.html:36
@@ -4732,21 +4772,6 @@ msgstr "找不到你想要的？"
 #: froide/templates/search/search.html:69
 msgid "Make a Freedom of Information Request now!"
 msgstr "現在製作一個 FOI 請求"
-
-#, fuzzy
-#~ msgid ""
-#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
-#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
-#~ msgstr ""
-#~ "Froide 是 &lt;a href=\"http://www.okfn.org\"&gt;the Open Knowledge "
-#~ "Foundation&lt;/a&gt; 的自由及開源軟件項目。"
-
-#~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-#~ "\">the Open Knowledge Foundation</a>."
-#~ msgstr ""
-#~ "Froide 是 <a href=\"http://www.okfn.org\">Open Knowledge Foundation</a> 的"
-#~ "自由及開源軟件項目。"
 
 #~ msgid "making-requests"
 #~ msgstr "making-requests"
