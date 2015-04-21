@@ -106,7 +106,7 @@ def get_foirequest_from_mail(email):
         except ValueError:
             return None
         hero_name = get_name_from_number(num)
-        if hero_name != name:
+        if hero_name != hero:
             return None
         try:
             return FoiRequest.objects.get(pk=num)
