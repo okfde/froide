@@ -297,6 +297,14 @@ data-spy="scroll" data-target="#message-nav-container"
                     {% endif %}
                   </p>
                   <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+                  <p class="help-block">
+                    <small>
+                      {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
+                      <strong>{% alternative_address object %}</strong>
+                      <br/>
+                      {% trans "It will still go to your request here." %}
+                    </small>
+                  </p>
                 </div>
               </div>
             </form>

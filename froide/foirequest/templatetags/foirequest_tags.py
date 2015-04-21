@@ -10,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from froide.helper.text_utils import unescape, split_text_by_separator
 
 from froide.foirequest.models import FoiRequest
+from froide.foirequest.foi_mail import get_alternative_mail
 
 register = template.Library()
 
@@ -119,6 +120,10 @@ def check_same_request(context, foirequest, user, var_name):
     return ""
 
 
+def alternative_address(foirequest):
+    return get_alternative_mail(foirequest)
+
 register.simple_tag(highlight_request)
 register.simple_tag(redact_message)
+register.simple_tag(alternative_address)
 register.simple_tag(takes_context=True)(check_same_request)
