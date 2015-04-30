@@ -56,7 +56,7 @@ class UnsupportedMailFormat(Exception):
 class EmailParser(object):
 
     def parse_dispositions(self, dispo):
-        dispos = dispo.strip().split(";")
+        dispos = dispo.strip().split(";", 1)
         dispo_name = dispos[0].lower()
         dispo_dict = {}
         for param in dispos[1:]:
