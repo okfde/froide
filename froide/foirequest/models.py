@@ -1256,8 +1256,13 @@ class FoiMessage(models.Model):
     @property
     def reply_address_entry(self):
         email = self.sender_email
+        pb = None
+        if self.sender_public_body:
+            pb = self.sender_public_body.name
         if email:
-            return u'%s@... (%s)' % (email.split('@')[0], self.real_sender)
+            if pb:
+                return u'%s@... (%s)' % (email.split('@')[0], pb)
+            return u'%s@...' % email.split('@')[0]
         else:
             return self.real_sender
 
