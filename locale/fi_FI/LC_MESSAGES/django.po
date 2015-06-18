@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-18 12:45+0200\n"
+"POT-Creation-Date: 2015-06-18 15:27+0200\n"
 "PO-Revision-Date: 2014-08-06 14:32+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: Finnish (Finland) (http://www.transifex.com/projects/p/froide/"
@@ -3786,7 +3786,6 @@ msgid "Visit your request: %(link)s"
 msgstr "Katso tietopyyntöäsi: %(link)s"
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt:11
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:16
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:17
 #, python-format
 msgid ""
@@ -4114,12 +4113,12 @@ msgstr "Et tule saamaan ilmoituksia enää."
 msgid "Hello,"
 msgstr "Hei,"
 
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:4
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:3
 #, python-format
 msgid "The following just happend to the request \"%(title)s\" that you follow"
 msgstr ""
 
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:7
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:6
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:8
 #, python-format
 msgid ""
@@ -4131,7 +4130,7 @@ msgstr ""
 "\n"
 "%(link)s"
 
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:12
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:10
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:13
 #, python-format
 msgid ""
@@ -4140,6 +4139,16 @@ msgid ""
 msgstr ""
 "Jos haluat lopettaa tämän tietopyynnön seuraamisen, klikkaa tätä linkkiä:\n"
 "%(unfollow_link)s"
+
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:13
+#, fuzzy, python-format
+msgid ""
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"\n"
+"Hei,\n"
+"%(site_name)s\n"
 
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:3
 #, python-format

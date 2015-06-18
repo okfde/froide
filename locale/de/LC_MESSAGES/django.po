@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-18 12:17+0200\n"
-"PO-Revision-Date: 2015-06-18 11:28+0000\n"
+"POT-Creation-Date: 2015-06-18 15:27+0200\n"
+"PO-Revision-Date: 2015-06-18 13:33+0000\n"
 "Last-Translator: arne <arne.semsrott@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/froide/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -550,7 +550,7 @@ msgstr "Tags zu mehreren Objekten hinzufügen"
 #: froide/account/templates/account/admin_send_mail.html:18
 #: froide/foirequest/forms.py:30 froide/foirequest/forms.py:33
 #: froide/foirequest/forms.py:173 froide/foirequest/forms.py:237
-#: froide/foirequest/forms.py:429 froide/foirequest/forms.py:432
+#: froide/foirequest/forms.py:439 froide/foirequest/forms.py:442
 #: froide/foirequest/models.py:1142
 #: froide/foirequest/templates/foirequest/request.html:469
 #: froide/foirequest/templates/foirequest/snippets/message.html:49
@@ -1109,7 +1109,7 @@ msgid ""
 " always decide to make it public later."
 msgstr "Wenn Ihre Anfrage nicht sofort öffentlich sein soll, entfernen Sie den Haken. Sie können die Anfrage dann später veröffentlichen."
 
-#: froide/foirequest/forms.py:63 froide/foirequest/forms.py:372
+#: froide/foirequest/forms.py:63 froide/foirequest/forms.py:382
 msgid "Information Law"
 msgstr "Informationsgesetz"
 
@@ -1123,7 +1123,7 @@ msgstr "Sie müssen eine Behörde angeben"
 
 #: froide/foirequest/forms.py:91 froide/foirequest/forms.py:95
 #: froide/foirequest/forms.py:162 froide/foirequest/forms.py:226
-#: froide/foirequest/forms.py:230 froide/foirequest/forms.py:325
+#: froide/foirequest/forms.py:230 froide/foirequest/forms.py:335
 msgid "Invalid value"
 msgstr "Ungültiger Wert"
 
@@ -1168,154 +1168,158 @@ msgstr "Begründen Sie, warum dies die richtige Behörde ist:"
 msgid "Reason"
 msgstr "Begründung"
 
-#: froide/foirequest/forms.py:256
+#: froide/foirequest/forms.py:255
+msgid "You need to fill in the blanks in the template!"
+msgstr "Sie müssen eine Begründung angeben."
+
+#: froide/foirequest/forms.py:266
 msgid "Suggestions"
 msgstr "Vorschläge"
 
-#: froide/foirequest/forms.py:263 froide/publicbody/models.py:336
+#: froide/foirequest/forms.py:273 froide/publicbody/models.py:336
 msgid "More Info"
 msgstr "Details"
 
-#: froide/foirequest/forms.py:264
+#: froide/foirequest/forms.py:274
 #, python-format
 msgid "Reason for this suggestion: %(reason)s"
 msgstr "Grund für diesen Vorschlag: %(reason)s"
 
-#: froide/foirequest/forms.py:273
+#: froide/foirequest/forms.py:283
 #: froide/foirequest/templates/foirequest/show.html:429
 msgid "Refusal Reason"
 msgstr "Verweigerungsgrund"
 
-#: froide/foirequest/forms.py:274
+#: froide/foirequest/forms.py:284
 msgid "No or other reason given"
 msgstr "Kein oder anderer Grund"
 
-#: froide/foirequest/forms.py:279
+#: froide/foirequest/forms.py:289
 msgid ""
 "When you are (partially) denied access to information, the Public Body "
 "should always state the reason."
 msgstr "Wenn Ihnen (auch nur teilweise) Auskunft verweigert wird, sollte die Behörde immer eine Begründung angeben."
 
-#: froide/foirequest/forms.py:282 froide/foirequest/models.py:266
+#: froide/foirequest/forms.py:292 froide/foirequest/models.py:266
 #: froide/foirequest/models.py:1138
 #: froide/foirequest/templates/foirequest/snippets/message.html:72
 msgid "Status"
 msgstr "Status"
 
-#: froide/foirequest/forms.py:284
+#: froide/foirequest/forms.py:294
 msgid "This request is still ongoing."
 msgstr "Diese Anfrage läuft noch."
 
-#: froide/foirequest/forms.py:285
+#: froide/foirequest/forms.py:295
 msgid "This request is finished."
 msgstr "Diese Anfrage ist abgeschlossen."
 
-#: froide/foirequest/forms.py:290 froide/foirequest/models.py:268
+#: froide/foirequest/forms.py:300 froide/foirequest/models.py:268
 msgid "Resolution"
 msgstr "Ergebnis"
 
-#: froide/foirequest/forms.py:291
+#: froide/foirequest/forms.py:301
 msgid "No outcome yet"
 msgstr "Noch kein Ergebnis"
 
-#: froide/foirequest/forms.py:294
+#: froide/foirequest/forms.py:304
 msgid "How would you describe the current outcome of this request?"
 msgstr "Wie würden Sie das Ergebnis dieser Anfrage beschreiben?"
 
-#: froide/foirequest/forms.py:296
+#: froide/foirequest/forms.py:306
 msgid "Redirected to"
 msgstr "Weitergeleitet an"
 
-#: froide/foirequest/forms.py:299
+#: froide/foirequest/forms.py:309
 msgid ""
 "If your message is redirected to a different Public Body, please specify the"
 " new Public Body"
 msgstr "Wenn Ihre Anfrage zu einer anderen Behörde weitergeleitet wurde, geben Sie bitte die neue Behörde an."
 
-#: froide/foirequest/forms.py:303
+#: froide/foirequest/forms.py:313
 msgid "Costs"
 msgstr "Kosten"
 
-#: froide/foirequest/forms.py:307
+#: froide/foirequest/forms.py:317
 msgid "Please specify what the Public Body charges for the information."
 msgstr "Bitte geben Sie an, welchen Betrag die Behörde für diese Information verlangt."
 
-#: froide/foirequest/forms.py:321
+#: froide/foirequest/forms.py:331
 msgid "Provide the redirected public body!"
 msgstr "Bitte geben Sie die neue Behörde an!"
 
-#: froide/foirequest/forms.py:328
+#: froide/foirequest/forms.py:338
 msgid "Please give a resolution to this request"
 msgstr "Bitte schreiben Sie eine Zusammenfassung des Ergebnisses"
 
-#: froide/foirequest/forms.py:381
+#: froide/foirequest/forms.py:391
 msgid "Invalid FoI Request for this operation"
 msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
 
-#: froide/foirequest/forms.py:408
+#: froide/foirequest/forms.py:418
 #, python-format
 msgid ""
 "The scanned letter must be either PDF, JPG or PNG, but was detected as "
 "%(content_type)s!"
 msgstr "Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, wurde aber als %(content_type)s erkannt!"
 
-#: froide/foirequest/forms.py:417
+#: froide/foirequest/forms.py:427
 msgid ""
 "Uploaded scans can be PDF, JPG or PNG. Please make sure to "
 "<strong>redact/black out all private information concerning you</strong>."
 msgstr "Hochgeladene Scans können im PDF-, JPG- oder PNG-Format sein. Sie können die Datei auch nach dem Hochladen in FragDenStaat schwärzen und anschließend freischalten. <strong>Bitte entfernen oder schwärzen Sie alle Stellen mit Ihren persönlichen Informationen (z.B. Ihre Adresse).</strong>"
 
-#: froide/foirequest/forms.py:421
+#: froide/foirequest/forms.py:431
 msgid "mm/dd/YYYY"
 msgstr "dd.mm.YYYY"
 
-#: froide/foirequest/forms.py:423
+#: froide/foirequest/forms.py:433
 msgid "Send Date"
 msgstr "Sendedatum"
 
-#: froide/foirequest/forms.py:424
+#: froide/foirequest/forms.py:434
 msgid "Please give the date the reply was sent."
 msgstr "Bitte geben Sie das Datum an, an dem der Brief versendet wurde."
 
-#: froide/foirequest/forms.py:426 froide/foirequest/forms.py:428
+#: froide/foirequest/forms.py:436 froide/foirequest/forms.py:438
 msgid "Sender Name"
 msgstr "Absender"
 
-#: froide/foirequest/forms.py:433
+#: froide/foirequest/forms.py:443
 msgid "Letter"
 msgstr "Brief"
 
-#: froide/foirequest/forms.py:435
+#: froide/foirequest/forms.py:445
 msgid "Letter text you have received"
 msgstr "Der Textinhalt des Briefes, den Sie erhalten haben"
 
-#: froide/foirequest/forms.py:439
+#: froide/foirequest/forms.py:449
 msgid "The text can be left empty, instead you can upload scanned documents."
 msgstr "Der Text kann leer bleiben, wenn Sie stattdessen den gescannten Brief hochladen."
 
-#: froide/foirequest/forms.py:440
+#: froide/foirequest/forms.py:450
 msgid "Scanned Letter"
 msgstr "Gescannter Brief"
 
-#: froide/foirequest/forms.py:442
+#: froide/foirequest/forms.py:452
 msgid "You are not allowed to publish some received documents"
 msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen."
 
-#: froide/foirequest/forms.py:444
+#: froide/foirequest/forms.py:454
 msgid ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
 msgstr "Falls die erhaltene Antwort ausdrücklich eine Veröffentlichung von einigen Dokumenten untersagt (z.B. wegen des Urheberrechts), machen Sie hier einen Haken."
 
-#: froide/foirequest/forms.py:450
+#: froide/foirequest/forms.py:460
 msgid "Your reply date is in the future, that is not possible."
 msgstr "Ihr Sendedatum ist in der Zukunft, das ist nicht möglich."
 
-#: froide/foirequest/forms.py:458
+#: froide/foirequest/forms.py:468
 msgid "You need to provide either the letter text or a scanned document."
 msgstr "Bitte geben Sie entweder den Brieftext an oder laden Sie ein gescanntes Dokument hoch."
 
-#: froide/foirequest/forms.py:463
+#: froide/foirequest/forms.py:473
 msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
@@ -3391,13 +3395,6 @@ msgstr "Betreff: %(subject)s "
 msgid "Attachments:"
 msgstr "Anhänge:"
 
-#: froide/foirequest/templates/foirequest/emails/mail_footer.txt:2
-#: froide/foirequest/templates/foirequest/emails/request_footer.txt:2
-msgid ""
-"Legal Note: This mail was sent through a Freedom Of Information Portal. "
-"Replies might be published automatically.\n"
-msgstr "Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat.de versendet. Antworten werden ggf. im Auftrag der Antragstellenden automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-behoerden/\n"
-
 #: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:3
 #, python-format
 msgid "Request Number: %(num)s"
@@ -3474,6 +3471,12 @@ msgid ""
 " Body from the list. Here is a link to your request:"
 msgstr "Wenn Sie Ihre Anfrage an diese Behörde richten wollen, rufen Sie Ihre Anfrage auf und wählen Sie die Behörde aus der Liste. Hier ist ein Link zu Ihrer Anfrage:"
 
+#: froide/foirequest/templates/foirequest/emails/request_footer.txt:2
+msgid ""
+"Legal Note: This mail was sent through a Freedom Of Information Portal. "
+"Replies might be published automatically.\n"
+msgstr "Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat.de versendet. Antworten werden ggf. im Auftrag der Antragstellenden automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-behoerden/\n"
+
 #: froide/foirequest/templates/foirequest/emails/request_update.txt:1
 #: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:1
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:1
@@ -3500,7 +3503,6 @@ msgid "Visit your request: %(link)s"
 msgstr "Gehe zu deiner Anfrage: %(link)s"
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt:11
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:16
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:17
 #, python-format
 msgid ""
@@ -3508,6 +3510,12 @@ msgid ""
 "Cheers,\n"
 "%(site_name)s\n"
 msgstr "\nGrüße,\n%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/emails/user_footer.txt:2
+msgid ""
+"Support Froide by donating to Open Knowledge Foundation Germany:\n"
+"http://okfn.de/spenden/\n"
+msgstr "Wir kämpfen für Transparenz! Kämpfen Sie mit und unterstützen Sie uns: https://fragdenstaat.de/hilfe/spenden/\n"
 
 #: froide/foirequest/templates/foirequest/snippets/attachment.html:9
 msgid ""
@@ -3797,12 +3805,12 @@ msgstr "Sie erhalten keine Benachrichtigungen mehr."
 msgid "Hello,"
 msgstr "Hallo,"
 
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:4
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:3
 #, python-format
 msgid "The following just happend to the request \"%(title)s\" that you follow"
 msgstr "Folgendes passierte bei der Anfrage \"%(title)s\", der Sie folgen"
 
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:7
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:6
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:8
 #, python-format
 msgid ""
@@ -3811,13 +3819,20 @@ msgid ""
 "%(link)s"
 msgstr "Gehen Sie zu der Anfrage:\n\n%(link)s"
 
-#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:12
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:10
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:13
 #, python-format
 msgid ""
 "If you want to UNFOLLOW this request, click this link:\n"
 "%(unfollow_link)s"
 msgstr "Wenn Sie diese Anfrage NICHT mehr interessiert, klicken Sie diesen Link:\n%(unfollow_link)s"
+
+#: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:13
+#, python-format
+msgid ""
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr "Grüße,\n%(site_name)s\n"
 
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:3
 #, python-format
