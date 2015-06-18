@@ -8,5 +8,5 @@
 {{ request.user.organization }}{% endif %}
 {{ request.user.address }}{% endif %}
 
-{% include "foirequest/emails/mail_footer.txt" %}
+{% include "foirequest/emails/request_footer.txt" %}
 {% endautoescape %}

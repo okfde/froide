@@ -1,3 +1,0 @@
-{% load i18n %}{% autoescape off %}-- 
-{% blocktrans %}Legal Note: This mail was sent through a Freedom Of Information Portal. Replies might be published automatically.
-{% endblocktrans %}{% endautoescape %}
