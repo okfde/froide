@@ -246,6 +246,16 @@ class EscalationMessageForm(forms.Form):
         super(EscalationMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
+    def clean_message(self):
+        message = self.cleaned_data['message']
+        message = message.replace('\r\n', '\n').strip()
+        empty_form = self.foirequest.get_escalation_message_form()
+        if message == empty_form.initial['message'].strip():
+            raise forms.ValidationError(
+                _('You need to fill in the blanks in the template!')
+            )
+        return message
+
     def save(self):
         self.foirequest.add_escalation_message(**self.cleaned_data)
 
