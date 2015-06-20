@@ -20,7 +20,8 @@ User = get_user_model()
 
 
 class FoiRequestFollowerFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = FoiRequestFollower
+    class Meta:
+        model = FoiRequestFollower
 
     request = factory.SubFactory(factories.FoiRequestFactory)
     user = factory.SubFactory(factories.UserFactory)

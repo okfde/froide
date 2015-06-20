@@ -27,13 +27,16 @@ def random_name(num=10):
 
 
 class SiteFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = Site
+    class Meta:
+        model = Site
+
     name = factory.Sequence(lambda n: 'Site %s' % n)
     domain = factory.Sequence(lambda n: 'domain%s.example.com' % n)
 
 
 class UserFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = get_user_model()
+    class Meta:
+        model = get_user_model()
 
     first_name = 'Jane'
     last_name = factory.Sequence(lambda n: 'D%se' % ('o' * min(20, int(n))))
@@ -54,7 +57,8 @@ class UserFactory(factory.DjangoModelFactory):
 
 
 class JurisdictionFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = Jurisdiction
+    class Meta:
+        model = Jurisdiction
 
     name = factory.Sequence(lambda n: 'Jurisdiction {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
@@ -64,14 +68,16 @@ class JurisdictionFactory(factory.DjangoModelFactory):
 
 
 class PublicBodyTagFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = PublicBodyTag
+    class Meta:
+        model = PublicBodyTag
 
     name = factory.Sequence(lambda n: 'Public Body Tag {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
 
 
 class PublicBodyFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = PublicBody
+    class Meta:
+        model = PublicBody
 
     name = factory.Sequence(lambda n: u'Pübli€ Body {0}'.format(random_name()))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
@@ -100,7 +106,8 @@ class PublicBodyFactory(factory.DjangoModelFactory):
 
 
 class FoiLawFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = FoiLaw
+    class Meta:
+        model = FoiLaw
 
     name = factory.Sequence(lambda n: 'FoiLaw {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
@@ -124,7 +131,8 @@ class FoiLawFactory(factory.DjangoModelFactory):
 
 
 class FoiRequestFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = FoiRequest
+    class Meta:
+        model = FoiRequest
 
     title = factory.Sequence(lambda n: 'My FoiRequest Number {0}'.format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.title))
@@ -159,7 +167,8 @@ class FoiRequestFactory(factory.DjangoModelFactory):
 
 
 class DeferredMessageFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = DeferredMessage
+    class Meta:
+        model = DeferredMessage
 
     recipient = factory.Sequence(lambda n: 'blub%s@fragdenstaat.de'.format(n))
     timestamp = timezone.now() - timedelta(hours=1)
@@ -173,11 +182,13 @@ Test'''))
 
 
 class PublicBodySuggestionFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = PublicBodySuggestion
+    class Meta:
+        model = PublicBodySuggestion
 
 
 class FoiMessageFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = FoiMessage
+    class Meta:
+        model = FoiMessage
 
     request = factory.SubFactory(FoiRequestFactory)
 
@@ -195,7 +206,9 @@ class FoiMessageFactory(factory.DjangoModelFactory):
     recipient_public_body = None
     status = 'awaiting_response'
 
-    timestamp = factory.Sequence(lambda n: timezone.now() - timedelta(days=1000 - int(n)))
+    timestamp = factory.Sequence(
+        lambda n: timezone.now() - timedelta(days=1000 - int(n))
+    )
     subject = 'subject'
     subject_redacted = 'subject'
     plaintext = 'plaintext'
@@ -207,7 +220,8 @@ class FoiMessageFactory(factory.DjangoModelFactory):
 
 
 class FoiAttachmentFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = FoiAttachment
+    class Meta:
+        model = FoiAttachment
 
     belongs_to = factory.SubFactory(FoiMessageFactory)
     name = factory.Sequence(lambda n: "file_{0}.pdf".format(n))
@@ -220,7 +234,8 @@ class FoiAttachmentFactory(factory.DjangoModelFactory):
 
 
 class FoiEventFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = FoiEvent
+    class Meta:
+        model = FoiEvent
 
     request = factory.SubFactory(FoiRequestFactory)
     user = None
