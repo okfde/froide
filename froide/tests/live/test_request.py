@@ -106,6 +106,8 @@ class TestMakingRequest(LiveServerTestCase):
             self.selenium.find_element_by_id('continue-foicheck').click()
             req_title = 'FoiRequest Number'
             self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('id_body').is_displayed())
             self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
@@ -160,6 +162,8 @@ class TestMakingRequest(LiveServerTestCase):
             self.selenium.find_element_by_id('continue-foicheck').click()
             req_title = 'FoiRequest Number'
             self.selenium.find_element_by_id('id_subject').send_keys(req_title)
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: driver.find_element_by_id('id_body').is_displayed())
             self.selenium.find_element_by_id('id_body').send_keys('Documents describing something...')
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_elements_by_css_selector('#similar-requests li'))
