@@ -10,7 +10,6 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
-from django.utils import six
 from django.utils.html import escape
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -19,8 +18,10 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, ItemBase
 from taggit.utils import edit_string_for_tags
 
-from froide.helper.date_utils import (calculate_workingday_range,
-        calculate_month_range_de)
+from froide.helper.date_utils import (
+    calculate_workingday_range,
+    calculate_month_range_de
+)
 from froide.helper.templatetags.markup import markdown
 from froide.helper.form_generator import FormGenerator
 from froide.helper.csv_utils import export_csv
@@ -357,25 +358,6 @@ class PublicBody(models.Model):
     @property
     def children_count(self):
         return len(PublicBody.objects.filter(parent=self))
-
-    def get_dict(self, fields):
-        d = {}
-        if 'tags' in fields:
-            d['tags'] = edit_string_for_tags(self.tags.all())
-
-        for field in fields:
-            if field in d:
-                continue
-            value = self
-            for f in field.split('__'):
-                value = getattr(value, f)
-                if value is None:
-                    break
-            if value is None:
-                d[field] = ""
-            else:
-                d[field] = six.text_type(value)
-        return d
 
     @classmethod
     def export_csv(cls, queryset):

@@ -10,6 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import helpers
 
 from froide.foirequest.models import FoiRequest
+from froide.helper.csv_utils import export_csv_response
 
 from .models import User, AccountManager
 
@@ -48,7 +49,12 @@ class UserAdmin(DjangoUserAdmin):
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + ['private', 'terms', 'newsletter']
 
-    actions = ['resend_activation', 'send_mail', 'delete_sessions']
+    actions = ['export_csv', 'resend_activation',
+               'send_mail', 'delete_sessions']
+
+    def export_csv(self, request, queryset):
+        return export_csv_response(User.export_csv(queryset))
+    export_csv.short_description = _("Export to CSV")
 
     def resend_activation(self, request, queryset):
         rows_updated = 0

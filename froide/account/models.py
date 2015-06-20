@@ -19,7 +19,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import AbstractUser, UserManager
 
 from froide.helper.text_utils import replace_greetings, replace_word
-
+from froide.helper.csv_utils import export_csv, get_dict
 
 user_activated_signal = dispatch.Signal(providing_args=[])
 
@@ -42,6 +42,22 @@ class User(AbstractUser):
         if self.private:
             return ""
         return reverse('account-profile', kwargs={'slug': self.username})
+
+    def get_dict(self, fields):
+        d = get_dict(self, fields)
+        d['request_count'] = self.foirequest_set.all().count()
+        return d
+
+    @classmethod
+    def export_csv(cls, queryset):
+        fields = (
+            "id", "first_name", "last_name", "email",
+            "organization", "organization_url", "private",
+            "date_joined", "is_staff",
+            "address", "terms", "newsletter",
+            "request_count",
+        )
+        return export_csv(queryset, fields)
 
     def display_name(self):
         if self.private:
