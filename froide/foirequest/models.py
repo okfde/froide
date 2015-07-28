@@ -814,13 +814,13 @@ class FoiRequest(models.Model):
             request.due_date = request.law.calculate_due_date()
 
         # ensure slug is unique
+        request.slug = slugify(request.title)
+        first_round = True
+        count = 0
+        postfix = ""
         while True:
-            request.slug = slugify(request.title)
-            first_round = True
-            count = 0
-            postfix = ""
-            with transaction.commit_manually():
-                try:
+            try:
+                with transaction.atomic():
                     while True:
                         if not first_round:
                             postfix = "-%d" % count
@@ -833,11 +833,10 @@ class FoiRequest(models.Model):
                             count += 1
                     request.slug += postfix
                     request.save()
-                except IntegrityError:
-                    transaction.rollback()
-                else:
-                    transaction.commit()
-                    break
+            except IntegrityError:
+                pass
+            else:
+                break
 
         message = FoiMessage(request=request,
             sent=False,
