@@ -14,6 +14,7 @@ from froide.helper.csv_utils import export_csv_response
 class PublicBodyAdminForm(forms.ModelForm):
     class Meta:
         model = PublicBody
+        fields = '__all__'
         widgets = {
             'tags': TagAutocompleteTagIt(
                 autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={
