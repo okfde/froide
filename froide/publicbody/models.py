@@ -29,7 +29,7 @@ from froide.helper.csv_utils import export_csv
 
 class JurisdictionManager(models.Manager):
     def get_visible(self):
-        return self.get_query_set()\
+        return self.get_queryset()\
                 .filter(hidden=False).order_by('rank', 'name')
 
     def get_list(self):
@@ -184,7 +184,7 @@ class FoiLaw(models.Model):
 
 class PublicBodyTagManager(models.Manager):
     def get_topic_list(self):
-        return (self.get_query_set().filter(is_topic=True)
+        return (self.get_queryset().filter(is_topic=True)
             .order_by('rank', 'name')
             .annotate(num_publicbodies=models.Count('publicbodies'))
         )
@@ -222,18 +222,18 @@ class TaggedPublicBody(ItemBase):
 
 
 class PublicBodyManager(CurrentSiteManager):
-    def get_query_set(self):
-        return super(PublicBodyManager, self).get_query_set()\
+    def get_queryset(self):
+        return super(PublicBodyManager, self).get_queryset()\
                 .exclude(email="")\
                 .filter(email__isnull=False)
 
     def get_list(self):
-        return self.get_query_set()\
+        return self.get_queryset()\
             .filter(jurisdiction__hidden=False)\
             .select_related('jurisdiction')
 
     def get_for_search_index(self):
-        return self.get_query_set()
+        return self.get_queryset()
 
 
 @python_2_unicode_compatible

@@ -40,11 +40,11 @@ from .foi_mail import send_foi_mail, package_foirequest
 class FoiRequestManager(CurrentSiteManager):
 
     def get_by_secret_mail(self, mail):
-        return self.get_query_set().get(secret_address=mail)
+        return self.get_queryset().get(secret_address=mail)
 
     def get_overdue(self):
         now = timezone.now()
-        return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
+        return self.get_queryset().filter(status="awaiting_response", due_date__lt=now)
 
     def get_to_be_overdue(self):
         yesterday = timezone.now() - timedelta(days=1)
@@ -52,7 +52,7 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_asleep(self):
         six_months_ago = timezone.now() - timedelta(days=30 * 6)
-        return self.get_query_set()\
+        return self.get_queryset()\
             .filter(
                 last_message__lt=six_months_ago
             ).filter(
@@ -64,12 +64,12 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_unclassified(self):
         some_days_ago = timezone.now() - timedelta(days=4)
-        return self.get_query_set().filter(status="awaiting_classification",
+        return self.get_queryset().filter(status="awaiting_classification",
                 last_message__lt=some_days_ago)
 
     def get_dashboard_requests(self, user):
         now = timezone.now()
-        return self.get_query_set().filter(user=user).filter(
+        return self.get_queryset().filter(user=user).filter(
             Q(status="awaiting_classification") | (
                 Q(due_date__lt=now) & Q(status='awaiting_response')
             )
@@ -77,22 +77,22 @@ class FoiRequestManager(CurrentSiteManager):
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
-    def get_query_set(self):
+    def get_queryset(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(visibility=2, is_foi=True)\
+                self).get_queryset().filter(visibility=2, is_foi=True)\
                         .select_related("public_body", "jurisdiction")
 
     def by_last_update(self):
-        return self.get_query_set().order_by('-last_message')
+        return self.get_queryset().order_by('-last_message')
 
     def for_list_view(self):
         return self.by_last_update().filter(same_as__isnull=True)
 
     def get_for_search_index(self):
-        return self.get_query_set().filter(same_as__isnull=True)
+        return self.get_queryset().filter(same_as__isnull=True)
 
     def get_resolution_count_by_public_body(self, obj):
-        res = self.get_query_set().filter(
+        res = self.get_queryset().filter(
                 status='resolved', public_body=obj
         ).values('resolution'
         ).annotate(
@@ -119,9 +119,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
-    def get_query_set(self):
+    def get_queryset(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(visibility=2, is_foi=False)\
+                self).get_queryset().filter(visibility=2, is_foi=False)\
                         .select_related("public_body", "jurisdiction")
 
 
