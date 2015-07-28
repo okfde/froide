@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from django.utils import translation
 from django.utils.dateformat import TimeFormat
 from django.conf import settings
-from django.contrib.comments.models import Comment
+from django_comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 

@@ -7,8 +7,8 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.contrib.auth import get_user_model
-from django.contrib.comments.forms import CommentForm
-from django.contrib.comments.models import Comment
+from django_comments.forms import CommentForm
+from django_comments.models import Comment
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tests import factories
