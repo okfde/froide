@@ -209,7 +209,7 @@ def show(request, slug, template_name="foirequest/show.html",
             context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
-                "user", "law", "law__combined").get(slug=slug)
+                "user", "law").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
     if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):

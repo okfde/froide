@@ -10,7 +10,7 @@ from froide.foirequest.models import FoiRequest
 class FeaturedRequestManager(CurrentSiteManager):
     def getFeatured(self):
         try:
-            return self.get_queryset().order_by("-timestamp").select_related('request', 'request__publicbody')[0]
+            return self.get_queryset().order_by("-timestamp").select_related('request', 'request__public_body')[0]
         except IndexError:
             return None
 
