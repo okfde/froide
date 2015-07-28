@@ -1,172 +1,148 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-from froide.helper.auth_migration_util import USER_DB_NAME
-APP_MODEL, APP_MODEL_NAME = 'account.User', 'account.user'
-
-
-class Migration(SchemaMigration):
-    depends_on = (
-        # be aggressive in asserting the dep
-        # (dep is probably weaker than this i.e. lower number from publicbody
-        # and higher from foirequest ...)
-        ('account', '0008_auto__del_profile.py'),
-    )
-
-    def forwards(self, orm):
-        
-        # Adding model 'FoiLaw'
-        db.create_table('publicbody_foilaw', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=255, db_index=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('letter_start', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('letter_end', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('jurisdiction', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('priority', self.gf('django.db.models.fields.SmallIntegerField')(default=3)),
-            ('max_response_time', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('max_response_time_unit', self.gf('django.db.models.fields.CharField')(max_length=32, blank=True)),
-            ('refusal_reasons', self.gf('django.db.models.fields.TextField')()),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['sites.Site'], null=True)),
-        ))
-        db.send_create_signal('publicbody', ['FoiLaw'])
-
-        # Adding model 'PublicBody'
-        db.create_table('publicbody_publicbody', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=255, db_index=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('topic', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('topic_slug', self.gf('django.db.models.fields.SlugField')(max_length=255, db_index=True)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='children', null=True, blank=True, to=orm['publicbody.PublicBody'])),
-            ('root', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='descendants', null=True, blank=True, to=orm['publicbody.PublicBody'])),
-            ('depth', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
-            ('classification', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('classification_slug', self.gf('django.db.models.fields.SlugField')(max_length=255, db_index=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75, null=True, blank=True)),
-            ('contact', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('address', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('website_dump', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-            ('_created_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='public_body_creators', null=True, to=orm[APP_MODEL])),
-            ('_updated_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='public_body_updaters', null=True, to=orm[APP_MODEL])),
-            ('confirmed', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('number_of_requests', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['sites.Site'], null=True)),
-            ('geography', self.gf('django.db.models.fields.CharField')(max_length=255)),
-        ))
-        db.send_create_signal('publicbody', ['PublicBody'])
-
-        # Adding M2M table for field laws on 'PublicBody'
-        db.create_table('publicbody_publicbody_laws', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('publicbody', models.ForeignKey(orm['publicbody.publicbody'], null=False)),
-            ('foilaw', models.ForeignKey(orm['publicbody.foilaw'], null=False))
-        ))
-        db.create_unique('publicbody_publicbody_laws', ['publicbody_id', 'foilaw_id'])
+from django.db import models, migrations
+import django.db.models.manager
+import django.utils.timezone
+from django.conf import settings
+import django.db.models.deletion
+import froide.publicbody.models
+import taggit.managers
 
 
-    def backwards(self, orm):
-        
-        # Deleting model 'FoiLaw'
-        db.delete_table('publicbody_foilaw')
+class Migration(migrations.Migration):
 
-        # Deleting model 'PublicBody'
-        db.delete_table('publicbody_publicbody')
+    dependencies = [
+        ('sites', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Removing M2M table for field laws on 'PublicBody'
-        db.delete_table('publicbody_publicbody_laws')
-
-
-    models = {
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        APP_MODEL_NAME: {
-            'Meta': {'object_name': 'User', 'db_table': "'%s'" % USER_DB_NAME},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'publicbody.foilaw': {
-            'Meta': {'object_name': 'FoiLaw'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'jurisdiction': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'letter_end': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'letter_start': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'max_response_time': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'max_response_time_unit': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'priority': ('django.db.models.fields.SmallIntegerField', [], {'default': '3'}),
-            'refusal_reasons': ('django.db.models.fields.TextField', [], {}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': "orm['sites.Site']", 'null': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'})
-        },
-        'publicbody.publicbody': {
-            'Meta': {'object_name': 'PublicBody'},
-            '_created_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_creators'", 'null': 'True', 'to': "orm['%s']" % APP_MODEL}),
-            '_updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'public_body_updaters'", 'null': 'True', 'to': "orm['%s']" % APP_MODEL}),
-            'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'classification': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'classification_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),
-            'confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'contact': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'depth': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
-            'geography': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'laws': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['publicbody.FoiLaw']", 'symmetrical': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'number_of_requests': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'children'", 'null': 'True', 'blank': 'True', 'to': "orm['publicbody.PublicBody']"}),
-            'root': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'descendants'", 'null': 'True', 'blank': 'True', 'to': "orm['publicbody.PublicBody']"}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': "orm['sites.Site']", 'null': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),
-            'topic': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'topic_slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'website_dump': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
-        },
-        'sites.site': {
-            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
-            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        }
-    }
-
-    complete_apps = ['publicbody']
+    operations = [
+        migrations.CreateModel(
+            name='FoiLaw',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                ('slug', models.SlugField(max_length=255, verbose_name='Slug')),
+                ('description', models.TextField(verbose_name='Description', blank=True)),
+                ('long_description', models.TextField(verbose_name='Website Text', blank=True)),
+                ('created', models.DateField(null=True, verbose_name='Creation Date', blank=True)),
+                ('updated', models.DateField(null=True, verbose_name='Updated Date', blank=True)),
+                ('request_note', models.TextField(verbose_name='request note', blank=True)),
+                ('meta', models.BooleanField(default=False, verbose_name='Meta Law')),
+                ('letter_start', models.TextField(verbose_name='Start of Letter', blank=True)),
+                ('letter_end', models.TextField(verbose_name='End of Letter', blank=True)),
+                ('priority', models.SmallIntegerField(default=3, verbose_name='Priority')),
+                ('url', models.CharField(max_length=255, verbose_name='URL', blank=True)),
+                ('max_response_time', models.IntegerField(default=30, null=True, verbose_name='Maximal Response Time', blank=True)),
+                ('max_response_time_unit', models.CharField(default=b'day', max_length=32, verbose_name='Unit of Response Time', blank=True, choices=[(b'day', 'Day(s)'), (b'working_day', 'Working Day(s)'), (b'month_de', 'Month(s) (DE)')])),
+                ('refusal_reasons', models.TextField(verbose_name='Possible Refusal Reasons, one per line, e.g \xa7X.Y: Privacy Concerns', blank=True)),
+                ('email_only', models.BooleanField(default=False, verbose_name='E-Mail only')),
+                ('combined', models.ManyToManyField(to='publicbody.FoiLaw', verbose_name='Combined Laws', blank=True)),
+            ],
+            options={
+                'verbose_name': 'Freedom of Information Law',
+                'verbose_name_plural': 'Freedom of Information Laws',
+            },
+        ),
+        migrations.CreateModel(
+            name='Jurisdiction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                ('slug', models.SlugField(max_length=255, verbose_name='Slug')),
+                ('description', models.TextField(verbose_name='Description', blank=True)),
+                ('hidden', models.BooleanField(default=False, verbose_name='Hidden')),
+                ('rank', models.SmallIntegerField(default=1)),
+            ],
+            options={
+                'verbose_name': 'Jurisdiction',
+                'verbose_name_plural': 'Jurisdictions',
+            },
+        ),
+        migrations.CreateModel(
+            name='PublicBody',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                ('other_names', models.TextField(default=b'', verbose_name='Other names', blank=True)),
+                ('slug', models.SlugField(max_length=255, verbose_name='Slug')),
+                ('description', models.TextField(verbose_name='Description', blank=True)),
+                ('url', models.URLField(max_length=500, null=True, verbose_name='URL', blank=True)),
+                ('depth', models.SmallIntegerField(default=0)),
+                ('classification', models.CharField(max_length=255, verbose_name='Classification', blank=True)),
+                ('classification_slug', models.SlugField(max_length=255, verbose_name='Classification Slug', blank=True)),
+                ('email', models.EmailField(max_length=254, null=True, verbose_name='Email', blank=True)),
+                ('contact', models.TextField(verbose_name='Contact', blank=True)),
+                ('address', models.TextField(verbose_name='Address', blank=True)),
+                ('website_dump', models.TextField(null=True, verbose_name='Website Dump', blank=True)),
+                ('request_note', models.TextField(verbose_name='request note', blank=True)),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Created at')),
+                ('updated_at', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Updated at')),
+                ('confirmed', models.BooleanField(default=True, verbose_name='confirmed')),
+                ('number_of_requests', models.IntegerField(default=0, verbose_name='Number of requests')),
+                ('_created_by', models.ForeignKey(related_name='public_body_creators', on_delete=django.db.models.deletion.SET_NULL, default=1, blank=True, to=settings.AUTH_USER_MODEL, null=True, verbose_name='Created by')),
+                ('_updated_by', models.ForeignKey(related_name='public_body_updaters', on_delete=django.db.models.deletion.SET_NULL, default=1, blank=True, to=settings.AUTH_USER_MODEL, null=True, verbose_name='Updated by')),
+                ('jurisdiction', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='Jurisdiction', blank=True, to='publicbody.Jurisdiction', null=True)),
+                ('laws', models.ManyToManyField(to='publicbody.FoiLaw', verbose_name='Freedom of Information Laws')),
+                ('parent', models.ForeignKey(related_name='children', on_delete=django.db.models.deletion.SET_NULL, default=None, blank=True, to='publicbody.PublicBody', null=True)),
+                ('root', models.ForeignKey(related_name='descendants', on_delete=django.db.models.deletion.SET_NULL, default=None, blank=True, to='publicbody.PublicBody', null=True)),
+                ('site', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, default=1, verbose_name='Site', to='sites.Site', null=True)),
+            ],
+            options={
+                'ordering': ('name',),
+                'verbose_name': 'Public Body',
+                'verbose_name_plural': 'Public Bodies',
+            },
+            managers=[
+                ('non_filtered_objects', django.db.models.manager.Manager()),
+                ('published', froide.publicbody.models.PublicBodyManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='PublicBodyTag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=100, verbose_name='Name')),
+                ('slug', models.SlugField(unique=True, max_length=100, verbose_name='Slug')),
+                ('is_topic', models.BooleanField(default=False, verbose_name='as topic')),
+                ('rank', models.SmallIntegerField(default=0, verbose_name='rank')),
+            ],
+            options={
+                'verbose_name': 'Public Body Tag',
+                'verbose_name_plural': 'Public Body Tags',
+            },
+        ),
+        migrations.CreateModel(
+            name='TaggedPublicBody',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('content_object', models.ForeignKey(to='publicbody.PublicBody')),
+                ('tag', models.ForeignKey(related_name='publicbodies', to='publicbody.PublicBodyTag')),
+            ],
+            options={
+                'verbose_name': 'Tagged Public Body',
+                'verbose_name_plural': 'Tagged Public Bodies',
+            },
+        ),
+        migrations.AddField(
+            model_name='publicbody',
+            name='tags',
+            field=taggit.managers.TaggableManager(to='publicbody.PublicBodyTag', through='publicbody.TaggedPublicBody', blank=True, help_text='A comma-separated list of tags.', verbose_name='Tags'),
+        ),
+        migrations.AddField(
+            model_name='foilaw',
+            name='jurisdiction',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, verbose_name='Jurisdiction', blank=True, to='publicbody.Jurisdiction', null=True),
+        ),
+        migrations.AddField(
+            model_name='foilaw',
+            name='mediator',
+            field=models.ForeignKey(related_name='mediating_laws', on_delete=django.db.models.deletion.SET_NULL, default=None, blank=True, to='publicbody.PublicBody', null=True, verbose_name='Mediator'),
+        ),
+        migrations.AddField(
+            model_name='foilaw',
+            name='site',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, default=1, verbose_name='Site', to='sites.Site', null=True),
+        ),
+    ]
