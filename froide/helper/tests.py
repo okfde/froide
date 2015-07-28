@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.template import engines
 
 from .text_utils import replace_email_name
 from .form_generator import FormGenerator
@@ -66,7 +67,7 @@ class TestThemeLoader(TestCase):
     def test_loader(self):
         from .theme_utils import ThemeLoader
 
-        tl = ThemeLoader()
+        tl = ThemeLoader(engines['django'])
         sources = list(tl.get_template_sources('index.html'))
         self.assertEqual(len(sources), 1)
         self.assertTrue(sources[0].startswith('/'))

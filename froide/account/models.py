@@ -240,13 +240,13 @@ class AccountManager(object):
             setattr(user, key, data.get(key, ''))
 
         # ensure username is unique
+        username = username_base
+        first_round = True
+        count = 0
+        postfix = ""
         while True:
-            username = username_base
-            first_round = True
-            count = 0
-            postfix = ""
-            with transaction.commit_manually():
-                try:
+            try:
+                with transaction.atomic():
                     while True:
                         if not first_round:
                             postfix = "_%d" % count
@@ -259,11 +259,9 @@ class AccountManager(object):
                             count += 1
                     user.username = username + postfix
                     user.save()
-                except IntegrityError:
-                    transaction.rollback()
-                    raise
-                else:
-                    transaction.commit()
-                    break
+            except IntegrityError:
+                pass
+            else:
+                break
 
         return user, password

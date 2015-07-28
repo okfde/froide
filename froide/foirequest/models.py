@@ -40,11 +40,11 @@ from .foi_mail import send_foi_mail, package_foirequest
 class FoiRequestManager(CurrentSiteManager):
 
     def get_by_secret_mail(self, mail):
-        return self.get_query_set().get(secret_address=mail)
+        return self.get_queryset().get(secret_address=mail)
 
     def get_overdue(self):
         now = timezone.now()
-        return self.get_query_set().filter(status="awaiting_response", due_date__lt=now)
+        return self.get_queryset().filter(status="awaiting_response", due_date__lt=now)
 
     def get_to_be_overdue(self):
         yesterday = timezone.now() - timedelta(days=1)
@@ -52,7 +52,7 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_asleep(self):
         six_months_ago = timezone.now() - timedelta(days=30 * 6)
-        return self.get_query_set()\
+        return self.get_queryset()\
             .filter(
                 last_message__lt=six_months_ago
             ).filter(
@@ -64,12 +64,12 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_unclassified(self):
         some_days_ago = timezone.now() - timedelta(days=4)
-        return self.get_query_set().filter(status="awaiting_classification",
+        return self.get_queryset().filter(status="awaiting_classification",
                 last_message__lt=some_days_ago)
 
     def get_dashboard_requests(self, user):
         now = timezone.now()
-        return self.get_query_set().filter(user=user).filter(
+        return self.get_queryset().filter(user=user).filter(
             Q(status="awaiting_classification") | (
                 Q(due_date__lt=now) & Q(status='awaiting_response')
             )
@@ -77,22 +77,22 @@ class FoiRequestManager(CurrentSiteManager):
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
-    def get_query_set(self):
+    def get_queryset(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(visibility=2, is_foi=True)\
+                self).get_queryset().filter(visibility=2, is_foi=True)\
                         .select_related("public_body", "jurisdiction")
 
     def by_last_update(self):
-        return self.get_query_set().order_by('-last_message')
+        return self.get_queryset().order_by('-last_message')
 
     def for_list_view(self):
         return self.by_last_update().filter(same_as__isnull=True)
 
     def get_for_search_index(self):
-        return self.get_query_set().filter(same_as__isnull=True)
+        return self.get_queryset().filter(same_as__isnull=True)
 
     def get_resolution_count_by_public_body(self, obj):
-        res = self.get_query_set().filter(
+        res = self.get_queryset().filter(
                 status='resolved', public_body=obj
         ).values('resolution'
         ).annotate(
@@ -119,9 +119,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
-    def get_query_set(self):
+    def get_queryset(self):
         return super(PublishedFoiRequestManager,
-                self).get_query_set().filter(visibility=2, is_foi=False)\
+                self).get_queryset().filter(visibility=2, is_foi=False)\
                         .select_related("public_body", "jurisdiction")
 
 
@@ -223,8 +223,7 @@ class FoiRequest(models.Model):
         (_("not-held"), resolution_filter, 'not_held'),
         (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
     ]
-    STATUS_URLS = [(str(s), t, u) for s, t, u in STATUS_URLS]
-
+    _STATUS_URLS = None
     _STATUS_URLS_DICT = None
     _URLS_STATUS_DICT = None
 
@@ -342,17 +341,23 @@ class FoiRequest(models.Model):
         return _(u"Request '%s'") % self.title
 
     @classmethod
+    def get_status_url(cls):
+        if cls._STATUS_URLS is None:
+            cls._STATUS_URLS = [(str(s), t, u) for s, t, u in cls.STATUS_URLS]
+        return cls._STATUS_URLS
+
+    @classmethod
     def get_status_from_url(cls, status_slug):
         if cls._URLS_STATUS_DICT is None:
             cls._URLS_STATUS_DICT = dict([
-                (str(x[0]), x[1:]) for x in cls.STATUS_URLS])
+                (str(x[0]), x[1:]) for x in cls.get_status_url()])
         return cls._URLS_STATUS_DICT.get(status_slug)
 
     @classmethod
     def get_url_from_status(cls, status):
         if cls._STATUS_URLS_DICT is None:
             cls._STATUS_URLS_DICT = dict([
-                (str(x[-1]), x[0]) for x in cls.STATUS_URLS])
+                (str(x[-1]), x[0]) for x in cls.get_status_url()])
         return cls._STATUS_URLS_DICT.get(status)
 
     @property
@@ -365,7 +370,6 @@ class FoiRequest(models.Model):
                 self._messages is None:
             self._messages = list(self.foimessage_set.select_related(
                 "sender_user",
-                "sender_user__profile",
                 "sender_public_body",
                 "recipient_public_body").order_by("timestamp"))
         return self._messages
@@ -810,13 +814,13 @@ class FoiRequest(models.Model):
             request.due_date = request.law.calculate_due_date()
 
         # ensure slug is unique
+        request.slug = slugify(request.title)
+        first_round = True
+        count = 0
+        postfix = ""
         while True:
-            request.slug = slugify(request.title)
-            first_round = True
-            count = 0
-            postfix = ""
-            with transaction.commit_manually():
-                try:
+            try:
+                with transaction.atomic():
                     while True:
                         if not first_round:
                             postfix = "-%d" % count
@@ -829,11 +833,10 @@ class FoiRequest(models.Model):
                             count += 1
                     request.slug += postfix
                     request.save()
-                except IntegrityError:
-                    transaction.rollback()
-                else:
-                    transaction.commit()
-                    break
+            except IntegrityError:
+                pass
+            else:
+                break
 
         message = FoiMessage(request=request,
             sent=False,
@@ -1453,8 +1456,9 @@ class FoiAttachment(models.Model):
     def get_absolute_domain_url(self):
         return self.get_absolute_url()
 
-    def approve(self):
+    def approve_and_save(self):
         self.approved = True
+        self.save()
         self.attachment_published.send(sender=self)
 
     def is_visible(self, user, foirequest):

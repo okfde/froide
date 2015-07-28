@@ -28,12 +28,11 @@ class Base(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'django.contrib.admin',
-        'django.contrib.comments',
+        'django_comments',
         'django.contrib.flatpages',
         'django.contrib.sitemaps',
 
         # external
-        'south',
         'haystack',
         'djcelery',
         'taggit',

@@ -51,6 +51,7 @@ class RequesterFilter(admin.FieldListFilter):
 class FoiRequestAdminForm(forms.ModelForm):
     class Meta:
         model = FoiRequest
+        fields = '__all__'
         widgets = {
             'tags': TagAutocompleteTagIt(
                 autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={

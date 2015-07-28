@@ -16,17 +16,8 @@ from .file_utils import convert_to_pdf
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
-    def run(*args, **kwargs):
-        try:
-            _process_mail(*args, **kwargs)
-        except Exception:
-            transaction.rollback()
-            raise
-        else:
-            transaction.commit()
-            return None
-    run = transaction.commit_manually(run)
-    run(*args, **kwargs)
+    with transaction.atomic():
+        _process_mail(*args, **kwargs)
 
 
 @celery_app.task(expires=60)

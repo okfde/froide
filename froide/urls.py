@@ -105,7 +105,7 @@ urlpatterns += patterns('',
     (r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
     (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
-    (r'^comments/', include('django.contrib.comments.urls')),
+    (r'^comments/', include('django_comments.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls))
 )

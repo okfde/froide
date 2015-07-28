@@ -35,7 +35,6 @@ setup(
     install_requires=[
         'Django',
         'Markdown',
-        'South',
         'celery',
         'django-celery',
         'django-haystack',
