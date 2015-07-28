@@ -3,7 +3,7 @@ Django==1.8.3
 Markdown==2.6.2
 celery==3.1.18
 django-celery==3.1.16
--e git://github.com/stefanw/django-haystack.git@update-index-language#egg=django_haystack
+django-haystack==2.4.0
 django-taggit==0.16.2
 pytz==2015.4
 requests==2.7.0
