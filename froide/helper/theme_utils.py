@@ -46,5 +46,3 @@ class ThemeLoader(Loader):
             except ValueError:
                 # The joined path was located outside of template_dir.
                 pass
-
-_loader = ThemeLoader()  # noqa
