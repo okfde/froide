@@ -209,7 +209,7 @@ def show(request, slug, template_name="foirequest/show.html",
             context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
-                "user", "user__profile", "law", "law__combined").get(slug=slug)
+                "user", "law", "law__combined").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
     if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):
@@ -234,7 +234,7 @@ def show(request, slug, template_name="foirequest/show.html",
             att.belongs_to = message
 
     events = FoiEvent.objects.filter(request=obj).select_related(
-            "user", "user__profile", "request",
+            "user", "request",
             "public_body").order_by("timestamp")
 
     event_count = len(events)

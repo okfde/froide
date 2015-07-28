@@ -370,7 +370,6 @@ class FoiRequest(models.Model):
                 self._messages is None:
             self._messages = list(self.foimessage_set.select_related(
                 "sender_user",
-                "sender_user__profile",
                 "sender_public_body",
                 "recipient_public_body").order_by("timestamp"))
         return self._messages
