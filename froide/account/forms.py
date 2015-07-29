@@ -112,7 +112,7 @@ class TermsForm(forms.Form):
         user.save()
 
 
-class NewUserForm(NewUserBaseForm, TermsForm):
+class NewUserForm(TermsForm, NewUserBaseForm):
     pass
 
 
