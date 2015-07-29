@@ -34,9 +34,9 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    if settings.CUSTOM_AUTH_USER_MODEL_DB:
-        class Meta:
-            db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
+    # if settings.CUSTOM_AUTH_USER_MODEL_DB:
+    #     class Meta:
+    #         db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
 
     def get_absolute_url(self):
         if self.private:
