@@ -17,6 +17,6 @@ python-mimeparse>=0.1.4
 django-storages==1.1.8
 dj-database-url==0.3.0
 django-cache-url==1.0.0
-django-compressor==1.5
+-e git://github.com/stefanw/django-compressor.git@patch-1#egg=compressor
 django-contrib-comments==1.6.1
 unicodecsv==0.13.0
