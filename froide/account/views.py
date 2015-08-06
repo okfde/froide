@@ -16,8 +16,7 @@ from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
-        UserEmailConfirmationForm, UserChangeAddressForm, UserDeleteForm,
-        UserChangeEmailForm, TermsForm)
+        UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .models import AccountManager
 
 
@@ -260,25 +259,6 @@ def password_reset_confirm(request, uidb64=None, token=None):
     return response
 
 
-@require_POST
-def change_address(request):
-    if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR,
-                _('You are not currently logged in, you cannot change your address.'))
-        return render_403(request)
-    form = UserChangeAddressForm(request.user, request.POST)
-    if form.is_valid():
-        form.save()
-        messages.add_message(request, messages.SUCCESS,
-                _('Your address has been changed.'))
-        return redirect('account-show')
-    return show(request, context={"address_change_form": form}, status=400)
-
-
-def csrf_failure(request, reason=''):
-    return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})
-
-
 def account_settings(request, context=None, status=200):
     if not request.user.is_authenticated():
         return redirect('account-login')
@@ -288,9 +268,33 @@ def account_settings(request, context=None, status=200):
         request.user.is_new = True
     if 'user_delete_form' not in context:
         context['user_delete_form'] = UserDeleteForm(request.user)
-    if 'change_email_form' not in context:
-        context['change_email_form'] = UserChangeEmailForm()
+    if 'change_form' not in context:
+        context['change_form'] = UserChangeForm(request.user)
     return render(request, 'account/settings.html', context, status=status)
+
+
+@require_POST
+def change_user(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are not currently logged in, you cannot change your address.'))
+        return render_403(request)
+    form = UserChangeForm(request.user, request.POST)
+    if form.is_valid():
+        if request.user.email != form.cleaned_data['email']:
+            AccountManager(request.user).send_email_change_mail(
+                form.cleaned_data['email']
+            )
+            messages.add_message(request, messages.SUCCESS,
+                _('We sent a confirmation email to your new address. Please click the link in there.'))
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your profile information has been changed.'))
+        return redirect('account-settings')
+    messages.add_message(request, messages.ERROR,
+            _('Please correct the errors below. You profile information was not changed.'))
+
+    return show(request, context={"change_form": form}, status=400)
 
 
 def change_email(request):
@@ -298,24 +302,6 @@ def change_email(request):
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your email address.'))
         return render_403(request)
-    if request.POST:
-        form = UserChangeEmailForm(request.POST)
-        if not form.is_valid():
-            messages.add_message(request, messages.ERROR,
-                    _('Your email address could not be changed.'))
-            return account_settings(
-                request,
-                context={
-                    'change_email_form': form
-                },
-                status=400
-            )
-        AccountManager(request.user).send_email_change_mail(
-            form.cleaned_data['email']
-        )
-        messages.add_message(request, messages.SUCCESS,
-                    _('We sent a confirmation email to your new address. Please click the link in there.'))
-        return redirect('account-settings')
 
     form = UserEmailConfirmationForm(request.user, request.GET)
     if form.is_valid():
@@ -390,3 +376,7 @@ def new_terms(request, next=None):
         'terms_form': form,
         'next': next
     })
+
+
+def csrf_failure(request, reason=''):
+    return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})

@@ -152,36 +152,47 @@ class PasswordResetForm(auth.forms.PasswordResetForm):
         label=_('Email address'))
 
 
-class UserChangeAddressForm(forms.Form):
+class UserChangeForm(forms.Form):
+    email = forms.EmailField(required=False, widget=forms.EmailInput(
+        attrs={
+            'placeholder': _('mail@ddress.net'),
+            'class': 'form-control'
+        }),
+        label=_('New email address'))
+
     address = forms.CharField(max_length=300,
             label=_('Mailing Address'),
             help_text=_('Your address will never be displayed publicly.'),
             widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
-                'class': 'inline smalltext'}))
+                'class': 'form-control'}))
 
-    def __init__(self, profile, *args, **kwargs):
-        super(UserChangeAddressForm, self).__init__(*args, **kwargs)
-        self.profile = profile
-        self.fields['address'].initial = self.profile.address
+    if HAVE_NEWSLETTER:
+        newsletter = forms.BooleanField(required=False,
+            label=_("Newsletter"))
 
-    def save(self):
-        self.profile.address = self.cleaned_data['address']
-        self.profile.save()
-
-
-class UserChangeEmailForm(forms.Form):
-    email = forms.EmailField(widget=forms.EmailInput(
-        attrs={'placeholder': _('mail@ddress.net')}),
-        label=_('New email address'))
+    def __init__(self, user, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.fields['address'].initial = self.user.address
+        self.fields['email'].initial = self.user.email
+        if HAVE_NEWSLETTER:
+            self.fields['newsletter'].initial = self.user.newsletter
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        if get_user_model().objects.filter(email=email).exists():
+        if (self.user.email != email and
+                get_user_model().objects.filter(email=email).exists()):
             raise forms.ValidationError(
-                _('A user with that email address already exists!')
+                _('Another user with that email address already exists!')
             )
-
         return email
+
+    def save(self):
+        self.user.address = self.cleaned_data['address']
+        if HAVE_NEWSLETTER:
+            self.user.newsletter = self.cleaned_data['newsletter']
+
+        self.user.save()
 
 
 class UserEmailConfirmationForm(forms.Form):
@@ -221,7 +232,7 @@ class UserDeleteForm(forms.Form):
     CONFIRMATION_PHRASE = str(_('Freedom of Information Act'))
 
     password = forms.CharField(
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(),
         label=_('Password'),
         help_text=_('Please type your password to confirm.')
     )

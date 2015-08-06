@@ -112,9 +112,9 @@ class User(AbstractUser):
     def get_password_change_form(self, *args, **kwargs):
         return SetPasswordForm(self, *args, **kwargs)
 
-    def get_address_change_form(self, *args, **kwargs):
-        from froide.account.forms import UserChangeAddressForm
-        return UserChangeAddressForm(self, *args, **kwargs)
+    def get_change_form(self, *args, **kwargs):
+        from froide.account.forms import UserChangeForm
+        return UserChangeForm(self, *args, **kwargs)
 
 
 class AccountManager(object):
