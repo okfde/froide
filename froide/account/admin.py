@@ -117,6 +117,7 @@ class UserAdmin(DjangoUserAdmin):
             return None
 
         context = {
+            'opts': self.model._meta,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
             'queryset': queryset
         }
