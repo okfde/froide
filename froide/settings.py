@@ -394,10 +394,6 @@ class Base(Configuration):
     # or can you send from any address you like?
     FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(True)
 
-    SOUTH_MIGRATION_MODULES = {
-        'taggit': 'taggit.south_migrations',
-    }
-
 
 class Dev(Base):
     pass
