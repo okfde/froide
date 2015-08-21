@@ -13,3 +13,4 @@
 {% endfor %}{% blocktrans with site_name=site_name %}Cheers,
 {{ site_name }}
 {% endblocktrans %}{% endautoescape %}
+{% include "foirequest/emails/user_footer.txt" %}
