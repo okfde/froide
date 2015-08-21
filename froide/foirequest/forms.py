@@ -62,13 +62,9 @@ class RequestForm(forms.Form):
         )
         self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
             required=False,
-            widget=forms.RadioSelect if not hidden else forms.HiddenInput,
+            widget=forms.Select if not hidden else forms.HiddenInput,
             initial=default_law.pk,
-            choices=((l.pk, mark_safe(
-                '%(name)s<span class="lawinfo">%(description)s</span>' % {
-                    "name": escape(l.name),
-                    "description": l.description_html
-                })) for l in list_of_laws))
+            choices=((l.pk, l.name) for l in list_of_laws))
 
     def laws_to_json(self):
         return json.dumps(dict([(l.id, l.as_dict()) for l in self.list_of_laws]))

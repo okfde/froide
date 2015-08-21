@@ -43,6 +43,10 @@ body {
     border-top: 0;
 }
 
+.requestform__law-select select {
+  width: 200px;
+}
+
 
 .special-nav-item a span{
     color: #333 !important;
