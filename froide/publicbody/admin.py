@@ -62,12 +62,15 @@ class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'meta', 'jurisdiction',)
+    list_filter = ('jurisdiction',)
     raw_id_fields = ('mediator',)
     filter_horizontal = ('combined',)
 
 
 class JurisdictionAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
+    list_filter = ['hidden', 'rank']
+    list_display = ['name', 'hidden', 'rank']
 
 
 class PublicBodyTagAdmin(admin.ModelAdmin):
