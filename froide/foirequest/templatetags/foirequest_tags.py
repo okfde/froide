@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from difflib import SequenceMatcher
+import re
 
 from django import template
 from django.utils.safestring import mark_safe
@@ -29,6 +30,12 @@ def highlight_request(message):
             urlizetrunc(escape(description), 40),
             escape(content[offset:]))
     )
+
+ONLY_SPACE_LINE = re.compile(u'^[ \u00A0]+$', re.U | re.M)
+
+
+def remove_space_lines(content):
+    return ONLY_SPACE_LINE.sub('', content)
 
 
 def mark_differences(content_a, content_b,
@@ -61,7 +68,7 @@ def mark_differences(content_a, content_b,
             opened = True
             last_start_tag = len(new_content)
             new_content.append(start_tag)
-        new_content.append(escape(content_a[i1:i2]))
+        new_content.append(escape(remove_space_lines(content_a[i1:i2])))
     if opened:
         if full_tag_check(new_content, last_start_tag):
             new_content.append(end_tag)
