@@ -170,7 +170,7 @@ class FoiRequestResource(ModelResource):
                 "description": x.description,
                 "url": x.url,
                 "score": x.score
-            } for x in result]
+            } for x in result if x]
 
         return self.create_response(request, {'objects': result})
 
