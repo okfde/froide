@@ -2,6 +2,7 @@ import base64
 import json
 import zipfile
 from email.utils import parseaddr
+import random
 
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
@@ -11,6 +12,7 @@ from django.utils.six import BytesIO, string_types
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails,
                                        make_address)
+from froide.helper.name_generator import get_name_from_number
 
 
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
@@ -81,8 +83,45 @@ def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
         )
 
 
+def get_alternative_mail(req):
+    name = get_name_from_number(req.pk)
+    domains = settings.FOI_EMAIL_DOMAIN
+    if isinstance(domains, string_types):
+        domains = [domains]
+    if len(domains) > 1:
+        domains = domains[1:]
+
+    random.shuffle(domains)
+    return '%s_%s@%s' % (name, req.pk, domains[0])
+
+
+def get_foirequest_from_mail(email):
+    from .models import FoiRequest
+
+    if '_' in email:
+        name, domain = email.split('@', 1)
+        hero, num = name.rsplit('_', 1)
+        try:
+            num = int(num)
+        except ValueError:
+            return None
+        hero_name = get_name_from_number(num)
+        if hero_name != hero:
+            return None
+        try:
+            return FoiRequest.objects.get(pk=num)
+        except FoiRequest.DoesNotExist:
+            return None
+
+    else:
+        try:
+            return FoiRequest.objects.get_by_secret_mail(email)
+        except FoiRequest.DoesNotExist:
+            return None
+
+
 def _deliver_mail(email, mail_string=None, manual=False):
-    from .models import FoiRequest, DeferredMessage
+    from .models import DeferredMessage
 
     received_list = email['to'] + email['cc'] \
             + email['resent_to'] + email['resent_cc']
@@ -114,9 +153,9 @@ def _deliver_mail(email, mail_string=None, manual=False):
         if secret_mail in already:
             continue
         already.add(secret_mail)
-        try:
-            foi_request = FoiRequest.objects.get_by_secret_mail(secret_mail)
-        except FoiRequest.DoesNotExist:
+
+        foi_request = get_foirequest_from_mail(secret_mail)
+        if not foi_request:
             try:
                 deferred = DeferredMessage.objects.get(recipient=secret_mail, request__isnull=False)
                 foi_request = deferred.request

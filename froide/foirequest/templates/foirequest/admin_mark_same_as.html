@@ -1,26 +1,14 @@
-{% extends "admin/base_site.html" %}
+{% extends "helper/admin_base_action.html" %}
+
 {% load i18n l10n %}
-{% load admin_static %}
-{% load admin_modify %}
 
-{% block extrahead %}{{ block.super }}
-{% url 'admin:jsi18n' as jsi18nurl %}
-<script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
-{{ media }}
+{% block action_title %}{% trans 'Mark multiple requests identical' %}{% endblock %}
+
+{% block breadcrumbs_action_label %}
+  {% trans 'Mark multiple requests identical' %}
 {% endblock %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
-
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-     <a href="../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../">{{ app_label|capfirst }}</a> &rsaquo;
-     <a href="./">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
-     {% trans 'Mark multiple requests identical' %}
-</div>
-{% endblock %}
-
-{% block content %}
+{% block action_content %}
 <form action="" method="post">{% csrf_token %}
 <div>
 <p>{% blocktrans %}These FoI request...{% endblocktrans %}<br/>

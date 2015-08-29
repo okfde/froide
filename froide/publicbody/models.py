@@ -18,15 +18,18 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, ItemBase
 from taggit.utils import edit_string_for_tags
 
-from froide.helper.date_utils import (calculate_workingday_range,
-        calculate_month_range_de)
+from froide.helper.date_utils import (
+    calculate_workingday_range,
+    calculate_month_range_de
+)
 from froide.helper.templatetags.markup import markdown
 from froide.helper.form_generator import FormGenerator
+from froide.helper.csv_utils import export_csv
 
 
 class JurisdictionManager(models.Manager):
     def get_visible(self):
-        return self.get_query_set()\
+        return self.get_queryset()\
                 .filter(hidden=False).order_by('rank', 'name')
 
     def get_list(self):
@@ -181,7 +184,7 @@ class FoiLaw(models.Model):
 
 class PublicBodyTagManager(models.Manager):
     def get_topic_list(self):
-        return (self.get_query_set().filter(is_topic=True)
+        return (self.get_queryset().filter(is_topic=True)
             .order_by('rank', 'name')
             .annotate(num_publicbodies=models.Count('publicbodies'))
         )
@@ -219,18 +222,18 @@ class TaggedPublicBody(ItemBase):
 
 
 class PublicBodyManager(CurrentSiteManager):
-    def get_query_set(self):
-        return super(PublicBodyManager, self).get_query_set()\
+    def get_queryset(self):
+        return super(PublicBodyManager, self).get_queryset()\
                 .exclude(email="")\
                 .filter(email__isnull=False)
 
     def get_list(self):
-        return self.get_query_set()\
+        return self.get_queryset()\
             .filter(jurisdiction__hidden=False)\
             .select_related('jurisdiction')
 
     def get_for_search_index(self):
-        return self.get_query_set()
+        return self.get_queryset()
 
 
 @python_2_unicode_compatible
@@ -267,7 +270,7 @@ class PublicBody(models.Model):
             blank=True, null=True, related_name='public_body_updaters',
             on_delete=models.SET_NULL, default=1)
     created_at = models.DateTimeField(_("Created at"), default=timezone.now)
-    updated_at = models.DateTimeField(_("Updated at"), default=timezone.now, auto_now=True)
+    updated_at = models.DateTimeField(_("Updated at"), default=timezone.now)
     confirmed = models.BooleanField(_("confirmed"), default=True)
 
     number_of_requests = models.IntegerField(_("Number of requests"),
@@ -358,15 +361,6 @@ class PublicBody(models.Model):
 
     @classmethod
     def export_csv(cls, queryset):
-        from django.utils import six
-
-        if six.PY3:
-            import csv
-        else:
-            import unicodecsv as csv
-
-        s = six.StringIO()
-
         fields = ("id", "name", "email", "contact",
             "address", "url", "classification",
             "jurisdiction__slug", "tags",
@@ -374,27 +368,4 @@ class PublicBody(models.Model):
             "request_note", "parent__name",
         )
 
-        writer = csv.DictWriter(s, fields)
-        writer.writeheader()
-        for pb in queryset:
-            d = {
-                'tags': edit_string_for_tags(pb.tags.all())
-            }
-            for field in fields:
-                if field in d:
-                    continue
-                value = pb
-                for f in field.split('__'):
-                    value = getattr(value, f)
-                    if value is None:
-                        break
-                if value is None:
-                    d[field] = ""
-                else:
-                    d[field] = value
-            writer.writerow(d)
-
-        s.seek(0)
-        if six.PY3:
-            return s.read()
-        return s.read().decode('utf-8')
+        return export_csv(queryset, fields)

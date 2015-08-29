@@ -62,13 +62,9 @@ class RequestForm(forms.Form):
         )
         self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
             required=False,
-            widget=forms.RadioSelect if not hidden else forms.HiddenInput,
+            widget=forms.Select if not hidden else forms.HiddenInput,
             initial=default_law.pk,
-            choices=((l.pk, mark_safe(
-                '%(name)s<span class="lawinfo">%(description)s</span>' % {
-                    "name": escape(l.name),
-                    "description": l.description_html
-                })) for l in list_of_laws))
+            choices=((l.pk, l.name) for l in list_of_laws))
 
     def laws_to_json(self):
         return json.dumps(dict([(l.id, l.as_dict()) for l in self.list_of_laws]))
@@ -133,8 +129,8 @@ class RequestForm(forms.Form):
     def clean(self):
         cleaned = self.cleaned_data
         public_body = cleaned.get("public_body")
-        if public_body is not None and (public_body != "new"
-                and public_body != ""):
+        if public_body is not None and (public_body != "new" and
+                public_body != ""):
             self.foi_law = self.clean_law_for_public_body(self.public_body_object)
         else:
             self.foi_law = self.clean_law_without_public_body()
@@ -169,7 +165,7 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int,
-            required=True, widget=forms.Select(attrs={"class": "form-control"}))
+            required=True, widget=forms.RadioSelect(attrs={"class": "form-control"}))
     subject = forms.CharField(label=_("Subject"),
             max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -245,6 +241,16 @@ class EscalationMessageForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(EscalationMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
+
+    def clean_message(self):
+        message = self.cleaned_data['message']
+        message = message.replace('\r\n', '\n').strip()
+        empty_form = self.foirequest.get_escalation_message_form()
+        if message == empty_form.initial['message'].strip():
+            raise forms.ValidationError(
+                _('You need to fill in the blanks in the template!')
+            )
+        return message
 
     def save(self):
         self.foirequest.add_escalation_message(**self.cleaned_data)

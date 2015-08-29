@@ -51,6 +51,7 @@ class RequesterFilter(admin.FieldListFilter):
 class FoiRequestAdminForm(forms.ModelForm):
     class Meta:
         model = FoiRequest
+        fields = '__all__'
         widgets = {
             'tags': TagAutocompleteTagIt(
                 autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={
@@ -79,7 +80,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     autocomplete_resource_name = 'request'
 
     actions = ['mark_checked', 'mark_not_foi', 'tag_all',
-               'mark_same_as', 'remove_from_index']
+               'mark_same_as', 'remove_from_index', 'confirm_request']
     raw_id_fields = ('same_as', 'public_body', 'user',)
     save_on_top = True
 
@@ -145,6 +146,16 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
         self.message_user(request, _("Removed from search index"))
     remove_from_index.short_description = _("Remove from search index")
+
+    def confirm_request(self, request, queryset):
+        foireq = queryset[0]
+        if foireq.status != 'awaiting_user_confirmation':
+            self.message_user(request, _("Request not in correct state!"))
+            return None
+        self.message_user(request, _("Message send successfully!"))
+        FoiRequest.confirmed_request(foireq.user, foireq.pk)
+        return None
+    confirm_request.short_description = _("Confirm request if unconfirmed")
 
 
 class FoiAttachmentInline(admin.TabularInline):

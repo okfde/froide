@@ -2,7 +2,7 @@ import os
 import sys
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, SuspiciousFileOperation
 from django.utils._os import safe_join
 from django.utils.importlib import import_module
 from django.template.loaders.app_directories import Loader
@@ -40,11 +40,11 @@ class ThemeLoader(Loader):
         for template_dir in template_dirs:
             try:
                 yield safe_join(template_dir, template_name)
+            except SuspiciousFileOperation:
+                pass
             except UnicodeDecodeError:
                 # The template dir name was a bytestring that wasn't valid UTF-8.
                 raise
             except ValueError:
                 # The joined path was located outside of template_dir.
                 pass
-
-_loader = ThemeLoader()  # noqa

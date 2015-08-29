@@ -9,5 +9,4 @@ Go to your request now:
 Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
-
-
+{% include "foirequest/emails/user_footer.txt" %}

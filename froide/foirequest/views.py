@@ -179,7 +179,7 @@ def list_requests(request, status=None, topic=None, tag=None,
         'object_list': foi_requests,
         'status_list': [(str(x[0]),
             FoiRequest.get_readable_status(x[2]),
-            x[2]) for x in FoiRequest.STATUS_URLS],
+            x[2]) for x in FoiRequest.get_status_url()],
         'topic_list': topic_list
     })
 
@@ -209,7 +209,7 @@ def show(request, slug, template_name="foirequest/show.html",
             context=None, status=200):
     try:
         obj = FoiRequest.objects.select_related("public_body",
-                "user", "user__profile", "law", "law__combined").get(slug=slug)
+                "user", "law").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
     if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):
@@ -234,7 +234,7 @@ def show(request, slug, template_name="foirequest/show.html",
             att.belongs_to = message
 
     events = FoiEvent.objects.filter(request=obj).select_related(
-            "user", "user__profile", "request",
+            "user", "request",
             "public_body").order_by("timestamp")
 
     event_count = len(events)
@@ -758,8 +758,7 @@ def approve_attachment(request, slug, attachment):
     att = get_object_or_404(FoiAttachment, id=int(attachment))
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
-    att.approve()
-    att.save()
+    att.approve_and_save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
     return redirect(att.get_anchor_url())
@@ -903,8 +902,7 @@ def redact_attachment(request, slug, attachment_id):
             )
         att.file = pdf_file
         att.size = pdf_file.size
-        att.approve()
-        att.save()
+        att.approve_and_save()
         if not attachment.is_redacted:
             attachment.redacted = att
             attachment.can_approve = False

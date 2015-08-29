@@ -249,9 +249,6 @@
               <label for="id_subject" class="control-label">{% trans "Request Subject" %}:</label>
               {{ request_form.subject }}
             </div>
-            {% if not public_body %}
-              {{ request_form.law }}
-            {% endif %}
           </div>
         </div>
         <div class="row">
@@ -268,6 +265,13 @@
                 {{ request_form.full_text }}
                 {{ request_form.full_text.label }}
               </label>
+              {% if not request_form.law.is_hidden %}
+                <div id="law-select" class="requestform__law-select form-group{% if request_form.law.errors %} has-error{% endif %}" style="display:none">
+              {% endif %}
+                {{ request_form.law }}
+              {% if not request_form.law.is_hidden %}
+                </div>
+              {% endif %}
             </div>
 
             <div class="well letter">

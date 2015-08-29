@@ -19,7 +19,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import AbstractUser, UserManager
 
 from froide.helper.text_utils import replace_greetings, replace_word
-
+from froide.helper.csv_utils import export_csv, get_dict
 
 user_activated_signal = dispatch.Signal(providing_args=[])
 
@@ -34,14 +34,30 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    if settings.CUSTOM_AUTH_USER_MODEL_DB:
-        class Meta:
-            db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
+    # if settings.CUSTOM_AUTH_USER_MODEL_DB:
+    #     class Meta:
+    #         db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
 
     def get_absolute_url(self):
         if self.private:
             return ""
         return reverse('account-profile', kwargs={'slug': self.username})
+
+    def get_dict(self, fields):
+        d = get_dict(self, fields)
+        d['request_count'] = self.foirequest_set.all().count()
+        return d
+
+    @classmethod
+    def export_csv(cls, queryset):
+        fields = (
+            "id", "first_name", "last_name", "email",
+            "organization", "organization_url", "private",
+            "date_joined", "is_staff",
+            "address", "terms", "newsletter",
+            "request_count",
+        )
+        return export_csv(queryset, fields)
 
     def display_name(self):
         if self.private:
@@ -96,9 +112,9 @@ class User(AbstractUser):
     def get_password_change_form(self, *args, **kwargs):
         return SetPasswordForm(self, *args, **kwargs)
 
-    def get_address_change_form(self, *args, **kwargs):
-        from froide.account.forms import UserChangeAddressForm
-        return UserChangeAddressForm(self, *args, **kwargs)
+    def get_change_form(self, *args, **kwargs):
+        from froide.account.forms import UserChangeForm
+        return UserChangeForm(self, *args, **kwargs)
 
 
 class AccountManager(object):
@@ -224,13 +240,13 @@ class AccountManager(object):
             setattr(user, key, data.get(key, ''))
 
         # ensure username is unique
+        username = username_base
+        first_round = True
+        count = 0
+        postfix = ""
         while True:
-            username = username_base
-            first_round = True
-            count = 0
-            postfix = ""
-            with transaction.commit_manually():
-                try:
+            try:
+                with transaction.atomic():
                     while True:
                         if not first_round:
                             postfix = "_%d" % count
@@ -243,11 +259,9 @@ class AccountManager(object):
                             count += 1
                     user.username = username + postfix
                     user.save()
-                except IntegrityError:
-                    transaction.rollback()
-                    raise
-                else:
-                    transaction.commit()
-                    break
+            except IntegrityError:
+                pass
+            else:
+                break
 
         return user, password

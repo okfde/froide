@@ -353,19 +353,20 @@ class AccountTest(TestCase):
                 response.content)
         self.assertEqual('', user.get_absolute_url())
 
-    def test_change_address(self):
+    def test_change_user(self):
         data = {}
-        response = self.client.post(reverse('account-change_address'), data)
+        response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 403)
+
         ok = self.client.login(username='sw', password='froide')
         self.assertTrue(ok)
-        response = self.client.post(reverse('account-change_address'), data)
+        response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 400)
         data["address"] = ""
-        response = self.client.post(reverse('account-change_address'), data)
+        response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 400)
         data["address"] = "Some Value"
-        response = self.client.post(reverse('account-change_address'), data)
+        response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(username='sw')
         self.assertEqual(user.address, data['address'])
@@ -444,8 +445,9 @@ class AccountTest(TestCase):
         new_email = 'newemail@example.com'
         user = User.objects.get(username='sw')
 
-        response = self.client.post(reverse('account-change_email'),
+        response = self.client.post(reverse('account-change_user'),
             {
+                'address': 'Test',
                 'email': 'not-email',
             }
         )
@@ -454,23 +456,26 @@ class AccountTest(TestCase):
 
         self.client.login(username='sw', password='froide')
 
-        response = self.client.post(reverse('account-change_email'),
+        response = self.client.post(reverse('account-change_user'),
             {
+                'address': 'Test',
                 'email': 'not-email',
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(mail.outbox), 0)
 
-        response = self.client.post(reverse('account-change_email'),
+        response = self.client.post(reverse('account-change_user'),
             {
+                'address': 'Test',
                 'email': user.email
             }
         )
-        self.assertEqual(response.status_code, 400)
-
-        response = self.client.post(reverse('account-change_email'),
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
+        response = self.client.post(reverse('account-change_user'),
             {
+                'address': 'Test',
                 'email': new_email,
             }
         )

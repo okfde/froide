@@ -28,12 +28,11 @@ class Base(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
         'django.contrib.admin',
-        'django.contrib.comments',
+        'django_comments',
         'django.contrib.flatpages',
         'django.contrib.sitemaps',
 
         # external
-        'south',
         'haystack',
         'djcelery',
         'taggit',
@@ -395,10 +394,6 @@ class Base(Configuration):
     # or can you send from any address you like?
     FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(True)
 
-    SOUTH_MIGRATION_MODULES = {
-        'taggit': 'taggit.south_migrations',
-    }
-
 
 class Dev(Base):
     pass
@@ -466,13 +461,15 @@ class Test(Base):
     DEFAULT_FROM_EMAIL = 'info@example.com'
 
     FOI_EMAIL_DOMAIN = 'fragdenstaat.de'
-    HAYSTACK_CONNECTIONS = {
-        'default': {
-            'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-            'URL': 'http://127.0.0.1:9200/',
-            'INDEX_NAME': 'froide',
-        },
-    }
+
+    @property
+    def HAYSTACK_CONNECTIONS(self):
+        return {
+            'default': {
+                'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+                'PATH': os.path.join(super(Test, self).PROJECT_ROOT, 'tests/froide_test_whoosh_db'),
+            },
+        }
 
     CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
     CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"

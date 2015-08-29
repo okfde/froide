@@ -1,16 +1,14 @@
-{% extends "admin/base_site.html" %}
+{% extends "helper/admin_base_action.html" %}
+
 {% load i18n l10n %}
 
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-  <a href="../../">{% trans "Home" %}</a> &rsaquo;
-  <a href="../">{{ app_label|capfirst }}</a> &rsaquo;
-  <a href="./">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
-  {% trans 'Add tags to multiple items' %}
-</div>
+{% block action_title %}{% trans 'Send mail to users' %}{% endblock %}
+
+{% block breadcrumbs_action_label %}
+  {% trans 'Send mail to users' %}
 {% endblock %}
 
-{% block content %}
+{% block action_content %}
 {% with count=queryset.count %}
 <form action="" method="post">{% csrf_token %}
   <div>

@@ -377,6 +377,7 @@ Froide.app = Froide.app || {};
 
                 $('#letter_start').toggle(!checked);
                 $('#letter_complete_end').toggle(!checked);
+                $('#law-select').toggle(checked);
 
                 if (checked && body === '') {
                     $('#id_body').val(combinedLetter);

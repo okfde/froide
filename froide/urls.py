@@ -62,7 +62,8 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
     urlpatterns += patterns('',
         url(r'^api/', include(v1_api.urls)),
         url(r'api/v1/docs/', include('tastypie_swagger.urls',
-            namespace='tastypie_swagger')),
+            namespace='tastypie_swagger'),
+            kwargs={'tastypie_api_module': v1_api, 'namespace': 'tastypie_swagger'}),
     )
 
 urlpatterns += patterns('',
@@ -104,7 +105,7 @@ urlpatterns += patterns('',
     (r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
     (r'^%s/' % _('search'), 'froide.foirequest.views.search', {}, "foirequest-search"),
-    (r'^comments/', include('django.contrib.comments.urls')),
+    (r'^comments/', include('django_comments.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls))
 )

@@ -1,0 +1,26 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_static %}
+{% load admin_urls %}
+
+{% block title %}{% block action_title %}{% endblock %}{{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; {% block breadcrumbs_action_label %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block content %}<div id="content-main">
+
+{% block action_content %}{% endblock %}
+
+{% block admin_change_form_document_ready %}
+  {{ block.super }}
+{% endblock %}
+
+</div>
+</form></div>
+{% endblock %}

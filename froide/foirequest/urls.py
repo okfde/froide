@@ -58,13 +58,13 @@ foirequest_urls = [
         {'feed': 'rss'}, 'foirequest-list_feed'),
 
 ] + [(r'^(?P<status>%s)/$' % str(urlinfo[0]), 'list_requests', {},
-        'foirequest-list') for urlinfo in FoiRequest.STATUS_URLS
+        'foirequest-list') for urlinfo in FoiRequest.get_status_url()
 ] + [(r'^(?P<status>%s)/feed/$' % str(urlinfo[0]), 'list_requests',
         {'feed': 'atom'},
-        'foirequest-list_feed_atom') for urlinfo in FoiRequest.STATUS_URLS
+        'foirequest-list_feed_atom') for urlinfo in FoiRequest.get_status_url()
 ] + [(r'^(?P<status>%s)/rss/$' % str(urlinfo[0]), 'list_requests',
         {'feed': 'rss'},
-        'foirequest-list_feed') for urlinfo in FoiRequest.STATUS_URLS]
+        'foirequest-list_feed') for urlinfo in FoiRequest.get_status_url()]
 
 urlpatterns += patterns("froide.foirequest.views",
     *foirequest_urls

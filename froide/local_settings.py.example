@@ -257,11 +257,6 @@ class Dev(Base):
     # SECURE_FRAME_DENY = True
 
 
-    ######### South #############
-
-    # SOUTH_TESTS_MIGRATE = False
-
-
     ######### Celery #############
 
     # # setup celery differently

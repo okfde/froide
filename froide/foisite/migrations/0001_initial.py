@@ -1,42 +1,29 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'FoiSite'
-        db.create_table('foisite_foisite', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('country_code', self.gf('django.db.models.fields.CharField')(max_length=5)),
-            ('country_name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('url', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('text', self.gf('django.db.models.fields.TextField')()),
-            ('enabled', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal('foisite', ['FoiSite'])
+    dependencies = [
+    ]
 
-
-    def backwards(self, orm):
-        # Deleting model 'FoiSite'
-        db.delete_table('foisite_foisite')
-
-
-    models = {
-        'foisite.foisite': {
-            'Meta': {'object_name': 'FoiSite'},
-            'country_code': ('django.db.models.fields.CharField', [], {'max_length': '5'}),
-            'country_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'enabled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'text': ('django.db.models.fields.TextField', [], {}),
-            'url': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        }
-    }
-
-    complete_apps = ['foisite']
+    operations = [
+        migrations.CreateModel(
+            name='FoiSite',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('country_code', models.CharField(max_length=5, verbose_name='Country Code')),
+                ('country_name', models.CharField(max_length=255, verbose_name='Country Name')),
+                ('name', models.CharField(max_length=255, verbose_name='Name')),
+                ('url', models.CharField(max_length=255, verbose_name='URL')),
+                ('text', models.TextField(verbose_name='Text', blank=True)),
+                ('enabled', models.BooleanField(default=True, verbose_name='Enabled')),
+            ],
+            options={
+                'verbose_name': 'FOI Site',
+                'verbose_name_plural': 'FOI Sites',
+            },
+        ),
+    ]

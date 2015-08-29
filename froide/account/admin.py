@@ -10,8 +10,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import helpers
 
 from froide.foirequest.models import FoiRequest
+from froide.helper.csv_utils import export_csv_response
 
 from .models import User, AccountManager
+
+from .utils import delete_all_unexpired_sessions_for_user
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -46,7 +49,12 @@ class UserAdmin(DjangoUserAdmin):
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + ['private', 'terms', 'newsletter']
 
-    actions = ['resend_activation', 'send_mail']
+    actions = ['export_csv', 'resend_activation',
+               'send_mail', 'delete_sessions']
+
+    def export_csv(self, request, queryset):
+        return export_csv_response(User.export_csv(queryset))
+    export_csv.short_description = _("Export to CSV")
 
     def resend_activation(self, request, queryset):
         rows_updated = 0
@@ -109,6 +117,7 @@ class UserAdmin(DjangoUserAdmin):
             return None
 
         context = {
+            'opts': self.model._meta,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
             'queryset': queryset
         }
@@ -117,5 +126,12 @@ class UserAdmin(DjangoUserAdmin):
         return TemplateResponse(request, 'account/admin_send_mail.html',
             context, current_app=self.admin_site.name)
     send_mail.short_description = _("Send mail to users")
+
+    def delete_sessions(self, request, queryset):
+        for user in queryset:
+            delete_all_unexpired_sessions_for_user(user)
+        self.message_user(request, _("Sessions deleted."))
+        return None
+    delete_sessions.short_description = _('Delete sessions of users')
 
 admin.site.register(User, UserAdmin)

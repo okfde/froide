@@ -1,5 +1,4 @@
 {% load i18n %}{% autoescape off %}{% if user %}{% blocktrans with name=user.get_full_name %}Hello {{ name }},{% endblocktrans %}{% else %}{% trans "Hello," %}{% endif %}
-
 {% for request, container in req_event_dict.items %}
 {% blocktrans with title=request.title %}The following just happend to the request "{{ title }}" that you follow{% endblocktrans %}:
 {% for event in container.events %} - {{ event }}
@@ -8,12 +7,9 @@
 
 {{ link }}{% endblocktrans %}
 
-
 {% blocktrans with unfollow_link=container.unfollow_link %}If you want to UNFOLLOW this request, click this link:
 {{ unfollow_link }}{% endblocktrans %}
 
-{% endfor %}
-{% blocktrans with site_name=site_name %}
-Cheers,
+{% endfor %}{% blocktrans with site_name=site_name %}Cheers,
 {{ site_name }}
 {% endblocktrans %}{% endautoescape %}
