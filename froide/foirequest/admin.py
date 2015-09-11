@@ -243,6 +243,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
     list_filter = (RequestNullFilter, 'spam')
+    search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
     list_display = ('recipient', 'timestamp', 'request', 'spam')
