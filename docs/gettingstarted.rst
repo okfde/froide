@@ -34,7 +34,7 @@ The dependency installation may take a couple of minutes, but after that everyth
 
 Sync and migrate and *do NOT* create a superuser just yet::
 
-    python manage.py syncdb --noinput
+    python manage.py migrate
 
 Now you can already start the web server::
 
