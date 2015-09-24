@@ -57,7 +57,7 @@ class CSVImporter(object):
         tags = parse_tags(row.pop('tags', ''))
         # Backwards compatible handling of topic__slug
         topic_slug = row.pop('topic__slug', None)
-        if topic_slug is not None:
+        if topic_slug:
             tags.append(self.get_topic(topic_slug))
 
         # resolve foreign keys
