@@ -49,6 +49,7 @@ class Jurisdiction(models.Model):
     class Meta:
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
+        ordering = ('rank', 'name',)
 
     def __str__(self):
         return self.name
