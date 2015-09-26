@@ -153,6 +153,16 @@ class PasswordResetForm(auth.forms.PasswordResetForm):
 
 
 class UserChangeForm(forms.Form):
+    first_name = forms.CharField(max_length=30,
+            label=_('First name'),
+            widget=forms.TextInput(attrs={'placeholder': _('First Name'),
+                'class': 'form-control'}))
+
+    last_name = forms.CharField(max_length=30,
+            label=_('Last name'),
+            widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
+                'class': 'form-control'}))
+
     email = forms.EmailField(required=False, widget=forms.EmailInput(
         attrs={
             'placeholder': _('mail@ddress.net'),
@@ -173,8 +183,11 @@ class UserChangeForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
         self.user = user
+        self.fields['first_name'].initial = self.user.first_name
+        self.fields['last_name'].initial = self.user.last_name
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email
+
         if HAVE_NEWSLETTER:
             self.fields['newsletter'].initial = self.user.newsletter
 
@@ -188,11 +201,20 @@ class UserChangeForm(forms.Form):
         return email
 
     def save(self):
+        self.user.first_name = self.cleaned_data['first_name']
+        self.user.last_name = self.cleaned_data['last_name']
         self.user.address = self.cleaned_data['address']
+
         if HAVE_NEWSLETTER:
             self.user.newsletter = self.cleaned_data['newsletter']
 
         self.user.save()
+
+    def clean_first_name(self):
+        return self.cleaned_data['first_name'].strip()
+
+    def clean_last_name(self):
+        return self.cleaned_data['last_name'].strip()
 
 
 class UserEmailConfirmationForm(forms.Form):
