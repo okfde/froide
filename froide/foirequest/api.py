@@ -126,6 +126,7 @@ class FoiRequestResource(ModelResource):
             'tags': ALL,
             'same_as': ALL,
             'status': ALL,
+            'resolution': ALL,
             'public_body': ALL_WITH_RELATIONS
         }
         authentication = AnonymousGetAuthentication()
