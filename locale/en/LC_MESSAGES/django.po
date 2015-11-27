@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-27 17:56+0100\n"
+"POT-Creation-Date: 2015-11-27 19:21+0100\n"
 "PO-Revision-Date: 2013-11-23 13:30+0000\n"
 "Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgstr ""
 "\">the Open Knowledge Foundation</a>. If you want to support Froide, please "
 "visit the <a href=\"%(url)s\">repository on GitHub</a>."
 
-#: froide/_local_settings.py:11 froide/settings.py:205 froide/settings.py:491
+#: froide/_local_settings.py:11 froide/settings.py:205 froide/settings.py:492
 msgid "German"
 msgstr ""
 
@@ -315,7 +315,7 @@ msgstr "%(site_name)s: please confirm your new email address"
 #: froide/account/templates/account/admin_send_mail.html:16
 #: froide/foirequest/forms.py:30 froide/foirequest/forms.py:33
 #: froide/foirequest/forms.py:169 froide/foirequest/forms.py:233
-#: froide/foirequest/forms.py:435 froide/foirequest/forms.py:438
+#: froide/foirequest/forms.py:440 froide/foirequest/forms.py:443
 #: froide/foirequest/models.py:1145
 #: froide/foirequest/templates/foirequest/request.html:473
 #: froide/foirequest/templates/foirequest/snippets/message.html:49
@@ -1067,7 +1067,7 @@ msgstr ""
 "If you don't want your request to be public right now, uncheck this. You can "
 "always decide to make it public later."
 
-#: froide/foirequest/forms.py:63 froide/foirequest/forms.py:378
+#: froide/foirequest/forms.py:63 froide/foirequest/forms.py:383
 msgid "Information Law"
 msgstr "Information Law"
 
@@ -1216,11 +1216,11 @@ msgstr "Provide the redirected public body!"
 msgid "Please give a resolution to this request"
 msgstr "Please give a resolution to this request"
 
-#: froide/foirequest/forms.py:387
+#: froide/foirequest/forms.py:392
 msgid "Invalid FoI Request for this operation"
 msgstr "Invalid FoI Request for this operation"
 
-#: froide/foirequest/forms.py:414
+#: froide/foirequest/forms.py:419
 #, python-format
 msgid ""
 "The scanned letter must be either PDF, JPG or PNG, but was detected as "
@@ -1229,7 +1229,7 @@ msgstr ""
 "The scanned letter must be either PDF, JPG or PNG, but was detected as "
 "%(content_type)s!"
 
-#: froide/foirequest/forms.py:423
+#: froide/foirequest/forms.py:428
 #, fuzzy
 msgid ""
 "Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/"
@@ -1239,43 +1239,43 @@ msgstr ""
 "black out all private information concerning you</strong>. All uploaded "
 "documents will be published!"
 
-#: froide/foirequest/forms.py:427
+#: froide/foirequest/forms.py:432
 msgid "mm/dd/YYYY"
 msgstr ""
 
-#: froide/foirequest/forms.py:429
+#: froide/foirequest/forms.py:434
 msgid "Send Date"
 msgstr "Send Date"
 
-#: froide/foirequest/forms.py:430
+#: froide/foirequest/forms.py:435
 msgid "Please give the date the reply was sent."
 msgstr "Please give the date the reply was sent."
 
-#: froide/foirequest/forms.py:432 froide/foirequest/forms.py:434
+#: froide/foirequest/forms.py:437 froide/foirequest/forms.py:439
 msgid "Sender Name"
 msgstr "Sender Name"
 
-#: froide/foirequest/forms.py:439
+#: froide/foirequest/forms.py:444
 msgid "Letter"
 msgstr "Letter"
 
-#: froide/foirequest/forms.py:441
+#: froide/foirequest/forms.py:446
 msgid "Letter text you have received"
 msgstr "Letter text you have received"
 
-#: froide/foirequest/forms.py:445
+#: froide/foirequest/forms.py:450
 msgid "The text can be left empty, instead you can upload scanned documents."
 msgstr "The text can be left empty, instead you can upload scanned documents."
 
-#: froide/foirequest/forms.py:446
+#: froide/foirequest/forms.py:451
 msgid "Scanned Letter"
 msgstr "Scanned Letter"
 
-#: froide/foirequest/forms.py:448
+#: froide/foirequest/forms.py:453
 msgid "You are not allowed to publish some received documents"
 msgstr "You are not allowed to publish some received documents"
 
-#: froide/foirequest/forms.py:450
+#: froide/foirequest/forms.py:455
 msgid ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
@@ -1283,15 +1283,15 @@ msgstr ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
 
-#: froide/foirequest/forms.py:456
+#: froide/foirequest/forms.py:461
 msgid "Your reply date is in the future, that is not possible."
 msgstr "Your reply date is in the future, that is not possible."
 
-#: froide/foirequest/forms.py:464
+#: froide/foirequest/forms.py:469
 msgid "You need to provide either the letter text or a scanned document."
 msgstr "You need to provide either the letter text or a scanned document."
 
-#: froide/foirequest/forms.py:469
+#: froide/foirequest/forms.py:474
 msgid "Scanned Document"
 msgstr "Scanned Document"
 
@@ -1377,7 +1377,9 @@ msgid "Request Successful"
 msgstr "Request Successful"
 
 #: froide/foirequest/models.py:179
-msgid "The request has been successul."
+#, fuzzy
+#| msgid "The request has been successul."
+msgid "The request has been successful."
 msgstr "The request has been successul."
 
 #: froide/foirequest/models.py:183
@@ -4328,6 +4330,18 @@ msgstr "Contact"
 #: froide/publicbody/models.py:262
 msgid "Website Dump"
 msgstr "Website Dump"
+
+#: froide/publicbody/models.py:265
+#, fuzzy
+#| msgid "File type"
+msgid "file index"
+msgstr "File type"
+
+#: froide/publicbody/models.py:266
+#, fuzzy
+#| msgid "Organization"
+msgid "organisational chart"
+msgstr "Organization"
 
 #: froide/publicbody/models.py:269
 msgid "Created by"

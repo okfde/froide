@@ -8,6 +8,7 @@
 # fin <fin+transifex@xbhd.org>, 2015
 # m_hoerz <hoerz@michael-hoerz.de>, 2011
 # m_hoerz <hoerz@michael-hoerz.de>, 2011
+# stefanw <stefanwehrmeyer@gmail.com>, 2015
 # stefanw <stefanwehrmeyer@gmail.com>, 2011
 # Stefan Wehrmeyer <mail@stefanwehrmeyer.com>, 2011
 # stefanw <stefanwehrmeyer@gmail.com>, 2011
@@ -15,9 +16,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-27 17:56+0100\n"
-"PO-Revision-Date: 2015-11-27 17:19+0000\n"
-"Last-Translator: arne <arne.semsrott@okfn.de>\n"
+"POT-Creation-Date: 2015-11-27 19:21+0100\n"
+"PO-Revision-Date: 2015-11-27 18:38+0000\n"
+"Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,7 +39,7 @@ msgid ""
 "Foundation&lt;/a&gt;."
 msgstr "FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn.de\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie FragDenStaat.de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!</a>"
 
-#: froide/_local_settings.py:11 froide/settings.py:205 froide/settings.py:491
+#: froide/_local_settings.py:11 froide/settings.py:205 froide/settings.py:492
 msgid "German"
 msgstr "Deutsch"
 
@@ -297,7 +298,7 @@ msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
 #: froide/account/templates/account/admin_send_mail.html:16
 #: froide/foirequest/forms.py:30 froide/foirequest/forms.py:33
 #: froide/foirequest/forms.py:169 froide/foirequest/forms.py:233
-#: froide/foirequest/forms.py:435 froide/foirequest/forms.py:438
+#: froide/foirequest/forms.py:440 froide/foirequest/forms.py:443
 #: froide/foirequest/models.py:1145
 #: froide/foirequest/templates/foirequest/request.html:473
 #: froide/foirequest/templates/foirequest/snippets/message.html:49
@@ -981,7 +982,7 @@ msgid ""
 " always decide to make it public later."
 msgstr "Wenn Ihre Anfrage nicht sofort öffentlich sein soll, entfernen Sie den Haken. Sie können die Anfrage dann später veröffentlichen."
 
-#: froide/foirequest/forms.py:63 froide/foirequest/forms.py:378
+#: froide/foirequest/forms.py:63 froide/foirequest/forms.py:383
 msgid "Information Law"
 msgstr "Informationsgesetz"
 
@@ -1124,74 +1125,74 @@ msgstr "Bitte geben Sie die neue Behörde an!"
 msgid "Please give a resolution to this request"
 msgstr "Bitte schreiben Sie eine Zusammenfassung des Ergebnisses"
 
-#: froide/foirequest/forms.py:387
+#: froide/foirequest/forms.py:392
 msgid "Invalid FoI Request for this operation"
 msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
 
-#: froide/foirequest/forms.py:414
+#: froide/foirequest/forms.py:419
 #, python-format
 msgid ""
 "The scanned letter must be either PDF, JPG or PNG, but was detected as "
 "%(content_type)s!"
 msgstr "Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, wurde aber als %(content_type)s erkannt!"
 
-#: froide/foirequest/forms.py:423
+#: froide/foirequest/forms.py:428
 msgid ""
 "Uploaded scans can be PDF, JPG or PNG. Please make sure to "
 "<strong>redact/black out all private information concerning you</strong>."
 msgstr "Hochgeladene Scans können im PDF-, JPG- oder PNG-Format sein. Sie können die Datei auch nach dem Hochladen in FragDenStaat schwärzen und anschließend freischalten. <strong>Bitte entfernen oder schwärzen Sie alle Stellen mit Ihren persönlichen Informationen (z.B. Ihre Adresse).</strong>"
 
-#: froide/foirequest/forms.py:427
+#: froide/foirequest/forms.py:432
 msgid "mm/dd/YYYY"
 msgstr "dd.mm.YYYY"
 
-#: froide/foirequest/forms.py:429
+#: froide/foirequest/forms.py:434
 msgid "Send Date"
 msgstr "Sendedatum"
 
-#: froide/foirequest/forms.py:430
+#: froide/foirequest/forms.py:435
 msgid "Please give the date the reply was sent."
 msgstr "Bitte geben Sie das Datum an, an dem der Brief versendet wurde."
 
-#: froide/foirequest/forms.py:432 froide/foirequest/forms.py:434
+#: froide/foirequest/forms.py:437 froide/foirequest/forms.py:439
 msgid "Sender Name"
 msgstr "Absender"
 
-#: froide/foirequest/forms.py:439
+#: froide/foirequest/forms.py:444
 msgid "Letter"
 msgstr "Brief"
 
-#: froide/foirequest/forms.py:441
+#: froide/foirequest/forms.py:446
 msgid "Letter text you have received"
 msgstr "Der Textinhalt des Briefes, den Sie erhalten haben"
 
-#: froide/foirequest/forms.py:445
+#: froide/foirequest/forms.py:450
 msgid "The text can be left empty, instead you can upload scanned documents."
 msgstr "Der Text kann leer bleiben, wenn Sie stattdessen den gescannten Brief hochladen."
 
-#: froide/foirequest/forms.py:446
+#: froide/foirequest/forms.py:451
 msgid "Scanned Letter"
 msgstr "Gescannter Brief"
 
-#: froide/foirequest/forms.py:448
+#: froide/foirequest/forms.py:453
 msgid "You are not allowed to publish some received documents"
 msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen."
 
-#: froide/foirequest/forms.py:450
+#: froide/foirequest/forms.py:455
 msgid ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
 msgstr "Falls die erhaltene Antwort ausdrücklich eine Veröffentlichung von einigen Dokumenten untersagt (z.B. wegen des Urheberrechts), machen Sie hier einen Haken."
 
-#: froide/foirequest/forms.py:456
+#: froide/foirequest/forms.py:461
 msgid "Your reply date is in the future, that is not possible."
 msgstr "Ihr Sendedatum ist in der Zukunft, das ist nicht möglich."
 
-#: froide/foirequest/forms.py:464
+#: froide/foirequest/forms.py:469
 msgid "You need to provide either the letter text or a scanned document."
 msgstr "Bitte geben Sie entweder den Brieftext an oder laden Sie ein gescanntes Dokument hoch."
 
-#: froide/foirequest/forms.py:469
+#: froide/foirequest/forms.py:474
 msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
@@ -1275,8 +1276,9 @@ msgid "Request Successful"
 msgstr "Anfrage erfolgreich"
 
 #: froide/foirequest/models.py:179
-msgid "The request has been successul."
-msgstr "Die Anfrage war erfolgreich."
+#| msgid "The request has been successul."
+msgid "The request has been successful."
+msgstr "Diese Anfrage war erfolgreich."
 
 #: froide/foirequest/models.py:183
 msgid "Request partially successful"
@@ -3960,6 +3962,16 @@ msgstr "Kontakt"
 #: froide/publicbody/models.py:262
 msgid "Website Dump"
 msgstr "Webseiten-Dump"
+
+#: froide/publicbody/models.py:265
+#| msgid "File type"
+msgid "file index"
+msgstr "Aktenplan"
+
+#: froide/publicbody/models.py:266
+#| msgid "Organization"
+msgid "organisational chart"
+msgstr "Organigramm"
 
 #: froide/publicbody/models.py:269
 msgid "Created by"
