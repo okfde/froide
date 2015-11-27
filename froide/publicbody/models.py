@@ -262,8 +262,8 @@ class PublicBody(models.Model):
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
 
-    file_index = models.CharField(max_length=1024, blank=True)
-    org_chart = models.CharField(max_length=1024, blank=True)
+    file_index = models.CharField(_("file index"), max_length=1024, blank=True)
+    org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
 
     _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
             verbose_name=_("Created by"),
