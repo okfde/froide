@@ -165,6 +165,10 @@ def list_requests(request, status=None, topic=None, tag=None,
 
     page = request.GET.get('page')
     paginator = Paginator(foi_requests, 20)
+
+    if request.GET.get('all') is not None:
+        if count <= 500:
+            paginator = Paginator(foi_requests, count)
     try:
         foi_requests = paginator.page(page)
     except PageNotAnInteger:
