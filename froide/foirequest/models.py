@@ -176,7 +176,7 @@ class FoiRequest(models.Model):
     RESOLUTION_CHOICES = (
         ('successful',
             _('Request Successful'),
-            _('The request has been successul.'),
+            _('The request has been successful.'),
             True
         ),
         ('partially_successful',

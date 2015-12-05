@@ -197,6 +197,8 @@ class DeferredMessageTest(TestCase):
         self.site = factories.make_world()
         self.req = factories.FoiRequestFactory.create(site=self.site,
             secret_address="sw+yurpykc1hr@fragdenstaat.de")
+        self.other_req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address="sw+abcsd@fragdenstaat.de")
         factories.FoiMessageFactory.create(request=self.req)
 
     def test_deferred(self):
@@ -217,6 +219,30 @@ class DeferredMessageTest(TestCase):
         self.assertEqual(len(req.messages), count_messages + 1)
         dm = DeferredMessage.objects.get(id=dm.id)
         self.assertEqual(dm.request, req)
+
+    def test_double_deferred(self):
+        count_messages = len(self.req.messages)
+        name, domain = self.req.secret_address.split('@')
+        bad_mail = '@'.join((name + 'x', domain))
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            mail = f.read().decode('ascii')
+        mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
+        self.assertEqual(DeferredMessage.objects.count(), 0)
+
+        # there is one deferredmessage matching, so deliver to associated request
+        DeferredMessage.objects.create(recipient=bad_mail, request=self.req)
+        process_mail.delay(mail.encode('ascii'))
+        self.assertEqual(count_messages + 1,
+            FoiMessage.objects.filter(request=self.req).count())
+        self.assertEqual(DeferredMessage.objects.count(), 1)
+
+        # there is more than one deferredmessage matching
+        # So delivery is ambiguous, create deferred message instead
+        DeferredMessage.objects.create(recipient=bad_mail, request=self.other_req)
+        process_mail.delay(mail.encode('ascii'))
+        self.assertEqual(count_messages + 1,
+            FoiMessage.objects.filter(request=self.req).count())
+        self.assertEqual(DeferredMessage.objects.count(), 3)
 
 
 class SpamMailTest(TestCase):

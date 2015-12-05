@@ -49,6 +49,7 @@ class Jurisdiction(models.Model):
     class Meta:
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
+        ordering = ('rank', 'name',)
 
     def __str__(self):
         return self.name
@@ -260,6 +261,9 @@ class PublicBody(models.Model):
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
+
+    file_index = models.CharField(_("file index"), max_length=1024, blank=True)
+    org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
 
     _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
             verbose_name=_("Created by"),

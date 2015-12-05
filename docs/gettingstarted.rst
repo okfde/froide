@@ -24,6 +24,8 @@ Get the source code with Git from the GitHub repository::
     git clone git://github.com/stefanw/froide.git
     cd froide
 
+Install the `libmagic` library, which is a system requirement. See `https://github.com/ahupp/python-magic#dependencies <https://github.com/ahupp/python-magic#dependencies>`_ for details.
+
 Install the requirements inside the virtual env with `pip`::
 
     pip install -r requirements.txt
@@ -32,7 +34,7 @@ The dependency installation may take a couple of minutes, but after that everyth
 
 Sync and migrate and *do NOT* create a superuser just yet::
 
-    python manage.py syncdb --noinput --migrate
+    python manage.py migrate
 
 Now you can already start the web server::
 

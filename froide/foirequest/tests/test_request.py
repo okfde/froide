@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core import mail
 from django.utils import timezone
 from django.utils.six import BytesIO
+from django.test.utils import override_settings
 
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
@@ -1403,6 +1404,12 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertEqual(last.subject.count('[#%s]' % req.pk), 1)
+
+    @override_settings(FOI_EMAIL_FIXED_FROM_ADDRESS=False)
+    def test_user_name_phd(self):
+        from froide.helper.email_utils import make_address
+        from_addr = make_address('j.doe.12345@example.org', 'John Doe, Dr.')
+        self.assertEqual(from_addr, '"John Doe, Dr." <j.doe.12345@example.org>')
 
 
 class MediatorTest(TestCase):

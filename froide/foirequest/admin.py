@@ -1,3 +1,5 @@
+import re
+
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
@@ -6,16 +8,21 @@ from django.db import router
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 from django.contrib.admin import helpers
+from django.utils.six import BytesIO
 
 import floppyforms as forms
 
 from froide.helper.admin_utils import NullFilterSpec, AdminTagAllMixIn
 from froide.helper.widgets import TagAutocompleteTagIt
+from froide.helper.email_utils import EmailParser
 
 from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
         DeferredMessage)
 from .tasks import count_same_foirequests, convert_attachment_task
+
+
+SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
 
 
 class FoiMessageInline(admin.StackedInline):
@@ -243,15 +250,29 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
     list_filter = (RequestNullFilter, 'spam')
+    search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
     list_display = ('recipient', 'timestamp', 'request', 'spam')
     raw_id_fields = ('request',)
-    actions = ['redeliver']
+    actions = ['redeliver', 'auto_redeliver']
 
     save_on_top = True
 
-    def redeliver(self, request, queryset):
+    def auto_redeliver(self, request, queryset):
+        parser = EmailParser()
+        for deferred in queryset:
+            email = parser.parse(BytesIO(deferred.decoded_mail()))
+            match = SUBJECT_REQUEST_ID.search(email['subject'])
+            if match is not None:
+                try:
+                    req = FoiRequest.objects.get(pk=match.group(1))
+                    deferred.redeliver(req)
+                except FoiRequest.DoesNotExist:
+                    continue
+    auto_redeliver.short_description = _("Auto-Redeliver based on subject")
+
+    def redeliver(self, request, queryset, auto=False):
         """
         Redeliver undelivered mails
 

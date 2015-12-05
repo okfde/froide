@@ -332,6 +332,11 @@ class FoiRequestStatusForm(forms.Form):
         if status == 'resolved':
             if not self.cleaned_data.get('resolution', ''):
                 raise forms.ValidationError(_('Please give a resolution to this request'))
+
+        # if resolution is successful or partially_successful, set status to resolved
+        if self.cleaned_data.get('resolution', '') in ('successful', 'partially_successful'):
+            self.cleaned_data['status'] = 'resolved'
+
         return self.cleaned_data
 
     def set_status(self):

@@ -156,12 +156,14 @@ def _deliver_mail(email, mail_string=None, manual=False):
 
         foi_request = get_foirequest_from_mail(secret_mail)
         if not foi_request:
-            try:
-                deferred = DeferredMessage.objects.get(recipient=secret_mail, request__isnull=False)
-                foi_request = deferred.request
-            except DeferredMessage.DoesNotExist:
+            deferred = DeferredMessage.objects.filter(recipient=secret_mail, request__isnull=False)
+            if len(deferred) == 0 or len(deferred) > 1:
+                # Can't do automatic matching!
                 create_deferred(secret_mail, mail_string, b64_encoded=b64_encoded, spam=False)
                 continue
+            else:
+                deferred = deferred[0]
+                foi_request = deferred.request
 
         # Check for spam
         if not manual:
