@@ -7,6 +7,8 @@
 {% endblock %}
 
 {% block body %}
+{% block headline %}
+
 {% if public_body %}
   <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
 {% endif %}
@@ -35,10 +37,12 @@
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}
 
-{% block badgeleft %}{% endblock badgeleft %}
+{% endblock headline %}
+
 
 <div class="row">
   <div class="col-lg-8">
+    {% block col-8-headline %}{% endblock col-8-headline %}
     <ul class="media-list">
       {% for object in object_list %}
       <li class="media">
