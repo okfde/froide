@@ -57,10 +57,11 @@
       </span>
     </p>
     {% endblock badge %}
-    {% block status_up %}
-    {% endblock status_up %}
+
 
     <ul class="nav nav-compact">
+    {% block status_up %}
+    {% endblock status_up %}
       {% if filtered or not_foi or jurisdiction %}
         <li>
           <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
@@ -107,7 +108,7 @@
             </a>
           </li>
         {% endfor %}
-        {% endblock status_up %}
+        {% endblock status %}
 
         <li class="nav-header">{% blocktrans %}By category{% endblocktrans %}</li>
         {% for topic in topic_list %}
