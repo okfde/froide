@@ -34,6 +34,9 @@
 {% if filtered and jurisdiction %}
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}
+
+{% block badgeleft %}{% endblock badgeleft %}
+
 <div class="row">
   <div class="col-lg-8">
     <ul class="media-list">
