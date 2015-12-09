@@ -50,11 +50,16 @@
   </div>
 
   <div class="col-lg-4">
+    {% block badge %}
     <p>
       <span class="badge">
         {% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}
       </span>
     </p>
+    {% endblock badge %}
+    {% block status_up %}
+    {% endblock status_up %}
+
     <ul class="nav nav-compact">
       {% if filtered or not_foi or jurisdiction %}
         <li>
@@ -92,6 +97,7 @@
             </li>
           {% endfor %}
         {% endif %}
+        {% block status %}
         <li class="nav-header">{% blocktrans %}By status{% endblocktrans %}</li>
         {% for urlpart,readable_status,status in status_list %}
           <li>
@@ -101,6 +107,8 @@
             </a>
           </li>
         {% endfor %}
+        {% endblock status_up %}
+
         <li class="nav-header">{% blocktrans %}By category{% endblocktrans %}</li>
         {% for topic in topic_list %}
           <li>
