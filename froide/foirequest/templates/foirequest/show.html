@@ -521,7 +521,7 @@ data-spy="scroll" data-target="#message-nav-container"
       {% with count=object.follow_count %}
         <li>
           <span class="badge{% if count %} badge-info{% endif %}">{% blocktrans count counter=count %}{{ counter }} follower{% plural %}{{ counter }} followers{% endblocktrans %}</span>
-          <br/><br/>
+          <br/>
         </li>
       {% endwith %}
 
