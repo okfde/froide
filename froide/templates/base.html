@@ -49,6 +49,8 @@
           </div>
         </form>
         <ul class="nav navbar-nav navbar-right">
+          {% block donation_button %}{% endblock donation_button %}
+
           {% block language_select %}
             {% if LANGUAGES|length > 1 %}
             <li class="dropdown">
