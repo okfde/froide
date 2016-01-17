@@ -519,11 +519,11 @@ data-spy="scroll" data-target="#message-nav-container"
     <ul class="nav nav-compact hidden-print">
        <li class="nav-header">{% trans "Followers" %}</li>
       {% with count=object.follow_count %}
-        {% block followers %}<li>{% endblock followers %}
+        {% block followers %}<li>
           <span class="badge{% if count %} badge-info{% endif %}">{% blocktrans count counter=count %}{{ counter }} follower{% plural %}{{ counter }} followers{% endblocktrans %}</span>
 
           <br/>
-        </li>
+        </li>{% endblock followers %}
       {% endwith %}
 
       {% if user.is_authenticated and user != object.user %}
