@@ -23,6 +23,8 @@
         <label for="index-search">
           {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
         </label>
+      {% block sendrequest-button %}
+
         <div class="input-group">
           <input id="index-search"class="form-control col-lg-3" type="text" name="q" autocomplete="off"/>
           <span class="input-group-btn">
@@ -32,6 +34,7 @@
             </button>
           </span>
         </div>
+
         <span class="help-block">
           {% block example_search_terms %}
             {% blocktrans %}Try the following:{% endblocktrans %}
@@ -40,6 +43,8 @@
             <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
           {% endblock %}
         </span>
+      {% endblock sendrequest-button %}
+
       </form>
       {% endblock first_index_row_search %}
     </div>

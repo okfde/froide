@@ -89,6 +89,8 @@
         {% for res in resolutions %}
         <tr>
           <td>
+            {% block result_image %}
+            {% endblock result_image %}
             <a href="{% url 'foirequest-list' public_body=object.slug %}?status={{ res.url_slug }}">
               {{ res.name }}
             </a>

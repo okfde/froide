@@ -7,6 +7,8 @@
 {% endblock %}
 
 {% block body %}
+{% block headline %}
+
 {% if public_body %}
   <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
 {% endif %}
@@ -34,8 +36,13 @@
 {% if filtered and jurisdiction %}
   <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
 {% endif %}
+
+{% endblock headline %}
+
+
 <div class="row">
   <div class="col-lg-8">
+    {% block col-8-headline %}{% endblock col-8-headline %}
     <ul class="media-list">
       {% for object in object_list %}
       <li class="media">
@@ -47,12 +54,18 @@
   </div>
 
   <div class="col-lg-4">
+    {% block badge %}
     <p>
       <span class="badge">
         {% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}
       </span>
     </p>
+    {% endblock badge %}
+
+
     <ul class="nav nav-compact">
+    {% block status_up %}
+    {% endblock status_up %}
       {% if filtered or not_foi or jurisdiction %}
         <li>
           <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
@@ -89,6 +102,7 @@
             </li>
           {% endfor %}
         {% endif %}
+        {% block status %}
         <li class="nav-header">{% blocktrans %}By status{% endblocktrans %}</li>
         {% for urlpart,readable_status,status in status_list %}
           <li>
@@ -98,6 +112,8 @@
             </a>
           </li>
         {% endfor %}
+        {% endblock status %}
+
         <li class="nav-header">{% blocktrans %}By category{% endblocktrans %}</li>
         {% for topic in topic_list %}
           <li>

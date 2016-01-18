@@ -48,7 +48,10 @@
             <input class="col-lg-3 search-query form-control" type="text" name="q" placeholder="{% trans "Search" %}"/>
           </div>
         </form>
+        {% block donation_button %}{% endblock donation_button %}
+
         <ul class="nav navbar-nav navbar-right">
+
           {% block language_select %}
             {% if LANGUAGES|length > 1 %}
             <li class="dropdown">

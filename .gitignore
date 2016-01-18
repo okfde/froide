@@ -10,6 +10,7 @@ files/
 froide/tests/testdata/*/
 .coverage
 */_build/
+.idea
 htmlcov/
 public/
 build/

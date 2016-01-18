@@ -1,3 +1,4 @@
+
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 {% load static from staticfiles %}
@@ -375,8 +376,9 @@ data-spy="scroll" data-target="#message-nav-container"
           </div>
         {% endif %}
         {# End Public Body Needed #}
-
     <dl>
+    {% block request_details%}
+
       <dt>{% blocktrans %}Request to:{% endblocktrans %}</dt>
       <dd>
         {% if object.public_body %}
@@ -433,6 +435,8 @@ data-spy="scroll" data-target="#message-nav-container"
         <dt>{% blocktrans %}Cost of information:{% endblocktrans %}</dt>
         <dd>{{ object.costs|floatformat:2 }} {{ froide.currency }}</dd>
         {% endif %}
+      {% endblock request_details%}
+
       {% if object.description %}
         <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
         <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
@@ -513,12 +517,13 @@ data-spy="scroll" data-target="#message-nav-container"
 
   <div class="col-lg-3 col-md-3">
     <ul class="nav nav-compact hidden-print">
-      <li class="nav-header">{% trans "Followers" %}</li>
+       <li class="nav-header">{% trans "Followers" %}</li>
       {% with count=object.follow_count %}
-        <li>
+        {% block followers %}<li>
           <span class="badge{% if count %} badge-info{% endif %}">{% blocktrans count counter=count %}{{ counter }} follower{% plural %}{{ counter }} followers{% endblocktrans %}</span>
-          <br/><br/>
-        </li>
+
+          <br/>
+        </li>{% endblock followers %}
       {% endwith %}
 
       {% if user.is_authenticated and user != object.user %}
@@ -551,6 +556,7 @@ data-spy="scroll" data-target="#message-nav-container"
         {% endblock %}
       {% endif %}
 
+      {% block feeds %}
       <li class="nav-header">{% trans "Feeds" %}</li>
       <li>
         <a href="{% url 'foirequest-feed' slug=object.slug %}">
@@ -564,6 +570,8 @@ data-spy="scroll" data-target="#message-nav-container"
           {% trans "Atom Feed" %}
         </a>
       </li>
+      {% endblock feeds%}
+
 
       <li class="nav-header">
         {% trans "Short URL" %}
