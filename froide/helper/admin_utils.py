@@ -10,7 +10,7 @@ from .forms import TagObjectForm
 class AdminTagAllMixIn(object):
     def tag_all(self, request, queryset):
         """
-        Tag all selected requests with given tags
+        Add tag to all selected objects
 
         """
         opts = self.model._meta
@@ -25,7 +25,7 @@ class AdminTagAllMixIn(object):
             if form.is_valid():
                 tags = form.cleaned_data['tags']
                 for obj in queryset:
-                    obj.tags.set(*tags)
+                    obj.tags.add(*tags)
                     obj.save()
                 self.message_user(request, _("Successfully added tags"))
                 # Return None to display the change list page again.
@@ -33,9 +33,6 @@ class AdminTagAllMixIn(object):
             self.message_user(request, _("Form invalid"))
 
         tags = set()
-        for q in queryset:
-            tags |= set([o for o in q.tags.all()])
-
         form = TagObjectForm(None, tags=tags,
                              resource_name=self.autocomplete_resource_name)
 
@@ -51,7 +48,7 @@ class AdminTagAllMixIn(object):
         # Display the confirmation page
         return TemplateResponse(request, 'admin_utils/admin_tag_all.html',
             context, current_app=self.admin_site.name)
-    tag_all.short_description = _("Tag all with...")
+    tag_all.short_description = _("Add tag to all selected")
 
 
 class NullFilterSpec(SimpleListFilter):
