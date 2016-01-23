@@ -12,7 +12,8 @@ from django.utils.six import BytesIO
 
 import floppyforms as forms
 
-from froide.helper.admin_utils import NullFilterSpec, AdminTagAllMixIn
+from froide.helper.admin_utils import (NullFilterSpec, AdminTagAllMixIn,
+                                      ForeignKeyFilter)
 from froide.helper.widgets import TagAutocompleteTagIt
 from froide.helper.email_utils import EmailParser
 
@@ -33,26 +34,6 @@ class FoiMessageInline(admin.StackedInline):
 class SameAsNullFilter(NullFilterSpec):
     title = _(u'Has same request')
     parameter_name = u'same_as'
-
-
-class RequesterFilter(admin.FieldListFilter):
-    template = "admin/foirequest/user_filter.html"
-
-    def __init__(self, field, request, params, model, model_admin, field_path):
-        super(RequesterFilter, self).__init__(
-            field, request, params, model, model_admin, field_path)
-        self.lookup_val = request.GET.get(self.field_path, None)
-
-    def expected_parameters(self):
-        return [self.field_path]
-
-    def choices(self, cl):
-        return [{
-            'value': self.lookup_val,
-            'field_path': self.field_path,
-            'query_string': cl.get_query_string({},
-                [self.field_path]),
-        }]
 
 
 class FoiRequestAdminForm(forms.ModelForm):
@@ -79,7 +60,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'public_body', 'status',)
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'checked', 'public', 'visibility', SameAsNullFilter,
-        ('user', RequesterFilter))
+        ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter))
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'

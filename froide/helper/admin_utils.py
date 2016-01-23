@@ -2,7 +2,7 @@ from django.contrib.admin.filters import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
-from django.contrib.admin import helpers
+from django.contrib import admin
 
 from .forms import TagObjectForm
 
@@ -41,7 +41,7 @@ class AdminTagAllMixIn(object):
             'queryset': queryset,
             'media': self.media,
             'form': form,
-            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
             'applabel': opts.app_label
         }
 
@@ -76,3 +76,23 @@ class NullFilterSpec(SimpleListFilter):
         if self.value() == '1':
             return queryset.exclude(**kwargs)
         return queryset
+
+
+class ForeignKeyFilter(admin.FieldListFilter):
+    template = "helper/admin/fk_filter.html"
+
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        super(ForeignKeyFilter, self).__init__(
+            field, request, params, model, model_admin, field_path)
+        self.lookup_val = request.GET.get(self.field_path, None)
+
+    def expected_parameters(self):
+        return [self.field_path]
+
+    def choices(self, cl):
+        return [{
+            'value': self.lookup_val,
+            'field_path': self.field_path,
+            'query_string': cl.get_query_string({},
+                [self.field_path]),
+        }]

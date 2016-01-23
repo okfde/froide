@@ -439,7 +439,7 @@ data-spy="scroll" data-target="#message-nav-container"
 
       {% if object.description %}
         <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
-        <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
+        <dd>{{ object.get_description|urlizetrunc:40 }}</dd>
         {% endif %}
       {% if object.summary %}
         <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>

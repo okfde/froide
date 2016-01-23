@@ -1,6 +1,11 @@
 {% extends "admin/change_form.html" %}
 {% load i18n %}
 {% block object-tools-items %}
+<li>
+  <a href="{% url 'admin:foirequest_foirequest_changelist' %}?public_body={{ original.pk }}">
+    {% trans "This public body's requests" %}
+  </a>
+</li>
 {% if not original.confirmed %}
 <li><form method="post" action="{% url 'publicbody-confirm' %}">{% csrf_token %}
   <input type="hidden" name="public_body" value="{{ original.pk }}"/>
@@ -9,4 +14,3 @@
 {% endif %}
 {{ block.super }}
 {% endblock %}
-
