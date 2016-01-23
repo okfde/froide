@@ -12,7 +12,7 @@ from django.utils.six import BytesIO
 
 import floppyforms as forms
 
-from froide.helper.admin_utils import (NullFilterSpec, AdminTagAllMixIn,
+from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
                                       ForeignKeyFilter, TaggitListFilter)
 from froide.helper.widgets import TagAutocompleteTagIt
 from froide.helper.email_utils import EmailParser
@@ -29,11 +29,6 @@ SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
 class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
     raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
-
-
-class SameAsNullFilter(NullFilterSpec):
-    title = _(u'Has same request')
-    parameter_name = u'same_as'
 
 
 class FoiRequestAdminForm(forms.ModelForm):
@@ -63,7 +58,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     list_display = ('title', 'first_message', 'secret_address', 'checked',
         'public_body', 'status',)
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
-        'resolution', 'is_foi', 'checked', 'public', 'visibility', SameAsNullFilter,
+        'resolution', 'is_foi', 'checked', 'public', 'visibility',
+        make_nullfilter('same_as', _(u'Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
         FoiRequestTagsFilter)
     search_fields = ['title', "description", 'secret_address']
@@ -170,22 +166,14 @@ class FoiMessageAdmin(admin.ModelAdmin):
     ]
 
 
-class RedactedVersionNullFilter(NullFilterSpec):
-    title = _(u'Has redacted version')
-    parameter_name = u'redacted'
-
-
-class ConvertedVersionNullFilter(NullFilterSpec):
-    title = _(u'Has converted version')
-    parameter_name = u'converted'
-
-
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted')
     ordering = ('-id',)
     list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
     list_filter = ('can_approve', 'approved', 'is_redacted', 'is_converted',
-                   RedactedVersionNullFilter, ConvertedVersionNullFilter)
+                   make_nullfilter('redacted', _(u'Has redacted version')),
+                   make_nullfilter('converted', _(u'Has converted version'))
+    )
     search_fields = ['name']
     actions = ['approve', 'cannot_approve', 'convert']
 
@@ -227,15 +215,10 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
     raw_id_fields = ('request', 'public_body', 'user')
 
 
-class RequestNullFilter(NullFilterSpec):
-    title = _(u'Has request')
-    parameter_name = u'request'
-
-
 class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
-    list_filter = (RequestNullFilter, 'spam')
+    list_filter = (make_nullfilter('request', _(u'Has request')), 'spam')
     search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)

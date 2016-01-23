@@ -53,7 +53,7 @@ class AdminTagAllMixIn(object):
     tag_all.short_description = _("Add tag to all selected")
 
 
-class NullFilterSpec(SimpleListFilter):
+class NullFilter(SimpleListFilter):
     """
     Taken from
     http://stackoverflow.com/questions/7691890/filtering-django-admin-by-null-is-not-null
@@ -78,6 +78,13 @@ class NullFilterSpec(SimpleListFilter):
         if self.value() == '1':
             return queryset.exclude(**kwargs)
         return queryset
+
+
+def make_nullfilter(field, title):
+    return type('%sNullFilter' % field.title(), (NullFilter,), {
+        'title': title,
+        'parameter_name': field
+    })
 
 
 class TaggitListFilter(SimpleListFilter):
