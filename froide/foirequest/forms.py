@@ -100,7 +100,7 @@ class RequestForm(forms.Form):
         if ref == '':
             return None
         try:
-            kind, value = ref.split(':')
+            kind, value = ref.split(':', 1)
         except ValueError:
             return None
         try:
