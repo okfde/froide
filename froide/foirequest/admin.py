@@ -13,13 +13,13 @@ from django.utils.six import BytesIO
 import floppyforms as forms
 
 from froide.helper.admin_utils import (NullFilterSpec, AdminTagAllMixIn,
-                                      ForeignKeyFilter)
+                                      ForeignKeyFilter, TaggitListFilter)
 from froide.helper.widgets import TagAutocompleteTagIt
 from froide.helper.email_utils import EmailParser
 
 from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
-        DeferredMessage)
+        DeferredMessage, TaggedFoiRequest)
 from .tasks import count_same_foirequests, convert_attachment_task
 
 
@@ -49,6 +49,10 @@ class FoiRequestAdminForm(forms.ModelForm):
         }
 
 
+class FoiRequestTagsFilter(TaggitListFilter):
+    tag_class = TaggedFoiRequest
+
+
 class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     form = FoiRequestAdminForm
 
@@ -60,7 +64,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'public_body', 'status',)
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'checked', 'public', 'visibility', SameAsNullFilter,
-        ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter))
+        ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
+        FoiRequestTagsFilter)
     search_fields = ['title', "description", 'secret_address']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
