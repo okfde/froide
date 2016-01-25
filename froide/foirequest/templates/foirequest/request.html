@@ -53,10 +53,11 @@
         <legend>
           {% blocktrans %}Choose a Public Body{% endblocktrans %}
         </legend>
+    {{ request_form.reference }}
+    {{ request_form.redirect_url}}
     {% if public_body %}
       <input type="hidden" name="public_body" value="{{ public_body.pk }}"/>
       <input type="hidden" id="id_law" name="law" value="{{ public_body.default_law.pk }}"/>
-      {{ request_form.reference }}
       <p>
         <strong>{% trans "To:" %}</strong>
         <span id="review-publicbody">{{ public_body.name }}</span>
