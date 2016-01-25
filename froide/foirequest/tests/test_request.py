@@ -376,6 +376,35 @@ class RequestTest(TestCase):
             self.assertEqual(message.to[0], pb.email)
         self.assertEqual(message.subject, '%s [#%s]' % (req.title, req.pk))
 
+    def test_redirect_after_request(self):
+        response = self.client.get(
+                reverse('foirequest-make_request') + '?redirect=/speci4l-url/?blub=bla')
+        self.assertContains(response, 'value="/speci4l-url/?blub=bla"')
+
+        pb = PublicBody.objects.all()[0]
+        self.client.login(username="dummy", password="froide")
+        post = {"subject": "Another Third Test-Subject",
+                "body": "This is another test body",
+                "redirect_url": "/?blub=bla",
+                "public_body": str(pb.pk),
+                "law": str(pb.default_law.pk),
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response['Location'].endswith('/?blub=bla'))
+
+        post = {"subject": "Another fourth Test-Subject",
+                "body": "This is another test body",
+                "redirect_url": "http://evil.example.com",
+                "public_body": str(pb.pk),
+                "law": str(pb.default_law.pk),
+                "public": "on"}
+        response = self.client.post(
+                reverse('foirequest-submit_request'), post)
+        req = FoiRequest.objects.get(title=post['subject'])
+        self.assertIn(req.get_absolute_url(), response['Location'])
+
     def test_foi_email_settings(self):
         pb = PublicBody.objects.all()[0]
         self.client.login(username="dummy", password="froide")

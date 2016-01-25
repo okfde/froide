@@ -12,6 +12,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext_lazy as _
+from django.utils.http import is_safe_url
 from django.http import Http404, HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import messages
@@ -317,7 +318,8 @@ def make_request(request, public_body=None, public_body_id=None):
         public_body_form = PublicBodyForm()
     initial = {
         "subject": request.GET.get("subject", ""),
-        "reference": request.GET.get('ref', '')
+        "reference": request.GET.get('ref', ''),
+        "redirect_url": request.GET.get('redirect', '')
     }
     if 'body' in request.GET:
         initial['body'] = request.GET['body']
@@ -431,6 +433,10 @@ def submit_request(request, public_body=None):
             else:
                 messages.add_message(request, messages.INFO,
                     _('Your request has been sent.'))
+            if request_form.cleaned_data['redirect_url']:
+                redirect_url = request_form.cleaned_data['redirect_url']
+                if is_safe_url(redirect_url):
+                    return redirect(redirect_url)
             return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
         else:
             AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,

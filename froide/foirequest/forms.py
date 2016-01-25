@@ -47,6 +47,7 @@ class RequestForm(forms.Form):
                         " uncheck this. You can always decide to make it public later.")
             )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
+    redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
         super(RequestForm, self).__init__(*args, **kwargs)
