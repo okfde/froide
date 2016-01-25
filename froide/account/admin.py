@@ -48,7 +48,10 @@ class UserAdmin(DjangoUserAdmin):
             'organization_url', 'private', 'terms', 'newsletter')}),
         (_('Advanced'), {'fields': ('is_deleted', 'date_left')})
     ]
-    list_filter = list(DjangoUserAdmin.list_filter) + ['private', 'terms', 'newsletter']
+    list_filter = list(DjangoUserAdmin.list_filter) + [
+            'private', 'terms',
+            'newsletter', 'is_deleted'
+    ]
 
     actions = ['export_csv', 'resend_activation',
                'send_mail', 'delete_sessions', 'cancel_users']
