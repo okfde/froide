@@ -18,6 +18,7 @@ from froide.helper.utils import render_403
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .models import AccountManager
+from .utils import cancel_user
 
 
 def confirm(request, user_id, secret, request_id=None):
@@ -332,18 +333,7 @@ def delete_account(request):
             status=400
         )
     # Removing all personal data from account
-    user = request.user
-    user.organization = ''
-    user.organization_url = ''
-    user.private = True
-    user.address = ''
-    user.save()
-    user.first_name = ''
-    user.last_name = ''
-    user.is_active = False
-    user.email = ''
-    user.username = 'u%s' % user.pk
-    user.save()
+    cancel_user(request.user)
     auth.logout(request)
     messages.add_message(request, messages.INFO,
             _('Your account has been deleted and you have been logged out.'))

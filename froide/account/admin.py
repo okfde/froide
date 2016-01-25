@@ -14,7 +14,7 @@ from froide.helper.csv_utils import export_csv_response
 
 from .models import User, AccountManager
 
-from .utils import delete_all_unexpired_sessions_for_user
+from .utils import delete_all_unexpired_sessions_for_user, cancel_user
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -45,12 +45,13 @@ class UserAdmin(DjangoUserAdmin):
 
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (_('Profile info'), {'fields': ('address', 'organization',
-            'organization_url', 'private', 'terms', 'newsletter')})
+            'organization_url', 'private', 'terms', 'newsletter')}),
+        (_('Advanced'), {'fields': ('is_deleted', 'date_left')})
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + ['private', 'terms', 'newsletter']
 
     actions = ['export_csv', 'resend_activation',
-               'send_mail', 'delete_sessions']
+               'send_mail', 'delete_sessions', 'cancel_users']
 
     def export_csv(self, request, queryset):
         return export_csv_response(User.export_csv(queryset))
@@ -133,5 +134,12 @@ class UserAdmin(DjangoUserAdmin):
         self.message_user(request, _("Sessions deleted."))
         return None
     delete_sessions.short_description = _('Delete sessions of users')
+
+    def cancel_users(self, request, queryset):
+        for user in queryset:
+            cancel_user(user)
+        self.message_user(request, _("Users canceled."))
+        return None
+    cancel_users.short_description = _('Cancel account of users')
 
 admin.site.register(User, UserAdmin)

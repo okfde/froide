@@ -1,5 +1,6 @@
 import datetime
 
+from django.utils import timezone
 from django.contrib.sessions.models import Session
 
 
@@ -49,3 +50,21 @@ def delete_all_unexpired_sessions_for_user(user, session_to_omit=None):
     if session_to_omit is not None:
         session_list.exclude(session_key=session_to_omit.session_key)
     session_list.delete()
+
+
+def cancel_user(user):
+    user.organization = ''
+    user.organization_url = ''
+    user.private = True
+    user.newsletter = False
+    user.address = ''
+    user.save()
+    user.first_name = ''
+    user.last_name = ''
+    user.is_active = False
+    user.is_deleted = True
+    user.date_left = timezone.now()
+    user.email = ''
+    user.username = 'u%s' % user.pk
+    user.save()
+    delete_all_unexpired_sessions_for_user(user)

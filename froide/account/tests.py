@@ -564,6 +564,8 @@ class AccountTest(TestCase):
         self.assertEqual(user.organization, '')
         self.assertEqual(user.organization_url, '')
         self.assertTrue(user.private)
+        self.assertTrue(user.is_deleted)
+        self.assertIsNotNone(user.date_left)
 
     def test_merge_account(self):
         from froide.foirequestfollower.models import FoiRequestFollower

@@ -32,6 +32,10 @@ class User(AbstractUser):
     terms = models.BooleanField(_('Accepted Terms'), default=True)
     newsletter = models.BooleanField(_('Wants Newsletter'), default=False)
 
+    is_deleted = models.BooleanField(_('deleted'), default=False,
+            help_text=_('Designates whether this user was deleted.'))
+    date_left = models.DateTimeField(_('date left'), default=None, null=True, blank=True)
+
     objects = UserManager()
 
     # if settings.CUSTOM_AUTH_USER_MODEL_DB:
