@@ -98,16 +98,16 @@ class RequestForm(forms.Form):
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']
-        if ref == '':
-            return None
+        if not ref:
+            return ''
         try:
             kind, value = ref.split(':', 1)
         except ValueError:
-            return None
+            return ''
         try:
-            return {kind: value}
+            return '%s:%s' % (kind, value)
         except ValueError:
-            return None
+            return ''
 
     def clean_law_for_public_body(self, public_body):
         law = self.clean_law_without_public_body()

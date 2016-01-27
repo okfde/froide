@@ -62,7 +62,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         make_nullfilter('same_as', _(u'Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
         FoiRequestTagsFilter)
-    search_fields = ['title', "description", 'secret_address']
+    search_fields = ['title', 'description', 'secret_address', 'reference']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
 

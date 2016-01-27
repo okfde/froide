@@ -288,6 +288,8 @@ class FoiRequest(models.Model):
             db_index=True, unique=True)
     secret = models.CharField(_("Secret"), blank=True, max_length=100)
 
+    reference = models.CharField(_("Reference"), blank=True, max_length=255)
+
     same_as = models.ForeignKey('self', null=True, blank=True,
             on_delete=models.SET_NULL,
             verbose_name=_("Identical request"))
@@ -790,6 +792,7 @@ class FoiRequest(models.Model):
                 description=form_data['body'],
                 public=form_data['public'],
                 site=Site.objects.get_current(),
+                reference=form_data.get('reference', ''),
                 first_message=now,
                 last_message=now)
         send_now = False
@@ -869,7 +872,7 @@ class FoiRequest(models.Model):
             message.recipient_email = ""
         message.original = ''
         message.save()
-        cls.request_created.send(sender=request, reference=form_data.get('reference'))
+        cls.request_created.send(sender=request, reference=form_data.get('reference', ''))
         if send_now:
             message.send()
         return request
