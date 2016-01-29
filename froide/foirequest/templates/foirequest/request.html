@@ -244,7 +244,13 @@
                 </ul>
               </div>
             </div>
-            {{ request_form.non_field_errors }}
+            {% if request_form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in request_form.non_field_errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
             <div class="form-group{% if request_form.subject.errors %} has-error{% endif %}">
               {{ request_form.subject.errors }}
               <label for="id_subject" class="control-label">{% trans "Request Subject" %}:</label>

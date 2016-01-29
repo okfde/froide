@@ -1440,6 +1440,33 @@ class RequestTest(TestCase):
         from_addr = make_address('j.doe.12345@example.org', 'John Doe, Dr.')
         self.assertEqual(from_addr, '"John Doe, Dr." <j.doe.12345@example.org>')
 
+    def test_throttling(self):
+        froide_config = settings.FROIDE_CONFIG
+        froide_config['request_throttle'] = (2, 1)
+
+        pb = PublicBody.objects.all()[0]
+        self.client.login(username="dummy", password="froide")
+
+        with self.settings(FROIDE_CONFIG=froide_config):
+            post = {"subject": "Another Third Test-Subject",
+                    "body": "This is another test body",
+                    "public_body": str(pb.pk),
+                    "public": "on"}
+            post['law'] = str(pb.default_law.pk)
+
+            response = self.client.post(
+                    reverse('foirequest-submit_request'), post)
+            self.assertEqual(response.status_code, 302)
+
+            response = self.client.post(
+                    reverse('foirequest-submit_request'), post)
+            self.assertEqual(response.status_code, 302)
+
+            response = self.client.post(
+                    reverse('foirequest-submit_request'), post)
+            self.assertContains(response, "exceeded your request limit",
+                                status_code=400)
+
 
 class MediatorTest(TestCase):
     def setUp(self):

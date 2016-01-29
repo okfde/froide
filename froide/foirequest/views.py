@@ -333,7 +333,8 @@ def make_request(request, public_body=None, public_body_id=None):
             _('You need to setup a default FOI Law object'))
         return render(request, '500.html')
 
-    rq_form = RequestForm(all_laws, default_law, True, initial=initial)
+    rq_form = RequestForm(user=request.user, list_of_laws=all_laws,
+                          default_law=default_law, initial=initial)
     user_form = None
     if not request.user.is_authenticated():
         user_form = NewUserForm()
@@ -360,8 +361,10 @@ def submit_request(request, public_body=None):
         all_laws = FoiLaw.objects.all()
     context = {"public_body": public_body}
 
-    request_form = RequestForm(all_laws, FoiLaw.get_default_law(),
-            True, request.POST)
+    request_form = RequestForm(user=request.user,
+                               list_of_laws=all_laws,
+                               default_law=FoiLaw.get_default_law(),
+                               data=request.POST)
     context['request_form'] = request_form
     context['public_body_form'] = PublicBodyForm()
     if (public_body is None and

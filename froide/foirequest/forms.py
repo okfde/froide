@@ -15,6 +15,7 @@ from froide.helper.widgets import PriceInput
 from froide.helper.forms import TagObjectForm
 
 from .models import FoiRequest, FoiAttachment
+from .utils import throttle
 
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
@@ -49,8 +50,10 @@ class RequestForm(forms.Form):
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, list_of_laws, default_law, hidden, *args, **kwargs):
-        super(RequestForm, self).__init__(*args, **kwargs)
+    def __init__(self, user=None, list_of_laws=(), default_law=None,
+                 hide_law_widgets=True, **kwargs):
+        super(RequestForm, self).__init__(**kwargs)
+        self.user = user
         self.list_of_laws = list_of_laws
         self.indexed_laws = dict([(l.pk, l) for l in self.list_of_laws])
         self.default_law = default_law
@@ -63,7 +66,7 @@ class RequestForm(forms.Form):
         )
         self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
             required=False,
-            widget=forms.Select if not hidden else forms.HiddenInput,
+            widget=forms.Select if not hide_law_widgets else forms.HiddenInput,
             initial=default_law.pk,
             choices=((l.pk, l.name) for l in list_of_laws))
 
@@ -135,6 +138,12 @@ class RequestForm(forms.Form):
             self.foi_law = self.clean_law_for_public_body(self.public_body_object)
         else:
             self.foi_law = self.clean_law_without_public_body()
+
+        if self.user.is_authenticated():
+            request_throttle = settings.FROIDE_CONFIG.get('request_throttle', None)
+            qs = FoiRequest.objects.filter(user=self.user)
+            if throttle(qs, request_throttle):
+                raise forms.ValidationError(_('You exceeded your request limit.'))
         return cleaned
 
 
