@@ -50,7 +50,8 @@ class UserAdmin(DjangoUserAdmin):
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (_('Profile info'), {'fields': ('address', 'organization',
             'organization_url', 'private', 'newsletter')}),
-        (_('Advanced'), {'fields': ('is_trusted', 'terms', 'is_deleted', 'date_left')})
+        (_('Advanced'), {'fields': ('is_trusted', 'terms', 'is_blocked',
+                                    'is_deleted', 'date_left')})
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
             'private', 'terms', 'is_trusted',

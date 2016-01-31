@@ -33,6 +33,7 @@ class User(AbstractUser):
     newsletter = models.BooleanField(_('Wants Newsletter'), default=False)
 
     is_trusted = models.BooleanField(_('Trusted'), default=False)
+    is_blocked = models.BooleanField(_('Blocked'), default=False)
 
     is_deleted = models.BooleanField(_('deleted'), default=False,
             help_text=_('Designates whether this user was deleted.'))
