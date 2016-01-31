@@ -65,6 +65,7 @@ def cancel_user(user):
     user.is_deleted = True
     user.date_left = timezone.now()
     user.email = ''
+    user.set_unusable_password()
     user.username = 'u%s' % user.pk
     user.save()
     delete_all_unexpired_sessions_for_user(user)
