@@ -56,6 +56,7 @@ class UserAdmin(DjangoUserAdmin):
             'private', 'terms', 'is_trusted',
             'newsletter', 'is_deleted'
     ]
+    search_fields = ('email', 'username', 'first_name', 'last_name')
 
     actions = ['export_csv', 'resend_activation',
                'send_mail', 'delete_sessions', 'cancel_users']
