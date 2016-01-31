@@ -788,11 +788,11 @@ class FoiRequest(models.Model):
         return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
 
     @classmethod
-    def from_request_form(cls, user, public_body_object, foi_law,
+    def from_request_form(cls, user=None, public_body=None, foi_law=None,
             form_data=None, post_data=None, **kwargs):
         now = timezone.now()
         request = FoiRequest(title=form_data['subject'],
-                public_body=public_body_object,
+                public_body=public_body,
                 user=user,
                 description=form_data['body'],
                 public=form_data['public'],
@@ -806,9 +806,9 @@ class FoiRequest(models.Model):
             request.visibility = 0
         else:
             request.determine_visibility()
-            if public_body_object is None:
+            if public_body is None:
                 request.status = 'publicbody_needed'
-            elif not public_body_object.confirmed:
+            elif not public_body.confirmed:
                 request.status = 'awaiting_publicbody_confirmation'
             else:
                 request.status = 'awaiting_response'
@@ -820,6 +820,10 @@ class FoiRequest(models.Model):
             request.jurisdiction = foi_law.jurisdiction
         if send_now:
             request.due_date = request.law.calculate_due_date()
+
+        if kwargs.get('blocked'):
+            send_now = False
+            request.is_blocked = True
 
         # ensure slug is unique
         request.slug = slugify(request.title)
@@ -867,10 +871,10 @@ class FoiRequest(models.Model):
                 full_text=form_data.get('full_text', False),
                 send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
-        if public_body_object is not None:
-            message.recipient_public_body = public_body_object
-            message.recipient = public_body_object.name
-            message.recipient_email = public_body_object.email
+        if public_body is not None:
+            message.recipient_public_body = public_body
+            message.recipient = public_body.name
+            message.recipient_email = public_body.email
             cls.request_to_public_body.send(sender=request)
         else:
             message.recipient = ""

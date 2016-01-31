@@ -39,6 +39,7 @@ from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from .tasks import process_mail
 from .foi_mail import package_foirequest
+from .hooks import registry
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 User = get_user_model()
@@ -350,7 +351,7 @@ def make_request(request, public_body=None, public_body_id=None):
 @require_POST
 def submit_request(request, public_body=None):
     error = False
-    foilaw = None
+    foi_law = None
     if public_body is not None:
         public_body = get_object_or_404(PublicBody,
                 slug=public_body)
@@ -399,58 +400,60 @@ def submit_request(request, public_body=None):
     else:
         user = request.user
 
-    if not error:
-        password = None
-        if user is None:
-            user, password = AccountManager.create_user(**user_form.cleaned_data)
-        sent_to_pb = 1
-        if public_body is not None and public_body.pk is None:
-            public_body._created_by = user
-            public_body.save()
-            sent_to_pb = 2
-        elif public_body is None:
-            sent_to_pb = 0
+    if error:
+        messages.add_message(request, messages.ERROR,
+            _('There were errors in your form submission. Please review and submit again.'))
+        return render(request, 'foirequest/request.html', context, status=400)
 
-        if foilaw is None:
-            if public_body is not None:
-                foilaw = public_body.default_law
-            else:
-                foilaw = request_form.foi_law
+    password = None
+    if user is None:
+        user, password = AccountManager.create_user(**user_form.cleaned_data)
+    sent_to_pb = 1
+    if public_body is not None and public_body.pk is None:
+        public_body._created_by = user
+        public_body.save()
+        sent_to_pb = 2
+    elif public_body is None:
+        sent_to_pb = 0
 
-        foi_request = FoiRequest.from_request_form(
-                user,
-                public_body,
-                foilaw,
-                form_data=request_form.cleaned_data,
-                post_data=request.POST
-        )
-
-        if user.is_active:
-            if sent_to_pb == 0:
-                messages.add_message(request, messages.INFO,
-                    _('Others can now suggest the Public Bodies for your request.'))
-            elif sent_to_pb == 2:
-                messages.add_message(request, messages.INFO,
-                    _('Your request will be sent as soon as the newly created Public Body was confirmed by an administrator.'))
-
-            else:
-                messages.add_message(request, messages.INFO,
-                    _('Your request has been sent.'))
-            if request_form.cleaned_data['redirect_url']:
-                redirect_url = request_form.cleaned_data['redirect_url']
-                if is_safe_url(redirect_url):
-                    return redirect(redirect_url)
-            return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
+    if foi_law is None:
+        if public_body is not None:
+            foi_law = public_body.default_law
         else:
-            AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
-                    password=password)
+            foi_law = request_form.foi_law
+
+    kwargs = registry.run_hook('pre_request_creation',
+        user=user,
+        public_body=public_body,
+        foi_law=foi_law,
+        form_data=request_form.cleaned_data,
+        post_data=request.POST
+    )
+    foi_request = FoiRequest.from_request_form(**kwargs)
+
+    if user.is_active:
+        if sent_to_pb == 0:
             messages.add_message(request, messages.INFO,
-                    _('Please check your inbox for mail from us to confirm your mail address.'))
-            # user cannot access the request yet!
-            return redirect("/")
-    messages.add_message(request, messages.ERROR,
-        _('There were errors in your form submission. Please review and submit again.'))
-    return render(request, 'foirequest/request.html', context, status=400)
+                _('Others can now suggest the Public Bodies for your request.'))
+        elif sent_to_pb == 2:
+            messages.add_message(request, messages.INFO,
+                _('Your request will be sent as soon as the newly created Public Body was confirmed by an administrator.'))
+
+        else:
+            messages.add_message(request, messages.INFO,
+                _('Your request has been sent.'))
+        if request_form.cleaned_data['redirect_url']:
+            redirect_url = request_form.cleaned_data['redirect_url']
+            if is_safe_url(redirect_url):
+                return redirect(redirect_url)
+        return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
+    else:
+        AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
+                password=password)
+        messages.add_message(request, messages.INFO,
+                _('Please check your inbox for mail from us to confirm your mail address.'))
+        # user cannot access the request yet!
+        return redirect("/")
 
 
 @require_POST
@@ -833,14 +836,18 @@ def make_same_request(request, slug, message_id):
                 'url': foirequest.get_absolute_domain_short_url(),
                 'site_name': settings.SITE_NAME
             })
-    fr = FoiRequest.from_request_form(
-        user, foirequest.public_body,
-        foirequest.law,
+
+    kwargs = registry.run_hook('pre_request_creation', request,
+        user=user,
+        public_body=foirequest.public_body,
+        foi_law=foirequest.law,
         form_data=dict(
             subject=foirequest.title,
             body=body,
             public=foirequest.public
-        ))  # Don't pass post_data, get default letter of law
+        )  # Don't pass post_data, get default letter of law
+    )
+    fr = FoiRequest.from_request_form(**kwargs)
     fr.same_as = foirequest
     fr.save()
     if user.is_active:
