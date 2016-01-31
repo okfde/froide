@@ -247,10 +247,14 @@ class FoiRequest(models.Model):
     })
     USER_STATUS_CHOICES = [(x[0], x[1]) for x in STATUS_RESOLUTION if x[3]]
 
+    INVISIBLE = 0
+    VISIBLE_TO_REQUESTER = 1
+    VISIBLE_TO_PUBLIC = 2
+
     VISIBILITY_CHOICES = (
-        (0, _("Invisible")),
-        (1, _("Visible to Requester")),
-        (2, _("Public")),
+        (INVISIBLE, _("Invisible")),
+        (VISIBLE_TO_REQUESTER, _("Visible to Requester")),
+        (VISIBLE_TO_PUBLIC, _("Public")),
     )
 
     # model fields
@@ -424,7 +428,7 @@ class FoiRequest(models.Model):
                 }))
 
     def get_accessible_link(self):
-        if self.visibility == 1:
+        if self.visibility == self.VISIBLE_TO_REQUESTER:
             return self.get_auth_link()
         return self.get_absolute_domain_short_url()
 
@@ -446,23 +450,23 @@ class FoiRequest(models.Model):
     def status_is_final(self):
         return self.status == 'resolved'
 
-    def is_visible(self, user, pb_auth=None):
-        if self.visibility == 0:
+    def is_visible(self, user=None, pb_auth=None):
+        if self.visibility == self.INVISIBLE:
             return False
-        if self.visibility == 2:
+        if self.visibility == self.VISIBLE_TO_PUBLIC:
             return True
-        if user and self.visibility == 1 and (
+        if user and self.visibility == self.VISIBLE_TO_REQUESTER and (
                 user.is_authenticated() and
                 self.user == user):
             return True
         if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
             return True
-        if self.visibility == 1 and pb_auth is not None:
+        if self.visibility == self.VISIBLE_TO_REQUESTER and pb_auth is not None:
             return self.check_auth_code(pb_auth)
         return False
 
     def in_search_index(self):
-        return (self.visibility > 1 and
+        return (self.is_visible() and
             self.is_foi and self.same_as is None)
 
     def needs_public_body(self):
@@ -906,9 +910,9 @@ class FoiRequest(models.Model):
 
     def determine_visibility(self):
         if self.public:
-            self.visibility = 2
+            self.visibility = self.VISIBLE_TO_PUBLIC
         else:
-            self.visibility = 1
+            self.visibility = self.VISIBLE_TO_REQUESTER
 
     def set_status_after_change(self):
         if not self.user.is_active:
@@ -1424,7 +1428,7 @@ class FoiAttachment(models.Model):
 
     def has_public_access(self):
         if self.belongs_to:
-            return self.belongs_to.request.visibility == 2 and self.approved
+            return self.belongs_to.request.is_visible() and self.approved
         return False
 
     def can_preview(self):
@@ -1486,7 +1490,7 @@ class FoiEventManager(models.Manager):
     def create_event(self, event_name, request, **context):
         assert event_name in FoiEvent.event_texts
         event = FoiEvent(request=request,
-                public=request.visibility == 2,
+                public=request.is_visible(),
                 event_name=event_name)
         event.user = context.pop("user", None)
         event.public_body = context.pop("public_body", None)
