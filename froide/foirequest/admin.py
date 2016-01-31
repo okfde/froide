@@ -69,7 +69,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     autocomplete_resource_name = 'request'
 
     actions = ['mark_checked', 'mark_not_foi', 'tag_all',
-               'mark_same_as', 'remove_from_index', 'confirm_request']
+               'mark_same_as', 'remove_from_index', 'confirm_request',
+               'set_visible_to_user', 'unpublish']
     raw_id_fields = ('same_as', 'public_body', 'user',)
     save_on_top = True
 
@@ -145,6 +146,16 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         FoiRequest.confirmed_request(foireq.user, foireq.pk)
         return None
     confirm_request.short_description = _("Confirm request if unconfirmed")
+
+    def set_visible_to_user(self, request, queryset):
+        queryset.update(visibility=1)
+        self.message_user(request, _("Selected requests are now only visible to requester."))
+    set_visible_to_user.short_description = _("Set only visible to requester")
+
+    def unpublish(self, request, queryset):
+        queryset.update(public=False)
+        self.message_user(request, _("Selected requests are now unpublished."))
+    unpublish.short_description = _("Unpublish")
 
 
 class FoiAttachmentInline(admin.TabularInline):
