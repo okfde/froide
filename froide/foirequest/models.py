@@ -306,6 +306,7 @@ class FoiRequest(models.Model):
     refusal_reason = models.CharField(_("Refusal reason"), max_length=1024,
             blank=True)
     checked = models.BooleanField(_("checked"), default=False)
+    is_blocked = models.BooleanField(_("Blocked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
 
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
