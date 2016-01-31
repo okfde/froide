@@ -43,7 +43,7 @@ class UserAdmin(DjangoUserAdmin):
     # The forms to add and change user instances
     add_form = CustomUserCreationForm
 
-    list_display = ('email', 'username', 'first_name', 'last_name', 'date_joined',
+    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined',
                     'is_active', 'is_staff')
     ordering = ('-date_joined',)
 
