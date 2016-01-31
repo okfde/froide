@@ -43,13 +43,17 @@ class UserAdmin(DjangoUserAdmin):
     # The forms to add and change user instances
     add_form = CustomUserCreationForm
 
+    list_display = ('email', 'first_name', 'last_name', 'date_joined',
+                    'is_active', 'is_staff')
+    ordering = ('-date_joined',)
+
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (_('Profile info'), {'fields': ('address', 'organization',
-            'organization_url', 'private', 'terms', 'newsletter')}),
-        (_('Advanced'), {'fields': ('is_deleted', 'date_left')})
+            'organization_url', 'private', 'newsletter')}),
+        (_('Advanced'), {'fields': ('is_trusted', 'terms', 'is_deleted', 'date_left')})
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
-            'private', 'terms',
+            'private', 'terms', 'is_trusted',
             'newsletter', 'is_deleted'
     ]
 
