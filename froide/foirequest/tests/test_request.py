@@ -1442,7 +1442,7 @@ class RequestTest(TestCase):
 
     def test_throttling(self):
         froide_config = settings.FROIDE_CONFIG
-        froide_config['request_throttle'] = (2, 1)
+        froide_config['request_throttle'] = [(2, 60)]
 
         pb = PublicBody.objects.all()[0]
         self.client.login(username="dummy", password="froide")
@@ -1464,8 +1464,10 @@ class RequestTest(TestCase):
 
             response = self.client.post(
                     reverse('foirequest-submit_request'), post)
-            self.assertContains(response, "exceeded your request limit",
-                                status_code=400)
+
+            self.assertContains(response,
+                u"exceeded your request limit of 2 requests in 1\xa0minute.",
+                status_code=400)
 
 
 class MediatorTest(TestCase):

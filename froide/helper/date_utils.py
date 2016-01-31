@@ -7,8 +7,16 @@ import calendar
 import pytz
 
 from django.conf import settings
+from django.utils import timezone
+from django.utils.timesince import timeuntil
 
 PYTZ_TIME_ZONE = pytz.timezone(settings.TIME_ZONE)
+
+
+def format_seconds(seconds):
+    now = timezone.now()
+    future = now + timedelta(seconds=seconds)
+    return timeuntil(future, now)
 
 
 def calculate_month_range_de(date, months=1):

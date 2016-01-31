@@ -2,6 +2,7 @@ import json
 import magic
 
 from django.conf import settings
+from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
@@ -13,6 +14,7 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import PriceInput
 from froide.helper.forms import TagObjectForm
+from froide.helper.date_utils import format_seconds
 
 from .models import FoiRequest, FoiAttachment
 from .utils import throttle
@@ -139,11 +141,17 @@ class RequestForm(forms.Form):
         else:
             self.foi_law = self.clean_law_without_public_body()
 
-        if self.user.is_authenticated():
+        if self.user.is_authenticated() and not self.user.trusted():
             request_throttle = settings.FROIDE_CONFIG.get('request_throttle', None)
             qs = FoiRequest.objects.filter(user=self.user)
-            if throttle(qs, request_throttle):
-                raise forms.ValidationError(_('You exceeded your request limit.'))
+            throttle_kind = throttle(qs, request_throttle)
+            if throttle_kind:
+                mail_managers(_('User exceeded request limit'), self.user.pk)
+                raise forms.ValidationError(
+                    _('You exceeded your request limit of {count} requests in {time}.'
+                    ).format(count=throttle_kind[0],
+                             time=format_seconds(throttle_kind[1])
+                ))
         return cleaned
 
 

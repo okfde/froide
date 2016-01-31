@@ -32,6 +32,8 @@ class User(AbstractUser):
     terms = models.BooleanField(_('Accepted Terms'), default=True)
     newsletter = models.BooleanField(_('Wants Newsletter'), default=False)
 
+    is_trusted = models.BooleanField(_('Trusted'), default=False)
+
     is_deleted = models.BooleanField(_('deleted'), default=False,
             help_text=_('Designates whether this user was deleted.'))
     date_left = models.DateTimeField(_('date left'), default=None, null=True, blank=True)
@@ -51,6 +53,9 @@ class User(AbstractUser):
         d = get_dict(self, fields)
         d['request_count'] = self.foirequest_set.all().count()
         return d
+
+    def trusted(self):
+        return self.is_trusted or self.is_staff or self.is_superuser
 
     @classmethod
     def export_csv(cls, queryset):

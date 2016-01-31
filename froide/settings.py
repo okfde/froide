@@ -345,7 +345,7 @@ class Base(Configuration):
         closings=[rec(u"Sincerely yours,?")],
         public_body_boosts={},
         dryrun=False,
-        request_throttle=None,  # Set to (15, 7) for 15 requests in 7 days
+        request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
         dryrun_domain="testmail.example.com",
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
