@@ -75,6 +75,9 @@ class FoiRequestManager(CurrentSiteManager):
             )
         )
 
+    def get_throttle_filter(self, user):
+        return self.get_queryset().filter(user=user), 'first_message'
+
 
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_queryset(self):
@@ -1115,6 +1118,11 @@ class PublicBodySuggestion(models.Model):
         verbose_name_plural = _('Public Body Suggestions')
 
 
+class FoiMessageManager(models.Manager):
+    def get_throttle_filter(self, user):
+        return self.get_queryset().filter(sender_user=user), 'timestamp'
+
+
 @python_2_unicode_compatible
 class FoiMessage(models.Model):
     request = models.ForeignKey(FoiRequest,
@@ -1162,6 +1170,8 @@ class FoiMessage(models.Model):
     original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
     not_publishable = models.BooleanField(_('Not publishable'), default=False)
+
+    objects = FoiMessageManager()
 
     class Meta:
         get_latest_by = 'timestamp'

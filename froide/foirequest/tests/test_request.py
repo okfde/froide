@@ -1442,7 +1442,7 @@ class RequestTest(TestCase):
 
     def test_throttling(self):
         froide_config = settings.FROIDE_CONFIG
-        froide_config['request_throttle'] = [(2, 60)]
+        froide_config['request_throttle'] = [(2, 60), (5, 60 * 60)]
 
         pb = PublicBody.objects.all()[0]
         self.client.login(username="dummy", password="froide")
@@ -1464,6 +1464,36 @@ class RequestTest(TestCase):
 
             response = self.client.post(
                     reverse('foirequest-submit_request'), post)
+
+            self.assertContains(response,
+                u"exceeded your request limit of 2 requests in 1\xa0minute.",
+                status_code=400)
+
+    def test_throttling_same_as(self):
+        froide_config = settings.FROIDE_CONFIG
+        froide_config['request_throttle'] = [(2, 60), (5, 60 * 60)]
+
+        # pb = PublicBody.objects.all()[0]
+        # user = User.objects.get(username='sw')
+        messages = []
+        for i in range(3):
+            req = factories.FoiRequestFactory(slug='same-as-request-%d' % i)
+            messages.append(
+                factories.FoiMessageFactory.create(
+                    not_publishable=True,
+                    request=req
+                )
+            )
+
+        self.client.login(username="dummy", password="froide")
+
+        with self.settings(FROIDE_CONFIG=froide_config):
+
+            for i, mes in enumerate(messages):
+                response = self.client.post(reverse('foirequest-make_same_request',
+                        kwargs={"slug": mes.request.slug, "message_id": mes.id}))
+                if i < 2:
+                    self.assertEqual(response.status_code, 302)
 
             self.assertContains(response,
                 u"exceeded your request limit of 2 requests in 1\xa0minute.",

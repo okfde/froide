@@ -40,6 +40,8 @@ from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from .tasks import process_mail
 from .foi_mail import package_foirequest
 from .hooks import registry
+from .utils import check_throttle
+
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 User = get_user_model()
@@ -478,6 +480,11 @@ def set_public_body(request, slug):
             _("This request doesn't need a Public Body!"))
         return render_400(request)
 
+    throttle_message = check_throttle(request.user, FoiRequest)
+    if throttle_message:
+        messages.add_message(request, messages.ERROR, throttle_message)
+        return render_400(request)
+
     foilaw = public_body.default_law
     foirequest.set_public_body(public_body, foilaw)
 
@@ -831,6 +838,12 @@ def make_same_request(request, slug, message_id):
             messages.add_message(request, messages.ERROR,
                 _("You already made an identical request"))
             return render_400(request)
+
+    throttle_message = check_throttle(request.user, FoiRequest)
+    if throttle_message:
+        messages.add_message(request, messages.ERROR, throttle_message)
+        return render_400(request)
+
     body = u"%s\n\n%s" % (foirequest.description,
             _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
                 'url': foirequest.get_absolute_domain_short_url(),

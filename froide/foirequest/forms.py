@@ -2,7 +2,6 @@ import json
 import magic
 
 from django.conf import settings
-from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
@@ -14,10 +13,9 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import PriceInput
 from froide.helper.forms import TagObjectForm
-from froide.helper.date_utils import format_seconds
 
-from .models import FoiRequest, FoiAttachment
-from .utils import throttle
+from .models import FoiRequest, FoiMessage, FoiAttachment
+from .utils import check_throttle
 
 
 new_publicbody_allowed = settings.FROIDE_CONFIG.get(
@@ -141,17 +139,10 @@ class RequestForm(forms.Form):
         else:
             self.foi_law = self.clean_law_without_public_body()
 
-        if self.user.is_authenticated() and not self.user.trusted():
-            request_throttle = settings.FROIDE_CONFIG.get('request_throttle', None)
-            qs = FoiRequest.objects.filter(user=self.user)
-            throttle_kind = throttle(qs, request_throttle)
-            if throttle_kind:
-                mail_managers(_('User exceeded request limit'), self.user.pk)
-                raise forms.ValidationError(
-                    _('You exceeded your request limit of {count} requests in {time}.'
-                    ).format(count=throttle_kind[0],
-                             time=format_seconds(throttle_kind[1])
-                ))
+        throttle_message = check_throttle(self.user, FoiRequest)
+        if throttle_message:
+            raise forms.ValidationError(throttle_message)
+
         return cleaned
 
 
@@ -207,6 +198,11 @@ class SendMessageForm(forms.Form):
                 help_text=(_('If the public body is asking for your post '
                     'address, check this and we will append it to your message.')),
                 required=False)
+
+    def clean(self):
+        throttle_message = check_throttle(self.foirequest.user, FoiMessage)
+        if throttle_message:
+            raise forms.ValidationError(throttle_message)
 
     def save(self, user):
         if self.cleaned_data["to"] == 0:
@@ -269,6 +265,11 @@ class EscalationMessageForm(forms.Form):
                 _('You need to fill in the blanks in the template!')
             )
         return message
+
+    def clean(self):
+        throttle_message = check_throttle(self.foirequest.user, FoiMessage)
+        if throttle_message:
+            raise forms.ValidationError(throttle_message)
 
     def save(self):
         self.foirequest.add_escalation_message(**self.cleaned_data)
