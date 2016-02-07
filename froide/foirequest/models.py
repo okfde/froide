@@ -718,6 +718,7 @@ class FoiRequest(models.Model):
             send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
         message.send()
+        message.save()
         return message
 
     def add_escalation_message(self, subject, message, send_address=False):
@@ -742,6 +743,7 @@ class FoiRequest(models.Model):
         zip_bytes = package_foirequest(self)
         attachments = [(filename, zip_bytes, 'application/zip')]
         message.send(attachments=attachments)
+        message.save()
         self.escalated.send(sender=self)
 
     @classmethod
@@ -887,6 +889,7 @@ class FoiRequest(models.Model):
         cls.request_created.send(sender=request, reference=form_data.get('reference', ''))
         if send_now:
             message.send()
+            message.save()
         return request
 
     def construct_message_body(self, text, foilaw, post_data,
@@ -944,6 +947,7 @@ class FoiRequest(models.Model):
         if message.sent:
             return None
         message.send()
+        message.save()
         return self
 
     @classmethod
@@ -1013,7 +1017,8 @@ class FoiRequest(models.Model):
             message.plaintext_redacted = message.redact_plaintext()
 
             assert not message.sent
-            message.send()  # saves message
+            message.send()
+            message.save()
 
     def make_public(self):
         self.public = True
@@ -1364,10 +1369,11 @@ class FoiMessage(models.Model):
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
-        send_foi_mail(self.subject, self.plaintext, from_addr,
-                [self.recipient_email.strip()], attachments=attachments)
-        self.sent = True
-        self.save()
+        if not self.request.is_blocked:
+            send_foi_mail(self.subject, self.plaintext, from_addr,
+                    [self.recipient_email.strip()], attachments=attachments)
+            self.sent = True
+            self.save()
         self.request._messages = None
         if notify:
             FoiRequest.message_sent.send(sender=self.request, message=self)
