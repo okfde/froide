@@ -424,7 +424,7 @@ def submit_request(request, public_body=None):
         else:
             foi_law = request_form.foi_law
 
-    kwargs = registry.run_hook('pre_request_creation',
+    kwargs = registry.run_hook('pre_request_creation', request,
         user=user,
         public_body=public_body,
         foi_law=foi_law,
