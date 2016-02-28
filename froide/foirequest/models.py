@@ -325,7 +325,7 @@ class FoiRequest(models.Model):
     tags = TaggableManager(through=TaggedFoiRequest, blank=True)
 
     class Meta:
-        ordering = ('last_message',)
+        ordering = ('-last_message',)
         get_latest_by = 'last_message'
         verbose_name = _('Freedom of Information Request')
         verbose_name_plural = _('Freedom of Information Requests')
