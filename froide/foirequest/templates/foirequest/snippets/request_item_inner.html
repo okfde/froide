@@ -1,0 +1,23 @@
+{% load i18n %}
+<h4 class="media-heading">
+  <a href="{{ object.url }}">
+    {{ object.title }}
+  </a>
+  <br/>
+  <small>
+  {% blocktrans %}to{% endblocktrans %}
+    {% if object.public_body_name %}
+    {{ object.public_body_name }}
+    {% elif object.public_body %}
+      <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+      <span class="muted">({{ object.jurisdiction.name }})</span>
+    {% else %}
+      {% blocktrans %}Not yet set{% endblocktrans %}
+    {% endif %}
+    <br/>
+    {{ object.readable_status }},
+    <span title="{{ object.last_message }}">{% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span>{% if object.costs %},
+    {{ object.costs|floatformat:2 }} {{ froide.currency }}{% endif %}
+    {% if object.same_as_count %} - <a class="muted" href="{{ object.url }}#identical">{% blocktrans count counter=object.same_as_count %}{{ counter }} identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>{% endif %}
+  </small>
+</h4>
