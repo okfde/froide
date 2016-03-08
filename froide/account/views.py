@@ -199,6 +199,7 @@ def signup(request):
     next = request.POST.get('next')
     if signup_form.is_valid():
         user, password = AccountManager.create_user(**signup_form.cleaned_data)
+        signup_form.save(user)
         AccountManager(user).send_confirmation_mail(password=password)
         messages.add_message(request, messages.SUCCESS,
                 _('Please check your emails for a mail from us with a confirmation link.'))

@@ -94,6 +94,7 @@ class AccountTest(TestCase):
                 "last_name": "Porst",
                 "organization": "Porst AG",
                 "terms": "on",
+                "newsletter": "on",
                 "user_email": "horst.porst"}
         self.client.login(username='sw', password='froide')
         response = self.client.post(reverse('account-signup'), post)
@@ -110,6 +111,7 @@ class AccountTest(TestCase):
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
         self.assertEqual(user.address, post['address'])
+        self.assertTrue(user.newsletter)
         self.assertEqual(user.organization, post['organization'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
@@ -129,6 +131,8 @@ class AccountTest(TestCase):
         self.assertTrue(user.is_active)
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 400)
+        user = User.objects.get(email=post['user_email'])
+        self.assertFalse(user.newsletter)
 
     def test_overlong_name_signup(self):
         post = {
