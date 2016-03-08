@@ -51,7 +51,6 @@ class CheckJSErrors(object):
             raise JavaScriptException(msg)
 
 
-@unittest.skip("Skip live tests because of django configurations failure")
 class TestMakingRequest(StaticLiveServerTestCase):
 
     @classmethod
