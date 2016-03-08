@@ -1,5 +1,4 @@
 import re
-import unittest
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
