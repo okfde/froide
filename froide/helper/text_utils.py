@@ -11,15 +11,14 @@ from django.utils.six import text_type as str, unichr as chr
 SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
 
 
-##
-# From http://effbot.org/zone/re-sub.htm#unescape-html
-# Removes HTML or XML character references and entities from a text string.
-#
-# @param text The HTML (or XML) source text.
-# @return The plain text, as a Unicode string, if necessary.
-
-
 def unescape(text):
+    '''
+    From http://effbot.org/zone/re-sub.htm#unescape-html
+    Removes HTML or XML character references and entities from a text string.
+
+    @param text The HTML (or XML) source text.
+    @return The plain text, as a Unicode string, if necessary.
+    '''
     def fixup(m):
         text = m.group(0)
         if text[:2] == "&#":
