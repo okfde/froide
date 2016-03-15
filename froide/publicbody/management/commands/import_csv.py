@@ -7,20 +7,21 @@ from django.utils import translation
 class Command(BaseCommand):
     help = "Loads public bodies"
 
+    def add_arguments(self, parser):
+        parser.add_argument('filename', type=str)
+
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
 
         from froide.publicbody.csv_import import CSVImporter
 
+        filename = options['filename']
+
         importer = CSVImporter()
 
-        if len(args) != 1:
-            self.stderr.write((u"Give URL or filename!\n").encode('utf-8'))
-            return 1
-
-        if args[0].startswith('http://') or args[0].startswith('https://'):
-            importer.import_from_url(args[0])
+        if filename.startswith('http://') or filename.startswith('https://'):
+            importer.import_from_url(filename)
         else:
-            importer.import_from_file(open(args[0], 'rb'))
+            importer.import_from_file(open(filename, 'rb'))
 
         self.stdout.write(u"Import done.\n")

@@ -1,6 +1,5 @@
 import json
 import tempfile
-import unittest
 
 from django.utils import six
 from django.test import TestCase
@@ -79,7 +78,6 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
 
-    @unittest.skip('call_command broken with django configurations')
     def test_csv_command(self):
         from django.core.management import call_command
         csv_file = tempfile.NamedTemporaryFile()
