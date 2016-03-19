@@ -171,9 +171,12 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 404)
         response = self.client.get(reverse('foirequest-shortlink',
                 kwargs={"obj_id": req.id}))
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
-        req.visibility = 1
+        self.assertRedirects(response, req.get_absolute_url())
+        # Shortlinks may end in /
+        response = self.client.get(reverse('foirequest-shortlink',
+                kwargs={"obj_id": req.id}) + '/')
+        self.assertRedirects(response, req.get_absolute_url())
+        req.visibility = FoiRequest.VISIBLE_TO_REQUESTER
         req.save()
         response = self.client.get(reverse('foirequest-shortlink',
                 kwargs={"obj_id": req.id}))
