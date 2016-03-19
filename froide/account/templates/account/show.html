@@ -80,6 +80,7 @@
     {% endfor %}
       </tbody>
     </table>
+    {% block feeds %}{% endblock %}
     {% if page_obj.has_other_pages %}
       {% include "pagination/pagination.html" %}
     {% endif %}

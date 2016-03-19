@@ -110,7 +110,6 @@ class FollowingRequestsView(BaseRequestListView):
         return FoiRequest.objects.filter(
                 foirequestfollower__user=self.request.user)
 
-
 def profile(request, slug):
     user = get_object_or_404(auth.get_user_model(), username=slug)
     if user.private:
@@ -381,7 +380,7 @@ def new_terms(request, next=None):
         'terms_form': form,
         'next': next
     })
-    
+
 def feed_generate_token(request):
     if not request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
