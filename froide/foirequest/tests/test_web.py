@@ -11,6 +11,7 @@ from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
 from froide.account.models import User
 
+
 class WebTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
@@ -254,20 +255,20 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'user_id': 1,
             'token': "FFFF1111222233334444555566667777",
-            'feed' : "rss"
+            'feed': "rss"
         }))
         self.assertEqual(response.status_code, 404)
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'user_id': self.user.pk,
             'token': self.user.feed_access_token,
-            'feed' : "atom"
+            'feed': "atom"
         }))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'user_id': self.user.pk,
             'token': self.user.feed_access_token,
-            'user_filter' : "follow",
-            'feed' : "atom"
+            'user_filter': "follow",
+            'feed': "atom"
         }))
         self.assertEqual(response.status_code, 200)
 
