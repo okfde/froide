@@ -18,34 +18,34 @@
           {% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}
         </p>
       {% endblock %}
-      <br/>
-      <form method="get" action="{% url 'foirequest-search' %}">
-        <label for="index-search">
-          {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
-        </label>
-      {% block sendrequest-button %}
+      {% block index-search %}
+        <form method="get" action="{% url 'foirequest-search' %}">
+          <label for="index-search">
+            {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
+          </label>
 
-        <div class="input-group">
-          <input id="index-search"class="form-control col-lg-3" type="text" name="q" autocomplete="off"/>
-          <span class="input-group-btn">
-            <button class="btn btn-success" type="submit">
-              <span class="glyphicon glyphicon-search"></span>
-              {% blocktrans %}Search For Information{% endblocktrans %}
-            </button>
+          <div class="input-group">
+            <input id="index-search"class="form-control col-lg-3" type="text" name="q" autocomplete="off" placeholder="{% block index-search-placeholder %}{% endblock %}"/>
+            <span class="input-group-btn">
+              <button class="btn btn-success" type="submit">
+                <span class="glyphicon glyphicon-search"></span>
+                {% blocktrans %}Search For Information{% endblocktrans %}
+              </button>
+            </span>
+          </div>
+          {% block example_search_terms_block %}
+          <span class="help-block">
+            {% block example_search_terms %}
+              {% blocktrans %}Try the following:{% endblocktrans %}
+              <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
+              {% trans "or" %}
+              <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
+            {% endblock %}
           </span>
-        </div>
-
-        <span class="help-block">
-          {% block example_search_terms %}
-            {% blocktrans %}Try the following:{% endblocktrans %}
-            <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
-            {% trans "or" %}
-            <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
           {% endblock %}
-        </span>
-      {% endblock sendrequest-button %}
+        </form>
+      {% endblock index-search %}
 
-      </form>
       {% endblock first_index_row_search %}
     </div>
     <div class="col-lg-6 col-md-6">
