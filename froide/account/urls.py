@@ -4,7 +4,7 @@ from .views import (ImportantRequestsView, MyRequestsView,
     FollowingRequestsView, account_settings,
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password, password_reset_confirm,
-    change_user, change_email, go, delete_account,
+    change_user, change_email, go, delete_account, feed, feed_generate_token,
 )
 
 urlpatterns = [
@@ -28,4 +28,5 @@ urlpatterns = [
         password_reset_confirm, name='account-password_reset_confirm'),
     url(r'^go/(?P<user_id>\d+)/(?P<secret>\w{32})(?P<url>/.*)$', go,
         name='account-go'),
+    url(r'^generate_token/$', feed_generate_token, name='account-generate_token'),
 ]
