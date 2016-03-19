@@ -32,9 +32,9 @@ foirequest_urls = [
         {'feed': 'atom'}, 'foirequest-list_feed_atom'),
     (r'^rss/$', 'list_requests',
         {'feed': 'rss'}, 'foirequest-list_feed'),
-    (r'^u/(?P<user_id>\d+)/(?P<token>\w{32})/(?P<user_filter>(follow))/(?P<feed>(rss|atom))/$','list_requests',{}, 
+    (r'^u/(?P<user_id>\d+)/(?P<token>\w{32})/(?P<user_filter>(follow))/(?P<feed>(rss|atom))/$', 'list_requests', {}, 
         'foirequest-list_feed'),
-    (r'^u/(?P<user_id>\d+)/(?P<token>\w{32})/(?P<feed>(rss|atom))/$','list_requests',{}, 
+    (r'^u/(?P<user_id>\d+)/(?P<token>\w{32})/(?P<feed>(rss|atom))/$','list_requests', {}, 
         'foirequest-list_feed'),
 
     # Translators: part in request filter URL

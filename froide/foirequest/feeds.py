@@ -136,4 +136,3 @@ class FoiRequestFeedAtom(FoiRequestFeed):
 
     def link(self, obj):
         return reverse('foirequest-feed_atom', kwargs={"slug": obj.slug})
-

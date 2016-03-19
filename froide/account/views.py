@@ -110,6 +110,7 @@ class FollowingRequestsView(BaseRequestListView):
         return FoiRequest.objects.filter(
                 foirequestfollower__user=self.request.user)
 
+
 def profile(request, slug):
     user = get_object_or_404(auth.get_user_model(), username=slug)
     if user.private:
@@ -381,6 +382,7 @@ def new_terms(request, next=None):
         'next': next
     })
 
+
 def feed_generate_token(request):
     if not request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,
@@ -390,6 +392,7 @@ def feed_generate_token(request):
     messages.add_message(request, messages.SUCCESS,
                 _('Your feed token has been changed.'))
     return redirect('account-settings')
+
 
 def csrf_failure(request, reason=''):
     return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})

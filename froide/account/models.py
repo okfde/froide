@@ -43,7 +43,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    feed_access_token = models.CharField(_('feed access key'),default=uuid4().hex, blank=True, max_length=40)
+    feed_access_token = models.CharField(_('feed access key'), default=uuid4().hex, blank=True, max_length=40)
     # if settings.CUSTOM_AUTH_USER_MODEL_DB:
     #     class Meta:
     #         db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
