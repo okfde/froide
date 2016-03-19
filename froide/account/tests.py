@@ -44,7 +44,6 @@ class AccountTest(TestCase):
         response = self.client.get(reverse('account-following'))
         self.assertEqual(response.status_code, 200)
 
-
     def test_login_page(self):
         self.client.logout()
         response = self.client.get(reverse('account-show'))
