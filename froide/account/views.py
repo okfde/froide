@@ -381,12 +381,7 @@ def new_terms(request, next=None):
         'terms_form': form,
         'next': next
     })
-
-def feed(request, user_id, token):
-    user = get_object_or_404(auth.get_user_model(), pk=int(user_id),feed_access_token=token)
-    #gather data + build feed
-    return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})
-
+    
 def feed_generate_token(request):
     if not request.user.is_authenticated():
         messages.add_message(request, messages.ERROR,

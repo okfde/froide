@@ -4,7 +4,7 @@ from .views import (ImportantRequestsView, MyRequestsView,
     FollowingRequestsView, account_settings,
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password, password_reset_confirm,
-    change_user, change_email, go, delete_account, feed, feed_generate_token,
+    change_user, change_email, go, delete_account, feed_generate_token,
 )
 
 urlpatterns = [
