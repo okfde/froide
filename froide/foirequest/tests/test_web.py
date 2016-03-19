@@ -15,7 +15,7 @@ from froide.account.models import User
 class WebTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
-        self.user = User.objects.get(pk=1)
+        self.user = User.objects.get(username="dummy")
 
     def test_index(self):
         response = self.client.get('/')
