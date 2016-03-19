@@ -9,11 +9,12 @@ from django.contrib.contenttypes.models import ContentType
 from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
-
+from froide.account.models import User
 
 class WebTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
+        self.user = User.objects.get(pk=1)
 
     def test_index(self):
         response = self.client.get('/')
@@ -247,6 +248,26 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
             'jurisdiction': juris.slug,
             'status': status
+        }))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'user_id': 1,
+            'token': "FFFF1111222233334444555566667777",
+            'feed' : "rss"
+        }))
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'user_id': self.user.pk,
+            'token': self.user.feed_access_token,
+            'feed' : "atom"
+        }))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={
+            'user_id': self.user.pk,
+            'token': self.user.feed_access_token,
+            'user_filter' : "follow",
+            'feed' : "atom"
         }))
         self.assertEqual(response.status_code, 200)
 
