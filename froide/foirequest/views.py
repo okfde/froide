@@ -106,7 +106,7 @@ def list_requests(request, status=None, topic=None, tag=None,
         'filtered': True
     }
     if (user_id and token) is not None:
-        user = get_object_or_404(get_user_model(), pk=int(user_id),feed_access_token=token)
+        user = get_object_or_404(get_user_model(), pk=int(user_id), feed_access_token=token)
     else:
         user = None
     manager = FoiRequest.published
@@ -143,7 +143,7 @@ def list_requests(request, status=None, topic=None, tag=None,
         foi_requests = manager.for_list_view()
         context['filtered'] = False
     if user is not None:
-        if user_filter is None: 
+        if user_filter is None:
             foi_requests = foi_requests.filter(user=user)
         elif user_filter is "follow":
             foi_requests = foi_requests.filter(foirequestfollower__user=user)
