@@ -348,6 +348,8 @@ class Base(Configuration):
 
     # ######### Tastypie #########
 
+    # Do not include xml by default, so lxml doesn't need to be present
+    TASTYPIE_DEFAULT_FORMATS = ['json']
     TASTYPIE_SWAGGER_API_MODULE = values.Value('froide.urls.v1_api')
 
     # ######### Froide settings ########

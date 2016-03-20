@@ -6,10 +6,10 @@ from haystack.query import SearchQuerySet
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator as TastyPaginator
 from tastypie import fields, utils
-from tastypie.authorization import DjangoAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 
-from froide.helper.api_utils import AnonymousGetAuthentication
+from froide.helper.api_utils import (AnonymousGetAuthentication,
+                                     CustomDjangoAuthorization)
 
 from .models import PublicBody, PublicBodyTag, Jurisdiction, FoiLaw
 
@@ -24,7 +24,7 @@ class JurisdictionResource(ModelResource):
         resource_name = 'jurisdiction'
         fields = ['id', 'name', 'rank', 'description', 'slug']
         authentication = AnonymousGetAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = CustomDjangoAuthorization()
 
     def dehydrate(self, bundle):
         if bundle.obj:
@@ -50,7 +50,7 @@ class FoiLawResource(ModelResource):
             'max_response_time_unit', 'refusal_reasons', 'mediator'
         ]
         authentication = AnonymousGetAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = CustomDjangoAuthorization()
 
     def dehydrate(self, bundle):
         if bundle.obj:
@@ -104,7 +104,7 @@ class PublicBodyResource(ModelResource):
         }
         paginator_class = TastyPaginator
         authentication = AnonymousGetAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = CustomDjangoAuthorization()
 
     def dehydrate(self, bundle):
         if bundle.obj:
