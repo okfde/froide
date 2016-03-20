@@ -144,9 +144,4 @@ Now your server will send background tasks to Celery. Lots of common tasks are d
 - Email Sending: When an action triggers an email, it's sent in the background
 - Denormalized Counts on database objects
 
-Celery also takes the role of `cron` and handles periodic tasks. You should set up periodic tasks in the admin under "Djcelery - Periodic tasks". Here is a recommended configuration:
-
-- Fetch Mail: every minute
-- Detect Overdue at Midnight: 0 0 * * * (m/h/d/dM/MY)
-- Batch Update Followers every 24 hours: 0 0 * * * (m/h/d/dM/MY)
-- Remind users to classify there requests: 0 7 6 * * (m/h/d/dM/MY)
+Celery also takes the role of `cron` and handles periodic tasks. These are setup in the `CELERYBEAT_SCHEDULE` setting.

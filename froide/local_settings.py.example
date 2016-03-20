@@ -259,9 +259,6 @@ class Dev(Base):
 
     ######### Celery #############
 
-    # # setup celery differently
-    # CELERY_RESULT_BACKEND = "database"
-    # CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
     # # Set to false to actually use celery
     # CELERY_ALWAYS_EAGER = True
 

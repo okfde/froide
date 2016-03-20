@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
 from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
 import os
 import sys
 import re
+
+from celery.schedules import crontab
 
 rec = lambda x: re.compile(x, re.I | re.U)
 
@@ -34,7 +38,6 @@ class Base(Configuration):
 
         # external
         'haystack',
-        'djcelery',
         'taggit',
         'floppyforms',
         'overextends',
@@ -305,8 +308,29 @@ class Base(Configuration):
 
     # ######## Celery #############
 
-    CELERY_RESULT_BACKEND = values.Value('djcelery.backends.database:DatabaseBackend')
-    CELERYBEAT_SCHEDULER = values.Value("djcelery.schedulers.DatabaseScheduler")
+    CELERYBEAT_SCHEDULE = {
+        'fetch-mail': {
+            'task': 'froide.foirequest.tasks.fetch_mail',
+            'schedule': crontab(),
+        },
+        'detect-asleep': {
+            'task': 'froide.foirequest.tasks.detect_asleep',
+            'schedule': crontab(hour=0, minute=0),
+        },
+        'detect-overdue': {
+            'task': 'froide.foirequest.tasks.detect_overdue',
+            'schedule': crontab(hour=0, minute=0),
+        },
+        'update-foirequestfollowers': {
+            'task': 'froide.foirequestfollower.tasks.batch_update',
+            'schedule': crontab(hour=0, minute=0),
+        },
+        'classification-reminder': {
+            'task': 'froide.foirequest.tasks.classification_reminder',
+            'schedule': crontab(hour=7, minute=0, day_of_week=6),
+        },
+    }
+
     CELERY_ALWAYS_EAGER = values.BooleanValue(True)
 
     CELERY_ROUTES = {
@@ -473,8 +497,6 @@ class Test(Base):
             },
         }
 
-    CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-    CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
     CELERY_ALWAYS_EAGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
