@@ -1,9 +1,8 @@
 -r requirements.txt
-pyelasticsearch==1.4
-selenium==2.47.1
-flake8==2.4.1
+selenium==2.53.1
+flake8==2.5.4
 factory-boy==2.5.2
-coverage==4.0a5
+coverage==4.1b2
 -e git://github.com/stefanw/transifex-client.git@python-3#egg=transifex_client
-mock==1.0.1
+mock==1.3.0
 whoosh
