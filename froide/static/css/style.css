@@ -49,9 +49,9 @@ body {
 
 
 .special-nav-item a span{
-    color: #333 !important;
+    color: #f0f0f0 !important;
     padding: 0.5em;
-    background: #d9edf7;
+    background: #428bca;
     -webkit-border-radius: 6px;
        -moz-border-radius: 6px;
             border-radius: 6px;
@@ -60,7 +60,6 @@ body {
 
 .special-nav-item a:hover span {
     color: #fff !important;
-    background: #428bca;
     text-shadow: none;
 }
 
