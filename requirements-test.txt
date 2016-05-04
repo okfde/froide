@@ -1,8 +1,8 @@
 -r requirements.txt
-selenium==2.53.1
+selenium==2.53.2
 flake8==2.5.4
-factory-boy==2.5.2
-coverage==4.1b2
+factory-boy==2.7.0
+coverage==4.0.3
 -e git://github.com/stefanw/transifex-client.git@python-3#egg=transifex_client
-mock==1.3.0
-whoosh
+mock==2.0.0
+Whoosh

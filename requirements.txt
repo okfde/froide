@@ -1,20 +1,20 @@
 pip==8.1.1
-Django==1.8.11
-Markdown==2.6.2
+Django==1.9.5
+Markdown==2.6.6
 celery==3.1.23
-django-haystack==2.4.1
-django-taggit==0.18.0
-pytz==2016.2
+-e git://github.com/django-haystack/django-haystack.git@master#egg=django-haystack
+django-taggit==0.18.1
+pytz==2016.4
 requests==2.9.1
-django-floppyforms==1.6.1
+django-floppyforms==1.6.2
 django-overextends==0.4.1
 python-magic==0.4.6
 django-tastypie==0.13.3
 python-mimeparse>=0.1.4
 django-configurations==1.0
-django-storages==1.4
-dj-database-url==0.4.0
+django-storages==1.4.1
+dj-database-url==0.4.1
 django-cache-url==1.0.0
 -e git://github.com/stefanw/django-compressor.git@patch-1#egg=compressor
-django-contrib-comments==1.6.2
+django-contrib-comments==1.7.0
 unicodecsv==0.14.1
