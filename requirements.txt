@@ -15,6 +15,6 @@ django-configurations==1.0
 django-storages==1.4.1
 dj-database-url==0.4.1
 django-cache-url==1.0.0
--e git://github.com/stefanw/django-compressor.git@patch-1#egg=compressor
+django-compressor==2.0
 django-contrib-comments==1.7.0
 unicodecsv==0.14.1
