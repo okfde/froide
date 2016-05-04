@@ -85,8 +85,9 @@ class TestThemeLoader(TestCase):
         tl = ThemeLoader(engines['django'])
         sources = list(tl.get_template_sources('index.html'))
         self.assertEqual(len(sources), 1)
-        self.assertTrue(sources[0].startswith('/'))
-        self.assertTrue(sources[0].endswith('froide/foirequest/templates/index.html'))
+        origin = sources[0]
+        self.assertTrue(origin.name.startswith('/'))
+        self.assertTrue(origin.name.endswith('froide/foirequest/templates/index.html'))
 
 
 class TestFormGenerator(TestCase):

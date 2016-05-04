@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, SuspiciousFileOperation
 from django.utils._os import safe_join
 from django.template.loaders.app_directories import Loader
+from django.template import Origin
 from django.utils import six
 
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
@@ -39,12 +40,11 @@ class ThemeLoader(Loader):
             template_dirs = [theme_template_dir]
         for template_dir in template_dirs:
             try:
-                yield safe_join(template_dir, template_name)
+                name = safe_join(template_dir, template_name)
             except SuspiciousFileOperation:
-                pass
-            except UnicodeDecodeError:
-                # The template dir name was a bytestring that wasn't valid UTF-8.
-                raise
-            except ValueError:
-                # The joined path was located outside of template_dir.
-                pass
+                continue
+            yield Origin(
+                name=name,
+                template_name=template_name,
+                loader=self,
+            )

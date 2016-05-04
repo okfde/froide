@@ -19,7 +19,6 @@ gettext = lambda s: s
 
 class Base(Configuration):
     DEBUG = values.BooleanValue(True)
-    TEMPLATE_DEBUG = values.BooleanValue(DEBUG)
 
     DATABASES = values.DatabaseURLValue('sqlite:///dev.db')
     CONN_MAX_AGE = None
@@ -110,11 +109,6 @@ class Base(Configuration):
                             'compressor.filters.cssmin.CSSMinFilter']
     COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
-    # Additional locations of template files
-    TEMPLATE_DIRS = (
-        os.path.join(PROJECT_ROOT, "templates"),
-    )
-
     # ########## URLs #################
 
     ROOT_URLCONF = values.Value('froide.urls')
@@ -158,22 +152,32 @@ class Base(Configuration):
         "django.contrib.auth.backends.ModelBackend",
     ]
 
-    TEMPLATE_CONTEXT_PROCESSORS = (
-        'django.core.context_processors.debug',
-        'django.core.context_processors.i18n',
-        'django.core.context_processors.media',
-        'django.core.context_processors.static',
-        'django.core.context_processors.request',
-        'django.contrib.auth.context_processors.auth',
-        'django.contrib.messages.context_processors.messages',
-        'froide.helper.context_processors.froide',
-        'froide.helper.context_processors.site_settings'
-    )
-
-    # List of callables that know how to import templates from various sources.
-    TEMPLATE_LOADERS = [
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': (
+                os.path.join(PROJECT_ROOT, "templates"),
+            ),
+            'OPTIONS': {
+                'debug': values.BooleanValue(DEBUG),
+                'loaders': [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ],
+                'builtins': ['overextends.templatetags.overextends_tags'],
+                'context_processors': [
+                    'django.core.context_processors.debug',
+                    'django.core.context_processors.i18n',
+                    'django.core.context_processors.media',
+                    'django.core.context_processors.static',
+                    'django.core.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                    'froide.helper.context_processors.froide',
+                    'froide.helper.context_processors.site_settings'
+                ]
+            }
+        }
     ]
 
     MIDDLEWARE_CLASSES = [
@@ -436,16 +440,21 @@ class ThemeBase(object):
         return installed.default
 
     @property
-    def TEMPLATE_LOADERS(self):
-        old = super(ThemeBase, self).TEMPLATE_LOADERS
+    def TEMPLATES(self):
+        TEMP = super(ThemeBase, self).TEMPLATES
         if self.FROIDE_THEME is not None:
-            return (['froide.helper.theme_utils.ThemeLoader'] + old)
-        return old
+            TEMP[0]['OPTIONS']['loaders'] = ['froide.helper.theme_utils.ThemeLoader'] + TEMP[0]['OPTIONS']['loaders']
+        return TEMP
 
 
 class Test(Base):
     DEBUG = False
-    TEMPLATE_DEBUG = True
+
+    @property
+    def TEMPLATES(self):
+        TEMP = super(Test, self).TEMPLATES
+        TEMP[0]['OPTIONS']['debug'] = True
+        return TEMP
 
     def _fake_convert_pdf(self, infile, outpath):
         _, filename = os.path.split(infile)
@@ -560,7 +569,13 @@ class German(object):
 
 class Production(Base):
     DEBUG = False
-    TEMPLATE_DEBUG = False
+
+    @property
+    def TEMPLATES(self):
+        TEMP = super(Production, self).TEMPLATES
+        TEMP[0]['OPTIONS']['debug'] = False
+        return TEMP
+
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
     CELERY_ALWAYS_EAGER = values.BooleanValue(False)
     COMPRESS_ENABLED = values.BooleanValue(True)
