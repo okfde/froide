@@ -7,7 +7,7 @@ django-taggit==0.18.1
 pytz==2016.4
 requests==2.9.1
 django-floppyforms==1.6.2
--e git://github.com/stephenmcd/django-overextends.git@master#egg=overextends
+-e git://github.com/stephenmcd/django-overextends.git@master#egg=django-overextends
 python-magic==0.4.6
 django-tastypie==0.13.3
 python-mimeparse>=0.1.4
