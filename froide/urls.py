@@ -61,9 +61,6 @@ if settings.FROIDE_THEME:
 if settings.FROIDE_CONFIG.get('api_activated', True):
     urlpatterns += patterns('',
         url(r'^api/', include(v1_api.urls)),
-        url(r'api/v1/docs/', include('tastypie_swagger.urls',
-            namespace='tastypie_swagger'),
-            kwargs={'tastypie_api_module': v1_api, 'namespace': 'tastypie_swagger'}),
     )
 
 urlpatterns += patterns('',

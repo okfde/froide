@@ -46,7 +46,6 @@ setup(
         'python-magic',
         'django-tastypie',
         'python-mimeparse',
-        'django-tastypie-swagger',
         'unicodecsv',
         'django-configurations',
         'django-storages',

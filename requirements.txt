@@ -11,7 +11,6 @@ django-overextends==0.4.1
 python-magic==0.4.6
 django-tastypie==0.13.3
 python-mimeparse>=0.1.4
--e git://github.com/stefanw/django-tastypie-swagger.git@python-3#egg=django_tastypie_swagger
 django-configurations==1.0
 django-storages==1.4
 dj-database-url==0.4.0
