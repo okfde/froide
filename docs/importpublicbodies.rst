@@ -62,6 +62,4 @@ Importing via command line
 
 The management command `import_csv` takes a URL or a path to a CSV file::
 
-    python manage.py import_csv public_bodies.csv --settings=froide.custom_settings
-
-
+    python manage.py import_csv public_bodies.csv
