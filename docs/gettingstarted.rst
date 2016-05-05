@@ -80,10 +80,10 @@ Custom configuration
 
 By default the Django Web server uses the `settings.py` file in the froide directory (the `froide.settings` Python module). This will be fine for your first experiments but if you want to customize your froide instance you will want your own settings file.
 
-Go into the froide directory and copy the `custom_settings.py.example` to `custom_settings.py`::
+Go into the froide directory and copy the `local_settings.py.example` to `local_settings.py`::
 
     cd froide
-    cp custom_settings.py.example custom_settings.py
+    cp local_settings.py.example local_settings.py
 
 Now you can customize that settings file to your liking. Note that it imports the original `settings.py` at the top, so you only have to change the values you need to change.
 
@@ -91,13 +91,13 @@ In order for Django to start your web server with these new settings you either 
 
 Either type::
 
-    export DJANGO_SETTINGS_MODULE=froide.custom_settings
+    export DJANGO_SETTINGS_MODULE=froide.local_settings
     python manage.py runserver
 
 The environment variable will be set for this shell session. If you open a new shell, you have to export the settings again.
 Or::
 
-    python manage.py runserver --settings=froide.custom_settings
+    python manage.py runserver --settings=froide.local_settings
 
 Since it can be annoying to type this (or to remember to export the environment variable), you can create a shortcut shell script, create an alias, put an export in your virtualenv's `activate` file or use `virtualenvwrapper <http://virtualenvwrapper.readthedocs.org/en/latest/>`_ and put the export in your `postactivate` hook.
 

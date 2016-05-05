@@ -4,7 +4,7 @@ Configuration
 
 Froide can be configured in many ways to reflect the needs of your local FoI portal.
 
-The `custom_settings.py.example` file that comes with froide has all the settings from the `settings.py` file but they are commented out. You can copy this file to `custom_settings.py`
+The `local_settings.py.example` file that comes with froide has all the settings from the `settings.py` file but they are commented out. You can copy this file to `local_settings.py`
 
 Froide Configuration
 --------------------
@@ -160,7 +160,7 @@ Configure the name, default domain URL and default email (without trailing slash
     SITE_URL = 'http://localhost:8000'
     SITE_EMAIL = 'info@example.com'
 
-More suggestions of settings you can change can be found in the `custom_settings.py.example` file that comes with froide.
+More suggestions of settings you can change can be found in the `local_settings.py.example` file that comes with froide.
 
 
 Securing your site
