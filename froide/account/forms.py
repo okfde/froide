@@ -161,13 +161,15 @@ class UserChangeForm(forms.Form):
             'placeholder': _('mail@ddress.net'),
             'class': 'form-control'
         }),
-        label=_('New email address'))
+        label=_('Your email address'))
 
     address = forms.CharField(max_length=300,
-            label=_('Mailing Address'),
+            label=_('Your mailing address'),
             help_text=_('Your address will never be displayed publicly.'),
             widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
                 'class': 'form-control'}))
+
+    field_order = ['email', 'newsletter', 'address']
 
     def __init__(self, user, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
@@ -178,6 +180,7 @@ class UserChangeForm(forms.Form):
             self.fields['newsletter'] = forms.BooleanField(required=False,
                 label=_("Newsletter"))
             self.fields['newsletter'].initial = self.user.newsletter
+        self.order_fields(self.field_order)
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
