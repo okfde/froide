@@ -3768,7 +3768,7 @@ msgstr "Nutzer hat Anfragenbeschränkung überschritten"
 #: froide/foirequest/utils.py:32
 #, python-brace-format
 msgid "You exceeded your request limit of {count} requests in {time}."
-msgstr "Sie haben die Begrenzung von {count} Anfragen in {time} überschritten."
+msgstr "Sie haben die Begrenzung von {count} Anfragen in {time} überschritten. Dies ist eine automatische Vorsichtsmaßnahme. Bei Fragen kontaktieren Sie bitte den Webmaster."
 
 #: froide/foirequest/views.py:113
 msgid "status"
