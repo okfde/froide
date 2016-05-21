@@ -101,10 +101,14 @@ def dashboard(request):
 
 
 def list_requests(request, status=None, topic=None, tag=None,
-        jurisdiction=None, public_body=None, not_foi=False, feed=None):
+        jurisdiction=None, public_body=None, not_foi=False, feed=None, user_id=None, token=None, user_filter=None):
     context = {
         'filtered': True
     }
+    if (user_id and token) is not None:
+        user = get_object_or_404(get_user_model(), pk=int(user_id), feed_access_token=token)
+    else:
+        user = None
     manager = FoiRequest.published
     if not_foi:
         manager = FoiRequest.published_not_foi
@@ -138,7 +142,11 @@ def list_requests(request, status=None, topic=None, tag=None,
     else:
         foi_requests = manager.for_list_view()
         context['filtered'] = False
-
+    if user is not None:
+        if user_filter is None:
+            foi_requests = foi_requests.filter(user=user)
+        elif user_filter is "follow":
+            foi_requests = foi_requests.filter(foirequestfollower__user=user)
     if jurisdiction is not None:
         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
         foi_requests = foi_requests.filter(jurisdiction=jurisdiction)

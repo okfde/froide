@@ -53,6 +53,12 @@
       </div>
     </div>
 
+
+    <div id="change-feed-token" class="section">
+        <a href="{% url 'account-generate_token' %}">{% blocktrans %}Change your feed token{% endblocktrans %}</a>
+        {% blocktrans %}Current feed token:{% endblocktrans %}{{ user.feed_access_token}}
+    </div>
+
     <div id="change-password-now" class="section focussed">
       {% if user.is_new %}
         <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>

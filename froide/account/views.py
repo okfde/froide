@@ -383,5 +383,16 @@ def new_terms(request, next=None):
     })
 
 
+def feed_generate_token(request):
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR,
+                _('You are not currently logged in, you cannot generate a new feed token.'))
+        return render_403(request)
+    AccountManager(request.user).generate_new_feed_token()
+    messages.add_message(request, messages.SUCCESS,
+                _('Your feed token has been changed.'))
+    return redirect('account-settings')
+
+
 def csrf_failure(request, reason=''):
     return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})

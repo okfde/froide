@@ -5,6 +5,8 @@ try:
 except ImportError:
     from urllib import urlencode
 
+from uuid import uuid4
+
 from django.utils.six import text_type as str
 from django.db import models, transaction, IntegrityError
 from django.conf import settings
@@ -41,6 +43,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    feed_access_token = models.CharField(_('feed access key'), default=uuid4().hex, blank=True, max_length=40)
     # if settings.CUSTOM_AUTH_USER_MODEL_DB:
     #     class Meta:
     #         db_table = settings.CUSTOM_AUTH_USER_MODEL_DB
@@ -188,6 +191,10 @@ class AccountManager(object):
                 settings.SECRET_KEY.encode('utf-8'),
                 (".".join(to_sign)).encode('utf-8')
         ).hexdigest()
+
+    def generate_new_feed_token(self):
+        self.user.feed_access_token = uuid4().hex
+        self.user.save()
 
     def send_confirmation_mail(self, request_id=None, password=None):
         secret = self.generate_confirmation_secret(request_id)

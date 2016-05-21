@@ -1,1 +1,13 @@
 {% extends "account/show.html" %}
+
+{% block feeds %}
+<a href="{% url 'foirequest-list_feed' user_id=request.user.pk token=request.user.feed_access_token user_filter="follow" feed="rss" %}">
+          <i class="rss-icon"></i>
+          RSS-Feed
+</a>
+
+<a href="{% url 'foirequest-list_feed' user_id=request.user.pk token=request.user.feed_access_token user_filter="follow" feed="atom" %}">
+          <i class="atom-icon"></i>
+          Atom-Feed
+</a>
+{% endblock %}

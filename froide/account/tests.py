@@ -32,12 +32,16 @@ class AccountTest(TestCase):
     def setUp(self):
         factories.make_world()
 
-    def test_account_page(self):
+    def test_account_pages(self):
         ok = self.client.login(username='sw', password='wrong')
         self.assertFalse(ok)
         ok = self.client.login(username='sw', password='froide')
         self.assertTrue(ok)
         response = self.client.get(reverse('account-show'))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('account-requests'))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('account-following'))
         self.assertEqual(response.status_code, 200)
 
     def test_login_page(self):
@@ -523,6 +527,14 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(pk=user.pk)
         self.assertEqual(user.email, new_email)
+
+    def test_generate_token(self):
+        ok = self.client.login(username='sw', password='froide')
+        self.assertTrue(ok)
+        old_token = User.objects.get(username='sw').feed_access_token
+        response = self.client.get(reverse('account-generate_token'))
+        self.assertEqual(response.status_code, 302)
+        self.assertNotEqual(old_token, User.objects.get(username='sw').feed_access_token)
 
     def test_account_delete(self):
         response = self.client.get(reverse('account-settings'))
