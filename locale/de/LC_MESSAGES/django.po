@@ -2258,7 +2258,7 @@ msgid ""
 "Sincerely yours,"
 msgstr ""
 "\n"
-"Mit freundlichen Grüßen,"
+"Mit freundlichen Grüßen"
 
 #: froide/foirequest/templates/foirequest/emails/dummy_mail_start.txt:1
 msgid ""
@@ -2409,7 +2409,7 @@ msgstr ""
 "Sie haben die Frist mittlerweile um %(due)s überschritten.\n"
 "Bitte informieren Sie mich umgehend über den Stand meiner Anfrage.\n"
 "\n"
-"Mit freundlichen Grüßen,\n"
+"Mit freundlichen Grüßen\n"
 "%(name)s"
 
 #: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:1
