@@ -112,7 +112,8 @@ class FoiRequestResource(ModelResource):
             'status',
             'public_body',
             'resolution', 'slug',
-            'title'
+            'title',
+            'reference'
         ]
         filtering = {
             'slug': ALL,
@@ -126,6 +127,7 @@ class FoiRequestResource(ModelResource):
             'tags': ALL,
             'same_as': ALL,
             'status': ALL,
+            'reference': ALL,
             'resolution': ALL,
             'public_body': ALL_WITH_RELATIONS
         }
