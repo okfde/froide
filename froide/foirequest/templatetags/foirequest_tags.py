@@ -104,14 +104,14 @@ def redact_message(message, user):
     content_2 = urlizetrunc(content_2, 40, autoescape=False)
 
     if content_2:
-        return u''.join([
+        return mark_safe(u''.join([
             content_1,
             u'<a href="#" class="show-text">…</a><div class="hidden-text">',
             content_2,
             u'</div>'
-        ])
+        ]))
 
-    return content_1
+    return mark_safe(content_1)
 
 
 def check_same_request(context, foirequest, user, var_name):
