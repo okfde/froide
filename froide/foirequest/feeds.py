@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
@@ -6,6 +8,12 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
 from .models import FoiRequest
+
+CONTROLCHARS_RE = re.compile(r'[\x00-\x08\x0B-\x0C\x0E-\x1F]')
+
+
+def clean(val):
+    return CONTROLCHARS_RE.sub('', val)
 
 
 class LatestFoiRequestsFeed(Feed):
@@ -38,26 +46,26 @@ class LatestFoiRequestsFeed(Feed):
     def title(self, obj):
         by = self.get_filter_string()
         if by:
-            return _("Freedom of Information Requests %(by)s on %(sitename)s") % {
+            return clean(_("Freedom of Information Requests %(by)s on %(sitename)s") % {
                 "sitename": settings.SITE_NAME,
                 'by': by
-            }
-        return _("Freedom of Information Requests on %(sitename)s") % {
+            })
+        return clean(_("Freedom of Information Requests on %(sitename)s") % {
             "sitename": settings.SITE_NAME
-        }
+        })
 
     def description(self, obj):
         by = self.get_filter_string()
         if by:
-            return _("This feed contains the Freedom of Information requests %(by)s"
+            return clean(_("This feed contains the Freedom of Information requests %(by)s"
                 " that have been made through %(sitename)s.") % {
                     "sitename": settings.SITE_NAME,
                     'by': by
-                }
-        return _("This feed contains the latest Freedom of Information requests"
+                })
+        return clean(_("This feed contains the latest Freedom of Information requests"
             " that have been made through %(sitename)s.") % {
                 "sitename": settings.SITE_NAME
-            }
+            })
 
     def get_link_kwargs(self):
         kwargs = {}
@@ -84,13 +92,13 @@ class LatestFoiRequestsFeed(Feed):
             pb_name = item.public_body.name
         else:
             pb_name = _("Not yet known")
-        return _("'%(title)s' to %(publicbody)s") % {
+        return clean(_("'%(title)s' to %(publicbody)s") % {
             "title": item.title,
             "publicbody": pb_name
-        }
+        })
 
     def item_description(self, item):
-        return item.description
+        return clean(item.description)
 
     def item_pubdate(self, item):
         return item.first_message
@@ -109,22 +117,22 @@ class FoiRequestFeed(Feed):
         return get_object_or_404(FoiRequest, slug=slug, public=True)
 
     def title(self, obj):
-        return obj.title
+        return clean(obj.title)
 
     def link(self, obj):
         return reverse('foirequest-feed', kwargs={"slug": obj.slug})
 
     def description(self, obj):
-        return obj.description
+        return clean(obj.description)
 
     def items(self, obj):
         return obj.foievent_set.order_by("-timestamp")[:15]
 
     def item_title(self, item):
-        return item.as_text()
+        return clean(item.as_text())
 
     def item_description(self, item):
-        return item.as_text()
+        return clean(item.as_text())
 
     def item_pubdate(self, item):
         return item.timestamp
