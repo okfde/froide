@@ -5,29 +5,27 @@
 {% block title %}{% trans "Help" %} - {{ SITE_NAME }}{% endblock %}
 
 {% block body %}
-<div class="row">
-	<div class="col-lg-8 col-md-8">
-	  {% block helpbody %}{% endblock %}
-	</div>
-	<div class="col-lg-4 col-md-4">
-		{% block helpnav %}
-	  <h3>{% blocktrans %}Help Pages{% endblocktrans %}</h3>
-	  <ul class="nav nav-compact">
-			{# Translators: URL part #}
-			{% trans "help" as help_url_part %}
+{# Translators: URL part #}
+{% trans "help" as help_url_part %}
 
-			{% with help_url="/"|add:help_url_part|add:"/" %}
-				{% get_flatpages help_url as help_pages %}
-					{% for help_page in help_pages %}
-						<li>
-							<a href="{{ help_page.url }}">
-								{{ help_page.title }}
-							</a>
-						</li>
-					{% endfor %}
-			{% endwith %}
-	  </ul>
-		{% endblock %}
-	</div>
+{% block helpnav %}
+<ul class="nav nav-tabs">
+{% with help_url="/"|add:help_url_part|add:"/" %}
+  {% get_flatpages help_url as help_pages %}
+  {% for help_page in help_pages %}
+    <li role="presentation"{% if help_url == request.path %} class="active"{% endif %}>
+      <a href="{{ help_page.url }}">
+        {{ help_page.title }}
+      </a>
+    </li>
+  {% endfor %}
+{% endwith %}
+</ul>
+{% endblock %}
+
+<div class="row">
+  <div class="col-lg-8 col-md-12">
+    {% block helpbody %}{% endblock %}
+  </div>
 </div>
 {% endblock %}
