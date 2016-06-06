@@ -6,7 +6,7 @@ import re
 
 from django.utils.six import string_types, text_type as str
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, When, Case, Value
 from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
@@ -67,13 +67,20 @@ class FoiRequestManager(CurrentSiteManager):
         return self.get_queryset().filter(status="awaiting_classification",
                 last_message__lt=some_days_ago)
 
-    def get_dashboard_requests(self, user):
+    def get_dashboard_requests(self, user, query=None):
+        query_kwargs = {}
+        if query is not None:
+            query_kwargs = {'title__contains': query}
         now = timezone.now()
-        return self.get_queryset().filter(user=user).filter(
-            Q(status="awaiting_classification") | (
-                Q(due_date__lt=now) & Q(status='awaiting_response')
+        return self.get_queryset().filter(user=user, **query_kwargs).annotate(
+            is_important=Case(
+                When(Q(status="awaiting_classification") | (
+                    Q(due_date__lt=now) & Q(status='awaiting_response')
+                ), then=Value(True)),
+                default=Value(False),
+                output_field=models.BooleanField()
             )
-        )
+        ).order_by('-is_important', '-last_message')
 
     def get_throttle_filter(self, user):
         return self.get_queryset().filter(user=user), 'first_message'

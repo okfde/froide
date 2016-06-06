@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import Http404, QueryDict
 from django.contrib import auth
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -76,22 +76,12 @@ class BaseRequestListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(BaseRequestListView, self).get_context_data(**kwargs)
+        no_page_query = QueryDict(self.request.GET.urlencode().encode('utf-8'),
+                                  mutable=True)
+        no_page_query.pop('page', None)
+        context['getvars'] = no_page_query.urlencode()
         context['menu'] = self.menu_item
         return context
-
-
-class ImportantRequestsView(BaseRequestListView):
-    template_name = 'account/show_important.html'
-    menu_item = 'important'
-
-    def get_context_data(self, **kwargs):
-        context = super(ImportantRequestsView, self).get_context_data(**kwargs)
-        if 'new' in self.request.GET:
-            self.request.user.is_new = True
-        return context
-
-    def get_queryset(self):
-        return FoiRequest.objects.get_dashboard_requests(self.request.user)
 
 
 class MyRequestsView(BaseRequestListView):
@@ -99,7 +89,14 @@ class MyRequestsView(BaseRequestListView):
     menu_item = 'requests'
 
     def get_queryset(self):
-        return FoiRequest.objects.filter(user=self.request.user)
+        self.query = self.request.GET.get('q', None)
+        return FoiRequest.objects.get_dashboard_requests(self.request.user, query=self.query)
+
+    def get_context_data(self, **kwargs):
+        context = super(MyRequestsView, self).get_context_data(**kwargs)
+        if 'new' in self.request.GET:
+            self.request.user.is_new = True
+        return context
 
 
 class FollowingRequestsView(BaseRequestListView):
@@ -107,8 +104,12 @@ class FollowingRequestsView(BaseRequestListView):
     menu_item = 'following'
 
     def get_queryset(self):
+        self.query = self.request.GET.get('q', None)
+        query_kwargs = {}
+        if self.query:
+            query_kwargs = {'title__contains': self.query}
         return FoiRequest.objects.filter(
-                foirequestfollower__user=self.request.user)
+                foirequestfollower__user=self.request.user, **query_kwargs)
 
 
 def profile(request, slug):

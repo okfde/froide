@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import (ImportantRequestsView, MyRequestsView,
+from .views import (MyRequestsView,
     FollowingRequestsView, account_settings,
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password, password_reset_confirm,
@@ -8,8 +8,7 @@ from .views import (ImportantRequestsView, MyRequestsView,
 )
 
 urlpatterns = [
-    url(r'^$', ImportantRequestsView.as_view(), name='account-show'),
-    url(r'^requests/$', MyRequestsView.as_view(), name='account-requests'),
+    url(r'^$', MyRequestsView.as_view(), name='account-show'),
     url(r'^following/$', FollowingRequestsView.as_view(), name='account-following'),
     url(r'^settings/$', account_settings, name='account-settings'),
     url(r'^terms/$', new_terms, name='account-new_terms'),
