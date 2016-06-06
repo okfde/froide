@@ -107,7 +107,7 @@ class FollowingRequestsView(BaseRequestListView):
         self.query = self.request.GET.get('q', None)
         query_kwargs = {}
         if self.query:
-            query_kwargs = {'title__contains': self.query}
+            query_kwargs = {'title__icontains': self.query}
         return FoiRequest.objects.filter(
                 foirequestfollower__user=self.request.user, **query_kwargs)
 

@@ -70,7 +70,7 @@ class FoiRequestManager(CurrentSiteManager):
     def get_dashboard_requests(self, user, query=None):
         query_kwargs = {}
         if query is not None:
-            query_kwargs = {'title__contains': query}
+            query_kwargs = {'title__icontains': query}
         now = timezone.now()
         return self.get_queryset().filter(user=user, **query_kwargs).annotate(
             is_important=Case(
