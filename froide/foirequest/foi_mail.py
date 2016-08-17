@@ -131,7 +131,7 @@ def _deliver_mail(email, mail_string=None, manual=False):
     if isinstance(domains, string_types):
         domains = [domains]
 
-    mail_filter = lambda x: x[1].endswith(tuple(["@%s" % d for d in domains]))
+    mail_filter = lambda x: x[1].lower().endswith(tuple(["@%s".lower() % d for d in domains]))
     received_list = [r for r in received_list if mail_filter(r)]
 
     # normalize to first FOI_EMAIL_DOMAIN
