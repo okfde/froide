@@ -5125,7 +5125,7 @@ msgid ""
 "Information"
 msgstr ""
 "Informationsfreiheitsanfragen, Informationsfreiheitsgesetz, "
-"Behördeninformationen"
+"Informationsfreiheit, IFG, Behörde, Amt, Ämter, Transparenz"
 
 #. Translators: meta description
 #: froide/templates/scaffold.html:22
