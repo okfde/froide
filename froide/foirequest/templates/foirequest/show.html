@@ -536,21 +536,15 @@ data-spy="scroll" data-target="#message-nav-container"
       {% block social_sharing %}
         <li class="nav-header">{% trans "Share this request" %}</li>
         <li>
-          <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}">
+          <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank">
             <span class="glyphicon glyphicon-share"></span>
             {% trans "Twitter" %}
           </a>
         </li>
         <li>
-          <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}">
+          <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank">
             <span class="glyphicon glyphicon-share"></span>
             {% trans "Facebook" %}
-          </a>
-        </li>
-        <li>
-          <a href="https://plus.google.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}">
-            <span class="glyphicon glyphicon-share"></span>
-            {% trans "Google+" %}
           </a>
         </li>
         {% endblock %}
