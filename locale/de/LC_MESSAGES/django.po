@@ -3596,14 +3596,14 @@ msgstr[1] ""
 
 #: froide/foirequest/templates/foirequest/show.html:520
 msgid "Followers"
-msgstr "Interessierte"
+msgstr "Follower"
 
 #: froide/foirequest/templates/foirequest/show.html:523
 #, python-format
 msgid "%(counter)s follower"
 msgid_plural "%(counter)s followers"
-msgstr[0] "%(counter)s Interessierte(r)"
-msgstr[1] "%(counter)s Interessierte"
+msgstr[0] "%(counter)s Follower"
+msgstr[1] "%(counter)s Follower"
 
 #: froide/foirequest/templates/foirequest/show.html:537
 msgid "Share this request"
@@ -4086,8 +4086,8 @@ msgstr ""
 #, python-format
 msgid "%(site_name)s: Update on one followed request"
 msgid_plural "%(site_name)s: Update on %(count)s followed requests"
-msgstr[0] "%(site_name)s: Neues bei einer Anfrage, die Sie interessiert"
-msgstr[1] "%(site_name)s: Neues bei %(count)s Anfragen, die Sie interessieren"
+msgstr[0] "%(site_name)s: Neues bei einer Anfrage, der Sie folgen"
+msgstr[1] "%(site_name)s: Neues bei %(count)s Anfragen, denen Sie folgen"
 
 #: froide/foirequestfollower/models.py:143
 #, python-format
@@ -4133,15 +4133,15 @@ msgstr ""
 
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:6
 msgid "Follow request"
-msgstr "Sie interessiert das!"
+msgstr "Anfrage gefolgt!"
 
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:14
 msgid "Unfollow request"
-msgstr "Kein Interesse mehr"
+msgstr "Nicht mehr folgen"
 
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:18
 msgid "You follow this request"
-msgstr "Sie interessiert das!"
+msgstr "Sie folgen der Anfrage!"
 
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:23
 msgid "You get notified of changes."
@@ -4150,7 +4150,7 @@ msgstr "Sie erhalten Benachrichtigungen."
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:30
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:34
 msgid "Follow request?"
-msgstr "Interessiert Sie das?"
+msgstr "Anfrage folgen?"
 
 #: froide/foirequestfollower/templates/foirequestfollower/follow_form.html:39
 msgid "Get notified by email of changes."
@@ -4193,7 +4193,7 @@ msgid ""
 "If you want to UNFOLLOW this request, click this link:\n"
 "%(unfollow_link)s"
 msgstr ""
-"Wenn Sie diese Anfrage NICHT mehr interessiert, klicken Sie diesen Link:\n"
+"Wenn Sie der Anfrage NICHT mehr folgen wollen, klicken Sie diesen Link:\n"
 "%(unfollow_link)s"
 
 #: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:13
@@ -5276,7 +5276,7 @@ msgstr "datenschutzerklaerung"
 #~ msgstr "Anfragen, denen Sie folgen"
 
 #~ msgid "Recent event on your followed requests:"
-#~ msgstr "Kürzliche Änderungen bei Anfragen, die Sie interessieren:"
+#~ msgstr "Kürzliche Änderungen bei Anfragen, denen Sie folgen:"
 
 #~ msgid "Your are following one request, but there are no recent events."
 #~ msgid_plural ""
@@ -5288,14 +5288,14 @@ msgstr "datenschutzerklaerung"
 #~ msgstr "Sie folgen keinen Anfragen."
 
 #~ msgid "Show all the requests that you are following."
-#~ msgstr "Alle Anfragen, die Sie interessieren, anzeigen."
+#~ msgstr "Alle Anfragen anzeigen, denen Sie folgen."
 
 #~ msgid ""
 #~ "You don't follow any requests. Click the follow button on a request page "
 #~ "to follow it."
 #~ msgstr ""
 #~ "Sie erhalten keine Neuigkeiten für Anfragen. Klicken Sie den "
-#~ "\"Interessiert Sie das?\"-Button auf einer Anfrageseite."
+#~ "\"Folgen\"-Button auf einer Anfrageseite."
 
 #~ msgid ""
 #~ "Your account is not active. You need to click on the link we send to your "
