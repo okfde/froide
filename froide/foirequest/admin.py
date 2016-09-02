@@ -124,7 +124,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
         # Display the confirmation page
         return TemplateResponse(request, 'foirequest/admin_mark_same_as.html',
-            context, current_app=self.admin_site.name)
+            context)
     mark_same_as.short_description = _("Mark selected requests as identical to...")
 
     def remove_from_index(self, request, queryset):
@@ -295,7 +295,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
 
         # Display the confirmation page
         return TemplateResponse(request, 'foirequest/admin_redeliver.html',
-            context, current_app=self.admin_site.name)
+            context)
     redeliver.short_description = _("Redeliver to...")
 
 admin.site.register(FoiRequest, FoiRequestAdmin)

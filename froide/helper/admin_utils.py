@@ -49,7 +49,7 @@ class AdminTagAllMixIn(object):
 
         # Display the confirmation page
         return TemplateResponse(request, 'admin_utils/admin_tag_all.html',
-            context, current_app=self.admin_site.name)
+            context)
     tag_all.short_description = _("Add tag to all selected")
 
 

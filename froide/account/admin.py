@@ -134,7 +134,7 @@ class UserAdmin(DjangoUserAdmin):
 
         # Display the confirmation page
         return TemplateResponse(request, 'account/admin_send_mail.html',
-            context, current_app=self.admin_site.name)
+            context)
     send_mail.short_description = _("Send mail to users")
 
     def delete_sessions(self, request, queryset):
