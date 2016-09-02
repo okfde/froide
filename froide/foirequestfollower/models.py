@@ -15,7 +15,7 @@ from froide.foirequest.models import FoiRequest
 
 class FoiRequestFollowerManager(models.Manager):
     def follow(self, request, user, email=None, **kwargs):
-        if user.is_authenticated():
+        if user.is_authenticated:
             following = request.followed_by(user)
             if following:
                 following.delete()

@@ -20,7 +20,7 @@ from .utils import cancel_user
 
 
 def confirm(request, user_id, secret, request_id=None):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are logged in and cannot use a confirmation link.'))
         return redirect('account-show')
@@ -50,7 +50,7 @@ def confirm(request, user_id, secret, request_id=None):
 
 
 def go(request, user_id, secret, url):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(request, messages.INFO,
                 _('You are logged in with a different user account. Please logout first before using this link.'))
@@ -70,7 +70,7 @@ class BaseRequestListView(ListView):
     paginate_by = 20
 
     def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return redirect('account-login')
         return super(BaseRequestListView, self).get(request, *args, **kwargs)
 
@@ -150,7 +150,7 @@ def login(request, base="base.html", context=None,
         if request.GET.get('email'):
             initial = {'email': request.GET.get('email')}
     else:
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return redirect('account-show')
     if request.method == "POST" and status == 200:
         status = 400  # if ok, we are going to redirect anyways
@@ -191,7 +191,7 @@ def login(request, base="base.html", context=None,
 def signup(request):
     next = request.POST.get('next')
     next_url = next if next else '/'
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot signup.'))
         return redirect(next_url)
@@ -217,7 +217,7 @@ def signup(request):
 
 @require_POST
 def change_password(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your password.'))
         return render_403(request)
@@ -235,7 +235,7 @@ def change_password(request):
 def send_reset_password_link(request):
     next = request.POST.get('next')
     next_url = next if next else '/'
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot get a password reset link.'))
         return redirect(next_url)
@@ -276,7 +276,7 @@ def password_reset_confirm(request, uidb64=None, token=None):
 
 
 def account_settings(request, context=None, status=200):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return redirect('account-login')
     if not context:
         context = {}
@@ -291,7 +291,7 @@ def account_settings(request, context=None, status=200):
 
 @require_POST
 def change_user(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your address.'))
         return render_403(request)
@@ -315,7 +315,7 @@ def change_user(request):
 
 
 def change_email(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot change your email address.'))
         return render_403(request)
@@ -333,7 +333,7 @@ def change_email(request):
 
 @require_POST
 def delete_account(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot delete your account.'))
         return render_403(request)
@@ -362,7 +362,7 @@ def new_terms(request, next=None):
         next = request.GET.get('next', '/')
     if not is_safe_url(url=next, host=request.get_host()):
         next = '/'
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return redirect(next)
     if request.user.terms:
         return redirect(next)

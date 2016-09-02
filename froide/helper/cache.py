@@ -7,7 +7,7 @@ def cache_anonymous_page(time, **cache_kwargs):
     """
     def _cache_anonymous_page(func):
         def _cache_page(request, *args, **kwargs):
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 return func(request, *args, **kwargs)
             return cache_page(time, **cache_kwargs)(func)(request, *args, **kwargs)
         return _cache_page

@@ -256,7 +256,7 @@ def show(request, slug, template_name="foirequest/show.html",
         context = {}
 
     active_tab = 'info'
-    if request.user.is_authenticated() and request.user == obj.user:
+    if request.user.is_authenticated and request.user == obj.user:
         if obj.awaits_classification():
             active_tab = 'set-status'
         elif obj.is_overdue() and obj.awaits_response():
@@ -339,7 +339,7 @@ def make_request(request, public_body=None, public_body_id=None):
     rq_form = RequestForm(user=request.user, list_of_laws=all_laws,
                           default_law=default_law, initial=initial)
     user_form = None
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         user_form = NewUserForm()
     return render(request, 'foirequest/request.html', {
         "public_body": public_body,
@@ -394,7 +394,7 @@ def submit_request(request, public_body=None):
 
     context['user_form'] = None
     user = None
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         user_form = NewUserForm(request.POST)
         context['user_form'] = user_form
         if not user_form.is_valid():
@@ -461,7 +461,7 @@ def submit_request(request, public_body=None):
 @require_POST
 def set_public_body(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or request.user != foirequest.user:
+    if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     try:
         public_body_pk = int(request.POST.get('suggestion', ''))
@@ -504,7 +504,7 @@ def suggest_public_body(request, slug):
         # foilaw = public_body.default_law
         public_body = form.public_body_object
         user = None
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             user = request.user
         response = foirequest.suggest_public_body(public_body,
                 form.cleaned_data['reason'], user)
@@ -523,7 +523,7 @@ def suggest_public_body(request, slug):
 @require_POST
 def set_status(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or request.user != foirequest.user:
+    if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():
@@ -540,7 +540,7 @@ def set_status(request, slug):
 @require_POST
 def send_message(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
@@ -557,7 +557,7 @@ def send_message(request, slug):
 @require_POST
 def escalation_message(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
@@ -578,7 +578,7 @@ def escalation_message(request, slug):
 @require_POST
 def make_public(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or request.user != foirequest.user:
+    if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     foirequest.make_public()
     return redirect(foirequest)
@@ -587,7 +587,7 @@ def make_public(request, slug):
 @require_POST
 def set_law(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or request.user != foirequest.user:
+    if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.response_messages():
         return render_400(request)
@@ -605,7 +605,7 @@ def set_law(request, slug):
 @require_POST
 def set_tags(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or not request.user.is_staff:
+    if not request.user.is_authenticated or not request.user.is_staff:
         return render_403(request)
     form = TagFoiRequestForm(foirequest, request.POST)
     if form.is_valid():
@@ -618,7 +618,7 @@ def set_tags(request, slug):
 @require_POST
 def set_summary(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or request.user != foirequest.user:
+    if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.status_is_final():
         return render_400(request)
@@ -635,7 +635,7 @@ def set_summary(request, slug):
 @require_POST
 def add_postal_reply(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated() or request.user != foirequest.user:
+    if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.public_body:
         return render_400(request)
@@ -688,7 +688,7 @@ def add_postal_reply_attachment(request, slug, message_id):
         message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
@@ -727,7 +727,7 @@ def set_message_sender(request, slug, message_id):
                 pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if request.user != foirequest.user:
         return render_403(request)
@@ -745,7 +745,7 @@ def set_message_sender(request, slug, message_id):
 @require_POST
 def mark_not_foi(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff:
         return render_403(request)
@@ -759,7 +759,7 @@ def mark_not_foi(request, slug):
 @require_POST
 def mark_checked(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff:
         return render_403(request)
@@ -773,7 +773,7 @@ def mark_checked(request, slug):
 @require_POST
 def approve_attachment(request, slug, attachment):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff and foirequest.user != request.user:
         return render_403(request)
@@ -789,7 +789,7 @@ def approve_attachment(request, slug, attachment):
 @require_POST
 def approve_message(request, slug, message):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff and foirequest.user != request.user:
         return render_403(request)
@@ -823,7 +823,7 @@ def make_same_request(request, slug, message_id):
         return render_400(request)
     if foirequest.same_as is not None:
         foirequest = foirequest.same_as
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         new_user_form = NewUserForm(request.POST)
         if not new_user_form.is_valid():
             return show(request, slug, context={"new_user_form": new_user_form}, status=400)
@@ -950,7 +950,7 @@ def redact_attachment(request, slug, attachment_id):
 @require_POST
 def extend_deadline(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff:
         return render_403(request)
@@ -973,7 +973,7 @@ def extend_deadline(request, slug):
 @require_POST
 def resend_message(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff:
         return render_403(request)

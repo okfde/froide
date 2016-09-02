@@ -467,7 +467,7 @@ class FoiRequest(models.Model):
         if self.visibility == self.VISIBLE_TO_PUBLIC:
             return True
         if user and self.visibility == self.VISIBLE_TO_REQUESTER and (
-                user.is_authenticated() and
+                user.is_authenticated and
                 self.user == user):
             return True
         if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
@@ -1500,7 +1500,7 @@ class FoiAttachment(models.Model):
         if self.approved:
             return True
         if user and (
-                user.is_authenticated() and
+                user.is_authenticated and
                 foirequest.user == user):
             return True
         if user and (user.is_superuser or user.has_perm('foirequest.see_private')):

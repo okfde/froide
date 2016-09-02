@@ -23,7 +23,7 @@ def throttle(qs, throttle_config, date_param='first_message'):
 
 
 def check_throttle(user, klass):
-    if user.is_authenticated() and not user.trusted():
+    if user.is_authenticated and not user.trusted():
         throttle_settings = settings.FROIDE_CONFIG.get('request_throttle', None)
         qs, date_param = klass.objects.get_throttle_filter(user)
         throttle_kind = throttle(qs, throttle_settings, date_param=date_param)

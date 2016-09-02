@@ -8,7 +8,7 @@ register = template.Library()
 def followrequest(context, foirequest, user, name):
     form = FollowRequestForm(foirequest, user)
     following = False
-    if user.is_authenticated():
+    if user.is_authenticated:
         if foirequest.followed_by(user):
             following = True
     form.following = following

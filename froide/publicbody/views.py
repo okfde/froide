@@ -94,7 +94,7 @@ def show_publicbody(request, slug):
 
 @require_POST
 def confirm(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff and not request.user.is_superuser:
         return render_403(request)
@@ -116,7 +116,7 @@ def confirm(request):
 
 @require_POST
 def import_csv(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return render_403(request)
     if not request.user.is_staff and not request.user.is_superuser:
         return render_403(request)

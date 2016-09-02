@@ -16,7 +16,7 @@ def follow(request, slug):
     form = FollowRequestForm(foirequest, request.user, request.POST)
     if form.is_valid():
         followed = form.save()
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             if followed:
                 messages.add_message(request, messages.SUCCESS,
                         _("You are now following this request."))

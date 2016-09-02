@@ -394,7 +394,7 @@ class AccountTest(TestCase):
         response = self.client.get(test_url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['user'], user)
-        self.assertTrue(response.context['user'].is_authenticated())
+        self.assertTrue(response.context['user'].is_authenticated)
         self.client.logout()
 
         # Try logging in via link: other user is authenticated
@@ -406,7 +406,7 @@ class AccountTest(TestCase):
         response = self.client.get(test_url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['user'], other_user)
-        self.assertTrue(response.context['user'].is_authenticated())
+        self.assertTrue(response.context['user'].is_authenticated)
         self.client.logout()
 
         # Try logging in via link: user not active
@@ -416,7 +416,7 @@ class AccountTest(TestCase):
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 404)
         response = self.client.get(test_url)
-        self.assertTrue(response.context['user'].is_anonymous())
+        self.assertTrue(response.context['user'].is_anonymous)
 
         # Try logging in via link: wrong user id
         autologin = reverse('account-go', kwargs=dict(
@@ -425,7 +425,7 @@ class AccountTest(TestCase):
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 404)
         response = self.client.get(test_url)
-        self.assertTrue(response.context['user'].is_anonymous())
+        self.assertTrue(response.context['user'].is_anonymous)
         user.is_active = True
         user.save()
 
@@ -436,7 +436,7 @@ class AccountTest(TestCase):
         response = self.client.get(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
-        self.assertTrue(response.context['user'].is_anonymous())
+        self.assertTrue(response.context['user'].is_anonymous)
 
     def test_profile_page(self):
         user = User.objects.get(username='sw')

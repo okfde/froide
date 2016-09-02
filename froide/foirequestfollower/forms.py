@@ -15,17 +15,17 @@ class FollowRequestForm(forms.Form):
         self.foirequest = foirequest
         self.user = user
         super(FollowRequestForm, self).__init__(*args, **kwargs)
-        if not self.user.is_authenticated():
+        if not self.user.is_authenticated:
             self.fields["email"] = forms.EmailField(label=_("Your Email address"),
                     widget=forms.TextInput(attrs={"placeholder": _("email address")}))
 
     def clean(self):
         email = self.cleaned_data.get('email', None)
-        if not self.user.is_authenticated() and email is None:
+        if not self.user.is_authenticated and email is None:
             raise forms.ValidationError(_("Missing email address!"))
         if not self.foirequest.is_visible(self.user):
             raise forms.ValidationError(_("You cannot access this request!"))
-        if not self.user.is_authenticated():
+        if not self.user.is_authenticated:
             try:
                 User.objects.get(email=email)
             except User.DoesNotExist:
