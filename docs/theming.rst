@@ -18,13 +18,13 @@ You can add custom URLs to your Froide instance by placing an `urls.py` file in 
 The url patterns will be hooked to the root of the Froide URLs and are the first to be considered for routing.
 An example might look like this::
 
-  from django.conf.urls import patterns, url
+  from django.conf.urls import url
   from django.http import HttpResponseRedirect
 
-  urlpatterns = patterns('froide_theme.theme.views',
+  urlpatterns = [
       url(r'^long-custom-url/', lambda request: HttpResponseRedirect('/url/'),
           name="longurl-redirect")
-  )
+  ]
 
 This is simply a custom redirect for a URL but you can also hook up your own views.
 
