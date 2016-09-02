@@ -1,6 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
+from .views import show_foilaw
 
-urlpatterns = patterns("froide.publicbody.views",
-    url(r"^(?P<slug>[-\w]+)/$", 'show_foilaw', name="publicbody-foilaw-show"),
-)
+urlpatterns = [
+    url(r"^(?P<slug>[-\w]+)/$", show_foilaw, name="publicbody-foilaw-show"),
+]

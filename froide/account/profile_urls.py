@@ -1,5 +1,7 @@
-from django.conf.urls import patterns
+from django.conf.urls import url
 
-urlpatterns = patterns("froide.account.views",
-    (r'^(?P<slug>[-\w\.]+)/$', 'profile', {}, 'account-profile')
-)
+from .views import profile
+
+urlpatterns = [
+    url(r'^(?P<slug>[-\w\.]+)/$', profile, name='account-profile')
+]
