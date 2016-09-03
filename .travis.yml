@@ -1,11 +1,8 @@
 ---
 language: python
 python:
-  - '3.4'
   - '3.5'
   - '2.7'
-services:
-  - elasticsearch
 before_install:
   - psql -c 'create database froide;' -U postgres
   - phantomjs --version
