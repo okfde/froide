@@ -20,13 +20,12 @@ User = get_user_model()
 
 
 class CSVImporter(object):
-    topic_cache = {}
-    default_topic = None
-    jur_cache = {}
-
     def __init__(self):
         self.user = User.objects.order_by('id')[0]
         self.site = Site.objects.get_current()
+        self.topic_cache = {}
+        self.default_topic = None
+        self.jur_cache = {}
 
     def import_from_url(self, url):
         response = requests.get(url)
