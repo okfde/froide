@@ -203,9 +203,9 @@ class PublicBodyTag(TagBase):
 
 
 class TaggedPublicBody(ItemBase):
-    tag = models.ForeignKey(PublicBodyTag,
+    tag = models.ForeignKey(PublicBodyTag, on_delete=models.CASCADE,
                             related_name="publicbodies")
-    content_object = models.ForeignKey('PublicBody')
+    content_object = models.ForeignKey('PublicBody', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _('Tagged Public Body')
@@ -268,11 +268,11 @@ class PublicBody(models.Model):
     _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
             verbose_name=_("Created by"),
             blank=True, null=True, related_name='public_body_creators',
-            on_delete=models.SET_NULL, default=1)
+            on_delete=models.SET_NULL)
     _updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,
             verbose_name=_("Updated by"),
             blank=True, null=True, related_name='public_body_updaters',
-            on_delete=models.SET_NULL, default=1)
+            on_delete=models.SET_NULL)
     created_at = models.DateTimeField(_("Created at"), default=timezone.now)
     updated_at = models.DateTimeField(_("Updated at"), default=timezone.now)
     confirmed = models.BooleanField(_("confirmed"), default=True)

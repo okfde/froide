@@ -51,9 +51,10 @@ class FoiRequestFollowerManager(models.Manager):
 
 @python_2_unicode_compatible
 class FoiRequestFollower(models.Model):
-    request = models.ForeignKey(FoiRequest,
+    request = models.ForeignKey(FoiRequest, on_delete=models.CASCADE,
             verbose_name=_("Freedom of Information Request"))
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, verbose_name=_("User"))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+            verbose_name=_("User"), on_delete=models.CASCADE)
     email = models.CharField(max_length=255, blank=True)
     confirmed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(_("Timestamp of Following"),
