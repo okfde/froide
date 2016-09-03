@@ -203,7 +203,7 @@ class Base(Configuration):
 
     # Language code for this installation. All choices can be found here:
     # http://www.i18nguy.com/unicode/language-identifiers.html
-    LANGUAGE_CODE = values.Value('en-us')
+    LANGUAGE_CODE = values.Value('en')
     LANGUAGES = (
         ('en', gettext('English')),
         ('es', gettext('Spanish')),
