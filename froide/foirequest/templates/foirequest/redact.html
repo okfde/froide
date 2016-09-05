@@ -126,12 +126,12 @@
 {% endblock %}
 
 {% block extra_footer %}
-{% compress js %}
+{# {% compress js %}#}
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/pdf.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/compatibility.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/pdfviewer.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/pdfviewer/redact.js"></script>
-{% endcompress %}
+{# {% endcompress %}#}
 <script type="text/javascript">
   PDFJS.workerSrc = "{% static "js/libs/pdfviewer/pdf.worker.js" %}";
 </script>

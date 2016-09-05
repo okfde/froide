@@ -27,9 +27,9 @@
     Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}";
     Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}";
   </script>
-  {% compress js %}
+  {# {% compress js %}#}
     <script src="{{ STATIC_URL }}js/foirequest.js" type="text/javascript"></script>
-  {% endcompress %}
+  {# {% endcompress %}#}
 
 {% endblock %}
 
