@@ -446,7 +446,7 @@ def submit_request(request, public_body=None):
                 _('Your request has been sent.'))
         if request_form.cleaned_data['redirect_url']:
             redirect_url = request_form.cleaned_data['redirect_url']
-            if is_safe_url(redirect_url):
+            if is_safe_url(redirect_url, allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
                 return redirect(redirect_url)
         return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
     else:

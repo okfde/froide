@@ -304,6 +304,7 @@ class Base(Configuration):
 
     # Change this
     # ALLOWED_HOSTS = ()
+    ALLOWED_REDIRECT_HOSTS = ()
 
     SESSION_COOKIE_AGE = values.IntegerValue(3628800)  # six weeks
     SESSION_COOKIE_HTTPONLY = True
