@@ -321,12 +321,20 @@ def make_request(request, public_body=None, public_body_id=None):
         all_laws = FoiLaw.objects.all()
         public_body_form = PublicBodyForm()
     initial = {
-        "subject": request.GET.get("subject", ""),
+        "subject": request.GET.get('subject', ''),
         "reference": request.GET.get('ref', ''),
         "redirect_url": request.GET.get('redirect', '')
     }
     if 'body' in request.GET:
         initial['body'] = request.GET['body']
+
+    if 'hide_public' in request.GET:
+        initial['hide_public'] = True
+        initial['public'] = False
+
+    if 'hide_similar' in request.GET:
+        initial['hide_similar'] = True
+
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
     public_body_search = request.GET.get("topic", "")
     initial['public_body_search'] = public_body_search
@@ -339,9 +347,18 @@ def make_request(request, public_body=None, public_body_id=None):
 
     rq_form = RequestForm(user=request.user, list_of_laws=all_laws,
                           default_law=default_law, initial=initial)
+
     user_form = None
     if not request.user.is_authenticated:
-        user_form = NewUserForm()
+        initial_user_data = {}
+        if 'email' in request.GET:
+            initial_user_data['user_email'] = request.GET['email']
+        if 'first_name' in request.GET:
+            initial_user_data['first_name'] = request.GET['first_name']
+        if 'last_name' in request.GET:
+            initial_user_data['last_name'] = request.GET['last_name']
+        user_form = NewUserForm(initial=initial_user_data)
+
     return render(request, 'foirequest/request.html', {
         "public_body": public_body,
         "public_body_form": public_body_form,

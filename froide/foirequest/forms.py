@@ -50,6 +50,10 @@ class RequestForm(forms.Form):
             )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
+    hide_public = forms.BooleanField(widget=forms.HiddenInput, initial=False,
+                                     required=False)
+    hide_similar = forms.BooleanField(widget=forms.HiddenInput, initial=False,
+                                     required=False)
 
     def __init__(self, user=None, list_of_laws=(), default_law=None,
                  hide_law_widgets=True, **kwargs):
