@@ -7,6 +7,8 @@ except ImportError:
     from htmlentitydefs import name2codepoint
 
 from django.utils.six import text_type as str, unichr as chr
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
 
@@ -51,6 +53,16 @@ def split_text_by_separator(text, separator=None):
     return split_text
 
 
+def redact_content(content):
+    content = replace_email_name(content, _("<<name and email address>>"))
+    content = replace_email(content, _("<<email address>>"))
+
+    if settings.FROIDE_CONFIG.get('custom_replacements'):
+        content = replace_custom(settings.FROIDE_CONFIG['custom_replacements'],
+            str(_('<<removed>>')), content)
+    return content
+
+
 def replace_word(needle, replacement, content):
     return re.sub('(^|\W)%s($|\W)' % re.escape(needle),
                     '\\1%s\\2' % replacement, content, re.U)
@@ -69,16 +81,16 @@ def replace_email(text, replacement=u""):
     return EMAIL_RE.sub(str(replacement), text)
 
 
-def replace_greetings(content, greetings, replacement):
-    for greeting in greetings:
-        match = greeting.search(content)
+def replace_custom(regex_list, replacement, content):
+    for regex in regex_list:
+        match = regex.search(content)
         if match is not None and len(match.groups()):
             content = content.replace(match.group(1),
                 replacement)
     return content
 
 
-def remove_closing(content, closings):
+def remove_closing(closings, content):
     for closing in closings:
         match = closing.search(content)
         if match is not None:

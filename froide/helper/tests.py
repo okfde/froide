@@ -37,7 +37,7 @@ More stuff here
             rec("Hochachtungsvoll,?"),
             rec('i\. ?A\.'), rec('[iI]m Auftrag')
         ]
-        removed = remove_closing(content, closings)
+        removed = remove_closing(closings, content)
         self.assertNotIn(u'Peter Parker', removed)
 
 

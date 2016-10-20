@@ -30,8 +30,7 @@ from taggit.models import TaggedItemBase
 
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
-from froide.helper.text_utils import (replace_email_name,
-        replace_email, remove_closing, replace_greetings)
+from froide.helper.text_utils import (redact_content, remove_closing, replace_custom)
 
 
 from .foi_mail import send_foi_mail, package_foirequest
@@ -444,7 +443,7 @@ class FoiRequest(models.Model):
         return self.get_absolute_domain_short_url()
 
     def get_description(self):
-        return replace_email(self.description, _("<<email address>>"))
+        return redact_content(self.description)
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))
@@ -1321,9 +1320,7 @@ class FoiMessage(models.Model):
         content = self.subject
         if self.request.user:
             content = self.request.user.apply_message_redaction(content)
-
-        content = replace_email_name(content, _("<<name and email address>>"))
-        content = replace_email(content, _("<<email address>>"))
+        content = redact_content(content)
         return content[:255]
 
     def get_content(self, user=None):
@@ -1335,22 +1332,20 @@ class FoiMessage(models.Model):
     def redact_plaintext(self):
         content = self.plaintext
 
-        content = replace_email_name(content, _("<<name and email address>>"))
-        content = replace_email(content, _("<<email address>>"))
+        content = redact_content(content)
 
         greeting_replacement = str(_("<< Greeting >>"))
 
         if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
             if self.is_response:
                 if settings.FROIDE_CONFIG.get('closings'):
-                    content = remove_closing(content,
-                                settings.FROIDE_CONFIG['closings'])
+                    content = remove_closing(settings.FROIDE_CONFIG['closings'],
+                                             content)
 
             else:
                 if settings.FROIDE_CONFIG.get('greetings'):
-                    content = replace_greetings(content,
-                            settings.FROIDE_CONFIG['greetings'],
-                            greeting_replacement)
+                    content = replace_custom(settings.FROIDE_CONFIG['greetings'],
+                            greeting_replacement, content)
 
         if self.request.user:
             content = self.request.user.apply_message_redaction(content)

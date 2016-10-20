@@ -18,7 +18,7 @@ from django.utils.crypto import constant_time_compare
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import AbstractUser, UserManager
 
-from froide.helper.text_utils import replace_greetings, replace_word
+from froide.helper.text_utils import replace_custom, replace_word
 from froide.helper.csv_utils import export_csv, get_dict
 
 user_activated_signal = dispatch.Signal(providing_args=[])
@@ -102,9 +102,8 @@ class User(AbstractUser):
         name_replacement = replacements.get('name',
                 str(_("<< Name removed >>")))
 
-        content = replace_greetings(content,
-                settings.FROIDE_CONFIG['greetings'],
-                name_replacement)
+        content = replace_custom(settings.FROIDE_CONFIG['greetings'],
+                name_replacement, content)
 
         content = replace_word(self.last_name, name_replacement, content)
         content = replace_word(self.first_name, name_replacement, content)
