@@ -149,7 +149,14 @@ class FoiLaw(models.Model):
     @classmethod
     def get_default_law(cls, pb=None):
         if pb:
-            return cls.objects.filter(jurisdiction=pb.jurisdiction).order_by('-meta')[0]
+            try:
+                return pb.laws.all().order_by('-meta')[0]
+            except IndexError:
+                pass
+            try:
+                return cls.objects.filter(jurisdiction=pb.jurisdiction).order_by('-meta')[0]
+            except IndexError:
+                pass
         try:
             return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
         except FoiLaw.DoesNotExist:
