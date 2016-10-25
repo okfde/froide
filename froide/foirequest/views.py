@@ -451,6 +451,12 @@ def submit_request(request, public_body=None):
     )
     foi_request = FoiRequest.from_request_form(**kwargs)
 
+    special_redirect = None
+    if request_form.cleaned_data['redirect_url']:
+        redirect_url = request_form.cleaned_data['redirect_url']
+        if is_safe_url(redirect_url, allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
+            special_redirect = redirect_url
+
     if user.is_active:
         if sent_to_pb == 0:
             messages.add_message(request, messages.INFO,
@@ -458,22 +464,18 @@ def submit_request(request, public_body=None):
         elif sent_to_pb == 2:
             messages.add_message(request, messages.INFO,
                 _('Your request will be sent as soon as the newly created Public Body was confirmed by an administrator.'))
-
         else:
             messages.add_message(request, messages.INFO,
                 _('Your request has been sent.'))
-        if request_form.cleaned_data['redirect_url']:
-            redirect_url = request_form.cleaned_data['redirect_url']
-            if is_safe_url(redirect_url, allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
-                return redirect(redirect_url)
-        return redirect(u'%s%s' % (foi_request.get_absolute_url(), _('?request-made')))
+        req_url = u'%s%s' % (foi_request.get_absolute_url(), _('?request-made'))
+        return redirect(special_redirect or req_url)
     else:
         AccountManager(user).send_confirmation_mail(request_id=foi_request.pk,
                 password=password)
         messages.add_message(request, messages.INFO,
                 _('Please check your inbox for mail from us to confirm your mail address.'))
-        # user cannot access the request yet!
-        return redirect("/")
+        # user cannot access the request yet, redirect to custom URL or homepage
+        return redirect(special_redirect or "/")
 
 
 @require_POST
