@@ -1,4 +1,5 @@
 {% load i18n %}{% autoescape off %}{% blocktrans with from=message.real_sender %}From: {{ from }}{% endblocktrans %}
+{% blocktrans with to=message.get_text_recipient %}To: {{ to }}{% endblocktrans %}
 {% if message.is_postal %}{% blocktrans with date=message.timestamp|date:"DATE_FORMAT" %}Date: {{ date }}
 Via: Postal Mail{% endblocktrans %}{% else %}{% blocktrans with date=message.timestamp|date:"DATETIME_FORMAT" %}Date: {{ date }}
 Via: Email{% endblocktrans %}{% endif %}

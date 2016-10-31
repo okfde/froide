@@ -1229,9 +1229,15 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import MessagePublicBodySenderForm
         return MessagePublicBodySenderForm(self)
 
+    def get_text_recipient(self):
+        alternative = self.recipient
+        if self.recipient_public_body:
+            alternative = self.recipient_public_body.name
+        return u'{} <{}>'.format(self.recipient or alternative, self.recipient_email)
+
     def get_recipient(self):
         if self.recipient_public_body:
-            return mark_safe('<a href="%(url)s">%(name)s</a>' % {
+            return mark_safe(u'<a href="%(url)s">%(name)s</a>' % {
                 "url": self.recipient_public_body.get_absolute_url(),
                 "name": escape(self.recipient_public_body.name)})
         else:
