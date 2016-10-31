@@ -5,7 +5,9 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.flatpages.views import flatpage
-from django.contrib.sitemaps import Sitemap
+from django.contrib.flatpages.sitemaps import FlatPageSitemap
+from django.contrib.sitemaps import views as sitemaps_views, Sitemap
+
 from django.utils.translation import ugettext as _
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
@@ -46,13 +48,26 @@ sitemaps = {
     'foilaw': FoiLawSitemap,
     'jurisdiction': JurisdictionSitemap,
     'foirequest': FoiRequestSitemap,
-    'content': StaticViewSitemap
+    'content': StaticViewSitemap,
+    'pages': FlatPageSitemap
 }
+
+
+PROTOCOL = settings.SITE_URL.split(':')[0]
+
+for klass in sitemaps.values():
+    klass.protocol = PROTOCOL
+
+urlpatterns = [
+    url(r'^sitemap\.xml$', sitemaps_views.index,
+        {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemaps'}),
+    url(r'^sitemap-(?P<section>.+)\.xml$', sitemaps_views.sitemap,
+        {'sitemaps': sitemaps}, name='sitemaps')
+]
 
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
-urlpatterns = []
 
 if settings.FROIDE_THEME:
     urlpatterns += [
