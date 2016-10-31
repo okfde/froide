@@ -1230,10 +1230,20 @@ class FoiMessage(models.Model):
         return MessagePublicBodySenderForm(self)
 
     def get_text_recipient(self):
-        alternative = self.recipient
-        if self.recipient_public_body:
-            alternative = self.recipient_public_body.name
-        return u'{} <{}>'.format(self.recipient or alternative, self.recipient_email)
+        if not self.is_response:
+            alternative = self.recipient
+            if self.recipient_public_body:
+                alternative = self.recipient_public_body.name
+            if self.is_postal:
+                return _(u'{} (via post)').format(self.recipient or alternative)
+            return make_address(self.recipient_email,
+                    self.recipient or alternative)
+
+        recipient = self.recipient or self.request.user.get_full_name()
+        if self.is_postal:
+            return _(u'{} (via post)').format(recipient)
+        return make_address(self.recipient_email or self.request.secret_address,
+                            recipient)
 
     def get_recipient(self):
         if self.recipient_public_body:
