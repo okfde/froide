@@ -152,8 +152,11 @@ class RequestForm(forms.Form):
 
 
 class MessagePublicBodySenderForm(forms.Form):
-    sender = forms.IntegerField(label=_("Sending Public Body"),
-            widget=PublicBodySelect, min_value=1)
+    sender = forms.ModelChoiceField(
+        label=_("Sending Public Body"),
+        queryset=PublicBody.objects.all(),
+        widget=PublicBodySelect
+    )
 
     def __init__(self, message, *args, **kwargs):
         if "initial" not in kwargs:
@@ -165,12 +168,8 @@ class MessagePublicBodySenderForm(forms.Form):
         super(MessagePublicBodySenderForm, self).__init__(*args, **kwargs)
 
     def clean_sender(self):
-        pk = self.cleaned_data['sender']
-        try:
-            self._public_body = PublicBody.objects.get(id=pk)
-        except PublicBody.DoesNotExist:
-            raise forms.ValidationError(_("Invalid value"))
-        return pk
+        self._public_body = self.cleaned_data['sender']
+        return self._public_body.pk
 
     def save(self):
         self.message.sender_public_body = self._public_body
@@ -228,24 +227,20 @@ class SendMessageForm(forms.Form):
 
 
 class MakePublicBodySuggestionForm(forms.Form):
-    public_body = forms.IntegerField(widget=PublicBodySelect)
+    public_body = forms.ModelChoiceField(
+        label=_('Public body'),
+        queryset=PublicBody.objects.all(),
+        widget=PublicBodySelect
+    )
     reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
         widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}),
         required=False)
 
     def clean_public_body(self):
-        pb = self.cleaned_data['public_body']
-        try:
-            pb_pk = int(pb)
-        except ValueError:
-            raise forms.ValidationError(_("Invalid value"))
-        try:
-            public_body = PublicBody.objects.get(pk=pb_pk)
-        except PublicBody.DoesNotExist:
-            raise forms.ValidationError(_("Invalid value"))
+        public_body = self.cleaned_data['public_body']
         self.public_body_object = public_body
         self.foi_law_object = public_body.default_law
-        return pb
+        return public_body
 
 
 class EscalationMessageForm(forms.Form):
