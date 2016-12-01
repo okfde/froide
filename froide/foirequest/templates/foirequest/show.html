@@ -123,6 +123,11 @@ data-spy="scroll" data-target="#message-nav-container"
               {% blocktrans %}Got Mail?{% endblocktrans %}
             </a>
           </li>
+          <li{% if active_tab == 'add-postal-message' %} class="active"{% endif %}>
+            <a href="#add-postal-message" data-toggle="tab">
+              {% blocktrans %}Sent Mail?{% endblocktrans %}
+            </a>
+          </li>
           <li{% if active_tab == "write-message" %} class="active"{% endif %}>
             <a href="#write-message" data-toggle="tab">
               {% blocktrans %}Send a message{% endblocktrans %}
@@ -268,6 +273,27 @@ data-spy="scroll" data-target="#message-nav-container"
             </form>
           </div>
           {# End Postal Reply #}
+
+          {# Postal Send #}
+          <div class="tab-pane hidden-print{% if active_tab == 'add-postal-message' %} active{% endif %}" id="add-postal-message">
+            <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_message' slug=object.slug %}#add-postal-message" enctype="multipart/form-data">{% csrf_token %}
+              <h4>{% blocktrans %}Upload letters that you send via postal mail{% endblocktrans %}</h4>
+              {% if postal_message_form %}
+                {% form postal_message_form using "bootstrap/horizontal.html" %}
+              {% else %}
+                {% with postal_message_form=object.get_postal_message_form %}
+                  {% form postal_message_form using "bootstrap/horizontal.html" %}
+                {% endwith %}
+              {% endif %}
+              <div class="row">
+                <div class="col-lg-offset-4 col-lg-8">
+                  <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Message{% endblocktrans %}</button>
+                  <span class="help-block">{% blocktrans %}You can attach more documents to your letter later.{% endblocktrans %}</span>
+                </div>
+              </div>
+            </form>
+          </div>
+          {# End Postal Send #}
 
           {# Reply #}
           <div class="tab-pane hidden-print{% if active_tab == 'write-message' %} active{% endif %}" id="write-message">

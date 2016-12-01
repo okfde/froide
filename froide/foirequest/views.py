@@ -35,7 +35,7 @@ from froide.redaction.utils import convert_to_pdf
 from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
         SendMessageForm, FoiRequestStatusForm, MakePublicBodySuggestionForm,
-        PostalReplyForm, PostalSendForm, PostalAttachmentForm,
+        PostalReplyForm, PostalMessageForm, PostalAttachmentForm,
         MessagePublicBodySenderForm, EscalationMessageForm)
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from .tasks import process_mail
@@ -265,6 +265,8 @@ def show(request, slug, template_name="foirequest/show.html",
 
         if 'postal_reply_form' in context:
             active_tab = 'add-postal-reply'
+        elif 'postal_message_form' in context:
+            active_tab = 'add-postal-message'
         elif 'status_form' in context:
             active_tab = 'set-status'
         elif 'send_message_form' in context:
@@ -653,31 +655,32 @@ def set_summary(request, slug):
 
 
 @require_POST
-def add_postal_reply(request, slug):
+def add_postal_reply(request, slug, form_class=PostalReplyForm,
+            success_message=_('A postal reply was successfully added!'),
+            error_message=_('There were errors with your form submission!'),
+            form_key='"postal_reply_form"'):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.public_body:
         return render_400(request)
-    form = PostalReplyForm(request.POST, request.FILES, foirequest=foirequest)
+    form = form_class(request.POST, request.FILES, foirequest=foirequest)
     if form.is_valid():
         message = form.save()
-        messages.add_message(request, messages.SUCCESS,
-                _('A postal reply was successfully added!'))
+        messages.add_message(request, messages.SUCCESS, success_message)
         return redirect(message)
-    messages.add_message(request, messages.ERROR,
-            _('There were errors with your form submission!'))
-    return show(request, slug, context={"postal_reply_form": form}, status=400)
+    messages.add_message(request, messages.ERROR, error_message)
+    return show(request, slug, context={form_key: form}, status=400)
 
 
 def add_postal_message(request, slug):
     return add_postal_reply(
         request,
         slug,
-        form=PostalSendForm,
-        success_message=_('A postal reply was successfully added!'),
+        form_class=PostalMessageForm,
+        success_message=_('A sent letter was successfully added!'),
         error_message=_('There were errors with your form submission!'),
-        form_key='postal_send_form'
+        form_key='postal_message_form'
     )
 
 

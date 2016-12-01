@@ -466,7 +466,7 @@ class PostalBaseForm(forms.Form):
                 "placeholder": _("Subject")}))
     text = forms.CharField(label=_("Letter"),
             widget=forms.Textarea(attrs={"placeholder":
-                _("Letter text you have received"),
+                _("Letter text"),
                 "class": "form-control"
             }),
             required=False,
