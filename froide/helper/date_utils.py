@@ -23,6 +23,9 @@ def calculate_month_range_de(date, months=1):
     """ Should calculate after German BGB Law § 130 and § 188"""
     assert months < 12, "Can't calculate month_range > 12"
 
+    if not isinstance(date, datetime):
+        date = datetime(date.year, date.month, date.day, 23, 59, 59)
+
     if date.hour >= 22:  # After 22h next working day is receival
         tempdate = advance_after_holiday(date + timedelta(days=1))
     else:
