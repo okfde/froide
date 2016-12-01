@@ -160,6 +160,7 @@ data-spy="scroll" data-target="#message-nav-container"
             </a>
           </li>
         {% endif %}
+        {% block request_action_menu_footer %}{% endblock %}
       </ul>
 
         </div>
@@ -338,6 +339,8 @@ data-spy="scroll" data-target="#message-nav-container"
             </form>
           </div>
         {% endif %}
+
+        {% block request_action_pane_footer %}{% endblock %}
 
         <div class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
       {% endif %}{# endif: object.user == user #}
