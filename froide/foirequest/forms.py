@@ -1,12 +1,10 @@
 import json
 import datetime
-import magic
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
-from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils import timezone
 
@@ -18,6 +16,7 @@ from froide.helper.widgets import PriceInput
 from froide.helper.forms import TagObjectForm
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
+from .validators import validate_upload_document
 from .utils import check_throttle
 
 
@@ -425,26 +424,6 @@ class ConcreteLawForm(forms.Form):
                     name=self.foi_law.name)
 
 
-class PostalScanMixin(object):
-    def clean_scan(self):
-        scan = self.cleaned_data.get("scan")
-        if scan:
-            scan.seek(0)
-            content_type = magic.from_buffer(scan.read(1024), mime=True)
-            content_type = force_text(content_type)
-            scan.seek(0)
-            if content_type:
-                scan.content_type = content_type
-            if content_type not in FoiAttachment.POSTAL_CONTENT_TYPES:
-                raise forms.ValidationError(
-                    _('The scanned letter must be either PDF, JPG or PNG,'
-                        ' but was detected as %(content_type)s!') % {
-                            'content_type': content_type
-                        }
-                )
-        return scan
-
-
 class PostalBaseForm(forms.Form):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>."))
     public_body = forms.ModelChoiceField(
@@ -472,6 +451,7 @@ class PostalBaseForm(forms.Form):
             required=False,
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
     scan = forms.FileField(label=_("Scanned Letter"), required=False,
+            validators=[validate_upload_document],
             help_text=scan_help_text)
     FIELD_ORDER = ['public_body', 'date', 'subject', 'text', 'scan']
 
@@ -534,7 +514,7 @@ class PostalBaseForm(forms.Form):
         return message
 
 
-class PostalReplyForm(PostalBaseForm, PostalScanMixin):
+class PostalReplyForm(PostalBaseForm):
     FIELD_ORDER = ['public_body', 'sender', 'date', 'subject', 'text', 'scan',
                    'not_publishable']
     PUBLIC_BODY_LABEL = _('Sender public body')
@@ -555,7 +535,7 @@ class PostalReplyForm(PostalBaseForm, PostalScanMixin):
         return message
 
 
-class PostalSendForm(PostalBaseForm, PostalScanMixin):
+class PostalMessageForm(PostalBaseForm):
     FIELD_ORDER = ['public_body', 'recipient', 'date', 'subject', 'text',
                    'scan']
     PUBLIC_BODY_LABEL = _('Receiving public body')
@@ -574,9 +554,10 @@ class PostalSendForm(PostalBaseForm, PostalScanMixin):
         return message
 
 
-class PostalAttachmentForm(forms.Form, PostalScanMixin):
+class PostalAttachmentForm(forms.Form):
     scan = forms.FileField(label=_("Scanned Document"),
-            help_text=PostalBaseForm.scan_help_text)
+            help_text=PostalBaseForm.scan_help_text,
+            validators=[validate_upload_document])
 
 
 class TagFoiRequestForm(TagObjectForm):
