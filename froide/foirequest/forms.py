@@ -1,9 +1,11 @@
 import json
+import datetime
 import magic
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.template.defaultfilters import slugify
 from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils import timezone
@@ -443,8 +445,13 @@ class PostalScanMixin(object):
         return scan
 
 
-class PostalReplyForm(forms.Form, PostalScanMixin):
+class PostalBaseForm(forms.Form):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>."))
+    public_body = forms.ModelChoiceField(
+        label=_('Public body'),
+        queryset=PublicBody.objects.all(),
+        widget=PublicBodySelect
+    )
     date = forms.DateField(
             widget=forms.TextInput(attrs={
                 "class": "form-control",
@@ -453,9 +460,6 @@ class PostalReplyForm(forms.Form, PostalScanMixin):
             label=_("Send Date"),
             help_text=_("Please give the date the reply was sent."),
             localize=True)
-    sender = forms.CharField(label=_("Sender Name"),
-            widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Sender Name")}), required=True)
     subject = forms.CharField(label=_("Subject"), required=False,
             max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control",
@@ -469,9 +473,14 @@ class PostalReplyForm(forms.Form, PostalScanMixin):
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
     scan = forms.FileField(label=_("Scanned Letter"), required=False,
             help_text=scan_help_text)
-    not_publishable = forms.BooleanField(label=_("You are not allowed to publish some received documents"),
-            initial=False, required=False,
-            help_text=_('If the reply explicitly states that you are not allowed to publish some of the documents (e.g. due to copyright), check this.'))
+    FIELD_ORDER = ['public_body', 'date', 'subject', 'text', 'scan']
+
+    def __init__(self, *args, **kwargs):
+        self.foirequest = kwargs.pop('foirequest')
+        super(PostalBaseForm, self).__init__(*args, **kwargs)
+        self.fields['public_body'].label = self.PUBLIC_BODY_LABEL
+        self.fields['public_body'].initial = self.foirequest.public_body
+        self.order_fields(self.FIELD_ORDER)
 
     def clean_date(self):
         date = self.cleaned_data['date']
@@ -488,10 +497,86 @@ class PostalReplyForm(forms.Form, PostalScanMixin):
             raise forms.ValidationError(_("You need to provide either the letter text or a scanned document."))
         return cleaned_data
 
+    def save(self):
+        foirequest = self.foirequest
+        message = FoiMessage(
+            request=foirequest,
+            is_postal=True,
+        )
+        # TODO: Check if timezone support is correct
+        date = datetime.datetime.combine(self.cleaned_data['date'], datetime.time())
+        message.timestamp = timezone.get_current_timezone().localize(date)
+        message.subject = self.cleaned_data.get('subject', '')
+        message.subject_redacted = message.redact_subject()[:250]
+        message.plaintext = ""
+        if self.cleaned_data.get('text'):
+            message.plaintext = self.cleaned_data.get('text')
+        message.plaintext_redacted = message.get_content()
+        message = self.contribute_to_message(message)
+        message.save()
+        foirequest.last_message = message.timestamp
+        foirequest.status = 'awaiting_classification'
+        foirequest.save()
+        foirequest.add_postal_reply.send(sender=foirequest)
+
+        if self.cleaned_data.get('scan'):
+            scan = self.cleaned_data['scan']
+            scan_name = scan.name.rsplit(".", 1)
+            scan_name = ".".join([slugify(n) for n in scan_name])
+            att = FoiAttachment(
+                    belongs_to=message,
+                    name=scan_name,
+                    size=scan.size,
+                    filetype=scan.content_type)
+            att.file.save(scan_name, scan)
+            att.approved = False
+            att.save()
+        return message
+
+
+class PostalReplyForm(PostalBaseForm, PostalScanMixin):
+    FIELD_ORDER = ['public_body', 'sender', 'date', 'subject', 'text', 'scan',
+                   'not_publishable']
+    PUBLIC_BODY_LABEL = _('Sender public body')
+
+    sender = forms.CharField(label=_("Sender name"),
+            widget=forms.TextInput(attrs={"class": "form-control",
+                "placeholder": _("Sender Name")}), required=True)
+
+    not_publishable = forms.BooleanField(label=_("You are not allowed to publish some received documents"),
+            initial=False, required=False,
+            help_text=_('If the reply explicitly states that you are not allowed to publish some of the documents (e.g. due to copyright), check this.'))
+
+    def contribute_to_message(self, message):
+        message.is_response = True
+        message.sender_name = self.cleaned_data['sender']
+        message.sender_public_body = message.request.public_body
+        message.not_publishable = self.cleaned_data['not_publishable']
+        return message
+
+
+class PostalSendForm(PostalBaseForm, PostalScanMixin):
+    FIELD_ORDER = ['public_body', 'recipient', 'date', 'subject', 'text',
+                   'scan']
+    PUBLIC_BODY_LABEL = _('Receiving public body')
+
+    recipient = forms.CharField(label=_("Recipient Name"),
+            widget=forms.TextInput(attrs={"class": "form-control",
+                "placeholder": _("Recipient Name")}), required=True)
+
+    def contribute_to_message(self, message):
+        message.is_response = False
+        message.sender_user = message.request.user
+
+        message.recipient = self.cleaned_data['recipient']
+        message.recipient_public_body = self.cleaned_data['public_body']
+
+        return message
+
 
 class PostalAttachmentForm(forms.Form, PostalScanMixin):
     scan = forms.FileField(label=_("Scanned Document"),
-            help_text=PostalReplyForm.scan_help_text)
+            help_text=PostalBaseForm.scan_help_text)
 
 
 class TagFoiRequestForm(TagObjectForm):

@@ -35,8 +35,8 @@ from froide.redaction.utils import convert_to_pdf
 from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
         SendMessageForm, FoiRequestStatusForm, MakePublicBodySuggestionForm,
-        PostalReplyForm, PostalAttachmentForm, MessagePublicBodySenderForm,
-        EscalationMessageForm)
+        PostalReplyForm, PostalSendForm, PostalAttachmentForm,
+        MessagePublicBodySenderForm, EscalationMessageForm)
 from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from .tasks import process_mail
 from .foi_mail import package_foirequest
@@ -659,46 +659,26 @@ def add_postal_reply(request, slug):
         return render_403(request)
     if not foirequest.public_body:
         return render_400(request)
-    form = PostalReplyForm(request.POST, request.FILES)
+    form = PostalReplyForm(request.POST, request.FILES, foirequest=foirequest)
     if form.is_valid():
-        message = FoiMessage(request=foirequest,
-                is_response=True,
-                is_postal=True,
-                sender_name=form.cleaned_data['sender'],
-                sender_public_body=foirequest.public_body)
-        # TODO: Check if timezone support is correct
-        date = datetime.datetime.combine(form.cleaned_data['date'], datetime.time())
-        message.timestamp = timezone.get_current_timezone().localize(date)
-        message.subject = form.cleaned_data.get('subject', '')
-        message.subject_redacted = message.redact_subject()[:250]
-        message.plaintext = ""
-        if form.cleaned_data.get('text'):
-            message.plaintext = form.cleaned_data.get('text')
-        message.plaintext_redacted = message.get_content()
-        message.not_publishable = form.cleaned_data['not_publishable']
-        message.save()
-        foirequest.last_message = message.timestamp
-        foirequest.status = 'awaiting_classification'
-        foirequest.save()
-        foirequest.add_postal_reply.send(sender=foirequest)
-
-        if form.cleaned_data.get('scan'):
-            scan = request.FILES['scan']
-            scan_name = scan.name.rsplit(".", 1)
-            scan_name = ".".join([slugify(n) for n in scan_name])
-            att = FoiAttachment(belongs_to=message,
-                    name=scan_name,
-                    size=scan.size,
-                    filetype=scan.content_type)
-            att.file.save(scan_name, scan)
-            att.approved = False
-            att.save()
+        message = form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('A postal reply was successfully added!'))
         return redirect(message)
     messages.add_message(request, messages.ERROR,
             _('There were errors with your form submission!'))
     return show(request, slug, context={"postal_reply_form": form}, status=400)
+
+
+def add_postal_message(request, slug):
+    return add_postal_reply(
+        request,
+        slug,
+        form=PostalSendForm,
+        success_message=_('A postal reply was successfully added!'),
+        error_message=_('There were errors with your form submission!'),
+        form_key='postal_send_form'
+    )
 
 
 @require_POST

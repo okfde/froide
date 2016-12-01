@@ -590,6 +590,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
         post['date'] = "2011-01-02"
+        post['public_body'] = str(pb.pk)
         post['scan'] = f
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
