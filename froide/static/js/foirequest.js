@@ -147,7 +147,10 @@ Froide.app = Froide.app || {};
         };
 
         var htmlEscape = function(s) {
-          return $('<div/>').text(s.toString()).html();
+          if (!s) {
+            return '';
+          }
+          return $('<div/>').text(s).html();
         };
 
         return function(){
