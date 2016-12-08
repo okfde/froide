@@ -4887,7 +4887,7 @@ msgstr "Connectar /<br/>Registar"
 msgid ""
 "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
 "\">the Open Knowledge Foundation</a>. If you want to support Froide, please "
-"visit the <a href=\"https://github.com/stefanw/froide\">repository on "
+"visit the <a href=\"https://github.com/okfde/froide\">repository on "
 "GitHub</a>."
 msgstr ""
 

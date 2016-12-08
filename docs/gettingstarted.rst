@@ -21,7 +21,7 @@ Setup a virtual environment for development with `virtualenv`like so::
 
 Get the source code with Git from the GitHub repository::
 
-    git clone git://github.com/stefanw/froide.git
+    git clone git://github.com/okfde/froide.git
     cd froide
 
 Install the `libmagic` library, which is a system requirement. See `https://github.com/ahupp/python-magic#dependencies <https://github.com/ahupp/python-magic#dependencies>`_ for details.

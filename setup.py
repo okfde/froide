@@ -25,7 +25,7 @@ def find_version(*file_paths):
 setup(
     name="froide",
     version=find_version("froide", "__init__.py"),
-    url='https://github.com/stefanw/froide',
+    url='https://github.com/okfde/froide',
     license='MIT',
     description="German Freedom of Information Portal",
     long_description=read('README.md'),
