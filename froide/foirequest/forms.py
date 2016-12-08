@@ -287,7 +287,9 @@ class PublicBodySuggestionsForm(forms.Form):
                     "name": escape(s.public_body.name),
                     "url": s.public_body.get_absolute_url(),
                     "link": _("More Info"),
-                    "reason": _("Reason for this suggestion: %(reason)s") % {"reason": s.reason}
+                    "reason": _("Reason for this suggestion: %(reason)s") % {
+                        "reason": escape(s.reason)
+                    }
                 })) for s in queryset))
 
 
