@@ -146,6 +146,10 @@ Froide.app = Froide.app || {};
             return pb;
         };
 
+        var htmlEscape = function(s) {
+          return $('<div/>').text(s.toString()).html();
+        };
+
         return function(){
             var text, result, inputId, i, warnings = [],
                 reviewWarnings = $("#review-warnings");
@@ -184,14 +188,14 @@ Froide.app = Froide.app || {};
             $("#review-subject").text($("#id_subject").val());
             text = '';
             if (fullText) {
-                text += '<div class="highlight">' + $("#id_body").val() + "</div>";
+                text += '<div class="highlight">' + htmlEscape($("#id_body").val()) + "</div>";
             } else {
                 text += resolve_forms($('#letter_start').clone());
-                text += '\n\n<div class="highlight">' + $("#id_body").val() + "</div>\n\n";
-                text += $('#letter_end').text();
+                text += '\n\n<div class="highlight">' + htmlEscape($("#id_body").val()) + "</div>\n\n";
+                text += htmlEscape($('#letter_end').text());
             }
-            text += "\n" + getFullName();
-            text += "\n\n" + getAddress();
+            text += "\n" + htmlEscape(getFullName());
+            text += "\n\n" + htmlEscape(getAddress());
             $("#review-text").html(text);
         };
     }());
