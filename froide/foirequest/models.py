@@ -684,7 +684,7 @@ class FoiRequest(models.Model):
                     name=attachment.name,
                     size=attachment.size,
                     filetype=attachment.content_type)
-            if att.name is None:
+            if not att.name:
                 att.name = _("attached_file_%d") % i
             att.name = self.user.apply_message_redaction(att.name,
                 {
@@ -1493,6 +1493,8 @@ class FoiAttachment(models.Model):
 
     def get_absolute_url(self):
         if settings.USE_X_ACCEL_REDIRECT:
+            if not self.name:
+                return ''
             return '%s%s' % (settings.SITE_URL,
                 reverse('foirequest-auth_message_attachment',
                     kwargs={
