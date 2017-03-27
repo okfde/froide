@@ -36,7 +36,6 @@ setup(
         'Django',
         'Markdown',
         'celery',
-        'django-celery',
         'django-haystack',
         'django-taggit',
         'pytz',
