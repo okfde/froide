@@ -426,7 +426,38 @@ class ConcreteLawForm(forms.Form):
                     name=self.foi_law.name)
 
 
-class PostalBaseForm(forms.Form):
+class AttachmentSaverMixin(object):
+    def make_filename(self, name):
+        name = name.rsplit(".", 1)
+        return ".".join([slugify(n) for n in name])
+
+    def save_attachments(self, files, message, replace=False):
+        added = 0
+        updated = 0
+
+        for file in files:
+            filename = self.make_filename(file.name)
+            att = None
+            if replace:
+                try:
+                    att = FoiAttachment.objects.get(belongs_to=message,
+                                                    name=filename)
+                    updated += 1
+                except FoiAttachment.DoesNotExist:
+                    pass
+            if att is None:
+                added += 1
+                att = FoiAttachment(belongs_to=message, name=filename)
+            att.size = file.size
+            att.filetype = file.content_type
+            att.file.save(filename, file)
+            att.approved = False
+            att.save()
+
+        return added, updated
+
+
+class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>."))
     public_body = forms.ModelChoiceField(
         label=_('Public body'),
@@ -452,10 +483,10 @@ class PostalBaseForm(forms.Form):
             }),
             required=False,
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
-    scan = forms.FileField(label=_("Scanned Letter"), required=False,
+    files = forms.FileField(label=_("Scanned Letter"), required=False,
             validators=[validate_upload_document],
-            help_text=scan_help_text)
-    FIELD_ORDER = ['public_body', 'date', 'subject', 'text', 'scan']
+            help_text=scan_help_text, widget=forms.FileInput(attrs={'multiple': True}))
+    FIELD_ORDER = ['public_body', 'date', 'subject', 'text', 'files']
 
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop('foirequest')
@@ -471,11 +502,28 @@ class PostalBaseForm(forms.Form):
             raise forms.ValidationError(_("Your reply date is in the future, that is not possible."))
         return date
 
+    def clean_files(self):
+        if 'files' not in self.files:
+            return self.cleaned_data['files']
+        files = self.files.getlist('files')
+        names = set()
+        for file in files:
+            validate_upload_document(file)
+            name = self.make_filename(file.name)
+            if name in names:
+                # FIXME: dont make this a requirement
+                raise forms.ValidationError(_('Upload files must have distinct names'))
+            names.add(name)
+        return self.cleaned_data['files']
+
     def clean(self):
         cleaned_data = self.cleaned_data
         text = cleaned_data.get("text")
-        scan = cleaned_data.get("scan")
-        if not (text or scan):
+        if 'files' in self.files:
+            files = self.files.getlist('files')
+        else:
+            files = None
+        if not (text or files):
             raise forms.ValidationError(_("You need to provide either the letter text or a scanned document."))
         return cleaned_data
 
@@ -501,23 +549,13 @@ class PostalBaseForm(forms.Form):
         foirequest.save()
         foirequest.add_postal_reply.send(sender=foirequest)
 
-        if self.cleaned_data.get('scan'):
-            scan = self.cleaned_data['scan']
-            scan_name = scan.name.rsplit(".", 1)
-            scan_name = ".".join([slugify(n) for n in scan_name])
-            att = FoiAttachment(
-                    belongs_to=message,
-                    name=scan_name,
-                    size=scan.size,
-                    filetype=scan.content_type)
-            att.file.save(scan_name, scan)
-            att.approved = False
-            att.save()
+        if self.cleaned_data.get('files'):
+            self.save_attachments(self.files.getlist('files'), message)
         return message
 
 
 class PostalReplyForm(PostalBaseForm):
-    FIELD_ORDER = ['public_body', 'sender', 'date', 'subject', 'text', 'scan',
+    FIELD_ORDER = ['public_body', 'sender', 'date', 'subject', 'text', 'files',
                    'not_publishable']
     PUBLIC_BODY_LABEL = _('Sender public body')
 
@@ -539,7 +577,7 @@ class PostalReplyForm(PostalBaseForm):
 
 class PostalMessageForm(PostalBaseForm):
     FIELD_ORDER = ['public_body', 'recipient', 'date', 'subject', 'text',
-                   'scan']
+                   'files']
     PUBLIC_BODY_LABEL = _('Receiving public body')
 
     recipient = forms.CharField(label=_("Recipient Name"),
@@ -556,10 +594,15 @@ class PostalMessageForm(PostalBaseForm):
         return message
 
 
-class PostalAttachmentForm(forms.Form):
-    scan = forms.FileField(label=_("Scanned Document"),
+class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
+    files = forms.FileField(label=_("Scanned Document"),
             help_text=PostalBaseForm.scan_help_text,
             validators=[validate_upload_document])
+
+    def save(self, message):
+        result = self.save_attachments(self.files.getlist('files'),
+                                               message, replace=True)
+        return result
 
 
 class TagFoiRequestForm(TagObjectForm):

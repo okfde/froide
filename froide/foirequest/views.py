@@ -699,26 +699,20 @@ def add_postal_reply_attachment(request, slug, message_id):
         return render_400(request)
     form = PostalAttachmentForm(request.POST, request.FILES)
     if form.is_valid():
-        scan = request.FILES['scan']
-        scan_name = scan.name.rsplit(".", 1)
-        scan_name = ".".join([slugify(n) for n in scan_name])
-        try:
-            att = FoiAttachment.objects.get(belongs_to=message, name=scan_name)
-            status_message = _('Your document was added to the message and replaced '
-                'an existing attachment with the same name.')
-        except FoiAttachment.DoesNotExist:
-            att = FoiAttachment(belongs_to=message, name=scan_name)
-            status_message = _('Your document was added to the message as a '
-                'new attachment.')
-        att.size = scan.size
-        att.filetype = scan.content_type
-        att.file.save(scan_name, scan)
-        att.approved = False
-        att.save()
+        result = form.save(message)
+        added, updated = result
+        if updated > 0 and not added:
+            status_message = _('You updated %d document(s) on this message') % updated
+        elif updated > 0 and added > 0:
+            status_message = _('You added %(added)d and updated %(updated)d document(s) on this message') % {
+                    'updated': updated, 'added': added
+                    }
+        elif added > 0:
+            status_message = _('You added %d document(s) to this message.') % added
         messages.add_message(request, messages.SUCCESS, status_message)
         return redirect(message)
     messages.add_message(request, messages.ERROR,
-            form._errors['scan'][0])
+            form._errors['files'][0])
     return render_400(request)
 
 

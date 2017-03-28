@@ -16,6 +16,7 @@ from django.core import mail
 from django.utils import timezone
 from django.utils.six import BytesIO
 from django.test.utils import override_settings
+from django.http import QueryDict
 
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
@@ -559,13 +560,13 @@ class RequestTest(TestCase):
 
         file_size = os.path.getsize(factories.TEST_PDF_PATH)
         f = open(factories.TEST_PDF_PATH, "rb")
-        post = {
+        post = QueryDict(mutable=True)
+        post.update({
             "date": "3000-01-01",  # far future
             "sender": "Some Sender",
             "subject": "",
             "text": "Some Text",
-            "scan": ""
-        }
+        })
 
         self.client.logout()
         response = self.client.post(reverse("foirequest-add_postal_reply",
@@ -591,7 +592,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         post['date'] = "2011-01-02"
         post['public_body'] = str(pb.pk)
-        post['scan'] = f
+        post['files'] = f
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -610,37 +611,39 @@ class RequestTest(TestCase):
         postal_attachment_form = message.get_postal_attachment_form()
         self.assertTrue(postal_attachment_form)
 
-        f = open(factories.TEST_PDF_PATH, "rb")
-        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
-            kwargs={"slug": req.slug, "message_id": "9" * 5}),
-            {"scan": f})
-        f.close()
+        post = QueryDict(mutable=True)
+
+        with open(factories.TEST_PDF_PATH, "rb") as f:
+            post.update({'files': f})
+            response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+                kwargs={"slug": req.slug, "message_id": "9" * 5}), post)
+
         self.assertEqual(response.status_code, 404)
 
-        f = open(factories.TEST_PDF_PATH, "rb")
         self.client.logout()
-        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
-            kwargs={"slug": req.slug, "message_id": message.pk}),
-            {"scan": f})
-        f.close()
+        with open(factories.TEST_PDF_PATH, "rb") as f:
+            post.update({'files': f})
+            response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+                kwargs={"slug": req.slug, "message_id": message.pk}), post)
         self.assertEqual(response.status_code, 403)
 
-        f = open(factories.TEST_PDF_PATH, "rb")
         self.client.login(username="dummy", password="froide")
-        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
-            kwargs={"slug": req.slug, "message_id": message.pk}),
-            {"scan": f})
-        f.close()
+        with open(factories.TEST_PDF_PATH, "rb") as f:
+            post.update({'files': f})
+            response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+            kwargs={"slug": req.slug, "message_id": message.pk}), post)
+
         self.assertEqual(response.status_code, 403)
 
-        f = open(factories.TEST_PDF_PATH, "rb")
         self.client.logout()
         self.client.login(username='sw', password='froide')
         message = req.foimessage_set.all()[0]
-        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
-            kwargs={"slug": req.slug, "message_id": message.pk}),
-            {"scan": f})
-        f.close()
+
+        with open(factories.TEST_PDF_PATH, "rb") as f:
+            post.update({'files': f})
+            response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+            kwargs={"slug": req.slug, "message_id": message.pk}), post)
+
         self.assertEqual(response.status_code, 400)
 
         message = req.foimessage_set.all()[1]
@@ -648,20 +651,20 @@ class RequestTest(TestCase):
             kwargs={"slug": req.slug, "message_id": message.pk}))
         self.assertEqual(response.status_code, 400)
 
-        f = open(factories.TEST_PDF_PATH, "rb")
-        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
-            kwargs={"slug": req.slug, "message_id": message.pk}),
-            {"scan": f})
-        f.close()
+        with open(factories.TEST_PDF_PATH, "rb") as f:
+            post.update({'files': f})
+            response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+            kwargs={"slug": req.slug, "message_id": message.pk}), post)
+
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
         # Adding the same document again should override the first one
-        f = open(factories.TEST_PDF_PATH, "rb")
-        response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
-            kwargs={"slug": req.slug, "message_id": message.pk}),
-            {"scan": f})
-        f.close()
+        with open(factories.TEST_PDF_PATH, "rb") as f:
+            post.update({'files': f})
+            response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
+            kwargs={"slug": req.slug, "message_id": message.pk}), post)
+
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
