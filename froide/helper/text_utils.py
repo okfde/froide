@@ -74,6 +74,7 @@ EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 def replace_email_name(text, replacement=u""):
     return EMAIL_NAME_RE.sub(str(replacement), text)
 
+
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 

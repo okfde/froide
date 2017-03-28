@@ -9,4 +9,5 @@ class FeaturedRequestAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
     raw_id_fields = ('request', 'user',)
 
+
 admin.site.register(FeaturedRequest, FeaturedRequestAdmin)

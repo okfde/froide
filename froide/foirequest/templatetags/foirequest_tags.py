@@ -31,6 +31,7 @@ def highlight_request(message):
             escape(content[offset:]))
     )
 
+
 ONLY_SPACE_LINE = re.compile(u'^[ \u00A0]+$', re.U | re.M)
 
 
@@ -129,6 +130,7 @@ def check_same_request(context, foirequest, user, var_name):
 
 def alternative_address(foirequest):
     return get_alternative_mail(foirequest)
+
 
 register.simple_tag(highlight_request)
 register.simple_tag(redact_message)

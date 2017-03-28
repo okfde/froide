@@ -151,4 +151,5 @@ class UserAdmin(DjangoUserAdmin):
         return None
     cancel_users.short_description = _('Cancel account of users')
 
+
 admin.site.register(User, UserAdmin)

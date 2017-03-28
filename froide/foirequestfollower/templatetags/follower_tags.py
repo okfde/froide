@@ -15,4 +15,5 @@ def followrequest(context, foirequest, user, name):
     context[name] = form
     return ""
 
+
 register.simple_tag(takes_context=True)(followrequest)

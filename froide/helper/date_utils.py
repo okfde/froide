@@ -89,5 +89,6 @@ def calc_easter(year):
     day = f % 31 + 1
     return (year, month, day)
 
+
 if __name__ == '__main__':
     print(calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1))

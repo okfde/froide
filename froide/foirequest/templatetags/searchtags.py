@@ -10,4 +10,5 @@ def search_engine_query(query=None, domain=""):
     else:
         return settings.FROIDE_CONFIG.get('search_engine_query', '') % {"query": query, "domain": domain}
 
+
 register.simple_tag(search_engine_query)

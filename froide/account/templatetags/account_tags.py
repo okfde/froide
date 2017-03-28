@@ -10,4 +10,5 @@ def get_new_user_form(context, var_name):
     context[var_name] = form
     return ""
 
+
 register.simple_tag(takes_context=True)(get_new_user_form)

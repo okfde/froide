@@ -10,4 +10,5 @@ def advise_foisite(context):
     ip = get_client_ip(context['request'])
     return advisor.get_site(ip)
 
+
 register.assignment_tag(takes_context=True)(advise_foisite)

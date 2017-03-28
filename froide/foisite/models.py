@@ -25,6 +25,7 @@ class FoiSite(models.Model):
         self.country_code = self.country_code.upper()
         super(FoiSite, self).save(*args, **kwargs)
 
+
 try:
     from django.contrib.gis.geoip import GeoIP
 except ImportError:

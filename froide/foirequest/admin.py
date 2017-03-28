@@ -298,6 +298,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
             context)
     redeliver.short_description = _("Redeliver to...")
 
+
 admin.site.register(FoiRequest, FoiRequestAdmin)
 admin.site.register(FoiMessage, FoiMessageAdmin)
 admin.site.register(FoiAttachment, FoiAttachmentAdmin)
