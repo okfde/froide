@@ -853,7 +853,7 @@ msgid ""
 msgstr ""
 "Schauen Sie in Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetzen-"
 "Link geschickt. Falls Sie keine E-Mail erhalten haben, prüfen Sie, ob Sie "
-"Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit eine "
+"Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit einen "
 "Account haben."
 
 #: froide/account/views.py:269
