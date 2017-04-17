@@ -2,7 +2,6 @@
 .DS_Store
 *.vim
 *.db
-*.mo
 local_*.py
 data/
 solr/
