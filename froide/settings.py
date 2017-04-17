@@ -88,7 +88,8 @@ class Base(Configuration):
 
     # Absolute filesystem path to the directory that will hold user-uploaded files.
     # Example: "/home/media/media.lawrence.com/media/"
-    MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, "..", "files"))
+    MEDIA_ROOT = values.Value(os.path.abspath(os.path.join(PROJECT_ROOT,
+                                                           "..", "files")))
 
     # Sub path in MEDIA_ROOT that will hold FOI attachments
     FOI_MEDIA_PATH = values.Value('foi')
@@ -97,7 +98,8 @@ class Base(Configuration):
     # Don't put anything in this directory yourself; store your static files
     # in apps' "static/" subdirectories and in STATICFILES_DIRS.
     # Example: "/home/media/media.lawrence.com/static/"
-    STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, "..", "public"))
+    STATIC_ROOT = values.Value(os.path.abspath(os.path.join(PROJECT_ROOT,
+                                                            "..", "public")))
 
     # Additional locations of static files
     STATICFILES_DIRS = (
