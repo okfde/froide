@@ -1,4 +1,4 @@
-import floppyforms as forms
+import floppyforms.__future__ as forms
 
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse

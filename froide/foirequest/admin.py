@@ -10,7 +10,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
 
-import floppyforms as forms
+import floppyforms.__future__ as forms
 
 from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
                                       ForeignKeyFilter, TaggitListFilter)
