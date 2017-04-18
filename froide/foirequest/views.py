@@ -229,16 +229,13 @@ def show(request, slug, template_name="foirequest/show.html",
         message.request = obj
         if message.not_publishable:
             obj.not_publishable_message = message
-        message.all_attachments = filter(
-            lambda x: x.belongs_to_id == message.id, all_attachments)
-        message.approved_attachments = filter(
-            lambda x: x.belongs_to_id == message.id and x.approved,
-            all_attachments
-        )
-        message.not_approved_attachments = filter(
-            lambda x: x.belongs_to_id == message.id and not x.approved,
-            all_attachments
-        )
+        message.all_attachments = [a for a in all_attachments
+                    if a.belongs_to_id == message.id]
+        message.approved_attachments = [a for a in all_attachments
+                    if a.belongs_to_id == message.id and a.approved]
+        message.not_approved_attachments = [a for a in all_attachments
+                    if a.belongs_to_id == message.id and not a.approved]
+
         for att in message.all_attachments:
             att.belongs_to = message
 
