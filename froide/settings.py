@@ -415,7 +415,7 @@ class Base(Configuration):
     FOI_EMAIL_HOST_FROM = values.Value(FOI_EMAIL_HOST_USER)
     FOI_EMAIL_HOST_PASSWORD = values.Value(FOI_EMAIL_ACCOUNT_PASSWORD)
     FOI_EMAIL_HOST = values.Value("smtp.example.com")
-    FOI_EMAIL_PORT = values.IntegerValue(537)
+    FOI_EMAIL_PORT = values.IntegerValue(587)
     FOI_EMAIL_USE_TLS = values.BooleanValue(True)
 
     # The FoI Mail can use a different account
