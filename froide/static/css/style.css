@@ -745,10 +745,21 @@ input:focus {
 .redacted,
 .redacted:hover,
 .redacted:active,
-.redacted::selection,
 .redacted a {
     background-color: #000 !important;
     color: #000 !important;
+}
+
+.redacted::selection {
+  /* Separate because otherwise it breaks in firefox */
+  background-color: #000 !important;
+  color: #000 !important;
+}
+
+.redacted::-moz-selection {
+  /* See https://developer.mozilla.org/en-US/docs/Web/CSS/::selection */
+  background-color: #000 !important;
+  color: #000 !important;
 }
 
 .redacted.redacted-hover:hover,
