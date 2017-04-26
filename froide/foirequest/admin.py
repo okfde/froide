@@ -243,7 +243,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     def auto_redeliver(self, request, queryset):
         parser = EmailParser()
         for deferred in queryset:
-            email = parser.parse(BytesIO(deferred.decoded_mail()))
+            email = parser.parse(BytesIO(deferred.encoded_mail()))
             match = SUBJECT_REQUEST_ID.search(email['subject'])
             if match is not None:
                 try:

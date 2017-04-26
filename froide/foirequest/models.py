@@ -1687,8 +1687,11 @@ class DeferredMessage(models.Model):
             'request': self.request
         }
 
+    def encoded_mail(self):
+        return base64.b64decode(self.mail)
+
     def decoded_mail(self):
-        return base64.b64decode(self.mail).decode('utf-8', 'ignore')
+        return self.encoded_mail().decode('utf-8', 'ignore')
 
     def redeliver(self, request):
         from .tasks import process_mail
