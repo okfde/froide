@@ -99,7 +99,7 @@
     {% block jurisdiction_sidebar %}
       <h3>
         {% block jurisdiction_sidebar_header %}
-        {% blocktrans with name=SITE_NAME %}Facts about {{ name }}{% endblocktrans %}
+        {% blocktrans with name=object.name %}Facts about {{ name }}{% endblocktrans %}
         {% endblock %}
       </h3>
       {% block jurisdiction_sidebar_content %}
