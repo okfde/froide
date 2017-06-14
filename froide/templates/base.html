@@ -123,10 +123,12 @@
 
   {% include "snippets/messages.html" %}
 
+  {% block main %}
   <div id="main" class="container">
   {% block body %}
   {% endblock %}
   </div>
+  {% endblock %}
 
   <footer class="container" id="footer">
     <hr/>
