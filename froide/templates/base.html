@@ -11,6 +11,7 @@
     {% endif %}
   {% endblock %}
 
+  {% block navbar %}
   <div class="navbar {% block navbar-class %}navbar-default{% endblock %}">
     <div class="container">
       <div class="navbar-header">
@@ -117,6 +118,7 @@
       </div><!--/.nav-collapse -->
     </div>
   </div>
+  {% endblock %}
 
   {% block index_banner %}{% endblock %}
   {% block foisite_advice %}{% endblock %}
