@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
@@ -16,6 +17,8 @@ def follow(request, slug):
     form = FollowRequestForm(foirequest, request.user, request.POST)
     if form.is_valid():
         followed = form.save()
+        if request.is_ajax():
+            return JsonResponse({'followed': followed})
         if request.user.is_authenticated:
             if followed:
                 messages.add_message(request, messages.SUCCESS,
@@ -34,8 +37,10 @@ def follow(request, slug):
                 messages.add_message(request, messages.INFO,
                         _("You are following this request. If you want to unfollow it, click the unfollow link in the emails you received."))
         return redirect(foirequest)
-    else:
-        return show(request, slug, context={"followform": form}, status=400)
+
+    if request.is_ajax():
+        return JsonResponse({'errors': form.errors})
+    return show(request, slug, context={"followform": form}, status=400)
 
 
 def confirm_follow(request, follow_id, check):

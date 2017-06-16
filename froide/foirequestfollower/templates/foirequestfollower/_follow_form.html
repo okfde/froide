@@ -1,0 +1,52 @@
+{% load i18n %}
+
+<form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if following and not follow_only %}
+    <button class="input-large btn btn-default hover-btn-danger" type="submit">
+      <span class="on-hover">
+        <span class="glyphicon glyphicon-remove"></span>
+        {% trans "Unfollow request" %}
+      </span>
+      <span class="on-display">
+        <span class="glyphicon glyphicon-star"></span>
+        {% trans "You follow this request" %}
+      </span>
+    </button>
+  {% elif not following %}
+    <button class="input-large btn hover-btn-success" type="submit">
+      <span class="on-hover">
+        <span class="glyphicon glyphicon-star"></span>
+        {% trans "Follow request?" %}
+      </span>
+      <span class="on-display">
+        <span class="glyphicon glyphicon-star-empty"></span>
+        {% trans "Follow request?" %}
+      </span>
+    </button>
+  {% endif %}
+</form>
+
+{% if verbose %}
+
+  <p class="help-block">
+    <small>
+      {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+    </small>
+  </p>
+  <div id="followrequest-form-{{ object.pk }}-success" style="display:none">
+    <p class="muted">
+      <small>
+        {% if following %}
+          <span class="glyphicon glyphicon-remove"></span>
+          {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
+        {% else %}
+          <span class="glyphicon glyphicon-ok"></span>
+          {% trans "You will receive notifications!" %}
+        {% endif %}
+      </small>
+    </p>
+  </div>
+
+{% endif %}
