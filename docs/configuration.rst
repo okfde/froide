@@ -79,6 +79,16 @@ key in the `FROIDE_CONFIG` setting::
         }
     })
 
+For autocomplete search results another name schema is used. This needs
+its own config too::
+
+    # boost public bodies for autocomplete
+    FROIDE_CONFIG.update(
+        'autocomplete_body_boosts': {
+            u"Ministry": 1.9
+        }
+    })
+
 
 Public Body E-Mail Dry-run
 --------------------------
