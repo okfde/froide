@@ -1,10 +1,13 @@
 from haystack.backends.elasticsearch_backend import ElasticsearchSearchEngine, ElasticsearchSearchBackend, FIELD_MAPPINGS
 from haystack.fields import NgramField
 
+
 class SuggestField(NgramField):
     field_type = 'suggest'
 
+
 FIELD_MAPPINGS['suggest'] = {'type': 'string', 'analyzer': 'suggest_analyzer'}
+
 
 class FroideElasticsearchSearchBackend(ElasticsearchSearchBackend):
     # Settings to add an custom suggest analyzer
@@ -62,6 +65,7 @@ class FroideElasticsearchSearchBackend(ElasticsearchSearchBackend):
             }
         }
     }
+
 
 class FroideElasticsearchSearchEngine(ElasticsearchSearchEngine):
     backend = FroideElasticsearchSearchBackend

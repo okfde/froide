@@ -19,6 +19,7 @@ AUTOCOMPLETE_MIN_CHAR = 3
 
 AUTOCOMPLETE_BODY_BOOSTS = settings.FROIDE_CONFIG.get("autocomplete_body_boosts", {})
 
+
 class JurisdictionResource(ModelResource):
     class Meta:
         # allowed_methods = ['get']
