@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import url
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404
@@ -15,6 +16,8 @@ from .models import PublicBody, PublicBodyTag, Jurisdiction, FoiLaw
 
 AUTOCOMPLETE_MAX_CHAR = 15
 AUTOCOMPLETE_MIN_CHAR = 3
+
+AUTOCOMPLETE_BODY_BOOSTS = settings.FROIDE_CONFIG.get("autocomplete_body_boosts", {})
 
 
 class JurisdictionResource(ModelResource):
@@ -137,10 +140,11 @@ class PublicBodyResource(ModelResource):
         sqs = []
         if short_query:
             sqs = SearchQuerySet().models(PublicBody).autocomplete(name_auto=short_query)
-            sqs = sqs.order_by('name')
             jurisdiction = request.GET.get('jurisdiction', None)
             if jurisdiction is not None:
                 sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
+            for k in AUTOCOMPLETE_BODY_BOOSTS.keys():
+                sqs = sqs.boost(k, AUTOCOMPLETE_BODY_BOOSTS[k])
 
         names = []
         data = []

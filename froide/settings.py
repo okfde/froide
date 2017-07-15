@@ -377,6 +377,7 @@ class Base(Configuration):
         custom_replacements=[],
         closings=[rec(u"Sincerely yours,?")],
         public_body_boosts={},
+        autocomplete_body_boosts={},
         dryrun=False,
         request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
         dryrun_domain="testmail.example.com",
@@ -565,6 +566,9 @@ class German(object):
                 u"Senatsverwaltung": 1.8,
                 u"Kommunalverwaltung": 1.7,
                 u"Andere": 0.8
+            },
+            "autocomplete_body_boosts": {
+                u"Bund": 1.5
             },
             'greetings': [rec(u"Sehr geehrt(er? (?:Herr|Frau)(?: ?Dr\.?)?(?: ?Prof\.?)? .*)")],
             'closings': [rec(u"Mit freundlichen Gr\xfc\xdfen,?"), rec("Mit den besten Gr\xfc\xdfen,?")]

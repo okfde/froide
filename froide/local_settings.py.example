@@ -295,6 +295,7 @@ class Dev(Base):
     #     greetings=[rec(u"Dear (?:Mr\.?|Ms\.? .*?)")],
     #     closings=[rec(u"Sincerely yours,?")],
     #     public_body_boosts={},
+    #     autocomplete_body_boosts={},
     #     dryrun=False,
     #     dryrun_domain="testmail.example.com",
     #     doc_conversion_binary=None,
