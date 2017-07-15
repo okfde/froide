@@ -1,7 +1,9 @@
 ---
 language: python
+sudo: false
 python:
   - '3.5'
+  - '3.6'
   - '2.7'
 before_install:
   - psql -c 'create database froide;' -U postgres
