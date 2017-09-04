@@ -7,8 +7,7 @@ from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
 from django.utils.html import escape
 from django.utils import timezone
-
-import floppyforms.__future__ as forms
+from django import forms
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect

@@ -1,5 +1,3 @@
-import floppyforms.__future__ as forms
-
 from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -7,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import auth
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django import forms
 
 from froide.helper.widgets import AgreeCheckboxInput
 

@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
-
-import floppyforms.__future__ as forms
+from django import forms
 
 from froide.publicbody.models import (PublicBody,
     PublicBodyTag, TaggedPublicBody, FoiLaw, Jurisdiction)

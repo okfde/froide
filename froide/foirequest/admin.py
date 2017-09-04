@@ -9,8 +9,7 @@ from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
-
-import floppyforms.__future__ as forms
+from django import forms
 
 from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
                                       ForeignKeyFilter, TaggitListFilter)

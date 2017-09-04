@@ -1,5 +1,4 @@
-import floppyforms.__future__ as forms
-
+from django import forms
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 
