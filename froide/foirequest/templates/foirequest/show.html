@@ -3,8 +3,8 @@
 {% load i18n %}
 {% load static from staticfiles %}
 {% load markup %}
-{% load floppyforms %}
 {% load foirequest_tags account_tags %}
+{% load form_helper %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -217,10 +217,10 @@ data-spy="scroll" data-target="#message-nav-container"
               <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
               <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled.{% endblocktrans %}</p>
               {% if escalation_form %}
-                {% form escalation_form using "bootstrap/horizontal.html" %}
+                {% render_form escalation_form %}
               {% else %}
                 {% with escalation_form=object.get_escalation_message_form %}
-                  {% form escalation_form using "bootstrap/horizontal.html" %}
+                  {% render_form escalation_form %}
                 {% endwith %}
               {% endif %}
               <div class="row">
@@ -258,10 +258,10 @@ data-spy="scroll" data-target="#message-nav-container"
             <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
               <h4>{% blocktrans %}Upload postal replies you received{% endblocktrans %}</h4>
               {% if postal_reply_form %}
-                {% form postal_reply_form using "bootstrap/horizontal.html" %}
+                {% render_form postal_reply_form %}
               {% else %}
                 {% with postal_reply_form=object.get_postal_reply_form %}
-                  {% form postal_reply_form using "bootstrap/horizontal.html" %}
+                  {% render_form postal_reply_form %}
                 {% endwith %}
               {% endif %}
               <div class="row">
@@ -279,10 +279,10 @@ data-spy="scroll" data-target="#message-nav-container"
             <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_message' slug=object.slug %}#add-postal-message" enctype="multipart/form-data">{% csrf_token %}
               <h4>{% blocktrans %}Upload letters that you send via postal mail{% endblocktrans %}</h4>
               {% if postal_message_form %}
-                {% form postal_message_form using "bootstrap/horizontal.html" %}
+                {% render_form postal_message_form %}
               {% else %}
                 {% with postal_message_form=object.get_postal_message_form %}
-                  {% form postal_message_form using "bootstrap/horizontal.html" %}
+                  {% render_form postal_message_form %}
                 {% endwith %}
               {% endif %}
               <div class="row">
@@ -307,10 +307,10 @@ data-spy="scroll" data-target="#message-nav-container"
               {% endif %}
               {% block send_message_form_pre %}{% endblock %}
               {% if send_message_form %}
-                {% form send_message_form using "bootstrap/horizontal.html" %}
+                {% render_form send_message_form %}
               {% else %}
                 {% with send_message_form=object.get_send_message_form %}
-                  {% form send_message_form using "bootstrap/horizontal.html" %}
+                  {% render_form send_message_form %}
                 {% endwith %}
               {% endif %}
               <div class="row">
@@ -398,7 +398,7 @@ data-spy="scroll" data-target="#message-nav-container"
               {% csrf_token %}
               {% with form=object.make_public_body_suggestion_form %}
                 {{ form.public_body }}
-                {% formrow form.reason using "bootstrap/horizontal_row.html" %}
+                {% render_field form.reason %}
               {% endwith %}
               <button class="btn btn-default" type="submit">{% blocktrans %}Suggest this Public Body{% endblocktrans%}</button>
             </form>
@@ -531,7 +531,7 @@ data-spy="scroll" data-target="#message-nav-container"
             {% if not new_user_form %}
               {% get_new_user_form "new_user_form" %}
             {% endif %}
-            {% form new_user_form using "bootstrap/horizontal.html" %}
+            {% render_form new_user_form %}
             <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
           </form>
         {% endif %}

@@ -11,11 +11,13 @@ from taggit.utils import edit_string_for_tags
 
 
 class PriceInput(forms.TextInput):
-    template_name = "bootstrap/price_input.html"
+    template_name = "helper/forms/widgets/price_input.html"
 
     def get_context(self, name, value, attrs):
         ctx = super(PriceInput, self).get_context(name, value, attrs)
+        ctx.setdefault('attrs', {})
         ctx['attrs']['class'] = 'col-xs-2'
+        ctx['currency'] = settings.FROIDE_CONFIG['currency']
         return ctx
 
 

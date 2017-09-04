@@ -1,6 +1,7 @@
 {% extends custom_base %}
+
 {% load i18n %}
-{% load floppyforms %}
+{% load form_helper %}
 
 {% block body %}
 {% if user.is_authenticated %}
@@ -37,7 +38,7 @@
         <form class="form-horizontal" method="post" action="{% url 'account-login' %}{% if simple %}?simple{% endif %}">
           {% csrf_token %}
           {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-          {% form form using "bootstrap/horizontal.html" %}
+          {% render_form form %}
           <div class="clearfix">
             <button type="submit" class="btn btn-primary btn-lg pull-right">
               {% blocktrans %}Log In{% endblocktrans %}
@@ -61,7 +62,7 @@
           {% if next %}
             <input type="hidden" name="next" value="{{ next }}"/>
           {% endif %}
-          {% form reset_form using "bootstrap/horizontal.html" %}
+          {% render_form reset_form %}
           <div class="clearfix">
             <button type="submit" class="btn btn-default pull-right">
               {% blocktrans %}Send reset link{% endblocktrans %}
@@ -85,7 +86,7 @@
           {% if next %}
             <input type="hidden" name="next" value="{{ next }}"/>
           {% endif %}
-          {% form signup_form using "bootstrap/horizontal.html" %}
+          {% render_form signup_form %}
           <div class="clearfix">
             <button type="submit" class="btn btn-success pull-right btn-lg">
               {% blocktrans %}Sign Up{% endblocktrans %}
@@ -98,4 +99,3 @@
 </div>
 {% endif %}
 {% endblock %}
-

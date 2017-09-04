@@ -42,7 +42,6 @@ class Base(Configuration):
         # external
         'haystack',
         'taggit',
-        'floppyforms',
         'overextends',
         'tastypie',
         'storages',

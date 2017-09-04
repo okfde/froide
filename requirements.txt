@@ -6,7 +6,6 @@ django-haystack==2.5.0
 django-taggit==0.21.2
 pytz==2016.10
 requests==2.13.0
-django-floppyforms==1.7.0
 django-overextends==0.4.2
 python-magic==0.4.13
 django-tastypie==0.13.3

@@ -1,0 +1,2 @@
+{% if errors %}<p class="text-danger">
+{% for error in errors %}{{ error }}{% if not forloop.last %}<br />{% endif %}{% endfor %}</p>{% endif %}

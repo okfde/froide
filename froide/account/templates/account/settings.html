@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+
 {% load i18n %}
-{% load floppyforms %}
+{% load form_helper %}
 
 {% block body %}
 <h2>{% trans "Account Settings" %}</h2>
@@ -87,7 +88,7 @@
           </h4>
           <form action="{% url 'account-delete_account' %}" method="post">
             {% csrf_token %}
-            {% form user_delete_form using "bootstrap/horizontal.html" %}
+            {% render_form user_delete_form %}
             <p>
               {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
             </p>

@@ -7,6 +7,7 @@ from .models import PublicBody, Jurisdiction
 
 
 class PublicBodySelect(forms.Widget):
+    input_type = "text"
     initial_jurisdiction = None
     initial_search = None
 

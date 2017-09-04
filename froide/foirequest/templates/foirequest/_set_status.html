@@ -1,14 +1,15 @@
 {% load i18n %}
-{% load floppyforms %}
+{% load form_helper %}
+
 {{ status_form.non_field_errors }}
-{% formrow status_form.status using "bootstrap/horizontal_row.html" %}
+{% render_field status_form.status %}
 <div class="status-redirected status-section">
-  {% formrow status_form.redirected using "bootstrap/horizontal_row.html" %}
+  {% render_field status_form.redirected %}
 </div>
-{% formrow status_form.resolution using "bootstrap/horizontal_row.html" %}
+{% render_field status_form.resolution %}
 <div class="status-refusal status-section">
-	{% formrow status_form.refusal_reason using "bootstrap/horizontal_row.html" %}
+	{% render_field status_form.refusal_reason %}
 </div>
 {% if froide.payment_possible %}
-	{% formrow status_form.costs using "bootstrap/horizontal_row.html" %}
+	{% render_field status_form.costs %}
 {% endif %}

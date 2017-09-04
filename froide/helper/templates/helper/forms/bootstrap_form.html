@@ -1,0 +1,5 @@
+{% load form_helper %}
+{% for field in form.visible_fields %}
+  {% render_field field %}
+{% endfor %}
+{% for field in form.hidden_fields %}{{ field.as_hidden }}{% endfor %}

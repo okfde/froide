@@ -178,7 +178,7 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int,
-            required=True, widget=forms.RadioSelect(attrs={"class": "form-control"}))
+            required=True, widget=forms.RadioSelect())
     subject = forms.CharField(label=_("Subject"),
             max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control"}))

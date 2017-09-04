@@ -40,7 +40,6 @@ setup(
         'django-taggit',
         'pytz',
         'requests',
-        'django-floppyforms',
         'django_overextends',
         'python-magic',
         'django-tastypie',

@@ -1,6 +1,7 @@
 {% extends 'simple_base.html' %}
+
 {% load i18n %}
-{% load floppyforms %}
+{% load form_helper %}
 
 
 {% block body %}
@@ -11,7 +12,7 @@
     <form class="form-horizontal" method="post" action=".?next={{ next }}">
       {% csrf_token %}
       {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-      {% form terms_form using "bootstrap/horizontal.html" %}
+      {% render_form terms_form %}
       <button type="submit" class="btn btn-lg btn-primary">{% trans "Accept" %}</button>
     </form>
   </div>
