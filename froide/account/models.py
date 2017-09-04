@@ -15,7 +15,6 @@ from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils.crypto import constant_time_compare
-from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import AbstractUser, UserManager
 
 from froide.helper.text_utils import replace_custom, replace_word
@@ -119,6 +118,8 @@ class User(AbstractUser):
         return account_manager.get_autologin_url(url)
 
     def get_password_change_form(self, *args, **kwargs):
+        from django.contrib.auth.forms import SetPasswordForm
+
         return SetPasswordForm(self, *args, **kwargs)
 
     def get_change_form(self, *args, **kwargs):
