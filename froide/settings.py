@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from configurations import Configuration, importer, values
-importer.install(check_options=True)
-
 import os
 import sys
 import re
 
 from celery.schedules import crontab
 
-rec = lambda x: re.compile(x, re.I | re.U)
+from configurations import Configuration, importer, values
+importer.install(check_options=True)
 
-gettext = lambda s: s
+
+def rec(x):
+    return re.compile(x, re.I | re.U)
+
+
+def gettext(s):
+    return s
 
 # Django settings for froide project.
 
