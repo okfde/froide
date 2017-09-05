@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.db.models.deletion
 from django.conf import settings
 
 
@@ -20,8 +21,8 @@ class Migration(migrations.Migration):
                 ('email', models.CharField(max_length=255, blank=True)),
                 ('confirmed', models.BooleanField(default=False)),
                 ('timestamp', models.DateTimeField(auto_now_add=True, verbose_name='Timestamp of Following')),
-                ('request', models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest')),
-                ('user', models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('request', models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest', on_delete=django.db.models.deletion.CASCADE)),
+                ('user', models.ForeignKey(verbose_name='User', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
                 'ordering': ('timestamp',),

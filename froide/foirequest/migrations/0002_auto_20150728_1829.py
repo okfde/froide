@@ -21,12 +21,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='publicbodysuggestion',
             name='public_body',
-            field=models.ForeignKey(verbose_name='Public Body', to='publicbody.PublicBody'),
+            field=models.ForeignKey(verbose_name='Public Body', to='publicbody.PublicBody', on_delete=django.db.models.deletion.CASCADE),
         ),
         migrations.AddField(
             model_name='publicbodysuggestion',
             name='request',
-            field=models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest'),
+            field=models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest', on_delete=django.db.models.deletion.CASCADE),
         ),
         migrations.AddField(
             model_name='publicbodysuggestion',
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='foimessage',
             name='request',
-            field=models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest'),
+            field=models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest', on_delete=django.db.models.deletion.CASCADE),
         ),
         migrations.AddField(
             model_name='foimessage',
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='foievent',
             name='request',
-            field=models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest'),
+            field=models.ForeignKey(verbose_name='Freedom of Information Request', to='foirequest.FoiRequest', on_delete=django.db.models.deletion.CASCADE),
         ),
         migrations.AddField(
             model_name='foievent',
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='foiattachment',
             name='belongs_to',
-            field=models.ForeignKey(verbose_name='Belongs to request', to='foirequest.FoiMessage', null=True),
+            field=models.ForeignKey(verbose_name='Belongs to request', to='foirequest.FoiMessage', null=True, on_delete=django.db.models.deletion.CASCADE),
         ),
         migrations.AddField(
             model_name='foiattachment',
@@ -121,6 +121,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deferredmessage',
             name='request',
-            field=models.ForeignKey(blank=True, to='foirequest.FoiRequest', null=True),
+            field=models.ForeignKey(blank=True, to='foirequest.FoiRequest', null=True, on_delete=django.db.models.deletion.CASCADE),
         ),
     ]
