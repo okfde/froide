@@ -347,6 +347,9 @@ class Base(Configuration):
         'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
     }
     CELERY_TIMEZONE = 'UTC'
+    CELERY_TASK_SERIALIZER = 'pickle'
+    CELERY_RESULT_SERIALIZER = 'pickle'
+    CELERY_ACCEPT_CONTENT = ['pickle']
 
     # ######## Haystack ###########
 
