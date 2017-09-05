@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1989106f2ec19df9146235dbc14910ccc503a27e4ef8e445b16ff12bd71bc289"
+            "sha256": "c1b20cc5618c38ea66c4de024190a0a58dbce34e864f935f399de85bac566965"
         },
         "pipfile-spec": 1,
         "requires": {},
@@ -14,16 +14,13 @@
     },
     "default": {
         "amqp": {
-            "version": "==1.4.9"
-        },
-        "anyjson": {
-            "version": "==0.3.3"
+            "version": "==2.2.1"
         },
         "billiard": {
-            "version": "==3.3.0.23"
+            "version": "==3.5.0.3"
         },
         "celery": {
-            "version": "==3.1.25"
+            "version": "==4.1.0"
         },
         "certifi": {
             "version": "==2017.7.27.1"
@@ -71,10 +68,10 @@
             "version": "==2.6"
         },
         "kombu": {
-            "version": "==3.0.37"
+            "version": "==4.1.0"
         },
         "markdown": {
-            "version": "==2.6.6"
+            "version": "==2.6.9"
         },
         "python-dateutil": {
             "version": "==2.6.1"
@@ -105,6 +102,9 @@
         },
         "urllib3": {
             "version": "==1.22"
+        },
+        "vine": {
+            "version": "==1.1.4"
         }
     },
     "develop": {}

@@ -318,7 +318,7 @@ class Base(Configuration):
 
     # ######## Celery #############
 
-    CELERYBEAT_SCHEDULE = {
+    CELERY_BEAT_SCHEDULE = {
         'fetch-mail': {
             'task': 'froide.foirequest.tasks.fetch_mail',
             'schedule': crontab(),
@@ -341,9 +341,9 @@ class Base(Configuration):
         },
     }
 
-    CELERY_ALWAYS_EAGER = values.BooleanValue(True)
+    CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(True)
 
-    CELERY_ROUTES = {
+    CELERY_TASK_ROUTES = {
         'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
     }
     CELERY_TIMEZONE = TIME_ZONE
@@ -514,8 +514,8 @@ class Test(Base):
             },
         }
 
-    CELERY_ALWAYS_EAGER = True
-    CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
 
     MIDDLEWARE_CLASSES = [
         'django.contrib.sessions.middleware.SessionMiddleware',
@@ -585,7 +585,7 @@ class Production(Base):
         return TEMP
 
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
-    CELERY_ALWAYS_EAGER = values.BooleanValue(False)
+    CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(False)
     COMPRESS_ENABLED = values.BooleanValue(True)
     COMPRESS_OFFLINE = values.BooleanValue(True)
 
@@ -625,8 +625,8 @@ class Heroku(Production):
     ALLOWED_HOSTS = ['*']
     SECRET_KEY = values.SecretValue()
 
-    CELERY_ALWAYS_EAGER = values.BooleanValue(True)
-    BROKER_URL = values.Value('amqp://')
+    CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(True)
+    CELERY_BROKER_URL = values.Value('amqp://')
 
     @property
     def LOGGING(self):

@@ -260,7 +260,7 @@ class Dev(Base):
     ######### Celery #############
 
     # # Set to false to actually use celery
-    # CELERY_ALWAYS_EAGER = True
+    # CELERY_TASK_ALWAYS_EAGER = True
 
     ######### Haystack ###########
 

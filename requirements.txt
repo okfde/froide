@@ -1,7 +1,7 @@
 pip==9.0.1
 Django<2.0
 Markdown==2.6.9
-celery==3.1.25
+celery==4.1.0
 django-haystack==2.6.1
 django-taggit==0.22.1
 pytz==2017.2

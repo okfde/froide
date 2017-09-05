@@ -5,7 +5,6 @@ verify_ssl = true
 [packages]
 Django = "<2.0"
 Markdown = "==2.6.9"
-celery = "==3.1.25"
 django-haystack = "==2.6.1"
 django-taggit = "==0.22.1"
 pytz = "==2017.2"
@@ -21,3 +20,4 @@ django-cache-url = "==2.0.0"
 django_compressor = "==2.2"
 django-contrib-comments = "==1.8.0"
 unicodecsv = "==0.14.1"
+celery = "==4.1.0"
