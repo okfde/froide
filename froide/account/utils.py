@@ -37,7 +37,7 @@ def merge_accounts(old_user, new_user):
 
 def all_unexpired_sessions_for_user(user):
     user_sessions = []
-    all_sessions = Session.objects.filter(expire_date__gte=datetime.datetime.now())
+    all_sessions = Session.objects.filter(expire_date__gte=timezone.now())
     for session in all_sessions:
         session_data = session.get_decoded()
         if user.pk == session_data.get('_auth_user_id'):

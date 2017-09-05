@@ -33,14 +33,4 @@ def markdown(value, arg=''):
             raise template.TemplateSyntaxError("Error in 'markdown' filter: The Python markdown library isn't installed.")
         return force_text(value)
     else:
-        extensions = [e for e in arg.split(",") if e]
-        if len(extensions) > 0 and extensions[0] == "safe":
-            extensions = extensions[1:]
-            safe_mode = True
-        else:
-            safe_mode = False
-        if safe_mode:
-            return mark_safe(markdown.markdown(force_text(value), extensions, safe_mode=safe_mode,
-                enable_attributes=False))
-        else:
-            return mark_safe(markdown.markdown(force_text(value), extensions, safe_mode=safe_mode))
+        return mark_safe(markdown.markdown(force_text(value)))

@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 class EmailBackend(ModelBackend):
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         try:
             validate_email(username)
         except ValidationError:

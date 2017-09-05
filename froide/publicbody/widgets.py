@@ -17,7 +17,7 @@ class PublicBodySelect(forms.Widget):
     def set_initial_search(self, search):
         self.initial_search = search
 
-    def render(self, name, value=None, attrs=None, choices=()):
+    def render(self, name, value=None, attrs=None, renderer=None, choices=()):
         pb, pb_desc = None, None
         juris_widget = None
         jurisdictions = Jurisdiction.objects.get_visible()
