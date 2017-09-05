@@ -6,7 +6,7 @@ import random
 
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import override, ugettext, ugettext_lazy as _
 from django.utils.six import BytesIO, string_types
 

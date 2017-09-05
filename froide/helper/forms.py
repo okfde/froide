@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django import forms
 
 from taggit.forms import TagField

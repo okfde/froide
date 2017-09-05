@@ -12,7 +12,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.files import File
 import django.dispatch
 from django.template.defaultfilters import slugify

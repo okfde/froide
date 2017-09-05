@@ -1,5 +1,5 @@
 from django.utils.six import text_type as str
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf.urls import url, include
 from django.utils.translation import pgettext
 from django.shortcuts import redirect

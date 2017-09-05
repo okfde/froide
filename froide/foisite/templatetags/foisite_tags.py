@@ -11,4 +11,4 @@ def advise_foisite(context):
     return advisor.get_site(ip)
 
 
-register.assignment_tag(takes_context=True)(advise_foisite)
+register.simple_tag(takes_context=True)(advise_foisite)

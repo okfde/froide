@@ -3,7 +3,7 @@ from __future__ import with_statement
 from datetime import timedelta
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.utils import translation, timezone
 

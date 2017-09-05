@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.http import Http404, QueryDict
 from django.contrib import auth
 from django.contrib import messages

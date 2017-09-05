@@ -10,7 +10,7 @@ from django.utils.six import text_type as str
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.conf import settings

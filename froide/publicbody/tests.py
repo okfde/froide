@@ -3,7 +3,7 @@ import tempfile
 
 from django.utils import six
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from froide.foirequest.tests import factories
 from froide.helper.csv_utils import export_csv_bytes

@@ -3,7 +3,7 @@ import re
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import router
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe

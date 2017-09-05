@@ -5,11 +5,11 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'froide.settings')
 os.environ.setdefault("DJANGO_CONFIGURATION", "Dev")
 
-from configurations import importer
+from configurations import importer  # noqa
 importer.install(check_options=True)
 
-from celery import Celery
-from django.conf import settings
+from celery import Celery  # noqa
+from django.conf import settings  # noqa
 
 
 app = Celery('froide')

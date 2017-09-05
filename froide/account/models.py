@@ -10,7 +10,7 @@ from django.db import models, transaction, IntegrityError
 from django.conf import settings
 from django import dispatch
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.core.mail import send_mail

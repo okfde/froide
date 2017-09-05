@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -121,7 +121,7 @@ urlpatterns += [
     url(r'^%s/' % _('search'), search, name="foirequest-search"),
     url(r'^comments/', include('django_comments.urls')),
     # Secret URLs
-    url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), include(admin.site.urls))
+    url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
 ]
 
 # Translators: URL part

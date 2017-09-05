@@ -4,7 +4,7 @@ import re
 import factory
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core import mail
 from django.contrib.auth import get_user_model
 from django_comments.forms import CommentForm

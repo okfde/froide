@@ -11,7 +11,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.six import BytesIO
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.utils import override_settings
 
 from froide.helper.email_utils import EmailParser
