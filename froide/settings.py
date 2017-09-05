@@ -346,7 +346,7 @@ class Base(Configuration):
     CELERY_TASK_ROUTES = {
         'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
     }
-    CELERY_TIMEZONE = TIME_ZONE
+    CELERY_TIMEZONE = 'UTC'
 
     # ######## Haystack ###########
 
