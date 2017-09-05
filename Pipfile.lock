@@ -1,0 +1,111 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "1989106f2ec19df9146235dbc14910ccc503a27e4ef8e445b16ff12bd71bc289"
+        },
+        "pipfile-spec": 1,
+        "requires": {},
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "amqp": {
+            "version": "==1.4.9"
+        },
+        "anyjson": {
+            "version": "==0.3.3"
+        },
+        "billiard": {
+            "version": "==3.3.0.23"
+        },
+        "celery": {
+            "version": "==3.1.25"
+        },
+        "certifi": {
+            "version": "==2017.7.27.1"
+        },
+        "chardet": {
+            "version": "==3.0.4"
+        },
+        "dj-database-url": {
+            "version": "==0.4.2"
+        },
+        "django": {
+            "version": "==1.11.4"
+        },
+        "django-appconf": {
+            "version": "==1.0.2"
+        },
+        "django-cache-url": {
+            "version": "==2.0.0"
+        },
+        "django-compressor": {
+            "version": "==2.2"
+        },
+        "django-configurations": {
+            "version": "==2.0"
+        },
+        "django-contrib-comments": {
+            "version": "==1.8.0"
+        },
+        "django-haystack": {
+            "version": "==2.6.1"
+        },
+        "django-overextends": {
+            "version": "==0.4.3"
+        },
+        "django-storages": {
+            "version": "==1.6.5"
+        },
+        "django-taggit": {
+            "version": "==0.22.1"
+        },
+        "django-tastypie": {
+            "version": "==0.14.0"
+        },
+        "idna": {
+            "version": "==2.6"
+        },
+        "kombu": {
+            "version": "==3.0.37"
+        },
+        "markdown": {
+            "version": "==2.6.6"
+        },
+        "python-dateutil": {
+            "version": "==2.6.1"
+        },
+        "python-magic": {
+            "version": "==0.4.13"
+        },
+        "python-mimeparse": {
+            "version": "==1.6.0"
+        },
+        "pytz": {
+            "version": "==2017.2"
+        },
+        "rcssmin": {
+            "version": "==1.0.6"
+        },
+        "requests": {
+            "version": "==2.18.4"
+        },
+        "rjsmin": {
+            "version": "==1.0.12"
+        },
+        "six": {
+            "version": "==1.10.0"
+        },
+        "unicodecsv": {
+            "version": "==0.14.1"
+        },
+        "urllib3": {
+            "version": "==1.22"
+        }
+    },
+    "develop": {}
+}
