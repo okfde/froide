@@ -1,5 +1,3 @@
-import datetime
-
 from django.utils import timezone
 from django.contrib.sessions.models import Session
 
