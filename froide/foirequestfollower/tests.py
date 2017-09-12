@@ -36,7 +36,7 @@ class FoiRequestFollowerTest(TestCase):
     def test_following(self):
         req = FoiRequest.objects.all()[0]
         user = User.objects.get(username='sw')
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
         # Can't follow my own requests
@@ -45,7 +45,7 @@ class FoiRequestFollowerTest(TestCase):
         self.assertEqual(followers.count(), 0)
         self.client.logout()
         user = User.objects.get(username='dummy')
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
@@ -77,7 +77,7 @@ class FoiRequestFollowerTest(TestCase):
     def test_unfollowing(self):
         req = FoiRequest.objects.all()[0]
         user = User.objects.get(username='dummy')
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
@@ -94,7 +94,7 @@ class FoiRequestFollowerTest(TestCase):
         req = FoiRequest.objects.all()[0]
         comment_user = factories.UserFactory()
         user = User.objects.get(username='dummy')
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
@@ -142,15 +142,15 @@ class FoiRequestFollowerTest(TestCase):
         mail.outbox = []
         self.client.logout()
 
-        def do_follow(req, username):
-            self.client.login(username=username, password='froide')
+        def do_follow(req, email):
+            self.client.login(email=email, password='froide')
             response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
             self.assertEqual(response.status_code, 302)
             self.client.logout()
 
-        def do_comment(mes, username):
-            self.client.login(username=username, password='froide')
+        def do_comment(mes, email):
+            self.client.login(email=email, password='froide')
             f = CommentForm(mes)
             d.update(f.initial)
             self.client.post(
@@ -158,11 +158,11 @@ class FoiRequestFollowerTest(TestCase):
                 d
             )
 
-        do_follow(req, 'dummy')
-        do_comment(mes, 'sw')
+        do_follow(req, 'dummy@example.org')
+        do_comment(mes, 'info@fragdenstaat.de')
 
-        do_follow(req2, 'dummy')
-        do_comment(mes2, 'sw')
+        do_follow(req2, 'dummy@example.org')
+        do_comment(mes2, 'info@fragdenstaat.de')
 
         _batch_update()
         self.assertEqual(len(mail.outbox), 1)
@@ -171,7 +171,7 @@ class FoiRequestFollowerTest(TestCase):
         Comment.objects.all().delete()
         mail.outbox = []
 
-        do_comment(mes2, 'dummy')
+        do_comment(mes2, 'dummy@example.org')
 
         _batch_update()
         self.assertEqual(len(mail.outbox), 1)

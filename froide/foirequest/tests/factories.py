@@ -41,8 +41,7 @@ class UserFactory(factory.DjangoModelFactory):
     first_name = 'Jane'
     last_name = factory.Sequence(lambda n: 'D%se' % ('o' * min(20, int(n))))
     username = factory.Sequence(lambda n: 'user_%s' % n)
-    email = factory.LazyAttribute(lambda o: '%s.%s@example.org' % (
-        o.first_name.lower(), o.last_name.lower()))
+    email = factory.Sequence(lambda n: 'user%s@example.org' % n)
     password = factory.PostGenerationMethodCall('set_password', 'froide')
     is_staff = False
     is_active = True
@@ -249,11 +248,17 @@ def make_world():
     site = Site.objects.get(id=1)
 
     user1 = UserFactory.create(is_staff=True, username='sw',
-        email='mail@stefanwehrmeyer.com',
+        email='info@fragdenstaat.de',
         first_name='Stefan', last_name='Wehrmeyer',
         address='DummyStreet23\n12345 Town')
-    UserFactory.create(username='dummy', first_name='Dummy', last_name='D.')
-    UserFactory.create(is_staff=True, username='dummy_staff')
+    UserFactory.create(
+        username='dummy', email='dummy@example.org',
+        first_name='Dummy', last_name='D.')
+    UserFactory.create(
+        is_staff=True,
+        username='dummy_staff',
+        email='dummy_staff@example.org',
+    )
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
 

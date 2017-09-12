@@ -142,7 +142,6 @@ class Base(Configuration):
     # ######## Backends, Finders, Processors, Classes ####
 
     AUTH_USER_MODEL = values.Value('account.User')
-    CUSTOM_AUTH_USER_MODEL_DB = values.Value('')
 
     # List of finder classes that know how to find static files in
     # various locations.
@@ -151,11 +150,6 @@ class Base(Configuration):
         'django.contrib.staticfiles.finders.FileSystemFinder',
         'compressor.finders.CompressorFinder',
     )
-
-    AUTHENTICATION_BACKENDS = [
-        "froide.helper.auth.EmailBackend",
-        "django.contrib.auth.backends.ModelBackend",
-    ]
 
     TEMPLATES = [
         {

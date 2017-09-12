@@ -159,7 +159,7 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 200)
@@ -197,7 +197,7 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
         # Check logged in with wrong code
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.get(reverse('foirequest-auth',
             kwargs={'obj_id': req.id, 'code': '0a'}))
         self.assertEqual(response.status_code, 302)
@@ -261,22 +261,22 @@ class WebTest(TestCase):
     def test_unchecked(self):
         response = self.client.get(reverse('foirequest-list_unchecked'))
         self.assertEqual(response.status_code, 403)
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.get(reverse('foirequest-list_unchecked'))
         self.assertEqual(response.status_code, 403)
         self.client.logout()
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.get(reverse('foirequest-list_unchecked'))
         self.assertEqual(response.status_code, 200)
 
     def test_dashboard(self):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 403)
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 403)
         self.client.logout()
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 200)
 
@@ -296,7 +296,7 @@ class MediaServingTest(TestCase):
         req.save()
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 403)
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn('X-Accel-Redirect', response)
@@ -307,7 +307,7 @@ class MediaServingTest(TestCase):
         att = FoiAttachment.objects.filter(approved=False)[0]
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 403)
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 200)
 
@@ -358,7 +358,7 @@ class PerformanceTest(TestCase):
         factories.FoiMessageFactory.create(request=req)
         mes2 = factories.FoiMessageFactory.create(request=req)
         factories.FoiAttachmentFactory.create(belongs_to=mes2)
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         ContentType.objects.clear_cache()
         with self.assertNumQueries(12):
             self.client.get(req.get_absolute_url())

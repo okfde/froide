@@ -2,15 +2,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import Http404, QueryDict
 from django.contrib import auth
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.contrib.auth.views import password_reset_confirm as django_password_reset_confirm
-from django.utils.http import urlsafe_base64_decode, is_safe_url
+from django.utils.http import is_safe_url
 from django.views.generic import ListView
 
 from froide.foirequest.models import FoiRequest, FoiEvent
-from froide.helper.auth import login_user
 from froide.helper.utils import render_403
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
@@ -31,7 +30,7 @@ def confirm(request, user_id, secret, request_id=None):
     if account_manager.confirm_account(secret, request_id):
         messages.add_message(request, messages.WARNING,
                 _('Your email address is now confirmed and you are logged in. You should change your password now by filling out the form below.'))
-        login_user(request, user)
+        auth.login(request, user)
         if request_id is not None:
             foirequest = FoiRequest.confirmed_request(user, request_id)
             if foirequest:
@@ -62,7 +61,7 @@ def go(request, user_id, secret, url):
             raise Http404
         account_manager = AccountManager(user)
         if account_manager.check_autologin_secret(secret):
-            login_user(request, user)
+            auth.login(request, user)
     return redirect(url)
 
 
@@ -252,27 +251,18 @@ def send_reset_password_link(request):
     return login(request, context={"reset_form": form}, status=400)
 
 
-def password_reset_confirm(request, uidb64=None, token=None):
-    # TODO: Fix this code
-    # - don't sniff response
-    # - make redirect
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'account/password_reset_confirm.html'
+    post_reset_login = True
 
-    response = django_password_reset_confirm(request, uidb64=uidb64, token=token,
-            template_name='account/password_reset_confirm.html',
-            post_reset_redirect=reverse('account-show'))
-
-    if response.status_code == 302:
-        uid = urlsafe_base64_decode(uidb64)
-        user = auth.get_user_model().objects.get(pk=uid)
-        login_user(request, user)
-        messages.add_message(request, messages.SUCCESS,
-                _('Your password has been set and you are now logged in.'))
-        if 'next' in request.session and is_safe_url(
-                    url=request.session['next'],
-                    host=request.get_host()):
-            response['Location'] = request.session['next']
-            del request.session['next']
-    return response
+    def get_success_url(self):
+        """
+        Returns the supplied success URL.
+        """
+        next_url = self.request.session.get('next')
+        if next_url is not None:
+            return next_url
+        return reverse('account-show')
 
 
 def account_settings(request, context=None, status=200):

@@ -93,12 +93,12 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
         self.client.logout()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 405)
 

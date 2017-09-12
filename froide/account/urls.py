@@ -3,8 +3,9 @@ from django.conf.urls import url
 from .views import (MyRequestsView,
     FollowingRequestsView, account_settings,
     new_terms, logout, login, signup, confirm,
-    send_reset_password_link, change_password, password_reset_confirm,
+    send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
+    CustomPasswordResetConfirmView
 )
 
 urlpatterns = [
@@ -24,7 +25,8 @@ urlpatterns = [
     url(r'^confirm/(?P<user_id>\d+)/(?P<request_id>\d+)/(?P<secret>\w{32})/$',
         confirm, name='account-confirm'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        password_reset_confirm, name='account-password_reset_confirm'),
+        CustomPasswordResetConfirmView.as_view(),
+        name='account-password_reset_confirm'),
     url(r'^go/(?P<user_id>\d+)/(?P<secret>\w{32})(?P<url>/.*)$', go,
         name='account-go'),
 ]

@@ -1,46 +1,35 @@
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.template.response import TemplateResponse
-from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.admin import helpers
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
 
 from .models import User, AccountManager
-
 from .utils import delete_all_unexpired_sessions_for_user, cancel_user
 
 
 class CustomUserCreationForm(UserCreationForm):
-    '''
-    Copy Django's UserCreationForm over
-    Overwrite clean_username, because of Django ticket #19353
-    '''
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
+        fields = ("email",)
 
-    def clean_username(self):
-        # Since User.username is unique, this check is redundant,
-        # but it sets a nicer error message than the ORM. See #13147.
-        username = self.cleaned_data["username"]
-        try:
-            User._default_manager.get(username=username)
-        except User.DoesNotExist:
-            return username
-        raise forms.ValidationError(
-            self.error_messages['duplicate_username'],
-            code='duplicate_username',
-        )
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 
 class UserAdmin(DjangoUserAdmin):
     # The forms to add and change user instances
+    form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined',

@@ -32,7 +32,7 @@ class RequestTest(TestCase):
         factories.make_world()
 
     def test_public_body_logged_in_request(self):
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
 
         user = User.objects.get(username='sw')
@@ -64,7 +64,7 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-make_public',
                 kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 403)
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_public',
                 kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 302)
@@ -240,7 +240,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}),
                 {"status": status, "costs": costs})
         self.assertEqual(response.status_code, 403)
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-set_law',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 403)
@@ -262,7 +262,7 @@ class RequestTest(TestCase):
                 [u'This field is required.'])
 
     def test_logged_in_request_new_public_body_missing(self):
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(reverse('foirequest-submit_request'),
                 {"subject": "Test-Subject", "body": "This is a test body",
                 "public_body": "new"})
@@ -275,7 +275,7 @@ class RequestTest(TestCase):
                 [u'This field is required.'])
 
     def test_logged_in_request_new_public_body(self):
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         post = {"subject": "Another Test-Subject",
                 "body": "This is a test body",
                 "public_body": "new",
@@ -300,11 +300,11 @@ class RequestTest(TestCase):
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 403)
         # login as not staff
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('publicbody-confirm'),
                 {"public_body": pb.pk})
         self.assertEqual(response.status_code, 403)
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('publicbody-confirm'),
                 {"public_body": "argh"})
         self.assertEqual(response.status_code, 400)
@@ -335,7 +335,7 @@ class RequestTest(TestCase):
 
     def test_logged_in_request_with_public_body(self):
         pb = PublicBody.objects.all()[0]
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         post = {"subject": "Another Third Test-Subject",
                 "body": "This is another test body",
                 "public_body": 'bs',
@@ -383,7 +383,7 @@ class RequestTest(TestCase):
         self.assertContains(response, 'value="/speci4l-url/?blub=bla"')
 
         pb = PublicBody.objects.all()[0]
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         post = {"subject": "Another Third Test-Subject",
                 "body": "This is another test body",
                 "redirect_url": "/?blub=bla",
@@ -408,7 +408,7 @@ class RequestTest(TestCase):
 
     def test_foi_email_settings(self):
         pb = PublicBody.objects.all()[0]
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         post = {"subject": "Another Third Test-Subject",
                 "body": "This is another test body",
                 "public_body": str(pb.pk),
@@ -428,7 +428,7 @@ class RequestTest(TestCase):
             self.assertEqual(req.secret_address, addr)
 
     def test_logged_in_request_no_public_body(self):
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         post = {"subject": "An Empty Public Body Request",
                 "body": "This is another test body",
                 "law": str(FoiLaw.get_default_law().id),
@@ -472,7 +472,7 @@ class RequestTest(TestCase):
                 {"public_body": "9" * 10})
         self.assertEqual(response.status_code, 400)
         self.client.logout()
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         mail.outbox = []
         response = self.client.post(
                 reverse('foirequest-suggest_public_body',
@@ -499,7 +499,7 @@ class RequestTest(TestCase):
                 {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 404)
         self.client.logout()
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
@@ -519,7 +519,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}),
                 {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 403)
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
@@ -538,7 +538,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_postal_reply(self):
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Totally Random Request",
                 "body": "This is another test body",
@@ -572,7 +572,7 @@ class RequestTest(TestCase):
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 403)
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
 
         pb = req.public_body
         req.public_body = None
@@ -627,7 +627,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug, "message_id": message.pk}), post)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         with open(factories.TEST_PDF_PATH, "rb") as f:
             post.update({'files': f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
@@ -636,7 +636,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         self.client.logout()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         message = req.foimessage_set.all()[0]
 
         with open(factories.TEST_PDF_PATH, "rb") as f:
@@ -669,7 +669,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
     # def test_public_body_logged_in_public_request(self):
-    #     ok = self.client.login(username='sw', password='froide')
+    #     ok = self.client.login(email='info@fragdenstaat.de', password='froide')
     #     user = User.objects.get(username='sw')
     #     pb = PublicBody.objects.all()[0]
     #     post = {"subject": "Test-Subject", "body": "This is a test body",
@@ -682,7 +682,7 @@ class RequestTest(TestCase):
     def test_set_message_sender(self):
         from froide.foirequest.forms import MessagePublicBodySenderForm
         mail.outbox = []
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         pb = PublicBody.objects.all()[0]
         post = {"subject": "A simple test request",
                 "body": "This is another test body",
@@ -743,7 +743,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertNotEqual(message.sender_public_body, alternate_pb)
 
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(
                 reverse('foirequest-set_message_sender',
                 kwargs={"slug": req.slug, "message_id": str(message.pk)}),
@@ -752,7 +752,7 @@ class RequestTest(TestCase):
         self.assertNotEqual(message.sender_public_body, alternate_pb)
 
         self.client.logout()
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         mes = req.messages[0]
         response = self.client.post(
                 reverse('foirequest-set_message_sender',
@@ -789,7 +789,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(reverse('foirequest-mark_not_foi',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
@@ -797,7 +797,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertTrue(req.is_foi)
         self.client.logout()
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(reverse('foirequest-mark_not_foi',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
@@ -817,7 +817,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(reverse('foirequest-mark_checked',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
@@ -825,7 +825,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertFalse(req.checked)
         self.client.logout()
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(reverse('foirequest-mark_checked',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
@@ -842,13 +842,13 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
-        ok = self.client.login(username="dummy", password="froide")
+        ok = self.client.login(email="dummy@example.org", password="froide")
         self.assertTrue(ok)
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
         self.client.logout()
-        self.client.login(username="sw", password="froide")
+        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
@@ -889,14 +889,14 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Not staff
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-set_tags',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
 
         # Bad form
         self.client.logout()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-set_tags',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
@@ -931,14 +931,14 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Not user of request
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 403)
 
         # Request not final
         self.client.logout()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         req.status = 'awaiting_response'
         req.save()
         response = self.client.post(reverse('foirequest-set_summary',
@@ -981,13 +981,13 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         # Not user of request
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
                 kwargs={"slug": req.slug, "attachment": att.id}))
         self.assertEqual(response.status_code, 403)
         self.client.logout()
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
                 kwargs={"slug": req.slug, "attachment": '9' * 8}))
         self.assertEqual(response.status_code, 404)
@@ -996,7 +996,7 @@ class RequestTest(TestCase):
         user.is_staff = False
         user.save()
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
                 kwargs={"slug": req.slug, "attachment": att.id}))
         self.assertEqual(response.status_code, 302)
@@ -1006,7 +1006,7 @@ class RequestTest(TestCase):
         att.approved = False
         att.can_approve = False
         att.save()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
                 kwargs={"slug": req.slug, "attachment": att.id}))
         self.assertEqual(response.status_code, 403)
@@ -1015,7 +1015,7 @@ class RequestTest(TestCase):
         self.assertFalse(att.can_approve)
 
         self.client.logout()
-        self.client.login(username='dummy_staff', password='froide')
+        self.client.login(email='dummy_staff@example.org', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
                 kwargs={"slug": req.slug, "attachment": att.id}))
         self.assertEqual(response.status_code, 302)
@@ -1060,7 +1060,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # user made original request
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug, "message_id": mes.id}))
         self.assertEqual(response.status_code, 400)
@@ -1068,7 +1068,7 @@ class RequestTest(TestCase):
         # make request
         mail.outbox = []
         self.client.logout()
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug, "message_id": mes.id}))
         self.assertEqual(response.status_code, 302)
@@ -1089,7 +1089,7 @@ class RequestTest(TestCase):
         same_mes = factories.FoiMessageFactory.create(
             request=same_req, not_publishable=True)
         self.client.logout()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": same_req.slug, "message_id": same_mes.id}))
         self.assertEqual(response.status_code, 400)
@@ -1138,7 +1138,7 @@ class RequestTest(TestCase):
             status=None,
             request=req
         )
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         status = 'awaiting_response'
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
@@ -1158,7 +1158,7 @@ class RequestTest(TestCase):
             status=None,
             request=req
         )
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         status = 'resolved'
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
@@ -1192,7 +1192,7 @@ class RequestTest(TestCase):
         pb = factories.PublicBodyFactory.create()
         # old_due = req.due_date
         self.assertNotEqual(req.public_body, pb)
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         status = 'request_redirected'
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
@@ -1222,7 +1222,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_full_text_request(self):
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         pb = PublicBody.objects.all()[0]
         law = pb.default_law
         post = {"subject": "A Public Body Request",
@@ -1244,7 +1244,7 @@ class RequestTest(TestCase):
         self.assertNotIn(law.get_letter_end_text({}), message.plaintext_redacted)
 
     def test_redaction_config(self):
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
         req = FoiRequest.objects.all()[0]
         name = u"Petra Radetzky"
         req.add_message_from_email({
@@ -1274,7 +1274,7 @@ class RequestTest(TestCase):
         self.assertNotIn('Radetzky', last.plaintext_redacted)
 
     def test_empty_pb_email(self):
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         pb = PublicBody.objects.all()[0]
         pb.email = ''
         pb.save()
@@ -1316,7 +1316,7 @@ class RequestTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
@@ -1342,11 +1342,11 @@ class RequestTest(TestCase):
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 400)
 
@@ -1367,11 +1367,11 @@ class RequestTest(TestCase):
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 400)
 
@@ -1396,11 +1396,11 @@ class RequestTest(TestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
 
@@ -1408,7 +1408,7 @@ class RequestTest(TestCase):
         self.assertFalse(message.content_hidden)
 
     def test_too_long_subject(self):
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {
             "subject": "Test" * 64,
@@ -1449,7 +1449,7 @@ class RequestTest(TestCase):
         froide_config['request_throttle'] = [(2, 60), (5, 60 * 60)]
 
         pb = PublicBody.objects.all()[0]
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
 
         with self.settings(FROIDE_CONFIG=froide_config):
             post = {"subject": "Another Third Test-Subject",
@@ -1489,7 +1489,7 @@ class RequestTest(TestCase):
                 )
             )
 
-        self.client.login(username="dummy", password="froide")
+        self.client.login(email="dummy@example.org", password="froide")
 
         with self.settings(FROIDE_CONFIG=froide_config):
 
@@ -1539,7 +1539,7 @@ class MediatorTest(TestCase):
             site=self.site
         )
         req.save()
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(req.get_absolute_url())
         self.assertNotIn('Mediation', response.content.decode('utf-8'))
         response = self.client.post(reverse('foirequest-escalation_message',
@@ -1555,7 +1555,7 @@ class JurisdictionTest(TestCase):
         self.pb = PublicBody.objects.filter(jurisdiction__slug='nrw')[0]
 
     def test_letter_public_body(self):
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         post = {
             "subject": "Jurisdiction-Test-Subject",
             "body": "This is a test body",
@@ -1573,7 +1573,7 @@ class JurisdictionTest(TestCase):
         self.assertIn(law.letter_end, mes.plaintext)
 
     def test_letter_set_public_body(self):
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         post = {
             "subject": "Jurisdiction-Test-Subject",
             "body": "This is a test body",

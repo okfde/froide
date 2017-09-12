@@ -33,9 +33,9 @@ class AccountTest(TestCase):
         factories.make_world()
 
     def test_account_page(self):
-        ok = self.client.login(username='sw', password='wrong')
+        ok = self.client.login(email='info@fragdenstaat.de', password='wrong')
         self.assertFalse(ok)
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
@@ -50,17 +50,17 @@ class AccountTest(TestCase):
                 "password": "foobar"})
         self.assertEqual(response.status_code, 400)
         response = self.client.post(reverse('account-login'),
-                {"email": "mail@stefanwehrmeyer.com",
+                {"email": "info@fragdenstaat.de",
                 "password": "dummy"})
         self.assertEqual(response.status_code, 400)
         response = self.client.post(reverse('account-login'),
-                {"email": "mail@stefanwehrmeyer.com",
+                {"email": "info@fragdenstaat.de",
                 "password": "froide"})
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('account-login'),
-                {"email": "mail@stefanwehrmeyer.com",
+                {"email": "info@fragdenstaat.de",
                 "password": "froide"})
         # already logged in, login again gives 302
         self.assertEqual(response.status_code, 302)
@@ -73,16 +73,16 @@ class AccountTest(TestCase):
         self.assertIn("simple_base.html", map(lambda x: x.name,
                 response.templates))
         response = self.client.post(reverse('account-login') + "?simple",
-                {"email": "mail@stefanwehrmeyer.com",
+                {"email": "info@fragdenstaat.de",
                 "password": "froide"})
         self.assertTrue(response.status_code, 302)
         self.assertIn("simple", response.url)
-        user = User.objects.get(email="mail@stefanwehrmeyer.com")
+        user = User.objects.get(email="info@fragdenstaat.de")
         user.is_active = False
         user.save()
         self.client.logout()
         response = self.client.post(reverse('account-login'),
-                {"email": "mail@stefanwehrmeyer.com",
+                {"email": "info@fragdenstaat.de",
                 "password": "froide"})
         # inactive users can't login
         self.assertEqual(response.status_code, 400)
@@ -99,7 +99,7 @@ class AccountTest(TestCase):
                 "terms": "on",
                 "newsletter": "on",
                 "user_email": "horst.porst"}
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 0)
@@ -223,7 +223,7 @@ class AccountTest(TestCase):
         # occurences in hidden inputs of login, signup and forgotten password
         self.assertTrue(response.content.decode('utf-8').count(url), 3)
         response = self.client.post(reverse('account-login'),
-                {"email": "mail@stefanwehrmeyer.com",
+                {"email": "info@fragdenstaat.de",
                 'next': url,
                 "password": "froide"})
         self.assertEqual(response.status_code, 302)
@@ -260,23 +260,23 @@ class AccountTest(TestCase):
                 "new_password2": "froide2"}
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 403)
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 400)
         data["new_password2"] = "froide1"
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 302)
         self.client.logout()
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertFalse(ok)
-        ok = self.client.login(username='sw', password='froide1')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide1')
         self.assertTrue(ok)
 
     def test_send_reset_password_link(self):
         mail.outbox = []
         response = self.client.get(reverse('account-send_reset_password_link'))
         self.assertEqual(response.status_code, 405)
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         data = {"email": "unknown@example.com"}
         response = self.client.post(reverse('account-send_reset_password_link'))
         self.assertEqual(response.status_code, 302)
@@ -285,7 +285,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 0)
-        data['email'] = 'mail@stefanwehrmeyer.com'
+        data['email'] = 'info@fragdenstaat.de'
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         message = mail.outbox[0]
@@ -297,20 +297,18 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['validlink'])
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb64": uidb64, "token": token}))
+            kwargs={"uidb64": uidb64, "token": token}), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['validlink'])
         data = {"new_password1": "froide4",
                 "new_password2": "froide4"}
-        response = self.client.post(reverse('account-password_reset_confirm',
-            kwargs={"uidb64": uidb64, "token": token}), data)
+        response = self.client.post(response.wsgi_request.path, data)
         self.assertEqual(response.status_code, 302)
         # we are already logged in after redirect
-        # due to extra magic in wrapping view
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
         self.client.logout()
-        ok = self.client.login(username='sw', password='froide4')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide4')
         self.assertTrue(ok)
 
     def test_next_password_reset(self):
@@ -318,7 +316,7 @@ class AccountTest(TestCase):
         mes = FoiMessage.objects.all()[0]
         url = mes.get_absolute_url()
         data = {
-            'email': 'mail@stefanwehrmeyer.com',
+            'email': 'info@fragdenstaat.de',
             'next': url
         }
         response = self.client.post(reverse('account-send_reset_password_link'), data)
@@ -329,13 +327,11 @@ class AccountTest(TestCase):
         uidb64 = match.group(1)
         token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
-            kwargs={"uidb64": uidb64, "token": token}))
+            kwargs={"uidb64": uidb64, "token": token}), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.context['validlink'])
         data = {"new_password1": "froide4",
                 "new_password2": "froide4"}
-        response = self.client.post(reverse('account-password_reset_confirm',
-            kwargs={"uidb64": uidb64, "token": token}), data)
+        response = self.client.post(response.wsgi_request.path, data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
 
@@ -343,7 +339,7 @@ class AccountTest(TestCase):
         user = User.objects.get(username="dummy")
         user.private = True
         user.save()
-        self.client.login(username='dummy', password='froide')
+        self.client.login(email='dummy@example.org', password='froide')
         pb = PublicBody.objects.all()[0]
         post = {"subject": "Request - Private name",
                 "body": "This is a test body",
@@ -368,7 +364,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 403)
 
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
         response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 400)
@@ -398,7 +394,7 @@ class AccountTest(TestCase):
         self.client.logout()
 
         # Try logging in via link: other user is authenticated
-        ok = self.client.login(username='sw', password='froide')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
         autologin = user.get_autologin_url(test_url)
         response = self.client.get(autologin)
@@ -464,7 +460,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(len(mail.outbox), 0)
 
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
 
         response = self.client.post(reverse('account-change_user'),
             {
@@ -536,7 +532,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
         user = User.objects.get(username='sw')
-        self.client.login(username='sw', password='froide')
+        self.client.login(email='info@fragdenstaat.de', password='froide')
 
         response = self.client.get(reverse('account-settings'))
         self.assertEqual(response.status_code, 200)
