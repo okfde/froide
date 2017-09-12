@@ -332,7 +332,7 @@ class TestMakingRequest(StaticLiveServerTestCase):
             self.selenium.find_element_by_xpath(login_link).click()
 
         popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
-        self.selenium.switch_to_window(popup_handle)
+        self.selenium.switch_to.window(popup_handle)
 
         with CheckJSErrors(self.selenium):
             password_input = self.selenium.find_element_by_id("id_password")
@@ -340,7 +340,7 @@ class TestMakingRequest(StaticLiveServerTestCase):
 
         self.selenium.find_element_by_xpath(
             '//form//button[contains(text(), "Log In")]').click()
-        self.selenium.switch_to_window(main_window_handle)
+        self.selenium.switch_to.window(main_window_handle)
 
         with CheckJSErrors(self.selenium):
             self.selenium.find_element_by_id('review-button').click()
