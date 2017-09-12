@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from django import forms
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 
 from taggit.forms import TagField
 from taggit.utils import edit_string_for_tags
@@ -34,3 +35,17 @@ class TagObjectForm(forms.Form):
     def save(self):
         self.obj.tags.set(*self.cleaned_data['tags'])
         self.obj.save()
+
+
+def get_fk_form_class(model, field, admin_site, queryset=None):
+    remote_field = model._meta.get_field(field).remote_field
+    if queryset is None:
+        queryset = remote_field.model.objects.all()
+
+    widget = ForeignKeyRawIdWidget(remote_field, admin_site)
+
+    class ForeignKeyForm(forms.Form):
+        obj = forms.ModelChoiceField(queryset=queryset,
+                                     widget=widget)
+
+    return ForeignKeyForm

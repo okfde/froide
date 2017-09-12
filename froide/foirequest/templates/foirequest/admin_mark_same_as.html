@@ -21,8 +21,9 @@
 {% endfor %}
 </ul>
 <br/>{% blocktrans %}...are identical to this one:{% endblocktrans %}</p>
-{{ req_widget }}
-</p>
+
+{{ form.as_p }}
+
 <input type="hidden" name="action" value="mark_same_as" />
 <input type="submit" value="{% trans "Mark as identical to chosen request" %}" />
 </div>

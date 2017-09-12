@@ -4,9 +4,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
-from django.db import router
 from django.template.response import TemplateResponse
-from django.utils.safestring import mark_safe
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
 from django import forms
@@ -14,6 +12,7 @@ from django import forms
 from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
                                       ForeignKeyFilter, TaggitListFilter)
 from froide.helper.widgets import TagAutocompleteTagIt
+from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
 
 from .models import (FoiRequest, FoiMessage,
@@ -94,30 +93,26 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
+        Form = get_fk_form_class(self.model, 'same_as', self.admin_site)
         # User has already chosen the other req
-        if request.POST.get('req_id'):
-            try:
-                req = self.model.objects.get(id=int(request.POST.get('req_id')))
-            except (ValueError, self.model.DoesNotExist,):
-                raise PermissionDenied
-            queryset.update(same_as=req)
-            count_same_foirequests.delay(req.id)
-            self.message_user(request, _("Successfully marked requests as identical."))
-            # Return None to display the change list page again.
-            return None
+        if request.POST.get('obj'):
+            f = Form(request.POST)
+            if f.is_valid():
+                req = f.cleaned_data['obj']
+                queryset.update(same_as=req)
+                count_same_foirequests.delay(req.id)
+                self.message_user(request, _("Successfully marked requests as identical."))
+                # Return None to display the change list page again.
+                return None
+        else:
+            f = Form()
 
-        db = router.db_for_write(self.model)
         context = {
             'opts': opts,
             'queryset': queryset,
             'media': self.media,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
-            'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
-                    self.model._meta.get_field(
-                        'same_as').rel, self.admin_site, using=db).render(
-                            'req_id', None,
-                            {'id': 'id_req_id'})
-                            .replace('../../..', '../..')),
+            'form': f,
             'applabel': opts.app_label
         }
 
@@ -262,33 +257,25 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
+        Form = get_fk_form_class(self.model, 'request', self.admin_site)
         # User has already chosen the other req
-        if request.POST.get('req_id'):
-            req_id = int(request.POST.get('req_id'))
-            try:
-                req = FoiRequest.objects.get(id=req_id)
-            except (ValueError, FoiRequest.DoesNotExist,):
-                raise PermissionDenied
+        if request.POST.get('obj'):
+            f = Form(request.POST)
+            if f.is_valid():
+                req = f.cleaned_data['obj']
+                for deferred in queryset:
+                    deferred.redeliver(req)
+                self.message_user(request, _("Successfully triggered redelivery."))
+                return None
+        else:
+            f = Form()
 
-            for deferred in queryset:
-                deferred.redeliver(req)
-
-            self.message_user(request, _("Successfully triggered redelivery."))
-
-            return None
-
-        db = router.db_for_write(self.model)
         context = {
             'opts': opts,
             'queryset': queryset,
             'media': self.media,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
-            'req_widget': mark_safe(admin.widgets.ForeignKeyRawIdWidget(
-                    self.model._meta.get_field(
-                        'request').rel, self.admin_site, using=db).render(
-                            'req_id', None,
-                            {'id': 'id_req_id'})
-                            .replace('../../..', '../..')),
+            'form': f,
             'applabel': opts.app_label
         }
 

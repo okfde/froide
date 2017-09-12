@@ -39,7 +39,7 @@ class AdminActionTest(TestCase):
         same_as = factories.FoiRequestFactory(site=self.site)
         same_as.save()
 
-        req = self.factory.post('/', {'req_id': same_as.id})
+        req = self.factory.post('/', {'obj': same_as.id})
         req.user = self.user
         req._messages = default_storage(req)
 
@@ -169,7 +169,7 @@ class RedeliverAdminActionTest(TestCase):
         self.assertEqual(result.status_code, 200)
 
         req = self.factory.post('/', {
-            'req_id': foireq.id
+            'obj': foireq.id
         })
         req.user = self.user
         req._messages = default_storage(req)
