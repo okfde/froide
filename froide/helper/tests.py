@@ -10,7 +10,9 @@ from .text_utils import replace_email_name, remove_closing
 from .form_generator import FormGenerator
 from .date_utils import calc_easter, calculate_month_range_de
 
-rec = lambda x: re.compile(x, re.I | re.U)
+
+def rec(x):
+    return re.compile(x, re.I | re.U)
 
 
 class TestTextReplacement(TestCase):
@@ -33,10 +35,11 @@ More stuff here
         '''
 
         closings = [
-            rec(u"[Mm]it( den)? (freundliche(n|m)|vielen|besten) Gr(ü|u)(ß|ss)(en)?,?"),
-            rec("Hochachtungsvoll,?"),
-            rec('i\. ?A\.'), rec('[iI]m Auftrag')
+            rec(u'[Mm]it( den)? (freundliche(n|m)|vielen|besten) Gr(ü|u)(ß|ss)(en)?,?'),
+            rec(r'Hochachtungsvoll,?'),
+            rec(r'i\. ?A\.'), rec(r'[iI]m Auftrag')
         ]
+
         removed = remove_closing(closings, content)
         self.assertNotIn(u'Peter Parker', removed)
 
