@@ -179,14 +179,14 @@ class Base(Configuration):
         }
     ]
 
-    MIDDLEWARE_CLASSES = [
+    MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.common.CommonMiddleware',
-        'django.middleware.clickjacking.XFrameOptionsMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
 
     # ######### I18N and L10N ##################
@@ -341,6 +341,8 @@ class Base(Configuration):
         'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
     }
     CELERY_TIMEZONE = 'UTC'
+    # We need to serialize email data as binary
+    # which doesn't work well in JSON
     CELERY_TASK_SERIALIZER = 'pickle'
     CELERY_RESULT_SERIALIZER = 'pickle'
     CELERY_ACCEPT_CONTENT = ['pickle']
@@ -514,7 +516,7 @@ class Test(Base):
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
 
-    MIDDLEWARE_CLASSES = [
+    MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
