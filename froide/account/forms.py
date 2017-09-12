@@ -12,10 +12,14 @@ from froide.helper.widgets import AgreeCheckboxInput
 from .widgets import ConfirmationWidget
 from .models import AccountManager
 
+
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
-HAVE_NEWSLETTER = lambda: settings.FROIDE_CONFIG.get("have_newsletter", False)
+
+
+def has_newsletter():
+    return settings.FROIDE_CONFIG.get("have_newsletter", False)
 
 
 class NewUserBaseForm(forms.Form):
@@ -103,13 +107,13 @@ class TermsForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(TermsForm, self).__init__(*args, **kwargs)
-        if HAVE_NEWSLETTER():
+        if has_newsletter():
             self.fields['newsletter'] = forms.BooleanField(required=False,
                 label=_("Check if you want to receive our newsletter."))
 
     def save(self, user):
         user.terms = True
-        if HAVE_NEWSLETTER():
+        if has_newsletter():
             user.newsletter = self.cleaned_data['newsletter']
         user.save()
 
@@ -175,7 +179,7 @@ class UserChangeForm(forms.Form):
         self.user = user
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email
-        if HAVE_NEWSLETTER():
+        if has_newsletter():
             self.fields['newsletter'] = forms.BooleanField(required=False,
                 label=_("Newsletter"))
             self.fields['newsletter'].initial = self.user.newsletter
@@ -192,9 +196,8 @@ class UserChangeForm(forms.Form):
 
     def save(self):
         self.user.address = self.cleaned_data['address']
-        if HAVE_NEWSLETTER():
+        if has_newsletter():
             self.user.newsletter = self.cleaned_data['newsletter']
-
         self.user.save()
 
 
