@@ -7,14 +7,13 @@ from django.template.defaultfilters import slugify
 from django.utils.six import StringIO, BytesIO, PY3
 
 from taggit.utils import parse_tags
-
 if PY3:
     import csv
 else:
     import unicodecsv as csv
 
-
-from froide.publicbody.models import (PublicBody, PublicBodyTag, Jurisdiction, FoiLaw)
+from froide.publicbody.models import (PublicBody, PublicBodyTag,
+                                      Jurisdiction, FoiLaw)
 
 User = get_user_model()
 

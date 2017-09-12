@@ -22,6 +22,7 @@ class Command(BaseCommand):
         if filename.startswith('http://') or filename.startswith('https://'):
             importer.import_from_url(filename)
         else:
-            importer.import_from_file(open(filename, 'rb'))
+            with open(filename, 'rb') as f:
+                importer.import_from_file(f)
 
         self.stdout.write(u"Import done.\n")
