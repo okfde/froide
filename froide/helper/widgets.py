@@ -77,7 +77,7 @@ class TagAutocompleteTagIt(TextInput):
             return None
         return val + ','
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """ Render HTML code """
         if value is not None and not isinstance(value, six.string_types):
             value = edit_string_for_tags([o.tag for o in value.select_related("tag")])
@@ -88,7 +88,7 @@ class TagAutocompleteTagIt(TextInput):
         autocomplete_min_length = getattr(settings, 'TAGGING_AUTOCOMPLETE_MIN_LENGTH', 3)
         remove_confirmation = 'true' if getattr(settings, 'TAGGING_AUTOCOMPLETE_REMOVE_CONFIRMATION', True) else 'false'
         animate = 'true' if getattr(settings, 'TAGGING_AUTOCOMPLETE_ANIMATE', True) else 'false'
-        html = super(TagAutocompleteTagIt, self).render(name, value, attrs)
+        html = super(TagAutocompleteTagIt, self).render(name, value, attrs, renderer=renderer)
         # Subclass this field in case you need to add some custom behaviour like custom callbacks
         js = u"""<script type="text/javascript">window.init_jQueryTagit = window.init_jQueryTagit || [];
                 window.init_jQueryTagit.push({{
