@@ -203,7 +203,7 @@ class UserChangeForm(forms.Form):
 
 class UserEmailConfirmationForm(forms.Form):
     email = forms.EmailField()
-    secret = forms.CharField(min_length=32, max_length=32)
+    secret = forms.CharField(min_length=32, max_length=64)
     user_id = forms.IntegerField()
 
     def __init__(self, user, *args, **kwargs):
@@ -219,9 +219,9 @@ class UserEmailConfirmationForm(forms.Form):
         return user_id
 
     def clean(self):
-        check = AccountManager(self.user).check_confirmation_secret(
+        check = AccountManager(self.user).check_secret(
             self.cleaned_data['secret'],
-            self.cleaned_data['email'],
+            params=[self.cleaned_data['email']]
         )
         if not check:
             raise forms.ValidationError(

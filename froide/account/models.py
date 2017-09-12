@@ -1,4 +1,4 @@
-import hmac
+import hashlib
 
 try:
     from urllib.parse import urlencode
@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.signing import Signer
 
 from froide.helper.text_utils import replace_custom, replace_word
 from froide.helper.csv_utils import export_csv, get_dict
@@ -227,7 +228,7 @@ class AccountManager(object):
         return base
 
     def confirm_account(self, secret, request_id=None):
-        if not self.check_confirmation_secret(secret, request_id):
+        if not self.check_secret(secret, params=[request_id]):
             return False
         self.user.is_active = True
         self.user.save()
@@ -235,41 +236,40 @@ class AccountManager(object):
         return True
 
     def get_autologin_url(self, url):
-        return settings.SITE_URL + reverse('account-go', kwargs={"user_id": self.user.id,
-            "secret": self.generate_autologin_secret(),
+        return settings.SITE_URL + reverse('account-go', kwargs={
+            "user_id": self.user.id,
+            "secret": self.generate_secret(),
             "url": url})
 
-    def check_autologin_secret(self, secret):
-        return constant_time_compare(self.generate_autologin_secret(), secret)
-
-    def generate_autologin_secret(self):
-        to_sign = [str(self.user.pk)]
+    def generate_secret(self, params=None, hash_method=None):
+        to_sign = [str(self.user.pk), str(self.user.email)]
+        if params is not None:
+            to_sign.extend([str(p) for p in params])
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
-        return hmac.new(
-                settings.SECRET_KEY.encode('utf-8'),
-                (".".join(to_sign)).encode('utf-8')
-        ).hexdigest()
+        return self.sign_data('.'.join(to_sign), salt='confirmation',
+                              hash_method=hash_method)
 
-    def check_confirmation_secret(self, secret, *args):
-        return constant_time_compare(
-                secret,
-                self.generate_confirmation_secret(*args)
+    def sign_data(self, to_sign, salt='', hash_method=None):
+        if hash_method is None:
+            hash_method = 'sha256'
+        signer = Signer(salt=salt)
+        value = signer.sign('.'.join(to_sign)).encode('utf-8')
+        h = hashlib.new(hash_method)
+        h.update(value)
+        return h.hexdigest()
+
+    def check_secret(self, secret, params=None, hash_method=None):
+        if len(secret) == 32:
+            hash_method = 'md5'
+        generated_secret = self.generate_secret(
+            params=params,
+            hash_method=hash_method
         )
-
-    def generate_confirmation_secret(self, *args):
-        to_sign = [str(self.user.pk), self.user.email]
-        for a in args:
-            to_sign.append(str(a))
-        if self.user.last_login:
-            to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
-        return hmac.new(
-                settings.SECRET_KEY.encode('utf-8'),
-                (".".join(to_sign)).encode('utf-8')
-        ).hexdigest()
+        return constant_time_compare(secret, generated_secret)
 
     def send_confirmation_mail(self, request_id=None, password=None):
-        secret = self.generate_confirmation_secret(request_id)
+        secret = self.generate_secret(params=[request_id])
         url_kwargs = {"user_id": self.user.pk, "secret": secret}
         if request_id:
             url_kwargs['request_id'] = request_id
@@ -287,7 +287,7 @@ class AccountManager(object):
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
 
     def send_email_change_mail(self, email):
-        secret = self.generate_confirmation_secret(email)
+        secret = self.generate_secret(params=[email])
         url_kwargs = {
             "user_id": self.user.pk,
             "secret": secret,

@@ -60,7 +60,7 @@ def go(request, user_id, secret, url):
                 _('Your account is not active.'))
             raise Http404
         account_manager = AccountManager(user)
-        if account_manager.check_autologin_secret(secret):
+        if account_manager.check_secret(secret):
             auth.login(request, user)
     return redirect(url)
 
