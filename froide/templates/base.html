@@ -2,7 +2,6 @@
 
 {% load i18n %}
 {% load static %}
-{% load compress %}
 
 {% block body_tag %}
   {% block top_block %}
@@ -182,11 +181,9 @@
 {% endblock body_tag %}
 
 {% block scripts %}
-  {% compress js %}
   <script src="{% static "js/libs/jquery.js" %}"></script>
   <script src="{% static "js/bootstrap.min.js" %}"></script>
   <script src="{% static "js/libs/mustache.js" %}"></script>
   <script src="{% static "js/libs/jquery.autocomplete.js" %}"></script>
   <script src="{% static "js/script.js" %}"></script>
-  {% endcompress %}
 {% endblock %}

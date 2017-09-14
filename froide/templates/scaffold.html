@@ -1,4 +1,4 @@
-{% load i18n %}{% load static %}{% load compress %}<!DOCTYPE html>
+{% load i18n %}{% load static %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" class="no-js">
   <head>
   <meta charset="utf-8">
@@ -6,10 +6,8 @@
   <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
   {% block header_font %}{% endblock %}
   {% block css %}
-  {% compress css %}
   <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
   <link rel="stylesheet" href="{% static "css/style.css" %}" />
-  {% endcompress %}
   {% block extra_css %}
   {% endblock %}
   {% endblock %}

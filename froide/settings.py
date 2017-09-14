@@ -108,12 +108,6 @@ class Base(Configuration):
     STATICFILES_DIRS = (
         os.path.join(PROJECT_ROOT, "static"),
     )
-    COMPRESS_ENABLED = values.BooleanValue(False)
-    COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
-    COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
-                            'compressor.filters.cssmin.CSSMinFilter']
-    COMPRESS_PARSER = 'compressor.parser.HtmlParser'
-
     # ########## URLs #################
 
     ROOT_URLCONF = values.Value('froide.urls')

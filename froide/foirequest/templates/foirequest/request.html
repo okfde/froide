@@ -3,7 +3,6 @@
 {% load static %}
 {% load markup %}
 {% load searchtags %}
-{% load compress %}
 
 {% block nav_makerequest %}active{% endblock %}
 
@@ -26,9 +25,7 @@
     Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}";
     Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}";
   </script>
-  {# {% compress js %}#}
-    <script src="{% static "js/foirequest.js" %}" type="text/javascript"></script>
-  {# {% endcompress %}#}
+  <script src="{% static "js/foirequest.js" %}" type="text/javascript"></script>
 
 {% endblock %}
 
