@@ -2,8 +2,8 @@
 {% load i18n %}
 
 {% block extra_head %}
-<link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
-<link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans %}Atom feed for these request{% endblocktrans %}" href="./feed/" />
+  <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
+  <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans %}Atom feed for these request{% endblocktrans %}" href="./feed/" />
 {% endblock %}
 
 {% block body %}
@@ -43,7 +43,7 @@
 <div class="row">
   <div class="col-lg-8">
     {% block col-8-headline %}{% endblock col-8-headline %}
-    <ul class="media-list">
+    <ul class="list-unstyled">
       {% for object in object_list %}
       <li class="media">
         {% include "foirequest/snippets/request_item.html" %}
@@ -63,19 +63,19 @@
     {% endblock badge %}
 
 
-    <ul class="nav nav-compact">
+    <ul class="nav nav-compact flex-column">
     {% block status_up %}
     {% endblock status_up %}
       {% if filtered or not_foi or jurisdiction %}
-        <li>
-          <a href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
         </li>
       {% endif %}
       {% if jurisdiction %}
         <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by status{% endblocktrans %}</li>
         {% for urlpart,readable_status,status in status_list %}
-          <li>
-            <a href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
+           <li class="nav-item">
+            <a class="nav-link" href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
               <span class="small-icon status-{{ status }}"></span>
               {{ readable_status }}
             </a>
@@ -83,8 +83,8 @@
         {% endfor %}
         <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by category{% endblocktrans %}</li>
         {% for topic in topic_list %}
-          <li>
-            <a href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
+           <li class="nav-item">
+            <a class="nav-link" href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
               <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
@@ -94,8 +94,8 @@
         {% if jurisdiction_list|length > 1 %}
           <li class="nav-header">{% blocktrans %}By jurisdiction{% endblocktrans %}</li>
           {% for juris in jurisdiction_list %}
-            <li>
-              <a href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
+             <li class="nav-item">
+              <a class="nav-link" href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
                 <span class="small-icon jurisdiction-{{ juris.slug }}"></span>
                 {{ juris.name }}
               </a>
@@ -105,8 +105,8 @@
         {% block status %}
         <li class="nav-header">{% blocktrans %}By status{% endblocktrans %}</li>
         {% for urlpart,readable_status,status in status_list %}
-          <li>
-            <a href="{% url 'foirequest-list' status=urlpart %}">
+           <li class="nav-item">
+            <a class="nav-link" href="{% url 'foirequest-list' status=urlpart %}">
               <span class="small-icon status-{{ status }}"></span>
               {{ readable_status }}
             </a>
@@ -116,8 +116,8 @@
 
         <li class="nav-header">{% blocktrans %}By category{% endblocktrans %}</li>
         {% for topic in topic_list %}
-          <li>
-            <a href="{% url 'foirequest-list' topic=topic.slug %}">
+           <li class="nav-item">
+            <a class="nav-link" href="{% url 'foirequest-list' topic=topic.slug %}">
               <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
@@ -126,21 +126,21 @@
       {% endif %}
       <li class="divider"></li>
       <li class="nav-header">{% blocktrans %}Feeds for these requests{% endblocktrans %}</li>
-      <li>
-        <a href="./rss/">
+       <li class="nav-item">
+        <a class="nav-link" href="./rss/">
           <i class="rss-icon"></i>
           {% trans "RSS Feed" %}
         </a>
       </li>
-      <li>
-        <a href="./feed/">
+       <li class="nav-item">
+        <a class="nav-link" href="./feed/">
           <i class="atom-icon"></i>
           {% trans "Atom Feed" %}
         </a>
       </li>
       <li class="divider"></li>
-      <li>
-        <a href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
+       <li class="nav-item">
+        <a class="nav-link" href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
       </li>
     </ul>
   </div>

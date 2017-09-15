@@ -86,7 +86,7 @@
             <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
             <td>
               {% if message.approved_attachments %}
-                <ul class="media-list">
+                <ul class="list-unstyled">
                   {% for attachment in message.approved_attachments %}
                     <li class="media">
                       {% include "foirequest/snippets/attachment_item.html" %}

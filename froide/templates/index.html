@@ -125,7 +125,7 @@
   <div class="col-lg-6 col-md-6">
     {% if successful_foi_requests %}
     <h3>{% blocktrans %}Successful Requests{% endblocktrans %}</h3>
-    <ul class="media-list">
+    <ul class="list-unstyled">
       {% for object in successful_foi_requests %}
         <li class="media">
           {% include "foirequest/snippets/request_item.html" %}
@@ -137,7 +137,7 @@
   <div class="col-lg-6 col-md-6">
     {% if unsuccessful_foi_requests %}
     <h3>{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h3>
-    <ul class="media-list">
+    <ul class="list-unstyled">
       {% for object in unsuccessful_foi_requests %}
         <li class="media">
           {% include "foirequest/snippets/request_item.html" %}

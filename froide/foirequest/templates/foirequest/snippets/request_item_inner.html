@@ -1,5 +1,5 @@
 {% load i18n %}
-<h4 class="media-heading">
+<h5 class="mt-0 mb-1">
   <a href="{{ object.url }}">
     {{ object.title }}
   </a>
@@ -20,4 +20,4 @@
     {{ object.costs|floatformat:2 }} {{ froide.currency }}{% endif %}
     {% if object.same_as_count %} - <a class="muted" href="{{ object.url }}#identical">{% blocktrans count counter=object.same_as_count %}{{ counter }} identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>{% endif %}
   </small>
-</h4>
+</h5>

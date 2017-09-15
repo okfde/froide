@@ -133,7 +133,7 @@
           {% blocktrans with name=object.name %}Requests in {{ name }}{% endblocktrans %}
           {% endblock %}
         </h3>
-        <ul class="media-list">
+        <ul class="list-unstyled">
         {% for foirequest in foirequests %}
           <li class="media">
             {% include "foirequest/snippets/request_item.html" with object=foirequest %}

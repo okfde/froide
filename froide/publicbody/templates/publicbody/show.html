@@ -106,7 +106,7 @@
       <h3>
         {% blocktrans count count=foirequest_count %}One requests to this public body{% plural %}{{ count }} requests to this public body{% endblocktrans %}
       </h3>
-      <ul class="media-list">
+      <ul class="list-unstyled">
         {% for object in foirequests %}
           <li class="media">
             {% include "foirequest/snippets/request_item.html" %}
