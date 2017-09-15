@@ -1,0 +1,51 @@
+
+.heroine-unit {
+  padding: 3% 3% 3% 4%;
+  margin-bottom: 30px;
+  background-color: #eeeeee;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+
+.heroine-unit h1 {
+  margin-bottom: 0;
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: inherit;
+}
+
+.heroine-unit p {
+  font-size: 18px;
+  font-weight: 200;
+  line-height: 30px;
+  color: inherit;
+}
+
+#main-folders {
+    background-image: url('~img/folders.jpg');
+}
+
+#main-foirequests {
+    opacity: 0.8;
+}
+
+.frontpage-teaser {
+    color: #333;
+}
+
+.frontpage-teaser small {
+  text-align: right;
+}
+
+.frontpage-teaser h3 {
+  margin-top: 0;
+}
+
+#sample-letter {
+    font-family: Georgia,serif;
+    font-size: 1em;
+    white-space: nowrap;
+    white-space: pre-wrap;
+}

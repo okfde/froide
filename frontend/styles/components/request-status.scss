@@ -1,0 +1,92 @@
+
+.icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position:0 0px;
+}
+
+.small-icon {
+    background-repeat: no-repeat;
+    background-position:0 3px;
+    padding-left: 20px;
+    /*margin-bottom: 2px;*/
+}
+
+.small-icon.status-successful {
+    background-image: url('~img/status/successful_small.png')
+}
+.small-icon.status-partially_successful {
+    background-image: url('~img/status/partially_successful_small.png')
+}
+.small-icon.status-refused {
+    background-image: url('~img/status/refused_small.png')
+}
+.small-icon.status-user_withdrew {
+    background-image: url('~img/status/user_withdrew_small.png')
+}
+.small-icon.status-user_withdrew_costs {
+    background-image: url('~img/status/user_withdrew_costs_small.png')
+}
+.small-icon.status-publicbody_needed {
+    background-image: url('~img/status/publicbody_needed_small.png')
+}
+.small-icon.status-awaiting_response {
+    background-image: url('~img/status/awaiting_response_small.png')
+}
+.small-icon.status-overdue {
+    background-image: url('~img/status/overdue_small.png')
+}
+.small-icon.status-asleep {
+    background-image: url('~img/status/asleep_small.png')
+}
+.small-icon.status-not_held {
+    background-image: url('~img/status/not_held_small.png')
+}
+.small-icon.status-has_fee {
+    background-image: url('~img/status/has_fee_small.png')
+}
+
+.icon.status-successful {
+    background-image: url('~img/status/successful.png')
+}
+.icon.status-partially_successful {
+    background-image: url('~img/status/partially_successful.png')
+}
+.icon.status-refused {
+    background-image: url('~img/status/refused.png')
+}
+.icon.status-user_withdrew {
+    background-image: url('~img/status/user_withdrew.png')
+}
+.icon.status-user_withdrew_costs {
+    background-image: url('~img/status/user_withdrew_costs.png')
+}
+.icon.status-publicbody_needed {
+    background-image: url('~img/status/publicbody_needed.png')
+}
+.icon.status-awaiting_response {
+    background-image: url('~img/status/awaiting_response.png')
+}
+.icon.status-overdue {
+    background-image: url('~img/status/overdue.png')
+}
+.icon.status-asleep {
+    background-image: url('~img/status/asleep.png')
+}
+.icon.status-not_held {
+    background-image: url('~img/status/not_held.png')
+}
+.icon.status-has_fee {
+    background-image: url('~img/status/has_fee.png')
+}
+
+.icon.status-awaiting_classification {
+    background-image: url('~img/status/awaiting_classification.png')
+}
+
+
+.js .status-section {
+    display:none;
+}

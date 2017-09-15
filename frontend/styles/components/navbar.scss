@@ -1,0 +1,63 @@
+.nav-compact > li > a{
+  padding: 2px 15px !important;
+}
+
+.nav-compact .nav-header {
+  padding-top: 15px;
+}
+
+.navbar .navbar-brand {
+  height: 50px;
+  background-position: 15px 10px;
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+    .navbar .navbar-brand > span {
+        display:none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+    .navbar .navbar-form {
+        display: none;
+    }
+}
+
+.navbar .nav > li > a:hover {
+    color: #06C;
+}
+
+.special-nav-item a span{
+    color: #f0f0f0 !important;
+    padding: 0.5em;
+    background: #428bca;
+    -webkit-border-radius: 6px;
+       -moz-border-radius: 6px;
+            border-radius: 6px;
+    text-shadow: none;
+}
+
+.special-nav-item a:hover span {
+    color: #fff !important;
+    text-shadow: none;
+}
+
+.account-dropdown {
+    padding: 0 !important;
+    margin: 10px 0;
+    background-color: transparent !important;
+}
+
+.account-dropdown .account-name {
+    float: left;
+    font-size: 60%;
+    margin: 2px 0 0 5px;
+    line-height: 110%;
+}
+
+.account-login {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    font-size: 75%;
+    line-height: 110% !important;
+}

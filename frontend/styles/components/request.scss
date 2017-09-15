@@ -1,0 +1,143 @@
+.request-well {
+    background-color: white;
+    border-top: 0;
+}
+
+.message-container {
+    border-bottom: 1px solid #ddd;
+    padding: 0 0 0.75em;
+    margin: 0 0 0.75em;
+}
+
+
+.message {
+    border: 2px solid #aaa;
+    /* -moz-box-shadow: 0px 0px 15px #ccc;*/
+    /* -webkit-box-shadow: 0px 0px 15px #ccc;*/
+    /* box-shadow: 0px 0px 15px #ccc;*/
+    padding:10px;
+    margin: 0;
+}
+
+.message-received {
+    background-color: #FFF9DC;
+}
+
+.message-postal {
+    background-image: url('~img/status/gone_postal_big.png');
+    background-position: 99% 5px;
+    background-repeat: no-repeat;
+}
+
+.message-escalated {
+    background-color: #FFE9EE;
+}
+
+.message-table {
+    border-spacing: 0px;
+}
+
+.message-table td.key {
+    text-align:right;
+    color: #999;
+    vertical-align:top;
+    font-weight: bold;
+    width: 10%;
+}
+
+.message-table td.key:after {
+    content: ":";
+}
+
+.message-table td.value-padding-right {
+    padding-right:65px;
+}
+
+.message-table tbody tr:nth-child(even) td, .message tbody tr.even td {
+    background: transparent;
+}
+
+.message-table  td {
+    padding: 0px 0px 2px 0.5em;
+}
+
+.message-table, .message-table td ul {
+    margin-bottom: 0.4em;
+}
+
+.content-text {
+    white-space: nowrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.events {
+    color: #999;
+    font-size: 0.8em;
+    margin: 0.5em 0 0;
+}
+
+.events ol {
+    margin-bottom: 0;
+    list-style-type: none;
+}
+
+.event {
+    color: #999;
+}
+
+.event a {
+    color: #999;
+    text-decoration: none;
+}
+
+.event a:hover {
+    text-decoration: underline;
+}
+
+
+
+.message-nav.affix {
+    position: static;
+}
+
+/* Show and affix the side nav when space allows it */
+@media screen and (min-width: 992px) {
+  /* Widen the fixed sidebar */
+  .message-nav.affix,
+  .message-nav.affix-bottom {
+    width: 263px;
+  }
+  .message-nav.affix {
+    position: fixed; /* Undo the static from mobile first approach */
+    top: 10px;
+    right: 83px;
+  }
+  .message-nav.affix-bottom {
+    position: absolute; /* Undo the static from mobile first approach */
+  }
+}
+@media screen and (min-width: 1200px) {
+  /* Widen the fixed sidebar again */
+  .message-nav.affix-bottom,
+  .message-nav.affix {
+    width: 263px;
+  }
+}
+
+.message-nav li a {
+    padding: 5px 15px 5px !important;
+}
+
+.message-nav li.active a {
+    font-weight: bold;
+}
+
+.message-nav li {
+    line-height: 12px;
+}
+
+.message-nav li.nav-header {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}

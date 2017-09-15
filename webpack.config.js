@@ -1,0 +1,86 @@
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const path = require('path');
+const LiveReloadPlugin = require('webpack-livereload-plugin');
+const webpack = require('webpack');
+
+const extractSass = new ExtractTextPlugin({
+    filename: "../css/[name].css",
+    disable: process.env.NODE_ENV === "development"
+});
+
+
+
+
+const config = {
+  entry: {
+    main: './frontend/javascript/main.js'
+  },
+  output: {
+      path: path.resolve(__dirname, 'froide/static/js'),
+      filename: '[name].js'
+  },
+  devtool: "source-map", // any "source-map"-like devtool is possible
+  resolve: {
+    modules: ["node_modules", "froide/static"]
+  },
+  module: {
+    rules: [
+      {
+         test: /\.js$/,
+         exclude: /(node_modules|bower_components)/,
+         use: {
+           loader: 'babel-loader'
+         }
+      },
+      {
+        test: /\.vue/,
+        use: {
+          loader: "vue-loader"
+        }
+      },
+      {
+        test: /\.scss$/,
+        use: extractSass.extract({
+          use: [{
+              loader: "css-loader",
+              options: {
+                sourceMap: true
+              }
+          }, {
+              loader: "sass-loader",
+              options: {
+                sourceMap: true,
+                includePaths: ['node_modules/']
+              }
+          }],
+          // use style-loader in development
+          fallback: "style-loader"
+        })
+      },
+      {
+        test: /\.(jpg|png)$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            name: '[path][name].[ext]',
+            emitFile: false,
+            context: 'froide/static',
+            publicPath: '../'
+          }
+        }
+      }
+    ]
+  },
+  plugins: [
+    extractSass,
+    new LiveReloadPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      Popper: ['popper.js/dist/popper.js', 'default']
+    })
+  ]
+};
+
+module.exports = config;

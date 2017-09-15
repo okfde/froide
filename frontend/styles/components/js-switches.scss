@@ -1,0 +1,34 @@
+.js .js-hidden {
+    display:none;
+}
+
+.js-hidden:target {
+    display:block;
+}
+
+
+.focussed:target {
+    background-color: #FFE9EE;
+    border: 1px red solid;
+}
+
+.focussed:target .js-hidden {
+    display:block;
+}
+
+.focussed:target .toggle {
+    display:none;
+}
+
+.focussed:target .toggle-div {
+    display:block !important;
+}
+
+
+.hover-visible {
+    visibility: hidden;
+}
+
+.hover-parent:hover .hover-visible{
+    visibility: visible;
+}
