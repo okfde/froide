@@ -45,7 +45,6 @@ class Base(Configuration):
         'overextends',
         'tastypie',
         'storages',
-        'compressor',
 
         # local
         'froide.foirequest',
@@ -146,7 +145,6 @@ class Base(Configuration):
     STATICFILES_FINDERS = (
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
         'django.contrib.staticfiles.finders.FileSystemFinder',
-        'compressor.finders.CompressorFinder',
     )
 
     TEMPLATES = [
