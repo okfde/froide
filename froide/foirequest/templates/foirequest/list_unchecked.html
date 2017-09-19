@@ -33,7 +33,7 @@
         <a href="{{ attachment.get_anchor_url }}">{% trans "View on Site" %}</a>
         <a href="{% url 'admin:foirequest_foiattachment_change' attachment.id %}">{% trans "View on Admin" %}</a>
         {% if attachment.file %}
-          <a href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a> {% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+          <a href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a> {% if attachment.can_preview %} - <a target="_blank" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
         {% else %}
           <div class="error">
     	     {% blocktrans %}No file present!{% endblocktrans %}

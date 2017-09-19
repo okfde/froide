@@ -423,7 +423,7 @@ data-spy="scroll" data-target="#message-nav-container"
             <ul>
               {% for law in object.law.combined.all %}
                 <li>
-                  <a href="{% url 'publicbody-foilaw-show' slug=law.slug %}" class="target-new">{{ law.name }}</a>
+                  <a href="{% url 'publicbody-foilaw-show' slug=law.slug %}" target="_blank">{{ law.name }}</a>
                 </li>
               {% endfor %}
             </ul>
@@ -431,7 +431,7 @@ data-spy="scroll" data-target="#message-nav-container"
         {% else %}
           <dt>{% blocktrans %}Law used:{% endblocktrans %}</dt>
           <dd>
-            <a href="{% url 'publicbody-foilaw-show' slug=object.law.slug %}" class="target-new">{{ object.law.name }}</a>
+            <a href="{% url 'publicbody-foilaw-show' slug=object.law.slug %}" target="_blank">{{ object.law.name }}</a>
           </dd>
         {% endif %}
       {% else %}

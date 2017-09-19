@@ -97,11 +97,6 @@ Froide.app.statusSet = function(){
 
 
 $(function(){
-
-    $(document).on('click', "a.target-new", function(e){
-        e.preventDefault();
-        window.open($(this).attr("href"));
-    });
     $(document).on('click', "a.target-small", function(e){
         e.preventDefault();
         var win = window.open($(this).attr("href"), "popup",

@@ -16,8 +16,8 @@
     Froide.regex = Froide.regex || {};
     Froide.regex.greetings = [{% blocktrans %}/Dear Sir or Madam/{% endblocktrans %}gi];
     Froide.regex.closings = [{% blocktrans %}/Kind Regards/{% endblocktrans %}gi];
-    Froide.template.searchInternet = '<li class="search-internet"><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search the internet for information about:" %} {% templatetag openvariable %}query{% templatetag closevariable %}</a></li>';
-    Froide.template.searchPublicBodyWebsite = '<li class="search-public-body-website"><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" class="target-new">{% trans "Search Public Body Website" %}</a></li>';
+    Froide.template.searchInternet = '<li class="search-internet"><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" target="_blank">{% trans "Search the internet for information about:" %} {% templatetag openvariable %}query{% templatetag closevariable %}</a></li>';
+    Froide.template.searchPublicBodyWebsite = '<li class="search-public-body-website"><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" target="_blank">{% trans "Search Public Body Website" %}</a></li>';
     Froide.template.searchEngineUrl = '{% search_engine_query %}';
     Froide.template.foundEmail = "{% trans "We found an email address in your text: {{ email }}. Do not sent personal data to the Public Body." %}";
     Froide.template.foundGreeting = "{% trans "We found {{ find }} in your text, but there is already a greeting at the top of the letter!" %}";
