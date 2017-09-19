@@ -34,6 +34,9 @@
 // @import "bootstrap/scss/carousel";
 @import "bootstrap/scss/utilities";
 
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome";
+
 // Own components
 // FIXME: these are not really components
 @import 'components/alerts';

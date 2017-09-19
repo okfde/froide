@@ -9,8 +9,6 @@ const extractSass = new ExtractTextPlugin({
 });
 
 
-
-
 const config = {
   entry: {
     main: './frontend/javascript/main.js'
@@ -56,6 +54,17 @@ const config = {
           // use style-loader in development
           fallback: "style-loader"
         })
+      },
+      {
+        test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: '../fonts/[name].[ext]',
+          emitFile: true,
+          context: 'froide/static/',
+          publicPath: ''
+        }
       },
       {
         test: /\.(jpg|png)$/,
