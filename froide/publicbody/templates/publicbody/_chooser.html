@@ -54,12 +54,12 @@ Froide.template.publicBodyListingInfo = '<li class="search-result">' +
     {% endif %}
   </ul>
   <div class="empty-result panel panel-warning" style="display:none">
-     <div class="panel-heading">
-      <h3 class="panel-title">
+     <div class="card-header">
+      <h3 class="card-title">
         {% blocktrans %}No Public Bodies found for this query.{% endblocktrans %}
       </h3>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       {% url "help-about" as help_about_url %}
       {% blocktrans with url=help_about_url %}Are we missing a public body? <a href="{{ url }}">Please let us know!</a>{% endblocktrans %}
     </div>

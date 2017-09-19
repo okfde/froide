@@ -18,13 +18,13 @@
 
 {% block redaction_removal_explanation %}
   <div class="col-lg-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
           {% trans "What you need to redact" %}
         </h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
         <ul>
           <li>
             {% if foirequest.user == user %}
@@ -53,11 +53,11 @@
 
 {% block redaction_removal_intro %}
   <div class="col-lg-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{% trans "How to redact" %}</h3>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{% trans "How to redact" %}</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
         <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Draw a rectangle over the area by clicking the mouse and dragging it. Be sure to also black out the email address of {{ name }} if it is visible.{% endblocktrans %}</p>
         <p>{% blocktrans %}The original version of the document will still be available to you (but not to the public). If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}</p>
         <p>{% blocktrans %}Note: in order to redact documents an up-to-date version of a modern browser is required. Using Internet Explorer will likely not work.{% endblocktrans %}</p>
@@ -73,8 +73,8 @@
     <form id="redaction-form" method="post" style="display:none">
       {% csrf_token %}
     </form>
-    <div class="panel panel-default">
-      <div class="panel-body">
+    <div class="card">
+      <div class="card-body">
         <div id="pdf-viewer">
           <div class="row">
             <div class="btn-toolbar pdf-controls col-lg-12">
