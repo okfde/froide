@@ -62,7 +62,7 @@ def cancel_user(user):
     user.is_active = False
     user.is_deleted = True
     user.date_left = timezone.now()
-    user.email = ''
+    user.email = None
     user.set_unusable_password()
     user.username = 'u%s' % user.pk
     user.save()
