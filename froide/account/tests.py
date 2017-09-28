@@ -564,7 +564,7 @@ class AccountTest(TestCase):
         user = User.objects.get(pk=user.pk)
         self.assertEqual(user.first_name, '')
         self.assertEqual(user.last_name, '')
-        self.assertEqual(user.email, '')
+        self.assertIsNone(user.email)
         self.assertEqual(user.username, 'u%s' % user.pk)
         self.assertEqual(user.address, '')
         self.assertEqual(user.organization, '')
