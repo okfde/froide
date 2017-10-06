@@ -8,6 +8,7 @@ from django.conf import settings
 from django import forms
 
 from froide.helper.widgets import AgreeCheckboxInput
+from froide.helper.form_utils import JSONMixin
 
 from .widgets import ConfirmationWidget
 from .models import AccountManager
@@ -118,7 +119,7 @@ class TermsForm(forms.Form):
         user.save()
 
 
-class NewUserForm(TermsForm, NewUserBaseForm):
+class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
     pass
 
 

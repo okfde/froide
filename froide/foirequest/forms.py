@@ -13,6 +13,7 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import PriceInput
 from froide.helper.forms import TagObjectForm
+from froide.helper.form_utils import JSONMixin
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
 from .validators import validate_upload_document
@@ -25,7 +26,7 @@ publicbody_empty = settings.FROIDE_CONFIG.get('publicbody_empty', True)
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
-class RequestForm(forms.Form):
+class RequestForm(JSONMixin, forms.Form):
     public_body = forms.CharField(widget=PublicBodySelect,
             label=_("Search for a topic or a public body:"),
             required=False)
