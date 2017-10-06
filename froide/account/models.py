@@ -1,4 +1,5 @@
 import hmac
+import json
 
 try:
     from urllib.parse import urlencode
@@ -146,6 +147,17 @@ class User(AbstractBaseUser, PermissionsMixin):
             "request_count",
         )
         return export_csv(queryset, fields)
+
+    def as_json(self):
+        return json.dumps({
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'address': self.address,
+            'private': self.private,
+            'email': self.email,
+            'organization': self.organization
+        })
 
     def display_name(self):
         if self.private:
