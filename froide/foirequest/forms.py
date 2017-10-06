@@ -64,9 +64,6 @@ class RequestForm(JSONMixin, forms.Form):
         self.indexed_laws = dict([(l.pk, l) for l in self.list_of_laws])
         self.default_law = default_law
 
-        self.fields["public_body"].widget.set_initial_jurisdiction(
-            kwargs.get('initial', {}).pop('jurisdiction', None)
-        )
         self.fields["public_body"].widget.set_initial_search(
             kwargs.get('initial', {}).pop('public_body_search', None)
         )
@@ -80,6 +77,8 @@ class RequestForm(JSONMixin, forms.Form):
         return json.dumps(dict([(l.id, l.as_dict()) for l in self.list_of_laws]))
 
     def clean_public_body(self):
+        self.public_body_object = None
+        self.foi_law_object = None
         pb = self.cleaned_data['public_body']
         if pb == "new":
             if not new_publicbody_allowed:
@@ -102,8 +101,6 @@ class RequestForm(JSONMixin, forms.Form):
             self.public_body_object = public_body
             self.foi_law_object = public_body.default_law
         return pb
-
-    public_body_object = None
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']

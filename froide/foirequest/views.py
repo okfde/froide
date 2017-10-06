@@ -337,6 +337,8 @@ def make_request(request, public_body=None, public_body_id=None):
     initial['jurisdiction'] = request.GET.get("jurisdiction", None)
     public_body_search = request.GET.get("topic", "")
     initial['public_body_search'] = public_body_search
+    if public_body is not None:
+        initial['public_body'] = public_body
 
     default_law = FoiLaw.get_default_law(public_body)
     if default_law is None:
@@ -387,6 +389,7 @@ def submit_request(request, public_body=None):
                                data=request.POST)
     context['request_form'] = request_form
     context['public_body_form'] = PublicBodyForm()
+
     if (public_body is None and
             request.POST.get('public_body') == "new"):
         pb_form = PublicBodyForm(request.POST)
@@ -403,11 +406,14 @@ def submit_request(request, public_body=None):
 
     if not request_form.is_valid():
         error = True
+        if public_body is None:
+            context['public_body'] = request_form.public_body_object
     else:
         if (public_body is None and
                 request_form.cleaned_data['public_body'] != '' and
                 request_form.cleaned_data['public_body'] != 'new'):
             public_body = request_form.public_body_object
+            context['public_body'] = public_body
 
     context['user_form'] = None
     user = None

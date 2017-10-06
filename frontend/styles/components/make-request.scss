@@ -1,12 +1,14 @@
-.foirequest fieldset {
+
+
+.requestform fieldset {
     margin-top: 1em;
 }
 
-.foirequest fieldset.active legend{
+.requestform fieldset.active legend{
     display: block;
 }
 
-.foirequest legend{
+.requestform legend{
     display: none;
 }
 
@@ -21,7 +23,7 @@
     font-weight: normal;
 }
 
-.foirequest .text {
+.requestform .text {
     white-space: nowrap;
     white-space: pre-line;
     word-wrap: break-word;
