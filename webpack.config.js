@@ -10,7 +10,9 @@ const extractSass = new ExtractTextPlugin({
 
 const config = {
   entry: {
-    main: './frontend/javascript/main.js'
+    main: ['./frontend/javascript/main.js'],
+    publicbody: ['./frontend/javascript/publicbody.js'],
+    makerequest: ['./frontend/javascript/makerequest.js']
   },
   output: {
     path: path.resolve(__dirname, 'froide/static/js'),
@@ -93,8 +95,23 @@ const config = {
       $: 'jquery',
       jQuery: 'jquery',
       Popper: ['popper.js/dist/popper.js', 'default']
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: process.env.NODE_ENV
+      }
     })
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'common'
+    //   // (the commons chunk name)
+    //
+    //   // filename: 'commons.js'
+    //   // (the filename of the commons chunk)
+    //
+    //   // minChunks: 3,
+    //   // (Modules must be shared between 3 entries)
+    // })
   ]
-};
+}
 
-module.exports = config;
+module.exports = config
