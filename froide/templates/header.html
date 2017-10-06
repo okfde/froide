@@ -64,9 +64,9 @@
       {% if user.is_authenticated %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle account-dropdown" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="navbaraccount-link">
-          <small class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
-            {{ user.last_name|truncatechars:12 }}
-          </small>
+          {% blocktrans with name=user.first_name|truncatechars:12 %}
+            Hello, {{ name}}
+          {% endblocktrans %}
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbaraccount-link">
           <a class="dropdown-item" href="{% url 'account-show' %}">
