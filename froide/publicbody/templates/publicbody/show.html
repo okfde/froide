@@ -15,7 +15,7 @@
 
 {% if object.email %}
 <p>
-  <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
+  <a class="btn btn-primary" href="{% url 'foirequest-make_request' publicbody_slug=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
 </p>
 {% endif %}
 

@@ -1,4 +1,3 @@
-import json
 import datetime
 
 from django.conf import settings
@@ -6,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
 from django.utils.html import escape
+from django.utils.http import is_safe_url
 from django.utils import timezone
 from django import forms
 
@@ -17,19 +17,12 @@ from froide.helper.form_utils import JSONMixin
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
 from .validators import validate_upload_document
-from .utils import check_throttle
 
 
-new_publicbody_allowed = settings.FROIDE_CONFIG.get(
-        'create_new_publicbody', False)
-publicbody_empty = settings.FROIDE_CONFIG.get('publicbody_empty', True)
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(JSONMixin, forms.Form):
-    public_body = forms.CharField(widget=PublicBodySelect,
-            label=_("Search for a topic or a public body:"),
-            required=False)
     subject = forms.CharField(label=_("Subject"),
             max_length=230,
             widget=forms.TextInput(
@@ -56,52 +49,6 @@ class RequestForm(JSONMixin, forms.Form):
     hide_similar = forms.BooleanField(widget=forms.HiddenInput, initial=False,
                                      required=False)
 
-    def __init__(self, user=None, list_of_laws=(), default_law=None,
-                 hide_law_widgets=True, **kwargs):
-        super(RequestForm, self).__init__(**kwargs)
-        self.user = user
-        self.list_of_laws = list_of_laws
-        self.indexed_laws = dict([(l.pk, l) for l in self.list_of_laws])
-        self.default_law = default_law
-
-        self.fields["public_body"].widget.set_initial_search(
-            kwargs.get('initial', {}).pop('public_body_search', None)
-        )
-        self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
-            required=False,
-            widget=forms.Select if not hide_law_widgets else forms.HiddenInput,
-            initial=default_law.pk,
-            choices=((l.pk, l.name) for l in list_of_laws))
-
-    def laws_to_json(self):
-        return json.dumps(dict([(l.id, l.as_dict()) for l in self.list_of_laws]))
-
-    def clean_public_body(self):
-        self.public_body_object = None
-        self.foi_law_object = None
-        pb = self.cleaned_data['public_body']
-        if pb == "new":
-            if not new_publicbody_allowed:
-                raise forms.ValidationError(
-                        _("You are not allowed to create a new public body"))
-        elif pb == "":
-            if not publicbody_empty:
-                raise forms.ValidationError(
-                        _("You must specify a public body"))
-            pb = None
-        else:
-            try:
-                pb_pk = int(pb)
-            except ValueError:
-                raise forms.ValidationError(_("Invalid value"))
-            try:
-                public_body = PublicBody.objects.get(pk=pb_pk)
-            except PublicBody.DoesNotExist:
-                raise forms.ValidationError(_("Invalid value"))
-            self.public_body_object = public_body
-            self.foi_law_object = public_body.default_law
-        return pb
-
     def clean_reference(self):
         ref = self.cleaned_data['reference']
         if not ref:
@@ -115,38 +62,12 @@ class RequestForm(JSONMixin, forms.Form):
         except ValueError:
             return ''
 
-    def clean_law_for_public_body(self, public_body):
-        law = self.clean_law_without_public_body()
-        if law is None:
-            return None
-        if law.jurisdiction.id != public_body.jurisdiction.id:
-            self._errors["law"] = self.error_class([_("Invalid Information Law")])
-            return None
-        return law
-
-    def clean_law_without_public_body(self):
-        try:
-            law = self.cleaned_data['law']
-            law = self.indexed_laws[int(law)]
-        except (ValueError, KeyError):
-            self._errors["law"] = self.error_class([_("Invalid Information Law")])
-            return None
-        return law
-
-    def clean(self):
-        cleaned = self.cleaned_data
-        public_body = cleaned.get("public_body")
-        if public_body is not None and (public_body != "new" and
-                public_body != ""):
-            self.foi_law = self.clean_law_for_public_body(self.public_body_object)
-        else:
-            self.foi_law = self.clean_law_without_public_body()
-
-        throttle_message = check_throttle(self.user, FoiRequest)
-        if throttle_message:
-            raise forms.ValidationError(throttle_message)
-
-        return cleaned
+    def clean_redirect_url(self):
+        redirect_url = self.cleaned_data['redirect_url']
+        if is_safe_url(redirect_url,
+                       allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
+            return redirect_url
+        return ''
 
 
 class MessagePublicBodySenderForm(forms.Form):
@@ -200,11 +121,6 @@ class SendMessageForm(forms.Form):
                 help_text=(_('If the public body is asking for your post '
                     'address, check this and we will append it to your message.')),
                 required=False)
-
-    def clean(self):
-        throttle_message = check_throttle(self.foirequest.user, FoiMessage)
-        if throttle_message:
-            raise forms.ValidationError(throttle_message)
 
     def save(self, user):
         if self.cleaned_data["to"] == 0:
@@ -263,11 +179,6 @@ class EscalationMessageForm(forms.Form):
                 _('You need to fill in the blanks in the template!')
             )
         return message
-
-    def clean(self):
-        throttle_message = check_throttle(self.foirequest.user, FoiMessage)
-        if throttle_message:
-            raise forms.ValidationError(throttle_message)
 
     def save(self):
         self.foirequest.add_escalation_message(**self.cleaned_data)

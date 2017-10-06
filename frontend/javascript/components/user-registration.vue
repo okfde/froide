@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card mb-3">
     <div class="card-body">
       <div class="form-group row">
         <div class="col" :class="{ 'text-danger': errors.first_name }">
@@ -57,9 +57,10 @@
             <input v-model="private" type="checkbox" name="private" />
             {{ form.private.label }}
           </label>
-          <p class="help-block">
+          <br/>
+          <small class="help-block">
             {{ form.private.help_text }}
-          </p>
+          </small>
         </div>
       </div>
 

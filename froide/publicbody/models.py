@@ -147,9 +147,9 @@ class FoiLaw(models.Model):
         except FoiLaw.DoesNotExist:
             return None
 
-    def as_dict(self):
+    def as_data(self):
         return {
-            "pk": self.pk, "name": self.name,
+            "id": self.id, "name": self.name,
             "description_html": self.description_html,
             "request_note_html": self.request_note_html,
             "description": self.description,
@@ -289,7 +289,7 @@ class PublicBody(models.Model):
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
 
-    serializable_fields = ('name', 'slug', 'request_note_html',
+    serializable_fields = ('id', 'name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
             'address', 'domain')
 
@@ -342,13 +342,16 @@ class PublicBody(models.Model):
                 counter += 1
         return counter
 
-    def as_json(self):
+    def as_data(self):
         d = {}
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
-        d['laws'] = [self.default_law.as_dict()]
+        d['default_law'] = self.default_law.as_data()
         d['jurisdiction'] = self.jurisdiction.name
-        return json.dumps(d)
+        return d
+
+    def as_json(self):
+        return json.dumps(self.as_data())
 
     @property
     def children_count(self):

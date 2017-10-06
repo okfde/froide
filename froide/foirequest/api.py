@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.core.paginator import Paginator, InvalidPage
 from django.http import Http404
+from django.urls import reverse
 
 from haystack.query import SearchQuerySet
 from tastypie.paginator import Paginator as TastyPaginator
@@ -171,7 +172,8 @@ class FoiRequestResource(ModelResource):
                 "id": x.pk,
                 "public_body_name": x.public_body_name,
                 "description": x.description,
-                "url": x.url,
+                "url": reverse('foirequest-shortlink',
+                        kwargs={'obj_id': x.pk}),
                 "score": x.score
             } for x in result]
 

@@ -46,8 +46,8 @@ class RequestTest(TestCase):
             "body": u"This is another test body with Ümläut€n",
             "law": str(pb.default_law.pk)
         }
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
         self.assertIsNotNone(req)
@@ -82,8 +82,8 @@ class RequestTest(TestCase):
                 "first_name": "Stefan", "last_name": "Wehrmeyer",
                 "user_email": "dummy@example.com",
                 "law": pb.laws.all()[0].pk}
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}), post)
         self.assertTrue(response.context['user_form']['user_email'].errors)
         self.assertEqual(response.status_code, 400)
         post = {"subject": "Test-Subject With New User",
@@ -93,8 +93,8 @@ class RequestTest(TestCase):
                 "user_email": "sw@example.com",
                 "terms": "on",
                 "law": str(FoiLaw.get_default_law(pb).id)}
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}), post)
         self.assertEqual(response.status_code, 302)
         user = User.objects.filter(email=post['user_email']).get()
         self.assertFalse(user.is_active)
@@ -251,8 +251,8 @@ class RequestTest(TestCase):
     def test_public_body_not_logged_in_request(self):
         self.client.logout()
         pb = PublicBody.objects.all()[0]
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}),
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}),
                 {"subject": "Test-Subject", "body": "This is a test body",
                     "user_email": "test@example.com"})
         self.assertEqual(response.status_code, 400)
@@ -263,7 +263,7 @@ class RequestTest(TestCase):
 
     def test_logged_in_request_new_public_body_missing(self):
         self.client.login(email="dummy@example.org", password="froide")
-        response = self.client.post(reverse('foirequest-submit_request'),
+        response = self.client.post(reverse('foirequest-make_request'),
                 {"subject": "Test-Subject", "body": "This is a test body",
                 "public_body": "new"})
         self.assertEqual(response.status_code, 400)
@@ -285,7 +285,7 @@ class RequestTest(TestCase):
                 "email": "public.body@example.com",
                 "url": "http://example.com/public/body/"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         pb = PublicBody.objects.filter(name=post['name']).get()
         self.assertEqual(pb.url, post['url'])
@@ -341,24 +341,24 @@ class RequestTest(TestCase):
                 "public_body": 'bs',
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 400)
         post['law'] = str(pb.default_law.pk)
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 400)
         post['public_body'] = '9' * 10  # not that many in fixture
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 400)
         post['public_body'] = str(pb.pk)
         post['law'] = '9' * 10
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 400)
         post['law'] = str(pb.default_law.pk)
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
         self.assertEqual(req.public_body.pk, pb.pk)
@@ -391,7 +391,7 @@ class RequestTest(TestCase):
                 "law": str(pb.default_law.pk),
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].endswith('/?blub=bla'))
 
@@ -402,7 +402,7 @@ class RequestTest(TestCase):
                 "law": str(pb.default_law.pk),
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         req = FoiRequest.objects.get(title=post['subject'])
         self.assertIn(req.get_absolute_url(), response['Location'])
 
@@ -420,7 +420,7 @@ class RequestTest(TestCase):
             FOI_EMAIL_TEMPLATE=email_func
         ):
             response = self.client.post(
-                    reverse('foirequest-submit_request'), post)
+                    reverse('foirequest-make_request'), post)
             self.assertEqual(response.status_code, 302)
             req = FoiRequest.objects.get(title=post['subject'])
             self.assertTrue(req.messages[0].sent)
@@ -435,7 +435,7 @@ class RequestTest(TestCase):
                 "public_body": '',
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
         response = self.client.get(req.get_absolute_url())
@@ -546,7 +546,7 @@ class RequestTest(TestCase):
                 "law": str(pb.default_law.pk),
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
         response = self.client.get(reverse("foirequest-show",
@@ -675,8 +675,8 @@ class RequestTest(TestCase):
     #     post = {"subject": "Test-Subject", "body": "This is a test body",
     #             "public": "on",
     #             "law": pb.default_law.pk}
-    #     response = self.client.post(reverse('foirequest-submit_request',
-    #             kwargs={"public_body": pb.slug}), post)
+    #     response = self.client.post(reverse('foirequest-make_request',
+    #             kwargs={"publicbody_slug": pb.slug}), post)
     #     self.assertEqual(response.status_code, 302)
 
     def test_set_message_sender(self):
@@ -690,7 +690,7 @@ class RequestTest(TestCase):
                 "public_body": str(pb.id),
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 2)
         req = FoiRequest.objects.get(title=post['subject'])
@@ -1232,7 +1232,7 @@ class RequestTest(TestCase):
                 "public_body": str(pb.id),
                 "public": "on"}
         response = self.client.post(
-                reverse('foirequest-submit_request'), post)
+                reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
         message = req.foimessage_set.all()[0]
@@ -1284,8 +1284,8 @@ class RequestTest(TestCase):
             "law": str(pb.default_law.pk)
         }
         response = self.client.post(
-            reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}
+            reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}
         ), post)
         self.assertEqual(response.status_code, 404)
         post = {
@@ -1295,7 +1295,7 @@ class RequestTest(TestCase):
             "public_body": str(pb.pk),
         }
         response = self.client.post(
-            reverse('foirequest-submit_request'), post)
+            reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 400)
         self.assertIn('public_body', response.context['request_form'].errors)
         self.assertEqual(len(response.context['request_form'].errors), 1)
@@ -1415,8 +1415,8 @@ class RequestTest(TestCase):
             "body": u"This is another test body with Ümläut€n",
             "law": str(pb.default_law.pk)
         }
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}), post)
         self.assertEqual(response.status_code, 400)
 
         post = {
@@ -1424,8 +1424,8 @@ class RequestTest(TestCase):
             "body": u"This is another test body with Ümläut€n",
             "law": str(pb.default_law.pk)
         }
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': pb.slug}), post)
         self.assertEqual(response.status_code, 302)
 
     def test_remove_double_numbering(self):
@@ -1459,15 +1459,15 @@ class RequestTest(TestCase):
             post['law'] = str(pb.default_law.pk)
 
             response = self.client.post(
-                    reverse('foirequest-submit_request'), post)
+                    reverse('foirequest-make_request'), post)
             self.assertEqual(response.status_code, 302)
 
             response = self.client.post(
-                    reverse('foirequest-submit_request'), post)
+                    reverse('foirequest-make_request'), post)
             self.assertEqual(response.status_code, 302)
 
             response = self.client.post(
-                    reverse('foirequest-submit_request'), post)
+                    reverse('foirequest-make_request'), post)
 
             self.assertContains(response,
                 u"exceeded your request limit of 2 requests in 1\xa0minute.",
@@ -1562,8 +1562,8 @@ class JurisdictionTest(TestCase):
             "law": str(self.pb.default_law.pk)
         }
         response = self.client.post(
-            reverse('foirequest-submit_request',
-                kwargs={"public_body": self.pb.slug}
+            reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': self.pb.slug}
         ), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title='Jurisdiction-Test-Subject')
@@ -1581,7 +1581,7 @@ class JurisdictionTest(TestCase):
             'publicbody': ''
         }
         response = self.client.post(
-            reverse('foirequest-submit_request'), post)
+            reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(
             title=post['subject']

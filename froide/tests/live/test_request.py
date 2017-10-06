@@ -153,7 +153,7 @@ class TestMakingRequest(StaticLiveServerTestCase):
     def test_make_not_logged_in_request_to_public_body(self):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('foirequest-make_request',
-                kwargs={'public_body': self.pb.slug})))
+                kwargs={'publicbody_slug': self.pb.slug})))
 
         with CheckJSErrors(self.selenium):
             WebDriverWait(self.selenium, 5).until(

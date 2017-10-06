@@ -345,8 +345,8 @@ class AccountTest(TestCase):
                 "body": "This is a test body",
                 "public": "on",
                 "law": pb.default_law.pk}
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={"publicbody_slug": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
         self.client.logout()  # log out to remove Account link

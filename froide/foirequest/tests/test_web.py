@@ -26,18 +26,18 @@ class WebTest(TestCase):
     def test_request_to(self):
         p = PublicBody.objects.all()[0]
         response = self.client.get(reverse('foirequest-make_request',
-            kwargs={'public_body': p.slug}))
+            kwargs={'publicbody_slug': p.slug}))
         self.assertEqual(response.status_code, 200)
         p.email = ""
         p.save()
         response = self.client.get(reverse('foirequest-make_request',
-            kwargs={'public_body': p.slug}))
+            kwargs={'publicbody_slug': p.slug}))
         self.assertEqual(response.status_code, 404)
 
     def test_request_prefilled(self):
         p = PublicBody.objects.all()[0]
         response = self.client.get(reverse('foirequest-make_request',
-            kwargs={'public_body': p.slug}) + '?body=THEBODY&subject=THESUBJECT')
+            kwargs={'publicbody_slug': p.slug}) + '?body=THEBODY&subject=THESUBJECT')
         self.assertEqual(response.status_code, 200)
         content = response.content.decode('utf-8')
         self.assertIn('THEBODY', content)
@@ -47,11 +47,11 @@ class WebTest(TestCase):
         p = PublicBody.objects.all()[0]
         query = '?body=THEBODY&subject=THESUBJECT'
         response = self.client.get(reverse('foirequest-make_request',
-            kwargs={'public_body_id': str(p.pk)}) + query)
+            kwargs={'publicbody_ids': str(p.pk)}) + query)
         self.assertRedirects(
             response,
             reverse('foirequest-make_request', kwargs={
-                'public_body': p.slug
+                'publicbody_slug': p.slug
                 }) + query,
             status_code=301
         )

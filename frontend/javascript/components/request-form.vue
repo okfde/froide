@@ -1,10 +1,13 @@
 <template>
   <div>
 
-    <fieldset class="active">
+    <fieldset v-if="publicbodyFormJson" class="active">
       <slot name="publicbody-legend-title"></slot>
 
-      <publicbody-chooser name="public_body" :defaultsearch="publicbodyDefaultSearch"  :config="config"></publicbody-chooser>
+      <publicbody-chooser name="publicbody"
+        :defaultsearch="publicbodyDefaultSearch"
+        :form-json="publicbodyFormJson"
+        :config="config"></publicbody-chooser>
     </fieldset>
 
     <fieldset v-if="publicbody" id="write-request">
@@ -28,33 +31,31 @@
 
       <div class="row">
         <div class="col-sm-12">
-          <div class="card">
-            <div class="card-header body-text">Antrag nach dem IFG/UIG/VIG
-
-  Sehr geehrte Damen und Herren,
-
-  bitte senden Sie mir Folgendes zu:</div>
+          <div class="card mb-3">
+            <div class="card-header body-text"><span v-if="defaultLaw">{{ defaultLaw.letter_start }}</span><span v-else>{{ i18n.greeting }}</span></div>
             <div class="card-body">
-              <textarea v-model="body" name="body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body }">
+              <textarea v-model="body" name="body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body }" :placeholder="form.body.placeholder">
               </textarea>
             </div>
-            <div class="card-footer body-text">Mit freundlichen Grüßen
-<em v-if="!user.first_name && !user.last_name">Bitte Formular mit Namen ausfüllen</em>
+            <div class="card-footer">
+              <div class="body-text">{{ i18n.kindRegards }}
+<em v-if="!user.first_name && !user.last_name">{{ i18n.giveName }}</em>
 <span v-else>{{ user.first_name }} {{ user.last_name }}</span>
+              </div>
             </div>
           </div>
         </div>
 
       </div>
 
-      <user-registration :form-json="userFormJson" :config="config"></user-registration>
+      <user-registration v-if="!user.id" :form-json="userFormJson" :config="config"></user-registration>
 
       <slot name="public"></slot>
 
 
     </fieldset>
 
-    <similar-requests :config="config"></similar-requests>
+    <similar-requests v-if="showSimilar" :config="config"></similar-requests>
 
     <button v-if="publicbody" type="submit" id="send-request-button" class="btn btn-primary">
       <span class="fa fa-check"></span>
@@ -70,14 +71,18 @@ import UserRegistration from './user-registration'
 
 import {mapGetters, mapMutations} from 'vuex'
 
-import {SET_PUBLICBODY, SET_USER, UPDATE_SUBJECT, UPDATE_BODY
+import {
+  SET_PUBLICBODY, SET_PUBLICBODIES, SET_PUBLICBODIES_DETAIL,
+  SET_USER, UPDATE_SUBJECT, UPDATE_BODY
 } from '../store/mutation_types'
 
 export default {
   name: 'request-form',
   props: [
     'config',
-    'publicbodyDefaultSearch', 'publicbodyJson',
+    'publicbodyDefaultSearch',
+    'publicbodyFormJson', // if form should be present
+    'publicbodiesJson', // if public bodies are fixed
     'userJson',
     'requestFormJson', 'userFormJson',
     'showSimilar'
@@ -88,8 +93,10 @@ export default {
     if (this.userJson) {
       this.setUser(JSON.parse(this.userJson))
     }
-    if (this.publicbodyJson) {
-      this.setPublicbody(JSON.parse(this.publicbodyJson))
+    if (this.publicbodiesJson) {
+      let pbs = JSON.parse(this.publicbodiesJson)
+      this.setPublicbodies(pbs)
+      this.setPublicbodiesDetail(pbs)
     }
   },
   computed: {
@@ -124,7 +131,7 @@ export default {
         this.updateBody(value)
       }
     },
-    ...mapGetters(['user', 'publicbody'])
+    ...mapGetters(['user', 'publicbody', 'publicbodyDetail', 'defaultLaw'])
   },
   methods: {
 
@@ -132,7 +139,9 @@ export default {
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,
       setUser: SET_USER,
-      setPublicbody: SET_PUBLICBODY
+      setPublicbody: SET_PUBLICBODY,
+      setPublicbodies: SET_PUBLICBODIES,
+      setPublicbodiesDetail: SET_PUBLICBODIES_DETAIL
     })
   },
   components: {PublicbodyChooser, UserRegistration, SimilarRequests}

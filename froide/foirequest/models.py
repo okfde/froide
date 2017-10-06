@@ -1,5 +1,4 @@
 import base64
-import random
 from datetime import timedelta
 import json
 import re
@@ -7,7 +6,6 @@ import re
 from django.utils.six import string_types, text_type as str
 from django.db import models
 from django.db.models import Q, When, Case, Value
-from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.sites.models import Site
@@ -15,7 +13,6 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.urls import reverse
 from django.core.files import File
 import django.dispatch
-from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.timesince import timesince
 from django.core.mail import send_mail, mail_managers
@@ -34,6 +31,7 @@ from froide.helper.text_utils import (redact_content, remove_closing, replace_cu
 
 
 from .foi_mail import send_foi_mail, package_foirequest
+from .utils import construct_message_body
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -756,36 +754,6 @@ class FoiRequest(models.Model):
         message.save()
         self.escalated.send(sender=self)
 
-    @classmethod
-    def generate_secret_address(cls, user):
-        possible_chars = 'abcdefghkmnprstuvwxyz2345689'
-        username = user.username.replace('_', '.')
-        secret = "".join([random.choice(possible_chars) for i in range(10)])
-        template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
-
-        domains = settings.FOI_EMAIL_DOMAIN
-        if isinstance(domains, string_types):
-            domains = [domains]
-        FOI_EMAIL_DOMAIN = domains[0]
-
-        if template is not None and callable(template):
-            return settings.FOI_EMAIL_TEMPLATE(username=username, secret=secret)
-        elif template is not None:
-            return settings.FOI_EMAIL_TEMPLATE.format(username=username,
-                                                      secret=secret,
-                                                      domain=FOI_EMAIL_DOMAIN)
-        return "%s.%s@%s" % (username, secret, FOI_EMAIL_DOMAIN)
-
-    @classmethod
-    def generate_unique_secret_address(cls, user):
-        while True:
-            address = cls.generate_secret_address(user)
-            try:
-                FoiRequest.objects.get(secret_address=address)
-            except FoiRequest.DoesNotExist:
-                break
-        return address
-
     @property
     def readable_status(self):
         return FoiRequest.get_readable_status(self.status_representation)
@@ -801,129 +769,6 @@ class FoiRequest(models.Model):
     @classmethod
     def get_status_description(cls, status):
         return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
-
-    @classmethod
-    def from_request_form(cls, user=None, public_body=None, foi_law=None,
-            form_data=None, post_data=None, **kwargs):
-        now = timezone.now()
-        request = FoiRequest(title=form_data['subject'],
-                public_body=public_body,
-                user=user,
-                description=form_data['body'],
-                public=form_data['public'],
-                site=Site.objects.get_current(),
-                reference=form_data.get('reference', ''),
-                first_message=now,
-                last_message=now)
-        send_now = False
-        if not user.is_active:
-            request.status = 'awaiting_user_confirmation'
-            request.visibility = 0
-        else:
-            request.determine_visibility()
-            if public_body is None:
-                request.status = 'publicbody_needed'
-            elif not public_body.confirmed:
-                request.status = 'awaiting_publicbody_confirmation'
-            else:
-                request.status = 'awaiting_response'
-                send_now = True
-
-        request.secret_address = cls.generate_unique_secret_address(user)
-        request.law = foi_law
-        if foi_law is not None:
-            request.jurisdiction = foi_law.jurisdiction
-        if send_now:
-            request.due_date = request.law.calculate_due_date()
-
-        if kwargs.get('blocked'):
-            send_now = False
-            request.is_blocked = True
-
-        # ensure slug is unique
-        request.slug = slugify(request.title)
-        first_round = True
-        count = 0
-        postfix = ""
-        while True:
-            try:
-                with transaction.atomic():
-                    while True:
-                        if not first_round:
-                            postfix = "-%d" % count
-                        if not FoiRequest.objects.filter(slug=request.slug + postfix).exists():
-                            break
-                        if first_round:
-                            first_round = False
-                            count = FoiRequest.objects.filter(slug__startswith=request.slug).count()
-                        else:
-                            count += 1
-                    request.slug += postfix
-                    request.save()
-            except IntegrityError:
-                pass
-            else:
-                break
-
-        message = FoiMessage(request=request,
-            sent=False,
-            is_response=False,
-            sender_user=user,
-            sender_email=request.secret_address,
-            sender_name=user.display_name(),
-            timestamp=now,
-            status="awaiting_response",
-            subject=u'%s [#%s]' % (request.title, request.pk)
-        )
-        message.subject_redacted = message.redact_subject()
-        send_address = True
-        if request.law:
-            send_address = not request.law.email_only
-        message.plaintext = request.construct_message_body(
-                form_data['body'],
-                foi_law,
-                post_data=post_data,
-                full_text=form_data.get('full_text', False),
-                send_address=send_address)
-        message.plaintext_redacted = message.redact_plaintext()
-        if public_body is not None:
-            message.recipient_public_body = public_body
-            message.recipient = public_body.name
-            message.recipient_email = public_body.email
-            cls.request_to_public_body.send(sender=request)
-        else:
-            message.recipient = ""
-            message.recipient_email = ""
-        message.original = ''
-        message.save()
-        cls.request_created.send(sender=request, reference=form_data.get('reference', ''))
-        if send_now:
-            message.send()
-            message.save()
-        return request
-
-    def construct_message_body(self, text, foilaw, post_data,
-                               full_text=False, send_address=True):
-        letter_start, letter_end = "", ""
-        if foilaw:
-            letter_start = foilaw.get_letter_start_text(post_data)
-            letter_end = foilaw.get_letter_end_text(post_data)
-        if full_text:
-            body = text
-        else:
-            body = (
-                u"{letter_start}\n\n{body}\n\n{letter_end}"
-            ).format(
-                letter_start=letter_start,
-                body=text,
-                letter_end=letter_end
-            )
-
-        return render_to_string("foirequest/emails/foi_request_mail.txt", {
-            "request": self,
-            "body": body,
-            "send_address": send_address
-        })
 
     def construct_standard_message_body(self, text, send_address=True):
         return render_to_string("foirequest/emails/mail_with_userinfo.txt",
@@ -1018,10 +863,10 @@ class FoiRequest(models.Model):
             message.recipient_public_body = public_body
             message.recipient = public_body.name
             message.recipient_email = public_body.email
-            message.plaintext = self.construct_message_body(
-                self.description,
-                self.law,
-                post_data={},
+            message.plaintext = construct_message_body(
+                self,
+                text=self.description,
+                foilaw=self.law,
                 full_text=False,
                 send_address=send_address)
             message.plaintext_redacted = message.redact_plaintext()

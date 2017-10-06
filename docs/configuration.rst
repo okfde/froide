@@ -14,13 +14,6 @@ There is a dictionary called `FROIDE_CONFIG` inside settings.py that acts as a n
 The following keys in that dictionary must be present:
 
 
-**create_new_publicbody**
-  *boolean* Are users allowed to create new public bodies when making a request by filling in some details?
-  Newly created public bodies must be approved by an administrator before the request is sent.
-
-**publicbody_empty**
-  *boolean* Can users leave the public body empty on a request, so other users can suggest an appropriate public body later?
-
 **users_can_hide_web**
   *boolean* Can users hide their name on the portal? Their name will always be sent with the request, but may not appear on the website.
 

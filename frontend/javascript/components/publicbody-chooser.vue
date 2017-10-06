@@ -1,5 +1,5 @@
 <template>
-  <div class="publicbody-chooser">
+  <div class="publicbody-chooser mb-3">
     <div class="form-search">
       <div class="input-group">
         <input type="search" v-model:value="search" class="search-public_bodies form-control" :placeholder="i18n.searchTerm" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
@@ -24,13 +24,7 @@
     <div v-if="searching" class="search-spinner">
       <img :src="config.resources.spinner" alt="Loading..."/>
     </div>
-    <ul v-if="searchResults.length > 0 || emptyResults || value" class="search-results list-unstyled">
-      <li v-if="value" class="search-result active">
-        <label>
-          <input type="radio" :name="name" :data-label="label" :value="value" @change="selectSearchResult" v-model="value"/>
-          {{ label }}
-        </label>
-      </li>
+    <ul v-if="searchResults.length > 0 || emptyResults" class="search-results list-unstyled">
       <li v-for="result in searchResults" class="search-result">
         <label>
           <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" v-model="value"/>
@@ -45,6 +39,14 @@
          </a>
       </li>
     </ul>
+    <ul v-if="value" class="search-results list-unstyled">
+      <li class="search-result active">
+        <label>
+          <input type="radio" :name="name" :data-label="label" :value="value" @change="selectSearchResult" v-model="value"/>
+          {{ label }}
+        </label>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -53,17 +55,22 @@
 import {debounce} from 'underscore'
 import {mapGetters, mapMutations} from 'vuex'
 
-import {SET_PUBLICBODY} from '../store/mutation_types'
-import {PublicBodySearch} from '../lib/search'
+import {SET_PUBLICBODY, SET_PUBLICBODY_DETAIL} from '../store/mutation_types'
+import {FroideSearch} from '../lib/search'
 
 export default {
   name: 'publicbody-chooser',
-  props: ['name', 'defaultlabel', 'defaultvalue', 'defaultsearch', 'config'],
+  props: ['name', 'defaultsearch', 'formJson', 'config'],
   created: function () {
-    if (this.defaultvalue) {
-      this.$store.publicbodies = [{id: this.defaultvalue, name: this.defaultlabel}]
+    this.pbSearch = new FroideSearch(this.config)
+
+    if (this._form.cleaned_data) {
+      this.cachePublicBodies([this._form.cleaned_data.publicbody])
+      this.setPublicbodyDetail(this._form.cleaned_data.publicbody)
     }
-    this.pbSearch = new PublicBodySearch(this.config)
+    if (this.form.publicbody.value) {
+      this.value = this.form.publicbody.value
+    }
   },
   data () {
     return {
@@ -82,6 +89,15 @@ export default {
     i18n () {
       return this.config.i18n
     },
+    _form () {
+      return JSON.parse(this.formJson)
+    },
+    form () {
+      return this._form.fields
+    },
+    errors () {
+      return this._form.errors
+    },
     value: {
       get () {
         if (this.publicbody) {
@@ -89,7 +105,9 @@ export default {
         }
       },
       set (value) {
+        this.searchResults = []
         this.setPublicbody(this.publicbodies[value])
+        this.fetchDetails(this.publicbodies[value])
       }
     },
     label () {
@@ -101,19 +119,19 @@ export default {
       return debounce(this.runAutocomplete, 300)
     },
     ...mapGetters([
-      'publicbody'
+      'publicbody',
+      'publicbodyDetails'
     ])
   },
   methods: {
-    fillSearch: function (event) {
+    fillSearch (event) {
       this.search = event.target.dataset.search
       this.triggerAutocomplete()
     },
-    selectSearchResult: function (event) {
-      this.searchResults = []
-      this.setPublicbody(this.publicbodies[event.target.value])
+    selectSearchResult (event) {
+      this.value = event.target.value
     },
-    triggerAutocomplete: function () {
+    triggerAutocomplete () {
       if (this.search === '') {
         this.searchResults = []
         this.emptyResults = false
@@ -124,7 +142,7 @@ export default {
       }
       this.debouncedAutocomplete()
     },
-    runAutocomplete: function () {
+    runAutocomplete () {
       if (this.search === this.lastSearch && !this.emptyResults &&
           this.searchResults.length !== 0) {
         this.searching = false
@@ -135,21 +153,34 @@ export default {
       this.pbSearch.autocomplete(this.search).then((results) => {
         this.searching = false
         this.emptyResults = results.length === 0
+        results = results.filter((r) => r.id !== this.value)
         this.searchResults = results
-        let newPublicBodies = {}
-        this.searchResults.forEach(function (r) {
-          newPublicBodies[r.id] = r
-        })
-        this.publicbodies = {
-          ...this.publicbodies,
-          ...newPublicBodies
-        }
+        this.cachePublicBodies(this.searchResults)
       }, () => {
         this.searching = false
       })
     },
+    fetchDetails (pb) {
+      if (this.publicbodyDetails[pb.id] !== undefined) {
+        return
+      }
+      this.pbSearch.get(pb.id).then((result) => {
+        this.setPublicbodyDetail(result)
+      })
+    },
+    cachePublicBodies (pbs) {
+      let newPublicBodies = {}
+      pbs.forEach(function (r) {
+        newPublicBodies[r.id] = r
+      })
+      this.publicbodies = {
+        ...this.publicbodies,
+        ...newPublicBodies
+      }
+    },
     ...mapMutations({
-      setPublicbody: SET_PUBLICBODY
+      setPublicbody: SET_PUBLICBODY,
+      setPublicbodyDetail: SET_PUBLICBODY_DETAIL
     })
   }
 }

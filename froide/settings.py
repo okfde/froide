@@ -362,8 +362,6 @@ class Base(Configuration):
     FROIDE_THEME = None
 
     FROIDE_CONFIG = dict(
-        create_new_publicbody=True,
-        publicbody_empty=True,
         user_can_hide_web=True,
         public_body_officials_public=True,
         public_body_officials_email_public=False,

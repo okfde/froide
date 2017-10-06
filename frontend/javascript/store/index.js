@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import {SET_PUBLICBODY, SET_USER, UPDATE_SUBJECT, UPDATE_BODY,
+import {
+  SET_PUBLICBODY, SET_PUBLICBODY_DETAIL,
+  SET_PUBLICBODIES, SET_PUBLICBODIES_DETAIL,
+  SET_USER,
+  UPDATE_SUBJECT, UPDATE_BODY,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME, UPDATE_EMAIL, UPDATE_ADDRESS,
   UPDATE_PRIVATE
 } from './mutation_types'
@@ -21,7 +25,9 @@ const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   state: {
     publicbodies: [],
+    publicbodyDetails: {},
     user: {},
+    defaultLaw: null,
     step: STEPS.SELECT_PUBLICBODY,
     subject: '',
     body: ''
@@ -33,14 +39,43 @@ export default new Vuex.Store({
       }
       return null
     },
+    publicbodyDetails: state => {
+      return state.publicbodyDetails
+    },
+    publicbodyDetail: state => {
+      if (state.publicbodies.length > 0) {
+        return state.publicbodyDetails[state.publicbodies[0].id]
+      }
+      return null
+    },
+    defaultLaw: state => {
+      return state.defaultLaw
+    },
     user: state => {
       return state.user
-    }
+    },
+    subject: state => state.subject,
+    getSubject: state => () => state.subject
   },
   mutations: {
     [SET_PUBLICBODY] (state, publicbody) {
       state.publicbodies = [publicbody]
       state.step = STEPS.WRITE_REQUEST
+    },
+    [SET_PUBLICBODIES] (state, publicbodies) {
+      state.publicbodies = publicbodies
+      state.step = STEPS.WRITE_REQUEST
+    },
+    [SET_PUBLICBODY_DETAIL] (state, publicbody) {
+      Vue.set(state.publicbodyDetails, publicbody.id, publicbody)
+      state.defaultLaw = publicbody.default_law
+    },
+    [SET_PUBLICBODIES_DETAIL] (state, publicbodies) {
+      publicbodies.forEach((pb) => {
+        Vue.set(state.publicbodyDetails, pb.id, pb)
+      })
+
+      state.defaultLaw = publicbodies[0].default_law
     },
     [SET_USER] (state, user) {
       state.user = user

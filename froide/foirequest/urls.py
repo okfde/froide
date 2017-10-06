@@ -5,7 +5,7 @@ from django.utils.translation import pgettext
 from django.shortcuts import redirect
 
 from .models import FoiRequest
-from .views import list_requests, list_unchecked, submit_request
+from .views import list_requests, list_unchecked
 
 
 urlpatterns = [
@@ -21,8 +21,6 @@ urlpatterns = [
         name='foirequest-feed_latest'),
 
     url(r'^unchecked/$', list_unchecked, name='foirequest-list_unchecked'),
-    # Translators: part in /request/to/public-body-slug URL
-    url(r'^submit$', submit_request, name='foirequest-submit_request'),
 ]
 
 

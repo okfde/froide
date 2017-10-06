@@ -1,21 +1,32 @@
 <template>
-  <div v-if="publicbody" class="card">
+  <div v-if="publicbody" class="card mb-3">
     <h5 class="card-header">
       {{ i18n.similarExist }}
     </h5>
     <div class="card-body">
       <div class="row">
-        <div class="col-md-6">
-          <h6>
-            {{ i18n.similarRequests }}
-          </h6>
-
-        </div>
-        <div class="col-md-6">
+        <div v-show="publicbody" class="col-md-6">
           <h6>
             {{ i18n.relevantResources }}
           </h6>
           <ul>
+            <li>
+              <a :href="publicbody.url" target="_blank">
+                Website of {{ publicbody.name }}
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div v-show="similarRequests.length > 0" class="col-md-6">
+          <h6>
+            {{ i18n.similarRequests }}
+          </h6>
+          <ul>
+            <li v-for="req in similarRequests">
+              <a :href="req.url" target="_blank">
+                {{ req.title }}
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -25,16 +36,44 @@
 
 <script>
 
+import {debounce} from 'underscore'
+
 import {mapGetters} from 'vuex'
+
+import {FroideSearch} from '../lib/search'
 
 export default {
   name: 'similar-requests',
   props: ['config'],
+  data () {
+    return {
+      similarRequests: [],
+      searches: {}
+    }
+  },
+  created () {
+    this.search = new FroideSearch(this.config)
+    this.$store.watch(this.$store.getters.getSubject, this.debouncedSearch)
+  },
   computed: {
     i18n () {
       return this.config.i18n
     },
-    ...mapGetters(['publicbody'])
+    debouncedSearch () {
+      return debounce(this.runSearch, 1000)
+    },
+    ...mapGetters(['publicbody', 'subject'])
+  },
+  methods: {
+    runSearch () {
+      if (this.searches[this.subject] !== undefined) {
+        return
+      }
+      this.searches[this.subject] = true
+      this.search.searchFoiRequests(this.subject).then(result => {
+        this.similarRequests = result
+      })
+    }
   }
 }
 </script>

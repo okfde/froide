@@ -14,64 +14,71 @@
 {% block body %}
 <div class="row justify-content-lg-center">
   <div class="col-lg-8">
-    {% if public_body %}
-      <form method="post" action="{% url 'foirequest-submit_request' public_body=public_body.slug %}" id="make-request" novalidate>
-    {% else %}
-      <form method="post" action="{% url 'foirequest-submit_request' %}" id="make-request" novalidate>
-    {% endif %}
+    <form method="post" action="" id="make-request" novalidate>
 
     {% csrf_token %}
     {{ request_form.reference }}
     {{ request_form.redirect_url}}
 
-    {% if public_body %}
-      <p>
-        <strong>{{ public_body.name }}</strong>
-        ({{ public_body.jurisdiction.name }})
-      </p>
-      {% if public_body.request_note or public_body.default_law.request_note %}
-        <div id="request-note" class="panel panel-danger">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              {% trans "Notes for this public body" %}
-            </h3>
-          </div>
-          <div class="panel-body">
-            {% if public_body.default_law.request_note %}
-              {{ public_body.default_law.request_note|markdown }}
+    {% if publicbodies %}
+      <fieldset>
+        <legend>
+          {% blocktrans %}You are writing a request to{% endblocktrans %}
+        </legend>
+        {% if multi_request %}
+          <p>
+            {% blocktrans with count=publicbodies|length %}
+              {{ count }} public bodies
+            {% endblocktrans %}
+          </p>
+        {% else %}
+          {% with publicbody=publicbodies.0 %}
+            <p>
+              <strong>{{ publicbody.name }}</strong>
+              ({{ publicbody.jurisdiction.name }})
+            </p>
+            {% if publicbody.request_note or publicbody.default_law.request_note %}
+              <div id="request-note" class="panel panel-danger">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    {% trans "Notes for this public body" %}
+                  </h3>
+                </div>
+                <div class="panel-body">
+                  {% if publicbody.default_law.request_note %}
+                    {{ publicbody.default_law.request_note|markdown }}
+                  {% endif %}
+                  {% if publicbody.request_note %}
+                    {{ publicbody.request_note|markdown }}
+                  {% endif %}
+                </div>
+              </div>
             {% endif %}
-            {% if public_body.request_note %}
-              {{ public_body.request_note|markdown }}
-            {% endif %}
-          </div>
-        </div>
-      {% endif %}
+          {% endwith %}
+        {% endif %}
+      </fieldset>
     {% endif %}
 
-    {% comment %}
-    {% if not request_form.is_bound and not request_form.initial.subject and not request.user.is_authenticated %}
-      {% include "foirequest/request/purpose_check.html" %}
-    {% endif %}
-    {% endcomment %}
       <request-form
         publicbody-default-search="{{ public_body_search }}"
         user-json="{{ request.user.as_json }}"
-        publicbody-json="{{ public_body.as_json }}"
+        publicbody-form-json="{{ publicbody_form.as_json }}"
+        publicbodies-json="{{ publicbodies_json }}"
         user-form-json="{{ user_form.as_json }}"
         request-form-json="{{ request_form.as_json }}"
-        show-similar="1"
+        show-similar="{% if not config.hide_similar %}true{% endif %}"
         :config="config">
 
         <legend slot="publicbody-legend-title">
-          {% blocktrans %}Choose a Public Body{% endblocktrans %}
+          {% blocktrans %}Choose a public body{% endblocktrans %}
         </legend>
 
         <legend slot="request-legend-title">
-          {% blocktrans %}Write the Request{% endblocktrans %}
+          {% blocktrans %}Write the request{% endblocktrans %}
         </legend>
 
-        <div slot="requesthints" class="panel panel-default">
-          <div class="panel-body">
+        <div slot="requesthints" class="card mb-3">
+          <div class="card-body">
             <h5>
               {% blocktrans %}Important Notes:{% endblocktrans %}
             </h5>
@@ -99,12 +106,12 @@
         </div>
         <div slot="public">
           {{ request_form.hide_public }}
-          {% if request_form.hide_public.value %}
+          {% if config.hide_public %}
             <div style="display: none">
               {{ request_form.public }}
             </div>
           {% else %}
-            <div class="card">
+            <div class="card mb-3">
               <div class="card-body">
                 <div class="checkbox">
                   <label>
@@ -139,9 +146,13 @@
       subject: '{% trans "Subject" %}',
       submitRequest: '{% trans "Submit Request"%}',
 
+      greeting: '{% trans "Dear Sir or Madam" %}',
+      kindRegards: '{% trans "Kind regards" %}',
+
       yourFirstName: '{% trans "Your first name" %}',
       yourEmail: '{% trans "Your email address" %}',
       yourAddress: '{% trans "Your postal address" %}',
+      giveName: '{% trans "Please fill out your name below" %}',
 
       similarExist: '{% trans "Please make sure the information is not already requested or public" %}',
       similarRequests: '{% trans "Similar requests" %}',

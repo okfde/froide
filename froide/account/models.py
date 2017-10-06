@@ -329,7 +329,7 @@ class AccountManager(object):
         username_base = cls.get_username_base(user.first_name, user.last_name)
 
         user.is_active = False
-        if "password" in data:
+        if 'password' in data:
             password = data['password']
         else:
             password = User.objects.make_random_password()
