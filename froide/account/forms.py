@@ -102,7 +102,7 @@ class TermsForm(forms.Form):
         error_messages={'required':
             _('You need to accept our Terms and Conditions and Priavcy Statement.')},
         widget=AgreeCheckboxInput(
-            agree_to=_(u'You agree to our <a href="%(url_terms)s" class="target-new">Terms and Conditions</a> and <a href="%(url_privacy)s" class="target-new">Privacy Statement</a>'),
+            agree_to=_(u'You agree to our <a href="%(url_terms)s" target="_blank">Terms and Conditions</a> and <a href="%(url_privacy)s" target="_blank">Privacy Statement</a>'),
             url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
 
     def __init__(self, *args, **kwargs):
