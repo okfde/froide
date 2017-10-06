@@ -1,0 +1,31 @@
+{% load i18n %}
+{% load static %}
+
+{% load block_helper %}
+
+{% addtoblock "js" %}
+<script type="text/javascript">
+  var Froide = window.Froide || {}
+  Froide.url = Froide.url || {}
+  Froide.url.searchPublicBody = "{% url 'api_get_search' api_name='v1' resource_name='publicbody' %}"
+  Froide.url.autocompletePublicBody = "{% url 'api_get_autocomplete' api_name='v1' resource_name='publicbody' %}"
+  Froide.url.showPublicBody = "{% url 'api_dispatch_detail' api_name='v1' resource_name='publicbody' pk='0' %}"
+  Froide.url.helpAbout = '{% url "help-about" %}'
+
+  Froide.i18n = Froide.i18n || {}
+  Froide.i18n = Object.assign(Froide.i18n, {
+    missingPublicBody: '{% trans "Are we missing a public body?" %}',
+    searchTerm: '{% trans "Search Term" %}',
+    search: '{% trans "Search" %}',
+    examples: '{% trans "Examples:" %}',
+    environment: '{% trans "Environment" %}',
+    ministryOfLabour: '{% trans "Ministry of Labour" %}',
+    or: '{% trans "or" %}',
+    noPublicBodiesFound: '{% trans "No Public Bodies found for this query." %}',
+    letUsKnow: '{% trans "Please let us know!" %}'
+  })
+
+  Froide.resources = Froide.resources || {}
+  Froide.resources.spinner = '{% static "img/spinner.gif" %}'
+</script>
+{% endaddtoblock %}
