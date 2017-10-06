@@ -3,6 +3,8 @@
 {% load i18n %}
 {% load static %}
 
+{% load block_helper %}
+
 {% block body_tag %}
   {% block top_block %}
     {% if froide.dryrun %}
@@ -73,8 +75,9 @@
     {% endblock footer_below %}
   {% endblock footer %}
   </footer>
-{% endblock body_tag %}
 
-{% block scripts %}
-  <script src="{% static "js/main.js" %}"></script>
-{% endblock %}
+  {% addtoblock "js" %}
+    <script src="{% static "js/main.js" %}"></script>
+  {% endaddtoblock %}
+
+{% endblock body_tag %}

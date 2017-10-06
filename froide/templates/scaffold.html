@@ -1,4 +1,4 @@
-{% load i18n %}{% load static %}<!DOCTYPE html>
+{% load i18n %}{% load static %}{% load block_helper %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" class="no-js">
   <head>
   <meta charset="utf-8">
@@ -8,6 +8,7 @@
   {% block css %}
     <link href="{% static "css/main.css" %}" rel="stylesheet">
   {% block extra_css %}
+    {% render_block "css" %}
   {% endblock %}
   {% endblock %}
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
@@ -29,6 +30,7 @@
 </head>
 <body{% block body_extra_attribuets %}{% endblock %}>
   {% block body_tag %}{% endblock %}
+  {% render_block "js" %}
   {% block scripts %}{% endblock %}
   {% block extra_footer %}{% endblock %}
   {% if not debug %}{% block tracking_code %}{% endblock %}{% endif %}

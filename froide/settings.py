@@ -169,7 +169,8 @@ class Base(Configuration):
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
                     'froide.helper.context_processors.froide',
-                    'froide.helper.context_processors.site_settings'
+                    'froide.helper.context_processors.site_settings',
+                    'froide.helper.context_processors.block_helper'
                 ]
             }
         }
