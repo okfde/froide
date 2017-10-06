@@ -57,9 +57,7 @@ class FoiLawResource(ModelResource):
 
     def dehydrate(self, bundle):
         if bundle.obj:
-            additional = ('letter_start_form', 'letter_end_form',
-                          'request_note_html', 'description_html')
-            for a in additional:
+            for a in ('request_note_html', 'description_html'):
                 bundle.data[a] = getattr(bundle.obj, a)
             bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
         return bundle

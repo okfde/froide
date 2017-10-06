@@ -23,7 +23,6 @@ from froide.helper.date_utils import (
     calculate_month_range_de
 )
 from froide.helper.templatetags.markup import markdown
-from froide.helper.form_generator import FormGenerator
 from froide.helper.csv_utils import export_csv
 
 
@@ -113,20 +112,6 @@ class FoiLaw(models.Model):
         return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     @property
-    def letter_start_form(self):
-        return mark_safe(FormGenerator(self.letter_start).render_html())
-
-    @property
-    def letter_end_form(self):
-        return mark_safe(FormGenerator(self.letter_end).render_html())
-
-    def get_letter_start_text(self, post):
-        return FormGenerator(self.letter_start, post).render()
-
-    def get_letter_end_text(self, post):
-        return FormGenerator(self.letter_end, post).render()
-
-    @property
     def request_note_html(self):
         return markdown(self.request_note)
 
@@ -170,8 +155,6 @@ class FoiLaw(models.Model):
             "description": self.description,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
-            "letter_start_form": self.letter_start_form,
-            "letter_end_form": self.letter_end_form,
             "jurisdiction": self.jurisdiction.name,
             "jurisdiction_id": self.jurisdiction.id,
             "email_only": self.email_only
@@ -231,9 +214,10 @@ class TaggedPublicBody(ItemBase):
 
 class PublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
-        return super(PublicBodyManager, self).get_queryset()\
-                .exclude(email="")\
+        return (super(PublicBodyManager, self).get_queryset()
+                .exclude(email='')
                 .filter(email__isnull=False)
+        )
 
     def get_list(self):
         return self.get_queryset()\
