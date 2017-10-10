@@ -545,9 +545,9 @@ data-spy="scroll" data-target="#message-nav-container"
   {% endif %}
 
   <div class="col-lg-3 col-md-3">
-    <ul class="nav nav-compact hidden-print">
+    <ul class="nav nav-compact flex-column hidden-print">
       {% with count=object.follow_count %}
-        {% block followers %}<li>
+        {% block followers %}<li class="nav-item">
           <span class="badge{% if count %} badge-info{% endif %}">{% blocktrans count counter=count %}{{ counter }} follower{% plural %}{{ counter }} followers{% endblocktrans %}</span>
 
           <br/>
@@ -555,7 +555,7 @@ data-spy="scroll" data-target="#message-nav-container"
       {% endwith %}
 
       {% if user.is_authenticated and user != object.user %}
-        <li>
+        <li class="nav-item">
           {% include "foirequestfollower/follow_form.html" %}
         </li>
       {% endif %}
@@ -563,13 +563,13 @@ data-spy="scroll" data-target="#message-nav-container"
       {% if object.visibility == 2 %}
       {% block social_sharing %}
         <li class="nav-header">{% trans "Share this request" %}</li>
-        <li>
+        <li class="nav-item">
           <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank">
             <span class="glyphicon glyphicon-share"></span>
             {% trans "Twitter" %}
           </a>
         </li>
-        <li>
+        <li class="nav-item">
           <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank">
             <span class="glyphicon glyphicon-share"></span>
             {% trans "Facebook" %}
@@ -580,13 +580,13 @@ data-spy="scroll" data-target="#message-nav-container"
 
       {% block feeds %}
       <li class="nav-header">{% trans "Feeds" %}</li>
-      <li>
+      <li class="nav-item">
         <a href="{% url 'foirequest-feed' slug=object.slug %}">
           <i class="rss-icon"></i>
           {% trans "RSS Feed" %}
         </a>
       </li>
-      <li>
+      <li class="nav-item">
         <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">
           <i class="atom-icon"></i>
           {% trans "Atom Feed" %}
@@ -598,13 +598,13 @@ data-spy="scroll" data-target="#message-nav-container"
       <li class="nav-header">
         {% trans "Short URL" %}
       </li>
-      <li>
+      <li class="nav-item">
         <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
       </li>
 
       {% if not object.public %}
         <li class="nav-header">{% trans "Secret Short URL" %}</li>
-        <li>
+        <li class="nav-item">
           <span class="small help">
             {% trans "This URL gives read access to others." %}
           </span>
@@ -614,7 +614,7 @@ data-spy="scroll" data-target="#message-nav-container"
 
      {% if user == object.user or user.is_staff %}
         <li class="nav-header">{% trans "Download" %}</li>
-        <li>
+        <li class="nav-item">
           <a class="btn btn-default" href="{% url 'foirequest-download' slug=object.slug %}">
             <span class="glyphicon glyphicon-download"></span>
             {% trans "Download request as ZIP-file" %}
@@ -625,7 +625,7 @@ data-spy="scroll" data-target="#message-nav-container"
       {% with object.tags.all as tags %}
         {% if tags %}
           <li class="nav-header">{% trans "Tags" %}</li>
-          <li>
+          <li class="nav-item">
             <ul class="tag-list">
               {% for tag in tags %}
                 <li>
@@ -639,13 +639,13 @@ data-spy="scroll" data-target="#message-nav-container"
 
       {% if user.is_staff %}
         <li class="nav-header">{% trans "Staff Actions" %}</li>
-        <li>
+        <li class="nav-item">
           <a class="btn btn-default" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
             <span class="glyphicon glyphicon-cog"></span>
             {% trans "View on Admin site" %}
           </a>
         </li>
-        <li>
+        <li class="nav-item">
           <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form">
             {% csrf_token %}
             <div class="input-group">
@@ -661,9 +661,9 @@ data-spy="scroll" data-target="#message-nav-container"
           </form>
         </li>
         {% if object.checked %}
-          <li>{% trans "Marked as checked" %}</li>
+          <li class="nav-item">{% trans "Marked as checked" %}</li>
         {% else %}
-          <li>
+          <li class="nav-item">
             <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn btn-default" type="submit">
@@ -676,9 +676,9 @@ data-spy="scroll" data-target="#message-nav-container"
           </li>
         {% endif %}
         {% if not object.is_foi %}
-          <li>{% trans "Marked as NOT FoI" %}</li>
+          <li class="nav-item">{% trans "Marked as NOT FoI" %}</li>
         {% else %}
-          <li>
+          <li class="nav-item">
             <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn btn-default" type="submit">{% trans "Mark as NOT FoI" %}</button>
