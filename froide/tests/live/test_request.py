@@ -363,7 +363,7 @@ class TestMakingRequest(StaticLiveServerTestCase):
         self.selenium.set_window_size(600, 800)
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('index')))
-        self.selenium.find_element_by_css_selector('.navbar-toggle').click()
+        self.selenium.find_element_by_css_selector('.navbar-toggler').click()
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.navbar-form').is_displayed()
+            lambda driver: driver.find_element_by_css_selector('.navbar form[@role=search]').is_displayed()
         )
