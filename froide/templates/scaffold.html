@@ -22,8 +22,14 @@
   {% block additional_meta %}
   {% endblock %}
 
-  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}" />
-  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/logo/apple-touch-icon.png" %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/logo/favicon-32x32.png" %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static "img/logo/favicon-16x16.png" %}">
+  <link rel="manifest" href="{% static "img/logo/manifest.json" %}">
+  <link rel="mask-icon" href="{% static "img/logo/safari-pinned-tab.svg" %}" color="#0069d0">
+  <link rel="shortcut icon" href="{% static "img/logo/favicon.ico" %}">
+  <meta name="msapplication-config" content="{% static "img/logo/browserconfig.xml" %}">
+  <meta name="theme-color" content="#ffffff">
 
   {% block extra_head %}
   {% endblock %}
