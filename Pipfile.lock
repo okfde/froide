@@ -482,16 +482,6 @@
             ],
             "version": "==4.3.2"
         },
-        "transifex-client": {
-            "editable": true,
-            "git": "git://github.com/stefanw/transifex-client.git",
-            "ref": "python-3"
-        },
-        "transifex_client": {
-            "editable": true,
-            "git": "//github.com/stefanw/transifex-client.git",
-            "ref": "719eb2cf25bfdbe177faed47df55d2ea881028ea"
-        },
         "wcwidth": {
             "hashes": [
                 "sha256:f4ebe71925af7b40a864553f761ed559b43544f8f71746c2d756c7fe788ade7c",

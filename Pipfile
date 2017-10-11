@@ -28,7 +28,6 @@ selenium = "==3.5.0"
 "flake8" = "==3.4.1"
 "factory_boy" = "==2.9.2"
 coverage = "==4.4.1"
-"transifex-client" = {git = "git://github.com/stefanw/transifex-client.git", editable = true, ref = "python-3"}
 mock = "==2.0.0"
 Whoosh = "*"
 ipdb = "*"
