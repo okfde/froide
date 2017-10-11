@@ -21,7 +21,7 @@
           <h6>
             {{ i18n.similarRequests }}
           </h6>
-          <ul>
+          <ul class="similar-requests">
             <li v-for="req in similarRequests">
               <a :href="req.url" target="_blank">
                 {{ req.title }}
@@ -54,6 +54,7 @@ export default {
   created () {
     this.search = new FroideSearch(this.config)
     this.$store.watch(this.$store.getters.getSubject, this.debouncedSearch)
+    this.runSearch()
   },
   computed: {
     i18n () {
@@ -66,13 +67,22 @@ export default {
   },
   methods: {
     runSearch () {
-      if (this.searches[this.subject] !== undefined) {
+      if (!this.subject) {
         return
       }
-      this.searches[this.subject] = true
-      this.search.searchFoiRequests(this.subject).then(result => {
-        this.similarRequests = result
-      })
+      if (this.searches[this.subject] !== undefined) {
+        if (this.searches[this.subject] !== false) {
+          this.similarRequests = this.searches[this.subject]
+        }
+        return
+      }
+      this.searches[this.subject] = false;
+      ((subject) => {
+        this.search.searchFoiRequests(subject).then(result => {
+          this.similarRequests = result
+          this.searches[subject] = result
+        })
+      })(this.subject)
     }
   }
 }
