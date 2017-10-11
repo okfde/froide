@@ -126,6 +126,20 @@
             </div>
           {% endif %}
         </div>
+        <div slot="terms">
+          {% if not user.is_authenticated %}
+            <div class="card mb-3">
+              <div class="card-body">
+                {% if user_form.terms %}
+                  {{ user_form.terms.errors }}
+                  <div class="checkbox">
+                    {{ user_form.terms }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
       </request-form>
     </form>
   </div>

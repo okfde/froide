@@ -52,6 +52,7 @@
 
       <slot name="public"></slot>
 
+      <slot name="terms"></slot>
 
     </fieldset>
 
