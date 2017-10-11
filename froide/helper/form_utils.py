@@ -10,6 +10,12 @@ class DjangoJSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+def get_data(error):
+    if isinstance(error, (dict, str)):
+        return error
+    return error.get_json_data()
+
+
 class JSONMixin(object):
     def as_json(self):
         return json.dumps(self.as_data(), cls=DjangoJSONEncoder)
@@ -19,8 +25,8 @@ class JSONMixin(object):
             'fields': {
                 str(name): self.field_to_dict(name, field) for name, field in self.fields.items()
             },
-            'errors': {f: e.get_json_data() for f, e in self.errors.items()},
-            'nonFieldErrors': [e.get_json_data() for e in self.non_field_errors()]
+            'errors': {f: get_data(e) for f, e in self.errors.items()},
+            'nonFieldErrors': [get_data(e) for e in self.non_field_errors()]
         }
 
     def field_to_dict(self, name, field):
