@@ -115,12 +115,12 @@
       </ul>
       <p>
         <a href="{% url 'foirequest-list_feed' public_body=object.slug %}">
-          <i class="rss-icon"></i>
+          <i class="fa fa-rss" aria-hidden="true"></i>
           {% trans "RSS Feed" %}
         </a>
         <br/>
         <a href="{% url 'foirequest-list_feed_atom' public_body=object.slug %}">
-          <i class="atom-icon"></i>
+          <i class="fa fa-rss-square" aria-hidden="true"></i>
           {% trans "Atom Feed" %}
         </a>
       </p>
