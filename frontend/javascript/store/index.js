@@ -39,6 +39,7 @@ export default new Vuex.Store({
       }
       return null
     },
+    publicbodies: state => state.publicbodies,
     publicbodyDetails: state => {
       return state.publicbodyDetails
     },
@@ -55,7 +56,8 @@ export default new Vuex.Store({
       return state.user
     },
     subject: state => state.subject,
-    getSubject: state => () => state.subject
+    getSubject: state => () => state.subject,
+    body: state => state.body
   },
   mutations: {
     [SET_PUBLICBODY] (state, publicbody) {

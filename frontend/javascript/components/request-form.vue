@@ -57,10 +57,13 @@
 
     <similar-requests v-if="showSimilar" :config="config"></similar-requests>
 
-    <button v-if="publicbody" type="submit" id="send-request-button" class="btn btn-primary">
-      <span class="fa fa-check"></span>
-      {{ i18n.submitRequest }}
+    <review-request v-if="publicbody" :i18n="i18n"></review-request>
+
+    <button v-if="publicbody" type="button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
+      <i class="fa fa-check" aria-hidden="true"></i>
+      {{ i18n.reviewRequest }}
     </button>
+
   </div>
 </template>
 
@@ -68,6 +71,7 @@
 import SimilarRequests from './similar-requests'
 import PublicbodyChooser from './publicbody-chooser'
 import UserRegistration from './user-registration'
+import ReviewRequest from './review-request'
 
 import {mapGetters, mapMutations} from 'vuex'
 
@@ -144,7 +148,12 @@ export default {
       setPublicbodiesDetail: SET_PUBLICBODIES_DETAIL
     })
   },
-  components: {PublicbodyChooser, UserRegistration, SimilarRequests}
+  components: {
+    PublicbodyChooser,
+    UserRegistration,
+    SimilarRequests,
+    ReviewRequest
+  }
 }
 </script>
 
