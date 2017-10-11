@@ -21,6 +21,7 @@ Subject: Latest Improvements
 Date: Mon, 5 Jul 2010 07:54:40 +0200
 Message-ID: <002e01cb1c06$8f9ec680$320abd$@example.com>
 MIME-Version: 1.0
+Content-Disposition: inline;
 Content-Type: multipart/alternative;
 	boundary="----=_NextPart_000_002F_01CB1C17.532859D0"
 X-Mailer: Microsoft Outlook 14.0
