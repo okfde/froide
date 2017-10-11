@@ -58,9 +58,9 @@
 
     <similar-requests v-if="showSimilar" :config="config"></similar-requests>
 
-    <review-request v-if="publicbody" :i18n="i18n"></review-request>
+    <review-request v-if="reviewReady" :i18n="i18n"></review-request>
 
-    <button v-if="publicbody" type="button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
+    <button v-if="reviewReady" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
       <i class="fa fa-check" aria-hidden="true"></i>
       {{ i18n.reviewRequest }}
     </button>
@@ -136,7 +136,9 @@ export default {
         this.updateBody(value)
       }
     },
-    ...mapGetters(['user', 'publicbody', 'publicbodyDetail', 'defaultLaw'])
+    ...mapGetters([
+      'user', 'publicbody', 'publicbodyDetail', 'defaultLaw', 'reviewReady'
+    ])
   },
   methods: {
 

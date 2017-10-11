@@ -57,7 +57,8 @@ export default new Vuex.Store({
     },
     subject: state => state.subject,
     getSubject: state => () => state.subject,
-    body: state => state.body
+    body: state => state.body,
+    reviewReady: state => state.step >= STEPS.WRITE_REQUEST
   },
   mutations: {
     [SET_PUBLICBODY] (state, publicbody) {
