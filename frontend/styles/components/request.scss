@@ -1,6 +1,11 @@
+.request-nav {
+  @extend .nav-pills;
+  @extend .flex-column;
+
+}
+
 .request-well {
-    background-color: white;
-    border-top: 0;
+  @extend .tab-content;
 }
 
 .message-container {
@@ -95,34 +100,10 @@
     text-decoration: underline;
 }
 
-
-
-.message-nav.affix {
-    position: static;
-}
-
-/* Show and affix the side nav when space allows it */
-@media screen and (min-width: 992px) {
-  /* Widen the fixed sidebar */
-  .message-nav.affix,
-  .message-nav.affix-bottom {
-    width: 263px;
-  }
-  .message-nav.affix {
-    position: fixed; /* Undo the static from mobile first approach */
-    top: 10px;
-    right: 83px;
-  }
-  .message-nav.affix-bottom {
-    position: absolute; /* Undo the static from mobile first approach */
-  }
-}
-@media screen and (min-width: 1200px) {
-  /* Widen the fixed sidebar again */
-  .message-nav.affix-bottom,
-  .message-nav.affix {
-    width: 263px;
-  }
+.message-nav {
+  position: sticky;
+  bottom: auto;
+  top: 0;
 }
 
 .message-nav li a {
@@ -133,11 +114,7 @@
     font-weight: bold;
 }
 
-.message-nav li {
-    line-height: 12px;
-}
-
-.message-nav li.nav-header {
+.message-nav .nav-header {
     margin-top: 10px;
-    margin-bottom: 5px;
+    margin-bottom: -5px;
 }

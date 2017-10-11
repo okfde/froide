@@ -13,7 +13,8 @@ const config = {
   entry: {
     main: ['./frontend/javascript/main.js'],
     publicbody: ['./frontend/javascript/publicbody.js'],
-    makerequest: ['./frontend/javascript/makerequest.js']
+    makerequest: ['./frontend/javascript/makerequest.js'],
+    request: ['./frontend/javascript/request.js']
   },
   output: {
     path: path.resolve(__dirname, 'froide/static/js'),
