@@ -196,7 +196,11 @@
     Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}"
     Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}"
   </script>
+{% endaddtoblock %}
+{% addtoblock "js" %}
   <script src="{% static 'js/makerequest.js' %}" charset="utf-8"></script>
+{% endaddtoblock %}
+{% addtoblock "js" %}
   <script>
     /* eslint-disable no-undef */
     Froide.components.makerequest.createRequestForm('#make-request', Froide)
