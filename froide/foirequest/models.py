@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import base64
 from datetime import timedelta
 import json
@@ -692,7 +694,7 @@ class FoiRequest(models.Model):
                     'name': str(_('NAME'))
                 }
             )
-            att.name = re.sub('[^A-Za-z0-9_\.\-]', '', att.name)
+            att.name = re.sub(r'[^A-Za-z0-9_\.\-]', '', att.name)
             att.name = att.name[:255]
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
                 has_pdf = True
@@ -710,8 +712,8 @@ class FoiRequest(models.Model):
             subject, message, recipient_pb=None, send_address=True):
         message_body = message
         message = FoiMessage(request=self)
-        subject = re.sub('\s*\[#%s\]\s*$' % self.pk, '', subject)
-        message.subject = u'%s [#%s]' % (subject, self.pk)
+        subject = re.sub(r'\s*\[#%s\]\s*$' % self.pk, '', subject)
+        message.subject = '%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.sender_user = user
@@ -732,7 +734,7 @@ class FoiRequest(models.Model):
     def add_escalation_message(self, subject, message, send_address=False):
         message_body = message
         message = FoiMessage(request=self)
-        subject = re.sub('\s*\[#%s\]\s*$' % self.pk, '', subject)
+        subject = re.sub(r'\s*\[#%s\]\s*$' % self.pk, '', subject)
         message.subject = u'%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False

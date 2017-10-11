@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+from __future__ import unicode_literals
+
 from difflib import SequenceMatcher
 import re
 
@@ -32,7 +34,7 @@ def highlight_request(message):
     )
 
 
-ONLY_SPACE_LINE = re.compile(u'^[ \u00A0]+$', re.U | re.M)
+ONLY_SPACE_LINE = re.compile('^[ \u00A0]+$', re.U | re.M)
 
 
 def remove_space_lines(content):

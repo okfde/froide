@@ -111,7 +111,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
-        match = re.search('/%d/%d/(\w+)/' % (user.pk, req.pk),
+        match = re.search(r'/%d/%d/(\w+)/' % (user.pk, req.pk),
                 message.body)
         self.assertIsNotNone(match)
         secret = match.group(1)
@@ -709,7 +709,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(req.messages), 2)
         self.assertEqual(len(mail.outbox), 3)
         notification = mail.outbox[-1]
-        match = re.search('https?://[^/]+(/.*?/%d/[^\s]+)' % req.user.pk,
+        match = re.search(r'https?://[^/]+(/.*?/%d/[^\s]+)' % req.user.pk,
                 notification.body)
         self.assertIsNotNone(match)
         url = match.group(1)
@@ -1628,4 +1628,4 @@ class PackageFoiRequestTest(TestCase):
         zip_names = zfile.namelist()
         self.assertEqual(len(filenames), len(zip_names))
         for zname, fname in zip(zip_names, filenames):
-            self.assertTrue(bool(re.match('^%s$' % fname, zname)))
+            self.assertTrue(bool(re.match(r'^%s$' % fname, zname)))

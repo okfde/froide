@@ -878,7 +878,7 @@ def redact_attachment(request, slug, attachment_id):
         if path is None:
             return render_400(request)
         name = attachment.name.rsplit('.', 1)[0]
-        name = re.sub('[^\w\.\-]', '', name)
+        name = re.sub(r'[^\w\.\-]', '', name)
         pdf_file = File(open(path, 'rb'))
         if already:
             att = already

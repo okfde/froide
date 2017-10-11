@@ -143,7 +143,7 @@ class TestMakingRequest(StaticLiveServerTestCase):
         self.assertEqual(req.status, 'awaiting_user_confirmation')
 
         message = mail.outbox[0]
-        match = re.search('http://[^/]+(/.+)', message.body)
+        match = re.search(r'http://[^/]+(/.+)', message.body)
         activate_url = match.group(1)
         self.selenium.get('%s%s' % (self.live_server_url, activate_url))
         WebDriverWait(self.selenium, 5).until(

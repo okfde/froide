@@ -289,7 +289,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        match = re.search(r'/account/reset/([^/]+)/([^/]+)/', message.body)
         uidb64 = match.group(1)
         token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
@@ -323,7 +323,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        match = re.search(r'/account/reset/([^/]+)/([^/]+)/', message.body)
         uidb64 = match.group(1)
         token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
