@@ -60,6 +60,8 @@ class EmailParser(object):
         dispo_name = dispos[0].lower()
         dispo_dict = {}
         for param in dispos[1:]:
+            if '=' not in param:
+                continue
             name, value = param.split("=", 1)
             name = name.lower().strip()
             value = value.strip()
