@@ -1,5 +1,5 @@
 -r requirements.txt
-selenium==3.5.0
+selenium==3.6.0
 flake8==3.4.1
 factory-boy==2.9.2
 coverage==4.4.1

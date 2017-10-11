@@ -4,8 +4,8 @@ verify_ssl = true
 
 [packages]
 
-Django = "<2.0"
-Markdown = "==2.6.9"
+django = "<2.0"
+markdown = "==2.6.9"
 "django-haystack" = "==2.6.1"
 "django-taggit" = "==0.22.1"
 pytz = "==2017.2"
@@ -24,11 +24,11 @@ celery = "==4.1.0"
 
 [dev-packages]
 
-selenium = "==3.5.0"
+selenium = "*"
 "flake8" = "==3.4.1"
-"factory_boy" = "==2.9.2"
+"factory-boy" = "==2.9.2"
 coverage = "==4.4.1"
 mock = "==2.0.0"
-Whoosh = "*"
+whoosh = "*"
 ipdb = "*"
 "psycopg2" = "*"
