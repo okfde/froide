@@ -127,7 +127,7 @@ class AccountTest(TestCase):
 
         # sign up with email that is confirmed
         message = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
@@ -180,7 +180,7 @@ class AccountTest(TestCase):
         AccountManager(user).send_confirmation_mail(password=password)
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
@@ -246,7 +246,7 @@ class AccountTest(TestCase):
         self.assertTrue(response.status_code, 302)
         user = User.objects.get(email=post['user_email'])
         message = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
