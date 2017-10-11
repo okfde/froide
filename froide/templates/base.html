@@ -76,8 +76,9 @@
   {% endblock footer %}
   </footer>
 
-  {% addtoblock "js" %}
-    <script src="{% static "js/main.js" %}"></script>
-  {% endaddtoblock %}
-
 {% endblock body_tag %}
+
+{% block scripts %}
+  <script src="{% static "js/common.js" %}"></script>
+  <script src="{% static "js/main.js" %}"></script>
+{% endblock %}

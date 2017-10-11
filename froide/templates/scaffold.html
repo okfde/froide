@@ -36,8 +36,10 @@
 </head>
 <body{% block body_extra_attribuets %}{% endblock %}>
   {% block body_tag %}{% endblock %}
-  {% render_block "js" %}
   {% block scripts %}{% endblock %}
+
+  {% render_block "js" %}
+
   {% block extra_footer %}{% endblock %}
   {% if not debug %}{% block tracking_code %}{% endblock %}{% endif %}
 </body>

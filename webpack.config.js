@@ -1,6 +1,7 @@
 const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const LiveReloadPlugin = require('webpack-livereload-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const webpack = require('webpack')
 
 const extractSass = new ExtractTextPlugin({
@@ -29,63 +30,64 @@ const config = {
     }
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /(node_modules|bower_components)/,
-      use: {
-        loader: 'babel-loader'
-      }
-    },
-    {
-      test: /\.vue/,
-      use: {
-        loader: 'vue-loader'
-      }
-    },
-    {
-      test: /\.scss$/,
-      use: extractSass.extract({
-        use: [{
-          loader: 'css-loader',
-          options: {
-            sourceMap: true
-          }
-        },
-        {
-          loader: 'sass-loader',
-          options: {
-            sourceMap: true,
-            includePaths: ['node_modules/']
-          }
-        }],
-        // use style-loader in development
-        fallback: 'style-loader'
-      })
-    },
-    {
-      test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
-      loader: 'url-loader',
-      options: {
-        limit: 10000,
-        name: '../fonts/[name].[ext]',
-        emitFile: true,
-        context: 'froide/static/',
-        publicPath: ''
-      }
-    },
-    {
-      test: /\.(jpg|png)$/,
-      use: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader'
+        }
+      },
+      {
+        test: /\.vue/,
+        use: {
+          loader: 'vue-loader'
+        }
+      },
+      {
+        test: /\.scss$/,
+        use: extractSass.extract({
+          use: [{
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              includePaths: ['node_modules/']
+            }
+          }],
+          // use style-loader in development
+          fallback: 'style-loader'
+        })
+      },
+      {
+        test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          limit: 8192,
-          name: '[path][name].[ext]',
-          emitFile: false,
-          context: 'froide/static',
-          publicPath: '../'
+          limit: 10000,
+          name: '../fonts/[name].[ext]',
+          emitFile: true,
+          context: 'froide/static/',
+          publicPath: ''
+        }
+      },
+      {
+        test: /\.(jpg|png)$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            name: '[path][name].[ext]',
+            emitFile: false,
+            context: 'froide/static',
+            publicPath: '../'
+          }
         }
       }
-    }
     ]
   },
   plugins: [
@@ -100,18 +102,25 @@ const config = {
       'process.env': {
         NODE_ENV: process.env.NODE_ENV
       }
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'common',
+      // (the commons chunk name)
+
+      filename: 'common.js',
+      // (the filename of the commons chunk)
+      //
+      minChunks: 2
+      // (Modules must be shared between 3 entries)
     })
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'common'
-    //   // (the commons chunk name)
-    //
-    //   // filename: 'commons.js'
-    //   // (the filename of the commons chunk)
-    //
-    //   // minChunks: 3,
-    //   // (Modules must be shared between 3 entries)
-    // })
-  ]
+  ].concat(process.env.NODE_ENV === 'production' ? new UglifyJsPlugin({
+    sourceMap: true,
+    uglifyOptions: {
+      ie8: true,
+      ecma: 8,
+      mangle: false
+    }
+  }) : [])
 }
 
 module.exports = config
