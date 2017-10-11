@@ -1,5 +1,7 @@
 from __future__ import with_statement
 
+import unittest
+
 from django.utils.six import text_type as str
 from django.test import TestCase
 from django.urls import reverse
@@ -43,6 +45,7 @@ class WebTest(TestCase):
         self.assertIn('THEBODY', content)
         self.assertIn('THESUBJECT', content)
 
+    @unittest.skip('No longer redirect to slug on pb ids')
     def test_request_prefilled_redirect(self):
         p = PublicBody.objects.all()[0]
         query = '?body=THEBODY&subject=THESUBJECT'
@@ -53,7 +56,7 @@ class WebTest(TestCase):
             reverse('foirequest-make_request', kwargs={
                 'publicbody_slug': p.slug
                 }) + query,
-            status_code=301
+            status_code=200
         )
 
     def test_list_requests(self):
