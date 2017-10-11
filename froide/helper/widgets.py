@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 from django.forms.widgets import TextInput
 from django.conf import settings
 from django.utils import six
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.translation import ugettext_lazy as _
 
 from taggit.utils import edit_string_for_tags
@@ -44,19 +45,21 @@ class TagAutocompleteTagIt(TextInput):
 
     class Media:
         # JS Base url defaults to STATIC_URL/jquery-autocomplete/
-        js_base_url = '%sjs/libs/jquery-tag-it/' % settings.STATIC_URL
+        js_base_url = 'js/libs/jquery-tag-it/'
         # jQuery ui is loaded from google's CDN by default
-        jqueryui_file = '%sjs/libs/jquery-ui.min.js' % settings.STATIC_URL
+        jqueryui_file = 'js/libs/jquery-ui.min.js'
 
         # load js
         js = (
-            '%stagging_autocomplete_tagit.js' % js_base_url,
-            jqueryui_file,
-            '%sjquery.tag-it.min.js' % js_base_url,
+            static('admin/js/vendor/jquery/jquery.min.js'),
+            static('%stagging_autocomplete_tagit.js' % js_base_url),
+            static(jqueryui_file),
+            static('%sjquery.tag-it.min.js' % js_base_url),
         )
 
         # custom css can also be overriden in settings
-        css_list = getattr(settings, 'TAGGING_AUTOCOMPLETE_CSS', ['%scss/ui-autocomplete-tag-it.css' % js_base_url])
+        css_list = getattr(settings, 'TAGGING_AUTOCOMPLETE_CSS',
+            [static('%scss/ui-autocomplete-tag-it.css' % js_base_url)])
         # check is a list, if is a string convert it to a list
         if type(css_list) != list and type(css_list) == str:
             css_list = [css_list]
