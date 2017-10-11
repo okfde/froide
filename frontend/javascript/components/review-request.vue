@@ -32,7 +32,7 @@
             </tr>
             </tbody>
           </table>
-          <div v-html="requestBodyHtml" class="body-text review-body-text"></div>
+          <div class="body-text review-body-text"><span>{{ letterStart }}</span><span class="highlight">{{ body }}</span><span>{{ letterEnd }}</span></div>
           <ul>
             <li>{{ i18n.reviewSpelling }}</li>
             <li>{{ i18n.reviewPoliteness }}</li>
@@ -65,12 +65,17 @@ export default {
     }
   },
   computed: {
-    requestBodyHtml () {
-      return [
-        this.defaultLaw.letter_start,
-        `<span class="highlight">${this.body}</span>`,
-        this.defaultLaw.letter_end
-      ].join('\n\n')
+    letterStart () {
+      if (this.defaultLaw === null) {
+        return ''
+      }
+      return this.defaultLaw.letter_start + '\n\n'
+    },
+    letterEnd () {
+      if (this.defaultLaw === null) {
+        return ''
+      }
+      return `\n\n${this.defaultLaw.letter_end}\n${this.user.first_name} ${this.user.last_name}`
     },
     ...mapGetters([
       'publicbodies', 'publicbody', 'subject', 'body', 'user', 'defaultLaw'
