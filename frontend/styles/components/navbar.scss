@@ -6,15 +6,8 @@
   padding-top: 15px;
 }
 
-.navbar .navbar-brand {
-  height: 50px;
-  background-position: 15px 10px;
-}
-
-@media (min-width: 768px) and (max-width: 992px) {
-    .navbar .navbar-brand > span {
-        display:none;
-    }
+.navbar-logo {
+  display: inline-block;
 }
 
 @media (min-width: 768px) and (max-width: 1200px) {
