@@ -72,7 +72,9 @@
         </li>
       {% endif %}
       {% if jurisdiction %}
-        <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by status{% endblocktrans %}</li>
+        <li class="nav-header">
+          {% blocktrans with name=jurisdiction.name %}{{ name }} requests by status{% endblocktrans %}
+        </li>
         {% for urlpart,readable_status,status in status_list %}
            <li class="nav-item">
             <a class="nav-link" href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
@@ -85,7 +87,6 @@
         {% for topic in topic_list %}
            <li class="nav-item">
             <a class="nav-link" href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
-              <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
           </li>
@@ -96,7 +97,6 @@
           {% for juris in jurisdiction_list %}
              <li class="nav-item">
               <a class="nav-link" href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
-                <span class="small-icon jurisdiction-{{ juris.slug }}"></span>
                 {{ juris.name }}
               </a>
             </li>
@@ -118,7 +118,6 @@
         {% for topic in topic_list %}
            <li class="nav-item">
             <a class="nav-link" href="{% url 'foirequest-list' topic=topic.slug %}">
-              <span class="small-icon topic-{{ topic.slug }}"></span>
               {{ topic.name }}
             </a>
           </li>
