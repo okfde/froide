@@ -1,4 +1,5 @@
 import re
+import os
 import unittest
 
 from django.conf import settings
@@ -24,6 +25,9 @@ def get_selenium():
         options = Options()
         if driver == 'chrome_headless':
             options.add_argument('headless')
+        driver_path = os.environ.get('CHROME_DRIVER_PATH', None)
+        if driver_path is not None:
+            return ChromeDriver(driver_path, chrome_options=options)
         return ChromeDriver(chrome_options=options)
     elif driver == 'phantomjs':
         from selenium.webdriver import PhantomJS
