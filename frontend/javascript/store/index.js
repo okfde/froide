@@ -24,8 +24,8 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
   state: {
-    publicbodies: [],
-    publicbodyDetails: {},
+    scopedPublicbodies: {},
+    scopedPublicbodyDetails: {},
     user: {},
     defaultLaw: null,
     step: STEPS.SELECT_PUBLICBODY,
@@ -33,21 +33,30 @@ export default new Vuex.Store({
     body: ''
   },
   getters: {
-    publicbody: state => {
-      if (state.publicbodies.length > 0) {
-        return state.publicbodies[0]
+    getPublicBodyByScope: (state, getters) => (scope) => {
+      let pbs = getters.getPublicBodiesByScope(scope)
+      if (pbs.length === 0) {
+        return null
       }
-      return null
+      return pbs[0]
     },
-    publicbodies: state => state.publicbodies,
-    publicbodyDetails: state => {
-      return state.publicbodyDetails
-    },
-    publicbodyDetail: state => {
-      if (state.publicbodies.length > 0) {
-        return state.publicbodyDetails[state.publicbodies[0].id]
+    getPublicBodiesByScope: (state, getters) => (scope) => {
+      let pbs = state.scopedPublicbodies[scope]
+      if (pbs === undefined) {
+        return []
       }
-      return null
+      return pbs
+    },
+    getPublicBodyDetailsByScope: (state, getters) => (scope, id) => {
+      let pbs = getters.getPublicBodiesDetailsByScope(scope)
+      return pbs[id]
+    },
+    getPublicBodiesDetailsByScope: (state, getters) => (scope) => {
+      let pbs = state.scopedPublicbodyDetails[scope]
+      if (pbs === undefined) {
+        return {}
+      }
+      return pbs
     },
     defaultLaw: state => {
       return state.defaultLaw
@@ -61,21 +70,31 @@ export default new Vuex.Store({
     reviewReady: state => state.step >= STEPS.WRITE_REQUEST
   },
   mutations: {
-    [SET_PUBLICBODY] (state, publicbody) {
-      state.publicbodies = [publicbody]
+    [SET_PUBLICBODY] (state, {publicbody, scope}) {
+      Vue.set(state.scopedPublicbodies, scope, [publicbody])
       state.step = STEPS.WRITE_REQUEST
     },
-    [SET_PUBLICBODIES] (state, publicbodies) {
-      state.publicbodies = publicbodies
+    [SET_PUBLICBODIES] (state, {publicbodies, scope}) {
+      Vue.set(state.scopedPublicbodies, scope, publicbodies)
       state.step = STEPS.WRITE_REQUEST
     },
-    [SET_PUBLICBODY_DETAIL] (state, publicbody) {
-      Vue.set(state.publicbodyDetails, publicbody.id, publicbody)
+    [SET_PUBLICBODY_DETAIL] (state, {publicbody, scope}) {
+      if (state.scopedPublicbodyDetails[scope] === undefined) {
+        Vue.set(state.scopedPublicbodyDetails, scope, {
+          [publicbody.id]: publicbody
+        })
+      } else {
+        Vue.set(state.scopedPublicbodyDetails, scope, {
+          [publicbody.id]: publicbody,
+          ...state.scopedPublicbodyDetails[scope]
+        })
+      }
+
       state.defaultLaw = publicbody.default_law
     },
-    [SET_PUBLICBODIES_DETAIL] (state, publicbodies) {
+    [SET_PUBLICBODIES_DETAIL] (state, {publicbodies, scope}) {
       publicbodies.forEach((pb) => {
-        Vue.set(state.publicbodyDetails, pb.id, pb)
+        this[SET_PUBLICBODY_DETAIL](state, {publicbody: pb, scope})
       })
 
       state.defaultLaw = publicbodies[0].default_law

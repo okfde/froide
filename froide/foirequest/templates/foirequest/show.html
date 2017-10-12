@@ -766,11 +766,17 @@
 
 {% endblock %}
 
-{% block extra_footer %}
+{% block scripts %}
+  {{ block.super }}
   {% if user.is_staff %}
     {% with object.get_set_tags_form as set_tags_form %}
       {{ set_tags_form.media.js }}
     {% endwith %}
   {% endif %}
-  <script src="{% static "js/request.js" %}" charset="utf-8"></script>
+  {% addtoblock "js" %}
+    <script src="{% static 'js/request.js' %}" charset="utf-8"></script>
+  {% endaddtoblock %}
+  {% addtoblock "js" %}
+    <script src="{% static 'js/publicbody.js' %}" charset="utf-8"></script>
+  {% endaddtoblock %}
 {% endblock %}

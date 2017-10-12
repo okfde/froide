@@ -6,11 +6,12 @@
 
       <publicbody-chooser name="publicbody"
         :defaultsearch="publicbodyDefaultSearch"
+        :scope="pbScope"
         :form-json="publicbodyFormJson"
         :config="config"></publicbody-chooser>
     </fieldset>
 
-    <fieldset v-if="publicbody" id="write-request">
+    <fieldset v-if="reviewReady" id="write-request">
       <slot name="request-legend-title"></slot>
 
       <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
@@ -56,9 +57,9 @@
 
     </fieldset>
 
-    <similar-requests v-if="showSimilar" :config="config"></similar-requests>
+    <similar-requests v-if="showSimilar" :pbScope="pbScope" :config="config"></similar-requests>
 
-    <review-request v-if="reviewReady" :i18n="i18n"></review-request>
+    <review-request v-if="reviewReady" :pbScope="pbScope" :i18n="i18n"></review-request>
 
     <button v-if="reviewReady" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
       <i class="fa fa-check" aria-hidden="true"></i>
@@ -93,6 +94,7 @@ export default {
     'showSimilar'
   ],
   created () {
+    this.pbScope = 'make-request'
     this.updateSubject(this.form.subject.value || this.form.subject.initial)
     this.updateBody(this.form.body.value || this.form.body.initial)
     if (this.userJson) {
@@ -100,8 +102,14 @@ export default {
     }
     if (this.publicbodiesJson) {
       let pbs = JSON.parse(this.publicbodiesJson)
-      this.setPublicbodies(pbs)
-      this.setPublicbodiesDetail(pbs)
+      this.setPublicbodies({
+        publicbodies: pbs,
+        scope: this.pbScope
+      })
+      this.setPublicbodiesDetail({
+        publicbodies: pbs,
+        scope: this.pbScope
+      })
     }
   },
   computed: {
@@ -136,12 +144,21 @@ export default {
         this.updateBody(value)
       }
     },
+    publicbody () {
+      return this.getPublicBodyByScope(this.pbScope)
+    },
+    publicbodyDetails () {
+      return this.getPublicBodyDetailsByScope(this.pbScope)
+    },
     ...mapGetters([
-      'user', 'publicbody', 'publicbodyDetail', 'defaultLaw', 'reviewReady'
+      'user',
+      'getPublicBodyByScope',
+      'getPublicBodyDetailsByScope',
+      'defaultLaw',
+      'reviewReady'
     ])
   },
   methods: {
-
     ...mapMutations({
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,

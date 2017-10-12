@@ -60,16 +60,26 @@ import {FroideSearch} from '../lib/search'
 
 export default {
   name: 'publicbody-chooser',
-  props: ['name', 'defaultsearch', 'formJson', 'config'],
+  props: ['name', 'scope', 'defaultsearch', 'formJson', 'config'],
   created: function () {
     this.pbSearch = new FroideSearch(this.config)
 
     if (this._form.cleaned_data) {
-      this.cachePublicBodies([this._form.cleaned_data.publicbody])
-      this.setPublicbodyDetail(this._form.cleaned_data.publicbody)
+      this.cachePublicBodies([this._form.cleaned_data[this.name]])
+      this.setPublicbodyDetail({
+        publicbody: this._form.cleaned_data[this.name],
+        scope: this.scope
+      })
     }
-    if (this.form.publicbody.value) {
-      this.value = this.form.publicbody.value
+    if (this.field.objects) {
+      this.cachePublicBodies([this.field.objects])
+      this.setPublicbodyDetail({
+        publicbody: this.field.objects,
+        scope: this.scope
+      })
+    }
+    if (this.field.value) {
+      this.value = this.field.value
     }
   },
   data () {
@@ -95,6 +105,9 @@ export default {
     form () {
       return this._form.fields
     },
+    field () {
+      return this.form[this.name]
+    },
     errors () {
       return this._form.errors
     },
@@ -106,7 +119,10 @@ export default {
       },
       set (value) {
         this.searchResults = []
-        this.setPublicbody(this.publicbodies[value])
+        this.setPublicbody({
+          publicbody: this.publicbodies[value],
+          scope: this.scope
+        })
         this.fetchDetails(this.publicbodies[value])
       }
     },
@@ -118,9 +134,15 @@ export default {
     debouncedAutocomplete () {
       return debounce(this.runAutocomplete, 300)
     },
+    publicbody () {
+      return this.getPublicBodyByScope(this.scope)
+    },
+    publicbodyDetails () {
+      return this.getPublicBodyDetailsByScope(this.scope)
+    },
     ...mapGetters([
-      'publicbody',
-      'publicbodyDetails'
+      'getPublicBodyByScope',
+      'getPublicBodyDetailsByScope'
     ])
   },
   methods: {
@@ -161,11 +183,14 @@ export default {
       })
     },
     fetchDetails (pb) {
-      if (this.publicbodyDetails[pb.id] !== undefined) {
+      if (this.getPublicBodyDetailsByScope(this.scope, pb.id) !== undefined) {
         return
       }
       this.pbSearch.get(pb.id).then((result) => {
-        this.setPublicbodyDetail(result)
+        this.setPublicbodyDetail({
+          publicbody: result,
+          scope: this.scope
+        })
       })
     },
     cachePublicBodies (pbs) {

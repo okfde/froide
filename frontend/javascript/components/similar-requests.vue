@@ -44,7 +44,7 @@ import {FroideSearch} from '../lib/search'
 
 export default {
   name: 'similar-requests',
-  props: ['config'],
+  props: ['config', 'pbScope'],
   data () {
     return {
       similarRequests: [],
@@ -63,7 +63,10 @@ export default {
     debouncedSearch () {
       return debounce(this.runSearch, 1000)
     },
-    ...mapGetters(['publicbody', 'subject'])
+    publicbody () {
+      return this.getPublicBodyByScope(this.pbScope)
+    },
+    ...mapGetters(['getPublicBodyByScope', 'subject'])
   },
   methods: {
     runSearch () {

@@ -58,7 +58,7 @@ import {mapGetters} from 'vuex'
 
 export default {
   name: 'review-request',
-  props: ['i18n'],
+  props: ['i18n', 'pbScope'],
   data () {
     return {
       errors: []
@@ -77,8 +77,14 @@ export default {
       }
       return `\n\n${this.defaultLaw.letter_end}\n${this.user.first_name} ${this.user.last_name}`
     },
+    publicbody () {
+      return this.getPublicBodyByScope(this.pbScope)
+    },
+    publicbodies () {
+      return this.getPublicBodiesByScope(this.pbScope)
+    },
     ...mapGetters([
-      'publicbodies', 'publicbody', 'subject', 'body', 'user', 'defaultLaw'
+      'getPublicBodiesByScope', 'getPublicBodyByScope', 'subject', 'body', 'user', 'defaultLaw'
     ])
   }
 }
