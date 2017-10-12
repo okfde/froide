@@ -6,18 +6,18 @@
   {% if following and not follow_only %}
     <button class="input-large btn btn-default hover-btn-danger" type="submit">
       <span class="on-hover">
-        <span class="glyphicon glyphicon-remove"></span>
+        <i class="fa fa-remove"></i>
         {% trans "Unfollow request" %}
       </span>
       <span class="on-display">
-        <span class="glyphicon glyphicon-star"></span>
+        <i class="fa fa-star"></i>
         {% trans "You follow this request" %}
       </span>
     </button>
   {% elif not following %}
     <button class="input-large btn hover-btn-success" type="submit">
       <span class="on-hover">
-        <span class="glyphicon glyphicon-star"></span>
+        <i class="fa fa-star"></i>
         {% trans "Follow request?" %}
       </span>
       <span class="on-display">
@@ -39,10 +39,10 @@
     <p class="muted">
       <small>
         {% if following %}
-          <span class="glyphicon glyphicon-remove"></span>
+          <i class="fa fa-remove"></i>
           {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
         {% else %}
-          <span class="glyphicon glyphicon-ok"></span>
+          <i class="fa fa-check"></i>
           {% trans "You will receive notifications!" %}
         {% endif %}
       </small>

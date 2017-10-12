@@ -67,7 +67,7 @@
 
     {% if user.is_staff %}
       <a class="btn btn-default" href="{% url 'admin:publicbody_publicbody_change' object.id %}">
-        <span class="glyphicon glyphicon-cog"></span>
+        <i class="fa fa-cog"></i>
         {% trans "View on Admin site" %}
       </a>
     {% endif %}

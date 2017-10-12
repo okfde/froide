@@ -26,7 +26,7 @@
       </dt>
       <dd>
       {% if user.private %}
-        <span class="glyphicon glyphicon-lock"></span>
+        <i class="fa fa-lock"></i>
         {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
       {% else %}
         {% blocktrans %}Your name is visible.{% endblocktrans %}
@@ -82,9 +82,9 @@
       <div id="delete-account" {% if not user_delete_form.is_bound %} class="js-hidden"{% endif %}>
         <div class="alert alert-error">
           <h4>
-            <span class="glyphicon glyphicon-fire"></span>
+            <i class="fa fa-fire"></i>
             {% trans "Danger: deleting your account cannot be undone." %}
-            <span class="glyphicon glyphicon-fire"></span>
+            <i class="fa fa-fire"></i>
           </h4>
           <form action="{% url 'account-delete_account' %}" method="post">
             {% csrf_token %}

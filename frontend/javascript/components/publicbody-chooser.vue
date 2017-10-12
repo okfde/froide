@@ -5,7 +5,7 @@
         <input type="search" v-model:value="search" class="search-public_bodies form-control" :placeholder="i18n.searchTerm" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
         <span class="input-group-btn">
           <button type="button" class="btn btn-success search-public_bodies-submit" @click="triggerAutocomplete">
-            <span class="glyphicon glyphicon-search"></span>
+            <i class="fa fa-search"></i>
             {{ i18n.search }}
           </button>
         </span>
