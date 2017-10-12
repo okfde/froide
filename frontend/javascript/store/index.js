@@ -7,7 +7,7 @@ import {
   SET_USER,
   UPDATE_SUBJECT, UPDATE_BODY,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME, UPDATE_EMAIL, UPDATE_ADDRESS,
-  UPDATE_PRIVATE
+  UPDATE_PRIVATE, UPDATE_USER_ID
 } from './mutation_types'
 
 Vue.use(Vuex)
@@ -103,6 +103,9 @@ export default new Vuex.Store({
     },
     [UPDATE_PRIVATE] (state, val) {
       Vue.set(state.user, 'private', val)
+    },
+    [UPDATE_USER_ID] (state, val) {
+      Vue.set(state.user, 'id', val)
     }
   },
   strict: debug

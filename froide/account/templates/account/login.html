@@ -8,16 +8,18 @@
 <h2>{% blocktrans %}You are now logged in.{% endblocktrans %}</h2>
 {% if simple %}
   <script>
-    if (window.opener && window.opener.loggedInCallback){
+    if (window.opener && window.opener.loggedInCallback) {
       window.opener.loggedInCallback({
+        'id': '{{ user.id }}',
         'email': '{{ user.email|escapejs }}',
-        'name': '{{ user.first_name|escapejs }}',
+        'first_name': '{{ user.first_name|escapejs }}',
         'last_name': '{{ user.last_name|escapejs }}',
         'address': '{{ user.address|escapejs }}',
+        'private': {% if not user.private %}true{% else %}false{% endif %},
         'csrf_token': "{% csrf_token %}"
-      });
+      })
     }
-    window.close();
+    window.close()
   </script>
 {% endif %}
 {% else %}

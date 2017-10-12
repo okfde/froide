@@ -31,6 +31,11 @@
           <div v-else>
             <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="form.user_email.placeholder"/>
             <p v-for="e in errors.user_email" class="text-danger">{{ e.message }}</p>
+            <p v-if="authRequired">
+              <a class="btn btn-warning simple-login-link" :href="authRequiredUrl" @click.prevent="openLoginWindow">
+                {{ i18n.loginWindowLink }}
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -73,7 +78,7 @@ import {mapGetters, mapMutations} from 'vuex'
 
 import {
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME, UPDATE_EMAIL, UPDATE_ADDRESS,
-  UPDATE_PRIVATE
+  UPDATE_PRIVATE, UPDATE_USER_ID
 } from '../store/mutation_types'
 
 export default {
@@ -110,6 +115,15 @@ export default {
     },
     i18n () {
       return this.config.i18n
+    },
+    authRequired () {
+      if (this.errors && this.errors.user_email) {
+        return this.errors.user_email.some(er => er.code === 'auth_required')
+      }
+      return false
+    },
+    authRequiredUrl () {
+      return this.config.url.loginSimple + this.email
     },
     first_name: {
       get () {
@@ -156,12 +170,40 @@ export default {
     ])
   },
   methods: {
+    openLoginWindow (e) {
+      let url = e.target.href
+      this.popup = window.open(url, 'popup', 'height=500,width=800,resizable=yes,scrollbars=yes')
+      this.popup.focus()
+      window.loggedInCallback = this.loggedInCallback
+    },
+    loggedInCallback (params) {
+      this.updateFirstName(params.first_name)
+      this.updateLastName(params.last_name)
+      this.updateAddress(params.address)
+      this.updateEmail(params.email)
+      this.updatePrivate(params.private)
+      this.updateUserId(params.id)
+
+      let csrfTag = params.csrf_token
+      let csrfValue = csrfTag.match(/value=.(\w+)/)[1]
+      if (csrfValue !== undefined) {
+        let csrfInputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]')
+        for (var i = 0; i < csrfInputs.length; i += 1) {
+          csrfInputs[i].value = csrfValue
+        }
+      }
+      if (this.popup) {
+        this.popup.close()
+      }
+      window.loggedInCallback = undefined
+    },
     ...mapMutations({
       updateFirstName: UPDATE_FIRST_NAME,
       updateLastName: UPDATE_LAST_NAME,
       updateAddress: UPDATE_ADDRESS,
       updateEmail: UPDATE_EMAIL,
-      updatePrivate: UPDATE_PRIVATE
+      updatePrivate: UPDATE_PRIVATE,
+      updateUserId: UPDATE_USER_ID
     })
   }
 }

@@ -154,6 +154,7 @@
     Froide.settings.user_can_hide_web = parseInt('{% if froide.user_can_hide_web %}1{% else %}0{% endif %}', 10)
     Froide.url = Froide.url || {}
     Froide.url.searchRequests = "{% url 'api_get_simple_search' api_name='v1' resource_name='request' %}"
+    Froide.url.loginSimple = "{% url 'account-login' %}?simple&email="
 
     Froide.i18n = Froide.i18n || {}
     Froide.i18n = Object.assign(Froide.i18n, {
@@ -167,6 +168,7 @@
       reviewSpelling: '{% trans "Please use proper spelling." %}',
       reviewPoliteness: '{% trans "Please stay polite." %}',
       submitRequest: '{% trans "Submit request"%}',
+      loginWindowLink: '{% trans "Click here to login using that email address" %}',
 
       greeting: '{% trans "Dear Sir or Madam" %}',
       kindRegards: '{% trans "Kind regards" %}',
