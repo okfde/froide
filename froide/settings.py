@@ -485,7 +485,7 @@ class Test(Base):
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
 
-    TEST_SELENIUM_DRIVER = values.Value('phantomjs')
+    TEST_SELENIUM_DRIVER = values.Value('chrome_headless')
 
     USE_X_ACCEL_REDIRECT = True
 
