@@ -60,22 +60,20 @@
           <p>
             {{ featured.text|truncatewords:55|linebreaksbr }}
           </p>
-          {% if featured.url %}
-            <p>
-              <a href="{{ featured.url }}">
-                <span class="glyphicon glyphicon-bullhorn"></span>
+          <p>
+            {% if featured.url %}
+              <a href="{{ featured.url }}" class="btn btn-primary">
+                <i class="fa fa-bullhorn"></i>
                 {% blocktrans %}Read the blog post{% endblocktrans %}
               </a>
-            </p>
-          {% endif %}
-          {% if featured.request %}
-            <p>
-              <a href="{% url 'foirequest-show' slug=featured.request.slug %}">
-                <span class="glyphicon glyphicon-envelope"></span>
+            {% endif %}
+            {% if featured.request %}
+              <a href="{% url 'foirequest-show' slug=featured.request.slug %}" class="btn btn-secondary">
+                <i class="fa fa-envelope"></i>
                 {% blocktrans %}Visit this request{% endblocktrans %}
               </a>
-            </p>
-          {% endif %}
+            {% endif %}
+          </p>
         </div>
         {% else %}
         <div id="sample-letter" class="frontpage-teaser">{% blocktrans %}Freedom of Information Request
