@@ -4,7 +4,17 @@
 {% load form_helper %}
 
 {% block body %}
-<h2>{% trans "Account Settings" %}</h2>
+
+<div class="row">
+  <div class="col-lg-8">
+    <h2>{% trans "Account Settings" %}</h2>
+  </div>
+  <div class="col-lg-4">
+    <a href="{% url 'account-show' %}" class="btn btn-secondary pull-right">
+      {% trans "back to your account" %}
+    </a>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-lg-12">
@@ -34,52 +44,54 @@
       </dd>
     </dl>
 
-    <div id="change-user-now" class="section focussed">
-      {% if not user.address %}
-        <h3>
-          {% blocktrans %}You need to enter your address.{% endblocktrans %}
-        </h3>
-      {% else %}
-        <div id="change-address">
-        {% endif %}
-          <form action="{% url 'account-change_user' %}" method="post">
+    <div id="change-user-now" class="card mb-3">
+      <h5 class="card-header">
+        {% trans "Change details" %}
+      </h5>
+      <div class="card-body">
+        <form action="{% url 'account-change_user' %}" method="post" id="change-address">
           {% csrf_token %}
           {% if change_form %}
             {{ change_form.as_p }}
           {% else %}
             {{ user.get_change_form.as_p }}
           {% endif %}
-          <button type="submit" class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
+          <button type="submit" class="btn btn-secondary">
+            {% blocktrans %}Save changes{% endblocktrans %}
+          </button>
         </form>
       </div>
     </div>
 
-    <div id="change-password-now" class="section focussed">
-      {% if user.is_new %}
-        <h3>{% blocktrans %}You should change your password now.{% endblocktrans %}</h3>
-      {% else %}
-        <a href="#change-password" class="toggle">{% blocktrans %}Change your password{% endblocktrans %}</a>
-        <div id="change-password"{% if not password_change_form %} class="js-hidden"{% endif %}>
+    <div id="change-password-now" class="card mb-3">
+      <h5 class="card-header">
+        {% trans "Change password" %}
+      </h5>
+      <div class="card-body">
+        {% if user.is_new %}
+          <h3>
+            {% blocktrans %}You should change your password now.{% endblocktrans %}
+          </h3>
         {% endif %}
-          <form action="{% url 'account-change_password' %}" method="post">
-            {% csrf_token %}
-            {% if password_change_form %}
-              {{ password_change_form.as_p }}
-            {% else %}
-              {{ user.get_password_change_form.as_p }}
-            {% endif %}
-            <button type="submit" class="btn btn-secondary">{% blocktrans %}Change password{% endblocktrans %}</button>
-          </form>
-        {% if not user.is_new %}
-          </div>
-        {% endif %}
+        <form action="{% url 'account-change_password' %}" method="post" id="change-password">
+          {% csrf_token %}
+          {% if password_change_form %}
+            {{ password_change_form.as_p }}
+          {% else %}
+            {{ user.get_password_change_form.as_p }}
+          {% endif %}
+          <button type="submit" class="btn btn-secondary">{% blocktrans %}Change password{% endblocktrans %}</button>
+        </form>
+      </div>
     </div>
 
-    <div id="delete-account-section" class="section">
-      <a href="#delete-account" class="toggle">
+    <hr/>
+
+    <div id="delete-account-section" class="card">
+      <h5 class="card-header">
         {% blocktrans %}Delete your account{% endblocktrans %}
-      </a>
-      <div id="delete-account" {% if not user_delete_form.is_bound %} class="js-hidden"{% endif %}>
+      </h5>
+      <div class="card-body">
         <div class="alert alert-error">
           <h4>
             <i class="fa fa-fire"></i>
@@ -93,13 +105,14 @@
               {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
             </p>
             <button type="submit" class="btn btn-danger">
-              <span class="glyphicon glyphicon-warning-sign"></span>
+              <i class="fa fa-warning" aria-hidden="true"></i>
               {% blocktrans %}Delete account{% endblocktrans %}
             </button>
           </form>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 {% endblock %}

@@ -180,8 +180,11 @@ class UserChangeForm(forms.Form):
     address = forms.CharField(max_length=300,
             label=_('Your mailing address'),
             help_text=_('Your address will never be displayed publicly.'),
-            widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
-                'class': 'form-control'}))
+            widget=forms.Textarea(attrs={
+                'placeholder': _('Street, Post Code, City'),
+                'class': 'form-control',
+                'rows': '3'
+            }))
 
     field_order = ['email', 'newsletter', 'address']
 
@@ -249,7 +252,7 @@ class UserDeleteForm(forms.Form):
     CONFIRMATION_PHRASE = str(_('Freedom of Information Act'))
 
     password = forms.CharField(
-        widget=forms.PasswordInput(),
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         label=_('Password'),
         help_text=_('Please type your password to confirm.')
     )
