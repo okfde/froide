@@ -25,10 +25,10 @@
 {% else %}
 <div class="row">
   <div class="col-lg-6 col-md-6">
-    <div class="card">
-      <h2 class="card-header">
-        {% blocktrans %}Please Log In{% endblocktrans %}
-      </h2>
+    <div class="card mb-3">
+      <h5 class="card-header">
+        {% blocktrans %}Log in{% endblocktrans %}
+      </h5>
       <div class="card-body">
         <p class="visible-sm visible-xs">
           <a href="#signup">
@@ -47,10 +47,10 @@
         </form>
       </div>
     </div>
-    <div class="card">
-      <h4 class="card-header">
+    <div class="card mb-3">
+      <h5 class="card-header">
         {% blocktrans %}In case you forgot your password...{% endblocktrans %}
-      </h4>
+      </h5>
       <div class="card-body">
         <p>
           {% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}
@@ -72,10 +72,10 @@
   </div>
   {% if not simple %}
     <div id="signup" class="col-lg-6 col-md-6">
-      <div class="card">
-        <h3 class="card-header">
+      <div class="card mb-3">
+        <h5 class="card-header">
           {% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}
-        </h3>
+        </h5>
       <div class="card-body">
         <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
           {% csrf_token %}
