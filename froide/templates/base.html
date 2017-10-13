@@ -35,14 +35,14 @@
     {% endblock footer_above %}
     {% block footer_credits %}
     <div class="row">
-      <div class="col-lg-9">
+      <div class="col-md-8 col-sm-7">
         {% block footer_description %}
         <p>
           {% blocktrans %}Froide is a free and Open Source Project by <a href="https://okfn.de">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="https://github.com/okfde/froide">repository on GitHub</a>.{% endblocktrans %}
         </p>
         {% endblock %}
       </div>
-      <div class="col-lg-3">
+      <div class="col-md-4 col-sm-5">
         {% block footer_logo %}
         <a href="https://okfn.de">
           <img src="{% static "img/okfde.png" %}" alt="Open Knowledge Foundation Deutschland" height="80"/>
