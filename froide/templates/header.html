@@ -51,10 +51,12 @@
             {% for lang_code, language in LANGUAGES %}
                 <form class="dropdown-item form-inline" action="{% url 'set_language' %}" method="post">
                   {% csrf_token %}
-                  <button class="btn btn-link" name="language" value="{{ lang_code }}">
+                  <button class="btn btn-link btn-block text-left" name="language" value="{{ lang_code }}">
                     {{ language|title }}
+                    {% if lang_code == CURRENT_LANGUAGE_CODE %}
+                      <i class="fa fa-check" aria-hidden="true"></i>
+                    {% endif %}
                   </button>
-                  {% if lang_code == CURRENT_LANGUAGE_CODE %}&times;{% endif %}
                 </form>
             {% endfor %}
           </div>
