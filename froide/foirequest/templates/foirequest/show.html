@@ -580,7 +580,7 @@
      {% if user == object.user or user.is_staff %}
         <li class="nav-header">{% trans "Download" %}</li>
         <li class="nav-item">
-          <a class="btn btn-secondary" href="{% url 'foirequest-download' slug=object.slug %}">
+          <a class="btn btn-light" href="{% url 'foirequest-download' slug=object.slug %}">
             <i class="fa fa-download"></i>
             {% trans "Download request as ZIP-file" %}
           </a>
@@ -605,7 +605,7 @@
       {% if user.is_staff %}
         <li class="nav-header">{% trans "Staff Actions" %}</li>
         <li class="nav-item">
-          <a class="btn btn-secondary" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+          <a class="btn btn-light" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
             <i class="fa fa-cog"></i>
             {% trans "View on Admin site" %}
           </a>
@@ -631,7 +631,7 @@
           <li class="nav-item">
             <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
               {% csrf_token %}
-              <button class="btn btn-secondary" type="submit">
+              <button class="btn btn-light" type="submit">
                 {% trans "Mark as checked" %}
               </button>
             </form>
@@ -646,7 +646,7 @@
           <li class="nav-item">
             <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
-              <button class="btn btn-secondary" type="submit">{% trans "Mark as NOT FoI" %}</button>
+              <button class="btn btn-light" type="submit">{% trans "Mark as NOT FoI" %}</button>
             </form>
             <div style="display:none" id="mark-not-foi-form-success">
               {% trans "Marked as NOT FoI" %}
@@ -658,7 +658,7 @@
           <div class="input-group">
             <input type="number" name="months" value="6" class="form-control"/>
             <span class="input-group-btn">
-              <button class="btn btn-secondary" type="submit">
+              <button class="btn btn-light" type="submit">
                 {% trans "Extend Deadline by Months" %}
               </button>
             </span>
