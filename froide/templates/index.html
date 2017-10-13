@@ -34,7 +34,7 @@
             </span>
           </div>
           {% block example_search_terms_block %}
-          <span class="help-block">
+          <span class="form-text text-muted">
             {% block example_search_terms %}
               {% blocktrans %}Try the following:{% endblocktrans %}
               <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>

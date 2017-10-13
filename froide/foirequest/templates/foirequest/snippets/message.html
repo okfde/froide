@@ -116,7 +116,7 @@
                   {% csrf_token %}
                   {{ form.files }}
                   <button type="submit" class="upload-button btn btn-default">{% blocktrans %}Upload Document{% endblocktrans %}</button>
-                  <span class="help-block">{{ form.files.help_text }}</span>
+                  <span class="form-text text-muted">{{ form.files.help_text }}</span>
                 </form>
               </td>
             {% endwith %}

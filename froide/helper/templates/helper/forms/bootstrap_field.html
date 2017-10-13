@@ -25,7 +25,7 @@
   {% if field.id_for_label %}<label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if label|last not in ".:!?" %}:{% endif %}{% if field.id_for_label %}</label>{% endif %}
   <div class="col-lg-8">
     {{ field }}
-    {% if help_text %}<span class="help-block">{{ help_text }}</span>{% endif %}
+    {% if help_text %}<span class="form-text text-muted">{{ help_text }}</span>{% endif %}
   </div>
 {% endif %}
 </div>

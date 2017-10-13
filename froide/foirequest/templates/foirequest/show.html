@@ -219,9 +219,9 @@
               <div class="row">
                 <div class="col-lg-offset-4 col-lg-8">
                   {% if not object.public %}
-                    <span class="help-block">
+                    <small class="form-text text-muted">
                       {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
-                    </span>
+                    </small>
                   {% endif %}
                   <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
                 </div>
@@ -260,7 +260,7 @@
               <div class="row">
                 <div class="col-lg-offset-4 col-lg-8">
                   <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Reply{% endblocktrans %}</button>
-                  <span class="help-block">{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</span>
+                  <small class="form-text text-muted">{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</small>
                 </div>
               </div>
             </form>
@@ -281,7 +281,7 @@
               <div class="row">
                 <div class="col-lg-offset-4 col-lg-8">
                   <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Message{% endblocktrans %}</button>
-                  <span class="help-block">{% blocktrans %}You can attach more documents to your letter later.{% endblocktrans %}</span>
+                  <small class="form-text text-muted">{% blocktrans %}You can attach more documents to your letter later.{% endblocktrans %}</small>
                 </div>
               </div>
             </form>
@@ -308,7 +308,7 @@
               {% endif %}
               <div class="row">
                 <div class="col-lg-offset-4 col-lg-8">
-                  <p class="help-block">
+                  <small class="form-text text-muted">
                     {% if user.address %}
                       {% blocktrans %}Your address:{% endblocktrans %}<br/>
                       {{ user.address|linebreaksbr }}
@@ -316,9 +316,9 @@
                       {% url "account-settings" as settings_url %}
                       {% blocktrans with url=settings_url %}You do not have a postal address set. <a href="{{ url }}#change-address">You can enter enter an address here.</a>{% endblocktrans %}
                     {% endif %}
-                  </p>
+                  </small>
                   <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-                  <p class="help-block">
+                  <p class="form-text text-muted">
                     <small>
                       {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
                       <strong>{% alternative_address object %}</strong>

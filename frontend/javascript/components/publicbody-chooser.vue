@@ -10,7 +10,7 @@
           </button>
         </span>
       </div>
-      <small class="search-examples help-block">
+      <small class="search-examples form-text text-muted">
         {{ i18n.examples }}
         <a href="#" :data-search="i18n.environment" @click.prevent="fillSearch">
           {{ i18n.environment }}
