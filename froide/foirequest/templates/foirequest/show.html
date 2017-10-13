@@ -73,10 +73,13 @@
 {% block foirequest_header %}{% endblock %}
 
 <div class="row">
-  <div class="col-lg-9 col-md-9">
-
+  <div class="lg-12">
     <h2>{{ object.title }}</h2>
+  </div>
+</div>
 
+<div class="row">
+  <div class="col-lg-9 col-md-8">
     {% if not object.public %}
       {% if object.user == user or user.is_staff %}
         <div class="card hidden-print">
@@ -509,21 +512,23 @@
   </div>
   {% endif %}
 
-  <div class="col-lg-3 col-md-3">
+  <div class="col-lg-3 col-md-4">
     <ul class="nav nav-compact flex-column hidden-print">
       {% with count=object.follow_count %}
-        {% block followers %}<li class="nav-item">
-          <span class="badge{% if count %} badge-info{% endif %}">{% blocktrans count counter=count %}{{ counter }} follower{% plural %}{{ counter }} followers{% endblocktrans %}</span>
-
-          <br/>
+        {% block followers %}
+          <li class="nav-item">
+            <h5>
+              <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
+                {% blocktrans count counter=count %}
+                  {{ counter }} follower{% plural %}{{ counter }} followers
+                {% endblocktrans %}
+              </span>
+            </h5>
+            {% if user.is_authenticated and user != object.user %}
+              {% include "foirequestfollower/follow_form.html" %}
+            {% endif %}
         </li>{% endblock followers %}
       {% endwith %}
-
-      {% if user.is_authenticated and user != object.user %}
-        <li class="nav-item">
-          {% include "foirequestfollower/follow_form.html" %}
-        </li>
-      {% endif %}
 
       {% if object.visibility == 2 %}
       {% block social_sharing %}
