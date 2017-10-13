@@ -204,8 +204,7 @@
 {% endaddtoblock %}
 {% addtoblock "js" %}
   <script>
-    /* eslint-disable no-undef */
-    Froide.components.makerequest.createRequestForm('#make-request', Froide)
+    window.Froide.components.makerequest.createRequestForm('#make-request', window.Froide)
   </script>
 {% endaddtoblock %}
 

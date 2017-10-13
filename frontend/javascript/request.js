@@ -25,13 +25,32 @@ $(function () {
     $(this).parent().find('.hidden-text').toggle()
   })
 
-  $('#id_resolution').change(function () {
-    // Froide.app.statusSet()
+  var setStatus = function () {
+    $('.status-refusal').hide()
+    var resolution = $('#id_resolution').val()
+    if (/refus/.exec(resolution) !== null || /partial/.exec(resolution) !== null) {
+      $('.status-refusal').slideDown()
+    }
+    var redirected = $('input[name="status"][value="request_redirected"]').prop('checked')
+    $('.status-redirected').hide()
+    if (redirected) {
+      $('.status-redirected').slideDown()
+    }
+  }
+
+  $('#id_resolution').change(setStatus)
+
+  $('input[name="status"]').change(setStatus)
+
+  setStatus()
+
+  $('a[data-tabgo="tab"]').click(function (e) {
+    e.preventDefault()
+    $(this).tab('show')
   })
 
-  $('input[name="status"]').change(function () {
-    // Froide.app.statusSet()
-  })
-
-  // Froide.app.statusSet()
+  let activeTab = window.Froide.config.activeTab
+  if (activeTab) {
+    $('.request-nav a[href="#' + activeTab + '"]').tab('show')
+  }
 })

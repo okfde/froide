@@ -1,9 +1,7 @@
 {% load i18n %}
 {% load static %}
 
-{% load block_helper %}
 
-{% addtoblock "js" %}
 <script type="text/javascript">
   var Froide = window.Froide || {}
   Froide.url = Froide.url || {}
@@ -28,4 +26,3 @@
   Froide.resources = Froide.resources || {}
   Froide.resources.spinner = '{% static "img/spinner.gif" %}'
 </script>
-{% endaddtoblock %}
