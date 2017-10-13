@@ -13,7 +13,7 @@ from django import forms
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
-from froide.helper.widgets import PriceInput
+from froide.helper.widgets import PriceInput, BootstrapRadioSelect
 from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
 
@@ -99,7 +99,7 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int,
-            required=True, widget=forms.RadioSelect())
+            required=True, widget=BootstrapRadioSelect)
     subject = forms.CharField(label=_("Subject"),
             max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -190,7 +190,7 @@ class PublicBodySuggestionsForm(forms.Form):
     def __init__(self, queryset, *args, **kwargs):
         super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)
         self.fields['suggestion'] = forms.ChoiceField(label=_("Suggestions"),
-            widget=forms.RadioSelect,
+            widget=BootstrapRadioSelect,
             choices=((s.public_body.id, mark_safe(
                 '''%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
                 <span class="help">%(reason)s</span>''' % {
@@ -204,21 +204,8 @@ class PublicBodySuggestionsForm(forms.Form):
 
 
 class FoiRequestStatusForm(forms.Form):
-    def __init__(self, foirequest, *args, **kwargs):
-        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
-        self.foirequest = foirequest
-        self.fields['refusal_reason'] = forms.ChoiceField(
-            label=_("Refusal Reason"),
-            choices=[('', _('No or other reason given'))] + (
-                foirequest.law.get_refusal_reason_choices()
-            ),
-            required=False,
-            widget=forms.Select(attrs={'class': 'form-control'}),
-            help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
-        )
-
     status = forms.ChoiceField(label=_("Status"),
-            widget=forms.RadioSelect,
+            widget=BootstrapRadioSelect,
             choices=[('awaiting_response', _('This request is still ongoing.')),
                 ('resolved', _('This request is finished.')),
                 # ('request_redirected', _('This request has been redirected to a different public body.'))
@@ -245,6 +232,20 @@ class FoiRequestStatusForm(forms.Form):
             help_text=_('Please specify what the Public Body charges for the information.')
         )
 
+    def __init__(self, foirequest, *args, **kwargs):
+        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
+        self.foirequest = foirequest
+        self.fields['refusal_reason'] = forms.ChoiceField(
+            label=_("Refusal Reason"),
+            choices=[('', _('No or other reason given'))] + (
+                foirequest.law.get_refusal_reason_choices()
+            ),
+            required=False,
+            widget=forms.Select(attrs={'class': 'form-control'}),
+            help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
+        )
+
+    if payment_possible:
         def clean_costs(self):
             costs = self.cleaned_data['costs']
             if costs is None:

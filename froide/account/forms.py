@@ -9,8 +9,8 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django import forms
 
-from froide.helper.widgets import AgreeCheckboxInput
 from froide.helper.form_utils import JSONMixin
+from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
 from .models import AccountManager
@@ -62,9 +62,11 @@ class NewUserBaseForm(forms.Form):
         )
 
     if USER_CAN_HIDE_WEB:
-        private = forms.BooleanField(required=False,
-                label=_("Hide my name on the web"),
-                help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
+        private = forms.BooleanField(
+            required=False,
+            widget=BootstrapCheckboxInput,
+            label=_("Hide my name on the web"),
+            help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
     def __init__(self, *args, **kwargs):
         super(NewUserBaseForm, self).__init__(*args, **kwargs)
@@ -99,15 +101,23 @@ class NewUserBaseForm(forms.Form):
 
 class TermsForm(forms.Form):
     terms = forms.BooleanField(
-        label=mark_safe(_("Terms and Conditions and Privacy Statement")),
+        widget=BootstrapCheckboxInput,
         error_messages={'required':
             _('You need to accept our Terms and Conditions and Priavcy Statement.')},
-        widget=AgreeCheckboxInput(
-            agree_to=_('You agree to our <a href="%(url_terms)s" target="_blank">Terms and Conditions</a> and <a href="%(url_privacy)s" target="_blank">Privacy Statement</a>'),
-            url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
+    )
 
     def __init__(self, *args, **kwargs):
         super(TermsForm, self).__init__(*args, **kwargs)
+
+        self.fields['terms'].label = mark_safe(
+            _('You agree to our <a href="{url_terms}" target="_blank">'
+                'Terms and Conditions</a> and <a href="{url_privacy}" target="_blank">'
+                'Privacy Statement</a>').format(
+                    url_terms=reverse("help-terms"),
+                    url_privacy=reverse("help-privacy")
+                )
+        )
+
         if has_newsletter():
             self.fields['newsletter'] = forms.BooleanField(required=False,
                 label=_("Check if you want to receive our newsletter."))

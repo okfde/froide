@@ -1,32 +1,40 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text %}
 
-<div class="form-group{% if classes %} {{ classes }}{% endif %}">
-
 {% include "helper/forms/errors.html" with errors=field.errors %}
 
 {% if field_type == "radio" %}
-  <div class="col-lg-offset-4 col-lg-8">
-    {% for widget in field %}
-      <div class="radio">
-        {{ widget }}
-      </div>
-    {% endfor %}
+<fieldset class="form-group">
+  <div class="row">
+    <legend class="col-form-legend col-lg-3">{{ label }}</legend>
+    <div class="col-lg-9">
+      {% for widget in field %}
+        <div class="form-check">
+          {{ widget }}
+        </div>
+      {% endfor %}
+      {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
+    </div>
   </div>
+</fieldset>
 {% elif field_type == "checkbox" %}
-  <div class="checkbox">
-    <div class="col-lg-offset-4 col-lg-8">
-      <label>
+<div class="form-group row{% if classes %} {{ classes }}{% endif %}">
+  <div class="col-lg-12">
+    <div class="form-check">
+      <label class="form-check-label">
         {{ field }}
         {{ label }}
       </label>
+      {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
     </div>
   </div>
-{% else %}
-  {% if field.id_for_label %}<label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if label|last not in ".:!?" %}:{% endif %}{% if field.id_for_label %}</label>{% endif %}
-  <div class="col-lg-8">
-    {{ field }}
-    {% if help_text %}<span class="form-text text-muted">{{ help_text }}</span>{% endif %}
-  </div>
-{% endif %}
 </div>
+{% else %}
+<div class="form-group row{% if classes %} {{ classes }}{% endif %}">
+  {% if field.id_for_label %}<label class="col-lg-3 col-form-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}
+  <div class="col-lg-9">
+    {{ field }}
+    {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
+  </div>
+</div>
+{% endif %}
 {% endwith %}

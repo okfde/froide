@@ -13,28 +13,30 @@ from django.utils.translation import ugettext_lazy as _
 from taggit.utils import edit_string_for_tags
 
 
+class BootstrapChoiceMixin(object):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('attrs', {})
+        kwargs['attrs'].update({'class': 'form-check-input'})
+        super(BootstrapChoiceMixin, self).__init__(*args, **kwargs)
+
+
+class BootstrapCheckboxInput(BootstrapChoiceMixin, forms.CheckboxInput):
+    pass
+
+
+class BootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
+    option_template_name = 'helper/forms/widgets/radio_option.html'
+
+
 class PriceInput(forms.TextInput):
     template_name = "helper/forms/widgets/price_input.html"
 
     def get_context(self, name, value, attrs):
         ctx = super(PriceInput, self).get_context(name, value, attrs)
-        ctx.setdefault('attrs', {})
-        ctx['attrs']['class'] = 'col-xs-2'
+        ctx['widget'].setdefault('attrs', {})
+        ctx['widget']['attrs']['class'] = 'form-control col-3'
         ctx['currency'] = settings.FROIDE_CONFIG['currency']
         return ctx
-
-
-class AgreeCheckboxInput(forms.CheckboxInput):
-    def __init__(self, attrs=None, check_test=bool, agree_to="", url_names=None):
-        super(AgreeCheckboxInput, self).__init__(attrs, check_test)
-        self.agree_to = agree_to
-        self.url_names = url_names
-
-    def render(self, name, value, attrs=None, renderer=None):
-        html = super(AgreeCheckboxInput, self).render(name, value, attrs=attrs,
-                                                      renderer=renderer)
-        return mark_safe('<label>%s %s</label>' % (html, self.agree_to %
-                dict([(k, reverse(v)) for k, v in self.url_names.items()])))
 
 
 class TagAutocompleteTagIt(TextInput):
