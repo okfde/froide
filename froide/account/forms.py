@@ -254,9 +254,7 @@ class UserDeleteForm(forms.Form):
         help_text=_('Please type your password to confirm.')
     )
     confirmation = forms.CharField(
-        widget=ConfirmationWidget(
-            {'placeholder': CONFIRMATION_PHRASE}
-        ),
+        widget=ConfirmationWidget(phrase=CONFIRMATION_PHRASE),
         label=_('Confirmation Phrase'),
         help_text=_('Type the phrase above exactly as displayed.'))
 

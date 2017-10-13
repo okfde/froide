@@ -1,18 +1,16 @@
 from django import forms
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 
 
 class ConfirmationWidget(forms.TextInput):
-    def render(self, name, value=None, attrs=None, renderer=None):
-        output = super(ConfirmationWidget, self).render(
-            name, value=value, attrs=attrs, renderer=renderer
-        )
-        return render_to_string(
-            'account/confirmation_widget.html',
-            {
-                'name': name,
-                'value': value,
-                'output': mark_safe(output)
-            }
-        )
+    template_name = 'account/widgets/confirmation.html'
+
+    def __init__(self, phrase):
+        self.phrase = phrase
+        super(ConfirmationWidget, self).__init__()
+
+    def get_context(self, *args):
+        context = super(ConfirmationWidget, self).get_context(*args)
+        context['widget'].update({'phrase': self.phrase})
+        context['widget'].setdefault('attrs', {})
+        context['widget']['attrs'].update({'class': 'col-6'})
+        return context
