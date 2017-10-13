@@ -258,7 +258,7 @@ class FoiRequestStatusForm(forms.Form):
             if pk is None:
                 raise forms.ValidationError(_("Provide the redirected public body!"))
             try:
-                self._redirected_public_body = PublicBody.objects.get(id=pk)
+                self._redirected_publicbody = PublicBody.objects.get(id=pk)
             except PublicBody.DoesNotExist:
                 raise forms.ValidationError(_("Invalid value"))
         if status == 'resolved':
@@ -284,7 +284,7 @@ class FoiRequestStatusForm(forms.Form):
 
         if status == "request_redirected":
             foirequest.due_date = foirequest.law.calculate_due_date()
-            foirequest.public_body = self._redirected_public_body
+            foirequest.public_body = self._redirected_publicbody
             status = 'awaiting_response'
 
         foirequest.status = status
@@ -369,7 +369,7 @@ class AttachmentSaverMixin(object):
 
 class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>."))
-    public_body = forms.ModelChoiceField(
+    publicbody = forms.ModelChoiceField(
         label=_('Public body'),
         queryset=PublicBody.objects.all(),
         widget=PublicBodySelect
@@ -396,13 +396,13 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     files = forms.FileField(label=_("Scanned Letter"), required=False,
             validators=[validate_upload_document],
             help_text=scan_help_text, widget=forms.FileInput(attrs={'multiple': True}))
-    FIELD_ORDER = ['public_body', 'date', 'subject', 'text', 'files']
+    FIELD_ORDER = ['publicbody', 'date', 'subject', 'text', 'files']
 
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop('foirequest')
         super(PostalBaseForm, self).__init__(*args, **kwargs)
-        self.fields['public_body'].label = self.PUBLIC_BODY_LABEL
-        self.fields['public_body'].initial = self.foirequest.public_body
+        self.fields['publicbody'].label = self.PUBLICBODY_LABEL
+        self.fields['publicbody'].initial = self.foirequest.public_body
         self.order_fields(self.FIELD_ORDER)
 
     def clean_date(self):
@@ -465,9 +465,9 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
 
 
 class PostalReplyForm(PostalBaseForm):
-    FIELD_ORDER = ['public_body', 'sender', 'date', 'subject', 'text', 'files',
+    FIELD_ORDER = ['publicbody', 'sender', 'date', 'subject', 'text', 'files',
                    'not_publishable']
-    PUBLIC_BODY_LABEL = _('Sender public body')
+    PUBLICBODY_LABEL = _('Sender public body')
 
     sender = forms.CharField(label=_("Sender name"),
             widget=forms.TextInput(attrs={"class": "form-control",
@@ -480,15 +480,15 @@ class PostalReplyForm(PostalBaseForm):
     def contribute_to_message(self, message):
         message.is_response = True
         message.sender_name = self.cleaned_data['sender']
-        message.sender_public_body = message.request.public_body
+        message.sender_public_body = self.cleaned_data['publicbody']
         message.not_publishable = self.cleaned_data['not_publishable']
         return message
 
 
 class PostalMessageForm(PostalBaseForm):
-    FIELD_ORDER = ['public_body', 'recipient', 'date', 'subject', 'text',
+    FIELD_ORDER = ['publicbody', 'recipient', 'date', 'subject', 'text',
                    'files']
-    PUBLIC_BODY_LABEL = _('Receiving public body')
+    PUBLICBODY_LABEL = _('Receiving public body')
 
     recipient = forms.CharField(label=_("Recipient Name"),
             widget=forms.TextInput(attrs={"class": "form-control",
@@ -499,7 +499,7 @@ class PostalMessageForm(PostalBaseForm):
         message.sender_user = message.request.user
 
         message.recipient = self.cleaned_data['recipient']
-        message.recipient_public_body = self.cleaned_data['public_body']
+        message.recipient_public_body = self.cleaned_data['publicbody']
 
         return message
 
