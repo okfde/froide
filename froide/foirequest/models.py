@@ -581,11 +581,11 @@ class FoiRequest(models.Model):
 
     def get_postal_reply_form(self):
         from .forms import PostalReplyForm
-        return PostalReplyForm(foirequest=self)
+        return PostalReplyForm(prefix='reply', foirequest=self)
 
     def get_postal_message_form(self):
         from .forms import PostalMessageForm
-        return PostalMessageForm(foirequest=self)
+        return PostalMessageForm(prefix='message', foirequest=self)
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
