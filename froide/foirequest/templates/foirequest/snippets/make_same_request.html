@@ -4,7 +4,7 @@
 {% load account_tags %}
 {% load form_helper %}
 
-<div class="alert hidden-print alert-info mt-5" id="make-same-request">
+<div class="alert d-print-none alert-info mt-5" id="make-same-request">
   <p>{% blocktrans %}This request received documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them below.{% endblocktrans %}</p>
   {% if user.is_authenticated %}
     {% if object.user == user %}
@@ -17,7 +17,7 @@
         {% if same_request %}
           <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
         {% else %}
-          <form method="post" class="hidden-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}">
+          <form method="post" class="d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}">
             {% csrf_token %}
             <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
             <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.address }}</span></strong></p>
@@ -28,7 +28,7 @@
       {% endif %}
     {% endif %}
   {% else %}
-    <form method="post" id="make-same-request" class="form-horizontal hidden-print" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}#make-same-request">
+    <form method="post" id="make-same-request" class="form-horizontal d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}#make-same-request">
       {% csrf_token %}
       <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
       {% if not new_user_form %}

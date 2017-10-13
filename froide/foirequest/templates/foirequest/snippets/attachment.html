@@ -1,8 +1,8 @@
 {% load i18n %}
 
-  <li class="well well-sm hidden-print">
+  <li class="well well-sm d-print-none">
     {% if attachment.can_approve %}
-      <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified hidden-print" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+      <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
         {% csrf_token %}
         {% if object.user.private %}
           <p>
