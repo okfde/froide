@@ -83,7 +83,7 @@
                 <button class="pdf-next btn">{% trans "Next Page" %} &raquo;</button>
               </div>
               <div class="btn-group">
-                <button class="btn btn-default" disabled="disabled">
+                <button class="btn btn-secondary" disabled="disabled">
                   {% trans "Page" %}
                   <span class="pdf-current"></span>
                   {% trans "of" %}
@@ -96,8 +96,8 @@
                 </button>
               </div>
               <div class="btn-group">
-                <a class="btn btn-default" href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>
-                <a class="btn btn-default" href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>
+                <a class="btn btn-secondary" href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>
+                <a class="btn btn-secondary" href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>
               </div>
             </div>
           </div>

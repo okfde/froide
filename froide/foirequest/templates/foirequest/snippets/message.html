@@ -18,7 +18,7 @@
                       {% csrf_token %}
                       <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
                       {{ message_pb_form.sender }}
-                      <button type="submit" class="btn btn-default">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                      <button type="submit" class="btn btn-secondary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
                     </form>
                   {% endwith %}
                 </div>
@@ -115,7 +115,7 @@
                 <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
                   {% csrf_token %}
                   {{ form.files }}
-                  <button type="submit" class="upload-button btn btn-default">{% blocktrans %}Upload Document{% endblocktrans %}</button>
+                  <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
                   <span class="form-text text-muted">{{ form.files.help_text }}</span>
                 </form>
               </td>
@@ -146,7 +146,7 @@
               <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
               <form class="form-horizontal" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message=message.pk %}">
                 {% csrf_token %}
-                <button class="btn btn-default" type="submit">{% trans "I want to publish this message" %}</button>
+                <button class="btn btn-secondary" type="submit">{% trans "I want to publish this message" %}</button>
               </form>
             </div>
             <div class="content-text">{% redact_message message user %}</div>

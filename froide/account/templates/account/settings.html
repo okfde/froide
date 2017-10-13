@@ -49,7 +49,7 @@
           {% else %}
             {{ user.get_change_form.as_p }}
           {% endif %}
-          <button type="submit" class="btn btn-default">{% blocktrans %}Save changes{% endblocktrans %}</button>
+          <button type="submit" class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
         </form>
       </div>
     </div>
@@ -68,7 +68,7 @@
             {% else %}
               {{ user.get_password_change_form.as_p }}
             {% endif %}
-            <button type="submit" class="btn btn-default">{% blocktrans %}Change password{% endblocktrans %}</button>
+            <button type="submit" class="btn btn-secondary">{% blocktrans %}Change password{% endblocktrans %}</button>
           </form>
         {% if not user.is_new %}
           </div>

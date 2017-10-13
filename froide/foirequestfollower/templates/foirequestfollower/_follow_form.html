@@ -4,7 +4,7 @@
   {% csrf_token %}
   {{ form.as_p }}
   {% if following and not follow_only %}
-    <button class="input-large btn btn-default hover-btn-danger" type="submit">
+    <button class="input-large btn btn-secondary hover-btn-danger" type="submit">
       <span class="on-hover">
         <i class="fa fa-remove"></i>
         {% trans "Unfollow request" %}

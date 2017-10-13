@@ -16,11 +16,11 @@
         <a href="{% url 'admin:foirequest_foirequest_change' foirequest.id %}">{% trans "View on Admin site" %}</a>
         <form method="post" action="{% url 'foirequest-mark_checked' slug=foirequest.slug %}">
           {% csrf_token %}
-          <button class="btn btn-default" type="submit">{% trans "Mark as checked" %}</button>
+          <button class="btn btn-secondary" type="submit">{% trans "Mark as checked" %}</button>
         </form>
         <form class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=foirequest.slug %}">
           {% csrf_token %}
-          <button class="btn btn-default" type="submit">{% trans "Mark as NOT FoI" %}</button>
+          <button class="btn btn-secondary" type="submit">{% trans "Mark as NOT FoI" %}</button>
         </form>
         <hr/>
       </div>
@@ -46,7 +46,7 @@
             {% else %}
     	        <p>{% blocktrans with name=attachment.belongs_to.request.user.get_full_name %}May only contain name {{ name }}.{% endblocktrans %}</p>
     	      {% endif %}
-    	      <button class="btn btn-default" type="submit">{% trans "Publish this attachment" %}</button>
+    	      <button class="btn btn-secondary" type="submit">{% trans "Publish this attachment" %}</button>
           </form>
         {% else %}
           <div class="error">

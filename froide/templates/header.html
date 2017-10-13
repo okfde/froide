@@ -79,7 +79,7 @@
           <div class="dropdown-item">
             <form action="{% url 'account-logout' %}" method="post" class="form-inline text-center">
               {% csrf_token %}
-              <button type="submit" class="btn btn-default">
+              <button type="submit" class="btn btn-secondary">
                 {% blocktrans %}Logout{% endblocktrans %}
               </button>
             </form>
