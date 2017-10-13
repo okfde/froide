@@ -5,6 +5,8 @@ http://www.ianlewis.org/en/parsing-email-attachments-python
 Licensed under MIT
 
 """
+from __future__ import unicode_literals
+
 from datetime import datetime, timedelta
 import time
 
@@ -136,7 +138,7 @@ class EmailParser(object):
                 except UnicodeDecodeError:
                     s = str(s, errors='ignore')
             fragments.append(s.strip(' '))
-        field = u' '.join(fragments)
+        field = ' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
 
     def get_address_list(self, values):
@@ -186,8 +188,8 @@ class EmailParser(object):
         body = []
         html = []
         self.parse_body(msgobj.walk(), attachments, body, html)
-        body = u'\n'.join(body)
-        html = u'\n'.join(html)
+        body = '\n'.join(body)
+        html = '\n'.join(html)
 
         tos = self.get_address_list(msgobj.get_all('To', []))
         tos.extend(self.get_address_list(msgobj.get_all('X-Original-To', [])))

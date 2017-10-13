@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 import datetime
 
@@ -174,9 +176,9 @@ class AccountTest(TestCase):
 
     def test_confirmation_process(self):
         self.client.logout()
-        user, password = AccountManager.create_user(first_name=u"Stefan",
-                last_name=u"Wehrmeyer", user_email="sw@example.com",
-                address=u"SomeRandomAddress\n11234 Bern", private=True)
+        user, password = AccountManager.create_user(first_name="Stefan",
+                last_name="Wehrmeyer", user_email="sw@example.com",
+                address="SomeRandomAddress\n11234 Bern", private=True)
         AccountManager(user).send_confirmation_mail(password=password)
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]

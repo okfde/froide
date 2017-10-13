@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import datetime
 
 from django.conf import settings
@@ -78,10 +80,10 @@ class MessagePublicBodySenderForm(forms.Form):
     )
 
     def __init__(self, message, *args, **kwargs):
-        if "initial" not in kwargs:
+        if 'initial' not in kwargs:
             if message.sender_public_body:
-                kwargs['initial'] = {"sender": message.sender_public_body.id}
-        if "prefix" not in kwargs:
+                kwargs['initial'] = {'sender': message.sender_public_body.id}
+        if 'prefix' not in kwargs:
             kwargs['prefix'] = "m%d" % message.id
         self.message = message
         super(MessagePublicBodySenderForm, self).__init__(*args, **kwargs)
@@ -292,7 +294,7 @@ class FoiRequestStatusForm(forms.Form):
         if resolution == "refused" or resolution == "partially_successful":
             foirequest.refusal_reason = data['refusal_reason']
         else:
-            foirequest.refusal_reason = u""
+            foirequest.refusal_reason = ""
 
         foirequest.save()
 

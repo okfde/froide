@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 
 from django.contrib import admin
@@ -58,7 +60,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'checked', 'public', 'visibility',
         'is_blocked',
-        make_nullfilter('same_as', _(u'Has same request')),
+        make_nullfilter('same_as', _('Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
         FoiRequestTagsFilter)
     search_fields = ['title', 'description', 'secret_address', 'reference']
@@ -177,8 +179,8 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     ordering = ('-id',)
     list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
     list_filter = ('can_approve', 'approved', 'is_redacted', 'is_converted',
-                   make_nullfilter('redacted', _(u'Has redacted version')),
-                   make_nullfilter('converted', _(u'Has converted version'))
+                   make_nullfilter('redacted', _('Has redacted version')),
+                   make_nullfilter('converted', _('Has converted version'))
     )
     search_fields = ['name']
     actions = ['approve', 'cannot_approve', 'convert']
@@ -224,7 +226,7 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
 class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
-    list_filter = (make_nullfilter('request', _(u'Has request')), 'spam')
+    list_filter = (make_nullfilter('request', _('Has request')), 'spam')
     search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)

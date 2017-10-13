@@ -59,9 +59,9 @@ class NullFilter(SimpleListFilter):
     http://stackoverflow.com/questions/7691890/filtering-django-admin-by-null-is-not-null
     under CC-By 3.0
     """
-    title = u''
+    title = ''
 
-    parameter_name = u''
+    parameter_name = ''
 
     def lookups(self, request, model_admin):
         return (

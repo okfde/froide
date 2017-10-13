@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import re
 
 try:
@@ -71,14 +73,14 @@ def replace_word(needle, replacement, content):
 EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 
 
-def replace_email_name(text, replacement=u""):
+def replace_email_name(text, replacement=""):
     return EMAIL_NAME_RE.sub(str(replacement), text)
 
 
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 
-def replace_email(text, replacement=u""):
+def replace_email(text, replacement=""):
     return EMAIL_RE.sub(str(replacement), text)
 
 

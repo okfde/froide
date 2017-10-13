@@ -354,7 +354,7 @@ class FoiRequest(models.Model):
     escalated = django.dispatch.Signal(providing_args=[])
 
     def __str__(self):
-        return _(u"Request '%s'") % self.title
+        return _("Request '%s'") % self.title
 
     @classmethod
     def get_status_url(cls):
@@ -424,14 +424,14 @@ class FoiRequest(models.Model):
                 kwargs={'obj_id': self.id})
 
     def get_absolute_domain_url(self):
-        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+        return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_absolute_domain_short_url(self):
-        return u"%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
+        return "%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
                 kwargs={'obj_id': self.id}))
 
     def get_auth_link(self):
-        return u"%s%s" % (settings.SITE_URL,
+        return "%s%s" % (settings.SITE_URL,
             reverse('foirequest-auth',
                 kwargs={"obj_id": self.id,
                     "code": self.get_auth_code()
@@ -735,7 +735,7 @@ class FoiRequest(models.Model):
         message_body = message
         message = FoiMessage(request=self)
         subject = re.sub(r'\s*\[#%s\]\s*$' % self.pk, '', subject)
-        message.subject = u'%s [#%s]' % (subject, self.pk)
+        message.subject = '%s [#%s]' % (subject, self.pk)
         message.subject_redacted = message.redact_subject()
         message.is_response = False
         message.is_escalation = True
@@ -898,7 +898,7 @@ class FoiRequest(models.Model):
             return
         if not self.user.email:
             return
-        send_mail(u'{0} [#{1}]'.format(
+        send_mail('{0} [#{1}]'.format(
                 _("%(site_name)s: Please classify the reply to your request") % {
                     "site_name": settings.SITE_NAME
                 },
@@ -1049,7 +1049,7 @@ class FoiMessage(models.Model):
         return self.plaintext
 
     def __str__(self):
-        return _(u"Message in '%(request)s' at %(time)s"
+        return _("Message in '%(request)s' at %(time)s"
                 ) % {"request": self.request,
                     "time": self.timestamp}
 
@@ -1086,19 +1086,19 @@ class FoiMessage(models.Model):
             if self.recipient_public_body:
                 alternative = self.recipient_public_body.name
             if self.is_postal:
-                return _(u'{} (via post)').format(self.recipient or alternative)
+                return _('{} (via post)').format(self.recipient or alternative)
             return make_address(self.recipient_email,
                     self.recipient or alternative)
 
         recipient = self.recipient or self.request.user.get_full_name()
         if self.is_postal:
-            return _(u'{} (via post)').format(recipient)
+            return _('{} (via post)').format(recipient)
         return make_address(self.recipient_email or self.request.secret_address,
                             recipient)
 
     def get_recipient(self):
         if self.recipient_public_body:
-            return mark_safe(u'<a href="%(url)s">%(name)s</a>' % {
+            return mark_safe('<a href="%(url)s">%(name)s</a>' % {
                 "url": self.recipient_public_body.get_absolute_url(),
                 "name": escape(self.recipient_public_body.name)})
         else:
@@ -1111,7 +1111,7 @@ class FoiMessage(models.Model):
         })
 
     def get_quoted(self):
-        return u"\n".join([u">%s" % l for l in self.plaintext.splitlines()])
+        return "\n".join([">%s" % l for l in self.plaintext.splitlines()])
 
     def needs_status_input(self):
         return self.request.message_needs_status() == self
@@ -1153,9 +1153,9 @@ class FoiMessage(models.Model):
         if not name and self.sender_public_body:
             name = self.sender_public_body.name
         if self.sender_email:
-            name += u' <%s>' % self.sender_email
+            name += ' <%s>' % self.sender_email
         if self.sender_public_body:
-            name += u' (%s)' % self.sender_public_body.name
+            name += ' (%s)' % self.sender_public_body.name
         return name
 
     @property
@@ -1166,8 +1166,8 @@ class FoiMessage(models.Model):
             pb = self.sender_public_body.name
         if email:
             if pb:
-                return u'%s@... (%s)' % (email.split('@')[0], pb)
-            return u'%s@...' % email.split('@')[0]
+                return '%s (%s)' % (email, pb)
+            return email
         else:
             return self.real_sender
 
@@ -1313,7 +1313,7 @@ class FoiAttachment(models.Model):
         verbose_name_plural = _('Attachments')
 
     def __str__(self):
-        return u"%s (%s) of %s" % (self.name, self.size, self.belongs_to)
+        return "%s (%s) of %s" % (self.name, self.size, self.belongs_to)
 
     def index_content(self):
         return "\n".join((self.name,))
@@ -1415,33 +1415,33 @@ class FoiEvent(models.Model):
         "public_body_suggested":
             _("%(user)s suggested %(public_body)s for the request '%(request)s'"),
         "reported_costs": _(
-            u"%(user)s reported costs of %(amount)s for this request."),
+            "%(user)s reported costs of %(amount)s for this request."),
         "message_received": _(
-            u"Received an email from %(public_body)s."),
+            "Received an email from %(public_body)s."),
         "message_sent": _(
-            u"%(user)s sent a message to %(public_body)s."),
+            "%(user)s sent a message to %(public_body)s."),
         "attachment_published": _(
-            u"%(user)s published an attachment on request %(request)s."),
+            "%(user)s published an attachment on request %(request)s."),
         "request_redirected": _(
-            u"Request was redirected to %(public_body)s and due date has been reset."),
+            "Request was redirected to %(public_body)s and due date has been reset."),
         "status_changed": _(
-            u"%(user)s set status to '%(status)s'."),
+            "%(user)s set status to '%(status)s'."),
         "made_public": _(
-            u"%(user)s made the request '%(request)s' public."),
+            "%(user)s made the request '%(request)s' public."),
         "request_refused": _(
-            u"%(public_body)s refused to provide information on the grounds of %(reason)s."),
+            "%(public_body)s refused to provide information on the grounds of %(reason)s."),
         "partially_successful": _(
-            u"%(public_body)s answered partially, but denied access to all information on the grounds of %(reason)s."),
+            "%(public_body)s answered partially, but denied access to all information on the grounds of %(reason)s."),
         "became_overdue": _(
-            u"This request became overdue"),
+            "This request became overdue"),
         "set_concrete_law": _(
-            u"%(user)s set '%(name)s' as the information law for the request %(request)s."),
+            "%(user)s set '%(name)s' as the information law for the request %(request)s."),
         "add_postal_reply": _(
-            u"%(user)s added a reply that was received via snail mail."),
+            "%(user)s added a reply that was received via snail mail."),
         "escalated": _(
-            u"%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s."),
+            "%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s."),
         "deadline_extended": _(
-            u"The deadline of request %(request)s has been extended.")
+            "The deadline of request %(request)s has been extended.")
     }
 
     class Meta:
@@ -1450,7 +1450,7 @@ class FoiEvent(models.Model):
         verbose_name_plural = _('Request Events')
 
     def __str__(self):
-        return u"%s - %s" % (self.event_name, self.request)
+        return "%s - %s" % (self.event_name, self.request)
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
@@ -1460,7 +1460,7 @@ class FoiEvent(models.Model):
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
-        return u"%s-%d" % (str(_("event")), self.id)
+        return "%s-%d" % (str(_("event")), self.id)
 
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),
@@ -1529,7 +1529,7 @@ class DeferredMessage(models.Model):
         verbose_name_plural = _('Undelivered Messages')
 
     def __str__(self):
-        return _(u"Undelievered Message to %(recipient)s (%(request)s)") % {
+        return _("Undelievered Message to %(recipient)s (%(request)s)") % {
             'recipient': self.recipient,
             'request': self.request
         }

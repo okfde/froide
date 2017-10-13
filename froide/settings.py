@@ -557,12 +557,12 @@ class German(object):
             "payment_possible": True,
             "currency": "Euro",
             "public_body_boosts": {
-                u"Oberste Bundesbeh\xf6rde": 1.9,
-                u"Obere Bundesbeh\xf6rde": 1.1,
-                u"Ministerium": 1.8,
-                u"Senatsverwaltung": 1.8,
-                u"Kommunalverwaltung": 1.7,
-                u"Andere": 0.8
+                "Oberste Bundesbeh\xf6rde": 1.9,
+                "Obere Bundesbeh\xf6rde": 1.1,
+                "Ministerium": 1.8,
+                "Senatsverwaltung": 1.8,
+                "Kommunalverwaltung": 1.7,
+                "Andere": 0.8
             },
             "autocomplete_body_boosts": {
                 "Bund": 1.5

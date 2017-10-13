@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import random
 from datetime import timedelta
 
@@ -69,7 +71,7 @@ def construct_message_body(foirequest, text='', foilaw=None, full_text=False,
             letter_start = foilaw.letter_start
             letter_end = foilaw.letter_end
         body = (
-            u"{letter_start}\n\n{body}\n\n{letter_end}"
+            "{letter_start}\n\n{body}\n\n{letter_end}"
         ).format(
             letter_start=letter_start,
             body=text,

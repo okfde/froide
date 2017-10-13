@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django import forms
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -31,7 +33,7 @@ class AgreeCheckboxInput(forms.CheckboxInput):
     def render(self, name, value, attrs=None, renderer=None):
         html = super(AgreeCheckboxInput, self).render(name, value, attrs=attrs,
                                                       renderer=renderer)
-        return mark_safe(u'<label>%s %s</label>' % (html, self.agree_to %
+        return mark_safe('<label>%s %s</label>' % (html, self.agree_to %
                 dict([(k, reverse(v)) for k, v in self.url_names.items()])))
 
 
@@ -93,7 +95,7 @@ class TagAutocompleteTagIt(TextInput):
         animate = 'true' if getattr(settings, 'TAGGING_AUTOCOMPLETE_ANIMATE', True) else 'false'
         html = super(TagAutocompleteTagIt, self).render(name, value, attrs, renderer=renderer)
         # Subclass this field in case you need to add some custom behaviour like custom callbacks
-        js = u"""<script type="text/javascript">window.init_jQueryTagit = window.init_jQueryTagit || [];
+        js = """<script type="text/javascript">window.init_jQueryTagit = window.init_jQueryTagit || [];
                 window.init_jQueryTagit.push({{
                     objectId: '{objectid}',
                     sourceUrl: '{sourceurl}',

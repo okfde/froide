@@ -801,7 +801,7 @@ def make_same_request(request, slug, message_id):
         messages.add_message(request, messages.ERROR, throttle_message)
         return render_400(request)
 
-    body = u"%s\n\n%s" % (foirequest.description,
+    body = "%s\n\n%s" % (foirequest.description,
             _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
                 'url': foirequest.get_absolute_domain_short_url(),
                 'site_name': settings.SITE_NAME
