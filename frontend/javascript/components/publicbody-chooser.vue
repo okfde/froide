@@ -40,7 +40,7 @@
       </li>
     </ul>
     <ul v-if="value" class="search-results list-unstyled">
-      <li class="search-result active">
+      <li class="search-result selected">
         <label>
           <input type="radio" :name="name" :data-label="label" :value="value" @change="selectSearchResult" v-model="value"/>
           {{ label }}
@@ -227,7 +227,7 @@ export default {
       background-color: #f5f5f5;
   }
 
-  .search-result.active {
+  .search-result.selected {
      background-color: #dff0d8;
   }
 
