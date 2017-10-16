@@ -15,7 +15,8 @@ const config = {
     main: ['./frontend/javascript/main.js'],
     publicbody: ['./frontend/javascript/publicbody.js'],
     makerequest: ['./frontend/javascript/makerequest.js'],
-    request: ['./frontend/javascript/request.js']
+    request: ['./frontend/javascript/request.js'],
+    redact: ['./frontend/javascript/redact.js']
   },
   output: {
     path: path.resolve(__dirname, 'froide/static/js'),
@@ -95,6 +96,9 @@ const config = {
   plugins: [
     extractSass,
     new LiveReloadPlugin(),
+    new CopyWebpackPlugin([
+      {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
+    ]),
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
