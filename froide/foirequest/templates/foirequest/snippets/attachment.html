@@ -23,18 +23,18 @@
         </form>
       {% else %}
         {% if attachment.redacted %}
-          <p class="pull-right">
-            {% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}
-          </p>
+          <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
+            {% blocktrans %}protected original{% endblocktrans %}
+          </span>
         {% else %}
           {% if attachment.converted %}
-            <p class="pull-right">
-              {% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}
-            </p>
+            <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+              {% blocktrans %}protected original{% endblocktrans %}
+            </span>
           {% else %}
-            <p class="pull-right">
-              {% blocktrans %}This attachment can't be published.{% endblocktrans %}
-            </p>
+            <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment can't be published.{% endblocktrans %}">
+              {% blocktrans %}protected{% endblocktrans %}
+            </span>
           {% endif %}
         {% endif %}
       {% endif %}
