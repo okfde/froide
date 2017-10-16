@@ -45,12 +45,28 @@ $(function () {
   setStatus()
 
   $('a[data-tabgo="tab"]').click(function (e) {
-    e.preventDefault()
-    $(this).tab('show')
+    $('.nav-link[href="' + $(this).attr('href') + '"]').tab('show')
   })
 
   let activeTab = window.Froide.config.activeTab
   if (activeTab) {
     $('.request-nav a[href="#' + activeTab + '"]').tab('show')
   }
+
+  $('form.ajaxified').submit(function (e) {
+    e.preventDefault()
+    var form = $(this)
+    $.ajax({
+      type: form.attr('method'),
+      url: form.attr('action'),
+      data: form.serialize(),
+      success: function () {
+        var id = form.attr('id')
+        form.hide()
+        $('#' + id + '-success').fadeIn()
+      }
+    })
+    form.find('button').attr('disabled', 'disabled')
+    form.find('input').attr('disabled', 'disabled')
+  })
 })

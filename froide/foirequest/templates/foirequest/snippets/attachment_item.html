@@ -1,15 +1,9 @@
 {% load i18n %}
 
-<a class="pull-left" href="{{ attachment.get_absolute_url }}">
-  <div class="media-object">
-    <i class="fa fa-paperclip"></i>
-  </div>
+<a id="{{ attachment.get_html_id }}" class="card-title" href="{{ attachment.get_absolute_url }}" title="{{ attachment.name }}">
+  <i class="fa fa-paperclip" aria-hidden="true"></i>
+  {{ attachment.name|truncatechars:25 }}
+  <span class="badge badge-light">
+    {{ attachment.size|filesizeformat }}
+  </span>
 </a>
-<div class="media-body">
-  <a id="{{ attachment.get_html_id }}" href="{{ attachment.get_absolute_url }}">
-    <h4 class="media-heading">
-      {{ attachment.name }}
-    </h4>
-  </a>
-  ({{ attachment.size|filesizeformat }})
-</div>

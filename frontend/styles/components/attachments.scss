@@ -1,0 +1,15 @@
+.attachment-deck {
+  @extend .list-group;
+  // flex-flow: row;
+  // overflow: scroll;
+}
+
+.attachment-card {
+  @extend .list-group-item;
+  // min-width: 250px;
+
+}
+
+.attachment-body {
+  // @extend .card-body;
+}

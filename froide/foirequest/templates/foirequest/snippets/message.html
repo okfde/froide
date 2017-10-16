@@ -81,49 +81,41 @@
             </td>
           </tr>
         {% endif %}
-        {% if message.all_attachments %}
-          <tr>
-            <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
-            <td>
-              {% if message.approved_attachments %}
-                <ul class="list-unstyled">
-                  {% for attachment in message.approved_attachments %}
-                    <li class="media">
-                      {% include "foirequest/snippets/attachment_item.html" %}
-                    </li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-              {% if user == object.user or user.is_staff %}
-                {% if message.not_approved_attachments %}
-                  <h5>{% trans "Attachments that are not published:" %}</h5>
-                  <ul class="list-unstyled">
-                    {% for attachment in message.not_approved_attachments %}
-                      {% include "foirequest/snippets/attachment.html" %}
-                    {% endfor %}
-                  </ul>
-                {% endif %}
-              {% endif %}
-            </td>
-          </tr>
-        {% endif %}
-        {% if user == object.user and message.is_postal %}
-          <tr class="d-print-none">
-            <td class="key">{% blocktrans %}Upload Attachments{% endblocktrans %}</td>
-            {% with form=message.get_postal_attachment_form %}
-              <td>
-                <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  {{ form.files }}
-                  <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
-                  <span class="form-text text-muted">{{ form.files.help_text }}</span>
-                </form>
-              </td>
-            {% endwith %}
-          </tr>
-        {% endif %}
       </tbody>
     </table>
+
+    {% if user == object.user and message.is_postal %}
+      <div>
+        <h6>
+          {% blocktrans %}Upload Attachments{% endblocktrans %}
+        </h6>
+        {% with form=message.get_postal_attachment_form %}
+          <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.files }}
+            <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
+            <span class="form-text text-muted">{{ form.files.help_text }}</span>
+          </form>
+        {% endwith %}
+      </div>
+    {% endif %}
+
+    {% if message.all_attachments %}
+      <h6>
+        {% blocktrans %}Attachments{% endblocktrans %}
+      </h6>
+      <div class="attachment-deck">
+        {% if user == object.user or user.is_staff %}
+          {% for attachment in message.not_approved_attachments %}
+            {% include "foirequest/snippets/attachment.html" %}
+          {% endfor %}
+        {% endif %}
+        {% for attachment in message.approved_attachments %}
+          {% include "foirequest/snippets/attachment.html" %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
     {% if object.user == user %}
       {% if object.message_needs_status == message %}
         <div class="alert alert-danger">
