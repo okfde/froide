@@ -1,3 +1,6 @@
+.target-primary:target {
+  @extend .border-success;
+}
 
 .small {
     color: #666;
