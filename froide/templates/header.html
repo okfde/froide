@@ -1,12 +1,14 @@
 {% load i18n %}
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-light justify-content-between">
+<nav class="navbar navbar-expand-lg navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'index' %}">
-       <img src="{% static "img/logo/logo.svg" %}" width="32" height="28" class="navbar-logo" alt="{{ SITE_NAME }}">
-       {{ SITE_NAME }}
-    </a>
+    {% block nav_brand %}
+      <a class="navbar-brand" href="{% url 'index' %}">
+         <img src="{% static "img/logo/logo.svg" %}" width="32" height="28" class="navbar-logo" alt="{{ SITE_NAME }}">
+         {{ SITE_NAME }}
+      </a>
+    {% endblock %}
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
