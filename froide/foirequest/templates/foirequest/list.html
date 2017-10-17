@@ -9,33 +9,35 @@
 {% block body %}
 {% block headline %}
 
-{% if public_body %}
-  <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
-{% endif %}
-{% if not filtered and jurisdiction %}
-  <h2>{% blocktrans with name=jurisdiction.name %}{{ name }}: all requests{% endblocktrans %}</h2>
-{% else %}
-  {% if not filtered %}
-    <h2>{{ page_title|safe }}</h2>
+<div class="mb-3 mt-3">
+  {% if public_body %}
+    <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
   {% endif %}
-{% endif %}
-{% if status %}
-  {% if filtered %}
-    <h3>{{ status }}</h3>
+  {% if not filtered and jurisdiction %}
+    <h2>{% blocktrans with name=jurisdiction.name %}{{ name }}: all requests{% endblocktrans %}</h2>
   {% else %}
-    <h2>{{ status }}</h2>
+    {% if not filtered %}
+      <h2>{{ page_title|safe }}</h2>
+    {% endif %}
   {% endif %}
-  <p>{{ status_description }}</p>
-{% endif %}
-{% if tag %}
-  <h2>{% blocktrans with name=tag.name %}Requests with tag "{{ name }}"{% endblocktrans %}</h2>
-{% endif %}
-{% if topic %}
-  <h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
-{% endif %}
-{% if filtered and jurisdiction %}
-  <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
-{% endif %}
+  {% if status %}
+    {% if filtered %}
+      <h3>{{ status }}</h3>
+    {% else %}
+      <h2>{{ status }}</h2>
+    {% endif %}
+    <p>{{ status_description }}</p>
+  {% endif %}
+  {% if tag %}
+    <h2>{% blocktrans with name=tag.name %}Requests with tag "{{ name }}"{% endblocktrans %}</h2>
+  {% endif %}
+  {% if topic %}
+    <h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
+  {% endif %}
+  {% if filtered and jurisdiction %}
+    <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
+  {% endif %}
+</div>
 
 {% endblock headline %}
 

@@ -80,15 +80,16 @@
 
 <div class="row">
   <div class="col-lg-9 col-md-8">
+
     {% if not object.public %}
       {% if object.user == user or user.is_staff %}
-        <div class="card d-print-none">
+        <div class="card d-print-none mb-5">
           <form class="card-body" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
             {% csrf_token %}
             <p>
               {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
             </p>
-            <button type="submit" class="btn btn-secondary">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
+            <button type="submit" class="btn btn-success">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
           </form>
         </div>
       {% endif %}
@@ -221,8 +222,8 @@
                   {% render_form escalation_form %}
                 {% endwith %}
               {% endif %}
-              <div class="row">
-                <div class="col-lg-offset-4 col-lg-8">
+              <div class="form-group row mb-3">
+                <div class="ml-md-auto col-lg-9">
                   {% if not object.public %}
                     <small class="form-text text-muted">
                       {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
