@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load markup %}
 
-{% block body %}
+{% block app_body %}
 <h2>{{ object.name }} ({{ object.jurisdiction.name }})</h2>
 <dl>
   <dt>{% blocktrans %}Link to law text:{% endblocktrans %}</dt>
@@ -29,4 +29,3 @@
 </div>
 
 {% endblock %}
-

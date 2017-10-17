@@ -8,7 +8,7 @@
 
 {% block metadescription %}{% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a {{ classification }} in {{ juris }} on {{ site_name }}{% endblocktrans %}{% endblock %}
 
-{% block body %}
+{% block app_body %}
 <div itemscope itemtype="http://schema.org/Organization">
 
 <h2 itemprop="name">{{ object.name }}</h2>

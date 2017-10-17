@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load form_helper %}
 
-{% block body %}
+{% block app_body %}
 {% if user.is_authenticated %}
 <h2>{% blocktrans %}You are now logged in.{% endblocktrans %}</h2>
 {% if simple %}

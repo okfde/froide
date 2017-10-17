@@ -22,10 +22,10 @@
   {% include "snippets/messages.html" %}
 
   {% block body_wrapper %}
-  <div id="main" class="container mt-3">
-  {% block body %}
-  {% endblock %}
-  </div>
+  <main>
+    {% block body %}
+    {% endblock %}
+  </main>
   {% endblock %}
 
   <footer class="container" id="footer">

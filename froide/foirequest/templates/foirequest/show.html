@@ -31,7 +31,7 @@
   {% endif %}
 {% endblock %}
 
-{% block body %}
+{% block app_body %}
 
 {% if not user.is_authenticated and object.awaits_classification %}
   {% url "account-login" as login_url %}

@@ -72,7 +72,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-logout'))
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('account-login') + "?simple")
-        self.assertIn("simple_base.html", map(lambda x: x.name,
+        self.assertIn("account/simple_base.html", map(lambda x: x.name,
                 response.templates))
         response = self.client.post(reverse('account-login') + "?simple",
                 {"email": "info@fragdenstaat.de",

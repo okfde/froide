@@ -132,7 +132,7 @@ def logout(request):
     return redirect("/")
 
 
-def login(request, base="base.html", context=None,
+def login(request, base="account/base.html", context=None,
         template='account/login.html', status=200):
     simple = False
     initial = None
@@ -144,7 +144,7 @@ def login(request, base="base.html", context=None,
         context['signup_form'] = NewUserForm()
 
     if request.GET.get("simple") is not None:
-        base = "simple_base.html"
+        base = "account/simple_base.html"
         simple = True
         if request.GET.get('email'):
             initial = {'email': request.GET.get('email')}

@@ -5,13 +5,15 @@
 
 {% block body_tag %}
 
-<div id="main" class="container">
+<main class="container">
 {% include "snippets/messages.html" %}
 
 {% block body %}
+{% block app_body %}
+{% endblock %}
 {% endblock %}
 
-</div>
+</main>
 
 {% block scripts %}
   <script src="{% static "js/common.js" %}"></script>
