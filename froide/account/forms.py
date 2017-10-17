@@ -119,8 +119,11 @@ class TermsForm(forms.Form):
         )
 
         if has_newsletter():
-            self.fields['newsletter'] = forms.BooleanField(required=False,
-                label=_("Check if you want to receive our newsletter."))
+            self.fields['newsletter'] = forms.BooleanField(
+                required=False,
+                widget=BootstrapCheckboxInput,
+                label=_("Check if you want to receive our newsletter.")
+            )
 
     def save(self, user):
         user.terms = True
@@ -194,8 +197,11 @@ class UserChangeForm(forms.Form):
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email
         if has_newsletter():
-            self.fields['newsletter'] = forms.BooleanField(required=False,
-                label=_("Newsletter"))
+            self.fields['newsletter'] = forms.BooleanField(
+                required=False,
+                label=_("Newsletter"),
+                widget=BootstrapCheckboxInput
+            )
             self.fields['newsletter'].initial = self.user.newsletter
         self.order_fields(self.field_order)
 
