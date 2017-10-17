@@ -4,117 +4,120 @@
 
 <div id="{{ message.get_html_id }}" class="message-container">
   <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
-    <table class="message-table">
-      <tbody>
-        <tr>
-          <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
-          <td class="value-padding-right">
-            {% if object.user == user or user.is_staff %}
-              {% if message.is_response %}
-                {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
-                <div id="change-pb-{{ message.id }}" style="display:none" class="d-print-none">
-                  {% with message_pb_form=message.get_public_body_sender_form %}
-                    <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
-                      {% csrf_token %}
-                      <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
-                      {{ message_pb_form.sender }}
-                      <button type="submit" class="btn btn-secondary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
-                    </form>
-                  {% endwith %}
-                </div>
-              {% else %}
-                {{ message.user_real_sender }}
+    <dl class="message-meta">
+      <dt>
+        {% blocktrans %}From{% endblocktrans %}
+      </dt>
+      <dd>
+        {% if object.user == user or user.is_staff %}
+          {% if message.is_response %}
+            {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
+            <div id="change-pb-{{ message.id }}" style="display:none" class="d-print-none">
+              {% with message_pb_form=message.get_public_body_sender_form %}
+                <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                  {% csrf_token %}
+                  <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
+                  {{ message_pb_form.sender }}
+                  <button type="submit" class="btn btn-secondary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                </form>
+              {% endwith %}
+            </div>
+          {% else %}
+            {{ message.user_real_sender }}
+          {% endif %}
+        {% else %}
+          {% if message.is_response %}
+            {% if froide.public_body_officials_public %}
+              {{ message.sender }}
+              {% if message.sender_public_body %}
+               – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
               {% endif %}
             {% else %}
-              {% if message.is_response %}
-                {% if froide.public_body_officials_public %}
-                  {{ message.sender }}
-                  {% if message.sender_public_body %}
-                   – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
-                  {% endif %}
-                {% else %}
-                  {% if message.sender_public_body %}
-                    <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
-                  {% else %}
-                    {% trans "Public Body" %}
-                  {% endif %}
-                {% endif %}
+              {% if message.sender_public_body %}
+                <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
               {% else %}
-                {{ message.sender }}
+                {% trans "Public Body" %}
               {% endif %}
             {% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
-          <td class="value-padding-right"><strong>{{ message.get_subject }}</strong></td>
-        </tr>
-        <tr>
-          <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
-          <td>
-            <a href="#{{ message.get_html_id }}">
-              {% if message.is_postal %}
-                {{ message.timestamp|date:"DATE_FORMAT" }}
-              {% else %}
-                {{ message.timestamp|date:"DATETIME_FORMAT" }}
-              {% endif %}
-            </a>
-          </td>
-        </tr>
-        {% if not message.is_response %}
-          <tr>
-            <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
-            <td>{{ message.get_recipient }}</td>
-          </tr>
+          {% else %}
+            {{ message.sender }}
+          {% endif %}
         {% endif %}
-        {% if message.status %}
-          <tr>
-            <td class="key">{% blocktrans %}Status{% endblocktrans %}</td>
-            <td>{{ message.readable_status }}</td>
-          </tr>
-        {% endif %}
-        {% if user.is_staff %}
-          <tr class="d-print-none">
-            <td class="key">{% blocktrans %}Admin{% endblocktrans %}</td>
-            <td>
-              <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
-            </td>
-          </tr>
-        {% endif %}
-      </tbody>
-    </table>
-
-    {% if user == object.user and message.is_postal %}
-      <div>
-        <h6>
-          {% blocktrans %}Upload Attachments{% endblocktrans %}
-        </h6>
-        {% with form=message.get_postal_attachment_form %}
-          <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.files }}
-            <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
-            <span class="form-text text-muted">{{ form.files.help_text }}</span>
-          </form>
-        {% endwith %}
-      </div>
+      </dd>
+      <dt>
+        {% blocktrans %}Subject{% endblocktrans %}
+      </dt>
+      <dd>
+        <strong>{{ message.get_subject }}</strong>
+      </dd>
+      <dt>
+        {% blocktrans %}Date{% endblocktrans %}
+      </dt>
+      <dd>
+        <a href="#{{ message.get_html_id }}">
+          {% if message.is_postal %}
+            {{ message.timestamp|date:"DATE_FORMAT" }}
+          {% else %}
+            {{ message.timestamp|date:"DATETIME_FORMAT" }}
+          {% endif %}
+        </a>
+      </dd>
+    {% if not message.is_response %}
+      <dt>
+        {% blocktrans %}To{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ message.get_recipient }}
+      </dd>
+  {% endif %}
+    {% if message.status %}
+      <dt>
+        {% blocktrans %}Status{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ message.readable_status }}
+      </dd>
     {% endif %}
-
-    {% if message.all_attachments %}
+    {% if user.is_staff %}
+      <dt class="d-print-none">
+        {% blocktrans %}Admin{% endblocktrans %}
+      </dt>
+      <dd class="d-print-none">
+        <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
+      </dd>
+    {% endif %}
+  </dl>
+  {% if user == object.user and message.is_postal %}
+    <div>
       <h6>
-        {% blocktrans %}Attachments{% endblocktrans %}
+        {% blocktrans %}Upload Attachments{% endblocktrans %}
       </h6>
-      <div class="attachment-deck">
-        {% if user == object.user or user.is_staff %}
-          {% for attachment in message.not_approved_attachments %}
-            {% include "foirequest/snippets/attachment.html" %}
-          {% endfor %}
-        {% endif %}
-        {% for attachment in message.approved_attachments %}
+      {% with form=message.get_postal_attachment_form %}
+        <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.files }}
+          <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
+          <span class="form-text text-muted">{{ form.files.help_text }}</span>
+        </form>
+      {% endwith %}
+    </div>
+  {% endif %}
+
+  {% if message.all_attachments %}
+    <h6>
+      {% blocktrans %}Attachments{% endblocktrans %}
+    </h6>
+    <div class="attachment-deck">
+      {% if user == object.user or user.is_staff %}
+        {% for attachment in message.not_approved_attachments %}
           {% include "foirequest/snippets/attachment.html" %}
         {% endfor %}
-      </div>
-    {% endif %}
+      {% endif %}
+      {% for attachment in message.approved_attachments %}
+        {% include "foirequest/snippets/attachment.html" %}
+      {% endfor %}
+    </div>
+  {% endif %}
 
     {% if object.user == user %}
       {% if object.message_needs_status == message %}

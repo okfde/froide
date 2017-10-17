@@ -31,36 +31,16 @@
     background-color: #FFE9EE;
 }
 
-.message-table {
-    border-spacing: 0px;
+.message-meta {
+  @extend .row;
 }
 
-.message-table td.key {
-    text-align:right;
-    color: #999;
-    vertical-align:top;
-    font-weight: bold;
-    width: 10%;
+.message-meta > dt {
+  @extend .col-sm-2;
 }
 
-.message-table td.key:after {
-    content: ":";
-}
-
-.message-table td.value-padding-right {
-    padding-right:65px;
-}
-
-.message-table tbody tr:nth-child(even) td, .message tbody tr.even td {
-    background: transparent;
-}
-
-.message-table  td {
-    padding: 0px 0px 2px 0.5em;
-}
-
-.message-table, .message-table td ul {
-    margin-bottom: 0.4em;
+.message-meta > dd {
+  @extend .col-sm-10;
 }
 
 .content-text {
