@@ -6,8 +6,13 @@
   padding-top: 15px;
 }
 
+.nav-compact .nav-link.active {
+  font-weight: bold;
+}
+
 .navbar-logo {
   display: inline-block;
+  transform: translateY(-6px);
 }
 
 @media (min-width: 768px) and (max-width: 1200px) {
@@ -23,10 +28,8 @@
 .special-nav-item a span{
     color: #f0f0f0 !important;
     padding: 0.5em;
-    background: #428bca;
-    -webkit-border-radius: 6px;
-       -moz-border-radius: 6px;
-            border-radius: 6px;
+    background: $component-active-bg;
+    border-radius: 6px;
     text-shadow: none;
 }
 
