@@ -313,6 +313,10 @@ class PublicBody(models.Model):
         return None
 
     @property
+    def all_names(self):
+        return ' '.join((self.name, self.other_names))
+
+    @property
     def request_note_html(self):
         return markdown(self.request_note)
 
