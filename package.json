@@ -9,6 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .js,.vue frontend",
+    "dev": "webpack --watch",
+    "build": "NODE_ENV=production webpack",
     "favicon": "real-favicon generate froide/static/img/logo/favicon.json favicon-result.json froide/static/img/logo"
   },
   "repository": {
