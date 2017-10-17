@@ -13,7 +13,7 @@
       {% block first_index_row %}
       <div class="col-lg-6 col-md-6">
         {% block first_index_row_search %}
-        <h1>{% block site_name %}{{ SITE_NAME }}{% endblock %}</h1>
+        <h2>{% block site_name %}{{ SITE_NAME }}{% endblock %}</h2>
         {% block site_description %}
           <p class="lead">
             {% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}
@@ -21,18 +21,20 @@
         {% endblock %}
         {% block index-search %}
           <form method="get" action="{% url 'foirequest-search' %}">
-            <label for="index-search">
-              {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
-            </label>
+            <div class="form-group">
+              <label for="index-search">
+                {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
+              </label>
 
-            <div class="input-group col-lg-12">
-              <input id="index-search"class="form-control" type="text" name="q" autocomplete="off" placeholder="{% block index-search-placeholder %}{% endblock %}"/>
-              <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit">
-                  <i class="fa fa-search"></i>
-                  {% blocktrans %}Search For Information{% endblocktrans %}
-                </button>
-              </span>
+              <div class="input-group">
+                <input id="index-search"class="form-control" type="text" name="q" autocomplete="off" placeholder="{% block index-search-placeholder %}{% endblock %}"/>
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-search"></i>
+                    {% blocktrans %}Search For Information{% endblocktrans %}
+                  </button>
+                </span>
+              </div>
             </div>
             {% block example_search_terms_block %}
             <span class="form-text text-muted">
