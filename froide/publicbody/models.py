@@ -335,7 +335,7 @@ class PublicBody(models.Model):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_label(self):
-        return mark_safe('%(name)s - <a href="%(url)s" class="target-new info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
+        return mark_safe('%(name)s - <a href="%(url)s" target="_blank" class="info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
 
     def confirm(self):
         if self.confirmed:
