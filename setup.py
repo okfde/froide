@@ -49,7 +49,6 @@ setup(
         'django-storages',
         'dj-database-url',
         'django-cache-url',
-        'django_compressor',
     ],
     include_package_data=True,
     classifiers=[
