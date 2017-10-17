@@ -585,8 +585,7 @@ class Production(Base):
 
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
     CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(False)
-    COMPRESS_ENABLED = values.BooleanValue(True)
-    COMPRESS_OFFLINE = values.BooleanValue(True)
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 
 class SSLSite(object):
@@ -605,11 +604,9 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
 
 
 class AmazonS3(object):
-    STATICFILES_STORAGE = values.Value('froide.helper.storage_utils.CachedS3BotoStorage')
-    COMPRESS_STORAGE = values.Value('froide.helper.storage_utils.CachedS3BotoStorage')
+    STATICFILES_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 
     STATIC_URL = values.Value('/static/')
-    COMPRESS_URL = values.Value(STATIC_URL)
 
     DEFAULT_FILE_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 
