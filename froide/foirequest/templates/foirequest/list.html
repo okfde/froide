@@ -1,5 +1,6 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
+{% load humanize %}
 
 {% block extra_head %}
   <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
@@ -59,7 +60,7 @@
     {% block badge %}
     <p>
       <span class="badge badge-info">
-        {% blocktrans count counter=count %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}
+        {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
       </span>
     </p>
     {% endblock badge %}

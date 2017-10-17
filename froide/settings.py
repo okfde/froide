@@ -38,6 +38,7 @@ class Base(Configuration):
         'django_comments',
         'django.contrib.flatpages',
         'django.contrib.sitemaps',
+        'django.contrib.humanize',
 
         # external
         'haystack',
