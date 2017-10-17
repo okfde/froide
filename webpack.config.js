@@ -110,7 +110,8 @@ const config = {
 
       filename: 'common.js',
       // (the filename of the commons chunk)
-      //
+
+      chunks: ['publicbody', 'request', 'makerequest'],
       minChunks: 2
       // (Modules must be shared between 3 entries)
     })
