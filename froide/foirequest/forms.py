@@ -461,7 +461,7 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         foirequest.add_postal_reply.send(sender=foirequest)
 
         if self.cleaned_data.get('files'):
-            self.save_attachments(self.files.getlist('files'), message)
+            self.save_attachments(self.files.getlist('%s-files' % self.prefix), message)
         return message
 
 

@@ -619,13 +619,14 @@ def set_summary(request, slug):
 def add_postal_reply(request, slug, form_class=PostalReplyForm,
             success_message=_('A postal reply was successfully added!'),
             error_message=_('There were errors with your form submission!'),
-            form_key='"postal_reply_form"'):
+            form_key='postal_reply_form', form_prefix='reply'):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     if not foirequest.public_body:
         return render_400(request)
-    form = form_class(request.POST, request.FILES, foirequest=foirequest)
+    form = form_class(request.POST, request.FILES, foirequest=foirequest,
+                      prefix=form_prefix)
     if form.is_valid():
         message = form.save()
         messages.add_message(request, messages.SUCCESS, success_message)
@@ -641,7 +642,7 @@ def add_postal_message(request, slug):
         form_class=PostalMessageForm,
         success_message=_('A sent letter was successfully added!'),
         error_message=_('There were errors with your form submission!'),
-        form_key='postal_message_form'
+        form_key='postal_message_form', form_prefix='message'
     )
 
 

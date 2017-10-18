@@ -539,11 +539,13 @@ class RequestTest(TestCase):
     def test_postal_reply(self):
         self.client.login(email='info@fragdenstaat.de', password='froide')
         pb = PublicBody.objects.all()[0]
-        post = {"subject": "Totally Random Request",
-                "body": "This is another test body",
-                "publicbody": str(pb.pk),
-                "law": str(pb.default_law.pk),
-                "public": "on"}
+        post = {
+            "subject": "Totally Random Request",
+            "body": "This is another test body",
+            "publicbody": str(pb.pk),
+            "law": str(pb.default_law.pk),
+            "public": "on"
+        }
         response = self.client.post(
                 reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
@@ -560,10 +562,10 @@ class RequestTest(TestCase):
         file_size = os.path.getsize(factories.TEST_PDF_PATH)
         post = QueryDict(mutable=True)
         post.update({
-            "date": "3000-01-01",  # far future
-            "sender": "Some Sender",
-            "subject": "",
-            "text": "Some Text",
+            "reply-date": "3000-01-01",  # far future
+            "reply-sender": "Some Sender",
+            "reply-subject": "",
+            "reply-text": "Some Text",
         })
 
         self.client.logout()
@@ -584,19 +586,22 @@ class RequestTest(TestCase):
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
-        post['date'] = "01/41garbl"
+        post['reply-date'] = "01/41garbl"
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
+        self.assertIn('postal_reply_form', response.context)
         self.assertEqual(response.status_code, 400)
-        post['date'] = "2011-01-02"
-        post['public_body'] = str(pb.pk)
+        post['reply-date'] = "2011-01-02"
+        post['reply-publicbody'] = str(pb.pk)
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post['files'] = f
+            post['reply-files'] = f
             response = self.client.post(reverse("foirequest-add_postal_reply",
                     kwargs={"slug": req.slug}), post)
+
         self.assertEqual(response.status_code, 302)
 
         message = req.foimessage_set.all()[1]
+
         attachment = message.foiattachment_set.all()[0]
         self.assertEqual(attachment.file.size, file_size)
         self.assertEqual(attachment.size, file_size)
