@@ -11,7 +11,7 @@
           </h6>
           <ul>
             <li>
-              <a :href="publicbody.url" target="_blank">
+              <a :href="publicbody.url" target="_blank" rel="noopener">
                 Website of {{ publicbody.name }}
               </a>
             </li>

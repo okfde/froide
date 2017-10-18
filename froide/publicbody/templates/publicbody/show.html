@@ -36,7 +36,7 @@
       </dd>
       {% if object.url %}
         <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
-        <dd><a href="{{ object.url }}" target="_blank">{{ object.url|truncatechars:30 }}</a></dd>
+        <dd><a href="{{ object.url }}" target="_blank" rel="noopener">{{ object.url|truncatechars:30 }}</a></dd>
       {% endif %}
 
       {% if object.email %}
