@@ -521,7 +521,9 @@
             <h5>
               <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
                 {% blocktrans count counter=count %}
-                  {{ counter }} follower{% plural %}{{ counter }} followers
+                  One follower
+                {% plural %}
+                  {{ counter }} followers
                 {% endblocktrans %}
               </span>
             </h5>
