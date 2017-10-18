@@ -83,7 +83,7 @@ class NullFilter(SimpleListFilter):
 
 
 def make_nullfilter(field, title):
-    return type('%sNullFilter' % field.title(), (NullFilter,), {
+    return type(str('%sNullFilter' % field.title()), (NullFilter,), {
         'title': title,
         'parameter_name': field
     })
