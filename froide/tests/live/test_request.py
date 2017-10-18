@@ -25,6 +25,7 @@ def get_selenium():
         options = Options()
         if driver == 'chrome_headless':
             options.add_argument('headless')
+            options.add_argument('disable-gpu')
         driver_path = os.environ.get('CHROME_DRIVER_PATH', None)
         if driver_path is not None:
             return ChromeDriver(driver_path, chrome_options=options)
