@@ -25,7 +25,7 @@ class PublicBodySelect(forms.Widget):
                 pb_desc = pb.get_label()
             except (ValueError, PublicBody.DoesNotExist):
                 pass
-        context = super().get_context(name, value, attrs)
+        context = super(PublicBodySelect, self).get_context(name, value, attrs)
         context['widget'].update({
             'value_label': pb_desc,
             'search': self.initial_search,
