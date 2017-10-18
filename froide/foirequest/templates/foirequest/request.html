@@ -4,6 +4,7 @@
 {% load markup %}
 {% load searchtags %}
 {% load block_helper %}
+{% load form_helper %}
 
 {% block nav_makerequest %}active{% endblock %}
 
@@ -127,15 +128,10 @@
           {% endif %}
         </div>
         <div slot="terms">
-          {% if not user.is_authenticated %}
+          {% if not user.is_authenticated and user_form.terms%}
             <div class="card mb-3">
               <div class="card-body">
-                {% if user_form.terms %}
-                  {{ user_form.terms.errors }}
-                  <div class="checkbox">
-                    {{ user_form.terms }}
-                  </div>
-                {% endif %}
+                {% render_field user_form.terms %}
               </div>
             </div>
           {% endif %}

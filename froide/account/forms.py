@@ -102,8 +102,9 @@ class NewUserBaseForm(forms.Form):
 class TermsForm(forms.Form):
     terms = forms.BooleanField(
         widget=BootstrapCheckboxInput,
-        error_messages={'required':
-            _('You need to accept our Terms and Conditions and Priavcy Statement.')},
+        error_messages={
+            'required': _('You need to accept our Terms '
+                'and Conditions and Priavcy Statement.')},
     )
 
     def __init__(self, *args, **kwargs):
