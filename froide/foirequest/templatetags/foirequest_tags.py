@@ -27,7 +27,7 @@ def highlight_request(message):
     except ValueError:
         return content
     offset = index + len(description)
-    return mark_safe('<div class="foldin">%s</div><div class="highlight">%s</div><div class="foldin-bottom print-show" style="display:none" id="letter_end">%s</div>' % (
+    return mark_safe('<div>%s</div><div class="highlight">%s</div><div class="collapse" id="letter_end">%s</div>' % (
             escape(content[:index]),
             urlizetrunc(escape(description), 40),
             escape(content[offset:]))
@@ -109,7 +109,10 @@ def redact_message(message, user):
     if content_2:
         return mark_safe(''.join([
             content_1,
-            '<a href="#" class="show-text">…</a><div class="hidden-text">',
+            ('<a href="#message-footer-{message_id}" data-toggle="collapse" '
+            ' aria-expanded="false" aria-controls="collapseExample">…</a>'
+            '<div id="message-footer-{message_id}" class="collapse">'
+            .format(message_id=message.id)),
             content_2,
             '</div>'
         ]))

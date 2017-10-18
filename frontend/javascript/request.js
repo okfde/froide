@@ -9,15 +9,11 @@ $(function () {
   })
   $('*[data-toggle=tooltip]').tooltip()
 
-  $(document).on('click', 'a.toggle', function (e) {
+  $(document).on('click', '.hideparent', function (e) {
     e.preventDefault()
-    var obj = $('#' + $(this).attr('href').split('#')[1])
-    if (obj.css('display') === 'none') {
-      obj.slideDown()
-    } else {
-      obj.slideUp()
-    }
+    $(this).parent().hide()
   })
+
   $('.comment-form').hide()
 
   $('a.show-text').on('click', function (e) {

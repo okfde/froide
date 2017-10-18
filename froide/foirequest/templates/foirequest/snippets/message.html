@@ -11,8 +11,10 @@
       <dd>
         {% if object.user == user or user.is_staff %}
           {% if message.is_response %}
-            {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
-            <div id="change-pb-{{ message.id }}" style="display:none" class="d-print-none">
+            {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+              {% trans "change" %}
+            </a>)
+            <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
               {% with message_pb_form=message.get_public_body_sender_form %}
                 <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
                   {% csrf_token %}
@@ -130,7 +132,7 @@
     <div id="{{ message.get_html_id }}-content" class="message-content">
       {% if forloop.counter0 == 0 %}
         <div class="content-text">{% highlight_request message %}<div>
-<a class="toggle d-print-none muted hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
+<a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="d-print-none muted hideparent">{% trans "[... Show complete request text]" %}</a>
 {% blocktrans %}Kind Regards,{% endblocktrans %}
 {{ message.sender }}</div>
         </div>
@@ -181,8 +183,10 @@
     {% get_comment_list for message as comment_list %}
     <div id="comments-{{ message.id }}" class="comments">
       {% include "comments/foirequest/list.html" %}
-      <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
-      <div class="comment-form" id="comment-form-{{ message.id }}">
+      <a data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+        {% blocktrans %}Write a comment{% endblocktrans %}
+      </a>
+      <div class="collapse" id="comment-form-{{ message.id }}">
         {% if user.is_authenticated %}
           {% include "comments/foirequest/form.html" %}
         {% else %}
