@@ -22,6 +22,7 @@ from .validators import validate_upload_document
 
 
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
+publishing_denied = settings.FROIDE_CONFIG.get('publishing_denied', False)
 
 
 class RequestForm(JSONMixin, forms.Form):
@@ -474,15 +475,21 @@ class PostalReplyForm(PostalBaseForm):
             widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Sender Name")}), required=True)
 
-    not_publishable = forms.BooleanField(label=_("You are not allowed to publish some received documents"),
-            initial=False, required=False,
-            help_text=_('If the reply explicitly states that you are not allowed to publish some of the documents (e.g. due to copyright), check this.'))
+    if publishing_denied:
+        not_publishable = forms.BooleanField(label=_('You are not allowed to '
+            'publish some received documents'),
+                initial=False, required=False,
+                help_text=_(
+                    'If the reply explicitly states that you are not allowed '
+                    'to publish some of the documents (e.g. due to copyright), '
+                    'check this.'))
 
     def contribute_to_message(self, message):
         message.is_response = True
         message.sender_name = self.cleaned_data['sender']
         message.sender_public_body = self.cleaned_data['publicbody']
-        message.not_publishable = self.cleaned_data['not_publishable']
+        message.not_publishable = self.cleaned_data.get('not_publishable',
+                                                        False)
         return message
 
 
