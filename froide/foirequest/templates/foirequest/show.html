@@ -22,7 +22,7 @@
   <link rel="canonical" href="{% url 'foirequest-show' slug=object.slug %}"/>
   <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
   <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" />
-  <link rel="stylesheet" href="{% static "css/print-request.css" %}" type="text/css" media="print" />
+
 
   {% if user.is_staff %}
     {% with object.get_set_tags_form as set_tags_form %}
@@ -169,7 +169,7 @@
           {% block request_action_menu_footer %}{% endblock %}
           </ul>
         </div>
-        <div class="col-8">
+        <div class="col-8 tab-content-container">
           <div class="tab-content">
 
         {# Set status #}
@@ -678,7 +678,7 @@
 
 </div>
 
-<hr/>
+<hr class="page-break"/>
 
 <div class="row" id="correspondence">
 
@@ -710,12 +710,14 @@
   </div>
 
   <div class="col-md-9 order-1">
-    <h4 id="messages">{% blocktrans %}Messages in this request{% endblocktrans %}</h4>
+    <h4 id="messages">
+      {% blocktrans %}Messages in this request{% endblocktrans %}
+    </h4>
 
     {% for message in object.messages %}
       {% include "foirequest/snippets/message.html" %}
       {% if not forloop.last %}
-        <!-- <div class="page-break"></div> -->
+        <div class="page-break"></div>
       {% endif %}
       {% empty %}
       <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>

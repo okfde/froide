@@ -4,7 +4,7 @@
 
 }
 
-.message-container {
+.message-container:not(:last-child) {
     border-bottom: 1px solid #ddd;
     padding: 0 0 0.75em;
     margin: 0 0 0.75em;

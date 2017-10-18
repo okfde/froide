@@ -3,3 +3,30 @@
     display: block;
   }
 }
+
+@media print {
+  .navbar #navbarNav,
+  #footer,
+  .social,
+  .alert,
+  .warning,
+  .notice,
+  .events,
+  .request-nav {
+  	display: none !important;
+  }
+
+  .tab-content-container {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .page-break  {
+  	display: block;
+  	page-break-before:always;
+  }
+
+  a:link:after, a:visited:after {
+    content: "" !important;
+  }
+}
