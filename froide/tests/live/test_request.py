@@ -17,7 +17,7 @@ from froide.publicbody.models import PublicBody
 User = get_user_model()
 
 
-def get_selenium():
+def get_selenium(**kwargs):
     driver = getattr(settings, 'TEST_SELENIUM_DRIVER', 'firefox')
     if driver in ('chrome', 'chrome_headless'):
         from selenium.webdriver.chrome.options import Options
@@ -26,6 +26,11 @@ def get_selenium():
         if driver == 'chrome_headless':
             options.add_argument('headless')
             options.add_argument('disable-gpu')
+            for key, val in kwargs.items():
+                if val is not None:
+                    options.add_argument('{key}={val}'.format(key=key, val=val))
+                else:
+                    options.add_argument('{key}'.format(key=key))
         driver_path = os.environ.get('CHROME_DRIVER_PATH', None)
         if driver_path is not None:
             return ChromeDriver(driver_path, chrome_options=options)
@@ -60,18 +65,22 @@ class CheckJSErrors(object):
             raise JavaScriptException(msg)
 
 
-class TestMakingRequest(StaticLiveServerTestCase):
+class LiveTestMixin(object):
+    ADDITIONAL_KWARGS = {}
 
     @classmethod
     def setUpClass(cls):
-        cls.selenium = get_selenium()
+        cls.selenium = get_selenium(**cls.ADDITIONAL_KWARGS)
         cls.selenium.implicitly_wait(3)
-        super(TestMakingRequest, cls).setUpClass()
+        super(LiveTestMixin, cls).setUpClass()
 
     @classmethod
     def tearDownClass(cls):
         cls.selenium.quit()
-        super(TestMakingRequest, cls).tearDownClass()
+        super(LiveTestMixin, cls).tearDownClass()
+
+
+class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
 
     def scrollTo(self, selector):
         # self.selenium.find_element_by_id(id).location_once_scrolled_into_view
@@ -336,8 +345,11 @@ class TestMakingRequest(StaticLiveServerTestCase):
         self.assertEqual(req.public, False)
         self.assertEqual(req.public_body, self.pb)
 
+
+class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
+    ADDITIONAL_KWARGS = {'window-size': '600,800'}
+
     def test_collapsed_menu(self):
-        self.selenium.set_window_size(600, 800)
         with CheckJSErrors(self.selenium):
             self.selenium.get('%s%s' % (self.live_server_url,
                 reverse('index')))
