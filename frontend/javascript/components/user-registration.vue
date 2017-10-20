@@ -32,7 +32,7 @@
             <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="form.user_email.placeholder"/>
             <p v-for="e in errors.user_email" class="text-danger">{{ e.message }}</p>
             <p v-if="authRequired">
-              <a class="btn btn-warning simple-login-link" :href="authRequiredUrl" @click.prevent="openLoginWindow">
+              <a id="simple-login-link" class="btn btn-success" :href="authRequiredUrl" @click.prevent="openLoginWindow">
                 {{ i18n.loginWindowLink }}
               </a>
             </p>

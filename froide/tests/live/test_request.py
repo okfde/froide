@@ -314,13 +314,14 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
         self.selenium.find_element_by_id('send-request-button').click()
         main_window_handle = self.selenium.current_window_handle
-        login_link = '.simple-login-link'
+        login_link = '#simple-login-link'
         with CheckJSErrors(self.selenium):
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_css_selector(login_link)
             )
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_css_selector(login_link).is_displayed())
+            self.scrollTo(login_link[1:])
             self.selenium.find_element_by_css_selector(login_link).click()
 
         popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
