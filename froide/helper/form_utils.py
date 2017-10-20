@@ -3,9 +3,9 @@ import json
 from django.db import models
 
 try:
-    unicode
+    str = unicode
 except NameError:
-    unicode = str
+    pass
 
 
 class DjangoJSONEncoder(json.JSONEncoder):
