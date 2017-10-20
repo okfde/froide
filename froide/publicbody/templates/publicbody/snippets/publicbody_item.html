@@ -1,18 +1,18 @@
 {% load i18n %}
 
-<div class="media-body">
-  <h4 class="media-heading">
+<div class="media-body mb-3">
+  <h5 class="mt-0 mb-1">
     <a href="{{ object.get_absolute_url }}">
       {{ object.name }}
     </a>
     <br/>
     <small>
       {{ object.jurisdiction.name }},
-        {% if object.number_of_requests %}
-          {% blocktrans count num=object.number_of_requests %}{{ num }} request{% plural %}{{ num }} requests{% endblocktrans %}
-        {% else %}
-          {% trans "no requests yet" %}
-        {% endif %}
+      {% if object.number_of_requests %}
+        {% blocktrans count num=object.number_of_requests %}{{ num }} request{% plural %}{{ num }} requests{% endblocktrans %}
+      {% else %}
+        {% trans "no requests yet" %}
+      {% endif %}
     </small>
-  </h4>
+  </h5>
 </div>

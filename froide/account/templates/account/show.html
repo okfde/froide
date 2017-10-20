@@ -1,15 +1,15 @@
-{% extends 'base.html' %}
+{% extends 'account/base.html' %}
 {% load i18n %}
 {% load markup %}
 
-{% block body %}
-<div class="row">
+{% block app_body %}
+<div class="row mb-3 mt-3">
   <div class="col-lg-8">
     <h2>{% trans "Your Account" %}</h2>
   </div>
   <div class="col-lg-4">
-    <a href="{% url 'account-settings' %}" class="btn btn-default pull-right">
-      <span class="glyphicon glyphicon-wrench"></span>
+    <a href="{% url 'account-settings' %}" class="btn btn-secondary pull-right">
+      <i class="fa fa-wrench"></i>
       {% trans "Your account settings" %}
     </a>
   </div>
@@ -18,67 +18,64 @@
 <div class="row">
   <div class="col-lg-12">
     <ul class="nav nav-tabs">
-      <li role="presentation"{% if menu == 'requests' %} class="active"{% endif %}>
-        <a href="{% if menu != 'requests' %}{% url 'account-show' %}{% endif %}">
+      <li class="nav-item">
+        <a href="{% if menu != 'requests' %}{% url 'account-show' %}{% endif %}" class="nav-link{% if menu == 'requests' %} active{% endif %}">
           {% trans "Your requests" %}
         </a>
       </li>
-      <li role="presentation"{% if menu == 'following' %} class="active"{% endif %}>
-        <a href="{% if menu != 'following' %}{% url 'account-following' %}{% endif %}">
+      <li class="nav-item">
+        <a href="{% if menu != 'following' %}{% url 'account-following' %}{% endif %}" class="nav-link{% if menu == 'following' %} active{% endif %}">
           {% trans "Requests you follow" %}
         </a>
       </li>
     </ul>
-  </div>
-</div>
+    <div class="tab-content">
+      {% block pre_table %}{% endblock %}
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            {% block table_head %}
+            <th>{% blocktrans %}Status{% endblocktrans %}</th>
+            <th>{% blocktrans %}Title{% endblocktrans %}</th>
+            {% endblock table_head %}
+          </tr>
+        </thead>
+        <tbody>
+      {% for object in object_list %}
+        {% block table_row %}
+        <tr class="{% if object.user == request.user and object.is_important %}warning{% endif %}">
+          <td class="media">
+            <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
+          </td>
+          <td>
+            {% include "foirequest/snippets/request_item_inner.html" %}
 
-<div class="row">
-  <div class="col-lg-12">
-    {% block pre_table %}{% endblock %}
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          {% block table_head %}
-          <th>{% blocktrans %}Status{% endblocktrans %}</th>
-          <th>{% blocktrans %}Title{% endblocktrans %}</th>
-          {% endblock table_head %}
-        </tr>
-      </thead>
-      <tbody>
-    {% for object in object_list %}
-      {% block table_row %}
-      <tr class="{% if object.user == request.user and object.is_important %}warning{% endif %}">
-        <td class="media">
-          <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
-        </td>
-        <td>
-          {% include "foirequest/snippets/request_item_inner.html" %}
-
-          {% if object.status == "awaiting_response" %}
-            {% if object.due_date %}
-              <small>
-                {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
-              </small>
+            {% if object.status == "awaiting_response" %}
+              {% if object.due_date %}
+                <small>
+                  {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
+                </small>
+              {% endif %}
             {% endif %}
-          {% endif %}
 
-          {% if not object.public and object.user == request.user %}
-            <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-              {% csrf_token %}
-                <button type="submit" class="btn btn-default">
-                  {% blocktrans %}Publish{% endblocktrans %}
-                </button>
-              </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% endblock %}
-    {% endfor %}
-      </tbody>
-    </table>
-    {% if page_obj.has_other_pages %}
-      {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
-    {% endif %}
+            {% if not object.public and object.user == request.user %}
+              <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-secondary">
+                    {% blocktrans %}Publish{% endblocktrans %}
+                  </button>
+                </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endblock %}
+      {% endfor %}
+        </tbody>
+      </table>
+      {% if page_obj.has_other_pages %}
+        {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
+      {% endif %}
+    </div>
   </div>
 </div>
 {% endblock %}

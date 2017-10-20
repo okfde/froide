@@ -1,0 +1,44 @@
+.target-primary:target {
+  @extend .border-success;
+}
+
+.small {
+    color: #666;
+    font-size:0.8em;
+}
+
+.small a {
+    text-decoration: none;
+    color: #666;
+}
+
+.small a:hover {
+    text-decoration: underline;
+    color: #666;
+}
+
+
+.highlight {
+    background: #FFFC78;
+}
+
+.top-buffer {
+    margin-top:20px;
+}
+
+
+.time-small {
+    color: #666;
+    font-size:0.8em;
+}
+
+
+.hidden-text {
+  display: none;
+}
+
+
+input.copyinput {
+    cursor: text;
+    background-color: #fff;
+}

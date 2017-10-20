@@ -1,12 +1,11 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 {% load static %}
-{% load compress %}
 
 {% block title %}{% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}{% endblock %}
 
 
-{% block body %}
+{% block app_body %}
 <div class="row">
   <div class="col-lg-12">
     <h2>
@@ -19,13 +18,13 @@
 
 {% block redaction_removal_explanation %}
   <div class="col-lg-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
           {% trans "What you need to redact" %}
         </h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
         <ul>
           <li>
             {% if foirequest.user == user %}
@@ -54,11 +53,11 @@
 
 {% block redaction_removal_intro %}
   <div class="col-lg-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{% trans "How to redact" %}</h3>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{% trans "How to redact" %}</h3>
       </div>
-      <div class="panel-body">
+      <div class="card-body">
         <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Draw a rectangle over the area by clicking the mouse and dragging it. Be sure to also black out the email address of {{ name }} if it is visible.{% endblocktrans %}</p>
         <p>{% blocktrans %}The original version of the document will still be available to you (but not to the public). If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}</p>
         <p>{% blocktrans %}Note: in order to redact documents an up-to-date version of a modern browser is required. Using Internet Explorer will likely not work.{% endblocktrans %}</p>
@@ -74,8 +73,8 @@
     <form id="redaction-form" method="post" style="display:none">
       {% csrf_token %}
     </form>
-    <div class="panel panel-default">
-      <div class="panel-body">
+    <div class="card">
+      <div class="card-body">
         <div id="pdf-viewer">
           <div class="row">
             <div class="btn-toolbar pdf-controls col-lg-12">
@@ -84,7 +83,7 @@
                 <button class="pdf-next btn">{% trans "Next Page" %} &raquo;</button>
               </div>
               <div class="btn-group">
-                <button class="btn btn-default" disabled="disabled">
+                <button class="btn btn-secondary" disabled="disabled">
                   {% trans "Page" %}
                   <span class="pdf-current"></span>
                   {% trans "of" %}
@@ -97,8 +96,8 @@
                 </button>
               </div>
               <div class="btn-group">
-                <a class="btn btn-default" href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>
-                <a class="btn btn-default" href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>
+                <a class="btn btn-secondary" href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>
+                <a class="btn btn-secondary" href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>
               </div>
             </div>
           </div>
@@ -126,12 +125,12 @@
 {% endblock %}
 
 {% block extra_footer %}
-{# {% compress js %}#}
+
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/pdf.js" %}"></script>
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/compatibility.js" %}"></script>
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/pdfviewer.js" %}"></script>
 <script type="text/javascript" src="{% static "js/libs/pdfviewer/redact.js" %}"></script>
-{# {% endcompress %}#}
+
 <script type="text/javascript">
   PDFJS.workerSrc = "{% static "js/libs/pdfviewer/pdf.worker.js" %}";
 </script>

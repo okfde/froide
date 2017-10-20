@@ -18,3 +18,5 @@ dist/
 *.log
 froide/tests/froide_test_whoosh_db
 node_modules/
+*.map
+favicon-result.json

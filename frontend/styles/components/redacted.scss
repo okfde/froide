@@ -1,0 +1,44 @@
+.redacted,
+.redacted:hover,
+.redacted:active,
+.redacted a {
+    background-color: #000 !important;
+    color: #000 !important;
+}
+
+.redacted::selection {
+  /* Separate because otherwise it breaks in firefox */
+  background-color: #000 !important;
+  color: #000 !important;
+}
+
+.redacted::-moz-selection {
+  /* See https://developer.mozilla.org/en-US/docs/Web/CSS/::selection */
+  background-color: #000 !important;
+  color: #000 !important;
+}
+
+.redacted.redacted-hover:hover,
+.redacted.redacted-hover:hover a {
+    color: #ddd !important;
+    background-color: #000 !important;
+}
+
+
+
+.pdf-canvas-container {
+    position: relative;
+}
+
+.pdf-canvas-container canvas {
+    outline: 1px solid #ddd;
+}
+
+.pdf-redaction {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: crosshair;
+}

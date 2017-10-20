@@ -1,4 +1,5 @@
-import json
+from __future__ import unicode_literals
+
 import datetime
 
 from django.conf import settings
@@ -6,29 +7,25 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
 from django.utils.html import escape
+from django.utils.http import is_safe_url
 from django.utils import timezone
 from django import forms
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
-from froide.helper.widgets import PriceInput
+from froide.helper.widgets import PriceInput, BootstrapRadioSelect
 from froide.helper.forms import TagObjectForm
+from froide.helper.form_utils import JSONMixin
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
 from .validators import validate_upload_document
-from .utils import check_throttle
 
 
-new_publicbody_allowed = settings.FROIDE_CONFIG.get(
-        'create_new_publicbody', False)
-publicbody_empty = settings.FROIDE_CONFIG.get('publicbody_empty', True)
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
+publishing_denied = settings.FROIDE_CONFIG.get('publishing_denied', False)
 
 
-class RequestForm(forms.Form):
-    public_body = forms.CharField(widget=PublicBodySelect,
-            label=_("Search for a topic or a public body:"),
-            required=False)
+class RequestForm(JSONMixin, forms.Form):
     subject = forms.CharField(label=_("Subject"),
             max_length=230,
             widget=forms.TextInput(
@@ -55,55 +52,6 @@ class RequestForm(forms.Form):
     hide_similar = forms.BooleanField(widget=forms.HiddenInput, initial=False,
                                      required=False)
 
-    def __init__(self, user=None, list_of_laws=(), default_law=None,
-                 hide_law_widgets=True, **kwargs):
-        super(RequestForm, self).__init__(**kwargs)
-        self.user = user
-        self.list_of_laws = list_of_laws
-        self.indexed_laws = dict([(l.pk, l) for l in self.list_of_laws])
-        self.default_law = default_law
-
-        self.fields["public_body"].widget.set_initial_jurisdiction(
-            kwargs.get('initial', {}).pop('jurisdiction', None)
-        )
-        self.fields["public_body"].widget.set_initial_search(
-            kwargs.get('initial', {}).pop('public_body_search', None)
-        )
-        self.fields["law"] = forms.ChoiceField(label=_("Information Law"),
-            required=False,
-            widget=forms.Select if not hide_law_widgets else forms.HiddenInput,
-            initial=default_law.pk,
-            choices=((l.pk, l.name) for l in list_of_laws))
-
-    def laws_to_json(self):
-        return json.dumps(dict([(l.id, l.as_dict()) for l in self.list_of_laws]))
-
-    def clean_public_body(self):
-        pb = self.cleaned_data['public_body']
-        if pb == "new":
-            if not new_publicbody_allowed:
-                raise forms.ValidationError(
-                        _("You are not allowed to create a new public body"))
-        elif pb == "":
-            if not publicbody_empty:
-                raise forms.ValidationError(
-                        _("You must specify a public body"))
-            pb = None
-        else:
-            try:
-                pb_pk = int(pb)
-            except ValueError:
-                raise forms.ValidationError(_("Invalid value"))
-            try:
-                public_body = PublicBody.objects.get(pk=pb_pk)
-            except PublicBody.DoesNotExist:
-                raise forms.ValidationError(_("Invalid value"))
-            self.public_body_object = public_body
-            self.foi_law_object = public_body.default_law
-        return pb
-
-    public_body_object = None
-
     def clean_reference(self):
         ref = self.cleaned_data['reference']
         if not ref:
@@ -117,38 +65,12 @@ class RequestForm(forms.Form):
         except ValueError:
             return ''
 
-    def clean_law_for_public_body(self, public_body):
-        law = self.clean_law_without_public_body()
-        if law is None:
-            return None
-        if law.jurisdiction.id != public_body.jurisdiction.id:
-            self._errors["law"] = self.error_class([_("Invalid Information Law")])
-            return None
-        return law
-
-    def clean_law_without_public_body(self):
-        try:
-            law = self.cleaned_data['law']
-            law = self.indexed_laws[int(law)]
-        except (ValueError, KeyError):
-            self._errors["law"] = self.error_class([_("Invalid Information Law")])
-            return None
-        return law
-
-    def clean(self):
-        cleaned = self.cleaned_data
-        public_body = cleaned.get("public_body")
-        if public_body is not None and (public_body != "new" and
-                public_body != ""):
-            self.foi_law = self.clean_law_for_public_body(self.public_body_object)
-        else:
-            self.foi_law = self.clean_law_without_public_body()
-
-        throttle_message = check_throttle(self.user, FoiRequest)
-        if throttle_message:
-            raise forms.ValidationError(throttle_message)
-
-        return cleaned
+    def clean_redirect_url(self):
+        redirect_url = self.cleaned_data['redirect_url']
+        if is_safe_url(redirect_url,
+                       allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
+            return redirect_url
+        return ''
 
 
 class MessagePublicBodySenderForm(forms.Form):
@@ -159,10 +81,10 @@ class MessagePublicBodySenderForm(forms.Form):
     )
 
     def __init__(self, message, *args, **kwargs):
-        if "initial" not in kwargs:
+        if 'initial' not in kwargs:
             if message.sender_public_body:
-                kwargs['initial'] = {"sender": message.sender_public_body.id}
-        if "prefix" not in kwargs:
+                kwargs['initial'] = {'sender': message.sender_public_body.id}
+        if 'prefix' not in kwargs:
             kwargs['prefix'] = "m%d" % message.id
         self.message = message
         super(MessagePublicBodySenderForm, self).__init__(*args, **kwargs)
@@ -178,7 +100,7 @@ class MessagePublicBodySenderForm(forms.Form):
 
 class SendMessageForm(forms.Form):
     to = forms.TypedChoiceField(label=_("To"), choices=[], coerce=int,
-            required=True, widget=forms.RadioSelect())
+            required=True, widget=BootstrapRadioSelect)
     subject = forms.CharField(label=_("Subject"),
             max_length=230,
             widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -202,11 +124,6 @@ class SendMessageForm(forms.Form):
                 help_text=(_('If the public body is asking for your post '
                     'address, check this and we will append it to your message.')),
                 required=False)
-
-    def clean(self):
-        throttle_message = check_throttle(self.foirequest.user, FoiMessage)
-        if throttle_message:
-            raise forms.ValidationError(throttle_message)
 
     def save(self, user):
         if self.cleaned_data["to"] == 0:
@@ -266,11 +183,6 @@ class EscalationMessageForm(forms.Form):
             )
         return message
 
-    def clean(self):
-        throttle_message = check_throttle(self.foirequest.user, FoiMessage)
-        if throttle_message:
-            raise forms.ValidationError(throttle_message)
-
     def save(self):
         self.foirequest.add_escalation_message(**self.cleaned_data)
 
@@ -279,7 +191,7 @@ class PublicBodySuggestionsForm(forms.Form):
     def __init__(self, queryset, *args, **kwargs):
         super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)
         self.fields['suggestion'] = forms.ChoiceField(label=_("Suggestions"),
-            widget=forms.RadioSelect,
+            widget=BootstrapRadioSelect,
             choices=((s.public_body.id, mark_safe(
                 '''%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
                 <span class="help">%(reason)s</span>''' % {
@@ -293,21 +205,8 @@ class PublicBodySuggestionsForm(forms.Form):
 
 
 class FoiRequestStatusForm(forms.Form):
-    def __init__(self, foirequest, *args, **kwargs):
-        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
-        self.foirequest = foirequest
-        self.fields['refusal_reason'] = forms.ChoiceField(
-            label=_("Refusal Reason"),
-            choices=[('', _('No or other reason given'))] + (
-                foirequest.law.get_refusal_reason_choices()
-            ),
-            required=False,
-            widget=forms.Select(attrs={'class': 'form-control'}),
-            help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
-        )
-
     status = forms.ChoiceField(label=_("Status"),
-            widget=forms.RadioSelect,
+            widget=BootstrapRadioSelect,
             choices=[('awaiting_response', _('This request is still ongoing.')),
                 ('resolved', _('This request is finished.')),
                 # ('request_redirected', _('This request has been redirected to a different public body.'))
@@ -334,6 +233,20 @@ class FoiRequestStatusForm(forms.Form):
             help_text=_('Please specify what the Public Body charges for the information.')
         )
 
+    def __init__(self, foirequest, *args, **kwargs):
+        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
+        self.foirequest = foirequest
+        self.fields['refusal_reason'] = forms.ChoiceField(
+            label=_("Refusal Reason"),
+            choices=[('', _('No or other reason given'))] + (
+                foirequest.law.get_refusal_reason_choices()
+            ),
+            required=False,
+            widget=forms.Select(attrs={'class': 'form-control'}),
+            help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
+        )
+
+    if payment_possible:
         def clean_costs(self):
             costs = self.cleaned_data['costs']
             if costs is None:
@@ -347,7 +260,7 @@ class FoiRequestStatusForm(forms.Form):
             if pk is None:
                 raise forms.ValidationError(_("Provide the redirected public body!"))
             try:
-                self._redirected_public_body = PublicBody.objects.get(id=pk)
+                self._redirected_publicbody = PublicBody.objects.get(id=pk)
             except PublicBody.DoesNotExist:
                 raise forms.ValidationError(_("Invalid value"))
         if status == 'resolved':
@@ -373,7 +286,7 @@ class FoiRequestStatusForm(forms.Form):
 
         if status == "request_redirected":
             foirequest.due_date = foirequest.law.calculate_due_date()
-            foirequest.public_body = self._redirected_public_body
+            foirequest.public_body = self._redirected_publicbody
             status = 'awaiting_response'
 
         foirequest.status = status
@@ -383,7 +296,7 @@ class FoiRequestStatusForm(forms.Form):
         if resolution == "refused" or resolution == "partially_successful":
             foirequest.refusal_reason = data['refusal_reason']
         else:
-            foirequest.refusal_reason = u""
+            foirequest.refusal_reason = ""
 
         foirequest.save()
 
@@ -458,7 +371,7 @@ class AttachmentSaverMixin(object):
 
 class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     scan_help_text = mark_safe(_("Uploaded scans can be PDF, JPG or PNG. Please make sure to <strong>redact/black out all private information concerning you</strong>."))
-    public_body = forms.ModelChoiceField(
+    publicbody = forms.ModelChoiceField(
         label=_('Public body'),
         queryset=PublicBody.objects.all(),
         widget=PublicBodySelect
@@ -485,13 +398,13 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     files = forms.FileField(label=_("Scanned Letter"), required=False,
             validators=[validate_upload_document],
             help_text=scan_help_text, widget=forms.FileInput(attrs={'multiple': True}))
-    FIELD_ORDER = ['public_body', 'date', 'subject', 'text', 'files']
+    FIELD_ORDER = ['publicbody', 'date', 'subject', 'text', 'files']
 
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop('foirequest')
         super(PostalBaseForm, self).__init__(*args, **kwargs)
-        self.fields['public_body'].label = self.PUBLIC_BODY_LABEL
-        self.fields['public_body'].initial = self.foirequest.public_body
+        self.fields['publicbody'].label = self.PUBLICBODY_LABEL
+        self.fields['publicbody'].initial = self.foirequest.public_body
         self.order_fields(self.FIELD_ORDER)
 
     def clean_date(self):
@@ -549,35 +462,41 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         foirequest.add_postal_reply.send(sender=foirequest)
 
         if self.cleaned_data.get('files'):
-            self.save_attachments(self.files.getlist('files'), message)
+            self.save_attachments(self.files.getlist('%s-files' % self.prefix), message)
         return message
 
 
 class PostalReplyForm(PostalBaseForm):
-    FIELD_ORDER = ['public_body', 'sender', 'date', 'subject', 'text', 'files',
+    FIELD_ORDER = ['publicbody', 'sender', 'date', 'subject', 'text', 'files',
                    'not_publishable']
-    PUBLIC_BODY_LABEL = _('Sender public body')
+    PUBLICBODY_LABEL = _('Sender public body')
 
     sender = forms.CharField(label=_("Sender name"),
             widget=forms.TextInput(attrs={"class": "form-control",
                 "placeholder": _("Sender Name")}), required=True)
 
-    not_publishable = forms.BooleanField(label=_("You are not allowed to publish some received documents"),
-            initial=False, required=False,
-            help_text=_('If the reply explicitly states that you are not allowed to publish some of the documents (e.g. due to copyright), check this.'))
+    if publishing_denied:
+        not_publishable = forms.BooleanField(label=_('You are not allowed to '
+            'publish some received documents'),
+                initial=False, required=False,
+                help_text=_(
+                    'If the reply explicitly states that you are not allowed '
+                    'to publish some of the documents (e.g. due to copyright), '
+                    'check this.'))
 
     def contribute_to_message(self, message):
         message.is_response = True
         message.sender_name = self.cleaned_data['sender']
-        message.sender_public_body = message.request.public_body
-        message.not_publishable = self.cleaned_data['not_publishable']
+        message.sender_public_body = self.cleaned_data['publicbody']
+        message.not_publishable = self.cleaned_data.get('not_publishable',
+                                                        False)
         return message
 
 
 class PostalMessageForm(PostalBaseForm):
-    FIELD_ORDER = ['public_body', 'recipient', 'date', 'subject', 'text',
+    FIELD_ORDER = ['publicbody', 'recipient', 'date', 'subject', 'text',
                    'files']
-    PUBLIC_BODY_LABEL = _('Receiving public body')
+    PUBLICBODY_LABEL = _('Receiving public body')
 
     recipient = forms.CharField(label=_("Recipient Name"),
             widget=forms.TextInput(attrs={"class": "form-control",
@@ -588,7 +507,7 @@ class PostalMessageForm(PostalBaseForm):
         message.sender_user = message.request.user
 
         message.recipient = self.cleaned_data['recipient']
-        message.recipient_public_body = self.cleaned_data['public_body']
+        message.recipient_public_body = self.cleaned_data['publicbody']
 
         return message
 

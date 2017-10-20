@@ -1,0 +1,93 @@
+{% load i18n %}
+
+{% if not request_form.is_bound and not request_form.initial.subject %}
+  <fieldset id="check-foi">
+  <legend>
+    {% blocktrans %}Choose the type of request{% endblocktrans %}
+  </legend>
+  <div class="js-hidden" id="step-checkfoi">
+    <h3>
+      {% blocktrans %}What kind of information do you want?{% endblocktrans %}
+    </h3>
+    <div id="foicheck-form" class="well">
+      <div class="radio">
+        <label>
+          <input id="option-check_foi_personal" type="radio" name="check_foi" value="false"/>
+          {% blocktrans %}a matter that involves you personally{% endblocktrans %}
+          <small class="form-text text-muted">
+            {% blocktrans %}Questions like "Where do I get X?" or "What do I have to do if X?"{% endblocktrans %}
+          </small>
+        </label>
+      </div>
+      <div class="radio">
+        <label>
+          <input id="option-check_foi_opinion" type="radio" name="check_foi" value="false"/>
+          {% blocktrans %}a question about a political opinion{% endblocktrans %}
+          <small class="form-text text-muted">
+            {% blocktrans %}Questions like "Why don't you do X?" or "How can it be that X?"{% endblocktrans %}
+          </small>
+        </label>
+      </div>
+      <div class="radio">
+        <label>
+          <input id="option-check_foi" type="radio" name="check_foi" value="true"/>
+          {% blocktrans %}a matter of general interest (Freedom of Information request){% endblocktrans %}
+          <small class="form-text text-muted">
+            {% blocktrans %}Questions like "How much did X cost?" or "Please give me a list of X?"{% endblocktrans %}
+          </small>
+        </label>
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary" id="continue-foicheck">
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+          {% trans "Continue" %}
+        </button>
+      </div>
+      <span id="select-one-information-kind" style="display:none">{% trans "Please select one of the above options!" %}</span>
+    </div>
+    <div id="nofoi-personal" style="display:none">
+      <div class="panel panel-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            {% blocktrans %}A request about a matter involving you personally{% endblocktrans %}
+          </h3>
+        </div>
+        <div class="card-body">
+          <p>
+            {% blocktrans %}If you want to ask a question that relates to you personally, like how you can achieve something or who you have to contact, you need publicly available information from that public body:{% endblocktrans %}
+          </p>
+          <p>
+            <a id="publicbody-link" href="{% if public_body.url %}{{ public_body.url }}{% else %}http://www.115.de{% endif %}">
+              <strong>
+                {% if public_body.url %}{% blocktrans %}Visit the website of this Public Body{% endblocktrans %}{% else %}{% blocktrans %}Click here to go to 115.de - the Public Body Service Hotline{% endblocktrans %}{% endif %}
+              </strong>
+            </a>
+          </p>
+          <p>
+            {% blocktrans %}Please note that you shouldn't use this site to request personal information.{% endblocktrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div id="nofoi-opinion" style="display:none">
+      <div class="panel panel-info">
+        <div class="card-header">
+          <h3 class="card-title">
+            {% blocktrans %}A request about an opinion{% endblocktrans %}
+          </h3>
+        </div>
+        <div class="card-body">
+          <p>
+            {% blocktrans %}In order to ask about a political state, you need to talk to people not public bodies. Please ask your Member of Parliament about the topic you are interested in:{% endblocktrans %}
+          </p>
+          <p>
+            <a href="http://www.abgeordnetenwatch.de">
+              <strong>{% blocktrans %}Click here to go to abgeordnetenwatch.de{% endblocktrans %}</strong>
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</fieldset>
+{% endif %}

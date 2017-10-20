@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import json
 import tempfile
 
@@ -62,7 +64,7 @@ class PublicBodyTest(TestCase):
 
         prev_count = PublicBody.objects.all().count()
         # Existing entity via slug, no id reference
-        csv = u'''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
+        csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
         imp.import_from_file(six.BytesIO(csv.encode('utf-8')))
@@ -71,7 +73,7 @@ Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://examp
 
     def test_csv_new_import(self):
         prev_count = PublicBody.objects.all().count()
-        csv = u'''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
+        csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
         imp.import_from_file(six.BytesIO(csv.encode('utf-8')))

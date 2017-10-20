@@ -1,0 +1,6 @@
+{% load i18n %}
+{% include "django/forms/widgets/input.html" %}
+
+<p style="-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;">
+  {% blocktrans with phrase=widget.phrase %}Please type this phrase to confirm: {{ phrase }}{% endblocktrans %}
+</p>

@@ -1,0 +1,14 @@
+.btn {
+  cursor: pointer;
+}
+.btn .on-hover {
+    display: none;
+}
+
+.btn:hover .on-hover {
+    display: inline;
+}
+
+.btn:hover .on-display {
+    display: none;
+}

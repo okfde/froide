@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+from __future__ import unicode_literals
+
 from datetime import datetime, timedelta
 import re
 
@@ -7,7 +9,6 @@ from django.test.utils import override_settings
 from django.template import engines
 
 from .text_utils import replace_email_name, remove_closing
-from .form_generator import FormGenerator
 from .date_utils import calc_easter, calculate_month_range_de
 
 
@@ -22,7 +23,7 @@ class TestTextReplacement(TestCase):
         self.assertEqual(content, 'This is a very long string with a name REPLACEMENT it')
 
     def test_remove_closing(self):
-        content = u'''
+        content = '''
 Sehr geehrte Frau Müller,
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -35,13 +36,13 @@ More stuff here
         '''
 
         closings = [
-            rec(u'[Mm]it( den)? (freundliche(n|m)|vielen|besten) Gr(ü|u)(ß|ss)(en)?,?'),
+            rec('[Mm]it( den)? (freundliche(n|m)|vielen|besten) Gr(ü|u)(ß|ss)(en)?,?'),
             rec(r'Hochachtungsvoll,?'),
             rec(r'i\. ?A\.'), rec(r'[iI]m Auftrag')
         ]
 
         removed = remove_closing(closings, content)
-        self.assertNotIn(u'Peter Parker', removed)
+        self.assertNotIn('Peter Parker', removed)
 
 
 @override_settings(
@@ -91,41 +92,3 @@ class TestThemeLoader(TestCase):
         origin = sources[0]
         self.assertTrue(origin.name.startswith('/'))
         self.assertTrue(origin.name.endswith('froide/foirequest/templates/index.html'))
-
-
-class TestFormGenerator(TestCase):
-    def test_render(self):
-        s = '''I choose
-    ( o ) ice cream
-    (   ) waffles
-with
-    [ x ] chocolate sauce
-    [ x ] caramel cream
-    [   ] extra sugar
-and I like it
-    ( o ) baked
-    (   ) cooked
-.
-Cheers!'''
-        form = FormGenerator(s, {
-            'fg_radio_1': 'ice cream',
-            'fg_check_3': 'yeah',
-            'fg_check_1': 'on',
-            'fg_radio_2': 'baked'
-        })
-        self.assertEqual(form.render_html(), '''I choose <label for="fg_option_1">
-<input type="radio" id="fg_option_1" checked="checked" name="fg_radio_1"
- value="ice cream"/> ice cream</label> <label for="fg_option_2">
-<input type="radio" id="fg_option_2" name="fg_radio_1" value="waffles"/>
- waffles</label> with <label for="fg_check_1">
-<input type="checkbox" id="fg_check_1" checked="checked" name="fg_check_1"
- value="chocolate sauce"/> chocolate sauce</label> <label for="fg_check_2">
-<input type="checkbox" id="fg_check_2" checked="checked" name="fg_check_2"
- value="caramel cream"/> caramel cream</label> <label for="fg_check_3">
-<input type="checkbox" id="fg_check_3" name="fg_check_3" value="extra sugar"/>
- extra sugar</label> and I like it <label for="fg_option_3">
-<input type="radio" id="fg_option_3" checked="checked" name="fg_radio_2"
- value="baked"/> baked</label> <label for="fg_option_4">
-<input type="radio" id="fg_option_4" name="fg_radio_2" value="cooked"/>
- cooked</label>.'''.replace('\n', '') + '\nCheers!''')
-        self.assertEqual(form.render(), 'I choose ice cream with chocolate sauce extra sugar and I like it baked.\nCheers!')

@@ -1,0 +1,26 @@
+{% extends "scaffold.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block body_tag %}
+
+<main class="container">
+{% include "snippets/messages.html" %}
+
+{% block body %}
+{% block app_body %}
+{% endblock %}
+{% endblock %}
+
+</main>
+
+{% block scripts %}
+  <script src="{% static "js/common.js" %}"></script>
+  <script src="{% static "js/main.js" %}"></script>
+{% endblock %}
+
+{% block extra_footer %}
+{% endblock %}
+
+{% endblock %}

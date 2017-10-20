@@ -1,0 +1,49 @@
+
+
+.requestform fieldset {
+    margin-top: 1em;
+}
+
+.requestform fieldset.active legend{
+    display: block;
+}
+
+.requestform legend{
+    display: none;
+}
+
+.full-text-checkbox {
+
+    padding: 5px 20px 0 0;
+}
+
+.full-text-checkbox > label {
+    color: #aaa;
+    font-size: 80%;
+    font-weight: normal;
+}
+
+.requestform .text {
+    white-space: nowrap;
+    white-space: pre-line;
+    word-wrap: break-word;
+}
+
+#review-text {
+    white-space: nowrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: "Times New Roman", Times, serif;
+    color: #000;
+    background-color: white;
+    padding: 0.25em;
+    border: 1px solid #ccc;
+    height: 14em;
+    max-height: 10em;
+    overflow: auto;
+}
+
+
+.requestform__law-select select {
+  width: 200px;
+}

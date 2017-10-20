@@ -38,6 +38,7 @@ class Base(Configuration):
         'django_comments',
         'django.contrib.flatpages',
         'django.contrib.sitemaps',
+        'django.contrib.humanize',
 
         # external
         'haystack',
@@ -45,7 +46,6 @@ class Base(Configuration):
         'overextends',
         'tastypie',
         'storages',
-        'compressor',
 
         # local
         'froide.foirequest',
@@ -108,12 +108,6 @@ class Base(Configuration):
     STATICFILES_DIRS = (
         os.path.join(PROJECT_ROOT, "static"),
     )
-    COMPRESS_ENABLED = values.BooleanValue(False)
-    COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.JSMinFilter']
-    COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
-                            'compressor.filters.cssmin.CSSMinFilter']
-    COMPRESS_PARSER = 'compressor.parser.HtmlParser'
-
     # ########## URLs #################
 
     ROOT_URLCONF = values.Value('froide.urls')
@@ -152,7 +146,6 @@ class Base(Configuration):
     STATICFILES_FINDERS = (
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
         'django.contrib.staticfiles.finders.FileSystemFinder',
-        'compressor.finders.CompressorFinder',
     )
 
     TEMPLATES = [
@@ -177,7 +170,8 @@ class Base(Configuration):
                     'django.contrib.auth.context_processors.auth',
                     'django.contrib.messages.context_processors.messages',
                     'froide.helper.context_processors.froide',
-                    'froide.helper.context_processors.site_settings'
+                    'froide.helper.context_processors.site_settings',
+                    'froide.helper.context_processors.block_helper'
                 ]
             }
         }
@@ -369,8 +363,6 @@ class Base(Configuration):
     FROIDE_THEME = None
 
     FROIDE_CONFIG = dict(
-        create_new_publicbody=True,
-        publicbody_empty=True,
         user_can_hide_web=True,
         public_body_officials_public=True,
         public_body_officials_email_public=False,
@@ -383,6 +375,7 @@ class Base(Configuration):
         custom_replacements=[],
         closings=[rec(r"Sincerely yours,?")],
         public_body_boosts={},
+        autocomplete_body_boosts={},
         dryrun=False,
         request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
         dryrun_domain="testmail.example.com",
@@ -493,7 +486,7 @@ class Test(Base):
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
 
-    TEST_SELENIUM_DRIVER = values.Value('phantomjs')
+    TEST_SELENIUM_DRIVER = values.Value('chrome_headless')
 
     USE_X_ACCEL_REDIRECT = True
 
@@ -565,12 +558,15 @@ class German(object):
             "payment_possible": True,
             "currency": "Euro",
             "public_body_boosts": {
-                u"Oberste Bundesbeh\xf6rde": 1.9,
-                u"Obere Bundesbeh\xf6rde": 1.1,
-                u"Ministerium": 1.8,
-                u"Senatsverwaltung": 1.8,
-                u"Kommunalverwaltung": 1.7,
-                u"Andere": 0.8
+                "Oberste Bundesbeh\xf6rde": 1.9,
+                "Obere Bundesbeh\xf6rde": 1.1,
+                "Ministerium": 1.8,
+                "Senatsverwaltung": 1.8,
+                "Kommunalverwaltung": 1.7,
+                "Andere": 0.8
+            },
+            "autocomplete_body_boosts": {
+                "Bund": 1.5
             },
             'greetings': [rec(r"Sehr geehrt(er? (?:Herr|Frau)(?: ?Dr\.?)?(?: ?Prof\.?)? .*)")],
             'closings': [rec(r"Mit freundlichen Gr\xfc\xdfen,?"), rec(r"Mit den besten Grüßen,?")]
@@ -589,8 +585,7 @@ class Production(Base):
 
     ALLOWED_HOSTS = values.TupleValue(('example.com',))
     CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(False)
-    COMPRESS_ENABLED = values.BooleanValue(True)
-    COMPRESS_OFFLINE = values.BooleanValue(True)
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 
 class SSLSite(object):
@@ -609,11 +604,9 @@ class SSLNginxProduction(SSLSite, NginxSecureStatic, Production):
 
 
 class AmazonS3(object):
-    STATICFILES_STORAGE = values.Value('froide.helper.storage_utils.CachedS3BotoStorage')
-    COMPRESS_STORAGE = values.Value('froide.helper.storage_utils.CachedS3BotoStorage')
+    STATICFILES_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 
     STATIC_URL = values.Value('/static/')
-    COMPRESS_URL = values.Value(STATIC_URL)
 
     DEFAULT_FILE_STORAGE = values.Value('storages.backends.s3boto.S3BotoStorage')
 

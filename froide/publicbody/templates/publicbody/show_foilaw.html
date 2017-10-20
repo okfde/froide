@@ -3,12 +3,12 @@
 {% load i18n %}
 {% load markup %}
 
-{% block body %}
+{% block app_body %}
 <h2>{{ object.name }} ({{ object.jurisdiction.name }})</h2>
 <dl>
   <dt>{% blocktrans %}Link to law text:{% endblocktrans %}</dt>
   <dd>
-  	<a href="{{ object.url }}" class="target-new">{% blocktrans with name=object.name juris=object.jurisdiction.name %}Law text of {{ name }} ({{ juris }}){% endblocktrans %}</a>
+  	<a href="{{ object.url }}" target="_blank" rel="noopener">{% blocktrans with name=object.name juris=object.jurisdiction.name %}Law text of {{ name }} ({{ juris }}){% endblocktrans %}</a>
   </dd>
   {% if object.created %}
 	  <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
@@ -29,4 +29,3 @@
 </div>
 
 {% endblock %}
-

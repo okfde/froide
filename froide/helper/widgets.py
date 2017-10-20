@@ -1,5 +1,6 @@
+from __future__ import unicode_literals
+
 from django import forms
-from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from django.forms.widgets import TextInput
@@ -10,28 +11,30 @@ from django.utils.translation import ugettext_lazy as _
 from taggit.utils import edit_string_for_tags
 
 
+class BootstrapChoiceMixin(object):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('attrs', {})
+        kwargs['attrs'].update({'class': 'form-check-input'})
+        super(BootstrapChoiceMixin, self).__init__(*args, **kwargs)
+
+
+class BootstrapCheckboxInput(BootstrapChoiceMixin, forms.CheckboxInput):
+    pass
+
+
+class BootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
+    option_template_name = 'helper/forms/widgets/radio_option.html'
+
+
 class PriceInput(forms.TextInput):
     template_name = "helper/forms/widgets/price_input.html"
 
     def get_context(self, name, value, attrs):
         ctx = super(PriceInput, self).get_context(name, value, attrs)
-        ctx.setdefault('attrs', {})
-        ctx['attrs']['class'] = 'col-xs-2'
+        ctx['widget'].setdefault('attrs', {})
+        ctx['widget']['attrs']['class'] = 'form-control col-3'
         ctx['currency'] = settings.FROIDE_CONFIG['currency']
         return ctx
-
-
-class AgreeCheckboxInput(forms.CheckboxInput):
-    def __init__(self, attrs=None, check_test=bool, agree_to="", url_names=None):
-        super(AgreeCheckboxInput, self).__init__(attrs, check_test)
-        self.agree_to = agree_to
-        self.url_names = url_names
-
-    def render(self, name, value, attrs=None, renderer=None):
-        html = super(AgreeCheckboxInput, self).render(name, value, attrs=attrs,
-                                                      renderer=renderer)
-        return mark_safe(u'<label>%s %s</label>' % (html, self.agree_to %
-                dict([(k, reverse(v)) for k, v in self.url_names.items()])))
 
 
 class TagAutocompleteTagIt(TextInput):
@@ -44,19 +47,21 @@ class TagAutocompleteTagIt(TextInput):
 
     class Media:
         # JS Base url defaults to STATIC_URL/jquery-autocomplete/
-        js_base_url = '%sjs/libs/jquery-tag-it/' % settings.STATIC_URL
+        js_base_url = 'js/libs/jquery-tag-it/'
         # jQuery ui is loaded from google's CDN by default
-        jqueryui_file = '%sjs/libs/jquery-ui.min.js' % settings.STATIC_URL
+        jqueryui_file = 'js/libs/jquery-ui.min.js'
 
         # load js
         js = (
+            'admin/js/vendor/jquery/jquery.min.js',
             '%stagging_autocomplete_tagit.js' % js_base_url,
             jqueryui_file,
             '%sjquery.tag-it.min.js' % js_base_url,
         )
 
         # custom css can also be overriden in settings
-        css_list = getattr(settings, 'TAGGING_AUTOCOMPLETE_CSS', ['%scss/ui-autocomplete-tag-it.css' % js_base_url])
+        css_list = getattr(settings, 'TAGGING_AUTOCOMPLETE_CSS',
+            ['%scss/ui-autocomplete-tag-it.css' % js_base_url])
         # check is a list, if is a string convert it to a list
         if type(css_list) != list and type(css_list) == str:
             css_list = [css_list]
@@ -90,7 +95,7 @@ class TagAutocompleteTagIt(TextInput):
         animate = 'true' if getattr(settings, 'TAGGING_AUTOCOMPLETE_ANIMATE', True) else 'false'
         html = super(TagAutocompleteTagIt, self).render(name, value, attrs, renderer=renderer)
         # Subclass this field in case you need to add some custom behaviour like custom callbacks
-        js = u"""<script type="text/javascript">window.init_jQueryTagit = window.init_jQueryTagit || [];
+        js = """<script type="text/javascript">window.init_jQueryTagit = window.init_jQueryTagit || [];
                 window.init_jQueryTagit.push({{
                     objectId: '{objectid}',
                     sourceUrl: '{sourceurl}',

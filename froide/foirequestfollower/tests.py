@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import re
 
 import factory
@@ -54,7 +53,7 @@ class FoiRequestFollowerTest(TestCase):
         req.add_postal_reply.send(sender=req)
         self.assertEqual(len(mail.outbox), 1)
         mes = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % follower.pk, mes.body)
+        match = re.search(r'/%d/(\w+)/' % follower.pk, mes.body)
         check = match.group(1)
         response = self.client.get(
             reverse('foirequestfollower-confirm_unfollow',

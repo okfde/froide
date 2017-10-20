@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 import datetime
 
@@ -70,7 +72,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-logout'))
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('account-login') + "?simple")
-        self.assertIn("simple_base.html", map(lambda x: x.name,
+        self.assertIn("account/simple_base.html", map(lambda x: x.name,
                 response.templates))
         response = self.client.post(reverse('account-login') + "?simple",
                 {"email": "info@fragdenstaat.de",
@@ -127,7 +129,7 @@ class AccountTest(TestCase):
 
         # sign up with email that is confirmed
         message = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
@@ -174,13 +176,13 @@ class AccountTest(TestCase):
 
     def test_confirmation_process(self):
         self.client.logout()
-        user, password = AccountManager.create_user(first_name=u"Stefan",
-                last_name=u"Wehrmeyer", user_email="sw@example.com",
-                address=u"SomeRandomAddress\n11234 Bern", private=True)
+        user, password = AccountManager.create_user(first_name="Stefan",
+                last_name="Wehrmeyer", user_email="sw@example.com",
+                address="SomeRandomAddress\n11234 Bern", private=True)
         AccountManager(user).send_confirmation_mail(password=password)
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
@@ -246,7 +248,7 @@ class AccountTest(TestCase):
         self.assertTrue(response.status_code, 302)
         user = User.objects.get(email=post['user_email'])
         message = mail.outbox[0]
-        match = re.search('/%d/(\w+)/' % user.pk, message.body)
+        match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
                 'secret': match.group(1)}))
@@ -289,7 +291,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        match = re.search(r'/account/reset/([^/]+)/([^/]+)/', message.body)
         uidb64 = match.group(1)
         token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
@@ -323,7 +325,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
         message = mail.outbox[0]
-        match = re.search('/account/reset/([^/]+)/([^/]+)/', message.body)
+        match = re.search(r'/account/reset/([^/]+)/([^/]+)/', message.body)
         uidb64 = match.group(1)
         token = match.group(2)
         response = self.client.get(reverse('account-password_reset_confirm',
@@ -345,8 +347,8 @@ class AccountTest(TestCase):
                 "body": "This is a test body",
                 "public": "on",
                 "law": pb.default_law.pk}
-        response = self.client.post(reverse('foirequest-submit_request',
-                kwargs={"public_body": pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={"publicbody_slug": pb.slug}), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
         self.client.logout()  # log out to remove Account link

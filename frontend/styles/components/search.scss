@@ -1,0 +1,24 @@
+.autocomplete {
+    background: #fff;
+    padding: 0 5px;
+    border:1px solid #999;
+    cursor:default;
+    text-align:left;
+    max-height:250px;
+    overflow:auto;
+    margin: 3px 0 0;
+    width: 100% !important;
+}
+
+.autocomplete div {
+    padding:2px 5px;
+    white-space:nowrap;
+    overflow:hidden;
+}
+.autocomplete strong {
+    color:#000;
+}
+
+.autocomplete > div.selected {
+    background:#F0F0F0;
+}

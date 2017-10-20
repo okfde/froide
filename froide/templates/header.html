@@ -1,0 +1,104 @@
+{% load i18n %}
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
+  <div class="container">
+    {% block nav_brand %}
+      <a class="navbar-brand" href="{% url 'index' %}">
+         <img src="{% static "img/logo/logo.svg" %}" height="36" class="navbar-logo" alt="{{ SITE_NAME }}">
+         {{ SITE_NAME }}
+      </a>
+    {% endblock %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% block nav %}
+      <ul class="navbar-nav col-auto mr-auto">
+        <li class="nav-item {% block nav_requests %}{% endblock %}">
+          <a class="nav-link" href="{% url 'foirequest-list' %}">
+            {% blocktrans %}Requests{% endblocktrans %}
+          </a>
+        </li>
+        <li class="nav-item {% block nav_publicbodies %}{% endblock %}">
+          <a class="nav-link" href="{% url 'publicbody-list' %}">
+            {% blocktrans %}Public Bodies{% endblocktrans %}
+          </a>
+       </li>
+        <li class="nav-item special-nav-item {% block nav_makerequest %}{% endblock %}">
+          <a class="nav-link" href="{% url 'foirequest-make_request' %}">
+            <span>{% blocktrans %}Make a Request!{% endblocktrans %}</span>
+          </a>
+        </li>
+      </ul>
+      {% endblock nav %}
+      <form class="form-inline" role="search" method="get" action="{% url 'foirequest-search' %}">
+        <input class="form-control mr-sm-2" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="Search">
+      </form>
+      {% block donation_button %}{% endblock donation_button %}
+
+      <ul class="navbar-nav col-auto">
+
+        {% block language_select %}
+          {% if LANGUAGES|length > 1 %}
+          <li class="nav-item dropdown">
+            {% csrf_token %}
+            {% for lang_code, language in LANGUAGES %}
+              {% if lang_code == CURRENT_LANGUAGE_CODE %}
+                <a class="nav-link dropdown-toggle" href="#" id="navbarlanguage-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ language }}
+                </a>
+              {% endif %}
+            {% endfor %}
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarlanguage-link">
+              {% for lang_code, language in LANGUAGES %}
+                  <form class="dropdown-item form-inline" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-link btn-block text-left" name="language" value="{{ lang_code }}">
+                      {{ language|title }}
+                      {% if lang_code == CURRENT_LANGUAGE_CODE %}
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                      {% endif %}
+                    </button>
+                  </form>
+              {% endfor %}
+            </div>
+          </li>
+          {% endif %}
+        {% endblock language_select %}
+        {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle account-dropdown" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="navbaraccount-link">
+            {% blocktrans with name=user.first_name|truncatechars:12 %}
+              Hello {{ name}}
+            {% endblocktrans %}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbaraccount-link">
+            <a class="dropdown-item" href="{% url 'account-show' %}">
+              {% trans "My requests" %}
+            </a>
+            <a class="dropdown-item" href="{% url 'account-settings' %}">
+              {% trans "Settings" %}
+            </a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item">
+              <form action="{% url 'account-logout' %}" method="post" class="form-inline text-center">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">
+                  {% blocktrans %}Logout{% endblocktrans %}
+                </button>
+              </form>
+            </div>
+          </div>
+        </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="btn btn-white btn-sm" href="{% url 'account-login' %}">
+              {% blocktrans %}log in /<br/>sign up{% endblocktrans %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>

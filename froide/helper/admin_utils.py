@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.contrib.admin.filters import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
@@ -59,9 +61,9 @@ class NullFilter(SimpleListFilter):
     http://stackoverflow.com/questions/7691890/filtering-django-admin-by-null-is-not-null
     under CC-By 3.0
     """
-    title = u''
+    title = ''
 
-    parameter_name = u''
+    parameter_name = ''
 
     def lookups(self, request, model_admin):
         return (
@@ -81,7 +83,7 @@ class NullFilter(SimpleListFilter):
 
 
 def make_nullfilter(field, title):
-    return type('%sNullFilter' % field.title(), (NullFilter,), {
+    return type(str('%sNullFilter' % field.title()), (NullFilter,), {
         'title': title,
         'parameter_name': field
     })

@@ -282,8 +282,6 @@ class Dev(Base):
 
 
     # FROIDE_CONFIG.update(dict(
-    #     create_new_publicbody=True,
-    #     publicbody_empty=True,
     #     user_can_hide_web=True,
     #     public_body_officials_public=True,
     #     public_body_officials_email_public=False,
@@ -295,6 +293,7 @@ class Dev(Base):
     #     greetings=[rec(u"Dear (?:Mr\.?|Ms\.? .*?)")],
     #     closings=[rec(u"Sincerely yours,?")],
     #     public_body_boosts={},
+    #     autocomplete_body_boosts={},
     #     dryrun=False,
     #     dryrun_domain="testmail.example.com",
     #     doc_conversion_binary=None,

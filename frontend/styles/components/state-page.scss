@@ -1,0 +1,37 @@
+
+.state-header {
+    background: center top no-repeat;
+    margin-top: -20px;
+}
+
+.state-header .state-headline {
+    text-align: center;
+}
+
+.state-header h1 {
+    font-size: 48px;
+    font-weight: bold;
+    text-shadow: 0px 0px 5px #fff;
+    padding-top: 0.5em;
+    margin-top: 0;
+}
+
+.state-header h2 {
+    font-weight: normal;
+    font-size: 110%;
+}
+
+.state-headline-white {
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.above-panorama {
+  padding-bottom: 1em;
+}
+
+.above-panorama .thumbnail {
+    border-color: transparent;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.8);
+}

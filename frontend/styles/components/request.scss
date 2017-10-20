@@ -1,0 +1,93 @@
+.request-nav {
+  @extend .nav-pills;
+  @extend .flex-column;
+
+}
+
+.message-container:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+    padding: 0 0 0.75em;
+    margin: 0 0 0.75em;
+}
+
+
+.message {
+    border: 1px solid #aaa;
+    padding:10px;
+    margin: 0;
+}
+
+.message-received {
+    background-color: #FFF9DC;
+}
+
+.message-postal {
+    background-image: url('~img/status/gone_postal_big.png');
+    background-position: 99% 5px;
+    background-repeat: no-repeat;
+}
+
+.message-escalated {
+    background-color: #FFE9EE;
+}
+
+.message-meta {
+  @extend .row;
+}
+
+.message-meta > dt {
+  @extend .col-sm-2;
+}
+
+.message-meta > dd {
+  @extend .col-sm-10;
+}
+
+.content-text {
+    white-space: nowrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.events {
+    color: #999;
+    font-size: 0.8em;
+    margin: 0.5em 0 0;
+}
+
+.events ol {
+    margin-bottom: 0;
+    list-style-type: none;
+}
+
+.event {
+    color: #999;
+}
+
+.event a {
+    color: #999;
+    text-decoration: none;
+}
+
+.event a:hover {
+    text-decoration: underline;
+}
+
+.message-nav {
+  position: sticky;
+  bottom: auto;
+  top: 0;
+}
+
+.message-nav li a {
+    padding: 5px 15px 5px !important;
+}
+
+.message-nav li.active a {
+    font-weight: bold;
+}
+
+.message-nav .nav-header {
+    margin-top: 10px;
+    margin-bottom: -5px;
+}

@@ -1,4 +1,8 @@
+from __future__ import unicode_literals
+
+import hashlib
 import hmac
+import json
 
 try:
     from urllib.parse import urlencode
@@ -147,12 +151,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         )
         return export_csv(queryset, fields)
 
+    def as_json(self):
+        return json.dumps({
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'address': self.address,
+            'private': self.private,
+            'email': self.email,
+            'organization': self.organization
+        })
+
     def display_name(self):
         if self.private:
-            return str(_(u"<< Name Not Public >>"))
+            return str(_("<< Name Not Public >>"))
         else:
             if self.organization:
-                return u'%s (%s)' % (self.get_full_name(), self.organization)
+                return '%s (%s)' % (self.get_full_name(), self.organization)
             else:
                 return self.get_full_name()
 
@@ -212,17 +227,17 @@ class AccountManager(object):
 
     @classmethod
     def get_username_base(self, firstname, lastname):
-        base = u""
+        base = ""
         first = slugify(firstname)
         last = slugify(lastname)
         if first and last:
-            base = u"%s.%s" % (first[0], last)
+            base = "%s.%s" % (first[0], last)
         elif last:
             base = last
         elif first:
             base = first
         else:
-            base = u"user"
+            base = "user"
         base = base[:27]
         return base
 
@@ -247,8 +262,9 @@ class AccountManager(object):
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
         return hmac.new(
-                settings.SECRET_KEY.encode('utf-8'),
-                (".".join(to_sign)).encode('utf-8')
+            settings.SECRET_KEY.encode('utf-8'),
+            (".".join(to_sign)).encode('utf-8'),
+            digestmod=hashlib.md5
         ).hexdigest()
 
     def check_confirmation_secret(self, secret, *args):
@@ -264,8 +280,9 @@ class AccountManager(object):
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
         return hmac.new(
-                settings.SECRET_KEY.encode('utf-8'),
-                (".".join(to_sign)).encode('utf-8')
+            settings.SECRET_KEY.encode('utf-8'),
+            (".".join(to_sign)).encode('utf-8'),
+            digestmod=hashlib.md5
         ).hexdigest()
 
     def send_confirmation_mail(self, request_id=None, password=None):
@@ -317,7 +334,7 @@ class AccountManager(object):
         username_base = cls.get_username_base(user.first_name, user.last_name)
 
         user.is_active = False
-        if "password" in data:
+        if 'password' in data:
             password = data['password']
         else:
             password = User.objects.make_random_password()

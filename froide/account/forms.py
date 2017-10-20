@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -7,7 +9,8 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django import forms
 
-from froide.helper.widgets import AgreeCheckboxInput
+from froide.helper.form_utils import JSONMixin
+from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
 from .models import AccountManager
@@ -59,9 +62,11 @@ class NewUserBaseForm(forms.Form):
         )
 
     if USER_CAN_HIDE_WEB:
-        private = forms.BooleanField(required=False,
-                label=_("Hide my name on the web"),
-                help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
+        private = forms.BooleanField(
+            required=False,
+            widget=BootstrapCheckboxInput,
+            label=_("Hide my name on the web"),
+            help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
     def __init__(self, *args, **kwargs):
         super(NewUserBaseForm, self).__init__(*args, **kwargs)
@@ -85,11 +90,9 @@ class NewUserBaseForm(forms.Form):
             pass
         else:
             if user.is_active:
-                raise forms.ValidationError(mark_safe(
-                    _('This email address already has an account. <a href="%(url)s?simple&email=%(email)s" class="btn btn-warning target-small">Click here to login using that email address.</a>') % {
-                            'url': reverse("account-login"),
-                            'email': email
-                    }))
+                raise forms.ValidationError(_('This email address already has '
+                                              'an account.'),
+                                            code='auth_required')
             else:
                 raise forms.ValidationError(
                     _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))
@@ -98,18 +101,30 @@ class NewUserBaseForm(forms.Form):
 
 class TermsForm(forms.Form):
     terms = forms.BooleanField(
-        label=mark_safe(_("Terms and Conditions and Privacy Statement")),
-        error_messages={'required':
-            _('You need to accept our Terms and Conditions and Priavcy Statement.')},
-        widget=AgreeCheckboxInput(
-            agree_to=_(u'You agree to our <a href="%(url_terms)s" class="target-new">Terms and Conditions</a> and <a href="%(url_privacy)s" class="target-new">Privacy Statement</a>'),
-            url_names={"url_terms": "help-terms", "url_privacy": "help-privacy"}))
+        widget=BootstrapCheckboxInput,
+        error_messages={
+            'required': _('You need to accept our Terms '
+                'and Conditions and Priavcy Statement.')},
+    )
 
     def __init__(self, *args, **kwargs):
         super(TermsForm, self).__init__(*args, **kwargs)
+
+        self.fields['terms'].label = mark_safe(
+            _('You agree to our <a href="{url_terms}" target="_blank">'
+                'Terms and Conditions</a> and <a href="{url_privacy}" target="_blank">'
+                'Privacy Statement</a>').format(
+                    url_terms=reverse("help-terms"),
+                    url_privacy=reverse("help-privacy")
+                )
+        )
+
         if has_newsletter():
-            self.fields['newsletter'] = forms.BooleanField(required=False,
-                label=_("Check if you want to receive our newsletter."))
+            self.fields['newsletter'] = forms.BooleanField(
+                required=False,
+                widget=BootstrapCheckboxInput,
+                label=_("Check if you want to receive our newsletter.")
+            )
 
     def save(self, user):
         user.terms = True
@@ -118,7 +133,7 @@ class TermsForm(forms.Form):
         user.save()
 
 
-class NewUserForm(TermsForm, NewUserBaseForm):
+class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
     pass
 
 
@@ -169,8 +184,11 @@ class UserChangeForm(forms.Form):
     address = forms.CharField(max_length=300,
             label=_('Your mailing address'),
             help_text=_('Your address will never be displayed publicly.'),
-            widget=forms.Textarea(attrs={'placeholder': _('Street, Post Code, City'),
-                'class': 'form-control'}))
+            widget=forms.Textarea(attrs={
+                'placeholder': _('Street, Post Code, City'),
+                'class': 'form-control',
+                'rows': '3'
+            }))
 
     field_order = ['email', 'newsletter', 'address']
 
@@ -180,8 +198,11 @@ class UserChangeForm(forms.Form):
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email
         if has_newsletter():
-            self.fields['newsletter'] = forms.BooleanField(required=False,
-                label=_("Newsletter"))
+            self.fields['newsletter'] = forms.BooleanField(
+                required=False,
+                label=_("Newsletter"),
+                widget=BootstrapCheckboxInput
+            )
             self.fields['newsletter'].initial = self.user.newsletter
         self.order_fields(self.field_order)
 
@@ -238,14 +259,12 @@ class UserDeleteForm(forms.Form):
     CONFIRMATION_PHRASE = str(_('Freedom of Information Act'))
 
     password = forms.CharField(
-        widget=forms.PasswordInput(),
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         label=_('Password'),
         help_text=_('Please type your password to confirm.')
     )
     confirmation = forms.CharField(
-        widget=ConfirmationWidget(
-            {'placeholder': CONFIRMATION_PHRASE}
-        ),
+        widget=ConfirmationWidget(phrase=CONFIRMATION_PHRASE),
         label=_('Confirmation Phrase'),
         help_text=_('Type the phrase above exactly as displayed.'))
 

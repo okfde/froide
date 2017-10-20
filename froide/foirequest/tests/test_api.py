@@ -1,4 +1,4 @@
-from __future__ import with_statement
+from __future__ import unicode_literals
 
 try:
     from urllib.parse import urlencode
@@ -35,7 +35,7 @@ class ApiTest(TestCase):
         mes = factories.FoiMessageFactory.create(
             request=req,
             subject=req.user.get_full_name(),
-            plaintext=u'Hallo %s,\n%s\n%s' % (
+            plaintext='Hallo %s,\n%s\n%s' % (
                 req.user.get_full_name(),
                 req.secret_address,
                 req.user.address
@@ -71,7 +71,7 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_content_hidden(self):
-        marker = u'TESTMARKER'
+        marker = 'TESTMARKER'
         mes = factories.FoiMessageFactory.create(
             content_hidden=True,
             plaintext=marker

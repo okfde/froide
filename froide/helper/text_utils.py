@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import re
 
 try:
@@ -39,7 +41,7 @@ def unescape(text):
             except KeyError:
                 pass
         return text  # leave as is
-    return re.sub("&#?\w+;", fixup, text)
+    return re.sub(r'&#?\w+;', fixup, text)
 
 
 def split_text_by_separator(text, separator=None):
@@ -64,21 +66,21 @@ def redact_content(content):
 
 
 def replace_word(needle, replacement, content):
-    return re.sub('(^|\W)%s($|\W)' % re.escape(needle),
+    return re.sub(r'(^|\W)%s($|\W)' % re.escape(needle),
                     '\\1%s\\2' % replacement, content, re.U)
 
 
 EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
 
 
-def replace_email_name(text, replacement=u""):
+def replace_email_name(text, replacement=""):
     return EMAIL_NAME_RE.sub(str(replacement), text)
 
 
 EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 
-def replace_email(text, replacement=u""):
+def replace_email(text, replacement=""):
     return EMAIL_RE.sub(str(replacement), text)
 
 

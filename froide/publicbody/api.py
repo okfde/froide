@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+
+from django.conf import settings
 from django.conf.urls import url
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404
@@ -15,6 +18,8 @@ from .models import PublicBody, PublicBodyTag, Jurisdiction, FoiLaw
 
 AUTOCOMPLETE_MAX_CHAR = 15
 AUTOCOMPLETE_MIN_CHAR = 3
+
+AUTOCOMPLETE_BODY_BOOSTS = settings.FROIDE_CONFIG.get("autocomplete_body_boosts", {})
 
 
 class JurisdictionResource(ModelResource):
@@ -54,9 +59,7 @@ class FoiLawResource(ModelResource):
 
     def dehydrate(self, bundle):
         if bundle.obj:
-            additional = ('letter_start_form', 'letter_end_form',
-                          'request_note_html', 'description_html')
-            for a in additional:
+            for a in ('request_note_html', 'description_html'):
                 bundle.data[a] = getattr(bundle.obj, a)
             bundle.data['site_url'] = bundle.obj.get_absolute_domain_url()
         return bundle
@@ -137,10 +140,11 @@ class PublicBodyResource(ModelResource):
         sqs = []
         if short_query:
             sqs = SearchQuerySet().models(PublicBody).autocomplete(name_auto=short_query)
-            sqs = sqs.order_by('name')
             jurisdiction = request.GET.get('jurisdiction', None)
             if jurisdiction is not None:
                 sqs = sqs.filter(jurisdiction=sqs.query.clean(jurisdiction))
+            for k in AUTOCOMPLETE_BODY_BOOSTS.keys():
+                sqs = sqs.boost(k, AUTOCOMPLETE_BODY_BOOSTS[k])
 
         names = []
         data = []
@@ -157,7 +161,7 @@ class PublicBodyResource(ModelResource):
                 return None
 
             sqs = sorted(sqs, key=lambda x: x.name)
-            names = [u"%s (%s)" % (x.name, jur_get(x)) for x in sqs]
+            names = ["%s (%s)" % (x.name, jur_get(x)) for x in sqs]
             data = [{"name": x.name, "jurisdiction": jur_get(x),
                      "id": x.pk, "url": x.url} for x in sqs]
         response = {

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import with_statement
+from __future__ import unicode_literals
 
 from datetime import datetime
 import json
@@ -42,7 +42,7 @@ class MailTest(TestCase):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.messages
         self.assertEqual(len(messages), 2)
-        self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
+        self.assertIn('Jörg Gahl-Killen', [m.sender_name for m in messages])
         message = messages[1]
         self.assertEqual(message.timestamp,
                 datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
@@ -60,11 +60,11 @@ class MailTest(TestCase):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
-        self.assertEqual(messages[1].subject, u"Fwd: Informationsfreiheitsgesetz des Bundes, Antragsvordruck für Open Data")
+        self.assertEqual(messages[1].subject, "Fwd: Informationsfreiheitsgesetz des Bundes, Antragsvordruck für Open Data")
         self.assertEqual(len(messages[1].attachments), 2)
         self.assertEqual(messages[1].attachments[0].name,
-                         u"TI-IFG-AntragVordruck.docx")
-        self.assertTrue(messages[1].attachments[1].name.endswith(u".pdf"))
+                         "TI-IFG-AntragVordruck.docx")
+        self.assertTrue(messages[1].attachments[1].name.endswith(".pdf"))
         self.assertFalse(messages[1].attachments[0].is_converted)
         self.assertTrue(messages[1].attachments[1].is_converted)
         self.assertTrue(messages[1].attachments[1].converted is None)
@@ -75,7 +75,7 @@ class MailTest(TestCase):
 
     def test_wrong_address(self):
         request = FoiRequest.objects.get_by_secret_mail(
-                u"sw+yurpykc1hr@fragdenstaat.de")
+                "sw+yurpykc1hr@fragdenstaat.de")
         request.delete()
         mail.outbox = []
         with open(p("test_mail_01.txt"), 'rb') as f:
@@ -98,9 +98,9 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-        self.assertEqual(mail['subject'], u'Kooperationen des Ministerium für Schule und '
-                u'Weiterbildung des Landes Nordrhein-Westfalen mit außerschulischen Partnern')
-        self.assertEqual(mail['attachments'][0].name, u'Kooperationen des MSW, Antrag '
+        self.assertEqual(mail['subject'], 'Kooperationen des Ministerium für Schule und '
+                'Weiterbildung des Landes Nordrhein-Westfalen mit außerschulischen Partnern')
+        self.assertEqual(mail['attachments'][0].name, 'Kooperationen des MSW, Antrag '
                 'nach Informationsfreiheitsgesetz NRW, Stefan Safario vom 06.12.2012 - AW vom '
                 '08.01.2013 - RS.pdf')
         request.add_message_from_email(mail, content)
@@ -111,8 +111,8 @@ class MailTest(TestCase):
         self.assertEqual(len(messages[1].attachments), 2)
         names = set([a.name for a in messages[1].attachments])
         self.assertEqual(names, set([
-            u'KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-Anlage.pdf',
-            u"KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf"
+            'KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-Anlage.pdf',
+            "KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf"
         ]))
 
     def test_strip_html(self):
@@ -134,7 +134,7 @@ class MailTest(TestCase):
             content = f.read()
             mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+            self.assertEqual(mail['attachments'][0].name, 'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
 
     def test_attachment_name_redaction(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
@@ -148,12 +148,12 @@ class MailTest(TestCase):
             content = f.read()
             mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, u'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+            self.assertEqual(mail['attachments'][0].name, 'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
         request.add_message_from_email(mail, content)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         mes = messages[1]
-        self.assertEqual(mes.attachments[0].name, u'EingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf')
+        self.assertEqual(mes.attachments[0].name, 'EingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf')
 
     def test_attachment_name_parsing(self):
         with open(p("test_mail_07.txt"), 'rb') as f:
@@ -161,7 +161,7 @@ class MailTest(TestCase):
             content = f.read()
             mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, u'Bescheid Fäker.pdf')
+            self.assertEqual(mail['attachments'][0].name, 'Bescheid Fäker.pdf')
 
     def test_address_list(self):
         with open(p("test_mail_01.txt"), 'rb') as f:
@@ -177,7 +177,7 @@ class MailTest(TestCase):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
         messages = request.messages
         self.assertEqual(len(messages), 2)
-        self.assertIn(u'J\xf6rg Gahl-Killen', [m.sender_name for m in messages])
+        self.assertIn('Jörg Gahl-Killen', [m.sender_name for m in messages])
         message = messages[1]
         self.assertEqual(message.timestamp,
                 datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
@@ -187,7 +187,7 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-            subject = u'WG: Disziplinarverfahren u.a. gegen B\xfcrgermeister/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche B\xfcrgermeister/Ortsvorsteher/Landr\xe4te im Land Brandenburg in den letzten Jahren [#5617]'
+            subject = 'WG: Disziplinarverfahren u.a. gegen Bürgermeister/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche Bürgermeister/Ortsvorsteher/Landräte im Land Brandenburg in den letzten Jahren [#5617]'
             self.assertEqual(mail['attachments'][0].name,
                 '%s.eml' % subject[:45])
 
@@ -207,7 +207,7 @@ class DeferredMessageTest(TestCase):
         bad_mail = '@'.join((name + 'x', domain))
         with open(p("test_mail_01.txt"), 'rb') as f:
             mail = f.read().decode('ascii')
-        mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
+        mail = mail.replace('sw+yurpykc1hr@fragdenstaat.de', bad_mail)
         process_mail.delay(mail.encode('ascii'))
         self.assertEqual(count_messages,
             FoiMessage.objects.filter(request=self.req).count())
@@ -226,7 +226,7 @@ class DeferredMessageTest(TestCase):
         bad_mail = '@'.join((name + 'x', domain))
         with open(p("test_mail_01.txt"), 'rb') as f:
             mail = f.read().decode('ascii')
-        mail = mail.replace(u'sw+yurpykc1hr@fragdenstaat.de', bad_mail)
+        mail = mail.replace('sw+yurpykc1hr@fragdenstaat.de', bad_mail)
         self.assertEqual(DeferredMessage.objects.count(), 0)
 
         # there is one deferredmessage matching, so deliver to associated request
@@ -329,7 +329,7 @@ class PostMarkMailTest(TestCase):
                 },
                 {
                     "Name": "DKIM-Signature",
-                    "Value": "v=1; a=rsa-sha256; c=relaxed\/relaxed;                d=wildbit.com; s=google;                h=mime-version:reply-to:date:message-id:subject:from:to:cc                 :content-type;                bh=cYr\/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;                b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u                 iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT                 Q9ou6L1hgy\/MbKChnp2kxHOtYNOrrszY3JfQM="
+                    "Value": "v=1; a=rsa-sha256; c=relaxed/relaxed;                d=wildbit.com; s=google;                h=mime-version:reply-to:date:message-id:subject:from:to:cc                 :content-type;                bh=cYr/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;                b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u                 iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT                 Q9ou6L1hgy/MbKChnp2kxHOtYNOrrszY3JfQM="
                 },
                 {
                     "Name": "MIME-Version",

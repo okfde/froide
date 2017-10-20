@@ -1,16 +1,14 @@
-{% load i18n %}{% load static %}{% load compress %}<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" class="no-js">
+{% load i18n %}{% load static %}{% load block_helper %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
   {% block header_font %}{% endblock %}
   {% block css %}
-  {% compress css %}
-  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-  <link rel="stylesheet" href="{% static "css/style.css" %}" />
-  {% endcompress %}
+    <link href="{% static "css/main.css" %}" rel="stylesheet">
   {% block extra_css %}
+    {% render_block "css" %}
   {% endblock %}
   {% endblock %}
   <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
@@ -20,21 +18,29 @@
   <meta name="keywords" content="{% trans "Freedom of Information Requests, Freedom of Information Law, Public Body Information" %}" />
   {# Translators: meta description #}
   <meta name="description" content="{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   {% block additional_meta %}
   {% endblock %}
 
-  <script src="{% static "js/libs/modernizr.min.js" %}"></script>
-  <link rel="shortcut icon" href="{% static "img/favicon.ico" %}" />
-  <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/logo/apple-touch-icon.png" %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/logo/favicon-32x32.png" %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static "img/logo/favicon-16x16.png" %}">
+  <link rel="manifest" href="{% static "img/logo/manifest.json" %}">
+  <link rel="mask-icon" href="{% static "img/logo/safari-pinned-tab.svg" %}" color="#0069d0">
+  <link rel="shortcut icon" href="{% static "img/logo/favicon.ico" %}">
+  <meta name="msapplication-config" content="{% static "img/logo/browserconfig.xml" %}">
+  <meta name="theme-color" content="#ffffff">
 
   {% block extra_head %}
   {% endblock %}
 </head>
 <body{% block body_extra_attribuets %}{% endblock %}>
   {% block body_tag %}{% endblock %}
-  {% block scripts %}{% endblock %}
   {% block extra_footer %}{% endblock %}
+
+  {% block scripts %}{% endblock %}
+  {% render_block "js" %}
+
   {% if not debug %}{% block tracking_code %}{% endblock %}{% endif %}
 </body>
 </html>

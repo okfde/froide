@@ -1,7 +1,7 @@
 {% load i18n %}
 {% if object.status_representation %}
-<a class="pull-left icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
+<a class="mr-3 icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
 {% endif %}
-<div class="media-body">
+<div class="media-body mb-3">
   {% include "foirequest/snippets/request_item_inner.html" %}
 </div>

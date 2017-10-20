@@ -2,7 +2,8 @@
 
 {% load i18n %}
 {% load static %}
-{% load compress %}
+
+{% load block_helper %}
 
 {% block body_tag %}
   {% block top_block %}
@@ -12,112 +13,7 @@
   {% endblock %}
 
   {% block navbar %}
-  <div class="navbar {% block navbar-class %}navbar-default{% endblock %}">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="{% url 'index' %}">
-          <span>{{ SITE_NAME }}</span>
-        </a>
-      </div>
-      <div class="navbar-collapse collapse">
-        {% block nav %}
-        <ul class="nav navbar-nav">
-          <li class="{% block nav_requests %}{% endblock %}">
-            <a href="{% url 'foirequest-list' %}">
-              {% blocktrans %}Requests{% endblocktrans %}
-            </a>
-          </li>
-          <li class="{% block nav_publicbodies %}{% endblock %}">
-            <a href="{% url 'publicbody-list' %}">
-              {% blocktrans %}Public Bodies{% endblocktrans %}
-            </a>
-         </li>
-          <li class="special-nav-item {% block nav_makerequest %}{% endblock %}">
-            <a href="{% url 'foirequest-make_request' %}">
-              <span>{% blocktrans %}Make a Request!{% endblocktrans %}</span>
-            </a>
-          </li>
-        </ul>
-        {% endblock nav %}
-        <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'foirequest-search' %}">
-          <div class="form-group">
-            <input class="col-lg-3 search-query form-control" type="text" name="q" placeholder="{% trans "Search" %}"/>
-          </div>
-        </form>
-        {% block donation_button %}{% endblock donation_button %}
-
-        <ul class="nav navbar-nav navbar-right">
-
-          {% block language_select %}
-            {% if LANGUAGES|length > 1 %}
-            <li class="dropdown">
-              {% csrf_token %}
-              {% for lang_code, language in LANGUAGES %}
-                {% if lang_code == CURRENT_LANGUAGE_CODE %}
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    {{ language }}
-                    <b class="caret"></b>
-                  </a>
-                {% endif %}
-              {% endfor %}
-              <ul class="dropdown-menu">
-                {% for lang_code, language in LANGUAGES %}
-                  <li>
-                    <form action="{% url 'set_language' %}" method="post">
-                      {% csrf_token %}
-                      <button class="btn btn-link" name="language" value="{{ lang_code }}">
-                        {{ language|title }}
-                      </button>
-                      {% if lang_code == CURRENT_LANGUAGE_CODE %}&times;{% endif %}
-                    </form>
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-            {% endif %}
-          {% endblock language_select %}
-          {% if user.is_authenticated %}
-          <li class="dropdown">
-            <a class="dropdown-toggle account-dropdown" data-toggle="dropdown" href="#">
-              <small class="account-name">{{ user.first_name|truncatechars:12 }}<br/>
-                {{ user.last_name|truncatechars:12 }}
-              </small>
-              <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="{% url 'account-show' %}">{% trans "My requests" %}</a>
-              </li>
-              <li>
-                <a href="{% url 'account-settings' %}">{% trans "Settings" %}</a>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <form action="{% url 'account-logout' %}" method="post" class="text-center">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-default">
-                    {% blocktrans %}Logout{% endblocktrans %}
-                  </button>
-                </form>
-              </li>
-            </ul>
-          </li>
-          {% else %}
-            <li>
-              <a class="account-login" href="{% url 'account-login' %}">
-                {% blocktrans %}Log In /<br/>Sign up{% endblocktrans %}
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </div>
+    {% include "header.html" %}
   {% endblock %}
 
   {% block index_banner %}{% endblock %}
@@ -126,10 +22,10 @@
   {% include "snippets/messages.html" %}
 
   {% block body_wrapper %}
-  <div id="main" class="container">
-  {% block body %}
-  {% endblock %}
-  </div>
+  <main>
+    {% block body %}
+    {% endblock %}
+  </main>
   {% endblock %}
 
   <footer class="container" id="footer">
@@ -139,17 +35,17 @@
     {% endblock footer_above %}
     {% block footer_credits %}
     <div class="row">
-      <div class="col-lg-9">
+      <div class="col-md-8 col-sm-7">
         {% block footer_description %}
         <p>
-          {% blocktrans %}Froide is a free and Open Source Project by <a href="http://www.okfn.org">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="https://github.com/okfde/froide">repository on GitHub</a>.{% endblocktrans %}
+          {% blocktrans %}Froide is a free and Open Source Project by <a href="https://okfn.de">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="https://github.com/okfde/froide">repository on GitHub</a>.{% endblocktrans %}
         </p>
         {% endblock %}
       </div>
-      <div class="col-lg-3">
+      <div class="col-md-4 col-sm-5">
         {% block footer_logo %}
-        <a href="http://www.okfn.de">
-          <img src="{% static "img/okf.png" %}" />
+        <a href="https://okfn.de">
+          <img src="{% static "img/okfde.png" %}" alt="Open Knowledge Foundation Deutschland" height="80"/>
         </a>
         {% endblock %}
       </div>
@@ -179,14 +75,9 @@
     {% endblock footer_below %}
   {% endblock footer %}
   </footer>
+
 {% endblock body_tag %}
 
 {% block scripts %}
-  {% compress js %}
-  <script src="{% static "js/libs/jquery.js" %}"></script>
-  <script src="{% static "js/bootstrap.min.js" %}"></script>
-  <script src="{% static "js/libs/mustache.js" %}"></script>
-  <script src="{% static "js/libs/jquery.autocomplete.js" %}"></script>
-  <script src="{% static "js/script.js" %}"></script>
-  {% endcompress %}
+  <script src="{% static "js/main.js" %}"></script>
 {% endblock %}

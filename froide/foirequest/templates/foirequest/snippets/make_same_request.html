@@ -1,0 +1,42 @@
+{% load i18n %}
+
+{% load foirequest_tags %}
+{% load account_tags %}
+{% load form_helper %}
+
+<div class="alert d-print-none alert-info mt-5" id="make-same-request">
+  <p>{% blocktrans %}This request received documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them below.{% endblocktrans %}</p>
+  {% if user.is_authenticated %}
+    {% if object.user == user %}
+      <p>{% blocktrans with email=SITE_EMAIL %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact {{ email }}.{% endblocktrans %}</p>
+    {% else %}
+      {% if object.same_as.user == user %}
+        <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
+      {% else %}
+        {% check_same_request object user "same_request" %}
+        {% if same_request %}
+          <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
+        {% else %}
+          <form method="post" class="d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}">
+            {% csrf_token %}
+            <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
+            <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.address }}</span></strong></p>
+            <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
+            <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
+          </form>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% else %}
+    <form method="post" id="make-same-request" class="form-horizontal d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}#make-same-request">
+      {% csrf_token %}
+      <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
+      {% if not new_user_form %}
+        {% get_new_user_form "new_user_form" %}
+      {% endif %}
+      {% render_form new_user_form %}
+      <button type="submit" class="btn btn-primary">{% trans "Make identical request in your name" %}</button>
+    </form>
+  {% endif %}
+  <p>{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
+</div>

@@ -4,126 +4,123 @@
 
 <div id="{{ message.get_html_id }}" class="message-container">
   <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_postal %} message-postal{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
-    <table class="message-table">
-      <tbody>
-        <tr>
-          <td class="key">{% blocktrans %}From{% endblocktrans %}</td>
-          <td class="value-padding-right">
-            {% if object.user == user or user.is_staff %}
-              {% if message.is_response %}
-                {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" class="toggle">{% trans "change" %}</a>)
-                <div id="change-pb-{{ message.id }}" style="display:none" class="hidden-print">
-                  {% with message_pb_form=message.get_public_body_sender_form %}
-                    <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
-                      {% csrf_token %}
-                      <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
-                      {{ message_pb_form.sender }}
-                      <button type="submit" class="btn btn-default">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
-                    </form>
-                  {% endwith %}
-                </div>
-              {% else %}
-                {{ message.user_real_sender }}
+    <dl class="message-meta">
+      <dt>
+        {% blocktrans %}From{% endblocktrans %}
+      </dt>
+      <dd>
+        {% if object.user == user or user.is_staff %}
+          {% if message.is_response %}
+            {{ message.user_real_sender }} – {{ message.sender_public_body.name }} (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+              {% trans "change" %}
+            </a>)
+            <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
+              {% with message_pb_form=message.get_public_body_sender_form %}
+                <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                  {% csrf_token %}
+                  <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
+                  {{ message_pb_form.sender }}
+                  <button type="submit" class="btn btn-secondary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                </form>
+              {% endwith %}
+            </div>
+          {% else %}
+            {{ message.user_real_sender }}
+          {% endif %}
+        {% else %}
+          {% if message.is_response %}
+            {% if froide.public_body_officials_public %}
+              {{ message.sender }}
+              {% if message.sender_public_body %}
+               – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
               {% endif %}
             {% else %}
-              {% if message.is_response %}
-                {% if froide.public_body_officials_public %}
-                  {{ message.sender }}
-                  {% if message.sender_public_body %}
-                   – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
-                  {% endif %}
-                {% else %}
-                  {% if message.sender_public_body %}
-                    <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
-                  {% else %}
-                    {% trans "Public Body" %}
-                  {% endif %}
-                {% endif %}
+              {% if message.sender_public_body %}
+                <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
               {% else %}
-                {{ message.sender }}
+                {% trans "Public Body" %}
               {% endif %}
             {% endif %}
-          </td>
-        </tr>
-        <tr>
-          <td class="key">{% blocktrans %}Subject{% endblocktrans %}</td>
-          <td class="value-padding-right"><strong>{{ message.get_subject }}</strong></td>
-        </tr>
-        <tr>
-          <td class="key">{% blocktrans %}Date{% endblocktrans %}</td>
-          <td>
-            <a href="#{{ message.get_html_id }}">
-              {% if message.is_postal %}
-                {{ message.timestamp|date:"DATE_FORMAT" }}
-              {% else %}
-                {{ message.timestamp|date:"DATETIME_FORMAT" }}
-              {% endif %}
-            </a>
-          </td>
-        </tr>
-        {% if not message.is_response %}
-          <tr>
-            <td class="key">{% blocktrans %}To{% endblocktrans %}</td>
-            <td>{{ message.get_recipient }}</td>
-          </tr>
+          {% else %}
+            {{ message.sender }}
+          {% endif %}
         {% endif %}
-        {% if message.status %}
-          <tr>
-            <td class="key">{% blocktrans %}Status{% endblocktrans %}</td>
-            <td>{{ message.readable_status }}</td>
-          </tr>
-        {% endif %}
-        {% if user.is_staff %}
-          <tr class="hidden-print">
-            <td class="key">{% blocktrans %}Admin{% endblocktrans %}</td>
-            <td>
-              <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
-            </td>
-          </tr>
-        {% endif %}
-        {% if message.all_attachments %}
-          <tr>
-            <td class="key">{% blocktrans %}Attachments{% endblocktrans %}</td>
-            <td>
-              {% if message.approved_attachments %}
-                <ul class="media-list">
-                  {% for attachment in message.approved_attachments %}
-                    <li class="media">
-                      {% include "foirequest/snippets/attachment_item.html" %}
-                    </li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-              {% if user == object.user or user.is_staff %}
-                {% if message.not_approved_attachments %}
-                  <h5>{% trans "Attachments that are not published:" %}</h5>
-                  <ul class="list-unstyled">
-                    {% for attachment in message.not_approved_attachments %}
-                      {% include "foirequest/snippets/attachment.html" %}
-                    {% endfor %}
-                  </ul>
-                {% endif %}
-              {% endif %}
-            </td>
-          </tr>
-        {% endif %}
-        {% if user == object.user and message.is_postal %}
-          <tr class="hidden-print">
-            <td class="key">{% blocktrans %}Upload Attachments{% endblocktrans %}</td>
-            {% with form=message.get_postal_attachment_form %}
-              <td>
-                <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
-                  {% csrf_token %}
-                  {{ form.files }}
-                  <button type="submit" class="upload-button btn btn-default">{% blocktrans %}Upload Document{% endblocktrans %}</button>
-                  <span class="help-block">{{ form.files.help_text }}</span>
-                </form>
-              </td>
-            {% endwith %}
-          </tr>
-        {% endif %}
-      </tbody>
-    </table>
+      </dd>
+      <dt>
+        {% blocktrans %}Subject{% endblocktrans %}
+      </dt>
+      <dd>
+        <strong>{{ message.get_subject }}</strong>
+      </dd>
+      <dt>
+        {% blocktrans %}Date{% endblocktrans %}
+      </dt>
+      <dd>
+        <a href="#{{ message.get_html_id }}">
+          {% if message.is_postal %}
+            {{ message.timestamp|date:"DATE_FORMAT" }}
+          {% else %}
+            {{ message.timestamp|date:"DATETIME_FORMAT" }}
+          {% endif %}
+        </a>
+      </dd>
+    {% if not message.is_response %}
+      <dt>
+        {% blocktrans %}To{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ message.get_recipient }}
+      </dd>
+  {% endif %}
+    {% if message.status %}
+      <dt>
+        {% blocktrans %}Status{% endblocktrans %}
+      </dt>
+      <dd>
+        {{ message.readable_status }}
+      </dd>
+    {% endif %}
+    {% if user.is_staff %}
+      <dt class="d-print-none">
+        {% blocktrans %}Admin{% endblocktrans %}
+      </dt>
+      <dd class="d-print-none">
+        <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
+      </dd>
+    {% endif %}
+  </dl>
+  {% if user == object.user and message.is_postal %}
+    <div>
+      <h6>
+        {% blocktrans %}Upload Attachments{% endblocktrans %}
+      </h6>
+      {% with form=message.get_postal_attachment_form %}
+        <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.files }}
+          <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
+          <span class="form-text text-muted">{{ form.files.help_text }}</span>
+        </form>
+      {% endwith %}
+    </div>
+  {% endif %}
+
+  {% if message.all_attachments %}
+    <h6>
+      {% blocktrans %}Attachments{% endblocktrans %}
+    </h6>
+    <div class="attachment-deck">
+      {% if user == object.user or user.is_staff %}
+        {% for attachment in message.not_approved_attachments %}
+          {% include "foirequest/snippets/attachment.html" %}
+        {% endfor %}
+      {% endif %}
+      {% for attachment in message.approved_attachments %}
+        {% include "foirequest/snippets/attachment.html" %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
     {% if object.user == user %}
       {% if object.message_needs_status == message %}
         <div class="alert alert-danger">
@@ -134,19 +131,19 @@
     <hr/>
     <div id="{{ message.get_html_id }}-content" class="message-content">
       {% if forloop.counter0 == 0 %}
-        <div class="content-text">{% highlight_request message %}<div>
-<a class="toggle hidden-print muted hideparent" href="#letter_end">{% trans "[... Show complete request text]" %}</a>
+        <div class="content-text">{% highlight_request message %}<div class="d-print-none">
+<a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{% trans "[... Show complete request text]" %}</a>
 {% blocktrans %}Kind Regards,{% endblocktrans %}
 {{ message.sender }}</div>
         </div>
       {% else %}
         {% if message.content_hidden %}
           {% if user == object.user or user.is_staff %}
-            <div class="hidden-print alert alert-warning">
+            <div class="d-print-none alert alert-warning">
               <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
               <form class="form-horizontal" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message=message.pk %}">
                 {% csrf_token %}
-                <button class="btn btn-default" type="submit">{% trans "I want to publish this message" %}</button>
+                <button class="btn btn-secondary" type="submit">{% trans "I want to publish this message" %}</button>
               </form>
             </div>
             <div class="content-text">{% redact_message message user %}</div>
@@ -163,7 +160,7 @@
   </div>
   {% if object.user == user %}
     {% if message.is_response %}
-      <div class="alert alert-info hidden-print">
+      <div class="alert alert-info d-print-none">
         <a data-tabgo="tab" href="#write-message">{% blocktrans %}You can write a reply by clicking here{% endblocktrans %}</a>
       </div>
     {% endif %}
@@ -174,24 +171,26 @@
       <ol>
         {% for event in message.events %}
           <li class="event" id="{{ event.get_html_id }}">
-            <span class="hidden-print" title="{{ event.timestamp }}">
-              {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="visible-print">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
+            <span class="d-print-none" title="{{ event.timestamp }}">
+              {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
           </li>
         {% endfor %}
       </ol>
     </div>
   {% endif %}
 
-  <div class="comments-container hidden-print">
+  <div class="comments-container d-print-none">
     {% get_comment_list for message as comment_list %}
     <div id="comments-{{ message.id }}" class="comments">
       {% include "comments/foirequest/list.html" %}
-      <a class="toggle" href="#comment-form-{{ message.id }}">{% blocktrans %}Write a comment{% endblocktrans %}</a>
-      <div class="comment-form" id="comment-form-{{ message.id }}">
+      <a data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+        {% blocktrans %}Write a comment{% endblocktrans %}
+      </a>
+      <div class="collapse" id="comment-form-{{ message.id }}">
         {% if user.is_authenticated %}
           {% include "comments/foirequest/form.html" %}
         {% else %}
-          <a href="{% url 'account-login' %}" class="hidden-print">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
+          <a href="{% url 'account-login' %}" class="d-print-none">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
         {% endif %}
       </div>
     </div>

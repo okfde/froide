@@ -1,0 +1,32 @@
+
+.heroine-unit {
+  padding: 3% 3% 3% 4%;
+  margin-bottom: 30px;
+}
+
+.heroine-unit h1 {
+  margin-bottom: 0;
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: inherit;
+}
+
+.heroine-unit p {
+  font-size: 18px;
+  font-weight: 200;
+  line-height: 30px;
+  color: inherit;
+}
+
+#main-folders {
+  background-image: url('~img/folders.jpg');
+  background-size: cover;
+}
+
+#sample-letter {
+    font-family: Georgia,serif;
+    font-size: 1em;
+    white-space: nowrap;
+    white-space: pre-wrap;
+}

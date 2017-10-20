@@ -1,7 +1,7 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 
-{% block body %}
+{% block app_body %}
 <div class="row">
   <div class="col-lg-6 col-md-6">
     <h2>{% trans "FoI Requests" %}</h2>
@@ -16,11 +16,11 @@
         <a href="{% url 'admin:foirequest_foirequest_change' foirequest.id %}">{% trans "View on Admin site" %}</a>
         <form method="post" action="{% url 'foirequest-mark_checked' slug=foirequest.slug %}">
           {% csrf_token %}
-          <button class="btn btn-default" type="submit">{% trans "Mark as checked" %}</button>
+          <button class="btn btn-secondary" type="submit">{% trans "Mark as checked" %}</button>
         </form>
         <form class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=foirequest.slug %}">
           {% csrf_token %}
-          <button class="btn btn-default" type="submit">{% trans "Mark as NOT FoI" %}</button>
+          <button class="btn btn-secondary" type="submit">{% trans "Mark as NOT FoI" %}</button>
         </form>
         <hr/>
       </div>
@@ -33,7 +33,7 @@
         <a href="{{ attachment.get_anchor_url }}">{% trans "View on Site" %}</a>
         <a href="{% url 'admin:foirequest_foiattachment_change' attachment.id %}">{% trans "View on Admin" %}</a>
         {% if attachment.file %}
-          <a href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a> {% if attachment.can_preview %} - <a class="target-new" href="{{ attachment.get_preview_url }}">{% blocktrans %}Preview in Browser{% endblocktrans %}</a>{% endif %}
+          <a href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a>
         {% else %}
           <div class="error">
     	     {% blocktrans %}No file present!{% endblocktrans %}
@@ -46,7 +46,7 @@
             {% else %}
     	        <p>{% blocktrans with name=attachment.belongs_to.request.user.get_full_name %}May only contain name {{ name }}.{% endblocktrans %}</p>
     	      {% endif %}
-    	      <button class="btn btn-default" type="submit">{% trans "Publish this attachment" %}</button>
+    	      <button class="btn btn-secondary" type="submit">{% trans "Publish this attachment" %}</button>
           </form>
         {% else %}
           <div class="error">

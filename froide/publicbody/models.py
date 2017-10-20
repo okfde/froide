@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import json
 from datetime import timedelta
 
@@ -23,7 +25,6 @@ from froide.helper.date_utils import (
     calculate_month_range_de
 )
 from froide.helper.templatetags.markup import markdown
-from froide.helper.form_generator import FormGenerator
 from froide.helper.csv_utils import export_csv
 
 
@@ -59,7 +60,7 @@ class Jurisdiction(models.Model):
             kwargs={'slug': self.slug})
 
     def get_absolute_domain_url(self):
-        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+        return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
 
 @python_2_unicode_compatible
@@ -88,7 +89,7 @@ class FoiLaw(models.Model):
                 ('month_de', _('Month(s) (DE)')),
             ))
     refusal_reasons = models.TextField(
-            _(u"Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
+            _("Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
             blank=True)
     mediator = models.ForeignKey('PublicBody', verbose_name=_("Mediator"),
             null=True, blank=True,
@@ -104,27 +105,13 @@ class FoiLaw(models.Model):
         verbose_name_plural = _("Freedom of Information Laws")
 
     def __str__(self):
-        return u"%s (%s)" % (self.name, self.jurisdiction)
+        return "%s (%s)" % (self.name, self.jurisdiction)
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
 
     def get_absolute_domain_url(self):
-        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
-
-    @property
-    def letter_start_form(self):
-        return mark_safe(FormGenerator(self.letter_start).render_html())
-
-    @property
-    def letter_end_form(self):
-        return mark_safe(FormGenerator(self.letter_end).render_html())
-
-    def get_letter_start_text(self, post):
-        return FormGenerator(self.letter_start, post).render()
-
-    def get_letter_end_text(self, post):
-        return FormGenerator(self.letter_end, post).render()
+        return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     @property
     def request_note_html(self):
@@ -162,16 +149,14 @@ class FoiLaw(models.Model):
         except FoiLaw.DoesNotExist:
             return None
 
-    def as_dict(self):
+    def as_data(self):
         return {
-            "pk": self.pk, "name": self.name,
+            "id": self.id, "name": self.name,
             "description_html": self.description_html,
             "request_note_html": self.request_note_html,
             "description": self.description,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
-            "letter_start_form": self.letter_start_form,
-            "letter_end_form": self.letter_end_form,
             "jurisdiction": self.jurisdiction.name,
             "jurisdiction_id": self.jurisdiction.id,
             "email_only": self.email_only
@@ -231,9 +216,10 @@ class TaggedPublicBody(ItemBase):
 
 class PublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
-        return super(PublicBodyManager, self).get_queryset()\
-                .exclude(email="")\
+        return (super(PublicBodyManager, self).get_queryset()
+                .exclude(email='')
                 .filter(email__isnull=False)
+        )
 
     def get_list(self):
         return self.get_queryset()\
@@ -305,12 +291,12 @@ class PublicBody(models.Model):
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
 
-    serializable_fields = ('name', 'slug', 'request_note_html',
+    serializable_fields = ('id', 'name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
             'address', 'domain')
 
     def __str__(self):
-        return u"%s (%s)" % (self.name, self.jurisdiction)
+        return "%s (%s)" % (self.name, self.jurisdiction)
 
     @property
     def created_by(self):
@@ -325,6 +311,10 @@ class PublicBody(models.Model):
         if self.url:
             return self.url.split("/")[2]
         return None
+
+    @property
+    def all_names(self):
+        return ' '.join((self.name, self.other_names))
 
     @property
     def request_note_html(self):
@@ -342,10 +332,10 @@ class PublicBody(models.Model):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
 
     def get_absolute_domain_url(self):
-        return u"%s%s" % (settings.SITE_URL, self.get_absolute_url())
+        return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_label(self):
-        return mark_safe('%(name)s - <a href="%(url)s" class="target-new info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
+        return mark_safe('%(name)s - <a href="%(url)s" target="_blank" class="info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
 
     def confirm(self):
         if self.confirmed:
@@ -358,13 +348,16 @@ class PublicBody(models.Model):
                 counter += 1
         return counter
 
-    def as_json(self):
+    def as_data(self):
         d = {}
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
-        d['laws'] = [self.default_law.as_dict()]
+        d['default_law'] = self.default_law.as_data()
         d['jurisdiction'] = self.jurisdiction.name
-        return json.dumps(d)
+        return d
+
+    def as_json(self):
+        return json.dumps(self.as_data())
 
     @property
     def children_count(self):

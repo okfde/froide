@@ -8,14 +8,14 @@
 
 {% block metadescription %}{% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a {{ classification }} in {{ juris }} on {{ site_name }}{% endblocktrans %}{% endblock %}
 
-{% block body %}
+{% block app_body %}
 <div itemscope itemtype="http://schema.org/Organization">
 
 <h2 itemprop="name">{{ object.name }}</h2>
 
 {% if object.email %}
 <p>
-  <a class="btn btn-primary" href="{% url 'foirequest-make_request' public_body=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
+  <a class="btn btn-primary" href="{% url 'foirequest-make_request' publicbody_slug=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
 </p>
 {% endif %}
 
@@ -36,7 +36,7 @@
       </dd>
       {% if object.url %}
         <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
-        <dd><a href="{{ object.url }}" class="target-new">{{ object.url|truncatechars:30 }}</a></dd>
+        <dd><a href="{{ object.url }}" target="_blank" rel="noopener">{{ object.url|truncatechars:30 }}</a></dd>
       {% endif %}
 
       {% if object.email %}
@@ -66,8 +66,8 @@
     </dl>
 
     {% if user.is_staff %}
-      <a class="btn btn-default" href="{% url 'admin:publicbody_publicbody_change' object.id %}">
-        <span class="glyphicon glyphicon-cog"></span>
+      <a class="btn btn-secondary" href="{% url 'admin:publicbody_publicbody_change' object.id %}">
+        <i class="fa fa-cog"></i>
         {% trans "View on Admin site" %}
       </a>
     {% endif %}
@@ -75,10 +75,10 @@
   <div class="col-lg-8 col-md-8">
     {% if object.request_note %}
       <div class="panel panel-info">
-        <div class="panel-heading">
-          <h3 class="panel-title">{% trans "Special note" %}</h3>
+        <div class="card-header">
+          <h3 class="card-title">{% trans "Special note" %}</h3>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           {{ object.request_note_html|safe }}
         </div>
       </div>
@@ -106,7 +106,7 @@
       <h3>
         {% blocktrans count count=foirequest_count %}One requests to this public body{% plural %}{{ count }} requests to this public body{% endblocktrans %}
       </h3>
-      <ul class="media-list">
+      <ul class="list-unstyled">
         {% for object in foirequests %}
           <li class="media">
             {% include "foirequest/snippets/request_item.html" %}
@@ -115,12 +115,12 @@
       </ul>
       <p>
         <a href="{% url 'foirequest-list_feed' public_body=object.slug %}">
-          <i class="rss-icon"></i>
+          <i class="fa fa-rss" aria-hidden="true"></i>
           {% trans "RSS Feed" %}
         </a>
         <br/>
         <a href="{% url 'foirequest-list_feed_atom' public_body=object.slug %}">
-          <i class="atom-icon"></i>
+          <i class="fa fa-rss-square" aria-hidden="true"></i>
           {% trans "Atom Feed" %}
         </a>
       </p>

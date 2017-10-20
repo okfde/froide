@@ -14,6 +14,5 @@ django-configurations==2.0
 django-storages==1.6.5
 dj-database-url==0.4.2
 django-cache-url==2.0.0
-django-compressor==2.2
 django-contrib-comments==1.8.0
 unicodecsv==0.14.1
