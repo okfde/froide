@@ -139,6 +139,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             user_email = 'peter.parker@example.com'
             self.selenium.find_element_by_name('user_email')\
                 .send_keys(user_email)
+            self.scrollTo('id_terms')
             self.selenium.find_element_by_name('terms').click()
             self.selenium.find_element_by_id('review-button').click()
             self.selenium.find_element_by_id('step-review')
@@ -189,6 +190,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             user_email = 'peter.parker@example.com'
             self.selenium.find_element_by_name('user_email')\
                 .send_keys(user_email)
+            self.scrollTo('id_terms')
             self.selenium.find_element_by_name('terms').click()
             self.selenium.find_element_by_name('public').click()
             self.selenium.find_element_by_name('private').click()
@@ -295,6 +297,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.find_element_by_name('last_name')\
                 .send_keys(user_last_name)
             self.selenium.find_element_by_name('user_email').send_keys(self.user.email)
+            self.scrollTo('id_terms')
             self.selenium.find_element_by_name('terms').click()
             self.selenium.find_element_by_name('public').click()
             self.selenium.find_element_by_name('private').click()
