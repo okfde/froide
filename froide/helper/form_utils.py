@@ -2,6 +2,11 @@ import json
 
 from django.db import models
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 
 class DjangoJSONEncoder(json.JSONEncoder):
     def default(self, obj):
