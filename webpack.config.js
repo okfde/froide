@@ -2,6 +2,7 @@ const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const LiveReloadPlugin = require('webpack-livereload-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const webpack = require('webpack')
 
 const extractSass = new ExtractTextPlugin({
@@ -115,14 +116,19 @@ const config = {
       minChunks: 2
       // (Modules must be shared between 3 entries)
     })
-  ].concat(process.env.NODE_ENV === 'production' ? new UglifyJsPlugin({
-    sourceMap: true,
-    uglifyOptions: {
-      ie8: true,
-      ecma: 8,
-      mangle: false
-    }
-  }) : [])
+  ].concat(process.env.NODE_ENV === 'production' ? [
+    new UglifyJsPlugin({
+      sourceMap: true,
+      uglifyOptions: {
+        ie8: true,
+        ecma: 8,
+        mangle: false
+      }
+    }),
+    new OptimizeCssAssetsPlugin({
+      assetNameRegExp: /\.css$/,
+      cssProcessorOptions: { discardComments: { removeAll: true } }
+    })] : [])
 }
 
 module.exports = config
