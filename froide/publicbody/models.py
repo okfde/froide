@@ -308,7 +308,7 @@ class PublicBody(models.Model):
 
     @property
     def domain(self):
-        if self.url:
+        if self.url and self.url.count('/') > 1:
             return self.url.split("/")[2]
         return None
 
