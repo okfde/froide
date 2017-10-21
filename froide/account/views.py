@@ -144,7 +144,7 @@ def login(request, base="account/base.html", context=None,
         context['signup_form'] = NewUserForm()
 
     if request.GET.get("simple") is not None:
-        base = "account/simple_base.html"
+        base = "simple_base.html"
         simple = True
         if request.GET.get('email'):
             initial = {'email': request.GET.get('email')}
