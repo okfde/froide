@@ -4,11 +4,9 @@ class FroideSearch {
   constructor (config) {
     this.config = config
   }
-
-  get (id) {
+  getJson (url) {
     return new Promise((resolve, reject) => {
       var request = new XMLHttpRequest()
-      let url = this.config.url.getPublicBody.replace(/\/0\//, `/${id}/`)
       request.open('GET', url, true)
       request.onload = function () {
         if (request.status >= 400) {
@@ -23,49 +21,34 @@ class FroideSearch {
       request.send()
     })
   }
-
-  autocomplete (term, filters) {
+  getJsonObjects (url) {
     return new Promise((resolve, reject) => {
-      var request = new XMLHttpRequest()
-      let query = encodeURIComponent(term)
-      let queryUrl = this.config.url.autocompletePublicBody + '?query=' + query
-      request.open('GET', queryUrl, true)
-      request.onload = function () {
-        let data = JSON.parse(request.responseText)
-        if (data.data) {
-          resolve(data.data)
-        } else {
-          reject(request.responseText)
-        }
-      }
-      request.onerror = function () {
-        reject(request.statusText)
-      }
-
-      request.send()
+      this.getJson(url)
+        .then((data) => resolve(data.objects))
+        .catch((e) => reject(e))
     })
+  }
+  getPublicBody (id) {
+    let url = this.config.url.getPublicBody.replace(/\/0\//, `/${id}/`)
+    return this.getJson(url)
+  }
+
+  autocompletePublicBody (term) {
+    let query = encodeURIComponent(term)
+    let url = this.config.url.autocompletePublicBody + '?query=' + query
+    return this.getJsonObjects(url)
+  }
+
+  searchPublicBody (term) {
+    let query = encodeURIComponent(term)
+    let url = this.config.url.searchPublicBody + '?q=' + query
+    return this.getJsonObjects(url)
   }
 
   searchFoiRequests (term) {
-    return new Promise((resolve, reject) => {
-      var request = new XMLHttpRequest()
-      let query = encodeURIComponent(term)
-      let queryUrl = this.config.url.searchRequests + '?q=' + query
-      request.open('GET', queryUrl, true)
-      request.onload = function () {
-        let data = JSON.parse(request.responseText)
-        if (data.objects) {
-          resolve(data.objects)
-        } else {
-          reject(request.responseText)
-        }
-      }
-      request.onerror = function () {
-        reject(request.statusText)
-      }
-
-      request.send()
-    })
+    let query = encodeURIComponent(term)
+    let url = this.config.url.searchRequests + '?q=' + query
+    return this.getJsonObjects(url)
   }
 }
 

@@ -1,14 +1,21 @@
 <template>
   <div>
-
     <fieldset v-if="publicbodyFormJson" class="active">
-      <slot name="publicbody-legend-title"></slot>
+      <div class="row">
+        <div class="col-lg-8">
+          <slot name="publicbody-legend-title"></slot>
 
-      <publicbody-chooser name="publicbody"
-        :defaultsearch="publicbodyDefaultSearch"
-        :scope="pbScope"
-        :form-json="publicbodyFormJson"
-        :config="config"></publicbody-chooser>
+          <publicbody-chooser name="publicbody"
+            :defaultsearch="publicbodyDefaultSearch"
+            :scope="pbScope"
+            :form-json="publicbodyFormJson"
+            :config="config">
+          </publicbody-chooser>
+        </div>
+        <div class="col-lg-4">
+          <slot name="publicbody-missing"></slot>
+        </div>
+      </div>
     </fieldset>
 
     <fieldset v-if="reviewReady" id="write-request">

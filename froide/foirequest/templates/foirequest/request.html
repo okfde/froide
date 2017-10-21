@@ -14,7 +14,7 @@
 
 {% block app_body %}
 <div class="row justify-content-lg-center">
-  <div class="col-lg-8">
+  <div class="col-lg-12">
     <form method="post" action="" id="make-request" novalidate>
 
     {% csrf_token %}
@@ -73,6 +73,8 @@
         <legend slot="publicbody-legend-title">
           {% blocktrans %}Choose a public body{% endblocktrans %}
         </legend>
+
+        <div slot="publicbody-missing"></div>
 
         <legend slot="request-legend-title">
           {% blocktrans %}Write the request{% endblocktrans %}

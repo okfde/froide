@@ -5,7 +5,8 @@ from django.conf.urls import url
 from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404
 
-from haystack.query import SearchQuerySet
+from haystack.query import SearchQuerySet, SQ
+from haystack.inputs import AutoQuery
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator as TastyPaginator
 from tastypie import fields, utils
@@ -134,7 +135,7 @@ class PublicBodyResource(ModelResource):
     def get_autocomplete(self, request, **kwargs):
         self.method_check(request, allowed=['get'])
 
-        query = request.GET.get('query', '')
+        query = request.GET.get('q', '')
         short_query = ' '.join([q[:AUTOCOMPLETE_MAX_CHAR] for q in query.split()
                                 if len(q) >= AUTOCOMPLETE_MIN_CHAR])
         sqs = []
@@ -167,7 +168,7 @@ class PublicBodyResource(ModelResource):
         response = {
             "query": query,
             "suggestions": names,
-            "data": data
+            "objects": data
         }
 
         return self.create_response(request, response)
@@ -191,8 +192,13 @@ class PublicBodyResource(ModelResource):
 
         query = request.GET.get('q', '')
 
-        sqs = SearchQuerySet().models(PublicBody).load_all().auto_query(query)
-        paginator = Paginator(sqs, 20)
+        sqs = SearchQuerySet().models(PublicBody).load_all()
+        sqs = sqs.filter(
+            SQ(name_auto=AutoQuery(query)) |
+            SQ(text=AutoQuery(query)) |
+            SQ(jurisdiction=AutoQuery(query))
+        )
+        paginator = Paginator(sqs, 50)
 
         try:
             page = paginator.page(int(request.GET.get('page', 1)))
@@ -209,6 +215,7 @@ class PublicBodyResource(ModelResource):
             objects.append(bundle)
 
         object_list = {
+            "query": query,
             'objects': objects,
         }
 

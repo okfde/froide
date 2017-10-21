@@ -29,6 +29,9 @@
         <label>
           <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" v-model="value"/>
           {{ result.name }}
+          <small>
+            {{ result.jurisdiction.name }}
+          </small>
         </label>
       </li>
       <li v-if="emptyResults" class="search-result">
@@ -172,7 +175,7 @@ export default {
       }
       this.searching = true
       this.lastSearch = this.search
-      this.pbSearch.autocomplete(this.search).then((results) => {
+      this.pbSearch.searchPublicBody(this.search).then((results) => {
         this.searching = false
         this.emptyResults = results.length === 0
         results = results.filter((r) => r.id !== this.value)
@@ -186,7 +189,7 @@ export default {
       if (this.getPublicBodyDetailsByScope(this.scope, pb.id) !== undefined) {
         return
       }
-      this.pbSearch.get(pb.id).then((result) => {
+      this.pbSearch.getPublicBody(pb.id).then((result) => {
         this.setPublicbodyDetail({
           publicbody: result,
           scope: this.scope
@@ -214,7 +217,6 @@ export default {
 
 <style scoped>
   .search-results {
-      max-height: 12em;
       overflow-y: auto;
       outline: 1px solid #aaa;
   }
