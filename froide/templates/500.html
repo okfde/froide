@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block body %}
+{% block app_body %}
 <h2>{% blocktrans %}500 - Server Error{% endblocktrans %}</h2>
 {% if request.sentry.id %}
 <p>{% blocktrans with ref=request.sentry.id %}If you need assistance, you may reference this error as <strong>{{ ref }}</strong>.{% endblocktrans %}</p>

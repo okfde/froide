@@ -24,6 +24,9 @@
   {% block body_wrapper %}
   <main>
     {% block body %}
+      <div class="container">
+        {% block app_body %}{% endblock %}
+      </div>
     {% endblock %}
   </main>
   {% endblock %}
