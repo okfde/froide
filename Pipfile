@@ -21,6 +21,9 @@ requests = "==2.18.4"
 "django-contrib-comments" = "==1.8.0"
 unicodecsv = "==0.14.1"
 celery = "==4.1.0"
+"pypdf2" = "*"
+reportlab = "*"
+wand = "*"
 
 [dev-packages]
 

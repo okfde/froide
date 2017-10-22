@@ -13,7 +13,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext_lazy as _
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.sitemaps import Sitemap
@@ -27,7 +27,7 @@ from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
-from froide.redaction.utils import convert_to_pdf
+from froide.redaction.utils import redact_file
 
 from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
@@ -874,8 +874,10 @@ def redact_attachment(request, slug, attachment_id):
 
     if already is not None and not already.can_approve and not request.user.is_staff:
         return render_403(request)
+
     if request.method == 'POST':
-        path = convert_to_pdf(request.POST)
+        instructions = json.loads(request.body)
+        path = redact_file(attachment.file.file, instructions)
         if path is None:
             return render_400(request)
         name = attachment.name.rsplit('.', 1)[0]
@@ -900,7 +902,7 @@ def redact_attachment(request, slug, attachment_id):
             attachment.can_approve = False
             attachment.approved = False
             attachment.save()
-        return redirect(att.get_anchor_url())
+        return JsonResponse({'url': att.get_anchor_url()})
     return render(request, 'foirequest/redact.html', {
         'foirequest': foirequest,
         'attachment': attachment

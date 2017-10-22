@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load static %}
 
+{% load block_helper %}
+
 {% block title %}{% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}{% endblock %}
 
 
@@ -14,16 +16,14 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row mb-3 mt-3">
 
 {% block redaction_removal_explanation %}
   <div class="col-lg-6">
     <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">
-          {% trans "What you need to redact" %}
-        </h3>
-      </div>
+      <h5 class="card-header">
+        {% trans "What you need to redact" %}
+      </h5>
       <div class="card-body">
         <ul>
           <li>
@@ -54,13 +54,10 @@
 {% block redaction_removal_intro %}
   <div class="col-lg-6">
     <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{% trans "How to redact" %}</h3>
-      </div>
+      <h5 class="card-header">{% trans "How to redact" %}</h5>
       <div class="card-body">
-        <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Draw a rectangle over the area by clicking the mouse and dragging it. Be sure to also black out the email address of {{ name }} if it is visible.{% endblocktrans %}</p>
+        <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Redact text by selecting it. You can also draw rectangles by clicking the mouse and dragging it. {% endblocktrans %}</p>
         <p>{% blocktrans %}The original version of the document will still be available to you (but not to the public). If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}</p>
-        <p>{% blocktrans %}Note: in order to redact documents an up-to-date version of a modern browser is required. Using Internet Explorer will likely not work.{% endblocktrans %}</p>
       </div>
     </div>
   </div>
@@ -74,92 +71,45 @@
       {% csrf_token %}
     </form>
     <div class="card">
-      <div class="card-body">
-        <div id="pdf-viewer">
-          <div class="row">
-            <div class="btn-toolbar pdf-controls col-lg-12">
-              <div class="btn-group">
-                <button class="pdf-prev btn">&laquo; {% trans "Previous Page" %}</button>
-                <button class="pdf-next btn">{% trans "Next Page" %} &raquo;</button>
-              </div>
-              <div class="btn-group">
-                <button class="btn btn-secondary" disabled="disabled">
-                  {% trans "Page" %}
-                  <span class="pdf-current"></span>
-                  {% trans "of" %}
-                  <span class="pdf-total"></span>
-                </button>
-              </div>
-              <div class="btn-group">
-                <button class="btn btn-primary" id="submit-form" data-loading-text="Redacting...">
-                  {% trans "Save and publish blacked out version" %}
-                </button>
-              </div>
-              <div class="btn-group">
-                <a class="btn btn-secondary" href="{% url "foirequest-redact_attachment" slug=foirequest.slug attachment_id=attachment.id %}">{% trans "Reset" %}</a>
-                <a class="btn btn-secondary" href="{{ attachment.get_anchor_url }}">{% trans "Cancel" %}</a>
-              </div>
-            </div>
-          </div>
-          <div class="row top-buffer">
-            <div class="col-lg-12">
-              <div class="pdf-canvas-container" style="display:none">
-                <canvas class="pdf-canvas"></canvas>
-              </div>
-              <div id="redaction-progress">
-                <p class="redacting" style="display:none">{% trans "Redaction process started, please wait..." %}</p>
-                <p class="loading">{% trans "Loading PDF..." %}</p>
-                <div class="progress progress-striped active">
-                  <div id="redaction-progressbar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                    <span class="sr-only">0% complete</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="card-body" id="redact">
+        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex="[\w\.]+@fragdenstaat.de|Herr {{ foirequest.user.get_full_name }}|Frau {{ foirequest.user.get_full_name }}|{{ foirequest.user.get_full_name }}|{{ foirequest.user.last_name }}|{{ foirequest.user.first_name }}|{{ foirequest.user.address }}" :config="config"></redaction>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
-{% block extra_footer %}
+{% block scripts %}
+  {{ block.super }}
+  <script>
+    var Froide = window.Froide || {}
+    Froide.resources = Froide.resources || {}
+    Froide.resources.pdfjsWorker = '{% static "js/pdf.worker.min.js" %}'
+    Froide.config = Froide.config || {}
+    Froide.config.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-<script type="text/javascript" src="{% static "js/libs/pdfviewer/pdf.js" %}"></script>
-<script type="text/javascript" src="{% static "js/libs/pdfviewer/compatibility.js" %}"></script>
-<script type="text/javascript" src="{% static "js/libs/pdfviewer/pdfviewer.js" %}"></script>
-<script type="text/javascript" src="{% static "js/libs/pdfviewer/redact.js" %}"></script>
+    Froide.i18n = Froide.i18n || {}
+    Froide.i18n = Object.assign(Froide.i18n, {
+      previousPage: '{% trans "Previous Page" %}',
+      nextPage: '{% trans "Next Page" %}',
+      pageCurrentOfTotal: function (obj) {
+        return '{% blocktrans with current="$current" total="$total" %}{{ current }} of {{ total }}{% endblocktrans %}'.replace(/\$current/, obj.current).replace(/\$total/, obj.total)
+      },
+      saveAndPublish: '{% trans "Save and publish" %}',
+      toggleText: '{% trans "Text only" %}',
+      cancel: '{% trans "Cancel" %}',
+      loadingPdf: '{% trans "Loading PDF..." %}',
+      redacting: '{% trans "Redaction process started, please wait..." %}'
+    })
+  </script>
+  {% addtoblock "js" %}
+    <script src="{% static 'js/redact.js' %}" charset="utf-8"></script>
+  {% endaddtoblock %}
+  {% addtoblock "js" %}
+    <script>
+      window.Froide.components.redact.createRedaction('#redact',
+        '{{ attachment.get_absolute_url|escapejs }}', window.Froide)
+    </script>
+  {% endaddtoblock %}
 
-<script type="text/javascript">
-  PDFJS.workerSrc = "{% static "js/libs/pdfviewer/pdf.worker.js" %}";
-</script>
-<script>
-  (function(){
-    var pdfViewer = new SimplePDFViewer(
-      'pdf-viewer',
-      '{{ attachment.get_absolute_url }}'
-    );
-    pdfViewer.init(function(){
-      pdfViewer.renderPage(1, function(){
-        $('#redaction-progress').hide()
-        $('#redaction-progress .loading').hide();
-        $('#pdf-viewer .pdf-canvas-container').show();
-        var pdfRedact = new PDFRedact(pdfViewer, $('#redaction-progressbar'));
-        pdfRedact.setup();
-        $('#submit-form').click(function(e){
-          e.preventDefault();
-          $('#submit-form').prop('disabled', true);
-          $('#pdf-viewer .pdf-canvas-container').hide();
-          pdfRedact.updateProgress(0);
-          $('#redaction-progress').show();
-          $('#redaction-progress .redacting').show();
-          pdfRedact.submitRedactions(
-            $('#redaction-form')
-          );
-        });
-      });
-    });
-  }());
-</script>
 {% endblock %}
