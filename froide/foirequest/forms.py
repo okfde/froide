@@ -415,9 +415,9 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         return date
 
     def clean_files(self):
-        if 'files' not in self.files:
+        if '%s-files' % self.prefix not in self.files:
             return self.cleaned_data['files']
-        files = self.files.getlist('files')
+        files = self.files.getlist('%s-files' % self.prefix)
         names = set()
         for file in files:
             validate_upload_document(file)
@@ -431,8 +431,8 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     def clean(self):
         cleaned_data = self.cleaned_data
         text = cleaned_data.get("text")
-        if 'files' in self.files:
-            files = self.files.getlist('files')
+        if '%s-files' % self.prefix in self.files:
+            files = self.files.getlist('%s-files' % self.prefix)
         else:
             files = None
         if not (text or files):

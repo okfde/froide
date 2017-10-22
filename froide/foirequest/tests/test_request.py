@@ -593,6 +593,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         post['reply-date'] = "2011-01-02"
         post['reply-publicbody'] = str(pb.pk)
+        post['reply-text'] = ''
         with open(factories.TEST_PDF_PATH, "rb") as f:
             post['reply-files'] = f
             response = self.client.post(reverse("foirequest-add_postal_reply",
