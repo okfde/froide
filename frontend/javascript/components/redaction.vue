@@ -40,6 +40,7 @@
     </div>
     <div class="row mt-3">
       <div class="col-lg-12">
+        <div v-if="errors" class="alert alert-warning">{{ errors }}</div>
         <div :id="containerId" class="redactContainer">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
           <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer"></canvas>
@@ -87,7 +88,8 @@ export default {
       rectanglesPerPage: {},
       startDrag: null,
       endDrag: null,
-      initialAutoRedact: {}
+      initialAutoRedact: {},
+      errors: null
     }
   },
   created () {
@@ -233,11 +235,14 @@ export default {
           return this.sendSerializedPages(serialized).then((res) => {
             if (res.url) {
               document.location.href = res.url
+            } else {
+              this.errors = res
             }
           }).catch((err) => {
             console.error(err)
             this.ready = true
             this.redacting = false
+            this.errors = err
           })
         })
     },
