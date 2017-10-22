@@ -85,6 +85,8 @@
     var Froide = window.Froide || {}
     Froide.resources = Froide.resources || {}
     Froide.resources.pdfjsWorker = '{% static "js/pdf.worker.min.js" %}'
+    Froide.config = Froide.config || {}
+    Froide.config.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
     Froide.i18n = Froide.i18n || {}
     Froide.i18n = Object.assign(Froide.i18n, {

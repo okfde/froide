@@ -1,28 +1,28 @@
 <template>
   <div id="pdf-viewer">
     <div class="row toolbar">
-      <div v-if="!loading" class="btn-toolbar col-lg-12">
+      <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group mr-2">
-          <button class="btn" @click="undo" :disabled="!canUndo">
+          <button class="btn btn-light" @click="undo" :disabled="!canUndo">
             <i class="fa fa-undo"></i>
           </button>
-          <button class="btn" @click="redo" :disabled="!canRedo">
+          <button class="btn btn-light" @click="redo" :disabled="!canRedo">
             <i class="fa fa-repeat"></i>
           </button>
         </div>
         <div class="btn-group mr-2">
-          <button class="pdf-prev btn" @click="goPrevious" :disabled="!hasPrevious">
+          <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
             &laquo; {{ i18n.previousPage}}
           </button>
           <span class="input-group-addon">
             {{ pageOfTotal }}
           </span>
-          <button class="pdf-next btn" @click="goNext" :disabled="!hasNext">
+          <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
             {{ i18n.nextPage }} &raquo;
           </button>
         </div>
         <div class="btn-group mr-2">
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" @click="redact">
             {{ i18n.saveAndPublish }}
           </button>
         </div>
@@ -40,10 +40,10 @@
     </div>
     <div class="row mt-3">
       <div class="col-lg-12">
-        <div v-if="ready" :id="containerId" class="redactContainer">
+        <div :id="containerId" class="redactContainer">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
           <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer"></canvas>
-          <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly }" @mousedown="mouseDown" @mouseup="mouseUp"></div>
+          <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly }" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></div>
         </div>
         <div class="redaction-progress">
           <p v-if="loading">
@@ -71,6 +71,7 @@ export default {
     return {
       doc: null,
       currentPage: null,
+      page: null,
       numPages: null,
       containerId: 'container-' + String(Math.random()).substr(2),
       canvasId: 'canvas-' + String(Math.random()).substr(2),
@@ -85,6 +86,7 @@ export default {
       actionIndexPerPage: {},
       rectanglesPerPage: {},
       startDrag: null,
+      endDrag: null,
       initialAutoRedact: {}
     }
   },
@@ -94,9 +96,6 @@ export default {
     this.loadDocument().then(() => this.loadPage(1))
   },
   computed: {
-    page () {
-      return this.currentPage
-    },
     i18n () {
       return this.config.i18n
     },
@@ -163,7 +162,9 @@ export default {
     loadPage (pageNum) {
       return this.doc.getPage(pageNum).then((page) => {
         console.log('# Page ' + pageNum)
+        this.page = page
         var viewport = page.getViewport(this.scaleFactor)
+        this.viewport = viewport
         console.log('Size: ' + viewport.width + 'x' + viewport.height)
         console.log()
         var canvas = this.canvas
@@ -176,11 +177,11 @@ export default {
         this.textLayer.style.width = Math.floor(viewport.width) + 'px'
         this.textLayer.style.height = Math.floor(viewport.height) + 'px'
         var ctx = canvas.getContext('2d')
-        var renderTask = page.render({
+        page.render({
           canvasContext: ctx,
           viewport: viewport
         })
-        page.getTextContent().then((content) => {
+        return page.getTextContent().then((content) => {
           // Content contains lots of information about the text layout and
           // styles, but we need only strings at the moment
           // remove all text layer elements
@@ -196,7 +197,6 @@ export default {
           })
           return task.promise.then(this.textAvailable)
         })
-        return renderTask.promise
       })
     },
     goNext () {
@@ -211,15 +211,77 @@ export default {
     },
     setCurrentPage (pageNum) {
       this.currentPage = pageNum
-      this.loadPage(pageNum)
+      return this.loadPage(pageNum)
     },
     toggleText () {
       this.textOnly = !this.textOnly
     },
+    redact () {
+      this.ready = false
+      this.redacting = true
+      let pages = [...Array(this.numPages + 1).keys()].slice(1)
+      let serialized = []
+      return pages.reduce((sequence, pageNumber) => {
+        return sequence.then(() => {
+          return this.setCurrentPage(pageNumber).then(() => {
+            serialized.push(this.serializePage(pageNumber))
+          })
+        })
+      }, Promise.resolve())
+        .then(() => {
+          console.log(serialized)
+          return this.sendSerializedPages(serialized).then((res) => {
+            if (res.url) {
+              document.location.href = res.url
+            }
+          }).catch((err) => {
+            console.error(err)
+            this.ready = true
+            this.redacting = false
+          })
+        })
+    },
+    sendSerializedPages (serialized) {
+      return new Promise((resolve, reject) => {
+        var xhr = new window.XMLHttpRequest()
+        xhr.open('POST', '')
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.setRequestHeader('X-CSRFToken', this.config.config.csrfToken)
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            return resolve(JSON.parse(xhr.responseText))
+          }
+        }
+        xhr.send(JSON.stringify(serialized))
+      })
+    },
+    serializePage (pageNumber) {
+      let divs = this.textLayer.children
+      let texts = Array.prototype.map.call(divs, d => {
+        let [dx, dy] = this.getDivPos(d)
+        let dw = d.offsetWidth
+        let dh = d.offsetHeight
+        return {
+          pos: [dx, dy, dw, dh],
+          fontFamily: d.style.fontFamily,
+          fontSize: d.style.fontSize,
+          transform: d.style.transform,
+          text: d.textContent
+        }
+      })
+      return {
+        width: this.viewport.width,
+        height: this.viewport.height,
+        scaleFactor: this.scaleFactor,
+        pageNumber: pageNumber,
+        rects: this.rectanglesPerPage[pageNumber],
+        texts
+      }
+    },
     getOffset (e) {
       let offset = [
-        (e.offsetX || e.originalEvent.layerX),
-        (e.offsetY || e.originalEvent.layerY)
+        (e.offsetX || (e.originalEvent && e.originalEvent.layerX)),
+        (e.offsetY || (e.originalEvent && e.originalEvent.layerY))
       ]
       if (e.target !== this.textLayer) {
         let x = parseInt(e.target.style.left.replace('px', ''))
@@ -229,6 +291,17 @@ export default {
       }
       return offset
     },
+    mouseMove (e) {
+      if (this.startDrag === null) {
+        return
+      }
+      let selection = window.getSelection()
+      if (!selection.isCollapsed) {
+        return
+      }
+      this.endDrag = this.getOffset(e)
+      this.drawRectangles()
+    },
     mouseDown (e) {
       this.startDrag = this.getOffset(e)
     },
@@ -237,30 +310,22 @@ export default {
 
       if (selection !== undefined && !selection.isCollapsed) {
         console.log(selection)
+        this.startDrag = null
         return this.handleSelection(selection)
+      }
+
+      if (this.startDrag === null) {
+        return
       }
 
       let endDrag = this.getOffset(e)
       if (Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
           Math.abs(endDrag[1] - this.startDrag[1]) < 3) {
         console.log('Cancel empty select')
+        this.startDrag = null
         return
       }
-      let x, y, w, h
-      if (this.startDrag[0] < endDrag[0]) {
-        x = this.startDrag[0]
-        w = endDrag[0] - x
-      } else {
-        x = endDrag[0]
-        w = this.startDrag[0] - x
-      }
-      if (this.startDrag[1] < endDrag[1]) {
-        y = this.startDrag[1]
-        h = endDrag[1] - y
-      } else {
-        y = endDrag[1]
-        h = this.startDrag[1] - y
-      }
+      let [x, y, w, h] = this.getRect(this.startDrag, endDrag)
 
       // find overlapping text and remove it completely
       let divs = this.textLayer.children
@@ -283,6 +348,24 @@ export default {
         texts
       })
       this.startDrag = null
+    },
+    getRect (start, end) {
+      let x, y, w, h
+      if (start[0] < end[0]) {
+        x = start[0]
+        w = end[0] - x
+      } else {
+        x = end[0]
+        w = start[0] - x
+      }
+      if (start[1] < end[1]) {
+        y = start[1]
+        h = end[1] - y
+      } else {
+        y = end[1]
+        h = start[1] - y
+      }
+      return [x, y, w, h]
     },
     handleSelection (selection) {
       function getNextNode (node) {
@@ -383,7 +466,12 @@ export default {
     drawRectangles () {
       let ctx = this.redactCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      this.rectanglesPerPage[this.currentPage].forEach(r => this.drawRectangle(ctx, r))
+      this.rectanglesPerPage[this.currentPage].forEach(r => {
+        this.drawRectangle(ctx, r)
+      })
+      if (this.startDrag && this.endDrag) {
+        this.drawRectangle(ctx, this.getRect(this.startDrag, this.endDrag))
+      }
     },
     applyActionsOnPageLoad () {
       if (this.rectanglesPerPage[this.currentPage] === undefined) {
