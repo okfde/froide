@@ -1304,8 +1304,8 @@ class RequestTest(TestCase):
         self.assertIn('publicbody', response.context['publicbody_form'].errors)
         self.assertEqual(len(response.context['publicbody_form'].errors), 1)
 
-    @patch('froide.foirequest.views.convert_to_pdf',
-           lambda x: factories.TEST_PDF_PATH)
+    @patch('froide.foirequest.views.redact_file',
+           lambda x, y: factories.TEST_PDF_PATH)
     def test_redact_attachment(self):
         foirequest = FoiRequest.objects.all()[0]
         message = foirequest.messages[0]
@@ -1331,8 +1331,8 @@ class RequestTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.post(url, {})
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(url, '[]', content_type='application/json')
+        self.assertEqual(response.status_code, 200)
 
         old_att = FoiAttachment.objects.get(id=att.id)
         self.assertFalse(old_att.can_approve)
