@@ -26,6 +26,9 @@
           <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
+          <a class="btn btn-sm btn-dark mr-3" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+            {% trans "Redact" %}
+          </a>
         {% else %}
           {% if attachment.converted %}
             <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
