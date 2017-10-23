@@ -371,7 +371,8 @@ class Base(Configuration):
         currency="Euro",
         default_law=1,
         search_engine_query="http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images",
-        greetings=[rec(r"Dear (?:Mr\.?|Ms\.? .*?)")],
+        greetings=[rec(r"Dear (?:Mr\.?|Mr?s\.? .*?)")],
+        redact_salutation=r"(?:Mr\.?|Mr?s\.?)",
         custom_replacements=[],
         closings=[rec(r"Sincerely yours,?")],
         public_body_boosts={},
@@ -569,6 +570,7 @@ class German(object):
                 "Bund": 1.5
             },
             'greetings': [rec(r"Sehr geehrt(er? (?:Herr|Frau)(?: ?Dr\.?)?(?: ?Prof\.?)? .*)")],
+            'redact_salutation': r"(?:er?\s+)?(?:Herr|Frau)",
             'closings': [rec(r"Mit freundlichen Gr\xfc\xdfen,?"), rec(r"Mit den besten Grüßen,?")]
         })
         return german_config

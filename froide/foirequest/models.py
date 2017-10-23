@@ -442,6 +442,25 @@ class FoiRequest(models.Model):
             return self.get_auth_link()
         return self.get_absolute_domain_short_url()
 
+    def get_redaction_regexes(self):
+        user = self.user
+        foimail_domain = settings.FOI_EMAIL_DOMAIN
+        if not isinstance(foimail_domain, (list, tuple)):
+            foimail_domain = [foimail_domain]
+        email_regexes = [r'[\w\.]@' + x for x in foimail_domain]
+        FROIDE_CONFIG = settings.FROIDE_CONFIG
+        user_regexes = []
+        if user.private:
+            user_regexes = [
+                '%s %s' % (FROIDE_CONFIG['redact_salutation'], user.get_full_name()),
+                '%s %s' % (FROIDE_CONFIG['redact_salutation'], user.last_name),
+                user.get_full_name(),
+                user.last_name,
+                user.first_name
+            ]
+        return json.dumps(email_regexes + user_regexes +
+                          user.address.splitlines())
+
     def get_description(self):
         return redact_content(self.description)
 

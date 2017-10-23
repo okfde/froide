@@ -46,6 +46,9 @@
           <li>{% trans "Please remove hand-written signatures." %}</li>
           {% endblock %}
         </ul>
+        <p>
+          {% blocktrans %}The original version of the document will still be available to you (but not to the public).{% endblocktrans %}
+        </p>
       </div>
     </div>
   </div>
@@ -57,7 +60,9 @@
       <h5 class="card-header">{% trans "How to redact" %}</h5>
       <div class="card-body">
         <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Redact text by selecting it. You can also draw rectangles by clicking the mouse and dragging it. {% endblocktrans %}</p>
-        <p>{% blocktrans %}The original version of the document will still be available to you (but not to the public). If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}</p>
+        <p>
+          {% trans "Check the text only view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator." %}
+        </p>
       </div>
     </div>
   </div>
@@ -72,7 +77,7 @@
     </form>
     <div class="card">
       <div class="card-body" id="redact">
-        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex="[\w\.]+@fragdenstaat.de|Herr {{ foirequest.user.get_full_name }}|Frau {{ foirequest.user.get_full_name }}|{{ foirequest.user.get_full_name }}|{{ foirequest.user.last_name }}|{{ foirequest.user.first_name }}|{{ foirequest.user.address }}" :config="config"></redaction>
+        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex-json="{{ foirequest.get_redaction_regexes }}" :config="config"></redaction>
       </div>
     </div>
   </div>
@@ -99,7 +104,8 @@
       toggleText: '{% trans "Text only" %}',
       cancel: '{% trans "Cancel" %}',
       loadingPdf: '{% trans "Loading PDF..." %}',
-      redacting: '{% trans "Redaction process started, please wait..." %}'
+      redacting: '{% trans "Redaction process started, please wait..." %}',
+      autoRedacted: '{% trans "We automatically redacted some text for you already. Please check if we got everything." %}'
     })
   </script>
   {% addtoblock "js" %}

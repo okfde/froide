@@ -1,5 +1,10 @@
 <template>
   <div id="pdf-viewer">
+    <div v-if="message" class="row">
+      <div class="col-lg-12">
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+      </div>
+    </div>
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group mr-2">
@@ -67,7 +72,7 @@ const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 export default {
   name: 'redaction',
-  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegex'],
+  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegexJson'],
   data () {
     return {
       doc: null,
@@ -89,7 +94,8 @@ export default {
       startDrag: null,
       endDrag: null,
       initialAutoRedact: {},
-      errors: null
+      errors: null,
+      message: null
     }
   },
   created () {
@@ -124,13 +130,10 @@ export default {
       return ''
     },
     regexList () {
-      let list = []
-      let splits = this.redactRegex.split('|')
-      splits.forEach(r => {
-        let lines = r.match(/[^\r\n]+/g)
-        list = [...list, ...lines.map(r => new RegExp(r, 'gi'))]
+      return JSON.parse(this.redactRegexJson).map(r => {
+        r = r.replace(/ /g, '\\s+')
+        return new RegExp(r, 'gi')
       })
-      return list
     },
     container () {
       return document.getElementById(this.containerId)
@@ -569,6 +572,9 @@ export default {
           this.addAction(action)
         }
       })
+      if (matches.length > 0) {
+        this.message = this.i18n.autoRedacted
+      }
     },
     getDivPos (div) {
       return [
