@@ -447,7 +447,7 @@ class FoiRequest(models.Model):
         foimail_domain = settings.FOI_EMAIL_DOMAIN
         if not isinstance(foimail_domain, (list, tuple)):
             foimail_domain = [foimail_domain]
-        email_regexes = [r'[\w\.]@' + x for x in foimail_domain]
+        email_regexes = [r'[\w\.\-]+@' + x for x in foimail_domain]
         FROIDE_CONFIG = settings.FROIDE_CONFIG
         user_regexes = []
         if user.private:
