@@ -876,7 +876,8 @@ def redact_attachment(request, slug, attachment_id):
         return render_403(request)
 
     if request.method == 'POST':
-        instructions = json.loads(request.body)
+        # Python 2.7/3.5 requires str for json.loads
+        instructions = json.loads(request.body.decode('utf-8'))
         path = redact_file(attachment.file.file, instructions)
         if path is None:
             return render_400(request)
