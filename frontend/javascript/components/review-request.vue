@@ -20,8 +20,11 @@
             <dd v-if="publicbodies.length > 1">
               {{ publicbodies.length }} {{ i18n.reviewPublicbodies }}
             </dd>
-            <dd v-else>
+            <dd v-else-if="publicbody">
               {{ publicbody.name }}
+            </dd>
+            <dd v-else>
+              -
             </dd>
             <dt>{{ i18n.subject }}</dt>
             <dd>
