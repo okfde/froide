@@ -73,7 +73,7 @@
 {% block foirequest_header %}{% endblock %}
 
 <div class="row">
-  <div class="lg-12">
+  <div class="col-12">
     <h2 class="mb-5 mt-3">{{ object.title }}</h2>
   </div>
 </div>
@@ -681,20 +681,24 @@
 <hr class="page-break"/>
 
 <div class="row" id="correspondence">
-
-  <div id="message-nav-container" class="order-2 col-md-3 d-print-none">
+  <div class="col-12">
+    <h4 id="messages">
+      {% blocktrans %}Messages in this request{% endblocktrans %}
+    </h4>
+  </div>
+  <div id="message-nav-container" class="order-md-2 col-md-3 d-print-none">
     {% if object.messages %}
       <ul class="message-nav nav flex-column">
       {% for message in object.messages %}
         {% ifchanged message.sender %}
-          <li class="nav-item nav-header">
+          <li class="nav-item nav-header text-truncate">
             {% if message.sender_public_body %}
               <span title="{{ message.sender_public_body.name }}">
-                {{ message.sender_public_body.name|truncatechars:20 }}
+                {{ message.sender_public_body.name }}
               </span>
             {% else %}
               <span title="{{ message.sender }}">
-                {{ message.sender|truncatechars:20 }}
+                {{ message.sender }}
               </span>
             {% endif %}
           </li>
@@ -709,11 +713,7 @@
     {% endif %}
   </div>
 
-  <div class="col-md-9 order-1">
-    <h4 id="messages">
-      {% blocktrans %}Messages in this request{% endblocktrans %}
-    </h4>
-
+  <div class="col-md-9 order-md-1">
     {% for message in object.messages %}
       {% include "foirequest/snippets/message.html" %}
       {% if not forloop.last %}
