@@ -3,8 +3,15 @@ import tempfile
 import subprocess
 import logging
 
+try:
+    TimeoutExpired = subprocess.TimeoutExpired
+    HAS_TIMEOUT = True
+except AttributeError:
+    TimeoutExpired = Exception
+    HAS_TIMEOUT = False
 
-def convert_to_pdf(filepath, binary_name=None, construct_call=None):
+
+def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
     if binary_name is None and construct_call is None:
         return
     outpath = tempfile.mkdtemp()
@@ -29,15 +36,27 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None):
 
     logging.info("Running: %s", ' '.join(arguments))
     logging.info("Env: %s", env)
+    try:
+        p = subprocess.Popen(
+            arguments,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env
+        )
 
-    p = subprocess.Popen(
-        arguments,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        env=env
-    )
-    out, err = p.communicate()
-    p.wait()
+        kwargs = {}
+        if HAS_TIMEOUT:
+            kwargs['timeout'] = timeout
+
+        out, err = p.communicate(**kwargs)
+        p.wait()
+    except TimeoutExpired:
+        p.kill()
+        out, err = p.communicate()
+    finally:
+        if p.returncode is None:
+            p.kill()
+            out, err = p.communicate()
     if p.returncode == 0:
         if os.path.exists(output_file):
             return output_file
