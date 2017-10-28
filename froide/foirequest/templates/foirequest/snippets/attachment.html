@@ -1,46 +1,50 @@
 {% load i18n %}
 
 <div class="attachment-card {% if not attachment.can_approve %}list-group-item-dark{% elif not attachment.approved %}list-group-item-secondary{% endif %}">
-  <div class="attachment-body">
-    {% include "foirequest/snippets/attachment_item.html" %}
-    {% if not attachment.approved %}
-      {% if attachment.can_approve %}
+  <div class="attachment-body row">
+    <div class="col-lg-7 mb-2 ">
+      {% include "foirequest/snippets/attachment_item.html" %}
+      {% if not attachment.approved %}
+        {% if attachment.can_approve %}
+          <span class="badge badge-warning">
+            {% blocktrans %}Not public!{% endblocktrans %}
+          </span>
+        </div>
+        <div class="col-lg-5 text-right">
+          <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified form-inline pull-right d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+            {% csrf_token %}
 
-        <span class="badge badge-warning">
-          {% blocktrans %}Not public!{% endblocktrans %}
-        </span>
+            <button class="btn btn-sm btn-success" type="submit">
+              {% trans "Publish" %}
+            </button>
 
-        <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified form-inline pull-right d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
-          {% csrf_token %}
-
-          <a class="btn btn-sm btn-dark mr-3" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-            {% trans "Redact" %}
-          </a>
-
-          <button class="btn btn-sm btn-success" type="submit">
-            {% trans "Publish" %}
-          </button>
-        </form>
+            <a class="btn btn-sm btn-dark ml-1" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+              {% trans "Redact" %}
+            </a>
+          </form>
       {% else %}
         {% if attachment.redacted %}
-          <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
-            {% blocktrans %}protected original{% endblocktrans %}
-          </span>
-          <a class="btn btn-sm btn-dark mr-3" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-            {% trans "Redact" %}
-          </a>
-        {% else %}
-          {% if attachment.converted %}
-            <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+            <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
               {% blocktrans %}protected original{% endblocktrans %}
             </span>
-          {% else %}
-            <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment can't be published.{% endblocktrans %}">
-              {% blocktrans %}protected{% endblocktrans %}
-            </span>
+          </div>
+          <div class="col-lg-5 text-right">
+            <a class="btn btn-sm btn-dark" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+              {% trans "Redact" %}
+            </a>
+        {% else %}
+            {% if attachment.converted %}
+              <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+                {% blocktrans %}protected original{% endblocktrans %}
+              </span>
+            {% else %}
+              <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment can't be published.{% endblocktrans %}">
+                {% blocktrans %}protected{% endblocktrans %}
+              </span>
+            {% endif %}
           {% endif %}
         {% endif %}
       {% endif %}
-    {% endif %}
+    </div>
   </div>
 </div>
