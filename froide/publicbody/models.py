@@ -157,8 +157,9 @@ class FoiLaw(models.Model):
             "description": self.description,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
-            "jurisdiction": self.jurisdiction.name,
-            "jurisdiction_id": self.jurisdiction.id,
+            "jurisdiction": self.jurisdiction.name if self.jurisdiction else '',
+            "jurisdiction_id": (self.jurisdiction.id
+                                if self.jurisdiction else None),
             "email_only": self.email_only
         }
 
