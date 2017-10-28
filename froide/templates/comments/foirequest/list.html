@@ -9,8 +9,8 @@
         {% else %}
             {% if comment.comment != comment.comment|truncatewords:20 %}
                 <p id="comment-{{ comment.id }}">{{ comment.comment|truncatewords:20 }}
-                    <a href="#comment-{{ comment.id }}-full" class="toggle hideparent">{% trans "Read all" %}</a></p>
-                <p style="display:none" id="comment-{{ comment.id }}-full">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
+                    <a href="#comment-{{ comment.id }}-full" class="hideparent" data-toggle="collapse" aria-expanded="false" aria-controls="comment-{{ comment.id }}-full">{% trans "Read all" %}</a></p>
+                <p class="collapse" id="comment-{{ comment.id }}-full">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
             {% else %}
                 <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
             {% endif %}
