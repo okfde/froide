@@ -182,11 +182,11 @@ export default {
         this.textLayer.style.width = Math.floor(viewport.width) + 'px'
         this.textLayer.style.height = Math.floor(viewport.height) + 'px'
         var ctx = canvas.getContext('2d')
-        page.render({
+        var renderTask = page.render({
           canvasContext: ctx,
           viewport: viewport
         })
-        return page.getTextContent().then((content) => {
+        var textPromise = page.getTextContent().then((content) => {
           // Content contains lots of information about the text layout and
           // styles, but we need only strings at the moment
           // remove all text layer elements
@@ -200,8 +200,10 @@ export default {
             viewport,
             enhanceTextSelection: true
           })
-          return task.promise.then(this.textAvailable)
+          return task.promise
         })
+        return Promise.all([renderTask.promise, textPromise])
+          .then(this.textAvailable)
       })
     },
     goNext () {
