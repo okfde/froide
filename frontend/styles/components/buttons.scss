@@ -12,3 +12,19 @@
 .btn:hover .on-display {
     display: none;
 }
+
+.hover-btn-success {
+  @extend .btn-outline-success;
+}
+
+.hover-btn-success:hover {
+  @extend .btn-success;
+}
+
+.hover-btn-danger {
+  @extend .btn-outline-secondary;
+}
+
+.btn.hover-btn-danger:hover {
+  @extend .btn-danger;
+}

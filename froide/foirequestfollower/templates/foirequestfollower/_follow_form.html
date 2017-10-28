@@ -4,20 +4,20 @@
   {% csrf_token %}
   {{ form.as_p }}
   {% if following and not follow_only %}
-    <button class="input-large btn btn-light hover-btn-danger" type="submit">
+    <button class="input-large btn hover-btn-danger btn-block" type="submit">
       <span class="on-hover">
-        <i class="fa fa-remove"></i>
+        <i class="fa fa-remove" aria-hidden="true"></i>
         {% trans "Unfollow request" %}
       </span>
       <span class="on-display">
-        <i class="fa fa-star"></i>
+        <i class="fa fa-star" aria-hidden="true"></i>
         {% trans "You follow this request" %}
       </span>
     </button>
   {% elif not following %}
-    <button class="input-large btn hover-btn-success" type="submit">
+    <button class="input-large btn hover-btn-success btn-block" type="submit">
       <span class="on-hover">
-        <i class="fa fa-star"></i>
+        <i class="fa fa-star" aria-hidden="true"></i>
         {% trans "Follow request?" %}
       </span>
       <span class="on-display">
@@ -29,12 +29,6 @@
 </form>
 
 {% if verbose %}
-
-  <p class="form-text text-muted">
-    <small>
-      {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
-    </small>
-  </p>
   <div id="followrequest-form-{{ object.pk }}-success" style="display:none">
     <p class="muted">
       <small>
@@ -48,5 +42,9 @@
       </small>
     </p>
   </div>
-
+  <p class="form-text text-muted">
+    <small>
+      {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+    </small>
+  </p>
 {% endif %}
