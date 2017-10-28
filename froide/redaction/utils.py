@@ -20,7 +20,7 @@ def redact_file(pdf_file, instructions):
     dpi = 150
     load_invisible_font()
     output = PdfFileWriter()
-    pdf_reader = PdfFileReader(pdf_file)
+    pdf_reader = PdfFileReader(pdf_file, strict=False)
     num_pages = pdf_reader.getNumPages()
     assert num_pages == len(instructions)
     for pageNum, instr in enumerate(instructions):
