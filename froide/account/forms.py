@@ -201,7 +201,8 @@ class UserChangeForm(forms.Form):
             self.fields['newsletter'] = forms.BooleanField(
                 required=False,
                 label=_("Newsletter"),
-                widget=BootstrapCheckboxInput
+                widget=BootstrapCheckboxInput,
+                help_text=_("Check if you want to receive our newsletter.")
             )
             self.fields['newsletter'].initial = self.user.newsletter
         self.order_fields(self.field_order)
