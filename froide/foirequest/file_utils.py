@@ -20,10 +20,16 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
     output_file = os.path.join(outpath, '%s.pdf' % name)
     arguments = [
         binary_name,
-        "--headless",
-        "--convert-to",
-        "pdf",
-        "--outdir",
+        '--headless',
+        '--nodefault',
+        '--nofirststartwizard',
+        '--nolockcheck',
+        '--nologo',
+        '--norestore',
+        '--invisible',
+        '--convert-to',
+        'pdf',
+        '--outdir',
         outpath,
         filepath
     ]
