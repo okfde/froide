@@ -731,6 +731,7 @@ class RequestTest(TestCase):
         form = MessagePublicBodySenderForm(message)
         post_var = form.add_prefix("sender")
         self.assertTrue(message.is_response)
+        original_pb = req.public_body
         alternate_pb = PublicBody.objects.all()[1]
         response = self.client.post(
                 reverse('foirequest-set_message_sender',
@@ -740,14 +741,6 @@ class RequestTest(TestCase):
         self.assertNotEqual(message.sender_public_body, alternate_pb)
 
         self.client.logout()
-        response = self.client.post(
-                reverse('foirequest-set_message_sender',
-                kwargs={"slug": req.slug, "message_id": str(message.pk)}),
-                {post_var: alternate_pb.id})
-        self.assertEqual(response.status_code, 403)
-        self.assertNotEqual(message.sender_public_body, alternate_pb)
-
-        self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(
                 reverse('foirequest-set_message_sender',
                 kwargs={"slug": req.slug, "message_id": str(message.pk)}),
@@ -781,6 +774,14 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         message = FoiMessage.objects.get(pk=message.pk)
         self.assertEqual(message.sender_public_body, alternate_pb)
+
+        self.client.login(email="info@fragdenstaat.de", password="froide")
+        response = self.client.post(
+                reverse('foirequest-set_message_sender',
+                kwargs={"slug": req.slug, "message_id": str(message.pk)}),
+                {post_var: original_pb.id})
+        self.assertEqual(response.status_code, 302)
+        self.assertNotEqual(message.sender_public_body, original_pb)
 
     def test_mark_not_foi(self):
         req = FoiRequest.objects.all()[0]
