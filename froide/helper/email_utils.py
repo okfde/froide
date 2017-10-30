@@ -9,8 +9,8 @@ from __future__ import unicode_literals
 
 from datetime import datetime, timedelta
 import time
-
 import base64
+import re
 
 try:
     from email.header import decode_header
@@ -116,7 +116,19 @@ class EmailParser(object):
         if field is None:
             return None
 
-        decodefrag = decode_header(field)
+        if isinstance(field, str):
+            # For Python 2
+            # see http://stackoverflow.com/questions/7331351/python-email-header-decoding-utf-8
+            field = re.sub(r"(=\?.*\?=)(?!$)", r"\1 ", field)
+
+        try:
+            decodefrag = decode_header(field)
+        except UnicodeEncodeError:
+            # Python 2 failure
+            if isinstance(field, str):
+                return field
+            return self.try_decoding(field)
+
         fragments = []
         for s, enc in decodefrag:
             decoded = None
