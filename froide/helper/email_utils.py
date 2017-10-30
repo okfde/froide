@@ -57,6 +57,8 @@ class UnsupportedMailFormat(Exception):
 class EmailParser(object):
 
     def parse_dispositions(self, dispo):
+        if not isinstance(dispo, str):
+            dispo = self.parse_header_field(dispo)
         dispos = dispo.strip().split(";", 1)
         dispo_name = dispos[0].lower()
         dispo_dict = {}
@@ -117,24 +119,34 @@ class EmailParser(object):
         decodefrag = decode_header(field)
         fragments = []
         for s, enc in decodefrag:
-            if enc:
-                try:
-                    s = s.decode(enc, errors='replace')
-                except (UnicodeDecodeError, LookupError):
-                    # desperate move here
-                    try:
-                        s = s.decode("latin1", errors='replace')
-                    except Exception:
-                        pass
+            decoded = None
+            if enc or not isinstance(s, str):
+                decoded = self.try_decoding(s, encoding=enc)
             else:
-                try:
-                    if not isinstance(s, str):
-                        s = s.decode("latin1", errors='replace')
-                except UnicodeDecodeError:
-                    s = str(s, errors='ignore')
-            fragments.append(s.strip(' '))
+                decoded = s
+            fragments.append(decoded.strip(' '))
         field = ' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
+
+    def try_decoding(self, encoded, encoding=None):
+        decoded = None
+        if encoding and encoding != 'unknown-8bit':
+            try:
+                decoded = encoded.decode(encoding, errors='replace')
+            except (UnicodeDecodeError, LookupError):
+                pass
+        if decoded is None:
+            # Try common encodings
+            for enc in ('utf-8', 'latin1'):
+                try:
+                    decoded = encoded.decode(enc)
+                    break
+                except UnicodeDecodeError:
+                    continue
+        if decoded is None:
+            # Fall back to ascii and replace
+            decoded = encoded.decode('ascii', errors='replace')
+        return decoded
 
     def get_address_list(self, values):
         address_list = getaddresses(values)
@@ -238,10 +250,3 @@ class EmailParser(object):
             'resent_cc': [],
             'attachments': attachments
         }
-
-
-if __name__ == '__main__':
-    p = EmailParser()
-    email = p.parse(open('../foirequest/tests/test_mail_03.txt').read())
-    for i, at in enumerate(email['attachments']):
-        open(getattr(at, 'name', 'test'), 'w').write(at.read())
