@@ -1,0 +1,84 @@
+Return-Path: <Tania.Test@example.com>
+X-Original-To: sw+yurpykc1hr@fragdenstaat.de
+Delivered-To: foimail@fragdenstaat.de
+Received: from mx01.rathaus.potsdam.de (mx01.rathaus.potsdam.de [80.86.4.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by fragdenstaat.de (Postfix) with ESMTPS id 252052E1328
+	for <sw+yurpykc1hr@fragdenstaat.de>; Mon,  9 Oct 2017 09:27:55 +0200 (CEST)
+Received: from localhost (unknown [127.0.0.1])
+	by mx01.rathaus.potsdam.de (Postfix) with ESMTP id 697BCA0037
+	for <sw+yurpykc1hr@fragdenstaat.de>; Mon,  9 Oct 2017 07:25:47 +0000 (UTC)
+X-Virus-Scanned: Mailserver der Landeshauptstadt Potsdam
+X-Amavis-Alert: BAD HEADER SECTION, Non-encoded 8-bit data (char E4 hex):
+	Subject: ...sicht in abgeschlossene Verwaltungsvorg\344nge -
+X-Spam-Flag: NO
+X-Spam-Score: -2.889
+X-Spam-Level:
+X-Spam-Status: No, score=-2.889 tagged_above=-999 required=2.9
+	tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, T_OBFU_DOC_ATTACH=0.01,
+	URIBL_BLOCKED=0.001] autolearn=ham
+Received: from mx01.rathaus.potsdam.de ([127.0.0.1])
+	by localhost (mx01.rathaus.potsdam.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id m7ZicGTp0RnC for <sw+yurpykc1hr@fragdenstaat.de>;
+	Mon,  9 Oct 2017 09:25:46 +0200 (CEST)
+Received: from mx03.rathaus.potsdam.de (unknown [10.234.192.236])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx01.rathaus.potsdam.de (Postfix) with ESMTPS id 6126AA00F6
+	for <sw+yurpykc1hr@fragdenstaat.de>; Mon,  9 Oct 2017 09:25:46 +0200 (CEST)
+X-Virus-Scanned: Mailgateway LVN Landeshauptstadt Potsdam
+X-Amavis-Alert: BAD HEADER SECTION, Non-encoded 8-bit data (char E4 hex):
+	Subject: ...sicht in abgeschlossene Verwaltungsvorg\344nge -
+Received: from mx03.rathaus.potsdam.de ([10.234.192.236])
+	by localhost (mx03.rathaus.potsdam.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id kuCr9iCTtbyi for <sw+yurpykc1hr@fragdenstaat.de>;
+	Mon,  9 Oct 2017 09:25:41 +0200 (CEST)
+Received: from S85.svp.lan (smtp.svp.lan [10.234.193.186])
+	by mx03.rathaus.potsdam.de (Postfix) with ESMTP id 1828B233BE
+	for <sw+yurpykc1hr@fragdenstaat.de>; Mon,  9 Oct 2017 09:25:41 +0200 (CEST)
+Received: from P6370 (P6370.potsdam [10.234.196.232])
+	by S85.svp.lan with ESMTP; Mon, 09 Oct 2017 09:25:40 +0200
+Date: Mon, 9 Oct 2017 09:31:55 +0100
+Subject: Aktenzeichen: 3378-2017, Antrag auf Akteneinsicht in abgeschlossene Verwaltungsvorgänge -
+To: sw+yurpykc1hr@fragdenstaat.de
+From: "Testle" <Tania.Test@example.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="--_mabry_1457376c17ca79f544971a68"
+Message-ID: <MDkuMTAuMjAxNyAwOTozMTo1NTI=@Rathaus.Potsdam.de>
+
+Mime-compliant email programs should not be displaying this line.
+
+----_mabry_1457376c17ca79f544971a68
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ISO-8859-1
+
+
+Sehr geehrter Herr Anfragesteller,
+
+in der Anlage übersende ich Ihnen die Eingangsbestäigung zu Ihrem Antrag auf Akteneinsicht.
+
+Mit freundlichen Grüßen
+
+Im Auftrag
+
+
+
+Diese E-Mail enthält vertrauliche oder rechtlich
+geschützte Informationen. Wenn Sie nicht der
+richtige Adressat sind und diese E-Mail irrtüm-
+lich erhalten haben, informieren Sie bitte sofort
+den Absender und vernichten Sie diese E-Mail.
+Das Kopieren von Inhalten dieser E-Mail, die
+Weitergabe ohne Genehmigung ist nicht erlaubt
+und stellt eine Urheberrechtsverletzung dar.
+
+
+
+----_mabry_1457376c17ca79f544971a68
+Content-Type: application/octet-stream; name="Eingangsbestätigung Akteneinsicht.doc"
+Content-Disposition: attachment; filename=Eingangsbestätigung Akteneinsicht.doc
+Content-Transfer-Encoding: base64
+
+dGVzdGluZw==
