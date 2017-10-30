@@ -42,6 +42,7 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
 
     logging.info("Running: %s", ' '.join(arguments))
     logging.info("Env: %s", env)
+    out, err = '', ''
     try:
         p = subprocess.Popen(
             arguments,
@@ -68,4 +69,5 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
             return output_file
     else:
         logging.error("Error during Doc to PDF conversion: %s", err)
+    logging.error(err)
     return None
