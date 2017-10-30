@@ -209,6 +209,14 @@ class MailTest(TestCase):
             self.assertIn('Unterlagen nach', mail['subject'])
             self.assertIn('E-Mail Empfangsbest', mail['subject'])
 
+    def test_attachment_name_parsing_header(self):
+        with open(p("test_mail_10.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(BytesIO(content))
+            self.assertEqual(len(mail['attachments']), 1)
+            self.assertEqual(mail['attachments'][0].name, 'Eingangsbestätigung Akteneinsicht.doc')
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):
