@@ -688,7 +688,7 @@ def set_message_sender(request, slug, message_id):
         raise Http404
     if not request.user.is_authenticated:
         return render_403(request)
-    if request.user != foirequest.user:
+    if request.user != foirequest.user and not request.user.is_staff:
         return render_403(request)
     if not message.is_response:
         return render_400(request)
