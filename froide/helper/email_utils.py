@@ -13,10 +13,10 @@ import time
 import base64
 
 try:
-    from email.header import decode_header
+    from email.header import Header, decode_header
     from email.parser import BytesParser as Parser
 except ImportError:
-    from email.Header import decode_header
+    from email.Header import Header, decode_header
     from email.Parser import Parser
 
 from email.utils import parseaddr, formataddr, parsedate_tz, getaddresses
@@ -115,26 +115,22 @@ class EmailParser(object):
         if field is None:
             return None
 
-        # preprocess head field
-        # see http://stackoverflow.com/questions/7331351/python-email-header-decoding-utf-8
-        field = re.sub(r"(=\?.*\?=)(?!$)", r"\1 ", field)
-
         decodefrag = decode_header(field)
         fragments = []
         for s, enc in decodefrag:
             if enc:
                 try:
-                    s = str(s, enc, errors='replace')
-                except UnicodeDecodeError:
+                    s = s.decode(enc, errors='replace')
+                except (UnicodeDecodeError, LookupError):
                     # desperate move here
                     try:
-                        s = s.decode("latin1")
-                    except:
+                        s = s.decode("latin1", errors='replace')
+                    except Exception:
                         pass
             else:
                 try:
                     if not isinstance(s, str):
-                        s = s.decode("latin1")
+                        s = s.decode("latin1", errors='replace')
                 except UnicodeDecodeError:
                     s = str(s, errors='ignore')
             fragments.append(s.strip(' '))

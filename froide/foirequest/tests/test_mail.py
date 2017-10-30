@@ -200,6 +200,15 @@ class MailTest(TestCase):
         message = messages[1]
         self.assertEqual(message.timestamp.date(), timezone.now().date())
 
+    def test_borked_subject(self):
+        ''' Subject completly borked '''
+        with open(p("test_mail_09.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(BytesIO(content))
+            self.assertIn('Unterlagen nach', mail['subject'])
+            self.assertIn('E-Mail Empfangsbest', mail['subject'])
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):
