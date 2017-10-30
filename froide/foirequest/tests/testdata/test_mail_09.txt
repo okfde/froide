@@ -1,0 +1,72 @@
+Return-Path: <MAILER-DAEMON>
+X-Original-To: sw+yurpykc1hr@fragdenstaat.de
+Delivered-To: foimail@fragdenstaat.de
+Received: from mail2.cnuv.de (mail2.cnuv.de [91.224.227.213])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by fragdenstaat.de (Postfix) with ESMTPS id BAF002E115F
+	for <sw+yurpykc1hr@fragdenstaat.de>; Wed, 25 Oct 2017 17:59:24 +0200 (CEST)
+X-IronPort-AV: E=Sophos;i="5.43,432,1503352800";
+   d="scan'208,217";a="10997195"
+Received: from unknown (HELO totemomail) ([10.97.31.67])
+  by mail2-intern.isa.cnuv.de with ESMTP/TLS/AES256-SHA; 25 Oct 2017 17:55:42 +0200
+Received: from b31s000053.vbg.dom ([10.31.200.15])
+          by totemomail (Totemo SMTP Server) with SMTP ID 182
+          for <prvs=46472e5e2=sw+yurpykc1hr@fragdenstaat.de>;
+          Wed, 25 Oct 2017 17:55:42 +0200 (CEST)
+Received: from MailMarshal.Engine () by B31S000053.vbg.dom with Trustwave SEG (v7,5,7,9061)
+	id <D59f0b3fe0000>; Wed, 25 Oct 2017 17:55:42 +0200
+Message-ID: <D59f0b3fe0000@B31S000053.vbg.dom>
+From: no_reply@vbg.de
+To: prvs=46472e5e2=sw+yurpykc1hr@fragdenstaat.de
+CC:
+Date: Wed, 25 Oct 2017 17:55:42 +0200
+Subject: E-Mail EmpfangsbestÃƒÂƒÃ‚Â¤tigung: Unterlagen nach ÃƒÂƒÃ‚Â‚ÃƒÂ‚Ã‚Â§ 6 Abs. 1 Arbeitsschutzgesetz [#25054]
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="--=c8efc2e0-874f-428e-964d-340094bf2b65"
+totemowork: yes
+
+----=c8efc2e0-874f-428e-964d-340094bf2b65
+Content-Type: multipart/alternative;
+	boundary="--=d8874292-75ee-44c0-82c6-98d711103774"
+
+
+----=d8874292-75ee-44c0-82c6-98d711103774
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Sehr geehrte Damen und Herren,
+vielen Dank f=FCr Ihre elektronische Nachricht. Wir werden Ihre Anfrage s=
+chnellst m=F6glich bearbeiten
+
+VBG - Ihre gesetzliche Unfallversicherung
+Hauptverwaltung Hamburg
+Deelb=F6genkamp 4
+22297 Hamburg
+
+----=d8874292-75ee-44c0-82c6-98d711103774
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content=3D"text/html; charset=3Dwindows-1252" http-equiv=3DContent-=
+Type>
+<META name=3DGENERATOR content=3D"MSHTML 11.00.9600.17842"></HEAD>
+<BODY><FONT size=3D2 face=3DArial>
+<P><FONT size=3D2 face=3DArial>Sehr geehrte Damen und Herren,</FONT></P>
+<P><FONT size=3D2 face=3DArial>vielen Dank f=FCr Ihre elektronische Nachr=
+icht. Wir=20
+werden Ihre Anfrage schnellst m=F6glich bearbeiten</FONT></P><FONT size=3D=
+2=20
+face=3DArial>
+<P><BR>VBG - Ihre gesetzliche Unfallversicherung<BR>Hauptverwaltung=20
+Hamburg<BR>Deelb=F6genkamp 4<BR>22297 Hamburg</P>
+</FONT></BODY></HTML>
+
+----=d8874292-75ee-44c0-82c6-98d711103774--
+
+----=c8efc2e0-874f-428e-964d-340094bf2b65--
