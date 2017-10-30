@@ -14,13 +14,12 @@ Received: from mailout.brandenburg.de (mailout.brandenburg.de [194.76.232.222])
   by fragdenstaat.de (Postfix) with ESMTP id 3993C95C06C
   for <sw+yurpykc1hr@fragdenstaat.de>; Tue, 11 Feb 2014 09:46:05 +0100 (CET)
 X-Virus-Scanned: by amavisd-new at lvnbb.de
-From: =?iso-8859-1?Q?Mustermann=2C_Erika?= <Erika.Mustermann@mi.brandenburg.de>
+From: =?iso-8859-1?Q?Mustermann=2C_Erika?= <Erika.Mustermann@example.com>
 To: "'sw+yurpykc1hr@fragdenstaat.de'"
   <sw+yurpykc1hr@fragdenstaat.de>
 Subject: =?iso-8859-1?Q?Ihre_Antr=E4ge_auf_Akteneinsicht_vom_3.2.2014?=
 Thread-Topic: =?iso-8859-1?Q?Ihre_Antr=E4ge_auf_Akteneinsicht_vom_3.2.2014?=
 Thread-Index: Ac8nA8qjVLaBPayuRDGNq5mUucgHTQ==
-Date: Tue, 11 Feb 2014 08:37:13 +0000
 Message-ID: <9D4E4A7B99CAB04FAC0F75BC91949B0A2F0CE659@PMMX-MBX03.LandBB.ad.lvnbb.de>
 Accept-Language: de-DE, en-US
 Content-Language: de-DE

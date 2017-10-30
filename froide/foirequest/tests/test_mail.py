@@ -191,6 +191,15 @@ class MailTest(TestCase):
             self.assertEqual(mail['attachments'][0].name,
                 '%s.eml' % subject[:45])
 
+    def test_missing_date(self):
+        with open(p("test_mail_08.txt"), 'rb') as f:
+            process_mail.delay(f.read())
+        request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
+        messages = request.messages
+        self.assertEqual(len(messages), 2)
+        message = messages[1]
+        self.assertEqual(message.timestamp.date(), timezone.now().date())
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):

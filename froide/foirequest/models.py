@@ -683,7 +683,10 @@ class FoiRequest(models.Model):
         message.sender_public_body = self.find_public_body_for_email(message.sender_email)
         if message.sender_public_body == self.law.mediator:
             message.content_hidden = True
-        message.timestamp = email['date']
+        if email['date'] is None:
+            message.timestamp = timezone.now()
+        else:
+            message.timestamp = email['date']
         message.recipient_email = self.secret_address
         message.recipient = self.user.display_name()
         message.plaintext = email['body']
