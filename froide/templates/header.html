@@ -1,16 +1,17 @@
 {% load i18n %}
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
+<nav class="navbar navbar-secondary navbar-expand-md navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
   <div class="container">
     {% block nav_brand %}
       <a class="navbar-brand" href="{% url 'index' %}">
-         <img src="{% static "img/logo/logo.svg" %}" height="36" class="navbar-logo" alt="{{ SITE_NAME }}">
-         {{ SITE_NAME }}
+         <img src="{% static "img/logo/logo.svg" %}" height="42" class="navbar-logo" alt="{{ SITE_NAME }}">
+         <span class="navbar-brand-name">{{ SITE_NAME }}</span>
       </a>
     {% endblock %}
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler d-print-none" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
+      {% trans "Menu" %}
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       {% block nav %}
@@ -27,47 +28,23 @@
        </li>
         <li class="nav-item special-nav-item {% block nav_makerequest %}{% endblock %}">
           <a class="nav-link" href="{% url 'foirequest-make_request' %}">
-            <span>{% blocktrans %}Make a Request!{% endblocktrans %}</span>
+            {% blocktrans %}Make a Request!{% endblocktrans %}
           </a>
         </li>
       </ul>
       {% endblock nav %}
-      <form class="form-inline" role="search" method="get" action="{% url 'foirequest-search' %}">
+      {% block nav_search %}
+      <form class="form-inline d-block d-md-none d-lg-block" role="search" method="get" action="{% url 'foirequest-search' %}">
         <input class="form-control mr-sm-2" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="Search">
       </form>
-      {% block donation_button %}{% endblock donation_button %}
-
+      <a class="nav-link d-none d-md-block d-lg-none" href="{% url 'foirequest-search' %}">
+        <i class="fa fa-search" aria-hidden="true"></i>
+      </a>
+      {% endblock nav_search %}
       <ul class="navbar-nav col-auto">
-
-        {% block language_select %}
-          {% if LANGUAGES|length > 1 %}
-          <li class="nav-item dropdown">
-            {% csrf_token %}
-            {% for lang_code, language in LANGUAGES %}
-              {% if lang_code == CURRENT_LANGUAGE_CODE %}
-                <a class="nav-link dropdown-toggle" href="#" id="navbarlanguage-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  {{ language }}
-                </a>
-              {% endif %}
-            {% endfor %}
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarlanguage-link">
-              {% for lang_code, language in LANGUAGES %}
-                  <form class="dropdown-item form-inline" action="{% url 'set_language' %}" method="post">
-                    {% csrf_token %}
-                    <button class="btn btn-link btn-block text-left" name="language" value="{{ lang_code }}">
-                      {{ language|title }}
-                      {% if lang_code == CURRENT_LANGUAGE_CODE %}
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                      {% endif %}
-                    </button>
-                  </form>
-              {% endfor %}
-            </div>
-          </li>
-          {% endif %}
-        {% endblock language_select %}
+        {% block nav_account_login %}
         {% if user.is_authenticated %}
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown {% block nav_account %}{% endblock %}">
           <a class="nav-link dropdown-toggle account-dropdown" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="navbaraccount-link">
             {% blocktrans with name=user.first_name|truncatechars:12 %}
               Hello {{ name}}
@@ -92,13 +69,58 @@
           </div>
         </li>
         {% else %}
-          <li class="nav-item">
-            <a class="btn btn-white btn-sm" href="{% url 'account-login' %}">
-              {% blocktrans %}log in /<br/>sign up{% endblocktrans %}
+          <li class="nav-item {% block nav_login %}{% endblock %}">
+            <a class="nav-link" href="{% url 'account-login' %}">
+              {% blocktrans %}Sign in{% endblocktrans %}
             </a>
           </li>
         {% endif %}
+        {% endblock nav_account_login %}
+
+        {% block language_select %}
+          {% if LANGUAGES|length > 1 %}
+          <li class="nav-item dropdown">
+            {% for lang_code, language in LANGUAGES %}
+              {% if lang_code == CURRENT_LANGUAGE_CODE %}
+                <a class="nav-link dropdown-toggle" href="#" id="navbarlanguage-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ language }}
+                </a>
+              {% endif %}
+            {% endfor %}
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarlanguage-link">
+              {% for lang_code, language in LANGUAGES %}
+                  <form class="dropdown-item form-inline" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-link btn-block text-left" name="language" value="{{ lang_code }}">
+                      {{ language|title }}
+                      {% if lang_code == CURRENT_LANGUAGE_CODE %}
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                      {% endif %}
+                    </button>
+                  </form>
+              {% endfor %}
+            </div>
+          </li>
+          {% endif %}
+        {% endblock language_select %}
+
       </ul>
+
+      {% block nav_secondary %}
+      <ul class="navbar-nav navbar-nav-secondary col-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'help-about' %}">
+            {% trans "About" %}
+          </a>
+        </li>
+        <li class="nav-item special-nav-secondary-item">
+          <a class="nav-link" href="{% url 'help-index' %}">
+            {% trans "Help" %}
+          </a>
+        <li>
+      </ul>
+      {% endblock nav_secondary %}
+
     </div><!--/.nav-collapse -->
   </div>
 </nav>

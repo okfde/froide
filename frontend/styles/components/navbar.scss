@@ -10,36 +10,66 @@
   font-weight: bold;
 }
 
-.navbar-brand {
-  transform: translateY(2px);
+.navbar-brand-name {
+  display: inline-block;
+  transform: translateY(11px);
+  font-size: 1.5rem;
+}
+
+@include media-breakpoint-up(md) {
+  .navbar-brand {
+    transform: translateY(11px);
+  }
 }
 
 .navbar-logo {
   display: inline-block;
-  transform: translateY(-6px);
-}
 
-@media (min-width: 768px) and (max-width: 1200px) {
-    .navbar .navbar-form {
-        display: none;
-    }
+  margin-right: $spacer * 0.5;
 }
 
 .navbar .nav > li > a:hover {
     color: #06C;
 }
 
-.special-nav-item a span{
-    color: #f0f0f0 !important;
-    padding: 0.5em;
-    background: $component-active-bg;
-    border-radius: 6px;
-    text-shadow: none;
+.special-nav-item > a {
+  color: $black;
 }
 
-.special-nav-item a:hover span {
-    color: #fff !important;
-    text-shadow: none;
+.navbar-secondary {
+  padding-top: 0;
+}
+
+.navbar-collapse {
+  flex-wrap: wrap;
+}
+
+@include media-breakpoint-up(md) {
+
+  .navbar-nav-secondary {
+    padding-bottom: $spacer;
+    width: 100%;
+    order: -1;
+    justify-content: flex-end;
+    font-size: $small-font-size;
+
+    .nav-item {
+      background-color: $gray-200;
+      margin-left: $spacer * 0.25;
+
+      &.special-nav-secondary-item {
+        border-radius: 0px;
+        background: theme-color("danger");
+        .nav-link {
+          color: $white !important;
+        }
+      }
+
+      .nav-link {
+        padding: $spacer * 0.25;
+      }
+    }
+  }
 }
 
 .account-dropdown {
