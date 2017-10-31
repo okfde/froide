@@ -37,9 +37,13 @@
       <form class="form-inline d-block d-md-none d-lg-block" role="search" method="get" action="{% url 'foirequest-search' %}">
         <input class="form-control mr-sm-2" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="Search">
       </form>
-      <a class="nav-link d-none d-md-block d-lg-none" href="{% url 'foirequest-search' %}">
-        <i class="fa fa-search" aria-hidden="true"></i>
-      </a>
+      <ul class="navbar-nav d-none d-md-block d-lg-none">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'foirequest-search' %}">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </a>
+        </li>
+      </ul>
       {% endblock nav_search %}
       <ul class="navbar-nav col-auto">
         {% block nav_account_login %}
