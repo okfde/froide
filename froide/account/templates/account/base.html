@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block body %}
-<div class="container">
-  {% block app_body %}{% endblock app_body %}
-</div>
+{% block navbar %}
+  {% include "account/header.html" %}
 {% endblock %}

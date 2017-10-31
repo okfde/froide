@@ -1,0 +1,5 @@
+{% extends "header.html" %}
+
+{% block nav_requests %}{% if not request_form %}active{% endif %}{% endblock %}
+
+{% block nav_makerequest %}{% if request_form %}active{% endif %}{% endblock %}

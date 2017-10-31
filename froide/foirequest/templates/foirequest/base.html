@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
-{% block nav_requests %}active{% endblock %}
 
-{% block body %}
-<div class="container">
-  {% block app_body %}{% endblock app_body %}
-</div>
+{% block navbar %}
+  {% include "foirequest/header.html" %}
 {% endblock %}
