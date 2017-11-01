@@ -37,7 +37,7 @@ const config = {
     rules: [
       {
         test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
+        include: /(froide\/frontend|node_modules\/(bootstrap))/,
         use: {
           loader: 'babel-loader'
         }
