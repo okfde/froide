@@ -4,7 +4,7 @@ Froide
 [![Build Status](https://travis-ci.org/okfde/froide.png?branch=master)](https://travis-ci.org/okfde/froide) [![Coverage Status](https://coveralls.io/repos/okfde/froide/badge.png?branch=master)](https://coveralls.io/r/okfde/froide?branch=master)
 
 
-Froide is a Freedom Of Information Portal written in Python using Django 1.9.
+Froide is a Freedom Of Information Portal using Django 1.11. It supports Python 2.7, 3.5, 3.6.
 
 It is used by the German and the Austrian FOI site, but it is fully
 internationalized and written in English.
