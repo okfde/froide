@@ -87,7 +87,7 @@ def add_text_on_pdf(pdf, text_obj, dpi, scale, height):
         return
     box = text_obj['pos']
     box = [b * scale * (72 / dpi) for b in box]
-    box[1] = height - box[1]
+    box[1] = height - box[1] - box[3]
 
     text = pdf.beginText()
     text.setTextRenderMode(3)  # double invisible
