@@ -27,7 +27,7 @@ from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
-from froide.redaction.utils import redact_file
+from froide.helper.redaction import redact_file
 
 from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
 from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,

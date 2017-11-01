@@ -15,6 +15,14 @@ from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
+from .document import PDF_FILETYPES
+
+
+def can_redact_file(filetype, name=None):
+    return filetype.lower() in PDF_FILETYPES or (
+        name is not None and name.lower().endswith('.pdf')
+    )
+
 
 def redact_file(pdf_file, instructions):
     dpi = 150
