@@ -17,10 +17,11 @@
             <button class="btn btn-sm btn-success" type="submit">
               {% trans "Publish" %}
             </button>
-
-            <a class="btn btn-sm btn-dark ml-1" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-              {% trans "Redact" %}
-            </a>
+            {% if attachment.can_redact %}
+              <a class="btn btn-sm btn-dark ml-1" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+                {% trans "Redact" %}
+              </a>
+            {% endif %}
           </form>
       {% else %}
         {% if attachment.redacted %}
@@ -29,9 +30,11 @@
             </span>
           </div>
           <div class="col-lg-5 text-right">
-            <a class="btn btn-sm btn-dark" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-              {% trans "Redact" %}
-            </a>
+            {% if attachment.can_redact %}
+              <a class="btn btn-sm btn-dark" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+                {% trans "Redact" %}
+              </a>
+            {% endif %}
         {% else %}
             {% if attachment.converted %}
               <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
