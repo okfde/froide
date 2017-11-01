@@ -6,10 +6,10 @@ from django.db import transaction
 from django.core.files import File
 
 from froide.celery import app as celery_app
+from froide.helper.document import convert_to_pdf
 
 from .models import FoiRequest, FoiAttachment
 from .foi_mail import _process_mail, _fetch_mail
-from .file_utils import convert_to_pdf
 
 
 @celery_app.task(acks_late=True, time_limit=60)

@@ -16,6 +16,7 @@ from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
 from froide.helper.widgets import TagAutocompleteTagIt
 from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
+from froide.helper.document import can_convert_to_pdf
 
 from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
@@ -198,11 +199,14 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     def convert(self, request, queryset):
         if not queryset:
             return
+        count = 0
         for instance in queryset:
-            if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
-                    instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
+            ft = instance.filetype.lower()
+            name = instance.name.lower()
+            if can_convert_to_pdf(ft, name=name):
+                count += 1
                 convert_attachment_task.delay(instance.pk)
-        self.message_user(request, _("Conversion tasks started."))
+        self.message_user(request, _("Conversion tasks started: %s") % count)
     convert.short_description = _("Convert to PDF")
 
 

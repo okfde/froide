@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import magic
 
-from .models import FoiAttachment
+from froide.helper.document import POSTAL_CONTENT_TYPES
 
 
 def get_content_type(scan):
@@ -22,7 +22,7 @@ def validate_upload_document(scan):
     if content_type:
         scan.content_type = content_type
 
-    if content_type not in FoiAttachment.POSTAL_CONTENT_TYPES:
+    if content_type not in POSTAL_CONTENT_TYPES:
         raise ValidationError(
             _('The scanned letter must be either PDF, JPG or PNG,'
                 ' but was detected as %(content_type)s!'), params={

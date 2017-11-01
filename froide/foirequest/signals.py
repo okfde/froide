@@ -9,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from haystack.utils import get_identifier
 
+from froide.helper.document import can_convert_to_pdf
+
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 
 
@@ -313,7 +315,6 @@ def foiattachment_convert_attachment(instance=None, created=False, **kwargs):
 
     from .tasks import convert_attachment_task
 
-    if (instance.filetype in FoiAttachment.CONVERTABLE_FILETYPES or
-            instance.name.endswith(FoiAttachment.CONVERTABLE_FILETYPES)):
+    if can_convert_to_pdf(instance.filetype, name=instance.name):
         if instance.converted_id is None:
             convert_attachment_task.delay(instance.id)

@@ -30,7 +30,7 @@ from taggit.models import TaggedItemBase
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (redact_content, remove_closing, replace_custom)
-
+from froide.helper.redaction import can_redact_file
 
 from .foi_mail import send_foi_mail, package_foirequest
 from .utils import construct_message_body
@@ -1296,36 +1296,6 @@ class FoiAttachment(models.Model):
         related_name='original_set')
     is_converted = models.BooleanField(_("Is converted"), default=False)
 
-    CONVERTABLE_FILETYPES = (
-        'application/msword',
-        'application/vnd.msword',
-        '.doc',
-        '.docx',
-    )
-
-    PREVIEWABLE_FILETYPES = (
-        'application/msexcel',
-        'application/vnd.ms-excel',
-        'application/msword',
-        'application/vnd.msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/pdf',
-        'application/x-pdf',
-        'pdf/application',
-        'application/acrobat',
-        'applications/vnd.pdf',
-        'text/pdf',
-        'text/x-pdf'
-    )
-
-    POSTAL_CONTENT_TYPES = PREVIEWABLE_FILETYPES + (
-        "image/png",
-        "image/jpeg",
-        "image/jpg",
-        "application/text-plain:formatted",
-        "text/plain"
-    )
-
     attachment_published = django.dispatch.Signal(providing_args=[])
 
     class Meta:
@@ -1345,14 +1315,15 @@ class FoiAttachment(models.Model):
             return self.belongs_to.request.is_visible() and self.approved
         return False
 
-    def can_preview(self):
-        return self.has_public_access() and self.filetype in self.PREVIEWABLE_FILETYPES
-
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
 
     def get_internal_url(self):
         return settings.MEDIA_URL + self.file.name
+
+    @property
+    def can_redact(self):
+        return can_redact_file(self.filetype, name=self.name)
 
     def get_anchor_url(self):
         if self.belongs_to:
