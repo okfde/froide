@@ -22,6 +22,21 @@ const STEPS = {
 
 const debug = process.env.NODE_ENV !== 'production'
 
+const setPublicbodyDetail = function (state, publicbody, scope) {
+  if (state.scopedPublicbodyDetails[scope] === undefined) {
+    Vue.set(state.scopedPublicbodyDetails, scope, {
+      [publicbody.id]: publicbody
+    })
+  } else {
+    Vue.set(state.scopedPublicbodyDetails, scope, {
+      [publicbody.id]: publicbody,
+      ...state.scopedPublicbodyDetails[scope]
+    })
+  }
+
+  state.defaultLaw = publicbody.default_law
+}
+
 export default new Vuex.Store({
   state: {
     scopedPublicbodies: {},
@@ -79,22 +94,11 @@ export default new Vuex.Store({
       state.step = STEPS.WRITE_REQUEST
     },
     [SET_PUBLICBODY_DETAIL] (state, {publicbody, scope}) {
-      if (state.scopedPublicbodyDetails[scope] === undefined) {
-        Vue.set(state.scopedPublicbodyDetails, scope, {
-          [publicbody.id]: publicbody
-        })
-      } else {
-        Vue.set(state.scopedPublicbodyDetails, scope, {
-          [publicbody.id]: publicbody,
-          ...state.scopedPublicbodyDetails[scope]
-        })
-      }
-
-      state.defaultLaw = publicbody.default_law
+      setPublicbodyDetail(state, publicbody, scope)
     },
     [SET_PUBLICBODIES_DETAIL] (state, {publicbodies, scope}) {
       publicbodies.forEach((pb) => {
-        this[SET_PUBLICBODY_DETAIL](state, {publicbody: pb, scope})
+        setPublicbodyDetail(state, pb, scope)
       })
 
       state.defaultLaw = publicbodies[0].default_law
