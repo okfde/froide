@@ -12,7 +12,7 @@
           <ul>
             <li>
               <a :href="publicbody.url" target="_blank" rel="noopener">
-                Website of {{ publicbody.name }}
+                {{ i18n.officialWebsite }} {{ publicbody.name }}
               </a>
             </li>
           </ul>
