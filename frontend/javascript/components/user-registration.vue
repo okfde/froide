@@ -16,7 +16,7 @@
           </label>
           <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': errors.last_name }" id="id_last_name" :placeholder="form.last_name.placeholder"/>
           <p v-for="e in errors.last_name">{{ e.message }}</p>
-          <small v-if="form.last_name.help_text">{{ form.last_name.help_text }}</small>
+          <small v-if="form.last_name.help_text" v-html="form.last_name.help_text"></small>
         </div>
       </div>
 
