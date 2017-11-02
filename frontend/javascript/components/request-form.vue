@@ -2,9 +2,13 @@
   <div>
     <fieldset v-if="publicbodyFormJson" class="active">
       <div class="row">
-        <div class="col-lg-8">
+        <div class="col-lg-7">
           <slot name="publicbody-legend-title"></slot>
-
+          <slot name="publicbody-help-text"></slot>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8">
           <publicbody-chooser name="publicbody"
             :defaultsearch="publicbodyDefaultSearch"
             :scope="pbScope"
@@ -12,7 +16,7 @@
             :config="config">
           </publicbody-chooser>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 small">
           <slot name="publicbody-missing"></slot>
         </div>
       </div>

@@ -74,7 +74,18 @@
           {% blocktrans %}Choose a public body{% endblocktrans %}
         </legend>
 
-        <div slot="publicbody-missing"></div>
+        <p slot="publicbody-help-text">
+          {% blocktrans %}Please type <strong>the name of the public body</strong> you'd like to request information from into the search box.{% endblocktrans %}
+        </p>
+
+        <div slot="publicbody-missing">
+          <h6>{% trans "Can't find what you're looking for?" %}</h6>
+          <p>
+            {% blocktrans with search_url="" suggest_url="" %}
+              <a href="{{ search_url }}">Search in all public bodies</a> or <a href="{{ suggest_url }}">suggest a new one</a>.
+            {% endblocktrans %}
+          </p>
+        </div>
 
         <legend slot="request-legend-title">
           {% blocktrans %}Write the request{% endblocktrans %}

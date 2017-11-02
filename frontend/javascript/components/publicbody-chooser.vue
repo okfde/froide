@@ -2,24 +2,14 @@
   <div class="publicbody-chooser mb-3">
     <div class="form-search">
       <div class="input-group">
-        <input type="search" v-model:value="search" class="search-public_bodies form-control" :placeholder="i18n.searchTerm" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
+        <input type="search" v-model:value="search" class="search-public_bodies form-control" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
         <span class="input-group-btn">
-          <button type="button" class="btn btn-success search-public_bodies-submit" @click="triggerAutocomplete">
+          <button type="button" class="btn btn-primary btn-lg search-public_bodies-submit" @click="triggerAutocomplete">
             <i class="fa fa-search"></i>
             {{ i18n.search }}
           </button>
         </span>
       </div>
-      <small class="search-examples form-text text-muted">
-        {{ i18n.examples }}
-        <a href="#" :data-search="i18n.environment" @click.prevent="fillSearch">
-          {{ i18n.environment }}
-        </a>
-        {{ i18n.or }}
-        <a href="#" :data-search="i18n.ministryOfLabour" @click.prevent="fillSearch">
-          {{ i18n.ministryOfLabour}}
-        </a>
-      </small>
     </div>
     <div v-if="searching" class="search-spinner">
       <img :src="config.resources.spinner" alt="Loading..."/>
