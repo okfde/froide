@@ -1,0 +1,70 @@
+{% load i18n %}
+{% load static %}
+
+<footer class="footer" id="footer">
+  <div class="container">
+    {% block footer %}
+      {% block footer_above %}
+      {% endblock footer_above %}
+      <div class="row">
+        <div class="col-md-4">
+          <h3>
+            {{ SITE_NAME }}
+          </h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          {% block footer_credits %}
+          <p class="footer__credits">
+            {% blocktrans %}Froide is a free and Open Source Project by <a href="https://okfn.de">the Open Knowledge Foundation</a>. If you want to support Froide, please visit the <a href="https://github.com/okfde/froide">repository on GitHub</a>.{% endblocktrans %}
+          </p>
+          <ul class="footer__networks">
+            <li>
+              <a href="https://github.com/okfde/froide" target="_blank" rel="noopener">
+                <i class="fa fa-github" aria-hidden="true"></i>
+                <span class="sr-only">GitHub</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/okfde" target="_blank" rel="noopener">
+                <i class="fa fa-twitter" aria-hidden="true"></i>
+                <span class="sr-only">Twitter</span>
+              </a>
+            </li>
+          </ul>
+          {% endblock %}
+        </div>
+        <div class="col-md-6">
+          <ul class="footer__menu">
+            {% block footer_menu %}
+            <li>
+              <a href="{% url 'help-about' %}">{% trans "About" %}</a>
+            </li>
+            {% block footer_menu_custom %}
+            {% endblock %}
+            <li>
+              <a href="{% url 'help-terms' %}">{% trans "Terms of Use" %}</a>
+            </li>
+            <li>
+              <a href="{% url 'help-privacy' %}">{% trans "Privacy Statement" %}</a>
+            </li>
+            <li>
+              <a href="{% url 'help-index' %}">{% trans "Help" %}</a>
+            </li>
+            {% endblock %}
+          </ul>
+        </div>
+        <div class="col-lg-2 text-right">
+          {% block footer_logo %}
+          <a href="https://okfn.de">
+            <img src="{% static "img/okfde_white.png" %}" alt="Open Knowledge Foundation Deutschland"/>
+          </a>
+          {% endblock %}
+        </div>
+      </div>
+      {% block footer_below %}
+      {% endblock footer_below %}
+    {% endblock footer %}
+  </div>
+</footer>
