@@ -24,7 +24,7 @@ def confirm(request, user_id, secret, request_id=None):
                 _('You are logged in and cannot use a confirmation link.'))
         return redirect('account-show')
     user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
-    if user.is_active:
+    if user.is_active or (not user.is_active and user.email is None):
         return redirect('account-login')
     account_manager = AccountManager(user)
     if account_manager.confirm_account(secret, request_id):

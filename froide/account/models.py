@@ -116,6 +116,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    def __str__(self):
+        if self.email is None:
+            return self.username
+        return self.email
+
     def get_absolute_url(self):
         if self.private:
             return ""
@@ -274,6 +279,8 @@ class AccountManager(object):
         )
 
     def generate_confirmation_secret(self, *args):
+        if self.user.email is None:
+            return ''
         to_sign = [str(self.user.pk), self.user.email]
         for a in args:
             to_sign.append(str(a))
