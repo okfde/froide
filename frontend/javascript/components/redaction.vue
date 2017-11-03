@@ -289,17 +289,11 @@ export default {
       }
     },
     getOffset (e) {
-      let offset = [
-        (e.offsetX || (e.originalEvent && e.originalEvent.layerX)),
-        (e.offsetY || (e.originalEvent && e.originalEvent.layerY))
-      ]
-      if (e.target !== this.textLayer) {
-        let x = parseInt(e.target.style.left.replace('px', ''))
-        let y = parseInt(e.target.style.top.replace('px', ''))
-        offset[0] += x
-        offset[1] += y
-      }
-      return offset
+      let target = e.target || e.srcElement
+      let rect = target.getBoundingClientRect()
+      let offsetX = e.clientX - rect.left
+      let offsetY = e.clientY - rect.top
+      return [offsetX, offsetY]
     },
     mouseMove (e) {
       if (this.startDrag === null) {
