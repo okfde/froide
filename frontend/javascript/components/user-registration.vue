@@ -12,7 +12,7 @@
         </div>
         <div class="col" :class="{ 'text-danger': errors.last_name }">
           <label class="control-label" for="id_last_name" :class="{ 'text-danger': errors.last_name }">
-            {{ i18n.yourFirstName }}
+            {{ i18n.yourLastName }}
           </label>
           <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': errors.last_name }" id="id_last_name" :placeholder="form.last_name.placeholder"/>
           <p v-for="e in errors.last_name">{{ e.message }}</p>
