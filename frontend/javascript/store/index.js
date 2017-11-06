@@ -2,8 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import {
-  SET_PUBLICBODY, SET_PUBLICBODY_DETAIL,
-  SET_PUBLICBODIES, SET_PUBLICBODIES_DETAIL,
+  SET_PUBLICBODY, SET_PUBLICBODIES,
+  CACHE_PUBLICBODIES,
+  SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS,
   SET_USER,
   UPDATE_SUBJECT, UPDATE_BODY,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME, UPDATE_EMAIL, UPDATE_ADDRESS,
@@ -39,8 +40,10 @@ const setPublicbodyDetail = function (state, publicbody, scope) {
 
 export default new Vuex.Store({
   state: {
+    scopedSearchResults: {},
+    scopedSearchMeta: {},
     scopedPublicbodies: {},
-    scopedPublicbodyDetails: {},
+    publicBodies: {},
     user: {},
     defaultLaw: null,
     step: STEPS.SELECT_PUBLICBODY,
@@ -62,16 +65,22 @@ export default new Vuex.Store({
       }
       return pbs
     },
-    getPublicBodyDetailsByScope: (state, getters) => (scope, id) => {
-      let pbs = getters.getPublicBodiesDetailsByScope(scope)
-      return pbs[id]
+    getPublicBody: (state, getters) => (id) => {
+      return state.publicBodies[id]
     },
-    getPublicBodiesDetailsByScope: (state, getters) => (scope) => {
-      let pbs = state.scopedPublicbodyDetails[scope]
-      if (pbs === undefined) {
-        return {}
+    getScopedSearchResults: (state, getters) => (scope) => {
+      let srs = state.scopedSearchResults[scope]
+      if (srs === undefined) {
+        return []
       }
-      return pbs
+      return srs
+    },
+    getScopedSearchMeta: (state, getters) => (scope) => {
+      let meta = state.scopedSearchMeta[scope]
+      if (meta === undefined) {
+        return null
+      }
+      return meta
     },
     defaultLaw: state => {
       return state.defaultLaw
@@ -82,26 +91,47 @@ export default new Vuex.Store({
     subject: state => state.subject,
     getSubject: state => () => state.subject,
     body: state => state.body,
-    reviewReady: state => state.step >= STEPS.WRITE_REQUEST
+    stepSelectPublicbody: state => state.step === STEPS.SELECT_PUBLICBODY,
+    stepReviewReady: state => state.step >= STEPS.WRITE_REQUEST
   },
   mutations: {
     [SET_PUBLICBODY] (state, {publicbody, scope}) {
       Vue.set(state.scopedPublicbodies, scope, [publicbody])
+      state.defaultLaw = publicbody.default_law
       state.step = STEPS.WRITE_REQUEST
     },
     [SET_PUBLICBODIES] (state, {publicbodies, scope}) {
       Vue.set(state.scopedPublicbodies, scope, publicbodies)
+      let sameLaw = publicbodies.reduce((a, b) => {
+        if (a === null) {
+          return true
+        }
+        return a.id === b.id
+      }, null)
+      if (sameLaw) {
+        state.defaultLaw = publicbodies[0].default_law
+      } else {
+        state.defaultLaw = null
+      }
       state.step = STEPS.WRITE_REQUEST
     },
-    [SET_PUBLICBODY_DETAIL] (state, {publicbody, scope}) {
-      setPublicbodyDetail(state, publicbody, scope)
-    },
-    [SET_PUBLICBODIES_DETAIL] (state, {publicbodies, scope}) {
-      publicbodies.forEach((pb) => {
-        setPublicbodyDetail(state, pb, scope)
+    [CACHE_PUBLICBODIES] (state, publicBodies) {
+      let newPublicBodies = {}
+      publicBodies.forEach(function (r) {
+        newPublicBodies[r.id] = r
       })
-
-      state.defaultLaw = publicbodies[0].default_law
+      state.publicBodies = {
+        ...state.publicBodies,
+        ...newPublicBodies
+      }
+    },
+    [SET_SEARCHRESULTS] (state, {searchResults, searchMeta, scope}) {
+      Vue.set(state.scopedSearchResults, scope, searchResults)
+      Vue.set(state.scopedSearchMeta, scope, searchMeta)
+    },
+    [CLEAR_SEARCHRESULTS] (state, {scope}) {
+      Vue.set(state.scopedSearchResults, scope, [])
+      Vue.set(state.scopedSearchMeta, scope, null)
     },
     [SET_USER] (state, user) {
       state.user = user

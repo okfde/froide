@@ -42,7 +42,7 @@ class FroideSearch {
   searchPublicBody (term) {
     let query = encodeURIComponent(term)
     let url = this.config.url.searchPublicBody + '?q=' + query
-    return this.getJsonObjects(url)
+    return this.getJson(url)
   }
 
   searchFoiRequests (term) {

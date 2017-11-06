@@ -14,32 +14,7 @@
     <div v-if="searching" class="search-spinner">
       <img :src="config.resources.spinner" alt="Loading..."/>
     </div>
-    <ul v-if="searchResults.length > 0 || emptyResults" class="search-results list-unstyled">
-      <li v-for="result in searchResults" class="search-result">
-        <label>
-          <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" v-model="value"/>
-          {{ result.name }}
-          <small>
-            {{ result.jurisdiction.name }}
-          </small>
-        </label>
-      </li>
-      <li v-if="emptyResults" class="search-result">
-        <strong>{{ i18n.noPublicBodiesFound }}</strong><br/>
-        {{ i18n.missingPublicBody }}
-         <a :href="help_url">
-           {{ i18n.letUsKnow }}
-         </a>
-      </li>
-    </ul>
-    <ul v-if="value" class="search-results list-unstyled">
-      <li class="search-result selected">
-        <label>
-          <input type="radio" :name="name" :data-label="label" :value="value" @change="selectSearchResult" v-model="value"/>
-          {{ label }}
-        </label>
-      </li>
-    </ul>
+    <component :is="listView" :name="name" :scope="scope" :i18n="i18n"></component>
   </div>
 </template>
 
@@ -48,26 +23,31 @@
 import {debounce} from 'underscore'
 import {mapGetters, mapMutations} from 'vuex'
 
-import {SET_PUBLICBODY, SET_PUBLICBODY_DETAIL} from '../store/mutation_types'
+import {
+  SET_PUBLICBODY, SET_PUBLICBODIES,
+  SET_SEARCHRESULTS, CACHE_PUBLICBODIES
+} from '../store/mutation_types'
 import {FroideSearch} from '../lib/search'
+
+import PBResultList from './pb-result-list'
 
 export default {
   name: 'publicbody-chooser',
   props: ['name', 'scope', 'defaultsearch', 'formJson', 'config'],
-  created: function () {
+  mounted: function () {
     this.pbSearch = new FroideSearch(this.config)
 
     if (this._form.cleaned_data) {
       this.cachePublicBodies([this._form.cleaned_data[this.name]])
-      this.setPublicbodyDetail({
+      this.setPublicbody({
         publicbody: this._form.cleaned_data[this.name],
         scope: this.scope
       })
     }
     if (this.field.objects) {
       this.cachePublicBodies([this.field.objects])
-      this.setPublicbodyDetail({
-        publicbody: this.field.objects,
+      this.setPublicBodies({
+        publicbodies: this.field.objects,
         scope: this.scope
       })
     }
@@ -77,13 +57,16 @@ export default {
   },
   data () {
     return {
-      searchResults: [],
       publicbodies: {},
       search: this.defaultsearch,
       lastSearch: null,
       emptyResults: false,
-      searching: false
+      searching: false,
+      listView: 'result'
     }
+  },
+  components: {
+    result: PBResultList
   },
   computed: {
     help_url () {
@@ -104,21 +87,6 @@ export default {
     errors () {
       return this._form.errors
     },
-    value: {
-      get () {
-        if (this.publicbody) {
-          return this.publicbody.id
-        }
-      },
-      set (value) {
-        this.searchResults = []
-        this.setPublicbody({
-          publicbody: this.publicbodies[value],
-          scope: this.scope
-        })
-        this.fetchDetails(this.publicbodies[value])
-      }
-    },
     label () {
       if (this.publicbody) {
         return this.publicbody.name
@@ -133,9 +101,14 @@ export default {
     publicbodyDetails () {
       return this.getPublicBodyDetailsByScope(this.scope)
     },
+    searchResults () {
+      return this.getScopedSearchResults(this.scope)
+    },
     ...mapGetters([
       'getPublicBodyByScope',
-      'getPublicBodyDetailsByScope'
+      'getPublicBodyDetailsByScope',
+      'getScopedSearchResults',
+      'getScopedSearchMeta'
     ])
   },
   methods: {
@@ -143,12 +116,9 @@ export default {
       this.search = event.target.dataset.search
       this.triggerAutocomplete()
     },
-    selectSearchResult (event) {
-      this.value = event.target.value
-    },
     triggerAutocomplete () {
       if (this.search === '') {
-        this.searchResults = []
+        // this.searchResults = []
         this.emptyResults = false
         this.searching = false
       }
@@ -168,9 +138,12 @@ export default {
       this.pbSearch.searchPublicBody(this.search).then((results) => {
         this.searching = false
         this.emptyResults = results.length === 0
-        results = results.filter((r) => r.id !== this.value)
-        this.searchResults = results
-        this.cachePublicBodies(this.searchResults)
+        this.setSearchResults({
+          searchResults: results.objects,
+          searchMeta: results.meta,
+          scope: this.scope
+        })
+        this.cachePublicBodies(results.objects)
       }, () => {
         this.searching = false
       })
@@ -186,74 +159,12 @@ export default {
         })
       })
     },
-    cachePublicBodies (pbs) {
-      let newPublicBodies = {}
-      pbs.forEach(function (r) {
-        newPublicBodies[r.id] = r
-      })
-      this.publicbodies = {
-        ...this.publicbodies,
-        ...newPublicBodies
-      }
-    },
     ...mapMutations({
-      setPublicbody: SET_PUBLICBODY,
-      setPublicbodyDetail: SET_PUBLICBODY_DETAIL
+      setPublicBody: SET_PUBLICBODY,
+      setPublicBodies: SET_PUBLICBODIES,
+      setSearchResults: SET_SEARCHRESULTS,
+      cachePublicBodies: CACHE_PUBLICBODIES
     })
   }
 }
 </script>
-
-
-<style scoped>
-  .search-results {
-      overflow-y: auto;
-      outline: 1px solid #aaa;
-  }
-
-  .search-result {
-      cursor: pointer;
-  }
-
-  .search-result:hover {
-      background-color: #f5f5f5;
-  }
-
-  .search-result.selected {
-     background-color: #dff0d8;
-  }
-
-  .search-result > label {
-      font-weight: normal;
-      cursor: pointer;
-  }
-
-  .search-result > label > small{
-      margin-left: 5px;
-      color: #999;
-  }
-
-  .search-result > label > input {
-      margin: 0 5px;
-  }
-
-  .search-examples > a {
-      color: #777;
-  }
-
-  /* Enter and leave animations can use different */
-  /* durations and timing functions.              */
-  .slide-up-enter-active {
-    transition: all .3s ease;
-    transform-origin: top;
-  }
-  .slide-up-leave-active {
-    transition: all .8s ease-in-out;
-    transform-origin: top;
-  }
-  .slide-up-enter, .slide-up-leave-to {
-    transform: scaleY(0);
-    opacity: 0;
-    max-height: 0;
-  }
-</style>
