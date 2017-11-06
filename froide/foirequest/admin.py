@@ -20,7 +20,7 @@ from froide.helper.document import can_convert_to_pdf
 
 from .models import (FoiRequest, FoiMessage,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
-        DeferredMessage, TaggedFoiRequest)
+        DeferredMessage, TaggedFoiRequest, RequestDraft)
 from .tasks import count_same_foirequests, convert_attachment_task
 
 
@@ -291,9 +291,19 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     redeliver.short_description = _("Redeliver to...")
 
 
+class RequestDraftAdmin(admin.ModelAdmin):
+    list_display = ('save_date', 'user', 'subject',)
+    list_filter = ('public', 'full_text')
+    search_fields = ['subject', 'user__email']
+    ordering = ('-save_date',)
+    date_hierarchy = 'save_date'
+    raw_id_fields = ('user', 'publicbodies')
+
+
 admin.site.register(FoiRequest, FoiRequestAdmin)
 admin.site.register(FoiMessage, FoiMessageAdmin)
 admin.site.register(FoiAttachment, FoiAttachmentAdmin)
 admin.site.register(FoiEvent, FoiEventAdmin)
 admin.site.register(PublicBodySuggestion, PublicBodySuggestionAdmin)
 admin.site.register(DeferredMessage, DeferredMessageAdmin)
+admin.site.register(RequestDraft, RequestDraftAdmin)

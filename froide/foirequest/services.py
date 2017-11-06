@@ -7,7 +7,7 @@ from django.template.defaultfilters import slugify
 
 from froide.account.models import AccountManager
 
-from .models import FoiRequest, FoiMessage
+from .models import FoiRequest, FoiMessage, RequestDraft
 from .utils import generate_secret_address, construct_message_body
 from .hooks import registry
 
@@ -171,3 +171,29 @@ class CreateRequestService(BaseService):
 class CreateSameAsRequestService(CreateRequestService):
     def pre_save_request(self, request):
         request.same_as = self.data['original_foirequest']
+
+
+class SaveDraftService(BaseService):
+    def process(self, request=None):
+        data = self.data
+        request_form = data['request_form']
+        draft = request_form.cleaned_data.get('draft', None)
+        if draft is None:
+            draft = RequestDraft.objects.create(
+                user=request.user,
+                subject=request_form.cleaned_data.get('subject', ''),
+                body=request_form.cleaned_data.get('body', ''),
+                full_text=request_form.cleaned_data['full_text'],
+                public=request_form.cleaned_data['public'],
+                reference=request_form.cleaned_data.get('reference', ''),
+            )
+        else:
+            RequestDraft.objects.filter(id=draft.id).update(
+                subject=request_form.cleaned_data.get('subject', ''),
+                body=request_form.cleaned_data.get('body', ''),
+                full_text=request_form.cleaned_data['full_text'],
+                public=request_form.cleaned_data['public'],
+                reference=request_form.cleaned_data.get('reference', ''),
+            )
+        draft.publicbodies.set(data['publicbodies'])
+        return draft

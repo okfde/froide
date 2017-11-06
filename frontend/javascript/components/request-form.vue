@@ -72,6 +72,11 @@
       <i class="fa fa-check" aria-hidden="true"></i>
       {{ i18n.reviewRequest }}
     </button>
+    <button v-if="reviewReady && user.id" type="submit" class="btn btn-secondary" name="save_draft" value="true">
+      <i class="fa fa-save" aria-hidden="true"></i>
+      {{ i18n.saveAsDraft }}
+    </button>
+
 
   </div>
 </template>

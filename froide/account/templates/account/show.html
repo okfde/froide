@@ -24,6 +24,11 @@
         </a>
       </li>
       <li class="nav-item">
+        <a href="{% if menu != 'drafts' %}{% url 'account-drafts' %}{% endif %}" class="nav-link{% if menu == 'drafts' %} active{% endif %}">
+          {% trans "Request drafts" %}
+        </a>
+      </li>
+      <li class="nav-item">
         <a href="{% if menu != 'following' %}{% url 'account-following' %}{% endif %}" class="nav-link{% if menu == 'following' %} active{% endif %}">
           {% trans "Requests you follow" %}
         </a>

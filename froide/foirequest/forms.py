@@ -17,7 +17,7 @@ from froide.helper.widgets import PriceInput, BootstrapRadioSelect
 from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
 
-from .models import FoiRequest, FoiMessage, FoiAttachment
+from .models import FoiRequest, FoiMessage, FoiAttachment, RequestDraft
 from .validators import validate_upload_document
 
 
@@ -51,6 +51,17 @@ class RequestForm(JSONMixin, forms.Form):
                                      required=False)
     hide_similar = forms.BooleanField(widget=forms.HiddenInput, initial=False,
                                      required=False)
+    hide_draft = forms.BooleanField(widget=forms.HiddenInput, initial=False,
+                                     required=False)
+    draft = forms.ModelChoiceField(queryset=None, required=False,
+                                      widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(RequestForm, self).__init__(*args, **kwargs)
+        if self.user.is_authenticated:
+            user_drafts = RequestDraft.objects.filter(user=self.user)
+            self.fields['draft'].queryset = user_drafts
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']

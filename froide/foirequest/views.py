@@ -29,7 +29,8 @@ from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 from froide.helper.redaction import redact_file
 
-from .models import FoiRequest, FoiMessage, FoiEvent, FoiAttachment
+from .models import (FoiRequest, FoiMessage, FoiEvent, FoiAttachment,
+                     RequestDraft)
 from .forms import (RequestForm, ConcreteLawForm, TagFoiRequestForm,
         SendMessageForm, FoiRequestStatusForm, MakePublicBodySuggestionForm,
         PostalReplyForm, PostalMessageForm, PostalAttachmentForm,
@@ -38,7 +39,8 @@ from .feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from .tasks import process_mail
 from .foi_mail import package_foirequest
 from .utils import check_throttle
-from .services import CreateRequestService, CreateSameAsRequestService
+from .services import (CreateRequestService, CreateSameAsRequestService,
+                       SaveDraftService)
 
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
@@ -316,7 +318,7 @@ def make_request(request, publicbody_slug=None, publicbody_ids=None):
     if request.method == 'POST':
         error = False
 
-        request_form = RequestForm(request.POST)
+        request_form = RequestForm(request.POST, user=request.user)
 
         throttle_message = check_throttle(request.user, FoiRequest)
         if throttle_message:
@@ -335,6 +337,21 @@ def make_request(request, publicbody_slug=None, publicbody_ids=None):
             publicbody_form = PublicBodyForm(request.POST)
             if not publicbody_form.is_valid():
                 error = True
+
+        if request.user.is_authenticated and request.POST.get('save_draft', ''):
+            # Save as draft
+            if publicbody_form:
+                publicbodies = publicbody_form.get_publicbodies()
+
+            service = SaveDraftService({
+                'publicbodies': publicbodies,
+                'request_form': request_form
+            })
+            service.execute(request)
+            messages.add_message(request, messages.INFO,
+                _('Your request has been saved to your drafts.'))
+
+            return redirect('account-drafts')
 
         if not request.user.is_authenticated:
             user_form = NewUserForm(request.POST)
@@ -388,22 +405,26 @@ def make_request(request, publicbody_slug=None, publicbody_ids=None):
         if 'body' in request.GET:
             initial['body'] = request.GET['body']
 
-        if 'hide_public' in request.GET:
-            initial['hide_public'] = True
+        if 'draft' in request.GET:
+            initial['draft'] = request.GET['draft']
+
+        config = {}
+        for key in ('hide_similar', 'hide_public', 'hide_draft'):
+            if key in request.GET:
+                initial[key] = True
+            config[key] = initial.get(key, False)
+
+        if initial.get('hide_public'):
             initial['public'] = True
+        if 'public' in request.GET:
+            initial['public'] = request.GET['public'] == '1'
 
-        if 'hide_similar' in request.GET:
-            initial['hide_similar'] = True
-
-        config = {
-            k: initial.get(k, False) for k in (
-                'hide_similar', 'hide_public'
-            )
-        }
+        if 'full_text' in request.GET:
+            initial['full_text'] = request.GET['full_text'] == '1'
 
         initial['jurisdiction'] = request.GET.get("jurisdiction", None)
 
-        request_form = RequestForm(initial=initial)
+        request_form = RequestForm(initial=initial, user=request.user)
         if not request.user.is_authenticated:
             initial_user_data = {}
             if 'email' in request.GET:
@@ -429,6 +450,20 @@ def make_request(request, publicbody_slug=None, publicbody_ids=None):
         'config': config,
         'public_body_search': request.GET.get('topic', '')
     }, status=status_code)
+
+
+@require_POST
+def delete_draft(request):
+    if not request.user.is_authenticated:
+        return render_403(request)
+
+    pk = request.POST.get('draft_id')
+    draft = get_object_or_404(RequestDraft, pk=pk, user=request.user)
+    draft.delete()
+    messages.add_message(request, messages.INFO,
+        _('The draft has been deleted.'))
+
+    return redirect('account-drafts')
 
 
 @require_POST

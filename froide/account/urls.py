@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
 from .views import (MyRequestsView,
-    FollowingRequestsView, account_settings,
+    FollowingRequestsView, DraftRequestsView, account_settings,
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
@@ -10,6 +10,7 @@ from .views import (MyRequestsView,
 
 urlpatterns = [
     url(r'^$', MyRequestsView.as_view(), name='account-show'),
+    url(r'^drafts/$', DraftRequestsView.as_view(), name='account-drafts'),
     url(r'^following/$', FollowingRequestsView.as_view(), name='account-following'),
     url(r'^settings/$', account_settings, name='account-settings'),
     url(r'^terms/$', new_terms, name='account-new_terms'),

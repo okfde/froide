@@ -17,6 +17,7 @@
 
     {% csrf_token %}
     {{ request_form.reference }}
+    {{ request_form.draft }}
     {{ request_form.redirect_url}}
 
     {% if publicbodies %}
@@ -66,6 +67,7 @@
         user-form-json="{{ user_form.as_json }}"
         request-form-json="{{ request_form.as_json }}"
         show-similar="{% if not config.hide_similar %}true{% endif %}"
+        show-draft="{% if not config.hide_draft %}true{% endif %}"
         :config="config">
 
         <legend slot="publicbody-legend-title">
@@ -155,6 +157,7 @@
     Froide.i18n = Froide.i18n || {}
     Froide.i18n = Object.assign(Froide.i18n, {
       subject: '{% trans "Subject" %}',
+      saveAsDraft: '{% trans "Save as draft" %}',
       reviewRequest: '{% trans "Review request" %}',
       reviewTitle: '{% trans "Review your request and submit" %}',
       reviewEdit: '{% trans "Edit" %}',
