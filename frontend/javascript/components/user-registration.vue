@@ -63,8 +63,7 @@
             {{ form.private.label }}
           </label>
           <br/>
-          <small class="help-block">
-            {{ form.private.help_text }}
+          <small class="help-block" v-html="form.private.help_text">
           </small>
         </div>
       </div>
