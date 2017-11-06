@@ -11,7 +11,7 @@
           {% blocktrans with query=view.query count request_count=page_obj.paginator.count %}
             Your search for “{{ query }}” produced one search result.
           {% plural %}
-            Your search for “{{ query }}” produced {{ request_count }} search result.
+            Your search for “{{ query }}” produced {{ request_count }} search results.
           {% endblocktrans %}
         {% else %}
           {% blocktrans count request_count=page_obj.paginator.count %}
