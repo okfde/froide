@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('file', models.FileField(upload_to=froide.foirequest.models.upload_to, max_length=255, verbose_name='File')),
+                ('file', models.FileField(upload_to=froide.foirequest.models.attachment.upload_to, max_length=255, verbose_name='File')),
                 ('size', models.IntegerField(null=True, verbose_name='Size', blank=True)),
                 ('filetype', models.CharField(max_length=100, verbose_name='File type', blank=True)),
                 ('format', models.CharField(max_length=100, verbose_name='Format', blank=True)),
@@ -128,9 +128,9 @@ class Migration(migrations.Migration):
             },
             managers=[
                 ('non_filtered_objects', django.db.models.manager.Manager()),
-                ('objects', froide.foirequest.models.FoiRequestManager()),
-                ('published', froide.foirequest.models.PublishedFoiRequestManager()),
-                ('published_not_foi', froide.foirequest.models.PublishedNotFoiRequestManager()),
+                ('objects', froide.foirequest.models.request.FoiRequestManager()),
+                ('published', froide.foirequest.models.request.PublishedFoiRequestManager()),
+                ('published_not_foi', froide.foirequest.models.request.PublishedNotFoiRequestManager()),
             ],
         ),
         migrations.CreateModel(
