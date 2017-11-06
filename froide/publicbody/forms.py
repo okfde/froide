@@ -20,9 +20,19 @@ class PublicBodyForm(JSONMixin, forms.Form):
             data['cleaned_data'] = self.cleaned_data
         return data
 
+    def get_publicbodies(self):
+        if self.is_valid():
+            return [self.cleaned_data['publicbody']]
+        return []
+
 
 class MultiplePublicBodyForm(JSONMixin, forms.Form):
     publicbody = forms.ModelMultipleChoiceField(
             queryset=PublicBody.objects.all(),
             label=_("Search for a topic or a public body:")
     )
+
+    def get_publicbodies(self):
+        if self.is_valid():
+            return self.cleaned_data['publicbody']
+        return []
