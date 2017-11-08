@@ -24,8 +24,13 @@
 
 .navbar-logo {
   display: inline-block;
-
   margin-right: $spacer * 0.5;
+}
+
+@media (max-width: 400px) {
+  .navbar-toggler-title {
+    display: none;
+  }
 }
 
 .navbar .nav > li > a:hover {
