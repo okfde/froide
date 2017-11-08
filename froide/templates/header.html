@@ -1,64 +1,5 @@
 {% load i18n %}
 {% load static %}
-<<<<<<< HEAD
-
-<nav class="navbar navbar-secondary navbar-expand-md navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
-  <div class="container">
-    {% block nav_brand %}
-      <a class="navbar-brand" href="{% url 'index' %}">
-         <img src="{% static "img/logo/logo.svg" %}" height="42" class="navbar-logo" alt="{{ SITE_NAME }}">
-         <span class="navbar-brand-name">{{ SITE_NAME }}</span>
-      </a>
-    {% endblock %}
-    <button class="navbar-toggler d-print-none" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-      <small class="d-none d-sm-inline">{% trans "Menu" %}</small>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      {% block nav %}
-      <ul class="navbar-nav col-auto mr-auto">
-        <li class="nav-item {% block nav_requests %}{% endblock %}">
-          <a class="nav-link" href="{% url 'foirequest-list' %}">
-            {% blocktrans %}Requests{% endblocktrans %}
-          </a>
-        </li>
-        <li class="nav-item {% block nav_publicbodies %}{% endblock %}">
-          <a class="nav-link" href="{% url 'publicbody-list' %}">
-            {% blocktrans %}Public Bodies{% endblocktrans %}
-          </a>
-       </li>
-        <li class="nav-item special-nav-item {% block nav_makerequest %}{% endblock %}">
-          <a class="nav-link" href="{% url 'foirequest-make_request' %}">
-            {% blocktrans %}Make a Request!{% endblocktrans %}
-          </a>
-        </li>
-      </ul>
-      {% endblock nav %}
-      {% block nav_search %}
-      <form class="form-inline d-block d-md-none d-lg-block" role="search" method="get" action="{% url 'foirequest-search' %}">
-        <input class="form-control mr-sm-2" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="Search">
-      </form>
-      <ul class="navbar-nav d-none d-md-block d-lg-none">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'foirequest-search' %}">
-            <i class="fa fa-search" aria-hidden="true"></i>
-          </a>
-        </li>
-      </ul>
-      {% endblock nav_search %}
-      <ul class="navbar-nav col-auto">
-        {% block nav_account_login %}
-        {% if user.is_authenticated %}
-        <li class="nav-item dropdown {% block nav_account %}{% endblock %}">
-          <a class="nav-link dropdown-toggle account-dropdown" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="navbaraccount-link">
-            {% blocktrans with name=user.first_name|truncatechars:12 %}
-              Hello {{ name}}
-            {% endblocktrans %}
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbaraccount-link">
-            <a class="dropdown-item" href="{% url 'account-show' %}">
-              {% trans "My requests" %}
-=======
 <header>
   <nav class="navbar navbar-secondary navbar-expand-md navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
     <div class="container">
@@ -78,7 +19,6 @@
           <li class="nav-item {% block nav_requests %}{% endblock %}">
             <a class="nav-link" href="{% url 'foirequest-list' %}">
               {% blocktrans %}Requests{% endblocktrans %}
->>>>>>> Redesign footer
             </a>
           </li>
           <li class="nav-item {% block nav_publicbodies %}{% endblock %}">
