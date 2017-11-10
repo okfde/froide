@@ -23,7 +23,7 @@ from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.foirequest.tests import factories
 
 
-from .models import AccountManager
+from .services import AccountService
 from .utils import merge_accounts
 from .admin import UserAdmin
 
@@ -176,10 +176,10 @@ class AccountTest(TestCase):
 
     def test_confirmation_process(self):
         self.client.logout()
-        user, password = AccountManager.create_user(first_name="Stefan",
+        user, password = AccountService.create_user(first_name="Stefan",
                 last_name="Wehrmeyer", user_email="sw@example.com",
                 address="SomeRandomAddress\n11234 Bern", private=True)
-        AccountManager(user).send_confirmation_mail(password=password)
+        AccountService(user).send_confirmation_mail(password=password)
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
         match = re.search(r'/%d/(\w+)/' % user.pk, message.body)

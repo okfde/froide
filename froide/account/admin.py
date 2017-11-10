@@ -11,7 +11,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
 
-from .models import User, AccountManager
+from .models import User
+from .services import AccountService
 from .utils import delete_all_unexpired_sessions_for_user, cancel_user
 
 
@@ -74,7 +75,7 @@ class UserAdmin(DjangoUserAdmin):
             else:
                 foi_request = None
             rows_updated += 1
-            AccountManager(user).send_confirmation_mail(
+            AccountService(user).send_confirmation_mail(
                     request_id=foi_request,
                     password=password
             )

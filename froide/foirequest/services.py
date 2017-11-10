@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 
-from froide.account.models import AccountManager
+from froide.account.services import AccountService
 
 from .models import FoiRequest, FoiMessage, RequestDraft
 from .utils import generate_secret_address, construct_message_body
@@ -39,7 +39,7 @@ class CreateRequestService(BaseService):
 
         if not user.is_authenticated:
             user_created = True
-            user, password = AccountManager.create_user(**self.data)
+            user, password = AccountService.create_user(**self.data)
             self.data['user'] = user
 
         if request is not None:
@@ -53,7 +53,7 @@ class CreateRequestService(BaseService):
         foirequest = self.create_request(self.data['publicbodies'][0])
 
         if user_created:
-            AccountManager(user).send_confirmation_mail(
+            AccountService(user).send_confirmation_mail(
                 request_id=foirequest.pk,
                 password=password
             )

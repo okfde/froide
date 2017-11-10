@@ -13,7 +13,7 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
-from .models import AccountManager
+from .services import AccountService
 
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
@@ -241,7 +241,7 @@ class UserEmailConfirmationForm(forms.Form):
         return user_id
 
     def clean(self):
-        check = AccountManager(self.user).check_confirmation_secret(
+        check = AccountService(self.user).check_confirmation_secret(
             self.cleaned_data['secret'],
             self.cleaned_data['email'],
         )

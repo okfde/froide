@@ -9,6 +9,7 @@ from django.utils.html import escape
 from django.utils.encoding import python_2_unicode_compatible
 
 from froide.publicbody.models import PublicBody
+from froide.account.services import AccountService
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (redact_content, remove_closing, replace_custom)
 
@@ -221,7 +222,8 @@ class FoiMessage(models.Model):
     def redact_subject(self):
         content = self.subject
         if self.request.user:
-            content = self.request.user.apply_message_redaction(content)
+            account_service = AccountService(self.request.user)
+            content = account_service.apply_message_redaction(content)
         content = redact_content(content)
         return content[:255]
 
@@ -250,7 +252,8 @@ class FoiMessage(models.Model):
                             greeting_replacement, content)
 
         if self.request.user:
-            content = self.request.user.apply_message_redaction(content)
+            account_service = AccountService(self.request.user)
+            content = account_service.apply_message_redaction(content)
 
         return content
 

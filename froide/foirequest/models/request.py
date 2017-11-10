@@ -25,6 +25,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
+from froide.account.services import AccountService
 from froide.helper.text_utils import redact_content
 
 from ..foi_mail import package_foirequest
@@ -701,6 +702,9 @@ class FoiRequest(models.Model):
         self.last_message = message.timestamp
         self.save()
         has_pdf = False
+
+        account_service = AccountService(self.user)
+
         for i, attachment in enumerate(email['attachments']):
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
@@ -708,7 +712,7 @@ class FoiRequest(models.Model):
                     filetype=attachment.content_type)
             if not att.name:
                 att.name = _("attached_file_%d") % i
-            att.name = self.user.apply_message_redaction(att.name,
+            att.name = account_service.apply_message_redaction(att.name,
                 {
                     'email': False,
                     'address': False,

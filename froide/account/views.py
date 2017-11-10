@@ -14,7 +14,7 @@ from froide.helper.utils import render_403
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
-from .models import AccountManager
+from .services import AccountService
 from .utils import cancel_user
 
 
@@ -26,8 +26,8 @@ def confirm(request, user_id, secret, request_id=None):
     user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
     if user.is_active or (not user.is_active and user.email is None):
         return redirect('account-login')
-    account_manager = AccountManager(user)
-    if account_manager.confirm_account(secret, request_id):
+    account_service = AccountService(user)
+    if account_service.confirm_account(secret, request_id):
         messages.add_message(request, messages.WARNING,
                 _('Your email address is now confirmed and you are logged in. You should change your password now by filling out the form below.'))
         auth.login(request, user)
@@ -59,7 +59,7 @@ def go(request, user_id, secret, url):
             messages.add_message(request, messages.ERROR,
                 _('Your account is not active.'))
             raise Http404
-        account_manager = AccountManager(user)
+        account_manager = AccountService(user)
         if account_manager.check_autologin_secret(secret):
             auth.login(request, user)
     return redirect(url)
@@ -211,9 +211,9 @@ def signup(request):
     signup_form = NewUserForm(request.POST)
     next = request.POST.get('next')
     if signup_form.is_valid():
-        user, password = AccountManager.create_user(**signup_form.cleaned_data)
+        user, password = AccountService.create_user(**signup_form.cleaned_data)
         signup_form.save(user)
-        AccountManager(user).send_confirmation_mail(password=password)
+        AccountService(user).send_confirmation_mail(password=password)
         messages.add_message(request, messages.SUCCESS,
                 _('Please check your emails for a mail from us with a confirmation link.'))
         if next:
@@ -301,7 +301,7 @@ def change_user(request):
     form = UserChangeForm(request.user, request.POST)
     if form.is_valid():
         if request.user.email != form.cleaned_data['email']:
-            AccountManager(request.user).send_email_change_mail(
+            AccountService(request.user).send_email_change_mail(
                 form.cleaned_data['email']
             )
             messages.add_message(request, messages.SUCCESS,
