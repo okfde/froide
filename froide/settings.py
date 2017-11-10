@@ -10,13 +10,12 @@ from celery.schedules import crontab
 from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
+from django.utils.translation import ugettext_lazy as _
+
 
 def rec(x):
     return re.compile(x, re.I | re.U)
 
-
-def gettext(s):
-    return s
 
 # Django settings for froide project.
 
@@ -202,17 +201,17 @@ class Base(Configuration):
     # http://www.i18nguy.com/unicode/language-identifiers.html
     LANGUAGE_CODE = values.Value('en')
     LANGUAGES = (
-        ('en', gettext('English')),
-        ('es', gettext('Spanish')),
-        ('fi-fi', gettext('Finnish (Finland)')),
-        ('de', gettext('German')),
-        ('da-dk', gettext('Danish (Denmark)')),
-        ('it', gettext('Italian')),
-        ('pt', gettext('Portuguese')),
-        ('sv-se', gettext('Swedish (Sweden)')),
-        ('sv-fi', gettext('Swedish (Finland)')),
-        ('zh-cn', gettext('Chinese (Simplified)')),
-        ('zh-hk', gettext('Chinese (Traditional, Hong Kong)')),
+        ('en', _('English')),
+        ('es', _('Spanish')),
+        ('fi-fi', _('Finnish (Finland)')),
+        ('de', _('German')),
+        ('da-dk', _('Danish (Denmark)')),
+        ('it', _('Italian')),
+        ('pt', _('Portuguese')),
+        ('sv-se', _('Swedish (Sweden)')),
+        ('sv-fi', _('Swedish (Finland)')),
+        ('zh-cn', _('Chinese (Simplified)')),
+        ('zh-hk', _('Chinese (Traditional, Hong Kong)')),
     )
 
     # If you set this to False, Django will make some optimizations so as not
@@ -525,7 +524,7 @@ class Test(Base):
 class German(object):
     LANGUAGE_CODE = "de"
     LANGUAGES = (
-        ('de', gettext('German')),
+        ('de', _('German')),
     )
 
     DATE_FORMAT = "d. F Y"
