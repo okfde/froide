@@ -17,7 +17,7 @@ from froide.publicbody.models import PublicBody
 
 @python_2_unicode_compatible
 class RequestDraft(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     create_date = models.DateTimeField(auto_now_add=True)
     save_date = models.DateTimeField(auto_now=True)
 
