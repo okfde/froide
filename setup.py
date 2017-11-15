@@ -42,7 +42,7 @@ setup(
         'requests',
         'django_overextends',
         'python-magic',
-        'django-tastypie',
+        'djangorestframework',
         'python-mimeparse',
         'unicodecsv',
         'django-configurations',

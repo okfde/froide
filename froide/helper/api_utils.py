@@ -1,24 +1,7 @@
 from collections import OrderedDict
 
-from tastypie.authentication import (MultiAuthentication,
-    BasicAuthentication, SessionAuthentication)
-from tastypie.authorization import ReadOnlyAuthorization
-
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-
-
-class AnonymousGetAuthentication(BasicAuthentication):
-    def is_authenticated(self, request, **kwargs):
-        if request.method == 'GET':
-            return True
-        multi_auth = MultiAuthentication(SessionAuthentication(),
-            BasicAuthentication())
-        return multi_auth.is_authenticated(request, **kwargs)
-
-
-class CustomDjangoAuthorization(ReadOnlyAuthorization):
-    pass
 
 
 class CustomLimitOffsetPagination(LimitOffsetPagination):

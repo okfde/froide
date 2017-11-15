@@ -12,14 +12,8 @@ from django.utils.translation import ugettext as _
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 
-from tastypie.api import Api
 from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
-
-from froide.publicbody.api import (PublicBodyResource,
-    JurisdictionResource, FoiLawResource)
-from froide.foirequest.api import (FoiRequestResource,
-    FoiMessageResource, FoiAttachmentResource)
 
 from froide.account.api_views import ProfileView
 from froide.foirequest.api_views import (FoiRequestViewSet, FoiMessageViewSet,
@@ -31,15 +25,6 @@ from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody)
 from froide.foirequest.views import (index, search, dashboard, auth,
                                      FoiRequestSitemap, shortlink)
-
-
-v1_api = Api(api_name='v1')
-v1_api.register(PublicBodyResource())
-v1_api.register(JurisdictionResource())
-v1_api.register(FoiLawResource())
-v1_api.register(FoiRequestResource())
-v1_api.register(FoiMessageResource())
-v1_api.register(FoiAttachmentResource())
 
 
 api_router = DefaultRouter()
@@ -94,15 +79,12 @@ if settings.FROIDE_THEME:
     ]
 
 if settings.FROIDE_CONFIG.get('api_activated', True):
-    urlpatterns += [
-        url(r'^api/', include(v1_api.urls)),
-    ]
     schema_view = get_schema_view(title='{name} API'.format(
                                   name=settings.SITE_NAME))
     urlpatterns += [
-        url(r'^api/v2/user/', ProfileView.as_view(), name='user-profile'),
-        url(r'^api/v2/', include((api_router.urls, 'api'))),
-        url(r'^api/v2/schema/$', schema_view),
+        url(r'^api/v1/user/', ProfileView.as_view(), name='user-profile'),
+        url(r'^api/v1/', include((api_router.urls, 'api'))),
+        url(r'^api/v1/schema/$', schema_view),
     ]
 
 

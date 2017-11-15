@@ -43,7 +43,6 @@ class Base(Configuration):
         'haystack',
         'taggit',
         'overextends',
-        'tastypie',
         'storages',
 
         # API
