@@ -166,14 +166,13 @@ class ApiTest(TestCase):
         pb = PublicBody.objects.all()[0]
         factories.rebuild_index()
 
-        response = self.client.get('%s&q=%s' % (
-                '/api/v1/publicbody/autocomplete/?format=json', pb.name))
+        response = self.client.get('%s?q=%s' % (
+                '/api/v1/publicbody/search/', pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(pb.name, obj['suggestions'][0])
         self.assertIn(pb.name, obj['objects'][0]['name'])
-        response = self.client.get('%s&query=%s&jurisdiction=non_existant' % (
-                '/api/v1/publicbody/autocomplete/?format=json', pb.name))
+        response = self.client.get('%s?query=%s&jurisdiction=non_existant' % (
+                '/api/v1/publicbody/search/', pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(obj['suggestions'], [])
+        self.assertEqual(obj['objects'], [])
