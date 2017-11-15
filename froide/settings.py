@@ -45,10 +45,6 @@ class Base(Configuration):
         'overextends',
         'storages',
 
-        # API
-        'oauth2_provider',
-        'rest_framework',
-
         # local
         'froide.foirequest',
         'froide.foirequestfollower',
@@ -57,6 +53,10 @@ class Base(Configuration):
         'froide.account',
         'froide.foisite',
         'froide.helper',
+
+        # API
+        'oauth2_provider',
+        'rest_framework',
     ])
 
     CACHES = values.CacheURLValue('dummy://')

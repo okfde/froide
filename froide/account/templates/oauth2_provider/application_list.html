@@ -1,0 +1,14 @@
+{% overextends "oauth2_provider/application_list.html" %}
+
+{% load i18n %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-lg-4 ml-auto">
+      <a href="{% url 'account-settings' %}" class="btn btn-secondary pull-right">
+        {% trans "back to your account settings" %}
+      </a>
+    </div>
+  </div>
+  {{ block.super }}
+{% endblock %}
