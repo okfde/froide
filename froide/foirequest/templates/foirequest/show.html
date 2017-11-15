@@ -618,21 +618,6 @@
             {% trans "View on Admin site" %}
           </a>
         </li>
-        <li class="nav-item">
-          <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form">
-            {% csrf_token %}
-            <div class="input-group">
-              {% with object.get_set_tags_form as set_tags_form %}
-                {{ set_tags_form.tags }}
-              {% endwith %}
-              <span class="input-group-btn">
-                <button class="btn btn-success" type="submit">
-                  {% trans "Save tags" %}
-                </button>
-              </span>
-            </div>
-          </form>
-        </li>
         {% if object.checked %}
           <li class="nav-item">{% trans "Marked as checked" %}</li>
         {% else %}
@@ -661,17 +646,29 @@
             </div>
           </li>
         {% endif %}
-        <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
-          {% csrf_token %}
-          <div class="input-group">
+        <li class="nav-header">{% trans "Tags" %}</li>
+        <li class="nav-item">
+          <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form">
+            {% csrf_token %}
+            {% with object.get_set_tags_form as set_tags_form %}
+              {{ set_tags_form.tags }}
+            {% endwith %}
+
+            <button class="btn btn-success btn-sm" type="submit">
+              {% trans "Save tags" %}
+            </button>
+          </form>
+        </li>
+        <li class="nav-header">{% trans "Extend deadline" %}</li>
+        <li class="nav-item">
+          <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+            {% csrf_token %}
             <input type="number" name="months" value="6" class="form-control"/>
-            <span class="input-group-btn">
-              <button class="btn btn-light" type="submit">
-                {% trans "Extend Deadline by Months" %}
-              </button>
-            </span>
-          </div>
-        </form>
+            <button class="btn btn-light" type="submit">
+              {% trans "Extend Deadline by Months" %}
+            </button>
+          </form>
+        </li>
       {% endif %}
     </ul>
   </div>
