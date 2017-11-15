@@ -30,6 +30,10 @@ class RequestDraft(models.Model):
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
 
+    class Meta:
+        verbose_name = _('request draft')
+        verbose_name_plural = _('request drafts')
+
     def __str__(self):
         return _('Draft "{subject}" by {user}').format(
             subject=self.subject,
