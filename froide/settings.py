@@ -48,6 +48,8 @@ class Base(Configuration):
 
         # API
         'oauth2_provider',
+        'rest_framework',
+
         # local
         'froide.foirequest',
         'froide.foirequestfollower',
@@ -370,6 +372,19 @@ class Base(Configuration):
     OAUTH2_PROVIDER_APPLICATION_MODEL = 'account.Application'
 
     LOGIN_URL = 'account-login'
+
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.SessionAuthentication',
+            'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        ),
+        'DEFAULT_PERMISSION_CLASSES': (
+            'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        ),
+        'DEFAULT_PAGINATION_CLASS': 'froide.helper.api_utils.CustomLimitOffsetPagination',
+        'PAGE_SIZE': 50,
+        'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    }
 
     # ######### Froide settings ########
 

@@ -13,11 +13,20 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 
 from tastypie.api import Api
+from rest_framework.routers import DefaultRouter
+from rest_framework.schemas import get_schema_view
 
 from froide.publicbody.api import (PublicBodyResource,
     JurisdictionResource, FoiLawResource)
 from froide.foirequest.api import (FoiRequestResource,
     FoiMessageResource, FoiAttachmentResource)
+
+from froide.account.api_views import ProfileView
+from froide.foirequest.api_views import (FoiRequestViewSet, FoiMessageViewSet,
+    FoiAttachmentViewSet)
+from froide.publicbody.api_views import (PublicBodyViewSet,
+    JurisdictionViewSet, FoiLawViewSet)
+
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody)
 from froide.foirequest.views import (index, search, dashboard, auth,
@@ -31,6 +40,15 @@ v1_api.register(FoiLawResource())
 v1_api.register(FoiRequestResource())
 v1_api.register(FoiMessageResource())
 v1_api.register(FoiAttachmentResource())
+
+
+api_router = DefaultRouter()
+api_router.register(r'request', FoiRequestViewSet, base_name='request')
+api_router.register(r'message', FoiMessageViewSet, base_name='message')
+api_router.register(r'attachment', FoiAttachmentViewSet, base_name='attachment')
+api_router.register(r'publicbody', PublicBodyViewSet, base_name='publicbody')
+api_router.register(r'jurisdiction', JurisdictionViewSet, base_name='jurisdiction')
+api_router.register(r'law', FoiLawViewSet, base_name='law')
 
 
 class StaticViewSitemap(Sitemap):
@@ -79,6 +97,14 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
     urlpatterns += [
         url(r'^api/', include(v1_api.urls)),
     ]
+    schema_view = get_schema_view(title='{name} API'.format(
+                                  name=settings.SITE_NAME))
+    urlpatterns += [
+        url(r'^api/v2/user/', ProfileView.as_view(), name='user-profile'),
+        url(r'^api/v2/', include((api_router.urls, 'api'))),
+        url(r'^api/v2/schema/$', schema_view),
+    ]
+
 
 urlpatterns += [
     # Translators: URL part
