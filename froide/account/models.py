@@ -6,11 +6,12 @@ from django.db import models
 from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
-
 from django.utils import timezone
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
+
+from oauth2_provider.models import AbstractApplication
 
 from froide.helper.csv_utils import export_csv, get_dict
 
@@ -175,3 +176,32 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_change_form(self, *args, **kwargs):
         from froide.account.forms import UserChangeForm
         return UserChangeForm(self, *args, **kwargs)
+
+
+class Application(AbstractApplication):
+    description = models.TextField(blank=True)
+    homepage = models.CharField(max_length=255, blank=True)
+    image_url = models.CharField(max_length=255, blank=True)
+    auto_approve_scopes = models.TextField(blank=True)
+
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
+
+    def allows_grant_type(self, *grant_types):
+        # only allow GRANT_AUTHORIZATION_CODE
+        # regardless of application setting
+        return bool(set([AbstractApplication.GRANT_AUTHORIZATION_CODE]) & set(grant_types))
+
+    def can_auto_approve(self, scopes):
+        """
+        Check if the token allows the provided scopes
+
+        :param scopes: An iterable containing the scopes to check
+        """
+        if not scopes:
+            return True
+
+        provided_scopes = set(self.auto_approve_scopes.split())
+        resource_scopes = set(scopes)
+
+        return resource_scopes.issubset(provided_scopes)

@@ -46,6 +46,8 @@ class Base(Configuration):
         'tastypie',
         'storages',
 
+        # API
+        'oauth2_provider',
         # local
         'froide.foirequest',
         'froide.foirequestfollower',
@@ -351,10 +353,23 @@ class Base(Configuration):
         }
     }
 
-    # ######### Tastypie #########
+    # ######### API #########
 
     # Do not include xml by default, so lxml doesn't need to be present
     TASTYPIE_DEFAULT_FORMATS = ['json']
+
+    OAUTH2_PROVIDER = {
+        'SCOPES': {
+            'read:user': _('Access to user status'),
+            'read:profile': _('Read user profile information'),
+            'read:email': _('Read user email'),
+            'read:request': _('Read my private requests'),
+            'make:request': _('Make requests on my behalf'),
+        }
+    }
+    OAUTH2_PROVIDER_APPLICATION_MODEL = 'account.Application'
+
+    LOGIN_URL = 'account-login'
 
     # ######### Froide settings ########
 
