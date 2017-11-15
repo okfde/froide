@@ -28,6 +28,11 @@
               </a>
             </li>
           </ul>
+          <p v-if="moreSimilarRequestsAvailable">
+            <a :href="searchUrl" target="_blank">
+              {{ i18n.moreSimilarRequests}}
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -42,13 +47,16 @@ import {mapGetters} from 'vuex'
 
 import {FroideSearch} from '../lib/search'
 
+const MAX_SIMILAR = 5
+
 export default {
   name: 'similar-requests',
   props: ['config', 'pbScope'],
   data () {
     return {
       similarRequests: [],
-      searches: {}
+      searches: {},
+      moreSimilarRequestsAvailable: false
     }
   },
   created () {
@@ -59,6 +67,9 @@ export default {
   computed: {
     i18n () {
       return this.config.i18n
+    },
+    searchUrl () {
+      return this.config.url.search + '?q=' + encodeURIComponent(this.subject)
     },
     debouncedSearch () {
       return debounce(this.runSearch, 1000)
@@ -82,7 +93,8 @@ export default {
       this.searches[this.subject] = false;
       ((subject) => {
         this.search.searchFoiRequests(subject).then(result => {
-          this.similarRequests = result
+          this.moreSimilarRequestsAvailable = result.length > MAX_SIMILAR
+          this.similarRequests = result.slice(0, MAX_SIMILAR)
           this.searches[subject] = result
         })
       })(this.subject)

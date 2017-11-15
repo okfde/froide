@@ -151,7 +151,8 @@
     Froide.settings = Froide.settings || {}
     Froide.settings.user_can_hide_web = parseInt('{% if froide.user_can_hide_web %}1{% else %}0{% endif %}', 10)
     Froide.url = Froide.url || {}
-    Froide.url.searchRequests = "{% url 'api_get_simple_search' api_name='v1' resource_name='request' %}"
+    Froide.url.searchRequests = "{% url 'api:request-search' %}"
+    Froide.url.search = "{% url 'foirequest-search' %}"
     Froide.url.loginSimple = "{% url 'account-login' %}?simple&email="
 
     Froide.i18n = Froide.i18n || {}
@@ -180,6 +181,7 @@
 
       similarExist: '{% trans "Please make sure the information is not already requested or public" %}',
       similarRequests: '{% trans "Similar requests" %}',
+      moreSimilarRequests: '{% trans "Search for more similar requests" %}',
       relevantResources: '{% trans "Relevant resources" %}',
       officialWebsite: '{% trans "Official website: " %}'
     })
