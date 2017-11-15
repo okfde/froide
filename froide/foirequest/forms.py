@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.conf import settings
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
@@ -535,4 +536,4 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
 
 
 class TagFoiRequestForm(TagObjectForm):
-    resource_name = 'request'
+    tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')

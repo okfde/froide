@@ -625,9 +625,9 @@ def set_tags(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated or not request.user.is_staff:
         return render_403(request)
-    form = TagFoiRequestForm(foirequest, request.POST)
+    form = TagFoiRequestForm(request.POST)
     if form.is_valid():
-        form.save()
+        form.save(foirequest)
         messages.add_message(request, messages.SUCCESS,
                 _('Tags have been set for this request'))
     return redirect(foirequest)

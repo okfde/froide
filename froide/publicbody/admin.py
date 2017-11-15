@@ -1,13 +1,16 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django import forms
 
 from froide.publicbody.models import (PublicBody,
     PublicBodyTag, TaggedPublicBody, FoiLaw, Jurisdiction)
 from froide.helper.admin_utils import AdminTagAllMixIn
-from froide.helper.widgets import TagAutocompleteTagIt
+from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.csv_utils import export_csv_response
+
+
+TAGS_AUTOCOMPLETE_URL = reverse_lazy('api:publicbody-tags-autocomplete')
 
 
 class PublicBodyAdminForm(forms.ModelForm):
@@ -15,11 +18,8 @@ class PublicBodyAdminForm(forms.ModelForm):
         model = PublicBody
         fields = '__all__'
         widgets = {
-            'tags': TagAutocompleteTagIt(
-                autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={
-                    'api_name': 'v1',
-                    'resource_name': 'publicbody'}
-                )),
+            'tags': TagAutocompleteWidget(
+                autocomplete_url=TAGS_AUTOCOMPLETE_URL),
         }
 
 
@@ -38,7 +38,7 @@ class PublicBodyAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
 
-    autocomplete_resource_name = 'publicbody'
+    tags_autocomplete_url = TAGS_AUTOCOMPLETE_URL
 
     actions = ['export_csv', 'remove_from_index', 'tag_all']
 
