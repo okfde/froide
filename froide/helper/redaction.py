@@ -104,7 +104,6 @@ def add_text_on_pdf(pdf, text_obj, dpi, scale, height):
     box_width = box[2]
     text.setHorizScale(100.0 * box_width / font_width)
     text.textLine(raw_text)
-    print(raw_text, box, height)
     pdf.drawText(text)
 
 
