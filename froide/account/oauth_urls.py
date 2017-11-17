@@ -32,6 +32,7 @@ class CustomApplicationUpdate(ApplicationUpdate):
 
 
 # Application management views
+app_name = 'account'
 urlpatterns += [
     url(r'^applications/$', ApplicationList.as_view(), name="list"),
     url(r'^applications/register/$', ApplicationRegistration.as_view(), name="register"),
