@@ -470,13 +470,13 @@ def set_public_body(request, slug):
     if not request.user.is_authenticated or request.user != foirequest.user:
         return render_403(request)
     try:
-        public_body_pk = int(request.POST.get('suggestion', ''))
+        publicbody_pk = int(request.POST.get('suggestion', ''))
     except ValueError:
         messages.add_message(request, messages.ERROR,
             _('Missing or invalid input!'))
         return redirect(foirequest)
     try:
-        public_body = PublicBody.objects.get(pk=public_body_pk)
+        publicbody = PublicBody.objects.get(pk=publicbody_pk)
     except PublicBody.DoesNotExist:
         messages.add_message(request, messages.ERROR,
             _('Missing or invalid input!'))
@@ -491,11 +491,11 @@ def set_public_body(request, slug):
         messages.add_message(request, messages.ERROR, throttle_message)
         return render_400(request)
 
-    foilaw = public_body.default_law
-    foirequest.set_public_body(public_body, foilaw)
+    foilaw = publicbody.default_law
+    foirequest.set_publicbody(publicbody, foilaw)
 
     messages.add_message(request, messages.SUCCESS,
-            _("Request was sent to: %(name)s.") % {"name": public_body.name})
+            _("Request was sent to: %(name)s.") % {"name": publicbody.name})
     return redirect(foirequest)
 
 
@@ -506,14 +506,15 @@ def suggest_public_body(request, slug):
         return render_400(request)
     form = MakePublicBodySuggestionForm(request.POST)
     if form.is_valid():
-        # FIXME: make foilaw dynamic
-        # foilaw = public_body.default_law
-        public_body = form.public_body_object
+        publicbody = form.publicbody_object
         user = None
         if request.user.is_authenticated:
             user = request.user
-        response = foirequest.suggest_public_body(public_body,
-                form.cleaned_data['reason'], user)
+        response = foirequest.suggest_public_body(
+            publicbody,
+            form.cleaned_data['reason'],
+            user
+        )
         if response:
             messages.add_message(request, messages.SUCCESS,
                 _('Your Public Body suggestion has been added.'))
@@ -521,6 +522,7 @@ def suggest_public_body(request, slug):
             messages.add_message(request, messages.WARNING,
                 _('This Public Body has already been suggested.'))
         return redirect(foirequest)
+
     messages.add_message(request, messages.ERROR,
             _("You need to specify a Public Body!"))
     return render_400(request)

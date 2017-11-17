@@ -1,6 +1,5 @@
 import re
 import os
-import unittest
 
 from django.conf import settings
 from django.urls import reverse
@@ -247,39 +246,6 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_response')
-
-    @unittest.skip('No longer allow empty public body')
-    def test_make_logged_in_request_no_pb_yet(self):
-        self.do_login()
-        self.selenium.get('%s%s' % (self.live_server_url,
-            reverse('foirequest-make_request')))
-        with CheckJSErrors(self.selenium):
-            self.selenium.find_element_by_id('option-emptypublicbody').click()
-            req_title = 'FoiRequest Number'
-            WebDriverWait(self.selenium, 5).until(
-                lambda driver: driver.find_element_by_name('body').is_displayed()
-            )
-            self.selenium.find_element_by_name('subject').send_keys(req_title)
-            self.selenium.find_element_by_name('body').send_keys('Documents describing something...')
-            WebDriverWait(self.selenium, 5).until(
-                lambda driver: driver.find_elements_by_css_selector('.similar-requests li'))
-            WebDriverWait(self.selenium, 5).until(
-                lambda driver: driver.find_element_by_id('review-button').is_displayed()
-            )
-            self.selenium.find_element_by_id('review-button').click()
-            self.scrollTo('send-request-button')
-
-        WebDriverWait(self.selenium, 10).until(
-            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
-        self.selenium.find_element_by_id('send-request-button').click()
-        WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#messages'))
-        req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
-        self.assertIn(req.get_absolute_url(), self.selenium.current_url)
-        self.assertEqual(req.title, req_title)
-        self.assertEqual(req.public, True)
-        self.assertTrue(req.public_body is None)
-        self.assertEqual(req.status, 'publicbody_needed')
 
     def test_make_request_logged_out_with_existing_account(self):
         self.go_to_make_request_url(pb=self.pb)

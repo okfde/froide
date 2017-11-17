@@ -5,7 +5,6 @@ import re
 from datetime import datetime, timedelta
 import os
 import zipfile
-import unittest
 
 from mock import patch
 
@@ -262,80 +261,6 @@ class RequestTest(TestCase):
         self.assertFormError(response, 'user_form', 'last_name',
                 ['This field is required.'])
 
-    @unittest.skip('no longer allow create public body with request')
-    def test_logged_in_request_new_public_body_missing(self):
-        self.client.login(email="dummy@example.org", password="froide")
-        response = self.client.post(reverse('foirequest-make_request'),
-                {"subject": "Test-Subject", "body": "This is a test body",
-                "publicbody": "new"})
-        self.assertEqual(response.status_code, 400)
-        self.assertFormError(response, 'public_body_form', 'name',
-                ['This field is required.'])
-        self.assertFormError(response, 'public_body_form', 'email',
-                ['This field is required.'])
-        self.assertFormError(response, 'public_body_form', 'url',
-                ['This field is required.'])
-
-    @unittest.skip('no longer allow create public body with request')
-    def test_logged_in_request_new_public_body(self):
-        self.client.login(email="dummy@example.org", password="froide")
-        post = {"subject": "Another Test-Subject",
-                "body": "This is a test body",
-                "publicbody": "new",
-                "public": "on",
-                "law": str(settings.FROIDE_CONFIG['default_law']),
-                "name": "Some New Public Body",
-                "email": "public.body@example.com",
-                "url": "http://example.com/public/body/"}
-        response = self.client.post(
-                reverse('foirequest-make_request'), post)
-        self.assertEqual(response.status_code, 302)
-        pb = PublicBody.objects.filter(name=post['name']).get()
-        self.assertEqual(pb.url, post['url'])
-        req = FoiRequest.objects.get(public_body=pb)
-        self.assertEqual(req.status, "awaiting_publicbody_confirmation")
-        self.assertEqual(req.visibility, 2)
-        self.assertTrue(req.public)
-        self.assertFalse(req.messages[0].sent)
-        self.client.logout()
-        # Confirm public body via admin interface
-        response = self.client.post(reverse('publicbody-confirm'),
-                {"publicbody": pb.pk})
-        self.assertEqual(response.status_code, 403)
-        # login as not staff
-        self.client.login(email='dummy@example.org', password='froide')
-        response = self.client.post(reverse('publicbody-confirm'),
-                {"publicbody": pb.pk})
-        self.assertEqual(response.status_code, 403)
-        self.client.login(email='info@fragdenstaat.de', password='froide')
-        response = self.client.post(reverse('publicbody-confirm'),
-                {"publicbody": "argh"})
-        self.assertEqual(response.status_code, 400)
-        response = self.client.post(reverse('publicbody-confirm'))
-        self.assertEqual(response.status_code, 400)
-        response = self.client.post(reverse('publicbody-confirm'),
-                {"publicbody": "9" * 10})
-        self.assertEqual(response.status_code, 404)
-        response = self.client.post(reverse('publicbody-confirm'),
-                {"publicbody": pb.pk})
-        self.assertEqual(response.status_code, 302)
-        pb = PublicBody.objects.get(id=pb.id)
-        req = FoiRequest.objects.get(id=req.id)
-        self.assertTrue(pb.confirmed)
-        self.assertTrue(req.messages[0].sent)
-        message_count = len(list(filter(
-                lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox)))
-        self.assertEqual(message_count, 1)
-        # resent
-        response = self.client.post(reverse('publicbody-confirm'),
-                {"publicbody": pb.pk})
-        self.assertEqual(response.status_code, 302)
-        message_count = len(list(filter(
-                lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
-                mail.outbox)))
-        self.assertEqual(message_count, 1)
-
     def test_logged_in_request_with_public_body(self):
         pb = PublicBody.objects.all()[0]
         self.client.login(email="dummy@example.org", password="froide")
@@ -425,31 +350,21 @@ class RequestTest(TestCase):
             addr = email_func(req.user.username, '')
             self.assertEqual(req.secret_address, addr)
 
-    @unittest.skip('No longer no public body')
     def test_logged_in_request_no_public_body(self):
         self.client.login(email="dummy@example.org", password="froide")
-        post = {"subject": "An Empty Public Body Request",
-                "body": "This is another test body",
-                "law": str(FoiLaw.get_default_law().id),
-                "publicbody": '',
-                "public": "on"}
-        response = self.client.post(
-                reverse('foirequest-make_request'), post)
-        self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.get(title=post['subject'])
-        response = self.client.get(req.get_absolute_url())
-        self.assertEqual(response.status_code, 200)
-        message = req.foimessage_set.all()[0]
-        law = FoiLaw.get_default_law()
-        self.assertIn(law.letter_start, message.plaintext)
-        self.assertIn(law.letter_end, message.plaintext)
+        user = User.objects.get(email='dummy@example.org')
+        req = factories.FoiRequestFactory.create(
+            user=user,
+            status='publicbody_needed',
+            public_body=None
+        )
+        factories.FoiMessageFactory.create(
+            request=req,
+            sent=False
+        )
+        pb = PublicBody.objects.all()[0]
 
-        # suggest public body
         other_req = FoiRequest.objects.filter(public_body__isnull=False)[0]
-        for pb in PublicBody.objects.all():
-            if law not in pb.laws.all():
-                break
-        assert FoiLaw.get_default_law(pb) != law
         response = self.client.post(
                 reverse('foirequest-suggest_public_body',
                 kwargs={"slug": req.slug + "garbage"}),
@@ -504,7 +419,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}),
                 {})
         self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.get(title=post['subject'])
+        req = FoiRequest.objects.get(pk=req.pk)
         self.assertIsNone(req.public_body)
 
         response = self.client.post(
@@ -524,11 +439,10 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}),
                 {"suggestion": str(pb.pk)})
         self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.get(title=post['subject'])
+        req = FoiRequest.objects.get(pk=req.pk)
         message = req.foimessage_set.all()[0]
         self.assertIn(req.law.letter_start, message.plaintext)
         self.assertIn(req.law.letter_end, message.plaintext)
-        self.assertNotEqual(req.law, law)
         self.assertEqual(req.public_body, pb)
         response = self.client.post(
                 reverse('foirequest-set_public_body',
@@ -1576,46 +1490,6 @@ class JurisdictionTest(TestCase):
         self.assertEqual(req.law, law)
         mes = req.messages[0]
         self.assertIn(law.letter_end, mes.plaintext)
-
-    @unittest.skip('no longer allow empty public body')
-    def test_letter_set_public_body(self):
-        self.client.login(email='info@fragdenstaat.de', password='froide')
-        post = {
-            "subject": "Jurisdiction-Test-Subject",
-            "body": "This is a test body",
-            'law': str(FoiLaw.get_default_law().pk),
-            'publicbody': ''
-        }
-        response = self.client.post(
-            reverse('foirequest-make_request'), post)
-        self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.get(
-            title=post['subject']
-        )
-        default_law = FoiLaw.get_default_law()
-        self.assertEqual(req.law, default_law)
-        mes = req.messages[0]
-        self.assertIn(default_law.letter_end, mes.plaintext)
-        self.assertIn(default_law.letter_end, mes.plaintext_redacted)
-
-        response = self.client.post(
-                reverse('foirequest-suggest_public_body',
-                kwargs={"slug": req.slug}),
-                {"publicbody": str(self.pb.pk),
-                "reason": "A good reason"})
-        self.assertEqual(response.status_code, 302)
-        response = self.client.post(
-                reverse('foirequest-set_public_body',
-                kwargs={"slug": req.slug}),
-                {"suggestion": str(self.pb.pk)})
-        self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.get(title=post['subject'])
-        law = FoiLaw.objects.get(meta=True, jurisdiction__slug='nrw')
-        self.assertEqual(req.law, law)
-        mes = req.messages[0]
-        self.assertNotEqual(default_law.letter_end, law.letter_end)
-        self.assertIn(law.letter_end, mes.plaintext)
-        self.assertIn(law.letter_end, mes.plaintext_redacted)
 
 
 class PackageFoiRequestTest(TestCase):

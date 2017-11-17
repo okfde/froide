@@ -877,12 +877,12 @@ class FoiRequest(models.Model):
         else:
             return False
 
-    def set_public_body(self, public_body, law):
+    def set_publicbody(self, publicbody, law):
         assert self.public_body is None
         assert self.status == "publicbody_needed"
-        self.public_body = public_body
+        self.public_body = publicbody
         self.law = law
-        self.jurisdiction = public_body.jurisdiction
+        self.jurisdiction = publicbody.jurisdiction
         send_now = self.set_status_after_change()
         if send_now:
             self.due_date = self.law.calculate_due_date()
@@ -894,9 +894,9 @@ class FoiRequest(models.Model):
             messages = self.foimessage_set.all()
             assert len(messages) == 1
             message = messages[0]
-            message.recipient_public_body = public_body
-            message.recipient = public_body.name
-            message.recipient_email = public_body.email
+            message.recipient_public_body = publicbody
+            message.recipient = publicbody.name
+            message.recipient_email = publicbody.email
             message.plaintext = construct_message_body(
                 self,
                 text=self.description,

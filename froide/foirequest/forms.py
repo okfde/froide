@@ -147,7 +147,7 @@ class SendMessageForm(forms.Form):
 
 
 class MakePublicBodySuggestionForm(forms.Form):
-    public_body = forms.ModelChoiceField(
+    publicbody = forms.ModelChoiceField(
         label=_('Public body'),
         queryset=PublicBody.objects.all(),
         widget=PublicBodySelect
@@ -156,11 +156,11 @@ class MakePublicBodySuggestionForm(forms.Form):
         widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}),
         required=False)
 
-    def clean_public_body(self):
-        public_body = self.cleaned_data['public_body']
-        self.public_body_object = public_body
-        self.foi_law_object = public_body.default_law
-        return public_body
+    def clean_publicbody(self):
+        publicbody = self.cleaned_data['publicbody']
+        self.publicbody_object = publicbody
+        self.foi_law_object = publicbody.default_law
+        return publicbody
 
 
 class EscalationMessageForm(forms.Form):
