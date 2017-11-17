@@ -18,3 +18,7 @@ unicodecsv==0.14.1
 reportlab==3.4.0
 PyPDF2==1.26.0
 Wand==0.4.4
+djangorestframework==3.7.3
+django-oauth-toolkit==1.0.0
+coreapi==2.3.3
+django-filter==1.1.0
