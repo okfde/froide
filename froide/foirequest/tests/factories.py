@@ -17,7 +17,7 @@ from django.conf import settings
 
 from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBody, PublicBodyTag
 from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
-    PublicBodySuggestion, DeferredMessage)
+    PublicBodySuggestion, DeferredMessage, RequestDraft)
 
 
 TEST_PDF_URL = "test.pdf"
@@ -164,6 +164,15 @@ class FoiRequestFactory(factory.DjangoModelFactory):
     jurisdiction = factory.SubFactory(JurisdictionFactory)
 
     site = factory.LazyAttribute(lambda o: Site.objects.get(id=1))
+
+
+class RequestDraftFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = RequestDraft
+
+    user = factory.LazyAttribute(lambda o: UserFactory())
+    subject = factory.Sequence(lambda n: 'My FoiRequest Number {0}'.format(n))
+    body = factory.Sequence(lambda n: 'My FoiRequest Body Number {0}'.format(n))
 
 
 class DeferredMessageFactory(factory.DjangoModelFactory):

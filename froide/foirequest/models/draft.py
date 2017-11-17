@@ -33,6 +33,7 @@ class RequestDraft(models.Model):
     class Meta:
         verbose_name = _('request draft')
         verbose_name_plural = _('request drafts')
+        ordering = ['-save_date']
 
     def __str__(self):
         return _('Draft "{subject}" by {user}').format(
@@ -42,9 +43,12 @@ class RequestDraft(models.Model):
 
     def get_absolute_url(self):
         pb_ids = '+'.join(str(pb.pk) for pb in self.publicbodies.all())
-        url = reverse('foirequest-make_request', kwargs={
-            'publicbody_ids': pb_ids
-        })
+        url_kwargs = {}
+        if pb_ids:
+            url_kwargs = {
+                'publicbody_ids': pb_ids
+            }
+        url = reverse('foirequest-make_request', kwargs=url_kwargs)
         context = {
             'draft': str(self.pk),
             'subject': self.subject,

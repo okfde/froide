@@ -18,6 +18,7 @@ from django.core import mail
 from django.conf import settings
 from django.contrib.messages.storage import default_storage
 from django.utils import timezone
+from django.utils.html import escape
 
 from oauth2_provider.models import get_access_token_model, get_application_model
 
@@ -44,6 +45,29 @@ class AccountTest(TestCase):
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
         response = self.client.get(reverse('account-show'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_account_drafts(self):
+        response = self.client.get(reverse('account-drafts'))
+        self.assertEqual(response.status_code, 302)
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
+        self.assertTrue(ok)
+
+        user = User.objects.get(email='info@fragdenstaat.de')
+        draft = factories.RequestDraftFactory.create(user=user)
+
+        response = self.client.get(reverse('account-drafts'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, draft.subject)
+        self.assertContains(response, escape(draft.get_absolute_url()))
+
+    def test_account_following(self):
+        response = self.client.get(reverse('account-following'))
+        self.assertEqual(response.status_code, 302)
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
+        self.assertTrue(ok)
+
+        response = self.client.get(reverse('account-following'))
         self.assertEqual(response.status_code, 200)
 
     def test_login_page(self):
