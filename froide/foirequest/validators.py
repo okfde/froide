@@ -29,3 +29,16 @@ def validate_upload_document(scan):
                     'content_type': content_type
                 }
         )
+
+
+def clean_reference(value):
+    if not value:
+        return ''
+    try:
+        kind, value = value.split(':', 1)
+    except ValueError:
+        return ''
+    try:
+        return '%s:%s' % (kind, value)
+    except ValueError:
+        return ''
