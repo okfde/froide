@@ -365,7 +365,7 @@ class Base(Configuration):
             'read:user': _('Access to user status'),
             'read:profile': _('Read user profile information'),
             'read:email': _('Read user email'),
-            'read:request': _('Read my private requests'),
+            'read:request': _('Read my (private) requests'),
             'make:request': _('Make requests on my behalf'),
         }
     }
