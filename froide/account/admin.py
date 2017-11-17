@@ -33,8 +33,10 @@ class UserAdmin(DjangoUserAdmin):
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 
-    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined',
-                    'is_active', 'is_staff')
+    list_display = ('username', 'email', 'first_name', 'last_name',
+        'date_joined', 'is_active', 'is_staff', 'private', 'is_trusted',
+        'is_deleted'
+    )
     ordering = ('-date_joined',)
 
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
