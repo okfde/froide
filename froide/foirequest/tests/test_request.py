@@ -1223,7 +1223,7 @@ class RequestTest(TestCase):
         factories.rebuild_index()
         response = self.client.get('%s?q=%s' % (
             reverse('foirequest-search'), pb.name[:6]))
-        self.assertIn(pb.name, response.content.decode('utf-8'))
+        self.assertContains(response, pb.name)
         self.assertEqual(response.status_code, 200)
 
     def test_full_text_request(self):
@@ -1546,7 +1546,7 @@ class MediatorTest(TestCase):
         req.save()
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(req.get_absolute_url())
-        self.assertNotIn('Mediation', response.content.decode('utf-8'))
+        self.assertNotContains(response, 'Mediation')
         response = self.client.post(reverse('foirequest-escalation_message',
             kwargs={'slug': req.slug}))
         self.assertEqual(response.status_code, 400)

@@ -16,19 +16,19 @@ class ApiTest(TestCase):
         self.site = factories.make_world()
 
     def test_list(self):
-        response = self.client.get('/api/v1/request/?format=json')
+        response = self.client.get('/api/v1/request/')
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/api/v1/message/?format=json')
+        response = self.client.get('/api/v1/message/')
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/api/v1/attachment/?format=json')
+        response = self.client.get('/api/v1/attachment/')
         self.assertEqual(response.status_code, 200)
 
     def test_detail(self):
         req = FoiRequest.objects.all()[0]
-        response = self.client.get('/api/v1/request/%d/?format=json' % req.pk)
+        response = self.client.get('/api/v1/request/%d/' % req.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(req.title, response.content.decode('utf-8'))
-        self.assertNotIn(req.secret_address, response.content.decode('utf-8'))
+        self.assertContains(response, req.title)
+        self.assertNotContains(response, req.secret_address)
         req.user.private = True
         req.user.save()
 
@@ -41,33 +41,33 @@ class ApiTest(TestCase):
                 req.user.address
             )
         )
-        response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
+        response = self.client.get('/api/v1/message/%d/' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(req.user.get_full_name(), response.content.decode('utf-8'))
-        self.assertNotIn(req.secret_address, response.content.decode('utf-8'))
-        self.assertNotIn(req.user.address, response.content.decode('utf-8'))
+        self.assertNotContains(response, req.user.get_full_name())
+        self.assertNotContains(response, req.secret_address)
+        self.assertNotContains(response, req.user.address)
 
         att = FoiAttachment.objects.all()[0]
         att.approved = True
         att.save()
-        response = self.client.get('/api/v1/attachment/%d/?format=json' % att.pk)
+        response = self.client.get('/api/v1/attachment/%d/' % att.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_permissions(self):
         req = factories.FoiRequestFactory.create(
-            visibility=1, site=self.site)
+            visibility=FoiRequest.VISIBLE_TO_REQUESTER, site=self.site)
 
-        response = self.client.get('/api/v1/request/%d/?format=json' % req.pk)
+        response = self.client.get('/api/v1/request/%d/' % req.pk)
         self.assertEqual(response.status_code, 404)
 
         mes = factories.FoiMessageFactory.create(request=req)
-        response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
+        response = self.client.get('/api/v1/message/%d/' % mes.pk)
         self.assertEqual(response.status_code, 404)
 
         att = factories.FoiAttachmentFactory.create(belongs_to=mes)
         att.approved = True
         att.save()
-        response = self.client.get('/api/v1/attachment/%d/?format=json' % att.pk)
+        response = self.client.get('/api/v1/attachment/%d/' % att.pk)
         self.assertEqual(response.status_code, 404)
 
     def test_content_hidden(self):
@@ -76,9 +76,9 @@ class ApiTest(TestCase):
             content_hidden=True,
             plaintext=marker
         )
-        response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
+        response = self.client.get('/api/v1/message/%d/' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(marker, response.content.decode('utf-8'))
+        self.assertNotContains(response, marker)
 
     def test_username_hidden(self):
         user = factories.UserFactory.create(
@@ -90,13 +90,13 @@ class ApiTest(TestCase):
             content_hidden=True,
             sender_user=user
         )
-        response = self.client.get('/api/v1/message/%d/?format=json' % mes.pk)
+        response = self.client.get('/api/v1/message/%d/' % mes.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(user.username, response.content.decode('utf-8'))
-        self.assertNotIn(user.first_name, response.content.decode('utf-8'))
+        self.assertNotContains(response, user.username)
+        self.assertNotContains(response, user.first_name)
 
     def test_search(self):
-        response = self.client.get('/api/v1/request/search/?format=json&q=Number')
+        response = self.client.get('/api/v1/request/search/?q=Number')
         self.assertEqual(response.status_code, 200)
 
     def test_search_similar(self):

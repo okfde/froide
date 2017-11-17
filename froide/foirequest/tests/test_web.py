@@ -107,7 +107,7 @@ class WebTest(TestCase):
         req.save()
         response = self.client.get(reverse('foirequest-list', kwargs={"tag": tag_slug}))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(req.title, response.content.decode('utf-8'))
+        self.assertContains(response, req.title)
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'tag': tag_slug
         }))
@@ -125,7 +125,7 @@ class WebTest(TestCase):
         pb = req.public_body
         response = self.client.get(reverse('foirequest-list', kwargs={"public_body": pb.slug}))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(req.title, response.content.decode('utf-8'))
+        self.assertContains(response, req.title)
         response = self.client.get(reverse('foirequest-list_feed', kwargs={"public_body": pb.slug}))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={"public_body": pb.slug}))
@@ -138,16 +138,16 @@ class WebTest(TestCase):
         req2 = reqs[1]
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(req1.title, response.content.decode('utf-8'))
-        self.assertIn(req2.title, response.content.decode('utf-8'))
+        self.assertContains(response, req1.title)
+        self.assertContains(response, req2.title)
         req1.same_as = req2
         req1.save()
         req2.same_as_count = 1
         req2.save()
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn(req1.title, response.content.decode('utf-8'))
-        self.assertIn(req2.title, response.content.decode('utf-8'))
+        self.assertNotContains(response, req1.title)
+        self.assertContains(response, req2.title)
 
     def test_show_request(self):
         req = FoiRequest.objects.all()[0]

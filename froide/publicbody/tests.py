@@ -27,18 +27,18 @@ class PublicBodyTest(TestCase):
             'topic': tag.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(pb.name, response.content.decode('utf-8'))
+        self.assertContains(response, pb.name)
         response = self.client.get(reverse('publicbody-list', kwargs={
             'jurisdiction': pb.jurisdiction.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(pb.name, response.content.decode('utf-8'))
+        self.assertContains(response, pb.name)
         response = self.client.get(reverse('publicbody-list', kwargs={
             'jurisdiction': pb.jurisdiction.slug,
             'topic': tag.slug
         }))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(pb.name, response.content.decode('utf-8'))
+        self.assertContains(response, pb.name)
         response = self.client.get(reverse('publicbody-show',
                 kwargs={"slug": pb.slug}))
         self.assertEqual(response.status_code, 200)
@@ -115,13 +115,13 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         self.assertIn(law.jurisdiction.name, str(law))
         response = self.client.get(law.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn(law.name, response.content.decode('utf-8'))
+        self.assertContains(response, law.name)
 
     def test_show_jurisdiction(self):
         juris = Jurisdiction.objects.all()[0]
         response = self.client.get(juris.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn(juris.name, response.content.decode('utf-8'))
+        self.assertContains(response, juris.name)
         new_juris = factories.JurisdictionFactory.create(name='peculiar')
         response = self.client.get(new_juris.get_absolute_url())
         self.assertEqual(response.status_code, 200)
