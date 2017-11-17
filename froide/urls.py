@@ -82,7 +82,7 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
     schema_view = get_schema_view(title='{name} API'.format(
                                   name=settings.SITE_NAME))
     urlpatterns += [
-        url(r'^api/v1/user/', ProfileView.as_view(), name='user-profile'),
+        url(r'^api/v1/user/', ProfileView.as_view(), name='api-user-profile'),
         url(r'^api/v1/', include((api_router.urls, 'api'))),
         url(r'^api/v1/schema/$', schema_view),
     ]
