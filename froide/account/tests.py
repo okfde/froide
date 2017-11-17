@@ -608,8 +608,8 @@ class AccountTest(TestCase):
         from froide.foirequestfollower.tests import FoiRequestFollowerFactory
 
         new_user = factories.UserFactory.create()
-        new_req = factories.FoiRequestFactory.create()
         req = FoiRequest.objects.all()[0]
+        new_req = factories.FoiRequestFactory.create()
         old_user = req.user
         FoiRequestFollowerFactory.create(
             user=new_user,

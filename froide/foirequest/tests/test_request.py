@@ -943,8 +943,9 @@ class RequestTest(TestCase):
         self.assertFalse(att.can_approve)
 
     def test_make_same_request(self):
-        fake_mes = factories.FoiMessageFactory.create(not_publishable=True)
         req = FoiRequest.objects.all()[0]
+
+        fake_mes = factories.FoiMessageFactory.create(not_publishable=True)
         mes = req.messages[-1]
 
         # req doesn't exist
