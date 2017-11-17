@@ -363,9 +363,7 @@ def make_request(request, publicbody_slug=None, publicbody_ids=None):
             data['user'] = request.user
 
             if publicbody_form:
-                data['publicbodies'] = [
-                    publicbody_form.cleaned_data['publicbody']
-                ]
+                data['publicbodies'] = publicbody_form.get_publicbodies()
             else:
                 data['publicbodies'] = publicbodies
 
