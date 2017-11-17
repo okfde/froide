@@ -545,7 +545,7 @@ class FoiRequest(models.Model):
 
     def get_set_tags_form(self):
         from ..forms import TagFoiRequestForm
-        return TagFoiRequestForm(self)
+        return TagFoiRequestForm(tags=self.tags.all())
 
     def get_status_form(self):
         from ..forms import FoiRequestStatusForm

@@ -115,6 +115,13 @@
       </div>
     </div>
 
+    {% if froide.api_activated %}
+      <div class="text-muted text-right mt-3">
+        <a class="btn btn-sm btn-light" href="{% url 'oauth2_provider:list' %}">
+          {% trans "Your OAuth Applications" %}
+        </a>
+      </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

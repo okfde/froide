@@ -43,7 +43,6 @@ class Base(Configuration):
         'haystack',
         'taggit',
         'overextends',
-        'tastypie',
         'storages',
 
         # local
@@ -54,6 +53,10 @@ class Base(Configuration):
         'froide.account',
         'froide.foisite',
         'froide.helper',
+
+        # API
+        'oauth2_provider',
+        'rest_framework',
     ])
 
     CACHES = values.CacheURLValue('dummy://')
@@ -181,6 +184,7 @@ class Base(Configuration):
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'oauth2_provider.middleware.OAuth2TokenMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
@@ -351,10 +355,36 @@ class Base(Configuration):
         }
     }
 
-    # ######### Tastypie #########
+    # ######### API #########
 
     # Do not include xml by default, so lxml doesn't need to be present
     TASTYPIE_DEFAULT_FORMATS = ['json']
+
+    OAUTH2_PROVIDER = {
+        'SCOPES': {
+            'read:user': _('Access to user status'),
+            'read:profile': _('Read user profile information'),
+            'read:email': _('Read user email'),
+            'read:request': _('Read my (private) requests'),
+            'make:request': _('Make requests on my behalf'),
+        }
+    }
+    OAUTH2_PROVIDER_APPLICATION_MODEL = 'account.Application'
+
+    LOGIN_URL = 'account-login'
+
+    REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.SessionAuthentication',
+            'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        ),
+        'DEFAULT_PERMISSION_CLASSES': (
+            'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        ),
+        'DEFAULT_PAGINATION_CLASS': 'froide.helper.api_utils.CustomLimitOffsetPagination',
+        'PAGE_SIZE': 50,
+        'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    }
 
     # ######### Froide settings ########
 

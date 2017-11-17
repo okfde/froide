@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from .views import (MyRequestsView,
     FollowingRequestsView, DraftRequestsView, account_settings,
@@ -7,8 +7,10 @@ from .views import (MyRequestsView,
     change_user, change_email, go, delete_account,
     CustomPasswordResetConfirmView
 )
+from .import oauth_urls
 
 urlpatterns = [
+    url(r'^', include(oauth_urls, namespace='oauth2_provider')),
     url(r'^$', MyRequestsView.as_view(), name='account-show'),
     url(r'^drafts/$', DraftRequestsView.as_view(), name='account-drafts'),
     url(r'^following/$', FollowingRequestsView.as_view(), name='account-following'),

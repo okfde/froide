@@ -8,7 +8,6 @@ pytz==2017.2
 requests==2.18.4
 django-overextends==0.4.3
 python-magic==0.4.13
-django-tastypie==0.14.0
 python-mimeparse>=0.1.4
 django-configurations==2.0
 django-storages==1.6.5

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.conf import settings
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
@@ -18,7 +19,7 @@ from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, RequestDraft
-from .validators import validate_upload_document
+from .validators import validate_upload_document, clean_reference
 
 
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
@@ -65,16 +66,7 @@ class RequestForm(JSONMixin, forms.Form):
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']
-        if not ref:
-            return ''
-        try:
-            kind, value = ref.split(':', 1)
-        except ValueError:
-            return ''
-        try:
-            return '%s:%s' % (kind, value)
-        except ValueError:
-            return ''
+        return clean_reference(ref)
 
     def clean_redirect_url(self):
         redirect_url = self.cleaned_data['redirect_url']
@@ -535,4 +527,4 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
 
 
 class TagFoiRequestForm(TagObjectForm):
-    resource_name = 'request'
+    tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')

@@ -71,24 +71,24 @@ class FoiAttachment(models.Model):
                 self.get_html_id())
         return '#' + self.get_html_id()
 
+    def get_domain_anchor_url(self):
+        return '%s%s' % (settings.SITE_URL, self.get_anchor_url())
+
     def get_absolute_url(self):
         if settings.USE_X_ACCEL_REDIRECT:
             if not self.name:
                 return ''
-            return '%s%s' % (settings.SITE_URL,
-                reverse('foirequest-auth_message_attachment',
-                    kwargs={
-                        'message_id': self.belongs_to_id,
-                        'attachment_name': self.name
-                    }
-                )
-            )
+            return reverse('foirequest-auth_message_attachment',
+                kwargs={
+                    'message_id': self.belongs_to_id,
+                    'attachment_name': self.name
+                })
         else:
             if self.file:
                 return self.file.url
 
     def get_absolute_domain_url(self):
-        return self.get_absolute_url()
+        return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
 
     def approve_and_save(self):
         self.approved = True

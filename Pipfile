@@ -1,35 +1,42 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
+
 
 [packages]
 
 Django = "<2.0"
 Markdown = "==2.6.9"
-"django-haystack" = "==2.6.1"
-"django-taggit" = "==0.22.1"
+django-haystack = "==2.6.1"
+django-taggit = "==0.22.1"
 pytz = "==2017.2"
 requests = "==2.18.4"
-"django-overextends" = "==0.4.3"
-"python-magic" = "==0.4.13"
-"django-tastypie" = "==0.14.0"
-"python-mimeparse" = ">=0.1.4"
-"django-configurations" = "==2.0"
-"django-storages" = "==1.6.5"
-"dj-database-url" = "==0.4.2"
-"django-cache-url" = "==2.0.0"
-"django-contrib-comments" = "==1.8.0"
+django-overextends = "==0.4.3"
+python-magic = "==0.4.13"
+python-mimeparse = ">=0.1.4"
+django-configurations = "==2.0"
+django-storages = "==1.6.5"
+dj-database-url = "==0.4.2"
+django-cache-url = "==2.0.0"
+django-contrib-comments = "==1.8.0"
 unicodecsv = "==0.14.1"
 celery = "==4.1.0"
-"pypdf2" = "*"
+"PyPDF2" = "*"
 reportlab = "*"
-wand = "*"
+Wand = "*"
+tesserocr = "*"
+djangorestframework = "*"
+django-oauth-toolkit = "*"
+coreapi = "*"
+django-filter = "*"
+
 
 [dev-packages]
 
 selenium = "*"
 "flake8" = "==3.4.1"
-"factory_boy" = "==2.9.2"
+factory_boy = "==2.9.2"
 coverage = "==4.4.1"
 mock = "==2.0.0"
 Whoosh = "*"

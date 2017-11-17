@@ -5,7 +5,7 @@ import re
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
@@ -13,7 +13,7 @@ from django import forms
 
 from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
                                       ForeignKeyFilter, TaggitListFilter)
-from froide.helper.widgets import TagAutocompleteTagIt
+from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
 from froide.helper.document import can_convert_to_pdf
@@ -37,11 +37,9 @@ class FoiRequestAdminForm(forms.ModelForm):
         model = FoiRequest
         fields = '__all__'
         widgets = {
-            'tags': TagAutocompleteTagIt(
-                autocomplete_url=lambda: reverse('api_get_tags_autocomplete', kwargs={
-                    'api_name': 'v1',
-                    'resource_name': 'request'}
-                )),
+            'tags': TagAutocompleteWidget(
+                autocomplete_url=reverse_lazy('api:request-tags-autocomplete')
+            ),
         }
 
 
@@ -68,7 +66,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
 
-    autocomplete_resource_name = 'request'
+    tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')
 
     actions = ['mark_checked', 'mark_not_foi', 'tag_all',
                'mark_same_as', 'remove_from_index', 'confirm_request',

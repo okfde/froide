@@ -227,11 +227,14 @@ class FoiMessage(models.Model):
         content = redact_content(content)
         return content[:255]
 
-    def get_content(self, user=None):
+    def get_content(self):
         if self.plaintext_redacted is None:
             self.plaintext_redacted = self.redact_plaintext()
             self.save()
         return self.plaintext_redacted
+
+    def get_content_check(self):
+        return self.get_content() if not self.content_hidden else None
 
     def redact_plaintext(self):
         content = self.plaintext

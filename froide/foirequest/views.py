@@ -363,9 +363,7 @@ def make_request(request, publicbody_slug=None, publicbody_ids=None):
             data['user'] = request.user
 
             if publicbody_form:
-                data['publicbodies'] = [
-                    publicbody_form.cleaned_data['publicbody']
-                ]
+                data['publicbodies'] = publicbody_form.get_publicbodies()
             else:
                 data['publicbodies'] = publicbodies
 
@@ -625,9 +623,9 @@ def set_tags(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not request.user.is_authenticated or not request.user.is_staff:
         return render_403(request)
-    form = TagFoiRequestForm(foirequest, request.POST)
+    form = TagFoiRequestForm(request.POST)
     if form.is_valid():
-        form.save()
+        form.save(foirequest)
         messages.add_message(request, messages.SUCCESS,
                 _('Tags have been set for this request'))
     return redirect(foirequest)

@@ -24,8 +24,8 @@ class AdminTagAllMixIn(object):
 
         # User has already chosen the other req
         if request.POST.get('tags'):
-            form = TagObjectForm(None, request.POST, tags=[],
-                                 resource_name=self.autocomplete_resource_name)
+            form = TagObjectForm(request.POST, tags=[],
+                                 autocomplete_url=self.tags_autocomplete_url)
             if form.is_valid():
                 tags = form.cleaned_data['tags']
                 for obj in queryset:
@@ -37,8 +37,8 @@ class AdminTagAllMixIn(object):
             self.message_user(request, _("Form invalid"))
 
         tags = set()
-        form = TagObjectForm(None, tags=tags,
-                             resource_name=self.autocomplete_resource_name)
+        form = TagObjectForm(tags=tags,
+                             autocomplete_url=self.tags_autocomplete_url)
 
         context = {
             'opts': opts,
