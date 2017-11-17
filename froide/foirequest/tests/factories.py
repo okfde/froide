@@ -100,7 +100,7 @@ class PublicBodyFactory(factory.DjangoModelFactory):
     confirmed = True
 
     number_of_requests = 0
-    site = factory.SubFactory(SiteFactory)
+    site = factory.LazyAttribute(lambda o: Site.objects.get(id=1))
 
     jurisdiction = factory.SubFactory(JurisdictionFactory)
 
@@ -127,7 +127,7 @@ class FoiLawFactory(factory.DjangoModelFactory):
     mediator = None
     email_only = False
 
-    site = factory.SubFactory(SiteFactory)
+    site = factory.LazyAttribute(lambda o: Site.objects.get(id=1))
 
 
 class FoiRequestFactory(factory.DjangoModelFactory):
@@ -163,7 +163,7 @@ class FoiRequestFactory(factory.DjangoModelFactory):
 
     jurisdiction = factory.SubFactory(JurisdictionFactory)
 
-    site = factory.SubFactory(SiteFactory)
+    site = factory.LazyAttribute(lambda o: Site.objects.get(id=1))
 
 
 class DeferredMessageFactory(factory.DjangoModelFactory):
