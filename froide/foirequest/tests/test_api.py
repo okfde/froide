@@ -185,26 +185,26 @@ class OAuthApiTest(TestCase):
         auth = self._create_authorization_header(self.access_token.token)
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
-        return response, json.loads(response.content)
+        return response, json.loads(response.content.decode('utf-8'))
 
     def api_post(self, url, data):
         auth = self._create_authorization_header(self.access_token.token)
         response = self.client.post(url, json.dumps(data),
             content_type="application/json", HTTP_AUTHORIZATION=auth)
-        return response, json.loads(response.content)
+        return response, json.loads(response.content.decode('utf-8'))
 
     def test_list_public_requests(self):
         self.assertEqual(FoiRequest.objects.all().count(), 3)
         response = self.client.get(self.request_list_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result['meta']['total_count'], 1)
 
     def test_list_private_requests_when_logged_in(self):
         self.client.login(email=self.test_user.email, password='froide')
         response = self.client.get(self.request_list_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode('utf-8'))
         self.assertEqual(result['meta']['total_count'], 2)
 
     def test_list_private_requests_without_scope(self):
@@ -250,7 +250,7 @@ class OAuthApiTest(TestCase):
         self.assertEqual(FoiAttachment.objects.all().count(), 4)
         response = self.client.get(self.message_detail_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result['attachments']), 1)
 
     def test_see_only_approved_attachments_loggedin(self):
@@ -260,7 +260,7 @@ class OAuthApiTest(TestCase):
         self.client.login(email=self.test_user.email, password='froide')
         response = self.client.get(self.message_detail_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode('utf-8'))
         self.assertEqual(len(result['attachments']), 2)
 
     def test_see_only_approved_attachments_without_scope(self):
