@@ -1,5 +1,4 @@
-from rest_framework import serializers, views
-from rest_framework import permissions, response
+from rest_framework import serializers, views, permissions, response
 
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 

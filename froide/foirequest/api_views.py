@@ -1,9 +1,15 @@
-from django.db.models import Q
+from __future__ import unicode_literals
 
-from rest_framework import serializers
-from rest_framework import viewsets
+from django.db.models import Q
+from django.contrib.auth import get_user_model
+
+from rest_framework import serializers, viewsets, mixins, status
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
+
+from oauth2_provider.contrib.rest_framework import TokenHasScope
+
+from django_filters import rest_framework as filters
 
 from haystack.query import SearchQuerySet
 
@@ -12,11 +18,37 @@ from froide.publicbody.api_views import PublicBodySerializer, FoiLawSerializer
 
 from taggit.models import Tag
 
+from froide.publicbody.models import PublicBody
+
 from .models import FoiRequest, FoiMessage, FoiAttachment
+from .services import CreateRequestService
+from .validators import clean_reference
+
+
+User = get_user_model()
+
+
+def filter_by_user_queryset(request):
+    user_filter = Q(is_active=True, private=False)
+    if request is None or not request.user.is_authenticated:
+        return User.objects.filter(user_filter)
+
+    user = request.user
+    token = request.auth
+
+    if not token and user.is_superuser:
+        return User.objects.all()
+
+    # Either not OAuth or OAuth and valid token
+    if not token or token.is_valid(['read:request']):
+        # allow filter by own user
+        user_filter |= Q(pk=request.user.pk)
+
+    return User.objects.filter(user_filter)
 
 
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
-    self = serializers.HyperlinkedIdentityField(
+    resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:attachment-detail',
         lookup_field='pk'
     )
@@ -37,7 +69,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         model = FoiAttachment
         depth = 0
         fields = (
-            'self', 'id', 'belongs_to', 'name', 'filetype',
+            'resource_uri', 'id', 'belongs_to', 'name', 'filetype',
             'approved', 'is_redacted', 'size', 'site_url', 'anchor_url'
         )
 
@@ -47,19 +79,23 @@ class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        token = self.request.auth
+
         vis_filter = Q(
             belongs_to__request__visibility=FoiRequest.VISIBLE_TO_PUBLIC,
             approved=True
         )
+
         if user.is_authenticated:
-            vis_filter |= Q(belongs_to__request__user=user)
-            if user.is_superuser:
+            if not token and user.is_superuser:
                 return FoiAttachment.objects.all()
+            if not token or token.is_valid(['read:request']):
+                vis_filter |= Q(belongs_to__request__user=user)
         return FoiAttachment.objects.filter(vis_filter)
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
-    self = serializers.HyperlinkedIdentityField(
+    resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:message-detail',
         lookup_field='pk'
     )
@@ -89,7 +125,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         model = FoiMessage
         depth = 0
         fields = (
-            'self', 'id', 'url', 'request', 'sent', 'is_response', 'is_postal',
+            'resource_uri', 'id', 'url', 'request', 'sent', 'is_response', 'is_postal',
             'is_escalation', 'content_hidden', 'sender_public_body',
             'recipient_public_body', 'status', 'timestamp',
             'redacted', 'not_publishable', 'attachments',
@@ -98,9 +134,15 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_attachments(self, obj):
         user = self.context['request'].user
+        token = self.context['request'].auth
+
         atts = obj.foiattachment_set.all()
-        if obj.request.user != user and not user.is_superuser:
-            atts = atts.filter(approved=True)
+        if obj.request.user == user:
+            if token and not token.is_valid(['read:request']):
+                atts = atts.filter(approved=True)
+        else:
+            if not user.is_superuser:
+                atts = atts.filter(approved=True)
         serializer = FoiAttachmentSerializer(
             atts,
             many=True,
@@ -114,16 +156,20 @@ class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        token = self.request.auth
+
         vis_filter = Q(request__visibility=FoiRequest.VISIBLE_TO_PUBLIC)
+
         if user.is_authenticated:
-            vis_filter |= Q(request__user=user)
-            if user.is_superuser:
+            if not token and user.is_superuser:
                 return FoiMessage.objects.all()
+            if not token or token.is_valid(['read:request']):
+                vis_filter |= Q(request__user=user)
         return FoiMessage.objects.filter(vis_filter)
 
 
 class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
-    self = serializers.HyperlinkedIdentityField(
+    resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:request-detail',
         lookup_field='pk'
     )
@@ -137,12 +183,20 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk',
         read_only=True
     )
+    same_as = serializers.HyperlinkedRelatedField(
+        view_name='api:request-detail',
+        lookup_field='pk',
+        read_only=True
+    )
+    user = serializers.SerializerMethodField(
+        source='get_user'
+    )
 
     class Meta:
         model = FoiRequest
         depth = 0
         fields = (
-            'self',
+            'resource_uri',
             'id',
             'url',
             'jurisdiction',
@@ -159,20 +213,93 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             'resolution', 'slug',
             'title',
             'reference',
-            'messages'
+            'messages',
+            'user'
         )
+
+    def get_user(self, obj):
+        user = self.context['request'].user
+        if obj.user == user or user.is_superuser:
+            return obj.user.pk
+        if obj.user.private:
+            return None
+        return obj.user.pk
 
 
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
     messages = FoiMessageSerializer(read_only=True, many=True)
 
 
-class FoiRequestViewSet(viewsets.ReadOnlyModelViewSet):
+class MakeRequestSerializer(serializers.Serializer):
+    publicbodies = serializers.PrimaryKeyRelatedField(
+        queryset=PublicBody.objects.all(),
+        many=True
+    )
+
+    subject = serializers.CharField(max_length=230)
+    body = serializers.CharField()
+
+    full_text = serializers.BooleanField(required=False, default=False)
+    public = serializers.BooleanField(required=False, default=True)
+    reference = serializers.CharField(required=False, default='')
+    tags = serializers.ListField(
+        required=False,
+        child=serializers.CharField(max_length=255)
+    )
+
+    def validate_reference(self, value):
+        cleaned_reference = clean_reference(value)
+        if value and cleaned_reference != value:
+            raise serializers.ValidationError('Reference not clean')
+        return cleaned_reference
+
+    def create(self, validated_data):
+        service = CreateRequestService(validated_data)
+        return service.execute(validated_data['request'])
+
+
+class FoiRequestFilter(filters.FilterSet):
+    user = filters.ModelChoiceFilter(queryset=filter_by_user_queryset)
+    tags = filters.CharFilter(method='tag_filter')
+
+    class Meta:
+        model = FoiRequest
+        fields = (
+            'user', 'is_foi', 'checked', 'jurisdiction', 'tags',
+            'resolution', 'status', 'reference', 'public_body'
+        )
+
+    def tag_filter(self, queryset, name, value):
+        return queryset.filter(**{
+            'tags__name': value,
+        })
+
+
+class CreateOnlyWithScopePermission(TokenHasScope):
+    def has_permission(self, request, view):
+        if view.action not in ('create', 'update'):
+            return True
+        if not request.user.is_authenticated:
+            return False
+        return super(CreateOnlyWithScopePermission, self).has_permission(
+            request, view
+        )
+
+
+class FoiRequestViewSet(mixins.CreateModelMixin,
+                        mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin,
+                        viewsets.GenericViewSet):
     ordering_fields = ('first_message', 'last_message')
     serializer_action_classes = {
+        'create': MakeRequestSerializer,
         'list': FoiRequestListSerializer,
         'retrieve': FoiRequestDetailSerializer
     }
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = FoiRequestFilter
+    permission_classes = (CreateOnlyWithScopePermission,)
+    required_scopes = ['make:request']
 
     def get_serializer_class(self):
         try:
@@ -182,17 +309,19 @@ class FoiRequestViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        token = self.request.auth
         vis_filter = Q(visibility=FoiRequest.VISIBLE_TO_PUBLIC)
         if user.is_authenticated:
-            vis_filter |= Q(user=user)
-            if user.is_superuser:
+            # Either not OAuth or OAuth and valid token
+            if not token and user.is_superuser:
                 return FoiRequest.objects.all()
+            if not token or token.is_valid(['read:request']):
+                vis_filter |= Q(user=user)
         return FoiRequest.objects.filter(vis_filter)
 
     @list_route(methods=['get'])
     def search(self, request):
         queryset = self.get_searchqueryset(request)
-
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -220,3 +349,18 @@ class FoiRequestViewSet(viewsets.ReadOnlyModelViewSet):
             sqs = sqs.none()
 
         return SearchQuerySetWrapper(sqs, FoiRequest)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        data = {
+            'status': 'success',
+            'url': instance.get_absolute_domain_url()
+        }
+        headers = {'Location': str(instance.get_absolute_url())}
+        return Response(data, status=status.HTTP_201_CREATED,
+            headers=headers)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user, request=self.request)
