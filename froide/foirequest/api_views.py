@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 
-from rest_framework import serializers, viewsets, mixins, status
+from rest_framework import serializers, viewsets, mixins, status, throttling
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 
@@ -23,6 +23,7 @@ from froide.publicbody.models import PublicBody
 from .models import FoiRequest, FoiMessage, FoiAttachment
 from .services import CreateRequestService
 from .validators import clean_reference
+from .utils import check_throttle
 
 
 User = get_user_model()
@@ -286,6 +287,23 @@ class CreateOnlyWithScopePermission(TokenHasScope):
         )
 
 
+class MakeRequestThrottle(throttling.BaseThrottle):
+    def allow_request(self, request, view):
+        return not bool(check_throttle(request.user, FoiRequest))
+
+
+def throttle_action(throttle_classes):
+    def inner(method):
+        def _inner(self, request, *args, **kwargs):
+            for throttle_class in throttle_classes:
+                throttle = throttle_class()
+                if not throttle.allow_request(request, self):
+                    self.throttled(request, throttle.wait())
+            return method(self, request, *args, *kwargs)
+        return _inner
+    return inner
+
+
 class FoiRequestViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
@@ -350,6 +368,7 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
 
         return SearchQuerySetWrapper(sqs, FoiRequest)
 
+    @throttle_action((MakeRequestThrottle,))
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

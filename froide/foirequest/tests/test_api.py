@@ -10,6 +10,7 @@ except ImportError:
 
 from django.test import TestCase
 from django.core import mail
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.urls import reverse
@@ -319,3 +320,14 @@ class OAuthApiTest(TestCase):
         new_count = FoiRequest.objects.all().count()
         self.assertEqual(old_count, new_count - 1)
         self.assertEqual(len(mail.outbox), 2)
+
+        # Check throttling
+        froide_config = settings.FROIDE_CONFIG
+        froide_config['request_throttle'] = [(1, 60), (5, 60 * 60)]
+
+        response, result = self.api_post(self.request_list_url, {
+            'subject': 'Test',
+            'body': 'Testing',
+            'publicbodies': [self.pb.pk]
+        })
+        self.assertEqual(response.status_code, 429)
