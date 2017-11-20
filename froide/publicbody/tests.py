@@ -22,7 +22,8 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
         pb = PublicBody.objects.all()[0]
-        tag = pb.tags.all()[0]
+        tag = factories.PublicBodyTagFactory.create(is_topic=True)
+        pb.tags.add(tag)
         response = self.client.get(reverse('publicbody-list', kwargs={
             'topic': tag.slug
         }))
