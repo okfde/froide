@@ -311,23 +311,28 @@ class OAuthApiTest(TestCase):
 
         old_count = FoiRequest.objects.all().count()
         mail.outbox = []
-        response, result = self.api_post(self.request_list_url, {
-            'subject': 'Test',
+        data = {
+            'subject': 'OAUth-Test',
             'body': 'Testing',
-            'publicbodies': [self.pb.pk]
-        })
+            'publicbodies': [self.pb.pk],
+            'tags': ['test1', 'test2']
+        }
+        response, result = self.api_post(self.request_list_url, data)
         self.assertEqual(response.status_code, 201)
         new_count = FoiRequest.objects.all().count()
         self.assertEqual(old_count, new_count - 1)
         self.assertEqual(len(mail.outbox), 2)
+        new_req = FoiRequest.objects.get(title='OAUth-Test')
+        self.assertEqual(set([t.name for t in new_req.tags.all()]),
+                         set(data['tags']))
 
         # Check throttling
-        froide_config = settings.FROIDE_CONFIG
+        froide_config = dict(settings.FROIDE_CONFIG)
         froide_config['request_throttle'] = [(1, 60), (5, 60 * 60)]
-
-        response, result = self.api_post(self.request_list_url, {
-            'subject': 'Test',
-            'body': 'Testing',
-            'publicbodies': [self.pb.pk]
-        })
+        with self.settings(FROIDE_CONFIG=froide_config):
+            response, result = self.api_post(self.request_list_url, {
+                'subject': 'Test',
+                'body': 'Testing',
+                'publicbodies': [self.pb.pk]
+            })
         self.assertEqual(response.status_code, 429)

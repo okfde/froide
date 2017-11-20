@@ -100,6 +100,9 @@ class CreateRequestService(BaseService):
         self.pre_save_request(request)
         self.save_request_with_slug(request, count=sequence)
 
+        if 'tags' in data and data['tags']:
+            request.tags.add(*data['tags'])
+
         message = FoiMessage(request=request,
             sent=False,
             is_response=False,
