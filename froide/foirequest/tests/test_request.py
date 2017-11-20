@@ -77,22 +77,24 @@ class RequestTest(TestCase):
         self.client.logout()
         factories.UserFactory.create(email="dummy@example.com")
         pb = PublicBody.objects.all()[0]
-        post = {"subject": "Test-Subject With New User",
-                "body": "This is a test body with new user",
-                "first_name": "Stefan", "last_name": "Wehrmeyer",
-                "user_email": "dummy@example.com",
-                "law": pb.laws.all()[0].pk}
+        post = {
+            "subject": "Test-Subject With New User",
+            "body": "This is a test body with new user",
+            "first_name": "Stefan", "last_name": "Wehrmeyer",
+            "user_email": "dummy@example.com",
+        }
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={'publicbody_slug': pb.slug}), post)
         self.assertTrue(response.context['user_form']['user_email'].errors)
         self.assertEqual(response.status_code, 400)
-        post = {"subject": "Test-Subject With New User",
-                "body": "This is a test body with new user",
-                "first_name": "Stefan", "last_name": "Wehrmeyer",
-                "address": "TestStreet 3\n55555 Town",
-                "user_email": "sw@example.com",
-                "terms": "on",
-                "law": str(FoiLaw.get_default_law(pb).id)}
+        post = {
+            "subject": "Test-Subject With New User",
+            "body": "This is a test body with new user",
+            "first_name": "Stefan", "last_name": "Wehrmeyer",
+            "address": "TestStreet 3\n55555 Town",
+            "user_email": "sw@example.com",
+            "terms": "on"
+        }
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={'publicbody_slug': pb.slug}), post)
         self.assertEqual(response.status_code, 302)
