@@ -44,7 +44,6 @@ class RequestTest(TestCase):
         post = {
             "subject": "Test-Subject",
             "body": "This is another test body with Ümläut€n",
-            "law": str(pb.default_law.pk)
         }
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={'publicbody_slug': pb.slug}), post)
@@ -313,7 +312,6 @@ class RequestTest(TestCase):
                 "body": "This is another test body",
                 "redirect_url": "/?blub=bla",
                 "publicbody": str(pb.pk),
-                "law": str(pb.default_law.pk),
                 "public": "on"}
         response = self.client.post(
                 reverse('foirequest-make_request'), post)
@@ -324,7 +322,6 @@ class RequestTest(TestCase):
                 "body": "This is another test body",
                 "redirect_url": "http://evil.example.com",
                 "publicbody": str(pb.pk),
-                "law": str(pb.default_law.pk),
                 "public": "on"}
         response = self.client.post(
                 reverse('foirequest-make_request'), post)
@@ -459,7 +456,6 @@ class RequestTest(TestCase):
             "subject": "Totally Random Request",
             "body": "This is another test body",
             "publicbody": str(pb.pk),
-            "law": str(pb.default_law.pk),
             "public": "on"
         }
         response = self.client.post(
@@ -588,17 +584,6 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
-    # def test_public_body_logged_in_public_request(self):
-    #     ok = self.client.login(email='info@fragdenstaat.de', password='froide')
-    #     user = User.objects.get(username='sw')
-    #     pb = PublicBody.objects.all()[0]
-    #     post = {"subject": "Test-Subject", "body": "This is a test body",
-    #             "public": "on",
-    #             "law": pb.default_law.pk}
-    #     response = self.client.post(reverse('foirequest-make_request',
-    #             kwargs={"publicbody_slug": pb.slug}), post)
-    #     self.assertEqual(response.status_code, 302)
-
     def test_set_message_sender(self):
         from froide.foirequest.forms import MessagePublicBodySenderForm
         mail.outbox = []
@@ -606,7 +591,6 @@ class RequestTest(TestCase):
         pb = PublicBody.objects.all()[0]
         post = {"subject": "A simple test request",
                 "body": "This is another test body",
-                "law": str(pb.default_law.id),
                 "publicbody": str(pb.id),
                 "public": "on"}
         response = self.client.post(
@@ -1150,7 +1134,6 @@ class RequestTest(TestCase):
         post = {"subject": "A Public Body Request",
                 "body": "This is another test body with Ümläut€n",
                 "full_text": "true",
-                "law": str(law.id),
                 "publicbody": str(pb.id),
                 "public": "on"}
         response = self.client.post(
@@ -1203,7 +1186,6 @@ class RequestTest(TestCase):
         post = {
             "subject": "Test-Subject",
             "body": "This is a test body",
-            "law": str(pb.default_law.pk)
         }
         response = self.client.post(
             reverse('foirequest-make_request',
@@ -1213,7 +1195,6 @@ class RequestTest(TestCase):
         post = {
             "subject": "Test-Subject",
             "body": "This is a test body",
-            "law": str(pb.default_law.pk),
             "publicbody": str(pb.pk),
         }
         response = self.client.post(
@@ -1335,7 +1316,6 @@ class RequestTest(TestCase):
         post = {
             "subject": "Test" * 64,
             "body": "This is another test body with Ümläut€n",
-            "law": str(pb.default_law.pk)
         }
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={'publicbody_slug': pb.slug}), post)
@@ -1344,7 +1324,6 @@ class RequestTest(TestCase):
         post = {
             "subject": "Test" * 55 + ' a@b.de',
             "body": "This is another test body with Ümläut€n",
-            "law": str(pb.default_law.pk)
         }
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={'publicbody_slug': pb.slug}), post)
@@ -1480,8 +1459,7 @@ class JurisdictionTest(TestCase):
         self.client.login(email='info@fragdenstaat.de', password='froide')
         post = {
             "subject": "Jurisdiction-Test-Subject",
-            "body": "This is a test body",
-            "law": str(self.pb.default_law.pk)
+            "body": "This is a test body"
         }
         response = self.client.post(
             reverse('foirequest-make_request',
