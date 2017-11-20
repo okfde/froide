@@ -705,12 +705,7 @@ class ApiTest(TestCase):
     def test_authentication_logged_in(self):
         self.client.login(email=self.test_user, password='froide')
         response = self.client.get(self.profile_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '"id":%d' % self.test_user.pk)
-        self.assertContains(response, self.test_user.email)
-        self.assertContains(response, self.test_user.first_name)
-        self.assertContains(response, self.test_user.last_name)
+        self.assertEqual(response.status_code, 403)
 
     def test_authentication_not_loggedin(self):
         response = self.client.get(self.profile_url)
