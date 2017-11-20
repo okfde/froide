@@ -299,7 +299,7 @@ def throttle_action(throttle_classes):
                 throttle = throttle_class()
                 if not throttle.allow_request(request, self):
                     self.throttled(request, throttle.wait())
-            return method(self, request, *args, *kwargs)
+            return method(self, request, *args, **kwargs)
         return _inner
     return inner
 
