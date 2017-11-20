@@ -1,6 +1,6 @@
 from rest_framework import serializers, views, permissions, response
 
-from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from oauth2_provider.contrib.rest_framework import TokenHasScope
 
 from .models import User
 
@@ -32,19 +32,16 @@ class UserEmailSerializer(UserSerializer):
 
 
 class ProfileView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated, IsAuthenticatedOrTokenHasScope]
+    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
     required_scopes = ['read:user']
 
     def get(self, request, format=None):
         token = request.auth
         user = request.user
-        if token is not None:
-            if token.is_valid(['read:email']):
-                serializer = UserEmailSerializer(user)
-            elif token.is_valid(['read:profile']):
-                serializer = UserDetailSerializer(user)
-            else:
-                serializer = UserSerializer(user)
-        else:
+        if token.is_valid(['read:email']):
             serializer = UserEmailSerializer(user)
+        elif token.is_valid(['read:profile']):
+            serializer = UserDetailSerializer(user)
+        else:
+            serializer = UserSerializer(user)
         return response.Response(serializer.data)
