@@ -30,6 +30,7 @@ from froide.helper.text_utils import redact_content
 
 from ..foi_mail import package_foirequest
 from ..utils import construct_message_body
+from .project import FoiProject
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -303,6 +304,10 @@ class FoiRequest(models.Model):
             on_delete=models.SET_NULL,
             verbose_name=_("Identical request"))
     same_as_count = models.IntegerField(_("Identical request count"), default=0)
+
+    project = models.ForeignKey(FoiProject, null=True, blank=True,
+            on_delete=models.SET_NULL, verbose_name=_('project'))
+    project_order = models.IntegerField(null=True, blank=True)
 
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
             on_delete=models.SET_NULL,
