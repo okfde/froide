@@ -14,6 +14,8 @@ class PublicBodyForm(JSONMixin, forms.Form):
             label=_("Search for a topic or a public body:")
     )
 
+    is_multi = False
+
     def as_data(self):
         data = super(PublicBodyForm, self).as_data()
         if self.is_bound and self.is_valid():
@@ -31,6 +33,8 @@ class MultiplePublicBodyForm(JSONMixin, forms.Form):
             queryset=PublicBody.objects.all(),
             label=_("Search for a topic or a public body:")
     )
+
+    is_multi = True
 
     def get_publicbodies(self):
         if self.is_valid():
