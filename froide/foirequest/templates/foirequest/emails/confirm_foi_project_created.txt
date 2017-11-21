@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=request.get_absolute_domain_short_url %}Hello {{ name }},
+
+your project "{{ title }}" has been created and we are sending the requests to the public bodies now. We will notify you when you get responses.
+
+{{ url }}
+
+Cheers,
+{{ site_name }}
+{% endblocktrans %}
+{% endautoescape %}
+{% include "foirequest/emails/user_footer.txt" %}

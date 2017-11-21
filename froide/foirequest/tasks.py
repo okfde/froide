@@ -6,9 +6,10 @@ from django.db import transaction
 from django.core.files import File
 
 from froide.celery import app as celery_app
+from froide.publicbody.models import PublicBody
 from froide.helper.document import convert_to_pdf
 
-from .models import FoiRequest, FoiAttachment
+from .models import FoiRequest, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
 
 
@@ -55,6 +56,50 @@ def count_same_foirequests(instance_id):
         FoiRequest.objects.filter(id=instance_id).update(same_as_count=count)
     except FoiRequest.DoesNotExist:
         pass
+
+
+@celery_app.task
+def create_project_requests(project_id, publicbody_ids):
+    for seq, pb_id in enumerate(publicbody_ids):
+        create_project_request.delay(project_id, pb_id, sequence=seq)
+
+
+@celery_app.task
+def create_project_request(project_id, publicbody_id, sequence=0):
+    from .services import CreateRequestFromProjectService
+
+    try:
+        project = FoiProject.objects.get(id=project_id)
+    except FoiProject.DoesNotExist:
+        # project does not exist anymore?
+        return
+
+    try:
+        pb = PublicBody.objects.get(id=publicbody_id)
+    except PublicBody.DoesNotExist:
+        # pb was deleted?
+        return
+
+    service = CreateRequestFromProjectService({
+        'project': project,
+        'publicbody': pb,
+
+        'subject': project.title,
+        'user': project.user,
+        'body': project.description,
+        'public': project.public,
+        'reference': project.reference,
+        'tags': [t.name for t in project.tags.all()],
+
+        'project_order': sequence
+    })
+    foirequest = service.execute()
+
+    if project.request_count == project.foirequest_set.all().count():
+        project.status = FoiProject.STATUS_READY
+        project.save()
+
+    return foirequest.pk
 
 
 @celery_app.task(time_limit=60)
