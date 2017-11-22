@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import hashlib
+import re
 import hmac
 
 try:
@@ -179,6 +180,24 @@ class AccountService(object):
         send_mail(str(_("%(site_name)s: please confirm your new email address") % {
                     "site_name": settings.SITE_NAME}),
                 message, settings.DEFAULT_FROM_EMAIL, [email])
+
+    def apply_name_redaction(self, content, replacement=''):
+        if not self.user.private:
+            return content
+
+        needles = [
+            self.user.last_name, self.user.first_name,
+            self.user.get_full_name()
+        ]
+        if self.user.organization:
+            needles.append(self.user.organization)
+
+        needles = [re.escape(n) for n in needles]
+
+        for needle in needles:
+            content = re.sub(needle, replacement, content, flags=re.I | re.U)
+
+        return content
 
     def apply_message_redaction(self, content, replacements=None):
         if replacements is None:

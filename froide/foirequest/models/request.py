@@ -712,14 +712,10 @@ class FoiRequest(models.Model):
                     filetype=attachment.content_type)
             if not att.name:
                 att.name = _("attached_file_%d") % i
-            att.name = account_service.apply_message_redaction(att.name,
-                {
-                    'email': False,
-                    'address': False,
-                    # Translators: replacement for person name in filename
-                    'name': str(_('NAME'))
-                }
-            )
+
+            # Translators: replacement for person name in filename
+            repl = str(_('NAME'))
+            att.name = account_service.apply_name_redaction(att.name, repl)
             att.name = re.sub(r'[^A-Za-z0-9_\.\-]', '', att.name)
             att.name = att.name[:255]
             if att.name.endswith('pdf') or 'pdf' in att.filetype:
