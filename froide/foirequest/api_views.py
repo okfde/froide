@@ -219,6 +219,8 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_user(self, obj):
+        if obj.user is None:
+            return None
         user = self.context['request'].user
         if obj.user == user or user.is_superuser:
             return obj.user.pk
