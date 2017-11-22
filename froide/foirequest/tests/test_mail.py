@@ -134,7 +134,7 @@ class MailTest(TestCase):
             content = f.read()
             mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, 'Eingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+            self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
 
     def test_attachment_name_redaction(self):
         request = FoiRequest.objects.get_by_secret_mail("sw+yurpykc1hr@fragdenstaat.de")
