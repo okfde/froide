@@ -126,7 +126,7 @@ const config = {
       sourceMap: true,
       uglifyOptions: {
         ie8: true,
-        ecma: 8,
+        ecma: 5,
         mangle: false
       }
     }),
