@@ -155,36 +155,50 @@
     Froide.url.search = "{% url 'foirequest-search' %}"
     Froide.url.loginSimple = "{% url 'account-login' %}?simple&email="
 
-    Froide.i18n = Froide.i18n || {}
-    Froide.i18n = Object.assign(Froide.i18n, {
-      subject: '{% trans "Subject" %}',
-      saveAsDraft: '{% trans "Save as draft" %}',
-      reviewRequest: '{% trans "Review request" %}',
-      reviewTitle: '{% trans "Review your request and submit" %}',
-      reviewEdit: '{% trans "Edit" %}',
-      reviewFrom: '{% trans "From" %}',
-      reviewTo: '{% trans "To" %}',
-      reviewPublicbodies: '{% trans "public bodies" %}',
-      reviewSpelling: '{% trans "Please use proper spelling." %}',
-      reviewPoliteness: '{% trans "Please stay polite." %}',
-      submitRequest: '{% trans "Submit request"%}',
-      loginWindowLink: '{% trans "Login using that email address" %}',
+    Froide.i18n = Froide.i18n || {};
+    (function () {
+      var i18n = {
+        publicBodiesFound: '{% trans "public bodies found" %}',
+        // {# Translators: not url #}
+        requests: '{% trans "requests" %}',
+        makeRequest: '{% trans "make request" %}',
+        writingRequestTo: '{% trans "You are writing a request to" %}',
+        change: '{% trans "change" %}',
+        next: '{% trans "next" %}',
+        previous: '{% trans "previous" %}',
+        subject: '{% trans "Subject" %}',
+        defaultLetterStart: '{% trans "Please send me the following information:" %}',
+        saveAsDraft: '{% trans "Save as draft" %}',
+        reviewRequest: '{% trans "Review request" %}',
+        reviewTitle: '{% trans "Review your request and submit" %}',
+        reviewEdit: '{% trans "Edit" %}',
+        reviewFrom: '{% trans "From" %}',
+        reviewTo: '{% trans "To" %}',
+        reviewPublicbodies: '{% trans "public bodies" %}',
+        reviewSpelling: '{% trans "Please use proper spelling." %}',
+        reviewPoliteness: '{% trans "Please stay polite." %}',
+        submitRequest: '{% trans "Submit request"%}',
+        loginWindowLink: '{% trans "Login using that email address" %}',
 
-      greeting: '{% trans "Dear Sir or Madam" %}',
-      kindRegards: '{% trans "Kind regards" %}',
+        greeting: '{% trans "Dear Sir or Madam" %}',
+        kindRegards: '{% trans "Kind regards" %}',
 
-      yourFirstName: '{% trans "Your first name" %}',
-      yourLastName: '{% trans "Your last name" %}',
-      yourEmail: '{% trans "Your email address" %}',
-      yourAddress: '{% trans "Your postal address" %}',
-      giveName: '{% trans "Please fill out your name below" %}',
+        yourFirstName: '{% trans "Your first name" %}',
+        yourLastName: '{% trans "Your last name" %}',
+        yourEmail: '{% trans "Your email address" %}',
+        yourAddress: '{% trans "Your postal address" %}',
+        giveName: '{% trans "Please fill out your name below" %}',
 
-      similarExist: '{% trans "Please make sure the information is not already requested or public" %}',
-      similarRequests: '{% trans "Similar requests" %}',
-      moreSimilarRequests: '{% trans "Search for more similar requests" %}',
-      relevantResources: '{% trans "Relevant resources" %}',
-      officialWebsite: '{% trans "Official website: " %}'
-    })
+        similarExist: '{% trans "Please make sure the information is not already requested or public" %}',
+        similarRequests: '{% trans "Similar requests" %}',
+        moreSimilarRequests: '{% trans "Search for more similar requests" %}',
+        relevantResources: '{% trans "Relevant resources" %}',
+        officialWebsite: '{% trans "Official website: " %}'
+      }
+      for (var key in i18n) {
+        Froide.i18n[key] = i18n[key]
+      }
+    }())
 
     Froide.template = Froide.template || {}
     Froide.template.visitPublicBodyWebsite = '{% blocktrans %}Visit the website of this Public Body{% endblocktrans %}'

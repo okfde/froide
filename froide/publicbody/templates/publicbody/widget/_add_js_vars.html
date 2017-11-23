@@ -9,18 +9,23 @@
   Froide.url.getPublicBody = "{% url 'api:publicbody-detail' pk='0' %}"
   Froide.url.helpAbout = '{% url "help-about" %}'
 
-  Froide.i18n = Froide.i18n || {}
-  Froide.i18n = Object.assign(Froide.i18n, {
-    missingPublicBody: '{% trans "Are we missing a public body?" %}',
-    searchTerm: '{% trans "Search Term" %}',
-    search: '{% trans "Search" %}',
-    examples: '{% trans "Examples:" %}',
-    environment: '{% trans "Environment" %}',
-    ministryOfLabour: '{% trans "Ministry of Labour" %}',
-    or: '{% trans "or" %}',
-    noPublicBodiesFound: '{% trans "No Public Bodies found for this query." %}',
-    letUsKnow: '{% trans "Please let us know!" %}'
-  })
+  Froide.i18n = Froide.i18n || {};
+  (function () {
+    var i18n = {
+      missingPublicBody: '{% trans "Are we missing a public body?" %}',
+      publicBodySearchPlaceholder: '{% trans "Ministry of..." %}',
+      search: '{% trans "Search" %}',
+      examples: '{% trans "Examples:" %}',
+      environment: '{% trans "Environment" %}',
+      ministryOfLabour: '{% trans "Ministry of Labour" %}',
+      or: '{% trans "or" %}',
+      noPublicBodiesFound: '{% trans "No Public Bodies found for this query." %}',
+      letUsKnow: '{% trans "Please let us know!" %}'
+    }
+    for (var key in i18n) {
+      Froide.i18n[key] = i18n[key]
+    }
+  }())
 
   Froide.resources = Froide.resources || {}
   Froide.resources.spinner = '{% static "img/spinner.gif" %}'

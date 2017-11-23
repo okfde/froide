@@ -93,20 +93,25 @@
     Froide.config = Froide.config || {}
     Froide.config.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-    Froide.i18n = Froide.i18n || {}
-    Froide.i18n = Object.assign(Froide.i18n, {
-      previousPage: '{% trans "Previous Page" %}',
-      nextPage: '{% trans "Next Page" %}',
-      pageCurrentOfTotal: function (obj) {
-        return '{% blocktrans with current="$current" total="$total" %}{{ current }} of {{ total }}{% endblocktrans %}'.replace(/\$current/, obj.current).replace(/\$total/, obj.total)
-      },
-      saveAndPublish: '{% trans "Save and publish" %}',
-      toggleText: '{% trans "Text only" %}',
-      cancel: '{% trans "Cancel" %}',
-      loadingPdf: '{% trans "Loading PDF..." %}',
-      redacting: '{% trans "Redaction process started, please wait..." %}',
-      autoRedacted: '{% trans "We automatically redacted some text for you already. Please check if we got everything." %}'
-    })
+    Froide.i18n = Froide.i18n || {};
+    (function () {
+      var i18n = {
+        previousPage: '{% trans "Previous Page" %}',
+        nextPage: '{% trans "Next Page" %}',
+        pageCurrentOfTotal: function (obj) {
+          return '{% blocktrans with current="$current" total="$total" %}{{ current }} of {{ total }}{% endblocktrans %}'.replace(/\$current/, obj.current).replace(/\$total/, obj.total)
+        },
+        saveAndPublish: '{% trans "Save and publish" %}',
+        toggleText: '{% trans "Text only" %}',
+        cancel: '{% trans "Cancel" %}',
+        loadingPdf: '{% trans "Loading PDF..." %}',
+        redacting: '{% trans "Redaction process started, please wait..." %}',
+        autoRedacted: '{% trans "We automatically redacted some text for you already. Please check if we got everything." %}'
+      }
+      for (var key in i18n) {
+        Froide.i18n[key] = i18n[key]
+      }
+    }())
   </script>
   {% addtoblock "js" %}
     <script src="{% static 'js/redact.js' %}" charset="utf-8"></script>
