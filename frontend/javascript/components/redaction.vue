@@ -65,7 +65,12 @@
 </template>
 
 <script>
+import 'string.prototype.repeat'
+
+import {range} from 'underscore'
+
 import Vue from 'vue'
+
 import {PDFJS} from 'pdfjs-dist'
 
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
@@ -226,7 +231,7 @@ export default {
     redact () {
       this.ready = false
       this.redacting = true
-      let pages = [...Array(this.numPages + 1).keys()].slice(1)
+      let pages = range(1, this.numPages + 1)
       let serialized = []
       return pages.reduce((sequence, pageNumber) => {
         return sequence.then(() => {
@@ -254,7 +259,7 @@ export default {
     sendSerializedPages (serialized) {
       return new Promise((resolve, reject) => {
         var xhr = new window.XMLHttpRequest()
-        xhr.open('POST', '')
+        xhr.open('POST', document.location.href)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.config.config.csrfToken)
         xhr.onreadystatechange = function () {
@@ -470,9 +475,11 @@ export default {
     drawRectangles () {
       let ctx = this.redactCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      this.rectanglesPerPage[this.currentPage].forEach(r => {
-        this.drawRectangle(ctx, r)
-      })
+      if (this.rectanglesPerPage[this.currentPage] !== undefined) {
+        this.rectanglesPerPage[this.currentPage].forEach(r => {
+          this.drawRectangle(ctx, r)
+        })
+      }
       if (this.startDrag && this.endDrag) {
         this.drawRectangle(ctx, this.getRect(this.startDrag, this.endDrag))
       }

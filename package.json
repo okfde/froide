@@ -58,10 +58,12 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-beta",
+    "es6-promise": "^4.1.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "pdfjs-dist": "^1.9.640",
     "popper.js": "^1.12.5",
+    "string.prototype.repeat": "^0.2.0",
     "underscore": "^1.8.3",
     "vue": "^2.4.4",
     "vuex": "^2.4.0"
