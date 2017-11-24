@@ -1203,7 +1203,7 @@ class RequestTest(TestCase):
         self.assertIn('publicbody', response.context['publicbody_form'].errors)
         self.assertEqual(len(response.context['publicbody_form'].errors), 1)
 
-    @patch('froide.helper.redaction.redact_file',
+    @patch('froide.foirequest.views.attachment.redact_file',
            lambda x, y: factories.TEST_PDF_PATH)
     def test_redact_attachment(self):
         foirequest = FoiRequest.objects.all()[0]
