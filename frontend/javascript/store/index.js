@@ -2,14 +2,19 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import {
-  SET_PUBLICBODY, SET_PUBLICBODIES,
+  SET_CONFIG,
+  SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
+  SET_PUBLICBODY, SET_PUBLICBODIES, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   CACHE_PUBLICBODIES,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS,
   SET_USER,
-  UPDATE_SUBJECT, UPDATE_BODY,
+  UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME, UPDATE_EMAIL, UPDATE_ADDRESS,
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from './mutation_types'
+
+import {scrollToAnchor} from '../lib/misc'
+import {FroideSearch} from '../lib/search'
 
 Vue.use(Vuex)
 
@@ -23,23 +28,9 @@ const STEPS = {
 
 const debug = process.env.NODE_ENV !== 'production'
 
-const setPublicbodyDetail = function (state, publicbody, scope) {
-  if (state.scopedPublicbodyDetails[scope] === undefined) {
-    Vue.set(state.scopedPublicbodyDetails, scope, {
-      [publicbody.id]: publicbody
-    })
-  } else {
-    Vue.set(state.scopedPublicbodyDetails, scope, {
-      [publicbody.id]: publicbody,
-      ...state.scopedPublicbodyDetails[scope]
-    })
-  }
-
-  state.defaultLaw = publicbody.default_law
-}
-
 export default new Vuex.Store({
   state: {
+    config: null,
     scopedSearchResults: {},
     scopedSearchMeta: {},
     scopedPublicbodies: {},
@@ -48,7 +39,8 @@ export default new Vuex.Store({
     defaultLaw: null,
     step: STEPS.SELECT_PUBLICBODY,
     subject: '',
-    body: ''
+    body: '',
+    fullText: false
   },
   getters: {
     getPublicBodyByScope: (state, getters) => (scope) => {
@@ -64,6 +56,13 @@ export default new Vuex.Store({
         return []
       }
       return pbs
+    },
+    isPublicBodySelectedByScope: (state, getters) => (scope, id) => {
+      let pbs = state.scopedPublicbodies[scope]
+      if (pbs === undefined) {
+        return false
+      }
+      return pbs.some((r) => r.id === id)
     },
     getPublicBody: (state, getters) => (id) => {
       return state.publicBodies[id]
@@ -91,14 +90,25 @@ export default new Vuex.Store({
     subject: state => state.subject,
     getSubject: state => () => state.subject,
     body: state => state.body,
+    fullText: state => state.fullText,
     stepSelectPublicbody: state => state.step === STEPS.SELECT_PUBLICBODY,
     stepReviewReady: state => state.step >= STEPS.WRITE_REQUEST
   },
   mutations: {
+    [SET_CONFIG] (state, config) {
+      state.config = config
+    },
+    [SET_STEP_PUBLICBODY] (state) {
+      state.step = STEPS.SELECT_PUBLICBODY
+      scrollToAnchor('step-publicbody')
+    },
+    [SET_STEP_REQUEST] (state) {
+      state.step = STEPS.WRITE_REQUEST
+      scrollToAnchor('step-request')
+    },
     [SET_PUBLICBODY] (state, {publicbody, scope}) {
       Vue.set(state.scopedPublicbodies, scope, [publicbody])
       state.defaultLaw = publicbody.default_law
-      state.step = STEPS.WRITE_REQUEST
     },
     [SET_PUBLICBODIES] (state, {publicbodies, scope}) {
       Vue.set(state.scopedPublicbodies, scope, publicbodies)
@@ -113,7 +123,32 @@ export default new Vuex.Store({
       } else {
         state.defaultLaw = null
       }
-      state.step = STEPS.WRITE_REQUEST
+    },
+    [ADD_PUBLICBODY_ID] (state, {publicbodyId, scope}) {
+      let pb = state.publicBodies[publicbodyId]
+      if (pb === undefined) {
+        return
+      }
+      let pbs = state.scopedPublicbodies[scope]
+      if (pbs === undefined) {
+        Vue.set(state.scopedPublicbodies, scope, [pb])
+      } else {
+        let contains = pbs.some((p) => p.id === pb.id)
+        if (!contains) {
+          Vue.set(state.scopedPublicbodies, scope, [
+            ...pbs,
+            ...[pb]
+          ])
+        }
+      }
+    },
+    [REMOVE_PUBLICBODY_ID] (state, {publicbodyId, scope}) {
+      let pbs = state.scopedPublicbodies[scope]
+      if (pbs === undefined) {
+        return
+      }
+      pbs = pbs.filter((p) => p.id !== publicbodyId)
+      Vue.set(state.scopedPublicbodies, scope, pbs)
     },
     [CACHE_PUBLICBODIES] (state, publicBodies) {
       let newPublicBodies = {}
@@ -132,6 +167,9 @@ export default new Vuex.Store({
     [CLEAR_SEARCHRESULTS] (state, {scope}) {
       Vue.set(state.scopedSearchResults, scope, [])
       Vue.set(state.scopedSearchMeta, scope, null)
+    },
+    [UPDATE_FULL_TEXT] (state, val) {
+      state.fullText = val
     },
     [SET_USER] (state, user) {
       state.user = user
@@ -159,6 +197,38 @@ export default new Vuex.Store({
     },
     [UPDATE_USER_ID] (state, val) {
       Vue.set(state.user, 'id', val)
+    }
+  },
+  actions: {
+    setSearchResults ({ commit }, {scope, results}) {
+      commit(SET_SEARCHRESULTS, {
+        searchResults: results.objects,
+        searchMeta: results.meta,
+        scope: scope
+      })
+      commit(CACHE_PUBLICBODIES, results.objects)
+    },
+    getSearchResults ({ commit, state, dispatch }, {scope, search}) {
+      commit(CLEAR_SEARCHRESULTS, {scope})
+      let searcher = new FroideSearch(state.config)
+      return searcher.searchPublicBody(search).then((results) => {
+        dispatch('setSearchResults', {results, scope})
+      })
+    },
+    getSearchResultsUrl ({ commit, state, getters, dispatch }, { scope, url }) {
+      commit(CLEAR_SEARCHRESULTS, {scope})
+      let searcher = new FroideSearch(state.config)
+      return searcher.getJson(url).then((results) => {
+        dispatch('setSearchResults', {results, scope})
+      })
+    },
+    getNextSearchResults ({ state, getters, dispatch }, scope) {
+      let meta = getters.getScopedSearchMeta(scope)
+      return dispatch('getSearchResultsUrl', {url: meta.next, scope: scope})
+    },
+    getPreviousSearchResults ({ state, getters, dispatch }, scope) {
+      let meta = getters.getScopedSearchMeta(scope)
+      return dispatch('getSearchResultsUrl', {url: meta.previous, scope: scope})
     }
   },
   strict: debug

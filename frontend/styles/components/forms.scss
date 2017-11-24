@@ -8,3 +8,8 @@
     list-style-type: none;
     padding: 15px 0 0 0;
 }
+
+.help-block {
+  @extend .small;
+  @extend .text-muted;
+}

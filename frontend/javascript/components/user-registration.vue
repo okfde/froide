@@ -3,6 +3,26 @@
     <div class="card-body">
 
       <div class="form-group row">
+        <label for="id_user_email" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.user_email }">
+          {{ i18n.yourEmail }}
+        </label>
+        <div class="col-sm-9">
+          <p v-if="user.id" id="email_address" class="form-control">
+            {{ user.email }}
+          </p>
+          <div v-else>
+            <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="form.user_email.placeholder"/>
+            <p v-for="e in errors.user_email" class="text-danger">{{ e.message }}</p>
+            <p v-if="authRequired">
+              <a id="simple-login-link" class="btn btn-success" :href="authRequiredUrl" @click.prevent="openLoginWindow">
+                {{ i18n.loginWindowLink }}
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
         <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address }">
           {{ i18n.yourAddress }}
         </label>
@@ -21,12 +41,12 @@
       <div v-if="config.settings.user_can_hide_web">
         <div class="checkbox">
           <label>
-            <input v-model="private" type="checkbox" name="private" />
+            <input id="id_private" v-model="private" type="checkbox" name="private" />
             {{ form.private.label }}
           </label>
           <br/>
-          <small class="help-block" v-html="form.private.help_text">
-          </small>
+          <p class="help-block" v-html="form.private.help_text">
+          </p>
         </div>
       </div>
     </div>

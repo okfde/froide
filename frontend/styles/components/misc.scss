@@ -32,6 +32,9 @@
     font-size:0.8em;
 }
 
+[v-cloak] {
+  display: none;
+}
 
 .hidden-text {
   display: none;

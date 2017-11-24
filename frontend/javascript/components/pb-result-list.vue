@@ -1,9 +1,18 @@
 <template>
   <div>
+    <div class="search-result" v-if="publicBody && !hasSearchResults">
+      <label>
+        <input type="radio" :data-label="publicBody.name" :name="name" :value="publicBody.id" v-model="value"/>
+        {{ publicBody.name }}
+        <small>
+          {{ publicBody.jurisdiction.name }}
+        </small>
+      </label>
+    </div>
     <ul v-if="searchResults.length > 0 || emptyResults" class="search-results list-unstyled">
       <li v-for="result in searchResults" class="search-result">
         <label>
-          <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" v-model="value"/>
+          <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" @click="selectSearchResult" v-model="value"/>
           {{ result.name }}
           <small>
             {{ result.jurisdiction.name }}
@@ -16,30 +25,17 @@
 
 <script>
 
-import {mapGetters, mapMutations} from 'vuex'
-import {SET_PUBLICBODY, CLEAR_SEARCHRESULTS} from '../store/mutation_types'
+import PBListMixin from '../lib/pb-list-mixin'
 
 export default {
   name: 'publicbody-chooser',
   props: ['name', 'scope', 'i18n'],
+  mixins: [PBListMixin],
   computed: {
-    publicBody () {
-      return this.getPublicBodyByScope(this.scope)
-    },
-    searchResults () {
-      return this.getScopedSearchResults(this.scope)
-    },
-    emptyResults () {
-      let meta = this.getScopedSearchMeta(this.scope)
-      if (meta) {
-        return meta.total_count === 0
-      }
-      return false
-    },
     value: {
       get () {
-        if (this.publicbody) {
-          return this.publicbody.id
+        if (this.publicBody) {
+          return this.publicBody.id
         }
       },
       set (value) {
@@ -49,23 +45,12 @@ export default {
         })
         this.clearSearchResults({scope: this.scope})
       }
-    },
-    ...mapGetters([
-      'getPublicBody',
-      'getPublicBodyByScope',
-      'getScopedSearchResults',
-      'getScopedSearchMeta'
-    ])
-
+    }
   },
   methods: {
     selectSearchResult (event) {
       this.value = event.target.value
-    },
-    ...mapMutations({
-      setPublicBody: SET_PUBLICBODY,
-      clearSearchResults: CLEAR_SEARCHRESULTS
-    })
+    }
   }
 }
 </script>

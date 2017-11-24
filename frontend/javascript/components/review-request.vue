@@ -31,7 +31,17 @@
               {{ subject }}
             </dd>
           </dl>
-          <div class="body-text review-body-text"><span>{{ letterStart }}</span><span class="highlight">{{ body }}</span><span>{{ letterEnd }}</span></div>
+          <div v-if="fullText">
+            <div class="body-text review-body-text">{{ body }}
+  {{ letterSignatureName }}</span></div>
+          </div>
+          <div v-else>
+            <div class="body-text review-body-text"><span>{{ letterStart }}</span>
+  <span class="highlight">{{ body }}</span>
+  <span>
+
+  {{ letterEnd }}</span></div>
+          </div>
           <ul>
             <li>{{ i18n.reviewSpelling }}</li>
             <li>{{ i18n.reviewPoliteness }}</li>
@@ -56,27 +66,18 @@
 <script>
 import {mapGetters} from 'vuex'
 
+import LetterMixin from '../lib/letter-mixin'
+
 export default {
   name: 'review-request',
   props: ['i18n', 'pbScope'],
+  mixins: [LetterMixin],
   data () {
     return {
       errors: []
     }
   },
   computed: {
-    letterStart () {
-      if (this.defaultLaw === null) {
-        return ''
-      }
-      return this.defaultLaw.letter_start + '\n\n'
-    },
-    letterEnd () {
-      if (this.defaultLaw === null) {
-        return ''
-      }
-      return `\n\n${this.defaultLaw.letter_end}\n${this.user.first_name} ${this.user.last_name}`
-    },
     publicbody () {
       return this.getPublicBodyByScope(this.pbScope)
     },
@@ -84,7 +85,8 @@ export default {
       return this.getPublicBodiesByScope(this.pbScope)
     },
     ...mapGetters([
-      'getPublicBodiesByScope', 'getPublicBodyByScope', 'subject', 'body', 'user', 'defaultLaw'
+      'getPublicBodiesByScope', 'getPublicBodyByScope', 'subject', 'body',
+      'fullText', 'user'
     ])
   }
 }
@@ -98,5 +100,7 @@ export default {
     height: 14em;
     max-height: 14em;
     overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 </style>
