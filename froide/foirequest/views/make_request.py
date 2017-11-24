@@ -21,7 +21,8 @@ from ..services import CreateRequestService, SaveDraftService
 class MakeRequestView(FormView):
     form_class = RequestForm
     template_name = 'foirequest/request.html'
-    FORM_CONFIG_PARAMS = ('hide_similar', 'hide_public', 'hide_draft')
+    FORM_CONFIG_PARAMS = ('hide_similar', 'hide_public', 'hide_draft',
+                          'hide_publicbody', 'hide_full_text')
 
     def get_initial(self):
         request = self.request
@@ -227,7 +228,7 @@ class MakeRequestView(FormView):
         else:
             source_func = lambda k: k in self.request.GET
 
-        for key in ('hide_similar', 'hide_public', 'hide_draft'):
+        for key in self.FORM_CONFIG_PARAMS:
             config[key] = source_func(key)
         return config
 
