@@ -315,7 +315,8 @@ class PublicBody(models.Model):
 
     @property
     def all_names(self):
-        return ' '.join((self.name, self.other_names))
+        return ' '.join((self.name, self.other_names,
+                         self.jurisdiction.name, self.jurisdiction.slug))
 
     @property
     def request_note_html(self):
