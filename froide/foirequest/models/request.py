@@ -338,6 +338,7 @@ class FoiRequest(models.Model):
         verbose_name_plural = _('Freedom of Information Requests')
         permissions = (
             ("see_private", _("Can see private requests")),
+            ("create_batch", _("Create batch requests")),
         )
 
     # Custom Signals

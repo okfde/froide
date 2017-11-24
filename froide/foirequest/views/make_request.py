@@ -99,6 +99,8 @@ class MakeRequestView(FormView):
             publicbodies = PublicBody.objects.filter(pk__in=publicbody_ids)
             if len(publicbody_ids) != len(publicbodies):
                 raise Http404
+            if len(publicbody_ids) > 1 and not self.can_create_batch():
+                raise Http404
         elif publicbody_slug is not None:
             publicbody = get_object_or_404(PublicBody, slug=publicbody_slug)
             if not publicbody.email:
@@ -107,9 +109,14 @@ class MakeRequestView(FormView):
         self._publicbodies = publicbodies
         return publicbodies
 
-    def get_publicbody_form_class(self):
+    def can_create_batch(self):
         user = self.request.user
-        if user.is_authenticated and user.trusted():
+        if not user.is_authenticated:
+            return False
+        return user.is_superuser or user.has_perm('foirequest.create_batch')
+
+    def get_publicbody_form_class(self):
+        if self.can_create_batch():
             return MultiplePublicBodyForm
         return PublicBodyForm
 
@@ -239,8 +246,10 @@ class MakeRequestView(FormView):
         if 'publicbody_form' not in kwargs:
             kwargs['publicbody_form'] = self.get_publicbody_form()
 
-        publicbodies_json = ''
+        publicbodies_json = '[]'
         publicbodies = self.get_publicbodies()
+        if not publicbodies:
+            publicbodies = kwargs['publicbody_form'].get_publicbodies()
         if publicbodies:
             publicbodies_json = json.dumps([p.as_data() for p in publicbodies])
 
