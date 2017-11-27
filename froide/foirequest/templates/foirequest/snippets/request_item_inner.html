@@ -5,11 +5,14 @@
   </a>
   <br/>
   <small>
-  {% blocktrans %}to{% endblocktrans %}
-    {% if object.public_body_name %}
-    {{ object.public_body_name }}
+    {% if object.project %}
+      {% blocktrans with name=object.public_body.name url=object.public_body.get_absolute_url count=project.request_count|add:-1 urlp=project.get_absolute_url %}to <a href="{{ url }}">{{ name }}</a> and <a href="{{ urlp }}">{{ count }} other public bodies</a>{% endblocktrans %}
+    {% elif object.public_body_name %}
+      {% blocktrans with name=object.public_body_name %}to {{ name }}{% endblocktrans %}
     {% elif object.public_body %}
-      <a href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+      {% blocktrans with url=object.public_body.get_absolute_url name=object.public_body.name %}
+        <a href="{{ url }}">{{ name }}</a>
+      {% endblocktrans %}
       <span class="muted">({{ object.jurisdiction.name }})</span>
     {% else %}
       {% blocktrans %}Not yet set{% endblocktrans %}
