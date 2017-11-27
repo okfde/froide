@@ -92,7 +92,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_queryset().order_by('-last_message')
 
     def for_list_view(self):
-        return self.by_last_update().filter(same_as__isnull=True)
+        return self.by_last_update().filter(
+            same_as__isnull=True,
+        ).filter(
+            models.Q(project__isnull=True) | models.Q(project_order=0)
+        )
 
     def get_for_search_index(self):
         return self.get_queryset().filter(same_as__isnull=True)
