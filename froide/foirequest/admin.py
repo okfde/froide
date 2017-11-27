@@ -289,7 +289,20 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     redeliver.short_description = _("Redeliver to...")
 
 
+class FoiProjectAdminForm(forms.ModelForm):
+    class Meta:
+        model = FoiProject
+        fields = '__all__'
+        widgets = {
+            'tags': TagAutocompleteWidget(
+                autocomplete_url=reverse_lazy('api:request-tags-autocomplete')
+            ),
+        }
+
+
 class FoiProjectAdmin(admin.ModelAdmin):
+    form = FoiRequestAdminForm
+
     list_display = ('title', 'created', 'user', 'public', 'status',
                     'request_count')
     list_filter = ('public', 'status',)
