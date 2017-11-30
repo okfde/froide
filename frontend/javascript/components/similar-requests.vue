@@ -1,23 +1,23 @@
 <template>
-  <div v-if="publicbody" class="card mb-3">
+  <div v-if="hasResources || hasSimilarRequests" class="card mb-3">
     <h5 class="card-header">
       {{ i18n.similarExist }}
     </h5>
     <div class="card-body">
       <div class="row">
-        <div v-show="publicbody" class="col-md-6">
+        <div v-show="hasResources" class="col-md-6">
           <h6>
             {{ i18n.relevantResources }}
           </h6>
           <ul>
-            <li>
-              <a :href="publicbody.url" target="_blank" rel="noopener">
-                {{ i18n.officialWebsite }} {{ publicbody.name }}
+            <li v-if="publicBody.url">
+              <a :href="publicBody.url" target="_blank" rel="noopener">
+                {{ i18n.officialWebsite }} {{ publicBody.name }}
               </a>
             </li>
           </ul>
         </div>
-        <div v-show="similarRequests.length > 0" class="col-md-6">
+        <div v-show="hasSimilarRequests" class="col-md-6">
           <h6>
             {{ i18n.similarRequests }}
           </h6>
@@ -46,12 +46,14 @@ import {debounce} from 'underscore'
 import {mapGetters} from 'vuex'
 
 import {FroideSearch} from '../lib/search'
+import I18nMixin from '../lib/i18n-mixin'
 
 const MAX_SIMILAR = 5
 
 export default {
   name: 'similar-requests',
   props: ['config', 'pbScope'],
+  mixins: [I18nMixin],
   data () {
     return {
       similarRequests: [],
@@ -65,8 +67,11 @@ export default {
     this.runSearch()
   },
   computed: {
-    i18n () {
-      return this.config.i18n
+    hasResources () {
+      return this.publicBody && this.publicBody.url
+    },
+    hasSimilarRequests () {
+      return this.similarRequests.length > 0
     },
     searchUrl () {
       return this.config.url.search + '?q=' + encodeURIComponent(this.subject)
@@ -74,7 +79,7 @@ export default {
     debouncedSearch () {
       return debounce(this.runSearch, 1000)
     },
-    publicbody () {
+    publicBody () {
       return this.getPublicBodyByScope(this.pbScope)
     },
     ...mapGetters(['getPublicBodyByScope', 'subject'])

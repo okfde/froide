@@ -26,25 +26,26 @@ import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
 
-import PbChooserMixin from '../lib/pb-chooser-mixin'
+import PBChooserMixin from '../lib/pb-chooser-mixin'
+import I18nMixin from '../lib/i18n-mixin'
 
 export default {
   name: 'publicbody-chooser',
-  mixins: [PbChooserMixin],
+  mixins: [PBChooserMixin, I18nMixin],
   props: ['name', 'scope', 'defaultsearch', 'formJson', 'config', 'listView'],
   created () {
     if (this.hasForm && this.field.value) {
       let pbs = this.field.objects
       this.cachePublicBodies(pbs)
       this.setPublicBodies({
-        publicbodies: pbs,
+        publicBodies: pbs,
         scope: this.scope
       })
     }
   },
   data () {
     return {
-      publicbodies: {},
+      publicBodies: {},
       search: this.defaultsearch,
       lastSearch: null,
       emptyResults: false,
@@ -64,16 +65,21 @@ export default {
       return this.listView
     },
     label () {
-      if (this.publicbody) {
-        return this.publicbody.name
+      if (this.publicBody) {
+        return this.publicBody.name
       }
     },
-    publicbody () {
+    publicBody () {
       return this.getPublicBodyByScope(this.scope)
     },
     ...mapGetters([
       'getPublicBodyByScope'
     ])
+  },
+  watch: {
+    defaultsearch: function () {
+      this.triggerAutocomplete()
+    }
   }
 }
 </script>

@@ -28,7 +28,7 @@
 import PBListMixin from '../lib/pb-list-mixin'
 
 export default {
-  name: 'publicbody-chooser',
+  name: 'pb-result-list',
   props: ['name', 'scope', 'i18n'],
   mixins: [PBListMixin],
   computed: {
@@ -40,7 +40,7 @@ export default {
       },
       set (value) {
         this.setPublicBody({
-          publicbody: this.getPublicBody(value),
+          publicBody: this.getPublicBody(value),
           scope: this.scope
         })
         this.clearSearchResults({scope: this.scope})

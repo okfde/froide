@@ -40,7 +40,7 @@ export default {
     selectAll () {
       this.searchResults.forEach((r) => {
         this.addPublicBodyId({
-          publicbodyId: r.id,
+          publicBodyId: r.id,
           scope: this.scope
         })
       })

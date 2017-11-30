@@ -3,8 +3,10 @@ import Vuex from 'vuex'
 
 import {
   SET_CONFIG,
-  SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
-  SET_PUBLICBODY, SET_PUBLICBODIES, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
+  SET_STEP, SET_STEP_BY_URL, SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
+  STEPS, URLS_TO_STEP,
+  SET_PUBLICBODY, SET_PUBLICBODIES,
+  SET_PUBLICBODY_ID, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   CACHE_PUBLICBODIES,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS,
   SET_USER,
@@ -13,18 +15,9 @@ import {
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from './mutation_types'
 
-import {scrollToAnchor} from '../lib/misc'
 import {FroideSearch} from '../lib/search'
 
 Vue.use(Vuex)
-
-const STEPS = {
-  SELECT_PUBLICBODY: 1,
-  CONFIRM_PURPOSE: 2,
-  WRITE_REQUEST: 3,
-  COMPLETE_PROFILE: 4,
-  CONFIRM_REQUEST: 5
-}
 
 const debug = process.env.NODE_ENV !== 'production'
 
@@ -33,10 +26,9 @@ export default new Vuex.Store({
     config: null,
     scopedSearchResults: {},
     scopedSearchMeta: {},
-    scopedPublicbodies: {},
+    scopedPublicBodies: {},
     publicBodies: {},
     user: {},
-    defaultLaw: null,
     step: STEPS.SELECT_PUBLICBODY,
     subject: '',
     body: '',
@@ -51,14 +43,14 @@ export default new Vuex.Store({
       return pbs[0]
     },
     getPublicBodiesByScope: (state, getters) => (scope) => {
-      let pbs = state.scopedPublicbodies[scope]
+      let pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return []
       }
       return pbs
     },
     isPublicBodySelectedByScope: (state, getters) => (scope, id) => {
-      let pbs = state.scopedPublicbodies[scope]
+      let pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return false
       }
@@ -81,8 +73,24 @@ export default new Vuex.Store({
       }
       return meta
     },
-    defaultLaw: state => {
-      return state.defaultLaw
+    defaultLaw: (state) => {
+      var key = null
+      for (key in state.scopedPublicBodies) {}
+      let pbs = state.scopedPublicBodies[key]
+      let sameLaw = true
+      for (let i = 0; i < pbs.length - 1; i += 1) {
+        let a = pbs[i]
+        let b = pbs[i + 1]
+        if (a.default_law.id !== b.default_law.id) {
+          sameLaw = false
+          break
+        }
+      }
+      if (sameLaw) {
+        return pbs[0].default_law
+      } else {
+        return null
+      }
     },
     user: state => {
       return state.user
@@ -91,64 +99,57 @@ export default new Vuex.Store({
     getSubject: state => () => state.subject,
     body: state => state.body,
     fullText: state => state.fullText,
-    stepSelectPublicbody: state => state.step === STEPS.SELECT_PUBLICBODY,
+    stepSelectPublicBody: state => state.step === STEPS.SELECT_PUBLICBODY,
     stepReviewReady: state => state.step >= STEPS.WRITE_REQUEST
   },
   mutations: {
     [SET_CONFIG] (state, config) {
       state.config = config
     },
+    [SET_STEP] (state, step) {
+      state.step = step
+    },
     [SET_STEP_PUBLICBODY] (state) {
       state.step = STEPS.SELECT_PUBLICBODY
-      scrollToAnchor('step-publicbody')
     },
     [SET_STEP_REQUEST] (state) {
       state.step = STEPS.WRITE_REQUEST
-      scrollToAnchor('step-request')
     },
-    [SET_PUBLICBODY] (state, {publicbody, scope}) {
-      Vue.set(state.scopedPublicbodies, scope, [publicbody])
-      state.defaultLaw = publicbody.default_law
+    [SET_PUBLICBODY] (state, {publicBody, scope}) {
+      Vue.set(state.scopedPublicBodies, scope, [publicBody])
     },
-    [SET_PUBLICBODIES] (state, {publicbodies, scope}) {
-      Vue.set(state.scopedPublicbodies, scope, publicbodies)
-      let sameLaw = publicbodies.reduce((a, b) => {
-        if (a === null) {
-          return true
-        }
-        return a.id === b.id
-      }, null)
-      if (sameLaw) {
-        state.defaultLaw = publicbodies[0].default_law
-      } else {
-        state.defaultLaw = null
-      }
+    [SET_PUBLICBODIES] (state, {publicBodies, scope}) {
+      Vue.set(state.scopedPublicBodies, scope, publicBodies)
     },
-    [ADD_PUBLICBODY_ID] (state, {publicbodyId, scope}) {
-      let pb = state.publicBodies[publicbodyId]
+    [SET_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
+      let pb = state.publicBodies[publicBodyId]
+      Vue.set(state.scopedPublicBodies, scope, [pb])
+    },
+    [ADD_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
+      let pb = state.publicBodies[publicBodyId]
       if (pb === undefined) {
         return
       }
-      let pbs = state.scopedPublicbodies[scope]
+      let pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
-        Vue.set(state.scopedPublicbodies, scope, [pb])
+        Vue.set(state.scopedPublicBodies, scope, [pb])
       } else {
         let contains = pbs.some((p) => p.id === pb.id)
         if (!contains) {
-          Vue.set(state.scopedPublicbodies, scope, [
+          Vue.set(state.scopedPublicBodies, scope, [
             ...pbs,
             ...[pb]
           ])
         }
       }
     },
-    [REMOVE_PUBLICBODY_ID] (state, {publicbodyId, scope}) {
-      let pbs = state.scopedPublicbodies[scope]
+    [REMOVE_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
+      let pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return
       }
-      pbs = pbs.filter((p) => p.id !== publicbodyId)
-      Vue.set(state.scopedPublicbodies, scope, pbs)
+      pbs = pbs.filter((p) => p.id !== publicBodyId)
+      Vue.set(state.scopedPublicBodies, scope, pbs)
     },
     [CACHE_PUBLICBODIES] (state, publicBodies) {
       let newPublicBodies = {}
@@ -200,6 +201,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    [SET_STEP_BY_URL] ({commit, getters}, {hash, scope}) {
+      let step = URLS_TO_STEP[hash]
+      if (step === undefined) {
+        return
+      }
+      let pbs = getters.getPublicBodiesByScope(scope)
+      if (step > STEPS.SELECT_PUBLICBODY && pbs.length === 0) {
+        return
+      }
+      commit(SET_STEP, step)
+    },
     setSearchResults ({ commit }, {scope, results}) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,

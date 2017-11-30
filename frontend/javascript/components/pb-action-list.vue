@@ -3,38 +3,19 @@
     <p v-if="hasSearchResults">
       {{ searchResultsLength }} {{ i18n.publicBodiesFound }}
     </p>
-    <div class="row" v-if="publicBody">
-      <div class="col-sm-8">
-        <h4 class="pb-heading">
-          <a :href="publicBody.site_url">
-            {{ publicBody.name }}
-          </a>
-        </h4>
-        <small>
-          {{ publicBody.jurisdiction.name }}, {{ publicBody.number_of_requests }} {{ i18n.requests }}
-        </small>
-      </div>
-      <div class="col-sm-4">
-        <a class="btn btn-primary" href="#step-request" @click="selectSearchResult" :data-pbid="publicBody.id">
-          {{ i18n.makeRequest }}
-        </a>
-      </div>
-    </div>
     <ul v-if="searchResultsLength > 0 || emptyResults" class="search-results list-unstyled">
-      <li v-for="result in searchResults" class="search-result">
+      <li v-for="result in searchResults" class="search-result" @click.prevent="selectSearchResult" :data-pbid="result.id">
         <div class="row">
           <div class="col-sm-8">
             <h4 class="pb-heading">
-              <a :href="result.site_url">
-                {{ result.name }}
-              </a>
+              {{ result.name }}
             </h4>
             <small>
               {{ result.jurisdiction.name }}, {{ result.number_of_requests }} {{ i18n.requests }}
             </small>
           </div>
           <div class="col-sm-4">
-            <a class="btn btn-primary" href="#step-request" @click="selectSearchResult" :data-pbid="result.id">
+            <a class="btn btn-primary" href="#step-request" @click.prevent="selectSearchResult" :data-pbid="result.id">
               {{ i18n.makeRequest }}
             </a>
           </div>
@@ -77,7 +58,7 @@
 
 <script>
 import {mapMutations} from 'vuex'
-import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../store/mutation_types'
+import {SET_STEP_REQUEST, SET_PUBLICBODY_ID} from '../store/mutation_types'
 
 import PBListMixin from '../lib/pb-list-mixin'
 
@@ -87,34 +68,48 @@ export default {
   props: ['name', 'scope', 'i18n'],
   methods: {
     selectSearchResult (e) {
-      let pbid = e.target.dataset.pbid
-      this.addPublicBodyId({
-        publicbodyId: pbid,
+      let pbid = e.currentTarget.dataset.pbid
+      this.setPublicBodyId({
+        publicBodyId: pbid,
         scope: this.scope
       })
       this.setStepRequest()
+      window.history.pushState(null, '', '#step-request')
+      window.scrollTo(0, 0)
     },
     ...mapMutations({
       setStepRequest: SET_STEP_REQUEST,
-      addPublicBodyId: ADD_PUBLICBODY_ID
+      setPublicBodyId: SET_PUBLICBODY_ID
     })
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+  @import "../../styles/variables";
+
   .search-result-container {
     margin-top: 30px;
   }
 
   .search-result {
     border-top: 1px solid #ccc;
-    padding-top: 30px;
-    margin-top: 15px;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    cursor: pointer;
+
+    .row {
+      padding: 1rem 0;
+      &:hover {
+        background-color: $gray-200;
+      }
+    }
+    .btn  {
+      float: right;
+    }
   }
-  .search-result .btn {
-    float: right;
-  }
+
   .pb-heading {
     margin-bottom: 0;
   }

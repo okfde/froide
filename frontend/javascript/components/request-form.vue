@@ -4,7 +4,7 @@
       <div class="container">
         <div class="row">
           <ol class="process-breadcrumbs col-md-8">
-            <li>
+            <li :class="{ 'active': stepSelectPublicBody, 'done': stepReviewReady}">
               <a href="#step-publicbody" @click="setStepPublicBody" v-if="!hidePublicbodyChooser">
                 <i class="fa fa-check-circle" aria-hidden="true"></i>
                 Behörde wählen
@@ -14,7 +14,7 @@
                 Behörde wählen
               </span>
             </li>
-            <li>
+            <li :class="{ 'active': stepReviewReady}">
               <a href="#step-request"  @click="setStepRequest" v-if="stepReviewReady">
                 <i class="fa" :class="{ 'fa-check-circle': stepReviewReady, 'fa-check-circle-o': !stepReviewReady }" aria-hidden="true"></i>
                 Anfrage stellen
@@ -46,7 +46,7 @@
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
 
-          <fieldset v-if="stepSelectPublicbody" id="step-publicbody" class="mt-5">
+          <fieldset v-if="stepSelectPublicBody" id="step-publicbody" class="mt-5">
             <div class="row">
               <div class="col-lg-7">
                 <slot name="publicbody-legend-title"></slot>
@@ -56,7 +56,7 @@
             <div class="row">
               <div class="col-lg-8">
                 <publicbody-chooser name="publicbody"
-                  :defaultsearch="publicbodyDefaultSearch"
+                  :defaultsearch="publicBodySearch"
                   :scope="pbScope"
                   :config="config"
                   :list-view="publicBodyListView">
@@ -68,51 +68,48 @@
             </div>
           </fieldset>
 
-          <fieldset v-if="stepReviewReady" id="step-request">
-            <legend>
-              {{ i18n.writingRequestTo }}
-            </legend>
+          <fieldset v-if="stepReviewReady" id="step-request" class="mt-3">
 
-            <div v-if="multiRequest">
-              <p>
-                {{ publicbodies.length }} public bodies
+            <slot name="request-legend-title"></slot>
 
-                <span v-if="!hidePublicbodyChooser">
-                  (<a href="#step-publicbody" @click="setStepPublicBody">{{ i18n.change }}</a>)
-                </span>
-              </p>
+            <div v-if="multiRequest" class="publicbody-summary-container">
+              <div class="publicbody-summary">
+                <p>
+                  {{ i18n._('toMultiPublicBodies', {count: publicBodies.length}) }}
 
+                  <span v-if="!hidePublicbodyChooser">
+                    <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepPublicBody">
+                      {{ i18n.change }}
+                    </a>
+                  </span>
+                </p>
+              </div>
             </div>
-            <div v-else>
-
+            <div v-else class="publicbody-summary-container">
               <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-8 publicbody-summary">
                   <p>
-                    {{ publicbody.name }}
+                    {{ i18n._('toPublicBody', {name: publicBody.name}) }}
                     <span v-if="!hidePublicbodyChooser">
-                      (<a href="#step-publicbody" @click="setStepPublicBody">
+                      <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepPublicBody">
                         {{ i18n.change }}
-                      </a>)
+                      </a>
                     </span>
                   </p>
                 </div>
               </div>
-              <div class="row " v-if="hasNotes">
+              <div class="row" v-if="hasNotes">
                 <div class="col-lg-8">
                   <div class="alert alert-warning" v-html="requestNotes">
                   </div>
                 </div>
               </div>
-
             </div>
-            <input v-for="pb in publicbodies" type="hidden" name="publicbody" :value="pb.id">
-          </fieldset>
 
-          <fieldset v-if="stepReviewReady" id="write-request" class="mt-3">
+            <input v-for="pb in publicBodies" type="hidden" name="publicbody" :value="pb.id">
 
             <div class="row">
               <div class="col-md-8">
-                <slot name="request-legend-title"></slot>
 
                 <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
                   <p v-for="error in nonFieldErrors">{{ error }}</p>
@@ -134,39 +131,39 @@
             <div class="card mb-3">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-md-8">
+                  <div class="col-md-4 order-md-2">
+                    <slot name="requesthints"></slot>
+                  </div>
+                  <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
                     <textarea v-model="body" name="body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder">
                     </textarea>
                     <label v-if="user.id && !hideFullText" class="small pull-right text-muted">
-                      <input type="checkbox" name="full_text" v-model="fullText" :disabled="fullText">
+                      <input type="checkbox" name="full_text" v-model="fullText" :disabled="fullTextDisabled">
                       {{ form.full_text.label }}
                     </label>
                     <div v-if="!fullText" class="body-text">{{ letterEndShort }}</div>
                     <div v-if="letterSignature" class="body-text"><em>{{ letterSignature }}</em></div>
                     <div v-if="!letterSignature && fullText" class="body-text">{{ letterSignatureName }}</div>
                   </div>
-                  <div class="col-md-4 small">
-                    <slot name="requesthints"></slot>
-                  </div>
                 </div>
                 <div class="row">
                   <div class="col-md-8">
                     <div class="form-group row" v-if="!user.id">
-                      <div class="col" :class="{ 'text-danger': errors.first_name }">
-                        <label class="control-label" for="id_first_name" :class="{ 'text-danger': errors.first_name }">
+                      <div class="col" :class="{ 'text-danger': usererrors.first_name }">
+                        <label class="control-label" for="id_first_name" :class="{ 'text-danger': usererrors.first_name }">
                           {{ i18n.yourFirstName }}
                         </label>
-                        <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': errors.first_name }" id="id_first_name" :placeholder="userform.first_name.placeholder"/>
-                        <p v-for="e in errors.first_name">{{ e.message }}</p>
+                        <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': usererrors.first_name }" id="id_first_name" :placeholder="userform.first_name.placeholder"/>
+                        <p v-for="e in usererrors.first_name">{{ e.message }}</p>
                       </div>
 
-                      <div class="col" :class="{ 'text-danger': errors.last_name }">
-                        <label class="control-label" for="id_last_name" :class="{ 'text-danger': errors.last_name }">
+                      <div class="col" :class="{ 'text-danger': usererrors.last_name }">
+                        <label class="control-label" for="id_last_name" :class="{ 'text-danger': usererrors.last_name }">
                           {{ i18n.yourLastName }}
                         </label>
-                        <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': errors.last_name }" id="id_last_name" :placeholder="userform.last_name.placeholder"/>
-                        <p v-for="e in errors.last_name">{{ e.message }}</p>
+                        <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': usererrors.last_name }" id="id_last_name" :placeholder="userform.last_name.placeholder"/>
+                        <p v-for="e in usererrors.last_name">{{ e.message }}</p>
                       </div>
                     </div>
                   </div>
@@ -220,16 +217,17 @@ import PublicbodyChooser from './publicbody-chooser'
 import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
 
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
-  SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
+  STEPS, STEP_TO_URLS, SET_STEP_BY_URL, SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
   SET_PUBLICBODY, SET_PUBLICBODIES, CACHE_PUBLICBODIES,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME,
   SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT
 } from '../store/mutation_types'
 
 import LetterMixin from '../lib/letter-mixin'
+import I18nMixin from '../lib/i18n-mixin'
 
 const MAX_BODY_ROWS = 10
 const MIN_BODY_ROWS = 3
@@ -249,11 +247,12 @@ export default {
     'hideFullText',
     'multiRequest'
   ],
-  mixins: [LetterMixin],
+  mixins: [I18nMixin, LetterMixin],
   data () {
     return {
       bodyRows: MIN_BODY_ROWS,
-      originalBody: ''
+      originalBody: '',
+      fullTextDisabled: false
     }
   },
   created () {
@@ -266,16 +265,25 @@ export default {
     }
     if (this.publicbodiesJson) {
       let pbs = JSON.parse(this.publicbodiesJson)
-      this.setPublicbodies({
-        publicbodies: pbs,
+      this.setPublicBodies({
+        publicBodies: pbs,
         scope: this.pbScope
       })
       this.cachePublicBodies(pbs)
     }
   },
   mounted () {
+    let step = STEPS.SELECT_PUBLICBODY
     if (this.hasPublicBodies) {
       this.setStepRequest()
+      step = STEPS.WRITE_REQUEST
+    }
+    let hash = STEP_TO_URLS[step]
+    window.history.pushState({step: step}, '', hash)
+
+    window.onpopstate = (event) => {
+      let hash = document.location.hash
+      this.setStepByURL({hash, scope: this.pbScope})
     }
   },
   computed: {
@@ -300,14 +308,11 @@ export default {
     usererrors () {
       return this._userform.errors
     },
-    i18n () {
-      return this.config.i18n
-    },
     hasNotes () {
       if (this.defaultLaw) {
-        return !!this.defaultLaw.request_note
+        return !!this.defaultLaw.request_note_html
       }
-      // FIXME: find all notes of all public body default laws
+      // FIXME: find all notes of all public body default laws?
       return false
     },
     requestNotes () {
@@ -315,6 +320,12 @@ export default {
         return this.defaultLaw.request_note_html
       }
       return ''
+    },
+    publicBodySearch () {
+      if (this.publicBody) {
+        return this.publicBody.name
+      }
+      return this.publicbodyDefaultSearch
     },
     publicBodyListView () {
       if (this.multiRequest) {
@@ -341,6 +352,9 @@ export default {
         this.updateBody(value)
       }
     },
+    allowFullText () {
+      return !this.hideFullText && this.publicBodies.length < 1
+    },
     fullText: {
       get () {
         return this.$store.state.fullText
@@ -350,6 +364,10 @@ export default {
         if (value) {
           this.originalBody = this.body
           this.body = `${this.letterStart}\n${this.body}\n\n${this.letterEndNoName}`
+        } else {
+          if (!this.fullTextDisabled) {
+            this.body = this.originalBody
+          }
         }
         let newLineCount = (this.body.match(/\n/g) || []).length
         this.bodyRows = Math.max(MIN_BODY_ROWS, Math.min(newLineCount, MAX_BODY_ROWS))
@@ -372,12 +390,12 @@ export default {
       }
     },
     hasPublicBodies () {
-      return this.publicbodies.length > 0
+      return this.publicBodies.length > 0
     },
-    publicbody () {
+    publicBody () {
       return this.getPublicBodyByScope(this.pbScope)
     },
-    publicbodies () {
+    publicBodies () {
       return this.getPublicBodiesByScope(this.pbScope)
     },
     ...mapGetters([
@@ -386,11 +404,14 @@ export default {
       'getPublicBodiesByScope',
       'defaultLaw',
       'stepReviewReady',
-      'stepSelectPublicbody'
+      'stepSelectPublicBody'
     ])
   },
   methods: {
     bodyChanged (e) {
+      if (this.fullText) {
+        this.fullTextDisabled = true
+      }
       var ta = document.querySelector('[name=body]')
       while (ta.scrollHeight > ta.clientHeight && ta.rows < MAX_BODY_ROWS) {
         ta.style.overflow = 'hidden'
@@ -410,9 +431,12 @@ export default {
       setUser: SET_USER,
       updateFirstName: UPDATE_FIRST_NAME,
       updateLastName: UPDATE_LAST_NAME,
-      setPublicbody: SET_PUBLICBODY,
-      setPublicbodies: SET_PUBLICBODIES,
+      setPublicBody: SET_PUBLICBODY,
+      setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES
+    }),
+    ...mapActions({
+      setStepByURL: SET_STEP_BY_URL
     })
   },
   components: {
@@ -426,11 +450,13 @@ export default {
 
 <style lang="scss" scoped>
 
+@import "../../styles/variables";
+
 .process-breadcrumbs-container {
   background-color: #f5f5f5;
-  position: sticky;
-  top: 0;
-  z-index: 500;
+  // position: sticky;
+  // top: 0;
+  // z-index: 500;
 }
 
 .process-breadcrumbs {
@@ -444,15 +470,48 @@ export default {
     min-width: 150px;
     padding: 15px 0;
 
-    a, a:hover {
-      color: #000;
+    & > *, *:hover {
+      color: $gray-500;
       text-decoration: none;
+    }
+    &.active > * {
+      color: $black;
+      font-weight: bold;
+    }
+    &.done > * {
+      color: $success;
     }
   }
 }
 
-#step-request legend {
-  padding-top: 3rem;
+legend {
+  padding: 2rem 0 2rem;
+  font-size: 2rem;
+}
+
+.small a {
+  color: $blue;
+}
+
+.request-hints {
+  color: $gray-700;
+  font-size: $font-size-sm;
+  ul {
+    padding-left: $spacer;
+  }
+}
+
+.publicbody-summary-container {
+  margin: 0 0 $spacer*2;
+}
+
+.publicbody-summary {
+  font-size: $font-size-lg;
+}
+
+.pb-change-link {
+  font-weight: normal;
+  font-size: $font-size-sm;
 }
 
 .body-text {
@@ -466,7 +525,6 @@ export default {
 }
 
 .body-textarea {
-  border-radius: 0px;
   padding-left: 0;
   margin-left: -5px;
   padding: 5px;

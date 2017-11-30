@@ -24,12 +24,12 @@ export default {
       set (value) {
         if (value) {
           this.addPublicBodyId({
-            publicbodyId: this.result.id,
+            publicBodyId: this.result.id,
             scope: this.scope
           })
         } else {
           this.removePublicBodyId({
-            publicbodyId: this.result.id,
+            publicBodyId: this.result.id,
             scope: this.scope
           })
         }

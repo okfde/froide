@@ -39,14 +39,18 @@
       </div>
 
       <div v-if="config.settings.user_can_hide_web">
-        <div class="checkbox">
-          <label>
-            <input id="id_private" v-model="private" type="checkbox" name="private" />
-            {{ form.private.label }}
-          </label>
-          <br/>
-          <p class="help-block" v-html="form.private.help_text">
-          </p>
+        <div class="row">
+          <div class="col-md-8">
+            <div class="checkbox">
+              <label>
+                <input id="id_private" v-model="private" type="checkbox" name="private" />
+                {{ form.private.label }}
+              </label>
+              <br/>
+              <p class="help-block" v-html="form.private.help_text">
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -62,11 +66,14 @@ import {
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from '../store/mutation_types'
 
+import I18nMixin from '../lib/i18n-mixin'
+
 export default {
   name: 'user-registration',
   props: [
     'config', 'formJson'
   ],
+  mixins: [I18nMixin],
   created () {
     if (this.form.first_name.value !== null) {
       this.updateFirstName(this.form.first_name.value)
@@ -93,9 +100,6 @@ export default {
     },
     errors () {
       return this._form.errors
-    },
-    i18n () {
-      return this.config.i18n
     },
     authRequired () {
       if (this.errors && this.errors.user_email) {

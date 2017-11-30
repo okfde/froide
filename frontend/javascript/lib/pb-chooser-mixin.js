@@ -6,13 +6,10 @@ import {
   SET_SEARCHRESULTS, CACHE_PUBLICBODIES
 } from '../store/mutation_types'
 
-var PbChooserMixin = {
+var PBChooserMixin = {
   computed: {
     help_url () {
       return this.config.url.helpAbout
-    },
-    i18n () {
-      return this.config.i18n
     },
     hasForm () {
       return (this.formJson !== undefined && this.formJson !== null &&
@@ -53,16 +50,18 @@ var PbChooserMixin = {
         this.searching = false
       }
       if (this.search !== undefined && this.search.length < 3) {
+        this.searching = false
         return
       }
-      this.debouncedAutocomplete()
-    },
-    runAutocomplete () {
       if (this.search === this.lastSearch &&
           this.searchResults.length !== 0) {
         this.searching = false
         return
       }
+      this.searching = true
+      this.debouncedAutocomplete()
+    },
+    runAutocomplete () {
       this.searching = true
       this.lastSearch = this.search
       this.getSearchResults({
@@ -82,4 +81,4 @@ var PbChooserMixin = {
   }
 }
 
-export default PbChooserMixin
+export default PBChooserMixin

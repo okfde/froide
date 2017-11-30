@@ -62,7 +62,7 @@
         </legend>
 
         <div slot="requesthints" class="">
-          <div>
+          <div class="request-hints">
             <h6>
               {% blocktrans %}Important Notes:{% endblocktrans %}
             </h6>
@@ -143,6 +143,10 @@
         requests: '{% trans "requests" %}',
         makeRequest: '{% trans "make request" %}',
         writingRequestTo: '{% trans "You are writing a request to" %}',
+        /* eslint-disable no-template-curly-in-string */
+        toMultiPublicBodies: '{% blocktrans with count="${count}" %}To: {{ count }} public bodies{% endblocktrans %}',
+        /* eslint-disable no-template-curly-in-string */
+        toPublicBody: '{% blocktrans with name="${name}" %}To: {{ name }}{% endblocktrans %}',
         change: '{% trans "change" %}',
         next: '{% trans "next" %}',
         previous: '{% trans "previous" %}',
@@ -173,7 +177,12 @@
         similarRequests: '{% trans "Similar requests" %}',
         moreSimilarRequests: '{% trans "Search for more similar requests" %}',
         relevantResources: '{% trans "Relevant resources" %}',
-        officialWebsite: '{% trans "Official website: " %}'
+        officialWebsite: '{% trans "Official website: " %}',
+        noSubject: '{% trans "Please add a subject." %}',
+        noBody: '{% trans "Please describe the information you want to request!" %}',
+        dontAddClosing: '{% trans "Do not add a closing, it is added automatically at the end of the letter." %}',
+        dontAddGreeting: '{% trans "Do not add a greeting, it is added automatically at the start of the letter." %}',
+        dontInsertName: '{% trans "Do not insert your name, we will add it automatically at the end of the letter." %}'
       }
       for (var key in i18n) {
         Froide.i18n[key] = i18n[key]
