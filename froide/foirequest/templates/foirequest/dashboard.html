@@ -4,9 +4,7 @@
 
 {% block extra_head %}
 {{ block.super }}
-    <script type="text/javascript" src="{% static "js/libs/d3/d3.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/libs/d3/d3.time.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/libs/d3/d3.layout.min.js" %}"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
     <style type="text/css">
 
 rect {
@@ -45,7 +43,7 @@ path.area {
     </style>
 {% endblock %}
 
-{% block body %}
+{% block app_body %}
 <div id="requests">
     <h2>{% trans "Number of Requests" %}</h2>
 </div>
@@ -62,21 +60,21 @@ var makeChart = function(selector, data){
   var m = [10, 50, 20, 10],
       w = 960 - m[1] - m[3],
       h = 500 - m[0] - m[2],
-      parse = d3.time.format("%Y-%m-%d").parse;
+      parseDate = d3.timeParse("%Y-%m-%d");
 
 
-  var color = d3.scale.category10();
+  var color = d3.schemeCategory10;
 
   // Scales. Note the inverted domain for the y-scale: bigger is up!
-  var x = d3.time.scale().range([20, w - 20]),
-      y = d3.scale.linear().range([h - 20, 20]);
+  var x = d3.scaleTime().range([20, w - 20]),
+      y = d3.scaleLinear().range([h - 20, 20]);
 
   // Axes.
-  var xAxis = d3.svg.axis().scale(x).orient("bottom"),
-      yAxis = d3.svg.axis().scale(y).orient("right");
+  var xAxis = d3.axisBottom(x),
+      yAxis = d3.axisRight(y);
 
   // An area generator.
-  var area = d3.svg.area()
+  var area = d3.area()
       .x(function(d) { return x(d.date); })
       .y0(y(0))
       .y1(function(d) { return y(d.total); });
@@ -90,7 +88,7 @@ var makeChart = function(selector, data){
       .attr("height", h);
 
     data.forEach(function(d) {
-      d.date = parse(d.date);
+      d.date = parseDate(d.date);
       d.num = +d.num;
       d.total = +d.total;
     });
@@ -99,28 +97,25 @@ var makeChart = function(selector, data){
     x.domain([data[0].date, data[data.length - 1].date]);
     y.domain([0, d3.max(data, function(d) { return d.total; })]);
 
-    x.domain([data[0].date, data[data.length - 1].date]);
-    y.domain([0, d3.max(data, function(d) { return d.total; })]);
-
     svg.append("g")
         .attr("class", "x grid")
         .attr("transform", "translate(0," + h + ")")
-        .call(xAxis.tickSubdivide(1).tickSize(-h));
+        .call(xAxis.tickSize(-h));
 
     svg.append("g")
         .attr("class", "y grid")
         .attr("transform", "translate(" + w + ",0)")
-        .call(yAxis.tickSubdivide(1).tickSize(-w));
+        .call(yAxis.tickSize(-w));
 
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + h + ")")
-        .call(xAxis.tickSubdivide(0).tickSize(6));
+        .call(xAxis.tickSize(6));
 
     svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + w + ",0)")
-        .call(yAxis.tickSubdivide(0).tickSize(6));
+        .call(yAxis.tickSize(6));
 
     svg.append("path")
         .attr("class", "area")
