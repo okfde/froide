@@ -286,9 +286,9 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_css_selector(login_link)
             )
+            self.scrollTo(login_link[1:])
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_css_selector(login_link).is_displayed())
-            self.scrollTo(login_link[1:])
             self.selenium.find_element_by_css_selector(login_link).click()
 
         popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
