@@ -1,7 +1,8 @@
 from django.conf.urls import url, include
 
 from .views import (MyRequestsView,
-    FollowingRequestsView, DraftRequestsView, account_settings,
+    FollowingRequestsView, DraftRequestsView, FoiProjectListView,
+    account_settings,
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^', include(oauth_urls, namespace='oauth2_provider')),
     url(r'^$', MyRequestsView.as_view(), name='account-show'),
     url(r'^drafts/$', DraftRequestsView.as_view(), name='account-drafts'),
+    url(r'^projects/$', FoiProjectListView.as_view(), name='account-projects'),
     url(r'^following/$', FollowingRequestsView.as_view(), name='account-following'),
     url(r'^settings/$', account_settings, name='account-settings'),
     url(r'^terms/$', new_terms, name='account-new_terms'),
