@@ -73,6 +73,8 @@ class RequestForm(JSONMixin, forms.Form):
         if self.user.is_authenticated:
             user_drafts = RequestDraft.objects.filter(user=self.user)
             self.fields['draft'].queryset = user_drafts
+        else:
+            self.fields['draft'].queryset = RequestDraft.objects.none()
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']

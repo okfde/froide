@@ -36,6 +36,21 @@ class RequestDraftTest(TestCase):
         self.assertFalse(user.is_active)
         self.assertTrue(RequestDraft.objects.count() == 0)
 
+    def test_draft_not_loggedin_setting_draft(self):
+        draft = factories.RequestDraftFactory.create()
+        post = {
+            "subject": "Test-Subject",
+            "body": "This is another test body with Ümläut€n",
+            "first_name": "Stefan", "last_name": "Wehrmeyer",
+            "user_email": "dummy@example.com",
+            "terms": "on",
+            'save_draft': 'true',
+            'draft': str(draft.id)
+        }
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': self.pb.slug}), post)
+        self.assertEqual(response.status_code, 400)
+
     def test_draft_logged_in(self):
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
