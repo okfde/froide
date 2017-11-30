@@ -78,7 +78,7 @@
   </div>
 </div>
 
-{% if not object.public and object.user == user or user.is_staff %}
+{% if not object.public and object.user == user %}
   <div class="row">
     <div class="col-12">
       <div class="card d-print-none mb-5">
@@ -91,7 +91,7 @@
         </form>
       </div>
     </div>
-</div>
+  </div>
 {% endif %}
 
 
