@@ -193,6 +193,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.find_element_by_name('public').click()
             self.scrollTo('id_private')
             self.selenium.find_element_by_name('private').click()
+            self.scrollTo('review-button')
             self.selenium.find_element_by_id('review-button').click()
             self.scrollTo('send-request-button')
 
@@ -274,6 +275,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_element_by_id('review-button').is_displayed()
             )
+            self.scrollTo('review-button')
             self.selenium.find_element_by_id('review-button').click()
             self.scrollTo('send-request-button')
 
