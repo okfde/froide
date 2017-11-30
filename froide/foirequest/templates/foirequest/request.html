@@ -138,7 +138,10 @@
     Froide.i18n = Froide.i18n || {};
     (function () {
       var i18n = {
-        publicBodiesFound: '{% trans "public bodies found" %}',
+        publicBodiesFound: [
+          '{% trans "one public body found" %}',
+          '{% blocktrans with count='${count}' %}{{ count }} public bodies found{% endblocktrans %}'
+        ],
         // {# Translators: not url #}
         requests: '{% trans "requests" %}',
         makeRequest: '{% trans "make request" %}',
