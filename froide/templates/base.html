@@ -27,7 +27,9 @@
       {% endif %}
     {% endblock %}
 
-    {% include "snippets/messages.html" %}
+    {% block messages %}
+      {% include "snippets/messages.html" %}
+    {% endblock messages %}
 
     {% block body %}
       <div class="container mt-3">

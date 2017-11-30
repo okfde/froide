@@ -1,24 +1,6 @@
 <template>
   <div class="card mb-3">
     <div class="card-body">
-      <div class="form-group row">
-        <div class="col" :class="{ 'text-danger': errors.first_name }">
-          <label class="control-label" for="id_first_name" :class="{ 'text-danger': errors.first_name }">
-            {{ i18n.yourFirstName }}
-          </label>
-          <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': errors.first_name }" id="id_first_name" :placeholder="form.first_name.placeholder"/>
-          <p v-for="e in errors.first_name">{{ e.message }}</p>
-          <small v-if="form.first_name.help_text">{{ form.first_name.help_text }}</small>
-        </div>
-        <div class="col" :class="{ 'text-danger': errors.last_name }">
-          <label class="control-label" for="id_last_name" :class="{ 'text-danger': errors.last_name }">
-            {{ i18n.yourLastName }}
-          </label>
-          <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': errors.last_name }" id="id_last_name" :placeholder="form.last_name.placeholder"/>
-          <p v-for="e in errors.last_name">{{ e.message }}</p>
-          <small v-if="form.last_name.help_text" v-html="form.last_name.help_text"></small>
-        </div>
-      </div>
 
       <div class="form-group row">
         <label for="id_user_email" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.user_email }">
@@ -57,14 +39,18 @@
       </div>
 
       <div v-if="config.settings.user_can_hide_web">
-        <div class="checkbox">
-          <label>
-            <input v-model="private" type="checkbox" name="private" />
-            {{ form.private.label }}
-          </label>
-          <br/>
-          <small class="help-block" v-html="form.private.help_text">
-          </small>
+        <div class="row">
+          <div class="col-md-8">
+            <div class="checkbox">
+              <label>
+                <input id="id_private" v-model="private" type="checkbox" name="private" />
+                {{ form.private.label }}
+              </label>
+              <br/>
+              <p class="help-block" v-html="form.private.help_text">
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -80,11 +66,14 @@ import {
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from '../store/mutation_types'
 
+import I18nMixin from '../lib/i18n-mixin'
+
 export default {
   name: 'user-registration',
   props: [
     'config', 'formJson'
   ],
+  mixins: [I18nMixin],
   created () {
     if (this.form.first_name.value !== null) {
       this.updateFirstName(this.form.first_name.value)
@@ -111,9 +100,6 @@ export default {
     },
     errors () {
       return this._form.errors
-    },
-    i18n () {
-      return this.config.i18n
     },
     authRequired () {
       if (this.errors && this.errors.user_email) {

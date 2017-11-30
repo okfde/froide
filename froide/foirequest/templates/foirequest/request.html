@@ -10,56 +10,19 @@
   {% include "foisite/banner.html" %}
 {% endblock %}
 
-{% block app_body %}
-<div class="row justify-content-lg-center">
-  <div class="col-lg-12">
-    <form method="post" action="" id="make-request" novalidate>
+{% block messages %}
+{% endblock messages %}
+
+{% block body %}
+  <form method="post" action="" id="make-request" novalidate>
 
     {% csrf_token %}
     {{ request_form.reference }}
     {{ request_form.draft }}
-    {{ request_form.redirect_url}}
-
-    {% if publicbodies %}
-      <fieldset>
-        <legend>
-          {% blocktrans %}You are writing a request to{% endblocktrans %}
-        </legend>
-        {% if multi_request %}
-          <p>
-            {% blocktrans with count=publicbodies|length %}
-              {{ count }} public bodies
-            {% endblocktrans %}
-          </p>
-        {% else %}
-          {% with publicbody=publicbodies.0 %}
-            <p>
-              <strong>{{ publicbody.name }}</strong>
-              ({{ publicbody.jurisdiction.name }})
-            </p>
-            {% if publicbody.request_note or publicbody.default_law.request_note %}
-              <div id="request-note" class="panel panel-danger">
-                <div class="panel-heading">
-                  <h3 class="panel-title">
-                    {% trans "Notes for this public body" %}
-                  </h3>
-                </div>
-                <div class="panel-body">
-                  {% if publicbody.default_law.request_note %}
-                    {{ publicbody.default_law.request_note|markdown }}
-                  {% endif %}
-                  {% if publicbody.request_note %}
-                    {{ publicbody.request_note|markdown }}
-                  {% endif %}
-                </div>
-              </div>
-            {% endif %}
-          {% endwith %}
-        {% endif %}
-      </fieldset>
-    {% endif %}
+    {{ request_form.redirect_url }}
 
       <request-form
+        v-cloak
         publicbody-default-search="{{ public_body_search }}"
         user-json="{{ request.user.as_json }}"
         publicbody-form-json="{{ publicbody_form.as_json }}"
@@ -68,24 +31,42 @@
         request-form-json="{{ request_form.as_json }}"
         show-similar="{% if not config.hide_similar %}true{% endif %}"
         show-draft="{% if not config.hide_draft %}true{% endif %}"
+        hide-publicbody-chooser="{% if config.hide_publicbody %}true{% endif %}"
+        hide-full-text="{% if config.hide_full_text %}true{% endif %}"
+        multi-request="{% if multi_request %}true{% endif %}"
         :config="config">
+
+        <div slot="messages">
+          {% include "snippets/messages.html" %}
+        </div>
 
         <legend slot="publicbody-legend-title">
           {% blocktrans %}Choose a public body{% endblocktrans %}
         </legend>
 
-        <div slot="publicbody-missing"></div>
+        <p slot="publicbody-help-text">
+          {% blocktrans %}Please type <strong>the name of the public body</strong> you'd like to request information from into the search box.{% endblocktrans %}
+        </p>
+
+        <div slot="publicbody-missing">
+          <h6>{% trans "Can't find what you're looking for?" %}</h6>
+          <p>
+            {% blocktrans with search_url="" suggest_url="" %}
+              <a href="{{ search_url }}">Search in all public bodies</a> or <a href="{{ suggest_url }}">suggest a new one</a>.
+            {% endblocktrans %}
+          </p>
+        </div>
 
         <legend slot="request-legend-title">
           {% blocktrans %}Write the request{% endblocktrans %}
         </legend>
 
-        <div slot="requesthints" class="card mb-3">
-          <div class="card-body">
-            <h5>
+        <div slot="requesthints" class="">
+          <div class="request-hints">
+            <h6>
               {% blocktrans %}Important Notes:{% endblocktrans %}
-            </h5>
-            <ul>
+            </h6>
+            <ul class="list-compact">
               <li>
                 {% blocktrans %}Write your request in <strong>simple, precise language</strong>.{% endblocktrans %}
               </li>
@@ -139,9 +120,8 @@
           {% endif %}
         </div>
       </request-form>
+
     </form>
-  </div>
-</div>
 
 {% include "publicbody/widget/_add_js_vars.html" %}
 
@@ -163,6 +143,10 @@
         requests: '{% trans "requests" %}',
         makeRequest: '{% trans "make request" %}',
         writingRequestTo: '{% trans "You are writing a request to" %}',
+        /* eslint-disable no-template-curly-in-string */
+        toMultiPublicBodies: '{% blocktrans with count="${count}" %}To: {{ count }} public bodies{% endblocktrans %}',
+        /* eslint-disable no-template-curly-in-string */
+        toPublicBody: '{% blocktrans with name="${name}" %}To: {{ name }}{% endblocktrans %}',
         change: '{% trans "change" %}',
         next: '{% trans "next" %}',
         previous: '{% trans "previous" %}',
@@ -193,7 +177,12 @@
         similarRequests: '{% trans "Similar requests" %}',
         moreSimilarRequests: '{% trans "Search for more similar requests" %}',
         relevantResources: '{% trans "Relevant resources" %}',
-        officialWebsite: '{% trans "Official website: " %}'
+        officialWebsite: '{% trans "Official website: " %}',
+        noSubject: '{% trans "Please add a subject." %}',
+        noBody: '{% trans "Please describe the information you want to request!" %}',
+        dontAddClosing: '{% trans "Do not add a closing, it is added automatically at the end of the letter." %}',
+        dontAddGreeting: '{% trans "Do not add a greeting, it is added automatically at the start of the letter." %}',
+        dontInsertName: '{% trans "Do not insert your name, we will add it automatically at the end of the letter." %}'
       }
       for (var key in i18n) {
         Froide.i18n[key] = i18n[key]
@@ -205,15 +194,6 @@
     Froide.regex = Froide.regex || {}
     Froide.regex.greetings = [new RegExp('{% blocktrans %}Dear Sir or Madam{% endblocktrans %}', 'gi')]
     Froide.regex.closings = [new RegExp('{% blocktrans %}Kind Regards{% endblocktrans %}', 'gi')]
-
-    Froide.template.searchInternet = '<li class="search-internet"><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" target="_blank" rel="noopener">{% trans "Search the internet for information about:" %} {% templatetag openvariable %}query{% templatetag closevariable %}</a></li>'
-    Froide.template.searchPublicBodyWebsite = '<li class="search-public-body-website"><a href="{% templatetag openvariable %}url{% templatetag closevariable %}" target="_blank" rel="noopener">{% trans "Search Public Body Website" %}</a></li>'
-    Froide.template.searchEngineUrl = '{% search_engine_query %}'
-    Froide.template.foundEmail = '{% trans "We found an email address in your text: {{ email }}. Do not sent personal data to the Public Body." %}'
-    Froide.template.foundGreeting = '{% trans "We found {{ find }} in your text, but there is already a greeting at the top of the letter!" %}'
-    Froide.template.foundClosing = '{% trans "We found {{ find }} in your text, but there is already a closing at the bottom of the letter!" %}'
-    Froide.template.emptyBody = "{% blocktrans %}Don't leave the body of your message empty{% endblocktrans %}"
-    Froide.template.emptySubject = "{% blocktrans %}Don't leave the subject of your message empty{% endblocktrans %}"
   </script>
 {% endaddtoblock %}
 {% addtoblock "js" %}

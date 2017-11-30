@@ -4,8 +4,8 @@ from django.conf.urls import url, include
 from django.utils.translation import pgettext
 from django.shortcuts import redirect
 
-from .models import FoiRequest
-from .views import list_requests, list_unchecked, delete_draft
+from ..models import FoiRequest
+from ..views import list_requests, list_unchecked, delete_draft
 
 
 urlpatterns = [

@@ -9,7 +9,8 @@ from django.views.decorators.http import require_POST
 from django.utils.http import is_safe_url
 from django.views.generic import ListView
 
-from froide.foirequest.models import FoiRequest, FoiEvent, RequestDraft
+from froide.foirequest.models import (FoiRequest, FoiProject, FoiEvent,
+                                      RequestDraft)
 from froide.helper.utils import render_403
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
@@ -122,6 +123,18 @@ class DraftRequestsView(BaseRequestListView):
             query_kwargs = {'subject__icontains': self.query}
         return RequestDraft.objects.filter(
                 user=self.request.user, **query_kwargs)
+
+
+class FoiProjectListView(BaseRequestListView):
+    template_name = 'account/show_projects.html'
+    menu_item = 'projects'
+
+    def get_queryset(self):
+        self.query = self.request.GET.get('q', None)
+        query_kwargs = {}
+        if self.query:
+            query_kwargs = {'title__icontains': self.query}
+        return FoiProject.objects.filter(user=self.request.user, **query_kwargs)
 
 
 def profile(request, slug):

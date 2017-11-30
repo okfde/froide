@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.utils.translation import pgettext
 
-from .views import MakeRequestView
+from ..views import MakeRequestView
 
 
 urlpatterns = [

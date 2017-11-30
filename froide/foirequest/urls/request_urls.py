@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
-from .feeds import FoiRequestFeed, FoiRequestFeedAtom
-from .views import (shortlink, auth, show, suggest_public_body, set_public_body,
+from ..feeds import FoiRequestFeed, FoiRequestFeedAtom
+from ..views import (shortlink, auth, show, suggest_public_body, set_public_body,
                     set_status, send_message, escalation_message, make_public,
                     set_law, set_tags, set_summary, add_postal_reply,
                     add_postal_message, add_postal_reply_attachment,
@@ -37,10 +37,8 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/download/$", download_foirequest, name="foirequest-download"),
     # Redaction
     url(r"^(?P<slug>[-\w]+)/redact/(?P<attachment_id>\d+)/$", redact_attachment, name="foirequest-redact_attachment"),
-]
 
-# Feed
-urlpatterns += [
+    # Feed
     url(r"^(?P<slug>[-\w]+)/feed/$", FoiRequestFeedAtom(), name="foirequest-feed_atom"),
     url(r"^(?P<slug>[-\w]+)/rss/$", FoiRequestFeed(), name="foirequest-feed")
 ]

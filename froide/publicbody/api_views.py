@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 
-from haystack.query import SearchQuerySet, SQ
+from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
 from froide.helper.search import SearchQuerySetWrapper
@@ -57,7 +57,7 @@ class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
         depth = 0
         fields = (
             'resource_uri', 'id', 'name', 'slug', 'description', 'long_description',
-            'created', 'updated', 'request_note', 'meta',
+            'created', 'updated', 'request_note', 'request_note_html', 'meta',
             'combined', 'letter_start', 'letter_end', 'jurisdiction',
             'priority', 'url', 'max_response_time',
             'max_response_time_unit', 'refusal_reasons', 'mediator'
@@ -154,10 +154,7 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
         query = request.GET.get('q', '')
         sqs = SearchQuerySet().models(PublicBody).load_all()
         if len(query) > 2:
-            sqs = sqs.filter(
-                SQ(name_auto=AutoQuery(query)) |
-                SQ(jurisdiction=AutoQuery(query))
-            )
+            sqs = sqs.filter(name_auto=AutoQuery(query))
         else:
             sqs = sqs.none()
 

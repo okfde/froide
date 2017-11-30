@@ -78,299 +78,301 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-lg-9 col-md-8">
+{% if not object.public and object.user == user or user.is_staff %}
+  <div class="row">
+    <div class="col-12">
+      <div class="card d-print-none mb-5">
+        <form class="card-body" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+          {% csrf_token %}
+          <p>
+            {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
+          </p>
+          <button type="submit" class="btn btn-success">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
+        </form>
+      </div>
+    </div>
+</div>
+{% endif %}
 
-    {% if not object.public %}
-      {% if object.user == user or user.is_staff %}
-        <div class="card d-print-none mb-5">
-          <form class="card-body" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-            {% csrf_token %}
-            <p>
-              {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
-            </p>
-            <button type="submit" class="btn btn-success">{% blocktrans %}Make this request public now{% endblocktrans %}</button>
-          </form>
-        </div>
+
+{% if object.user == user %}
+  <div class="row">
+    <div class="col-3">
+      <ul class="request-nav nav">
+        <li class="nav-item">
+          <a href="#info" data-toggle="pill" class="nav-link" role="tab" aria-controls="info" aria-expanded="false">
+            {% trans "Request" %}
+          </a>
+        </li>
+        {% if object.reply_received %}
+        <li class="nav-item">
+          <a href="#set-status" data-toggle="pill" class="nav-link" role="tab" aria-controls="set-status" aria-expanded="false">
+              {% trans "Set status" %}
+            </a>
+        </li>
+        {% endif %}
+        {% if object.status == "publicbody_needed" %}
+          <li class="nav-item">
+            <a href="#choose-public-body" data-toggle="pill" class="nav-link" role="tab" aria-controls="choose-public-body" aria-expanded="false">
+              {% trans "Choose Public Body" %}
+            </a>
+          </li>
+        {% endif %}
+        {% if object.public_body %}
+          <li class="nav-item">
+            <a href="#add-postal-reply" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-reply" aria-expanded="false">
+              {% blocktrans %}Got Mail?{% endblocktrans %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#add-postal-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-message" aria-expanded="false">
+              {% blocktrans %}Sent Mail?{% endblocktrans %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#write-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="write-message" aria-expanded="false">
+              {% blocktrans %}Send a message{% endblocktrans %}
+            </a>
+          </li>
+        {% endif %}
+        {% if object.law.mediator and object.can_be_escalated %}
+          <li class="nav-item">
+            <a href="#escalate" data-toggle="pill" class="nav-link" role="tab" aria-controls="escalate" aria-expanded="false">
+              {% trans "Mediation" %}
+            </a>
+          </li>
+        {% endif %}
+
+      {% if froide.can_make_meta_request and object.can_be_escalated %}
+        <li class="nav-item">
+          <a href="#meta-request" data-toggle="pill" class="nav-link" role="tab" aria-controls="meta-request" aria-expanded="false">
+            {% trans "Make Meta Request" %}
+          </a>
+        </li>
       {% endif %}
+
+      {% if object.response_messages and object.law.meta %}
+        <li class="nav-item">
+          <a href="#concrete-law" data-toggle="pill" class="nav-link" role="tab" aria-controls="concrete-law" aria-expanded="false">
+            {% blocktrans %}Set law{% endblocktrans %}
+          </a>
+        </li>
+      {% endif %}
+
+      {% if object.status_is_final %}
+        <li class="nav-item">
+          <a href="#resolution-summary" data-toggle="pill" class="nav-link" role="tab" aria-controls="resolution-summary" aria-expanded="false">
+            {% blocktrans %}Write summary{% endblocktrans %}
+          </a>
+        </li>
+      {% endif %}
+      {% block request_action_menu_footer %}{% endblock %}
+      </ul>
+    </div>
+    <div class="col-9 tab-content-container">
+      <div class="tab-content">
+
+    {# Set status #}
+    <div id="set-status" role="tabpanel" class="tab-pane d-print-none">
+      {% if status_message %}
+        <h4>{% blocktrans with url=status_message.get_absolute_url %}Please <a href="{{ url }}">read the reply</a> and choose a new status {% endblocktrans %}</h4>
+      {% else %}
+        <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4>
+      {% endif %}
+      <form class="form-horizontal" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+        {% csrf_token %}
+        {% if status_form %}
+          {% include "foirequest/_set_status.html" %}
+        {% else %}
+          {% with status_form=object.get_status_form %}
+            {% include "foirequest/_set_status.html" %}
+          {% endwith %}
+        {% endif %}
+        <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+      </form>
+    </div>
+    {# End Set status #}
+
+    {% if object.status == "publicbody_needed" %}
+      <div class="d-print-none tab-pane" id="choose-public-body">
+        {% with suggestions_form=object.public_body_suggestions_form %}
+          {% if suggestions_form %}
+            <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
+            <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
+              {% csrf_token %}
+              {{ suggestions_form }}
+              <button class="btn btn-primary" type="submit">{% blocktrans %}Send this request to the selected Public Body{% endblocktrans %}</button>
+            </form>
+          {% endif %}
+        {% endwith %}
+      </div>
     {% endif %}
 
-    {% if object.user == user %}
-      <div class="row">
-        <div class="col-4">
-          <ul class="request-nav nav">
-            <li class="nav-item">
-              <a href="#info" data-toggle="pill" class="nav-link" role="tab" aria-controls="info" aria-expanded="false">
-                {% trans "Request" %}
-              </a>
-            </li>
-            {% if object.reply_received %}
-            <li class="nav-item">
-              <a href="#set-status" data-toggle="pill" class="nav-link" role="tab" aria-controls="set-status" aria-expanded="false">
-                  {% trans "Set status" %}
-                </a>
-            </li>
-            {% endif %}
-            {% if object.status == "publicbody_needed" %}
-              <li class="nav-item">
-                <a href="#choose-public-body" data-toggle="pill" class="nav-link" role="tab" aria-controls="choose-public-body" aria-expanded="false">
-                  {% trans "Choose Public Body" %}
-                </a>
-              </li>
-            {% endif %}
-            {% if object.public_body %}
-              <li class="nav-item">
-                <a href="#add-postal-reply" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-reply" aria-expanded="false">
-                  {% blocktrans %}Got Mail?{% endblocktrans %}
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#add-postal-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-message" aria-expanded="false">
-                  {% blocktrans %}Sent Mail?{% endblocktrans %}
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#write-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="write-message" aria-expanded="false">
-                  {% blocktrans %}Send a message{% endblocktrans %}
-                </a>
-              </li>
-            {% endif %}
-            {% if object.law.mediator and object.can_be_escalated %}
-              <li class="nav-item">
-                <a href="#escalate" data-toggle="pill" class="nav-link" role="tab" aria-controls="escalate" aria-expanded="false">
-                  {% trans "Mediation" %}
-                </a>
-              </li>
-            {% endif %}
-
-          {% if froide.can_make_meta_request and object.can_be_escalated %}
-            <li class="nav-item">
-              <a href="#meta-request" data-toggle="pill" class="nav-link" role="tab" aria-controls="meta-request" aria-expanded="false">
-                {% trans "Make Meta Request" %}
-              </a>
-            </li>
-          {% endif %}
-
-          {% if object.response_messages and object.law.meta %}
-            <li class="nav-item">
-              <a href="#concrete-law" data-toggle="pill" class="nav-link" role="tab" aria-controls="concrete-law" aria-expanded="false">
-                {% blocktrans %}Set law{% endblocktrans %}
-              </a>
-            </li>
-          {% endif %}
-
-          {% if object.status_is_final %}
-            <li class="nav-item">
-              <a href="#resolution-summary" data-toggle="pill" class="nav-link" role="tab" aria-controls="resolution-summary" aria-expanded="false">
-                {% blocktrans %}Write summary{% endblocktrans %}
-              </a>
-            </li>
-          {% endif %}
-          {% block request_action_menu_footer %}{% endblock %}
-          </ul>
-        </div>
-        <div class="col-8 tab-content-container">
-          <div class="tab-content">
-
-        {# Set status #}
-        <div id="set-status" role="tabpanel" class="tab-pane d-print-none">
-          {% if status_message %}
-            <h4>{% blocktrans with url=status_message.get_absolute_url %}Please <a href="{{ url }}">read the reply</a> and choose a new status {% endblocktrans %}</h4>
+    {# Escalate #}
+    {% if object.law.mediator and object.can_be_escalated %}
+      <div role="tabpanel" class="tab-pane d-print-none" id="escalate">
+        <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+          {% csrf_token %}
+          <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
+          <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled.{% endblocktrans %}</p>
+          {% if escalation_form %}
+            {% render_form escalation_form %}
           {% else %}
-            <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4>
-          {% endif %}
-          <form class="form-horizontal" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
-            {% csrf_token %}
-            {% if status_form %}
-              {% include "foirequest/_set_status.html" %}
-            {% else %}
-              {% with status_form=object.get_status_form %}
-                {% include "foirequest/_set_status.html" %}
-              {% endwith %}
-            {% endif %}
-            <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
-          </form>
-        </div>
-        {# End Set status #}
-
-        {% if object.status == "publicbody_needed" %}
-          <div class="d-print-none tab-pane" id="choose-public-body">
-            {% with suggestions_form=object.public_body_suggestions_form %}
-              {% if suggestions_form %}
-                <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
-                <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
-                  {% csrf_token %}
-                  {{ suggestions_form }}
-                  <button class="btn btn-primary" type="submit">{% blocktrans %}Send this request to the selected Public Body{% endblocktrans %}</button>
-                </form>
-              {% endif %}
+            {% with escalation_form=object.get_escalation_message_form %}
+              {% render_form escalation_form %}
             {% endwith %}
-          </div>
-        {% endif %}
-
-        {# Escalate #}
-        {% if object.law.mediator and object.can_be_escalated %}
-          <div role="tabpanel" class="tab-pane d-print-none" id="escalate">
-            <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
-              {% csrf_token %}
-              <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
-              <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled.{% endblocktrans %}</p>
-              {% if escalation_form %}
-                {% render_form escalation_form %}
-              {% else %}
-                {% with escalation_form=object.get_escalation_message_form %}
-                  {% render_form escalation_form %}
-                {% endwith %}
+          {% endif %}
+          <div class="form-group row mb-3">
+            <div class="ml-md-auto col-lg-9">
+              {% if not object.public %}
+                <small class="form-text text-muted">
+                  {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
+                </small>
               {% endif %}
-              <div class="form-group row mb-3">
-                <div class="ml-md-auto col-lg-9">
-                  {% if not object.public %}
-                    <small class="form-text text-muted">
-                      {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
-                    </small>
-                  {% endif %}
-                  <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-                </div>
-              </div>
-            </form>
+              <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+            </div>
           </div>
-        {% endif %}
-        {# End Escalate #}
+        </form>
+      </div>
+    {% endif %}
+    {# End Escalate #}
 
-        {# Make Meta Request #}
-        {% if froide.can_make_meta_request and object.can_be_escalated %}
-          <div role="tabpanel" class="tab-pane d-print-none" id="meta-request">
-            <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
-              {% csrf_token %}
-              <h4>{% blocktrans %}Make a meta request{% endblocktrans %}</h4>
-              <p>
-                {% blocktrans with title=object.title %}By making a meta request you will make a normal FOI request for the internal communication related to the handling of your original request "{{ title }}". Please only make a meta request if you reasonably suspect an internal mishandling of your request.{% endblocktrans %}
+    {# Make Meta Request #}
+    {% if froide.can_make_meta_request and object.can_be_escalated %}
+      <div role="tabpanel" class="tab-pane d-print-none" id="meta-request">
+        <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+          {% csrf_token %}
+          <h4>{% blocktrans %}Make a meta request{% endblocktrans %}</h4>
+          <p>
+            {% blocktrans with title=object.title %}By making a meta request you will make a normal FOI request for the internal communication related to the handling of your original request "{{ title }}". Please only make a meta request if you reasonably suspect an internal mishandling of your request.{% endblocktrans %}
+          </p>
+          <button class="btn btn-primary">{% blocktrans %}Send Meta Request{% endblocktrans %}</button>
+        </form>
+      </div>
+    {% endif %}
+    {# End Make Meta Request #}
+
+    {% if object.public_body %}
+      {# Postal Reply #}
+      <div role="tabpanel" class="tab-pane d-print-none" id="add-postal-reply">
+        <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
+          <h4>{% blocktrans %}Upload postal replies you received{% endblocktrans %}</h4>
+          {% if postal_reply_form %}
+            {% render_form postal_reply_form %}
+          {% else %}
+            {% with postal_reply_form=object.get_postal_reply_form %}
+              {% render_form postal_reply_form %}
+            {% endwith %}
+          {% endif %}
+          <div class="row">
+            <div class="col-lg-offset-4 col-lg-8">
+              <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Reply{% endblocktrans %}</button>
+              <small class="form-text text-muted">{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</small>
+            </div>
+          </div>
+        </form>
+      </div>
+      {# End Postal Reply #}
+
+      {# Postal Send #}
+      <div role="tabpanel" class="tab-pane d-print-none" id="add-postal-message">
+        <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_message' slug=object.slug %}#add-postal-message" enctype="multipart/form-data">{% csrf_token %}
+          <h4>{% blocktrans %}Upload letters that you send via postal mail{% endblocktrans %}</h4>
+          {% if postal_message_form %}
+            {% render_form postal_message_form %}
+          {% else %}
+            {% with postal_message_form=object.get_postal_message_form %}
+              {% render_form postal_message_form %}
+            {% endwith %}
+          {% endif %}
+          <div class="row">
+            <div class="col-lg-offset-4 col-lg-8">
+              <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Message{% endblocktrans %}</button>
+              <small class="form-text text-muted">{% blocktrans %}You can attach more documents to your letter later.{% endblocktrans %}</small>
+            </div>
+          </div>
+        </form>
+      </div>
+      {# End Postal Send #}
+
+      {# Reply #}
+      <div role="tabpanel" class="tab-pane d-print-none" id="write-message">
+        <form class="form-horizontal" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">
+          {% csrf_token %}
+          <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
+          {% if object.is_overdue %}
+            <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
+          {% else %}
+            <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
+          {% endif %}
+          {% block send_message_form_pre %}{% endblock %}
+          {% if send_message_form %}
+            {% render_form send_message_form %}
+          {% else %}
+            {% with send_message_form=object.get_send_message_form %}
+              {% render_form send_message_form %}
+            {% endwith %}
+          {% endif %}
+          <div class="row">
+            <div class="col-lg-offset-4 col-lg-8">
+              <small class="form-text text-muted">
+                {% if user.address %}
+                  {% blocktrans %}Your address:{% endblocktrans %}<br/>
+                  {{ user.address|linebreaksbr }}
+                {% else %}
+                  {% url "account-settings" as settings_url %}
+                  {% blocktrans with url=settings_url %}You do not have a postal address set. <a href="{{ url }}#change-address">You can enter enter an address here.</a>{% endblocktrans %}
+                {% endif %}
+              </small>
+              <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+              <p class="form-text text-muted">
+                <small>
+                  {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
+                  <strong>{% alternative_address object %}</strong>
+                  <br/>
+                  {% trans "It will still go to your request here." %}
+                </small>
               </p>
-              <button class="btn btn-primary">{% blocktrans %}Send Meta Request{% endblocktrans %}</button>
-            </form>
+            </div>
           </div>
-        {% endif %}
-        {# End Make Meta Request #}
+        </form>
+      </div>
+      {# End Reply #}
+    {% endif %}
+    {# End if object.public_body #}
 
-        {% if object.public_body %}
-          {# Postal Reply #}
-          <div role="tabpanel" class="tab-pane d-print-none" id="add-postal-reply">
-            <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
-              <h4>{% blocktrans %}Upload postal replies you received{% endblocktrans %}</h4>
-              {% if postal_reply_form %}
-                {% render_form postal_reply_form %}
-              {% else %}
-                {% with postal_reply_form=object.get_postal_reply_form %}
-                  {% render_form postal_reply_form %}
-                {% endwith %}
-              {% endif %}
-              <div class="row">
-                <div class="col-lg-offset-4 col-lg-8">
-                  <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Reply{% endblocktrans %}</button>
-                  <small class="form-text text-muted">{% blocktrans %}You can attach more documents to this reply later.{% endblocktrans %}</small>
-                </div>
-              </div>
-            </form>
-          </div>
-          {# End Postal Reply #}
+    {# If Meta Law #}
+    {% if object.response_messages and object.law.meta %}
+      <div role="tabpanel" class="tab-pane d-print-none" id="concrete-law">
+        <h4>{% trans "Set Law" %}</h4>
+        <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
+          {% csrf_token %}
+          <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
+          {{ object.get_concrete_law_form.as_p }}
+          <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
+        </form>
+      </div>
+    {% endif %}
 
-          {# Postal Send #}
-          <div role="tabpanel" class="tab-pane d-print-none" id="add-postal-message">
-            <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_message' slug=object.slug %}#add-postal-message" enctype="multipart/form-data">{% csrf_token %}
-              <h4>{% blocktrans %}Upload letters that you send via postal mail{% endblocktrans %}</h4>
-              {% if postal_message_form %}
-                {% render_form postal_message_form %}
-              {% else %}
-                {% with postal_message_form=object.get_postal_message_form %}
-                  {% render_form postal_message_form %}
-                {% endwith %}
-              {% endif %}
-              <div class="row">
-                <div class="col-lg-offset-4 col-lg-8">
-                  <button type="submit" class="btn btn-primary">{% blocktrans %}Add Postal Message{% endblocktrans %}</button>
-                  <small class="form-text text-muted">{% blocktrans %}You can attach more documents to your letter later.{% endblocktrans %}</small>
-                </div>
-              </div>
-            </form>
-          </div>
-          {# End Postal Send #}
+    {# Write Resolution #}
+    {% if object.status_is_final %}
+      <div role="tabpanel" class="tab-pane d-print-none" id="resolution-summary">
+        <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
+        <form method="post" action="{% url 'foirequest-set_summary' slug=object.slug %}">
+          {% csrf_token %}
+          <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+          <textarea rows="8" class="form-control" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea><br/>
+          <button type="submit" class="btn btn-primary">{% blocktrans %}Save Summary{% endblocktrans %}</button>
+        </form>
+      </div>
+    {% endif %}
 
-          {# Reply #}
-          <div role="tabpanel" class="tab-pane d-print-none" id="write-message">
-            <form class="form-horizontal" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">
-              {% csrf_token %}
-              <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
-              {% if object.is_overdue %}
-                <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
-              {% else %}
-                <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
-              {% endif %}
-              {% block send_message_form_pre %}{% endblock %}
-              {% if send_message_form %}
-                {% render_form send_message_form %}
-              {% else %}
-                {% with send_message_form=object.get_send_message_form %}
-                  {% render_form send_message_form %}
-                {% endwith %}
-              {% endif %}
-              <div class="row">
-                <div class="col-lg-offset-4 col-lg-8">
-                  <small class="form-text text-muted">
-                    {% if user.address %}
-                      {% blocktrans %}Your address:{% endblocktrans %}<br/>
-                      {{ user.address|linebreaksbr }}
-                    {% else %}
-                      {% url "account-settings" as settings_url %}
-                      {% blocktrans with url=settings_url %}You do not have a postal address set. <a href="{{ url }}#change-address">You can enter enter an address here.</a>{% endblocktrans %}
-                    {% endif %}
-                  </small>
-                  <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-                  <p class="form-text text-muted">
-                    <small>
-                      {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
-                      <strong>{% alternative_address object %}</strong>
-                      <br/>
-                      {% trans "It will still go to your request here." %}
-                    </small>
-                  </p>
-                </div>
-              </div>
-            </form>
-          </div>
-          {# End Reply #}
-        {% endif %}
-        {# End if object.public_body #}
+    {% block request_action_pane_footer %}{% endblock %}
 
-        {# If Meta Law #}
-        {% if object.response_messages and object.law.meta %}
-          <div role="tabpanel" class="tab-pane d-print-none" id="concrete-law">
-            <h4>{% trans "Set Law" %}</h4>
-            <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
-              {% csrf_token %}
-              <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-              {{ object.get_concrete_law_form.as_p }}
-              <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
-            </form>
-          </div>
-        {% endif %}
-
-        {# Write Resolution #}
-        {% if object.status_is_final %}
-          <div role="tabpanel" class="tab-pane d-print-none" id="resolution-summary">
-            <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
-            <form method="post" action="{% url 'foirequest-set_summary' slug=object.slug %}">
-              {% csrf_token %}
-              <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
-              <textarea rows="8" class="form-control" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea><br/>
-              <button type="submit" class="btn btn-primary">{% blocktrans %}Save Summary{% endblocktrans %}</button>
-            </form>
-          </div>
-        {% endif %}
-
-        {% block request_action_pane_footer %}{% endblock %}
-
-        <div role="tabpanel" class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
-      {% endif %}{# endif: object.user == user #}
+    <div role="tabpanel" class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
+  {% endif %}{# end {% if object.user == user %} #}
+      <div class="row">
+        <div class="col-md-8">
 
         {# Public Body Needed #}
         {% if object.status == "publicbody_needed" %}
@@ -447,16 +449,18 @@
             {% if object.is_overdue %}
               <dd class="red">
                 {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}
-              </dd>
             {% else %}
               <dd>
                 {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
             {% endif %}
-                {# Translators: URL part #}
-                <a class="d-print-none" href="{% url "help-index" %}#{% trans "deadline" %}">
+              {# Translators: URL part #}
+              {% trans "deadline" as trans_deadline %}
+              <small>
+                <a class="d-print-none" href="{% url "help-index" %}#{{ trans_deadline }}">
                   {% blocktrans %}How is this calculated?{% endblocktrans %}
                 </a>
-              </dd>
+              </small>
+            </dd>
           {% endif %}
           {% if object.refusal_reason %}
             <dt>{% blocktrans %}Refusal Reason{% endblocktrans %}</dt>
@@ -478,202 +482,40 @@
           {% endif %}
         </dl>
 
-    {# Public Body Needed #}
-    {% if object.status == "publicbody_needed" %}
-      <div class="alert alert-info">
-        {% blocktrans %}This request was not sent yet, because it still needs a Public Body as a recipient.{% endblocktrans %}
-      </div>
-      {% if not object.public %}
-        <div class="alert alert-info d-print-none">
-          {% blocktrans %}This request is not public and will not receive suggestions for public bodies from users!{% endblocktrans %}
+      {# Public Body Needed #}
+      {% if object.status == "publicbody_needed" %}
+        <div class="alert alert-info">
+          {% blocktrans %}This request was not sent yet, because it still needs a Public Body as a recipient.{% endblocktrans %}
+        </div>
+        {% if not object.public %}
+          <div class="alert alert-info d-print-none">
+            {% blocktrans %}This request is not public and will not receive suggestions for public bodies from users!{% endblocktrans %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {# Unconfirmed Public Body #}
+      {% if object.public_body and not object.public_body.confirmed %}
+        <div class="alert alert-info">
+          {% blocktrans %}The public body of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
         </div>
       {% endif %}
-    {% endif %}
-
-    {# Unconfirmed Public Body #}
-    {% if object.public_body and not object.public_body.confirmed %}
-      <div class="alert alert-info">
-        {% blocktrans %}The public body of this request has been created by the user and still needs to be confirmed.{% endblocktrans %}
-      </div>
-    {% endif %}
-    {# End Unconfirmed Public Body #}
-
-    {% if user == object.user %}
+      {# End Unconfirmed Public Body #}
+    </div>
+    <div class="col-md-4">
+      {% include "foirequest/snippets/sidebar.html" %}
+    </div>
+  </div>
+  {% if object.user == user %}
       </div>
     </div>
-    {% endif %}
+  </div>
+</div>
+  {% endif %}
 
     {% if object.not_publishable_message %}
       {% include "foirequest/snippets/make_same_request.html" %}
     {% endif %}
-
-  </div>
-  {% if object.user == user %}
-  </div>
-  </div>
-  {% endif %}
-
-  <div class="col-lg-3 col-md-4">
-    <ul class="nav nav-compact flex-column d-print-none">
-      {% with count=object.follow_count %}
-        {% block followers %}
-          <li class="nav-item">
-            <h5>
-              <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
-                {% blocktrans count counter=count %}
-                  One follower
-                {% plural %}
-                  {{ counter }} followers
-                {% endblocktrans %}
-              </span>
-            </h5>
-            {% if user.is_authenticated and user != object.user %}
-              {% include "foirequestfollower/follow_form.html" %}
-            {% endif %}
-        </li>{% endblock followers %}
-      {% endwith %}
-
-      {% if object.visibility == 2 %}
-      {% block social_sharing %}
-        <li class="nav-header">{% trans "Share this request" %}</li>
-        <li class="nav-item">
-          <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
-            <i class="fa fa-share"></i>
-            {% trans "Twitter" %}
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
-            <i class="fa fa-share"></i>
-            {% trans "Facebook" %}
-          </a>
-        </li>
-        {% endblock %}
-      {% endif %}
-
-      {% block feeds %}
-      <li class="nav-header">{% trans "Feeds" %}</li>
-      <li class="nav-item">
-        <a href="{% url 'foirequest-feed' slug=object.slug %}">
-          <i class="fa fa-rss" aria-hidden="true"></i>
-          {% trans "RSS Feed" %}
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">
-          <i class="fa fa-rss-square" aria-hidden="true"></i>
-          {% trans "Atom Feed" %}
-        </a>
-      </li>
-      {% endblock feeds%}
-
-
-      <li class="nav-header">
-        {% trans "Short URL" %}
-      </li>
-      <li class="nav-item">
-        <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
-      </li>
-
-      {% if not object.public %}
-        <li class="nav-header">{% trans "Secret Short URL" %}</li>
-        <li class="nav-item">
-          <span class="small help">
-            {% trans "This URL gives read access to others." %}
-          </span>
-          <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_accessible_link }}"/>
-        </li>
-      {% endif %}
-
-     {% if user == object.user or user.is_staff %}
-        <li class="nav-header">{% trans "Download" %}</li>
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'foirequest-download' slug=object.slug %}">
-            <i class="fa fa-download"></i>
-            {% trans "Download request as ZIP-file" %}
-          </a>
-        </li>
-      {% endif %}
-
-      {% with object.tags.all as tags %}
-        {% if tags %}
-          <li class="nav-header">{% trans "Tags" %}</li>
-          <li class="nav-item">
-            <ul class="tag-list">
-              {% for tag in tags %}
-                <li>
-                  <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
-                </li>
-              {% endfor %}
-            </ul>
-          </li>
-        {% endif %}
-      {% endwith %}
-
-      {% if user.is_staff %}
-        <li class="nav-header">{% trans "Staff Actions" %}</li>
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
-            <i class="fa fa-cog"></i>
-            {% trans "View on Admin site" %}
-          </a>
-        </li>
-        {% if object.checked %}
-          <li class="nav-item">{% trans "Marked as checked" %}</li>
-        {% else %}
-          <li class="nav-item">
-            <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
-              {% csrf_token %}
-              <button class="btn btn-light" type="submit">
-                {% trans "Mark as checked" %}
-              </button>
-            </form>
-            <div style="display:none" id="mark-checked-form-success">
-              {% trans "Marked as checked" %}
-            </div>
-          </li>
-        {% endif %}
-        {% if not object.is_foi %}
-          <li class="nav-item">{% trans "Marked as NOT FoI" %}</li>
-        {% else %}
-          <li class="nav-item">
-            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
-              {% csrf_token %}
-              <button class="btn btn-light" type="submit">{% trans "Mark as NOT FoI" %}</button>
-            </form>
-            <div style="display:none" id="mark-not-foi-form-success">
-              {% trans "Marked as NOT FoI" %}
-            </div>
-          </li>
-        {% endif %}
-        <li class="nav-header">{% trans "Tags" %}</li>
-        <li class="nav-item">
-          <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form">
-            {% csrf_token %}
-            {% with object.get_set_tags_form as set_tags_form %}
-              {{ set_tags_form.tags }}
-            {% endwith %}
-
-            <button class="btn btn-success btn-sm" type="submit">
-              {% trans "Save tags" %}
-            </button>
-          </form>
-        </li>
-        <li class="nav-header">{% trans "Extend deadline" %}</li>
-        <li class="nav-item">
-          <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
-            {% csrf_token %}
-            <input type="number" name="months" value="6" class="form-control"/>
-            <button class="btn btn-light" type="submit">
-              {% trans "Extend Deadline by Months" %}
-            </button>
-          </form>
-        </li>
-      {% endif %}
-    </ul>
-  </div>
-
-</div>
 
 <hr class="page-break"/>
 

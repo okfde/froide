@@ -23,9 +23,7 @@ from froide.publicbody.api_views import (PublicBodyViewSet,
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody)
-from froide.foirequest.views import (index, search, dashboard, auth,
-                                     FoiRequestSitemap, shortlink)
-
+from froide.foirequest.views import FoiRequestSitemap
 
 api_router = DefaultRouter()
 api_router.register(r'request', FoiRequestViewSet, base_name='request')
@@ -90,9 +88,8 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
 
 urlpatterns += [
     # Translators: URL part
-    url(r'^$', index, name='index'),
+    url(r'^', include('froide.foirequest.urls')),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}),
-    url(r'^dashboard/$', dashboard, name='dashboard')
 ]
 
 if len(settings.LANGUAGES) > 1:
@@ -101,16 +98,6 @@ if len(settings.LANGUAGES) > 1:
     ]
 
 urlpatterns += [
-    # Translators: request URL
-    url(r'^%s/' % _('make-request'), include('froide.foirequest.make_request_urls')),
-    # Translators: URL part
-    url(r'^%s/' % _('requests'), include('froide.foirequest.urls')),
-    # Translators: request URL
-    url(r'^%s/' % _('request'), include('froide.foirequest.request_urls')),
-    # Translators: Short-request URL
-    url(r"^%s/(?P<obj_id>\d+)/?$" % _('r'), shortlink, name="foirequest-shortlink"),
-    # Translators: Short-request auth URL
-    url(r"^%s/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$" % _('r'), auth, name="foirequest-auth"),
     # Translators: follow request URL
     url(r'^%s/' % _('follow'), include('froide.foirequestfollower.urls')),
     # Translators: URL part
@@ -126,7 +113,6 @@ urlpatterns += [
     # Translators: URL part
     url(r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
-    url(r'^%s/' % _('search'), search, name="foirequest-search"),
     url(r'^comments/', include('django_comments.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
@@ -169,13 +155,6 @@ if SECRET_URLS.get('postmark_bounce'):
             postmark_bounce, name="foirequest-postmark_bounce")
     ]
 
-USE_X_ACCEL_REDIRECT = getattr(settings, 'USE_X_ACCEL_REDIRECT', False)
-
-if USE_X_ACCEL_REDIRECT:
-    urlpatterns += [
-        url(r'^%s%s/' % (settings.MEDIA_URL[1:], settings.FOI_MEDIA_PATH),
-            include('froide.foirequest.media_urls'))
-    ]
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()

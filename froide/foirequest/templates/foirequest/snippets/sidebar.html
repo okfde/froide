@@ -1,0 +1,159 @@
+{% load i18n %}
+
+<ul class="nav nav-compact flex-column d-print-none">
+  {% with count=object.follow_count %}
+    {% block followers %}
+      <li class="nav-item">
+        <h5>
+          <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
+            {% blocktrans count counter=count %}
+              One follower
+            {% plural %}
+              {{ counter }} followers
+            {% endblocktrans %}
+          </span>
+        </h5>
+        {% if user.is_authenticated and user != object.user %}
+          {% include "foirequestfollower/follow_form.html" %}
+        {% endif %}
+    </li>{% endblock followers %}
+  {% endwith %}
+
+  {% if object.visibility == 2 %}
+  {% block social_sharing %}
+    <li class="nav-header">{% trans "Share this request" %}</li>
+    <li class="nav-item">
+      <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+        <i class="fa fa-share"></i>
+        {% trans "Twitter" %}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+        <i class="fa fa-share"></i>
+        {% trans "Facebook" %}
+      </a>
+    </li>
+    {% endblock %}
+  {% endif %}
+
+  {% block feeds %}
+  <li class="nav-header">{% trans "Feeds" %}</li>
+  <li class="nav-item">
+    <a href="{% url 'foirequest-feed' slug=object.slug %}">
+      <i class="fa fa-rss" aria-hidden="true"></i>
+      {% trans "RSS Feed" %}
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">
+      <i class="fa fa-rss-square" aria-hidden="true"></i>
+      {% trans "Atom Feed" %}
+    </a>
+  </li>
+  {% endblock feeds%}
+
+
+  <li class="nav-header">
+    {% trans "Short URL" %}
+  </li>
+  <li class="nav-item">
+    <input type="text" class="form-control form-control-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
+  </li>
+
+  {% if not object.public %}
+    <li class="nav-header">{% trans "Secret Short URL" %}</li>
+    <li class="nav-item">
+      <span class="small help">
+        {% trans "This URL gives read access to others." %}
+      </span>
+      <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_accessible_link }}"/>
+    </li>
+  {% endif %}
+
+ {% if user == object.user or user.is_staff %}
+    <li class="nav-header">{% trans "Download" %}</li>
+    <li class="nav-item">
+      <a class="btn btn-light" href="{% url 'foirequest-download' slug=object.slug %}">
+        <i class="fa fa-download"></i>
+        {% trans "Download request as ZIP-file" %}
+      </a>
+    </li>
+  {% endif %}
+
+  {% with object.tags.all as tags %}
+    {% if tags %}
+      <li class="nav-header">{% trans "Tags" %}</li>
+      <li class="nav-item">
+        <ul class="tag-list">
+          {% for tag in tags %}
+            <li>
+              <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endif %}
+  {% endwith %}
+
+  {% if user.is_staff %}
+    <li class="nav-header">{% trans "Staff Actions" %}</li>
+    <li class="nav-item">
+      <a class="btn btn-light" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+        <i class="fa fa-cog"></i>
+        {% trans "View on Admin site" %}
+      </a>
+    </li>
+    {% if object.checked %}
+      <li class="nav-item">{% trans "Marked as checked" %}</li>
+    {% else %}
+      <li class="nav-item">
+        <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
+          {% csrf_token %}
+          <button class="btn btn-light" type="submit">
+            {% trans "Mark as checked" %}
+          </button>
+        </form>
+        <div style="display:none" id="mark-checked-form-success">
+          {% trans "Marked as checked" %}
+        </div>
+      </li>
+    {% endif %}
+    {% if not object.is_foi %}
+      <li class="nav-item">{% trans "Marked as NOT FoI" %}</li>
+    {% else %}
+      <li class="nav-item">
+        <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+          {% csrf_token %}
+          <button class="btn btn-light" type="submit">{% trans "Mark as NOT FoI" %}</button>
+        </form>
+        <div style="display:none" id="mark-not-foi-form-success">
+          {% trans "Marked as NOT FoI" %}
+        </div>
+      </li>
+    {% endif %}
+    <li class="nav-header">{% trans "Tags" %}</li>
+    <li class="nav-item">
+      <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form">
+        {% csrf_token %}
+        {% with object.get_set_tags_form as set_tags_form %}
+          {{ set_tags_form.tags }}
+        {% endwith %}
+
+        <button class="btn btn-secondary btn-sm" type="submit">
+          {% trans "Save tags" %}
+        </button>
+      </form>
+    </li>
+    <li class="nav-header">{% trans "Extend deadline" %}</li>
+    <li class="nav-item">
+      <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+        {% csrf_token %}
+        <input type="number" name="months" value="6" class="form-control"/>
+        <button class="btn btn-light" type="submit">
+          {% trans "Extend Deadline by Months" %}
+        </button>
+      </form>
+    </li>
+  {% endif %}
+</ul>

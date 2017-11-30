@@ -1,11 +1,25 @@
+export const SET_CONFIG = 'SET_CONFIG'
+export const SET_STEP = 'SET_STEP'
+export const SET_STEP_PUBLICBODY = 'SET_STEP_PUBLICBODY'
+export const SET_STEP_REQUEST = 'SET_STEP_REQUEST'
+
+export const SET_STEP_BY_URL = 'SET_STEP_BY_URL' // action
+
 export const SET_PUBLICBODY = 'SET_PUBLICBODY'
+export const SET_PUBLICBODY_ID = 'SET_PUBLICBODY_ID'
+export const ADD_PUBLICBODY_ID = 'ADD_PUBLICBODY_ID'
+export const REMOVE_PUBLICBODY_ID = 'REMOVE_PUBLICBODY_ID'
 export const SET_PUBLICBODIES = 'SET_PUBLICBODIES'
-export const SET_PUBLICBODY_DETAIL = 'SET_PUBLICBODY_DETAIL'
-export const SET_PUBLICBODIES_DETAIL = 'SET_PUBLICBODIES_DETAIL'
-export const SET_USER = 'SET_USER'
+export const CACHE_PUBLICBODIES = 'CACHE_PUBLICBODIES'
+
+export const SET_SEARCHRESULTS = 'SET_SEARCHRESULTS'
+export const CLEAR_SEARCHRESULTS = 'CLEAR_SEARCHRESULTS'
 
 export const UPDATE_SUBJECT = 'UPDATE_SUBJECT'
 export const UPDATE_BODY = 'UPDATE_BODY'
+export const UPDATE_FULL_TEXT = 'UPDATE_FULL_TEXT'
+
+export const SET_USER = 'SET_USER'
 
 export const UPDATE_FIRST_NAME = 'UPDATE_FIRST_NAME'
 export const UPDATE_LAST_NAME = 'UPDATE_LAST_NAME'
@@ -13,3 +27,17 @@ export const UPDATE_EMAIL = 'UPDATE_EMAIL'
 export const UPDATE_ADDRESS = 'UPDATE_ADDRESS'
 export const UPDATE_PRIVATE = 'UPDATE_PRIVATE'
 export const UPDATE_USER_ID = 'UPDATE_USER_ID'
+
+export const STEPS = {
+  SELECT_PUBLICBODY: 1,
+  WRITE_REQUEST: 3
+}
+
+export const URLS_TO_STEP = {
+  '#step-publicbody': 1,
+  '#step-request': 3
+}
+export const STEP_TO_URLS = {}
+for (var key in URLS_TO_STEP) {
+  STEP_TO_URLS[URLS_TO_STEP[key]] = key
+}

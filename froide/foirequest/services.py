@@ -7,9 +7,10 @@ from django.template.defaultfilters import slugify
 
 from froide.account.services import AccountService
 
-from .models import FoiRequest, FoiMessage, RequestDraft
+from .models import FoiRequest, FoiMessage, RequestDraft, FoiProject
 from .utils import generate_secret_address, construct_message_body
 from .hooks import registry
+from .tasks import create_project_requests
 
 
 class BaseService(object):
@@ -50,7 +51,11 @@ class CreateRequestService(BaseService):
             )
             data.update(extra)
 
-        foirequest = self.create_request(self.data['publicbodies'][0])
+        if len(self.data['publicbodies']) > 1:
+            project = self.create_project()
+            return project
+        else:
+            foirequest = self.create_request(self.data['publicbodies'][0])
 
         if user_created:
             AccountService(user).send_confirmation_mail(
@@ -59,20 +64,51 @@ class CreateRequestService(BaseService):
             )
         return foirequest
 
+    def create_project(self):
+        data = self.data
+        user = data['user']
+
+        project = FoiProject(
+            title=data['subject'],
+            description=data['body'],
+            status=FoiProject.STATUS_PENDING,
+            public=data['public'],
+            user=user,
+            site=Site.objects.get_current(),
+            reference=data.get('reference', ''),
+            request_count=len(self.data['publicbodies'])
+        )
+
+        self.save_obj_with_slug(project)
+        if 'tags' in data and data['tags']:
+            project.tags.add(*data['tags'])
+
+        FoiProject.project_created.send(sender=project)
+
+        publicbody_ids = [pb.pk for pb in data['publicbodies']]
+        create_project_requests.delay(
+            project.id, publicbody_ids,
+        )
+        return project
+
     def create_request(self, publicbody, sequence=0):
         data = self.data
         user = data['user']
 
         now = timezone.now()
-        request = FoiRequest(title=data['subject'],
-                public_body=publicbody,
-                user=data['user'],
-                description=data['body'],
-                public=data['public'],
-                site=Site.objects.get_current(),
-                reference=data.get('reference', ''),
-                first_message=now,
-                last_message=now)
+        request = FoiRequest(
+            title=data['subject'],
+            public_body=publicbody,
+            user=data['user'],
+            description=data['body'],
+            public=data['public'],
+            site=Site.objects.get_current(),
+            reference=data.get('reference', ''),
+            first_message=now,
+            last_message=now,
+            project=data.get('project'),
+            project_order=data.get('project_order'),
+        )
 
         send_now = False
 
@@ -98,7 +134,7 @@ class CreateRequestService(BaseService):
             request.is_blocked = True
 
         self.pre_save_request(request)
-        self.save_request_with_slug(request, count=sequence)
+        self.save_obj_with_slug(request, count=sequence)
 
         if 'tags' in data and data['tags']:
             request.tags.add(*data['tags'])
@@ -135,7 +171,10 @@ class CreateRequestService(BaseService):
 
         message.original = ''
         message.save()
-        FoiRequest.request_created.send(sender=request, reference=data.get('reference', ''))
+        FoiRequest.request_created.send(
+            sender=request,
+            reference=data.get('reference', '')
+        )
         if send_now:
             message.send()
             message.save()
@@ -144,8 +183,8 @@ class CreateRequestService(BaseService):
     def pre_save_request(self, request):
         pass
 
-    def save_request_with_slug(self, request, count=0):
-        request.slug = slugify(request.title)
+    def save_obj_with_slug(self, obj, attribute='title', count=0):
+        obj.slug = slugify(getattr(obj, attribute))
         first_round = count == 0
         postfix = ''
         while True:
@@ -155,20 +194,27 @@ class CreateRequestService(BaseService):
                         if not first_round:
                             postfix = '-%d' % count
                         if not FoiRequest.objects.filter(
-                                slug=request.slug + postfix).exists():
+                                slug=obj.slug + postfix).exists():
                             break
                         if first_round:
                             first_round = False
                             count = FoiRequest.objects.filter(
-                                    slug__startswith=request.slug).count()
+                                    slug__startswith=obj.slug).count()
                         else:
                             count += 1
-                    request.slug += postfix
-                    request.save()
+                    obj.slug += postfix
+                    obj.save()
             except IntegrityError:
                 pass
             else:
                 break
+
+
+class CreateRequestFromProjectService(CreateRequestService):
+    def process(self, request=None):
+        data = self.data
+        pb = data['publicbody']
+        return self.create_request(pb, sequence=data['project_order'])
 
 
 class CreateSameAsRequestService(CreateRequestService):

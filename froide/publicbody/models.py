@@ -294,7 +294,7 @@ class PublicBody(models.Model):
 
     serializable_fields = ('id', 'name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
-            'address', 'domain')
+            'address', 'domain', 'number_of_requests')
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.jurisdiction)
@@ -315,7 +315,8 @@ class PublicBody(models.Model):
 
     @property
     def all_names(self):
-        return ' '.join((self.name, self.other_names))
+        return ' '.join((self.name, self.other_names,
+                         self.jurisdiction.name, self.jurisdiction.slug))
 
     @property
     def request_note_html(self):
@@ -354,7 +355,10 @@ class PublicBody(models.Model):
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
         d['default_law'] = self.default_law.as_data()
-        d['jurisdiction'] = self.jurisdiction.name
+        d['jurisdiction'] = {
+            'name': self.jurisdiction.name,
+            'id': self.jurisdiction.id
+        }
         return d
 
     def as_json(self):

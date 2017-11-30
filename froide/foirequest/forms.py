@@ -48,14 +48,24 @@ class RequestForm(JSONMixin, forms.Form):
             )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
-    hide_public = forms.BooleanField(widget=forms.HiddenInput, initial=False,
-                                     required=False)
-    hide_similar = forms.BooleanField(widget=forms.HiddenInput, initial=False,
-                                     required=False)
-    hide_draft = forms.BooleanField(widget=forms.HiddenInput, initial=False,
-                                     required=False)
-    draft = forms.ModelChoiceField(queryset=None, required=False,
-                                      widget=forms.HiddenInput)
+    hide_public = forms.BooleanField(
+        widget=forms.HiddenInput, initial=False, required=False
+    )
+    hide_similar = forms.BooleanField(
+        widget=forms.HiddenInput, initial=False, required=False
+    )
+    hide_full_text = forms.BooleanField(
+        widget=forms.HiddenInput, initial=False, required=False
+    )
+    hide_draft = forms.BooleanField(
+        widget=forms.HiddenInput, initial=False, required=False
+    )
+    hide_publicbody = forms.BooleanField(
+        widget=forms.HiddenInput, initial=False, required=False
+    )
+    draft = forms.ModelChoiceField(
+        queryset=None, required=False, widget=forms.HiddenInput
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)

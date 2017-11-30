@@ -30,6 +30,7 @@ from froide.helper.text_utils import redact_content
 
 from ..foi_mail import package_foirequest
 from ..utils import construct_message_body
+from .project import FoiProject
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -91,7 +92,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_queryset().order_by('-last_message')
 
     def for_list_view(self):
-        return self.by_last_update().filter(same_as__isnull=True)
+        return self.by_last_update().filter(
+            same_as__isnull=True,
+        ).filter(
+            models.Q(project__isnull=True) | models.Q(project_order=0)
+        )
 
     def get_for_search_index(self):
         return self.get_queryset().filter(same_as__isnull=True)
@@ -304,6 +309,10 @@ class FoiRequest(models.Model):
             verbose_name=_("Identical request"))
     same_as_count = models.IntegerField(_("Identical request count"), default=0)
 
+    project = models.ForeignKey(FoiProject, null=True, blank=True,
+            on_delete=models.SET_NULL, verbose_name=_('project'))
+    project_order = models.IntegerField(null=True, blank=True)
+
     law = models.ForeignKey(FoiLaw, null=True, blank=True,
             on_delete=models.SET_NULL,
             verbose_name=_("Freedom of Information Law"))
@@ -333,6 +342,7 @@ class FoiRequest(models.Model):
         verbose_name_plural = _('Freedom of Information Requests')
         permissions = (
             ("see_private", _("Can see private requests")),
+            ("create_batch", _("Create batch requests")),
         )
 
     # Custom Signals

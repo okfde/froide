@@ -89,7 +89,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
     def setUp(self):
         factories.make_world()
         factories.rebuild_index()
-        self.user = User.objects.all()[0]
+        self.user = User.objects.get(username='dummy')
         self.pb = PublicBody.objects.all()[0]
 
     def go_to_make_request_url(self, pb=None):
@@ -119,8 +119,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
-            self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
-
+            self.selenium.find_element_by_css_selector('.search-results .search-result .btn').click()
             req_title = 'FoiRequest Number'
             self.selenium.find_element_by_name('subject').send_keys(req_title)
             WebDriverWait(self.selenium, 5).until(
@@ -192,6 +191,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.scrollTo('id_terms')
             self.selenium.find_element_by_name('terms').click()
             self.selenium.find_element_by_name('public').click()
+            self.scrollTo('id_private')
             self.selenium.find_element_by_name('private').click()
             self.selenium.find_element_by_id('review-button').click()
             self.scrollTo('send-request-button')
@@ -219,7 +219,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.find_element_by_class_name('search-public_bodies-submit').click()
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_element_by_css_selector('.search-results .search-result'))
-            self.selenium.find_element_by_css_selector('.search-results .search-result label').click()
+            self.selenium.find_element_by_css_selector('.search-results .search-result .btn').click()
             req_title = 'FoiRequest Number'
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_element_by_name('body').is_displayed()
@@ -266,6 +266,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.scrollTo('id_terms')
             self.selenium.find_element_by_name('terms').click()
             self.selenium.find_element_by_name('public').click()
+            self.scrollTo('id_private')
             self.selenium.find_element_by_name('private').click()
 
             WebDriverWait(self.selenium, 5).until(
@@ -285,9 +286,9 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_css_selector(login_link)
             )
+            self.scrollTo(login_link[1:])
             WebDriverWait(self.selenium, 10).until(
                 lambda driver: self.selenium.find_element_by_css_selector(login_link).is_displayed())
-            self.scrollTo(login_link[1:])
             self.selenium.find_element_by_css_selector(login_link).click()
 
         popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
@@ -317,9 +318,14 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
 
 
 class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
-    ADDITIONAL_KWARGS = {'window-size': '600,800'}
+    SCREEN_SIZE = (600, 800)
+    ADDITIONAL_KWARGS = {'window-size': '%s,%s' % SCREEN_SIZE}
 
     def test_collapsed_menu(self):
+        try:
+            self.selenium.set_window_size(*self.SCREEN_SIZE)
+        except Exception:
+            pass
         with CheckJSErrors(self.selenium):
             self.selenium.get('%s%s' % (self.live_server_url,
                 reverse('index')))

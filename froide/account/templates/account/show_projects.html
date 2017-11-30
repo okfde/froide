@@ -1,0 +1,50 @@
+{% extends "account/show.html" %}
+
+{% load i18n %}
+
+{% block pre_table %}
+  <div class="row">
+    <div class="col-lg-8">
+      {% trans "Search your projects" as search_title %}
+      {% include "account/_account_search.html" with title=search_title %}
+      <p>
+        {% if view.query %}
+          {% blocktrans with query=view.query count request_count=page_obj.paginator.count %}
+            Your search for “{{ query }}” produced one search result.
+          {% plural %}
+            Your search for “{{ query }}” produced {{ request_count }} search results.
+          {% endblocktrans %}
+        {% else %}
+          {% blocktrans count request_count=page_obj.paginator.count %}
+            You have one project.
+          {% plural %}
+            You have {{ request_count }} projects.
+          {% endblocktrans %}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block table_head %}
+  <th>{% blocktrans %}Title{% endblocktrans %}</th>
+  <th>{% blocktrans %}Requests{% endblocktrans %}</th>
+  <th>{% blocktrans %}Date{% endblocktrans %}</th>
+{% endblock table_head %}
+
+
+{% block table_row %}
+<tr>
+  <td>
+    <a href="{{ object.get_absolute_url }}">
+      {{ object.title }}
+    </a>
+  </td>
+  <td>
+    {{ object.request_count }}
+  </td>
+  <td>
+    {{ object.last_update|date:"DATETIME_FORMAT" }}
+  </td>
+</tr>
+{% endblock %}

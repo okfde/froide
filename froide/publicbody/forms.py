@@ -14,6 +14,8 @@ class PublicBodyForm(JSONMixin, forms.Form):
             label=_("Search for a topic or a public body:")
     )
 
+    is_multi = False
+
     def as_data(self):
         data = super(PublicBodyForm, self).as_data()
         if self.is_bound and self.is_valid():
@@ -26,13 +28,24 @@ class PublicBodyForm(JSONMixin, forms.Form):
         return []
 
 
-class MultiplePublicBodyForm(JSONMixin, forms.Form):
+class MultiplePublicBodyForm(PublicBodyForm):
     publicbody = forms.ModelMultipleChoiceField(
             queryset=PublicBody.objects.all(),
             label=_("Search for a topic or a public body:")
     )
 
+    is_multi = True
+
     def get_publicbodies(self):
         if self.is_valid():
             return self.cleaned_data['publicbody']
         return []
+
+    def as_data(self):
+        data = super(PublicBodyForm, self).as_data()
+        if self.is_bound and self.is_valid():
+            data['cleaned_data'] = {
+                'publicbody': [x.as_data() for x in
+                               self.cleaned_data['publicbody']]
+            }
+        return data

@@ -34,7 +34,7 @@ class PublicBodySelect(forms.Widget):
                 'fields': {
                     name: {
                         'value': value,
-                        'objects': pb.as_data() if pb is not None else None
+                        'objects': [pb.as_data()] if pb is not None else None
                     }
                 }
             })
