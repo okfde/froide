@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import json
 
 from django.db import models
+# from django.conf import settings
 from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
@@ -10,6 +11,7 @@ from django.utils import timezone
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.encoding import python_2_unicode_compatible
 
 from oauth2_provider.models import AbstractApplication
 
@@ -49,6 +51,7 @@ class UserManager(BaseUserManager):
                                  **extra_fields)
 
 
+@python_2_unicode_compatible
 class User(AbstractBaseUser, PermissionsMixin):
 
     username_validator = UnicodeUsernameValidator()
@@ -176,6 +179,40 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_change_form(self, *args, **kwargs):
         from froide.account.forms import UserChangeForm
         return UserChangeForm(self, *args, **kwargs)
+
+
+# @python_2_unicode_compatible
+# class TeamMembership(models.Model):
+#     ROLE_OWNER = 'owner'
+#     ROLE_EDITOR = 'editor'
+#     ROLE_VIEWER = 'viewer'
+#     ROLES = (
+#         (ROLE_OWNER, _('owner')),
+#         (ROLE_EDITOR, _('editor')),
+#         (ROLE_VIEWER, _('viewer')),
+#     )
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+#     team = models.ForeignKey('Team', on_delete=models.CASCADE)
+#     role = models.CharField(max_length=30, choices=ROLES)
+#
+#     def __str__(self):
+#         return '%s in %s' % (self.user, self.team)
+#
+#
+# @python_2_unicode_compatible
+# class Team(models.Model):
+#     name = models.CharField(max_length=255)
+#     created = models.DateTimeField(auto_now_add=True)
+#
+#     members = models.ManyToManyField(settings.AUTH_USER_MODEL,
+#                                      through=TeamMembership)
+#
+#     class Meta:
+#         verbose_name = _('team')
+#         verbose_name_plural = _('teams')
+#
+#     def __str__(self):
+#         return self.name
 
 
 class Application(AbstractApplication):
