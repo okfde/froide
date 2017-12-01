@@ -70,7 +70,7 @@
   </div>
 {% endif %}
 
-{% if not object.closed %}
+{% if object.closed %}
   <div class="alert alert-info">
     {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
   </div>
