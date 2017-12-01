@@ -322,6 +322,7 @@ class FoiRequest(models.Model):
     checked = models.BooleanField(_("checked"), default=False)
     is_blocked = models.BooleanField(_("Blocked"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
+    closed = models.BooleanField(_('is closed'), default=False)
 
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
             null=True, on_delete=models.SET_NULL)

@@ -167,6 +167,10 @@ def _deliver_mail(email, mail_string=None, manual=False):
 
         # Check for spam
         if not manual:
+            if foi_request.closed:
+                # Request is closed and will not receive messages
+                continue
+
             messages = foi_request.response_messages()
             reply_domains = set(m.sender_email.split('@')[1] for m in messages
                              if m.sender_email and '@' in m.sender_email)

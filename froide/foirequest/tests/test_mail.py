@@ -292,8 +292,31 @@ class SpamMailTest(TestCase):
         self.assertEqual(len(dms), 1)
 
 
+class ClosedRequestTest(TestCase):
+    def setUp(self):
+        self.secret_address = 'sw+yurpykc1hr@fragdenstaat.de'
+        self.site = factories.make_world()
+        self.req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address=self.secret_address, closed=True)
+        factories.FoiMessageFactory.create(request=self.req)
+        factories.FoiMessageFactory.create(request=self.req, is_response=True)
+
+    def test_closed(self):
+        count_messages = len(self.req.messages)
+        name, domain = self.req.secret_address.split('@')
+        recipient = self.secret_address
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            mail = f.read()
+        process_mail.delay(mail)
+        self.assertEqual(count_messages,
+            FoiMessage.objects.filter(request=self.req).count())
+        dms = DeferredMessage.objects.filter(recipient=recipient)
+        self.assertEqual(len(dms), 0)
+
+
 class PostMarkMailTest(TestCase):
     def setUp(self):
+        self.secret_address = 'sw+yurpykc1hr@fragdenstaat.de'
         self.site = factories.make_world()
         date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
         req = factories.FoiRequestFactory.create(site=self.site,
