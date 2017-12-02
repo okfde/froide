@@ -180,18 +180,33 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 400)
+
         post = {"message": "My custom reply"}
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
+
         post["to"] = 'abc'
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
+
         post["to"] = '9' * 10
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
+
+        pb_email = req.public_body.email
+        req.public_body.email = None
+        req.public_body.save()
+        post["to"] = '0'
+        post["subject"] = "Re: Custom subject"
+        response = self.client.post(reverse('foirequest-send_message',
+                kwargs={"slug": req.slug}), post)
+        self.assertEqual(response.status_code, 400)
+        req.public_body.email = pb_email
+        req.public_body.save()
+
         post["subject"] = "Re: Custom subject"
         post["to"] = str(list(req.possible_reply_addresses().values())[0].id)
         response = self.client.post(reverse('foirequest-send_message',
