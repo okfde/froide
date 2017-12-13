@@ -133,9 +133,10 @@ class MailTest(TestCase):
         with open(p("test_mail_06.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+        mail = parser.parse(BytesIO(content))
+        self.assertEqual(len(mail['attachments']), 2)
+        self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+        self.assertEqual(mail['attachments'][1].name, '15-725_002 II_0367.pdf')
 
     def test_attachment_name_redaction(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
@@ -148,13 +149,13 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail['attachments']), 1)
+            self.assertEqual(len(mail['attachments']), 2)
             self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
         request.add_message_from_email(mail, content)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         mes = messages[1]
-        self.assertEqual(mes.attachments[0].name, 'NAMEEingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf')
+        self.assertIn('NAMEEingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf', {a.name for a in mes.attachments})
 
     def test_attachment_name_parsing(self):
         with open(p("test_mail_07.txt"), 'rb') as f:

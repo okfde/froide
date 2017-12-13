@@ -57,9 +57,10 @@ class UnsupportedMailFormat(Exception):
 class EmailParser(object):
 
     def parse_dispositions(self, dispo):
+        # FIXME: this requires proper parsing, fails on values with semicolons
         if not isinstance(dispo, str):
             dispo = self.parse_header_field(dispo)
-        dispos = dispo.strip().split(";", 1)
+        dispos = dispo.strip().split(";")
         dispo_name = dispos[0].lower()
         dispo_dict = {}
         for param in dispos[1:]:
@@ -75,42 +76,42 @@ class EmailParser(object):
 
     def parse_attachment(self, message_part):
         content_disposition = message_part.get("Content-Disposition", None)
-        if content_disposition:
-            dispo_type, dispo_dict = self.parse_dispositions(content_disposition)
-            if dispo_type == "attachment" or (dispo_type == 'inline' and
-                    'filename' in dispo_dict):
-                content_type = message_part.get("Content-Type", None)
-                file_data = message_part.get_payload(decode=True)
-                if file_data is None:
-                    payloads = message_part.get_payload()
-                    file_data = '\n\n'.join([p.as_string() for p in payloads]).encode('utf-8')
-                attachment = BytesIO(file_data)
-                attachment.content_type = message_part.get_content_type()
-                attachment.size = len(file_data)
-                attachment.name = None
-                attachment.create_date = None
-                attachment.mod_date = None
-                attachment.read_date = None
-                if "filename" in dispo_dict:
-                    attachment.name = dispo_dict['filename']
-                if content_type:
-                    _, content_dict = self.parse_dispositions(content_type)
-                    if 'name' in content_dict:
-                        attachment.name = content_dict['name']
-                if attachment.name is None and content_type == 'message/rfc822':
-                    p = Parser()
-                    msgobj = p.parse(BytesIO(attachment.getvalue()))
-                    subject = self.parse_header_field(msgobj['Subject'])
-                    if subject:
-                        attachment.name = '%s.eml' % subject[:45]
-                if "create-date" in dispo_dict:
-                    attachment.create_date = dispo_dict['create-date']  # TODO: datetime
-                if "modification-date" in dispo_dict:
-                    attachment.mod_date = dispo_dict['modification-date']  # TODO: datetime
-                if "read-date" in dispo_dict:
-                    attachment.read_date = dispo_dict['read-date']  # TODO: datetime
-                return attachment
-        return None
+        if not content_disposition:
+            return None
+        dispo_type, dispo_dict = self.parse_dispositions(content_disposition)
+        if dispo_type == "attachment" or (dispo_type == 'inline' and
+                'filename' in dispo_dict):
+            content_type = message_part.get("Content-Type", None)
+            file_data = message_part.get_payload(decode=True)
+            if file_data is None:
+                payloads = message_part.get_payload()
+                file_data = '\n\n'.join([p.as_string() for p in payloads]).encode('utf-8')
+            attachment = BytesIO(file_data)
+            attachment.content_type = message_part.get_content_type()
+            attachment.size = len(file_data)
+            attachment.name = None
+            attachment.create_date = None
+            attachment.mod_date = None
+            attachment.read_date = None
+            if "filename" in dispo_dict:
+                attachment.name = dispo_dict['filename']
+            if content_type:
+                _, content_dict = self.parse_dispositions(content_type)
+                if 'name' in content_dict:
+                    attachment.name = content_dict['name']
+            if attachment.name is None and content_type == 'message/rfc822':
+                p = Parser()
+                msgobj = p.parse(BytesIO(attachment.getvalue()))
+                subject = self.parse_header_field(msgobj['Subject'])
+                if subject:
+                    attachment.name = '%s.eml' % subject[:45]
+            if "create-date" in dispo_dict:
+                attachment.create_date = dispo_dict['create-date']  # TODO: datetime
+            if "modification-date" in dispo_dict:
+                attachment.mod_date = dispo_dict['modification-date']  # TODO: datetime
+            if "read-date" in dispo_dict:
+                attachment.read_date = dispo_dict['read-date']  # TODO: datetime
+            return attachment
 
     def parse_header_field(self, field):
         if field is None:
@@ -177,7 +178,10 @@ class EmailParser(object):
             date = date - timedelta(seconds=offset)
         return pytz.utc.localize(date)
 
-    def parse_body(self, parts, attachments, body, html):
+    def parse_body(self, parts):
+        body = []
+        html = []
+        attachments = []
         for part in parts:
             attachment = self.parse_attachment(part)
             if attachment:
@@ -193,6 +197,7 @@ class EmailParser(object):
                     part.get_payload(decode=True),
                     charset,
                     'replace'))
+        return body, html, attachments
 
     def get(self, field):
         if isinstance(field, bytes):
@@ -203,10 +208,7 @@ class EmailParser(object):
         p = Parser()
         msgobj = p.parse(bytesfile)
         subject = self.parse_header_field(msgobj['Subject'])
-        attachments = []
-        body = []
-        html = []
-        self.parse_body(msgobj.walk(), attachments, body, html)
+        body, html, attachments = self.parse_body(msgobj.walk())
         body = '\n'.join(body)
         html = '\n'.join(html)
 
