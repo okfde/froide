@@ -45,6 +45,12 @@ def send_foi_mail(subject, message, from_email, recipient_list,
         headers['Reply-To'] = make_address(mailaddr, name)
     else:
         headers['Reply-To'] = from_email
+
+    if kwargs.get('read_receipt'):
+        headers['Disposition-Notification-To'] = from_email
+    if kwargs.get('delivery_receipt'):
+        headers['Return-Receipt-To'] = from_email
+
     email = EmailMessage(subject, message, from_email, recipient_list,
                         connection=connection, headers=headers)
     if attachments is not None:

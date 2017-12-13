@@ -275,15 +275,21 @@ class FoiMessage(models.Model):
         return PostalAttachmentForm()
 
     def send(self, notify=True, attachments=None):
+        extra_kwargs = {}
         if settings.FROIDE_CONFIG['dryrun']:
             recp = self.recipient_email.replace("@", "+")
             self.recipient_email = "%s@%s" % (recp, settings.FROIDE_CONFIG['dryrun_domain'])
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
+        if settings.FROIDE_CONFIG['read_receipt'] and self.sender_user.is_superuser:
+            extra_kwargs['read_receipt'] = True
+        if settings.FROIDE_CONFIG['delivery_receipt'] and self.sender_user.is_superuser:
+            extra_kwargs['delivery_receipt'] = True
+
         if not self.request.is_blocked:
             send_foi_mail(self.subject, self.plaintext, from_addr,
-                    [self.recipient_email.strip()], attachments=attachments)
+                    [self.recipient_email.strip()], attachments=attachments, **extra_kwargs)
             self.sent = True
             self.save()
         self.request._messages = None
