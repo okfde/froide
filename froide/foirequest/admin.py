@@ -181,6 +181,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         DeliveryStatusInline,
         FoiAttachmentInline,
     ]
+    actions = ['check_delivery_status']
 
     def check_delivery_status(self, request, queryset):
         from ..tasks import check_delivery_status
