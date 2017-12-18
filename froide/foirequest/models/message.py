@@ -76,6 +76,7 @@ class FoiMessage(models.Model):
         choices=FoiRequest.STATUS_FIELD_CHOICES, default=None)
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
+    email_message_id = models.CharField(max_length=512, blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     subject_redacted = models.CharField(
         _("Redacted Subject"), blank=True, max_length=255)

@@ -224,6 +224,7 @@ class EmailParser(object):
         date = self.parse_date(self.get(msgobj.get("Date")))
         return {
             'msgobj': msgobj,
+            'message_id': msgobj.get('Message-Id'),
             'date': date,
             'subject': subject,
             'body': body,
