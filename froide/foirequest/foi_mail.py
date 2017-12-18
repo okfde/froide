@@ -36,8 +36,6 @@ def send_foi_mail(subject, message, from_email, recipient_list,
         fail_silently=fail_silently
     )
     headers = {}
-    if "message_id" in kwargs:
-        headers['Message-ID'] = kwargs.pop("message_id")
     if settings.FOI_EMAIL_FIXED_FROM_ADDRESS:
         name, mailaddr = parseaddr(from_email)
         from_address = settings.FOI_EMAIL_HOST_FROM
@@ -50,9 +48,11 @@ def send_foi_mail(subject, message, from_email, recipient_list,
         headers['Disposition-Notification-To'] = from_email
     if kwargs.get('delivery_receipt'):
         headers['Return-Receipt-To'] = from_email
+    if kwargs.get('froide_message_id'):
+        headers['X-Froide-Message-Id'] = kwargs.get('froide_message_id')
 
     email = EmailMessage(subject, message, from_email, recipient_list,
-                        connection=connection, headers=headers)
+                         connection=connection, headers=headers)
     if attachments is not None:
         for name, data, mime_type in attachments:
             email.attach(name, data, mime_type)

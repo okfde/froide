@@ -104,6 +104,10 @@ class FoiMessage(models.Model):
         return "%s#%s" % (self.request.get_absolute_short_url(),
                 self.get_html_id())
 
+    def get_absolute_domain_short_url(self):
+        return "%s#%s" % (self.request.get_absolute_domain_short_url(),
+                          self.get_html_id())
+
     def get_absolute_domain_url(self):
         return "%s#%s" % (self.request.get_absolute_domain_url(),
                 self.get_html_id())
@@ -286,6 +290,7 @@ class FoiMessage(models.Model):
             extra_kwargs['read_receipt'] = True
         if settings.FROIDE_CONFIG['delivery_receipt'] and self.sender_user.is_superuser:
             extra_kwargs['delivery_receipt'] = True
+        extra_kwargs['froide_message_id'] = self.get_absolute_domain_short_url()
 
         if not self.request.is_blocked:
             send_foi_mail(self.subject, self.plaintext, from_addr,
