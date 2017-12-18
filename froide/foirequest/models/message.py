@@ -286,10 +286,14 @@ class FoiMessage(models.Model):
         # Use send_foi_mail here
         from_addr = make_address(self.request.secret_address,
                 self.request.user.get_full_name())
-        if settings.FROIDE_CONFIG['read_receipt'] and self.sender_user.is_superuser:
+        delivery_notification = (self.sender_user.is_superuser and
+                                  not self.request.public)
+        if settings.FROIDE_CONFIG['read_receipt'] and delivery_notification:
             extra_kwargs['read_receipt'] = True
-        if settings.FROIDE_CONFIG['delivery_receipt'] and self.sender_user.is_superuser:
+        if settings.FROIDE_CONFIG['delivery_receipt'] and delivery_notification:
             extra_kwargs['delivery_receipt'] = True
+        if settings.FROIDE_CONFIG['dsn'] and delivery_notification:
+            extra_kwargs['dsn'] = True
         extra_kwargs['froide_message_id'] = self.get_absolute_domain_short_url()
 
         if not self.request.is_blocked:

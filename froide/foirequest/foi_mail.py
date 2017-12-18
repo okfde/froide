@@ -26,8 +26,15 @@ Please investigate! %(url)s
 
 def send_foi_mail(subject, message, from_email, recipient_list,
                   attachments=None, fail_silently=False, **kwargs):
+    backend = None
+    if kwargs.get('dsn'):
+        if hasattr(settings, 'FOI_EMAIL_BACKEND'):
+            backend = settings.FOI_EMAIL_BACKEND
+
+    if not backend:
+        backend = settings.EMAIL_BACKEND
     connection = get_connection(
-        backend=getattr(settings, 'FOI_EMAIL_BACKEND', settings.EMAIL_BACKEND),
+        backend=backend,
         username=settings.FOI_EMAIL_HOST_USER,
         password=settings.FOI_EMAIL_HOST_PASSWORD,
         host=settings.FOI_EMAIL_HOST,
