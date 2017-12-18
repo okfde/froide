@@ -184,7 +184,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
     actions = ['check_delivery_status']
 
     def check_delivery_status(self, request, queryset):
-        from ..tasks import check_delivery_status
+        from .tasks import check_delivery_status
         for message in queryset:
             check_delivery_status.delay(message.id)
         self.message_user(request, _("Selected messages are being checked for delivery."))
