@@ -11,7 +11,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from froide.publicbody.models import PublicBody
 from froide.account.services import AccountService
 from froide.helper.email_utils import make_address
-from froide.helper.text_utils import (redact_content, remove_closing, replace_custom)
+from froide.helper.text_utils import (redact_content, remove_closing,
+                                      replace_custom)
 
 from ..foi_mail import send_foi_mail
 from .request import FoiRequest
@@ -24,18 +25,23 @@ class FoiMessageManager(models.Manager):
 
 @python_2_unicode_compatible
 class FoiMessage(models.Model):
-    request = models.ForeignKey(FoiRequest,
-            verbose_name=_("Freedom of Information Request"),
-            on_delete=models.CASCADE)
+    request = models.ForeignKey(
+        FoiRequest,
+        verbose_name=_("Freedom of Information Request"),
+        on_delete=models.CASCADE)
     sent = models.BooleanField(_("has message been sent?"), default=True)
-    is_response = models.BooleanField(_("Is this message a response?"),
-            default=True)
-    is_postal = models.BooleanField(_("Postal?"),
-            default=False)
-    is_escalation = models.BooleanField(_("Escalation?"),
-            default=False)
-    content_hidden = models.BooleanField(_("Content hidden?"),
-            default=False)
+    is_response = models.BooleanField(
+        _("Is this message a response?"),
+        default=True)
+    is_postal = models.BooleanField(
+        _("Postal?"),
+        default=False)
+    is_escalation = models.BooleanField(
+        _("Escalation?"),
+        default=False)
+    content_hidden = models.BooleanField(
+        _("Content hidden?"),
+        default=False)
     sender_user = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             blank=True,
@@ -43,29 +49,39 @@ class FoiMessage(models.Model):
             on_delete=models.SET_NULL,
             verbose_name=_("From User")
     )
-    sender_email = models.CharField(_("From Email"),
-            blank=True, max_length=255)
-    sender_name = models.CharField(_("From Name"),
-            blank=True, max_length=255)
-    sender_public_body = models.ForeignKey(PublicBody, blank=True,
-            null=True, on_delete=models.SET_NULL,
-            verbose_name=_("From Public Body"), related_name='send_messages')
+    sender_email = models.CharField(
+        _("From Email"),
+        blank=True, max_length=255)
+    sender_name = models.CharField(
+        _("From Name"),
+        blank=True, max_length=255)
+    sender_public_body = models.ForeignKey(
+        PublicBody, blank=True,
+        null=True, on_delete=models.SET_NULL,
+        verbose_name=_("From Public Body"), related_name='send_messages')
 
-    recipient = models.CharField(_("Recipient"), max_length=255,
-            blank=True, null=True)
-    recipient_email = models.CharField(_("Recipient Email"), max_length=255,
-            blank=True, null=True)
-    recipient_public_body = models.ForeignKey(PublicBody, blank=True,
-            null=True, on_delete=models.SET_NULL,
-            verbose_name=_("Public Body Recipient"), related_name='received_messages')
-    status = models.CharField(_("Status"), max_length=50, null=True, blank=True,
-            choices=FoiRequest.STATUS_FIELD_CHOICES, default=None)
+    recipient = models.CharField(
+        _("Recipient"), max_length=255,
+        blank=True, null=True)
+    recipient_email = models.CharField(
+        _("Recipient Email"), max_length=255,
+        blank=True, null=True)
+    recipient_public_body = models.ForeignKey(
+        PublicBody, blank=True,
+        null=True, on_delete=models.SET_NULL,
+        verbose_name=_("Public Body Recipient"),
+        related_name='received_messages')
+    status = models.CharField(
+        _("Status"), max_length=50, null=True, blank=True,
+        choices=FoiRequest.STATUS_FIELD_CHOICES, default=None)
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
-    subject_redacted = models.CharField(_("Redacted Subject"), blank=True, max_length=255)
+    subject_redacted = models.CharField(
+        _("Redacted Subject"), blank=True, max_length=255)
     plaintext = models.TextField(_("plain text"), blank=True, null=True)
-    plaintext_redacted = models.TextField(_("redacted plain text"), blank=True, null=True)
+    plaintext_redacted = models.TextField(
+        _("redacted plain text"), blank=True, null=True)
     html = models.TextField(_("HTML"), blank=True, null=True)
     original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
@@ -85,9 +101,11 @@ class FoiMessage(models.Model):
         return self.plaintext
 
     def __str__(self):
-        return _("Message in '%(request)s' at %(time)s"
-                ) % {"request": self.request,
-                    "time": self.timestamp}
+        return _(
+            "Message in '%(request)s' at %(time)s") % {
+                "request": self.request,
+                "time": self.timestamp
+            }
 
     @property
     def readable_status(self):
@@ -98,11 +116,11 @@ class FoiMessage(models.Model):
 
     def get_absolute_url(self):
         return "%s#%s" % (self.request.get_absolute_url(),
-                self.get_html_id())
+                          self.get_html_id())
 
     def get_absolute_short_url(self):
         return "%s#%s" % (self.request.get_absolute_short_url(),
-                self.get_html_id())
+                          self.get_html_id())
 
     def get_absolute_domain_short_url(self):
         return "%s#%s" % (self.request.get_absolute_domain_short_url(),
@@ -110,11 +128,11 @@ class FoiMessage(models.Model):
 
     def get_absolute_domain_url(self):
         return "%s#%s" % (self.request.get_absolute_domain_url(),
-                self.get_html_id())
+                          self.get_html_id())
 
     def get_accessible_link(self):
         return "%s#%s" % (self.request.get_accessible_link(),
-                self.get_html_id())
+                          self.get_html_id())
 
     def get_public_body_sender_form(self):
         from froide.foirequest.forms import MessagePublicBodySenderForm
@@ -128,13 +146,13 @@ class FoiMessage(models.Model):
             if self.is_postal:
                 return _('{} (via post)').format(self.recipient or alternative)
             return make_address(self.recipient_email,
-                    self.recipient or alternative)
+                                self.recipient or alternative)
 
         recipient = self.recipient or self.request.user.get_full_name()
         if self.is_postal:
             return _('{} (via post)').format(recipient)
-        return make_address(self.recipient_email or self.request.secret_address,
-                            recipient)
+        email = self.recipient_email or self.request.secret_address
+        return make_address(email, recipient)
 
     def get_recipient(self):
         if self.recipient_public_body:
@@ -160,11 +178,11 @@ class FoiMessage(models.Model):
     def sender(self):
         if self.sender_user:
             return self.sender_user.display_name()
-        if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
-                False):
+        if settings.FROIDE_CONFIG.get(
+                "public_body_officials_email_public", False):
             return make_address(self.sender_email, self.sender_name)
-        if settings.FROIDE_CONFIG.get("public_body_officials_public",
-                False) and self.sender_name:
+        if settings.FROIDE_CONFIG.get(
+                "public_body_officials_public", False) and self.sender_name:
             return self.sender_name
         else:
             if self.sender_public_body:
@@ -175,8 +193,8 @@ class FoiMessage(models.Model):
     def user_real_sender(self):
         if self.sender_user:
             return self.sender_user.display_name()
-        if settings.FROIDE_CONFIG.get("public_body_officials_email_public",
-                False):
+        if settings.FROIDE_CONFIG.get(
+                "public_body_officials_email_public", False):
             return make_address(self.sender_email, self.sender_name)
         if self.sender_name:
             return self.sender_name
@@ -250,13 +268,18 @@ class FoiMessage(models.Model):
         if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
             if self.is_response:
                 if settings.FROIDE_CONFIG.get('closings'):
-                    content = remove_closing(settings.FROIDE_CONFIG['closings'],
-                                             content)
+                    content = remove_closing(
+                        settings.FROIDE_CONFIG['closings'],
+                        content
+                    )
 
             else:
                 if settings.FROIDE_CONFIG.get('greetings'):
-                    content = replace_custom(settings.FROIDE_CONFIG['greetings'],
-                            greeting_replacement, content)
+                    content = replace_custom(
+                        settings.FROIDE_CONFIG['greetings'],
+                        greeting_replacement,
+                        content
+                    )
 
         if self.request.user:
             account_service = AccountService(self.request.user)
@@ -282,27 +305,34 @@ class FoiMessage(models.Model):
         extra_kwargs = {}
         if settings.FROIDE_CONFIG['dryrun']:
             recp = self.recipient_email.replace("@", "+")
-            self.recipient_email = "%s@%s" % (recp, settings.FROIDE_CONFIG['dryrun_domain'])
+            self.recipient_email = "%s@%s" % (
+                recp,
+                settings.FROIDE_CONFIG['dryrun_domain']
+            )
         # Use send_foi_mail here
         from_addr = make_address(
             self.request.secret_address,
             self.request.user.get_full_name()
         )
-        delivery_notification = (self.sender_user.is_superuser and
-                                 not self.request.public)
-        if settings.FROIDE_CONFIG['read_receipt'] and delivery_notification:
+        get_notified = (self.sender_user.is_superuser and
+                        not self.request.public)
+        if settings.FROIDE_CONFIG['read_receipt'] and get_notified:
             extra_kwargs['read_receipt'] = True
-        if settings.FROIDE_CONFIG['delivery_receipt'] and delivery_notification:
+        if settings.FROIDE_CONFIG['delivery_receipt'] and get_notified:
             extra_kwargs['delivery_receipt'] = True
-        if settings.FROIDE_CONFIG['dsn'] and delivery_notification:
+        if settings.FROIDE_CONFIG['dsn'] and get_notified:
             extra_kwargs['dsn'] = True
 
         self.save()
-        extra_kwargs['froide_message_id'] = self.get_absolute_domain_short_url()
+        message_id = self.get_absolute_domain_short_url()
+        extra_kwargs['froide_message_id'] = message_id
 
         if not self.request.is_blocked:
-            send_foi_mail(self.subject, self.plaintext, from_addr,
-                    [self.recipient_email.strip()], attachments=attachments, **extra_kwargs)
+            send_foi_mail(
+                self.subject, self.plaintext, from_addr,
+                [self.recipient_email.strip()], attachments=attachments,
+                **extra_kwargs
+            )
             self.sent = True
             self.save()
         self.request._messages = None

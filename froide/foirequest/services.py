@@ -139,7 +139,8 @@ class CreateRequestService(BaseService):
         if 'tags' in data and data['tags']:
             request.tags.add(*data['tags'])
 
-        message = FoiMessage(request=request,
+        message = FoiMessage(
+            request=request,
             sent=False,
             is_response=False,
             sender_user=user,
