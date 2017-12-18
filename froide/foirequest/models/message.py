@@ -303,23 +303,28 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
-    def check_delivery_status(self):
+    def check_delivery_status(self, count=None):
         if self.is_postal or self.is_response:
             return
 
         from froide.foirequest.delivery import get_delivery_report
+        from ..tasks import check_delivery_status
 
         report = get_delivery_report(
             self.sender_email, self.recipient_email, self.timestamp
         )
         if report is None:
-            return
+            if count is None or count > 5:
+                return
+            count += 1
+            check_delivery_status.apply_async((self.id,), {'count': count},
+                                              countdown=5**count * 60)
 
         if not self.email_message_id and report.message_id:
             self.email_message_id = report.message_id
             self.save()
 
-        DeliveryStatus.objects.update_or_create(
+        ds = DeliveryStatus.objects.update_or_create(
             message=self,
             defaults=dict(
                 log=report.log,
@@ -327,6 +332,16 @@ class FoiMessage(models.Model):
                 last_update=timezone.now(),
             )
         )
+        if count is None or count > 5:
+            return
+
+        count += 1
+        if not ds.is_log_status_final():
+            check_delivery_status.apply_async(
+                (self.id,),
+                {'count': count},
+                countdown=5**count * 60
+            )
 
     def send(self, notify=True, attachments=None):
         extra_kwargs = {}
@@ -363,9 +378,10 @@ class FoiMessage(models.Model):
             self.sent = True
             self.save()
 
-            # Check delivery status in 5 minutes
-            # from ..tasks import check_delivery_status
-            # check_delivery_status.apply_async((self.id,), countdown=5 * 60)
+            # Check delivery status in 2 minutes
+            from ..tasks import check_delivery_status
+            check_delivery_status.apply_async((self.id,), {'count': 0},
+                                              countdown=2 * 60)
 
         self.request._messages = None
         if notify:
@@ -381,6 +397,11 @@ class DeliveryStatus(models.Model):
     STATUS_DEFERRED = 'deferred'
     STATUS_BOUNCED = 'bounced'
     STATUS_EXPIRED = 'expired'
+
+    FINAL_STATUS = (
+        STATUS_SENT, STATUS_RECEIVED, STATUS_READ, STATUS_BOUNCED,
+        STATUS_EXPIRED
+    )
 
     STATUS_CHOICES = (
         (STATUS_UNKNOWN, _('unknown')),
@@ -405,3 +426,6 @@ class DeliveryStatus(models.Model):
 
     def __str__(self):
         return '%s: %s' % (self.message, self.status)
+
+    def is_log_status_final(self):
+        return self.status in self.FINAL_STATUS

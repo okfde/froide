@@ -59,12 +59,12 @@ def count_same_foirequests(instance_id):
 
 
 @celery_app.task
-def check_delivery_status(message_id):
+def check_delivery_status(message_id, count=None):
     try:
         message = FoiMessage.objects.get(id=message_id)
     except FoiMessage.DoesNotExist:
         return
-    message.check_delivery_status()
+    message.check_delivery_status(count=count)
 
 
 @celery_app.task
