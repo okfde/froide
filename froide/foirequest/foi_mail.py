@@ -69,22 +69,26 @@ def _process_mail(mail_string, mail_type=None, manual=False):
 
 
 def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
-                    subject=_('Unknown FoI-Mail Recipient'), body=unknown_foimail_message):
+                    subject=_('Unknown FoI-Mail Recipient'),
+                    body=unknown_foimail_message):
     from .models import DeferredMessage
 
     if mail_string is not None:
         if not b64_encoded:
-            mail_string = base64.b64encode(mail_string.encode('utf-8')).decode("utf-8")
+            mail_string = base64.b64encode(mail_string.encode('utf-8'))
+            mail_string = mail_string.decode("utf-8")
     DeferredMessage.objects.create(
         recipient=secret_mail,
         mail=mail_string,
         spam=spam
     )
     with override(settings.LANGUAGE_CODE):
-        mail_managers(subject,
+        url = reverse('admin:foirequest_deferredmessage_changelist')
+        mail_managers(
+            subject,
             body % {
                 'address': secret_mail,
-                'url': settings.SITE_URL + reverse('admin:foirequest_deferredmessage_changelist')
+                'url': settings.SITE_URL + url
             }
         )
 
@@ -126,18 +130,24 @@ def get_foirequest_from_mail(email):
             return None
 
 
+def strip_subdomains(domain):
+    return '.'.join(domain.split('.')[-2:])
+
+
 def _deliver_mail(email, mail_string=None, manual=False):
     from .models import DeferredMessage
 
-    received_list = email['to'] + email['cc'] \
-            + email['resent_to'] + email['resent_cc']
+    received_list = (email['to'] + email['cc'] +
+                     email['resent_to'] + email['resent_cc'])
     # TODO: BCC?
 
     domains = settings.FOI_EMAIL_DOMAIN
     if isinstance(domains, string_types):
         domains = [domains]
 
-    mail_filter = lambda x: x[1].endswith(tuple(["@%s" % d for d in domains]))
+    def mail_filter(x):
+        return x[1].endswith(tuple(["@%s" % d for d in domains]))
+
     received_list = [r for r in received_list if mail_filter(r)]
 
     # normalize to first FOI_EMAIL_DOMAIN
@@ -162,10 +172,14 @@ def _deliver_mail(email, mail_string=None, manual=False):
 
         foi_request = get_foirequest_from_mail(secret_mail)
         if not foi_request:
-            deferred = DeferredMessage.objects.filter(recipient=secret_mail, request__isnull=False)
+            deferred = DeferredMessage.objects.filter(
+                recipient=secret_mail, request__isnull=False)
             if len(deferred) == 0 or len(deferred) > 1:
                 # Can't do automatic matching!
-                create_deferred(secret_mail, mail_string, b64_encoded=b64_encoded, spam=False)
+                create_deferred(
+                    secret_mail, mail_string, b64_encoded=b64_encoded,
+                    spam=False
+                )
                 continue
             else:
                 deferred = deferred[0]
@@ -179,9 +193,9 @@ def _deliver_mail(email, mail_string=None, manual=False):
 
             messages = foi_request.response_messages()
             reply_domains = set(m.sender_email.split('@')[1] for m in messages
-                             if m.sender_email and '@' in m.sender_email)
+                                if m.sender_email and '@' in m.sender_email)
             reply_domains.add(foi_request.public_body.email.split('@')[1])
-            strip_subdomains = lambda x: '.'.join(x.split('.')[-2:])
+
             # Strip subdomains
             reply_domains = set([strip_subdomains(x) for x in reply_domains])
 
@@ -189,15 +203,21 @@ def _deliver_mail(email, mail_string=None, manual=False):
             if len(messages) > 0 and sender_email and '@' in sender_email:
                 email_domain = strip_subdomains(sender_email.split('@')[1])
                 if email_domain not in reply_domains:
-                    create_deferred(secret_mail, mail_string, b64_encoded=b64_encoded,
-                        spam=True, subject=_('Possible Spam Mail received'), body=spam_message)
+                    create_deferred(
+                        secret_mail, mail_string,
+                        b64_encoded=b64_encoded,
+                        spam=True,
+                        subject=_('Possible Spam Mail received'),
+                        body=spam_message
+                    )
                     continue
 
         foi_request.add_message_from_email(email, mail_string)
 
 
 def _fetch_mail():
-    for rfc_data in get_unread_mails(settings.FOI_EMAIL_HOST_IMAP,
+    for rfc_data in get_unread_mails(
+            settings.FOI_EMAIL_HOST_IMAP,
             settings.FOI_EMAIL_PORT_IMAP,
             settings.FOI_EMAIL_ACCOUNT_NAME,
             settings.FOI_EMAIL_ACCOUNT_PASSWORD,
@@ -238,7 +258,8 @@ def package_foirequest(foirequest):
             else:
                 filename = '%s_%s.txt' % (date_prefix, ugettext('requester'))
 
-            zfile.writestr(filename, message.get_formated(att_queryset).encode('utf-8'))
+            payload = message.get_formated(att_queryset).encode('utf-8')
+            zfile.writestr(filename, payload)
 
             for attachment in att_queryset:
                 if not attachment.file:
