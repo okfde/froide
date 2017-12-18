@@ -763,7 +763,6 @@ class FoiRequest(models.Model):
             send_address=send_address)
         message.plaintext_redacted = message.redact_plaintext()
         message.send()
-        message.save()
         return message
 
     def add_escalation_message(self, subject, message, send_address=False):
@@ -790,8 +789,8 @@ class FoiRequest(models.Model):
         zip_bytes = package_foirequest(self)
         attachments = [(filename, zip_bytes, 'application/zip')]
         message.send(attachments=attachments)
-        message.save()
         self.escalated.send(sender=self)
+        return message
 
     @property
     def readable_status(self):
@@ -841,7 +840,6 @@ class FoiRequest(models.Model):
         if message.sent:
             return None
         message.send()
-        message.save()
         return self
 
     @classmethod
@@ -871,15 +869,19 @@ class FoiRequest(models.Model):
         from .suggestion import PublicBodySuggestion
 
         try:
-            PublicBodySuggestion.objects.get(public_body=public_body,
-                    request=self)
+            PublicBodySuggestion.objects.get(
+                public_body=public_body,
+                request=self
+            )
         except PublicBodySuggestion.DoesNotExist:
             suggestion = self.publicbodysuggestion_set.create(
                     public_body=public_body,
                     reason=reason,
                     user=user)
-            self.public_body_suggested.send(sender=self,
-                    suggestion=suggestion)
+            self.public_body_suggested.send(
+                sender=self,
+                suggestion=suggestion
+            )
             return suggestion
         else:
             return False
@@ -902,6 +904,7 @@ class FoiRequest(models.Model):
             assert len(messages) == 1
             message = messages[0]
             message.recipient_public_body = publicbody
+            message.sender_user = self.user
             message.recipient = publicbody.name
             message.recipient_email = publicbody.email
             message.plaintext = construct_message_body(
@@ -914,7 +917,6 @@ class FoiRequest(models.Model):
 
             assert not message.sent
             message.send()
-            message.save()
 
     def make_public(self):
         self.public = True
