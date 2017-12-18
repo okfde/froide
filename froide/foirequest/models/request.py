@@ -689,7 +689,9 @@ class FoiRequest(models.Model):
         message = FoiMessage(request=self)
         message.subject = email['subject'] or ''
         message.subject = message.subject[:250]
-        message.email_message_id = email.get('message_id', '')[:512]
+        message_id = email.get('message_id', '')
+        if message_id:
+            message.email_message_id = message_id[:512]
         message.is_response = True
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
