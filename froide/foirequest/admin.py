@@ -20,7 +20,7 @@ from froide.helper.document import can_convert_to_pdf
 
 from .models import (FoiRequest, FoiMessage, FoiProject,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
-        DeferredMessage, TaggedFoiRequest, RequestDraft)
+        DeferredMessage, TaggedFoiRequest, RequestDraft, DeliveryStatus)
 from .tasks import count_same_foirequests, convert_attachment_task
 
 
@@ -159,6 +159,15 @@ class FoiAttachmentInline(admin.TabularInline):
     raw_id_fields = ('redacted', 'converted')
 
 
+class DeliveryStatusInline(admin.TabularInline):
+    model = DeliveryStatus
+    extra = 0
+    max_num = 1
+    min_num = 0
+    raw_id_fields = ('message',)
+    readonly_fields = ('log', 'status', 'last_update')
+
+
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ('subject', 'timestamp', 'sender_email', 'recipient_email',)
@@ -169,8 +178,16 @@ class FoiMessageAdmin(admin.ModelAdmin):
     exclude = ('original',)
     raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
     inlines = [
+        DeliveryStatusInline,
         FoiAttachmentInline,
     ]
+
+    def check_delivery_status(self, request, queryset):
+        from ..tasks import check_delivery_status
+        for message in queryset:
+            check_delivery_status.delay(message.id)
+        self.message_user(request, _("Selected messages are being checked for delivery."))
+    check_delivery_status.short_description = _("Check delivery status")
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):

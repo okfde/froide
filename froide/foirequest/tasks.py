@@ -9,7 +9,7 @@ from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.helper.document import convert_to_pdf
 
-from .models import FoiRequest, FoiAttachment, FoiProject
+from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
 
 
@@ -56,6 +56,15 @@ def count_same_foirequests(instance_id):
         FoiRequest.objects.filter(id=instance_id).update(same_as_count=count)
     except FoiRequest.DoesNotExist:
         pass
+
+
+@celery_app.task
+def check_delivery_status(message_id):
+    try:
+        message = FoiMessage.objects.get(id=message_id)
+    except FoiMessage.DoesNotExist:
+        return
+    message.check_delivery_status()
 
 
 @celery_app.task

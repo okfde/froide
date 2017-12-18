@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
+from django.utils import timezone
 from django.utils.html import escape
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -302,6 +303,29 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
+    def check_delivery_status(self):
+        if self.is_postal or self.is_response:
+            return
+
+        from froide.foirequest.delivery import get_delivery_report
+
+        report = get_delivery_report(
+            self.sender_email, self.recipient_email, self.timestamp
+        )
+        if report is None:
+            return
+
+        if not self.email_message_id and report.message_id:
+            self.email_message_id = report.message_id
+            self.save()
+
+        DeliveryStatus.objects.update_or_create(
+            log=report.log,
+            status=report.status,
+            last_update=timezone.now(),
+            default={'message': self}
+        )
+
     def send(self, notify=True, attachments=None):
         extra_kwargs = {}
         if settings.FROIDE_CONFIG['dryrun']:
@@ -336,6 +360,46 @@ class FoiMessage(models.Model):
             )
             self.sent = True
             self.save()
+
+            # Check delivery status in 5 minutes
+            # from ..tasks import check_delivery_status
+            # check_delivery_status.apply_async((self.id,), countdown=5 * 60)
+
         self.request._messages = None
         if notify:
             FoiRequest.message_sent.send(sender=self.request, message=self)
+
+
+@python_2_unicode_compatible
+class DeliveryStatus(models.Model):
+    STATUS_UNKNOWN = 'unknown'
+    STATUS_SENT = 'sent'
+    STATUS_RECEIVED = 'received'
+    STATUS_READ = 'read'
+    STATUS_DEFERRED = 'deferred'
+    STATUS_BOUNCED = 'bounced'
+    STATUS_EXPIRED = 'expired'
+
+    STATUS_CHOICES = (
+        (STATUS_UNKNOWN, _('unknown')),
+        (STATUS_SENT, _('sent')),
+        (STATUS_RECEIVED, _('received')),
+        (STATUS_READ, _('read')),
+        (STATUS_DEFERRED, _('deferred')),
+        (STATUS_BOUNCED, _('bounced')),
+        (STATUS_EXPIRED, _('expired')),
+    )
+
+    message = models.OneToOneField(FoiMessage, on_delete=models.CASCADE)
+    status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=32)
+    log = models.TextField(blank=True)
+    last_update = models.DateTimeField()
+
+    class Meta:
+        get_latest_by = 'last_update'
+        ordering = ('last_update',)
+        verbose_name = _('delivery status')
+        verbose_name_plural = _('delivery statii')
+
+    def __str__(self):
+        return '%s: %s' % (self.message, self.status)
