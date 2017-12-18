@@ -36,7 +36,7 @@ class PostfixDeliveryReporter(object):
     TIME_PARSE_STR = '%b %d %H:%M:%S'
 
     LOG_FILES = [
-        '/var/log/mail.log'
+        '/var/log/mail.log',
         '/var/log/mail.log.1'
     ]
 
@@ -111,7 +111,7 @@ class PostfixDeliveryReporter(object):
         if match:
             message_id = match.group('message_id')
 
-        return DeliveryReport(lines, time_diff, status, message_id)
+        return DeliveryReport(text, time_diff, status, message_id)
 
     def get_timestamp(self, text, timestamp):
         match = self.TIMESTAMP_RE.search(text)

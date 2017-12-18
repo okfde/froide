@@ -320,10 +320,12 @@ class FoiMessage(models.Model):
             self.save()
 
         DeliveryStatus.objects.update_or_create(
-            log=report.log,
-            status=report.status,
-            last_update=timezone.now(),
-            default={'message': self}
+            message=self,
+            defaults=dict(
+                log=report.log,
+                status=report.status,
+                last_update=timezone.now(),
+            )
         )
 
     def send(self, notify=True, attachments=None):
