@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 
+from django_filters import rest_framework as filters
+
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
@@ -123,10 +125,26 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class PublicBodyFilter(filters.FilterSet):
+    tags = filters.CharFilter(method='tag_filter')
+
+    class Meta:
+        model = PublicBody
+        fields = (
+            'jurisdiction', 'tags', 'slug'
+        )
+
+    def tag_filter(self, queryset, name, value):
+        return queryset.filter(**{
+            'tags__name': value,
+        })
+
+
 class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PublicBodySerializer
     queryset = PublicBody.objects.all()
-    filter_fields = ('tags__name', 'jurisdiction', 'slug',)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = PublicBodyFilter
 
     @list_route(methods=['get'])
     def search(self, request):
