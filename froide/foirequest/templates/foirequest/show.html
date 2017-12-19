@@ -459,13 +459,7 @@
               <dd>
                 {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
             {% endif %}
-              {# Translators: URL part #}
-              {% trans "deadline" as trans_deadline %}
-              <small>
-                <a class="d-print-none" href="{% url "help-index" %}#{{ trans_deadline }}">
-                  {% blocktrans %}How is this calculated?{% endblocktrans %}
-                </a>
-              </small>
+              {% block foirequest_explain_deadline %}{% endblock %}
             </dd>
           {% endif %}
           {% if object.refusal_reason %}
