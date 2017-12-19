@@ -322,11 +322,11 @@
           <div class="row">
             <div class="col-lg-offset-4 col-lg-8">
               <small class="form-text text-muted">
+                {% url "account-settings" as settings_url %}
                 {% if user.address %}
-                  {% blocktrans %}Your address:{% endblocktrans %}<br/>
+                  {% blocktrans with url=settings_url %}Your address (<a href="{{ url }}#change-address">You can change your address here</a>):{% endblocktrans %}<br/>
                   {{ user.address|linebreaksbr }}
                 {% else %}
-                  {% url "account-settings" as settings_url %}
                   {% blocktrans with url=settings_url %}You do not have a postal address set. <a href="{{ url }}#change-address">You can enter enter an address here.</a>{% endblocktrans %}
                 {% endif %}
               </small>
