@@ -205,6 +205,8 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             'costs',
             'public',
             'law',
+            'description',
+            'summary',
             'same_as_count',
             'same_as',
             'due_date',
