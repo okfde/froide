@@ -382,8 +382,12 @@ class FoiMessage(models.Model):
                 [self.recipient_email.strip()], attachments=attachments,
                 **extra_kwargs
             )
+            self.email_message_id = ''
             self.sent = True
             self.save()
+            ds = self.get_delivery_status()
+            if ds is not None:
+                ds.delete()
 
             # Check delivery status in 2 minutes
             from ..tasks import check_delivery_status

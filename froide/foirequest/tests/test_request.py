@@ -1300,6 +1300,9 @@ class RequestTest(TestCase):
         post = {'message': str(message.pk)}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
+        message = FoiMessage.objects.get(id=message.pk)
+        self.assertTrue(message.sent)
+        self.assertEqual(message.email_message_id, '')
 
     def test_approve_message(self):
         foirequest = FoiRequest.objects.all()[0]
