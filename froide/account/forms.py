@@ -189,14 +189,26 @@ class UserChangeForm(forms.Form):
                 'class': 'form-control',
                 'rows': '3'
             }))
-
-    field_order = ['email', 'newsletter', 'address']
+    if HAVE_ORGANIZATION:
+        organization = forms.CharField(
+            required=False,
+            label=_("Organization"),
+            help_text=_('Optional. Affiliation will be shown next to your name'),
+            widget=forms.TextInput(attrs={
+                'placeholder': _('Organization'),
+                'class': 'form-control'})
+        )
+        field_order = ['email', 'newsletter', 'address', 'organization']
+    else:
+        field_order = ['email', 'newsletter', 'address']
 
     def __init__(self, user, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
         self.user = user
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email
+        if HAVE_ORGANIZATION:
+            self.fields['organization'].initial = self.user.organization
         if has_newsletter():
             self.fields['newsletter'] = forms.BooleanField(
                 required=False,
@@ -218,6 +230,8 @@ class UserChangeForm(forms.Form):
 
     def save(self):
         self.user.address = self.cleaned_data['address']
+        if HAVE_ORGANIZATION:
+            self.user.organization = self.cleaned_data['organization']
         if has_newsletter():
             self.user.newsletter = self.cleaned_data['newsletter']
         self.user.save()
