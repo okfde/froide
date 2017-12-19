@@ -324,7 +324,7 @@ class FoiMessage(models.Model):
             self.email_message_id = report.message_id
             self.save()
 
-        ds = DeliveryStatus.objects.update_or_create(
+        ds, created = DeliveryStatus.objects.update_or_create(
             message=self,
             defaults=dict(
                 log=report.log,
