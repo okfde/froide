@@ -103,7 +103,7 @@
 
 {% if object.user == user %}
   <div class="row">
-    <div class="col-3">
+    <div class="col-md-3">
       <ul class="request-nav nav">
         <li class="nav-item">
           <a href="#info" data-toggle="pill" class="nav-link" role="tab" aria-controls="info" aria-expanded="false">
@@ -175,7 +175,7 @@
       {% block request_action_menu_footer %}{% endblock %}
       </ul>
     </div>
-    <div class="col-9 tab-content-container">
+    <div class="col-md-9 tab-content-container">
       <div class="tab-content">
 
     {# Set status #}
@@ -320,7 +320,7 @@
             {% endwith %}
           {% endif %}
           <div class="row">
-            <div class="col-lg-offset-4 col-lg-8">
+            <div class="ml-auto col-lg-9">
               <small class="form-text text-muted">
                 {% url "account-settings" as settings_url %}
                 {% if user.address %}
