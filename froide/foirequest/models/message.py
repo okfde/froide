@@ -303,6 +303,12 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
+    def get_delivery_status(self):
+        try:
+            return self.deliverystatus
+        except DeliveryStatus.DoesNotExist:
+            return None
+
     def check_delivery_status(self, count=None):
         if self.is_postal or self.is_response:
             return
@@ -319,6 +325,7 @@ class FoiMessage(models.Model):
             count += 1
             check_delivery_status.apply_async((self.id,), {'count': count},
                                               countdown=5**count * 60)
+            return
 
         if not self.email_message_id and report.message_id:
             self.email_message_id = report.message_id

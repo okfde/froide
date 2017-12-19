@@ -3,12 +3,14 @@ from __future__ import unicode_literals
 from io import StringIO
 
 import pytz
+from mock import patch, Mock
 
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
 from django.conf import settings
 
-from ..delivery import PostfixDeliveryReporter
+from ..delivery import PostfixDeliveryReporter, DeliveryReport
+from . import factories
 
 log_string = """
 Dec 10 14:30:19 fragdenstaat postfix/smtpd[31492]: A3CD32E0C2C: client=localhost[127.0.0.1], sasl_method=PLAIN, sasl_username=foimail@fragdenstaat.de
@@ -27,6 +29,9 @@ Dec 11 14:30:25 fragdenstaat postfix/qmgr[31484]: 93CD32E0C2D: removed
 
 
 class PostfixDeliveryReportTest(TestCase):
+    def setUp(self):
+        factories.make_world()
+
     def test_parsing(self):
         sender = 's.peter.xyz123@fragdenstaat.de'
         recipient = 'test.testing@staedteregion-aachen.de'
@@ -40,3 +45,33 @@ class PostfixDeliveryReportTest(TestCase):
         result = pdl.search_log(log_file, sender, recipient, timestamp)
         self.assertEqual(result.status, 'sent')
         self.assertEqual(result.message_id, '20171211133019.12503.3873@fragdenstaat.de')
+
+    @patch('froide.foirequest.delivery.get_delivery_report',
+           lambda a, b, c: DeliveryReport('loglines', None, 'sent', 'message-id'))
+    def test_delivery_report_sent(self):
+        mes = factories.FoiMessageFactory.create(is_response=False)
+        mes.check_delivery_status()
+        self.assertIsNotNone(mes.deliverystatus)
+        ds = mes.get_delivery_status()
+        self.assertEqual(ds.status, 'sent')
+        self.assertEqual(mes.email_message_id, 'message-id')
+
+    def test_delivery_report_unavailable(self):
+        mock = Mock(return_value=None)
+        mes = factories.FoiMessageFactory.create(is_response=False)
+        with patch('froide.foirequest.delivery.get_delivery_report', mock):
+            mes.check_delivery_status(count=0)
+
+        self.assertEqual(mock.call_count, 7)
+        self.assertIsNone(mes.get_delivery_status())
+
+    def test_delivery_report_deferred(self):
+        mock = Mock(return_value=DeliveryReport('loglines', None, 'deferred', 'message-id-2'))
+        mes = factories.FoiMessageFactory.create(is_response=False)
+        with patch('froide.foirequest.delivery.get_delivery_report', mock):
+            mes.check_delivery_status(count=0)
+
+        self.assertEqual(mock.call_count, 7)
+        ds = mes.get_delivery_status()
+        self.assertEqual(ds.status, 'deferred')
+        self.assertEqual(mes.email_message_id, 'message-id-2')
