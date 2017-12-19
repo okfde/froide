@@ -16,12 +16,14 @@ class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:jurisdiction-detail',
         lookup_field='pk'
     )
+    site_url = serializers.CharField(source='get_absolute_domain_url')
 
     class Meta:
         model = Jurisdiction
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'rank', 'description', 'slug'
+            'resource_uri', 'id', 'name', 'rank', 'description', 'slug',
+            'site_url'
         )
 
 
@@ -51,6 +53,7 @@ class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         many=True
     )
+    site_url = serializers.CharField(source='get_absolute_domain_url')
 
     class Meta:
         model = FoiLaw
@@ -59,7 +62,7 @@ class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
             'resource_uri', 'id', 'name', 'slug', 'description', 'long_description',
             'created', 'updated', 'request_note', 'request_note_html', 'meta',
             'combined', 'letter_start', 'letter_end', 'jurisdiction',
-            'priority', 'url', 'max_response_time',
+            'priority', 'url', 'max_response_time', 'site_url',
             'max_response_time_unit', 'refusal_reasons', 'mediator'
         )
 
