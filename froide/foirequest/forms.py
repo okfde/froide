@@ -70,7 +70,7 @@ class RequestForm(JSONMixin, forms.Form):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(RequestForm, self).__init__(*args, **kwargs)
-        if self.user.is_authenticated:
+        if self.user and self.user.is_authenticated:
             user_drafts = RequestDraft.objects.filter(user=self.user)
             self.fields['draft'].queryset = user_drafts
         else:
