@@ -14,7 +14,7 @@
 {% endblock messages %}
 
 {% block body %}
-  <form method="post" action="" id="make-request" novalidate>
+  <form method="post" action="{% url 'foirequest-make_request' %}" id="make-request" novalidate>
 
     {% csrf_token %}
     {{ request_form.reference }}

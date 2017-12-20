@@ -374,6 +374,7 @@ class AccountTest(TestCase):
         post = {"subject": "Request - Private name",
                 "body": "This is a test body",
                 "public": "on",
+                "publicbody": pb.pk,
                 "law": pb.default_law.pk}
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={"publicbody_slug": pb.slug}), post)

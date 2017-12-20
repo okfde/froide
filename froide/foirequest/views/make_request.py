@@ -89,8 +89,16 @@ class MakeRequestView(FormView):
         return kwargs
 
     def get_publicbodies(self):
+        if self.request.method == 'POST':
+            # on POST public bodies need to come from POST vars
+            self._publicbodies = []
         if hasattr(self, '_publicbodies'):
             return self._publicbodies
+        pbs = self.get_publicbodies_from_context()
+        self._publicbodies = pbs
+        return pbs
+
+    def get_publicbodies_from_context(self):
         publicbody_ids = self.kwargs.get('publicbody_ids')
         publicbody_slug = self.kwargs.get('publicbody_slug')
         publicbodies = []
@@ -106,7 +114,6 @@ class MakeRequestView(FormView):
             if not publicbody.email:
                 raise Http404
             publicbodies = [publicbody]
-        self._publicbodies = publicbodies
         return publicbodies
 
     def can_create_batch(self):

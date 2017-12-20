@@ -27,9 +27,9 @@ class RequestDraftTest(TestCase):
             "user_email": "dummy@example.com",
             "terms": "on",
             'save_draft': 'true',
+            "publicbody": str(self.pb.pk)
         }
-        response = self.client.post(reverse('foirequest-make_request',
-                kwargs={'publicbody_slug': self.pb.slug}), post)
+        response = self.client.post(reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
 
         user = User.objects.filter(email=post['user_email']).get()

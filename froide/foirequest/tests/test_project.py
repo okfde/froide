@@ -36,15 +36,17 @@ class RequestProjectTest(TestCase):
         self.assertTrue(ok)
 
         pb_ids = '%s+%s' % (self.pb1.pk, self.pb2.pk)
-
+        response = self.client.get(reverse('foirequest-make_request',
+                kwargs={'publicbody_ids': pb_ids}))
+        self.assertEqual(response.status_code, 200)
         data = {
             "subject": "Test-Subject",
             "body": "This is another test body with Ümläut€n",
             'public': 'on',
+            'publicbody': pb_ids.split('+')
         }
         mail.outbox = []
-        response = self.client.post(reverse('foirequest-make_request',
-                kwargs={'publicbody_ids': pb_ids}), data)
+        response = self.client.post(reverse('foirequest-make_request'), data)
         self.assertEqual(response.status_code, 302)
         project = FoiProject.objects.get(title=data['subject'])
         print(response['Location'])
