@@ -42,6 +42,9 @@ class RequestDraft(models.Model):
         )
 
     def get_absolute_url(self):
+        return reverse('foirequest-make_draftrequest', kwargs={'pk': self.id})
+
+    def get_absolute_public_url(self):
         pb_ids = '+'.join(str(pb.pk) for pb in self.publicbodies.all())
         url_kwargs = {}
         if pb_ids:

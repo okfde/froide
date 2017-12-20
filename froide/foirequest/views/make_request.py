@@ -6,13 +6,13 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 from django.contrib import messages
-from django.views.generic import FormView
+from django.views.generic import FormView, DetailView
 
 from froide.account.forms import NewUserForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
 from froide.publicbody.models import PublicBody
 
-from ..models import FoiRequest
+from ..models import FoiRequest, RequestDraft
 from ..forms import RequestForm
 from ..utils import check_throttle
 from ..services import CreateRequestService, SaveDraftService
@@ -279,3 +279,23 @@ class MakeRequestView(FormView):
             'public_body_search': self.request.GET.get('topic', '')
         })
         return kwargs
+
+
+class DraftRequestView(MakeRequestView, DetailView):
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return RequestDraft.objects.filter(user=self.request.user)
+        return RequestDraft.objects.none()
+
+    def get_initial(self):
+        return {
+            'draft': self.object.pk,
+            'subject': self.object.subject,
+            'body': self.object.body,
+            'full_text': self.object.full_text,
+            'public': self.object.public,
+            'reference': self.object.reference,
+        }
+
+    def get_publicbodies_from_context(self):
+        return self.object.publicbodies.all()
