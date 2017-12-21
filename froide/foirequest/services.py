@@ -52,17 +52,17 @@ class CreateRequestService(BaseService):
             data.update(extra)
 
         if len(self.data['publicbodies']) > 1:
-            project = self.create_project()
-            return project
+            foi_object = self.create_project()
         else:
-            foirequest = self.create_request(self.data['publicbodies'][0])
+            foi_object = self.create_request(self.data['publicbodies'][0])
 
-        if user_created:
-            AccountService(user).send_confirmation_mail(
-                request_id=foirequest.pk,
-                password=password
-            )
-        return foirequest
+            if user_created:
+                AccountService(user).send_confirmation_mail(
+                    request_id=foi_object.pk,
+                    password=password
+                )
+        self.post_creation(foi_object)
+        return foi_object
 
     def create_project(self):
         data = self.data
@@ -183,6 +183,18 @@ class CreateRequestService(BaseService):
 
     def pre_save_request(self, request):
         pass
+
+    def post_creation(self, foi_object):
+        data = self.data
+        draft = data['draft']
+        if draft:
+            if isinstance(foi_object, FoiRequest):
+                draft.request = foi_object
+                draft.project = None
+            else:
+                draft.project = foi_object
+                draft.request = None
+            draft.save()
 
     def save_obj_with_slug(self, obj, attribute='title', count=0):
         obj.slug = slugify(getattr(obj, attribute))

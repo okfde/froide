@@ -14,6 +14,8 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from froide.publicbody.models import PublicBody
 
+from .request import FoiRequest, FoiProject
+
 
 @python_2_unicode_compatible
 class RequestDraft(models.Model):
@@ -30,6 +32,11 @@ class RequestDraft(models.Model):
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
 
+    request = models.ForeignKey(FoiRequest, null=True, blank=True,
+                                on_delete=models.SET_NULL)
+    project = models.ForeignKey(FoiProject, null=True, blank=True,
+                                on_delete=models.SET_NULL)
+
     class Meta:
         verbose_name = _('request draft')
         verbose_name_plural = _('request drafts')
@@ -40,6 +47,10 @@ class RequestDraft(models.Model):
             subject=self.subject,
             user=self.user
         )
+
+    @property
+    def request_or_project(self):
+        return self.request or self.project
 
     def get_absolute_url(self):
         return reverse('foirequest-make_draftrequest', kwargs={'pk': self.id})

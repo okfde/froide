@@ -335,7 +335,7 @@ class RequestDraftAdmin(admin.ModelAdmin):
     search_fields = ['subject', 'user__email']
     ordering = ('-save_date',)
     date_hierarchy = 'save_date'
-    raw_id_fields = ('user', 'publicbodies')
+    raw_id_fields = ('user', 'publicbodies', 'request', 'project')
 
 
 admin.site.register(FoiRequest, FoiRequestAdmin)

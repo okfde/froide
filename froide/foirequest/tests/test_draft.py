@@ -61,6 +61,7 @@ class RequestDraftTest(TestCase):
             'public': 'on',
             'reference': 'test:abcdefg',
             'save_draft': 'true',
+            'publicbody': str(self.pb.pk)
         }
         response = self.client.post(reverse('foirequest-make_request',
                 kwargs={'publicbody_slug': self.pb.slug}), post)
@@ -78,6 +79,7 @@ class RequestDraftTest(TestCase):
         self.assertEqual(draft.public, True)
         self.assertEqual(draft.full_text, False)
         self.assertEqual(draft.reference, post['reference'])
+        self.assertEqual(list(draft.publicbodies.all()), [self.pb])
 
         response = self.client.get(drafts_url)
         self.assertContains(response, post['subject'])
@@ -96,6 +98,15 @@ class RequestDraftTest(TestCase):
         self.assertEqual(draft.public, True)
         self.assertEqual(draft.full_text, False)
         self.assertEqual(draft.reference, post['reference'])
+        self.assertEqual(list(draft.publicbodies.all()), [self.pb])
+
+        del post['save_draft']
+        response = self.client.post(reverse('foirequest-make_request'), post)
+        self.assertEqual(response.status_code, 302)
+        draft = RequestDraft.objects.get(id=draft.pk)
+        req = FoiRequest.objects.get(title=post['subject'])
+        self.assertEqual(draft.request, req)
+        self.assertIsNone(draft.project)
 
         self.client.logout()
         self.client.login(email="dummy@example.org", password="froide")
@@ -111,3 +122,12 @@ class RequestDraftTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].endswith(drafts_url))
         self.assertTrue(RequestDraft.objects.all().count() == 0)
+
+    def test_draft_make_request(self):
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
+        self.assertTrue(ok)
+        user = User.objects.get(email='info@fragdenstaat.de')
+        draft = factories.RequestDraftFactory(user=user)
+        draft.publicbodies.add(self.pb)
+        response = self.client.get(draft.get_absolute_url())
+        self.assertEqual(response.status_code, 200)

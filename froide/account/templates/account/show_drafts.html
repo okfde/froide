@@ -47,6 +47,15 @@
         {% blocktrans with subject=object.subject count count=pbcount %}“{{ subject }}” to one public body{% plural %}“{{ subject }}” to {{ count }} public bodies{% endblocktrans %}
       {% endif %}
     {% endwith %}
+    {% if object.request_or_project %}
+      <br/><small>
+        {% blocktrans with title=object.request_or_project.title url=object.request_or_project.get_absolute_url %}
+          last used for <a href="{{ url }}">
+            {{ title }}
+          </a>
+        {% endblocktrans %}
+      </small>
+    {% endif %}
   </td>
   <td>
     <a href="{{ object.get_absolute_url }}" class="btn btn-primary">
