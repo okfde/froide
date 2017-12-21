@@ -438,5 +438,20 @@ class DeliveryStatus(models.Model):
     def __str__(self):
         return '%s: %s' % (self.message, self.status)
 
+    def is_sent(self):
+        return self.status in (
+            self.STATUS_SENT,
+            self.STATUS_RECEIVED,
+            self.STATUS_READ
+        )
+
+    def is_pending(self):
+        return self.status == self.STATUS_DEFERRED
+
+    def is_failed(self):
+        return self.status in (
+            self.STATUS_BOUNCED, self.STATUS_EXPIRED
+        )
+
     def is_log_status_final(self):
         return self.status in self.FINAL_STATUS
