@@ -58,11 +58,11 @@ class PostfixDeliveryReporter(object):
 
     def search_log(self, fp, sender, recipient, timestamp):
         sender_re = re.compile(self.SENDER_RE.format(sender=sender))
-        mail_ids = []
+        mail_ids = set()
         for line in fp:
             match = sender_re.search(line)
             if match:
-                mail_ids.append(match.group('mail_id'))
+                mail_ids.add(match.group('mail_id'))
         fp.seek(0)
         mail_id_res = [re.compile(self.ALL_RE.format(mail_id=mail_id))
                    for mail_id in mail_ids]
