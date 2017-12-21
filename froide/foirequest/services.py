@@ -186,7 +186,7 @@ class CreateRequestService(BaseService):
 
     def post_creation(self, foi_object):
         data = self.data
-        draft = data['draft']
+        draft = data.get('draft')
         if draft:
             if isinstance(foi_object, FoiRequest):
                 draft.request = foi_object
