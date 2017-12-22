@@ -184,7 +184,7 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
         if len(query) > 2:
             sqs = sqs.filter(name_auto=AutoQuery(query))
         else:
-            sqs = sqs.none()
+            sqs = sqs.all()
 
         juris = request.GET.get('jurisdiction')
         if juris:
