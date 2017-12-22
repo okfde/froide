@@ -270,6 +270,8 @@ class MakeRequestView(FormView):
             is_multi = True
         if publicbodies and len(publicbodies) > 1:
             is_multi = True
+        if self.request.GET.get('single') is not None:
+            is_multi = False
 
         kwargs.update({
             'publicbodies': publicbodies,
