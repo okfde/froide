@@ -20,8 +20,6 @@
 
 <script>
 
-import {mapGetters} from 'vuex'
-
 import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
@@ -33,19 +31,8 @@ export default {
   name: 'publicbody-chooser',
   mixins: [PBChooserMixin, I18nMixin],
   props: ['name', 'scope', 'defaultsearch', 'formJson', 'config', 'listView'],
-  created () {
-    if (this.hasForm && this.field.value) {
-      let pbs = this.field.objects
-      this.cachePublicBodies(pbs)
-      this.setPublicBodies({
-        publicBodies: pbs,
-        scope: this.scope
-      })
-    }
-  },
   data () {
     return {
-      publicBodies: {},
       search: this.defaultsearch,
       lastSearch: null,
       emptyResults: false,
@@ -71,10 +58,7 @@ export default {
     },
     publicBody () {
       return this.getPublicBodyByScope(this.scope)
-    },
-    ...mapGetters([
-      'getPublicBodyByScope'
-    ])
+    }
   },
   watch: {
     defaultsearch: function () {

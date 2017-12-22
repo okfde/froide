@@ -133,6 +133,8 @@
     Froide.settings.user_can_hide_web = parseInt('{% if froide.user_can_hide_web %}1{% else %}0{% endif %}', 10)
     Froide.url = Froide.url || {}
     Froide.url.searchRequests = "{% url 'api:request-search' %}"
+    Froide.url.listJurisdiction = "{% url 'api:jurisdiction-list' %}"
+    Froide.url.listPublicbodyTag = "{% url 'api:publicbodytag-list' %}"
     Froide.url.search = "{% url 'foirequest-search' %}"
     Froide.url.loginSimple = "{% url 'account-login' %}?simple&email="
 
@@ -143,12 +145,32 @@
           '{% trans "one public body found" %}',
           '{% blocktrans with count='${count}' %}{{ count }} public bodies found{% endblocktrans %}'
         ],
+        publicBodiesChosen: [
+          '{% trans "one public body chosen" %}',
+          '{% blocktrans with count='${count}' %}{{ count }} public bodies chosen{% endblocktrans %}'
+        ],
+        publicBodiesCount: [
+          '{% trans "one public body" %}',
+          '{% blocktrans with count='${count}' %}{{ count }} public bodies{% endblocktrans %}'
+        ],
         // {# Translators: not url #}
         requests: '{% trans "requests" %}',
         makeRequest: '{% trans "make request" %}',
         writingRequestTo: '{% trans "You are writing a request to" %}',
         /* eslint-disable no-template-curly-in-string */
         toMultiPublicBodies: '{% blocktrans with count="${count}" %}To: {{ count }} public bodies{% endblocktrans %}',
+        selectPublicBodies: '{% trans "Select public bodies" %}',
+        continue: '{% trans "continue" %}',
+        selectAll: '{% trans "select all" %}',
+        name: '{% trans "Name" %}',
+        jurisdictionPlural: [
+          '{% trans "Jurisdiction" %}',
+          '{% trans "Jurisdictions" %}',
+        ],
+        topicPlural: [
+          '{% trans "topic" %}',
+          '{% trans "topics" %}',
+        ],
         /* eslint-disable no-template-curly-in-string */
         toPublicBody: '{% blocktrans with name="${name}" %}To: {{ name }}{% endblocktrans %}',
         change: '{% trans "change" %}',

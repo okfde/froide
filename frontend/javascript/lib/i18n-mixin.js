@@ -12,14 +12,15 @@ var I18nMixin = {
         _ (key, params) {
           let trans = this[key]
           if (Array.isArray(trans)) {
-            if (params.count && params.count > 1) {
+            if (params.count !== undefined && (params.count > 1 ||
+                                               params.count === 0)) {
               return trans[1].replace(VAR, this._replacer(params))
             }
             return trans[0].replace(VAR, this._replacer(params))
           }
           return trans.replace(VAR, this._replacer(params))
         },
-        ...this.config.i18n
+        ...(this.config.i18n)
       }
     }
   }

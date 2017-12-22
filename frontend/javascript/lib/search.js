@@ -39,10 +39,26 @@ class FroideSearch {
     return this.getJsonObjects(url)
   }
 
-  searchPublicBody (term) {
+  searchPublicBody (term, filters) {
     let query = encodeURIComponent(term)
     let url = this.config.url.searchPublicBody + '?q=' + query
+
+    if (filters !== undefined) {
+      for (let key in filters) {
+        if (filters[key] !== null) {
+          url += '&' + key + '=' + encodeURIComponent(filters[key])
+        }
+      }
+    }
     return this.getJson(url)
+  }
+
+  listJurisdiction () {
+    return this.getJsonObjects(this.config.url.listJurisdiction)
+  }
+
+  listPublicbodyTag () {
+    return this.getJsonObjects(this.config.url.listPublicbodyTag + '?is_topic=1')
   }
 
   searchFoiRequests (term) {

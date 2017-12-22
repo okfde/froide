@@ -47,23 +47,32 @@
         <div class="col-lg-12">
 
           <fieldset v-if="stepSelectPublicBody" id="step-publicbody" class="mt-5">
-            <div class="row">
-              <div class="col-lg-7">
-                <slot name="publicbody-legend-title"></slot>
-                <slot name="publicbody-help-text"></slot>
-              </div>
+            <div v-if="multiRequest">
+              <publicbody-multi-chooser
+                name="publicbody"
+                :defaultsearch="publicBodySearch"
+                :scope="pbScope"
+                :config="config"></publicbody-multi-chooser>
             </div>
-            <div class="row">
-              <div class="col-lg-8">
-                <publicbody-chooser name="publicbody"
-                  :defaultsearch="publicBodySearch"
-                  :scope="pbScope"
-                  :config="config"
-                  :list-view="publicBodyListView">
-                </publicbody-chooser>
+            <div v-else>
+              <div class="row">
+                <div class="col-lg-7">
+                  <slot name="publicbody-legend-title"></slot>
+                  <slot name="publicbody-help-text"></slot>
+                </div>
               </div>
-              <div class="col-lg-4 small">
-                <slot name="publicbody-missing"></slot>
+              <div class="row">
+                <div class="col-lg-8">
+                  <publicbody-chooser
+                    name="publicbody"
+                    :defaultsearch="publicBodySearch"
+                    :scope="pbScope"
+                    :config="config"
+                    :list-view="publicBodyListView"></publicbody-chooser>
+                </div>
+                <div class="col-lg-4 small">
+                  <slot name="publicbody-missing"></slot>
+                </div>
               </div>
             </div>
           </fieldset>
@@ -214,6 +223,7 @@
 <script>
 import SimilarRequests from './similar-requests'
 import PublicbodyChooser from './publicbody-chooser'
+import PublicbodyMultiChooser from './publicbody-multichooser'
 import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
 
@@ -441,6 +451,7 @@ export default {
   },
   components: {
     PublicbodyChooser,
+    PublicbodyMultiChooser,
     UserRegistration,
     SimilarRequests,
     ReviewRequest

@@ -86,7 +86,7 @@ export default new Vuex.Store({
           break
         }
       }
-      if (sameLaw) {
+      if (sameLaw && pbs.length > 0) {
         return pbs[0].default_law
       } else {
         return null
@@ -220,10 +220,10 @@ export default new Vuex.Store({
       })
       commit(CACHE_PUBLICBODIES, results.objects)
     },
-    getSearchResults ({ commit, state, dispatch }, {scope, search}) {
+    getSearchResults ({ commit, state, dispatch }, {scope, search, filters}) {
       commit(CLEAR_SEARCHRESULTS, {scope})
       let searcher = new FroideSearch(state.config)
-      return searcher.searchPublicBody(search).then((results) => {
+      return searcher.searchPublicBody(search, filters).then((results) => {
         dispatch('setSearchResults', {results, scope})
       })
     },
