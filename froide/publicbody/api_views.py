@@ -82,6 +82,13 @@ class PublicBodyTagSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class PublicBodyTagViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = PublicBodyTagSerializer
+    queryset = PublicBodyTag.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('is_topic', 'rank',)
+
+
 class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:publicbody-detail',
