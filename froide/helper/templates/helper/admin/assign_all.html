@@ -1,0 +1,34 @@
+{% extends "helper/admin_base_action.html" %}
+
+{% load i18n l10n %}
+
+{% block action_title %}{% trans 'Assign all' %}{% endblock %}
+
+{% block breadcrumbs_action_label %}
+  {% trans 'Assign all' %}
+{% endblock %}
+
+{% block action_content %}
+  <form action="" method="post">
+    {% csrf_token %}
+    <div>
+      <p>
+        {{ headline }}
+      </p>
+
+      {{ form }}
+
+      <ul>
+        {% for obj in queryset %}
+          <li>
+            {{ obj }}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+          </li>
+        {% endfor %}
+      </ul>
+
+      <input type="hidden" name="action" value="{{ actionname }}" />
+      <input type="submit" value="{% trans "Assign" %}" />
+    </div>
+  </form>
+{% endblock %}

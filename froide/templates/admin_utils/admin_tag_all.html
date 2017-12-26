@@ -4,6 +4,10 @@
 
 {% block action_title %}{% trans 'Add tags to multiple items' %}{% endblock %}
 
+{% block extrahead %}{{ block.super}}
+{{ form.media }}
+{% endblock %}
+
 {% block breadcrumbs_action_label %}
   {% trans 'Add tags to multiple items' %}
 {% endblock %}
@@ -12,9 +16,9 @@
 <form action="" method="post">{% csrf_token %}
   <div>
     <p>
-      {% blocktrans %}Set these tags for all selected items:{% endblocktrans %}
+      {{ headline }}
       <br/>
-      {{ form.tags }}
+      {{ form }}
     </p>
 
     <ul>

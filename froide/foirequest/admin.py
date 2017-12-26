@@ -66,7 +66,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
 
-    tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')
+    tag_all_config = ('tags', reverse_lazy('api:request-tags-autocomplete'))
 
     actions = ['mark_checked', 'mark_not_foi', 'tag_all',
                'mark_same_as', 'remove_from_index', 'confirm_request',

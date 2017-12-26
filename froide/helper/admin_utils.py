@@ -8,7 +8,70 @@ from django.contrib import admin
 
 from taggit.models import TaggedItem
 
-from .forms import TagObjectForm
+from .forms import TagObjectForm, get_fk_form_class
+
+
+class AdminAssignActionBase():
+    action_label = _('Choose object to assign')
+
+    def _assign_action_handler(self, fieldname, actionname, request, queryset):
+
+        opts = self.model._meta
+        # Check that the user has change permission for the actual model
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        Form = self._get_assign_action_form_class(fieldname)
+        # User has already chosen the other req
+        if request.POST.get('obj'):
+            form = Form(request.POST)
+            if form.is_valid():
+                assign_obj = form.cleaned_data['obj']
+                for obj in queryset:
+                    self._execute_assign_action(obj, fieldname, assign_obj)
+                self.message_user(request, _("Successfully assigned."))
+                return None
+        else:
+            form = Form()
+
+        context = {
+            'opts': opts,
+            'queryset': queryset,
+            'media': self.media,
+            'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
+            'form': form,
+            'headline': self.action_label,
+            'actionname': actionname,
+            'applabel': opts.app_label
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(request, 'helper/admin/assign_all.html',
+            context)
+
+    def _get_assign_action_form_class(self, fieldname):
+        return get_fk_form_class(self.model, fieldname, self.admin_site)
+
+    def _execute_assign_action(self, obj, fieldname, assign_obj):
+        setattr(obj, fieldname, assign_obj)
+        obj.save()
+
+
+def make_admin_assign_action(fieldname):
+    action_name = 'assign_%s' % fieldname
+
+    def _assign(self, request, queryset):
+        return self._assign_action_handler(fieldname, action_name,
+                                          request, queryset)
+
+    _assign.short_description = _("Add %s to all selected") % fieldname
+
+    class AdminAssignAction(AdminAssignActionBase):
+        actions = [action_name]
+
+    setattr(AdminAssignAction, action_name, _assign)
+
+    return AdminAssignAction
 
 
 class AdminTagAllMixIn(object):
@@ -22,29 +85,32 @@ class AdminTagAllMixIn(object):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
+        field, autocomplete_url = self.tag_all_config
+
         # User has already chosen the other req
         if request.POST.get('tags'):
             form = TagObjectForm(request.POST, tags=[],
-                                 autocomplete_url=self.tags_autocomplete_url)
+                                 autocomplete_url=autocomplete_url)
             if form.is_valid():
                 tags = form.cleaned_data['tags']
                 for obj in queryset:
-                    obj.tags.add(*tags)
+                    getattr(obj, field).add(*tags)
                     obj.save()
-                self.message_user(request, _("Successfully added tags"))
+                self.message_user(request, _("Successfully added %s") % field)
                 # Return None to display the change list page again.
                 return None
             self.message_user(request, _("Form invalid"))
 
         tags = set()
         form = TagObjectForm(tags=tags,
-                             autocomplete_url=self.tags_autocomplete_url)
+                             autocomplete_url=autocomplete_url)
 
         context = {
             'opts': opts,
             'queryset': queryset,
             'media': self.media,
             'form': form,
+            'headline': _('Set these tags for all selected items:'),
             'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
             'applabel': opts.app_label
         }
