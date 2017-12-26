@@ -101,6 +101,11 @@ class ClassificationSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class SearchFilterMixin(object):
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(name__icontains=value)
+
+
 class TreeFilterMixin(object):
     def parent_filter(self, queryset, name, value):
         return queryset.intersection(value.get_children())
@@ -109,7 +114,9 @@ class TreeFilterMixin(object):
         return queryset.intersection(value.get_descendants())
 
 
-class ClassificationFilter(TreeFilterMixin, filters.FilterSet):
+class ClassificationFilter(SearchFilterMixin, TreeFilterMixin,
+                           filters.FilterSet):
+    q = filters.CharFilter(method='search_filter')
     parent = filters.ModelChoiceFilter(method='parent_filter',
         queryset=Classification.objects.all())
     ancestor = filters.ModelChoiceFilter(method='ancestor_filter',
@@ -147,7 +154,8 @@ class CategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
         )
 
 
-class CategoryFilter(TreeFilterMixin, filters.FilterSet):
+class CategoryFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
+    q = filters.CharFilter(method='search_filter')
     parent = filters.ModelChoiceFilter(method='parent_filter',
         queryset=Category.objects.all())
     ancestor = filters.ModelChoiceFilter(method='ancestor_filter',
@@ -213,28 +221,37 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'resource_uri', 'id', 'name', 'slug', 'other_names',
             'description', 'url', 'parent', 'root',
-            'depth', 'classification', 'classification_slug',
+            'depth', 'classification', 'categories',
             'email', 'contact', 'address',
             'request_note', 'number_of_requests',
             'laws', 'site_url',
             'jurisdiction', 'request_note_html',
-            'default_law', 'tags'
+            'default_law',
         )
 
 
 class PublicBodyFilter(filters.FilterSet):
-    tags = filters.CharFilter(method='tag_filter')
+    classification = filters.ModelChoiceFilter(method='classification_filter',
+        queryset=Classification.objects.all())
+    category = filters.ModelMultipleChoiceFilter(method='category_filter',
+        queryset=Category.objects.all())
 
     class Meta:
         model = PublicBody
         fields = (
-            'jurisdiction', 'tags', 'slug'
+            'jurisdiction', 'slug', 'classification_id',
         )
 
-    def tag_filter(self, queryset, name, value):
-        return queryset.filter(**{
-            'tags__name': value,
-        })
+    def classification_filter(self, queryset, name, value):
+        tree_list = Classification.get_tree(parent=value)
+        return queryset.filter(classification__in=tree_list)
+
+    def category_filter(self, queryset, name, value):
+        for v in value:
+            queryset = queryset.filter(
+                categories__in=Category.get_tree(parent=v)
+            )
+        return queryset
 
 
 class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -266,9 +283,5 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
         juris = request.GET.get('jurisdiction')
         if juris:
             sqs = sqs.filter(jurisdiction__exact=juris)
-
-        tags = request.GET.get('tags')
-        if tags:
-            sqs = sqs.filter(tags__exact=tags)
 
         return SearchQuerySetWrapper(sqs, PublicBody)
