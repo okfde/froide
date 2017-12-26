@@ -10,7 +10,8 @@ from haystack.inputs import AutoQuery
 
 from froide.helper.search import SearchQuerySetWrapper
 
-from .models import PublicBody, PublicBodyTag, Jurisdiction, FoiLaw
+from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
+                     Classification)
 
 
 class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
@@ -74,19 +75,106 @@ class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FoiLaw.objects.all()
 
 
-class PublicBodyTagSerializer(serializers.HyperlinkedModelSerializer):
+class TreeMixin(object):
+    def get_parent(self, obj):
+        return obj.get_parent()
+
+    def get_children(self, obj):
+        return obj.get_children()
+
+
+class ClassificationSerializer(serializers.HyperlinkedModelSerializer):
+    parent = serializers.HyperlinkedRelatedField(
+        source='get_parent', read_only=True,
+        view_name='api:classification-detail'
+    )
+    children = serializers.HyperlinkedRelatedField(
+        source='get_children', many=True, read_only=True,
+        view_name='api:classification-detail'
+    )
+
     class Meta:
-        model = PublicBodyTag
+        model = Classification
         fields = (
-            'id', 'name', 'slug', 'rank', 'is_topic'
+            'id', 'name', 'slug', 'depth',
+            'parent', 'children'
         )
 
 
-class PublicBodyTagViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = PublicBodyTagSerializer
-    queryset = PublicBodyTag.objects.all()
+class TreeFilterMixin(object):
+    def parent_filter(self, queryset, name, value):
+        return queryset.intersection(value.get_children())
+
+    def ancestor_filter(self, queryset, name, value):
+        return queryset.intersection(value.get_descendants())
+
+
+class ClassificationFilter(TreeFilterMixin, filters.FilterSet):
+    parent = filters.ModelChoiceFilter(method='parent_filter',
+        queryset=Classification.objects.all())
+    ancestor = filters.ModelChoiceFilter(method='ancestor_filter',
+        queryset=Classification.objects.all())
+
+    class Meta:
+        model = Classification
+        fields = (
+            'name', 'depth',
+        )
+
+
+class ClassificationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ClassificationSerializer
+    queryset = Classification.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('is_topic', 'rank',)
+    filter_class = ClassificationFilter
+
+
+class CategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
+    parent = serializers.HyperlinkedRelatedField(
+        source='get_parent', read_only=True,
+        view_name='api:category-detail'
+    )
+    children = serializers.HyperlinkedRelatedField(
+        source='get_children', many=True, read_only=True,
+        view_name='api:category-detail'
+    )
+
+    class Meta:
+        model = Category
+        fields = (
+            'id', 'name', 'slug', 'is_topic', 'depth',
+            'parent', 'children'
+        )
+
+
+class CategoryFilter(TreeFilterMixin, filters.FilterSet):
+    parent = filters.ModelChoiceFilter(method='parent_filter',
+        queryset=Category.objects.all())
+    ancestor = filters.ModelChoiceFilter(method='ancestor_filter',
+        queryset=Category.objects.all())
+
+    class Meta:
+        model = Category
+        fields = (
+            'name', 'is_topic', 'depth',
+        )
+
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = CategoryFilter
+
+    @list_route(methods=['get'], url_path='autocomplete',
+                url_name='autocomplete')
+    def autocomplete(self, request):
+        query = request.GET.get('query', '')
+        tags = []
+        if query:
+            tags = Category.objects.filter(name__istartswith=query)
+            tags = [t for t in tags.values_list('name', flat=True)]
+        return Response(tags)
 
 
 class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
@@ -114,7 +202,9 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         read_only=True
     )
-    tags = PublicBodyTagSerializer(read_only=True, many=True)
+    categories = CategorySerializer(read_only=True, many=True)
+    classification = ClassificationSerializer(read_only=True)
+
     site_url = serializers.CharField(source='get_absolute_domain_url')
 
     class Meta:
@@ -164,19 +254,6 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-    @list_route(methods=['get'], url_path='tags/autocomplete',
-                url_name='tags-autocomplete')
-    def tags_autocomplete(self, request):
-        query = request.GET.get('query', '')
-        tags = []
-        if query:
-            tags = PublicBodyTag.objects.filter(name__istartswith=query)
-            kind = request.GET.get('kind', '')
-            if kind:
-                tags = tags.filter(kind=kind)
-            tags = [t for t in tags.values_list('name', flat=True)]
-        return Response(tags)
 
     def get_searchqueryset(self, request):
         query = request.GET.get('q', '')

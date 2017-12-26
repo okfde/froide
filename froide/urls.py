@@ -18,8 +18,8 @@ from rest_framework.schemas import get_schema_view
 from froide.account.api_views import ProfileView
 from froide.foirequest.api_views import (FoiRequestViewSet, FoiMessageViewSet,
     FoiAttachmentViewSet)
-from froide.publicbody.api_views import (PublicBodyTagViewSet,
-    PublicBodyViewSet, JurisdictionViewSet, FoiLawViewSet)
+from froide.publicbody.api_views import (ClassificationViewSet,
+    CategoryViewSet, PublicBodyViewSet, JurisdictionViewSet, FoiLawViewSet)
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody)
@@ -28,10 +28,14 @@ from froide.foirequest.views import FoiRequestSitemap
 api_router = DefaultRouter()
 api_router.register(r'request', FoiRequestViewSet, base_name='request')
 api_router.register(r'message', FoiMessageViewSet, base_name='message')
-api_router.register(r'attachment', FoiAttachmentViewSet, base_name='attachment')
+api_router.register(r'attachment', FoiAttachmentViewSet,
+                    base_name='attachment')
 api_router.register(r'publicbody', PublicBodyViewSet, base_name='publicbody')
-api_router.register(r'publicbodytag', PublicBodyTagViewSet, base_name='publicbodytag')
-api_router.register(r'jurisdiction', JurisdictionViewSet, base_name='jurisdiction')
+api_router.register(r'category', CategoryViewSet, base_name='category')
+api_router.register(r'classification', ClassificationViewSet,
+                    base_name='classification')
+api_router.register(r'jurisdiction', JurisdictionViewSet,
+                    base_name='jurisdiction')
 api_router.register(r'law', FoiLawViewSet, base_name='law')
 
 
