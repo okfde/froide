@@ -44,6 +44,7 @@ class Base(Configuration):
         'taggit',
         'overextends',
         'storages',
+        'treebeard',
 
         # local
         'froide.foirequest',

@@ -19,6 +19,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, ItemBase
 from taggit.utils import edit_string_for_tags
+from treebeard.mp_tree import MP_Node, MP_NodeManager
 
 from froide.helper.date_utils import (
     calculate_workingday_range,
@@ -215,6 +216,69 @@ class TaggedPublicBody(ItemBase):
         }).distinct()
 
 
+class CategoryManager(MP_NodeManager):
+    def get_category_list(self):
+        count = models.Count('categorized_publicbodies')
+        return (self.get_queryset().filter(depth=1, is_topic=True)
+            .order_by('name')
+            .annotate(num_publicbodies=count)
+        )
+
+
+class Category(TagBase, MP_Node):
+    is_topic = models.BooleanField(_('as topic'), default=False)
+
+    # node_order_by = ['is_topic', 'name']
+    objects = CategoryManager()
+
+    class Meta:
+        verbose_name = _("category")
+        verbose_name_plural = _("categories")
+        ordering = ('name',)
+
+    def save(self, *args, **kwargs):
+        if self.pk is None and kwargs.get('force_insert'):
+            obj = Category.add_root(name=self.name, slug=self.slug)
+            self.pk = obj.pk
+        else:
+            TagBase.save(self, *args, **kwargs)
+
+
+class CategorizedPublicBody(ItemBase):
+    tag = models.ForeignKey(Category, on_delete=models.CASCADE,
+                            related_name="categorized_publicbodies")
+    content_object = models.ForeignKey('PublicBody', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('Categorized Public Body')
+        verbose_name_plural = _('Categorized Public Bodies')
+
+    @classmethod
+    def tags_for(cls, model, instance=None):
+        if instance is not None:
+            return cls.tag_model().objects.filter(**{
+                '%s__content_object' % cls.tag_relname(): instance
+            })
+        return cls.tag_model().objects.filter(**{
+            '%s__content_object__isnull' % cls.tag_relname(): False
+        }).distinct()
+
+
+@python_2_unicode_compatible
+class Classification(MP_Node):
+    name = models.CharField(_("name"), max_length=255)
+    slug = models.SlugField(_("slug"), max_length=255)
+
+    node_order_by = ['name']
+
+    class Meta:
+        verbose_name = _("classification")
+        verbose_name_plural = _("classifications")
+
+    def __str__(self):
+        return self.name
+
+
 class PublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
         return (super(PublicBodyManager, self).get_queryset()
@@ -238,6 +302,7 @@ class PublicBody(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255)
     description = models.TextField(_("Description"), blank=True)
     url = models.URLField(_("URL"), null=True, blank=True, max_length=500)
+
     parent = models.ForeignKey('PublicBody', null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
             related_name="children")
@@ -245,10 +310,8 @@ class PublicBody(models.Model):
             default=None, on_delete=models.SET_NULL,
             related_name="descendants")
     depth = models.SmallIntegerField(default=0)
-    classification = models.CharField(_("Classification"), max_length=255,
-            blank=True)
-    classification_slug = models.SlugField(_("Classification Slug"), max_length=255,
-            blank=True)
+
+    classification = models.ForeignKey(Classification, null=True, blank=True)
 
     email = models.EmailField(_("Email"), null=True, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
@@ -282,6 +345,11 @@ class PublicBody(models.Model):
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
     tags = TaggableManager(through=TaggedPublicBody, blank=True)
+    categories = TaggableManager(
+        through=CategorizedPublicBody,
+        verbose_name=_("categories"),
+        blank=True
+    )
 
     non_filtered_objects = models.Manager()
     objects = PublicBodyManager()
