@@ -13,8 +13,7 @@ from froide.foirequest.models import FoiRequest
 from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 
-from .models import (PublicBody,
-    PublicBodyTag, FoiLaw, Jurisdiction)
+from .models import PublicBody, Category, FoiLaw, Jurisdiction
 from .csv_import import CSVImporter
 
 
@@ -23,7 +22,7 @@ def index(request, jurisdiction=None, topic=None):
         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
 
     if topic is not None:
-        topic = get_object_or_404(PublicBodyTag, slug=topic)
+        topic = get_object_or_404(Category, slug=topic)
 
     query = request.GET.get('q', '')
     if query:
@@ -32,7 +31,7 @@ def index(request, jurisdiction=None, topic=None):
         publicbodies = PublicBody.objects.get_list()
 
     if topic:
-        publicbodies = publicbodies.filter(tags=topic.name if query else topic)
+        publicbodies = publicbodies.filter(categories=topic.name if query else topic)
     if jurisdiction:
         publicbodies = publicbodies.filter(
                 jurisdiction=jurisdiction.name if query else jurisdiction)
@@ -51,7 +50,7 @@ def index(request, jurisdiction=None, topic=None):
         'jurisdictions': Jurisdiction.objects.get_list(),
         'jurisdiction': jurisdiction,
         'topic': topic,
-        'topics': PublicBodyTag.objects.get_topic_list(),
+        'topics': Category.objects.get_category_list(),
         'query': query,
     })
 

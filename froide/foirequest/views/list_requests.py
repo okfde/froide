@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from haystack.query import SearchQuerySet
 from taggit.models import Tag
 
-from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
+from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiAttachment
@@ -25,7 +25,7 @@ def list_requests(request, status=None, topic=None, tag=None,
     manager = FoiRequest.published
     if not_foi:
         manager = FoiRequest.published_not_foi
-    topic_list = PublicBodyTag.objects.get_topic_list()
+    topic_list = Category.objects.get_category_list()
     if status is None:
         status = request.GET.get(str(_('status')), None)
     status_url = status
@@ -41,8 +41,8 @@ def list_requests(request, status=None, topic=None, tag=None,
             'status_description': FoiRequest.get_status_description(status)
         })
     elif topic is not None:
-        topic = get_object_or_404(PublicBodyTag, slug=topic)
-        foi_requests = manager.for_list_view().filter(public_body__tags=topic)
+        topic = get_object_or_404(Category, slug=topic)
+        foi_requests = manager.for_list_view().filter(public_body__categories=topic)
         context.update({
             'topic': topic,
         })
