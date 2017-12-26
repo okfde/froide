@@ -300,7 +300,6 @@ class Base(Configuration):
     # ######## Security ###########
 
     CSRF_COOKIE_SECURE = False
-    CSRF_COOKIE_HTTPONLY = True
     CSRF_FAILURE_VIEW = values.Value('froide.account.views.csrf_failure')
 
     # Change this
