@@ -226,7 +226,10 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
                 lambda driver: driver.find_element_by_name('body').is_displayed()
             )
             self.selenium.find_element_by_name('subject').send_keys(req_title)
-            self.selenium.find_element_by_name('body').send_keys('Documents describing & something...')
+            self.selenium.find_element_by_name('full_text_checkbox').click()
+            self.selenium.find_element_by_name('body').clear()
+            body_text = 'Documents describing & something...'
+            self.selenium.find_element_by_name('body').send_keys(body_text)
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_elements_by_css_selector('.similar-requests li'))
             self.scrollTo('review-button')
@@ -244,6 +247,8 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
         self.assertIn(req.get_absolute_url(), self.selenium.current_url)
         self.assertEqual(req.title, req_title)
+        self.assertEqual(req.description, body_text)
+        self.assertTrue(req.messages[0].plaintext.startswith(body_text))
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_response')
