@@ -226,7 +226,9 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
                 lambda driver: driver.find_element_by_name('body').is_displayed()
             )
             self.selenium.find_element_by_name('subject').send_keys(req_title)
+            self.scrollTo('full_text_checkbox')
             self.selenium.find_element_by_name('full_text_checkbox').click()
+            self.scrollTo('id_body')
             self.selenium.find_element_by_name('body').clear()
             body_text = 'Documents describing & something...'
             self.selenium.find_element_by_name('body').send_keys(body_text)

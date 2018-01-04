@@ -145,10 +145,10 @@
                   </div>
                   <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
-                    <textarea v-model="body" name="body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder">
+                    <textarea v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder">
                     </textarea>
                     <label v-if="user.id && !hideFullText" class="small pull-right text-muted">
-                      <input type="checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
+                      <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
                       {{ form.full_text.label }}
                       <input type="hidden" name="full_text" v-model="fullText">
                     </label>
