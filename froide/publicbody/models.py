@@ -238,7 +238,11 @@ class Category(TagBase, MP_Node):
 
     def save(self, *args, **kwargs):
         if self.pk is None and kwargs.get('force_insert'):
-            obj = Category.add_root(name=self.name, slug=self.slug)
+            obj = Category.add_root(
+                name=self.name,
+                slug=self.slug,
+                is_topic=self.is_topic
+            )
             self.pk = obj.pk
         else:
             TagBase.save(self, *args, **kwargs)
