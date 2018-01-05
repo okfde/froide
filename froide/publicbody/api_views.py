@@ -8,6 +8,7 @@ from django_filters import rest_framework as filters
 from haystack.query import SearchQuerySet
 from haystack.inputs import AutoQuery
 
+from froide.helper.api_utils import SearchFacetListSerializer
 from froide.helper.search import SearchQuerySetWrapper
 
 from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
@@ -217,6 +218,7 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PublicBody
+        list_serializer_class = SearchFacetListSerializer
         depth = 0
         fields = (
             'resource_uri', 'id', 'name', 'slug', 'other_names',
@@ -230,7 +232,8 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class PublicBodyFilter(filters.FilterSet):
+class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
+    q = filters.CharFilter(method='search_filter')
     classification = filters.ModelChoiceFilter(method='classification_filter',
         queryset=Classification.objects.all())
     category = filters.ModelMultipleChoiceFilter(method='category_filter',
@@ -262,15 +265,25 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
 
     @list_route(methods=['get'])
     def search(self, request):
-        queryset = self.get_searchqueryset(request)
+        self.queryset = self.get_searchqueryset(request)
 
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(self.queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        else:
+            serializer = self.get_serializer(self.queryset, many=True)
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        data = serializer.data
+
+        if page is not None:
+            return self.get_paginated_response(data)
+        return Response(data)
+
+    def get_serializer_context(self):
+        ctx = super(PublicBodyViewSet, self).get_serializer_context()
+        if self.action == 'search':
+            ctx['facets'] = self.queryset.sqs.facet_counts()
+        return ctx
 
     def get_searchqueryset(self, request):
         query = request.GET.get('q', '')
@@ -280,8 +293,20 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             sqs = sqs.all()
 
+        sqs = sqs.facet('jurisdiction', size=30)
         juris = request.GET.get('jurisdiction')
         if juris:
-            sqs = sqs.filter(jurisdiction__exact=juris)
+            sqs = sqs.filter(jurisdiction=juris)
+
+        sqs = sqs.facet('classification', size=100)
+        classification = request.GET.get('classification')
+        if classification:
+            sqs = sqs.filter(classification=classification)
+
+        sqs = sqs.facet('categories', size=100)
+        categories = request.GET.getlist('categories')
+        if categories:
+            for cat in categories:
+                sqs = sqs.filter(categories=cat)
 
         return SearchQuerySetWrapper(sqs, PublicBody)
