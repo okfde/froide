@@ -2,10 +2,12 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th></th>
-        <th v-for="header in headers">
+        <th>
+          <input v-if="options.selectAllCheckbox" type="checkbox" v-model="selectAllRows"/>
+        </th>
+        <th v-for="header in headers" :class="header.class">
           {{ header.label }}
-          <i v-if="options.sortableHeader" class="sort-control fa" :class="{'fa-chevron-up': sortOrder > 0, 'fa-chevron-down': sortOrder < 0, 'sort-control--active': sortHeader === header.label}" @click="changeSort(header.label)"></i>
+          <i v-if="options.sortableHeader && header.sortKey" class="sort-control fa" :class="{'fa-sort-alpha-asc': sortOrder > 0, 'fa-sort-alpha-desc': sortOrder < 0, 'sort-control--active': sortHeader === header.label}" @click="changeSort(header.label)"></i>
         </th>
       </tr>
     </thead>
@@ -29,7 +31,8 @@ export default {
   data () {
     return {
       sortHeader: null,
-      sortOrder: 1
+      sortOrder: 1,
+      allRowsSelected: false
     }
   },
   computed: {
@@ -42,6 +45,15 @@ export default {
         sortedRows = sortedRows.reverse()
       }
       return sortedRows
+    },
+    selectAllRows: {
+      get () {
+        return this.allRowsSelected
+      },
+      set () {
+        this.allRowsSelected = !this.allRowsSelected
+        this.$emit('selectAllRows', this.allRowsSelected)
+      }
     }
   },
   methods: {

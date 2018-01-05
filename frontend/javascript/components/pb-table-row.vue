@@ -9,6 +9,12 @@
     <td>
       {{ row.jurisdiction.name }}
     </td>
+    <td>
+      {{ (row.classification && row.classification.name) || '-' }}
+    </td>
+    <td>
+      {{ rowCategories }}
+    </td>
   </tr>
 </template>
 
@@ -21,6 +27,9 @@ export default {
   name: 'pb-table-row',
   props: ['name', 'row', 'scope'],
   computed: {
+    rowCategories () {
+      return this.row.categories.map((x) => x.name).join(', ')
+    },
     value: {
       get () {
         return this.isPublicBodySelectedByScope(this.scope, this.row.id)

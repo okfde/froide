@@ -2,7 +2,6 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {SET_PUBLICBODY, CLEAR_SEARCHRESULTS} from '../store/mutation_types'
 
 var PBListMixin = {
-  props: ['name', 'scope', 'i18n'],
   computed: {
     publicBody () {
       return this.getPublicBodyByScope(this.scope)

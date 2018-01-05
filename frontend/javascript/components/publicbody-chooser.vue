@@ -34,7 +34,7 @@ export default {
   data () {
     return {
       search: this.defaultsearch,
-      lastSearch: null,
+      lastQuery: null,
       emptyResults: false,
       searching: false
     }

@@ -133,8 +133,10 @@
     Froide.settings.user_can_hide_web = parseInt('{% if froide.user_can_hide_web %}1{% else %}0{% endif %}', 10)
     Froide.url = Froide.url || {}
     Froide.url.searchRequests = "{% url 'api:request-search' %}"
-    Froide.url.listJurisdiction = "{% url 'api:jurisdiction-list' %}"
-    Froide.url.listPublicbodyTag = "{% url 'api:publicbodytag-list' %}"
+    Froide.url.listJurisdictions = "{% url 'api:jurisdiction-list' %}"
+    Froide.url.listCategories = "{% url 'api:category-list' %}"
+    Froide.url.listClassifications = "{% url 'api:classification-list' %}"
+    Froide.url.listPublicBodies = "{% url 'api:publicbody-list' %}"
     Froide.url.search = "{% url 'foirequest-search' %}"
     Froide.url.loginSimple = "{% url 'account-login' %}?simple&email="
 
@@ -161,7 +163,11 @@
         toMultiPublicBodies: '{% blocktrans with count="${count}" %}To: {{ count }} public bodies{% endblocktrans %}',
         selectPublicBodies: '{% trans "Select public bodies" %}',
         continue: '{% trans "continue" %}',
-        selectAll: '{% trans "select all" %}',
+        selectAll: [
+          '{% trans "select one" %}',
+          '{% blocktrans with count='${count}' %}select all {{ count }}{% endblocktrans %}'
+        ],
+        selectingAll: '{% trans "Selecting all public bodies, please wait..." %}',
         name: '{% trans "Name" %}',
         jurisdictionPlural: [
           '{% trans "Jurisdiction" %}',
@@ -171,9 +177,18 @@
           '{% trans "topic" %}',
           '{% trans "topics" %}',
         ],
+        classificationPlural: [
+          '{% trans "classification" %}',
+          '{% trans "classifications" %}',
+        ],
         /* eslint-disable no-template-curly-in-string */
         toPublicBody: '{% blocktrans with name="${name}" %}To: {{ name }}{% endblocktrans %}',
         change: '{% trans "change" %}',
+        searchPlaceholder: '{% trans "Search..." %}',
+        clearSearchResults: '{% trans "clear search" %}',
+        clearSelection: '{% trans "clear selection" %}',
+        reallyClearSelection: '{% trans "Are you sure you want to discard your current selection?" %}',
+        loadMore: '{% trans "load more..." %}',
         next: '{% trans "next" %}',
         previous: '{% trans "previous" %}',
         subject: '{% trans "Subject" %}',

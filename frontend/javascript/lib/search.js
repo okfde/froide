@@ -21,6 +21,14 @@ class FroideSearch {
       request.send()
     })
   }
+  getObjects (promise) {
+    return new Promise((resolve, reject) => {
+      promise.then((data) => {
+        return resolve(data.objects)
+      })
+        .catch((e) => reject(e))
+    })
+  }
   getJsonObjects (url) {
     return new Promise((resolve, reject) => {
       this.getJson(url)
@@ -39,26 +47,49 @@ class FroideSearch {
     return this.getJsonObjects(url)
   }
 
-  searchPublicBody (term, filters) {
-    let query = encodeURIComponent(term)
-    let url = this.config.url.searchPublicBody + '?q=' + query
-
+  getJsonForUrl (url, term, filters) {
+    let hasParam = false
+    if (term !== undefined && term) {
+      hasParam = true
+      url = url + '?q=' + encodeURIComponent(term)
+    }
     if (filters !== undefined) {
+      let f = []
       for (let key in filters) {
-        if (filters[key] !== null) {
-          url += '&' + key + '=' + encodeURIComponent(filters[key])
+        let filterVal = filters[key]
+        if (filterVal !== null) {
+          if (!Array.isArray(filterVal)) {
+            filterVal = [filterVal]
+          }
+          filterVal.forEach((val) => {
+            f.push(key + '=' + encodeURIComponent(val))
+          })
         }
       }
+      url += hasParam ? '&' : '?'
+      url += f.join('&')
     }
     return this.getJson(url)
   }
 
-  listJurisdiction () {
-    return this.getJsonObjects(this.config.url.listJurisdiction)
+  searchPublicBodies (term, filters) {
+    return this.getJsonForUrl(this.config.url.searchPublicBody, term, filters)
   }
 
-  listPublicbodyTag () {
-    return this.getJsonObjects(this.config.url.listPublicbodyTag + '?is_topic=1')
+  listPublicBodies (term, filters) {
+    return this.getJsonForUrl(this.config.url.listPublicBodies, term, filters)
+  }
+
+  listJurisdictions (term, filters) {
+    return this.getJsonForUrl(this.config.url.listJurisdictions, term, filters)
+  }
+
+  listCategories (term, filters) {
+    return this.getJsonForUrl(this.config.url.listCategories, term, filters)
+  }
+
+  listClassifications (term, filters) {
+    return this.getJsonForUrl(this.config.url.listClassifications, term, filters)
   }
 
   searchFoiRequests (term) {

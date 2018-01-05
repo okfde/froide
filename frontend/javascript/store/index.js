@@ -7,6 +7,7 @@ import {
   STEPS, URLS_TO_STEP,
   SET_PUBLICBODY, SET_PUBLICBODIES,
   SET_PUBLICBODY_ID, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
+  CLEAR_PUBLICBODIES,
   CACHE_PUBLICBODIES,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS,
   SET_USER,
@@ -25,6 +26,7 @@ export default new Vuex.Store({
   state: {
     config: null,
     scopedSearchResults: {},
+    scopedSearchFacets: {},
     scopedSearchMeta: {},
     scopedPublicBodies: {},
     publicBodies: {},
@@ -65,6 +67,13 @@ export default new Vuex.Store({
         return []
       }
       return srs
+    },
+    getScopedSearchFacets: (state, getters) => (scope) => {
+      let facets = state.scopedSearchFacets[scope]
+      if (facets === undefined) {
+        return null
+      }
+      return facets
     },
     getScopedSearchMeta: (state, getters) => (scope) => {
       let meta = state.scopedSearchMeta[scope]
@@ -151,6 +160,9 @@ export default new Vuex.Store({
       pbs = pbs.filter((p) => p.id !== publicBodyId)
       Vue.set(state.scopedPublicBodies, scope, pbs)
     },
+    [CLEAR_PUBLICBODIES] (state, {scope}) {
+      Vue.set(state.scopedPublicBodies, scope, [])
+    },
     [CACHE_PUBLICBODIES] (state, publicBodies) {
       let newPublicBodies = {}
       publicBodies.forEach(function (r) {
@@ -161,12 +173,14 @@ export default new Vuex.Store({
         ...newPublicBodies
       }
     },
-    [SET_SEARCHRESULTS] (state, {searchResults, searchMeta, scope}) {
+    [SET_SEARCHRESULTS] (state, {searchResults, searchFacets, searchMeta, scope}) {
       Vue.set(state.scopedSearchResults, scope, searchResults)
+      Vue.set(state.scopedSearchFacets, scope, searchFacets)
       Vue.set(state.scopedSearchMeta, scope, searchMeta)
     },
     [CLEAR_SEARCHRESULTS] (state, {scope}) {
       Vue.set(state.scopedSearchResults, scope, [])
+      Vue.set(state.scopedSearchFacets, scope, {})
       Vue.set(state.scopedSearchMeta, scope, null)
     },
     [UPDATE_FULL_TEXT] (state, val) {
@@ -214,16 +228,17 @@ export default new Vuex.Store({
     },
     setSearchResults ({ commit }, {scope, results}) {
       commit(SET_SEARCHRESULTS, {
-        searchResults: results.objects,
+        searchResults: results.objects.results,
+        searchFacets: results.objects.facets.fields,
         searchMeta: results.meta,
         scope: scope
       })
-      commit(CACHE_PUBLICBODIES, results.objects)
+      commit(CACHE_PUBLICBODIES, results.objects.results)
     },
     getSearchResults ({ commit, state, dispatch }, {scope, search, filters}) {
       commit(CLEAR_SEARCHRESULTS, {scope})
       let searcher = new FroideSearch(state.config)
-      return searcher.searchPublicBody(search, filters).then((results) => {
+      return searcher.searchPublicBodies(search, filters).then((results) => {
         dispatch('setSearchResults', {results, scope})
       })
     },

@@ -1,18 +1,18 @@
 <template>
   <div>
-    {{ i18n._('publicBodiesCount', {count: publicBodies.length}) }}
-    <ul>
-      <li v-for="item in summary">
+    <div class="row">
+      <div v-for="item in summary" class="col-sm-6 col-md-4">
         <strong>
           {{ item.count }} {{ i18n._(item.i18nLabel, {count: item.count}) }}
+          <span v-if="item.multi">multi</span>
         </strong>
         <ul class="summary-subitem-list">
           <li v-for="subitem in item.sorted">
             {{ subitem.count }} {{ subitem.label }}
           </li>
         </ul>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,13 +27,21 @@ export default {
       let summary = {}
       for (let pb of this.publicBodies) {
         for (let dimension of this.dimensions) {
-          let val = dimension.key(pb)
+          let val = dimension.key(pb) || ''
           let dim = dimension.id
           summary[dim] = summary[dim] || {
-            count: 0, items: {}, i18nLabel: dimension.i18nLabel
+            count: 0,
+            items: {},
+            i18nLabel: dimension.i18nLabel,
+            multi: dim.multi
           }
-          summary[dim].items[val] = summary[dim].items[val] || 0
-          summary[dim].items[val] += 1
+          if (!Array.isArray(val)) {
+            val = [val]
+          }
+          val.forEach((v) => {
+            summary[dim].items[v] = summary[dim].items[v] || 0
+            summary[dim].items[v] += 1
+          })
         }
       }
       for (let dimension of this.dimensions) {
@@ -42,7 +50,10 @@ export default {
         summary[dim].count = Object.keys(summary[dim].items).length
         summary[dim].sorted = []
         for (let key in summary[dim].items) {
-          summary[dim].sorted.push({label: key, count: summary[dim].items[key]})
+          summary[dim].sorted.push({
+            label: key === '' ? '-' : key,
+            count: summary[dim].items[key]
+          })
         }
         summary[dim].sorted.sort((a, b) => {
           if (a.count === b.count) {

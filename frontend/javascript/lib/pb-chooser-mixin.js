@@ -3,7 +3,7 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
   SET_PUBLICBODY, SET_PUBLICBODIES,
-  SET_SEARCHRESULTS, CACHE_PUBLICBODIES
+  SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS, CACHE_PUBLICBODIES
 } from '../store/mutation_types'
 
 var PBChooserMixin = {
@@ -60,10 +60,6 @@ var PBChooserMixin = {
     ])
   },
   methods: {
-    fillSearch (event) {
-      this.search = event.target.dataset.search
-      this.triggerAutocomplete()
-    },
     buildQuery () {
       let query = this.search
       if (this.hasFilters) {
@@ -101,11 +97,15 @@ var PBChooserMixin = {
         this.searching = false
       })
     },
+    clearResults () {
+      this.clearSearchResults({scope: this.scope})
+    },
     ...mapMutations({
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       setSearchResults: SET_SEARCHRESULTS,
-      cachePublicBodies: CACHE_PUBLICBODIES
+      cachePublicBodies: CACHE_PUBLICBODIES,
+      clearSearchResults: CLEAR_SEARCHRESULTS
     }),
     ...mapActions(['getSearchResults'])
   }
