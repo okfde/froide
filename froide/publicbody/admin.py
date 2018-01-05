@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.urls import reverse_lazy
 from django import forms
 
@@ -46,10 +47,20 @@ class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
     tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
+    readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
 
     actions = ClassificationAssignMixin.actions + [
             'export_csv', 'remove_from_index', 'tag_all'
     ]
+
+    def save_model(self, request, obj, form, change):
+        obj._updated_by = request.user
+        obj.updated_at = timezone.now()
+        if change is None:
+            obj._created_by = obj._updated_by
+            obj.created_at = obj.updated_at
+
+        super(PublicBodyAdmin, self).save_model(request, obj, form, change)
 
     def category_list(self, obj):
         return ", ".join(o.name for o in obj.categories.all())
