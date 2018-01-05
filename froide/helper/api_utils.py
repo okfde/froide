@@ -31,6 +31,6 @@ class SearchFacetListSerializer(ListSerializer):
 
         ret = OrderedDict([
             ('results', ret),
-            ('facets', self._context['facets']),
+            ('facets', self._context.get('facets', {'fields': {}})),
         ])
         return ret
