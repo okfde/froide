@@ -311,7 +311,8 @@ class PublicBody(models.Model):
             related_name="descendants")
     depth = models.SmallIntegerField(default=0)
 
-    classification = models.ForeignKey(Classification, null=True, blank=True)
+    classification = models.ForeignKey(Classification, null=True, blank=True,
+        on_delete=models.SET_NULL)
 
     email = models.EmailField(_("Email"), null=True, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
