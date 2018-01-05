@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 
-from froide.publicbody.models import PublicBody, PublicBodyTag, Jurisdiction
+from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
 
@@ -72,7 +72,7 @@ class WebTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-        for topic in PublicBodyTag.objects.filter(is_topic=True):
+        for topic in Category.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"topic": topic.slug}))
             self.assertEqual(response.status_code, 200)
@@ -93,7 +93,7 @@ class WebTest(TestCase):
                 kwargs={"status": urlpart, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)
 
-        for topic in PublicBodyTag.objects.filter(is_topic=True):
+        for topic in Category.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"topic": topic.slug, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)
@@ -229,7 +229,7 @@ class WebTest(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
-        topic = PublicBodyTag.objects.filter(is_topic=True)[0]
+        topic = Category.objects.filter(is_topic=True)[0]
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'jurisdiction': juris.slug,
             'topic': topic.slug

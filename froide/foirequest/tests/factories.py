@@ -15,9 +15,10 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.conf import settings
 
-from froide.publicbody.models import Jurisdiction, FoiLaw, PublicBody, PublicBodyTag
-from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment, FoiEvent,
-    PublicBodySuggestion, DeferredMessage, RequestDraft)
+from froide.publicbody.models import (Jurisdiction, FoiLaw, PublicBody,
+    Classification, Category, PublicBodyTag)
+from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment,
+    FoiEvent, PublicBodySuggestion, DeferredMessage, RequestDraft)
 
 
 TEST_PDF_URL = "test.pdf"
@@ -75,6 +76,26 @@ class PublicBodyTagFactory(factory.DjangoModelFactory):
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
 
 
+class CategoryFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Category
+
+    name = factory.Sequence(lambda n: 'Category {0}'.format(n))
+    slug = factory.LazyAttribute(lambda o: slugify(o.name))
+    depth = 1
+    path = factory.Sequence(lambda n: Category._get_path(None, 1, n))
+
+
+class ClassificationFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Classification
+
+    name = factory.Sequence(lambda n: 'Classification {0}'.format(n))
+    slug = factory.LazyAttribute(lambda o: slugify(o.name))
+    depth = 1
+    path = factory.Sequence(lambda n: Classification._get_path(None, 1, n))
+
+
 class PublicBodyFactory(factory.DjangoModelFactory):
     class Meta:
         model = PublicBody
@@ -86,8 +107,8 @@ class PublicBodyFactory(factory.DjangoModelFactory):
     parent = None
     root = None
     depth = 0
-    classification = 'Ministry'
-    classification_slug = 'ministry'
+
+    classification = factory.SubFactory(ClassificationFactory)
 
     email = factory.Sequence(lambda n: 'pb-{0}@{0}.example.com'.format(n))
     contact = 'Some contact stuff'
@@ -273,11 +294,14 @@ def make_world():
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
 
-    topic_1 = PublicBodyTagFactory.create(is_topic=True)
-    topic_2 = PublicBodyTagFactory.create(is_topic=True)
+    topic_1 = CategoryFactory.create(is_topic=True)
+    topic_2 = CategoryFactory.create(is_topic=True)
+
+    tag_1 = PublicBodyTagFactory.create(is_topic=True)
+    tag_2 = PublicBodyTagFactory.create(is_topic=True)
 
     mediator_bund = PublicBodyFactory.create(jurisdiction=bund, site=site)
-    mediator_bund.tags.add(topic_1)
+    mediator_bund.categories.add(topic_1)
 
     ifg_bund = FoiLawFactory.create(site=site, jurisdiction=bund,
         name='IFG Bund',
@@ -303,11 +327,13 @@ def make_world():
 
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
-        pb_bund_1.tags.add(topic_1)
+        pb_bund_1.categories.add(topic_1)
+        pb_bund_1.tags.add(tag_1)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)
     for _ in range(5):
         pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site)
-        pb_nrw_1.tags.add(topic_2)
+        pb_nrw_1.categories.add(topic_2)
+        pb_nrw_1.tags.add(tag_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     req = FoiRequestFactory.create(site=site, user=user1, jurisdiction=bund,
         law=meta_bund, public_body=pb_bund_1)

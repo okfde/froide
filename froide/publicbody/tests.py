@@ -22,10 +22,10 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
         pb = PublicBody.objects.all()[0]
-        tag = factories.PublicBodyTagFactory.create(is_topic=True)
-        pb.tags.add(tag)
+        category = factories.CategoryFactory.create()
+        pb.categories.add(category)
         response = self.client.get(reverse('publicbody-list', kwargs={
-            'topic': tag.slug
+            'topic': category.slug
         }))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, pb.name)
@@ -36,7 +36,7 @@ class PublicBodyTest(TestCase):
         self.assertContains(response, pb.name)
         response = self.client.get(reverse('publicbody-list', kwargs={
             'jurisdiction': pb.jurisdiction.slug,
-            'topic': tag.slug
+            'topic': category.slug
         }))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, pb.name)
@@ -171,9 +171,9 @@ class ApiTest(TestCase):
                 '/api/v1/publicbody/search/', pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(pb.name, obj['objects'][0]['name'])
+        self.assertIn(pb.name, obj['objects']['results'][0]['name'])
         response = self.client.get('%s?query=%s&jurisdiction=non_existant' % (
                 '/api/v1/publicbody/search/', pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(obj['objects'], [])
+        self.assertEqual(obj['objects']['results'], [])
