@@ -43,7 +43,7 @@ class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
     list_filter = ('jurisdiction', 'classification', 'categories',)
     filter_horizontal = ('laws',)
     list_max_show_all = 5000
-    search_fields = ['name', "description", 'classification']
+    search_fields = ['name', 'other_names', 'description']
     exclude = ('confirmed',)
     raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
     tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
