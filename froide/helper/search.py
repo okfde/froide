@@ -1,3 +1,5 @@
+import logging
+
 from haystack.fields import NgramField
 from haystack.exceptions import MissingDependency
 
@@ -8,11 +10,12 @@ class SuggestField(NgramField):
 
 try:
 
-    from haystack.backends.elasticsearch_backend import (
-        ElasticsearchSearchEngine, ElasticsearchSearchBackend, FIELD_MAPPINGS
+    from haystack.backends.elasticsearch2_backend import (
+        Elasticsearch2SearchEngine, Elasticsearch2SearchBackend
     )
-except (ImportError, MissingDependency):
-    pass
+    from haystack.backends.elasticsearch_backend import FIELD_MAPPINGS
+except (ImportError, MissingDependency) as e:
+    logging.warn(e)
 else:
 
     class SuggestField(NgramField):  # noqa
@@ -20,7 +23,7 @@ else:
 
     FIELD_MAPPINGS['suggest'] = {'type': 'string', 'analyzer': 'suggest_analyzer'}
 
-    class FroideElasticsearchSearchBackend(ElasticsearchSearchBackend):
+    class FroideElasticsearch2SearchBackend(Elasticsearch2SearchBackend):
         # Settings to add an custom suggest analyzer
         DEFAULT_SETTINGS = {
             'settings': {
@@ -77,8 +80,8 @@ else:
             }
         }
 
-    class FroideElasticsearchSearchEngine(ElasticsearchSearchEngine):
-        backend = FroideElasticsearchSearchBackend
+    class FroideElasticsearch2SearchEngine(Elasticsearch2SearchEngine):
+        backend = FroideElasticsearch2SearchBackend
 
 
 class SearchQuerySetWrapper(object):
