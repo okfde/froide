@@ -6,9 +6,9 @@ from django.db import migrations
 
 
 def create_classifications(apps, schema_editor):
-    from ..models import Classification, PublicBody  # Use treebeard API
+    from ..models import Classification  # Use treebeard API
     # Classification = apps.get_model('publicbody', 'Classification')
-    # PublicBody = apps.get_model('publicbody', 'PublicBody')
+    PublicBody = apps.get_model('publicbody', 'PublicBody')
     classifications = {}
     for pb in PublicBody.objects.exclude(classification_slug=''):
         if pb.classification_slug in classifications:
