@@ -1,3 +1,13 @@
+from haystack.fields import NgramField
+
+
+try:
+    from .elasticsearch import SuggestField
+except ImportError:
+    class SuggestField(NgramField):
+        pass
+
+
 class SearchQuerySetWrapper(object):
     """
     Decorates a SearchQuerySet object using a generator for efficient iteration

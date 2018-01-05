@@ -3,11 +3,6 @@ import logging
 from haystack.fields import NgramField
 from haystack.exceptions import MissingDependency
 
-
-class SuggestField(NgramField):
-    pass
-
-
 try:
 
     from haystack.backends.elasticsearch2_backend import (

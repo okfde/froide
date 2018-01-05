@@ -3,12 +3,13 @@ from __future__ import print_function
 from django.conf import settings
 
 from haystack import indexes
-from froide.helper.search import SuggestField
 
 try:
     from celery_haystack.indexes import CelerySearchIndex as SearchIndex
 except ImportError:
     SearchIndex = indexes.SearchIndex
+
+from froide.helper.search import SuggestField
 
 from .models import PublicBody
 
