@@ -54,8 +54,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     inlines = [
         FoiMessageInline,
     ]
-    list_display = ('title', 'first_message', 'secret_address', 'checked',
-        'public_body', 'status',)
+    list_display = ('title', 'first_message', 'secret_address',
+                    'public_body', 'status', 'visibility')
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'checked', 'public', 'visibility',
         'is_blocked',
