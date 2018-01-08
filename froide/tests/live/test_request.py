@@ -33,8 +33,8 @@ def get_selenium(**kwargs):
                     options.add_argument('{key}'.format(key=key))
         driver_path = os.environ.get('CHROME_DRIVER_PATH', None)
         if driver_path is not None:
-            return ChromeDriver(driver_path, chrome_options=options)
-        return ChromeDriver(chrome_options=options)
+            return ChromeDriver(driver_path, options=options)
+        return ChromeDriver(options=options)
     elif driver == 'phantomjs':
         from selenium.webdriver import PhantomJS
         return PhantomJS()
@@ -336,6 +336,7 @@ class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.set_window_size(*self.SCREEN_SIZE)
         except Exception as e:
             logging.exception(e)
+        logging.warning('Window size: %s', self.selenium.get_window_size())
         with CheckJSErrors(self.selenium):
             self.selenium.get('%s%s' % (self.live_server_url,
                 reverse('index')))
