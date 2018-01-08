@@ -327,7 +327,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
 
 
 class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
-    SCREEN_SIZE = (600, 800)
+    SCREEN_SIZE = (400, 800)
     ADDITIONAL_KWARGS = {'window-size': '%s,%s' % SCREEN_SIZE}
 
     def test_collapsed_menu(self):
