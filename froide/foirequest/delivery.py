@@ -32,7 +32,7 @@ class PostfixDeliveryReporter(object):
     ALL_RE = r' {mail_id}: '
     RECIPIENT_RE = r'{mail_id}: to=<{recipient}'
     STATUS_RE = re.compile(r'status=(\w+)')
-    TIMESTAMP_RE = re.compile(r'\w{3} \d+ \d+:\d+:\d+')
+    TIMESTAMP_RE = re.compile(r'\w{3}\s+\d+\s+\d+:\d+:\d+')
     TIME_PARSE_STR = '%b %d %H:%M:%S'
 
     LOG_FILES = [
