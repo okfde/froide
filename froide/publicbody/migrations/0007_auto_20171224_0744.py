@@ -6,21 +6,26 @@ from django.db import migrations
 
 
 def create_classifications(apps, schema_editor):
-    from ..models import Classification  # Use treebeard API
-    # Classification = apps.get_model('publicbody', 'Classification')
+    from ..models import Classification as RealClassification  # Use treebeard API
+
+    Classification = apps.get_model('publicbody', 'Classification')
     PublicBody = apps.get_model('publicbody', 'PublicBody')
     classifications = {}
     for pb in PublicBody.objects.exclude(classification_slug=''):
         if pb.classification_slug in classifications:
             pb.classification = classifications[pb.classification_slug]
         else:
-            root = Classification.add_root(
+            root = Classification(
                 name=pb.classification_name,
-                slug=pb.classification_slug
+                slug=pb.classification_slug,
+                depth=1,
+                path=RealClassification._get_path(None, 1, len(classifications))
             )
+            root.save()
             pb.classification = root
             classifications[pb.classification_slug] = root
         pb.save()
+    RealClassification.fix_tree()
 
 
 class Migration(migrations.Migration):
