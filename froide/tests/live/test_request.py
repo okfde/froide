@@ -1,5 +1,6 @@
 import re
 import os
+import logging
 
 from django.conf import settings
 from django.urls import reverse
@@ -333,8 +334,8 @@ class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
     def test_collapsed_menu(self):
         try:
             self.selenium.set_window_size(*self.SCREEN_SIZE)
-        except Exception:
-            pass
+        except Exception as e:
+            logging.exception(e)
         with CheckJSErrors(self.selenium):
             self.selenium.get('%s%s' % (self.live_server_url,
                 reverse('index')))
