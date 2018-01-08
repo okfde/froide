@@ -26,6 +26,17 @@ def create_classifications(apps, schema_editor):
             classifications[pb.classification_slug] = root
         pb.save()
     RealClassification.fix_tree()
+    if Classification.objects.all().count() == 0:
+        return
+    # This assigns all but the first item in tree a broken path
+    # and then moves all but the first item as a sibling of the first
+    # in order to fix the path
+    c = Classification.objects.all()[0]
+    for x in Classification.objects.exclude(id=c.id):
+        x.path = 'x%s' % x.path
+        x.save()
+    for x in Classification.objects.exclude(id=c.id):
+        x.move(c)
 
 
 class Migration(migrations.Migration):
