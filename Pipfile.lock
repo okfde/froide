@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e2ddd71d0df76880597097af77b205c56a01427c300fa7b0b0f56e726b5809df"
+            "sha256": "915160c7d32cd6924129b5f1b3d54a33fa877b583739b0a6f84f332766ea2dca"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -151,10 +151,9 @@
             "version": "==0.22.2"
         },
         "django-treebeard": {
-            "hashes": [
-                "sha256:c1830d6e98618f524af654e084cd40e9449fdd1c9959f6fe679f08d54b964ba9"
-            ],
-            "version": "==4.2.0"
+            "editable": true,
+            "git": "git://github.com/stefanw/django-treebeard.git",
+            "ref": "deploy"
         },
         "djangorestframework": {
             "hashes": [
