@@ -95,8 +95,7 @@ class JurisdictionAdmin(admin.ModelAdmin):
     list_display = ['name', 'hidden', 'rank']
 
 
-class PublicBodyTagAdmin(TreeAdmin):
-    form = movenodeform_factory(PublicBodyTag)
+class PublicBodyTagAdmin(admin.ModelAdmin):
     list_display = ["name", "slug", "is_topic", "rank"]
     list_filter = ['is_topic', 'rank']
     ordering = ["rank", "name"]
