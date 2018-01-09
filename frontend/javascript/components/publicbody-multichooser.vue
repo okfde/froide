@@ -304,14 +304,18 @@ export default {
     },
     selectAllNext (num) {
       this.blockProgress = num / this.maxResultPage * 100
-      this.getNextSearchResults(this.scope).then(() => {
-        this.selectAllRows(true)
-        if (this.hasNextSearchResults) {
-          this.selectAllNext(num + 1)
-        } else {
-          this.blockUI = false
-        }
-      })
+      if (this.hasNextSearchResults) {
+        this.getNextSearchResults(this.scope).then(() => {
+          this.selectAllRows(true)
+          if (this.hasNextSearchResults) {
+            this.selectAllNext(num + 1)
+          } else {
+            this.blockUI = false
+          }
+        })
+      } else {
+        this.blockUI = false
+      }
     },
     updateFilter (filter, value) {
       Vue.set(this.filters, filter.key, value)
