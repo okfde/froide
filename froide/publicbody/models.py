@@ -228,13 +228,12 @@ class CategoryManager(MP_NodeManager):
 class Category(TagBase, MP_Node):
     is_topic = models.BooleanField(_('as topic'), default=False)
 
-    # node_order_by = ['is_topic', 'name']
+    node_order_by = ['name']
     objects = CategoryManager()
 
     class Meta:
         verbose_name = _("category")
         verbose_name_plural = _("categories")
-        ordering = ('name',)
 
     def save(self, *args, **kwargs):
         if self.pk is None and kwargs.get('force_insert'):
