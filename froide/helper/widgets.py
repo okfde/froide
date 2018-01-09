@@ -41,7 +41,7 @@ class TagAutocompleteWidget(forms.TextInput):
     class Media:
 
         js = (
-            'admin/js/vendor/jquery/jquery.min.js',
+            'https://code.jquery.com/jquery-3.2.1.min.js',
             'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js'
         )
 
