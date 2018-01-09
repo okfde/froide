@@ -10,9 +10,6 @@ def render_form(form):
 
 @register.inclusion_tag('helper/forms/bootstrap_field.html')
 def render_field(field, horizontal=True):
-    # if getattr(field.field.widget, 'input_type', None) == 'radio':
-    #     import ipdb; ipdb.set_trace()
-    #
     return {
         'field': field,
         'field_type': getattr(field.field.widget, 'input_type', None),
