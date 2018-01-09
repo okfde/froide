@@ -19,8 +19,11 @@ User = get_user_model()
 
 
 class CSVImporter(object):
-    def __init__(self):
-        self.user = User.objects.order_by('id')[0]
+    def __init__(self, user=None):
+        if user is None:
+            self.user = User.objects.order_by('id')[0]
+        else:
+            self.user = user
         self.site = Site.objects.get_current()
         self.topic_cache = {}
         self.classification_cache = {}
@@ -86,7 +89,7 @@ class CSVImporter(object):
             pb.laws.add(*row['jurisdiction'].laws)
             pb.tags.set(*tags)
             pb.categories.set(*categories)
-            return
+            return pb
         except PublicBody.DoesNotExist:
             pass
         row.pop('id', None)  # Remove id if present
@@ -98,6 +101,7 @@ class CSVImporter(object):
         public_body.save()
         public_body.laws.add(*row['jurisdiction'].laws)
         public_body.tags.set(*list(tags))
+        return public_body
 
     def get_jurisdiction(self, slug):
         if slug not in self.jur_cache:
