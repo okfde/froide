@@ -28,15 +28,17 @@ def create_classifications(apps, schema_editor):
     RealClassification.fix_tree()
     if Classification.objects.all().count() == 0:
         return
-    # This assigns all but the first item in tree a broken path
-    # and then moves all but the first item as a sibling of the first
-    # in order to fix the path
-    c = Classification.objects.all()[0]
-    for x in Classification.objects.exclude(id=c.id):
-        x.path = 'x%s' % x.path
-        x.save()
-    for x in Classification.objects.exclude(id=c.id):
-        x.move(c)
+
+    # Fix paths
+    last = None
+    for c in Classification.objects.all():
+        if last is None:
+            last = Classification.get_last_root_node()
+        c.path = last._inc_path()
+        last = c
+        c.depth = 1
+        c.numchild = 0
+        c.save()
 
 
 class Migration(migrations.Migration):
