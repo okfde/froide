@@ -7,7 +7,6 @@ from django.conf import settings
 from django.utils import six
 from django.utils.html import escape
 
-from taggit.models import ItemBase
 from taggit.utils import edit_string_for_tags
 
 
@@ -66,17 +65,19 @@ class TagAutocompleteWidget(forms.TextInput):
     def render(self, name, value, attrs=None, renderer=None):
         """ Render HTML code """
         options = ''
+        render_value = value
+        if value is not None and not isinstance(value, six.string_types):
+            value = [o.tag for o in value.select_related('tag')]
+            render_value = edit_string_for_tags(value)
         if value is not None:
-            if issubclass(value.model, ItemBase):
-                value = [o.tag for o in value.select_related('tag')]
-
             options = [
                 '<option value="{value}" selected>{value}</option>'.format(
                     value=escape(six.text_type(o))) for o in value]
-            value = edit_string_for_tags(value)
             options = '\n'.join(options)
-        html = super(TagAutocompleteWidget, self).render(name, value, attrs,
-                                                        renderer=renderer)
+
+        html = super(TagAutocompleteWidget, self).render(
+            name, render_value, attrs, renderer=renderer
+        )
 
         html = """<div style="display: none">%(input)s</div><select id="%(objectid)s_select2" name="%(objectid)s_select2" multiple>%(options)s</select>
         <script type="text/javascript">

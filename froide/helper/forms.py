@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 
 from taggit.forms import TagField
+from taggit.utils import edit_string_for_tags
 
 from .widgets import TagAutocompleteWidget
 
@@ -11,7 +12,7 @@ class TagObjectForm(forms.Form):
     def __init__(self, *args, **kwargs):
         tags = kwargs.pop('tags', [])
         if tags:
-            kwargs['initial'] = {'tags': tags}
+            kwargs['initial'] = {'tags': edit_string_for_tags(tags)}
 
         autocomplete_url = kwargs.pop('autocomplete_url', None)
         if autocomplete_url is not None:
