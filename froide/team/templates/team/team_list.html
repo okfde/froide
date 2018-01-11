@@ -1,0 +1,58 @@
+{% extends "team/base.html" %}
+{% load i18n %}
+{% load form_helper %}
+
+{% block app_body %}
+
+<div class="row mb-3 mt-3">
+  <div class="col-lg-8">
+    <h2>{% trans "Your Teams" %}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <table class="table table-hover table-responsive mt-3">
+      <thead>
+        <tr>
+          <th>{% blocktrans %}Name{% endblocktrans %}</th>
+          <th>{% blocktrans %}Your Role{% endblocktrans %}</th>
+          <th>{% blocktrans %}Members{% endblocktrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in object_list %}
+          <tr>
+            <td>
+              <a href="{{ object.get_absolute_url }}">
+                {{ object.name }}
+              </a>
+            </td>
+            <td>
+              {{ object.role }}
+            </td>
+            <td>
+               {{ object.member_count }}
+             </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row mb-3 mt-3">
+  <div class="col-lg-6">
+    <fieldset>
+      <legend>{% trans "Create a new team" %}</legend>
+      <form method="post" action="{% url 'team-create' %}">
+        {% csrf_token %}
+        {% render_form form %}
+        <button type="submit" class="btn btn-primary">
+          {% trans "Create team" %}
+        </button>
+      </form>
+    </fieldset>
+  </div>
+</div>
+
+{% endblock %}

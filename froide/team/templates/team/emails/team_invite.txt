@@ -1,0 +1,13 @@
+{% load i18n %}{% autoescape off %}{% blocktrans %}Hello,
+
+{{ name }} has invited you to join a team on {{ site_name }}.
+Please visit the link below to join this team:
+
+{{ url }}
+
+If you don't have an account on {{ site_name }} yet, you have to create one first.
+{% endblocktrans %}
+
+{% blocktrans %}Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}

@@ -52,6 +52,7 @@ class Base(Configuration):
         'froide.frontpage',
         'froide.publicbody',
         'froide.account',
+        'froide.team',
         'froide.foisite',
         'froide.helper',
 

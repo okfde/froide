@@ -1,0 +1,156 @@
+{% extends 'team/base.html' %}
+
+{% load i18n %}
+{% load form_helper %}
+
+{% block app_body %}
+<div class="row mb-3 mt-3">
+  <div class="col-lg-8">
+    <h2>{% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}</h2>
+  </div>
+  <div class="col-lg-4">
+    <a href="{% url 'team-list' %}" class="btn btn-secondary pull-right">
+      <i class="fa fa-back"></i>
+      {% trans "back to team overview" %}
+    </a>
+  </div>
+</div>
+
+{% if members %}
+    <div class="row">
+      <div class="col-lg-8">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>{% trans "Member" %}</th>
+            <th>{% trans "Role" %}</th>
+            <th>{% trans "Status" %}</th>
+            {% if user_member.is_owner %}
+            <th>{% trans "Remove" %}</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for member in members %}
+            <tr{% if member.is_invited %} class="Secondary"{% endif %}>
+              <td>
+                {% if member.is_invited %}
+                  {% if user_member.is_owner %}
+                    <i>{{ member.email }}</i>
+                     -
+                  {% endif %}
+                  {% trans "invited" %}
+                {% else %}
+                  {{ member.user.get_full_name }}
+                {% endif %}
+                {% if user_member == member %}
+                  <em>{% trans "– that's you!" %}</em>
+                {% endif %}
+              </td>
+              <td>
+                {% if member.change_role_form %}
+                  <form method="post" action="{% url 'team-change_member' pk=member.pk %}" class="form-inline">
+                    {% csrf_token %}
+                    {% render_form member.change_role_form %}
+                    <button type="submit" class="btn btn-primary btn-sm">
+                      {% trans "Change" %}
+                    </button>
+                  </form>
+                {% else %}
+                  {{ member.get_role_display }}
+                {% endif %}
+              </td>
+              <td>
+                {{ member.get_status_display }}
+              </td>
+              {% if user_member.is_owner %}
+                <td>
+                  {% if user_member != member %}
+                    <form method="post" action="{% url 'team-delete_member' pk=member.pk %}" class="form-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fa fa-close"></i>
+                        {% trans "Remove" %}
+                      </button>
+                    </form>
+                  {% endif %}
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-4">
+      <h3>{% trans "Roles" %}</h3>
+      <dl>
+        <dt>{% trans "Viewer" %}</dt>
+        <dd>
+          {% blocktrans %}
+            A viewer has read-only access to all team projects and requests.
+          {% endblocktrans %}
+        </dd>
+        <dt>{% trans "Editor" %}</dt>
+        <dd>
+          {% blocktrans %}
+            An editor can make requests in team projects, send messages, set the status of requests.
+          {% endblocktrans %}
+        </dd>
+        <dt>{% trans "Owner" %}</dt>
+        <dd>
+          {% blocktrans %}
+            An owner can do everything an editor can do. In addition they can also add or remove team members and change their roles.
+          {% endblocktrans %}
+        </dd>
+      </dl>
+    </div>
+  </div>
+{% endif %}
+
+{% if form %}
+  <div class="row mt-5">
+    <div class="col-md-8">
+      <form class="form-inline" method="post" action="{% url 'team-invite' pk=object.pk %}">
+        {% csrf_token %}
+        <fieldset>
+          <legend>{% trans "Add team member" %}</legend>
+          {% render_form form %}
+          <button type="submit" class="btn btn-primary">
+            {% trans "Invite as team member" %}
+          </button>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+{% endif %}
+
+<div class="row mt-5">
+  <div class="col-md-8">
+    <h3>{% trans "Team projects" %}</h3>
+    <table class="table table-responsive">
+      <thead>
+        <th>{% blocktrans %}Title{% endblocktrans %}</th>
+        <th>{% blocktrans %}Requests{% endblocktrans %}</th>
+        <th>{% blocktrans %}Date{% endblocktrans %}</th>
+      </thead>
+      <tbody>
+        {% for project in projects %}
+          <tr>
+            <td>
+              <a href="{{ project.get_absolute_url }}">
+                {{ project.title }}
+              </a>
+            </td>
+            <td>
+              {{ project.request_count }}
+            </td>
+            <td>
+              {{ project.last_update|date:"DATETIME_FORMAT" }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

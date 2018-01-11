@@ -116,6 +116,8 @@ urlpatterns += [
     # Translators: URL part
     url(r'^%s/' % _('account'), include('froide.account.urls')),
     # Translators: URL part
+    url(r'^%s/%s/' % (_('account'), _('teams')), include('froide.team.urls')),
+    # Translators: URL part
     url(r'^%s/' % _('profile'), include('froide.account.profile_urls')),
     # Translators: URL part
     url(r'^comments/', include('django_comments.urls')),

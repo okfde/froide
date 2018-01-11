@@ -1,0 +1,23 @@
+{% extends 'team/base.html' %}
+
+{% load i18n %}
+
+{% block app_body %}
+<div class="row mb-3 mt-3">
+  <div class="col-lg-8">
+    <h2>
+      {% blocktrans with name=object.team.name %}
+        Team “{{ name }}” has invited you
+        {% endblocktrans %}
+    </h2>
+  </div>
+</div>
+
+  <form method="post" action="">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-lg btn-primary">
+      {% trans "Join this team" %}
+    </button>
+  </form>
+
+{% endblock %}
