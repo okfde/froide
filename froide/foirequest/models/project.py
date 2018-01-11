@@ -12,6 +12,8 @@ from django.contrib.sites.managers import CurrentSiteManager
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
+from froide.team.models import Team
+
 
 class TaggedFoiProject(TaggedItemBase):
     content_object = models.ForeignKey('FoiProject', on_delete=models.CASCADE)
@@ -52,13 +54,15 @@ class FoiProject(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
-    last_update = models.DateTimeField(auto_now_add=True)
+    last_update = models.DateTimeField(auto_now=True)
 
     public = models.BooleanField(_("published?"), default=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
+    team = models.ForeignKey(Team, null=True, blank=True,
+            on_delete=models.SET_NULL, verbose_name=_("Team"))
 
     request_count = models.IntegerField(default=0)
     reference = models.CharField(_("Reference"), blank=True, max_length=255)
