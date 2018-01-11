@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<a class="dropdown-item" href="{% url 'account-show' %}">
+  {% trans "Your requests" %}
+</a>
+<a class="dropdown-item" href="{% url 'team-list' %}">
+  {% trans "Your teams" %}
+</a>
+<a class="dropdown-item" href="{% url 'account-settings' %}">
+  {% trans "Settings" %}
+</a>
