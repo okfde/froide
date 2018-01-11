@@ -8,7 +8,7 @@ def merge_accounts(old_user, new_user):
     from froide.foirequestfollower.models import FoiRequestFollower
     from froide.frontpage.models import FeaturedRequest
     from froide.publicbody.models import PublicBody
-    from froide.account.models import TeamMembership
+    from froide.team.models import TeamMembership
 
     mapping = [
         (FoiRequest, 'user', None),
