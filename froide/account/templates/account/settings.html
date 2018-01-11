@@ -56,7 +56,7 @@
           {% if change_form %}
             {% render_form change_form %}
           {% else %}
-          {% render_form user.get_change_form %}
+            {% render_form user.get_change_form %}
           {% endif %}
           <button type="submit" class="btn btn-secondary">
             {% blocktrans %}Save changes{% endblocktrans %}

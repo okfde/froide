@@ -43,7 +43,7 @@
     </ul>
     <div class="tab-content">
       {% block pre_table %}{% endblock %}
-      <table class="table table-hover">
+      <table class="table table-hover mt-3">
         <thead>
           <tr>
             {% block table_head %}
@@ -87,6 +87,7 @@
       {% if page_obj.has_other_pages %}
         {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
       {% endif %}
+      {% block post_table %}{% endblock %}
     </div>
   </div>
 </div>
