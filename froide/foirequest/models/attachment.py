@@ -105,9 +105,3 @@ class FoiAttachment(models.Model):
         if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
             return True
         return False
-
-    def admin_link_message(self):
-        return '<a href="%s">%s</a>' % (
-            reverse('admin:foirequest_foimessage_change',
-                args=(self.belongs_to_id,)), _('See FoiMessage'))
-    admin_link_message.allow_tags = True

@@ -5,7 +5,7 @@ import re
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
@@ -201,6 +201,12 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     )
     search_fields = ['name']
     actions = ['approve', 'cannot_approve', 'convert']
+
+    def admin_link_message(self, obj):
+        return '<a href="%s">%s</a>' % (
+            reverse('admin:foirequest_foimessage_change',
+                args=(obj.belongs_to_id,)), _('See FoiMessage'))
+    admin_link_message.allow_tags = True
 
     def approve(self, request, queryset):
         rows_updated = queryset.update(approved=True)
