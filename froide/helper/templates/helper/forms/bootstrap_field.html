@@ -30,7 +30,7 @@
 </div>
 {% else %}
 <div class="form-group row{% if classes %} {{ classes }}{% endif %}">
-  {% if field.id_for_label %}<label class="col-lg-3 col-form-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}
+  {% if label %}{% if field.id_for_label %}<label class="col-lg-3 col-form-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
   <div class="col-lg-9">
     {{ field }}
     {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
