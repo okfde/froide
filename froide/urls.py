@@ -167,6 +167,15 @@ if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
+    except ImportError:
+        pass
+
 # Catch all Jurisdiction patterns
 urlpatterns += [
     url(r'^(?P<slug>[\w-]+)/', include('froide.publicbody.jurisdiction_urls'))
