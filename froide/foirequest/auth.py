@@ -1,4 +1,13 @@
-from functools import lru_cache
+try:
+    from functools import lru_cache
+except ImportError:
+    # FIXME: Fake lru cache on Python2
+    def lru_cache():
+        def inner(func):
+            def _inner(*args, **kwargs):
+                return func(*args, **kwargs)
+            return _inner
+        return inner
 
 from django.utils.crypto import salted_hmac, constant_time_compare
 
