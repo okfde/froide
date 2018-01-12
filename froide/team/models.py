@@ -62,6 +62,9 @@ class Team(models.Model):
     class Meta:
         verbose_name = _('team')
         verbose_name_plural = _('teams')
+        permissions = (
+            ("can_use_teams", _("Can use teams")),
+        )
 
     def __str__(self):
         return self.name

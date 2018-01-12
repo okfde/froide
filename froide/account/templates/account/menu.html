@@ -1,11 +1,17 @@
 {% load i18n %}
 
+{% load teamtags %}
+
 <a class="dropdown-item" href="{% url 'account-show' %}">
   {% trans "Your requests" %}
 </a>
-<a class="dropdown-item" href="{% url 'team-list' %}">
-  {% trans "Your teams" %}
-</a>
+
+{% if request.user|can_use_teams %}
+  <a class="dropdown-item" href="{% url 'team-list' %}">
+    {% trans "Your teams" %}
+  </a>
+{% endif %}
+
 <a class="dropdown-item" href="{% url 'account-settings' %}">
   {% trans "Settings" %}
 </a>
