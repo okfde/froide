@@ -5,8 +5,8 @@
 
 
 {% block body %}
-<div class="row">
-  <div class="col-lg-8 col-lg-push-2">
+<div class="row justify-content-md-center mt-5">
+  <div class="col-lg-8">
     <h2>{% trans "Our Terms of Use have changed" %}</h2>
     {% block terms_details %}{% endblock %}
     <form class="form-horizontal" method="post" action=".?next={{ next }}">
