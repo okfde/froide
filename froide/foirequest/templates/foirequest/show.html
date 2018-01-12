@@ -38,11 +38,11 @@
   <div class="alert alert-info d-print-none">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
 {% endif %}
 
-{% if object.user == user and object.awaits_classification %}
+{% if object|can_write_foirequest:request and object.awaits_classification %}
   <div class="alert alert-info d-print-none">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status" data-tabgo="tab">set a new status for this request</a>!{% endblocktrans %}</div>
 {% endif %}
 
-{% if object.user == user and object.is_overdue %}
+{% if object|can_write_foirequest:request and object.is_overdue %}
   <div class="alert d-print-none">
     {% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!<br/>
     Please act now:{% endblocktrans %}
@@ -57,7 +57,7 @@
   </div>
 {% endif %}
 
-{% if object.user == user and object.has_been_refused and object.law.mediator %}
+{% if object|can_write_foirequest:request and object.has_been_refused and object.law.mediator %}
   <div class="alert alert-info d-print-none">
     {% blocktrans %}You request has been refused.{% endblocktrans %}
     <a href="#escalate" data-tabgo="tab">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
@@ -84,7 +84,7 @@
   </div>
 </div>
 
-{% if not object.public and object.user == user %}
+{% if not object.public and object|can_write_foirequest:request %}
   <div class="row">
     <div class="col-12">
       <div class="card d-print-none mb-5">
@@ -101,7 +101,7 @@
 {% endif %}
 
 
-{% if object.user == user %}
+{% if object|can_write_foirequest:request %}
   <div class="row">
     <div class="col-md-3">
       <ul class="request-nav nav">
@@ -376,7 +376,7 @@
     {% block request_action_pane_footer %}{% endblock %}
 
     <div role="tabpanel" class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
-  {% endif %}{# end {% if object.user == user %} #}
+  {% endif %}{# end {% if object|can_write_foirequest:request %} #}
       <div class="row">
         <div class="col-md-8">
 
@@ -506,7 +506,7 @@
       {% include "foirequest/snippets/sidebar.html" %}
     </div>
   </div>
-  {% if object.user == user %}
+  {% if object|can_write_foirequest:request %}
       </div>
     </div>
   </div>

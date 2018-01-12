@@ -12,8 +12,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from froide.helper.text_utils import unescape, split_text_by_separator
 
-from froide.foirequest.models import FoiRequest
-from froide.foirequest.foi_mail import get_alternative_mail
+from ..models import FoiRequest
+from ..foi_mail import get_alternative_mail
+from ..auth import can_read_foirequest, can_write_foirequest
 
 register = template.Library()
 
@@ -125,12 +126,24 @@ def check_same_request(context, foirequest, user, var_name):
         foirequest_id = foirequest.same_as_id
     else:
         foirequest_id = foirequest.id
-    same_requests = FoiRequest.objects.filter(user=user, same_as_id=foirequest_id)
+    same_requests = FoiRequest.objects.filter(
+        user=user, same_as_id=foirequest_id
+    )
     if same_requests:
         context[var_name] = same_requests[0]
     else:
         context[var_name] = False
     return ""
+
+
+@register.filter(name='can_read_foirequest')
+def can_read_foirequest_filter(foirequest, request):
+    return can_read_foirequest(foirequest, request)
+
+
+@register.filter(name='can_write_foirequest')
+def can_write_foirequest_filter(foirequest, request):
+    return can_write_foirequest(foirequest, request)
 
 
 def alternative_address(foirequest):

@@ -4,15 +4,18 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from froide.foirequest.auth import can_read_foirequest
+
 from .models import FoiRequestFollower
 
 User = get_user_model()
 
 
 class FollowRequestForm(forms.Form):
-    def __init__(self, foirequest, user, *args, **kwargs):
+    def __init__(self, foirequest, request, *args, **kwargs):
         self.foirequest = foirequest
-        self.user = user
+        self.request = request
+        self.user = request.user
         super(FollowRequestForm, self).__init__(*args, **kwargs)
         if not self.user.is_authenticated:
             self.fields["email"] = forms.EmailField(label=_("Your Email address"),
@@ -22,7 +25,7 @@ class FollowRequestForm(forms.Form):
         email = self.cleaned_data.get('email', None)
         if not self.user.is_authenticated and email is None:
             raise forms.ValidationError(_("Missing email address!"))
-        if not self.foirequest.is_visible(self.user):
+        if not can_read_foirequest(self.foirequest, self.request):
             raise forms.ValidationError(_("You cannot access this request!"))
         if not self.user.is_authenticated:
             try:
@@ -38,4 +41,6 @@ class FollowRequestForm(forms.Form):
         return self.cleaned_data
 
     def save(self):
-        return FoiRequestFollower.objects.follow(self.foirequest, self.user, **self.cleaned_data)
+        return FoiRequestFollower.objects.follow(
+            self.foirequest, self.user, **self.cleaned_data
+        )

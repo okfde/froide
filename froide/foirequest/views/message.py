@@ -6,24 +6,21 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 from django.contrib import messages
 
-from froide.helper.utils import render_400, render_403
+from froide.helper.utils import render_400
 
-from ..models import FoiRequest, FoiMessage
+from ..models import FoiMessage
 from ..forms import (SendMessageForm, PostalReplyForm, PostalMessageForm,
         PostalAttachmentForm, MessagePublicBodySenderForm,
         EscalationMessageForm)
 from ..utils import check_throttle
 
-from .request import show
+from .request import show_foirequest
+from .request_actions import allow_write_foirequest
 
 
 @require_POST
-def send_message(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def send_message(request, foirequest):
     form = SendMessageForm(foirequest, request.POST)
 
     throttle_message = check_throttle(foirequest.user, FoiMessage)
@@ -36,20 +33,18 @@ def send_message(request, slug):
                 _('Your Message has been sent.'))
         return redirect(mes)
     else:
-        return show(request, slug, context={"send_message_form": form}, status=400)
+        return show_foirequest(request, foirequest, context={
+            "send_message_form": form
+        }, status=400)
 
 
 @require_POST
-def escalation_message(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def escalation_message(request, foirequest):
     if not foirequest.can_be_escalated():
         messages.add_message(request, messages.ERROR,
                 _('Your request cannot be escalated.'))
-        return show(request, slug, status=400)
+        return show_foirequest(request, foirequest, status=400)
     form = EscalationMessageForm(foirequest, request.POST)
 
     throttle_message = check_throttle(foirequest.user, FoiMessage)
@@ -62,17 +57,17 @@ def escalation_message(request, slug):
                 _('Your Escalation Message has been sent.'))
         return redirect(foirequest)
     else:
-        return show(request, slug, context={"escalation_form": form}, status=400)
+        return show_foirequest(request, foirequest, context={
+            "escalation_form": form
+        }, status=400)
 
 
 @require_POST
-def add_postal_reply(request, slug, form_class=PostalReplyForm,
+@allow_write_foirequest
+def add_postal_reply(request, foirequest, form_class=PostalReplyForm,
             success_message=_('A postal reply was successfully added!'),
             error_message=_('There were errors with your form submission!'),
             form_key='postal_reply_form', form_prefix='reply'):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or request.user != foirequest.user:
-        return render_403(request)
     if not foirequest.public_body:
         return render_400(request)
     form = form_class(request.POST, request.FILES, foirequest=foirequest,
@@ -82,7 +77,9 @@ def add_postal_reply(request, slug, form_class=PostalReplyForm,
         messages.add_message(request, messages.SUCCESS, success_message)
         return redirect(message)
     messages.add_message(request, messages.ERROR, error_message)
-    return show(request, slug, context={form_key: form}, status=400)
+    return show_foirequest(request, foirequest, context={
+        form_key: form
+    }, status=400)
 
 
 def add_postal_message(request, slug):
@@ -97,16 +94,12 @@ def add_postal_message(request, slug):
 
 
 @require_POST
-def add_postal_reply_attachment(request, slug, message_id):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
+@allow_write_foirequest
+def add_postal_reply_attachment(request, foirequest, message_id):
     try:
         message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if request.user != foirequest.user:
-        return render_403(request)
     if not message.is_postal:
         return render_400(request)
     form = PostalAttachmentForm(request.POST, request.FILES)
@@ -129,17 +122,13 @@ def add_postal_reply_attachment(request, slug, message_id):
 
 
 @require_POST
-def set_message_sender(request, slug, message_id):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
+@allow_write_foirequest
+def set_message_sender(request, foirequest, message_id):
     try:
         message = FoiMessage.objects.get(request=foirequest,
                 pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if request.user != foirequest.user and not request.user.is_staff:
-        return render_403(request)
     if not message.is_response:
         return render_400(request)
     form = MessagePublicBodySenderForm(message, request.POST)
@@ -152,12 +141,8 @@ def set_message_sender(request, slug, message_id):
 
 
 @require_POST
-def approve_message(request, slug, message):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff and foirequest.user != request.user:
-        return render_403(request)
+@allow_write_foirequest
+def approve_message(request, foirequest, message):
     mes = get_object_or_404(FoiMessage, id=int(message))
     mes.content_hidden = False
     mes.save()
@@ -167,12 +152,8 @@ def approve_message(request, slug, message):
 
 
 @require_POST
-def resend_message(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff:
-        return render_403(request)
+@allow_write_foirequest
+def resend_message(request, foirequest):
     try:
         mes = FoiMessage.objects.get(sent=False, request=foirequest, pk=int(request.POST.get('message', 0)))
     except (FoiMessage.DoesNotExist, ValueError):

@@ -24,9 +24,14 @@ class TaggedFoiProject(TaggedItemBase):
 
 
 class FoiProjectManager(CurrentSiteManager):
-    def get_for_user(self, user):
+    def get_for_user(self, user, **query_kwargs):
         qs = self.get_queryset()
-        qs = qs.filter(models.Q(user=user) | models.Q(team__user=user))
+        user_teams = Team.objects.get_for_user(user)
+        qs = qs.filter(
+            models.Q(user=user) |
+            models.Q(team__in=user_teams),
+            **query_kwargs
+        )
         return qs
 
 
@@ -95,12 +100,3 @@ class FoiProject(models.Model):
 
     def get_absolute_domain_short_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_short_url())
-
-    def is_visible(self, user=None, pb_auth=None):
-        if self.public:
-            return True
-        if user and self.user == user:
-            return True
-        if user and user.is_staff:
-            return True
-        return False

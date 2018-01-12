@@ -695,7 +695,7 @@ class RequestTest(TestCase):
                 reverse('foirequest-set_message_sender',
                 kwargs={"slug": req.slug, "message_id": str(message.pk)}),
                 {post_var: original_pb.id})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 403)
         self.assertNotEqual(message.sender_public_body, original_pb)
 
     def test_mark_not_foi(self):

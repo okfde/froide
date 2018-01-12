@@ -17,7 +17,6 @@ import django.dispatch
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, mail_managers
 from django.utils.html import strip_tags
-from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -30,6 +29,7 @@ from froide.helper.text_utils import redact_content
 
 from ..foi_mail import package_foirequest
 from ..utils import construct_message_body
+
 from .project import FoiProject
 
 
@@ -438,10 +438,12 @@ class FoiRequest(models.Model):
                 kwargs={'obj_id': self.id}))
 
     def get_auth_link(self):
+        from ..auth import get_foirequest_auth_code
+
         return "%s%s" % (settings.SITE_URL,
             reverse('foirequest-auth',
                 kwargs={"obj_id": self.id,
-                    "code": self.get_auth_code()
+                    "code": get_foirequest_auth_code(self)
                 }))
 
     def get_accessible_link(self):
@@ -486,20 +488,8 @@ class FoiRequest(models.Model):
     def status_is_final(self):
         return self.status == 'resolved'
 
-    def is_visible(self, user=None, pb_auth=None):
-        if self.visibility == self.INVISIBLE:
-            return False
-        if self.visibility == self.VISIBLE_TO_PUBLIC:
-            return True
-        if user and self.visibility == self.VISIBLE_TO_REQUESTER and (
-                user.is_authenticated and
-                self.user == user):
-            return True
-        if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
-            return True
-        if self.visibility == self.VISIBLE_TO_REQUESTER and pb_auth is not None:
-            return self.check_auth_code(pb_auth)
-        return False
+    def is_visible(self):
+        return self.visibility == self.VISIBLE_TO_PUBLIC
 
     def in_search_index(self):
         return (self.is_visible() and
@@ -587,13 +577,6 @@ class FoiRequest(models.Model):
                         request=self
                     ).select_related("public_body", "request")
         return self._public_body_suggestion
-
-    def get_auth_code(self):
-        return salted_hmac("FoiRequestPublicBodyAuth",
-                '%s#%s' % (self.id, self.secret_address)).hexdigest()
-
-    def check_auth_code(self, code):
-        return constant_time_compare(code, self.get_auth_code())
 
     def public_body_suggestions_form(self):
         from ..forms import PublicBodySuggestionsForm

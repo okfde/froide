@@ -5,9 +5,10 @@ from froide.foirequestfollower.forms import FollowRequestForm
 register = template.Library()
 
 
-def get_context(foirequest, user, **kwargs):
-    form = FollowRequestForm(foirequest, user)
+def get_context(foirequest, request, **kwargs):
+    form = FollowRequestForm(foirequest, request)
     following = False
+    user = request.user
     if user.is_authenticated and foirequest.followed_by(user):
         following = True
     context = {
@@ -20,6 +21,6 @@ def get_context(foirequest, user, **kwargs):
 
 
 @register.inclusion_tag('foirequestfollower/_follow_form.html')
-def follow_request_form(foirequest, user, follow_only=False, verbose=True):
-    return get_context(foirequest, user, follow_only=follow_only,
+def follow_request_form(foirequest, request, follow_only=False, verbose=True):
+    return get_context(foirequest, request, follow_only=follow_only,
                        verbose=verbose)

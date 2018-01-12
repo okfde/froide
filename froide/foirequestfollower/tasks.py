@@ -119,7 +119,7 @@ def _batch_update(update_requester=True, update_follower=True):
                 if follower.user and (
                         not follower.user.is_active or not follower.user.email):
                     continue
-                if not request.is_visible(None):
+                if not request.is_visible():
                     continue
                 if not any([x for x in updates[req_id] if x[2] != follower.user_id]):
                     continue

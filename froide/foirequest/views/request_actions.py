@@ -16,15 +16,23 @@ from ..forms import (ConcreteLawForm, TagFoiRequestForm,
         FoiRequestStatusForm, MakePublicBodySuggestionForm)
 from ..utils import check_throttle
 from ..services import CreateSameAsRequestService
+from ..auth import can_write_foirequest
 
-from .request import show
+from .request import show_foirequest
+
+
+def allow_write_foirequest(func):
+    def inner(request, slug, *args, **kwargs):
+        foirequest = get_object_or_404(FoiRequest, slug=slug)
+        if not can_write_foirequest(foirequest, request):
+            return render_403(request)
+        return func(request, foirequest, *args, **kwargs)
+    return inner
 
 
 @require_POST
-def set_public_body(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def set_public_body(request, foirequest):
     try:
         publicbody_pk = int(request.POST.get('suggestion', ''))
     except ValueError:
@@ -85,10 +93,8 @@ def suggest_public_body(request, slug):
 
 
 @require_POST
-def set_status(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def set_status(request, foirequest):
     form = FoiRequestStatusForm(foirequest, request.POST)
     if form.is_valid():
         form.set_status()
@@ -97,24 +103,22 @@ def set_status(request, slug):
     else:
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
-        return show(request, slug, context={"status_form": form}, status=400)
+        return show_foirequest(request, foirequest, context={
+            "status_form": form
+        }, status=400)
     return redirect(foirequest.get_absolute_url() + '#-')
 
 
 @require_POST
-def make_public(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def make_public(request, foirequest):
     foirequest.make_public()
     return redirect(foirequest)
 
 
 @require_POST
-def set_law(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def set_law(request, foirequest):
     if not foirequest.response_messages():
         return render_400(request)
     if not foirequest.law.meta:
@@ -129,10 +133,8 @@ def set_law(request, slug):
 
 
 @require_POST
-def set_tags(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or not request.user.is_staff:
-        return render_403(request)
+@allow_write_foirequest
+def set_tags(request, foirequest):
     form = TagFoiRequestForm(request.POST)
     if form.is_valid():
         form.save(foirequest)
@@ -142,10 +144,8 @@ def set_tags(request, slug):
 
 
 @require_POST
-def set_summary(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated or request.user != foirequest.user:
-        return render_403(request)
+@allow_write_foirequest
+def set_summary(request, foirequest):
     if not foirequest.status_is_final():
         return render_400(request)
     summary = request.POST.get('summary', None)
@@ -200,7 +200,8 @@ def make_same_request(request, slug, message_id):
     if not request.user.is_authenticated:
         new_user_form = NewUserForm(request.POST)
         if not new_user_form.is_valid():
-            return show(request, slug, context={"new_user_form": new_user_form}, status=400)
+            return show_foirequest(request, foirequest,
+                context={"new_user_form": new_user_form}, status=400)
     else:
         user = request.user
         if foirequest.user == user:

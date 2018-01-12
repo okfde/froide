@@ -14,7 +14,7 @@ from .forms import FollowRequestForm
 @require_POST
 def follow(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    form = FollowRequestForm(foirequest, request.user, request.POST)
+    form = FollowRequestForm(foirequest, request, request.POST)
     if form.is_valid():
         followed = form.save()
         if request.is_ajax():

@@ -24,6 +24,7 @@ from .models import FoiRequest, FoiMessage, FoiAttachment
 from .services import CreateRequestService
 from .validators import clean_reference
 from .utils import check_throttle
+from .auth import can_read_foirequest_authenticated
 
 
 User = get_user_model()
@@ -134,22 +135,28 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_attachments(self, obj):
-        user = self.context['request'].user
-        token = self.context['request'].auth
+        request = self.context['request']
+        token = request.auth
 
         atts = obj.foiattachment_set.all()
-        if obj.request.user == user:
-            if token and not token.is_valid(['read:request']):
-                atts = atts.filter(approved=True)
-        else:
-            if not user.is_superuser:
-                atts = atts.filter(approved=True)
+        if not self.can_see_attachment(obj.request, request, token):
+            atts = atts.filter(approved=True)
         serializer = FoiAttachmentSerializer(
             atts,
             many=True,
             context={'request': self.context['request']}
         )
         return serializer.data
+
+    def can_see_attachment(self, foirequest, request, token):
+        allowed = can_read_foirequest_authenticated(
+            foirequest, request, allow_code=False
+        )
+        if allowed:
+            if token and not token.is_valid(['read:request']):
+                return False
+            return True
+        return False
 
 
 class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):

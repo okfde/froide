@@ -15,6 +15,9 @@ from froide.helper.utils import render_400, render_403
 from froide.helper.redaction import redact_file
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
+from ..auth import (can_read_foirequest, can_read_foirequest_authenticated,
+                    can_write_foirequest)
+
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
@@ -22,9 +25,8 @@ X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 @require_POST
 def approve_attachment(request, slug, attachment):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff and foirequest.user != request.user:
+
+    if not can_write_foirequest(foirequest, request):
         return render_403(request)
     att = get_object_or_404(FoiAttachment, id=int(attachment))
     if not att.can_approve and not request.user.is_staff:
@@ -43,12 +45,16 @@ def auth_message_attachment(request, message_id, attachment_name):
     attachment = get_object_or_404(FoiAttachment, belongs_to=message,
         name=attachment_name)
     foirequest = message.request
-    pb_auth = request.session.get('pb_auth')
-
-    if not foirequest.is_visible(request.user, pb_auth=pb_auth):
+    if not can_read_foirequest(foirequest, request):
         return render_403(request)
-    if not attachment.is_visible(request.user, foirequest):
-        return render_403(request)
+    if not attachment.approved:
+        # allow only approved attachments to be read
+        # do not allow anonymous authentication here
+        allowed = can_read_foirequest_authenticated(
+            foirequest, request, allow_code=False
+        )
+        if not allowed:
+            return render_403(request)
 
     response = HttpResponse()
     response['Content-Type'] = ""
@@ -59,7 +65,7 @@ def auth_message_attachment(request, message_id, attachment_name):
 
 def redact_attachment(request, slug, attachment_id):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_staff and not request.user == foirequest.user:
+    if not can_write_foirequest(foirequest, request):
         return render_403(request)
     attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
             belongs_to__request=foirequest)
@@ -71,7 +77,8 @@ def redact_attachment(request, slug, attachment_id):
     elif attachment.is_redacted:
         already = attachment
 
-    if already is not None and not already.can_approve and not request.user.is_staff:
+    if (already is not None and not already.can_approve and
+            not request.user.is_staff):
         return render_403(request)
 
     if request.method == 'POST':

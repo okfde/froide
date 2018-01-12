@@ -186,6 +186,8 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_auth_links(self):
+        from froide.foirequest.auth import get_foirequest_auth_code
+
         req = FoiRequest.objects.all()[0]
         req.visibility = 1
         req.save()
@@ -196,7 +198,10 @@ class WebTest(TestCase):
             kwargs={'obj_id': req.id, 'code': '0a'}))
         self.assertEqual(response.status_code, 403)
         response = self.client.get(reverse('foirequest-auth',
-            kwargs={'obj_id': req.id, 'code': req.get_auth_code()}))
+            kwargs={
+                'obj_id': req.id,
+                'code': get_foirequest_auth_code(req)
+            }))
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
         # Check logged in with wrong code

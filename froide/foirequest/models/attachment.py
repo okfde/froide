@@ -50,11 +50,6 @@ class FoiAttachment(models.Model):
     def index_content(self):
         return "\n".join((self.name,))
 
-    def has_public_access(self):
-        if self.belongs_to:
-            return self.belongs_to.request.is_visible() and self.approved
-        return False
-
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
 
@@ -94,14 +89,3 @@ class FoiAttachment(models.Model):
         self.approved = True
         self.save()
         self.attachment_published.send(sender=self)
-
-    def is_visible(self, user, foirequest):
-        if self.approved:
-            return True
-        if user and (
-                user.is_authenticated and
-                foirequest.user == user):
-            return True
-        if user and (user.is_superuser or user.has_perm('foirequest.see_private')):
-            return True
-        return False

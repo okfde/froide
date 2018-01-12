@@ -6,36 +6,43 @@ from django.http import Http404
 from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiEvent, FoiAttachment
+from ..auth import (can_read_foirequest, can_write_foirequest,
+    check_foirequest_auth_code)
 
 
 def shortlink(request, obj_id):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
-    if foirequest.is_visible(request.user):
-        return redirect(foirequest)
-    else:
+    if not can_read_foirequest(foirequest, request):
         return render_403(request)
+    return redirect(foirequest)
 
 
 def auth(request, obj_id, code):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
-    if foirequest.is_visible(request.user):
+    if can_read_foirequest(foirequest, request):
         return redirect(foirequest)
-    if foirequest.check_auth_code(code):
+    if check_foirequest_auth_code(foirequest, code):
         request.session['pb_auth'] = code
         return redirect(foirequest)
     else:
         return render_403(request)
 
 
-def show(request, slug, template_name="foirequest/show.html",
-            context=None, status=200):
+def show(request, slug, **kwargs):
     try:
         obj = FoiRequest.objects.select_related("public_body",
                 "user", "law").get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
-    if not obj.is_visible(request.user, pb_auth=request.session.get('pb_auth')):
+
+    if not can_read_foirequest(obj, request):
         return render_403(request)
+
+    return show_foirequest(request, obj, **kwargs)
+
+
+def show_foirequest(request, obj, template_name="foirequest/show.html",
+        context=None, status=200):
     all_attachments = FoiAttachment.objects.select_related('redacted')\
             .filter(belongs_to__request=obj).all()
     for message in obj.messages:
@@ -67,25 +74,30 @@ def show(request, slug, template_name="foirequest/show.html",
         context = {}
 
     active_tab = 'info'
-    if request.user.is_authenticated and request.user == obj.user:
-        if obj.awaits_classification():
-            active_tab = 'set-status'
-        elif obj.is_overdue() and obj.awaits_response():
-            active_tab = 'write-message'
-
-        if 'postal_reply_form' in context:
-            active_tab = 'add-postal-reply'
-        elif 'postal_message_form' in context:
-            active_tab = 'add-postal-message'
-        elif 'status_form' in context:
-            active_tab = 'set-status'
-        elif 'send_message_form' in context:
-            active_tab = 'write-message'
-        elif 'escalation_form' in context:
-            active_tab = 'escalate'
+    if can_write_foirequest(obj, request):
+        active_tab = get_active_tab(obj, context)
 
     context.update({
         "object": obj,
         "active_tab": active_tab
     })
     return render(request, template_name, context, status=status)
+
+
+def get_active_tab(obj, context):
+    if obj.awaits_classification():
+        return 'set-status'
+    elif obj.is_overdue() and obj.awaits_response():
+        return 'write-message'
+
+    if 'postal_reply_form' in context:
+        return 'add-postal-reply'
+    elif 'postal_message_form' in context:
+        return 'add-postal-message'
+    elif 'status_form' in context:
+        return 'set-status'
+    elif 'send_message_form' in context:
+        return 'write-message'
+    elif 'escalation_form' in context:
+        return 'escalate'
+    return 'info'

@@ -14,6 +14,8 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 from froide.publicbody.models import (Jurisdiction, FoiLaw, PublicBody,
     Classification, Category, PublicBodyTag)
@@ -286,11 +288,18 @@ def make_world():
     UserFactory.create(
         username='dummy', email='dummy@example.org',
         first_name='Dummy', last_name='D.')
-    UserFactory.create(
+    dummy_staff = UserFactory.create(
         is_staff=True,
         username='dummy_staff',
         email='dummy_staff@example.org',
     )
+    content_type = ContentType.objects.get_for_model(FoiRequest)
+    permission = Permission.objects.get(
+        codename='change_foirequest',
+        content_type=content_type,
+    )
+    dummy_staff.user_permissions.add(permission)
+
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
 

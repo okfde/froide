@@ -134,7 +134,9 @@ class FoiProjectListView(BaseRequestListView):
         query_kwargs = {}
         if self.query:
             query_kwargs = {'title__icontains': self.query}
-        return FoiProject.objects.filter(user=self.request.user, **query_kwargs)
+        return FoiProject.objects.get_for_user(
+            self.request.user, **query_kwargs
+        )
 
 
 def profile(request, slug):
