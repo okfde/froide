@@ -89,10 +89,13 @@ class Team(models.Model):
         return self.members.count()
 
     def can_do(self, user, *args):
+        kwargs = dict(
+            status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+            user=user
+        )
         return self.teammembership_set.filter(
             *args,
-            status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
-            user=user,
+            **kwargs
         ).exists()
 
     def can_read(self, user):
