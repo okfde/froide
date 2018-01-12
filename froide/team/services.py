@@ -33,7 +33,7 @@ class TeamService(object):
     def send_team_invite(self, invited_by):
         secret = self.generate_invite_secret()
         url_kwargs = {
-            "member_id": self.member.pk,
+            "pk": self.member.pk,
             "secret": secret,
         }
         url = '%s%s' % (
