@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import pgettext
 
 from ..views import (
     index, search, dashboard, auth, shortlink, auth_message_attachment,
@@ -21,23 +21,23 @@ urlpatterns = [
     url(r'^dashboard/$', dashboard, name='dashboard'),
 
     # Translators: request URL
-    url(r'^%s/' % _('make-request'), include(make_request_urls)),
+    url(r'^%s/' % pgettext('url part', 'make-request'), include(make_request_urls)),
     # Translators: URL part
-    url(r'^%s/' % _('requests'), include(list_requests_urls)),
+    url(r'^%s/' % pgettext('url part', 'requests'), include(list_requests_urls)),
     # Translators: request URL
-    url(r'^%s/' % _('request'), include(request_urls)),
+    url(r'^%s/' % pgettext('url part', 'request'), include(request_urls)),
     # Translators: project URL
-    url(r'^%s/' % _('project'), include(project_urls)),
+    url(r'^%s/' % pgettext('url part', 'project'), include(project_urls)),
 
 
     # Translators: request URL
-    url(r'^%s/' % _('search'), search, name="foirequest-search"),
+    url(r'^%s/' % pgettext('url part', 'search'), search, name="foirequest-search"),
     # Translators: Short request URL
-    url(r"^%s/(?P<obj_id>\d+)/?$" % _('r'), shortlink, name="foirequest-shortlink"),
+    url(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'r'), shortlink, name="foirequest-shortlink"),
     # Translators: Short project URL
-    url(r"^%s/(?P<obj_id>\d+)/?$" % _('p'), project_shortlink, name="foirequest-project_shortlink"),
+    url(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'p'), project_shortlink, name="foirequest-project_shortlink"),
     # Translators: Short-request auth URL
-    url(r"^%s/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$" % _('r'), auth, name="foirequest-auth"),
+    url(r"^%s/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$" % pgettext('url part', 'r'), auth, name="foirequest-auth"),
 ]
 
 

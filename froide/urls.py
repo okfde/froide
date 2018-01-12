@@ -7,8 +7,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.flatpages.views import flatpage
 from django.contrib.flatpages.sitemaps import FlatPageSitemap
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
-
-from django.utils.translation import ugettext as _
+from django.utils.translation import pgettext
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 
@@ -102,23 +101,26 @@ if len(settings.LANGUAGES) > 1:
         url(r'^i18n/', include('django.conf.urls.i18n'))
     ]
 
+account = pgettext('url part', 'account')
+teams = pgettext('url part', 'teams')
+
 urlpatterns += [
     # Translators: follow request URL
-    url(r'^%s/' % _('follow'), include('froide.foirequestfollower.urls')),
+    url(r'^%s/' % pgettext('url part', 'follow'), include('froide.foirequestfollower.urls')),
     # Translators: URL part
-    url(r"^%s/(?P<slug>[-\w]+)/$" % _('entity'), show_publicbody,
+    url(r"^%s/(?P<slug>[-\w]+)/$" % pgettext('url part', 'entity'), show_publicbody,
             name="publicbody-show"),
-    url(r"^%s/$" % _('entity'), lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
+    url(r"^%s/$" % pgettext('url part', 'entity'), lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
     # Translators: URL part
-    url(r'^%s/' % _('entities'), include('froide.publicbody.urls')),
+    url(r'^%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
     # Translators: URL part
-    url(r'^%s/' % _('law'), include('froide.publicbody.law_urls')),
+    url(r'^%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
     # Translators: URL part
-    url(r'^%s/' % _('account'), include('froide.account.urls')),
+    url(r'^%s/' % account, include('froide.account.urls')),
     # Translators: URL part
-    url(r'^%s/%s/' % (_('account'), _('teams')), include('froide.team.urls')),
+    url(r'^%s/%s/' % (account, teams), include('froide.team.urls')),
     # Translators: URL part
-    url(r'^%s/' % _('profile'), include('froide.account.profile_urls')),
+    url(r'^%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
     # Translators: URL part
     url(r'^comments/', include('django_comments.urls')),
     # Secret URLs
@@ -126,13 +128,13 @@ urlpatterns += [
 ]
 
 # Translators: URL part
-help_url_part = _('help')
+help_url_part = pgettext('url part', 'help')
 # Translators: URL part
-about_url_part = _('about')
+about_url_part = pgettext('url part', 'about')
 # Translators: URL part
-terms_url_part = _('terms')
+terms_url_part = pgettext('url part', 'terms')
 # Translators: URL part
-privacy_url_part = _('privacy')
+privacy_url_part = pgettext('url part', 'privacy')
 
 urlpatterns += [
     url(r'^%s/$' % help_url_part, flatpage,
