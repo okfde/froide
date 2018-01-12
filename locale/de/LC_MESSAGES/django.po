@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-12 09:55+0100\n"
-"PO-Revision-Date: 2018-01-12 16:07+0700\n"
+"POT-Creation-Date: 2018-01-12 16:13+0100\n"
+"PO-Revision-Date: 2018-01-12 22:13+0700\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -2290,9 +2290,7 @@ msgstr "Identische Anfrage"
 msgid "Identical request count"
 msgstr "Anzahl Identischer Anfragen"
 
-#. Translators: project URL
 #: froide/foirequest/models/request.py:313
-#: froide/foirequest/urls/__init__.py:30
 msgid "project"
 msgstr "projekt"
 
@@ -3338,9 +3336,7 @@ msgid "%(count)s public bodies"
 msgstr "%(count)s Behörden"
 
 #. Translators: not url
-#. Translators: URL part
 #: froide/foirequest/templates/foirequest/request.html:159
-#: froide/foirequest/urls/__init__.py:26
 msgid "requests"
 msgstr "anfragen"
 
@@ -4388,27 +4384,44 @@ msgstr "Nur für Sie sichtbar"
 
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:24
+msgctxt "url part"
 msgid "make-request"
 msgstr "anfrage-stellen"
 
+#. Translators: URL part
+#: froide/foirequest/urls/__init__.py:26
+msgctxt "url part"
+msgid "requests"
+msgstr "anfragen"
+
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:28
+msgctxt "url part"
 msgid "request"
 msgstr "anfrage"
 
+#. Translators: project URL
+#: froide/foirequest/urls/__init__.py:30
+msgctxt "url part"
+msgid "project"
+msgstr "projekt"
+
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:34
+msgctxt "url part"
 msgid "search"
 msgstr "suche"
 
 #. Translators: Short request URL
 #. Translators: Short-request auth URL
 #: froide/foirequest/urls/__init__.py:36 froide/foirequest/urls/__init__.py:40
+msgctxt "url part"
 msgid "r"
 msgstr "a"
 
 #. Translators: Short project URL
 #: froide/foirequest/urls/__init__.py:38
+msgctxt "url part"
 msgid "p"
 msgstr "p"
 
@@ -5011,13 +5024,12 @@ msgid "Search for a topic or a public body:"
 msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
 
 #. Translators: URL part
-#: froide/publicbody/jurisdiction_urls.py:12 froide/urls.py:109
-#: froide/urls.py:111
+#: froide/publicbody/jurisdiction_urls.py:12
 msgid "entity"
 msgstr "behoerde"
 
 #. Translators: URL part
-#: froide/publicbody/jurisdiction_urls.py:17 froide/urls.py:113
+#: froide/publicbody/jurisdiction_urls.py:17
 msgid "entities"
 msgstr "behoerden"
 
@@ -5565,7 +5577,7 @@ msgstr "eingeladen"
 msgid "team"
 msgstr "Team"
 
-#: froide/team/models.py:76 froide/urls.py:119
+#: froide/team/models.py:76
 msgid "teams"
 msgstr "Teams"
 
@@ -5576,7 +5588,6 @@ msgstr "Kann Teams nutzen"
 #. Translators: Mail subject
 #: froide/team/services.py:50
 #, python-format
-#| msgid "%(time)s: New comment by %(name)s"
 msgid "%(site_name)s: team invite from %(name)s"
 msgstr "%(site_name)s: Team-Einladung von %(name)s"
 
@@ -5869,7 +5880,7 @@ msgid "Sign in"
 msgstr "Anmelden"
 
 #. Translators: URL part
-#: froide/templates/help/base.html:9 froide/urls.py:129
+#: froide/templates/help/base.html:9
 msgid "help"
 msgstr "hilfe"
 
@@ -6043,38 +6054,67 @@ msgstr "Stellen Sie jetzt eine Informationsfreiheitsanfrage!"
 msgid "Close"
 msgstr "Schließen"
 
+#: froide/urls.py:104
+msgctxt "url part"
+msgid "account"
+msgstr "account"
+
+#: froide/urls.py:105
+msgctxt "url part"
+msgid "teams"
+msgstr "teams"
+
 #. Translators: follow request URL
-#: froide/urls.py:107
+#: froide/urls.py:109
+msgctxt "url part"
 msgid "follow"
 msgstr "benachrichtigen"
 
 #. Translators: URL part
+#: froide/urls.py:111 froide/urls.py:113
+msgctxt "url part"
+msgid "entity"
+msgstr "behoerde"
+
+#. Translators: URL part
 #: froide/urls.py:115
+msgctxt "url part"
+msgid "entities"
+msgstr "behoerden"
+
+#. Translators: URL part
+#: froide/urls.py:117
+msgctxt "url part"
 msgid "law"
 msgstr "gesetz"
 
 #. Translators: URL part
-#: froide/urls.py:117 froide/urls.py:119
-msgid "account"
-msgstr "account"
-
-#. Translators: URL part
-#: froide/urls.py:121
+#: froide/urls.py:123
+msgctxt "url part"
 msgid "profile"
 msgstr "profil"
 
 #. Translators: URL part
 #: froide/urls.py:131
+msgctxt "url part"
+msgid "help"
+msgstr "hilfe"
+
+#. Translators: URL part
+#: froide/urls.py:133
+msgctxt "url part"
 msgid "about"
 msgstr "ueber"
 
 #. Translators: URL part
-#: froide/urls.py:133
+#: froide/urls.py:135
+msgctxt "url part"
 msgid "terms"
 msgstr "nutzungsbedingungen"
 
 #. Translators: URL part
-#: froide/urls.py:135
+#: froide/urls.py:137
+msgctxt "url part"
 msgid "privacy"
 msgstr "datenschutzerklaerung"
 
