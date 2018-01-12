@@ -1,8 +1,8 @@
 from django.db import models
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.generic import ListView, FormView, DetailView, UpdateView
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+    PermissionRequiredMixin)
 from django.http import Http404
 
 from .forms import CreateTeamForm, TeamInviteForm, TeamMemberChangeRoleForm
@@ -10,13 +10,11 @@ from .models import Team, TeamMembership
 from .services import TeamService
 
 
-class LoginRequiredMixin():
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+class AuthMixin(PermissionRequiredMixin, LoginRequiredMixin):
+    permission_required = 'team.can_use_teams'
 
 
-class CreateTeamView(LoginRequiredMixin, FormView):
+class CreateTeamView(AuthMixin, FormView):
     form_class = CreateTeamForm
 
     def form_valid(self, form):
@@ -30,7 +28,7 @@ class CreateTeamView(LoginRequiredMixin, FormView):
         return self.object.get_absolute_url()
 
 
-class TeamListView(LoginRequiredMixin, ListView):
+class TeamListView(AuthMixin, ListView):
     def get_queryset(self):
         return Team.objects.filter(
             members=self.request.user
@@ -42,7 +40,7 @@ class TeamListView(LoginRequiredMixin, ListView):
         return context
 
 
-class TeamDetailView(LoginRequiredMixin, DetailView):
+class TeamDetailView(AuthMixin, DetailView):
     def get_queryset(self):
         return Team.objects.filter(
             teammembership__user=self.request.user,
@@ -73,7 +71,7 @@ class TeamDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class InviteTeamMemberView(LoginRequiredMixin, UpdateView):
+class InviteTeamMemberView(AuthMixin, UpdateView):
     form_class = TeamInviteForm
     template_name = 'team/team_detail.html'
 
@@ -95,7 +93,7 @@ class InviteTeamMemberView(LoginRequiredMixin, UpdateView):
         return redirect(self.object)
 
 
-class ChangeTeamMemberRoleView(LoginRequiredMixin, UpdateView):
+class ChangeTeamMemberRoleView(AuthMixin, UpdateView):
     form_class = TeamMemberChangeRoleForm
 
     def get(self, request, *args, **kwargs):
@@ -116,7 +114,7 @@ class ChangeTeamMemberRoleView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class DeleteTeamMemberRoleView(LoginRequiredMixin, DetailView):
+class DeleteTeamMemberRoleView(AuthMixin, DetailView):
     def get(self, request, *args, **kwargs):
         return redirect(self.get_object().team)
 
@@ -134,7 +132,7 @@ class DeleteTeamMemberRoleView(LoginRequiredMixin, DetailView):
         return redirect(team)
 
 
-class JoinTeamView(LoginRequiredMixin, DetailView):
+class JoinTeamView(AuthMixin, DetailView):
     template_name = 'team/team_join.html'
 
     def get_queryset(self):
