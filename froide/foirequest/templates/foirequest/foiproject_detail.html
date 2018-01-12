@@ -29,40 +29,86 @@
 
 {% block app_body %}
 
-<h1>
-  {{ object.title }}
-</h1>
+  <h1>
+    {{ object.title }}
+  </h1>
 
-<table class="table table-hover table-sm">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">
-        {% trans "public body" %}
-      </th>
-      <th scope="col">
-        {% trans "last message" %}
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for req in object.foirequest_set.all %}
-    <tr>
-      <td>
-        {{ req.project_order }}
-      </td>
-      <td>
-        <a href="{{ req.public_body.get_absolute_url }}">
-          {{ req.public_body.name }}
-        </a>
-      </td>
-      <td>
-        <a href="{{ req.get_absolute_url }}">
-          {{ req.last_message|date:"SHORT_DATE_FORMAT" }}
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <p>
+    {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
+    Created on {{ date }} with currently {{ num }} requests.
+    {% endblocktrans %}
+    {% if object.public %}
+      {% trans "This project and all its requests are <strong>public</strong>." %}
+    {% else %}
+      {% trans "This project and all its requests are <strong>not public</strong>." %}
+    {% endif %}
+  </p>
+
+  <table class="table table-hover table-sm">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">
+          {% trans "status" %}
+        </th>
+        <th scope="col">
+          {% trans "last message" %}
+        </th>
+        <th scope="col">
+          {% trans "public body" %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for req in object.foirequest_set.all %}
+      <tr>
+        <td>
+          {{ req.project_order }}
+        </td>
+        <td>
+          <a href="{{ req.get_absolute_url }}">
+            {{ req.get_status_display }}
+          </a>
+        </td>
+        <td>
+          <a href="{{ req.get_absolute_url }}">
+            {{ req.last_message|date:"SHORT_DATE_FORMAT" }}
+          </a>
+        </td>
+        <td>
+          <a href="{{ req.public_body.get_absolute_url }}">
+            {{ req.public_body.name }}
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if team_form %}
+    <div class="row mt-5">
+      <div class="col-md-8">
+        <form class="form-inline" method="post" action="{% url 'foirequest-project_set_team' slug=object.slug %}">
+          {% csrf_token %}
+          <fieldset>
+            <legend>{% trans "Assign team to project" %}</legend>
+            <p>
+              {% if object.team %}
+                {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
+                  Currently assigned team: <a href="{{ url }}">{{ name }}</a>.
+                {% endblocktrans %}
+              {% else %}
+                {% trans "Currently no team assigned." %}
+              {% endif %}
+            </p>
+            {% render_form team_form %}
+            <button type="submit" class="btn btn-primary">
+              {% trans "Set team for project" %}
+            </button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
 {% endblock %}

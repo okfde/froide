@@ -13,7 +13,9 @@ from .misc_views import (
     index, dashboard, postmark_inbound, postmark_bounce, download_foirequest,
     FoiRequestSitemap
 )
-from .project import ProjectView, project_shortlink
+from .project import (
+    ProjectView, project_shortlink, SetProjectTeamView
+)
 from .request_actions import (
     set_public_body, suggest_public_body, set_status, make_public, set_law,
     set_tags, set_summary, mark_not_foi, mark_checked, make_same_request,
@@ -34,7 +36,7 @@ __all__ = [
     resend_message,
     index, dashboard, postmark_inbound, postmark_bounce, download_foirequest,
     FoiRequestSitemap,
-    ProjectView, project_shortlink,
+    ProjectView, project_shortlink, SetProjectTeamView,
     set_public_body, suggest_public_body, set_status, make_public, set_law,
     set_tags, set_summary, mark_not_foi, mark_checked, make_same_request,
     extend_deadline,
