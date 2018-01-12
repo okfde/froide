@@ -51,6 +51,16 @@ class TeamMembership(models.Model):
         pass
 
 
+class TeamManager(models.Manager):
+    def get_for_user(self, user, *args, **kwargs):
+        return self.get_queryset().filter(
+            *args,
+            teammembership__user=user,
+            teammembership__status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+            **kwargs
+        )
+
+
 @python_2_unicode_compatible
 class Team(models.Model):
     name = models.CharField(max_length=255)
@@ -58,6 +68,8 @@ class Team(models.Model):
 
     members = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                      through=TeamMembership)
+
+    objects = TeamManager()
 
     class Meta:
         verbose_name = _('team')
@@ -76,5 +88,25 @@ class Team(models.Model):
     def member_count(self):
         return self.members.count()
 
-    def get_invite_form(self):
-        pass
+    def can_do(self, user, *args):
+        return self.teammembership_set.filter(
+            *args,
+            status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+            user=user,
+        ).exists()
+
+    def can_read(self, user):
+        return self.can_do(user)
+
+    def can_write(self, user):
+        return self.can_do(
+            user,
+            models.Q(role=TeamMembership.ROLE_EDITOR) |
+            models.Q(role=TeamMembership.ROLE_OWNER)
+        )
+
+    def can_manage(self, user):
+        return self.can_do(
+            user,
+            models.Q(role=TeamMembership.ROLE_OWNER)
+        )
