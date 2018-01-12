@@ -28,7 +28,7 @@ def send_message(request, foirequest):
         form.add_error(None, throttle_message)
 
     if form.is_valid():
-        mes = form.save(request.user)
+        mes = form.save(foirequest.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Message has been sent.'))
         return redirect(mes)
