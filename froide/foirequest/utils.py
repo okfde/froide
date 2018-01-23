@@ -33,7 +33,7 @@ def check_throttle(user, klass):
         qs, date_param = klass.objects.get_throttle_filter(user)
         throttle_kind = throttle(qs, throttle_settings, date_param=date_param)
         if throttle_kind:
-            mail_managers(_('User exceeded request limit'), user.pk)
+            mail_managers(_('User exceeded request limit'), str(user.pk))
             return _('You exceeded your request limit of {count} requests in {time}.'
                     ).format(count=throttle_kind[0],
                              time=format_seconds(throttle_kind[1])
