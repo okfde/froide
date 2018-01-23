@@ -83,23 +83,24 @@
       <dd>
         {% if message.status %}
           {{ message.readable_status }}
-        {% else %}
-          {% trans "Message sent" %}
         {% endif %}
         {% if not message.is_response and message.sent %}
           {% with deliverystatus=message.get_delivery_status %}
             {% if deliverystatus %}
+              {% if message.status %}
+                &mdash;
+              {% endif %}
               {% if deliverystatus.is_sent %}
-                &mdash; <i class="fa fa-check-circle-o"></i>
+                <i class="fa fa-check-circle-o"></i>
                 {% trans "Email was sent successfully." %}
               {% elif deliverystatus.is_pending %}
-                &mdash; <i class="fa fa-clock-o"></i>
+                <i class="fa fa-clock-o"></i>
                 {% trans "Email delivery is ongoing..." %}
               {% elif deliverystatus.is_failed %}
-                &mdash; <i class="fa fa-ban"></i>
+                <i class="fa fa-ban"></i>
                 {% trans "Email delivery has failed. Please contact site moderators." %}
               {% else %}
-                &mdash; <i class="fa fa-circle-o"></i>
+                <i class="fa fa-circle-o"></i>
                 {% trans "Email delivery status is unknown." %}
               {% endif %}
             {% endif %}
