@@ -410,6 +410,12 @@ class PublicBody(models.Model):
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
+    def get_mediator(self):
+        law = self.default_law
+        if law is None:
+            return None
+        return law.mediator
+
     def get_label(self):
         return mark_safe('%(name)s - <a href="%(url)s" target="_blank" class="info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
 

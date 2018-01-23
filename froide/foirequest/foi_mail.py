@@ -152,8 +152,8 @@ def get_legal_reply_domains(foi_request):
     reply_domains = set(get_domain(m.sender_email) for m in messages)
     if foi_request.public_body:
         reply_domains.add(get_domain(foi_request.public_body.email))
-        if foi_request.public_body.mediator is not None:
-            mediator = foi_request.public_body.mediator
+        mediator = foi_request.public_body.get_mediator()
+        if mediator is not None:
             reply_domains.add(get_domain(mediator.email))
 
     # add with stripped subdomains
