@@ -303,11 +303,19 @@ class FoiMessage(models.Model):
         from froide.foirequest.forms import PostalAttachmentForm
         return PostalAttachmentForm()
 
+    def has_delivery_status(self):
+        if not self.sent or self.is_response:
+            return False
+        return self.get_delivery_status() is not None
+
     def get_delivery_status(self):
+        if hasattr(self, '_delivery_status'):
+            return self._delivery_status
         try:
-            return self.deliverystatus
+            self._delivery_status = self.deliverystatus
         except DeliveryStatus.DoesNotExist:
-            return None
+            self._delivery_status = None
+        return self._delivery_status
 
     def check_delivery_status(self, count=None):
         if self.is_postal or self.is_response:

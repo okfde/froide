@@ -76,7 +76,7 @@
         {{ message.get_recipient }}
       </dd>
   {% endif %}
-    {% if message.status or message.sent %}
+    {% if message.status or message.has_delivery_status %}
       <dt>
         {% blocktrans %}Status{% endblocktrans %}
       </dt>
@@ -84,25 +84,23 @@
         {% if message.status %}
           {{ message.readable_status }}
         {% endif %}
-        {% if not message.is_response and message.sent %}
+        {% if message.has_delivery_status %}
           {% with deliverystatus=message.get_delivery_status %}
-            {% if deliverystatus %}
-              {% if message.status %}
-                &mdash;
-              {% endif %}
-              {% if deliverystatus.is_sent %}
-                <i class="fa fa-check-circle-o"></i>
-                {% trans "Email was sent successfully." %}
-              {% elif deliverystatus.is_pending %}
-                <i class="fa fa-clock-o"></i>
-                {% trans "Email delivery is ongoing..." %}
-              {% elif deliverystatus.is_failed %}
-                <i class="fa fa-ban"></i>
-                {% trans "Email delivery has failed. Please contact site moderators." %}
-              {% else %}
-                <i class="fa fa-circle-o"></i>
-                {% trans "Email delivery status is unknown." %}
-              {% endif %}
+            {% if message.status %}
+              &mdash;
+            {% endif %}
+            {% if deliverystatus.is_sent %}
+              <i class="fa fa-check-circle-o"></i>
+              {% trans "Email was sent successfully." %}
+            {% elif deliverystatus.is_pending %}
+              <i class="fa fa-clock-o"></i>
+              {% trans "Email delivery is ongoing..." %}
+            {% elif deliverystatus.is_failed %}
+              <i class="fa fa-ban"></i>
+              {% trans "Email delivery has failed. Please contact site moderators." %}
+            {% else %}
+              <i class="fa fa-circle-o"></i>
+              {% trans "Email delivery status is unknown." %}
             {% endif %}
           {% endwith %}
         {% endif %}
@@ -200,7 +198,7 @@
         {% for event in message.events %}
           <li class="event" id="{{ event.get_html_id }}">
             <span class="d-print-none" title="{{ event.timestamp }}">
-              {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
+              {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-none d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
           </li>
         {% endfor %}
       </ol>
