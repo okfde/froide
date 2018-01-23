@@ -141,6 +141,27 @@ def strip_subdomains(domain):
     return '.'.join(domain.split('.')[-2:])
 
 
+def get_domain(email):
+    if email and '@' in email:
+        return email.rsplit('@', 1)[1].lower()
+    return None
+
+
+def get_legal_reply_domains(foi_request):
+    messages = foi_request.response_messages()
+    reply_domains = set(get_domain(m.sender_email) for m in messages)
+    if foi_request.public_body:
+        reply_domains.add(get_domain(foi_request.public_body.email))
+        if foi_request.public_body.mediator is not None:
+            mediator = foi_request.public_body.mediator
+            reply_domains.add(get_domain(mediator.email))
+
+    # add with stripped subdomains
+    reply_domains = reply_domains | set([
+                        strip_subdomains(x) for x in reply_domains])
+    return reply_domains - set([None])
+
+
 def _deliver_mail(email, mail_string=None, manual=False):
     from .models import DeferredMessage
 
@@ -198,17 +219,13 @@ def _deliver_mail(email, mail_string=None, manual=False):
                 # Request is closed and will not receive messages
                 continue
 
+            reply_domains = get_legal_reply_domains(foi_request)
             messages = foi_request.response_messages()
-            reply_domains = set(m.sender_email.split('@')[1] for m in messages
-                                if m.sender_email and '@' in m.sender_email)
-            reply_domains.add(foi_request.public_body.email.split('@')[1])
-
-            # Strip subdomains
-            reply_domains = set([strip_subdomains(x) for x in reply_domains])
 
             sender_email = email['from'][1]
-            if len(messages) > 0 and sender_email and '@' in sender_email:
-                email_domain = strip_subdomains(sender_email.split('@')[1])
+            sender_domain = get_domain(sender_email)
+            if len(messages) > 0 and sender_domain:
+                email_domain = strip_subdomains(sender_domain)
                 if email_domain not in reply_domains:
                     create_deferred(
                         secret_mail, mail_string,
