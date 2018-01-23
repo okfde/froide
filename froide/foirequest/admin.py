@@ -295,7 +295,10 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         for deferred in queryset:
             if deferred.request is not None:
                 deferred.spam = False
-                deferred.redeliver(deferred.request)
+                if deferred.delivered:
+                    deferred.save()
+                else:
+                    deferred.redeliver(deferred.request)
     deliver_no_spam.short_description = _("Deliver and mark as no spam")
 
     def redeliver(self, request, queryset, auto=False):
