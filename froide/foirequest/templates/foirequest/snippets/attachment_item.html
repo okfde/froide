@@ -2,7 +2,8 @@
 
 <a id="{{ attachment.get_html_id }}" class="card-title" href="{{ attachment.get_absolute_url }}" title="{{ attachment.name }}">
   <i class="fa fa-paperclip" aria-hidden="true"></i>
-  {{ attachment.name|truncatechars:20 }}
+  <span class="d-print-none">{{ attachment.name|truncatechars:20 }}</span>
+  <span class="d-none d-print-inline">{{ attachment.name }}</span>
 </a>&nbsp;<span class="badge badge-light">
   {{ attachment.size|filesizeformat }}
 </span>

@@ -5,6 +5,24 @@
 }
 
 @media print {
+  /*
+    Many fixes in here are so that firefox will print more than one page.
+    Especially display: flex is not good for printing in firefox.
+  */
+
+  html, body {
+    display: block !important;
+    font-size: 0.85rem;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    height: 100%;
+  }
+
+  a:link:after, a:visited:after {
+    content: "" !important;
+  }
+
   .navbar #navbarNav,
   #footer,
   .social,
@@ -13,20 +31,58 @@
   .notice,
   .events,
   .request-nav {
-  	display: none !important;
+    display: none !important;
+  }
+  .navbar-brand {
+    text-decoration: none !important;
   }
 
-  .tab-content-container {
+  .tab-content-container, .request-info, .messages, #correspondence {
     max-width: 100%;
     flex: 0 0 100%;
+    display: block;
+    position: static;
+    float: none !important;
+  }
+  .tab-pane#info {
+    display: block !important;
   }
 
-  .page-break  {
-  	display: block;
-  	page-break-before:always;
+  .message {
+    border: none;
   }
 
-  a:link:after, a:visited:after {
-    content: "" !important;
+  .message-meta, .request-info, .attachment-card {
+    a:link,
+    a:visited {
+      color: #000;
+      text-decoration: none;
+    }
   }
+
+  .message-content {
+    a[data-toggle="collapse"] {
+      display: none !important;
+    }
+    a:link,
+    a:visited {
+      font-size: 1px;
+      letter-spacing: -1px;
+      color: transparent;
+    }
+    a:link:after,
+    a:visited:after {
+      font-size: 0.8rem;
+      letter-spacing: normal;
+      color: #000;
+      content: "" attr(href) "" !important;
+    }
+  }
+
+  .page-break {
+    display: block;
+    break-after: page;
+    page-break-after: always;
+  }
+
 }

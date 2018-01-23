@@ -11,14 +11,14 @@
           </span>
         </div>
         <div class="col-lg-5 text-right">
-          <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified form-inline pull-right d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+          <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified form-inline d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
             {% csrf_token %}
 
             <button class="btn btn-sm btn-success" type="submit">
               {% trans "Publish" %}
             </button>
             {% if attachment.can_redact %}
-              <a class="btn btn-sm btn-dark ml-1" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+              <a class="btn btn-sm btn-dark ml-1 d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
                 {% trans "Redact" %}
               </a>
             {% endif %}
@@ -31,7 +31,7 @@
           </div>
           <div class="col-lg-5 text-right">
             {% if attachment.can_redact %}
-              <a class="btn btn-sm btn-dark" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+              <a class="btn btn-sm btn-dark d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
                 {% trans "Redact" %}
               </a>
             {% endif %}

@@ -378,7 +378,7 @@
     <div role="tabpanel" class="tab-pane{% if active_tab == 'info' %} active{% endif %}" id="info">
   {% endif %}{# end {% if object|can_write_foirequest:request %} #}
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8 request-info">
 
         {# Public Body Needed #}
         {% if object.status == "publicbody_needed" %}
@@ -530,13 +530,13 @@
       <ul class="message-nav nav flex-column">
       {% for message in object.messages %}
         {% ifchanged message.sender %}
-          <li class="nav-item nav-header text-truncate">
+          <li class="nav-item nav-header">
             {% if message.sender_public_body %}
-              <span title="{{ message.sender_public_body.name }}">
+              <span class="d-inline-block text-truncate" title="{{ message.sender_public_body.name }}">
                 {{ message.sender_public_body.name }}
               </span>
             {% else %}
-              <span title="{{ message.sender }}">
+              <span class="d-inline-block text-truncate" title="{{ message.sender }}">
                 {{ message.sender }}
               </span>
             {% endif %}
@@ -552,7 +552,7 @@
     {% endif %}
   </div>
 
-  <div class="col-md-9 order-md-1">
+  <div class="messages order-md-1">
     {% for message in object.messages %}
       {% include "foirequest/snippets/message.html" %}
       {% if not forloop.last %}

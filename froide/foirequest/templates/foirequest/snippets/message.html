@@ -12,9 +12,11 @@
         {% if object.user == user or user.is_staff %}
           {% if message.is_response %}
             {{ message.user_real_sender }} – {{ message.sender_public_body.name }}
-            (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
-              {% trans "change" %}
-            </a>)
+            <span class="d-print-none">
+              (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+                {% trans "change" %}
+              </a>)
+            </span>
             {% if message.is_postal %}<em>{% trans "via postal mail" %}</em>{% endif %}
             <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
               {% with message_pb_form=message.get_public_body_sender_form %}
