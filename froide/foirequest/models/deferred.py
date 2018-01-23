@@ -17,6 +17,7 @@ class DeferredMessage(models.Model):
         on_delete=models.CASCADE)
     mail = models.TextField(blank=True)
     spam = models.BooleanField(default=False)
+    delivered = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('timestamp',)
@@ -40,6 +41,7 @@ class DeferredMessage(models.Model):
         from ..tasks import process_mail
 
         self.request = request
+        self.delivered = True
         self.save()
         mail = base64.b64decode(self.mail)
         mail = mail.replace(self.recipient.encode('utf-8'),

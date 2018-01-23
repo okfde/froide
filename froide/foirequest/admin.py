@@ -252,11 +252,12 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
 class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
-    list_filter = (make_nullfilter('request', _('Has request')), 'spam')
+    list_filter = ('delivered', make_nullfilter('request', _('Has request')),
+                   'spam')
     search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
-    list_display = ('recipient', 'timestamp', 'request', 'spam')
+    list_display = ('recipient', 'timestamp', 'spam', 'delivered', 'request',)
     raw_id_fields = ('request',)
     actions = ['redeliver', 'auto_redeliver']
 
