@@ -262,15 +262,24 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
-    list_display = ('recipient', 'timestamp', 'spam', 'delivered', 'request',)
+    list_display = ('recipient', 'timestamp', 'spam', 'delivered',
+                    'get_email_details', 'request',)
     raw_id_fields = ('request',)
     actions = ['redeliver', 'auto_redeliver']
+    # Reduce per page because parsing emails is heavy
 
+    list_per_page = 20
     save_on_top = True
 
     def auto_redeliver(self, request, queryset):
         parser = EmailParser()
         for deferred in queryset:
+    def get_email_details(self, obj):
+        parser = EmailParser()
+        email = parser.parse(BytesIO(obj.encoded_mail()))
+        return '%s (%s...)' % (email['from'][1], email.get('subject')[:20])
+    get_email_details.short_description = _('email details')
+
             email = parser.parse(BytesIO(deferred.encoded_mail()))
             match = SUBJECT_REQUEST_ID.search(email['subject'])
             if match is not None:
