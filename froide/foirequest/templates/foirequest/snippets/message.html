@@ -9,7 +9,7 @@
         {% blocktrans %}From{% endblocktrans %}
       </dt>
       <dd>
-        {% if object.user == user or user.is_staff %}
+        {% if object|can_write_foirequest:request %}
           {% if message.is_response %}
             {{ message.user_real_sender }} – {{ message.sender_public_body.name }}
             <span class="d-print-none">
@@ -76,27 +76,30 @@
         {{ message.get_recipient }}
       </dd>
   {% endif %}
-    {% if message.status %}
+    {% if message.status or message.sent %}
       <dt>
         {% blocktrans %}Status{% endblocktrans %}
       </dt>
       <dd>
-        {{ message.readable_status }}
+        {% if message.status %}
+          {{ message.readable_status }}
+        {% else %}
+          {% trans "Message sent" %}
+        {% endif %}
         {% if not message.is_response and message.sent %}
-          &mdash;
           {% with deliverystatus=message.get_delivery_status %}
             {% if deliverystatus %}
               {% if deliverystatus.is_sent %}
-                <i class="fa fa-check-circle-o"></i>
+                &mdash; <i class="fa fa-check-circle-o"></i>
                 {% trans "Email was sent successfully." %}
               {% elif deliverystatus.is_pending %}
-                <i class="fa fa-clock-o"></i>
+                &mdash; <i class="fa fa-clock-o"></i>
                 {% trans "Email delivery is ongoing..." %}
               {% elif deliverystatus.is_failed %}
-                <i class="fa fa-ban"></i>
+                &mdash; <i class="fa fa-ban"></i>
                 {% trans "Email delivery has failed. Please contact site moderators." %}
               {% else %}
-                <i class="fa fa-circle-o"></i>
+                &mdash; <i class="fa fa-circle-o"></i>
                 {% trans "Email delivery status is unknown." %}
               {% endif %}
             {% endif %}
@@ -113,8 +116,8 @@
       </dd>
     {% endif %}
   </dl>
-  {% if user == object.user and message.is_postal %}
-    <div>
+  {% if object|can_write_foirequest:request and message.is_postal %}
+    <div class="d-print-none">
       <h6>
         {% blocktrans %}Upload Attachments{% endblocktrans %}
       </h6>
@@ -145,7 +148,7 @@
     </div>
   {% endif %}
 
-    {% if object.user == user %}
+    {% if object|can_write_foirequest:request %}
       {% if object.message_needs_status == message %}
         <div class="alert alert-danger">
           <a data-tabgo="tab" href="#set-status">{% blocktrans %}Please click here to set a new status for this request now{% endblocktrans %}</a>
@@ -162,7 +165,7 @@
         </div>
       {% else %}
         {% if message.content_hidden %}
-          {% if user == object.user or user.is_staff %}
+          {% if object|can_write_foirequest:request %}
             <div class="d-print-none alert alert-warning">
               <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
               <form class="form-horizontal" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message=message.pk %}">
@@ -182,7 +185,7 @@
       {% endif %}
     </div>
   </div>
-  {% if object.user == user %}
+  {% if object|can_write_foirequest:request %}
     {% if message.is_response %}
       <div class="alert alert-info d-print-none">
         <a data-tabgo="tab" href="#write-message">{% blocktrans %}You can write a reply by clicking here{% endblocktrans %}</a>
