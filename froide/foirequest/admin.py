@@ -54,7 +54,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     inlines = [
         FoiMessageInline,
     ]
-    list_display = ('title', 'first_message', 'secret_address',
+    list_display = ('title', 'first_message', 'secret_address', 'request_page',
                     'public_body', 'status', 'visibility')
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'checked', 'public', 'visibility',
@@ -73,6 +73,11 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
                'set_visible_to_user', 'unpublish']
     raw_id_fields = ('same_as', 'public_body', 'user',)
     save_on_top = True
+
+    def request_page(self, obj):
+        return '<a href="%s">%s</a>' % (
+            obj.get_absolute_url(), _('request page'))
+    request_page.allow_tags = True
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
