@@ -156,10 +156,12 @@ def get_legal_reply_domains(foi_request):
         if mediator is not None:
             reply_domains.add(get_domain(mediator.email))
 
+    reply_domains = reply_domains - set([None])
+
     # add with stripped subdomains
     reply_domains = reply_domains | set([
                         strip_subdomains(x) for x in reply_domains])
-    return reply_domains - set([None])
+    return reply_domains
 
 
 def _deliver_mail(email, mail_string=None, manual=False):
