@@ -77,7 +77,7 @@ def _process_mail(mail_string, mail_type=None, manual=False):
 
 def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
                     subject=_('Unknown FoI-Mail Recipient'),
-                    body=unknown_foimail_message):
+                    body=unknown_foimail_message, request=None):
     from .models import DeferredMessage
 
     if mail_string is not None:
@@ -87,7 +87,8 @@ def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
     DeferredMessage.objects.create(
         recipient=secret_mail,
         mail=mail_string,
-        spam=spam
+        spam=spam,
+        request=request
     )
     with override(settings.LANGUAGE_CODE):
         url = reverse('admin:foirequest_deferredmessage_changelist')
