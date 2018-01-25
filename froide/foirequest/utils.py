@@ -83,3 +83,76 @@ def construct_message_body(foirequest, text='', foilaw=None, full_text=False,
         'body': body,
         'send_address': send_address
     })
+
+
+def strip_subdomains(domain):
+    return '.'.join(domain.split('.')[-2:])
+
+
+def get_host(email):
+    if email and '@' in email:
+        return email.rsplit('@', 1)[1].lower()
+    return None
+
+
+def get_domain(email):
+    host = get_host(email)
+    if host is None:
+        return None
+    return strip_subdomains(host)
+
+
+def compare_publicbody_email(email, foi_request,
+                                 transform=lambda x: x.lower()):
+    email = transform(email)
+
+    if foi_request.public_body and foi_request.public_body.email:
+        pb_value = transform(foi_request.public_body.email)
+        if email == pb_value:
+            return foi_request.public_body
+
+        mediator = foi_request.public_body.get_mediator()
+        if mediator is not None:
+            mediator_value = transform(mediator.email)
+            if email == mediator_value:
+                return mediator
+
+    message_checks = (
+        ('sender', foi_request.response_messages()),
+        ('recipient', foi_request.sent_messages()),
+    )
+    for kind, messages in message_checks:
+        for message in messages:
+            message_email = getattr(message, '%s_email' % kind)
+            message_pb = getattr(message, '%s_public_body' % kind)
+            if not message_email or not message_pb:
+                continue
+            message_email = transform(message_email)
+            if email == message_email:
+                return message_pb
+
+
+def get_publicbody_for_email(email, foi_request):
+    # Compare email direct
+    pb = compare_publicbody_email(email, foi_request)
+    if pb is not None:
+        return pb
+
+    # Compare email full host
+    pb = compare_publicbody_email(email, foi_request, transform=get_host)
+    if pb is not None:
+        return pb
+
+    # Compare email domain without subdomains
+    pb = compare_publicbody_email(email, foi_request, transform=get_domain)
+    if pb is not None:
+        return pb
+
+    # Search in all PublicBodies
+    from froide.publicbody.models import PublicBody
+
+    email_host = get_host(email)
+    pbs = PublicBody.objects.filter(email__endswith=email_host)
+    if len(pbs) == 1:
+        return pbs[0]
+    return None

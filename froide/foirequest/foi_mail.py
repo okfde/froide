@@ -14,6 +14,8 @@ from froide.helper.email_utils import (EmailParser, get_unread_mails,
                                        make_address)
 from froide.helper.name_generator import get_name_from_number
 
+from .utils import get_publicbody_for_email
+
 
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
 No corresponding request could be identified, please investigate! %(url)s
@@ -138,33 +140,6 @@ def get_foirequest_from_mail(email):
             return None
 
 
-def strip_subdomains(domain):
-    return '.'.join(domain.split('.')[-2:])
-
-
-def get_domain(email):
-    if email and '@' in email:
-        return email.rsplit('@', 1)[1].lower()
-    return None
-
-
-def get_legal_reply_domains(foi_request):
-    messages = foi_request.response_messages()
-    reply_domains = set(get_domain(m.sender_email) for m in messages)
-    if foi_request.public_body:
-        reply_domains.add(get_domain(foi_request.public_body.email))
-        mediator = foi_request.public_body.get_mediator()
-        if mediator is not None:
-            reply_domains.add(get_domain(mediator.email))
-
-    reply_domains = reply_domains - set([None])
-
-    # add with stripped subdomains
-    reply_domains = reply_domains | set([
-                        strip_subdomains(x) for x in reply_domains])
-    return reply_domains
-
-
 def _deliver_mail(email, mail_string=None, manual=False):
     from .models import DeferredMessage
 
@@ -216,30 +191,28 @@ def _deliver_mail(email, mail_string=None, manual=False):
                 deferred = deferred[0]
                 foi_request = deferred.request
 
-        # Check for spam
+        pb = None
         if not manual:
             if foi_request.closed:
                 # Request is closed and will not receive messages
                 continue
 
-            reply_domains = get_legal_reply_domains(foi_request)
-            messages = foi_request.response_messages()
-
+            # Check for spam
             sender_email = email['from'][1]
-            sender_domain = get_domain(sender_email)
-            if len(messages) > 0 and sender_domain:
-                email_domain = strip_subdomains(sender_domain)
-                if email_domain not in reply_domains:
-                    create_deferred(
-                        secret_mail, mail_string,
-                        b64_encoded=b64_encoded,
-                        spam=True,
-                        subject=_('Possible Spam Mail received'),
-                        body=spam_message
-                    )
-                    continue
+            pb = get_publicbody_for_email(sender_email, foi_request)
 
-        foi_request.add_message_from_email(email, mail_string)
+            if pb is None:
+                create_deferred(
+                    secret_mail, mail_string,
+                    b64_encoded=b64_encoded,
+                    spam=True,
+                    subject=_('Possible Spam Mail received'),
+                    body=spam_message,
+                    request=foi_request
+                )
+                continue
+
+        foi_request.add_message_from_email(email, mail_string, publicbody=pb)
 
 
 def _fetch_mail():

@@ -28,7 +28,7 @@ from froide.account.services import AccountService
 from froide.helper.text_utils import redact_content
 
 from ..foi_mail import package_foirequest
-from ..utils import construct_message_body
+from ..utils import construct_message_body, get_publicbody_for_email
 
 from .project import FoiProject
 
@@ -476,6 +476,9 @@ class FoiRequest(models.Model):
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))
 
+    def sent_messages(self):
+        return list(filter(lambda m: m.is_response, self.messages))
+
     def reply_received(self):
         return len(self.response_messages()) > 0
 
@@ -601,33 +604,6 @@ class FoiRequest(models.Model):
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
 
-    def find_public_body_for_email(self, email):
-        if not email or '@' not in email:
-            return self.public_body
-        messages = list(reversed(self.messages))
-        domain = email.split('@', 1)[1]
-        for m in messages:
-            if m.is_response:
-                if not m.sender_public_body or not m.sender_email:
-                    continue
-                sender_email = m.sender_email.lower()
-                if sender_email == email:
-                    return m.sender_public_body
-                if ('@' in sender_email and
-                        sender_email.split('@')[1] == domain):
-                    return m.sender_public_body
-        for m in messages:
-            if not m.is_response:
-                if not m.recipient_public_body or not m.recipient_email:
-                    continue
-                recipient_email = m.recipient_email.lower()
-                if recipient_email == email:
-                    return m.recipient_public_body
-                if ('@' in recipient_email and
-                        recipient_email.split('@')[1] == domain):
-                    return m.recipient_public_body
-        return self.public_body
-
     def get_send_message_form(self):
         from ..forms import SendMessageForm
         last_message = list(self.messages)[-1]
@@ -665,7 +641,7 @@ class FoiRequest(models.Model):
                         }
                     )})
 
-    def add_message_from_email(self, email, mail_string=None):
+    def add_message_from_email(self, email, mail_string=None, publicbody=None):
         from .message import FoiMessage
         from .attachment import FoiAttachment
 
@@ -678,9 +654,14 @@ class FoiRequest(models.Model):
         message.is_response = True
         message.sender_name = email['from'][0]
         message.sender_email = email['from'][1]
-        message.sender_public_body = self.find_public_body_for_email(message.sender_email)
+
+        if publicbody is None:
+            publicbody = get_publicbody_for_email(message.sender_email, self)
+        message.sender_public_body = publicbody
+
         if message.sender_public_body == self.law.mediator:
             message.content_hidden = True
+
         if email['date'] is None:
             message.timestamp = timezone.now()
         else:
