@@ -527,10 +527,10 @@
   </div>
   <div id="message-nav-container" class="order-md-2 col-md-3 d-print-none">
     {% if object.messages %}
-      <ul class="message-nav nav flex-column">
+      <ul class="message-nav nav flex-column mb-3">
       {% for message in object.messages %}
         {% ifchanged message.sender %}
-          <li class="nav-item nav-header">
+          <li class="nav-item nav-header d-flex">
             {% if message.sender_public_body %}
               <span class="d-inline-block text-truncate" title="{{ message.sender_public_body.name }}">
                 {{ message.sender_public_body.name }}
