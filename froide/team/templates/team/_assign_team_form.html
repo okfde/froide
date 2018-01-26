@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load form_helper %}
+
+<div class="row mt-5">
+  <div class="col-md-8">
+    <form class="form-inline" method="post" action="{{ submit_url }}">
+      {% csrf_token %}
+      <fieldset>
+        <legend>{{ legend }}</legend>
+        <p>
+          {% if object.team %}
+            {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
+              Currently assigned team: <a href="{{ url }}">{{ name }}</a>.
+            {% endblocktrans %}
+          {% else %}
+            {% trans "Currently no team assigned." %}
+          {% endif %}
+        </p>
+        {% render_form form %}
+        <button type="submit" class="btn btn-primary">
+          {{ submit_button }}
+        </button>
+      </fieldset>
+    </form>
+  </div>
+</div>

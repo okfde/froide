@@ -88,7 +88,16 @@ class Team(models.Model):
     def member_count(self):
         return self.members.count()
 
-    def can_do(self, user, *args):
+    def can_do(self, verb, user):
+        if verb == 'read':
+            return self.can_read(user)
+        if verb == 'write':
+            return self.can_write(user)
+        if verb == 'manage':
+            return self.can_manage(user)
+        raise ValueError('Invalid auth verb')
+
+    def _can_do(self, user, *args):
         kwargs = dict(
             status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
             user=user
@@ -99,17 +108,17 @@ class Team(models.Model):
         ).exists()
 
     def can_read(self, user):
-        return self.can_do(user)
+        return self._can_do(user)
 
     def can_write(self, user):
-        return self.can_do(
+        return self._can_do(
             user,
             models.Q(role=TeamMembership.ROLE_EDITOR) |
             models.Q(role=TeamMembership.ROLE_OWNER)
         )
 
     def can_manage(self, user):
-        return self.can_do(
+        return self._can_do(
             user,
             models.Q(role=TeamMembership.ROLE_OWNER)
         )

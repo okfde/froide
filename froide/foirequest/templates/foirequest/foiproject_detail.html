@@ -4,7 +4,6 @@
 {% load static %}
 {% load markup %}
 {% load foirequest_tags %}
-{% load form_helper %}
 {% load block_helper %}
 
 
@@ -86,29 +85,10 @@
   </table>
 
   {% if team_form %}
-    <div class="row mt-5">
-      <div class="col-md-8">
-        <form class="form-inline" method="post" action="{% url 'foirequest-project_set_team' slug=object.slug %}">
-          {% csrf_token %}
-          <fieldset>
-            <legend>{% trans "Assign team to project" %}</legend>
-            <p>
-              {% if object.team %}
-                {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
-                  Currently assigned team: <a href="{{ url }}">{{ name }}</a>.
-                {% endblocktrans %}
-              {% else %}
-                {% trans "Currently no team assigned." %}
-              {% endif %}
-            </p>
-            {% render_form team_form %}
-            <button type="submit" class="btn btn-primary">
-              {% trans "Set team for project" %}
-            </button>
-          </fieldset>
-        </form>
-      </div>
-    </div>
+    {% trans "Assign team to project" as legend %}
+    {% trans "Set team for project" as submit_button %}
+    {% url 'foirequest-project_set_team' slug=object.slug as submit_url %}
+    {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
   {% endif %}
 
 {% endblock %}

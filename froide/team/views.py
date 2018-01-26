@@ -5,7 +5,10 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin)
 from django.http import Http404
 
-from .forms import CreateTeamForm, TeamInviteForm, TeamMemberChangeRoleForm
+from froide.helper.auth import can_manage_object
+
+from .forms import (CreateTeamForm, TeamInviteForm, TeamMemberChangeRoleForm,
+                    AssignTeamForm)
 from .models import Team, TeamMembership
 from .services import TeamService
 
@@ -153,3 +156,24 @@ class JoinTeamView(AuthMixin, DetailView):
         self.object.status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
         self.object.save()
         return redirect(self.object.team)
+
+
+class AssignTeamView(UpdateView):
+    """
+    Subclass this view to set a team for your object
+    """
+    form_class = AssignTeamForm
+
+    def get_object(self, queryset=None):
+        obj = super(AssignTeamView, self).get_object(queryset=queryset)
+        if not can_manage_object(obj, self.request):
+            raise Http404
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        return redirect(self.get_object())
+
+    def get_form_kwargs(self):
+        kwargs = super(AssignTeamView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs

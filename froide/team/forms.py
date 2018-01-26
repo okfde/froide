@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
+from django.db.models import Q
 from django import forms
 
 from .services import TeamService
@@ -80,3 +81,26 @@ class TeamInviteForm(forms.Form):
         service = TeamService(member)
         service.send_team_invite(user)
         return self.team
+
+
+class AssignTeamForm(forms.Form):
+    team = forms.ModelChoiceField(queryset=None)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        self.instance = kwargs.pop('instance')
+        super(AssignTeamForm, self).__init__(*args, **kwargs)
+        self.fields['team'].queryset = Team.objects.get_for_user(
+            self.user,
+            Q(teammembership__role=TeamMembership.ROLE_OWNER) |
+            Q(teammembership__role=TeamMembership.ROLE_EDITOR)
+        )
+        self.fields['team'].initial = self.instance.team
+        # Cannot set empty if you would then lose access, even if you are owner
+        self.fields['team'].required = self.instance.user != self.user
+
+    def save(self):
+        team = self.cleaned_data['team']
+        self.instance.team = team
+        self.instance.save()
+        return self.instance

@@ -544,26 +544,3 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
 
 class TagFoiRequestForm(TagObjectForm):
     tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')
-
-
-class ProjectTeamForm(forms.Form):
-    team = forms.ModelChoiceField(queryset=None)
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        self.project = kwargs.pop('instance')
-        super(ProjectTeamForm, self).__init__(*args, **kwargs)
-        self.fields['team'].queryset = Team.objects.get_for_user(
-            self.user,
-            Q(teammembership__role=TeamMembership.ROLE_OWNER) |
-            Q(teammembership__role=TeamMembership.ROLE_EDITOR)
-        )
-        self.fields['team'].initial = self.project.team
-        # Cannot set empty if you would then lose access, even if you are owner
-        self.fields['team'].required = self.project.user != self.user
-
-    def save(self):
-        team = self.cleaned_data['team']
-        self.project.team = team
-        self.project.save()
-        return self.project
