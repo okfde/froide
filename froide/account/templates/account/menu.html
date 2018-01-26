@@ -1,17 +1,41 @@
 {% load i18n %}
 
-{% load teamtags %}
+{% load account_tags %}
+
+{% get_menu_items 'menu_items' %}
+
+{% block menu_block %}
+
+{% block before_requests %}
+  {% for menu_item in menu_items.before_request %}
+    <a class="dropdown-item" href="{{ menu_item.url }}">
+      {{ menu_item.label }}
+    </a>
+  {% endfor %}
+{% endblock %}
 
 <a class="dropdown-item" href="{% url 'account-show' %}">
   {% trans "Your requests" %}
 </a>
 
-{% if request.user|can_use_teams %}
-  <a class="dropdown-item" href="{% url 'team-list' %}">
-    {% trans "Your teams" %}
-  </a>
-{% endif %}
+{% block before_settings %}
+  {% for menu_item in menu_items.before_settings %}
+    <a class="dropdown-item" href="{{ menu_item.url }}">
+      {{ menu_item.label }}
+    </a>
+  {% endfor %}
+{% endblock %}
 
 <a class="dropdown-item" href="{% url 'account-settings' %}">
   {% trans "Settings" %}
 </a>
+
+{% block after_settings %}
+  {% for menu_item in menu_items.after_settings %}
+    <a class="dropdown-item" href="{{ menu_item.url }}">
+      {{ menu_item.label }}
+    </a>
+  {% endfor %}
+{% endblock %}
+
+{% endblock %}

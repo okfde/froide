@@ -11,6 +11,15 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.six import text_type as str
 
+from .models import Team
+
+
+def can_use_team(user):
+    if not user.is_authenticated:
+        return False
+    in_team = Team.objects.get_for_user(user).exists()
+    return in_team or user.has_perm('team.can_use_teams')
+
 
 class TeamService(object):
     def __init__(self, member):
