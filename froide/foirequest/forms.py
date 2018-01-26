@@ -11,11 +11,9 @@ from django.utils.html import escape
 from django.utils.http import is_safe_url
 from django.utils import timezone
 from django import forms
-from django.db.models import Q
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
-from froide.team.models import Team, TeamMembership
 from froide.helper.widgets import PriceInput, BootstrapRadioSelect
 from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
