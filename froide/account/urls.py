@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 
-from .views import (MyRequestsView,
+from .views import (
+    NewAccountView, MyRequestsView,
     FollowingRequestsView, DraftRequestsView, FoiProjectListView,
     account_settings,
     new_terms, logout, login, signup, confirm,
@@ -13,6 +14,7 @@ from .import oauth_urls
 urlpatterns = [
     url(r'^', include(oauth_urls, namespace='oauth2_provider')),
     url(r'^$', MyRequestsView.as_view(), name='account-show'),
+    url(r'^new/$', NewAccountView.as_view(), name='account-new'),
     url(r'^drafts/$', DraftRequestsView.as_view(), name='account-drafts'),
     url(r'^projects/$', FoiProjectListView.as_view(), name='account-projects'),
     url(r'^following/$', FollowingRequestsView.as_view(), name='account-following'),

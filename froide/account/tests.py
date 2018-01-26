@@ -132,6 +132,8 @@ class AccountTest(TestCase):
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 302)
+        self.assertTrue(response.url, '/')
+
         self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
         response = self.client.post(reverse('account-signup'), post)
@@ -143,6 +145,9 @@ class AccountTest(TestCase):
             response = self.client.post(reverse('account-signup'), post)
 
         self.assertEqual(response.status_code, 302)
+        new_account_url = reverse('account-new')
+        self.assertIn(new_account_url, response.url)
+
         user = User.objects.get(email=post['user_email'])
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
@@ -248,14 +253,15 @@ class AccountTest(TestCase):
     def test_next_link_login(self):
         mes = FoiMessage.objects.all()[0]
         url = mes.get_absolute_url()
-        enc_url = url.replace('#', '%23')  # FIX: fake uri encode
+        enc_url = url.replace('#', '%23')  # FIXME: fake uri encode
         response = self.client.get(reverse('account-login') + '?next=%s' % enc_url)
         # occurences in hidden inputs of login, signup and forgotten password
         self.assertTrue(response.content.decode('utf-8').count(url), 3)
-        response = self.client.post(reverse('account-login'),
-                {"email": "info@fragdenstaat.de",
-                'next': url,
-                "password": "froide"})
+        response = self.client.post(reverse('account-login'), {
+            "email": "info@fragdenstaat.de",
+            'next': url,
+            "password": "froide"
+        })
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
 
@@ -274,6 +280,9 @@ class AccountTest(TestCase):
         }
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 302)
+        new_account_url = reverse('account-new')
+        self.assertIn(new_account_url, response.url)
+
         user = User.objects.get(email=post['user_email'])
         message = mail.outbox[0]
         match = re.search(r'/%d/(\w+)/' % user.pk, message.body)

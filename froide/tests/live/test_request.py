@@ -146,8 +146,12 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
 
         mail.outbox = []
         self.selenium.find_element_by_id('send-request-button').click()
+
+        new_account_url = reverse('account-new')
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
+            lambda driver: new_account_url in driver.current_url)
+        self.assertIn(new_account_url, self.selenium.current_url)
+
         new_user = User.objects.get(email=user_email)
         self.assertEqual(new_user.private, False)
         req = FoiRequest.objects.get(user=new_user)
@@ -199,8 +203,12 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.scrollTo('send-request-button')
 
         self.selenium.find_element_by_id('send-request-button').click()
+
+        new_account_url = reverse('account-new')
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('.heroine-unit'))
+            lambda driver: new_account_url in driver.current_url)
+        self.assertIn(new_account_url, self.selenium.current_url)
+
         new_user = User.objects.get(email=user_email)
         self.assertEqual(new_user.first_name, user_first_name)
         self.assertEqual(new_user.last_name, user_last_name)

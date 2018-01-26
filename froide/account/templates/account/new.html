@@ -1,0 +1,49 @@
+{% extends 'account/base.html' %}
+
+{% load i18n %}
+
+{% block title %}{% trans "New account" %}{% endblock %}
+
+{% block app_body %}
+
+<h2 class="display-3 mb-5">
+  {% trans "Confirm your email address" %}
+</h2>
+
+<div class="row mt-5">
+  <div class="col-lg-8">
+
+    {% if title %}
+      <p class="lead">
+          {% blocktrans with title=title %}
+            Your request “{{ title }}” is almost ready to be sent!
+          {% endblocktrans %}
+      </p>
+    {% endif %}
+
+    {% if email %}
+      <ol class="lead">
+        <li>
+          {% blocktrans with email=email %}
+            Check your emails for your account <strong class="highlight">{{ email }}</strong>
+          {% endblocktrans %}
+        </li>
+        <li>
+          {% blocktrans %}
+            Click the <strong class="highlight">confirmation link</strong> in the email.
+          {% endblocktrans %}
+        </li>
+      </ol>
+    {% else %}
+      <p class="lead">
+        {% trans "Please go to your email account and <strong>click the confirmation link.</strong>" %}
+      </p>
+    {% endif %}
+    {% if title %}
+      <p class="lead">
+        {% trans "If you do not confirm your email address, we cannot send your request." %}
+      </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

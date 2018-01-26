@@ -1,3 +1,8 @@
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import Http404, QueryDict
@@ -8,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.utils.http import is_safe_url
 from django.views.generic import ListView
+from django.views.generic import TemplateView
 
 from froide.foirequest.models import (FoiRequest, FoiProject, FoiEvent,
                                       RequestDraft)
@@ -17,6 +23,16 @@ from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .services import AccountService
 from .utils import cancel_user
+
+
+class NewAccountView(TemplateView):
+    template_name = 'account/new.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(NewAccountView, self).get_context_data(**kwargs)
+        context['title'] = self.request.GET.get('title', '')
+        context['email'] = self.request.GET.get('email', '')
+        return context
 
 
 def confirm(request, user_id, secret, request_id=None):
@@ -216,24 +232,28 @@ def login(request, base="account/base.html", context=None,
 
 @require_POST
 def signup(request):
-    next = request.POST.get('next')
-    next_url = next if next else '/'
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot signup.'))
-        return redirect(next_url)
+        return redirect('/')
     form = UserLoginForm()
     signup_form = NewUserForm(request.POST)
-    next = request.POST.get('next')
     if signup_form.is_valid():
         user, password = AccountService.create_user(**signup_form.cleaned_data)
         signup_form.save(user)
         AccountService(user).send_confirmation_mail(password=password)
         messages.add_message(request, messages.SUCCESS,
                 _('Please check your emails for a mail from us with a confirmation link.'))
-        if next:
-            request.session['next'] = next
-        return redirect(next_url)
+
+        next_url = request.POST.get('next')
+        if next_url:
+            # Store next in session to redirect on confirm
+            request.session['next'] = next_url
+
+        url = reverse('account-new')
+        query = urlencode({'email': user.email.encode('utf-8')})
+        return redirect('%s?%s' % (url, query))
+
     return render(request, 'account/login.html', {
         "form": form,
         "signup_form": signup_form,

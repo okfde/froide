@@ -1,7 +1,12 @@
 from __future__ import unicode_literals
 
 import json
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
@@ -214,10 +219,14 @@ class MakeRequestView(FormView):
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
 
+        return self.make_redirect(request_form, foi_object)
+
+    def make_redirect(self, request_form, foi_object):
+        user = self.request.user
         special_redirect = request_form.cleaned_data['redirect_url']
 
         if user.is_authenticated:
-            if len(data['publicbodies']) == 1:
+            if isinstance(foi_object, FoiRequest):
                 messages.add_message(self.request, messages.INFO,
                     _('Your request has been sent.'))
             else:
@@ -228,12 +237,21 @@ class MakeRequestView(FormView):
                                 _('?request-made'))
             return redirect(special_redirect or req_url)
 
-        messages.add_message(self.request, messages.INFO,
-                _('Please check your inbox for mail from us to '
-                  'confirm your mail address.'))
         # user cannot access the request yet,
-        # redirect to custom URL or homepage
-        return redirect(special_redirect or '/')
+        # redirect to custom redirect or new account page
+        if special_redirect:
+            messages.add_message(self.request, messages.INFO,
+                    _('Please check your inbox for mail from us to '
+                      'confirm your mail address.'))
+
+            return redirect(special_redirect)
+
+        url = reverse('account-new')
+        query = urlencode({
+            'email': foi_object.user.email.encode('utf-8'),
+            'title': foi_object.title
+        })
+        return redirect('%s?%s' % (url, query))
 
     def get_config(self, form):
         config = {}
