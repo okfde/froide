@@ -1,15 +1,8 @@
-try:
-    from functools import lru_cache
-except ImportError:
-    # FIXME: Fake lru cache on Python2
-    def lru_cache():
-        def inner(func):
-            def _inner(*args, **kwargs):
-                return func(*args, **kwargs)
-            return _inner
-        return inner
-
 from django.utils.crypto import salted_hmac, constant_time_compare
+
+from froide.helper.auth import (can_read_object, can_write_object,
+                                can_manage_object, has_authenticated_access,
+                                lru_cache)
 
 from .models import FoiRequest
 
@@ -18,34 +11,21 @@ from .models import FoiRequest
 def can_read_foirequest(foirequest, request, allow_code=True):
     if foirequest.visibility == FoiRequest.INVISIBLE:
         return False
-    if foirequest.visibility == FoiRequest.VISIBLE_TO_PUBLIC:
+
+    if can_read_object(foirequest, request):
         return True
 
-    # only option left
-    assert foirequest.visibility == FoiRequest.VISIBLE_TO_REQUESTER
-
-    user = request.user
-    if not user.is_authenticated:
-        if allow_code:
-            return can_read_foirequest_anonymous(foirequest, request)
-        return False
-
-    return can_read_foirequest_authenticated(
-        foirequest, request, allow_code=allow_code
-    )
+    if allow_code:
+        return can_read_foirequest_anonymous(foirequest, request)
+    return False
 
 
 @lru_cache()
 def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
     user = request.user
-
-    if not user.is_authenticated:
-        return False
-
-    if foirequest.user_id == user.id:
+    if has_authenticated_access(foirequest, request):
         return True
-    if user.is_superuser:
-        return True
+
     if user.is_staff and user.has_perm('foirequest.see_private'):
         return True
 
@@ -58,30 +38,13 @@ def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
     return False
 
 
-@lru_cache()
 def can_read_foiproject(foiproject, request):
-    if foiproject.public:
-        return True
-    user = request.user
-    if not user.is_authenticated:
-        return False
-    if foiproject.user_id == user.id:
-        return True
-    if foiproject.team and foiproject.team.can_read(user):
-        return True
-    return False
+    return can_read_object(foiproject, request)
 
 
 @lru_cache()
 def can_write_foirequest(foirequest, request):
-    user = request.user
-    if not user.is_authenticated:
-        return False
-    if foirequest.user_id == user.id:
-        return True
-    if user.is_superuser:
-        return True
-    if user.is_staff and user.has_perm('foirequest.change_foirequest'):
+    if can_write_object(foirequest, request):
         return True
 
     if foirequest.project:
@@ -89,28 +52,12 @@ def can_write_foirequest(foirequest, request):
     return False
 
 
-@lru_cache()
 def can_write_foiproject(foiproject, request):
-    user = request.user
-    if not user.is_authenticated:
-        return False
-    if foiproject.user_id == user.id:
-        return True
-    if foiproject.team and foiproject.team.can_write(user):
-        return True
-    return False
+    return can_write_object(foiproject, request)
 
 
-@lru_cache()
 def can_manage_foiproject(foiproject, request):
-    user = request.user
-    if not user.is_authenticated:
-        return False
-    if foiproject.user_id == user.id:
-        return True
-    if foiproject.team and foiproject.team.can_manage(user):
-        return True
-    return False
+    return can_manage_object(foiproject, request)
 
 
 def can_read_foirequest_anonymous(foirequest, request):

@@ -451,6 +451,9 @@ class FoiRequest(models.Model):
             return self.get_auth_link()
         return self.get_absolute_domain_short_url()
 
+    def is_public(self):
+        return self.visibility == self.VISIBLE_TO_PUBLIC
+
     def get_redaction_regexes(self):
         user = self.user
         foimail_domain = settings.FOI_EMAIL_DOMAIN

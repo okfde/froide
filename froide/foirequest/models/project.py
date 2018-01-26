@@ -100,3 +100,6 @@ class FoiProject(models.Model):
 
     def get_absolute_domain_short_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_short_url())
+
+    def is_public(self):
+        return self.public
