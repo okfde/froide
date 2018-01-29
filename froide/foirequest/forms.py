@@ -17,6 +17,7 @@ from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import PriceInput, BootstrapRadioSelect
 from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
+from froide.helper.auth import get_read_queryset
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, RequestDraft
 from .validators import validate_upload_document, clean_reference
@@ -68,13 +69,10 @@ class RequestForm(JSONMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        request = kwargs.pop('request', None)
         super(RequestForm, self).__init__(*args, **kwargs)
-        if self.user and self.user.is_authenticated:
-            user_drafts = RequestDraft.objects.filter(user=self.user)
-            self.fields['draft'].queryset = user_drafts
-        else:
-            self.fields['draft'].queryset = RequestDraft.objects.none()
+        draft_qs = get_read_queryset(RequestDraft.objects.all(), request)
+        self.fields['draft'].queryset = draft_qs
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']

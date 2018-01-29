@@ -16,6 +16,7 @@ from django.views.generic import FormView, DetailView
 from froide.account.forms import NewUserForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
 from froide.publicbody.models import PublicBody
+from froide.helper.auth import get_read_queryset
 
 from ..models import FoiRequest, RequestDraft
 from ..forms import RequestForm
@@ -60,7 +61,7 @@ class MakeRequestView(FormView):
 
     def get_form_kwargs(self):
         kwargs = super(MakeRequestView, self).get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs['request'] = self.request
         return kwargs
 
     def get_user_initial(self):
@@ -303,9 +304,7 @@ class MakeRequestView(FormView):
 
 class DraftRequestView(MakeRequestView, DetailView):
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return RequestDraft.objects.filter(user=self.request.user)
-        return RequestDraft.objects.none()
+        return get_read_queryset(RequestDraft.objects.all())
 
     def get_initial(self):
         return {
