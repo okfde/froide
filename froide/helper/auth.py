@@ -10,6 +10,9 @@ except ImportError:
         return inner
 
 from django.contrib.auth import get_permission_codename
+from django.db.models import Q
+
+from froide.team.models import Team
 
 
 def has_authenticated_access(obj, request, verb='write'):
@@ -36,7 +39,7 @@ def has_authenticated_access(obj, request, verb='write'):
 
 @lru_cache()
 def can_read_object(obj, request):
-    if obj.is_public():
+    if hasattr(obj, 'is_public') and obj.is_public():
         return True
     return has_authenticated_access(obj, request, verb='read')
 
@@ -49,3 +52,25 @@ def can_write_object(obj, request):
 @lru_cache()
 def can_manage_object(obj, request):
     return has_authenticated_access(obj, request, 'manage')
+
+
+def get_read_queryset(qs, request, has_team=False):
+    user = request.user
+    if not user.is_authenticated:
+        return qs.none()
+
+    if user.is_superuser:
+        return qs
+
+    model = qs.model
+    opts = model._meta
+    codename = get_permission_codename('change', opts)
+    if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
+        return qs
+
+    # If not specially authorised, only access what belongs to user
+    filter_arg = Q(user=user)
+    if has_team:
+        # or their team
+        filter_arg |= Q(team__in=Team.objects.get_for_user(user))
+    return qs.filter(filter_arg)
