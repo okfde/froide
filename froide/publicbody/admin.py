@@ -39,6 +39,7 @@ class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
                       admin.ModelAdmin):
     form = PublicBodyAdminForm
 
+    prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'category_list')
     list_filter = ('jurisdiction', 'classification', 'categories',)
     filter_horizontal = ('laws',)
