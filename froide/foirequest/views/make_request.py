@@ -304,7 +304,7 @@ class MakeRequestView(FormView):
 
 class DraftRequestView(MakeRequestView, DetailView):
     def get_queryset(self):
-        return get_read_queryset(RequestDraft.objects.all())
+        return get_read_queryset(RequestDraft.objects.all(), self.request)
 
     def get_initial(self):
         return {
