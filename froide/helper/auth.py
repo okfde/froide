@@ -54,6 +54,16 @@ def can_manage_object(obj, request):
     return has_authenticated_access(obj, request, 'manage')
 
 
+def can_access_object(verb, obj, request):
+    if verb == 'read':
+        return can_read_object(obj, request)
+    elif verb == 'write':
+        return can_write_object(obj, request)
+    elif verb == 'manage':
+        return can_manage_object(obj, request)
+    raise ValueError('Invalid auth verb')
+
+
 def get_read_queryset(qs, request, has_team=False):
     user = request.user
     if not user.is_authenticated:
@@ -68,7 +78,11 @@ def get_read_queryset(qs, request, has_team=False):
     if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
         return qs
 
-    # If not specially authorised, only access what belongs to user
+    return get_user_queryset(qs, request, has_team=has_team)
+
+
+def get_user_queryset(qs, request, has_team=False):
+    user = request.user
     filter_arg = Q(user=user)
     if has_team:
         # or their team
