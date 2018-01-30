@@ -11,7 +11,6 @@ from django.utils.translation import pgettext
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 
-from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
 
 from froide.account.api_views import ProfileView
@@ -24,7 +23,9 @@ from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody)
 from froide.foirequest.views import FoiRequestSitemap
 
-api_router = DefaultRouter()
+from froide.helper import api_router
+
+
 api_router.register(r'request', FoiRequestViewSet, base_name='request')
 api_router.register(r'message', FoiMessageViewSet, base_name='message')
 api_router.register(r'attachment', FoiAttachmentViewSet,
