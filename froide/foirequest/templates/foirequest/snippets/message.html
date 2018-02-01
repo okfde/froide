@@ -30,6 +30,7 @@
             </div>
           {% else %}
             {{ message.user_real_sender }}
+            {% if message.is_postal %}<em>{% trans "via postal mail" %}</em>{% endif %}
           {% endif %}
         {% else %}
           {% if message.is_response %}
@@ -48,6 +49,7 @@
           {% else %}
             {{ message.sender }}
           {% endif %}
+          {% if message.is_postal %}<em>{% trans "via postal mail" %}</em>{% endif %}
         {% endif %}
       </dd>
       <dt>
