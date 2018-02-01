@@ -133,6 +133,9 @@ def compare_publicbody_email(email, foi_request,
 
 
 def get_publicbody_for_email(email, foi_request):
+    if not email:
+        return None
+
     # Compare email direct
     pb = compare_publicbody_email(email, foi_request)
     if pb is not None:
