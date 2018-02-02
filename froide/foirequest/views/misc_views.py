@@ -31,13 +31,13 @@ def index(request):
     successful_foi_requests = FoiRequest.published.successful()[:8]
     unsuccessful_foi_requests = FoiRequest.published.unsuccessful()[:8]
     featured = FeaturedRequest.objects.getFeatured()
-    return render(request, 'index.html',
-            {'featured': featured,
-            'successful_foi_requests': successful_foi_requests,
-            'unsuccessful_foi_requests': unsuccessful_foi_requests,
-            'foicount': FoiRequest.published.for_list_view().count(),
-            'pbcount': PublicBody.objects.get_list().count()
-        })
+    return render(request, 'index.html', {
+        'featured': featured,
+        'successful_foi_requests': successful_foi_requests,
+        'unsuccessful_foi_requests': unsuccessful_foi_requests,
+        'foicount': FoiRequest.objects.filter(is_foi=True).count(),
+        'pbcount': PublicBody.objects.get_list().count()
+    })
 
 
 def dashboard(request):
