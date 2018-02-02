@@ -488,7 +488,7 @@ class PostalReplyForm(PostalBaseForm):
 
     sender = forms.CharField(label=_("Sender name"),
             widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Sender Name")}), required=True)
+                "placeholder": _("Sender Name")}), required=False)
 
     if publishing_denied:
         not_publishable = forms.BooleanField(label=_('You are not allowed to '
@@ -501,8 +501,9 @@ class PostalReplyForm(PostalBaseForm):
 
     def contribute_to_message(self, message):
         message.is_response = True
-        message.sender_name = self.cleaned_data['sender']
         message.sender_public_body = self.cleaned_data['publicbody']
+        if self.cleaned_data.get('sender'):
+            message.sender_name = self.cleaned_data['sender']
         message.not_publishable = self.cleaned_data.get('not_publishable',
                                                         False)
         return message
@@ -515,15 +516,14 @@ class PostalMessageForm(PostalBaseForm):
 
     recipient = forms.CharField(label=_("Recipient Name"),
             widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Recipient Name")}), required=True)
+                "placeholder": _("Recipient Name")}))
 
     def contribute_to_message(self, message):
         message.is_response = False
         message.sender_user = message.request.user
-
-        message.recipient = self.cleaned_data['recipient']
         message.recipient_public_body = self.cleaned_data['publicbody']
-
+        if self.cleaned_data.get('recipient'):
+            message.recipient = self.cleaned_data['recipient']
         return message
 
 
