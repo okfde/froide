@@ -55,13 +55,13 @@ const config = {
           use: [{
             loader: 'css-loader',
             options: {
-              sourceMap: true
+              sourceMap: process.env.NODE_ENV !== 'production'
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true,
+              sourceMap: process.env.NODE_ENV !== 'production',
               includePaths: ['node_modules/']
             }
           }],
@@ -124,7 +124,7 @@ const config = {
     })
   ].concat(process.env.NODE_ENV === 'production' ? [
     new UglifyJsPlugin({
-      sourceMap: true,
+      sourceMap: false,
       uglifyOptions: {
         ie8: true,
         ecma: 5,
