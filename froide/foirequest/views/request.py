@@ -85,11 +85,6 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
 
 
 def get_active_tab(obj, context):
-    if obj.awaits_classification():
-        return 'set-status'
-    elif obj.is_overdue() and obj.awaits_response():
-        return 'write-message'
-
     if 'postal_reply_form' in context:
         return 'add-postal-reply'
     elif 'postal_message_form' in context:
@@ -100,4 +95,10 @@ def get_active_tab(obj, context):
         return 'write-message'
     elif 'escalation_form' in context:
         return 'escalate'
+
+    if obj.awaits_classification():
+        return 'set-status'
+    elif obj.is_overdue() and obj.awaits_response():
+        return 'write-message'
+
     return 'info'
