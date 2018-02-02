@@ -20,12 +20,14 @@ class TagObjectForm(forms.Form):
 
         super(TagObjectForm, self).__init__(*args, **kwargs)
 
-        self.fields['tags'] = TagField(label=_("Tags"),
+        self.fields['tags'] = TagField(
+            label=_("Tags"),
             widget=TagAutocompleteWidget(
                 attrs={'placeholder': _('Tags')},
                 autocomplete_url=self.tags_autocomplete_url
             ),
-            help_text=_("Comma separated and quoted"))
+            help_text=_("Comma separated and quoted")
+        )
 
     def save(self, obj):
         obj.tags.set(*self.cleaned_data['tags'])

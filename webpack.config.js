@@ -17,7 +17,8 @@ const config = {
     publicbody: ['./frontend/javascript/publicbody.js'],
     makerequest: ['./frontend/javascript/makerequest.js'],
     request: ['./frontend/javascript/request.js'],
-    redact: ['./frontend/javascript/redact.js']
+    redact: ['./frontend/javascript/redact.js'],
+    tagautocomplete: ['./frontend/javascript/tagautocomplete.js']
   },
   output: {
     path: path.resolve(__dirname, 'froide/static/js'),
