@@ -13,3 +13,10 @@
   @extend .small;
   @extend .text-muted;
 }
+
+.field-required {
+  &:after {
+    content: " *";
+    color: darken($red, 20%);
+  }
+}
