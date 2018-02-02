@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stefanw/froide.git"
+    "url": "git+https://github.com/okfde/froide.git"
   },
   "author": "Stefan Wehrmeyer",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/stefanw/froide/issues"
+    "url": "https://github.com/okfde/froide/issues"
   },
-  "homepage": "https://github.com/stefanw/froide#readme",
+  "homepage": "https://github.com/okfde/froide#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
