@@ -407,10 +407,10 @@ class AccountTest(TestCase):
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
         response = self.client.post(reverse('account-change_user'), data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 302)
         data["address"] = ""
         response = self.client.post(reverse('account-change_user'), data)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 302)
         data["address"] = "Some Value"
         response = self.client.post(reverse('account-change_user'), data)
         self.assertEqual(response.status_code, 302)
