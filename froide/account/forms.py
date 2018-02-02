@@ -182,14 +182,17 @@ class UserChangeForm(forms.Form):
         }),
         label=_('Your email address'))
 
-    address = forms.CharField(max_length=300,
-            label=_('Your mailing address'),
-            help_text=_('Your address will never be displayed publicly.'),
-            widget=forms.Textarea(attrs={
-                'placeholder': _('Street, Post Code, City'),
-                'class': 'form-control',
-                'rows': '3'
-            }))
+    address = forms.CharField(
+        max_length=300,
+        label=_('Your mailing address'),
+        help_text=_('Your address will never be displayed publicly.'),
+        widget=forms.Textarea(attrs={
+            'placeholder': _('Street, Post Code, City'),
+            'class': 'form-control',
+            'rows': '3'
+        }),
+        required=False
+    )
     if HAVE_ORGANIZATION:
         organization = forms.CharField(
             required=False,
