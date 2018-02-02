@@ -516,7 +516,7 @@ class PostalMessageForm(PostalBaseForm):
 
     recipient = forms.CharField(label=_("Recipient Name"),
             widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Recipient Name")}))
+                "placeholder": _("Recipient Name")}), required=False)
 
     def contribute_to_message(self, message):
         message.is_response = False
