@@ -75,6 +75,7 @@ def list_requests(request, status=None, topic=None, tag=None,
         context['filtered'] = False
 
     if feed is not None:
+        foi_requests = foi_requests[:50]
         if feed == 'rss':
             klass = LatestFoiRequestsFeed
         else:
