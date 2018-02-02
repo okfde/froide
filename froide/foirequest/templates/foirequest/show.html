@@ -110,13 +110,11 @@
             {% trans "Request" %}
           </a>
         </li>
-        {% if object.reply_received %}
         <li class="nav-item">
           <a href="#set-status" data-toggle="pill" class="nav-link" role="tab" aria-controls="set-status" aria-expanded="false">
               {% trans "Set status" %}
             </a>
         </li>
-        {% endif %}
         {% if object.status == "publicbody_needed" %}
           <li class="nav-item">
             <a href="#choose-public-body" data-toggle="pill" class="nav-link" role="tab" aria-controls="choose-public-body" aria-expanded="false">
