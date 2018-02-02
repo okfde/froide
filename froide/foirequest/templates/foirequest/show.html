@@ -474,7 +474,7 @@
 
           {% if object.description %}
             <dt>{% blocktrans %}Summary of Request{% endblocktrans %}</dt>
-            <dd>{{ object.get_description|urlizetrunc:40 }}</dd>
+            <dd>{{ object.get_description|urlizetrunc:40|linebreaks }}</dd>
             {% endif %}
           {% if object.summary %}
             <dt>{% blocktrans %}Summary of Resolution{% endblocktrans %}</dt>
