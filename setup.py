@@ -32,6 +32,7 @@ setup(
     author='Stefan Wehrmeyer',
     author_email='mail@stefanwehrmeyer.com',
     packages=find_packages(),
+    scripts=['manage.py'],
     install_requires=[
         'Django',
         'Markdown',
