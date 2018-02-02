@@ -110,7 +110,7 @@ class FoiRequestSitemap(Sitemap):
     priority = 0.5
 
     def items(self):
-        return FoiRequest.published.all()
+        return FoiRequest.published.filter(same_as__isnull=True)
 
     def lastmod(self, obj):
         return obj.last_message
