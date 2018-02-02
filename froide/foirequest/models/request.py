@@ -35,6 +35,12 @@ from .project import FoiProject
 
 class FoiRequestManager(CurrentSiteManager):
 
+    def get_send_foi_requests(self):
+        return self.get_queryset().filter(
+            is_foi=True,
+            visibility__gt=FoiRequest.INVISIBLE
+        )
+
     def get_by_secret_mail(self, mail):
         return self.get_queryset().get(secret_address=mail)
 
@@ -84,9 +90,10 @@ class FoiRequestManager(CurrentSiteManager):
 
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_queryset(self):
-        return super(PublishedFoiRequestManager,
-                self).get_queryset().filter(visibility=2, is_foi=True)\
-                        .select_related("public_body", "jurisdiction")
+        qs = super(PublishedFoiRequestManager, self).get_queryset()
+        return qs.filter(
+            visibility=FoiRequest.VISIBLE_TO_PUBLIC, is_foi=True
+        ).select_related("public_body", "jurisdiction")
 
     def by_last_update(self):
         return self.get_queryset().order_by('-last_message')
