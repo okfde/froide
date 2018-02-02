@@ -171,12 +171,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         return service.get_autologin_url(url)
 
     def get_password_change_form(self, *args, **kwargs):
-        from django.contrib.auth.forms import SetPasswordForm
-
+        from .forms import SetPasswordForm
         return SetPasswordForm(self, *args, **kwargs)
 
     def get_change_form(self, *args, **kwargs):
-        from froide.account.forms import UserChangeForm
+        from .forms import UserChangeForm
         return UserChangeForm(self, *args, **kwargs)
 
 

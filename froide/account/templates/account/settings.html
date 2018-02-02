@@ -78,9 +78,9 @@
         <form action="{% url 'account-change_password' %}" method="post" id="change-password">
           {% csrf_token %}
           {% if password_change_form %}
-            {{ password_change_form.as_p }}
+            {% render_form password_change_form %}
           {% else %}
-            {{ user.get_password_change_form.as_p }}
+            {% render_form user.get_password_change_form %}
           {% endif %}
           <button type="submit" class="btn btn-secondary">{% blocktrans %}Change password{% endblocktrans %}</button>
         </form>

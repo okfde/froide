@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib import auth
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django import forms
 
 from froide.helper.form_utils import JSONMixin
@@ -279,7 +280,10 @@ class UserDeleteForm(forms.Form):
         help_text=_('Please type your password to confirm.')
     )
     confirmation = forms.CharField(
-        widget=ConfirmationWidget(phrase=CONFIRMATION_PHRASE),
+        widget=ConfirmationWidget(
+            phrase=CONFIRMATION_PHRASE,
+            attrs={'class': 'form-control'}
+        ),
         label=_('Confirmation Phrase'),
         help_text=_('Type the phrase above exactly as displayed.'))
 
@@ -306,3 +310,14 @@ class UserDeleteForm(forms.Form):
                 _('You did not type the confirmation phrase exactly right!')
             )
         return ''
+
+
+class SetPasswordForm(DjangoSetPasswordForm):
+    """
+    Subclass just to set widget class
+    """
+    def __init__(self, *args, **kwargs):
+        super(SetPasswordForm, self).__init__(*args, **kwargs)
+        for i in range(1, 3):
+            widget = self.fields['new_password%d' % i].widget
+            widget.attrs.update({'class': 'form-control'})
