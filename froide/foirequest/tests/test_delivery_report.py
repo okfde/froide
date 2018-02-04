@@ -47,7 +47,8 @@ class PostfixDeliveryReportTest(TestCase):
         self.assertEqual(result.message_id, '20171211133019.12503.3873@fragdenstaat.de')
 
     @patch('froide.foirequest.delivery.get_delivery_report',
-           lambda a, b, c: DeliveryReport('loglines', None, 'sent', 'message-id'))
+           lambda a, b, c, extended=False:
+                DeliveryReport('loglines', None, 'sent', 'message-id'))
     def test_delivery_report_sent(self):
         mes = factories.FoiMessageFactory.create(is_response=False)
         mes.check_delivery_status()

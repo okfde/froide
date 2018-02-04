@@ -1,6 +1,8 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
 import importlib
+import gzip
+import io
 import logging
 import re
 import os
@@ -8,7 +10,7 @@ import os
 import pytz
 
 
-def get_delivery_report(sender, recipient, timestamp):
+def get_delivery_report(sender, recipient, timestamp, extended=False):
     from django.conf import settings
     reporter_path = settings.FROIDE_CONFIG.get('delivery_reporter', None)
     if not reporter_path:
@@ -19,7 +21,7 @@ def get_delivery_report(sender, recipient, timestamp):
     reporter_klass = getattr(module, klass)
 
     reporter = reporter_klass(time_zone=settings.TIME_ZONE)
-    return reporter.find(sender, recipient, timestamp)
+    return reporter.find(sender, recipient, timestamp, extended=extended)
 
 
 DeliveryReport = namedtuple('DeliveryReport', ['log', 'time_diff',
@@ -37,24 +39,37 @@ class PostfixDeliveryReporter(object):
 
     LOG_FILES = [
         '/var/log/mail.log',
-        '/var/log/mail.log.1'
+        '/var/log/mail.log.1',
     ]
+    LOG_FILES_EXTENDED = ['/var/log/mail.log.%d.gz' % i for i in range(2, 12)]
 
     def __init__(self, time_zone=None):
         self.timezone = pytz.timezone(time_zone)
 
-    def find(self, sender, recipient, timestamp):
-        for filename in self.LOG_FILES:
+    def get_log_files(self, extended=False):
+        for open_func, filename in self._get_files(extended):
             if not os.path.exists(filename):
                 continue
             try:
-                with open(filename) as fp:
-                    result = self.search_log(fp, sender, recipient, timestamp)
-                    if result:
-                        return result
+                with open_func(filename, mode='rt', encoding='utf-8') as fp:
+                    yield fp
             except IOError as e:
                 logging.exception(e)
                 pass
+
+    def _get_files(self, extended):
+        for f in self.LOG_FILES:
+            yield io.open, f
+        if not extended:
+            return
+        for f in self.LOG_FILES_EXTENDED:
+            yield gzip.open, f
+
+    def find(self, sender, recipient, timestamp, extended=False):
+        for fp in self.get_log_files(extended):
+            result = self.search_log(fp, sender, recipient, timestamp)
+            if result:
+                return result
 
     def search_log(self, fp, sender, recipient, timestamp):
         sender_re = re.compile(self.SENDER_RE.format(sender=sender))

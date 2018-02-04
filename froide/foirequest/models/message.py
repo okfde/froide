@@ -317,7 +317,7 @@ class FoiMessage(models.Model):
             self._delivery_status = None
         return self._delivery_status
 
-    def check_delivery_status(self, count=None):
+    def check_delivery_status(self, count=None, extended=False):
         if self.is_postal or self.is_response:
             return
 
@@ -325,7 +325,8 @@ class FoiMessage(models.Model):
         from ..tasks import check_delivery_status
 
         report = get_delivery_report(
-            self.sender_email, self.recipient_email, self.timestamp
+            self.sender_email, self.recipient_email, self.timestamp,
+            extended=extended
         )
         if report is None:
             if count is None or count > 5:
