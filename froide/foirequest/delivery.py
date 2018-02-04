@@ -59,11 +59,16 @@ class PostfixDeliveryReporter(object):
 
     def _get_files(self, extended):
         for f in self.LOG_FILES:
-            yield io.open, f
+            yield self._get_openfunc(f), f
         if not extended:
             return
         for f in self.LOG_FILES_EXTENDED:
-            yield gzip.open, f
+            yield self._get_openfunc(f), f
+
+    def _get_openfunc(self, filename):
+        if filename.endswith('.gz'):
+            return gzip.open
+        return io.open
 
     def find(self, sender, recipient, timestamp, extended=False):
         for fp in self.get_log_files(extended):
