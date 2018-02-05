@@ -13,7 +13,8 @@ from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
 
 
-@celery_app.task(acks_late=True, time_limit=60)
+@celery_app.task(name='froide.foirequest.tasks.process_mail',
+                 acks_late=True, time_limit=60)
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
@@ -21,7 +22,7 @@ def process_mail(*args, **kwargs):
         _process_mail(*args, **kwargs)
 
 
-@celery_app.task(expires=60)
+@celery_app.task(name='froide.foirequest.tasks.fetch_mail', expires=60)
 def fetch_mail():
     for rfc_data in _fetch_mail():
         process_mail.delay(rfc_data)
@@ -111,7 +112,8 @@ def create_project_request(project_id, publicbody_id, sequence=0):
     return foirequest.pk
 
 
-@celery_app.task(time_limit=60)
+@celery_app.task(name='froide.foirequest.tasks.convert_attachment_task',
+                 time_limit=60)
 def convert_attachment_task(instance_id):
     try:
         att = FoiAttachment.objects.get(pk=instance_id)
