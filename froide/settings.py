@@ -340,6 +340,8 @@ class Base(Configuration):
 
     CELERY_TASK_ROUTES = {
         'froide.foirequest.tasks.fetch_mail': {"queue": "emailfetch"},
+        'froide.foirequest.tasks.process_mail': {"queue": "email"},
+        'djcelery_email_send_multiple': {"queue": "email"},
     }
     CELERY_TIMEZONE = 'UTC'
     # We need to serialize email data as binary
