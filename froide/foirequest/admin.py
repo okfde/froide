@@ -176,7 +176,11 @@ class DeliveryStatusInline(admin.TabularInline):
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ('subject', 'timestamp', 'sender_email', 'recipient_email',)
-    list_filter = ('is_postal', 'is_response', 'sent', 'status', 'deliverystatus__status')
+    list_filter = (
+        'is_postal', 'is_response', 'sent', 'status',
+        'deliverystatus__status',
+        make_nullfilter('deliverystatus', _('Has delivery status'))
+    )
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
