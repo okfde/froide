@@ -55,7 +55,7 @@ class CSVImporter(object):
         if row['url'] and not row['url'].startswith(('http://', 'https://')):
             row['url'] = 'http://' + row['url']
         row['slug'] = slugify(row['name'])
-        row['classification'] = self.get_classification(row.pop('classification__slug', None))
+        row['classification'] = self.get_classification(row.pop('classification', None))
 
         categories = parse_tags(row.pop('categories', ''))
         categories = list(self.get_categories(categories))
@@ -125,9 +125,9 @@ class CSVImporter(object):
             self.topic_cache[slug] = PublicBodyTag.objects.get(slug=slug, is_topic=True)
         return self.topic_cache[slug]
 
-    def get_classification(self, slug):
-        if slug is None:
+    def get_classification(self, name):
+        if name is None:
             return None
-        if slug not in self.classification_cache:
-            self.classification_cache[slug] = Classification.objects.get(slug=slug)
-        return self.classification_cache[slug]
+        if name not in self.classification_cache:
+            self.classification_cache[name] = Classification.objects.get(name=name)
+        return self.classification_cache[name]
