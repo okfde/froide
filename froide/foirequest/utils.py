@@ -155,6 +155,8 @@ def get_publicbody_for_email(email, foi_request):
     from froide.publicbody.models import PublicBody
 
     email_host = get_host(email)
+    if email_host is None:
+        return None
     pbs = PublicBody.objects.filter(email__endswith=email_host)
     if len(pbs) == 1:
         return pbs[0]
