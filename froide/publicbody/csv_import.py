@@ -93,15 +93,16 @@ class CSVImporter(object):
         except PublicBody.DoesNotExist:
             pass
         row.pop('id', None)  # Remove id if present
-        public_body = PublicBody(**row)
-        public_body._created_by = self.user
-        public_body._updated_by = self.user
-        public_body.confirmed = True
-        public_body.site = self.site
-        public_body.save()
-        public_body.laws.add(*row['jurisdiction'].laws)
-        public_body.tags.set(*list(tags))
-        return public_body
+        pb = PublicBody(**row)
+        pb._created_by = self.user
+        pb._updated_by = self.user
+        pb.confirmed = True
+        pb.site = self.site
+        pb.save()
+        pb.laws.add(*row['jurisdiction'].laws)
+        pb.tags.set(*list(tags))
+        pb.categories.set(*categories)
+        return pb
 
     def get_jurisdiction(self, slug):
         if slug not in self.jur_cache:

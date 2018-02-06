@@ -59,7 +59,12 @@ class PublicBodyTest(TestCase):
         self.assertEqual(now_count, prev_count)
 
     def test_csv_existing_import(self):
-        factories.PublicBodyFactory.create(site=self.site, name='Public Body 76 X')
+        classification = factories.ClassificationFactory.create(name='Ministry')
+        factories.PublicBodyFactory.create(
+            site=self.site,
+            name='Public Body 76 X',
+            classification=classification
+        )
         # reenable when django-taggit support atomic transaction wrapping
         # factories.PublicBodyTagFactory.create(slug='public-body-topic-76-x', is_topic=True)
 
@@ -73,6 +78,8 @@ Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://examp
         self.assertEqual(now_count, prev_count)
 
     def test_csv_new_import(self):
+        # Make sure classification exist
+        factories.ClassificationFactory.create(name='Ministry')
         prev_count = PublicBody.objects.all().count()
         csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''

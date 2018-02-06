@@ -1,8 +1,6 @@
 from django.utils import six
 from django.http import StreamingHttpResponse
 
-from taggit.utils import edit_string_for_tags
-
 
 def export_csv_response(generator, name='export.csv'):
     response = StreamingHttpResponse(generator, content_type='text/csv')
@@ -19,23 +17,26 @@ class FakeFile(object):
             self._last_string = self._last_string.encode('utf-8')
 
 
-def get_dict(self, fields):
+def get_dict(obj, fields):
     d = {}
-    if 'tags' in fields:
-        d['tags'] = edit_string_for_tags(self.tags.all())
 
     for field in fields:
         if field in d:
             continue
-        value = self
-        for f in field.split('__'):
-            value = getattr(value, f, None)
-            if value is None:
-                break
-        if value is None:
-            d[field] = ""
+        if isinstance(field, tuple):
+            field_name = field[0]
+            value = field[1](obj)
         else:
-            d[field] = six.text_type(value)
+            value = obj
+            field_name = field
+            for f in field.split('__'):
+                value = getattr(value, f, None)
+                if value is None:
+                    break
+        if value is None:
+            d[field_name] = ""
+        else:
+            d[field_name] = six.text_type(value)
     return d
 
 
@@ -46,7 +47,8 @@ def export_csv(queryset, fields):
         import unicodecsv as csv
 
     f = FakeFile()
-    writer = csv.DictWriter(f, fields)
+    field_names = [f[0] if isinstance(f, tuple) else f for f in fields]
+    writer = csv.DictWriter(f, field_names)
     writer.writeheader()
     yield f._last_string
     for obj in queryset:

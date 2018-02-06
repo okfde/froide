@@ -317,7 +317,7 @@ class PublicBody(models.Model):
     classification = models.ForeignKey(Classification, null=True, blank=True,
         on_delete=models.SET_NULL)
 
-    email = models.EmailField(_("Email"), null=True, blank=True)
+    email = models.EmailField(_("Email"), blank=True, default='')
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
@@ -450,9 +450,13 @@ class PublicBody(models.Model):
 
     @classmethod
     def export_csv(cls, queryset):
-        fields = ("id", "name", "email", "contact",
-            "address", "url", "classification",
-            "jurisdiction__slug", "tags",
+
+        fields = (
+            "id", "name", "email", "contact",
+            "address", "url",
+            ('classification', lambda x: x.classification.name),
+            "jurisdiction__slug",
+            ("categories", lambda x: edit_string_for_tags(x.categories.all())),
             "other_names", "website_dump", "description",
             "request_note", "parent__name",
         )
