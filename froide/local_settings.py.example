@@ -8,22 +8,6 @@ class Dev(Base):
     TEMPLATE_DEBUG = True
     TASTYPIE_FULL_DEBUG = True
 
-    # FROIDE_THEME = ''
-
-    @property
-    def TEMPLATE_LOADERS(self):
-        old = super(Dev, self).TEMPLATE_LOADERS
-        if self.FROIDE_THEME is not None:
-            return (['froide.helper.theme_utils.ThemeLoader'] + old)
-        return old
-
-    @property
-    def INSTALLED_APPS(self):
-        installed = super(Dev, self).INSTALLED_APPS
-        if self.FROIDE_THEME is not None:
-            return installed.default + [self.FROIDE_THEME]
-        return installed.default
-
     ############## Site Configuration #########
 
     # # Make this unique, and don't share it with anybody.
@@ -274,12 +258,6 @@ class Dev(Base):
     # HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
 
     ########## Froide settings ########
-
-    # # Add the name of your
-    # FROIDE_THEME = 'your_theme'
-    # # Add your theme to the top of installed apps
-    # INSTALLED_APPS = [FROIDE_THEME] + INSTALLED_APPS
-
 
     # FROIDE_CONFIG.update(dict(
     #     user_can_hide_web=True,

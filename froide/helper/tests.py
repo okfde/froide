@@ -6,7 +6,6 @@ import re
 
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.template import engines
 
 from .text_utils import replace_email_name, remove_closing
 from .date_utils import calc_easter, calculate_month_range_de
@@ -78,17 +77,3 @@ class TestGermanDeadline(TestCase):
         deadline = calculate_month_range_de(month_before)
         deadline = deadline.replace(tzinfo=None)
         self.assertTrue((deadline - month_before).days > 33)
-
-
-class TestThemeLoader(TestCase):
-
-    @override_settings(FROIDE_THEME='froide.foirequest')
-    def test_loader(self):
-        from .theme_utils import ThemeLoader
-
-        tl = ThemeLoader(engines['django'])
-        sources = list(tl.get_template_sources('index.html'))
-        self.assertEqual(len(sources), 1)
-        origin = sources[0]
-        self.assertTrue(origin.name.startswith('/'))
-        self.assertTrue(origin.name.endswith('froide/foirequest/templates/index.html'))

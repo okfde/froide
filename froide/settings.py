@@ -154,9 +154,9 @@ class Base(Configuration):
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': (
+            'DIRS': [
                 os.path.join(PROJECT_ROOT, "templates"),
-            ),
+            ],
             'OPTIONS': {
                 'debug': values.BooleanValue(DEBUG),
                 'loaders': [
@@ -395,8 +395,6 @@ class Base(Configuration):
 
     # ######### Froide settings ########
 
-    FROIDE_THEME = None
-
     FROIDE_CONFIG = dict(
         user_can_hide_web=True,
         public_body_officials_public=True,
@@ -473,24 +471,6 @@ class Base(Configuration):
 
 class Dev(Base):
     pass
-
-
-class ThemeBase(object):
-
-    @property
-    def INSTALLED_APPS(self):
-        installed = super(ThemeBase, self).INSTALLED_APPS
-        installed.default += [
-            self.FROIDE_THEME
-        ]
-        return installed.default
-
-    @property
-    def TEMPLATES(self):
-        TEMP = super(ThemeBase, self).TEMPLATES
-        if self.FROIDE_THEME is not None:
-            TEMP[0]['OPTIONS']['loaders'] = ['froide.helper.theme_utils.ThemeLoader'] + TEMP[0]['OPTIONS']['loaders']
-        return TEMP
 
 
 class Test(Base):
