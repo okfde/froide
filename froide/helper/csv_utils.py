@@ -46,18 +46,18 @@ def export_csv(queryset, fields):
     else:
         import unicodecsv as csv
 
-    f = FakeFile()
+    fake_file = FakeFile()
     field_names = [f[0] if isinstance(f, tuple) else f for f in fields]
-    writer = csv.DictWriter(f, field_names)
+    writer = csv.DictWriter(fake_file, field_names)
     writer.writeheader()
-    yield f._last_string
+    yield fake_file._last_string
     for obj in queryset:
         if hasattr(obj, 'get_dict'):
             d = obj.get_dict(fields)
         else:
             d = get_dict(obj, fields)
         writer.writerow(d)
-        yield f._last_string
+        yield fake_file._last_string
 
 
 def export_csv_bytes(generator):
