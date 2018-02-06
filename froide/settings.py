@@ -350,6 +350,10 @@ class Base(Configuration):
     CELERY_RESULT_SERIALIZER = 'pickle'
     CELERY_ACCEPT_CONTENT = ['pickle']
 
+    CELERY_EMAIL_TASK_CONFIG = {
+        'queue': 'email'
+    }
+
     # ######## Haystack ###########
 
     HAYSTACK_CONNECTIONS = {
