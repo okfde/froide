@@ -4,9 +4,11 @@
 {% block content %}
   {{ block.super }}
   <div>
-    <form method="post" action="{% url 'publicbody-import' %}">{% csrf_token %}
+    <form enctype="multipart/form-data" method="post" action="{% url 'publicbody-import' %}">{% csrf_token %}
       <input type="url" name="url" value="" placeholder="http://example.com/data.csv"/>
-      <input type="submit" value="{% blocktrans with cl.opts.verbose_name_plural as name %}Import {{ name }} by URL{% endblocktrans %}"/>
+      {% trans "or" %}
+      <input type="file" name="file"/>
+      <input type="submit" value="{% blocktrans with cl.opts.verbose_name_plural as name %}Import {{ name }}{% endblocktrans %}"/>
     </form>
   </div>
 {% endblock %}

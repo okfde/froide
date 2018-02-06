@@ -123,10 +123,14 @@ def import_csv(request):
         return render_403(request)
     importer = CSVImporter()
     url = request.POST.get('url')
+    csv_file = request.FILES.get('file')
     try:
-        if not url:
-            raise ValueError(_('You need to provide a url.'))
-        importer.import_from_url(url)
+        if not url and not csv_file:
+            raise ValueError(_('You need to provide a url or a file.'))
+        if url:
+            importer.import_from_url(url)
+        else:
+            importer.import_from_file(csv_file)
     except Exception as e:
         messages.add_message(request, messages.ERROR, str(e))
     else:
