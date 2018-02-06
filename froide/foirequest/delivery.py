@@ -71,6 +71,8 @@ class PostfixDeliveryReporter(object):
         return io.open
 
     def find(self, sender, recipient, timestamp, extended=False):
+        sender = sender.strip()
+        recipient = recipient.strip()
         for fp in self.get_log_files(extended):
             result = self.search_log(fp, sender, recipient, timestamp)
             if result:
