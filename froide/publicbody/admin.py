@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.urls import reverse_lazy
@@ -129,8 +130,22 @@ class ClassificationAdmin(AssignClassificationParentMixin, TreeAdmin):
     form = movenodeform_factory(Classification)
     prepopulated_fields = {"slug": ["name"]}
     search_fields = ["name"]
-    list_display = ('name', 'publicbody_link')
+    list_display = ('name', 'num_publicbodies', 'publicbody_link')
     actions = AssignClassificationParentMixin.actions
+
+    def get_queryset(self, request):
+        """Use this so we can annotate with additional info."""
+
+        qs = super(ClassificationAdmin, self).get_queryset(request)
+        return qs.annotate(
+            num_publicbodies=Count('publicbody', distinct=True)
+        )
+
+    def num_publicbodies(self, obj):
+        """# of companies an expert has."""
+
+        return obj.num_publicbodies
+    num_publicbodies.short_description = _('# public bodies')
 
     def publicbody_link(self, obj):
         return format_html('<a href="{}">{}</a>',
