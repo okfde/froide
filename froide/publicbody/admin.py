@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django import forms
+from django.urls import reverse
+from django.utils.html import format_html
 
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
@@ -127,7 +129,16 @@ class ClassificationAdmin(AssignClassificationParentMixin, TreeAdmin):
     form = movenodeform_factory(Classification)
     prepopulated_fields = {"slug": ["name"]}
     search_fields = ["name"]
+    list_display = ('name', 'publicbody_link')
     actions = AssignClassificationParentMixin.actions
+
+    def publicbody_link(self, obj):
+        return format_html('<a href="{}">{}</a>',
+            reverse('admin:publicbody_publicbody_changelist') + (
+                '?classification__id__exact={}'.format(obj.id)
+            ),
+            _('Public bodies with this classification')
+        )
 
 
 class AssignCategoryParentMixin(AssignParentMixin):
