@@ -21,9 +21,18 @@ from froide.publicbody.api_views import (ClassificationViewSet,
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody)
-from froide.foirequest.views import FoiRequestSitemap
+from froide.foirequest.views import FoiRequestSitemap, index, dashboard
 
 from froide.helper import api_router
+
+
+def handler500(request):
+    """
+    500 error handler which includes ``request`` in the context.
+    """
+
+    from django.shortcuts import render
+    return render(request, '500.html', {'request': request}, status=500)
 
 
 api_router.register(r'request', FoiRequestViewSet, base_name='request')
@@ -65,7 +74,7 @@ PROTOCOL = settings.SITE_URL.split(':')[0]
 for klass in sitemaps.values():
     klass.protocol = PROTOCOL
 
-urlpatterns = [
+froide_urlpatterns = [
     url(r'^sitemap\.xml$', sitemaps_views.index,
         {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemaps'}),
     url(r'^sitemap-(?P<section>.+)\.xml$', sitemaps_views.sitemap,
@@ -78,28 +87,28 @@ SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 if settings.FROIDE_CONFIG.get('api_activated', True):
     schema_view = get_schema_view(title='{name} API'.format(
                                   name=settings.SITE_NAME))
-    urlpatterns += [
+    froide_urlpatterns += [
         url(r'^api/v1/user/', ProfileView.as_view(), name='api-user-profile'),
         url(r'^api/v1/', include((api_router.urls, 'api'))),
         url(r'^api/v1/schema/$', schema_view),
     ]
 
 
-urlpatterns += [
+froide_urlpatterns += [
     # Translators: URL part
     url(r'^', include('froide.foirequest.urls')),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}),
 ]
 
 if len(settings.LANGUAGES) > 1:
-    urlpatterns += [
+    froide_urlpatterns += [
         url(r'^i18n/', include('django.conf.urls.i18n'))
     ]
 
 account = pgettext('url part', 'account')
 teams = pgettext('url part', 'teams')
 
-urlpatterns += [
+froide_urlpatterns += [
     # Translators: follow request URL
     url(r'^%s/' % pgettext('url part', 'follow'), include('froide.foirequestfollower.urls')),
     # Translators: URL part
@@ -122,6 +131,40 @@ urlpatterns += [
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
 ]
 
+if SECRET_URLS.get('postmark_inbound'):
+    from froide.foirequest.views import postmark_inbound
+
+    froide_urlpatterns += [
+        url(r'^postmark/%s/' % SECRET_URLS['postmark_inbound'],
+            postmark_inbound, name="foirequest-postmark_inbound")
+    ]
+
+if SECRET_URLS.get('postmark_bounce'):
+    from froide.foirequest.views import postmark_bounce
+
+    froide_urlpatterns += [
+        url(r'^postmark/%s/' % SECRET_URLS['postmark_bounce'],
+            postmark_bounce, name="foirequest-postmark_bounce")
+    ]
+
+
+if settings.DEBUG:
+    froide_urlpatterns += staticfiles_urlpatterns()
+    froide_urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
+
+if settings.DEBUG:
+    try:
+        import debug_toolbar
+        froide_urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + froide_urlpatterns
+    except ImportError:
+        pass
+
+
 # Translators: URL part
 help_url_part = pgettext('url part', 'help')
 # Translators: URL part
@@ -131,7 +174,7 @@ terms_url_part = pgettext('url part', 'terms')
 # Translators: URL part
 privacy_url_part = pgettext('url part', 'privacy')
 
-urlpatterns += [
+help_urlpatterns = [
     url(r'^%s/$' % help_url_part, flatpage,
         {'url': '/%s/' % help_url_part}, name='help-index'),
     url(r'^%s/%s/$' % (help_url_part, about_url_part), flatpage,
@@ -142,47 +185,7 @@ urlpatterns += [
         {'url': '/%s/%s/' % (help_url_part, privacy_url_part)}, name='help-privacy'),
 ]
 
-
-if SECRET_URLS.get('postmark_inbound'):
-    from froide.foirequest.views import postmark_inbound
-
-    urlpatterns += [
-        url(r'^postmark/%s/' % SECRET_URLS['postmark_inbound'],
-            postmark_inbound, name="foirequest-postmark_inbound")
-    ]
-
-if SECRET_URLS.get('postmark_bounce'):
-    from froide.foirequest.views import postmark_bounce
-
-    urlpatterns += [
-        url(r'^postmark/%s/' % SECRET_URLS['postmark_bounce'],
-            postmark_bounce, name="foirequest-postmark_bounce")
-    ]
-
-
-if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns()
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-if settings.DEBUG:
-    try:
-        import debug_toolbar
-        urlpatterns = [
-            url(r'^__debug__/', include(debug_toolbar.urls)),
-        ] + urlpatterns
-    except ImportError:
-        pass
-
-# Catch all Jurisdiction patterns
-urlpatterns += [
-    url(r'^(?P<slug>[\w-]+)/', include('froide.publicbody.jurisdiction_urls'))
-]
-
-
-def handler500(request):
-    """
-    500 error handler which includes ``request`` in the context.
-    """
-
-    from django.shortcuts import render
-    return render(request, '500.html', {'request': request}, status=500)
+urlpatterns = froide_urlpatterns + [
+    url(r'^$', index, name='index'),
+    url(r'^dashboard/$', dashboard, name='dashboard'),
+] + help_urlpatterns

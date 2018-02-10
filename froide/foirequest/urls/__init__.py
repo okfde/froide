@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import pgettext
 
 from ..views import (
-    index, search, dashboard, auth, shortlink, auth_message_attachment,
+    search, auth, shortlink, auth_message_attachment,
     project_shortlink
 )
 
@@ -16,10 +16,6 @@ from . import (
 
 
 urlpatterns = [
-
-    url(r'^$', index, name='index'),
-    url(r'^dashboard/$', dashboard, name='dashboard'),
-
     # Translators: request URL
     url(r'^%s/' % pgettext('url part', 'make-request'), include(make_request_urls)),
     # Translators: URL part
