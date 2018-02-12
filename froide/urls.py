@@ -185,7 +185,16 @@ help_urlpatterns = [
         {'url': '/%s/%s/' % (help_url_part, privacy_url_part)}, name='help-privacy'),
 ]
 
+
+# Translators: URL part
+jurisdiction_part = pgettext('url part', 'jurisdiction')
+
+jurisdiction_urls = [
+    url(r'^%s/(?P<slug>[\w-]+)/' % jurisdiction_part,
+        include('froide.publicbody.jurisdiction_urls'))
+]
+
 urlpatterns = froide_urlpatterns + [
     url(r'^$', index, name='index'),
     url(r'^dashboard/$', dashboard, name='dashboard'),
-] + help_urlpatterns
+] + help_urlpatterns + jurisdiction_urls
