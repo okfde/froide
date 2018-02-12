@@ -28,12 +28,12 @@
 
               <div class="input-group">
                 <input id="index-search"class="form-control" type="text" name="q" autocomplete="off" placeholder="{% block index-search-placeholder %}{% endblock %}"/>
-                <span class="input-group-btn">
+                <div class="input-group-append">
                   <button class="btn btn-primary" type="submit">
                     <i class="fa fa-search"></i>
                     {% blocktrans %}Search For Information{% endblocktrans %}
                   </button>
-                </span>
+                </div>
               </div>
             </div>
             {% block example_search_terms_block %}

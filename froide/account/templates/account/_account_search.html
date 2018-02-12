@@ -5,9 +5,9 @@
       <label class="sr-only" for="id_q">{{ title }}</label>
       <div class="input-group">
         <input type="search" id="id_q" name="q" value="{% if view.query %}{{ view.query }}{% endif %}" placeholder="{% trans "Search your requests by title" %}" class="form-control"/>
-        <span class="input-group-btn">
+        <div class="input-group-append">
           <button type="submit" class="btn btn-secondary">{% trans "Search" %}</button>
-        </span>
+        </div>
       </div>
     </div>
   </div>

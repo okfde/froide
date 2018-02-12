@@ -19,12 +19,12 @@
     <form class="col-lg-8" method="get" action="{% url 'foirequest-search' %}">
       <div class="input-group">
         <input class="form-control" type="search" placeholder="{% trans "Your Topic" %}" name="q" value="{{ query }}" autocomplete="off"/>
-        <span class="input-group-btn">
+        <div class="input-group-append">
           <button class="btn btn-success" type="submit">
             <i class="fa fa-search"></i>
             {% blocktrans %}Search For Information{% endblocktrans %}
           </button>
-        </span>
+        </div>
       </div>
     </form>
   </div>

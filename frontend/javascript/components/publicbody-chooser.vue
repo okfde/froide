@@ -3,12 +3,12 @@
     <div class="form-search">
       <div class="input-group">
         <input type="search" v-model:value="search" class="search-public_bodies form-control" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
-        <span class="input-group-btn">
+        <div class="input-group-append">
           <button type="button" class="btn btn-primary search-public_bodies-submit" @click="triggerAutocomplete">
             <i class="fa fa-search"></i>
             {{ i18n.search }}
           </button>
-        </span>
+        </div>
       </div>
     </div>
     <div v-if="searching" class="search-spinner">
