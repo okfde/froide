@@ -104,7 +104,7 @@ class MailTest(TestCase):
         self.assertEqual(mail['attachments'][0].name, 'Kooperationen des MSW, Antrag '
                 'nach Informationsfreiheitsgesetz NRW, Stefan Safario vom 06.12.2012 - AW vom '
                 '08.01.2013 - RS.pdf')
-        request.add_message_from_email(mail, content)
+        request.add_message_from_email(mail)
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -122,7 +122,7 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-        request.add_message_from_email(mail, content)
+        request.add_message_from_email(mail)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         mes = messages[1]
@@ -151,7 +151,7 @@ class MailTest(TestCase):
             mail = parser.parse(BytesIO(content))
             self.assertEqual(len(mail['attachments']), 2)
             self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
-        request.add_message_from_email(mail, content)
+        request.add_message_from_email(mail)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
         mes = messages[1]
@@ -238,8 +238,9 @@ class DeferredMessageTest(TestCase):
             mail = f.read().decode('ascii')
         mail = mail.replace(self.secret_address, bad_mail)
         process_mail.delay(mail.encode('ascii'))
-        self.assertEqual(count_messages,
-            FoiMessage.objects.filter(request=self.req).count())
+        self.assertEqual(
+            count_messages, FoiMessage.objects.filter(request=self.req).count()
+        )
         dms = DeferredMessage.objects.filter(recipient=bad_mail)
         self.assertEqual(len(dms), 1)
         dm = dms[0]

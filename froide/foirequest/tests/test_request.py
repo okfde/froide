@@ -152,7 +152,7 @@ class RequestTest(TestCase):
             'resent_to': [],
             'resent_cc': [],
             'attachments': []
-        }, "FAKE_ORIGINAL")
+        })
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertTrue(req.awaits_classification())
         self.assertEqual(len(req.messages), 2)
@@ -625,7 +625,7 @@ class RequestTest(TestCase):
             'resent_to': [],
             'resent_cc': [],
             'attachments': []
-        }, "FAKE_ORIGINAL")
+        })
         req = FoiRequest.objects.get(title=post['subject'])
         self.assertEqual(len(req.messages), 2)
         self.assertEqual(len(mail.outbox), 3)
@@ -1181,7 +1181,7 @@ class RequestTest(TestCase):
             'resent_to': [],
             'resent_cc': [],
             'attachments': []
-        }, '')
+        })
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertNotIn(name, last.plaintext_redacted)
@@ -1446,7 +1446,7 @@ class MediatorTest(TestCase):
             'resent_to': [],
             'resent_cc': [],
             'attachments': []
-        }, '')
+        })
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertTrue(last.content_hidden)

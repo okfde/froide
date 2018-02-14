@@ -68,24 +68,23 @@ def send_foi_mail(subject, message, from_email, recipient_list,
     return email.send()
 
 
-def _process_mail(mail_string, mail_type=None, manual=False):
+def _process_mail(mail_bytes, mail_type=None, manual=False):
     parser = EmailParser()
     if mail_type is None:
-        email = parser.parse(BytesIO(mail_string))
+        email = parser.parse(BytesIO(mail_bytes))
     elif mail_type == 'postmark':
-        email = parser.parse_postmark(json.loads(mail_string.decode('utf-8')))
-    return _deliver_mail(email, mail_string=mail_string, manual=manual)
+        email = parser.parse_postmark(json.loads(mail_bytes.decode('utf-8')))
+    return _deliver_mail(email, mail_bytes=mail_bytes, manual=manual)
 
 
-def create_deferred(secret_mail, mail_string, b64_encoded=False, spam=False,
+def create_deferred(secret_mail, mail_bytes, spam=False,
                     subject=_('Unknown FoI-Mail Recipient'),
                     body=unknown_foimail_message, request=None):
     from .models import DeferredMessage
 
-    if mail_string is not None:
-        if not b64_encoded:
-            mail_string = base64.b64encode(mail_string.encode('utf-8'))
-            mail_string = mail_string.decode("utf-8")
+    mail_string = ''
+    if mail_bytes is not None:
+        mail_string = base64.b64encode(mail_bytes).decode("utf-8")
     DeferredMessage.objects.create(
         recipient=secret_mail,
         mail=mail_string,
@@ -140,12 +139,10 @@ def get_foirequest_from_mail(email):
             return None
 
 
-def _deliver_mail(email, mail_string=None, manual=False):
-    from .models import DeferredMessage
-
+def _deliver_mail(email, mail_bytes=None, manual=False):
     received_list = (email['to'] + email['cc'] +
                      email['resent_to'] + email['resent_cc'])
-    # TODO: BCC?
+    received_list = [(r[0], r[1].lower()) for r in received_list]
 
     domains = settings.FOI_EMAIL_DOMAIN
     if isinstance(domains, string_types):
@@ -160,59 +157,60 @@ def _deliver_mail(email, mail_string=None, manual=False):
     received_list = [(x[0], '@'.join(
         (x[1].split('@')[0], domains[0]))) for x in received_list]
 
-    if mail_string is not None:
-        # make original mail storeable as unicode
-        b64_encoded = False
-        try:
-            mail_string = mail_string.decode("utf-8")
-        except UnicodeDecodeError:
-            b64_encoded = True
-            mail_string = base64.b64encode(mail_string).decode("utf-8")
+    sender_email = email['from'][1]
 
     already = set()
     for received in received_list:
-        secret_mail = received[1]
-        if secret_mail in already:
+        recipient_email = received[1]
+        if recipient_email in already:
             continue
-        already.add(secret_mail)
+        already.add(recipient_email)
+        foirequest, pb = check_delivery_conditions(
+            recipient_email, sender_email, mail_bytes, manual=manual
+        )
+        if foirequest is not None:
+            foirequest.add_message_from_email(email, publicbody=pb)
 
-        foi_request = get_foirequest_from_mail(secret_mail)
-        if not foi_request:
-            deferred = DeferredMessage.objects.filter(
-                recipient=secret_mail, request__isnull=False)
-            if len(deferred) == 0 or len(deferred) > 1:
-                # Can't do automatic matching!
-                create_deferred(
-                    secret_mail, mail_string, b64_encoded=b64_encoded,
-                    spam=False
-                )
-                continue
-            else:
-                deferred = deferred[0]
-                foi_request = deferred.request
 
-        pb = None
-        if not manual:
-            if foi_request.closed:
-                # Request is closed and will not receive messages
-                continue
+def check_delivery_conditions(recipient_mail, sender_email,
+                              mail_bytes, manual=False):
+    from .models import DeferredMessage
 
-            # Check for spam
-            sender_email = email['from'][1]
-            pb = get_publicbody_for_email(sender_email, foi_request)
+    foirequest = get_foirequest_from_mail(recipient_mail)
+    if not foirequest:
+        deferred = DeferredMessage.objects.filter(
+            recipient=recipient_mail, request__isnull=False
+        )
+        if len(deferred) == 0 or len(deferred) > 1:
+            # Can't do automatic matching!
+            create_deferred(
+                recipient_mail, mail_bytes,
+                spam=False
+            )
+            return None, None
+        else:
+            deferred = deferred[0]
+            foirequest = deferred.request
 
-            if pb is None:
-                create_deferred(
-                    secret_mail, mail_string,
-                    b64_encoded=b64_encoded,
-                    spam=True,
-                    subject=_('Possible Spam Mail received'),
-                    body=spam_message,
-                    request=foi_request
-                )
-                continue
+    pb = None
+    if not manual:
+        if foirequest.closed:
+            # Request is closed and will not receive messages
+            return None, None
 
-        foi_request.add_message_from_email(email, mail_string, publicbody=pb)
+        # Check for spam
+        pb = get_publicbody_for_email(sender_email, foirequest)
+
+        if pb is None:
+            create_deferred(
+                recipient_mail, mail_bytes,
+                spam=True,
+                subject=_('Possible Spam Mail received'),
+                body=spam_message,
+                request=foirequest
+            )
+            return None, None
+    return foirequest, pb
 
 
 def _fetch_mail():

@@ -651,7 +651,7 @@ class FoiRequest(models.Model):
                         }
                     )})
 
-    def add_message_from_email(self, email, mail_string=None, publicbody=None):
+    def add_message_from_email(self, email, publicbody=None):
         from .message import FoiMessage
         from .attachment import FoiAttachment
 
