@@ -5,6 +5,10 @@
     </td>
     <td>
       {{ row.name }}
+      <a :href="row.site_url" class="info-link" target="_blank">
+        <span class="sr-only">Details</span>
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+      </a>
     </td>
     <td v-if="hasJurisdiction">
       {{ row.jurisdiction.name }}
@@ -85,6 +89,13 @@ export default {
 
   .row-active {
     background-color: lighten($success, 50%);
+  }
+
+  .info-link {
+    color: $gray-500;
+    &:hover {
+      color: $link-color;
+    }
   }
 
 </style>
