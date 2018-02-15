@@ -1,11 +1,16 @@
 const VAR = new RegExp(/\$\{(\w+)\}/g)
 
+const LANG = document.querySelector('html').lang
+
 var I18nMixin = {
   computed: {
     i18n () {
       return {
         _replacer (params) {
           return (match, p1, offset, string) => {
+            if (p1 === 'count' && params.count >= 1000) {
+              return params.count.toLocaleString(LANG)
+            }
             return params[p1]
           }
         },

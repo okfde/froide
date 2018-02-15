@@ -58,7 +58,7 @@ var PBListMixin = {
       if (meta) {
         return meta.total_count
       }
-      return null
+      return 0
     },
     emptyResults () {
       let len = this.searchResultsLength

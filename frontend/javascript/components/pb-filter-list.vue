@@ -1,14 +1,12 @@
 <template>
-  <div>
+  <div class="filter-list-wrapper">
     <ul class="filter-list">
-      <li v-for="item in items" :class="{ active: isActive(item.value) }">
+      <li v-for="item in filteredItems" :class="{ active: isActive(item.value) }">
         <a href="#" @click.prevent="setFilter(item.value)">
           {{ item.label }}
         </a>
         <small v-if="item.count">({{ item.count }})</small>
-        <i v-if="item.children && item.children.length > 0 && !item.subItems" class="fa fa-chevron-down load-children" @click="loadChildren(item)"></i>
-
-        <i v-if="isActive(item.value)" class="fa fa-close remove-filter" @click="removeFilter(item.value)"></i>
+        <i v-if="item.children && item.children.length > 0 && !item.subItems" class="fa fa-chevron-left load-children" @click="loadChildren(item)"></i>
 
         <pb-filter-list v-if="item.subItems && item.subItems.length > 0" :config="config" :i18n="i18n" :scope="scope" :value="value" :items="item.subItems" @removeFilter="removeFilter" @setFilter="setFilter" @loadMore="loadMore" @loadChildren="loadChildren"></pb-filter-list>
       </li>
@@ -41,6 +39,12 @@ export default {
         return facetMap
       }
       return null
+    },
+    filteredItems () {
+      // if (!this.value) {
+      //   return this.items.filter((x) => x.count && x.count > 0)
+      // }
+      return this.items
     },
     orderedItems () {
       let items = this.items
@@ -80,7 +84,9 @@ export default {
 
 <style lang="scss" scoped>
   @import "../../styles/variables";
-
+  .filter-list-wrapper {
+    padding-bottom: 2em;
+  }
   .filter-list {
     list-style: none;
     padding-left: 0;

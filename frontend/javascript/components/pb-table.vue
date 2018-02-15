@@ -11,9 +11,9 @@
         </th>
       </tr>
     </thead>
-    <tbody>
-      <pb-table-row v-for="row in sortedRows" :key="row.id" :name="name" :row="row" :scope="scope"></pb-table-row>
-    </tbody>
+    <transition-group name="table" tag="tbody">
+      <pb-table-row v-for="row in sortedRows" :key="row.id" :name="name" :row="row" :scope="scope" :headers="headers"></pb-table-row>
+    </transition-group>
   </table>
 </template>
 
@@ -74,13 +74,29 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
   .sort-control {
     cursor: pointer;
     opacity: 0.3;
   }
   .sort-control--active {
     opacity: 1;
+  }
+  .transition {
+
+    .table-move {
+      transition: transform 0.5s;
+    }
+
+    .table-enter-active, .table-leave-active {
+      transition: opacity 0.8s;
+    }
+    .table-enter, .table-leave-to /* .fade-leave-active below version 2.1.8 */ {
+      opacity: 0;
+    }
+    .table-leave-active {
+      position: absolute;
+    }
   }
 
 </style>

@@ -1,11 +1,23 @@
 <template>
-  <div class="mb-3">
-    <h5>{{ config.label }}</h5>
-    <input v-if="hasSearch" type="search" class="form-control form-control-sm" :placeholder="i18n.searchPlaceholder" v-model:value="search" @keyup="triggerSearch" @keydown.enter.prevent="triggerSearch">
-    <div class="filter-list-container">
-      <pb-filter-list :config="config" :i18n="i18n" :scope="scope" :has-more="hasMore" :items="orderedItems" :value="value"
-      @removeFilter="removeFilter" @setFilter="setFilter" @loadMore="loadMore" @loadChildren="loadChildren"></pb-filter-list>
+  <div class="filter-component mb-3">
+    <h5 @click="toggleExpand" class="filter-heading">
+      {{ config.label }}&nbsp;<i class="fa expand-icon" :class="{'fa-chevron-left': !expanded, 'fa-chevron-down': expanded}"></i>
+    </h5>
+    <div if="hasValue">
+      <div v-for="v in valueList" class="filter-badge">
+        {{ v }}
+        <i  @click="removeFilter(v)" class="remove-filter fa fa-close" aria-hidden="true"></i>
+      </div>
     </div>
+    <transition name="expand">
+      <div v-show="expanded" class="filter-container">
+        <input v-if="hasSearch" type="search" class="form-control form-control-sm" :placeholder="i18n.searchPlaceholder" v-model:value="search" @keyup="triggerSearch" @keydown.enter.prevent="triggerSearch">
+        <div class="filter-list-container">
+          <pb-filter-list :config="config" :i18n="i18n" :scope="scope" :has-more="hasMore" :items="orderedItems" :value="value"
+          @removeFilter="removeFilter" @setFilter="setFilter" @loadMore="loadMore" @loadChildren="loadChildren"></pb-filter-list>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -20,7 +32,7 @@ import PbFilterList from './pb-filter-list'
 
 export default {
   name: 'pb-filter',
-  props: ['globalConfig', 'config', 'i18n', 'scope', 'value'],
+  props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
   components: {PbFilterList},
   data () {
     return {
@@ -75,6 +87,21 @@ export default {
       let searcher = new FroideSearch(this.globalConfig)
       return searcher
     },
+    valueList () {
+      if (this.value === null) {
+        return []
+      }
+      if (!this.config.multi) {
+        return [this.value]
+      }
+      return this.value
+    },
+    hasValue () {
+      if (this.value === null) {
+        return false
+      }
+      return !(this.config.multi && this.value.length === 0)
+    },
     hasMore () {
       if (!this.searchMeta) { return false }
       return this.searchMeta.next !== null
@@ -82,6 +109,13 @@ export default {
     ...mapGetters(['getScopedSearchFacets'])
   },
   methods: {
+    toggleExpand () {
+      this.$emit('setFilterExpand', this.config, !this.expanded)
+    },
+    removeCurrentFilter (e) {
+      e.preventDefault()
+      this.removeFilter(this.value)
+    },
     runSearch () {
       if (this.lastSearch === this.search) {
         return
@@ -151,13 +185,73 @@ export default {
 
 <style lang="scss" scoped>
   @import "../../styles/variables";
+  .filter-component {
+    border-bottom: 2px solid $gray-300;
+    padding-bottom: 1em;
+  }
+
+  .filter-heading {
+    font-size: 0.9em;
+    cursor: pointer;
+  }
+  .expand-icon {
+    cursor: pointer;
+    font-size: 0.8em;
+  }
+
+  .filter-badge {
+    background-color: $primary;
+    color: #fff;
+    display: block;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    margin: 0.5rem 0;
+
+    .remove-filter {
+      color: #eee;
+      padding: 0.25rem 0.5rem;
+      float: right;
+      &:hover {
+        color: #fff;
+      }
+      cursor: pointer;
+    }
+
+  }
+
+  .expand-enter-active, .expand-leave-active {
+    transition: opacity .5s;
+  }
+  .expand-enter, .expand-leave-to {
+    opacity: 0;
+    .filter-list-container {
+      max-height: 0;
+    }
+  }
 
   .filter-list-container {
-    max-height: 210px;
+    transition: max-height 0.5s ease-in-out;
+    padding: 5px;
+    max-height: 200px;
     overflow-y: auto;
+    position: relative;
 
     @include media-breakpoint-up(md) {
-      max-height: 420px;
+      max-height: 320px;
     }
+  }
+  .filter-container:after {
+    content:' ';
+    position: absolute;
+    left: 0;
+    height: 2em;
+    bottom: 2em;
+    width: 100%;
+    background:linear-gradient(
+      to bottom,
+      rgba(255,255,255, 0),
+      rgba(255,255,255,0.95) 50%
+    );
+    z-index:1;
   }
 </style>

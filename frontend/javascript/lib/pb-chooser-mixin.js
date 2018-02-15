@@ -72,10 +72,12 @@ var PBChooserMixin = {
         // this.searchResults = []
         this.searching = false
       }
-      if (this.search !== undefined && this.search.length < 3 &&
-           !this.hasFilters) {
-        this.searching = false
-        return
+      if (!this.allowEmptySearch) {
+        if (this.search !== undefined && this.search.length < 3 &&
+             !this.hasFilters) {
+          this.searching = false
+          return
+        }
       }
       let query = this.buildQuery()
       if (query === this.lastQuery &&

@@ -6,13 +6,13 @@
     <td>
       {{ row.name }}
     </td>
-    <td>
+    <td v-if="hasJurisdiction">
       {{ row.jurisdiction.name }}
     </td>
-    <td>
+    <td v-if="hasClassification">
       {{ (row.classification && row.classification.name) || '-' }}
     </td>
-    <td>
+    <td v-if="hasCategories">
       {{ rowCategories }}
     </td>
   </tr>
@@ -25,7 +25,7 @@ import {ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../store/mutation_types'
 
 export default {
   name: 'pb-table-row',
-  props: ['name', 'row', 'scope'],
+  props: ['name', 'row', 'scope', 'headers'],
   computed: {
     rowCategories () {
       return this.row.categories.map((x) => x.name).join(', ')
@@ -47,6 +47,15 @@ export default {
           })
         }
       }
+    },
+    hasJurisdiction () {
+      return this.headers.filter((x) => x.key === 'jurisdiction').length > 0
+    },
+    hasClassification () {
+      return this.headers.filter((x) => x.key === 'classification').length > 0
+    },
+    hasCategories () {
+      return this.headers.filter((x) => x.key === 'categories').length > 0
     },
     ...mapGetters([
       'isPublicBodySelectedByScope'
@@ -77,4 +86,5 @@ export default {
   .row-active {
     background-color: lighten($success, 50%);
   }
+
 </style>
