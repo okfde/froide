@@ -120,9 +120,39 @@
             </div>
           {% endif %}
         </div>
+
       </request-form>
 
     </form>
+
+    <noscript>
+      <div class="container">
+        <div class="alert alert-danger">
+          {% trans "You have JavaScript disabled. For an better experience please enable JavaScript." %}
+        </div>
+        {% if not user.is_authenticated %}
+          <div class="alert alert-warning">
+            <a href="{% url 'account-login' %}">
+              {% trans "You have to login or signup first in order to make a request." %}
+            </a>
+          </div>
+        {% else %}
+          {% if publicbodies %}
+            <h2>{% blocktrans with name=publicbodies.0.name %}To: {{ name }}{% endblocktrans %}</h2>
+            <form method="post" action="{% url 'foirequest-make_request' %}">
+              {% csrf_token %}
+              <input type="hidden" name="publicbody" value="{{ publicbodies.0.pk }}"/>
+              {% render_form request_form %}
+              <input type="submit">
+            </form>
+          {% else %}
+            <a href="{% url 'publicbody-list' %}">
+              {% trans "Please choose a public body first and click on the «Make a request» button." %}
+            </a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </noscript>
 
 {% include "publicbody/widget/_add_js_vars.html" %}
 
