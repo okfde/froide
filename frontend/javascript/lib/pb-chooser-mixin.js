@@ -91,7 +91,7 @@ var PBChooserMixin = {
     runAutocomplete () {
       this.searching = true
       this.lastQuery = this.buildQuery()
-      this.getSearchResults({
+      return this.getSearchResults({
         scope: this.scope,
         search: this.search,
         filters: this.filters

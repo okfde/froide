@@ -340,8 +340,12 @@ export default {
     selectAll () {
       this.blockUI = true
       this.blockMessage = this.i18n.selectingAll
-      this.selectAllRows(true)
-      this.selectAllNext(1)
+      if (this.currentResultPage !== 1) {
+        this.runAutocomplete().then(() => this.selectAll())
+      } else {
+        this.selectAllRows(true)
+        this.selectAllNext(1)
+      }
     },
     selectAllNext (num) {
       this.blockProgress = num / this.maxResultPage * 100
