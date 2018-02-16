@@ -81,11 +81,10 @@
 
             <slot name="request-legend-title"></slot>
 
-            <div v-if="multiRequest" class="publicbody-summary-container">
+            <div v-if="multiRequest && publicBodies.length > 1" class="publicbody-summary-container">
               <div class="publicbody-summary">
                 <p>
                   {{ i18n._('toMultiPublicBodies', {count: publicBodies.length}) }}
-
                   <span v-if="!hidePublicbodyChooser">
                     <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepPublicBody">
                       {{ i18n.change }}
