@@ -64,7 +64,7 @@
           </div>
           <div class="col-md-4  col-lg-3 order-md-1">
             <div class="row mt-3">
-              <div v-for="filterKey in filterOrder" class="col-sm-4 col-md-12">
+              <div v-for="filterKey in filterOrder" class="col-sm-4 col-md-12 filter-column">
                 <pb-filter :global-config="config" :expanded="filterExpanded[filterKey]" :config="filterConfig[filterKey]" :i18n="i18n" :scope="scope" @update="updateFilter" @setFilterExpand="setFilterExpand" :value="filters[filterKey]"></pb-filter>
               </div>
             </div>
@@ -408,7 +408,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../../styles/variables";
+
   button[disabled] {
     cursor: not-allowed;
+  }
+  @mixin filter-divider() {
+    .filter-column:not(:first-child) {
+      padding-top: 1em;
+    }
+    .filter-column:not(:last-child) {
+      border-bottom: 2px solid $gray-300;
+      padding-bottom: 1em;
+    }
+  }
+  @include media-breakpoint-up(md) {
+    @include filter-divider();
+  }
+  @include media-breakpoint-down(xs) {
+    @include filter-divider();
   }
 </style>

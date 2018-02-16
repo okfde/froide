@@ -1,5 +1,5 @@
 <template>
-  <div class="filter-component mb-3">
+  <div class="filter-component">
     <h5 @click="toggleExpand" class="filter-heading">
       {{ config.label }}&nbsp;<i class="fa expand-icon" :class="{'fa-chevron-left': !expanded, 'fa-chevron-down': expanded}"></i>
     </h5>
@@ -185,11 +185,6 @@ export default {
 
 <style lang="scss" scoped>
   @import "../../styles/variables";
-  .filter-component {
-    border-bottom: 2px solid $gray-300;
-    padding-bottom: 1em;
-  }
-
   .filter-heading {
     font-size: 0.9em;
     cursor: pointer;
@@ -229,6 +224,19 @@ export default {
     }
   }
 
+  @include media-breakpoint-only(sm) {
+    .filter-heading {
+      cursor: default;
+      pointer-events: none;
+    }
+    .expand-icon {
+      display: none;
+    }
+    .filter-container {
+      display: block !important;
+    }
+  }
+
   .filter-list-container {
     transition: max-height 0.5s ease-in-out;
     padding: 5px;
@@ -242,10 +250,11 @@ export default {
   }
   .filter-container:after {
     content:' ';
+    pointer-events: none;
     position: absolute;
     left: 0;
-    height: 2em;
-    bottom: 2em;
+    height: 3em;
+    bottom: 0em;
     width: 100%;
     background:linear-gradient(
       to bottom,
