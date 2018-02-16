@@ -75,6 +75,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "../../styles/variables";
+
   .sort-control {
     cursor: pointer;
     opacity: 0.3;
@@ -82,8 +84,14 @@ export default {
   .sort-control--active {
     opacity: 1;
   }
-  .transition {
 
+  @include media-breakpoint-up(lg) {
+    .table-responsive {
+      display: table;
+    }
+  }
+
+  .transition {
     .table-move {
       transition: transform 0.5s;
     }

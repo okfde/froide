@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="container">
+    <div :class="{container: !multiRequest, 'container-multi': multiRequest}">
 
       <slot name="messages"></slot>
 
@@ -463,6 +463,16 @@ export default {
 <style lang="scss" scoped>
 
 @import "../../styles/variables";
+
+.container-multi {
+  /* Allow container to wider than normal to allow for more space */
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1400px;
+}
 
 .process-breadcrumbs-container {
   background-color: #f5f5f5;
