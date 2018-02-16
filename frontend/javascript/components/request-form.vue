@@ -138,16 +138,33 @@
 
             <div class="card mb-3">
               <div class="card-body">
+                <div v-if="!allowFullText && fullText" class="alert alert-warning">
+                  <p>
+                    {{ i18n.warnFullText }}
+                  </p>
+                  <button v-if="fullTextDisabled" class="btn btn-light btn-sm" @click.prevent="resetFullText" >
+                    {{ i18n.resetFullText }}
+                  </button>
+                </div>
                 <div class="row">
                   <div class="col-md-4 order-md-2">
+                    <transition name="saved-full-text">
+                      <div v-if="savedFullTextBody">
+                        <h6>
+                          {{ i18n.savedFullTextChanges }}
+                        </h6>
+                        <textarea class="saved-body">{{ savedFullTextBody }}</textarea>
+                      </div>
+                    </transition>
                     <slot name="requesthints"></slot>
                   </div>
                   <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
                     <textarea v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder">
                     </textarea>
-                    <label v-if="allowFullText" class="small pull-right text-muted">
+                    <label class="small pull-right text-muted">
                       <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
+                      <i v-if="!allowFullText" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                       {{ form.full_text.label }}
                       <input type="hidden" name="full_text" v-model="fullText">
                     </label>
@@ -262,6 +279,7 @@ export default {
     return {
       bodyRows: MIN_BODY_ROWS,
       originalBody: '',
+      savedFullTextBody: '',
       fullTextDisabled: false
     }
   },
@@ -380,7 +398,7 @@ export default {
           }
         }
         let newLineCount = (this.body.match(/\n/g) || []).length
-        this.bodyRows = Math.max(MIN_BODY_ROWS, Math.min(newLineCount, MAX_BODY_ROWS))
+        this.bodyRows = Math.max(MIN_BODY_ROWS, Math.min(newLineCount + 1, MAX_BODY_ROWS))
       }
     },
     first_name: {
@@ -418,6 +436,11 @@ export default {
     ])
   },
   methods: {
+    resetFullText () {
+      this.savedFullTextBody = this.body
+      this.fullTextDisabled = false
+      this.fullText = false
+    },
     bodyChanged (e) {
       if (this.fullText) {
         this.fullTextDisabled = true
@@ -554,5 +577,16 @@ legend {
   border-left: 3px solid #faa;
 }
 
+.saved-body {
+  width: 100%;
+  height: 5em;
+}
+
+.saved-full-text-enter-active, .saved-full-text-leave-active {
+  transition: opacity .5s;
+}
+.saved-full-text-enter, .saved-full-text-leave-to {
+  opacity: 0;
+}
 
 </style>
