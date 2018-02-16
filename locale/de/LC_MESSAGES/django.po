@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-12 17:26+0100\n"
-"PO-Revision-Date: 2018-02-12 17:28+0100\n"
+"POT-Creation-Date: 2018-02-16 13:25+0100\n"
+"PO-Revision-Date: 2018-02-16 13:57+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -229,7 +229,7 @@ msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
 
 #: froide/account/forms.py:183
-#: froide/foirequest/templates/foirequest/request.html:213
+#: froide/foirequest/templates/foirequest/request.html:246
 msgid "Your email address"
 msgstr "Ihre E-Mail-Adresse"
 
@@ -415,7 +415,7 @@ msgstr "Suchen"
 #: froide/foirequest/forms.py:117 froide/foirequest/forms.py:179
 #: froide/foirequest/forms.py:402 froide/foirequest/forms.py:405
 #: froide/foirequest/models/message.py:81
-#: froide/foirequest/templates/foirequest/request.html:194
+#: froide/foirequest/templates/foirequest/request.html:224
 #: froide/foirequest/templates/foirequest/snippets/message.html:56
 msgid "Subject"
 msgstr "Betreff"
@@ -887,7 +887,7 @@ msgstr ""
 "      "
 
 #: froide/account/templates/account/show_drafts.html:63
-#: froide/foirequest/templates/foirequest/request.html:199
+#: froide/foirequest/templates/foirequest/request.html:232
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1411,15 +1411,15 @@ msgstr ""
 msgid "Unknown FoI-Mail Recipient"
 msgstr "Unbekannter IFG-Mail-Empfänger"
 
-#: froide/foirequest/foi_mail.py:209
+#: froide/foirequest/foi_mail.py:208
 msgid "Possible Spam Mail received"
 msgstr "Mögliche Spam-E-Mail erhalten"
 
-#: froide/foirequest/foi_mail.py:257
+#: froide/foirequest/foi_mail.py:255
 msgid "publicbody"
 msgstr "behoerde"
 
-#: froide/foirequest/foi_mail.py:259
+#: froide/foirequest/foi_mail.py:257
 msgid "requester"
 msgstr "anfragesteller"
 
@@ -1452,7 +1452,7 @@ msgid "Sending Public Body"
 msgstr "Absender (Behörde)"
 
 #: froide/foirequest/forms.py:115
-#: froide/foirequest/templates/foirequest/request.html:201
+#: froide/foirequest/templates/foirequest/request.html:234
 #: froide/foirequest/templates/foirequest/snippets/message.html:75
 msgid "To"
 msgstr "An"
@@ -1682,7 +1682,7 @@ msgid "Belongs to request"
 msgstr "Gehört zur Anfrage"
 
 #: froide/foirequest/models/attachment.py:23
-#: froide/foirequest/templates/foirequest/request.html:171
+#: froide/foirequest/templates/foirequest/request.html:201
 #: froide/foisite/models.py:14 froide/publicbody/models.py:43
 #: froide/publicbody/models.py:69 froide/publicbody/models.py:303
 #: froide/team/templates/team/team_list.html:18
@@ -2386,7 +2386,7 @@ msgid "is closed"
 msgstr "ist geschlossen"
 
 #: froide/foirequest/models/request.py:334
-#: froide/foirequest/templates/foirequest/request.html:173
+#: froide/foirequest/templates/foirequest/request.html:203
 #: froide/publicbody/models.py:52 froide/publicbody/models.py:80
 #: froide/publicbody/models.py:346
 #: froide/publicbody/templates/publicbody/show.html:26
@@ -3359,250 +3359,291 @@ msgstr ""
 msgid "Do <strong>not ask</strong> for personal information."
 msgstr "Fragen Sie <strong>nicht</strong> nach persönlichen Informationen."
 
-#: froide/foirequest/templates/foirequest/request.html:147
+#: froide/foirequest/templates/foirequest/request.html:131
+msgid ""
+"You have JavaScript disabled. For an better experience please enable "
+"JavaScript."
+msgstr ""
+"Sie haben JavaScript deaktiviert. Für eine besseres Plattformerlebnis "
+"aktivieren Sie bitte JavaScript."
+
+#: froide/foirequest/templates/foirequest/request.html:136
+msgid "You have to login or signup first in order to make a request."
+msgstr ""
+"Sie müssen sich zuerst anmelden oder registrieren, um eine Anfrage zu "
+"stellen."
+
+#: froide/foirequest/templates/foirequest/request.html:141
+#: froide/foirequest/templates/foirequest/request.html:215
+#, python-format
+msgid "To: %(name)s"
+msgstr "An: %(name)s"
+
+#: froide/foirequest/templates/foirequest/request.html:150
+msgid ""
+"Please choose a public body first and click on the «Make a request» button."
+msgstr ""
+"Bitte wählen Sie zuerst eine Behörde aus und klicken Sie dann auf den "
+"„Anfrage stellen“-Knopf."
+
+#: froide/foirequest/templates/foirequest/request.html:177
 msgid "one public body found"
 msgstr "Eine Behörde gefunden"
 
-#: froide/foirequest/templates/foirequest/request.html:148
+#: froide/foirequest/templates/foirequest/request.html:178
 #, python-format
 msgid "%(count)s public bodies found"
 msgstr "%(count)s Behörden gefunden"
 
-#: froide/foirequest/templates/foirequest/request.html:151
+#: froide/foirequest/templates/foirequest/request.html:181
 msgid "one public body chosen"
 msgstr "eine Behörde ausgewählt"
 
-#: froide/foirequest/templates/foirequest/request.html:152
+#: froide/foirequest/templates/foirequest/request.html:182
 #, python-format
 msgid "%(count)s public bodies chosen"
 msgstr "%(count)s Behörden ausgewählt"
 
-#: froide/foirequest/templates/foirequest/request.html:155
+#: froide/foirequest/templates/foirequest/request.html:185
 msgid "one public body"
 msgstr "eine Behörde"
 
-#: froide/foirequest/templates/foirequest/request.html:156
+#: froide/foirequest/templates/foirequest/request.html:186
 #, python-format
 msgid "%(count)s public bodies"
 msgstr "%(count)s Behörden"
 
 #. Translators: not url
-#: froide/foirequest/templates/foirequest/request.html:159
+#: froide/foirequest/templates/foirequest/request.html:189
 msgid "requests"
 msgstr "anfragen"
 
-#: froide/foirequest/templates/foirequest/request.html:160
+#: froide/foirequest/templates/foirequest/request.html:190
 msgid "make request"
 msgstr "Anfrage stellen"
 
-#: froide/foirequest/templates/foirequest/request.html:161
+#: froide/foirequest/templates/foirequest/request.html:191
 msgid "You are writing a request to"
 msgstr "Sie schreiben eine Anfragen an"
 
-#: froide/foirequest/templates/foirequest/request.html:163
+#: froide/foirequest/templates/foirequest/request.html:193
 #, python-format
 msgid "To: %(count)s public bodies"
 msgstr "An: %(count)s Behörden"
 
-#: froide/foirequest/templates/foirequest/request.html:164
+#: froide/foirequest/templates/foirequest/request.html:194
 msgid "Select public bodies"
 msgstr "Behörden auswählen"
 
-#: froide/foirequest/templates/foirequest/request.html:165
+#: froide/foirequest/templates/foirequest/request.html:195
 msgid "continue"
 msgstr "weiter"
 
-#: froide/foirequest/templates/foirequest/request.html:167
+#: froide/foirequest/templates/foirequest/request.html:197
 msgid "select one"
 msgstr "Eine auswählen"
 
-#: froide/foirequest/templates/foirequest/request.html:168
+#: froide/foirequest/templates/foirequest/request.html:198
 #, python-format
 msgid "select all %(count)s"
 msgstr "Alle %(count)s auswählen"
 
-#: froide/foirequest/templates/foirequest/request.html:170
+#: froide/foirequest/templates/foirequest/request.html:200
 msgid "Selecting all public bodies, please wait..."
 msgstr "Alle Behörden werden ausgewählt, bitte warten..."
 
-#: froide/foirequest/templates/foirequest/request.html:174
+#: froide/foirequest/templates/foirequest/request.html:204
 #: froide/publicbody/models.py:53
 #: froide/publicbody/templates/publicbody/list.html:63
 msgid "Jurisdictions"
 msgstr "Zuständigkeitsbereiche"
 
-#: froide/foirequest/templates/foirequest/request.html:177
+#: froide/foirequest/templates/foirequest/request.html:207
 msgid "topic"
 msgstr "Thema"
 
-#: froide/foirequest/templates/foirequest/request.html:178
+#: froide/foirequest/templates/foirequest/request.html:208
 msgid "topics"
 msgstr "Themen"
 
-#: froide/foirequest/templates/foirequest/request.html:181
+#: froide/foirequest/templates/foirequest/request.html:211
 #: froide/publicbody/models.py:278
 msgid "classification"
 msgstr "Klassifikation"
 
-#: froide/foirequest/templates/foirequest/request.html:182
+#: froide/foirequest/templates/foirequest/request.html:212
 #: froide/publicbody/models.py:279
 msgid "classifications"
 msgstr "Klassifikationen"
 
-#: froide/foirequest/templates/foirequest/request.html:185
-#, python-format
-msgid "To: %(name)s"
-msgstr "An: %(name)s"
-
-#: froide/foirequest/templates/foirequest/request.html:186
+#: froide/foirequest/templates/foirequest/request.html:216
 #: froide/foirequest/templates/foirequest/snippets/message.html:17
 msgid "change"
 msgstr "ändern"
 
-#: froide/foirequest/templates/foirequest/request.html:187
+#: froide/foirequest/templates/foirequest/request.html:217
 msgid "Search..."
 msgstr "Suchen..."
 
-#: froide/foirequest/templates/foirequest/request.html:188
+#: froide/foirequest/templates/foirequest/request.html:218
 msgid "clear search"
 msgstr "Suche zurücksetzen"
 
-#: froide/foirequest/templates/foirequest/request.html:189
+#: froide/foirequest/templates/foirequest/request.html:219
 msgid "clear selection"
 msgstr "Auswahl verwerfen"
 
-#: froide/foirequest/templates/foirequest/request.html:190
+#: froide/foirequest/templates/foirequest/request.html:220
 msgid "Are you sure you want to discard your current selection?"
 msgstr "Sind Sie sicher, dass Sie die aktuelle Auswahl verwerfen wollen?"
 
-#: froide/foirequest/templates/foirequest/request.html:191
+#: froide/foirequest/templates/foirequest/request.html:221
 msgid "load more..."
 msgstr "Lade mehr..."
 
-#: froide/foirequest/templates/foirequest/request.html:192
+#: froide/foirequest/templates/foirequest/request.html:222
 #: froide/templates/pagination/pagination.html:105
 #: froide/templates/pagination/pagination.html:111
 msgid "next"
 msgstr "nächste"
 
-#: froide/foirequest/templates/foirequest/request.html:193
+#: froide/foirequest/templates/foirequest/request.html:223
 #: froide/templates/pagination/pagination.html:8
 #: froide/templates/pagination/pagination.html:10
 #: froide/templates/pagination/pagination.html:17
 msgid "previous"
 msgstr "vorherige"
 
-#: froide/foirequest/templates/foirequest/request.html:195
+#: froide/foirequest/templates/foirequest/request.html:225
 msgid "Please send me the following information:"
 msgstr "bitte senden Sie mir Folgendes zu:"
 
-#: froide/foirequest/templates/foirequest/request.html:196
+#: froide/foirequest/templates/foirequest/request.html:226
+msgid ""
+"Watch out! You are requesting information across jurisdictions! If you write "
+"the full text, we cannot customize it according to applicable laws. Instead "
+"you have to write the text to be jurisdiction agnostic."
+msgstr ""
+"Achtung! Sie fragen Informationen von mehreren Zuständigkeitsbereichen an! "
+"Wenn Sie die Vorlage anpassen, können wir Ihre Anfrage nicht mehr an die "
+"lokale Gesetzeslage anpassen. Daher müssen Sie Ihren Text so schreiben, dass "
+"er in allen Zuständigkeitsbereichen passt."
+
+#: froide/foirequest/templates/foirequest/request.html:227
+msgid "Reset text to template version"
+msgstr "Text auf Vorlage zurücksetzen"
+
+#: froide/foirequest/templates/foirequest/request.html:228
+msgid "Your previous customized text"
+msgstr "Ihr vorheriger, angepasster Text"
+
+#: froide/foirequest/templates/foirequest/request.html:229
 msgid "Save as draft"
 msgstr "Als Entwurf speichern"
 
-#: froide/foirequest/templates/foirequest/request.html:197
+#: froide/foirequest/templates/foirequest/request.html:230
 msgid "Review request"
 msgstr "Anfragetext prüfen"
 
-#: froide/foirequest/templates/foirequest/request.html:198
+#: froide/foirequest/templates/foirequest/request.html:231
 msgid "Review your request and submit"
 msgstr "Überprüfen Sie Ihre Anfrage und senden Sie sie ab"
 
-#: froide/foirequest/templates/foirequest/request.html:200
+#: froide/foirequest/templates/foirequest/request.html:233
 #: froide/foirequest/templates/foirequest/snippets/message.html:9
 msgid "From"
 msgstr "Von"
 
-#: froide/foirequest/templates/foirequest/request.html:202
+#: froide/foirequest/templates/foirequest/request.html:235
 msgid "public bodies"
 msgstr "Behörden"
 
-#: froide/foirequest/templates/foirequest/request.html:203
+#: froide/foirequest/templates/foirequest/request.html:236
 msgid "Please use proper spelling."
 msgstr "Bitte achten Sie auf Ihre Rechtschreibung."
 
-#: froide/foirequest/templates/foirequest/request.html:204
+#: froide/foirequest/templates/foirequest/request.html:237
 msgid "Please stay polite."
 msgstr "Bitte bleiben Sie höflich."
 
-#: froide/foirequest/templates/foirequest/request.html:205
+#: froide/foirequest/templates/foirequest/request.html:238
 msgid "Submit request"
 msgstr "Anfrage absenden"
 
-#: froide/foirequest/templates/foirequest/request.html:206
+#: froide/foirequest/templates/foirequest/request.html:239
 msgid "Login using that email address"
 msgstr "Melden Sie sich mit dieser E-Mail-Adresse an"
 
-#: froide/foirequest/templates/foirequest/request.html:208
-#: froide/foirequest/templates/foirequest/request.html:236
+#: froide/foirequest/templates/foirequest/request.html:241
+#: froide/foirequest/templates/foirequest/request.html:269
 msgid "Dear Sir or Madam"
 msgstr "Sehr geehrte Damen und Herren"
 
-#: froide/foirequest/templates/foirequest/request.html:209
+#: froide/foirequest/templates/foirequest/request.html:242
 msgid "Kind regards"
 msgstr "Mit freundlichen Grüßen"
 
-#: froide/foirequest/templates/foirequest/request.html:211
+#: froide/foirequest/templates/foirequest/request.html:244
 msgid "Your first name"
 msgstr "Ihr Vorname"
 
-#: froide/foirequest/templates/foirequest/request.html:212
+#: froide/foirequest/templates/foirequest/request.html:245
 msgid "Your last name"
 msgstr "Ihr Nachname"
 
-#: froide/foirequest/templates/foirequest/request.html:214
+#: froide/foirequest/templates/foirequest/request.html:247
 msgid "Your postal address"
 msgstr "Ihre Postadresse"
 
-#: froide/foirequest/templates/foirequest/request.html:215
+#: froide/foirequest/templates/foirequest/request.html:248
 msgid "Please fill out your name below"
 msgstr "Bitte geben Sie Ihren Namen unten ein"
 
-#: froide/foirequest/templates/foirequest/request.html:217
+#: froide/foirequest/templates/foirequest/request.html:250
 msgid "Please make sure the information is not already requested or public"
 msgstr ""
 "Bitte stellen Sie sicher, dass die benötigten Informationen nicht schon "
 "angefragt wurden oder schon öffentlich sind"
 
-#: froide/foirequest/templates/foirequest/request.html:218
+#: froide/foirequest/templates/foirequest/request.html:251
 msgid "Similar requests"
 msgstr "Ähnliche Anfragen"
 
-#: froide/foirequest/templates/foirequest/request.html:219
+#: froide/foirequest/templates/foirequest/request.html:252
 msgid "Search for more similar requests"
 msgstr "Suchen Sie nach weiteren ähnlichen Anfragen"
 
-#: froide/foirequest/templates/foirequest/request.html:220
+#: froide/foirequest/templates/foirequest/request.html:253
 msgid "Relevant resources"
 msgstr "Relevante Resourcen"
 
-#: froide/foirequest/templates/foirequest/request.html:221
+#: froide/foirequest/templates/foirequest/request.html:254
 msgid "Official website: "
 msgstr "Offizielle Webseite: "
 
-#: froide/foirequest/templates/foirequest/request.html:222
+#: froide/foirequest/templates/foirequest/request.html:255
 msgid "Please add a subject."
 msgstr "Bitte schreiben Sie einen Betreff."
 
-#: froide/foirequest/templates/foirequest/request.html:223
+#: froide/foirequest/templates/foirequest/request.html:256
 msgid "Please describe the information you want to request!"
 msgstr "Bitte beschreiben Sie die Information, die Sie anfragen möchten!"
 
-#: froide/foirequest/templates/foirequest/request.html:224
+#: froide/foirequest/templates/foirequest/request.html:257
 msgid ""
 "Do not add a closing, it is added automatically at the end of the letter."
 msgstr ""
 "Schreiben Sie keine Grußformel, wir fügen automatisch eine am Ende des "
 "Briefes ein."
 
-#: froide/foirequest/templates/foirequest/request.html:225
+#: froide/foirequest/templates/foirequest/request.html:258
 msgid ""
 "Do not add a greeting, it is added automatically at the start of the letter."
 msgstr ""
 "Schreiben Sie keine Anrede-Formel, wir fügen automatisch eine am Anfang des "
 "Briefes ein."
 
-#: froide/foirequest/templates/foirequest/request.html:226
+#: froide/foirequest/templates/foirequest/request.html:259
 msgid ""
 "Do not insert your name, we will add it automatically at the end of the "
 "letter."
@@ -3610,12 +3651,12 @@ msgstr ""
 "Schreiben Sie Ihren Namen nicht selbst in Ihre Anfrage. Wir fügen Ihren "
 "Namen automatisch am Ende des Briefs ein."
 
-#: froide/foirequest/templates/foirequest/request.html:234
+#: froide/foirequest/templates/foirequest/request.html:267
 #: froide/foirequest/templates/foirequest/request/purpose_check.html:62
 msgid "Visit the website of this Public Body"
 msgstr "Besuchen Sie die Webseite dieser Behörde"
 
-#: froide/foirequest/templates/foirequest/request.html:237
+#: froide/foirequest/templates/foirequest/request.html:270
 msgid "Kind Regards"
 msgstr "Mit freundlichen Grüßen"
 
