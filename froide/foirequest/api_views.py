@@ -273,6 +273,7 @@ class MakeRequestSerializer(serializers.Serializer):
 class FoiRequestFilter(filters.FilterSet):
     user = filters.ModelChoiceFilter(queryset=filter_by_user_queryset)
     tags = filters.CharFilter(method='tag_filter')
+    categories = filters.CharFilter(method='categories_filter')
 
     class Meta:
         model = FoiRequest
@@ -284,6 +285,11 @@ class FoiRequestFilter(filters.FilterSet):
     def tag_filter(self, queryset, name, value):
         return queryset.filter(**{
             'tags__name': value,
+        })
+
+    def categories_filter(self, queryset, name, value):
+        return queryset.filter(**{
+            'public_body__categories__name': value,
         })
 
 
