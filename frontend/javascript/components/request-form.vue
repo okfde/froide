@@ -132,10 +132,6 @@
               </div>
             </div>
 
-            <label for="id_subject" :class="{ 'text-danger': errors.subject }">
-              {{ i18n.subject }}
-            </label>
-
             <div class="card mb-3">
               <div class="card-body">
                 <div v-if="!allowFullText && fullText" class="alert alert-warning">
