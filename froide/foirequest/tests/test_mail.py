@@ -116,6 +116,14 @@ class MailTest(TestCase):
             "KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf"
         ]))
 
+    def test_recipient_parsing(self):
+        with open(p("test_mail_05.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+            mail = parser.parse(BytesIO(content))
+        self.assertEqual(len(mail['cc']), 2)
+        self.assertEqual(len(mail['to']), 3)  # contains X-Original-To as well
+
     def test_strip_html(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
         with open(p("test_mail_05.txt"), 'rb') as f:

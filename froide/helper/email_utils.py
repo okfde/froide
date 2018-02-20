@@ -162,6 +162,7 @@ class EmailParser(object):
         return decoded
 
     def get_address_list(self, values):
+        values = [self.parse_header_field(value) for value in values]
         address_list = getaddresses(values)
         fixed = []
         for addr in address_list:
