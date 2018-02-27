@@ -79,15 +79,30 @@
   }
 }
 
-.account-dropdown {
+.account-dropdown-link {
     padding: 0 !important;
     margin: 10px 0;
     background-color: transparent !important;
+  .account-name {
+      float: left;
+      font-size: 60%;
+      margin: 2px 0 0 5px;
+      line-height: 110%;
+  }
 }
 
-.account-dropdown .account-name {
-    float: left;
-    font-size: 60%;
-    margin: 2px 0 0 5px;
-    line-height: 110%;
+@include media-breakpoint-down(sm) {
+  .account-dropdown-link {
+    display: none;
+  }
+
+  .account-dropdown .dropdown-menu {
+    border: 0;
+    display: block;
+  }
+
+  .dropdown-item {
+    padding: 0.25rem 0;
+  }
+
 }
