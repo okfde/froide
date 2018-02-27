@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load humanize %}
+
 {% block title %}{{SITE_NAME}}{% endblock %}
 
 {% block index_banner %}{% endblock %}
@@ -23,7 +25,7 @@
           <form method="get" action="{% url 'foirequest-search' %}">
             <div class="form-group">
               <label for="index-search">
-                {% blocktrans %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
+                {% blocktrans with foicount=foicount|intcomma pbcount=pbcount|intcomma %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
               </label>
 
               <div class="input-group">
