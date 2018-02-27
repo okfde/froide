@@ -49,7 +49,8 @@ class CreateRequestService(BaseService):
                 user=user,
                 data=data
             )
-            data.update(extra)
+            if extra is not None:
+                data.update(extra)
 
         if len(self.data['publicbodies']) > 1:
             foi_object = self.create_project()

@@ -9,9 +9,12 @@ class HookRegistry():
         self.hooks[name][func] = True
 
     def run_hook(self, name, *args, **kwargs):
+        return_val = None
         for hook in self.hooks[name]:
-            kwargs = hook(*args, **kwargs)
-        return kwargs
+            result = hook(*args, **kwargs)
+            if result is not None:
+                return_val = result
+        return return_val
 
 
 registry = HookRegistry()
