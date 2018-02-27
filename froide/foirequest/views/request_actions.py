@@ -17,6 +17,7 @@ from ..forms import (ConcreteLawForm, TagFoiRequestForm,
 from ..utils import check_throttle
 from ..services import CreateSameAsRequestService
 from ..auth import can_write_foirequest
+from ..hooks import registry
 
 from .request import show_foirequest
 
@@ -100,6 +101,14 @@ def set_status(request, foirequest):
         form.set_status()
         messages.add_message(request, messages.SUCCESS,
                 _('Status of request has been updated.'))
+        response = registry.run_hook(
+            'post_status_set',
+            request,
+            user=request.user,
+            data={'request': request, 'form': form}
+        )
+        if response is not None:
+            return response
     else:
         messages.add_message(request, messages.ERROR,
         _('Invalid value for form submission!'))
