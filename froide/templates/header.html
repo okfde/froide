@@ -14,28 +14,10 @@
         <span class="navbar-toggler-title">{% trans "Menu" %}</span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        {% block nav %}
-        <ul class="navbar-nav col-auto mr-auto">
-          <li class="nav-item {% block nav_requests %}{% endblock %}">
-            <a class="nav-link" href="{% url 'foirequest-list' %}">
-              {% blocktrans %}Requests{% endblocktrans %}
-            </a>
-          </li>
-          <li class="nav-item {% block nav_publicbodies %}{% endblock %}">
-            <a class="nav-link" href="{% url 'publicbody-list' %}">
-              {% blocktrans %}Public Bodies{% endblocktrans %}
-            </a>
-          </li>
-          <li class="nav-item special-nav-item {% block nav_makerequest %}{% endblock %}">
-            <a class="nav-link" href="{% url 'foirequest-make_request' %}">
-             {% blocktrans %}Make a Request!{% endblocktrans %}
-            </a>
-          </li>
-        </ul>
-        {% endblock nav %}
         {% block nav_search %}
         <form class="form-inline d-block d-md-none d-lg-block" role="search" method="get" action="{% url 'foirequest-search' %}">
-          <input class="form-control mr-sm-2" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="Search">
+          <input class="form-control mr-sm-2 icon-input-search" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="Search">
+          <i class="fa fa-search icon-input" aria-hidden="true"></i>
         </form>
         <ul class="navbar-nav d-none d-md-block d-lg-none">
           <li class="nav-item">
@@ -46,6 +28,20 @@
           </li>
         </ul>
         {% endblock nav_search %}
+        {% block nav %}
+        <ul class="navbar-nav col-auto ml-auto">
+          <li class="nav-item {% block nav_requests %}{% endblock %}">
+            <a class="nav-link" href="{% url 'foirequest-list' %}">
+              {% blocktrans %}Requests{% endblocktrans %}
+            </a>
+          </li>
+          <li class="nav-item {% block nav_makerequest %}{% endblock %}">
+            <a class="btn btn-primary" href="{% url 'foirequest-make_request' %}">
+             {% blocktrans %}Make a Request!{% endblocktrans %}
+            </a>
+          </li>
+        </ul>
+        {% endblock nav %}
         <ul class="navbar-nav col-auto">
           {% block nav_account_login %}
           {% if user.is_authenticated %}
