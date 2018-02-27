@@ -49,9 +49,41 @@ class RequestProjectTest(TestCase):
         response = self.client.post(reverse('foirequest-make_request'), data)
         self.assertEqual(response.status_code, 302)
         project = FoiProject.objects.get(title=data['subject'])
-        print(response['Location'])
+        self.assertEqual(set([str(x.pk) for x in project.publicbodies.all()]),
+                         set(pb_ids.split('+')))
         self.assertIn(project.get_absolute_url(), response['Location'])
         self.assertEqual(project.title, data['subject'])
         self.assertEqual(project.description, data['body'])
         self.assertEqual(project.foirequest_set.all().count(), 2)
         self.assertEqual(len(mail.outbox), 3)  # 2 to pb, one to user
+        requests = project.foirequest_set.all()
+        first_message_1 = requests[0].messages[0]
+        first_message_2 = requests[1].messages[0]
+        self.assertNotEqual(first_message_1.plaintext, data['body'])
+        last_part_1 = first_message_1.plaintext.split(data['body'])[1]
+        last_part_2 = first_message_2.plaintext.split(data['body'])[1]
+        self.assertNotEqual(last_part_1, last_part_2)
+
+    def test_create_project_full_text(self):
+        user = User.objects.get(email='info@fragdenstaat.de')
+        user.user_permissions.add(self.perm)
+
+        ok = self.client.login(email=user.email, password='froide')
+        self.assertTrue(ok)
+
+        pb_ids = (self.pb1.pk, self.pb2.pk)
+        data = {
+            "subject": "Test-Subject",
+            "body": "This is another test body with Ümläut€n",
+            'public': 'on',
+            'publicbody': pb_ids,
+            'full_text': 'on'
+        }
+        response = self.client.post(reverse('foirequest-make_request'), data)
+        self.assertEqual(response.status_code, 302)
+        project = FoiProject.objects.get(title=data['subject'])
+        requests = project.foirequest_set.all()
+        first_message_1 = requests[0].messages[0]
+        first_message_2 = requests[1].messages[0]
+        self.assertTrue(first_message_1.plaintext.startswith(data['body']))
+        self.assertTrue(first_message_2.plaintext.startswith(data['body']))

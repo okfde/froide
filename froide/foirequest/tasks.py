@@ -69,13 +69,13 @@ def check_delivery_status(message_id, count=None, extended=False):
 
 
 @celery_app.task
-def create_project_requests(project_id, publicbody_ids):
+def create_project_requests(project_id, publicbody_ids, **kwargs):
     for seq, pb_id in enumerate(publicbody_ids):
-        create_project_request.delay(project_id, pb_id, sequence=seq)
+        create_project_request.delay(project_id, pb_id, sequence=seq, **kwargs)
 
 
 @celery_app.task
-def create_project_request(project_id, publicbody_id, sequence=0):
+def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
     from .services import CreateRequestFromProjectService
 
     try:
@@ -90,7 +90,7 @@ def create_project_request(project_id, publicbody_id, sequence=0):
         # pb was deleted?
         return
 
-    service = CreateRequestFromProjectService({
+    kwargs.update({
         'project': project,
         'publicbody': pb,
 
@@ -103,6 +103,7 @@ def create_project_request(project_id, publicbody_id, sequence=0):
 
         'project_order': sequence
     })
+    service = CreateRequestFromProjectService(kwargs)
     foirequest = service.execute()
 
     if project.request_count == project.foirequest_set.all().count():
