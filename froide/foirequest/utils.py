@@ -160,4 +160,7 @@ def get_publicbody_for_email(email, foi_request):
     pbs = PublicBody.objects.filter(email__endswith=email_host)
     if len(pbs) == 1:
         return pbs[0]
+    elif foi_request.public_body in pbs:
+        # likely the request's public body
+        return foi_request.public_body
     return None
