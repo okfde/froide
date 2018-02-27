@@ -197,7 +197,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         pb_email = req.public_body.email
-        req.public_body.email = None
+        req.public_body.email = ''
         req.public_body.save()
         post["to"] = '0'
         post["subject"] = "Re: Custom subject"
