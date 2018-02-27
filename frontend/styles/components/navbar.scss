@@ -37,16 +37,18 @@
     color: #06C;
 }
 
-.special-nav-item > a {
-  color: $black;
-}
-
 .navbar-secondary {
   padding-top: 0;
 }
 
 .navbar-collapse {
   flex-wrap: wrap;
+}
+
+.navbar-nav-secondary {
+  &.navbar-nav .nav-link {
+    color: $gray-500;
+  }
 }
 
 @include media-breakpoint-up(md) {
@@ -59,7 +61,7 @@
     font-size: $small-font-size;
 
     .nav-item {
-      background-color: $gray-200;
+      background-color: $gray-100;
       margin-left: $spacer * 0.25;
 
       &.special-nav-secondary-item {
