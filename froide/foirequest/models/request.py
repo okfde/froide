@@ -667,6 +667,9 @@ class FoiRequest(models.Model):
 
         if publicbody is None:
             publicbody = get_publicbody_for_email(message.sender_email, self)
+        if publicbody is None:
+            publicbody = self.public_body
+
         message.sender_public_body = publicbody
 
         if message.sender_public_body == self.law.mediator:
