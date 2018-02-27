@@ -10,6 +10,7 @@ from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
 from django import forms
+from django.utils.html import format_html
 
 from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
                                       ForeignKeyFilter, TaggitListFilter)
@@ -61,7 +62,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'is_blocked',
         make_nullfilter('same_as', _('Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
-        FoiRequestTagsFilter)
+        ('project', ForeignKeyFilter), FoiRequestTagsFilter
+    )
     search_fields = ['title', 'description', 'secret_address', 'reference']
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
@@ -75,7 +77,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     save_on_top = True
 
     def request_page(self, obj):
-        return '<a href="%s">%s</a>' % (
+        return format_html('<a href="{}">{}</a>',
             obj.get_absolute_url(), _('request page'))
     request_page.allow_tags = True
 
@@ -212,7 +214,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     actions = ['approve', 'cannot_approve', 'convert']
 
     def admin_link_message(self, obj):
-        return '<a href="%s">%s</a>' % (
+        return format_html('<a href="{}">{}</a>',
             reverse('admin:foirequest_foimessage_change',
                 args=(obj.belongs_to_id,)), _('See FoiMessage'))
     admin_link_message.allow_tags = True
@@ -357,12 +359,27 @@ class FoiProjectAdminForm(forms.ModelForm):
 class FoiProjectAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
-    list_display = ('title', 'created', 'user', 'public', 'status',
-                    'request_count')
+    list_display = ('title', 'created',
+        'requests_admin_link',
+        'user', 'public', 'status', 'request_count', 'site_link')
     list_filter = ('public', 'status',)
     search_fields = ['title', 'description', 'reference']
     ordering = ('-last_update',)
     date_hierarchy = 'created'
+
+    def site_link(self, obj):
+        return format_html('<a href="{}">{}</a>',
+            obj.get_absolute_url(),
+            _('Show on site')
+        )
+
+    def requests_admin_link(self, obj):
+        return format_html('<a href="{}">{}</a>',
+            reverse('admin:foirequest_foirequest_changelist') + (
+                '?project__id__exact={}'.format(obj.id)
+            ),
+            _('Requests in admin')
+        )
 
 
 class RequestDraftAdmin(admin.ModelAdmin):
