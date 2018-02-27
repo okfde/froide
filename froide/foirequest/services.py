@@ -80,6 +80,8 @@ class CreateRequestService(BaseService):
         )
 
         self.save_obj_with_slug(project)
+        project.publicbodies.add(*data['publicbodies'])
+
         if 'tags' in data and data['tags']:
             project.tags.add(*data['tags'])
 

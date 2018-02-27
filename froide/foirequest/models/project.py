@@ -13,6 +13,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
 from froide.team.models import Team
+from froide.publicbody.models import PublicBody
 
 
 class TaggedFoiProject(TaggedItemBase):
@@ -72,6 +73,7 @@ class FoiProject(models.Model):
     request_count = models.IntegerField(default=0)
     reference = models.CharField(_("Reference"), blank=True, max_length=255)
     tags = TaggableManager(through=TaggedFoiProject, blank=True)
+    publicbodies = models.ManyToManyField(PublicBody, blank=True)
 
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
