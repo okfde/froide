@@ -203,28 +203,33 @@ class CreateRequestService(BaseService):
             draft.save()
 
     def save_obj_with_slug(self, obj, attribute='title', count=0):
+        MAX_COUNT = 10000000  # max 10 million loops
         obj.slug = slugify(getattr(obj, attribute))
         first_round = count == 0
         postfix = ''
         while True:
             try:
-                with transaction.atomic():
-                    while True:
-                        if not first_round:
-                            postfix = '-%d' % count
-                        if not FoiRequest.objects.filter(
-                                slug=obj.slug + postfix).exists():
-                            break
-                        if first_round:
-                            first_round = False
-                            count = FoiRequest.objects.filter(
-                                    slug__startswith=obj.slug).count()
-                        else:
-                            count += 1
-                    obj.slug += postfix
-                    obj.save()
+                while count < MAX_COUNT:
+                    if not first_round:
+                        postfix = '-%d' % count
+                    if not FoiRequest.objects.filter(
+                            slug=obj.slug + postfix).exists():
+                        break
+                    if first_round:
+                        first_round = False
+                        count = FoiRequest.objects.filter(
+                                slug__startswith=obj.slug).count()
+                    else:
+                        count += 1
+                obj.slug += postfix
+                obj.save()
             except IntegrityError:
-                pass
+                if count < MAX_COUNT:
+                    first_round = False
+                    count = FoiRequest.objects.filter(
+                            slug__startswith=obj.slug).count()
+                else:
+                    raise
             else:
                 break
 
