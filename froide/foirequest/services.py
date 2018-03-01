@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError
 from django.utils import timezone
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
@@ -18,8 +18,7 @@ class BaseService(object):
         self.data = data
 
     def execute(self, request=None):
-        with transaction.atomic():
-            return self.process(request=request)
+        return self.process(request=request)
 
 
 def generate_unique_secret_address(user):
