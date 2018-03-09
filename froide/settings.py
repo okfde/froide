@@ -51,6 +51,7 @@ class Base(Configuration):
         'froide.foirequest',
         'froide.foirequestfollower',
         'froide.frontpage',
+        'froide.georegion',
         'froide.publicbody',
         'froide.account',
         'froide.team',
