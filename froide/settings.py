@@ -23,7 +23,7 @@ def rec(x):
 class Base(Configuration):
     DEBUG = values.BooleanValue(True)
 
-    DATABASES = values.DatabaseURLValue('sqlite:///dev.db')
+    DATABASES = values.DatabaseURLValue('spatialite:///dev.db')
     CONN_MAX_AGE = None
 
     INSTALLED_APPS = values.ListValue([
@@ -38,6 +38,7 @@ class Base(Configuration):
         'django.contrib.flatpages',
         'django.contrib.sitemaps',
         'django.contrib.humanize',
+        'django.contrib.gis',
 
         # external
         'haystack',
