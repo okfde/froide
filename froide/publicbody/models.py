@@ -321,6 +321,7 @@ class PublicBody(models.Model):
         on_delete=models.SET_NULL)
 
     email = models.EmailField(_("Email"), blank=True, default='')
+    fax = models.CharField(max_length=50, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
