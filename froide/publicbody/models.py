@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 from datetime import timedelta
 
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
@@ -20,6 +20,8 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, ItemBase
 from taggit.utils import edit_string_for_tags
 from treebeard.mp_tree import MP_Node, MP_NodeManager
+
+from froide.georegion.models import GeoRegion
 
 from froide.helper.date_utils import (
     calculate_workingday_range,
@@ -45,6 +47,7 @@ class Jurisdiction(models.Model):
     description = models.TextField(_("Description"), blank=True)
     hidden = models.BooleanField(_("Hidden"), default=False)
     rank = models.SmallIntegerField(default=1)
+    region = models.ForeignKey(GeoRegion, null=True, on_delete=models.SET_NULL)
 
     objects = JurisdictionManager()
 
@@ -345,6 +348,9 @@ class PublicBody(models.Model):
 
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
             blank=True, null=True, on_delete=models.SET_NULL)
+
+    geo = models.PointField(null=True, geography=True)
+    region = models.ForeignKey(GeoRegion, null=True, on_delete=models.SET_NULL)
 
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
