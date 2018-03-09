@@ -29,8 +29,7 @@ djangorestframework = "*"
 django-oauth-toolkit = "*"
 coreapi = "*"
 django-filter = "*"
-# until https://github.com/django-treebeard/django-treebeard/pull/91 resolved
-django-treebeard = {git = "git://github.com/stefanw/django-treebeard.git", editable = true, ref = "deploy"}
+django-treebeard = "*"
 
 
 [dev-packages]

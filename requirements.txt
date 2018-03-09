@@ -1,23 +1,22 @@
 amqp==2.2.2
 billiard==3.5.0.3
 celery==4.1.0
-certifi==2017.11.5
+certifi==2018.1.18
 chardet==3.0.4
 coreapi==2.3.3
 coreschema==0.0.4
-dj-database-url==0.4.2
-django==1.11.9
+dj-database-url==0.5.0
+django==1.11.11
 django-cache-url==2.0.0
 django-configurations==2.0
 django-contrib-comments==1.8.0
 django-filter==1.1.0
-django-haystack==2.6.1
+django-haystack==2.8.0
 django-oauth-toolkit==1.0.0
 django-overextends==0.4.3
 django-storages==1.6.5
 django-taggit==0.22.2
-# until https://github.com/django-treebeard/django-treebeard/pull/91 resolved
--e git+git://github.com/stefanw/django-treebeard.git@deploy#egg=django-treebeard
+django-treebeard==4.2.1
 djangorestframework==3.7.7
 idna==2.6
 itypes==1.1.0
@@ -30,7 +29,7 @@ pillow==5.0.0
 pypdf2==1.26.0
 python-magic==0.4.15
 python-mimeparse==1.6.0
-pytz==2017.3
+pytz==2018.3
 reportlab==3.4.0
 requests==2.18.4
 unicodecsv==0.14.1
