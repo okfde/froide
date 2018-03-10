@@ -38,7 +38,7 @@ install:
 script:
   - set -e
   - export CHROME_DRIVER_PATH=/usr/local/bin/chromedriver
-  - export DATABASE_URL=postgres://postgres@127.0.0.1/froide
+  - export DATABASE_URL=postgis://postgres@127.0.0.1/froide
   - whereis google-chrome-stable
   - google-chrome-stable --version
   - whereis chromedriver
