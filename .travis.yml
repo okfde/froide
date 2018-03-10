@@ -1,14 +1,24 @@
 ---
 language: python
+
 sudo: required
 dist: trusty
+
 addons:
   chrome: stable
+  postgresql: 9.6
+
 python:
   - '3.5'
   - '3.6'
   - '2.7'
+
+services:
+  - postgresql
+
 before_script:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y postgresql-9.6-postgis-2.4
   - psql -c 'create database froide;' -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d froide
   - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d froide
