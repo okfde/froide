@@ -155,6 +155,35 @@ def make_nullfilter(field, title):
     })
 
 
+class EmptyFilter(SimpleListFilter):
+    title = ''
+    parameter_name = ''
+
+    def lookups(self, request, model_admin):
+        return (
+            ('0', _('Is empty')),
+            ('1', _('Is not empty')),
+
+        )
+
+    def queryset(self, request, queryset):
+        kwargs = {
+            '%s' % self.parameter_name: '',
+        }
+        if self.value() == '0':
+            return queryset.filter(**kwargs)
+        if self.value() == '1':
+            return queryset.exclude(**kwargs)
+        return queryset
+
+
+def make_emptyfilter(field, title):
+    return type(str('%sEmptyFilter' % field.title()), (EmptyFilter,), {
+        'title': title,
+        'parameter_name': field
+    })
+
+
 class TaggitListFilter(SimpleListFilter):
     """
     A custom filter class that can be used to filter by taggit tags in the admin.
