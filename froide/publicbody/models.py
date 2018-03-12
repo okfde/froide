@@ -459,7 +459,7 @@ class PublicBody(models.Model):
     def export_csv(cls, queryset):
 
         fields = (
-            "id", "name", "email", "contact",
+            "id", "name", "email", "fax", "contact",
             "address", "url",
             ('classification', lambda x: x.classification.name),
             "jurisdiction__slug",
