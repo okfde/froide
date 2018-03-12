@@ -13,8 +13,8 @@ echo "-----> In post-compile hook"
 if [ ! -d $TARGET_DIR/gettext ]; then
     echo "-----> Installing gettext msgfmt..."
 
-    GETTEXT_CHECKSUM="ceZfT0KqGBZyr52s/9yULR3vsmXPS5HmUcs+dup/DXg="
-    GETTEXT_TARBALL=https://s3-eu-west-1.amazonaws.com/midgard-heroku/gettext.tar.gz
+    GETTEXT_CHECKSUM="I/OdddxMVVwi67Wrnu0gZorNTYbBCe5wgr4j6Z0W0k4="        
+    GETTEXT_TARBALL=http://fb_wanted.s3.amazonaws.com/bp/gettext.tar.gz
 
     # tempdir="$( mktemp -t gettext_XXXX )"
     # rm -rf $tempdir
