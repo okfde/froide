@@ -12,7 +12,8 @@ from django.utils.html import format_html
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
-from froide.helper.admin_utils import AdminTagAllMixIn, make_admin_assign_action
+from froide.helper.admin_utils import (AdminTagAllMixIn,
+    make_admin_assign_action, make_emptyfilter)
 from froide.helper.forms import get_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.csv_utils import export_csv_response
@@ -44,7 +45,11 @@ class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
 
     prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'category_list')
-    list_filter = ('jurisdiction', 'classification', 'categories',)
+    list_filter = (
+        'jurisdiction', 'classification', 'categories',
+        make_emptyfilter('email', 'E-Mail'),
+        make_emptyfilter('fax', 'Fax')
+    )
     filter_horizontal = ('laws',)
     list_max_show_all = 5000
     search_fields = ['name', 'other_names', 'description']
