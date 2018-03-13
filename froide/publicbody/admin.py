@@ -55,7 +55,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
         (_('Context'), {
             'fields': (
                 'jurisdiction', 'laws',
-                'classification', 'categories',
+                'categories',
                 'description',
                 'file_index', 'org_chart',
             ),
@@ -104,7 +104,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
             obj._created_by = obj._updated_by
             obj.created_at = obj.updated_at
 
-        super(PublicBodyAdmin, self).save_model(request, obj, form, change)
+        super(PublicBodyAdminMixin, self).save_model(request, obj, form, change)
 
     def category_list(self, obj):
         return ", ".join(o.name for o in obj.categories.all())
