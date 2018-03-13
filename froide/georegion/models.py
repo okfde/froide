@@ -36,8 +36,6 @@ class GeoRegion(models.Model):
         on_delete=models.SET_NULL
     )
 
-    objects = models.GeoManager()
-
     class Meta:
         verbose_name = _('Geo Region')
         verbose_name_plural = _('Geo Regions')
