@@ -138,7 +138,7 @@
       {% blocktrans %}Attachments{% endblocktrans %}
     </h6>
     <div class="attachment-deck">
-      {% if user == object.user or user.is_staff %}
+      {% if object|can_write_foirequest:request %}
         {% for attachment in message.not_approved_attachments %}
           {% include "foirequest/snippets/attachment.html" %}
         {% endfor %}
