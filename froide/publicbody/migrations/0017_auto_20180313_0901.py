@@ -16,11 +16,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='publicbody',
-            name='geo',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, null=True, srid=4326),
-        ),
-        migrations.AlterField(
-            model_name='publicbody',
             name='region',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='georegion.GeoRegion'),
         ),

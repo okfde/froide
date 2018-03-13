@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='publicbody',
             name='geo',
-            field=django.contrib.gis.db.models.fields.PointField(geography=True, null=True, srid=4326),
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, null=True, srid=4326),
         ),
         migrations.AddField(
             model_name='publicbody',
