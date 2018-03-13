@@ -366,6 +366,7 @@ class FoiProjectAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description', 'reference']
     ordering = ('-last_update',)
     date_hierarchy = 'created'
+    raw_id_fields = ('user', 'team', 'publicbodies',)
 
     def site_link(self, obj):
         return format_html('<a href="{}">{}</a>',
