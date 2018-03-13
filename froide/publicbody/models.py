@@ -350,8 +350,9 @@ class PublicBody(models.Model):
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
             blank=True, null=True, on_delete=models.SET_NULL)
 
-    geo = models.PointField(null=True, geography=True)
-    region = models.ForeignKey(GeoRegion, null=True, on_delete=models.SET_NULL)
+    geo = models.PointField(null=True, blank=True, geography=True)
+    region = models.ForeignKey(GeoRegion, null=True, blank=True,
+                               on_delete=models.SET_NULL)
 
     laws = models.ManyToManyField(FoiLaw,
             verbose_name=_("Freedom of Information Laws"))
