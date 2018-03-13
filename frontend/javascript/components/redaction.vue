@@ -71,7 +71,7 @@ import {range} from 'underscore'
 
 import Vue from 'vue'
 
-import {PDFJS} from 'pdfjs-dist'
+import PDFJS from 'pdfjs-dist'
 
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
@@ -104,8 +104,8 @@ export default {
     }
   },
   created () {
-    PDFJS.workerSrc = this.config.resources.pdfjsWorker
-    console.log(PDFJS)
+    PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
+    console.log(this.config.resources.pdfjsWorker, PDFJS)
     this.loadDocument().then(() => this.loadPage(1))
   },
   computed: {
