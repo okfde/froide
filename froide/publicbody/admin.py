@@ -39,11 +39,43 @@ class PublicBodyAdminForm(forms.ModelForm):
 ClassificationAssignMixin = make_admin_assign_action('classification')
 
 
-class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
-                      admin.ModelAdmin):
+class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     form = PublicBodyAdminForm
 
     prepopulated_fields = {"slug": ("name",)}
+    fieldsets = (
+        (None, {
+            'fields': (
+                'name', 'slug', 'other_names',
+                'classification',
+                'url', 'email', 'fax',
+                'contact', 'address',
+            )
+        }),
+        (_('Context'), {
+            'fields': (
+                'jurisdiction', 'laws',
+                'classification', 'categories',
+                'description',
+                'file_index', 'org_chart',
+            ),
+        }),
+        (_('Hierachy'), {
+            'classes': ('collapse',),
+            'fields': ('parent', 'root', 'depth'),
+        }),
+        (_('Geo'), {
+            'classes': ('collapse',),
+            'fields': ('geo', 'region'),
+        }),
+        (_('Advanced'), {
+            'classes': ('collapse',),
+            'fields': ('site', 'number_of_requests', 'website_dump'),
+        }),
+        (_('Meta'), {
+            'fields': ('_created_by', 'created_at', '_updated_by', 'updated_at'),
+        }),
+    )
     list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'category_list')
     list_filter = (
         'jurisdiction', 'classification', 'categories',
@@ -54,7 +86,10 @@ class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
     list_max_show_all = 5000
     search_fields = ['name', 'other_names', 'description']
     exclude = ('confirmed',)
-    raw_id_fields = ('parent', 'root', '_created_by', '_updated_by')
+    raw_id_fields = (
+        'parent', 'root', '_created_by', '_updated_by',
+        'region',
+    )
     tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
 
@@ -88,6 +123,10 @@ class PublicBodyAdmin(ClassificationAssignMixin, AdminTagAllMixIn,
 
         self.message_user(request, _("Removed from search index"))
     remove_from_index.short_description = _("Remove from search index")
+
+
+class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
+    pass
 
 
 class FoiLawAdmin(admin.ModelAdmin):
