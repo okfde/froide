@@ -47,6 +47,7 @@ class Base(Configuration):
         'overextends',
         'storages',
         'treebeard',
+        'django_filters',
 
         # local
         'froide.foirequest',

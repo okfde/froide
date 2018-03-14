@@ -1,0 +1,17 @@
+<div class="dropdown show">
+  <a class="btn btn-light btn-block text-truncate dropdown-toggle" href="#" role="button" id="dropdown-{{ widget.attrs.id }}" title="{{ selected_label }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    {{ selected_label }}
+  </a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-{{ widget.attrs.id }}">
+    {% for group_name, group_choices, group_index in widget.optgroups %}
+      {% for option in group_choices %}
+        <a class="dropdown-item{% if option.selected %} active{% endif %}" href="{{ option.url }}">
+          {% if option.icon %}
+            <span class="small-icon {{ option.icon }}"></span>
+          {% endif %}
+          {{ option.label }}
+        </a>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>

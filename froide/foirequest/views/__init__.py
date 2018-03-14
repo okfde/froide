@@ -2,7 +2,9 @@ from .attachment import (
     approve_attachment, auth_message_attachment, redact_attachment
 )
 from .draft import delete_draft
-from .list_requests import list_requests, search, list_unchecked
+from .list_requests import (
+    list_requests, search, list_unchecked,
+)
 from .make_request import MakeRequestView, DraftRequestView
 from .message import (
     send_message, escalation_message, add_postal_reply, add_postal_message,

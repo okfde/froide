@@ -89,9 +89,12 @@
         {% for res in resolutions %}
         <tr>
           <td>
+            <img style="width:80px" src="{% static 'img/status/icon-'|add:res.resolution|add:'.svg' %}" alt=""/>
+          </td>
+          <td>
             {% block result_image %}
             {% endblock result_image %}
-            <a href="{% url 'foirequest-list' public_body=object.slug %}?status={{ res.url_slug }}">
+            <a href="{% url 'foirequest-list' publicbody=object.slug %}?status={{ res.url_slug }}">
               {{ res.name }}
             </a>
             <br/>
@@ -114,19 +117,19 @@
         {% endfor %}
       </ul>
       <p>
-        <a href="{% url 'foirequest-list_feed' public_body=object.slug %}">
+        <a href="{% url 'foirequest-list_feed' publicbody=object.slug %}">
           <i class="fa fa-rss" aria-hidden="true"></i>
           {% trans "RSS Feed" %}
         </a>
         <br/>
-        <a href="{% url 'foirequest-list_feed_atom' public_body=object.slug %}">
+        <a href="{% url 'foirequest-list_feed_atom' publicbody=object.slug %}">
           <i class="fa fa-rss-square" aria-hidden="true"></i>
           {% trans "Atom Feed" %}
         </a>
       </p>
       {% if foirequest_count > foirequests|length %}
         <p>
-          <a href="{% url 'foirequest-list' public_body=object.slug %}">
+          <a href="{% url 'foirequest-list' publicbody=object.slug %}">
             {% trans "See all FOI requests for this public body" %}
           </a>
         </p>

@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
+from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
 
 
 class WebTest(TestCase):
@@ -62,15 +63,10 @@ class WebTest(TestCase):
     def test_list_requests(self):
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
-        for urlpart, _, status in FoiRequest.get_status_url():
+        for urlpart in FOIREQUEST_FILTER_DICT:
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": str(urlpart)}))
             self.assertEqual(response.status_code, 200)
-        url = reverse('foirequest-list',
-                kwargs={"status": 'successful'})
-        url = url.replace('successful', 'non-existing')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
 
         for topic in Category.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
@@ -88,7 +84,7 @@ class WebTest(TestCase):
         response = self.client.get(reverse('foirequest-list'),
                 kwargs={'jurisdiction': juris.slug})
         self.assertEqual(response.status_code, 200)
-        for urlpart, _, status in FoiRequest.get_status_url():
+        for urlpart in FOIREQUEST_FILTER_DICT:
             response = self.client.get(reverse('foirequest-list',
                 kwargs={"status": urlpart, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)
@@ -100,8 +96,6 @@ class WebTest(TestCase):
 
     def test_tagged_requests(self):
         tag_slug = 'awesome'
-        response = self.client.get(reverse('foirequest-list', kwargs={"tag": tag_slug}))
-        self.assertEqual(response.status_code, 404)
         req = FoiRequest.published.all()[0]
         req.tags.add(tag_slug)
         req.save()
@@ -118,17 +112,14 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_publicbody_requests(self):
-        fake_slug = 'fake-slug'
-        response = self.client.get(reverse('foirequest-list', kwargs={"public_body": fake_slug}))
-        self.assertEqual(response.status_code, 404)
         req = FoiRequest.published.all()[0]
         pb = req.public_body
-        response = self.client.get(reverse('foirequest-list', kwargs={"public_body": pb.slug}))
+        response = self.client.get(reverse('foirequest-list', kwargs={"publicbody": pb.slug}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, req.title)
-        response = self.client.get(reverse('foirequest-list_feed', kwargs={"public_body": pb.slug}))
+        response = self.client.get(reverse('foirequest-list_feed', kwargs={"publicbody": pb.slug}))
         self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={"public_body": pb.slug}))
+        response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={"publicbody": pb.slug}))
         self.assertEqual(response.status_code, 200)
 
     def test_list_no_identical(self):
@@ -246,7 +237,7 @@ class WebTest(TestCase):
         }))
         self.assertEqual(response.status_code, 200)
 
-        status = FoiRequest.get_status_url()[0][0]
+        status = FOIREQUEST_FILTERS[0][0]
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'jurisdiction': juris.slug,
             'status': status

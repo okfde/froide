@@ -10,41 +10,69 @@
 {% block app_body %}
 {% block headline %}
 
+
 <div class="mb-3 mt-3">
-  {% if public_body %}
-    <h2>{% blocktrans with name=public_body.name %}Requests to {{ name }}{% endblocktrans %}</h2>
-  {% endif %}
-  {% if not filtered and jurisdiction %}
-    <h2>{% blocktrans with name=jurisdiction.name %}{{ name }}: all requests{% endblocktrans %}</h2>
+  <h2>
+  {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.topic %}
+    {% trans "Requests" %}
+    {% if filtered_objects.publicbody %}
+      <small>
+        {% blocktrans with name=filtered_objects.publicbody.name %}to {{ name }}{% endblocktrans %}
+      </small>
+    {% endif %}
+    {% if filtered_objects.tag %}
+      <small>
+        {% blocktrans with name=filtered_objects.tag.name %}with tag “{{ name }}”{% endblocktrans %}
+      </small>
+    {% endif %}
+    {% if filtered_objects.topic %}
+      <small>
+        {% blocktrans with name=filtered_objects.topic.name %}in topic “{{ name }}”{% endblocktrans %}
+      </small>
+    {% endif %}
   {% else %}
-    {% if not filtered %}
-      <h2>{{ page_title|safe }}</h2>
-    {% endif %}
+    {{ page_title }}
   {% endif %}
-  {% if status %}
-    {% if filtered %}
-      <h3>{{ status }}</h3>
-    {% else %}
-      <h2>{{ status }}</h2>
-    {% endif %}
-    <p>{{ status_description }}</p>
-  {% endif %}
-  {% if tag %}
-    <h2>{% blocktrans with name=tag.name %}Requests with tag "{{ name }}"{% endblocktrans %}</h2>
-  {% endif %}
-  {% if topic %}
-    <h2>{% blocktrans with name=topic.name %}Requests in topic "{{ name }}"{% endblocktrans %}</h2>
-  {% endif %}
-  {% if filtered and jurisdiction %}
-    <p>{% blocktrans with name=jurisdiction.name %}Filtered by requests to Public Bodies in {{ name }}.{% endblocktrans %}</p>
-  {% endif %}
+  </h2>
 </div>
 
 {% endblock headline %}
 
+<div class="row mb-5 align-items-start">
+  {% if jurisdiction_list|length > 1 %}
+    <div class="col-md-3">
+      {{ filter_form.jurisdiction }}
+    </div>
+  {% endif %}
+
+  <div class="col-md-3">
+    {{ filter_form.status }}
+  </div>
+
+  {% comment %}
+  <div class="col-auto">
+    {{ filter_form.topic }}
+  </div>
+  {% endcomment %}
+
+
+
+  {% if filtered_objects %}
+    <div class="ml-auto col-auto">
+      <a class="btn btn btn-light" href="{% url 'foirequest-list' %}">
+        {% trans "Show all FoI requests" %}
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="ml-auto col-auto">
+    {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
+  </div>
+</div>
+
 
 <div class="row">
-  <div class="col-lg-8">
+  <div class="col-lg-12">
     {% block col-8-headline %}{% endblock col-8-headline %}
     <ul class="list-unstyled">
       {% for object in object_list %}
@@ -61,80 +89,11 @@
         </li>
       {% endfor %}
     </ul>
-    {% include "pagination/pagination.html" with page_obj=object_list %}
-  </div>
-
-  <div class="col-lg-4">
-    {% block badge %}
-    <p>
-      <span class="badge badge-info">
-        {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
-      </span>
-    </p>
-    {% endblock badge %}
-
+    {% if object_list.paginator.num_pages > 1 %}
+      {% include "pagination/pagination.html" with page_obj=object_list %}
+    {% endif %}
 
     <ul class="nav nav-compact flex-column">
-    {% block status_up %}
-    {% endblock status_up %}
-      {% if filtered or not_foi or jurisdiction %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'foirequest-list' %}">{% trans "Show all FoI requests" %}</a>
-        </li>
-      {% endif %}
-      {% if jurisdiction %}
-        <li class="nav-header">
-          {% blocktrans with name=jurisdiction.name %}{{ name }} requests by status{% endblocktrans %}
-        </li>
-        {% for urlpart,readable_status,status in status_list %}
-           <li class="nav-item">
-            <a class="nav-link" href="{% url 'foirequest-list' status=urlpart jurisdiction=jurisdiction.slug %}">
-              <span class="small-icon status-{{ status }}"></span>
-              {{ readable_status }}
-            </a>
-        </li>
-        {% endfor %}
-        <li class="nav-header">{% blocktrans with name=jurisdiction.name %}{{ name }} requests by category{% endblocktrans %}</li>
-        {% for topic in topic_list %}
-           <li class="nav-item">
-            <a class="nav-link" href="{% url 'foirequest-list' topic=topic.slug jurisdiction=jurisdiction.slug %}">
-              {{ topic.name }}
-            </a>
-          </li>
-        {% endfor %}
-      {% else %}
-        {% if jurisdiction_list|length > 1 %}
-          <li class="nav-header">{% blocktrans %}By jurisdiction{% endblocktrans %}</li>
-          {% for juris in jurisdiction_list %}
-             <li class="nav-item">
-              <a class="nav-link" href="{% url 'foirequest-list' jurisdiction=juris.slug %}">
-                {{ juris.name }}
-              </a>
-            </li>
-          {% endfor %}
-        {% endif %}
-        {% block status %}
-        <li class="nav-header">{% blocktrans %}By status{% endblocktrans %}</li>
-        {% for urlpart,readable_status,status in status_list %}
-           <li class="nav-item">
-            <a class="nav-link" href="{% url 'foirequest-list' status=urlpart %}">
-              <span class="small-icon status-{{ status }}"></span>
-              {{ readable_status }}
-            </a>
-          </li>
-        {% endfor %}
-        {% endblock status %}
-
-        <li class="nav-header">{% blocktrans %}By category{% endblocktrans %}</li>
-        {% for topic in topic_list %}
-           <li class="nav-item">
-            <a class="nav-link" href="{% url 'foirequest-list' topic=topic.slug %}">
-              {{ topic.name }}
-            </a>
-          </li>
-        {% endfor %}
-      {% endif %}
-      <li class="divider"></li>
       <li class="nav-header">{% blocktrans %}Feeds for these requests{% endblocktrans %}</li>
        <li class="nav-item">
         <a class="nav-link" href="./rss/">
@@ -148,11 +107,8 @@
           {% trans "Atom Feed" %}
         </a>
       </li>
-      <li class="divider"></li>
-       <li class="nav-item">
-        <a class="nav-link" href="{% url 'foirequest-list_not_foi' %}">{% trans "Show all Non-FoI requests" %}</a>
-      </li>
     </ul>
+
   </div>
 </div>
 {% endblock %}

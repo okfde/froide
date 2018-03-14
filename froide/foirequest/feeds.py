@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
 from .models import FoiRequest
+from .filters import FOIREQUEST_FILTER_DICT
 
 CONTROLCHARS_RE = re.compile(r'[\x00-\x08\x0B-\x0C\x0E-\x1F]')
 
@@ -17,13 +18,14 @@ def clean(val):
 
 
 class LatestFoiRequestsFeed(Feed):
-    def __init__(self, items, topic=None, jurisdiction=None, public_body=None, tag=None, status=None):
+    def __init__(self, items, topic=None, jurisdiction=None,
+                 publicbody=None, tag=None, status=None):
         self.items = items
         self.topic = topic
         self.jurisdiction = jurisdiction
         self.tag = tag
         self.status = status
-        self.public_body = public_body
+        self.publicbody = publicbody
         super(LatestFoiRequestsFeed, self).__init__()
 
     def get_filter_string(self):
@@ -32,15 +34,14 @@ class LatestFoiRequestsFeed(Feed):
             by.append(_('by topic %(topic)s') % {'topic': self.topic.name})
         if self.status:
             by.append(_('by status %(status)s') % {
-                'status': FoiRequest.get_readable_status(
-                    FoiRequest.get_status_from_url(self.status)[1])
+                'status': FOIREQUEST_FILTER_DICT[self.status][1]
             })
         if self.tag:
             by.append(_('by tag %(tag)s') % {'tag': self.tag.name})
         if self.jurisdiction:
             by.append(_('for %(juris)s') % {'juris': self.jurisdiction.name})
-        if self.public_body:
-            by.append(_('to %(public_body)s') % {'public_body': self.public_body.name})
+        if self.publicbody:
+            by.append(_('to %(publicbody)s') % {'publicbody': self.publicbody.name})
         return ' '.join(by)
 
     def title(self, obj):
@@ -77,8 +78,8 @@ class LatestFoiRequestsFeed(Feed):
             kwargs['status'] = self.status
         if self.tag:
             kwargs['tag'] = self.tag.slug
-        if self.public_body:
-            kwargs['public_body'] = self.public_body.slug
+        if self.publicbody:
+            kwargs['publicbody'] = self.publicbody.slug
         return kwargs
 
     def link(self):

@@ -4,9 +4,13 @@ from django.conf.urls import url, include
 from django.utils.translation import pgettext
 from django.shortcuts import redirect
 
-from ..models import FoiRequest
-from ..views import list_requests, list_unchecked, delete_draft
+from ..views import (
+    list_requests, list_unchecked, delete_draft,
+)
+from ..filters import FOIREQUEST_FILTERS
 
+
+STATUS_URLS = [str(x[0]) for x in FOIREQUEST_FILTERS]
 
 urlpatterns = [
     url(r'^%s/$' % pgettext('URL part', 'not-foi'), list_requests,
@@ -23,7 +27,6 @@ urlpatterns = [
     url(r'^unchecked/$', list_unchecked, name='foirequest-list_unchecked'),
     url(r'^delete-draft$', delete_draft, name='foirequest-delete_draft'),
 ]
-
 
 foirequest_urls = [
     url(r'^$', list_requests, name='foirequest-list'),
@@ -49,19 +52,21 @@ foirequest_urls = [
         list_requests, kwargs={'feed': 'rss'}, name='foirequest-list_feed'),
 
     # Translators: part in request filter URL
-    url(r'^%s/(?P<public_body>[-\w]+)/$' % pgettext('URL part', 'to'),
+    url(r'^%s/(?P<publicbody>[-\w]+)/$' % pgettext('URL part', 'to'),
         list_requests, name='foirequest-list'),
-    url(r'^%s/(?P<public_body>[-\w]+)/feed/$' % pgettext('URL part', 'to'),
+    url(r'^%s/(?P<publicbody>[-\w]+)/feed/$' % pgettext('URL part', 'to'),
         list_requests, kwargs={'feed': 'atom'}, name='foirequest-list_feed_atom'),
-    url(r'^%s/(?P<public_body>[-\w]+)/rss/$' % pgettext('URL part', 'to'),
+    url(r'^%s/(?P<publicbody>[-\w]+)/rss/$' % pgettext('URL part', 'to'),
         list_requests, kwargs={'feed': 'rss'}, name='foirequest-list_feed'),
 
-] + [url(r'^(?P<status>%s)/$' % str(urlinfo[0]), list_requests,
-        name='foirequest-list') for urlinfo in FoiRequest.get_status_url()
-] + [url(r'^(?P<status>%s)/feed/$' % str(urlinfo[0]), list_requests,
-        kwargs={'feed': 'atom'}, name='foirequest-list_feed_atom') for urlinfo in FoiRequest.get_status_url()
-] + [url(r'^(?P<status>%s)/rss/$' % str(urlinfo[0]), list_requests,
-        kwargs={'feed': 'rss'}, name='foirequest-list_feed') for urlinfo in FoiRequest.get_status_url()]
+] + [url(r'^(?P<status>%s)/$' % status, list_requests, name='foirequest-list')
+        for status in STATUS_URLS
+] + [url(r'^(?P<status>%s)/feed/$' % status, list_requests,
+        kwargs={'feed': 'atom'}, name='foirequest-list_feed_atom')
+        for status in STATUS_URLS
+] + [url(r'^(?P<status>%s)/rss/$' % status, list_requests,
+        kwargs={'feed': 'rss'}, name='foirequest-list_feed')
+        for status in STATUS_URLS]
 
 urlpatterns += foirequest_urls
 

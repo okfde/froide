@@ -1,24 +1,23 @@
 from __future__ import unicode_literals
 
-from django.utils.six import text_type as str
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 
 from haystack.query import SearchQuerySet
-from taggit.models import Tag
+
 
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiAttachment
 from ..feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
+from ..filters import (
+    get_filter_data, FoiRequestFilterSet, FOIREQUEST_FILTER_RENDER
+)
 
 
-def list_requests(request, status=None, topic=None, tag=None,
-        jurisdiction=None, public_body=None, not_foi=False, feed=None):
+def list_requests(request, not_foi=False, feed=None, **filter_kwargs):
     context = {
         'filtered': True
     }
@@ -26,53 +25,15 @@ def list_requests(request, status=None, topic=None, tag=None,
     if not_foi:
         manager = FoiRequest.published_not_foi
     topic_list = Category.objects.get_category_list()
-    if status is None:
-        status = request.GET.get(str(_('status')), None)
-    status_url = status
-    foi_requests = manager.for_list_view()
-    if status is not None:
-        func_status = FoiRequest.get_status_from_url(status)
-        if func_status is None:
-            raise Http404
-        func, status = func_status
-        foi_requests = foi_requests.filter(func(status))
-        context.update({
-            'status': FoiRequest.get_readable_status(status),
-            'status_description': FoiRequest.get_status_description(status)
-        })
-    elif topic is not None:
-        topic = get_object_or_404(Category, slug=topic)
-        foi_requests = manager.for_list_view().filter(public_body__categories=topic)
-        context.update({
-            'topic': topic,
-        })
-    elif tag is not None:
-        tag = get_object_or_404(Tag, slug=tag)
-        foi_requests = manager.for_list_view().filter(tags=tag)
-        context.update({
-            'tag': tag
-        })
-    else:
-        foi_requests = manager.for_list_view()
-        context['filtered'] = False
 
-    if jurisdiction is not None:
-        jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
-        foi_requests = foi_requests.filter(jurisdiction=jurisdiction)
-        context.update({
-            'jurisdiction': jurisdiction
-        })
-    elif public_body is not None:
-        public_body = get_object_or_404(PublicBody, slug=public_body)
-        foi_requests = foi_requests.filter(public_body=public_body)
-        context.update({
-            'public_body': public_body
-        })
-        context['filtered'] = True
-        context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
-    else:
-        context['jurisdiction_list'] = Jurisdiction.objects.get_visible()
-        context['filtered'] = False
+    foi_requests = manager.for_list_view()
+
+    data = get_filter_data(filter_kwargs, dict(request.GET.items()))
+    filtered = FoiRequestFilterSet(data, queryset=foi_requests)
+
+    foi_requests = filtered.qs
+    filtered_objs = filtered.form.cleaned_data
+    filtered_objs = {k: v for k, v in filtered_objs.items() if v}
 
     if feed is not None:
         foi_requests = foi_requests[:50]
@@ -80,8 +41,7 @@ def list_requests(request, status=None, topic=None, tag=None,
             klass = LatestFoiRequestsFeed
         else:
             klass = LatestFoiRequestsFeedAtom
-        return klass(foi_requests, status=status_url, topic=topic,
-            tag=tag, jurisdiction=jurisdiction)(request)
+        return klass(foi_requests, **filtered_objs)(request)
 
     count = foi_requests.count()
 
@@ -103,10 +63,11 @@ def list_requests(request, status=None, topic=None, tag=None,
         'count': count,
         'not_foi': not_foi,
         'object_list': foi_requests,
-        'status_list': [(str(x[0]),
-            FoiRequest.get_readable_status(x[2]),
-            x[2]) for x in FoiRequest.get_status_url()],
-        'topic_list': topic_list
+        'jurisdiction_list': Jurisdiction.objects.get_visible(),
+        'status_list': FOIREQUEST_FILTER_RENDER,
+        'topic_list': topic_list,
+        'filter_form': filtered.form,
+        'filtered_objects': filtered_objs
     })
 
     return render(request, 'foirequest/list.html', context)

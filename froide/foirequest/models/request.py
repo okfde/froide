@@ -109,6 +109,8 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         return self.get_queryset().filter(same_as__isnull=True)
 
     def get_resolution_count_by_public_body(self, obj):
+        from ..filters import REVERSE_FILTER_DICT
+
         res = self.get_queryset().filter(
                 status='resolved', public_body=obj
         ).values('resolution'
@@ -118,11 +120,11 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
         return [{
             'resolution': x['resolution'],
-            'url_slug': FoiRequest.get_url_from_status(x['resolution']),
-            'name': FoiRequest.get_readable_status(x['resolution']),
-            'description': FoiRequest.get_status_description(x['resolution']),
+            'url_slug': REVERSE_FILTER_DICT[x['resolution']][0],
+            'name': REVERSE_FILTER_DICT[x['resolution']][2],
+            'description': REVERSE_FILTER_DICT[x['resolution']][3],
             'count': x['resolution__count']
-            } for x in res]
+            } for x in res if x['resolution']]
 
     def successful(self):
         return self.by_last_update().filter(
@@ -222,28 +224,6 @@ class FoiRequest(models.Model):
         ),
     )
 
-    resolution_filter = lambda x: Q(resolution=x)
-    status_filter = lambda x: Q(status=x)
-
-    STATUS_URLS = [
-        (_("successful"), resolution_filter, 'successful'),
-        (_("partially-successful"), resolution_filter, 'partially_successful'),
-        (_("refused"), resolution_filter, 'refused'),
-        (_("withdrawn"), resolution_filter, 'user_withdrew'),
-        (_("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
-        (_("publicbody-needed"), status_filter, 'publicbody_needed'),
-        (_("awaiting-response"), status_filter, 'awaiting_response'),
-        (_("overdue"), (lambda x:
-            Q(due_date__lt=timezone.now()) & Q(status='awaiting_response')),
-            'overdue'),
-        (_("asleep"), status_filter, 'asleep'),
-        (_("not-held"), resolution_filter, 'not_held'),
-        (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
-    ]
-    _STATUS_URLS = None
-    _STATUS_URLS_DICT = None
-    _URLS_STATUS_DICT = None
-
     STATUS_FIELD_CHOICES = [(x[0], x[1]) for x in STATUS_CHOICES]
     RESOLUTION_FIELD_CHOICES = [(x[0], x[1]) for x in RESOLUTION_CHOICES]
 
@@ -262,7 +242,6 @@ class FoiRequest(models.Model):
             False
         )
     })
-    USER_STATUS_CHOICES = [(x[0], x[1]) for x in STATUS_RESOLUTION if x[3]]
 
     INVISIBLE = 0
     VISIBLE_TO_REQUESTER = 1
@@ -369,26 +348,6 @@ class FoiRequest(models.Model):
 
     def __str__(self):
         return _("Request '%s'") % self.title
-
-    @classmethod
-    def get_status_url(cls):
-        if cls._STATUS_URLS is None:
-            cls._STATUS_URLS = [(str(s), t, u) for s, t, u in cls.STATUS_URLS]
-        return cls._STATUS_URLS
-
-    @classmethod
-    def get_status_from_url(cls, status_slug):
-        if cls._URLS_STATUS_DICT is None:
-            cls._URLS_STATUS_DICT = dict([
-                (str(x[0]), x[1:]) for x in cls.get_status_url()])
-        return cls._URLS_STATUS_DICT.get(status_slug)
-
-    @classmethod
-    def get_url_from_status(cls, status):
-        if cls._STATUS_URLS_DICT is None:
-            cls._STATUS_URLS_DICT = dict([
-                (str(x[-1]), x[0]) for x in cls.get_status_url()])
-        return cls._STATUS_URLS_DICT.get(status)
 
     @property
     def same_as_set(self):
