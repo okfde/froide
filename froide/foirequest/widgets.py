@@ -22,13 +22,17 @@ class DropDownFilterWidget(forms.widgets.ChoiceWidget):
     template_name = 'foirequest/widgets/dropdown_filter.html'
 
     def value_from_datadict(self, data, files, name):
-        value = super().value_from_datadict(data, files, name)
+        value = super(DropDownFilterWidget, self).value_from_datadict(
+            data, files, name
+        )
         self.data = data
         return value
 
     def get_context(self, name, value, attrs):
         self.selected_label = self.attrs.get('label', '')
-        context = super().get_context(name, value, attrs)
+        context = super(DropDownFilterWidget, self).get_context(
+            name, value, attrs
+        )
         context['selected_label'] = self.selected_label
         return context
 
