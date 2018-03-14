@@ -34,6 +34,11 @@ def approve_attachment(request, slug, attachment):
     att.approve_and_save()
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
+    if request.is_ajax():
+        return render(
+            request, 'foirequest/snippets/attachment.html',
+            {'attachment': att, 'object': foirequest}
+        )
     return redirect(att.get_anchor_url())
 
 

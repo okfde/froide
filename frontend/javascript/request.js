@@ -56,10 +56,8 @@ $(function () {
       type: form.attr('method'),
       url: form.attr('action'),
       data: form.serialize(),
-      success: function () {
-        var id = form.attr('id')
-        form.hide()
-        $('#' + id + '-success').fadeIn()
+      success: function (data) {
+        form.closest('.ajax-parent').replaceWith(data)
       }
     })
     form.find('button').attr('disabled', 'disabled')

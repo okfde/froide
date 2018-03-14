@@ -1,0 +1,33 @@
+{% load i18n %}
+
+<div class="col-lg-7 mb-2 ">
+  {% if attachment.can_redact %}
+    <span>
+      <i class="fa fa-paperclip" aria-hidden="true"></i>
+      <span class="d-print-none">{{ attachment.name|truncatechars:20 }}</span>
+      <span class="d-none d-print-inline">{{ attachment.name }}</span>
+    </span>&nbsp;<span class="badge badge-light">
+      {{ attachment.size|filesizeformat }}
+    </span>
+  {% else %}
+    {% include "foirequest/snippets/attachment_item.html" %}
+  {% endif %}
+  <span class="badge badge-warning">
+    {% blocktrans %}Not public!{% endblocktrans %}
+  </span>
+</div>
+<div class="col-lg-5 text-right">
+  {% if attachment.can_approve %}
+    <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
+      {% if attachment.can_redact %}
+        <a class="btn btn-sm btn-primary mr-1 d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+          {% trans "Review" %}
+        </a>
+      {% endif %}
+      {% csrf_token %}
+      <button class="btn btn-sm btn-success" type="submit">
+        {% trans "Approve" %}
+      </button>
+    </form>
+  {% endif %}
+</div>
