@@ -30,7 +30,7 @@ class GeoRegion(models.Model):
     valid_on = models.DateTimeField(null=True, blank=True)
 
     geom = models.MultiPolygonField(_('geometry'), geography=True)
-    gov_seat = models.PointField(_('geometry'), null=True, geography=True)
+    gov_seat = models.PointField(_('gov seat'), null=True, geography=True)
 
     part_of = models.ForeignKey('self', verbose_name=_('Part of'), null=True,
         on_delete=models.SET_NULL
