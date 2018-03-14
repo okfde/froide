@@ -56,8 +56,13 @@ $(function () {
       type: form.attr('method'),
       url: form.attr('action'),
       data: form.serialize(),
-      success: function (data) {
-        form.closest('.ajax-parent').replaceWith(data)
+      success: function (data, status, xhr) {
+        if (xhr.status === 302) {
+          window.location.href = xhr.getResponseHeader('Location')
+        }
+        if (data.length > 0) {
+          form.closest('.ajax-parent').replaceWith(data)
+        }
       }
     })
     form.find('button').attr('disabled', 'disabled')

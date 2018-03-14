@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
@@ -18,7 +18,10 @@ def follow(request, slug):
     if form.is_valid():
         followed = form.save()
         if request.is_ajax():
-            return JsonResponse({'followed': followed})
+            return render(request, 'foirequestfollower/show.html', {
+                'count': foirequest.follow_count(),
+                'object': foirequest
+            })
         if request.user.is_authenticated:
             if followed:
                 messages.add_message(request, messages.SUCCESS,

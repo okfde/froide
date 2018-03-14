@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="ajax-parent">
+  <h5>
+    <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
+      {% blocktrans count counter=count %}
+        One follower
+      {% plural %}
+        {{ counter }} followers
+      {% endblocktrans %}
+    </span>
+  </h5>
+  {% if user.is_authenticated and user != object.user %}
+    {% include "foirequestfollower/follow_form.html" %}
+  {% endif %}
+</div>
