@@ -1,89 +1,89 @@
 
 .icon {
     display: block;
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 45px;
     background-repeat: no-repeat;
-    background-position:0 0px;
+    background-position: 0 0;
 }
 
 .small-icon {
     background-repeat: no-repeat;
-    background-position:0 3px;
+    background-position: 0 3px;
     padding-left: 20px;
-    /*margin-bottom: 2px;*/
+    margin-right: 0.5rem;
 }
 
 .small-icon.status-successful {
-    background-image: url('~img/status/successful_small.png')
+    background-image: url('~img/status/icon-successful.svg')
 }
 .small-icon.status-partially_successful {
-    background-image: url('~img/status/partially_successful_small.png')
+    background-image: url('~img/status/icon-partially_successful.svg')
 }
 .small-icon.status-refused {
-    background-image: url('~img/status/refused_small.png')
+    background-image: url('~img/status/icon-refused.svg')
 }
 .small-icon.status-user_withdrew {
-    background-image: url('~img/status/user_withdrew_small.png')
+    background-image: url('~img/status/icon-user_withdrew.svg')
 }
-.small-icon.status-user_withdrew_costs {
-    background-image: url('~img/status/user_withdrew_costs_small.png')
-}
-.small-icon.status-publicbody_needed {
-    background-image: url('~img/status/publicbody_needed_small.png')
-}
+// .small-icon.status-user_withdrew_costs {
+//     background-image: url('~img/status/icon-user_withdrew_costs.svg')
+// }
+// .small-icon.status-publicbody_needed {
+//     background-image: url('~img/status/icon-publicbody_needed.svg')
+// }
 .small-icon.status-awaiting_response {
-    background-image: url('~img/status/awaiting_response_small.png')
+    background-image: url('~img/status/icon-awaiting_response.svg')
 }
 .small-icon.status-overdue {
-    background-image: url('~img/status/overdue_small.png')
+    background-image: url('~img/status/icon-overdue.svg')
 }
 .small-icon.status-asleep {
-    background-image: url('~img/status/asleep_small.png')
+    background-image: url('~img/status/icon-asleep.svg')
 }
 .small-icon.status-not_held {
-    background-image: url('~img/status/not_held_small.png')
+    background-image: url('~img/status/icon-not_held.svg')
 }
-.small-icon.status-has_fee {
-    background-image: url('~img/status/has_fee_small.png')
-}
+// .small-icon.status-has_fee {
+//     background-image: url('~img/status/icon-has_fee.svg')
+// }
 
 .icon.status-successful {
-    background-image: url('~img/status/successful.png')
+    background-image: url('~img/status/icon-successful.svg')
 }
 .icon.status-partially_successful {
-    background-image: url('~img/status/partially_successful.png')
+    background-image: url('~img/status/icon-partially_successful.svg')
 }
 .icon.status-refused {
-    background-image: url('~img/status/refused.png')
+    background-image: url('~img/status/icon-refused.svg')
 }
 .icon.status-user_withdrew {
-    background-image: url('~img/status/user_withdrew.png')
+    background-image: url('~img/status/icon-user_withdrew.svg')
 }
-.icon.status-user_withdrew_costs {
-    background-image: url('~img/status/user_withdrew_costs.png')
-}
-.icon.status-publicbody_needed {
-    background-image: url('~img/status/publicbody_needed.png')
-}
+// .icon.status-user_withdrew_costs {
+//     background-image: url('~img/status/icon-user_withdrew_costs.svg')
+// }
+// .icon.status-publicbody_needed {
+//     background-image: url('~img/status/icon-publicbody_needed.svg')
+// }
 .icon.status-awaiting_response {
-    background-image: url('~img/status/awaiting_response.png')
+    background-image: url('~img/status/icon-awaiting_response.svg')
 }
 .icon.status-overdue {
-    background-image: url('~img/status/overdue.png')
+    background-image: url('~img/status/icon-overdue.svg')
 }
 .icon.status-asleep {
-    background-image: url('~img/status/asleep.png')
+    background-image: url('~img/status/icon-asleep.svg')
 }
 .icon.status-not_held {
-    background-image: url('~img/status/not_held.png')
+    background-image: url('~img/status/icon-not_held.svg')
 }
-.icon.status-has_fee {
-    background-image: url('~img/status/has_fee.png')
-}
+// .icon.status-has_fee {
+//     background-image: url('~img/status/icon-has_fee.svg')
+// }
 
 .icon.status-awaiting_classification {
-    background-image: url('~img/status/awaiting_classification.png')
+    background-image: url('~img/status/icon-awaiting_classification.svg')
 }
 
 
