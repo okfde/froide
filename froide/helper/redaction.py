@@ -25,7 +25,7 @@ def can_redact_file(filetype, name=None):
 
 
 def redact_file(pdf_file, instructions):
-    dpi = 150
+    dpi = 300
     load_invisible_font()
     output = PdfFileWriter()
     pdf_reader = PdfFileReader(pdf_file, strict=False)
