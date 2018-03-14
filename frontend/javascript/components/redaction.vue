@@ -47,7 +47,7 @@
             </button>
           </form>
         </div>
-        <div class="btn-group">
+        <div class="btn-group mr-4" v-if="!canPublish">
           <a class="btn btn-secondary" :href="attachmentUrl">
             {{ i18n.cancel }}
           </a>
