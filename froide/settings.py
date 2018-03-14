@@ -24,6 +24,7 @@ class Base(Configuration):
     DEBUG = values.BooleanValue(True)
 
     DATABASES = values.DatabaseURLValue('spatialite:///dev.db')
+    SPATIALITE_LIBRARY_PATH = '/usr/local/lib/mod_spatialite.dylib'
     CONN_MAX_AGE = None
 
     INSTALLED_APPS = values.ListValue([
