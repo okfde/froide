@@ -3,12 +3,13 @@
 
   margin-bottom: 2rem;
 
-  .request-link__icon {
-    @extend .mr-3;
-  }
   .request-link__wrapper {
     @extend .media-body;
   }
+}
+
+.request-link__icon {
+  @extend .mr-3;
 }
 
 .request-link__body {
