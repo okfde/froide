@@ -19,24 +19,35 @@
           <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
             &laquo; {{ i18n.previousPage}}
           </button>
-          <span class="input-group-addon">
+          <span class="input-group-text">
             {{ pageOfTotal }}
           </span>
           <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
             {{ i18n.nextPage }} &raquo;
           </button>
         </div>
-        <div class="btn-group mr-2">
+
+        <div class="btn-group mr-4">
+          <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
+            <i class="fa fa-align-justify"></i>
+          </button>
+        </div>
+
+        <div class="btn-group mr-1">
           <button class="btn btn-primary" @click="redact">
-            {{ i18n.saveAndPublish }}
+            {{ i18n.redactAndPublish }}
           </button>
         </div>
-        <div class="btn-group mr-2">
-          <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText">
-            {{ i18n.toggleText }}
-          </button>
+        <div class="btn-group mr-4" v-if="canPublish">
+          <form method="post" :action="config.config.publishUrl">
+            <input type="hidden" name="csrfmiddlewaretoken" :value="config.config.csrfToken"/>
+            <button class="btn btn-success" type="submit">
+              <i class="fa fa-check"></i>
+              {{ i18n.publishWithoutRedaction }}
+            </button>
+          </form>
         </div>
-        <div class="btn-group mr-2">
+        <div class="btn-group">
           <a class="btn btn-secondary" :href="attachmentUrl">
             {{ i18n.cancel }}
           </a>
@@ -77,7 +88,7 @@ const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 export default {
   name: 'redaction',
-  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegexJson'],
+  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegexJson', 'canPublish'],
   data () {
     return {
       doc: null,

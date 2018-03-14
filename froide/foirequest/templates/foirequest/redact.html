@@ -25,6 +25,9 @@
         {% trans "What you need to redact" %}
       </h5>
       <div class="card-body">
+        <p>
+          {% trans "If this document <strong>is not a letter to you</strong> from a public body, but any other kind of document, it very likely <strong>does not need a redaction</strong>." %}
+        </p>
         <ul>
           <li>
             {% if foirequest.user == user %}
@@ -59,6 +62,9 @@
     <div class="card">
       <h5 class="card-header">{% trans "How to redact" %}</h5>
       <div class="card-body">
+        <p>
+          {% trans "If this document is a letter to you:" %}
+        </p>
         <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. Redact text by selecting it. You can also draw rectangles by clicking the mouse and dragging it. {% endblocktrans %}</p>
         <p>
           {% trans "Check the text only view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator." %}
@@ -77,7 +83,7 @@
     </form>
     <div class="card">
       <div class="card-body" id="redact">
-        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex-json="{{ foirequest.get_redaction_regexes }}" :config="config"></redaction>
+        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex-json="{{ foirequest.get_redaction_regexes }}" {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %} :config="config"></redaction>
       </div>
     </div>
   </div>
@@ -92,6 +98,7 @@
     Froide.resources.pdfjsWorker = '{% static "js/pdf.worker.min.js" %}'
     Froide.config = Froide.config || {}
     Froide.config.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    Froide.config.publishUrl = "{% url 'foirequest-approve_attachment' slug=foirequest.slug attachment=attachment.pk %}"
 
     Froide.i18n = Froide.i18n || {};
     (function () {
@@ -101,7 +108,8 @@
         pageCurrentOfTotal: function (obj) {
           return '{% blocktrans with current="$current" total="$total" %}{{ current }} of {{ total }}{% endblocktrans %}'.replace(/\$current/, obj.current).replace(/\$total/, obj.total)
         },
-        saveAndPublish: '{% trans "Save and publish" %}',
+        redactAndPublish: '{% trans "Save redaction" %}',
+        publishWithoutRedaction: '{% trans "No redaction needed" %}',
         toggleText: '{% trans "Text only" %}',
         cancel: '{% trans "Cancel" %}',
         loadingPdf: '{% trans "Loading PDF..." %}',
