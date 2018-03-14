@@ -24,7 +24,7 @@
     <h3>{% blocktrans count counter=requests|length %}One Request{% plural %}{{ counter }} requests{% endblocktrans %}</h3>
     <ul class="list-unstyled">
       {% for object in requests %}
-        <li class="media">
+        <li>
           {% include "foirequest/snippets/request_item.html" %}
         </li>
       {% endfor %}

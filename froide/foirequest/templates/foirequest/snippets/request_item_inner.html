@@ -1,26 +1,28 @@
 {% load i18n %}
-<h5 class="mt-0 mb-1">
-  <a href="{{ object.url }}">
-    {{ object.title }}
-  </a>
-  <br/>
-  <small>
-    {% if object.project %}
-      {% blocktrans with name=object.public_body.name url=object.public_body.get_absolute_url count=project.request_count|add:-1 urlp=project.get_absolute_url %}to <a href="{{ url }}">{{ name }}</a> and <a href="{{ urlp }}">{{ count }} other public bodies</a>{% endblocktrans %}
-    {% elif object.public_body_name %}
-      {% blocktrans with name=object.public_body_name %}to {{ name }}{% endblocktrans %}
-    {% elif object.public_body %}
-      {% blocktrans with url=object.public_body.get_absolute_url name=object.public_body.name %}
-        <a href="{{ url }}">{{ name }}</a>
-      {% endblocktrans %}
-      <span class="muted">({{ object.jurisdiction.name }})</span>
-    {% else %}
-      {% blocktrans %}Not yet set{% endblocktrans %}
-    {% endif %}
+<div class="request-link__body">
+  <h5 class="mt-0 mb-1">
+    <a href="{{ object.url }}">
+      {{ object.title }}
+    </a>
     <br/>
-    {{ object.readable_status }},
-    <span title="{{ object.last_message }}">{% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span>{% if object.costs %},
-    {{ object.costs|floatformat:2 }} {{ froide.currency }}{% endif %}
-    {% if object.same_as_count %} - <a class="muted" href="{{ object.url }}#identical">{% blocktrans count counter=object.same_as_count %}{{ counter }} identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>{% endif %}
-  </small>
-</h5>
+    <small>
+      {% if object.project %}
+        {% blocktrans with name=object.public_body.name url=object.public_body.get_absolute_url count=project.request_count|add:-1 urlp=project.get_absolute_url %}to <a href="{{ url }}">{{ name }}</a> and <a href="{{ urlp }}">{{ count }} other public bodies</a>{% endblocktrans %}
+      {% elif object.public_body_name %}
+        {% blocktrans with name=object.public_body_name %}to {{ name }}{% endblocktrans %}
+      {% elif object.public_body %}
+        {% blocktrans with url=object.public_body.get_absolute_url name=object.public_body.name %}
+          <a href="{{ url }}">{{ name }}</a>
+        {% endblocktrans %}
+        – <span class="muted">{{ object.jurisdiction.name }}</span>
+      {% else %}
+        {% blocktrans %}Not yet set{% endblocktrans %}
+      {% endif %}
+      <br/>
+      {{ object.readable_status }},
+      <span title="{{ object.last_message }}">{% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span>{% if object.costs %},
+      {{ object.costs|floatformat:2 }} {{ froide.currency }}{% endif %}
+      {% if object.same_as_count %} - <a class="muted" href="{{ object.url }}#identical">{% blocktrans count counter=object.same_as_count %}{{ counter }} identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</a>{% endif %}
+    </small>
+  </h5>
+</div>

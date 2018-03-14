@@ -56,10 +56,10 @@
       {% for object in object_list %}
         {% block table_row %}
         <tr class="{% if object.user == request.user and object.is_important %}warning{% endif %}">
-          <td class="media">
+          <td>
             <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
           </td>
-          <td>
+          <td class="request-link__body">
             {% include "foirequest/snippets/request_item_inner.html" %}
 
             {% if object.status == "awaiting_response" %}

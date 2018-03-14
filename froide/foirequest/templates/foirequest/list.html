@@ -48,10 +48,18 @@
     {% block col-8-headline %}{% endblock col-8-headline %}
     <ul class="list-unstyled">
       {% for object in object_list %}
-      <li class="media">
-        {% include "foirequest/snippets/request_item.html" %}
-      </li>
-    {% endfor %}
+        <li>
+          {% include "foirequest/snippets/request_item.html" %}
+        </li>
+      {% empty %}
+        <li>
+          {% if filtered_objects %}
+            {% trans "No requests with these filters." %}
+          {% else %}
+            {% trans "No requests yet." %}
+          {% endif %}
+        </li>
+      {% endfor %}
     </ul>
     {% include "pagination/pagination.html" with page_obj=object_list %}
   </div>

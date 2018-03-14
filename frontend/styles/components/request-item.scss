@@ -1,0 +1,20 @@
+.request-link {
+  @extend .media;
+
+  margin-bottom: 2rem;
+
+  .request-link__icon {
+    @extend .mr-3;
+  }
+  .request-link__wrapper {
+    @extend .media-body;
+  }
+}
+
+.request-link__body {
+  color: $gray-500;
+
+  a {
+    color: $black;
+  }
+}

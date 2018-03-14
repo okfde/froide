@@ -36,7 +36,7 @@
         </h3>
         <ul class="list-unstyled">
           {% for object in foirequests %}
-            <li class="media">
+            <li>
               {% include "foirequest/snippets/request_item.html" %}
             </li>
           {% empty %}
@@ -53,7 +53,7 @@
         </h3>
         <ul class="list-unstyled">
           {% for object in publicbodies %}
-            <li class="media">
+            <li>
               {% include "publicbody/snippets/publicbody_item.html" %}
             </li>
           {% empty %}

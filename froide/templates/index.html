@@ -132,7 +132,7 @@
       <h3>{% blocktrans %}Successful Requests{% endblocktrans %}</h3>
       <ul class="list-unstyled">
         {% for object in successful_foi_requests %}
-          <li class="media">
+          <li>
             {% include "foirequest/snippets/request_item.html" %}
           </li>
         {% endfor %}
@@ -144,7 +144,7 @@
       <h3>{% blocktrans %}Unsuccessful Requests{% endblocktrans %}</h3>
       <ul class="list-unstyled">
         {% for object in unsuccessful_foi_requests %}
-          <li class="media">
+          <li>
             {% include "foirequest/snippets/request_item.html" %}
           </li>
         {% endfor %}
