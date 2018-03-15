@@ -74,16 +74,6 @@ def get_filter_data(filter_kwargs, data):
     return data
 
 
-class ModelSlugChoiceField(django_filters.fields.ModelChoiceField):
-    def __init__(self, *args, **kwargs):
-        super(ModelSlugChoiceField, self).__init__(*args, **kwargs)
-        self.to_field_name = 'slug'
-
-
-class ModelSlugChoiceFilter(django_filters.ModelChoiceFilter):
-    field_class = ModelSlugChoiceField
-
-
 class DropDownStatusFilterWidget(DropDownFilterWidget):
     def create_option(self, name, value, label, selected, index,
                       subindex=None, attrs=None):
@@ -103,26 +93,30 @@ class FoiRequestFilterSet(django_filters.FilterSet):
         ),
         method='filter_status',
     )
-    jurisdiction = ModelSlugChoiceFilter(
+    jurisdiction = django_filters.ModelChoiceFilter(
         queryset=Jurisdiction.objects.get_visible(),
+        to_field_name='slug',
         widget=DropDownFilterWidget(
             attrs={'label': _('By jurisdiction')}
         ),
         method='filter_jurisdiction'
     )
-    topic = ModelSlugChoiceFilter(
+    topic = django_filters.ModelChoiceFilter(
         queryset=Category.objects.get_category_list(),
+        to_field_name='slug',
         widget=DropDownFilterWidget(
             attrs={'label': _('By category')}
         ),
         method='filter_topic'
     )
-    tag = ModelSlugChoiceFilter(
+    tag = django_filters.ModelChoiceFilter(
         queryset=Tag.objects.all(),
+        to_field_name='slug',
         method='filter_tag'
     )
-    publicbody = ModelSlugChoiceFilter(
+    publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody.objects.all(),
+        to_field_name='slug',
         method='filter_publicbody'
     )
 

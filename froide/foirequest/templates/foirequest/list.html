@@ -39,19 +39,19 @@
 {% endblock headline %}
 
 <div class="row mb-5 align-items-start">
-  {% if jurisdiction_list|length > 1 %}
+  {% if form.jurisdiction.field.choices|length > 1 %}
     <div class="col-md-3">
-      {{ filter_form.jurisdiction }}
+      {{ form.jurisdiction }}
     </div>
   {% endif %}
 
   <div class="col-md-3">
-    {{ filter_form.status }}
+    {{ form.status }}
   </div>
 
   {% comment %}
   <div class="col-auto">
-    {{ filter_form.topic }}
+    {{ form.topic }}
   </div>
   {% endcomment %}
 

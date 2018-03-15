@@ -21,11 +21,8 @@ def make_filter_url(data):
 class DropDownFilterWidget(forms.widgets.ChoiceWidget):
     template_name = 'foirequest/widgets/dropdown_filter.html'
 
-    def value_from_datadict(self, data, files, name):
-        value = super(DropDownFilterWidget, self).value_from_datadict(
-            data, files, name
-        )
-        self.data = data
+    def render(self, name, value, attrs=None, renderer=None):
+        value = super(DropDownFilterWidget, self).render(name, value, attrs=attrs, renderer=renderer)
         return value
 
     def get_context(self, name, value, attrs):
@@ -42,6 +39,7 @@ class DropDownFilterWidget(forms.widgets.ChoiceWidget):
             label, selected, index, subindex=subindex, attrs=attrs)
         if selected and value:
             self.selected_label = label
+        # Data is set on widget directly before rendering
         data = self.data.copy()
         data[name] = value
         option['url'] = make_filter_url(data)

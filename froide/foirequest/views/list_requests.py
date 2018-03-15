@@ -12,9 +12,7 @@ from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiAttachment
 from ..feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
-from ..filters import (
-    get_filter_data, FoiRequestFilterSet, FOIREQUEST_FILTER_RENDER
-)
+from ..filters import get_filter_data, FoiRequestFilterSet
 
 
 def list_requests(request, not_foi=False, feed=None, **filter_kwargs):
@@ -24,14 +22,21 @@ def list_requests(request, not_foi=False, feed=None, **filter_kwargs):
     manager = FoiRequest.published
     if not_foi:
         manager = FoiRequest.published_not_foi
-    topic_list = Category.objects.get_category_list()
 
     foi_requests = manager.for_list_view()
 
     data = get_filter_data(filter_kwargs, dict(request.GET.items()))
     filtered = FoiRequestFilterSet(data, queryset=foi_requests)
+    form = filtered.form
+    form.is_valid()
+
+    # Set only valid data on widgets so they can render filter links
+    data_clean_only = {k: v for k, v in data.items() if k in form.cleaned_data}
+    for name, field in filtered.form.fields.items():
+        field.widget.data = data_clean_only
 
     foi_requests = filtered.qs
+
     filtered_objs = filtered.form.cleaned_data
     filtered_objs = {k: v for k, v in filtered_objs.items() if v}
 
@@ -43,14 +48,9 @@ def list_requests(request, not_foi=False, feed=None, **filter_kwargs):
             klass = LatestFoiRequestsFeedAtom
         return klass(foi_requests, **filtered_objs)(request)
 
-    count = foi_requests.count()
-
     page = request.GET.get('page')
-    paginator = Paginator(foi_requests, 20)
+    paginator = Paginator(foi_requests, 30)
 
-    if request.GET.get('all') is not None:
-        if count <= 500:
-            paginator = Paginator(foi_requests, count)
     try:
         foi_requests = paginator.page(page)
     except PageNotAnInteger:
@@ -60,13 +60,10 @@ def list_requests(request, not_foi=False, feed=None, **filter_kwargs):
 
     context.update({
         'page_title': _("FoI Requests"),
-        'count': count,
+        'count': paginator.count,
         'not_foi': not_foi,
         'object_list': foi_requests,
-        'jurisdiction_list': Jurisdiction.objects.get_visible(),
-        'status_list': FOIREQUEST_FILTER_RENDER,
-        'topic_list': topic_list,
-        'filter_form': filtered.form,
+        'form': form,
         'filtered_objects': filtered_objs
     })
 
