@@ -180,8 +180,12 @@ class FoiMessageAdmin(admin.ModelAdmin):
     list_display = ('subject', 'timestamp', 'sender_email', 'recipient_email',)
     list_filter = (
         'is_postal', 'is_response', 'sent', 'status',
+        make_nullfilter('recipient_public_body', _('Has recipient public body')),
         'deliverystatus__status',
-        make_nullfilter('deliverystatus', _('Has delivery status'))
+        make_nullfilter('deliverystatus', _('Has delivery status')),
+        'sender_user__is_active',
+        'sender_user__is_blocked',
+        'sender_user__is_deleted',
     )
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
