@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="col-lg-7 mb-2 ">
+<div class="col-lg-8 mb-2 ">
   {% include "foirequest/snippets/attachment_item.html" %}
   {% if attachment.redacted %}
     <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
@@ -12,8 +12,18 @@
       {% blocktrans %}protected original{% endblocktrans %}
     </span>
   {% endif %}
+  {% if attachment.approved %}
+    <span class="badge badge-success">
+      {% blocktrans %}published{% endblocktrans %}
+    </span>
+  {% endif %}
+  {% if attachment.is_redacted %}
+    <span class="badge badge-dark">
+      {% blocktrans %}redacted{% endblocktrans %}
+    </span>
+  {% endif %}
 </div>
-<div class="col-lg-5 text-right">
+<div class="col-lg-4 text-right">
   {% if attachment.can_redact %}
     <a class="btn btn-sm btn-dark d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
       {% trans "Redact" %}

@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="col-lg-7 mb-2 ">
+<div class="col-lg-8 mb-2 ">
   {% if attachment.can_redact %}
     <span>
       <i class="fa fa-paperclip" aria-hidden="true"></i>
@@ -16,7 +16,7 @@
     {% blocktrans %}Not public!{% endblocktrans %}
   </span>
 </div>
-<div class="col-lg-5 text-right">
+<div class="col-lg-4 text-right">
   {% if attachment.can_approve %}
     <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
       {% if attachment.can_redact %}
