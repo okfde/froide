@@ -377,7 +377,7 @@ class PublicBody(models.Model):
             'address', 'domain', 'number_of_requests')
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.jurisdiction)
+        return self.name
 
     @property
     def created_by(self):
