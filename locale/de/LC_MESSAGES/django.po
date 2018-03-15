@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-14 22:31+0100\n"
-"PO-Revision-Date: 2018-03-14 22:31+0100\n"
+"POT-Creation-Date: 2018-03-15 12:58+0100\n"
+"PO-Revision-Date: 2018-03-15 12:59+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1434,15 +1434,15 @@ msgstr "nicht-vorhanden"
 msgid "has-fee"
 msgstr "gebuehr-erhoben"
 
-#: froide/foirequest/filters.py:102
+#: froide/foirequest/filters.py:92
 msgid "By status"
 msgstr "Nach Status"
 
-#: froide/foirequest/filters.py:109
+#: froide/foirequest/filters.py:100
 msgid "By jurisdiction"
 msgstr "Nach Zuständigkeitsbereich"
 
-#: froide/foirequest/filters.py:116
+#: froide/foirequest/filters.py:108
 msgid "By category"
 msgstr "Nach Kategorie"
 
@@ -4193,7 +4193,15 @@ msgstr ""
 "Dieser Anhang wurde in ein PDF konvertiert und kann nicht veröffentlicht "
 "werden."
 
-#: froide/foirequest/templates/foirequest/snippets/attachment_approved.html:19
+#: froide/foirequest/templates/foirequest/snippets/attachment_approved.html:17
+msgid "published"
+msgstr "veröffentlicht"
+
+#: froide/foirequest/templates/foirequest/snippets/attachment_approved.html:22
+msgid "redacted"
+msgstr "geschwärzt"
+
+#: froide/foirequest/templates/foirequest/snippets/attachment_approved.html:29
 msgid "Redact"
 msgstr "Schwärzen"
 
