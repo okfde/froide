@@ -6,8 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from haystack.query import SearchQuerySet
 
-
-from froide.publicbody.models import PublicBody, Category, Jurisdiction
+from froide.publicbody.models import PublicBody
 from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiAttachment
