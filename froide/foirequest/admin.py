@@ -30,7 +30,9 @@ SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
 
 class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
-    raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
+    raw_id_fields = (
+        'request', 'sender_user', 'sender_public_body', 'recipient_public_body'
+    )
 
 
 class FoiRequestAdminForm(forms.ModelForm):
@@ -83,12 +85,14 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
-        self.message_user(request, _("%d request(s) successfully marked as checked." % rows_updated))
+        self.message_user(request,
+            _("%d request(s) successfully marked as checked." % rows_updated))
     mark_checked.short_description = _("Mark selected requests as checked")
 
     def mark_not_foi(self, request, queryset):
         rows_updated = queryset.update(is_foi=False)
-        self.message_user(request, _("%d request(s) successfully marked as not FoI." % rows_updated))
+        self.message_user(request,
+            _("%d request(s) successfully marked as not FoI." % rows_updated))
     mark_not_foi.short_description = _("Mark selected requests as not FoI")
 
     def mark_same_as(self, request, queryset):
@@ -109,7 +113,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
                 req = f.cleaned_data['obj']
                 queryset.update(same_as=req)
                 count_same_foirequests.delay(req.id)
-                self.message_user(request, _("Successfully marked requests as identical."))
+                self.message_user(request,
+                    _("Successfully marked requests as identical."))
                 # Return None to display the change list page again.
                 return None
         else:
@@ -152,7 +157,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     def set_visible_to_user(self, request, queryset):
         queryset.update(visibility=1)
-        self.message_user(request, _("Selected requests are now only visible to requester."))
+        self.message_user(request,
+            _("Selected requests are now only visible to requester."))
     set_visible_to_user.short_description = _("Set only visible to requester")
 
     def unpublish(self, request, queryset):
@@ -180,7 +186,8 @@ class FoiMessageAdmin(admin.ModelAdmin):
     list_display = ('subject', 'timestamp', 'sender_email', 'recipient_email',)
     list_filter = (
         'is_postal', 'is_response', 'sent', 'status',
-        make_nullfilter('recipient_public_body', _('Has recipient public body')),
+        make_nullfilter('recipient_public_body',
+                        _('Has recipient public body')),
         'deliverystatus__status',
         make_nullfilter('deliverystatus', _('Has delivery status')),
         'sender_user__is_active',
@@ -191,19 +198,35 @@ class FoiMessageAdmin(admin.ModelAdmin):
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
     exclude = ('original',)
-    raw_id_fields = ('request', 'sender_user', 'sender_public_body', 'recipient_public_body')
+    raw_id_fields = (
+        'request', 'sender_user', 'sender_public_body', 'recipient_public_body'
+    )
     inlines = [
         DeliveryStatusInline,
         FoiAttachmentInline,
     ]
-    actions = ['check_delivery_status']
+    actions = ['check_delivery_status', 'resend_message']
 
     def check_delivery_status(self, request, queryset):
         from .tasks import check_delivery_status
         for message in queryset:
             check_delivery_status.delay(message.id, extended=True)
-        self.message_user(request, _("Selected messages are being checked for delivery."))
+        self.message_user(request,
+            _("Selected messages are being checked for delivery."))
     check_delivery_status.short_description = _("Check delivery status")
+
+    def resend_message(self, request, queryset):
+        count = 0
+        total = len(queryset)
+        queryset = queryset.exclude(recipient_email='').filter(sent=False)
+        for message in queryset:
+            message.send(notify=False)
+            count += 1
+        self.message_user(request,
+            _("{num} of {total} selected messages were sent.").format(
+                num=count, total=total
+            ))
+    resend_message.short_description = _('Resend selected messages')
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):
@@ -329,7 +352,8 @@ class DeferredMessageAdmin(admin.ModelAdmin):
                 req = f.cleaned_data['obj']
                 for deferred in queryset:
                     deferred.redeliver(req)
-                self.message_user(request, _("Successfully triggered redelivery."))
+                self.message_user(request,
+                    _("Successfully triggered redelivery."))
                 return None
         else:
             f = Form()
