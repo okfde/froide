@@ -271,6 +271,31 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = PublicBodyFilter
 
+    REFINE_PROPOSE_PROPERTIES = [{
+        'id': 'classification',
+        'name': 'Classification',
+        'query': 'classification__name'
+        }, {
+        'id': 'jurisdiction',
+        'name': 'Jurisdiction',
+        'query': 'jurisdiction__name'
+        }, {
+        'id': 'email',
+        'name': 'Email'
+        }, {
+        'id': 'id',
+        'name': 'ID'
+        }, {
+        'id': 'slug',
+        'name': 'Slug'
+        }, {
+        'id': 'url',
+        'name': 'URL'
+    }]
+    REFINE_PROPOSE_PROPERTIES_DICT = {
+        p['id']: p for p in REFINE_PROPOSE_PROPERTIES
+    }
+
     @list_route(methods=['get'])
     def search(self, request):
         self.queryset = self.get_searchqueryset(request)
@@ -296,8 +321,60 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
         '''
         This is a OpenRefine Reconciliation API endpoint
         https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
-        It's a bit messy,
+        It's a bit messy.
         '''
+        self._apply_openrefine_jsonp(request)
+
+        if request.method == 'GET':
+            return self._reconciliation_meta(request)
+
+        methods = {
+            'queries': self._get_reconciliation_results,
+            'extend': self._get_reconciliation_extend
+        }
+
+        payload = None
+        for kind in methods.keys():
+            if request.POST.get(kind):
+                payload = request.POST.get(kind)
+                break
+
+        if payload is None:
+            return Response([])
+        try:
+            payload = json.loads(payload)
+        except ValueError:
+            return Response([])
+
+        method = methods[kind]
+        return Response(method(request, payload))
+
+    def _reconciliation_meta(self, request):
+        pb_api_url = reverse('api:publicbody-list', request=request)
+        magic = '13374223'
+        pb_detail_url = reverse('publicbody-publicbody_shortlink', kwargs={
+            'obj_id': magic
+        }, request=request)
+        pb_detail_url = pb_detail_url.replace(magic, '{{id}}')
+
+        return Response({
+            'name': "%s Reconciliation Service" % settings.SITE_NAME,
+            'identifierSpace': pb_api_url,
+            'schemaSpace': pb_api_url,
+            'view': {
+                'url': pb_detail_url
+            },
+            'defaultTypes': ['publicbody'],
+            'extend': {
+                'propose_properties': {
+                    'service_url': pb_api_url,
+                    'service_path': 'reconciliation-propose-properties/'
+                },
+                'property_settings': []
+            }
+        })
+
+    def _apply_openrefine_jsonp(self, request):
         if request.GET.get('callback'):
             # Force set JSONPRenderer
             request.accepted_renderer = JSONPRenderer()
@@ -305,36 +382,7 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
             # Fore JSONRenderer because requests come with HTML in Accept header
             request.accepted_renderer = JSONRenderer()
 
-        queries = None
-        if request.method == 'GET':
-            queries = request.GET.get('queries')
-        elif request.method == 'POST':
-            queries = request.POST.get('queries')
-        if queries is None:
-            pb_api_url = reverse('api:publicbody-list', request=request)
-            magic = '13374223'
-            pb_detail_url = reverse('publicbody-publicbody_shortlink', kwargs={
-                'obj_id': magic
-            }, request=request)
-            pb_detail_url = pb_detail_url.replace(magic, '{{id}}')
-
-            return Response({
-                'name': "%s Reconciliation Service" % settings.SITE_NAME,
-                'identifierSpace': pb_api_url,
-                'schemaSpace': pb_api_url,
-                'view': {
-                    'url': pb_detail_url
-                },
-                'defaultTypes': ['publicbody'],
-            })
-        try:
-            queries = json.loads(queries)
-        except ValueError:
-            return Response([])
-        results = self._get_reconciliation_results(queries)
-        return Response(results)
-
-    def _get_reconciliation_results(self, queries):
+    def _get_reconciliation_results(self, request, queries):
         result = {}
         for key in queries:
             query = queries[key]
@@ -373,6 +421,79 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
                 'score': r.score,
                 'match': r.score >= 4  # FIXME: this is quite arbitrary
             }
+
+    def _get_reconciliation_extend(self, request, query):
+        """
+        This implementation ignores settings
+        """
+        ids = query.get('ids', [])
+        properties = query.get('properties', [])
+        props = [
+            p['id'] for p in properties
+            if p.get('id') in self.REFINE_PROPOSE_PROPERTIES_DICT
+        ]
+        qs = PublicBody.objects.filter(id__in=ids)
+        for prop in self.REFINE_PROPOSE_PROPERTIES:
+            if prop['id'] in props and '__' in prop.get('query', ''):
+                qs = qs.select_related(prop['query'].split('__')[0])
+
+        meta = [{
+            'id': self.REFINE_PROPOSE_PROPERTIES_DICT[p]['id'],
+            'name': self.REFINE_PROPOSE_PROPERTIES_DICT[p]['name']
+        } for p in props]
+        objs = {str(o.id): o for o in qs}
+
+        def make_prop(pk, objs, props):
+            if pk not in objs:
+                return {p: {} for p in props}
+            obj = objs[pk]
+            result = {}
+            for p in props:
+                meta = self.REFINE_PROPOSE_PROPERTIES_DICT[p]
+                item = meta.get('query', meta['id'])
+                val = obj
+                for key in item.split('__'):
+                    val = getattr(val, key, None)
+                    if val is None:
+                        break
+                if val is None:
+                    val = {}
+                else:
+                    val = {'str': str(val)}
+                result[p] = [val]
+            return result
+
+        rows = {
+            id_: make_prop(id_, objs, props) for id_ in ids
+        }
+
+        return {
+            'meta': meta,
+            'rows': rows
+        }
+
+    @list_route(
+        methods=['get', 'post'],
+        permission_classes=(),
+        authentication_classes=(),
+        url_path='reconciliation-propose-properties'
+    )
+    def reconciliation_propose_properties(self, request):
+        """
+        Implements OpenRefine Data Extension API
+        https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+
+        """
+        self._apply_openrefine_jsonp(request)
+
+        properties = self.REFINE_PROPOSE_PROPERTIES
+        limit = request.GET.get('limit', len(properties))
+
+        return Response({
+            'properties': properties[:limit],
+            'type': 'publicbody',
+            'limit': limit
+        })
 
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
