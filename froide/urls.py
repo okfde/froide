@@ -20,7 +20,8 @@ from froide.publicbody.api_views import (ClassificationViewSet,
     CategoryViewSet, PublicBodyViewSet, JurisdictionViewSet, FoiLawViewSet)
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
-                                     JurisdictionSitemap, show_publicbody)
+                                     JurisdictionSitemap, show_publicbody,
+                                     publicbody_shortlink)
 from froide.foirequest.views import FoiRequestSitemap, index, dashboard
 
 from froide.helper import api_router
@@ -111,6 +112,9 @@ teams = pgettext('url part', 'teams')
 froide_urlpatterns += [
     # Translators: follow request URL
     url(r'^%s/' % pgettext('url part', 'follow'), include('froide.foirequestfollower.urls')),
+
+    url(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'b'),
+        publicbody_shortlink, name="publicbody-publicbody_shortlink"),
     # Translators: URL part
     url(r"^%s/(?P<slug>[-\w]+)/$" % pgettext('url part', 'entity'), show_publicbody,
             name="publicbody-show"),

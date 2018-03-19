@@ -79,6 +79,11 @@ def show_foilaw(request, slug):
     return render(request, 'publicbody/show_foilaw.html', context)
 
 
+def publicbody_shortlink(request, obj_id):
+    obj = get_object_or_404(PublicBody, pk=obj_id)
+    return redirect(obj)
+
+
 def show_publicbody(request, slug):
     obj = get_object_or_404(PublicBody, slug=slug)
     context = {
