@@ -30,6 +30,7 @@ django-oauth-toolkit = "*"
 coreapi = "*"
 django-filter = "*"
 django-treebeard = "*"
+djangorestframework-jsonp = "*"
 
 
 [dev-packages]

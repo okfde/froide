@@ -394,7 +394,12 @@ class Base(Configuration):
         ),
         'DEFAULT_PAGINATION_CLASS': 'froide.helper.api_utils.CustomLimitOffsetPagination',
         'PAGE_SIZE': 50,
-        'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+        'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+        'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
+            'rest_framework_jsonp.renderers.JSONPRenderer',
+        )
     }
 
     # ######### Froide settings ########

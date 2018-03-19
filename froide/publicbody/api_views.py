@@ -1,7 +1,15 @@
+import json
+
+from django.conf import settings
+
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from rest_framework.decorators import list_route
+from rest_framework.renderers import JSONRenderer
+
+from rest_framework_jsonp.renderers import JSONPRenderer
 
 from django_filters import rest_framework as filters
 
@@ -278,6 +286,93 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
         if page is not None:
             return self.get_paginated_response(data)
         return Response(data)
+
+    @list_route(
+        methods=['get', 'post'],
+        permission_classes=(),
+        authentication_classes=(),
+    )
+    def reconciliation(self, request):
+        '''
+        This is a OpenRefine Reconciliation API endpoint
+        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+        It's a bit messy,
+        '''
+        if request.GET.get('callback'):
+            # Force set JSONPRenderer
+            request.accepted_renderer = JSONPRenderer()
+        else:
+            # Fore JSONRenderer because requests come with HTML in Accept header
+            request.accepted_renderer = JSONRenderer()
+
+        queries = None
+        if request.method == 'GET':
+            queries = request.GET.get('queries')
+        elif request.method == 'POST':
+            queries = request.POST.get('queries')
+        if queries is None:
+            pb_api_url = reverse('api:publicbody-list', request=request)
+            magic = '13374223'
+            pb_detail_url = reverse('publicbody-publicbody_shortlink', kwargs={
+                'obj_id': magic
+            }, request=request)
+            pb_detail_url = pb_detail_url.replace(magic, '{{id}}')
+
+            return Response({
+                'name': "%s Reconciliation Service" % settings.SITE_NAME,
+                'identifierSpace': pb_api_url,
+                'schemaSpace': pb_api_url,
+                'view': {
+                    'url': pb_detail_url
+                },
+                'defaultTypes': ['publicbody'],
+            })
+        try:
+            queries = json.loads(queries)
+        except ValueError:
+            return Response([])
+        results = self._get_reconciliation_results(queries)
+        return Response(results)
+
+    def _get_reconciliation_results(self, queries):
+        result = {}
+        for key in queries:
+            query = queries[key]
+            result[key] = {
+                'result': list(self._get_reconciliation_result(query))
+            }
+        return result
+
+    def _get_reconciliation_result(self, query):
+        limit = min(query.get('limit', 3), 10)
+        q = query.get('query')
+        properties = query.get('properties', [])
+        ALLOWED_PROPERTIES = set(['jurisdiction'])
+        filters = {}
+        for prop in properties:
+            if prop.get('p', None) in ALLOWED_PROPERTIES:
+                v = prop.get('v', None)
+                if v is None:
+                    continue
+                if isinstance(v, list):
+                    if not v:
+                        continue
+                    v = v[0]
+                filters[prop['p']] = str(v)
+        if not q:
+            return
+        sqs = SearchQuerySet().models(PublicBody)
+        for key, val in filters.items():
+            sqs = sqs.filter(**{key: val})
+        sqs = sqs.auto_query(q)[:limit]
+        for r in sqs:
+            yield {
+                'id': str(r.pk),
+                'name': r.name,
+                'type': [r.model_name],
+                'score': r.score,
+                'match': r.score >= 4  # FIXME: this is quite arbitrary
+            }
 
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
