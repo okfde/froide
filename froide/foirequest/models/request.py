@@ -379,6 +379,10 @@ class FoiRequest(models.Model):
     def status_settable(self):
         return self.awaits_classification()
 
+    @property
+    def has_fee(self):
+        return self.costs > 0
+
     def identical_count(self):
         if self.same_as:
             return self.same_as.same_as_count

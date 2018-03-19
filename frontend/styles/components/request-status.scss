@@ -5,6 +5,18 @@
     height: 45px;
     background-repeat: no-repeat;
     background-position: 0 0;
+    position: relative;
+
+    &.--has-fee::after {
+      content: '';
+      background-image: url('~img/status/icon-fee.svg');
+      background-repeat: no-repeat;
+      width: 1.5rem;
+      height: 1.5rem;
+      position: absolute;
+      bottom: -0.6rem;
+      right: 0;
+    }
 }
 
 .small-icon {
@@ -85,7 +97,6 @@
 .icon.status-awaiting_classification {
     background-image: url('~img/status/icon-awaiting_classification.svg')
 }
-
 
 .js .status-section {
     display:none;
