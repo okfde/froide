@@ -31,6 +31,9 @@
           <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
             <i class="fa fa-align-justify"></i>
           </button>
+          <button class="btn" :class="{'btn-outline-info': !textDisabled, 'btn-info': textDisabled}" @click.stop="toggleDrawing" :title="i18n.disableText">
+            <i class="fa fa-image"></i>
+          </button>
         </div>
 
         <div class="btn-group mr-1">
@@ -59,8 +62,8 @@
         <div v-if="errors" class="alert alert-warning">{{ errors }}</div>
         <div :id="containerId" class="redactContainer">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
-          <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer"></canvas>
-          <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly }" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></div>
+          <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></canvas>
+          <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly, textDisabled: textDisabled }" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></div>
         </div>
         <div class="redaction-progress">
           <p v-if="loading">
@@ -102,6 +105,7 @@ export default {
       loading: true,
       ready: false,
       textOnly: false,
+      textDisabled: false,
       redacting: false,
       scaleFactor: PDF_TO_CSS_UNITS,
       actionsPerPage: {},
@@ -238,6 +242,15 @@ export default {
     },
     toggleText () {
       this.textOnly = !this.textOnly
+      if (this.textOnly) {
+        this.textDisabled = false
+      }
+    },
+    toggleDrawing () {
+      this.textDisabled = !this.textDisabled
+      if (this.textDisabled) {
+        this.textOnly = false
+      }
     },
     redact () {
       this.ready = false
@@ -706,6 +719,9 @@ export default {
 
   .textLayer.textActive {
     opacity: 1.0;
+  }
+  .textLayer.textDisabled {
+    visibility: hidden;
   }
 
   .textLayer.textActive > div {
