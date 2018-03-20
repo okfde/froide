@@ -440,6 +440,9 @@ export default {
 
         return nodes
       }
+
+      let actions = []
+
       for (var i = 0; i < selection.rangeCount; i += 1) {
         let range = selection.getRangeAt(i)
         if (range.isCollapsed) { continue }
@@ -450,7 +453,7 @@ export default {
             node = node.parentNode
           }
           let action = this.redactRange(node, range.startOffset, range.endOffset)
-          this.addAction(action)
+          actions.push(action)
           continue
         }
         // FIXME: weird other logic
@@ -476,8 +479,20 @@ export default {
             return
           }
           let action = this.redactRange(node, start, end)
-          this.addAction(action)
+          actions.push(action)
         })
+      }
+      let action = this.combineActions(actions)
+      this.addAction(action)
+    },
+    combineActions (actions) {
+      let texts = actions.reduce((a, b) => a.concat(b.texts), [])
+      let rects = actions.reduce((a, b) => a.concat(b.rects), [])
+      return {
+        type: 'redact',
+        texts: texts,
+        rects: rects,
+        page: this.currentPage
       }
     },
     textAvailable () {
