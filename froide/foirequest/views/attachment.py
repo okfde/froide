@@ -74,17 +74,11 @@ def redact_attachment(request, slug, attachment_id):
         return render_403(request)
     attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
             belongs_to__request=foirequest)
-    if not attachment.can_approve and not request.user.is_staff:
-        return render_403(request)
     already = None
     if attachment.redacted:
         already = attachment.redacted
     elif attachment.is_redacted:
         already = attachment
-
-    if (already is not None and not already.can_approve and
-            not request.user.is_staff):
-        return render_403(request)
 
     if request.method == 'POST':
         # Python 2.7/3.5 requires str for json.loads
