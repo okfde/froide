@@ -344,7 +344,9 @@ export default {
       if (selection !== undefined && !selection.isCollapsed) {
         console.log(selection)
         this.startDrag = null
-        return this.handleSelection(selection)
+        this.handleSelection(selection)
+        selection.removeAllRanges()
+        return
       }
 
       if (this.startDrag === null) {
