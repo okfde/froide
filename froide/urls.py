@@ -9,7 +9,6 @@ from django.contrib.flatpages.sitemaps import FlatPageSitemap
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
 
 from rest_framework.schemas import get_schema_view
 
@@ -75,13 +74,14 @@ PROTOCOL = settings.SITE_URL.split(':')[0]
 for klass in sitemaps.values():
     klass.protocol = PROTOCOL
 
-froide_urlpatterns = [
+sitemap_urlpatterns = [
     url(r'^sitemap\.xml$', sitemaps_views.index,
         {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemaps'}),
     url(r'^sitemap-(?P<section>.+)\.xml$', sitemaps_views.sitemap,
         {'sitemaps': sitemaps}, name='sitemaps')
 ]
 
+froide_urlpatterns = []
 
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
@@ -98,7 +98,6 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
 froide_urlpatterns += [
     # Translators: URL part
     url(r'^', include('froide.foirequest.urls')),
-    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}),
 ]
 
 if len(settings.LANGUAGES) > 1:
@@ -201,4 +200,4 @@ jurisdiction_urls = [
 urlpatterns = froide_urlpatterns + [
     url(r'^$', index, name='index'),
     url(r'^dashboard/$', dashboard, name='dashboard'),
-] + help_urlpatterns + jurisdiction_urls
+] + sitemap_urlpatterns + help_urlpatterns + jurisdiction_urls
