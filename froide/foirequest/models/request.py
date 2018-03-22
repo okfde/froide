@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import timedelta
 import json
 import re
+import os
 
 from django.utils.six import string_types, text_type as str
 from django.db import models
@@ -658,6 +659,7 @@ class FoiRequest(models.Model):
 
         account_service = AccountService(self.user)
 
+        names = set()
         for i, attachment in enumerate(email['attachments']):
             att = FoiAttachment(belongs_to=message,
                     name=attachment.name,
@@ -670,12 +672,22 @@ class FoiRequest(models.Model):
             repl = str(_('NAME'))
             att.name = account_service.apply_name_redaction(att.name, repl)
             att.name = re.sub(r'[^A-Za-z0-9_\.\-]', '', att.name)
-            att.name = att.name[:255]
+            att.name = att.name[:250]
+
+            # Assure name is unique
+            if att.name in names:
+                att.name = self._add_number_to_filename(att.name, i)
+            names.add(att.name)
+
             attachment._committed = False
             att.file = File(attachment)
             att.save()
 
         self.message_received.send(sender=self, message=message)
+
+    def _add_number_to_filename(self, filename, num):
+        path, ext = os.path.splitext(filename)
+        return '%s_%d%s' % (path, num, ext)
 
     def add_message(self, user, recipient_name, recipient_email,
             subject, message, recipient_pb=None, send_address=True):
