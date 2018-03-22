@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from django.core.files import File
 
@@ -136,25 +137,21 @@ def convert_attachment(att):
     if result_file is None:
         return
 
-    path, filename = os.path.split(result_file)
-
     if att.converted:
         new_att = att.converted
     else:
-        if FoiAttachment.objects.filter(
-                belongs_to=att.belongs_to,
-                name=filename).exists():
-            name, extension = filename.rsplit('.', 1)
-            filename = '%s_converted.%s' % (name, extension)
+        name, ext = os.path.splitext(att.name)
+        name = _('{name}_converted{ext}').format(name=name, ext=ext)
 
         new_att = FoiAttachment(
+            name=name,
             belongs_to=att.belongs_to,
             approved=False,
             filetype='application/pdf',
             is_converted=True
         )
 
-    new_att.name = filename
+    filename = os.path.basename(result_file)
     with open(result_file, 'rb') as f:
         new_file = File(f)
         new_att.size = new_file.size
