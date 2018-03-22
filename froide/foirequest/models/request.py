@@ -15,7 +15,7 @@ from django.urls import reverse
 from django.core.files import File
 import django.dispatch
 from django.template.loader import render_to_string
-from django.core.mail import send_mail, mail_managers
+from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -655,7 +655,6 @@ class FoiRequest(models.Model):
         self.status = 'awaiting_classification'
         self.last_message = message.timestamp
         self.save()
-        has_pdf = False
 
         account_service = AccountService(self.user)
 
@@ -672,16 +671,10 @@ class FoiRequest(models.Model):
             att.name = account_service.apply_name_redaction(att.name, repl)
             att.name = re.sub(r'[^A-Za-z0-9_\.\-]', '', att.name)
             att.name = att.name[:255]
-            if att.name.endswith('pdf') or 'pdf' in att.filetype:
-                has_pdf = True
             attachment._committed = False
             att.file = File(attachment)
             att.save()
-        if (has_pdf and
-                settings.FROIDE_CONFIG.get("mail_managers_on_pdf_attachment",
-                    False)):
-            mail_managers(_('Message contains PDF'),
-                    self.get_absolute_domain_url())
+
         self.message_received.send(sender=self, message=message)
 
     def add_message(self, user, recipient_name, recipient_email,
