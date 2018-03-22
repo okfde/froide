@@ -39,8 +39,8 @@ class HashedFilenameStorage(FileSystemStorage):
     def _save(self, name, content):
         hashed_name = self._get_content_name(name=name, content=content)
         if self.exists(hashed_name):
-            # if the file exists, just return the name,
+            # if the file exists, just return the hashed name,
             # the file should be the same
-            return name
+            return hashed_name
         # if the file is new, DO call it
         return super(HashedFilenameStorage, self)._save(hashed_name, content)
