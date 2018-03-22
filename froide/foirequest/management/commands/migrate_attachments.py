@@ -49,7 +49,7 @@ class Command(BaseCommand):
             json.dump(self.missing_attachments, f)
 
     def handle_folder(self, folder):
-        for file_entry in os.scandir(folder):
+        for file_entry in os.scandir(folder.path):
             if file_entry.is_file():
                 message_id = int(folder.name)
                 all_attachments = FoiAttachment.objects.filter(
