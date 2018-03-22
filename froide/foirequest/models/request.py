@@ -661,10 +661,12 @@ class FoiRequest(models.Model):
 
         names = set()
         for i, attachment in enumerate(email['attachments']):
-            att = FoiAttachment(belongs_to=message,
-                    name=attachment.name,
-                    size=attachment.size,
-                    filetype=attachment.content_type)
+            att = FoiAttachment(
+                belongs_to=message,
+                name=attachment.name,
+                size=attachment.size,
+                filetype=attachment.content_type
+            )
             if not att.name:
                 att.name = _("attached_file_%d") % i
 
