@@ -137,11 +137,14 @@ def convert_attachment(att):
     if result_file is None:
         return
 
+    result_filename = os.path.basename(result_file)
+    result_name, result_ext = os.path.splitext(result_filename)
+
     if att.converted:
         new_att = att.converted
     else:
         name, ext = os.path.splitext(att.name)
-        name = _('{name}_converted{ext}').format(name=name, ext=ext)
+        name = _('{name}_converted{ext}').format(name=name, ext=result_ext)
 
         new_att = FoiAttachment(
             name=name,
@@ -151,11 +154,10 @@ def convert_attachment(att):
             is_converted=True
         )
 
-    filename = os.path.basename(result_file)
     with open(result_file, 'rb') as f:
         new_file = File(f)
         new_att.size = new_file.size
-        new_att.file.save(filename, new_file)
+        new_att.file.save(new_att.name, new_file)
     new_att.save()
     att.converted = new_att
     att.save()
