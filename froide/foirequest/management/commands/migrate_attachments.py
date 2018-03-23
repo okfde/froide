@@ -87,8 +87,9 @@ class Command(BaseCommand):
         new_path = os.path.join(settings.MEDIA_ROOT, stored_path)
 
         print('Move from %s to %s' % (orig_file_path, new_path))
+        new_base_path = os.path.dirname(new_path)
+
         if not os.path.exists(new_path):
-            new_base_path = os.path.dirname(new_path)
             print('Creating dirs for', new_base_path)
             if self.run_now:
                 mode_kwarg = {}
