@@ -234,7 +234,7 @@ class FoiMessage(models.Model):
     @property
     def attachments(self):
         if not hasattr(self, "_attachments"):
-            self._attachments = list(self.foiattachment_set.all())
+            self._attachments = list(self.foiattachment_set.all().order_by('id'))
         return self._attachments
 
     def get_subject(self, user=None):
