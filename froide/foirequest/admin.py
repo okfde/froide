@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import re
 
 from django.contrib import admin
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
@@ -23,6 +24,7 @@ from .models import (FoiRequest, FoiMessage, FoiProject,
         FoiAttachment, FoiEvent, PublicBodySuggestion,
         DeferredMessage, TaggedFoiRequest, RequestDraft, DeliveryStatus)
 from .tasks import count_same_foirequests, convert_attachment_task
+from .widgets import AttachmentFileWidget
 
 
 SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
@@ -170,6 +172,9 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 class FoiAttachmentInline(admin.TabularInline):
     model = FoiAttachment
     raw_id_fields = ('redacted', 'converted')
+    formfield_overrides = {
+        models.FileField: {'widget': AttachmentFileWidget},
+    }
 
 
 class DeliveryStatusInline(admin.TabularInline):
@@ -238,6 +243,9 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
                    make_nullfilter('converted', _('Has converted version'))
     )
     search_fields = ['name']
+    formfield_overrides = {
+        models.FileField: {'widget': AttachmentFileWidget},
+    }
     actions = ['approve', 'cannot_approve', 'convert']
 
     def admin_link_message(self, obj):

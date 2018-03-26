@@ -44,3 +44,7 @@ class DropDownFilterWidget(forms.widgets.ChoiceWidget):
         data[name] = value
         option['url'] = make_filter_url(data)
         return option
+
+
+class AttachmentFileWidget(forms.ClearableFileInput):
+    template_name = 'foirequest/widgets/attachment_file.html'
