@@ -461,7 +461,8 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
             is_postal=True,
         )
         # TODO: Check if timezone support is correct
-        date = datetime.datetime.combine(self.cleaned_data['date'], datetime.time())
+        date = datetime.datetime.combine(self.cleaned_data['date'],
+                                         datetime.datetime.now().time())
         message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = self.cleaned_data.get('subject', '')
         message.subject_redacted = message.redact_subject()[:250]
