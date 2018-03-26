@@ -7,6 +7,8 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 
 
 class CustomLimitOffsetPagination(LimitOffsetPagination):
+    max_limit = 50
+
     def get_paginated_response(self, data):
         return Response(OrderedDict([
             ('meta', OrderedDict([
