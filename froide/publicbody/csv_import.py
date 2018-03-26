@@ -71,6 +71,9 @@ class CSVImporter(object):
         parent = row.pop('parent__name', None)
         if parent:
             row['parent'] = PublicBody.objects.get(slug=slugify(parent))
+        parent = row.pop('parent__id', None)
+        if parent:
+            row['parent'] = PublicBody.objects.get(pk=parent)
 
         # get optional values
         for n in ('description', 'other_names', 'request_note', 'website_dump'):
@@ -83,6 +86,7 @@ class CSVImporter(object):
                 pb = PublicBody.objects.get(slug=row['slug'])
             # If it exists, update it
             row.pop('id', None)  # Do not update id though
+            row.pop('slug', None)  # Do not update slug either
             row['_updated_by'] = self.user
             PublicBody.objects.filter(id=pb.id).update(**row)
             pb.laws.clear()
