@@ -364,7 +364,12 @@ class PublicBodyViewSet(viewsets.ReadOnlyModelViewSet):
             'view': {
                 'url': pb_detail_url
             },
-            'defaultTypes': ['publicbody'],
+            'defaultTypes': [
+                {
+                    'id': 'publicbody',
+                    'name': 'Public Body',
+                }
+            ],
             'extend': {
                 'propose_properties': {
                     'service_url': pb_api_url,
