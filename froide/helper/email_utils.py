@@ -50,6 +50,14 @@ def make_address(email, name=None):
     return email
 
 
+DISPO_SPLIT = re.compile(r'''((?:[^;"']|"[^"]*"|'[^']*')+)''')
+
+
+def split_with_quotes(dispo):
+    return [x.strip() for x in DISPO_SPLIT.split(dispo.strip())
+            if x and x != ';']
+
+
 class UnsupportedMailFormat(Exception):
     pass
 
@@ -57,10 +65,9 @@ class UnsupportedMailFormat(Exception):
 class EmailParser(object):
 
     def parse_dispositions(self, dispo):
-        # FIXME: this requires proper parsing, fails on values with semicolons
         if not isinstance(dispo, str):
             dispo = self.parse_header_field(dispo)
-        dispos = dispo.strip().split(";")
+        dispos = split_with_quotes(dispo)
         dispo_name = dispos[0].lower()
         dispo_dict = {}
         for param in dispos[1:]:

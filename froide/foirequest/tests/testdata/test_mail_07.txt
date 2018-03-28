@@ -1134,4 +1134,18 @@ MDAwMzEwMjggMDAwMDAgbiAKMDAwMDA1MjcwMSAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDg0
 IC9Sb290IDEgMCBSIC9JbmZvIDIgMCBSCi9JRCBbPDcyMTgyQjVEREVFRjE0MkU5Rjk4QkRCRDM4
 NEQ4Mzk5Pjw3MjE4MkI1RERFRUYxNDJFOUY5OEJEQkQzODREODM5OT5dCj4+CnN0YXJ0eHJlZgo1
 NTUxOQolJUVPRgo=
---------------070502010809030208090406--
+
+
+--------------070502010809030208090406
+Content-Type: application/pdf;
+ name="180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf"
+Content-Description: 180328 Schreiben an Antragstellerin; Vg.
+ 069-2018.pdf
+Content-Disposition: attachment;
+ filename="180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf";
+ size=241144;
+ creation-date="Wed, 28 Mar 2018 12:47:04 GMT";
+ modification-date="Wed, 28 Mar 2018 12:44:08 GMT"
+Content-Transfer-Encoding: base64
+
+dGVzdA==
