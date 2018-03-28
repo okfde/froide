@@ -169,9 +169,11 @@ class MailTest(TestCase):
         with open(p("test_mail_07.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
-            mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, 'Bescheid Fäker.pdf')
+        mail = parser.parse(BytesIO(content))
+        self.assertEqual(mail['subject'], 'Anfrage nach dem Informationsfreiheitsgesetz; Gespräch damaliger BM Steinmeier Matthias Müller VW AG; Vg. 069-2018')
+        self.assertEqual(len(mail['attachments']), 2)
+        self.assertEqual(mail['attachments'][0].name, 'Bescheid Fäker.pdf')
+        self.assertEqual(mail['attachments'][1].name, '180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf')
 
     def test_address_list(self):
         with open(p("test_mail_01.txt"), 'rb') as f:

@@ -36,7 +36,10 @@ User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:10.0.5) Gecko/20120605 Thunderbird/1
 MIME-Version: 1.0
 To: =?UTF-8?B?TW9yaXR6IE3DpGx6ZXI=?=
  <sw+yurpykc1hr@fragdenstaat.de>
-Subject: Re: Gutachten zu netzbasierter Kommunikation
+Subject: =?iso-8859-1?Q?Anfrage_nach_dem_Informationsfreiheitsgesetz;
+  _Gespr=E4ch_d?=
+  =?iso-8859-1?Q?amaliger_BM_Steinmeier_Matthias_M=FCller_VW_AG;
+  _Vg._069-20?= =?iso-8859-1?Q?18?=
 References: <20130706131640.15753.41838@localhost>
 In-Reply-To: <20130706131640.15753.41838@localhost>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha1; boundary="------------ms030903000800050105010507"
