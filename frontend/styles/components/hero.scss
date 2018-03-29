@@ -19,14 +19,14 @@
   color: inherit;
 }
 
-#main-folders {
-  background-image: url('~img/folders.jpg');
+.main-folders {
+  background-image: url('~froide_static/img/folders.jpg');
   background-size: cover;
 }
 
-#sample-letter {
-    font-family: Georgia,serif;
-    font-size: 1em;
-    white-space: nowrap;
-    white-space: pre-wrap;
+.sample-letter {
+  font-family: Georgia,serif;
+  font-size: 1em;
+  white-space: nowrap;
+  white-space: pre-wrap;
 }

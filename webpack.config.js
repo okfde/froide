@@ -31,7 +31,9 @@ const config = {
     modules: ['node_modules', 'froide/static'],
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      'froide': path.resolve('.'),
+      'froide_static': path.resolve('.', 'froide', 'static')
     }
   },
   module: {
