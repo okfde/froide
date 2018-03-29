@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-03-15 12:58+0100\n"
-"PO-Revision-Date: 2018-03-15 12:59+0100\n"
+"PO-Revision-Date: 2018-03-29 18:08+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -5941,7 +5941,7 @@ msgstr "Tritt diesem Team bei"
 
 #: froide/team/templates/team/team_list.html:9
 msgid "Your Teams"
-msgstr "Ihr Teams"
+msgstr "Ihre Teams"
 
 #: froide/team/templates/team/team_list.html:19
 msgid "Your Role"
