@@ -441,8 +441,8 @@ class FoiRequest(models.Model):
                 user.last_name,
                 user.first_name
             ]
-        return json.dumps(email_regexes + user_regexes +
-                          user.address.splitlines())
+        all_regexes = email_regexes + user_regexes + user.address.splitlines()
+        return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
         return redact_content(self.description)
