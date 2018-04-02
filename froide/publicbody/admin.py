@@ -55,6 +55,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
         (_('Context'), {
             'fields': (
                 'jurisdiction', 'laws',
+                'request_note',
                 'categories',
                 'description',
                 'file_index', 'org_chart',
