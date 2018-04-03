@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load foirequest_tags %}
 
 <div class="col-lg-8 mb-2 ">
   {% include "foirequest/snippets/attachment_item.html" %}
@@ -24,7 +25,7 @@
   {% endif %}
 </div>
 <div class="col-lg-4 text-right">
-  {% if attachment.can_redact %}
+  {% if attachment.can_redact and object|can_write_foirequest:request %}
     <a class="btn btn-sm btn-dark d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
       {% trans "Redact" %}
     </a>

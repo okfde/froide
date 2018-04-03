@@ -41,20 +41,30 @@ def show(request, slug, **kwargs):
     return show_foirequest(request, obj, **kwargs)
 
 
+def can_see_attachment(att, can_write):
+    if att.redacted_id and not can_write:
+        return False
+    if att.converted_id and not can_write:
+        return False
+    return True
+
+
 def show_foirequest(request, obj, template_name="foirequest/show.html",
         context=None, status=200):
     all_attachments = FoiAttachment.objects.select_related('redacted')\
             .filter(belongs_to__request=obj).all()
+
+    can_write = can_write_foirequest(obj, request)
+
     for message in obj.messages:
         message.request = obj
         if message.not_publishable:
             obj.not_publishable_message = message
         message.all_attachments = [a for a in all_attachments
                     if a.belongs_to_id == message.id]
-        message.approved_attachments = [a for a in all_attachments
-                    if a.belongs_to_id == message.id and a.approved]
-        message.not_approved_attachments = [a for a in all_attachments
-                    if a.belongs_to_id == message.id and not a.approved]
+        message.listed_attachments = [a for a in all_attachments
+            if a.belongs_to_id == message.id and
+            can_see_attachment(a, can_write)]
 
         for att in message.all_attachments:
             att.belongs_to = message
@@ -74,7 +84,7 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
         context = {}
 
     active_tab = 'info'
-    if can_write_foirequest(obj, request):
+    if can_write:
         active_tab = get_active_tab(obj, context)
 
     context.update({
