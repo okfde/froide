@@ -121,6 +121,8 @@ def set_status(request, foirequest):
 @require_POST
 @allow_write_foirequest
 def make_public(request, foirequest):
+    if not foirequest.is_foi:
+        return render_400(request)
     foirequest.make_public()
     return redirect(foirequest)
 
@@ -175,6 +177,8 @@ def mark_not_foi(request, slug):
     if not request.user.is_staff:
         return render_403(request)
     foirequest.is_foi = False
+    foirequest.public = False
+    foirequest.visibility = FoiRequest.VISIBLE_TO_REQUESTER
     foirequest.save()
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as not a FoI request.'))

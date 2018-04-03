@@ -66,7 +66,7 @@
 
 {% if not object.is_foi %}
   <div class="alert alert-info">
-    {% blocktrans %}This request is not an FoI request. This site is only for requesting specific information from public bodies.{% endblocktrans %}
+    {% blocktrans %}This request is not an FoI request. This site is only for requesting specific, non-personal information from public bodies.{% endblocktrans %}
   </div>
 {% endif %}
 
@@ -84,7 +84,7 @@
   </div>
 </div>
 
-{% if not object.public and object|can_write_foirequest:request %}
+{% if not object.public and object.is_foi and object|can_write_foirequest:request %}
   <div class="row">
     <div class="col-12">
       <div class="card d-print-none mb-5">
