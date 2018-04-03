@@ -20,6 +20,7 @@ from ..auth import can_write_foirequest
 from ..hooks import registry
 
 from .request import show_foirequest
+from .make_request import get_new_account_url
 
 
 def allow_write_foirequest(func):
@@ -261,7 +262,7 @@ def make_same_request(request, slug, message_id):
                 _('Please check your inbox for mail from us to '
                   'confirm your mail address.'))
         # user cannot access the request yet!
-        return redirect("/")
+        return redirect(get_new_account_url(foirequest))
 
 
 @require_POST

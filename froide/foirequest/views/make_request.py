@@ -247,12 +247,7 @@ class MakeRequestView(FormView):
 
             return redirect(special_redirect)
 
-        url = reverse('account-new')
-        query = urlencode({
-            'email': foi_object.user.email.encode('utf-8'),
-            'title': foi_object.title
-        })
-        return redirect('%s?%s' % (url, query))
+        return redirect(get_new_account_url(foi_object))
 
     def get_config(self, form):
         config = {}
@@ -318,3 +313,12 @@ class DraftRequestView(MakeRequestView, DetailView):
 
     def get_publicbodies_from_context(self):
         return self.object.publicbodies.all()
+
+
+def get_new_account_url(foi_object):
+    url = reverse('account-new')
+    query = urlencode({
+        'email': foi_object.user.email.encode('utf-8'),
+        'title': foi_object.title.encode('utf-8')
+    })
+    return '%s?%s' % (url, query)
