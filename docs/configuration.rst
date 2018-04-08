@@ -9,7 +9,7 @@ The `local_settings.py.example` file that comes with froide has all the settings
 Froide Configuration
 --------------------
 
-There is a dictionary called `FROIDE_CONFIG` inside settings.py that acts as a namespace for some other configurations. These settings are also available in the template via the name `froide` through the context processor `froide.helper.context_processors.froide`.
+There is a dictionary called `FROIDE_CONFIG` inside `settings.py` that acts as a namespace for some other configurations. These settings are also available in the template via the name `froide` through the context processor `froide.helper.context_processors.froide`.
 
 The following keys in that dictionary must be present:
 
@@ -107,7 +107,7 @@ to
 
 right before the mail is
 sent out (the changed address is not stored). This allows for some
-testing of sending and receiving mails to and from public bodies wihtout spamming them.
+testing of sending and receiving mails to and from public bodies without spamming them.
 
 
 Settings for Sending E-Mail

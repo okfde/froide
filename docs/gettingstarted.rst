@@ -66,7 +66,7 @@ Name your jurisdiction however you want (e.g. Federal). If you only ever intend 
 Go back into the public body section and add an FOI law. Give it a name (e.g. Freedom of Information Act) and choose a jurisdiction. There are many more things that can be configured, but you can leave them for now.
 
 Now you can add your first public body by going back to the public body section and clicking on "Add" next to "Public Bodies". Give it a name (e.g. Ministry of the Interior).
-Click on the little plus-sign next to topic to add a topic for this public body. The classification is to distinguish different areas of government (e.g. "Ministry", "Council").
+Click on the little plus-sign next to "classification" to add a topic for this public body. The classification is to distinguish different areas of government (e.g. "Ministry", "Council").
 If you want to make a request to this public body, it needs to have an email address.
 Select your previously created jurisdiction and FOI law and save.
 
@@ -78,9 +78,9 @@ Now you are ready to make your first request. Go back to the front page and give
 Custom settings
 --------------------
 
-By default the Django Web server uses the `settings.py` file in the froide directory (the `froide.settings` Python module). This will be fine for your first experiments but if you want to customize your froide instance you will want your own settings file.
+By default the Django Web server uses the `settings.py` file in the ``froide`` directory (the `froide.settings` Python module). This will be fine for your first experiments but if you want to customize your froide instance you will want your own settings file.
 
-Go into the froide directory and copy the `local_settings.py.example` to `local_settings.py`::
+Go into the ``froide`` directory and copy the `local_settings.py.example` to `local_settings.py`::
 
     cd froide
     cp local_settings.py.example local_settings.py
@@ -127,6 +127,6 @@ Now your server will send background tasks to Celery. Lots of common tasks are d
 
 - Search Indexing: Updates to database objects are indexed in the background
 - Email Sending: When an action triggers an email, it's sent in the background
-- Denormalized Counts on database objects
+- Denormalized counts on database objects
 
 Celery also takes the role of `cron` and handles periodic tasks. These are setup in the `CELERYBEAT_SCHEDULE` setting.
