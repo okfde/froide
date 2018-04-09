@@ -35,7 +35,7 @@ class TeamListView(AuthMixin, ListView):
     def get_queryset(self):
         return Team.objects.filter(
             members=self.request.user
-        ).distinct('id').annotate(role=models.F('teammembership__role'))
+        ).distinct().annotate(role=models.F('teammembership__role'))
 
     def get_context_data(self, **kwargs):
         context = super(TeamListView, self).get_context_data(**kwargs)
