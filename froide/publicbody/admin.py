@@ -142,6 +142,7 @@ class JurisdictionAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_filter = ['hidden', 'rank']
     list_display = ['name', 'hidden', 'rank']
+    raw_id_fields = ('region',)
 
 
 class PublicBodyTagAdmin(admin.ModelAdmin):
