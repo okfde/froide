@@ -54,7 +54,7 @@ If during import a public body with the same slug is found, it is skipped and no
 Importing through Admin
 -----------------------
 
-The admin interface that lists public bodies has an import form at the very bottom of the page. Give a HTTP or HTTPS url of your CSV file and press the import button. The file will be downloaded and imported. Any errors will be shown to you.
+The admin interface that lists public bodies has an import form at the very bottom of the page. Give a HTTP or HTTPS URL of your CSV file and press the import button. The file will be downloaded and imported. Any errors will be shown to you.
 
 
 Importing via command line

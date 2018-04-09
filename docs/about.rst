@@ -2,7 +2,7 @@
 About
 =====
 
-Froide is a Freedom of Information portal software written in Python with Django 1.5.
+Froide is a Freedom of Information portal software written in Python with Django 1.11.
 
 
 Development Goals
