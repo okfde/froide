@@ -47,7 +47,9 @@ class Jurisdiction(models.Model):
     description = models.TextField(_("Description"), blank=True)
     hidden = models.BooleanField(_("Hidden"), default=False)
     rank = models.SmallIntegerField(default=1)
-    region = models.ForeignKey(GeoRegion, null=True, on_delete=models.SET_NULL)
+    region = models.ForeignKey(
+        GeoRegion, null=True, on_delete=models.SET_NULL, blank=True
+    )
 
     objects = JurisdictionManager()
 
