@@ -33,7 +33,7 @@ class GeoRegion(models.Model):
     gov_seat = models.PointField(_('gov seat'), null=True, geography=True)
 
     part_of = models.ForeignKey('self', verbose_name=_('Part of'), null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL, blank=True
     )
 
     class Meta:
