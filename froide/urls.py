@@ -17,11 +17,13 @@ from froide.foirequest.api_views import (FoiRequestViewSet, FoiMessageViewSet,
     FoiAttachmentViewSet)
 from froide.publicbody.api_views import (ClassificationViewSet,
     CategoryViewSet, PublicBodyViewSet, JurisdictionViewSet, FoiLawViewSet)
+from froide.georegion.api_views import GeoRegionViewSet
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody,
                                      publicbody_shortlink)
 from froide.foirequest.views import FoiRequestSitemap, index, dashboard
+
 
 from froide.helper import api_router
 
@@ -46,6 +48,7 @@ api_router.register(r'classification', ClassificationViewSet,
 api_router.register(r'jurisdiction', JurisdictionViewSet,
                     base_name='jurisdiction')
 api_router.register(r'law', FoiLawViewSet, base_name='law')
+api_router.register(r'georegion', GeoRegionViewSet, base_name='georegion')
 
 
 class StaticViewSitemap(Sitemap):
