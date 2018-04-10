@@ -12,7 +12,7 @@ from froide.foirequest.models import FoiAttachment
 from froide.foirequest.models.attachment import upload_to
 from froide.helper.storage import HashedFilenameStorage
 
-BROKEN_ISO_NAME = re.compile('^(.*)(\.[a-z]{,5})nameiso-8859-\w+$')
+BROKEN_ISO_NAME = re.compile(r'^(.*)(\.[a-z]{,5})nameiso-8859-\w+$')
 
 
 class Command(BaseCommand):

@@ -47,8 +47,8 @@ regexes that also find the name::
 
     FROIDE_CONFIG.update(
         dict(
-            greetings=[rec(u"Dear (?:Mr\.?|Ms\.? .*?)")],
-            closings=[rec(u"Sincerely yours,?")]
+            greetings=[rec(r"Dear (?:Mr\.?|Ms\.? .*?)")],
+            closings=[rec(r"Sincerely yours,?")]
         )
     )
 
