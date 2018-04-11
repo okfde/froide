@@ -57,7 +57,7 @@
     "webpack-livereload-plugin": "^1.0.0"
   },
   "dependencies": {
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.1.0",
     "es6-promise": "^4.1.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
