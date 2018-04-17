@@ -31,6 +31,7 @@ coreapi = "*"
 django-filter = "*"
 django-treebeard = "*"
 djangorestframework-jsonp = "*"
+"geoip2" = "*"
 
 
 [dev-packages]

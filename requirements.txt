@@ -19,6 +19,7 @@ django-taggit==0.22.2
 django-treebeard==4.2.1
 djangorestframework==3.7.7
 djangorestframework-jsonp==1.0.2
+geoip2==2.8.0
 idna==2.6
 itypes==1.1.0
 jinja2==2.10
