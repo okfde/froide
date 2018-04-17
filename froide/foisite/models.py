@@ -29,14 +29,14 @@ class FoiSite(models.Model):
 
 
 try:
-    from django.contrib.gis.geoip import GeoIP
+    from django.contrib.gis.geoip2 import GeoIP2
 except ImportError:
-    GeoIP = None  # noqa
+    GeoIP2 = None  # noqa
 
 
 class SiteAdivsor(object):
     def __init__(self):
-        self.geoip = GeoIP()
+        self.geoip = GeoIP2()
         self.sites = None
 
     def update(self):
@@ -61,7 +61,7 @@ class DummyAdvisor(object):
         pass
 
 
-if GeoIP and getattr(settings, 'GEOIP_PATH', False):
+if GeoIP2 and getattr(settings, 'GEOIP_PATH', False):
     advisor = SiteAdivsor()
 else:
     advisor = DummyAdvisor()
