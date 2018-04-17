@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import json
+import os
 
 from django.db import models
 from django.utils.six import text_type as str
@@ -15,6 +16,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from oauth2_provider.models import AbstractApplication
 
 from froide.helper.csv_utils import export_csv, get_dict
+from froide.helper.storage import HashedFilenameStorage
 
 
 class UserManager(BaseUserManager):
@@ -48,6 +50,11 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, username, password=None, **extra_fields):
         return self._create_user(email, username, password, True, True,
                                  **extra_fields)
+
+
+def profile_photo_path(instance=None, filename=None):
+    path = ['profile', filename]
+    return os.path.join(*path)
 
 
 @python_2_unicode_compatible
@@ -90,6 +97,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     address = models.TextField(_('Address'), blank=True)
     terms = models.BooleanField(_('Accepted Terms'), default=True)
     newsletter = models.BooleanField(_('Wants Newsletter'), default=False)
+
+    profile_text = models.TextField(blank=True)
+    profile_photo = models.ImageField(
+        null=True, blank=True,
+        upload_to=profile_photo_path,
+        storage=HashedFilenameStorage()
+    )
 
     is_trusted = models.BooleanField(_('Trusted'), default=False)
     is_blocked = models.BooleanField(_('Blocked'), default=False)
