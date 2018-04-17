@@ -468,7 +468,7 @@ class PublicBody(models.Model):
             "jurisdiction__slug",
             ("categories", lambda x: edit_string_for_tags(x.categories.all())),
             "other_names", "website_dump", "description",
-            "request_note", "parent__name",
+            "request_note", "parent__name", 'region_id',
         )
 
         return export_csv(queryset, fields)
