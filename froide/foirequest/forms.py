@@ -529,9 +529,12 @@ class PostalMessageForm(PostalBaseForm):
 
 
 class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
-    files = forms.FileField(label=_("Scanned Document"),
-            help_text=PostalBaseForm.scan_help_text,
-            validators=[validate_upload_document])
+    files = forms.FileField(
+        label=_("Scanned Document"),
+        help_text=PostalBaseForm.scan_help_text,
+        validators=[validate_upload_document],
+        widget=forms.FileInput(attrs={'multiple': True})
+    )
 
     def save(self, message):
         result = self.save_attachments(self.files.getlist('files'),
