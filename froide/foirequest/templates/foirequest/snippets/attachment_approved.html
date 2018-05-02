@@ -14,9 +14,15 @@
     </span>
   {% endif %}
   {% if attachment.approved %}
-    <span class="badge badge-success">
-      {% blocktrans %}published{% endblocktrans %}
-    </span>
+    {% if object.public %}
+      <span class="badge badge-success">
+        {% blocktrans %}public{% endblocktrans %}
+      </span>
+    {% else %}
+      <span class="badge badge-info">
+        {% blocktrans %}visible to you{% endblocktrans %}
+      </span>
+    {% endif %}
   {% endif %}
   {% if attachment.is_redacted %}
     <span class="badge badge-dark">
