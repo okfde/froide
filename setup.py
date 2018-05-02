@@ -37,6 +37,7 @@ setup(
         'Django',
         'Markdown',
         'celery',
+        'geoip2',
         'django-haystack',
         'django-taggit',
         'pytz',
