@@ -115,6 +115,7 @@
             </div>
 
             <input v-for="pb in publicBodies" type="hidden" name="publicbody" :value="pb.id">
+            <input type="hidden" name="law_type" :value="lawType">
 
             <div class="row">
               <div class="col-md-12">
@@ -141,13 +142,10 @@
 
             <div class="card mb-3">
               <div class="card-body">
-                <div v-if="!allowFullText && fullText" class="alert alert-warning">
+                <div v-if="fullText && warnFullText" class="alert alert-warning">
                   <p>
                     {{ i18n.warnFullText }}
                   </p>
-                  <button v-if="fullTextDisabled" class="btn btn-light btn-sm" @click.prevent="resetFullText" >
-                    {{ i18n.resetFullText }}
-                  </button>
                 </div>
                 <div class="row">
                   <div v-if="!editingDisabled" class="col-md-4 order-md-2">
@@ -160,18 +158,23 @@
                       </div>
                     </transition>
                     <slot name="requesthints"></slot>
+                    <button v-if="fullTextDisabled" class="btn btn-light btn-sm" @click.prevent="resetFullText" >
+                      {{ i18n.resetFullText }}
+                    </button>
                   </div>
                   <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
                     <div v-if="editingDisabled" class="body-text">{{ body }}</div>
                     <textarea v-else v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder"></textarea>
-                    <label class="small pull-right text-muted" v-if="!hideFullText">
+                    <label class="small pull-right text-muted" v-if="allowFullText && !editingDisabled">
                       <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
-                      <i v-if="!allowFullText" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                      <i v-if="warnFullText" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                       {{ form.full_text.label }}
                     </label>
                     <input type="hidden" name="full_text" v-model="fullText">
-                    <div v-if="!fullText" class="body-text">{{ letterEndShort }}</div>
+                    <div v-if="!fullText" class="body-text"><template v-if="!fullLetter"><a class="show-full-letter" href="#" @click.prevent="showFullLetter">[&hellip;]</a>
+{{ letterEndShort }}</template><template v-else>
+{{ letterEnd }}</template></div>
                     <div v-if="letterSignature" class="body-text"><em>{{ letterSignature }}</em></div>
                     <div v-if="!letterSignature && fullText" class="body-text">{{ letterSignatureName }}</div>
                   </div>
@@ -256,7 +259,8 @@ import {
   STEPS, STEP_TO_URLS, SET_STEP_BY_URL, SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
   SET_PUBLICBODY, SET_PUBLICBODIES, CACHE_PUBLICBODIES,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME,
-  SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT
+  SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
+  UPDATE_LAW_TYPE
 } from '../store/mutation_types'
 
 import LetterMixin from '../lib/letter-mixin'
@@ -288,7 +292,8 @@ export default {
       bodyBeforeChange: '',
       savedFullTextBody: '',
       fullTextDisabled: false,
-      editingDisabled: this.hideEditing
+      editingDisabled: this.hideEditing,
+      fullLetter: false
     }
   },
   created () {
@@ -299,6 +304,7 @@ export default {
     if (this.userJson) {
       this.setUser(JSON.parse(this.userJson))
     }
+    this.updateLawType(this.form.law_type.value || this.form.law_type.initial)
     if (this.publicbodiesJson) {
       let pbs = JSON.parse(this.publicbodiesJson)
       this.setPublicBodies({
@@ -401,7 +407,13 @@ export default {
       }
     },
     allowFullText () {
-      return this.user.id && !this.hideFullText && this.defaultLaw !== null
+      return this.user.id && !this.hideFullText
+    },
+    warnFullText () {
+      return this.allowFullText && this.multipleLaws
+    },
+    multipleLaws () {
+      return this.defaultLaw === null
     },
     fullText: {
       get () {
@@ -453,9 +465,9 @@ export default {
       'user',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
-      'defaultLaw',
       'stepReviewReady',
-      'stepSelectPublicBody'
+      'stepSelectPublicBody',
+      'lawType'
     ])
   },
   methods: {
@@ -478,6 +490,9 @@ export default {
       }
       this.bodyRows = ta.rows
     },
+    showFullLetter () {
+      this.fullLetter = true
+    },
     ...mapMutations({
       setStepPublicBody: SET_STEP_PUBLICBODY,
       setStepRequest: SET_STEP_REQUEST,
@@ -487,6 +502,7 @@ export default {
       setUser: SET_USER,
       updateFirstName: UPDATE_FIRST_NAME,
       updateLastName: UPDATE_LAST_NAME,
+      updateLawType: UPDATE_LAW_TYPE,
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES
@@ -610,6 +626,11 @@ legend {
 }
 .saved-full-text-enter, .saved-full-text-leave-to {
   opacity: 0;
+}
+
+.show-full-letter {
+  color: #999;
+  text-decoration: underline;
 }
 
 </style>
