@@ -37,7 +37,9 @@ class JurisdictionManager(models.Manager):
                 .filter(hidden=False).order_by('rank', 'name')
 
     def get_list(self):
-        return self.get_visible().annotate(num_publicbodies=models.Count('publicbody'))
+        return self.get_visible().annotate(
+            num_publicbodies=models.Count('publicbody')
+        )
 
 
 @python_2_unicode_compatible
@@ -79,10 +81,15 @@ class FoiLaw(models.Model):
     updated = models.DateField(_("Updated Date"), blank=True, null=True)
     request_note = models.TextField(_("request note"), blank=True)
     meta = models.BooleanField(_("Meta Law"), default=False)
-    combined = models.ManyToManyField('FoiLaw', verbose_name=_("Combined Laws"), blank=True)
+    law_type = models.CharField(_('law type'), max_length=255, blank=True)
+    combined = models.ManyToManyField(
+        'FoiLaw',
+        verbose_name=_("Combined Laws"), blank=True
+    )
     letter_start = models.TextField(_("Start of Letter"), blank=True)
     letter_end = models.TextField(_("End of Letter"), blank=True)
-    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
+    jurisdiction = models.ForeignKey(
+            Jurisdiction, verbose_name=_('Jurisdiction'),
             null=True, on_delete=models.SET_NULL, blank=True)
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
@@ -95,8 +102,8 @@ class FoiLaw(models.Model):
                 ('month_de', _('Month(s) (DE)')),
             ))
     refusal_reasons = models.TextField(
-            _("Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
-            blank=True)
+        _("Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
+        blank=True)
     mediator = models.ForeignKey('PublicBody', verbose_name=_("Mediator"),
             null=True, blank=True,
             default=None, on_delete=models.SET_NULL,
