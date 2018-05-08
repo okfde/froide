@@ -31,6 +31,7 @@ class RequestDraft(models.Model):
     full_text = models.BooleanField(default=False)
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
+    law_type = models.CharField(max_length=255, blank=True)
 
     request = models.ForeignKey(FoiRequest, null=True, blank=True,
                                 on_delete=models.SET_NULL)
