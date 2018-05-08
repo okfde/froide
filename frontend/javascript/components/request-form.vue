@@ -387,7 +387,7 @@ export default {
       return this.form.subject.value || this.form.subject.initial || ''
     },
     subjectWasChanged () {
-      return this.subject !== this.originalSubject
+      return this.subject !== this.form.subject.initial
     },
     hasBody () {
       return this.body && this.body.length > 0
@@ -396,7 +396,7 @@ export default {
       return this.form.body.value || this.form.body.initial || ''
     },
     bodyWasChanged () {
-      return this.body !== this.originalBody
+      return this.body !== this.form.body.initial
     },
     body: {
       get () {
