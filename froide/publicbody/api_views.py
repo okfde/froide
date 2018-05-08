@@ -207,9 +207,7 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(source='pk')
     jurisdiction = JurisdictionSerializer(read_only=True)
     default_law = FoiLawSerializer(read_only=True)
-    laws = serializers.HyperlinkedRelatedField(
-        view_name='api:law-detail',
-        lookup_field='pk',
+    laws = FoiLawSerializer(
         many=True,
         read_only=True
     )
