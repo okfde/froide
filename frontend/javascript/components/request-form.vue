@@ -165,7 +165,7 @@
                   <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
                     <div v-if="editingDisabled" class="body-text">{{ body }}</div>
-                    <textarea v-else v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder"></textarea>
+                    <textarea v-show="!editingDisabled" v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder"></textarea>
                     <label class="small pull-right text-muted" v-if="allowFullText && !editingDisabled">
                       <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
                       <i v-if="warnFullText" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
