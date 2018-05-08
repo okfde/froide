@@ -42,7 +42,7 @@ var LetterMixin = {
     ...mapGetters([
       'user', 'defaultLaw'
     ])
-  },
+  }
 }
 
 export default LetterMixin

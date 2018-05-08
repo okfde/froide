@@ -31,7 +31,6 @@ export default new Vuex.Store({
     scopedSearchMeta: {},
     scopedPublicBodies: {},
     publicBodies: {},
-    defaultLaw: null,
     lawType: null,
     user: {},
     step: STEPS.SELECT_PUBLICBODY,
