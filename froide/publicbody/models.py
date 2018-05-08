@@ -178,6 +178,7 @@ class FoiLaw(models.Model):
             "description_html": self.description_html,
             "request_note_html": self.request_note_html,
             "description": self.description,
+            "law_type": self.law_type,
             "letter_start": self.letter_start,
             "letter_end": self.letter_end,
             "jurisdiction": self.jurisdiction.name if self.jurisdiction else '',
@@ -429,10 +430,10 @@ class PublicBody(models.Model):
 
     @property
     def default_law(self):
-        return get_applicable_law(pb=self)
+        return self.get_applicable_law()
 
-    def get_applicable_law(self, law_type=None, meta=None):
-        return FoiLaw.get_default_law(self)
+    def get_applicable_law(self, law_type=None):
+        return get_applicable_law(pb=self, law_type=law_type)
 
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
@@ -464,7 +465,7 @@ class PublicBody(models.Model):
         d = {}
         for field in self.serializable_fields:
             d[field] = getattr(self, field)
-        d['default_law'] = self.default_law.as_data()
+        d['laws'] = [law.as_data() for law in self.laws.all().order_by('-meta')]
         d['jurisdiction'] = {
             'name': self.jurisdiction.name,
             'id': self.jurisdiction.id

@@ -65,7 +65,7 @@ class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
         model = FoiLaw
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'slug', 'description', 'long_description',
+            'resource_uri', 'id', 'name', 'slug', 'description', 'long_description', 'law_type',
             'created', 'updated', 'request_note', 'request_note_html', 'meta',
             'combined', 'letter_start', 'letter_end', 'jurisdiction',
             'priority', 'url', 'max_response_time', 'site_url',
