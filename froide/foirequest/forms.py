@@ -48,6 +48,7 @@ class RequestForm(JSONMixin, forms.Form):
                         " uncheck this. You can always decide to make it public later.")
             )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
+    law_type = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
     hide_public = forms.BooleanField(
         widget=forms.HiddenInput, initial=False, required=False

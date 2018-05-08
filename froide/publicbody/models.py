@@ -31,6 +31,32 @@ from froide.helper.templatetags.markup import markdown
 from froide.helper.csv_utils import export_csv
 
 
+DEFAULT_LAW = settings.FROIDE_CONFIG.get("default_law", 1)
+
+
+def get_applicable_law(pb=None, law_type=None):
+    if pb is None:
+        try:
+            return FoiLaw.objects.get(id=DEFAULT_LAW)
+        except FoiLaw.DoesNotExist:
+            return None
+
+    pb_laws = pb.laws.all()
+    juris_laws = FoiLaw.objects.filter(jurisdiction=pb.jurisdiction)
+    # Check pb laws and then, if empty, pb juris laws
+    for qs in (pb_laws, juris_laws):
+        if law_type is not None:
+            qs = qs.filter(law_type=law_type)
+        # Prefer meta laws
+        qs = qs.order_by('-meta')
+        if qs:
+            break
+    try:
+        return qs[0]
+    except IndexError:
+        return None
+
+
 class JurisdictionManager(models.Manager):
     def get_visible(self):
         return self.get_queryset()\
@@ -145,22 +171,6 @@ class FoiLaw(models.Model):
             return (not_applicable +
                     [(x, Truncator(x).words(12))
                     for x in self.refusal_reasons.splitlines()])
-
-    @classmethod
-    def get_default_law(cls, pb=None):
-        if pb:
-            try:
-                return pb.laws.all().order_by('-meta')[0]
-            except IndexError:
-                pass
-            try:
-                return cls.objects.filter(jurisdiction=pb.jurisdiction).order_by('-meta')[0]
-            except IndexError:
-                pass
-        try:
-            return FoiLaw.objects.get(id=settings.FROIDE_CONFIG.get("default_law", 1))
-        except FoiLaw.DoesNotExist:
-            return None
 
     def as_data(self):
         return {
@@ -419,6 +429,9 @@ class PublicBody(models.Model):
 
     @property
     def default_law(self):
+        return get_applicable_law(pb=self)
+
+    def get_applicable_law(self, law_type=None, meta=None):
         return FoiLaw.get_default_law(self)
 
     def get_absolute_url(self):

@@ -127,7 +127,14 @@ class CreateRequestService(BaseService):
             send_now = True
 
         request.secret_address = generate_unique_secret_address(user)
-        foilaw = publicbody.default_law
+        foilaw = None
+        if data.get('law_type'):
+            law_type = data['law_type']
+            foilaw = publicbody.get_applicable_law(law_type=law_type)
+
+        if foilaw is None:
+            foilaw = publicbody.default_law
+
         request.law = foilaw
         request.jurisdiction = foilaw.jurisdiction
 
@@ -250,22 +257,22 @@ class SaveDraftService(BaseService):
         data = self.data
         request_form = data['request_form']
         draft = request_form.cleaned_data.get('draft', None)
+        additional_kwargs = dict(
+            subject=request_form.cleaned_data.get('subject', ''),
+            body=request_form.cleaned_data.get('body', ''),
+            full_text=request_form.cleaned_data['full_text'],
+            public=request_form.cleaned_data['public'],
+            reference=request_form.cleaned_data.get('reference', ''),
+            law_type=request_form.cleaned_data.get('law_type', ''),
+        )
         if draft is None:
             draft = RequestDraft.objects.create(
                 user=request.user,
-                subject=request_form.cleaned_data.get('subject', ''),
-                body=request_form.cleaned_data.get('body', ''),
-                full_text=request_form.cleaned_data['full_text'],
-                public=request_form.cleaned_data['public'],
-                reference=request_form.cleaned_data.get('reference', ''),
+                **additional_kwargs
             )
         else:
             RequestDraft.objects.filter(id=draft.id).update(
-                subject=request_form.cleaned_data.get('subject', ''),
-                body=request_form.cleaned_data.get('body', ''),
-                full_text=request_form.cleaned_data['full_text'],
-                public=request_form.cleaned_data['public'],
-                reference=request_form.cleaned_data.get('reference', ''),
+                **additional_kwargs
             )
         draft.publicbodies.set(data['publicbodies'])
         return draft
