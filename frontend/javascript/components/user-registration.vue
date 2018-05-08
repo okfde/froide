@@ -3,7 +3,7 @@
     <div class="card-body">
 
       <div class="form-group row">
-        <label for="id_user_email" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.user_email }">
+        <label for="id_user_email" class="col-sm-3 col-form-label field-required" :class="{ 'text-danger': errors.user_email }">
           {{ i18n.yourEmail }}
         </label>
         <div class="col-sm-9">
@@ -11,7 +11,7 @@
             {{ user.email }}
           </p>
           <div v-else>
-            <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="form.user_email.placeholder"/>
+            <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="form.user_email.placeholder" required/>
             <p v-for="e in errors.user_email" class="text-danger">{{ e.message }}</p>
             <p v-if="authRequired">
               <a id="simple-login-link" class="btn btn-success" :href="authRequiredUrl" @click.prevent="openLoginWindow">
