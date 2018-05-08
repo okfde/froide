@@ -33,6 +33,7 @@
         show-draft="{% if not config.hide_draft %}true{% endif %}"
         hide-publicbody-chooser="{% if config.hide_publicbody %}true{% endif %}"
         hide-full-text="{% if config.hide_full_text %}true{% endif %}"
+        hide-editing="{% if config.hide_editing %}true{% endif %}"
         multi-request="{% if multi_request %}true{% endif %}"
         :config="config">
 

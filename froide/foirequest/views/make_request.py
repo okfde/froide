@@ -28,7 +28,7 @@ class MakeRequestView(FormView):
     form_class = RequestForm
     template_name = 'foirequest/request.html'
     FORM_CONFIG_PARAMS = ('hide_similar', 'hide_public', 'hide_draft',
-                          'hide_publicbody', 'hide_full_text')
+                          'hide_publicbody', 'hide_full_text', 'hide_editing')
 
     def get_initial(self):
         request = self.request

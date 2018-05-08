@@ -95,7 +95,7 @@
             </div>
             <div v-else class="publicbody-summary-container">
               <div class="row">
-                <div class="col-lg-8 publicbody-summary">
+                <div class="col-lg-12 publicbody-summary">
                   <p>
                     {{ i18n._('toPublicBody', {name: publicBody.name}) }}
                     <span v-if="!hidePublicbodyChooser">
@@ -117,7 +117,7 @@
             <input v-for="pb in publicBodies" type="hidden" name="publicbody" :value="pb.id">
 
             <div class="row">
-              <div class="col-md-8">
+              <div class="col-md-12">
 
                 <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
                   <p v-for="error in nonFieldErrors">{{ error }}</p>
@@ -127,7 +127,14 @@
                   <label for="id_subject" :class="{ 'text-danger': errors.subject }">
                     {{ i18n.subject }}
                   </label>
-                  <input v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="form.subject.placeholder" @keydown.enter.prevent=""/>
+                  <div v-if="editingDisabled">
+                    <input type="hidden" name="subject" :value="subject"/>
+                    <strong>{{ subject}}</strong>
+                    <button @click.prevent="editingDisabled = false" class="btn btn-sm btn-white pull-right">
+                      <small>{{ i18n.reviewEdit }}</small>
+                    </button>
+                  </div>
+                  <input v-else v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="form.subject.placeholder" @keydown.enter.prevent=""/>
                 </div>
               </div>
             </div>
@@ -143,7 +150,7 @@
                   </button>
                 </div>
                 <div class="row">
-                  <div class="col-md-4 order-md-2">
+                  <div v-if="!editingDisabled" class="col-md-4 order-md-2">
                     <transition name="saved-full-text">
                       <div v-if="savedFullTextBody">
                         <h6>
@@ -156,14 +163,14 @@
                   </div>
                   <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
-                    <textarea v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder">
-                    </textarea>
-                    <label class="small pull-right text-muted">
+                    <div v-if="editingDisabled" class="body-text">{{ body }}</div>
+                    <textarea v-else v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder"></textarea>
+                    <label class="small pull-right text-muted" v-if="!hideFullText">
                       <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
                       <i v-if="!allowFullText" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                       {{ form.full_text.label }}
-                      <input type="hidden" name="full_text" v-model="fullText">
                     </label>
+                    <input type="hidden" name="full_text" v-model="fullText">
                     <div v-if="!fullText" class="body-text">{{ letterEndShort }}</div>
                     <div v-if="letterSignature" class="body-text"><em>{{ letterSignature }}</em></div>
                     <div v-if="!letterSignature && fullText" class="body-text">{{ letterSignatureName }}</div>
@@ -173,18 +180,18 @@
                   <div class="col-md-8">
                     <div class="form-group row" v-if="!user.id">
                       <div class="col" :class="{ 'text-danger': usererrors.first_name }">
-                        <label class="control-label" for="id_first_name" :class="{ 'text-danger': usererrors.first_name }">
+                        <label class="control-label field-required" for="id_first_name" :class="{ 'text-danger': usererrors.first_name }">
                           {{ i18n.yourFirstName }}
                         </label>
-                        <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': usererrors.first_name }" id="id_first_name" :placeholder="userform.first_name.placeholder"/>
+                        <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': usererrors.first_name }" id="id_first_name" :placeholder="userform.first_name.placeholder" required/>
                         <p v-for="e in usererrors.first_name">{{ e.message }}</p>
                       </div>
 
                       <div class="col" :class="{ 'text-danger': usererrors.last_name }">
-                        <label class="control-label" for="id_last_name" :class="{ 'text-danger': usererrors.last_name }">
+                        <label class="control-label field-required" for="id_last_name" :class="{ 'text-danger': usererrors.last_name }">
                           {{ i18n.yourLastName }}
                         </label>
-                        <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': usererrors.last_name }" id="id_last_name" :placeholder="userform.last_name.placeholder"/>
+                        <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': usererrors.last_name }" id="id_last_name" :placeholder="userform.last_name.placeholder" required/>
                         <p v-for="e in usererrors.last_name">{{ e.message }}</p>
                       </div>
                     </div>
@@ -218,16 +225,19 @@
 
           <review-request v-if="stepReviewReady" :pbScope="pbScope" :i18n="i18n"></review-request>
 
-          <button v-if="stepReviewReady" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
+          <button v-if="stepReviewReady && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
             <i class="fa fa-check" aria-hidden="true"></i>
             {{ i18n.reviewRequest }}
+          </button>
+          <button v-else-if="stepReviewReady" type="submit" id="send-request-button" class="btn btn-primary">
+            <i class="fa fa-send" aria-hidden="true"></i>
+            {{ i18n.submitRequest }}
           </button>
           <button v-if="stepReviewReady && user.id && showDraft" type="submit" class="btn btn-secondary" name="save_draft" value="true">
             <i class="fa fa-save" aria-hidden="true"></i>
             {{ i18n.saveAsDraft }}
           </button>
         </div>
-
       </div>
     </div>
   </div>
@@ -268,21 +278,23 @@ export default {
     'showDraft',
     'hidePublicbodyChooser',
     'hideFullText',
+    'hideEditing',
     'multiRequest'
   ],
   mixins: [I18nMixin, LetterMixin],
   data () {
     return {
       bodyRows: MIN_BODY_ROWS,
-      originalBody: '',
+      bodyBeforeChange: '',
       savedFullTextBody: '',
-      fullTextDisabled: false
+      fullTextDisabled: false,
+      editingDisabled: this.hideEditing
     }
   },
   created () {
     this.pbScope = 'make-request'
-    this.updateSubject(this.form.subject.value || this.form.subject.initial || '')
-    this.updateBody(this.form.body.value || this.form.body.initial || '')
+    this.updateSubject(this.originalSubject)
+    this.updateBody(this.originalBody)
     this.updateFullText(this.form.full_text.value || this.form.full_text.initial)
     if (this.userJson) {
       this.setUser(JSON.parse(this.userJson))
@@ -365,8 +377,20 @@ export default {
         this.updateSubject(value)
       }
     },
+    originalSubject () {
+      return this.form.subject.value || this.form.subject.initial || ''
+    },
+    subjectWasChanged () {
+      return this.subject !== this.originalSubject
+    },
     hasBody () {
       return this.body && this.body.length > 0
+    },
+    originalBody () {
+      return this.form.body.value || this.form.body.initial || ''
+    },
+    bodyWasChanged () {
+      return this.body !== this.originalBody
     },
     body: {
       get () {
@@ -386,11 +410,11 @@ export default {
       set (value) {
         this.updateFullText(value)
         if (value) {
-          this.originalBody = this.body
+          this.bodyBeforeChange = this.body
           this.body = `${this.letterStart}\n${this.body}\n\n${this.letterEndNoName}`
         } else {
           if (!this.fullTextDisabled) {
-            this.body = this.originalBody
+            this.body = this.bodyBeforeChange
           }
         }
         let newLineCount = (this.body.match(/\n/g) || []).length
@@ -421,6 +445,9 @@ export default {
     },
     publicBodies () {
       return this.getPublicBodiesByScope(this.pbScope)
+    },
+    shouldCheckRequest () {
+      return this.bodyWasChanged || this.subjectWasChanged
     },
     ...mapGetters([
       'user',
