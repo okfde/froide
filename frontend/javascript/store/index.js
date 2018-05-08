@@ -10,6 +10,7 @@ import {
   CLEAR_PUBLICBODIES,
   CACHE_PUBLICBODIES,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS,
+  UPDATE_LAW_TYPE,
   SET_USER,
   UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME, UPDATE_EMAIL, UPDATE_ADDRESS,
@@ -30,6 +31,8 @@ export default new Vuex.Store({
     scopedSearchMeta: {},
     scopedPublicBodies: {},
     publicBodies: {},
+    defaultLaw: null,
+    lawType: null,
     user: {},
     step: STEPS.SELECT_PUBLICBODY,
     subject: '',
@@ -86,20 +89,27 @@ export default new Vuex.Store({
       var key = null
       for (key in state.scopedPublicBodies) {}
       let pbs = state.scopedPublicBodies[key]
+      let lastLaw = null
       let sameLaw = true
-      for (let i = 0; i < pbs.length - 1; i += 1) {
-        let a = pbs[i]
-        let b = pbs[i + 1]
-        if (a.default_law.id !== b.default_law.id) {
+      for (let i = 0; i < pbs.length; i += 1) {
+        let pb = pbs[i]
+        let laws = pb.laws.filter((l) => {
+          return state.lawType ? l.law_type === state.lawType : true
+        })
+        if (i === 0) {
+          lastLaw = laws[0]
+          continue
+        }
+        if (lastLaw.id !== laws[0].id) {
           sameLaw = false
           break
         }
+        lastLaw = laws[0]
       }
-      if (sameLaw && pbs.length > 0) {
-        return pbs[0].default_law
-      } else {
-        return null
+      if (sameLaw) {
+        return lastLaw
       }
+      return null
     },
     user: state => {
       return state.user
@@ -109,7 +119,8 @@ export default new Vuex.Store({
     body: state => state.body,
     fullText: state => state.fullText,
     stepSelectPublicBody: state => state.step === STEPS.SELECT_PUBLICBODY,
-    stepReviewReady: state => state.step >= STEPS.WRITE_REQUEST
+    stepReviewReady: state => state.step >= STEPS.WRITE_REQUEST,
+    lawType: state => state.lawType
   },
   mutations: {
     [SET_CONFIG] (state, config) {
@@ -212,6 +223,9 @@ export default new Vuex.Store({
     },
     [UPDATE_USER_ID] (state, val) {
       Vue.set(state.user, 'id', val)
+    },
+    [UPDATE_LAW_TYPE] (state, val) {
+      state.lawType = val
     }
   },
   actions: {
