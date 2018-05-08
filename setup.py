@@ -52,6 +52,7 @@ setup(
         'django-storages',
         'dj-database-url',
         'django-cache-url',
+        'django-filter',
     ],
     include_package_data=True,
     classifiers=[
