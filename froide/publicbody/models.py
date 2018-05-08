@@ -485,7 +485,7 @@ class PublicBody(models.Model):
         fields = (
             "id", "name", "email", "fax", "contact",
             "address", "url",
-            ('classification', lambda x: x.classification.name),
+            ('classification', lambda x: x.classification.name if x.classification else None),
             "jurisdiction__slug",
             ("categories", lambda x: edit_string_for_tags(x.categories.all())),
             "other_names", "website_dump", "description",
