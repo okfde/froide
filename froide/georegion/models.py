@@ -18,6 +18,7 @@ class GeoRegion(models.Model):
             ('municipality', _('municipality')),
             ('borough', _('borough')),
             ('zipcode', _('zipcode')),
+            ('admin_court_jurisdiction', _('administrative court jurisdiction')),
         )
     )
     kind_detail = models.CharField(max_length=255, blank=True)
