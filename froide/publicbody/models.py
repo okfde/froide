@@ -35,25 +35,25 @@ DEFAULT_LAW = settings.FROIDE_CONFIG.get("default_law", 1)
 
 
 def get_applicable_law(pb=None, law_type=None):
-    if pb is None:
+    if pb is not None:
+        pb_laws = pb.laws.all()
+        juris_laws = FoiLaw.objects.filter(jurisdiction=pb.jurisdiction)
+        # Check pb laws and then, if empty, pb juris laws
+        for qs in (pb_laws, juris_laws):
+            if law_type is not None:
+                qs = qs.filter(law_type=law_type)
+            # Prefer meta laws
+            qs = qs.order_by('-meta')
+            if qs:
+                break
         try:
-            return FoiLaw.objects.get(id=DEFAULT_LAW)
-        except FoiLaw.DoesNotExist:
-            return None
+            return qs[0]
+        except IndexError:
+            pass
 
-    pb_laws = pb.laws.all()
-    juris_laws = FoiLaw.objects.filter(jurisdiction=pb.jurisdiction)
-    # Check pb laws and then, if empty, pb juris laws
-    for qs in (pb_laws, juris_laws):
-        if law_type is not None:
-            qs = qs.filter(law_type=law_type)
-        # Prefer meta laws
-        qs = qs.order_by('-meta')
-        if qs:
-            break
     try:
-        return qs[0]
-    except IndexError:
+        return FoiLaw.objects.get(id=DEFAULT_LAW)
+    except FoiLaw.DoesNotExist:
         return None
 
 
