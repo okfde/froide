@@ -84,6 +84,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
         'jurisdiction', 'classification', 'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
         make_nullfilter('region', _('Has region')),
+        'region__kind', 'region__kind_detail',
         make_emptyfilter('email', 'E-Mail'),
         make_emptyfilter('fax', 'Fax')
     )
