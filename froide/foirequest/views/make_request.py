@@ -55,12 +55,12 @@ class MakeRequestView(FormView):
             initial['full_text'] = request.GET['full_text'] == '1'
 
         initial['jurisdiction'] = request.GET.get("jurisdiction", None)
-
-        for k in self.FORM_CONFIG_PARAMS:
-            if k in self.request.GET:
-                initial[k] = True
-
+        initial.update(self.get_form_config_initial())
         return initial
+
+    def get_form_config_initial(self):
+        return {k: True for k in self.FORM_CONFIG_PARAMS
+                if k in self.request.GET}
 
     def get_form_kwargs(self):
         kwargs = super(MakeRequestView, self).get_form_kwargs()

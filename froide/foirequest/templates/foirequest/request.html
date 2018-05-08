@@ -21,6 +21,10 @@
     {{ request_form.draft }}
     {{ request_form.redirect_url }}
 
+    {% for k, v in config.items %}
+      <input type="hidden" name="{{ k }}" value="1"/>
+    {% endfor %}
+
       <request-form
         v-cloak
         publicbody-default-search="{{ public_body_search }}"
