@@ -51,10 +51,11 @@ def get_redacted_page(pdf_file, pageNum, instr, dpi):
     pdf = canvas.Canvas(writer)
     filename = "{}[{}]".format(pdf_file.name, pageNum)
     with Image(filename=filename, resolution=dpi) as image:
+        width = image.width * 72 / dpi
+        height = image.height * 72 / dpi
+        scale = image.width / instr['width']
+
         for rect in instr['rects']:
-            width = image.width * 72 / dpi
-            height = image.height * 72 / dpi
-            scale = image.width / instr['width']
             rect = [r * scale for r in rect]
 
             with Drawing() as draw:
