@@ -136,10 +136,11 @@ class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ('name', 'meta', 'jurisdiction',)
-    list_filter = ('jurisdiction',)
+    list_display = ('name', 'meta', 'law_type', 'jurisdiction',)
+    list_filter = ('meta', 'law_type', 'jurisdiction')
     raw_id_fields = ('mediator',)
     filter_horizontal = ('combined',)
+    search_fields = ['name', 'description']
 
 
 class JurisdictionAdmin(admin.ModelAdmin):
