@@ -11,7 +11,8 @@
               {{ result.name }}
             </h4>
             <small>
-              {{ result.jurisdiction.name }}, {{ result.number_of_requests }} {{ i18n.requests }}
+              {{ result.jurisdiction.name }},
+              {{ i18n._('requestCount', {count: result.number_of_requests} ) }}
             </small>
           </div>
           <div class="col-sm-4">
