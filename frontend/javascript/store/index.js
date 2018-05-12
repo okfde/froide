@@ -85,6 +85,12 @@ export default new Vuex.Store({
       return meta
     },
     defaultLaw: (state) => {
+      let sortMetaLawsFirst = (a, b) => {
+        if (a.meta && b.meta) return 0
+        if (a.meta) return -1
+        if (b.meta) return 1
+        return 0
+      }
       var key = null
       for (key in state.scopedPublicBodies) {}
       let pbs = state.scopedPublicBodies[key]
@@ -95,6 +101,7 @@ export default new Vuex.Store({
         let laws = pb.laws.filter((l) => {
           return state.lawType ? l.law_type === state.lawType : true
         })
+        laws = laws.sort(sortMetaLawsFirst)
         if (i === 0) {
           lastLaw = laws[0]
           continue
