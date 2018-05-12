@@ -22,7 +22,7 @@
         </div>
       </li>
     </ul>
-    <ul class="pagination" v-if="hasSearchResults">
+    <ul class="pagination" v-if="hasSearchResults && maxResultPage > 1">
       <li v-if="hasPreviousSearchResults" class="page-item">
         <a href="#" class="page-link prev" @click.prevent="getPrevious">
           <span aria-hidden="true">&laquo;</span>
