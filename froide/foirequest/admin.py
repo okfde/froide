@@ -74,9 +74,9 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     tag_all_config = ('tags', reverse_lazy('api:request-tags-autocomplete'))
 
-    actions = ['mark_checked', 'mark_not_foi', 'tag_all',
-               'mark_same_as', 'remove_from_index', 'confirm_request',
-               'set_visible_to_user', 'unpublish']
+    actions = ['mark_checked', 'mark_not_foi', 'mark_successfully_resolved',
+               'tag_all', 'mark_same_as', 'remove_from_index',
+               'confirm_request', 'set_visible_to_user', 'unpublish']
     raw_id_fields = ('same_as', 'public_body', 'user', 'project')
     save_on_top = True
 
@@ -96,6 +96,15 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         self.message_user(request,
             _("%d request(s) successfully marked as not FoI." % rows_updated))
     mark_not_foi.short_description = _("Mark selected requests as not FoI")
+
+    def mark_successfully_resolved(self, request, queryset):
+        rows_updated = queryset.update(
+            status='resolved', resolution='successful'
+        )
+        self.message_user(request,
+            _("%d request(s) have been marked as successfully resolved." %
+                rows_updated))
+    mark_successfully_resolved.short_description = _("Mark successfully resolved")
 
     def mark_same_as(self, request, queryset):
         """
