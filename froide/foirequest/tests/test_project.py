@@ -64,6 +64,10 @@ class RequestProjectTest(TestCase):
         last_part_2 = first_message_2.plaintext.split(data['body'])[1]
         self.assertNotEqual(last_part_1, last_part_2)
 
+        response = self.client.get(reverse('foirequest-project_shortlink',
+                kwargs={"obj_id": project.pk}))
+        self.assertEqual(response.status_code, 302)
+
     def test_create_project_full_text(self):
         user = User.objects.get(email='info@fragdenstaat.de')
         user.user_permissions.add(self.perm)

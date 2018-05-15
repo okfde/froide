@@ -9,8 +9,8 @@ from ..models import FoiProject
 from ..auth import can_read_foiproject, can_manage_foiproject
 
 
-def project_shortlink(request, pk):
-    foiproject = get_object_or_404(FoiProject, pk=pk)
+def project_shortlink(request, obj_id):
+    foiproject = get_object_or_404(FoiProject, pk=obj_id)
     if not can_read_foiproject(foiproject, request):
         raise Http404
     return redirect(foiproject)
