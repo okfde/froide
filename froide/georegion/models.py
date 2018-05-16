@@ -8,6 +8,8 @@ class GeoRegion(models.Model):
     name = models.CharField(_('Name'), max_length=255)
     slug = models.SlugField(_('Slug'), max_length=255)
 
+    description = models.TextField(blank=True)
+
     kind = models.CharField(_('Kind of Region'), max_length=255,
         choices=(
             ('country', _('country')),
@@ -31,7 +33,7 @@ class GeoRegion(models.Model):
     valid_on = models.DateTimeField(null=True, blank=True)
 
     geom = models.MultiPolygonField(_('geometry'), geography=True)
-    gov_seat = models.PointField(_('gov seat'), null=True, geography=True)
+    gov_seat = models.PointField(_('gov seat'), null=True, blank=True, geography=True)
 
     part_of = models.ForeignKey('self', verbose_name=_('Part of'), null=True,
         on_delete=models.SET_NULL, blank=True
