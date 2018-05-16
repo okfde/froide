@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import serializers
 from rest_framework import viewsets
 
@@ -19,6 +21,9 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         many=False
     )
+    geom = serializers.SerializerMethodField()
+    gov_seat = serializers.SerializerMethodField()
+    centroid = serializers.SerializerMethodField()
 
     class Meta:
         model = GeoRegion
@@ -29,12 +34,30 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
             'region_identifier', 'global_identifier',
             'area', 'population', 'valid_on',
             'geom', 'gov_seat',
+            'centroid',
             'part_of',
         )
+
+    def get_geom(self, obj):
+        if obj.geom is not None:
+            return json.loads(obj.geom.json)
+        return None
+
+    def get_gov_seat(self, obj):
+        if obj.gov_seat is not None:
+            return json.loads(obj.gov_seat.json)
+        return None
+
+    def get_centroid(self, obj):
+        if obj.geom is not None:
+            return json.loads(obj.geom.centroid.json)
+        return None
 
 
 class GeoRegionFilter(filters.FilterSet):
     q = filters.CharFilter(method='search_filter')
+    kind = filters.CharFilter(method='kind_filter')
+    level = filters.NumberFilter(method='level_filter')
 
     class Meta:
         model = GeoRegion
@@ -44,6 +67,12 @@ class GeoRegionFilter(filters.FilterSet):
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(name__icontains=value)
+
+    def kind_filter(self, queryset, name, value):
+        return queryset.filter(kind=value)
+
+    def level_filter(self, queryset, name, value):
+        return queryset.filter(level=value)
 
 
 class GeoRegionViewSet(OpenRefineReconciliationMixin,
