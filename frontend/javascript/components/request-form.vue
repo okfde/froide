@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="make-request-container">
     <div class="process-breadcrumbs-container">
       <div class="container">
         <div class="row">
@@ -524,6 +524,10 @@ export default {
 <style lang="scss" scoped>
 
 @import "../../styles/variables";
+
+.make-request-container {
+  padding-bottom: 1rem;
+}
 
 .container-multi {
   /* Allow container to wider than normal to allow for more space */
