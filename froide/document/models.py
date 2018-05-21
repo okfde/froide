@@ -189,7 +189,7 @@ class PageAnnotation(models.Model):
     def save(self, *args, **kwargs):
         image_cropped = kwargs.pop('image_cropped', False)
         res = super(PageAnnotation, self).save(*args, **kwargs)
-        if not image_cropped:
+        if not image_cropped and self.valid_rect():
             image_bytes = crop_image(
                 self.page.image.path,
                 self.left, self.top, self.width, self.height
@@ -201,3 +201,9 @@ class PageAnnotation(models.Model):
             )
             return self.save(image_cropped=True)
         return res
+
+    def valid_rect(self):
+        return (self.left is not None and
+                self.top is not None and
+                self.width is not None and
+                self.height is not None)
