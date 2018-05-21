@@ -55,6 +55,7 @@ class Base(Configuration):
         'froide.frontpage',
         'froide.georegion',
         'froide.publicbody',
+        'froide.document',
         'froide.account',
         'froide.team',
         'froide.foisite',
@@ -430,6 +431,8 @@ class Base(Configuration):
         doc_conversion_binary=None,  # replace with libreoffice instance
         doc_conversion_call_func=None,  # see settings_test for use
     )
+
+    TESSERACT_DATA_PATH = values.Value('/usr/local/share/tessdata')
 
     # ###### Email ##############
 
