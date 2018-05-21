@@ -27,7 +27,8 @@ class DocumentAdmin(admin.ModelAdmin):
 
     def reprocess_document(self, request, queryset):
         for instance in queryset:
-            Document.objects.create_pages_from_pdf(instance)
+            process_document.delay(instance.pk)
+        self.message_user(request, _("Started reprocessing documents."))
     reprocess_document.short_description = _("Reprocess document")
 
 
