@@ -6,8 +6,8 @@ verify_ssl = true
 
 [packages]
 
-django = "<2.0"
-markdown = "*"
+Django = "<2.0"
+Markdown = "*"
 django-haystack = "*"
 django-taggit = "*"
 pytz = "*"
@@ -22,9 +22,9 @@ django-cache-url = "*"
 django-contrib-comments = "*"
 unicodecsv = "*"
 celery = "*"
-"pypdf2" = "*"
+"PyPDF2" = "*"
 reportlab = "*"
-wand = "*"
+Wand = "*"
 djangorestframework = "*"
 django-oauth-toolkit = "*"
 coreapi = "*"
@@ -32,13 +32,14 @@ django-filter = "*"
 django-treebeard = "*"
 djangorestframework-jsonp = "*"
 "geoip2" = "*"
+tesserocr = {git = "git://github.com/sirfz/tesserocr.git", editable = true}
 
 
 [dev-packages]
 
 selenium = "*"
 "flake8" = "*"
-factory-boy = "*"
+factory_boy = "*"
 coverage = "*"
 mock = "*"
-whoosh = "*"
+Whoosh = "*"

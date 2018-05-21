@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fd1ccd516f963e77dd9aa94c8c983a9f7db53ba763564181696ee2f09374fa78"
+            "sha256": "0fa2d5ab650c8f522dd127b81ae34355a5f09175255827e523b8dcbec1a93eb1"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -11,7 +11,7 @@
             "platform_python_implementation": "CPython",
             "platform_release": "17.5.0",
             "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 17.5.0: Mon Mar  5 22:24:32 PST 2018; root:xnu-4570.51.1~1/RELEASE_X86_64",
+            "platform_version": "Darwin Kernel Version 17.5.0: Fri Apr 13 19:32:32 PDT 2018; root:xnu-4570.51.2~1/RELEASE_X86_64",
             "python_full_version": "3.6.3",
             "python_version": "3.6",
             "sys_platform": "darwin"
@@ -42,10 +42,10 @@
         },
         "celery": {
             "hashes": [
-                "sha256:81a67f0d53a688ec2bc8557bd5d6d7218f925a6f2e6df80e01560de9e28997ec",
-                "sha256:77ff3730198d6a17b3c1f05579ebe570b579efb35f6d7e13dba3b1368d068b35"
+                "sha256:6fc4678d1692af97e137b2a9f1c04efd8e7e2fb7134c5c5ad60738cdd927762f",
+                "sha256:d1f2a3359bdbdfb344edce98b8e891f5fe64f8a11c5a45538ec20ac237c971f5"
             ],
-            "version": "==4.1.0"
+            "version": "==4.1.1"
         },
         "certifi": {
             "hashes": [
@@ -84,17 +84,17 @@
         },
         "django": {
             "hashes": [
-                "sha256:056fe5b9e1f8f7fed9bb392919d64f6b33b3a71cfb0f170a90ee277a6ed32bc2",
-                "sha256:4d398c7b02761e234bbde490aea13ea94cb539ceeb72805b72303f348682f2eb"
+                "sha256:18986bcffe69653a84eaf1faa1fa5a7eded32cee41cfecc77fdc65a3e046404d",
+                "sha256:46adfe8e0abe4d1f026c1086889970b611aec492784fbdfbdaabc2457360a4a5"
             ],
-            "version": "==1.11.12"
+            "version": "==1.11.13"
         },
         "django-cache-url": {
             "hashes": [
-                "sha256:f0009452c4d63468714c7ff59266085947f3f3cc0947b3b2e87121bb27538d6c",
-                "sha256:d7e7d3f3fadaa38ab7c655afafc85c2a1b06a3ddc0002af4ae021c1948307f8b"
+                "sha256:964120787dc80e568a355385a3880a19f2f00219c251903956f3137d1583d097",
+                "sha256:235950e2d7cb16164082167c2974301e2f0fb2313d40bfacc9d24f5b09c3514b"
             ],
-            "version": "==2.0.0"
+            "version": "==3.0.0"
         },
         "django-configurations": {
             "hashes": [
@@ -125,10 +125,10 @@
         },
         "django-oauth-toolkit": {
             "hashes": [
-                "sha256:5717b218672a0681521134433f05a796087d6e19b28eb0865e0e6d010c78a4a2",
-                "sha256:590d944ddd61368d02cc6feddc4c06a9eaf8cddeb570ab2deb9e2e8f648d9f1f"
+                "sha256:c006e804ecfdc98ffeb943100dbb0b5e6d82c969c7cb672bc999f1f3a403cb01",
+                "sha256:5eb68432e0869451bad81d127bb2de7a20cb5c5343518bc8d24befe6eaa34e16"
             ],
-            "version": "==1.1.0"
+            "version": "==1.1.2"
         },
         "django-overextends": {
             "hashes": [
@@ -152,10 +152,9 @@
             "version": "==0.22.2"
         },
         "django-treebeard": {
-            "hashes": [
-                "sha256:c21db06a8d4943bf2a28d9d7a119058698fb76116df2679ecbf15a46a501de42"
-            ],
-            "version": "==4.3"
+            "editable": true,
+            "git": "//github.com/stefanw/django-treebeard.git",
+            "ref": "c8d179921da82efb8886a1a04038970bc966c274"
         },
         "djangorestframework": {
             "hashes": [
@@ -200,10 +199,10 @@
         },
         "kombu": {
             "hashes": [
-                "sha256:01f0da9fe222a2183345004243d1518c0fbe5875955f1b24842f2d9c65709ade",
-                "sha256:4249d9dd9dbf1fcec471d1c2def20653c9310dd1a217272d77e4844f9d5273cb"
+                "sha256:416aa6fb7b22125a3b65322eb26f5c4479d4830b3e7bad55191ac46438ef2b2b",
+                "sha256:d601c47312833c0f6f4aaf037f293b2627398d4cf8526e6ba0360287294ee1fb"
             ],
-            "version": "==4.1.0"
+            "version": "==4.2.0"
         },
         "markdown": {
             "hashes": [
@@ -341,6 +340,11 @@
             ],
             "version": "==2.18.4"
         },
+        "tesserocr": {
+            "editable": true,
+            "git": "//github.com/sirfz/tesserocr.git",
+            "ref": "33209fb2365b73929cd903e01a20aa6c301cdfd2"
+        },
         "unicodecsv": {
             "hashes": [
                 "sha256:018c08037d48649a0412063ff4eda26eaa81eff1546dbffa51fa5293276ff7fc"
@@ -421,17 +425,17 @@
         },
         "factory-boy": {
             "hashes": [
-                "sha256:be2abc8092294e4097935a29b4e37f5b9ed3e4205e2e32df215c0315b625995e",
-                "sha256:bd5a096d0f102d79b6c78cef1c8c0b650f2e1a3ecba351c735c6d2df8dabd29c"
+                "sha256:d552cb872b310ae78bd7429bf318e42e1e903b1a109e899a523293dfa762ea4f",
+                "sha256:6f25cc4761ac109efd503f096e2ad99421b1159f01a29dbb917359dcd68e08ca"
             ],
-            "version": "==2.10.0"
+            "version": "==2.11.1"
         },
         "faker": {
             "hashes": [
-                "sha256:226d8fa67a8cf8b4007aab721f67639f130e9cfdc53a7095a2290ebb07a65c71",
-                "sha256:48fed4b4a191e2b42ad20c14115f1c6d36d338b80192075d7573f0f42d7fb321"
+                "sha256:782a58cec0e083df8e3536b0a890fce9bdc1633782c140b64183dcc626fea53e",
+                "sha256:a77a1a2223a8e0d32618878350bbd2171040f32b526ba2cddfab8864704bb370"
             ],
-            "version": "==0.8.13"
+            "version": "==0.8.15"
         },
         "flake8": {
             "hashes": [
@@ -456,16 +460,14 @@
         },
         "pbr": {
             "hashes": [
-                "sha256:4e8a0ed6a8705a26768f4c3da26026013b157821fe5f95881599556ea9d91c19",
-                "sha256:dae4aaa78eafcad10ce2581fc34d694faa616727837fd8e55c1a00951ad6744f"
+                "sha256:680bf5ba9b28dd56e08eb7c267991a37c7a5f90a92c2e07108829931a50ff80a",
+                "sha256:6874feb22334a1e9a515193cba797664e940b763440c88115009ec323a7f2df5"
             ],
-            "version": "==4.0.2"
+            "version": "==4.0.3"
         },
         "pycodestyle": {
             "hashes": [
-                "sha256:5ff2fbcbab997895ba9ead77e1b38b3ebc2e5c3b8a6194ef918666e4c790a00e",
                 "sha256:6c4245ade1edfad79c3446fadfc96b0de2759662dc29d07d80a6f27ad1ca6ba9",
-                "sha256:1ec08a51c901dfe44921576ed6e4c1f5b7ecbad403f871397feedb5eb8e4fa14",
                 "sha256:682256a5b318149ca0d2a9185d365d8864a768a28db66a84a2ea946bcc426766"
             ],
             "version": "==2.3.1"
@@ -479,17 +481,17 @@
         },
         "python-dateutil": {
             "hashes": [
-                "sha256:3220490fb9741e2342e1cf29a503394fdac874bc39568288717ee67047ff29df",
-                "sha256:9d8074be4c993fbe4947878ce593052f71dac82932a677d49194d8ce9778002e"
+                "sha256:1adb80e7a782c12e52ef9a8182bebeb73f1d7e24e374397af06fb4956c8dc5c0",
+                "sha256:e27001de32f627c22380a688bcc43ce83504a7bc5da472209b4c70f02829f0b8"
             ],
-            "version": "==2.7.2"
+            "version": "==2.7.3"
         },
         "selenium": {
             "hashes": [
-                "sha256:2b6f018e55f50e9c67a67caec2f73f806f72c162fb38cf3ea79e0a8f6506bf56",
-                "sha256:5841fb30c3965866220c34d16de8e3d091e2833fcac385160a63db0c3522a297"
+                "sha256:1372101ad23798462038481f92ba1c7fab8385c788b05da6b44318f10ea52422",
+                "sha256:b8a2630fd858636c894960726ca3c94d8277e516ea3a9d81614fb819a5844764"
             ],
-            "version": "==3.11.0"
+            "version": "==3.12.0"
         },
         "six": {
             "hashes": [
