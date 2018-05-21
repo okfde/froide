@@ -9,6 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
+from froide.document.models import Document
 
 from .message import FoiMessage
 
@@ -42,6 +43,8 @@ class FoiAttachment(models.Model):
         null=True, blank=True, on_delete=models.SET_NULL,
         related_name='original_set')
     is_converted = models.BooleanField(_("Is converted"), default=False)
+
+    document = models.ForeignKey(Document, null=True, on_delete=models.SET_NULL)
 
     attachment_published = Signal(providing_args=[])
 
@@ -96,3 +99,21 @@ class FoiAttachment(models.Model):
         self.approved = True
         self.save()
         self.attachment_published.send(sender=self)
+
+    def create_document(self):
+        if self.document is not None:
+            return self.document
+
+        if self.filetype != 'application/pdf':
+            return
+
+        foirequest = self.belongs_to.request
+        doc = Document.objects.create(
+            original=self.file.name,
+            user=foirequest.user,
+            public=foirequest.public,
+            title=self.name
+        )
+        self.document = doc
+        self.save()
+        return doc

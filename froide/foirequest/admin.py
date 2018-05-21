@@ -246,7 +246,8 @@ class FoiMessageAdmin(admin.ModelAdmin):
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted')
     ordering = ('-id',)
-    list_display = ('name', 'filetype', 'admin_link_message', 'approved', 'can_approve',)
+    list_display = ('name', 'filetype', 'admin_link_message',
+                    'approved', 'can_approve',)
     list_filter = ('can_approve', 'approved', 'is_redacted', 'is_converted',
                    make_nullfilter('redacted', _('Has redacted version')),
                    make_nullfilter('converted', _('Has converted version'))
@@ -255,7 +256,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.FileField: {'widget': AttachmentFileWidget},
     }
-    actions = ['approve', 'cannot_approve', 'convert']
+    actions = ['approve', 'cannot_approve', 'convert', 'make_document']
 
     def admin_link_message(self, obj):
         return format_html('<a href="{}">{}</a>',
@@ -285,6 +286,15 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
                 convert_attachment_task.delay(instance.pk)
         self.message_user(request, _("Conversion tasks started: %s") % count)
     convert.short_description = _("Convert to PDF")
+
+    def make_document(self, request, queryset):
+        count = 0
+        for instance in queryset:
+            doc = instance.create_document()
+            if doc:
+                count += 1
+        self.message_user(request, _("%s document(s) created") % count)
+    make_document.short_description = _("Make into document")
 
 
 class FoiEventAdmin(admin.ModelAdmin):

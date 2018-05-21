@@ -42,6 +42,31 @@ def approve_attachment(request, slug, attachment):
     return redirect(att.get_anchor_url())
 
 
+@require_POST
+def create_document(request, slug, attachment):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+
+    if not can_write_foirequest(foirequest, request):
+        return render_403(request)
+    att = get_object_or_404(FoiAttachment, id=int(attachment))
+    if not att.can_approve and not request.user.is_staff:
+        return render_403(request)
+
+    if att.document is not None:
+        return render_400(request)
+
+    att.create_document()
+    messages.add_message(request, messages.SUCCESS,
+            _('Document created.'))
+
+    if request.is_ajax():
+        return render(
+            request, 'foirequest/snippets/attachment.html',
+            {'attachment': att, 'object': foirequest}
+        )
+    return redirect(att.get_anchor_url())
+
+
 def auth_message_attachment(request, message_id, attachment_name):
     '''
     nginx auth view
