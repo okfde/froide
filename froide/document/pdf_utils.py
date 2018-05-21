@@ -4,6 +4,11 @@ from PyPDF2 import PdfFileReader
 from PIL import Image as PILImage
 from wand.image import Image
 import tesserocr
+try:
+    import pdflib
+except ImportError:
+    pdflib = None
+    
 
 TESSERACT_LANGUAGE = {
     'en': 'eng',
@@ -41,9 +46,17 @@ class PDFProcessor(object):
     def get_text(self, pages=None):
         if pages is None:
             pages = range(self.num_pages)
+        pdflib_pages = None
+        if pdflib is not None:
+            pdflib_doc = pdflib.Document(self.filename)
+            pdflib_pages = list(pdflib_doc)
         for page_no in pages:
-            page = self.pdf_reader.getPage(page_no)
-            text = page.extractText()
+            if pdflib_pages is not None:
+                page = pages[page_no]
+                text = ' '.join(page.lines).strip()
+            else:
+                page = self.pdf_reader.getPage(page_no)
+                text = page.extractText()
             if not text.strip():
                 text = self.run_ocr(page_no)
             yield text

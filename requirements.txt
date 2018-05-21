@@ -27,6 +27,7 @@ kombu==4.1.0
 markdown==2.6.11
 markupsafe==1.0
 oauthlib==2.0.6
+pdflib==0.1.7
 pillow==5.0.0
 pypdf2==1.26.0
 python-magic==0.4.15
