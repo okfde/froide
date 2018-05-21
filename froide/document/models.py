@@ -151,7 +151,7 @@ class Page(models.Model):
         ordering = ('number',)
 
     def __str__(self):
-        return '%s (%s)' % (self.document, self.number)
+        return '%s - %s' % (self.document, self.number)
 
 
 def get_page_annotation_filename(instance, filename):
@@ -184,7 +184,7 @@ class PageAnnotation(models.Model):
                               max_length=255, blank=True)
 
     def __str__(self):
-        return self.title
+        return '%s (%s)' % (self.title, self.page)
 
     def save(self, *args, **kwargs):
         image_cropped = kwargs.pop('image_cropped', False)
