@@ -44,8 +44,10 @@
 {% endblock %}
 
 {% block after_field_sets %}
-<div style="position:relative; width: max-content">
-    <img src="{{ original.page.image.url }}" alt="Testing" id="page_image" style="outline: 1px solid #000; width: 50%;height:50%">
-    <div id="page_rect" style="outline: 1px solid #f00; position: absolute; pointer-events: none"></div>
-</div>
+    {% if original and original.page %}
+        <div style="position:relative; width: max-content">
+            <img src="{{ original.page.image.url }}" alt="Testing" id="page_image" style="outline: 1px solid #000; width: 50%;height:50%">
+            <div id="page_rect" style="outline: 1px solid #f00; position: absolute; pointer-events: none"></div>
+        </div>
+    {% endif %}
 {% endblock %}
