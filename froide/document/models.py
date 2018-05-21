@@ -38,14 +38,14 @@ class DocumentManager(models.Manager):
             )
 
             page.image.save(
-                'page_annotation.gif',
+                'page.gif',
                 ContentFile(img.make_blob('gif')),
                 save=False
             )
             for size_name, width in Page.SIZES:
                 img.transform(resize='{}x'.format(width))
                 getattr(page, 'image_%s' % size_name).save(
-                    'page_annotation.gif',
+                    'page.gif',
                     ContentFile(img.make_blob('gif')),
                     save=False
                 )

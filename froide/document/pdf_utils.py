@@ -2,13 +2,14 @@ import contextlib
 
 from PyPDF2 import PdfFileReader
 from PIL import Image as PILImage
+import wand
 from wand.image import Image
 import tesserocr
 try:
     import pdflib
 except ImportError:
     pdflib = None
-    
+
 
 TESSERACT_LANGUAGE = {
     'en': 'eng',
@@ -40,7 +41,11 @@ class PDFProcessor(object):
     @contextlib.contextmanager
     def get_image(self, page_no, resolution=300):
         filename = "{}[{}]".format(self.filename, page_no)
-        with Image(filename=filename, resolution=resolution) as img:
+        with Image(
+                filename=filename,
+                resolution=resolution,
+                background=wand.color.Color('#fff')) as img:
+            img.alpha_channel = False
             yield img
 
     def get_text(self, pages=None):
@@ -59,7 +64,7 @@ class PDFProcessor(object):
                 text = page.extractText()
             if not text.strip():
                 text = self.run_ocr(page_no)
-            yield text
+            yield text.strip()
 
     def run_ocr(self, page_no):
         with self.get_image(page_no, resolution=300) as img:
@@ -79,5 +84,6 @@ class PDFProcessor(object):
 
 def crop_image(image_path, left, top, width, height):
     with Image(filename=image_path) as img:
+        img.alpha_channel = False
         img.crop(left, top, left + width, top + height)
         return img.make_blob('gif')
