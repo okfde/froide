@@ -52,7 +52,7 @@ class PDFProcessor(object):
             pdflib_pages = list(pdflib_doc)
         for page_no in pages:
             if pdflib_pages is not None:
-                page = pages[page_no]
+                page = pdflib_pages[page_no]
                 text = ' '.join(page.lines).strip()
             else:
                 page = self.pdf_reader.getPage(page_no)
