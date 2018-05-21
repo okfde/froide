@@ -92,7 +92,10 @@ class Document(models.Model):
     slug = models.SlugField(max_length=250, blank=True)
     description = models.TextField(default='', blank=True)
 
-    pdf_file = models.FileField(max_length=255, upload_to=get_document_path, blank=True)
+    pdf_file = models.FileField(
+        max_length=255,
+        storage=OverwriteStorage(),
+        upload_to=get_document_path, blank=True)
     original = models.FileField(blank=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
@@ -141,11 +144,22 @@ class Page(models.Model):
     number = models.IntegerField(default=1)
 
     content = models.TextField(blank=True)
-    image = models.ImageField(max_length=255,
+    image = models.ImageField(
+        max_length=255,
+        storage=OverwriteStorage(),
         upload_to=functools.partial(get_page_filename, size='original'))
-    image_large = models.ImageField(max_length=255, upload_to=UPLOAD_FUNCS['large'])
-    image_normal = models.ImageField(max_length=255, upload_to=UPLOAD_FUNCS['normal'])
-    image_small = models.ImageField(max_length=255, upload_to=UPLOAD_FUNCS['small'])
+    image_large = models.ImageField(
+        max_length=255,
+        storage=OverwriteStorage(),
+        upload_to=UPLOAD_FUNCS['large'])
+    image_normal = models.ImageField(
+        max_length=255,
+        storage=OverwriteStorage(),
+        upload_to=UPLOAD_FUNCS['normal'])
+    image_small = models.ImageField(
+        max_length=255,
+        storage=OverwriteStorage(),
+        upload_to=UPLOAD_FUNCS['small'])
 
     class Meta:
         ordering = ('number',)
