@@ -285,6 +285,11 @@
 {% addtoblock "js" %}
   <script src="{% static 'js/makerequest.js' %}" charset="utf-8"></script>
 {% endaddtoblock %}
+
+{% addtoblock "css" %}
+  <link rel="stylesheet" href="{% static 'css/makerequest.css' %}">
+{% endaddtoblock %}
+
 {% addtoblock "js" %}
   <script>
     window.Froide.components.makerequest.createRequestForm('#make-request', window.Froide)
