@@ -6,12 +6,7 @@ dist: trusty
 
 addons:
   chrome: stable
-  apt:
-    packages:
-    - tesseract-ocr
-    - libtesseract-dev
-    - libleptonica-dev
-    - poppler-utils
+  postgres: 10.0
 
 python:
   - '3.5'
