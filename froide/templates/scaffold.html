@@ -9,8 +9,9 @@
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
   {% block extra_css %}
   {% endblock %}
-  {% block render_styles %}{% render_block "css" %}{% endblock %}
   {% endblock %}
+  
+  {% render_block "css" %}
 
   {% include "snippets/meta.html" %}
 
@@ -22,7 +23,7 @@
   {% block extra_footer %}{% endblock %}
 
   {% block scripts %}{% endblock %}
-  {% block render_scripts %}{% render_block "js" %}{% endblock %}
+  {% render_block "js" %}
 
   {% block below_scripts %}{% endblock %}
 </body>
