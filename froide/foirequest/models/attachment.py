@@ -44,7 +44,10 @@ class FoiAttachment(models.Model):
         related_name='original_set')
     is_converted = models.BooleanField(_("Is converted"), default=False)
 
-    document = models.ForeignKey(Document, null=True, on_delete=models.SET_NULL)
+    document = models.ForeignKey(
+        Document, null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
 
     attachment_published = Signal(providing_args=[])
 
