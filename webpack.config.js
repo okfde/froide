@@ -1,15 +1,14 @@
 const path = require('path')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const LiveReloadPlugin = require('webpack-livereload-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+
 const webpack = require('webpack')
 
-const extractSass = new ExtractTextPlugin({
-  filename: '../css/[name].css',
-  disable: process.env.NODE_ENV === 'development'
-})
+const devMode = process.env.NODE_ENV !== 'production'
 
 const config = {
   entry: {
@@ -53,23 +52,39 @@ const config = {
       },
       {
         test: /\.scss$/,
-        use: extractSass.extract({
-          use: [{
+        use: [
+          devMode ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+          {
             loader: 'css-loader',
             options: {
-              sourceMap: process.env.NODE_ENV !== 'production'
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: (loader) => [
+                require('autoprefixer')()
+              ]
+            }
+          },
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              sourceMap: true
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: process.env.NODE_ENV !== 'production',
-              includePaths: ['node_modules/']
+              sourceMap: true,
+              includePaths: [
+                'node_modules/'
+              ]
             }
-          }],
-          // use style-loader in development
-          fallback: 'style-loader'
-        })
+          }
+        ]
       },
       {
         test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
@@ -98,7 +113,13 @@ const config = {
     ]
   },
   plugins: [
-    extractSass,
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '../css/[name].css'
+      // publicPath: '../../'
+    }),
     new LiveReloadPlugin(),
     new CopyWebpackPlugin([
       {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
@@ -112,31 +133,24 @@ const config = {
       'process.env': {
         NODE_ENV: `"${process.env.NODE_ENV}"`
       }
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      // (the commons chunk name)
-
-      filename: 'common.js',
-      // (the filename of the commons chunk)
-
-      chunks: ['publicbody', 'request', 'makerequest'],
-      minChunks: 2
-      // (Modules must be shared between 3 entries)
     })
-  ].concat(process.env.NODE_ENV === 'production' ? [
-    new UglifyJsPlugin({
-      sourceMap: false,
-      uglifyOptions: {
-        ie8: true,
-        ecma: 5,
-        mangle: false
-      }
-    }),
-    new OptimizeCssAssetsPlugin({
-      assetNameRegExp: /\.css$/,
-      cssProcessorOptions: { discardComments: { removeAll: true } }
-    })] : [])
+  ],
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true // set to true if you want JS source maps
+      })
+    ].concat(!devMode ? [
+      new OptimizeCssAssetsPlugin({
+        assetNameRegExp: /\.css$/,
+        cssProcessorOptions: {
+          discardComments: { removeAll: true }
+        }
+      })
+    ] : [])
+  }
 }
 
 module.exports = config
