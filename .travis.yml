@@ -6,7 +6,11 @@ dist: trusty
 
 addons:
   chrome: stable
-  postgres: 10.0
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-client-10
 
 python:
   - '3.5'
@@ -18,7 +22,6 @@ services:
 
 before_script:
   - sudo apt-get -qq update
-  - sudo apt-get install -y postgresql-9.6-postgis-2.4
   - psql -c 'create database froide;' -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d froide
   - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d froide
