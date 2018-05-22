@@ -700,7 +700,7 @@ export default {
 </script>
 
 
-<style>
+<style lang="scss" scoped>
   .toolbar {
     position: sticky;
     top: 0;

@@ -56,7 +56,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .search-results {
       overflow-y: auto;
       outline: 1px solid #aaa;

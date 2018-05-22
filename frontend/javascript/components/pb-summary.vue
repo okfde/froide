@@ -78,7 +78,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .summary-subitem-list {
     max-height: 200px;
     overflow-y: scroll;
