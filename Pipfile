@@ -32,7 +32,6 @@ django-filter = "*"
 django-treebeard = "*"
 djangorestframework-jsonp = "*"
 "geoip2" = "*"
-tesserocr = {git = "git://github.com/sirfz/tesserocr.git", editable = true}
 pdflib = "*"
 
 

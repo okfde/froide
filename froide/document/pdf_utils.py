@@ -4,7 +4,10 @@ from PyPDF2 import PdfFileReader
 from PIL import Image as PILImage
 import wand
 from wand.image import Image
-import tesserocr
+try:
+    import tesserocr
+except ImportError:
+    tesserocr = None
 try:
     import pdflib
 except ImportError:
@@ -67,6 +70,8 @@ class PDFProcessor(object):
             yield text.strip()
 
     def run_ocr(self, page_no):
+        if tesserocr is None:
+            return ''
         with self.get_image(page_no, resolution=300) as img:
             pil_image = PILImage.frombytes('RGB', img.size, img.make_blob('RGB'))
             return tesserocr.image_to_text(
