@@ -24,7 +24,13 @@ class DocumentManager(models.Manager):
         config = {
             'TESSERACT_DATA_PATH': settings.TESSERACT_DATA_PATH
         }
-        pdf = PDFProcessor(doc.original.path, language=doc.language, config=config)
+
+        if doc.original:
+            pdf_file = doc.original
+        elif doc.pdf_file:
+            pdf_file = doc.pdf_file
+
+        pdf = PDFProcessor(pdf_file.path, language=doc.language, config=config)
 
         doc.num_pages = pdf.num_pages
         doc.save()
