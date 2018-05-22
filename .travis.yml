@@ -22,6 +22,7 @@ services:
 
 before_script:
   - sudo apt-get -qq update
+  - sudo apt-get install -y postgresql-10-postgis-2.4
   - psql -c 'create database froide;' -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d froide
   - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d froide
