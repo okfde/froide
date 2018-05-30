@@ -5,6 +5,13 @@
 
 {% load block_helper %}
 
+
+{% block css %}
+  {% addtoblock "css" %}<link href="{% static 'css/main.css' %}" rel="stylesheet">{% endaddtoblock %}
+  {{ block.super }}
+{% endblock %}
+
+
 {% block body_tag %}
   {% block top_block %}
   {% endblock %}
@@ -46,5 +53,6 @@
 {% endblock body_tag %}
 
 {% block scripts %}
-  <script async src="{% static "js/main.js" %}"></script>
+  {% addtoblock "js" %}<script async src="{% static "js/main.js" %}"></script>{% endaddtoblock %}
+  {{ block.super }}
 {% endblock %}

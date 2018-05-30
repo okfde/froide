@@ -6,9 +6,8 @@
   <title>{% block title %}{% trans "Freedom of Information Requests" %} - {{ SITE_NAME }}{% endblock %}</title>
   {% block header_font %}{% endblock %}
   {% block css %}
-    <link href="{% static 'css/main.css' %}" rel="stylesheet">
-  {% block extra_css %}
-  {% endblock %}
+    {% block extra_css %}
+    {% endblock %}
   {% endblock %}
   
   {% render_block "css" %}
