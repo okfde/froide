@@ -123,6 +123,9 @@
     }())
   </script>
   {% addtoblock "js" %}
+    <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
+  {% endaddtoblock %}
+  {% addtoblock "js" %}
     <script src="{% static 'js/redact.js' %}" charset="utf-8"></script>
   {% endaddtoblock %}
   {% addtoblock "js" %}
