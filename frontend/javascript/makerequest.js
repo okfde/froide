@@ -20,7 +20,8 @@ function createRequestForm (selector, config) {
   })
 }
 
-module.exports = {
+const exp = {
   createRequestForm
 }
-export default module.exports
+module.exports = exp
+export default exp

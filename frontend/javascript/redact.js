@@ -16,7 +16,9 @@ function createRedaction (selector, pdfPath, config) {
   })
 }
 
-module.exports = {
+const exp = {
   createRedaction
 }
-export default module.exports
+
+module.exports = exp
+export default exp
