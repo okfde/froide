@@ -1,7 +1,7 @@
-import $ from 'jquery'
+/* global $ */
 
+import 'select2'
 import 'select2/src/scss/core.scss'
-import 'select2/dist/js/select2.min.js'
 
 function setupTagging (objectid, sourceurl) {
   $(`#${objectid}_select2`).on('change.select2', function (e) {
@@ -33,7 +33,9 @@ function setupTagging (objectid, sourceurl) {
   })
 }
 
-module.exports = {
+const exp = {
   setupTagging
 }
-export default module.exports
+
+module.exports = exp
+export default exp
