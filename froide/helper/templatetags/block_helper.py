@@ -28,9 +28,7 @@ class AddToBlockNode(template.Node):
     def render(self, context):
         output = self.nodelist.render(context).strip()
         if VAR_NAME not in context:
-            context[VAR_NAME] = {}
-        if self.block_name not in context[VAR_NAME]:
-            context[VAR_NAME][self.block_name] = {}
+            context[VAR_NAME] = get_default_dict()
         context[VAR_NAME][self.block_name][output] = None
         return ''
 
