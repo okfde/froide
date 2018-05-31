@@ -130,8 +130,10 @@
   {% endaddtoblock %}
   {% addtoblock "js" %}
     <script>
-      window.Froide.components.redact.createRedaction('#redact',
-        '{{ attachment.get_absolute_url|escapejs }}', window.Froide)
+      document.addEventListener('DOMContentLoaded', function() {
+        window.Froide.components.redact.createRedaction('#redact',
+          '{{ attachment.get_absolute_url|escapejs }}', window.Froide)
+      })
     </script>
   {% endaddtoblock %}
 
