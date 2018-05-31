@@ -17,13 +17,15 @@
         </div>
         <div class="btn-group mr-2">
           <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
-            &laquo; {{ i18n.previousPage}}
+            &laquo;
+            <span class="sr-only">{{ i18n.previousPage}}</span>
           </button>
           <span class="input-group-text">
             {{ pageOfTotal }}
           </span>
           <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
-            {{ i18n.nextPage }} &raquo;
+            <span class="sr-only">{{ i18n.nextPage }}</span>
+            &raquo;
           </button>
         </div>
 
@@ -72,6 +74,23 @@
           <p v-if="redacting" class="redacting">
             {{ i18n.redacting }}
           </p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div v-if="ready" class="btn-toolbar col-lg-12">
+        <div class="btn-group mr-auto ml-auto">
+          <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
+            &laquo;
+            {{ i18n.previousPage}}
+          </button>
+          <span class="input-group-text">
+            {{ pageOfTotal }}
+          </span>
+          <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
+            {{ i18n.nextPage }}
+            &raquo;
+          </button>
         </div>
       </div>
     </div>
@@ -700,7 +719,7 @@ export default {
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
   .toolbar {
     position: sticky;
     top: 0;
