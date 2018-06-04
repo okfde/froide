@@ -26,9 +26,9 @@ services:
 before_script:
   - sudo apt-get -qq update
   - sudo apt-get install -y postgresql-10-postgis-2.4
-  - psql -c 'create database froide;' -U postgres
-  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d froide
-  - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d froide
+  - sudo -u postgres psql -c 'create database froide;' -U postgres
+  - sudo -u postgres psql -c 'CREATE EXTENSION postgis;' -U postgres -d froide
+  - sudo -u postgres psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d froide
   - "export DISPLAY=:99.0"
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
