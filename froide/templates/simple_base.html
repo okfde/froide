@@ -3,9 +3,16 @@
 {% load i18n %}
 {% load static %}
 
+{% load block_helper %}
+
+{% block css %}
+  {% addtoblock "css" %}<link href="{% static 'css/main.css' %}" rel="stylesheet">{% endaddtoblock %}
+  {{ block.super }}
+{% endblock %}
+
 {% block body_tag %}
 
-<main class="container">
+<main class="main">
 {% include "snippets/messages.html" %}
 
 {% block body %}
@@ -15,11 +22,12 @@
 
 </main>
 
-{% block scripts %}
-  <script async src="{% static "js/main.js" %}"></script>
-{% endblock %}
-
 {% block extra_footer %}
 {% endblock %}
 
+{% endblock body_tag %}
+
+{% block scripts %}
+  {% addtoblock "js" %}<script async src="{% static "js/main.js" %}"></script>{% endaddtoblock %}
+  {{ block.super }}
 {% endblock %}
