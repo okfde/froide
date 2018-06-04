@@ -1,6 +1,7 @@
 import re
 import os
 import logging
+import time
 
 from django.conf import settings
 from django.urls import reverse
@@ -353,4 +354,9 @@ class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.find_element_by_css_selector('.navbar-toggler').click()
             WebDriverWait(self.selenium, 5).until(
                 lambda driver: driver.find_element_by_css_selector('.navbar form[role=search]').is_displayed()
+            )
+            time.sleep(0.5)
+            self.selenium.find_element_by_css_selector('.navbar-toggler').click()
+            WebDriverWait(self.selenium, 5).until(
+                lambda driver: not driver.find_element_by_css_selector('.navbar form[role=search]').is_displayed()
             )
