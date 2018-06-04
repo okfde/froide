@@ -556,6 +556,10 @@ class Test(Base):
     ]
 
 
+class CustomTest(Test):
+    pass
+
+
 class German(object):
     LANGUAGE_CODE = "de"
     LANGUAGES = (
