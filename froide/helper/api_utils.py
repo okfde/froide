@@ -7,7 +7,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.utils.serializer_helpers import ReturnDict
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.reverse import reverse
 from rest_framework.renderers import JSONRenderer
 
@@ -59,7 +59,8 @@ class OpenRefineReconciliationMixin(object):
         properties = []
         properties_dict = {}
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get', 'post'],
         permission_classes=(),
         authentication_classes=(),
@@ -234,7 +235,8 @@ class OpenRefineReconciliationMixin(object):
             'rows': rows
         }
 
-    @list_route(
+    @action(
+        detail=False,
         methods=['get', 'post'],
         permission_classes=(),
         authentication_classes=(),

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 
 from django_filters import rest_framework as filters
 
@@ -177,8 +177,8 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = CategoryFilter
 
-    @list_route(methods=['get'], url_path='autocomplete',
-                url_name='autocomplete')
+    @action(detail=False, methods=['get'], url_path='autocomplete',
+            url_name='autocomplete')
     def autocomplete(self, request):
         query = request.GET.get('query', '')
         tags = []
@@ -296,7 +296,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
             p['id']: p for p in properties
         }
 
-    @list_route(methods=['get'])
+    @action(detail=False, methods=['get'])
     def search(self, request):
         self.queryset = self.get_searchqueryset(request)
 

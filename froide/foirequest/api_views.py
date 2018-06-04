@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers, viewsets, mixins, status, throttling
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 
 from oauth2_provider.contrib.rest_framework import TokenHasScope
 
@@ -354,7 +354,7 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
                 vis_filter |= Q(user=user)
         return FoiRequest.objects.filter(vis_filter)
 
-    @list_route(methods=['get'])
+    @action(detail=False, methods=['get'])
     def search(self, request):
         queryset = self.get_searchqueryset(request)
         page = self.paginate_queryset(queryset)
@@ -365,7 +365,7 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @list_route(methods=['get'], url_path='tags/autocomplete',
+    @action(detail=False, methods=['get'], url_path='tags/autocomplete',
                 url_name='tags-autocomplete')
     def tags_autocomplete(self, request):
         query = request.GET.get('query', '')
