@@ -53,6 +53,7 @@ class FoiAttachment(models.Model):
 
     class Meta:
         ordering = ('name',)
+        unique_together = (("belongs_to", "name"),)
         # order_with_respect_to = 'belongs_to'
         verbose_name = _('Attachment')
         verbose_name_plural = _('Attachments')
