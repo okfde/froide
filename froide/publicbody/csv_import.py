@@ -112,6 +112,9 @@ class CSVImporter(object):
         if slug not in self.jur_cache:
             jur = Jurisdiction.objects.get(slug=slug)
             laws = FoiLaw.objects.filter(jurisdiction=jur)
+            meta_ids = laws.filter(meta=True).values_list('combined', flat=True)
+            meta_laws = FoiLaw.objects.filter(pk__in=meta_ids)
+            laws = laws.union(meta_laws)
             jur.laws = laws
             self.jur_cache[slug] = jur
         return self.jur_cache[slug]
