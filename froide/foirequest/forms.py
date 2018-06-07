@@ -252,11 +252,12 @@ class FoiRequestStatusForm(forms.Form):
     def __init__(self, foirequest, *args, **kwargs):
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
+        refusal_choices = []
+        if foirequest.law:
+            refusal_choices = foirequest.law.get_refusal_reason_choices()
         self.fields['refusal_reason'] = forms.ChoiceField(
             label=_("Refusal Reason"),
-            choices=[('', _('No or other reason given'))] + (
-                foirequest.law.get_refusal_reason_choices()
-            ),
+            choices=[('', _('No or other reason given'))] + refusal_choices,
             required=False,
             widget=forms.Select(attrs={'class': 'form-control'}),
             help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
