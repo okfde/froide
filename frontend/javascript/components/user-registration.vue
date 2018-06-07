@@ -22,13 +22,13 @@
         </div>
       </div>
 
-      <div class="form-group row">
+      <div class="form-group row" v-if="requiresPostalAddress">
         <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address }">
           {{ i18n.yourAddress }}
         </label>
         <div class="col-sm-9">
           <p v-if="user.id" id="email_address" class="form-control">
-            {{ user.email }}
+            {{ user.address }}
           </p>
           <div v-else>
             <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="form.address.placeholder"></textarea>
@@ -150,8 +150,14 @@ export default {
         this.updatePrivate(value)
       }
     },
+    requiresPostalAddress () {
+      if (this.defaultLaw) {
+        return !this.defaultLaw.email_only
+      }
+      return false
+    },
     ...mapGetters([
-      'user'
+      'user', 'defaultLaw'
     ])
   },
   methods: {
