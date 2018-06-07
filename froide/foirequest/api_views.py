@@ -274,6 +274,7 @@ class FoiRequestFilter(filters.FilterSet):
     user = filters.ModelChoiceFilter(queryset=filter_by_user_queryset)
     tags = filters.CharFilter(method='tag_filter')
     categories = filters.CharFilter(method='categories_filter')
+    reference = filters.CharFilter(method='reference_filter')
 
     class Meta:
         model = FoiRequest
@@ -290,6 +291,11 @@ class FoiRequestFilter(filters.FilterSet):
     def categories_filter(self, queryset, name, value):
         return queryset.filter(**{
             'public_body__categories__name': value,
+        })
+
+    def reference_filter(self, queryset, name, value):
+        return queryset.filter(**{
+            'reference__startswith': value,
         })
 
 
