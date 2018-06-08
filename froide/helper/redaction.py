@@ -51,25 +51,29 @@ def get_redacted_page(pdf_file, pageNum, instr, dpi):
     pdf = canvas.Canvas(writer)
     filename = "{}[{}]".format(pdf_file.name, pageNum)
     with Image(filename=filename, resolution=dpi) as image:
-        width = image.width * 72 / dpi
-        height = image.height * 72 / dpi
+        image.background_color = Color('white')
+        image.format = 'jpg'
+        image.alpha_channel = 'remove'
+
         scale = image.width / instr['width']
 
-        for rect in instr['rects']:
-            rect = [r * scale for r in rect]
+        with Drawing() as draw:
 
-            with Drawing() as draw:
+            for rect in instr['rects']:
+                rect = [r * scale for r in rect]
                 draw.border_color = Color('black')
                 draw.fill_color = Color('black')
                 p = 2
                 draw.rectangle(
                     left=rect[0] - p, top=rect[1] - p,
                     width=rect[2] + p * 2, height=rect[3] + p * 2)
-                draw(image)
+
+            draw(image)
+
+        width = image.width * 72 / dpi
+        height = image.height * 72 / dpi
 
         pdf.setPageSize((width, height))
-        image.format = 'jpg'
-        image.alpha_channel = False
         reportlab_io_img = ImageReader(io.BytesIO(image.make_blob()))
         pdf.drawImage(reportlab_io_img, 0, 0, width=width, height=height)
 
