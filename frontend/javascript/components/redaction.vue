@@ -5,6 +5,26 @@
         <div class="alert alert-info" role="alert">{{ message }}</div>
       </div>
     </div>
+    <div v-if="errors" class="row">
+      <div class="col-lg-12">
+        <div class="alert alert-error" role="alert">{{ errors }}</div>
+      </div>
+    </div>
+    <div class="row" v-if="loading || redacting">
+      <div class="col-lg-12">
+        <div class="text-center">
+          <p v-if="loading">
+            {{ i18n.loadingPdf }}
+          </p>
+          <p v-if="redacting">
+            {{ i18n.redacting }}
+          </p>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" :class="{'progress-bar-striped': progressUnknown}" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :style="progressWidth"></div>
+        </div>
+      </div>
+    </div>
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group mr-2">
@@ -61,19 +81,10 @@
     </div>
     <div class="row mt-3">
       <div class="col-lg-12">
-        <div v-if="errors" class="alert alert-warning">{{ errors }}</div>
-        <div :id="containerId" class="redactContainer">
+        <div :id="containerId" class="redactContainer" :class="{'hide-redacting': redacting}">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
           <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></canvas>
           <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly, textDisabled: textDisabled }" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></div>
-        </div>
-        <div class="redaction-progress">
-          <p v-if="loading">
-            {{ i18n.loadingPdf }}
-          </p>
-          <p v-if="redacting" class="redacting">
-            {{ i18n.redacting }}
-          </p>
         </div>
       </div>
     </div>
@@ -134,7 +145,9 @@ export default {
       endDrag: null,
       initialAutoRedact: {},
       errors: null,
-      message: null
+      message: null,
+      progressCurrent: null,
+      progressTotal: null
     }
   },
   created () {
@@ -185,11 +198,27 @@ export default {
     },
     textLayer () {
       return document.getElementById(this.textLayerId)
+    },
+    progressUnknown () {
+      return this.progressCurrent === null || this.progressTotal === undefined
+    },
+    progressPercent () {
+      if (!this.progressUnknown) {
+        return this.progressCurrent / this.progressTotal * 100
+      }
+      return 100
+    },
+    progressWidth () {
+      return `width: ${this.progressPercent}%`
     }
   },
   methods: {
     loadDocument () {
       let loadingTask = PDFJS.getDocument(this.pdfPath)
+      loadingTask.onProgress = (progress) => {
+        this.progressCurrent = progress.loaded
+        this.progressTotal = progress.total
+      }
       return loadingTask.promise.then(pdfDocument => {
         this.loading = false
         this.ready = true
@@ -274,17 +303,21 @@ export default {
     redact () {
       this.ready = false
       this.redacting = true
+      this.progressCurrent = 0
+      this.progressTotal = this.numPages + 1
       let pages = range(1, this.numPages + 1)
       let serialized = []
       return pages.reduce((sequence, pageNumber) => {
         return sequence.then(() => {
           return this.setCurrentPage(pageNumber).then(() => {
+            this.progressCurrent = pageNumber
             serialized.push(this.serializePage(pageNumber))
           })
         })
       }, Promise.resolve())
         .then(() => {
           console.log(serialized)
+          this.progressCurrent = null
           return this.sendSerializedPages(serialized).then((res) => {
             if (res.url) {
               document.location.href = res.url
@@ -733,6 +766,10 @@ export default {
     padding: 0;
     margin: 0;
   }
+  .hide-redacting {
+    visibility: hidden;
+  }
+
   .textLayer, .redactLayer {
     position: absolute;
     left: 0;
