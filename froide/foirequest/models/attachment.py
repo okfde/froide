@@ -9,6 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
+from froide.helper.document import PDF_FILETYPES
 from froide.document.models import Document
 
 from .message import FoiMessage
@@ -74,6 +75,10 @@ class FoiAttachment(models.Model):
     def can_redact(self):
         return can_redact_file(self.filetype, name=self.name)
 
+    @property
+    def is_pdf(self):
+        return self.filetype in PDF_FILETYPES
+
     def get_anchor_url(self):
         if self.belongs_to:
             return '%s#%s' % (self.belongs_to.request.get_absolute_url(),
@@ -84,6 +89,20 @@ class FoiAttachment(models.Model):
         return '%s%s' % (settings.SITE_URL, self.get_anchor_url())
 
     def get_absolute_url(self):
+        fr = self.belongs_to.request
+        return reverse(
+            'foirequest-show_attachment',
+            kwargs={
+                'slug': fr.slug,
+                'message_id': self.belongs_to.pk,
+                'attachment_name': self.name
+            }
+        )
+
+    def get_absolute_domain_url(self):
+        return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
+
+    def get_absolute_file_url(self):
         if settings.USE_X_ACCEL_REDIRECT:
             if not self.name:
                 return ''
@@ -96,8 +115,8 @@ class FoiAttachment(models.Model):
             if self.file:
                 return self.file.url
 
-    def get_absolute_domain_url(self):
-        return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
+    def get_absolute_domain_file_url(self):
+        return '%s%s' % (settings.SITE_URL, self.get_absolute_file_url())
 
     def approve_and_save(self):
         self.approved = True
@@ -108,7 +127,7 @@ class FoiAttachment(models.Model):
         if self.document is not None:
             return self.document
 
-        if self.filetype != 'application/pdf':
+        if self.is_pdf:
             return
 
         foirequest = self.belongs_to.request

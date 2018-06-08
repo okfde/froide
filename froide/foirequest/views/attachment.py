@@ -22,6 +22,35 @@ from ..auth import (can_read_foirequest, can_read_foirequest_authenticated,
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
 
+def has_attachment_access(request, foirequest, attachment):
+    if not can_read_foirequest(foirequest, request):
+        return False
+    if not attachment.approved:
+        # allow only approved attachments to be read
+        # do not allow anonymous authentication here
+        allowed = can_read_foirequest_authenticated(
+            foirequest, request, allow_code=False
+        )
+        if not allowed:
+            return False
+    return True
+
+
+def show_attachment(request, slug, message_id, attachment_name):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    message = get_object_or_404(FoiMessage, id=int(message_id),
+                                request=foirequest)
+    attachment = get_object_or_404(FoiAttachment, belongs_to=message,
+                                   name=attachment_name)
+    if not has_attachment_access(request, foirequest, attachment):
+        return render_403(request)
+    return render(request, 'foirequest/attachment/show.html', {
+        'attachment': attachment,
+        'message': message,
+        'foirequest': foirequest
+    })
+
+
 @require_POST
 def approve_attachment(request, slug, attachment):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
@@ -75,16 +104,9 @@ def auth_message_attachment(request, message_id, attachment_name):
     attachment = get_object_or_404(FoiAttachment, belongs_to=message,
         name=attachment_name)
     foirequest = message.request
-    if not can_read_foirequest(foirequest, request):
+
+    if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
-    if not attachment.approved:
-        # allow only approved attachments to be read
-        # do not allow anonymous authentication here
-        allowed = can_read_foirequest_authenticated(
-            foirequest, request, allow_code=False
-        )
-        if not allowed:
-            return render_403(request)
 
     response = HttpResponse()
     response['Content-Type'] = ""

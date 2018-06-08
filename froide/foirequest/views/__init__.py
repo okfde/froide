@@ -1,4 +1,5 @@
 from .attachment import (
+    show_attachment,
     approve_attachment, auth_message_attachment, redact_attachment
 )
 from .draft import delete_draft

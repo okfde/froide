@@ -1,0 +1,28 @@
+{% extends "foirequest/base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block app_body %}
+<div class="mb-5 mt-3">
+    <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>
+    <p>
+        {% blocktrans with title=foirequest.title message_url=message.get_absolute_url %}
+        This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
+        {% endblocktrans %}
+    </p>
+    {% if attachment.is_pdf %}
+        <iframe src="{% static 'document/viewer/web/viewer.html' %}?file={{ attachment.get_absolute_domain_file_url }}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
+    {% else %}
+        <embed src="{{ attachment.get_absolute_file_url }}" style="width: 100%; height: 80vh" {% if attachment.filetype %} type="{{ attachment.filetype }}"{% endif %}></embed>
+    {% endif %}
+
+    <div class="text-right">
+        <small>
+            <a href="{{ attachment.get_absolute_domain_file_url }}">
+                {% trans "Download original" %}
+            </a>
+        </small>
+    </div>
+</div>
+{% endblock %}
