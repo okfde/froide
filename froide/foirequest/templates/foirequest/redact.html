@@ -76,14 +76,21 @@
 
 </div>
 
-<div class="row">
+<div class="row mb-5">
   <div class="col-lg-12">
     <form id="redaction-form" method="post" style="display:none">
       {% csrf_token %}
     </form>
     <div class="card">
       <div class="card-body" id="redact">
-        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex-json="{{ foirequest.get_redaction_regexes }}" {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %} :config="config"></redaction>
+        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex-json="{{ foirequest.get_redaction_regexes }}" {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %} :config="config">
+          <div class="text-center">
+            <h3>
+                {% trans "Redaction tool is loading..." %}
+            </h3>
+            <img src="{% static "img/spinner.gif" %}" alt=""/>
+          </div>
+        </redaction>
       </div>
     </div>
   </div>
@@ -115,6 +122,7 @@
         cancel: '{% trans "Cancel" %}',
         loadingPdf: '{% trans "Loading PDF..." %}',
         redacting: '{% trans "Redaction process started, please wait..." %}',
+        sending: '{% trans "Saving redacted PDF, please wait..." %}',
         autoRedacted: '{% trans "We automatically redacted some text for you already. Please check if we got everything." %}'
       }
       for (var key in i18n) {

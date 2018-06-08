@@ -1,5 +1,5 @@
 <template>
-  <div id="pdf-viewer">
+  <div id="pdf-viewer" class="pdf-redaction-tool">
     <div v-if="message" class="row">
       <div class="col-lg-12">
         <div class="alert alert-info" role="alert">{{ message }}</div>
@@ -10,15 +10,18 @@
         <div class="alert alert-error" role="alert">{{ errors }}</div>
       </div>
     </div>
-    <div class="row" v-if="loading || redacting">
+    <div class="row" v-if="working">
       <div class="col-lg-12">
         <div class="text-center">
-          <p v-if="loading">
+          <h3 v-if="loading">
             {{ i18n.loadingPdf }}
-          </p>
-          <p v-if="redacting">
+          </h3>
+          <h3 v-if="redacting">
             {{ i18n.redacting }}
-          </p>
+          </h3>
+          <h3 v-if="sending">
+            {{ i18n.sending }}
+          </h3>
         </div>
         <div class="progress">
           <div class="progress-bar" :class="{'progress-bar-striped': progressUnknown}" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :style="progressWidth"></div>
@@ -49,7 +52,7 @@
           </button>
         </div>
 
-        <div class="btn-group mr-4">
+        <div class="btn-group mr-2">
           <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
             <i class="fa fa-align-justify"></i>
           </button>
@@ -58,7 +61,7 @@
           </button>
         </div>
 
-        <div class="btn-group mr-1">
+        <div class="btn-group mr-1 ml-auto">
           <button class="btn btn-primary" @click="redact">
             {{ i18n.redactAndPublish }}
           </button>
@@ -81,7 +84,7 @@
     </div>
     <div class="row mt-3">
       <div class="col-lg-12">
-        <div :id="containerId" class="redactContainer" :class="{'hide-redacting': redacting}">
+        <div :id="containerId" class="redactContainer" :class="{'hide-redacting': working}">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
           <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></canvas>
           <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly, textDisabled: textDisabled }" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></div>
@@ -132,11 +135,10 @@ export default {
       canvasId: 'canvas-' + String(Math.random()).substr(2),
       redactCanvasId: 'redactCanvas-' + String(Math.random()).substr(2),
       textLayerId: 'textlayer-' + String(Math.random()).substr(2),
-      loading: true,
+      workingState: 'loading',
       ready: false,
       textOnly: false,
       textDisabled: false,
-      redacting: false,
       scaleFactor: PDF_TO_CSS_UNITS,
       actionsPerPage: {},
       actionIndexPerPage: {},
@@ -199,6 +201,18 @@ export default {
     textLayer () {
       return document.getElementById(this.textLayerId)
     },
+    working () {
+      return this.workingState !== null
+    },
+    loading () {
+      return this.workingState === 'loading'
+    },
+    redacting () {
+      return this.workingState === 'redacting'
+    },
+    sending () {
+      return this.workingState === 'sending'
+    },
     progressUnknown () {
       return this.progressCurrent === null || this.progressTotal === undefined
     },
@@ -220,7 +234,7 @@ export default {
         this.progressTotal = progress.total
       }
       return loadingTask.promise.then(pdfDocument => {
-        this.loading = false
+        this.workingState = null
         this.ready = true
         this.doc = pdfDocument
         this.numPages = this.doc.pdfInfo.numPages
@@ -302,7 +316,7 @@ export default {
     },
     redact () {
       this.ready = false
-      this.redacting = true
+      this.workingState = 'redacting'
       this.progressCurrent = 0
       this.progressTotal = this.numPages + 1
       let pages = range(1, this.numPages + 1)
@@ -320,11 +334,15 @@ export default {
           this.progressCurrent = null
           return this.sendSerializedPages(serialized).then((res) => {
             if (res.url) {
+              this.progressCurrent = 100
+              this.progressTotal = 100
               document.location.href = res.url
             } else {
+              this.workingState = null
               this.errors = res
             }
           }).catch((err) => {
+            this.workingState = null
             console.error(err)
             this.ready = true
             this.redacting = false
@@ -333,11 +351,22 @@ export default {
         })
     },
     sendSerializedPages (serialized) {
+      this.workingState = 'sending'
+      this.progressCurrent = 5 // show at least some progress
+      this.progressTotal = 100
       return new Promise((resolve, reject) => {
         var xhr = new window.XMLHttpRequest()
         xhr.open('POST', document.location.href)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.config.config.csrfToken)
+        xhr.addEventListener("progress", (e) => {
+          if (e.lengthComputable) {
+            this.progressCurrent = e.loaded
+            this.progressTotal = e.total
+          } else {
+            this.progressCurrent = null
+          }
+        })
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4) {
             return resolve(JSON.parse(xhr.responseText))
