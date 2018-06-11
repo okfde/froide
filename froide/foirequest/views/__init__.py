@@ -30,6 +30,7 @@ from .request import (
 
 
 __all__ = [
+    show_attachment,
     approve_attachment, auth_message_attachment, redact_attachment,
     delete_draft,
     list_requests, search, list_unchecked,
