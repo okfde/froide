@@ -296,7 +296,7 @@ class MediaServingTest(TestCase):
         response = self.client.get(att.get_absolute_file_url())
         self.assertEqual(response.status_code, 403)
         self.client.login(email='info@fragdenstaat.de', password='froide')
-        response = self.client.get(att.get_absolute_url())
+        response = self.client.get(att.get_absolute_file_url())
         self.assertEqual(response.status_code, 200)
         self.assertIn('X-Accel-Redirect', response)
         self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
