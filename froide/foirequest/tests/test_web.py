@@ -293,7 +293,7 @@ class MediaServingTest(TestCase):
         req = att.belongs_to.request
         req.visibility = 1
         req.save()
-        response = self.client.get(att.get_absolute_url())
+        response = self.client.get(att.get_absolute_file_url())
         self.assertEqual(response.status_code, 403)
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(att.get_absolute_url())
