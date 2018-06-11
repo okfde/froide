@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-08 18:55+0200\n"
-"PO-Revision-Date: 2018-06-08 18:55+0100\n"
+"POT-Creation-Date: 2018-06-11 19:28+0200\n"
+"PO-Revision-Date: 2018-06-11 19:30+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1796,11 +1796,11 @@ msgstr "Empfängername"
 msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
-#: froide/foirequest/models/attachment.py:27
+#: froide/foirequest/models/attachment.py:28
 msgid "Belongs to request"
 msgstr "Gehört zur Anfrage"
 
-#: froide/foirequest/models/attachment.py:28
+#: froide/foirequest/models/attachment.py:29
 #: froide/foirequest/templates/foirequest/request.html:210
 #: froide/foisite/models.py:14 froide/georegion/models.py:8
 #: froide/publicbody/models.py:73 froide/publicbody/models.py:102
@@ -1809,57 +1809,57 @@ msgstr "Gehört zur Anfrage"
 msgid "Name"
 msgstr "Name"
 
-#: froide/foirequest/models/attachment.py:30
+#: froide/foirequest/models/attachment.py:31
 msgid "File"
 msgstr "Datei"
 
-#: froide/foirequest/models/attachment.py:33
+#: froide/foirequest/models/attachment.py:34
 msgid "Size"
 msgstr "Größe"
 
-#: froide/foirequest/models/attachment.py:34
+#: froide/foirequest/models/attachment.py:35
 msgid "File type"
 msgstr "Dateityp"
 
-#: froide/foirequest/models/attachment.py:35
+#: froide/foirequest/models/attachment.py:36
 msgid "Format"
 msgstr "Format"
 
-#: froide/foirequest/models/attachment.py:36
+#: froide/foirequest/models/attachment.py:37
 msgid "User can approve"
 msgstr "Nutzer kann genehmigen"
 
-#: froide/foirequest/models/attachment.py:37
+#: froide/foirequest/models/attachment.py:38
 msgid "Approved"
 msgstr "Veröffentlicht"
 
-#: froide/foirequest/models/attachment.py:38
+#: froide/foirequest/models/attachment.py:39
 msgid "Redacted Version"
 msgstr "Geschwärzte Version"
 
-#: froide/foirequest/models/attachment.py:41
+#: froide/foirequest/models/attachment.py:42
 msgid "Is redacted"
 msgstr "Ist geschwärzt"
 
-#: froide/foirequest/models/attachment.py:42
+#: froide/foirequest/models/attachment.py:43
 msgid "Converted Version"
 msgstr "Konvertierte Version"
 
-#: froide/foirequest/models/attachment.py:45
+#: froide/foirequest/models/attachment.py:46
 msgid "Is converted"
 msgstr "Konvertiert?"
 
-#: froide/foirequest/models/attachment.py:58
+#: froide/foirequest/models/attachment.py:59
 msgid "Attachment"
 msgstr "Anhang"
 
-#: froide/foirequest/models/attachment.py:59
+#: froide/foirequest/models/attachment.py:60
 #: froide/foirequest/templates/foirequest/list_unchecked.html:30
 #: froide/foirequest/templates/foirequest/snippets/message.html:138
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: froide/foirequest/models/attachment.py:68
+#: froide/foirequest/models/attachment.py:69
 #, python-format
 msgid "attachment-%(id)d"
 msgstr "anhang-%(id)d"
@@ -2639,6 +2639,32 @@ msgstr "…an diese IFG-Anfrage"
 #: froide/foirequest/templates/foirequest/admin_redeliver.html:33
 msgid "Redeliver messages"
 msgstr "Nachrichten erneut zustellen"
+
+#: froide/foirequest/templates/foirequest/attachment/show.html:8
+#, python-format
+msgid "Attachment “%(name)s”"
+msgstr "Anhang „%(name)s“"
+
+#: froide/foirequest/templates/foirequest/attachment/show.html:10
+#, python-format
+#| msgid ""
+#| "\n"
+#| "          <a href=\"%(url)s\">%(name)s</a>\n"
+#| "        "
+msgid ""
+"\n"
+"        This attachment is part of the request ”<a href=\"%(message_url)s\">"
+"%(title)s</a>”.\n"
+"        "
+msgstr ""
+"\n"
+"        Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">"
+"%(title)s</a>“\n"
+"        "
+
+#: froide/foirequest/templates/foirequest/attachment/show.html:23
+msgid "Download original"
+msgstr "Original-Datei herunterladen"
 
 #: froide/foirequest/templates/foirequest/dashboard.html:48
 msgid "Number of Requests"
@@ -4631,6 +4657,11 @@ msgctxt "URL part"
 msgid "draft"
 msgstr "entwurf"
 
+#: froide/foirequest/urls/request_urls.py:41
+msgctxt "url component"
+msgid "attachment"
+msgstr "anhang"
+
 #: froide/foirequest/utils.py:36
 msgid "User exceeded request limit"
 msgstr "Nutzer hat Anfragenbeschränkung überschritten"
@@ -4652,15 +4683,15 @@ msgstr ""
 "Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, "
 "wurde aber als %(content_type)s erkannt!"
 
-#: froide/foirequest/views/attachment.py:36
+#: froide/foirequest/views/attachment.py:65
 msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
 
-#: froide/foirequest/views/attachment.py:60
+#: froide/foirequest/views/attachment.py:89
 msgid "Document created."
 msgstr "Dokument erstellt."
 
-#: froide/foirequest/views/attachment.py:122
+#: froide/foirequest/views/attachment.py:144
 #, python-format
 msgid "%s_redacted.pdf"
 msgstr "%s_geschwaerzt.pdf"
@@ -6409,35 +6440,41 @@ msgstr "gesetz"
 #. Translators: URL part
 #: froide/urls.py:133
 msgctxt "url part"
+msgid "documents"
+msgstr "dokumente"
+
+#. Translators: URL part
+#: froide/urls.py:135
+msgctxt "url part"
 msgid "profile"
 msgstr "profil"
 
 #. Translators: URL part
-#: froide/urls.py:175
+#: froide/urls.py:177
 msgctxt "url part"
 msgid "help"
 msgstr "hilfe"
 
 #. Translators: URL part
-#: froide/urls.py:177
+#: froide/urls.py:179
 msgctxt "url part"
 msgid "about"
 msgstr "ueber"
 
 #. Translators: URL part
-#: froide/urls.py:179
+#: froide/urls.py:181
 msgctxt "url part"
 msgid "terms"
 msgstr "nutzungsbedingungen"
 
 #. Translators: URL part
-#: froide/urls.py:181
+#: froide/urls.py:183
 msgctxt "url part"
 msgid "privacy"
 msgstr "datenschutzerklaerung"
 
 #. Translators: URL part
-#: froide/urls.py:196
+#: froide/urls.py:198
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
