@@ -3,20 +3,26 @@
 {% load i18n %}
 {% load static %}
 
-{% block app_body %}
-<div class="mb-5 mt-3">
+{% block body %}
+<div class="container mt-3">
     <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>
     <p>
         {% blocktrans with title=foirequest.title message_url=message.get_absolute_url %}
         This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
         {% endblocktrans %}
     </p>
+</div>
     {% if attachment.is_pdf %}
+    <div class="container-sm-full">
         <iframe src="{% static 'document/viewer/web/viewer.html' %}?file={{ attachment.get_absolute_domain_file_url }}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
+    </div>
     {% else %}
-        <embed src="{{ attachment.get_absolute_file_url }}" style="width: 100%; height: 80vh" {% if attachment.filetype %} type="{{ attachment.filetype }}"{% endif %}></embed>
+    <div class="container">
+        <embed src="{{ attachment.get_absolute_file_url }}" style="max-width: 100%;" {% if attachment.filetype %} type="{{ attachment.filetype }}"{% endif %}></embed>
+    </div>
     {% endif %}
 
+<div class="container mb-5">
     <div class="text-right">
         <small>
             <a href="{{ attachment.get_absolute_domain_file_url }}">
