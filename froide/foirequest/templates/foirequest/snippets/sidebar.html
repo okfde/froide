@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load foirequest_tags %}
 
 <ul class="nav nav-compact flex-column d-print-none">
   {% with count=object.follow_count %}
@@ -26,7 +27,46 @@
     {% endblock %}
   {% endif %}
 
-  {% block feeds %}
+{% with object.tags.all as tags %}
+  {% if tags or object|can_write_foirequest:request %}
+    <li class="nav-header">{% trans "Tags" %}</li>
+  {% endif %}
+  {% if tags %}
+    <li class="nav-item">
+      <ul class="tag-list">
+        {% for tag in tags %}
+          <li>
+            <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endif %}
+{% endwith %}
+
+{% if object|can_write_foirequest:request %}
+<li class="nav-item">
+  <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form form-inline">
+    {% csrf_token %}
+    {% with object.get_set_tags_form as set_tags_form %}
+      {{ set_tags_form.tags }}
+    {% endwith %}
+
+    <button class="btn btn-secondary btn-sm" type="submit">
+      {% trans "Save" %}
+    </button>
+  </form>
+</li>
+{% endif %}
+
+  <li class="nav-header">
+    {% trans "Short URL" %}
+  </li>
+  <li class="nav-item">
+    <input type="text" class="form-control form-control-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
+  </li>
+
+{% block feeds %}
   <li class="nav-header">{% trans "Feeds" %}</li>
   <li class="nav-item">
     <a href="{% url 'foirequest-feed' slug=object.slug %}">
@@ -40,15 +80,7 @@
       {% trans "Atom Feed" %}
     </a>
   </li>
-  {% endblock feeds%}
-
-
-  <li class="nav-header">
-    {% trans "Short URL" %}
-  </li>
-  <li class="nav-item">
-    <input type="text" class="form-control form-control-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
-  </li>
+{% endblock feeds%}
 
   {% if not object.public %}
     <li class="nav-header">{% trans "Secret Short URL" %}</li>
@@ -60,7 +92,7 @@
     </li>
   {% endif %}
 
- {% if user == object.user or user.is_staff %}
+ {% if object|can_write_foirequest:request %}
     <li class="nav-header">{% trans "Download" %}</li>
     <li class="nav-item">
       <a class="btn btn-light" href="{% url 'foirequest-download' slug=object.slug %}">
@@ -69,21 +101,6 @@
       </a>
     </li>
   {% endif %}
-
-  {% with object.tags.all as tags %}
-    {% if tags %}
-      <li class="nav-header">{% trans "Tags" %}</li>
-      <li class="nav-item">
-        <ul class="tag-list">
-          {% for tag in tags %}
-            <li>
-              <a href="{% url 'foirequest-list' tag=tag.slug %}">{{ tag.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </li>
-    {% endif %}
-  {% endwith %}
 
   {% if user.is_staff %}
     <li class="nav-header">{% trans "Staff Actions" %}</li>
@@ -121,19 +138,6 @@
         </div>
       </li>
     {% endif %}
-    <li class="nav-header">{% trans "Tags" %}</li>
-    <li class="nav-item">
-      <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}" class="tagit-form">
-        {% csrf_token %}
-        {% with object.get_set_tags_form as set_tags_form %}
-          {{ set_tags_form.tags }}
-        {% endwith %}
-
-        <button class="btn btn-secondary btn-sm" type="submit">
-          {% trans "Save tags" %}
-        </button>
-      </form>
-    </li>
     <li class="nav-header">{% trans "Extend deadline" %}</li>
     <li class="nav-item">
       <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">

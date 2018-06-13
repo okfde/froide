@@ -24,7 +24,7 @@
   <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" />
 
 
-  {% if user.is_staff %}
+  {% if object|can_write_foirequest:request %}
     {% with object.get_set_tags_form as set_tags_form %}
       {{ set_tags_form.media.css }}
     {% endwith %}
@@ -587,7 +587,7 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% if user.is_staff %}
+  {% if object|can_write_foirequest:request %}
     {% with object.get_set_tags_form as set_tags_form %}
       {{ set_tags_form.media.js }}
     {% endwith %}

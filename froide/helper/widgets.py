@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.utils import six
 from django.utils.html import escape
+from django.utils.translation import ugettext_lazy as _
 
 from taggit.utils import edit_string_for_tags, parse_tags
 
@@ -80,13 +81,18 @@ class TagAutocompleteWidget(forms.TextInput):
         html = """<div style="display: none">%(input)s</div><select id="%(objectid)s_select2" name="%(objectid)s_select2" multiple>%(options)s</select>
         <script type="text/javascript">
           document.addEventListener('DOMContentLoaded', function () {
-            window.Froide.components.tagautocomplete.setupTagging('%(objectid)s', '%(sourceurl)s')
+            window.Froide.components.tagautocomplete.setupTagging('%(objectid)s', '%(sourceurl)s', {
+                noResults: '%(noResults)s',
+                searching: '%(searching)s'
+            })
           });
             </script>""" % dict(
                 input=html,
                 objectid=attrs['id'],
                 sourceurl=self.autocomplete_url,
-                options=options
+                options=options,
+                noResults=_('No results'),
+                searching=_('Searching…')
         )
 
         return mark_safe(html)

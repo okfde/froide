@@ -3,7 +3,7 @@
 import 'select2'
 import 'select2/src/scss/core.scss'
 
-function setupTagging (objectid, sourceurl) {
+function setupTagging (objectid, sourceurl, trans) {
   $(`#${objectid}_select2`).on('change.select2', function (e) {
     var tagString = $(this).select2('data').map(function (el) {
       return '"' + el.id + '"'
@@ -13,6 +13,14 @@ function setupTagging (objectid, sourceurl) {
   }).select2({
     width: '75%%',
     tags: true,
+    language: {
+      noResults: function () {
+        return trans.noResults
+      },
+      searching: function () {
+        return trans.searching
+      }
+    },
     tokenSeparators: [',', ' '],
     ajax: {
       url: sourceurl,
