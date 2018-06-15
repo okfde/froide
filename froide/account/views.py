@@ -11,7 +11,6 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.utils.http import is_safe_url
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 
