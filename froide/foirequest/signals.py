@@ -263,24 +263,24 @@ def create_event_followers_attachments_approved(sender, **kwargs):
 @receiver(FoiRequest.status_changed,
         dispatch_uid="create_event_status_changed")
 def create_event_status_changed(sender, **kwargs):
-    status = kwargs['status']
+    resolution = kwargs['resolution']
     data = kwargs['data']
     if data.get('costs', 0) > 0:
         FoiEvent.objects.create_event("reported_costs", sender,
                 user=sender.user,
                 public_body=sender.public_body, amount=data['costs'])
-    elif status == "refused" and data['refusal_reason']:
+    elif resolution == "refused" and data['refusal_reason']:
         FoiEvent.objects.create_event("request_refused", sender,
                 user=sender.user,
                 public_body=sender.public_body, reason=data['refusal_reason'])
-    elif status == "partially_successful" and data['refusal_reason']:
+    elif resolution == "partially_successful" and data['refusal_reason']:
         FoiEvent.objects.create_event("partially_successful", sender,
                 user=sender.user,
                 public_body=sender.public_body, reason=data['refusal_reason'])
     else:
         FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
             public_body=sender.public_body,
-            status=FoiRequest.get_readable_status(status))
+            status=FoiRequest.get_readable_status(resolution))
 
 
 @receiver(FoiRequest.made_public,

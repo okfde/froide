@@ -106,7 +106,7 @@ def set_status(request, foirequest):
             'post_status_set',
             request,
             user=request.user,
-            data={'request': request, 'form': form}
+            data={'foirequest': foirequest, 'form': form}
         )
         if response is not None:
             return response

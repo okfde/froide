@@ -317,11 +317,11 @@ class FoiRequestStatusForm(forms.Form):
 
         foirequest.save()
 
-        status = data.pop("status")
         if status == 'resolved':
             foirequest.status_changed.send(
                 sender=foirequest,
-                status=resolution,
+                status=status,
+                resolution=resolution,
                 data=data
             )
 

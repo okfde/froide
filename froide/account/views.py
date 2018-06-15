@@ -17,7 +17,7 @@ from django.views.generic import TemplateView
 
 from froide.foirequest.models import (FoiRequest, FoiProject, FoiEvent,
                                       RequestDraft)
-from froide.helper.utils import render_403
+from froide.helper.utils import render_403, get_redirect
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
@@ -45,20 +45,14 @@ def confirm(request, user_id, secret, request_id=None):
         return redirect('account-login')
     account_service = AccountService(user)
     if account_service.confirm_account(secret, request_id):
-        messages.add_message(request, messages.WARNING,
-                _('Your email address is now confirmed and you are logged in. You should change your password now by filling out the form below.'))
         auth.login(request, user)
         if request_id is not None:
             foirequest = FoiRequest.confirmed_request(user, request_id)
             if foirequest:
                 messages.add_message(request, messages.SUCCESS,
                     _('Your request "%s" has now been sent') % foirequest.title)
-        next = request.GET.get('next', request.session.get('next'))
-        if next:
-            if 'next' in request.session:
-                del request.session['next']
-            return redirect(next)
-        return redirect(reverse('account-settings') + "?new#change-password-now")
+        default_url = reverse('account-settings') + '?new#change-password-now'
+        return get_redirect(request, default=default_url)
     else:
         messages.add_message(request, messages.ERROR,
                 _('You can only use the confirmation link once, please login with your password.'))
@@ -197,7 +191,6 @@ def login(request, base="account/base.html", context=None,
             return redirect('account-show')
     if request.method == "POST" and status == 200:
         status = 400  # if ok, we are going to redirect anyways
-        next = request.POST.get('next')
         form = UserLoginForm(request.POST)
         if form.is_valid():
             user = auth.authenticate(username=form.cleaned_data['email'],
@@ -210,9 +203,7 @@ def login(request, base="account/base.html", context=None,
                     if simple:
                         return redirect(reverse('account-login') + "?simple")
                     else:
-                        if next:
-                            return redirect(next)
-                        return redirect('account-show')
+                        return get_redirect(request, default='account-show')
                 else:
                     messages.add_message(request, messages.ERROR,
                             _('Please activate your mail address before logging in.'))
@@ -396,14 +387,10 @@ def delete_account(request):
 
 
 def new_terms(request, next=None):
-    if next is None:
-        next = request.GET.get('next', '/')
-    if not is_safe_url(url=next, host=request.get_host()):
-        next = '/'
     if not request.user.is_authenticated:
-        return redirect(next)
+        return get_redirect(request, default=next)
     if request.user.terms:
-        return redirect(next)
+        return get_redirect(request, default=next)
 
     form = TermsForm()
     if request.POST:
@@ -412,7 +399,7 @@ def new_terms(request, next=None):
             form.save(request.user)
             messages.add_message(request, messages.SUCCESS,
                 _('Thank you for accepting our new terms!'))
-            return redirect(next)
+            return get_redirect(request, default=next)
         else:
             messages.add_message(request, messages.ERROR,
                 _('You need to accept our new terms to continue.'))
@@ -423,4 +410,7 @@ def new_terms(request, next=None):
 
 
 def csrf_failure(request, reason=''):
-    return render_403(request, message=_("You probably do not have cookies enabled, but you need cookies to use this site! Cookies are only ever sent securely. The technical reason is: %(reason)s") % {"reason": reason})
+    return render_403(request, message=_(
+        'You probably do not have cookies enabled, but you need cookies to '
+        'use this site! Cookies are only ever sent securely. The technical '
+        'reason is: %(reason)s') % {'reason': reason})
