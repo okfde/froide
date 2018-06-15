@@ -127,7 +127,7 @@ class EmailParser(object):
         if isinstance(field, str):
             # For Python 2
             # see http://stackoverflow.com/questions/7331351/python-email-header-decoding-utf-8
-            field = re.sub(r"(=\?.*\?=)(?!$)", r"\1 ", field)
+            field = re.sub(r"(=\?[\w-]+\?\w\?.*\?=)(?!$)", r"\1 ", field)
             field = field.replace('\n  ', '')
 
         try:

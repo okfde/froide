@@ -24,9 +24,7 @@ Received: (from localhost) by m1.mfw.bn.ivbb.bund.de (MSCAN) id 8/m1.mfw.bn.ivbb
 X-P350-Id: 7caa2eea585c8ff2
 X-Server-Uuid: 54533E9A-2DC2-4DE8-BE07-B7B6B56E3EFF
 MIME-Version: 1.0
-Subject: IFG-Anfrage [Vorgangsnummer 20120212503124] IFG-Anfrage
- [Vorgangsnummer 20120212503124]; Teilnahme an den Verhandlungsrunden
- =?UTF-8?Q?f=FCr?= das ACTA-Abkommen
+Subject: =?iso-8859-1?Q?=D6ffentlicher_Personennahverkehr?=
 X-Powered-BY: OTRS - Open Ticket Request System (http://otrs.org/)
 X-Mailer: OTRS Mail Service (2.0.4)
 Date: Mon, 23 Apr 2012 14:06:07 +0200

@@ -94,6 +94,7 @@ class MailTest(TestCase):
         with open(p("test_mail_03.txt"), 'rb') as f:
             email = parser.parse(f)
         self.assertEqual(len(email['attachments']), 1)
+        self.assertEqual(email['subject'], 'Öffentlicher Personennahverkehr')
 
     def test_long_attachment_names(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
