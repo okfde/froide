@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.utils.http import is_safe_url
 
 
 def get_next(request):
@@ -31,3 +33,27 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def get_redirect_url(request, default='/', next=None):
+    if next is None:
+        next = request.POST.get('next',
+            request.GET.get('next', request.session.get('next')))
+        if 'next' in request.session:
+            del request.session['next']
+    if not is_safe_url(url=next, host=request.get_host()):
+        next = None
+    if next is None and default is not None:
+        if not default.startswith('/'):
+            default = reverse(default)
+        next = default
+    if next is None or not is_safe_url(url=next, host=request.get_host()):
+        next = request.META.get('HTTP_REFERER')
+    if next is None or not is_safe_url(url=next, host=request.get_host()):
+        next = '/'
+    return next
+
+
+def get_redirect(request, **kwargs):
+    url = get_redirect_url(request, **kwargs)
+    return redirect(url)
