@@ -636,7 +636,7 @@ class FoiRequest(models.Model):
 
         message.sender_public_body = publicbody
 
-        if message.sender_public_body == self.law.mediator:
+        if self.law and message.sender_public_body == self.law.mediator:
             message.content_hidden = True
 
         if email['date'] is None:
