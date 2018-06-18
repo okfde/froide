@@ -45,8 +45,15 @@ $(function () {
   })
 
   let activeTab = window.Froide.config.activeTab
-  if (activeTab) {
+  if (activeTab && activeTab !== 'info') {
     $('.request-nav a[href="#' + activeTab + '"]').tab('show')
+  } else {
+    var hashNav = $('.request-nav a[href="' + document.location.hash + '"]')
+    if (hashNav.length > 0) {
+      $('.request-nav a[href="' + document.location.hash + '"]').tab('show')
+    } else {
+      $('.request-nav a[href="#info"]').tab('show')
+    }
   }
 
   $('form.ajaxified').submit(function (e) {
