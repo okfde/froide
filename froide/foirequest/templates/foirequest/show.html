@@ -511,10 +511,11 @@
 </div>
   {% endif %}
 
+{% block before_correspondence %}
     {% if object.not_publishable_message %}
       {% include "foirequest/snippets/make_same_request.html" %}
     {% endif %}
-
+{% endblock %}
 <hr class="page-break"/>
 
 <div class="row" id="correspondence">
