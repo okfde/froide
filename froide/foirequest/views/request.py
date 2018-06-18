@@ -106,6 +106,9 @@ def get_active_tab(obj, context):
     elif 'escalation_form' in context:
         return 'escalate'
 
+    if 'active_tab' in context:
+        return context['active_tab']
+
     if obj.awaits_classification():
         return 'set-status'
     elif obj.is_overdue() and obj.awaits_response():
