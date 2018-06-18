@@ -26,6 +26,7 @@ class TagObjectForm(forms.Form):
                 attrs={'placeholder': _('Tags')},
                 autocomplete_url=self.tags_autocomplete_url
             ),
+            required=False,
             help_text=_("Comma separated and quoted")
         )
 
