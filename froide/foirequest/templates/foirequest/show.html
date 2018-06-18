@@ -106,7 +106,7 @@
     <div class="col-md-3">
       <ul class="request-nav nav">
         <li class="nav-item">
-          <a href="#info" data-toggle="pill" class="nav-link" role="tab" aria-controls="info" aria-expanded="false">
+          <a href="#info" data-toggle="pill" class="nav-link{% if active_tab == 'info' %} active{% endif %}" role="tab" aria-controls="info" aria-expanded="false">
             {% trans "Request" %}
           </a>
         </li>
