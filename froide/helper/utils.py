@@ -41,6 +41,10 @@ def get_redirect_url(request, default='/', next=None):
             request.GET.get('next', request.session.get('next')))
         if 'next' in request.session:
             del request.session['next']
+    if next is None:
+        keyword = request.GET.get('pk_keyword')
+        if keyword.startswith('/'):
+            next = keyword
     if not is_safe_url(url=next, host=request.get_host()):
         next = None
     if next is None and default is not None:
