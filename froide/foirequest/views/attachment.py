@@ -46,10 +46,12 @@ def show_attachment(request, slug, message_id, attachment_name):
                                 request=foirequest)
     attachment = get_object_or_404(FoiAttachment, belongs_to=message,
                                    name=attachment_name)
+
     if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
+
     needs_authentication = is_attachment_public(foirequest, attachment)
-    attachment_url = attachment.get_absolute_file_url(
+    attachment_url = attachment.get_absolute_domain_file_url(
         authenticated=needs_authentication
     )
     return render(request, 'foirequest/attachment/show.html', {
