@@ -34,7 +34,7 @@ class PriceInput(forms.TextInput):
         ctx = super(PriceInput, self).get_context(name, value, attrs)
         ctx['widget'].setdefault('attrs', {})
         ctx['widget']['attrs']['class'] = 'form-control col-3'
-        ctx['widget']['attrs']['pattern'] = "[\d\.,]*"
+        ctx['widget']['attrs']['pattern'] = "[\\d\\.,]*"
         ctx['currency'] = settings.FROIDE_CONFIG['currency']
         return ctx
 
