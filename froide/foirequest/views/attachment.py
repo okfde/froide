@@ -125,6 +125,8 @@ def auth_message_attachment(request, message_id, attachment_name):
 
 def auth_attachment_with_token(request, foirequest, attachment):
     if request.get_host() not in settings.SITE_URL:
+        if is_attachment_public(foirequest, attachment):
+            return send_attachment_file(attachment)
         # media domain internal NGINX check
         result = attachment.check_token(request)
         if not result:
