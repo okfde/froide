@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.http import is_safe_url
+from django.urls import reverse, NoReverseMatch
 
 
 def get_next(request):
@@ -60,4 +61,7 @@ def get_redirect_url(request, default='/', next=None, allowed_hosts=None):
 
 def get_redirect(request, **kwargs):
     url = get_redirect_url(request, **kwargs)
-    return redirect(url)
+    try:
+        return redirect(url)
+    except NoReverseMatch:
+        return redirect('/')
