@@ -143,7 +143,7 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         window.Froide.components.redact.createRedaction('#redact',
-          '{{ attachment.get_absolute_file_url|escapejs }}', window.Froide)
+          '{{ attachment_url|escapejs }}', window.Froide)
       })
     </script>
   {% endaddtoblock %}

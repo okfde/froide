@@ -40,6 +40,13 @@ def has_attachment_access(request, foirequest, attachment):
     return True
 
 
+def get_accessible_attachment_url(foirequest, attachment):
+    needs_authentication = not is_attachment_public(foirequest, attachment)
+    return attachment.get_absolute_domain_file_url(
+        authenticated=needs_authentication
+    )
+
+
 def show_attachment(request, slug, message_id, attachment_name):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     message = get_object_or_404(FoiMessage, id=int(message_id),
@@ -50,10 +57,8 @@ def show_attachment(request, slug, message_id, attachment_name):
     if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
 
-    needs_authentication = not is_attachment_public(foirequest, attachment)
-    attachment_url = attachment.get_absolute_domain_file_url(
-        authenticated=needs_authentication
-    )
+    attachment_url = get_accessible_attachment_url(foirequest, attachment)
+
     return render(request, 'foirequest/attachment/show.html', {
         'attachment': attachment,
         'attachment_url': attachment_url,
@@ -167,10 +172,13 @@ def send_attachment_file(attachment):
 
 def redact_attachment(request, slug, attachment_id):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
+
     if not can_write_foirequest(foirequest, request):
         return render_403(request)
+
     attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
             belongs_to__request=foirequest)
+
     already = None
     if attachment.redacted:
         already = attachment.redacted
@@ -206,7 +214,11 @@ def redact_attachment(request, slug, attachment_id):
             attachment.approved = False
             attachment.save()
         return JsonResponse({'url': att.get_anchor_url()})
+
+    attachment_url = get_accessible_attachment_url(foirequest, attachment)
+
     return render(request, 'foirequest/redact.html', {
         'foirequest': foirequest,
-        'attachment': attachment
+        'attachment': attachment,
+        'attachment_url': attachment_url
     })
