@@ -35,7 +35,7 @@ def get_client_ip(request):
     return ip
 
 
-def get_redirect_url(request, default='/', next=None):
+def get_redirect_url(request, default='/', next=None, allowed_hosts=None):
     if next is None:
         next = request.POST.get('next',
             request.GET.get('next', request.session.get('next')))
@@ -45,15 +45,15 @@ def get_redirect_url(request, default='/', next=None):
         keyword = request.GET.get('pk_keyword')
         if keyword and keyword.startswith('/'):
             next = keyword
-    if not is_safe_url(url=next, host=request.get_host()):
+    if not is_safe_url(url=next, allowed_hosts=allowed_hosts):
         next = None
     if next is None and default is not None:
         if not default.startswith('/'):
             default = reverse(default)
         next = default
-    if next is None or not is_safe_url(url=next, host=request.get_host()):
+    if next is None or not is_safe_url(url=next, allowed_hosts=allowed_hosts):
         next = request.META.get('HTTP_REFERER')
-    if next is None or not is_safe_url(url=next, host=request.get_host()):
+    if next is None or not is_safe_url(url=next, allowed_hosts=allowed_hosts):
         next = '/'
     return next
 
