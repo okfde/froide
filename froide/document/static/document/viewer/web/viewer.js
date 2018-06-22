@@ -1361,7 +1361,7 @@ var PDFViewerApplication = {
 };
 var validateFileURL = void 0;
 {
-  var HOSTED_VIEWER_ORIGINS = ['null', 'http://mozilla.github.io', 'https://mozilla.github.io'];
+  var HOSTED_VIEWER_ORIGINS = ['null', 'https://static.frag-den-staat.de'];
   validateFileURL = function validateFileURL(file) {
     if (file === undefined) {
       return;
