@@ -125,7 +125,7 @@ def auth_message_attachment(request, message_id, attachment_name):
     if not settings.USE_X_ACCEL_REDIRECT:
         if not settings.DEBUG:
             logger.warn('Django should not serve files in production!')
-        return serve(request, attachment.file.path, settings.MEDIA_ROOT)
+        return serve(request, attachment.file.name, settings.MEDIA_ROOT)
 
     return send_attachment_file(attachment)
 
