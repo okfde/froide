@@ -72,7 +72,7 @@ class FoiAttachment(models.Model):
         return _("attachment-%(id)d") % {"id": self.id}
 
     def get_internal_url(self):
-        return settings.MEDIA_URL + self.file.name
+        return settings.FOI_MEDIA_URL + self.file.name
 
     @property
     def can_redact(self):
