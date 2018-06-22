@@ -50,7 +50,7 @@ def show_attachment(request, slug, message_id, attachment_name):
     if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
 
-    needs_authentication = is_attachment_public(foirequest, attachment)
+    needs_authentication = not is_attachment_public(foirequest, attachment)
     attachment_url = attachment.get_absolute_domain_file_url(
         authenticated=needs_authentication
     )
