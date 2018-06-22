@@ -132,7 +132,9 @@ class FoiAttachment(models.Model):
         return '%s%s' % (settings.SITE_URL, self.get_absolute_file_url())
 
     def check_token(self, request):
-        token = request.GET['token']
+        token = request.GET.get('token')
+        if token is None:
+            return None
         original = '%s:%s' % (self.get_absolute_file_url(), token)
         signer = TimestampSigner()
         try:
