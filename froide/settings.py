@@ -102,8 +102,17 @@ class Base(Configuration):
     MEDIA_ROOT = values.Value(os.path.abspath(os.path.join(PROJECT_ROOT,
                                                            "..", "files")))
 
+    # URL that handles the media served from MEDIA_ROOT. Make sure to use a
+    # trailing slash.
+    # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+    MEDIA_URL = values.Value('/files/')
+
     # Sub path in MEDIA_ROOT that will hold FOI attachments
     FOI_MEDIA_PATH = values.Value('foi')
+    FOI_MEDIA_URL = values.Value('/files/')
+    FOI_MEDIA_DOMAIN = values.Value('')
+    FOI_MEDIA_TOKENS = False
+    FOI_MEDIA_TOKEN_EXPIRY = 2 * 60
 
     # Absolute path to the directory static files should be collected to.
     # Don't put anything in this directory yourself; store your static files
@@ -119,11 +128,6 @@ class Base(Configuration):
     # ########## URLs #################
 
     ROOT_URLCONF = values.Value('froide.urls')
-
-    # URL that handles the media served from MEDIA_ROOT. Make sure to use a
-    # trailing slash.
-    # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-    MEDIA_URL = values.Value('/files/')
 
     # URL prefix for static files.
     # Example: "http://media.lawrence.com/static/"
@@ -521,8 +525,6 @@ class Test(Base):
     CACHES = values.CacheURLValue('locmem://')
 
     TEST_SELENIUM_DRIVER = values.Value('chrome_headless')
-
-    USE_X_ACCEL_REDIRECT = True
 
     SECRET_URLS = values.DictValue({
         "admin": "admin",

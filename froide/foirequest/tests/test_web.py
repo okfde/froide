@@ -6,6 +6,7 @@ from django.utils.six import text_type as str
 from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
+from django.test.utils import override_settings
 from django.contrib.contenttypes.models import ContentType
 
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
@@ -288,6 +289,9 @@ class MediaServingTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
 
+    @override_settings(
+        USE_X_ACCEL_REDIRECT=True
+    )
     def test_request_not_public(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
         req = att.belongs_to.request
@@ -301,6 +305,86 @@ class MediaServingTest(TestCase):
         self.assertIn('X-Accel-Redirect', response)
         self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
             settings.X_ACCEL_REDIRECT_PREFIX, att.file.url))
+
+    @override_settings(
+        USE_X_ACCEL_REDIRECT=True,
+        FOI_MEDIA_TOKENS=True,
+        SITE_URL='https://fragdenstaat.de',
+        FOI_MEDIA_DOMAIN='https://media.frag-den-staat.de',
+        ALLOWED_HOSTS=('fragdenstaat.de', 'media.frag-den-staat.de')
+    )
+    def test_request_media_tokens(self):
+        att = FoiAttachment.objects.filter(approved=True)[0]
+        req = att.belongs_to.request
+        req.visibility = 1
+        req.save()
+        response = self.client.get(
+            att.get_absolute_file_url(),
+            HTTP_HOST='fragdenstaat.de'
+        )
+        self.assertEqual(response.status_code, 403)
+        self.client.login(email='info@fragdenstaat.de', password='froide')
+
+        response = self.client.get(
+            att.get_absolute_file_url(),
+            follow=False,
+            HTTP_HOST='fragdenstaat.de',
+        )
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response['Location']
+        _, _, domain, path = redirect_url.split('/', 3)
+        response = self.client.get(
+            '/' + path + 'a',  # break signature
+            follow=False,
+            HTTP_HOST=domain,
+        )
+        self.assertEqual(response.status_code, 403)
+
+        response = self.client.get(
+            '/' + path,
+            follow=False,
+            HTTP_HOST=domain,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
+            settings.X_ACCEL_REDIRECT_PREFIX, att.file.url))
+
+    @override_settings(
+        USE_X_ACCEL_REDIRECT=True,
+        FOI_MEDIA_TOKENS=True,
+        SITE_URL='https://fragdenstaat.de',
+        FOI_MEDIA_DOMAIN='https://media.frag-den-staat.de',
+        ALLOWED_HOSTS=('fragdenstaat.de', 'media.frag-den-staat.de'),
+        FOI_MEDIA_TOKEN_EXPIRY=0
+    )
+    def test_request_media_tokens_expired(self):
+        att = FoiAttachment.objects.filter(approved=True)[0]
+        req = att.belongs_to.request
+        req.visibility = 1
+        req.save()
+
+        self.client.login(email='info@fragdenstaat.de', password='froide')
+
+        response = self.client.get(
+            att.get_absolute_file_url(),
+            follow=False,
+            HTTP_HOST='fragdenstaat.de',
+        )
+        self.assertEqual(response.status_code, 302)
+        redirect_url = response['Location']
+        _, _, domain, path = redirect_url.split('/', 3)
+
+        response = self.client.get(
+            '/' + path,
+            follow=False,
+            HTTP_HOST=domain,
+        )
+        self.assertEqual(response.status_code, 302)
+        # Redirect back for re-authenticating
+        redirect_url = response['Location']
+        _, _, domain, path = redirect_url.split('/', 3)
+        self.assertEqual(domain, 'fragdenstaat.de')
+        self.assertEqual('/' + path, att.get_absolute_file_url())
 
     def test_attachment_not_approved(self):
         att = FoiAttachment.objects.filter(approved=False)[0]

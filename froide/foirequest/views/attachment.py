@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import re
 import json
+import logging
 
 from django.conf import settings
 from django.core.files import File
@@ -10,14 +11,17 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
+from django.views.static import serve
 
 from froide.helper.utils import render_400, render_403
 from froide.helper.redaction import redact_file
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..auth import (can_read_foirequest, can_read_foirequest_authenticated,
-                    can_write_foirequest)
+                    can_write_foirequest, is_attachment_public)
 
+
+logger = logging.getLogger(__name__)
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 
@@ -105,13 +109,49 @@ def auth_message_attachment(request, message_id, attachment_name):
         name=attachment_name)
     foirequest = message.request
 
+    if settings.FOI_MEDIA_TOKENS:
+        return auth_attachment_with_token(request, foirequest, attachment)
+
     if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
 
+    if not settings.USE_X_ACCEL_REDIRECT:
+        if not settings.DEBUG:
+            logger.warn('Django should not serve files in production!')
+        return serve(request, attachment.file.path, settings.MEDIA_ROOT)
+
+    return send_attachment_file(attachment)
+
+
+def auth_attachment_with_token(request, foirequest, attachment):
+    if request.get_host() not in settings.SITE_URL:
+        # media domain internal NGINX check
+        result = attachment.check_token(request)
+        if not result:
+            if result is None:
+                # Redirect back to get new signature
+                return redirect(attachment.get_absolute_domain_file_url())
+            return render_403(request)
+        return send_attachment_file(attachment)
+    else:
+        # main domain: always deny or redirect
+        # in order not to render content on main domain
+        if is_attachment_public(foirequest, attachment):
+            url = attachment.get_absolute_file_url(authenticated=False)
+            return redirect(settings.FOI_MEDIA_DOMAIN + url)
+
+        if not has_attachment_access(request, foirequest, attachment):
+            # Deny access early
+            return render_403(request)
+
+        url = attachment.get_absolute_file_url(authenticated=True)
+        return redirect(settings.FOI_MEDIA_DOMAIN + url)
+
+
+def send_attachment_file(attachment):
     response = HttpResponse()
     response['Content-Type'] = ""
     response['X-Accel-Redirect'] = X_ACCEL_REDIRECT_PREFIX + attachment.get_internal_url()
-
     return response
 
 

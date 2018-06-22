@@ -74,3 +74,7 @@ def get_foirequest_auth_code(foirequest):
 
 def check_foirequest_auth_code(foirequest, code):
     return constant_time_compare(code, get_foirequest_auth_code(foirequest))
+
+
+def is_attachment_public(foirequest, attachment):
+    return can_read_object(foirequest) and attachment.approved

@@ -6,6 +6,9 @@ from django.dispatch import Signal
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.core.signing import (
+    TimestampSigner, SignatureExpired, BadSignature
+)
 
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
@@ -106,21 +109,39 @@ class FoiAttachment(models.Model):
     def get_absolute_domain_url(self):
         return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
 
-    def get_absolute_file_url(self):
+    def get_absolute_file_url(self, authenticated=False):
         if settings.USE_X_ACCEL_REDIRECT:
             if not self.name:
                 return ''
-            return reverse('foirequest-auth_message_attachment',
+            url = reverse('foirequest-auth_message_attachment',
                 kwargs={
                     'message_id': self.belongs_to_id,
                     'attachment_name': self.name
                 })
+            if settings.FOI_MEDIA_TOKENS and authenticated:
+                signer = TimestampSigner()
+                value = signer.sign(url).split(':', 1)[1]
+                return '%s?token=%s' % (url, value)
+            return url
+
         else:
             if self.file:
                 return self.file.url
 
     def get_absolute_domain_file_url(self):
         return '%s%s' % (settings.SITE_URL, self.get_absolute_file_url())
+
+    def check_token(self, request):
+        token = request.GET['token']
+        original = '%s:%s' % (self.get_absolute_file_url(), token)
+        signer = TimestampSigner()
+        try:
+            signer.unsign(original, max_age=settings.FOI_MEDIA_TOKEN_EXPIRY)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return False
+        return True
 
     def approve_and_save(self):
         self.approved = True
