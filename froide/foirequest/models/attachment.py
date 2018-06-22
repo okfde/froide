@@ -9,7 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
-from froide.helper.document import PDF_FILETYPES
+from froide.helper.document import PDF_FILETYPES, EMBEDDABLE_FILETYPES
 from froide.document.models import Document
 
 from .message import FoiMessage
@@ -78,6 +78,10 @@ class FoiAttachment(models.Model):
     @property
     def is_pdf(self):
         return self.filetype in PDF_FILETYPES
+
+    @property
+    def can_embed(self):
+        return self.filetype in EMBEDDABLE_FILETYPES
 
     def get_anchor_url(self):
         if self.belongs_to:

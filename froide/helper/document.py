@@ -39,11 +39,17 @@ IMAGE_FILETYPES = (
     'image/png',
     'image/jpeg',
     'image/jpg',
+    'image/gif'
 )
 
 TEXT_FILETYPES = (
     'application/text-plain:formatted',
     'text/plain'
+)
+
+EMBEDDABLE_FILETYPES = (
+    PDF_FILETYPES +
+    IMAGE_FILETYPES
 )
 
 POSTAL_CONTENT_TYPES = PDF_FILETYPES + IMAGE_FILETYPES
