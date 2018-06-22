@@ -16,11 +16,11 @@
 {% if attachment.can_embed %}
   {% if attachment.is_pdf %}
   <div class="container-sm-full">
-      <iframe src="{% static 'document/viewer/web/viewer.html' %}?file={{ attachment.get_absolute_domain_file_url }}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
+      <iframe src="{% static 'document/viewer/web/viewer.html' %}?file={{ attachment_url }}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
   </div>
   {% else %}
   <div class="container">
-      <embed src="{{ attachment.get_absolute_file_url }}" style="max-width: 100%;" {% if attachment.filetype %} type="{{ attachment.filetype }}"{% endif %}></embed>
+      <embed src="{{ attachment_url }}" style="max-width: 100%;" {% if attachment.filetype %} type="{{ attachment.filetype }}"{% endif %}></embed>
   </div>
   {% endif %}
 {% endif %}
@@ -29,7 +29,8 @@
   {% if attachment.can_embed %}
     <div class="text-right">
         <small>
-            <a href="{{ attachment.get_absolute_domain_file_url }}">
+            {# expose direct links through redirects in case they get copied #}
+            <a href="{{ attachment.get_absolute_file_url }}">
                 {% trans "Download original" %}
             </a>
         </small>
@@ -37,7 +38,7 @@
   {% else %}
     <p>
       {% trans "This file cannot be previewed." %}
-      <a href="{{ attachment.get_absolute_domain_file_url }}">
+      <a href="{{ attachment.get_absolute_file_url }}">
         {% trans "Download the file here." %}
       </a>
     </p>

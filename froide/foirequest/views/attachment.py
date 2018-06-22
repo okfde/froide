@@ -48,8 +48,13 @@ def show_attachment(request, slug, message_id, attachment_name):
                                    name=attachment_name)
     if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
+    needs_authentication = is_attachment_public(foirequest, attachment)
+    attachment_url = attachment.get_absolute_file_url(
+        authenticated=needs_authentication
+    )
     return render(request, 'foirequest/attachment/show.html', {
         'attachment': attachment,
+        'attachment_url': attachment_url,
         'message': message,
         'foirequest': foirequest
     })
@@ -132,22 +137,23 @@ def auth_attachment_with_token(request, foirequest, attachment):
         if not result:
             if result is None:
                 # Redirect back to get new signature
-                return redirect(attachment.get_absolute_domain_file_url())
+                app_url = settings.SITE_URL + attachment.get_absolute_file_url()
+                return redirect(app_url)
             return render_403(request)
         return send_attachment_file(attachment)
     else:
         # main domain: always deny or redirect
         # in order not to render content on main domain
         if is_attachment_public(foirequest, attachment):
-            url = attachment.get_absolute_file_url(authenticated=False)
-            return redirect(settings.FOI_MEDIA_DOMAIN + url)
+            url = attachment.get_absolute_domain_file_url(authenticated=False)
+            return redirect(url)
 
         if not has_attachment_access(request, foirequest, attachment):
             # Deny access early
             return render_403(request)
 
-        url = attachment.get_absolute_file_url(authenticated=True)
-        return redirect(settings.FOI_MEDIA_DOMAIN + url)
+        url = attachment.get_absolute_domain_file_url(authenticated=True)
+        return redirect(url)
 
 
 def send_attachment_file(attachment):

@@ -128,8 +128,11 @@ class FoiAttachment(models.Model):
             if self.file:
                 return self.file.url
 
-    def get_absolute_domain_file_url(self):
-        return '%s%s' % (settings.SITE_URL, self.get_absolute_file_url())
+    def get_absolute_domain_file_url(self, authenticated=False):
+        return '%s%s' % (
+            settings.FOI_MEDIA_DOMAIN,
+            self.get_absolute_file_url(authenticated=authenticated)
+        )
 
     def check_token(self, request):
         token = request.GET.get('token')
