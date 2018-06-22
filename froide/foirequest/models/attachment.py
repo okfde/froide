@@ -110,23 +110,18 @@ class FoiAttachment(models.Model):
         return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
 
     def get_absolute_file_url(self, authenticated=False):
-        if settings.USE_X_ACCEL_REDIRECT:
-            if not self.name:
-                return ''
-            url = reverse('foirequest-auth_message_attachment',
-                kwargs={
-                    'message_id': self.belongs_to_id,
-                    'attachment_name': self.name
-                })
-            if settings.FOI_MEDIA_TOKENS and authenticated:
-                signer = TimestampSigner()
-                value = signer.sign(url).split(':', 1)[1]
-                return '%s?token=%s' % (url, value)
-            return url
-
-        else:
-            if self.file:
-                return self.file.url
+        if not self.name:
+            return ''
+        url = reverse('foirequest-auth_message_attachment',
+            kwargs={
+                'message_id': self.belongs_to_id,
+                'attachment_name': self.name
+            })
+        if settings.FOI_MEDIA_TOKENS and authenticated:
+            signer = TimestampSigner()
+            value = signer.sign(url).split(':', 1)[1]
+            return '%s?token=%s' % (url, value)
+        return url
 
     def get_absolute_domain_file_url(self, authenticated=False):
         return '%s%s' % (
