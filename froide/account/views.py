@@ -385,7 +385,8 @@ def delete_account(request):
     return redirect('/')
 
 
-def new_terms(request, next=None):
+def new_terms(request):
+    next = request.GET.get('next')
     if not request.user.is_authenticated:
         return get_redirect(request, default=next)
     if request.user.terms:
