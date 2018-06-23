@@ -1,7 +1,11 @@
+try:
+    from urllib.parse import parse_qs, urlsplit, urlunsplit
+except ImportError:
+    from urlparse import parse_qs, urlsplit, urlunsplit
+
 from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.utils.http import is_safe_url
 from django.urls import reverse, NoReverseMatch
+from django.utils.http import is_safe_url, urlencode
 
 
 def get_next(request):
@@ -65,3 +69,21 @@ def get_redirect(request, **kwargs):
         return redirect(url)
     except NoReverseMatch:
         return redirect('/')
+
+
+def update_query_params(url, params):
+    """
+    Given a URL, update the query parameters and return the
+    modified URL.
+
+    >>> update_query_params('http://example.com?foo=bar&biz=baz', {'foo': 'stuff'})
+    'http://example.com?foo=stuff&biz=baz'
+
+    """
+    scheme, netloc, path, query_string, fragment = urlsplit(url)
+    query_params = parse_qs(query_string)
+    query_params.update(params)
+
+    new_query_string = urlencode(query_params, doseq=True)
+
+    return urlunsplit((scheme, netloc, path, new_query_string, fragment))
