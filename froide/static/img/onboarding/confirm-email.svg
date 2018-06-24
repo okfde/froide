@@ -1,0 +1,28 @@
+<svg data-name="Layer 1" id="Layer_1" viewBox="0 0 274 274" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <style>.cls-1,.cls-10,.cls-8{fill:#eaeaea;}.cls-1,.cls-2{clip-rule:evenodd;}.cls-11,.cls-13,.cls-2{fill:#efefef;}.cls-3{fill:#4886ff;}.cls-4{fill:#9db2c6;}.cls-5{fill:#fff;}.cls-6{fill:#e9ebef;}.cls-7{fill:#003f7c;}.cls-11,.cls-8{fill-rule:evenodd;}.cls-9{clip-path:url(#clip-path);}.cls-12{clip-path:url(#clip-path-2);}</style>
+        <clipPath id="clip-path">
+            <path class="cls-1" d="M39.05,130.57l105,53,105-53V245.16a4,4,0,0,1-4,4h-202a4,4,0,0,1-4-4Z"/>
+        </clipPath>
+        <clipPath id="clip-path-2">
+            <path class="cls-2" d="M130.81,182c5.82-4.21,15.26-4.2,21.08,0l91,65.7c1.79,1.29,1.44,2.34-.76,2.34H40.54c-2.21,0-2.55-1.05-.76-2.34Z"/>
+        </clipPath>
+    </defs>
+    <circle class="cls-3" cx="137" cy="137" r="137"/>
+    <polygon class="cls-4" points="38.63 161.27 39.05 130.57 143.35 58.71 249.04 130.57 249.04 208.67 38.63 161.27"/>
+    <polygon class="cls-5" points="43 45.3 196.63 21.1 224.52 203.32 70.66 230.3 43 45.3"/>
+    <rect class="cls-6" height="6" transform="translate(-18.8 21.62) rotate(-9.06)" width="103.9" x="75.04" y="126.41"/>
+    <rect class="cls-6" height="6" transform="translate(-20.73 23.25) rotate(-8.93)" width="120.71" x="78.15" y="141.3"/>
+    <rect class="cls-6" height="6" transform="translate(-22.74 21.82) rotate(-8.65)" width="104.01" x="80.88" y="158.27"/>
+    <rect class="cls-6" height="6" transform="translate(-11.33 20.7) rotate(-8.98)" width="121" x="65.66" y="79.47"/>
+    <rect class="cls-6" height="6" transform="translate(-13.81 19.81) rotate(-8.85)" width="104.35" x="68.95" y="96.14"/>
+    <rect class="cls-6" height="6" transform="translate(-15.7 21.66) rotate(-8.81)" width="121.61" x="71.91" y="109.73"/>
+    <path class="cls-8" d="M39.05,130.57l105,53,105-53V245.16a4,4,0,0,1-4,4h-202a4,4,0,0,1-4-4Z"/>
+    <g class="cls-9">
+        <rect class="cls-10" height="871" width="1200" x="-466.95" y="-275.84"/>
+    </g>
+    <path class="cls-11" d="M130.81,182c5.82-4.21,15.26-4.2,21.08,0l91,65.7c1.79,1.29,1.44,2.34-.76,2.34H40.54c-2.21,0-2.55-1.05-.76-2.34Z"/>
+    <g class="cls-12">
+        <rect class="cls-13" height="83.19" width="217.44" x="32.63" y="172.81"/>
+    </g>
+</svg>
