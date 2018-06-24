@@ -65,27 +65,7 @@
       </div>
     </div>
 
-    <div id="change-password-now" class="card mb-3">
-      <h5 class="card-header">
-        {% trans "Change password" %}
-      </h5>
-      <div class="card-body">
-        {% if user.is_new %}
-          <h3>
-            {% blocktrans %}You should change your password now.{% endblocktrans %}
-          </h3>
-        {% endif %}
-        <form action="{% url 'account-change_password' %}" method="post" id="change-password">
-          {% csrf_token %}
-          {% if password_change_form %}
-            {% render_form password_change_form %}
-          {% else %}
-            {% render_form user.get_password_change_form %}
-          {% endif %}
-          <button type="submit" class="btn btn-secondary">{% blocktrans %}Change password{% endblocktrans %}</button>
-        </form>
-      </div>
-    </div>
+    {% include "account/includes/change_password_form.html" %}
 
     <hr/>
 

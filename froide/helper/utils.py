@@ -40,7 +40,7 @@ def get_client_ip(request):
     return ip
 
 
-def get_redirect_url(request, default='/', next=None, allowed_hosts=None):
+def get_redirect_url(request, default='/', next=None, allowed_hosts=None, params=None):
     if next is None:
         next = request.POST.get('next',
             request.GET.get('next', request.session.get('next')))
@@ -60,6 +60,8 @@ def get_redirect_url(request, default='/', next=None, allowed_hosts=None):
         next = request.META.get('HTTP_REFERER')
     if next is None or not is_safe_url(url=next, allowed_hosts=allowed_hosts):
         next = '/'
+    if params is not None:
+        next = update_query_params(next, params)
     return next
 
 

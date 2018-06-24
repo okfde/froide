@@ -1,26 +1,35 @@
 {% extends 'account/base.html' %}
 
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "New account" %}{% endblock %}
 
+{% block navbar %}{% endblock %}
+
 {% block app_body %}
-
-<h2 class="display-3 mb-5">
-  {% trans "Confirm your email address" %}
-</h2>
-
-<div class="row mt-5">
-  <div class="col-lg-8">
+<div class="row mt-5 justify-content-center">
+    <div class="col-6 col-md-3">
+        <img src="{% static 'img/onboarding/confirm-email.svg' %}" alt="{% trans 'You got mail' %}">
+    </div>
+  </div>
+<div class="row mt-5 justify-content-center">
+  <div class="col-md-8 text-center">
+    <h1>
+      {% trans "Please confirm your email address!" %}
+    </h1>
 
     {% if title %}
       <p class="lead">
           {% blocktrans with title=title %}
-            Your request “{{ title }}” is almost ready to be sent!
+            Your request “{{ title }}” will only be sent to the public body, when you confirm your email address.
           {% endblocktrans %}
       </p>
     {% endif %}
-
+  </div>
+</div>
+<div class="row mb-5 justify-content-center">
+  <div class="col-md-8">
     {% if email %}
       <ol class="lead">
         <li>
@@ -30,7 +39,7 @@
         </li>
         <li>
           {% blocktrans %}
-            Click the <strong class="highlight">confirmation link</strong> in the email.
+            Click the <strong class="highlight">confirmation link</strong> in the email from {{ SITE_NAME }}.
           {% endblocktrans %}
         </li>
       </ol>

@@ -140,12 +140,22 @@ class AccountService(object):
             digestmod=hashlib.md5
         ).hexdigest()
 
-    def send_confirmation_mail(self, request_id=None, password=None):
+    def send_confirmation_mail(self, request_id=None, password=None,
+                               reference=None, redirect_url=None):
         secret = self.generate_confirmation_secret(request_id)
         url_kwargs = {"user_id": self.user.pk, "secret": secret}
         if request_id:
             url_kwargs['request_id'] = request_id
         url = reverse('account-confirm', kwargs=url_kwargs)
+
+        params = {}
+        if reference:
+            params['ref'] = reference.encode('utf-8')
+        if redirect_url:
+            params['next'] = redirect_url.encode('utf-8')
+        if params:
+            url = '%s?%s' % (url, urlencode(params))
+
         message = render_to_string('account/confirmation_mail.txt',
                 {'url': settings.SITE_URL + url,
                 'password': password,
@@ -153,6 +163,7 @@ class AccountService(object):
                 'site_name': settings.SITE_NAME,
                 'site_url': settings.SITE_URL
             })
+
         # Translators: Mail subject
         send_mail(str(_("%(site_name)s: please confirm your account") % {
                     "site_name": settings.SITE_NAME}),

@@ -323,6 +323,7 @@ class RequestTest(TestCase):
 
         pb = PublicBody.objects.all()[0]
         self.client.login(email="dummy@example.org", password="froide")
+
         post = {"subject": "Another Third Test-Subject",
                 "body": "This is another test body",
                 "redirect_url": "/?blub=bla",
@@ -331,7 +332,8 @@ class RequestTest(TestCase):
         response = self.client.post(
                 reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response['Location'].endswith('/?blub=bla'))
+        req = FoiRequest.objects.get(title=post['subject'])
+        self.assertEqual(response['Location'], '/?blub=bla&request=%s' % req.pk)
 
         post = {"subject": "Another fourth Test-Subject",
                 "body": "This is another test body",
@@ -340,8 +342,39 @@ class RequestTest(TestCase):
                 "public": "on"}
         response = self.client.post(
                 reverse('foirequest-make_request'), post)
+        request_sent = reverse('foirequest-request_sent')
+        self.assertIn(request_sent, response['Location'])
+
+    def test_redirect_after_request_new_account(self):
+        pb = PublicBody.objects.all()[0]
+        mail.outbox = []
+        redirect_url = "/foo/?blub=bla"
+        post = {
+            "subject": "Another Third Test-Subject",
+            "body": "This is another test body",
+            "redirect_url": redirect_url,
+            "publicbody": str(pb.pk),
+            "public": "on",
+            "first_name": "Stefan", "last_name": "Wehrmeyer",
+            "address": "TestStreet 3\n55555 Town",
+            "user_email": "sw@example.com",
+            "reference": 'foo:bar',
+            "terms": "on",
+        }
+        response = self.client.post(
+                reverse('foirequest-make_request'), post)
+        self.assertEqual(response.status_code, 302)
+        account_new = reverse('account-new')
+        self.assertIn(account_new, response['Location'])
+        
         req = FoiRequest.objects.get(title=post['subject'])
-        self.assertIn(req.get_absolute_url(), response['Location'])
+        message = mail.outbox[0]
+        self.assertEqual(message.to[0], post['user_email'])
+        match = re.search(r'http://[\w:]+(/[\w/]+/\d+/%d/\w+/\S*)' % (req.pk), message.body)
+        self.assertIsNotNone(match)
+        url = match.group(1)
+        response = self.client.get(url)
+        self.assertEqual(response['Location'], redirect_url + '&ref=foo%3Abar&request={}'.format(req.pk))
 
     def test_foi_email_settings(self):
         pb = PublicBody.objects.all()[0]

@@ -165,9 +165,11 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         match = re.search(r'http://[^/]+(/.+)', message.body)
         activate_url = match.group(1)
         self.selenium.get('%s%s' % (self.live_server_url, activate_url))
+        account_confirmed = reverse('account-confirmed')
+
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#change-password-now'))
-        self.assertIn('?new#change-password-now', self.selenium.current_url)
+            lambda driver: account_confirmed in driver.current_url)
+        self.assertIn(account_confirmed, self.selenium.current_url)
         req = FoiRequest.objects.get(user=new_user)
         self.assertEqual(req.status, 'awaiting_response')
 
@@ -252,10 +254,14 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         WebDriverWait(self.selenium, 10).until(
             lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
         self.selenium.find_element_by_id('send-request-button').click()
+
+        request_sent = reverse('foirequest-request_sent')
         WebDriverWait(self.selenium, 5).until(
-            lambda driver: driver.find_element_by_css_selector('#messages'))
+            lambda driver: request_sent in driver.current_url)
+
+        self.assertIn(request_sent, self.selenium.current_url)
+
         req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
-        self.assertIn(req.get_absolute_url(), self.selenium.current_url)
         self.assertEqual(req.title, req_title)
         self.assertIn(req.description, body_text)
         self.assertIn(body_text, req.messages[0].plaintext)
@@ -328,7 +334,8 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.selenium.find_element_by_id('send-request-button').click()
 
         req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
-        self.assertIn(req.get_absolute_url(), self.selenium.current_url)
+        sent_url = reverse('foirequest-request_sent')
+        self.assertIn(sent_url, self.selenium.current_url)
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, False)
         self.assertEqual(req.public_body, self.pb)

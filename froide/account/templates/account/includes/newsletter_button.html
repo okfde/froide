@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<form method="post" action="{% url 'account-newsletter_subscribe' %}">
+  {% csrf_token %}
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% else %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  {% endif %}
+  {% block newsletter_text %}
+    <h3>
+      {% trans "Newsletter" %}
+    </h3>
+    <p>
+      {% trans "Subscribe to our newsletter and get news about what's going on." %}
+    </p>
+  {% endblock %}
+  {% block newsletter_button %}
+    <button type="submit" class="btn btn-primary">
+      {% block newsletter_button_text %}
+        {% trans  "Subscribe now!" %}
+      {% endblock %}
+    </button>
+  {% endblock %}
+</form>

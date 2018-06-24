@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.http import Http404, QueryDict
 from django.contrib import auth
 from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
@@ -16,7 +17,7 @@ from django.views.generic import TemplateView
 
 from froide.foirequest.models import (FoiRequest, FoiProject, FoiEvent,
                                       RequestDraft)
-from froide.helper.utils import render_403, get_redirect
+from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
@@ -34,6 +35,25 @@ class NewAccountView(TemplateView):
         return context
 
 
+class AccountConfirmedView(LoginRequiredMixin, TemplateView):
+    template_name = 'account/confirmed.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AccountConfirmedView, self).get_context_data(**kwargs)
+        context['foirequest'] = self.get_foirequest()
+        context['ref'] = self.request.GET.get('ref')
+        return context
+
+    def get_foirequest(self):
+        request_pk = self.request.GET.get('request')
+        if request_pk:
+            try:
+                return FoiRequest.objects.get(user=self.request.user, pk=request_pk)
+            except FoiRequest.DoesNotExist:
+                pass
+        return None
+
+
 def confirm(request, user_id, secret, request_id=None):
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
@@ -43,19 +63,27 @@ def confirm(request, user_id, secret, request_id=None):
     if user.is_active or (not user.is_active and user.email is None):
         return redirect('account-login')
     account_service = AccountService(user)
-    if account_service.confirm_account(secret, request_id):
-        auth.login(request, user)
-        if request_id is not None:
-            foirequest = FoiRequest.confirmed_request(user, request_id)
-            if foirequest:
-                messages.add_message(request, messages.SUCCESS,
-                    _('Your request "%s" has now been sent') % foirequest.title)
-        default_url = reverse('account-settings') + '?new#change-password-now'
-        return get_redirect(request, default=default_url)
-    else:
+    result = account_service.confirm_account(secret, request_id)
+    if not result:
         messages.add_message(request, messages.ERROR,
-                _('You can only use the confirmation link once, please login with your password.'))
-    return redirect('account-login')
+                _('You can only use the confirmation link once, '
+                  'please login with your password.'))
+        return redirect('account-login')
+
+    auth.login(request, user)
+
+    params = {}
+
+    if request.GET.get('ref'):
+        params['ref'] = request.GET['ref']
+
+    if request_id is not None:
+        foirequest = FoiRequest.confirmed_request(user, request_id)
+        if foirequest:
+            params['request'] = str(foirequest.pk).encode('utf-8')
+
+    default_url = reverse('account-confirmed') + urlencode(params)
+    return get_redirect(request, default=default_url, params=params)
 
 
 def go(request, user_id, secret, url):
@@ -65,12 +93,12 @@ def go(request, user_id, secret, url):
                 _('You are logged in with a different user account. Please logout first before using this link.'))
     else:
         user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
-        if not user.is_active:
-            messages.add_message(request, messages.ERROR,
-                _('Your account is not active.'))
-            raise Http404
         account_manager = AccountService(user)
         if account_manager.check_autologin_secret(secret):
+            if not user.is_active:
+                messages.add_message(request, messages.ERROR,
+                    _('Your account is not active.'))
+                raise Http404
             auth.login(request, user)
     return redirect(url)
 
@@ -263,7 +291,7 @@ def change_password(request):
         form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been changed.'))
-        return redirect('account-show')
+        return get_redirect(request, default=reverse('account-show'))
     return account_settings(request,
             context={"password_change_form": form}, status=400)
 
@@ -297,10 +325,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         """
         Returns the supplied success URL.
         """
-        next_url = self.request.session.get('next')
-        if next_url is not None:
-            return next_url
-        return reverse('account-show')
+        return get_redirect_url(self.request, default=reverse('account-show'))
 
 
 def account_settings(request, context=None, status=200):
@@ -357,6 +382,20 @@ def change_email(request):
         messages.add_message(request, messages.ERROR,
                 _('The email confirmation link was invalid or expired.'))
     return redirect('account-settings')
+
+
+@require_POST
+def subscribe_newsletter(request):
+    if not request.user.is_authenticated:
+        return render_403(request)
+
+    messages.add_message(request, messages.SUCCESS,
+            _('You successfully subscribed to our newsletter!'))
+
+    user = request.user
+    user.newsletter = True
+    user.save()
+    return get_redirect(request)
 
 
 @require_POST

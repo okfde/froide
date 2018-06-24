@@ -1,0 +1,48 @@
+{% extends 'account/base.html' %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Your account is now confirmed" %}{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+
+{% block body %}
+  <div class="container">
+    <div class="row mt-5 justify-content-center">
+      <div class="col-6 col-md-3">
+        <img src="{% static 'img/onboarding/email-confirmed.svg' %}" alt="{% trans 'You got mail' %}">
+      </div>
+    </div>
+    <div class="row mt-5 justify-content-center">
+      <div class="col-md-8 text-center">
+
+        <h2>
+          {% trans "Your email address is now confirmed!" %}
+        </h2>
+
+        {% if foirequest %}
+          <p class="lead">
+            {% blocktrans with title=foirequest.title url=foirequest.get_absolute_url %}
+              Your request “<a href="{{ url }}">{{ title }}</a>” has been sent.
+            {% endblocktrans %}
+          </p>
+        {% endif %}
+        <p>
+          {% trans "We will send you an email when you receive a reply from the public body." %}
+        </p>
+      </div>
+    </div>
+    {% block password_form %}
+      <div class="row mt-5 justify-content-center">
+        <div class="col-lg-8">
+          {% trans "Please set a password for your account now" as form_title %}
+          {% include "account/includes/change_password_form.html" with form_title=form_title %}
+        </div>
+      </div>
+    {% endblock %}
+  </div>
+  {% block below_password %}{% endblock %}
+
+{% endblock %}

@@ -11,14 +11,16 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.http import Http404
 from django.contrib import messages
-from django.views.generic import FormView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import FormView, DetailView, TemplateView
 
 from froide.account.forms import NewUserForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
 from froide.publicbody.models import PublicBody
 from froide.helper.auth import get_read_queryset
+from froide.helper.utils import update_query_params
 
-from ..models import FoiRequest, RequestDraft
+from ..models import FoiRequest, FoiProject, RequestDraft
 from ..forms import RequestForm
 from ..utils import check_throttle
 from ..services import CreateRequestService, SaveDraftService
@@ -230,25 +232,26 @@ class MakeRequestView(FormView):
         special_redirect = request_form.cleaned_data['redirect_url']
 
         if user.is_authenticated:
+            params = {}
             if isinstance(foi_object, FoiRequest):
+                params['request'] = str(foi_object.pk).encode('utf-8')
                 messages.add_message(self.request, messages.INFO,
                     _('Your request has been sent.'))
             else:
+                params['project'] = str(foi_object.pk).encode('utf-8')
                 messages.add_message(self.request, messages.INFO,
                     _('Your project has been created and we are sending your '
                       'requests.'))
-            req_url = '%s%s' % (foi_object.get_absolute_url(),
-                                _('?request-made'))
-            return redirect(special_redirect or req_url)
 
-        # user cannot access the request yet,
-        # redirect to custom redirect or new account page
-        if special_redirect:
-            messages.add_message(self.request, messages.INFO,
-                    _('Please check your inbox for mail from us to '
-                      'confirm your mail address.'))
+            if special_redirect:
+                special_redirect = update_query_params(special_redirect, params)
+                return redirect(special_redirect)
 
-            return redirect(special_redirect)
+            req_url = '%s?%s' % (
+                reverse('foirequest-request_sent'),
+                urlencode(params)
+            )
+            return redirect(req_url)
 
         return redirect(get_new_account_url(foi_object))
 
@@ -325,3 +328,35 @@ def get_new_account_url(foi_object):
         'title': foi_object.title.encode('utf-8')
     })
     return '%s?%s' % (url, query)
+
+
+class RequestSentView(LoginRequiredMixin, TemplateView):
+    template_name = 'foirequest/sent.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RequestSentView, self).get_context_data(**kwargs)
+        context['foirequest'] = self.get_foirequest()
+        context['foiproject'] = self.get_foiproject()
+        if context['foirequest']:
+            context['url'] = context['foirequest'].get_absolute_url()
+        if context['foiproject']:
+            context['url'] = context['foiproject'].get_absolute_url()
+        return context
+
+    def get_foirequest(self):
+        request_pk = self.request.GET.get('request')
+        if request_pk:
+            try:
+                return FoiRequest.objects.get(user=self.request.user, pk=request_pk)
+            except FoiRequest.DoesNotExist:
+                pass
+        return None
+
+    def get_foiproject(self):
+        project_pk = self.request.GET.get('project')
+        if project_pk:
+            try:
+                return FoiProject.objects.get(user=self.request.user, pk=project_pk)
+            except FoiProject.DoesNotExist:
+                pass
+        return None

@@ -51,7 +51,8 @@ class RequestProjectTest(TestCase):
         project = FoiProject.objects.get(title=data['subject'])
         self.assertEqual(set([str(x.pk) for x in project.publicbodies.all()]),
                          set(pb_ids.split('+')))
-        self.assertIn(project.get_absolute_url(), response['Location'])
+        request_sent = reverse('foirequest-request_sent') + '?project=%s' % project.pk
+        self.assertEqual(response['Location'], request_sent)
         self.assertEqual(project.title, data['subject'])
         self.assertEqual(project.description, data['body'])
         self.assertEqual(project.foirequest_set.all().count(), 2)
