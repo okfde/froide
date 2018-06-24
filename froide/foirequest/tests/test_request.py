@@ -366,7 +366,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         account_new = reverse('account-new')
         self.assertIn(account_new, response['Location'])
-        
+
         req = FoiRequest.objects.get(title=post['subject'])
         message = mail.outbox[0]
         self.assertEqual(message.to[0], post['user_email'])
