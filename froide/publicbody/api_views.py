@@ -270,7 +270,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
         model = PublicBody
         api_list = 'api:publicbody-list'
         obj_short_link = 'publicbody-publicbody_shortlink'
-        filters = ['jurisdiction']
+        filters = ['jurisdiction', 'classification']
         properties = [{
             'id': 'classification',
             'name': 'Classification',
