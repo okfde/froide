@@ -16,7 +16,8 @@
 
 .field-required {
   &:after {
-    content: " *";
+    content: "*";
+    margin-left: 0.25rem;
     color: darken($red, 20%);
   }
 }
