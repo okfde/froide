@@ -424,6 +424,14 @@
               {% blocktrans %}Not yet known{% endblocktrans %}
             {% endif %}
           </dd>
+          {% if object.project %}
+            <dt>{% blocktrans %}Project:{% endblocktrans %}</dt>
+            <dd>
+              <a href="{{ object.project.get_absolute_url }}">
+                {{ object.project.title }}
+              </a>
+            </dd>
+          {% endif %}
           {% if object.law %}
             {% if object.law.meta %}
               <dt>{% blocktrans %}Laws used:{% endblocktrans %}</dt>
