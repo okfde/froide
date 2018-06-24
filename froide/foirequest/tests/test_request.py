@@ -326,14 +326,16 @@ class RequestTest(TestCase):
 
         post = {"subject": "Another Third Test-Subject",
                 "body": "This is another test body",
-                "redirect_url": "/?blub=bla",
+                "redirect_url": "/foo/?blub=bla",
                 "publicbody": str(pb.pk),
                 "public": "on"}
         response = self.client.post(
                 reverse('foirequest-make_request'), post)
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(title=post['subject'])
-        self.assertEqual(response['Location'], '/?blub=bla&request=%s' % req.pk)
+        self.assertIn('/foo/?', response['Location'])
+        self.assertIn('blub=bla', response['Location'])
+        self.assertIn('request=%s' % req.pk, response['Location'])
 
         post = {"subject": "Another fourth Test-Subject",
                 "body": "This is another test body",
@@ -374,7 +376,10 @@ class RequestTest(TestCase):
         self.assertIsNotNone(match)
         url = match.group(1)
         response = self.client.get(url)
-        self.assertEqual(response['Location'], redirect_url + '&ref=foo%3Abar&request={}'.format(req.pk))
+        self.assertIn('/foo/?', response['Location'])
+        self.assertIn('blub=bla', response['Location'])
+        self.assertIn('ref=foo%3Abar', response['Location'])
+        self.assertIn('request=%s' % req.pk, response['Location'])
 
     def test_foi_email_settings(self):
         pb = PublicBody.objects.all()[0]
