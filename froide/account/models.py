@@ -12,11 +12,16 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 
 from oauth2_provider.models import AbstractApplication
 
 from froide.helper.csv_utils import export_csv, get_dict
 from froide.helper.storage import HashedFilenameStorage
+
+
+def has_newsletter():
+    return settings.FROIDE_CONFIG.get("have_newsletter", False)
 
 
 class UserManager(BaseUserManager):
@@ -146,6 +151,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def trusted(self):
         return self.is_trusted or self.is_staff or self.is_superuser
+
+    def show_newsletter(self):
+        return has_newsletter() and not self.newsletter
 
     @classmethod
     def export_csv(cls, queryset):

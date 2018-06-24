@@ -15,15 +15,12 @@ from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
 from .services import AccountService
+from .models import has_newsletter
 
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
-
-
-def has_newsletter():
-    return settings.FROIDE_CONFIG.get("have_newsletter", False)
 
 
 class NewUserBaseForm(forms.Form):
