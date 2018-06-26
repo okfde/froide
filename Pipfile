@@ -1,11 +1,8 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
-
 [packages]
-
 django = "<2.0"
 markdown = "*"
 django-haystack = "*"
@@ -33,10 +30,9 @@ django-treebeard = "*"
 djangorestframework-jsonp = "*"
 "geoip2" = "*"
 pdflib = "*"
-
+pylatex = "*"
 
 [dev-packages]
-
 selenium = "*"
 "flake8" = "*"
 factory-boy = "*"
