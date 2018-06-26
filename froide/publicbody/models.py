@@ -29,6 +29,7 @@ from froide.helper.date_utils import (
 )
 from froide.helper.templatetags.markup import markdown
 from froide.helper.csv_utils import export_csv
+from froide.helper.api_utils import get_fake_api_context
 
 
 DEFAULT_LAW = settings.FROIDE_CONFIG.get("default_law", 1)
@@ -173,19 +174,9 @@ class FoiLaw(models.Model):
                     for x in self.refusal_reasons.splitlines()])
 
     def as_data(self):
-        return {
-            "id": self.id, "name": self.name,
-            "description_html": self.description_html,
-            "request_note_html": self.request_note_html,
-            "description": self.description,
-            "law_type": self.law_type,
-            "letter_start": self.letter_start,
-            "letter_end": self.letter_end,
-            "jurisdiction": self.jurisdiction.name if self.jurisdiction else '',
-            "jurisdiction_id": (self.jurisdiction.id
-                                if self.jurisdiction else None),
-            "email_only": self.email_only
-        }
+        from .api_views import FoiLawSerializer
+        ctx = get_fake_api_context()
+        return FoiLawSerializer(self, context=ctx).data
 
     def calculate_due_date(self, date=None, value=None):
         if date is None:
@@ -462,15 +453,10 @@ class PublicBody(models.Model):
         return counter
 
     def as_data(self):
-        d = {}
-        for field in self.serializable_fields:
-            d[field] = getattr(self, field)
-        d['laws'] = [law.as_data() for law in self.laws.all().order_by('-meta')]
-        d['jurisdiction'] = {
-            'name': self.jurisdiction.name,
-            'id': self.jurisdiction.id
-        }
-        return d
+        from .api_views import PublicBodySerializer
+
+        ctx = get_fake_api_context()
+        return PublicBodySerializer(self, context=ctx).data
 
     def as_json(self):
         return json.dumps(self.as_data())

@@ -10,10 +10,21 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 from rest_framework.decorators import action
 from rest_framework.reverse import reverse
 from rest_framework.renderers import JSONRenderer
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
 
 from rest_framework_jsonp.renderers import JSONPRenderer
 
 from haystack.query import SearchQuerySet
+
+
+def get_fake_api_context(url='/'):
+    factory = APIRequestFactory()
+    request = factory.get(url)
+
+    return {
+        'request': Request(request),
+    }
 
 
 class CustomLimitOffsetPagination(LimitOffsetPagination):
