@@ -108,7 +108,7 @@ def download_foirequest_pdf(request, slug):
     if not can_read_foirequest_authenticated(foirequest, request):
         return render_403(request)
     response = HttpResponse(get_foirequest_pdf_bytes(foirequest), content_type='application/pdf')
-    # response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
+    response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
     return response
 
 
