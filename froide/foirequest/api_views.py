@@ -66,14 +66,22 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         source='get_domain_anchor_url',
         read_only=True
     )
+    file_url = serializers.SerializerMethodField(
+        source='get_file_url',
+        read_only=True
+    )
 
     class Meta:
         model = FoiAttachment
         depth = 0
         fields = (
             'resource_uri', 'id', 'belongs_to', 'name', 'filetype',
-            'approved', 'is_redacted', 'size', 'site_url', 'anchor_url'
+            'approved', 'is_redacted', 'size',
+            'site_url', 'anchor_url', 'file_url'
         )
+
+    def get_file_url(self, obj):
+        return obj.get_absolute_domain_file_url(authenticated=True)
 
 
 class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
