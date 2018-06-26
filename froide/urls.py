@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.flatpages.views import flatpage
 from django.contrib.flatpages.sitemaps import FlatPageSitemap
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext
@@ -172,27 +171,6 @@ if settings.DEBUG:
 
 
 # Translators: URL part
-help_url_part = pgettext('url part', 'help')
-# Translators: URL part
-about_url_part = pgettext('url part', 'about')
-# Translators: URL part
-terms_url_part = pgettext('url part', 'terms')
-# Translators: URL part
-privacy_url_part = pgettext('url part', 'privacy')
-
-help_urlpatterns = [
-    url(r'^%s/$' % help_url_part, flatpage,
-        {'url': '/%s/' % help_url_part}, name='help-index'),
-    url(r'^%s/%s/$' % (help_url_part, about_url_part), flatpage,
-        {'url': '/%s/%s/' % (help_url_part, about_url_part)}, name='help-about'),
-    url(r'^%s/%s/$' % (help_url_part, terms_url_part), flatpage,
-        {'url': '/%s/%s/' % (help_url_part, terms_url_part)}, name='help-terms'),
-    url(r'^%s/%s/$' % (help_url_part, privacy_url_part), flatpage,
-        {'url': '/%s/%s/' % (help_url_part, privacy_url_part)}, name='help-privacy'),
-]
-
-
-# Translators: URL part
 jurisdiction_part = pgettext('url part', 'jurisdiction')
 
 jurisdiction_urls = [
@@ -203,4 +181,4 @@ jurisdiction_urls = [
 urlpatterns = froide_urlpatterns + [
     url(r'^$', index, name='index'),
     url(r'^dashboard/$', dashboard, name='dashboard'),
-] + sitemap_urlpatterns + help_urlpatterns + jurisdiction_urls
+] + sitemap_urlpatterns + jurisdiction_urls

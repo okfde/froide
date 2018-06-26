@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from django.urls import reverse
 from django.contrib import auth
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -11,6 +10,7 @@ from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django import forms
 
 from froide.helper.form_utils import JSONMixin
+from froide.helper.content_urls import get_content_url
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
@@ -71,7 +71,7 @@ class NewUserBaseForm(forms.Form):
         if ALLOW_PSEUDONYM:
             self.fields["last_name"].help_text = mark_safe(
                     _('<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.')
-                    .format(url=reverse("help-privacy") + '#pseudonym'))
+                    .format(url=get_content_url("privacy") + '#pseudonym'))
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()
@@ -112,8 +112,8 @@ class TermsForm(forms.Form):
             _('You agree to our <a href="{url_terms}" target="_blank">'
                 'Terms and Conditions</a> and <a href="{url_privacy}" target="_blank">'
                 'Privacy Statement</a>').format(
-                    url_terms=reverse("help-terms"),
-                    url_privacy=reverse("help-privacy")
+                    url_terms=get_content_url("terms"),
+                    url_privacy=get_content_url("privacy")
                 )
         )
 

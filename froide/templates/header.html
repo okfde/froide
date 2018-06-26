@@ -1,5 +1,8 @@
 {% load i18n %}
 {% load static %}
+{% load content_helper %}
+
+
 <header id="header">
   <nav class="navbar navbar-secondary navbar-expand-md navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
     <div class="container">
@@ -112,12 +115,12 @@
         {% block nav_secondary %}
         <ul class="navbar-nav navbar-nav-secondary col-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'help-about' %}">
+            <a class="nav-link" href="{% content_url 'about' %}">
               {% trans "About" %}
             </a>
           </li>
           <li class="nav-item special-nav-secondary-item">
-            <a class="nav-link" href="{% url 'help-index' %}">
+            <a class="nav-link" href="{% content_url 'help' %}">
               {% trans "Help" %}
             </a>
           </li>

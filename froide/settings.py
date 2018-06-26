@@ -434,6 +434,12 @@ class Base(Configuration):
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
         doc_conversion_call_func=None,  # see settings_test for use
+        content_urls={
+            'terms': '/terms/',
+            'privary': '/privacy/',
+            'about': '/about/',
+            'help': '/help/',
+        }
     )
 
     TESSERACT_DATA_PATH = values.Value('/usr/local/share/tessdata')

@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load content_helper %}
 
 
 <script type="text/javascript">
@@ -7,7 +8,7 @@
   Froide.url = Froide.url || {}
   Froide.url.searchPublicBody = "{% url 'api:publicbody-search' %}"
   Froide.url.getPublicBody = "{% url 'api:publicbody-detail' pk='0' %}"
-  Froide.url.helpAbout = '{% url "help-about" %}'
+  Froide.url.helpAbout = '{% content_url "about" %}'
 
   Froide.i18n = Froide.i18n || {};
   (function () {

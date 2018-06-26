@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load content_helper %}
 
 <footer class="footer" id="footer">
   <div class="container">
@@ -39,18 +40,18 @@
           <ul class="footer__menu">
             {% block footer_menu %}
             <li>
-              <a href="{% url 'help-about' %}">{% trans "About" %}</a>
+              <a href="{% content_url 'about' %}">{% trans "About" %}</a>
             </li>
             {% block footer_menu_custom %}
             {% endblock %}
             <li>
-              <a href="{% url 'help-terms' %}">{% trans "Terms of Use" %}</a>
+              <a href="{% content_url 'terms' %}">{% trans "Terms of Use" %}</a>
             </li>
             <li>
-              <a href="{% url 'help-privacy' %}">{% trans "Privacy Statement" %}</a>
+              <a href="{% content_url 'privacy' %}">{% trans "Privacy Statement" %}</a>
             </li>
             <li>
-              <a href="{% url 'help-index' %}">{% trans "Help" %}</a>
+              <a href="{% content_url 'help' %}">{% trans "Help" %}</a>
             </li>
             {% endblock %}
           </ul>

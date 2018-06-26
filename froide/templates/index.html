@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load humanize %}
+{% load content_helper %}
 
 {% block title %}{{SITE_NAME}}{% endblock %}
 
@@ -118,7 +119,7 @@
       <h3>{% blocktrans %}What does this site do?{% endblocktrans %}</h3>
       <p>{% blocktrans %}This site publishes Freedom of Information requests and replies so that others don't have to ask for the same information and replies can be scrutinized by the public.{% endblocktrans %}
       <br/>
-       <a href="{% url 'help-index' %}">{% blocktrans %}Read more about the concept!{% endblocktrans %}</a>
+       <a href="{% content_url 'index' %}">{% blocktrans %}Read more about the concept!{% endblocktrans %}</a>
       </p>
       {% endblock %}
     </div>
