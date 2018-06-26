@@ -13,10 +13,10 @@ import base64
 import re
 
 try:
-    from email.header import decode_header
+    from email.header import decode_header, make_header
     from email.parser import BytesParser as Parser
 except ImportError:
-    from email.Header import decode_header
+    from email.Header import decode_header, make_header
     from email.Parser import Parser
 
 from email.utils import parseaddr, formataddr, parsedate_tz, getaddresses
@@ -46,7 +46,7 @@ def get_unread_mails(host, port, user, password, ssl=True):
 
 def make_address(email, name=None):
     if name:
-        return formataddr((name, email))
+        return str(make_header(decode_header(formataddr((name, email)))))
     return email
 
 
