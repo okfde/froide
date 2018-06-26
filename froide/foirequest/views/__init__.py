@@ -13,7 +13,8 @@ from .message import (
     resend_message
 )
 from .misc_views import (
-    index, dashboard, postmark_inbound, postmark_bounce, download_foirequest,
+    index, dashboard, postmark_inbound, postmark_bounce,
+    download_foirequest_zip, download_foirequest_pdf,
     FoiRequestSitemap
 )
 from .project import (
@@ -38,7 +39,8 @@ __all__ = [
     send_message, escalation_message, add_postal_reply, add_postal_message,
     add_postal_reply_attachment, set_message_sender, approve_message,
     resend_message,
-    index, dashboard, postmark_inbound, postmark_bounce, download_foirequest,
+    index, dashboard, postmark_inbound, postmark_bounce,
+    download_foirequest_zip, download_foirequest_pdf,
     FoiRequestSitemap,
     ProjectView, project_shortlink, SetProjectTeamView,
     set_public_body, suggest_public_body, set_status, make_public, set_law,

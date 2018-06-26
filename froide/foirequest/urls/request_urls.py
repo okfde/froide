@@ -2,14 +2,17 @@ from django.conf.urls import url
 from django.utils.translation import pgettext
 
 from ..feeds import FoiRequestFeed, FoiRequestFeedAtom
-from ..views import (shortlink, auth, show, suggest_public_body, set_public_body,
-                    set_status, send_message, escalation_message, make_public,
-                    set_law, set_tags, set_summary, add_postal_reply,
-                    add_postal_message, add_postal_reply_attachment,
-                    set_message_sender, mark_not_foi, mark_checked,
-                    extend_deadline, approve_attachment, approve_message,
-                    make_same_request, resend_message, download_foirequest,
-                    show_attachment, redact_attachment)
+from ..views import (
+    shortlink, auth, show, suggest_public_body, set_public_body,
+    set_status, send_message, escalation_message, make_public,
+    set_law, set_tags, set_summary, add_postal_reply,
+    add_postal_message, add_postal_reply_attachment,
+    set_message_sender, mark_not_foi, mark_checked,
+    extend_deadline, approve_attachment, approve_message,
+    make_same_request, resend_message,
+    download_foirequest_zip, download_foirequest_pdf,
+    show_attachment, redact_attachment
+)
 
 urlpatterns = [
     url(r"^(?P<obj_id>\d+)$", shortlink, name="foirequest-notsolonglink"),
@@ -35,7 +38,8 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message>\d+)/$", approve_message, name="foirequest-approve_message"),
     url(r"^(?P<slug>[-\w]+)/make-same/(?P<message_id>\d+)/$", make_same_request, name="foirequest-make_same_request"),
     url(r"^(?P<slug>[-\w]+)/resend/$", resend_message, name="foirequest-resend_message"),
-    url(r"^(?P<slug>[-\w]+)/download/$", download_foirequest, name="foirequest-download"),
+    url(r"^(?P<slug>[-\w]+)/download/$", download_foirequest_zip, name="foirequest-download"),
+    url(r"^(?P<slug>[-\w]+)/pdf/$", download_foirequest_pdf, name="foirequest-pdf"),
     # Attachments
     url(r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/%s/(?P<attachment_name>.+)$'
         % pgettext('url component', 'attachment'), show_attachment, name='foirequest-show_attachment'),

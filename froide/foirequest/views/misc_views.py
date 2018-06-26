@@ -20,6 +20,8 @@ from froide.helper.cache import cache_anonymous_page
 from ..models import FoiRequest
 from ..tasks import process_mail
 from ..foi_mail import package_foirequest
+from ..auth import can_read_foirequest_authenticated
+from ..pdf_generator import get_foirequest_pdf_bytes
 
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
@@ -92,12 +94,21 @@ def postmark_bounce(request):
     return postmark_inbound(request, bounce=True)
 
 
-def download_foirequest(request, slug):
+def download_foirequest_zip(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_staff and not request.user == foirequest.user:
+    if not can_read_foirequest_authenticated(foirequest, request):
         return render_403(request)
     response = HttpResponse(package_foirequest(foirequest), content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename="%s.zip"' % foirequest.pk
+    return response
+
+
+def download_foirequest_pdf(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not can_read_foirequest_authenticated(foirequest, request):
+        return render_403(request)
+    response = HttpResponse(get_foirequest_pdf_bytes(foirequest), content_type='application/pdf')
+    # response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
     return response
 
 

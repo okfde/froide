@@ -15,7 +15,7 @@ from froide.helper.email_utils import (EmailParser, get_unread_mails,
 from froide.helper.name_generator import get_name_from_number
 
 from .utils import get_publicbody_for_email
-
+from .pdf_generator import get_foirequest_pdf_bytes
 
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
 No corresponding request could be identified, please investigate! %(url)s
@@ -237,6 +237,9 @@ def package_foirequest(foirequest):
         zfile = zipfile.ZipFile(zfile_obj, 'w')
         last_date = None
         date_count = 1
+        path = str(foirequest.pk)
+        correspondence_bytes = get_foirequest_pdf_bytes(foirequest)
+        zfile.writestr('%s/%s.pdf' % (path, foirequest.pk), correspondence_bytes)
         for message in foirequest.messages:
             current_date = message.timestamp.date()
             date_prefix = current_date.isoformat()
@@ -251,18 +254,11 @@ def package_foirequest(foirequest):
                 is_redacted=False,
                 is_converted=False
             )
-            if message.is_response:
-                filename = '%s_%s.txt' % (date_prefix, ugettext('publicbody'))
-            else:
-                filename = '%s_%s.txt' % (date_prefix, ugettext('requester'))
-
-            payload = message.get_formatted(att_queryset).encode('utf-8')
-            zfile.writestr(filename, payload)
 
             for attachment in att_queryset:
                 if not attachment.file:
                     continue
-                filename = '%s-%s' % (date_prefix, attachment.name)
+                filename = '%s/%s-%s' % (path, date_prefix, attachment.name)
                 zfile.write(attachment.file.path, arcname=filename)
         zfile.close()
     return zfile_obj.getvalue()

@@ -100,6 +100,12 @@
         {% trans "Download request as ZIP-file" %}
       </a>
     </li>
+    <li class="nav-item">
+      <a class="btn btn-light" href="{% url 'foirequest-pdf' slug=object.slug %}">
+        <i class="fa fa-file-pdf-o"></i>
+        {% trans "Download request as PDF" %}
+      </a>
+    </li>
   {% endif %}
 
   {% if user.is_staff %}
