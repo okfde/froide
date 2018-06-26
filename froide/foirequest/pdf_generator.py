@@ -1,4 +1,5 @@
 import tempfile
+import logging
 import os
 
 from django.utils.translation import ugettext_lazy as _
@@ -6,6 +7,7 @@ from django.utils import formats
 from django.conf import settings
 
 try:
+    import pylatex
     from pylatex import (
         Document, Package, NoEscape, PageStyle, Head,
         Description, Foot, NewPage, LineBreak,
@@ -19,10 +21,19 @@ except ImportError:
     PDF_EXPORT_AVAILABLE = False
 
 
+logger = logging.getLogger(__name__)
+
+
 def get_foirequest_pdf_bytes(foirequest):
     if not PDF_EXPORT_AVAILABLE:
         return b''
-    path = make_request_document(foirequest)
+
+    try:
+        path = make_request_document(foirequest)
+    except pylatex.errors.CompilerError as e:
+        logger.warn(e)
+        return b''
+
     with open(path, 'rb') as f:
         return f.read()
 
