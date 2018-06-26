@@ -7,7 +7,7 @@
     <br/>
     <small>
       {% if object.project %}
-        {% blocktrans with name=object.public_body.name url=object.public_body.get_absolute_url count=project.request_count|add:-1 urlp=project.get_absolute_url %}to <a href="{{ url }}">{{ name }}</a> and <a href="{{ urlp }}">{{ count }} other public bodies</a>{% endblocktrans %}
+        {% blocktrans with name=object.public_body.name url=object.public_body.get_absolute_url count=project.request_count|add:-1 urlp=object.project.get_absolute_url %}to <a href="{{ url }}">{{ name }}</a> and <a href="{{ urlp }}">{{ count }} other public bodies</a>{% endblocktrans %}
       {% elif object.public_body_name %}
         {% blocktrans with name=object.public_body_name %}to {{ name }}{% endblocktrans %}
       {% elif object.public_body %}
