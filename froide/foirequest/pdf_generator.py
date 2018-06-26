@@ -49,7 +49,7 @@ def make_request_document(foirequest):
     # Change font
     doc.packages.append(Package('fontspec,xunicode,array'))
     doc.packages.append(Package('sectsty'))
-    doc.preamble.append(NoEscape("\\setmainfont{Helvetica}"))
+    doc.preamble.append(NoEscape("\\usepackage{helvet}"))
     doc.preamble.append(NoEscape("\\sectionfont{\\fontsize{12}{15}\\selectfont}"))
 
     # Adjust description list
