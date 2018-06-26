@@ -256,7 +256,7 @@ def package_foirequest(foirequest):
             else:
                 filename = '%s_%s.txt' % (date_prefix, ugettext('requester'))
 
-            payload = message.get_formated(att_queryset).encode('utf-8')
+            payload = message.get_formatted(att_queryset).encode('utf-8')
             zfile.writestr(filename, payload)
 
             for attachment in att_queryset:

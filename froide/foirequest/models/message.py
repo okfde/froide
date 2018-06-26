@@ -164,8 +164,8 @@ class FoiMessage(models.Model):
         else:
             return self.recipient
 
-    def get_formated(self, attachments):
-        return render_to_string('foirequest/emails/formated_message.txt', {
+    def get_formatted(self, attachments):
+        return render_to_string('foirequest/emails/formatted_message.txt', {
                 'message': self,
                 'attachments': attachments
         })
