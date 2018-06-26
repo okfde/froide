@@ -1538,8 +1538,7 @@ class PackageFoiRequestTest(TestCase):
         bytes = package_foirequest(fr)
         zfile = zipfile.ZipFile(BytesIO(bytes), 'r')
         filenames = [
-            r'20\d{2}-\d{2}-\d{2}_1_requester\.txt',
-            r'20\d{2}-\d{2}-\d{2}_1_publicbody\.txt',
+            r'%s\.pdf' % fr.pk,
             r'20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf',
             r'20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf'
         ]
