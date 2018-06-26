@@ -1538,9 +1538,9 @@ class PackageFoiRequestTest(TestCase):
         bytes = package_foirequest(fr)
         zfile = zipfile.ZipFile(BytesIO(bytes), 'r')
         filenames = [
-            r'%s\.pdf' % fr.pk,
-            r'20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf',
-            r'20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf'
+            r'%s/%s\.pdf' % (fr.pk, fr.pk),
+            r'%s/20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf' % fr.pk,
+            r'%s/20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf' % fr.pk,
         ]
         zip_names = zfile.namelist()
         self.assertEqual(len(filenames), len(zip_names))
