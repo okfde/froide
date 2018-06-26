@@ -1,22 +1,5 @@
 <template>
   <div class="publicbody-chooser mb-3">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a href="#pb-select-pane" @click.prevent="togglePane" class="nav-link" :class="{ active: selectPane }" data-pane="select" data-toggle="tab" role="tab" aria-controls="pb-select-pane" :aria-expanded="selectPane">
-          {{ i18n.selectPublicBodies}}
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="#pb-chosen-pane" @click.prevent="togglePane" class="nav-link" :class="{ active: chosenPane }"  data-pane="chosen" data-toggle="tab" role="tab" aria-controls="pb-chosen-pane" aria-expanded="chosenPane">
-          {{ i18n._('publicBodiesChosen', {count: publicBodies.length}) }}
-        </a>
-      </li>
-      <li class="nav-item ml-auto">
-        <a class="btn btn-primary" href="#step-request" @click="setStepRequest"  v-show="hasPublicBodies && !blockUI">
-          {{ i18n.continue }}
-        </a>
-      </li>
-    </ul>
     <div v-if="blockUI" class="mt-5 text-center">
       <h4>
         {{ blockMessage }}
@@ -25,73 +8,60 @@
         <div class="progress-bar" :style="blockProgressWidth" role="progressbar" :aria-valuenow="blockProgress" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
-    <div v-else class="tab-content mt-3">
-      <div role="tabpanel" class="tab-pane" :class="{ active: selectPane }" id="pb-select-pane">
-        <div class="row">
-          <div class="col-md-8 col-lg-9 order-2">
-            <div class="row">
-              <div class="form-search col-md-8 mt-3">
-                <div class="input-group">
-                  <input type="search" v-model:value="search" class="search-public_bodies form-control form-control-lg" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
-                  <div class="input-group-append">
-                    <button type="button" class="btn btn-secondary search-public_bodies-submit" @click="triggerAutocomplete">
-                      <i class="fa fa-search"></i>
-                      {{ i18n.search }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row mb-4 mt-5">
-              <div class="col-auto">
-                <img v-show="searching" class="col-auto" :src="config.resources.spinner" alt="Loading..."/>
-                <span>
-                  {{ i18n._('publicBodiesFound', {count: searchResultsLength} ) }}
-                </span>
-                <button @click.prevent="selectAll" class="btn btn-sm btn-light" :disabled="selectAllButtonDisabled">
-                  {{ i18n._('selectAll', { count: searchResultsLength} ) }}
-                </button>
-              </div>
-              <div class="col-auto ml-auto">
-                <button :disabled="!hasSearchResults" @click.prevent="clearSearch" class="btn-sm btn btn-secondary">
-                  {{ i18n.clearSearchResults }}
-                </button>
-              </div>
-            </div>
-            <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="currentHeaders"
-                      :options="selectOptions" :rows="searchResults" @selectAllRows="selectAllRows"></pb-table>
-            <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
-          </div>
-          <div class="col-md-4  col-lg-3 order-md-1">
-            <div class="row mt-3">
-              <div v-for="filterKey in filterOrder" class="col-sm-4 col-md-12 filter-column">
-                <pb-filter :global-config="config" :expanded="filterExpanded[filterKey]" :config="filterConfig[filterKey]" :i18n="i18n" :scope="scope" @update="updateFilter" @setFilterExpand="setFilterExpand" :value="filters[filterKey]"></pb-filter>
-              </div>
+    <template v-else>
+      <div class="row">
+        <div class="form-search col-md-8 mt-3">
+          <label for="publicbody-multi-search-input">Suchen Sie nach Behörden</label>
+          <div class="input-group">
+            <input id="publicbody-multi-search-input" type="search" v-model="search" class="search-public_bodies form-control form-control-lg" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
+            <div class="input-group-append">
+              <button type="button" class="btn btn-primary search-public_bodies-submit" @click="triggerAutocomplete">
+                <i class="fa fa-search"></i>
+                {{ i18n.search }}
+              </button>
             </div>
           </div>
         </div>
       </div>
-
-      <div role="tabpanel" class="tab-pane" :class="{ active: chosenPane }" id="pb-chosen-pane">
-        <div class="row mt-3 mb-3">
-          <div class="col-auto">
-            <h3>{{ i18n._('publicBodiesCount', {count: publicBodies.length}) }}</h3>
-          </div>
-          <div class="col-auto ml-auto">
-            <a v-if="publicBodies.length > 0" href="#" @click.prevent="clearSelection" class="btn-sm btn btn-danger ">
-              <i class="fa fa-ban" aria-hidden="true"></i>
-              {{ i18n.clearSelection }}
-            </a>
+      <div class="row mb-4 mt-5">
+        <div class="col-auto">
+          <h3 v-show="!searching">
+            {{ i18n._('publicBodiesFound', {count: searchResultsLength} ) }}
+          </h3>
+          <img v-show="searching" class="col-auto" :src="config.resources.spinner" alt="Loading..."/>
+        </div>
+        <div class="col-auto">
+          <button @click.prevent="selectAll" class="btn btn-sm btn-light" :disabled="selectAllButtonDisabled">
+            {{ i18n._('selectAll', { count: searchResultsLength} ) }}
+          </button>
+        </div>
+        <div class="col-auto ml-auto">
+          <button :disabled="!hasSearchResults" @click.prevent="clearSearch" class="btn-sm btn btn-light">
+            {{ i18n.clearSearchResults }}
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 col-lg-9 order-2">
+          <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="currentHeaders"
+                    :options="selectOptions" :rows="searchResults" @selectAllRows="selectAllRows"></pb-table>
+          <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
+        </div>
+        <div class="col-md-4  col-lg-3 order-md-1">
+          <pb-filter-selected
+            v-for="filterKey in filterOrder" :key="filterKey"
+            :config="filterConfig[filterKey]"
+            @update="updateFilter"
+            :value="filters[filterKey]">
+          </pb-filter-selected>
+          <div class="row mt-3">
+            <div v-for="filterKey in filterOrder" :key="filterKey" class="col-sm-4 col-md-12 filter-column">
+              <pb-filter :global-config="config" :expanded="filterExpanded[filterKey]" :config="filterConfig[filterKey]" :i18n="i18n" :scope="scope" @update="updateFilter" @setFilterExpand="setFilterExpand" :value="filters[filterKey]"></pb-filter>
+            </div>
           </div>
         </div>
-        <pb-summary :scope="scope" :i18n="i18n" :dimensions="summaryDimensions"></pb-summary>
-
-        <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="headers"
-                  :options="chosenOptions" :rows="publicBodies" @selectAllRows="selectAllRows" class="transition"></pb-table>
       </div>
-
-    </div>
-
+    </template>
   </div>
 </template>
 
@@ -113,6 +83,7 @@ import PbTable from './pb-table'
 import PbPagination from './pb-pagination'
 import PbSummary from './pb-summary'
 import PbFilter from './pb-filter'
+import PbFilterSelected from './pb-filter-selected'
 
 import 'string.prototype.repeat'
 
@@ -130,11 +101,14 @@ export default {
     PbTable,
     PbPagination,
     PbSummary,
-    PbFilter
+    PbFilter,
+    PbFilterSelected
   },
   allowEmptySearch: true,
   mounted () {
-    this.triggerAutocomplete()
+    if (!this.hasSearchResults) {
+      this.triggerAutocomplete()
+    }
   },
   data () {
     return {
@@ -144,12 +118,8 @@ export default {
       blockProgress: 0,
       lastQuery: null,
       searching: false,
-      tabPane: 'select',
       selectOptions: {
         selectAllCheckbox: true
-      },
-      chosenOptions: {
-        sortableHeader: true
       },
       filters: {
         classification: null,
@@ -216,58 +186,8 @@ export default {
         }
       }
     },
-    headers () {
-      return [
-        {
-          key: 'name',
-          label: this.i18n.name,
-          sortKey: (x) => x.name
-        },
-        {
-          key: 'jurisdiction',
-          label: this.i18n.jurisdictionPlural[0],
-          sortKey: (x) => x.jurisdiction.name
-        },
-        {
-          key: 'classification',
-          label: this.i18n.classificationPlural[0],
-          sortKey: (x) => x.classification && x.classification.name
-        },
-        {
-          key: 'categories',
-          label: this.i18n.topicPlural[1],
-          sortKey: (x) => x.categories[0] && x.categories[0].name
-        }
-      ]
-    },
     currentHeaders () {
       return this.headers.filter((x) => !this.hasFilter(x.key))
-    },
-    summaryDimensions () {
-      return [
-        {
-          id: 'jurisdiction',
-          i18nLabel: 'jurisdictionPlural',
-          key: (x) => x.jurisdiction.name
-        },
-        {
-          id: 'classification',
-          i18nLabel: 'classificationPlural',
-          key: (x) => x.classification && x.classification.name
-        },
-        {
-          id: 'categories',
-          i18nLabel: 'topicPlural',
-          multi: true,
-          key: (x) => x.categories.map((x) => x.name)
-        }
-      ]
-    },
-    selectPane () {
-      return this.tabPane === 'select'
-    },
-    chosenPane () {
-      return this.tabPane === 'chosen'
     },
     publicBodies () {
       return this.getPublicBodiesByScope(this.scope)
@@ -322,21 +242,6 @@ export default {
       }
       return true
     },
-    selectAllRows (select) {
-      this.searchResults.forEach((r) => {
-        if (select) {
-          this.addPublicBodyId({
-            publicBodyId: r.id,
-            scope: this.scope
-          })
-        } else {
-          this.removePublicBodyId({
-            publicBodyId: r.id,
-            scope: this.scope
-          })
-        }
-      })
-    },
     selectAll () {
       this.blockUI = true
       this.blockMessage = this.i18n.selectingAll
@@ -383,11 +288,6 @@ export default {
     updateFilter (filter, value) {
       Vue.set(this.filters, filter.key, value)
       this.triggerAutocomplete()
-    },
-    clearSelection () {
-      if (window.confirm(this.i18n.reallyClearSelection)) {
-        this.clearPublicBodies({scope: this.scope})
-      }
     },
     ...mapMutations({
       setStepRequest: SET_STEP_REQUEST,

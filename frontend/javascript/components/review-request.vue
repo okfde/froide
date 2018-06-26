@@ -46,7 +46,7 @@
           <ul class="review-hints">
             <li>{{ i18n.reviewSpelling }}</li>
             <li>{{ i18n.reviewPoliteness }}</li>
-            <li v-for="error in errors" class="error">
+            <li v-for="error in errors" :key="error" class="error">
               {{ error }}
             </li>
           </ul>

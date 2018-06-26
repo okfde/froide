@@ -3,7 +3,9 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
   SET_PUBLICBODY, SET_PUBLICBODIES,
-  SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS, CACHE_PUBLICBODIES
+  ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
+  SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS, CACHE_PUBLICBODIES,
+  CLEAR_PUBLICBODIES, SET_STEP_SELECT_PUBLICBODY
 } from '../store/mutation_types'
 
 var PBChooserMixin = {
@@ -20,6 +22,30 @@ var PBChooserMixin = {
   computed: {
     help_url () {
       return this.config.url.helpAbout
+    },
+    headers () {
+      return [
+        {
+          key: 'name',
+          label: this.i18n.name,
+          sortKey: (x) => x.name
+        },
+        {
+          key: 'jurisdiction',
+          label: this.i18n.jurisdictionPlural[0],
+          sortKey: (x) => x.jurisdiction.name
+        },
+        {
+          key: 'classification',
+          label: this.i18n.classificationPlural[0],
+          sortKey: (x) => x.classification && x.classification.name
+        },
+        {
+          key: 'categories',
+          label: this.i18n.topicPlural[1],
+          sortKey: (x) => x.categories[0] && x.categories[0].name
+        }
+      ]
     },
     hasForm () {
       return (this.formJson !== undefined && this.formJson !== null &&
@@ -67,6 +93,27 @@ var PBChooserMixin = {
       }
       return query
     },
+    selectAllRows (select) {
+      this.searchResults.forEach((r) => {
+        if (select) {
+          this.addPublicBodyId({
+            publicBodyId: r.id,
+            scope: this.scope
+          })
+        } else {
+          this.removePublicBodyId({
+            publicBodyId: r.id,
+            scope: this.scope
+          })
+        }
+      })
+    },
+    clearSelection () {
+      if (window.confirm(this.i18n.reallyClearSelection)) {
+        this.clearPublicBodies({scope: this.scope})
+        this.setStepSelectPublicBody()
+      }
+    },
     triggerAutocomplete () {
       if (this.search === '' && !this.hasFilters) {
         // this.searchResults = []
@@ -107,7 +154,11 @@ var PBChooserMixin = {
       setPublicBodies: SET_PUBLICBODIES,
       setSearchResults: SET_SEARCHRESULTS,
       cachePublicBodies: CACHE_PUBLICBODIES,
-      clearSearchResults: CLEAR_SEARCHRESULTS
+      clearPublicBodies: CLEAR_PUBLICBODIES,
+      clearSearchResults: CLEAR_SEARCHRESULTS,
+      addPublicBodyId: ADD_PUBLICBODY_ID,
+      setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
+      removePublicBodyId: REMOVE_PUBLICBODY_ID
     }),
     ...mapActions(['getSearchResults'])
   }

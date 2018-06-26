@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="bg-light p-3 mt-5 mb-5">
     <div class="row">
-      <div v-for="item in summary" class="col-sm-6 col-md-4">
+      <div v-for="item in summary" :key="item.label" class="col-sm-6 col-md-4">
         <strong>
           {{ item.count }} {{ i18n._(item.i18nLabel, {count: item.count}) }}
           <span v-if="item.multi">multi</span>
         </strong>
         <ul class="summary-subitem-list">
-          <li v-for="subitem in item.sorted">
+          <li v-for="subitem in item.sorted" :key="subitem.label">
             {{ subitem.count }} {{ subitem.label }}
           </li>
         </ul>

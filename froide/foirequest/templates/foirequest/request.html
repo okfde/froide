@@ -22,7 +22,9 @@
     {{ request_form.redirect_url }}
 
     {% for k, v in config.items %}
-      <input type="hidden" name="{{ k }}" value="1"/>
+      {% if v %}
+        <input type="hidden" name="{{ k }}" value="1"/>
+      {% endif %}
     {% endfor %}
 
       <request-form
@@ -33,12 +35,12 @@
         publicbodies-json="{{ publicbodies_json }}"
         user-form-json="{{ user_form.as_json }}"
         request-form-json="{{ request_form.as_json }}"
-        show-similar="{% if not config.hide_similar %}true{% endif %}"
-        show-draft="{% if not config.hide_draft %}true{% endif %}"
-        hide-publicbody-chooser="{% if config.hide_publicbody %}true{% endif %}"
-        hide-full-text="{% if config.hide_full_text %}true{% endif %}"
-        hide-editing="{% if config.hide_editing %}true{% endif %}"
-        multi-request="{% if multi_request %}true{% endif %}"
+        {% if not config.hide_similar %}:show-similar="true"{% endif %}
+        {% if not config.hide_draft %}:show-draft="true"{% endif %}
+        {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %}
+        {% if config.hide_full_text %}:hide-full-text="true"{% endif %}
+        {% if config.hide_editing %}:hide-editing="true"{% endif %}
+        {% if multi_request %}:multi-request="true"{% endif %}
         :config="config">
 
         <div slot="messages">
@@ -204,7 +206,7 @@
         continue: '{% trans "continue" %}',
         selectAll: [
           '{% trans "select one" %}',
-          '{% blocktrans with count='${count}' %}select all {{ count }}{% endblocktrans %}'
+          '{% blocktrans %}select all{% endblocktrans %}'
         ],
         selectingAll: '{% trans "Selecting all public bodies, please wait..." %}',
         name: '{% trans "Name" %}',

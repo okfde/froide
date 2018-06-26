@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 
 import {
   SET_CONFIG,
-  SET_STEP, SET_STEP_BY_URL, SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
+  SET_STEP, SET_STEP_BY_URL,
+  SET_STEP_SELECT_PUBLICBODY, SET_STEP_REVIEW_PUBLICBODY, SET_STEP_REQUEST,
   STEPS, URLS_TO_STEP,
   SET_PUBLICBODY, SET_PUBLICBODIES,
   SET_PUBLICBODY_ID, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
@@ -125,7 +126,11 @@ export default new Vuex.Store({
     body: state => state.body,
     fullText: state => state.fullText,
     stepSelectPublicBody: state => state.step === STEPS.SELECT_PUBLICBODY,
-    stepReviewReady: state => state.step >= STEPS.WRITE_REQUEST,
+    stepSelectPublicBodyDone: state => state.step > STEPS.SELECT_PUBLICBODY,
+    stepReviewPublicBodies: state => state.step === STEPS.REVIEW_PUBLICBODY,
+    stepReviewPublicBodiesDone: state => state.step > STEPS.REVIEW_PUBLICBODY,
+    stepWriteRequest: state => state.step === STEPS.WRITE_REQUEST,
+    stepWriteRequestDone: state => state.step > STEPS.WRITE_REQUEST,
     lawType: state => state.lawType
   },
   mutations: {
@@ -135,8 +140,11 @@ export default new Vuex.Store({
     [SET_STEP] (state, step) {
       state.step = step
     },
-    [SET_STEP_PUBLICBODY] (state) {
+    [SET_STEP_SELECT_PUBLICBODY] (state) {
       state.step = STEPS.SELECT_PUBLICBODY
+    },
+    [SET_STEP_REVIEW_PUBLICBODY] (state) {
+      state.step = STEPS.REVIEW_PUBLICBODY
     },
     [SET_STEP_REQUEST] (state) {
       state.step = STEPS.WRITE_REQUEST

@@ -1,43 +1,10 @@
 <template>
   <div class="make-request-container">
-    <div class="process-breadcrumbs-container">
-      <div class="container">
-        <div class="row">
-          <ol class="process-breadcrumbs col-md-8">
-            <li :class="{ 'active': stepSelectPublicBody, 'done': stepReviewReady}">
-              <a href="#step-publicbody" @click="setStepPublicBody" v-if="!hidePublicbodyChooser">
-                <i class="fa fa-check-circle" aria-hidden="true"></i>
-                Behörde wählen
-              </a>
-              <span v-else>
-                <i class="fa fa-check-circle" aria-hidden="true"></i>
-                Behörde wählen
-              </span>
-            </li>
-            <li :class="{ 'active': stepReviewReady}">
-              <a href="#step-request"  @click="setStepRequest" v-if="stepReviewReady">
-                <i class="fa" :class="{ 'fa-check-circle': stepReviewReady, 'fa-check-circle-o': !stepReviewReady }" aria-hidden="true"></i>
-                Anfrage stellen
-              </a>
-              <span v-else>
-                <i class="fa" :class="{ 'fa-check-circle': stepReviewReady, 'fa-check-circle-o': !stepReviewReady }" aria-hidden="true"></i>
-                Anfrage stellen
-              </span>
-            </li>
-            <li>
-              <a href="#step-review" data-toggle="modal" v-if="stepReviewReady">
-                <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-                Prüfen
-              </a>
-              <span v-else>
-                <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-                Prüfen
-              </span>
-            </li>
-          </ol>
-        </div>
-      </div>
-    </div>
+    <request-form-breadcrumbs
+      :i18n="i18n"
+      :multiRequest="multiRequest"
+      :hasPublicBodies="hasPublicBodies"
+      :hidePublicbodyChooser="hidePublicbodyChooser"></request-form-breadcrumbs>
 
     <div :class="{container: !multiRequest, 'container-multi': multiRequest}">
 
@@ -77,7 +44,16 @@
             </div>
           </fieldset>
 
-          <fieldset v-if="stepReviewReady" id="step-request" class="mt-3">
+          <fieldset v-if="stepReviewPublicBodies && !stepWriteRequest" id="step-review-publicbody" class="mt-5">
+            <pb-multi-review
+              name="publicbody"
+              :i18n="i18n"
+              :scope="pbScope"
+            >
+            </pb-multi-review>
+          </fieldset>
+
+          <fieldset v-if="stepWriteRequest" id="step-request" class="mt-3">
 
             <slot name="request-legend-title"></slot>
 
@@ -86,7 +62,7 @@
                 <p>
                   {{ i18n._('toMultiPublicBodies', {count: publicBodies.length}) }}
                   <span v-if="!hidePublicbodyChooser">
-                    <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepPublicBody">
+                    <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepSelectPublicBody">
                       {{ i18n.change }}
                     </a>
                   </span>
@@ -99,7 +75,7 @@
                   <p>
                     {{ i18n._('toPublicBody', {name: publicBody.name}) }}
                     <span v-if="!hidePublicbodyChooser">
-                      <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepPublicBody">
+                      <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepSelectPublicBody">
                         {{ i18n.change }}
                       </a>
                     </span>
@@ -114,14 +90,14 @@
               </div>
             </div>
 
-            <input v-for="pb in publicBodies" type="hidden" name="publicbody" :value="pb.id">
+            <input v-for="pb in publicBodies" type="hidden" name="publicbody" :value="pb.id" :key="pb.id">
             <input type="hidden" name="law_type" :value="lawType">
 
             <div class="row">
               <div class="col-md-12">
 
                 <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
-                  <p v-for="error in nonFieldErrors">{{ error }}</p>
+                  <p v-for="error in nonFieldErrors" :key="error">{{ error }}</p>
                 </div>
 
                 <div class="form-group">
@@ -135,7 +111,7 @@
                       <small>{{ i18n.reviewEdit }}</small>
                     </button>
                   </div>
-                  <input v-else v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="form.subject.placeholder" @keydown.enter.prevent=""/>
+                  <input v-else v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="form.subject.placeholder" @keydown.enter.prevent/>
                 </div>
               </div>
             </div>
@@ -154,7 +130,7 @@
                         <h6>
                           {{ i18n.savedFullTextChanges }}
                         </h6>
-                        <textarea class="saved-body">{{ savedFullTextBody }}</textarea>
+                        <textarea class="saved-body" v-model="savedFullTextBody" readonly></textarea>
                       </div>
                     </transition>
                     <slot name="requesthints"></slot>
@@ -187,7 +163,7 @@
                           {{ i18n.yourFirstName }}
                         </label>
                         <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': usererrors.first_name }" id="id_first_name" :placeholder="userform.first_name.placeholder" required/>
-                        <p v-for="e in usererrors.first_name">{{ e.message }}</p>
+                        <p v-for="e in usererrors.first_name" :key="e.message">{{ e.message }}</p>
                       </div>
 
                       <div class="col" :class="{ 'text-danger': usererrors.last_name }">
@@ -195,7 +171,7 @@
                           {{ i18n.yourLastName }}
                         </label>
                         <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': usererrors.last_name }" id="id_last_name" :placeholder="userform.last_name.placeholder" required/>
-                        <p v-for="e in usererrors.last_name">{{ e.message }}</p>
+                        <p v-for="e in usererrors.last_name" :key="e.message">{{ e.message }}</p>
                       </div>
                     </div>
                   </div>
@@ -222,21 +198,21 @@
 
           <div class="row">
             <div class="col-md-12">
-              <similar-requests v-if="showSimilar && stepReviewReady" :pbScope="pbScope" :config="config"></similar-requests>
+              <similar-requests v-if="showSimilar && stepWriteRequest" :pbScope="pbScope" :config="config"></similar-requests>
             </div>
           </div>
 
-          <review-request v-if="stepReviewReady" :pbScope="pbScope" :i18n="i18n"></review-request>
+          <review-request v-if="stepWriteRequest" :pbScope="pbScope" :i18n="i18n"></review-request>
 
-          <button v-if="stepReviewReady && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
+          <button v-if="stepWriteRequest && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
             <i class="fa fa-check" aria-hidden="true"></i>
             {{ i18n.reviewRequest }}
           </button>
-          <button v-else-if="stepReviewReady" type="submit" id="send-request-button" class="btn btn-primary">
+          <button v-else-if="stepWriteRequest" type="submit" id="send-request-button" class="btn btn-primary">
             <i class="fa fa-send" aria-hidden="true"></i>
             {{ i18n.submitRequest }}
           </button>
-          <button v-if="stepReviewReady && user.id && showDraft" type="submit" class="btn btn-secondary" name="save_draft" value="true">
+          <button v-if="stepWriteRequest && user.id && showDraft" type="submit" class="btn btn-secondary" name="save_draft" value="true">
             <i class="fa fa-save" aria-hidden="true"></i>
             {{ i18n.saveAsDraft }}
           </button>
@@ -252,11 +228,14 @@ import PublicbodyChooser from './publicbody-chooser'
 import PublicbodyMultiChooser from './publicbody-multichooser'
 import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
+import PbMultiReview from './pb-multi-review'
+import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
-  STEPS, STEP_TO_URLS, SET_STEP_BY_URL, SET_STEP_PUBLICBODY, SET_STEP_REQUEST,
+  STEPS, STEP_TO_URLS, SET_STEP_BY_URL,
+  SET_STEP_SELECT_PUBLICBODY, SET_STEP_REVIEW_PUBLICBODY, SET_STEP_REQUEST,
   SET_PUBLICBODY, SET_PUBLICBODIES, CACHE_PUBLICBODIES,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME,
   SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
@@ -271,20 +250,62 @@ const MIN_BODY_ROWS = 3
 
 export default {
   name: 'request-form',
-  props: [
-    'config',
-    'publicbodyDefaultSearch',
-    'publicbodyFormJson', // if form should be present
-    'publicbodiesJson', // if public bodies are fixed
-    'userJson',
-    'requestFormJson', 'userFormJson',
-    'showSimilar',
-    'showDraft',
-    'hidePublicbodyChooser',
-    'hideFullText',
-    'hideEditing',
-    'multiRequest'
-  ],
+  props: {
+    config: {
+      type: Object
+    },
+    publicbodyDefaultSearch: {
+        type: String
+    },
+    publicbodyFormJson: {
+      type: String
+    },
+    publicbodiesJson: {
+      type: String
+    },
+    userJson: {
+      type: String
+    },
+    requestFormJson: {
+      type: String
+    },
+    userFormJson: {
+      type: String
+    },
+    showSimilar: {
+      type: Boolean,
+      default: false
+    },
+    showDraft: {
+      type: Boolean,
+      default: false
+    },
+    hidePublicbodyChooser: {
+      type: Boolean,
+      default: false
+    },
+    hideFullText: {
+      type: Boolean,
+      default: false
+    },
+    hideEditing: {
+      type: Boolean,
+      default: false
+    },
+    multiRequest: {
+      type: Boolean,
+      default: false
+    }
+  },
+  components: {
+    PublicbodyChooser,
+    PublicbodyMultiChooser,
+    UserRegistration,
+    SimilarRequests,
+    ReviewRequest,
+    PbMultiReview,
+    RequestFormBreadcrumbs
+  },
   mixins: [I18nMixin, LetterMixin],
   data () {
     return {
@@ -321,7 +342,6 @@ export default {
       step = STEPS.WRITE_REQUEST
     }
     let hash = STEP_TO_URLS[step]
-    window.history.pushState({step: step}, '', hash)
 
     window.onpopstate = (event) => {
       let hash = document.location.hash
@@ -465,7 +485,8 @@ export default {
       'user',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
-      'stepReviewReady',
+      'stepWriteRequest',
+      'stepReviewPublicBodies',
       'stepSelectPublicBody',
       'lawType'
     ])
@@ -494,7 +515,7 @@ export default {
       this.fullLetter = true
     },
     ...mapMutations({
-      setStepPublicBody: SET_STEP_PUBLICBODY,
+      setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
       setStepRequest: SET_STEP_REQUEST,
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,
@@ -510,13 +531,6 @@ export default {
     ...mapActions({
       setStepByURL: SET_STEP_BY_URL
     })
-  },
-  components: {
-    PublicbodyChooser,
-    PublicbodyMultiChooser,
-    UserRegistration,
-    SimilarRequests,
-    ReviewRequest
   }
 }
 </script>
@@ -537,38 +551,6 @@ export default {
   margin-right: auto;
   margin-left: auto;
   max-width: 1400px;
-}
-
-.process-breadcrumbs-container {
-  background-color: #f5f5f5;
-  // position: sticky;
-  // top: 0;
-  // z-index: 500;
-}
-
-.process-breadcrumbs {
-  margin-bottom: 0;
-  list-style-type: none;
-  display: flex;
-  flex-wrap: wrap;
-
-  li {
-    flex: 1;
-    min-width: 150px;
-    padding: 15px 0;
-
-    & > *, *:hover {
-      color: $gray-500;
-      text-decoration: none;
-    }
-    &.active > * {
-      color: $black;
-      font-weight: bold;
-    }
-    &.done > * {
-      color: $success;
-    }
-  }
 }
 
 legend {

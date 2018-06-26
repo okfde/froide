@@ -1,17 +1,11 @@
 <template>
   <div class="filter-component">
     <h5 @click="toggleExpand" class="filter-heading">
-      {{ config.label }}&nbsp;<i class="fa expand-icon" :class="{'fa-chevron-left': !expanded, 'fa-chevron-down': expanded}"></i>
+      {{ config.label }}&nbsp;<i class="fa expand-icon" :class="{'fa-chevron-down': !expanded, 'fa-chevron-up': expanded}"></i>
     </h5>
-    <div if="hasValue">
-      <div v-for="v in valueList" class="filter-badge">
-        {{ v }}
-        <i  @click="removeFilter(v)" class="remove-filter fa fa-close" aria-hidden="true"></i>
-      </div>
-    </div>
     <transition name="expand">
       <div v-show="expanded" class="filter-container">
-        <input v-if="hasSearch" type="search" class="form-control form-control-sm" :placeholder="i18n.searchPlaceholder" v-model:value="search" @keyup="triggerSearch" @keydown.enter.prevent="triggerSearch">
+        <input v-if="hasSearch" type="search" class="form-control form-control-sm" :placeholder="i18n.searchPlaceholder" v-model="search" @keyup="triggerSearch" @keydown.enter.prevent="triggerSearch">
         <div class="filter-list-container">
           <pb-filter-list :config="config" :i18n="i18n" :scope="scope" :has-more="hasMore" :items="orderedItems" :value="value"
           @removeFilter="removeFilter" @setFilter="setFilter" @loadMore="loadMore" @loadChildren="loadChildren"></pb-filter-list>
@@ -27,12 +21,14 @@ import {mapGetters} from 'vuex'
 import {debounce} from 'underscore'
 
 import {FroideSearch} from '../lib/search'
+import FilterMixin from '../lib/filter-mixin'
 
 import PbFilterList from './pb-filter-list'
 
 export default {
   name: 'pb-filter',
   props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
+  mixins: [FilterMixin],
   components: {PbFilterList},
   data () {
     return {
@@ -87,25 +83,6 @@ export default {
       let searcher = new FroideSearch(this.globalConfig)
       return searcher
     },
-    valueList () {
-      if (this.value === null) {
-        return []
-      }
-      if (!this.config.multi) {
-        return [this.value]
-      }
-      return this.value
-    },
-    hasValue () {
-      if (this.value === null) {
-        return false
-      }
-      return !(this.config.multi && this.value.length === 0)
-    },
-    hasMore () {
-      if (!this.searchMeta) { return false }
-      return this.searchMeta.next !== null
-    },
     ...mapGetters(['getScopedSearchFacets'])
   },
   methods: {
@@ -157,14 +134,6 @@ export default {
         Vue.set(item, 'subItems', items)
       })
     },
-    removeFilter (itemValue) {
-      if (this.config.multi) {
-        let val = this.value.filter((x) => itemValue !== x)
-        this.$emit('update', this.config, val)
-      } else {
-        this.$emit('update', this.config, null)
-      }
-    },
     setFilter (itemValue) {
       if (this.config.multi) {
         if (!this.value) {
@@ -192,26 +161,6 @@ export default {
   .expand-icon {
     cursor: pointer;
     font-size: 0.8em;
-  }
-
-  .filter-badge {
-    background-color: $primary;
-    color: #fff;
-    display: block;
-    border-radius: 4px;
-    padding: 0.25rem 0.5rem;
-    margin: 0.5rem 0;
-
-    .remove-filter {
-      color: #eee;
-      padding: 0.25rem 0.5rem;
-      float: right;
-      &:hover {
-        color: #fff;
-      }
-      cursor: pointer;
-    }
-
   }
 
   .expand-enter-active, .expand-leave-active {

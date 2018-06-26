@@ -5,7 +5,7 @@
         <th>
           <input v-if="options.selectAllCheckbox" type="checkbox" v-model="selectAllRows"/>
         </th>
-        <th v-for="header in headers" :class="header.class">
+        <th v-for="header in headers" :key="header.label" :class="header.class">
           {{ header.label }}
           <i v-if="options.sortableHeader && header.sortKey" class="sort-control fa" :class="{'fa-sort-alpha-asc': sortOrder > 0, 'fa-sort-alpha-desc': sortOrder < 0, 'sort-control--active': sortHeader === header.label}" @click="changeSort(header.label)"></i>
         </th>
