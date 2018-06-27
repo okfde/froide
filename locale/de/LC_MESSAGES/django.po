@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-26 19:19+0200\n"
-"PO-Revision-Date: 2018-06-26 20:30+0100\n"
+"POT-Creation-Date: 2018-06-27 14:15+0200\n"
+"PO-Revision-Date: 2018-06-27 14:16+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -47,7 +47,7 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:11 froide/settings.py:222 froide/settings.py:568
+#: froide/_local_settings.py:11 froide/settings.py:222 froide/settings.py:574
 msgid "German"
 msgstr "Deutsch"
 
@@ -405,9 +405,9 @@ msgid "Search your requests by title"
 msgstr "Durchsuchen Sie Ihre Anfragen nach Titel"
 
 #: froide/account/templates/account/_account_search.html:9
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:17
-#: froide/templates/header.html:20 froide/templates/header.html:24
-#: froide/templates/header.html:33 froide/templates/search/search.html:14
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:18
+#: froide/templates/header.html:23 froide/templates/header.html:27
+#: froide/templates/header.html:36 froide/templates/search/search.html:14
 msgid "Search"
 msgstr "Suchen"
 
@@ -499,7 +499,6 @@ msgstr ""
 "Ihr Passwort lautet: %(password)s\n"
 
 #: froide/account/templates/account/confirmed.html:6
-#: froide/foirequest/templates/foirequest/sent.html:6
 msgid "Your account is now confirmed"
 msgstr "Ihr Nutzerkonto ist jetzt bestätigt"
 
@@ -513,7 +512,7 @@ msgid "Your email address is now confirmed!"
 msgstr "Ihre E-Mail-Adresse wurde bestätigt!"
 
 #: froide/account/templates/account/confirmed.html:27
-#: froide/foirequest/templates/foirequest/sent.html:31
+#: froide/foirequest/templates/foirequest/sent.html:29
 #, python-format
 msgid ""
 "\n"
@@ -527,7 +526,7 @@ msgstr ""
 "          "
 
 #: froide/account/templates/account/confirmed.html:33
-#: froide/foirequest/templates/foirequest/sent.html:36
+#: froide/foirequest/templates/foirequest/sent.html:34
 msgid ""
 "We will send you an email when you receive a reply from the public body."
 msgstr ""
@@ -1012,7 +1011,7 @@ msgstr[1] ""
 #: froide/account/templates/account/show_projects.html:31
 #: froide/foirequest/templates/foirequest/list.html:17
 #: froide/team/templates/team/team_detail.html:133
-#: froide/templates/header.html:42
+#: froide/templates/header.html:45
 msgid "Requests"
 msgstr "Anfragen"
 
@@ -1213,11 +1212,11 @@ msgstr ""
 "sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: "
 "%(reason)s"
 
-#: froide/document/admin.py:31
+#: froide/document/admin.py:32
 msgid "Started reprocessing documents."
 msgstr "Neuverarbeitung der Dokumente gestartet."
 
-#: froide/document/admin.py:32
+#: froide/document/admin.py:33
 msgid "Reprocess document"
 msgstr "Dokument neuverarbeiten"
 
@@ -1225,21 +1224,26 @@ msgstr "Dokument neuverarbeiten"
 msgid "Document"
 msgstr "Dokument"
 
-#: froide/document/models.py:86
+#: froide/document/models.py:87
 msgid "Document Tag"
 msgstr "Dokumenten-Schlagwort"
 
-#: froide/document/models.py:87
+#: froide/document/models.py:88
 msgid "Document Tags"
 msgstr "Dokumenten-Schlagwörter"
 
-#: froide/document/models.py:109 froide/document/models.py:196
+#: froide/document/models.py:110 froide/document/models.py:206
 #: froide/foirequest/models/event.py:39 froide/foirequest/models/project.py:69
 #: froide/foirequest/models/request.py:277
 #: froide/foirequest/models/suggestion.py:20
 #: froide/foirequestfollower/models.py:57 froide/frontpage/models.py:30
 msgid "User"
 msgstr "Nutzer"
+
+#: froide/document/templates/document/document_detail.html:25
+#: froide/foirequest/templates/foirequest/attachment/show.html:34
+msgid "Download original"
+msgstr "Original-Datei herunterladen"
 
 #: froide/foirequest/admin.py:67
 msgid "Has same request"
@@ -1572,14 +1576,6 @@ msgstr "Unbekannter IFG-Mail-Empfänger"
 #: froide/foirequest/foi_mail.py:208
 msgid "Possible Spam Mail received"
 msgstr "Mögliche Spam-E-Mail erhalten"
-
-#: froide/foirequest/foi_mail.py:255
-msgid "publicbody"
-msgstr "behoerde"
-
-#: froide/foirequest/foi_mail.py:257
-msgid "requester"
-msgstr "anfragesteller"
 
 #: froide/foirequest/forms.py:36
 msgid "Body"
@@ -2600,45 +2596,46 @@ msgstr "Vorschlag für Behörde"
 msgid "Public Body Suggestions"
 msgstr "Vorschläge für Behörden"
 
-#: froide/foirequest/pdf_generator.py:65
+#: froide/foirequest/pdf_generator.py:76
 #, python-brace-format
 msgid "Request #{request_no}"
 msgstr "Anfrage #{request_no}"
 
-#: froide/foirequest/pdf_generator.py:92
+#: froide/foirequest/pdf_generator.py:103
 msgid "From:"
 msgstr "Von:"
 
-#: froide/foirequest/pdf_generator.py:93
+#: froide/foirequest/pdf_generator.py:104
 msgid "To:"
 msgstr "An:"
 
-#: froide/foirequest/pdf_generator.py:95 froide/foirequest/pdf_generator.py:99
+#: froide/foirequest/pdf_generator.py:106
+#: froide/foirequest/pdf_generator.py:110
 msgid "Date:"
 msgstr "Datum:"
 
-#: froide/foirequest/pdf_generator.py:97
-#: froide/foirequest/pdf_generator.py:101
+#: froide/foirequest/pdf_generator.py:108
+#: froide/foirequest/pdf_generator.py:112
 msgid "Via:"
 msgstr "Via:"
 
-#: froide/foirequest/pdf_generator.py:97
+#: froide/foirequest/pdf_generator.py:108
 msgid "Postal Mail"
 msgstr "Briefpost"
 
-#: froide/foirequest/pdf_generator.py:101 froide/publicbody/models.py:334
+#: froide/foirequest/pdf_generator.py:112 froide/publicbody/models.py:334
 msgid "Email"
 msgstr "E-Mail"
 
-#: froide/foirequest/pdf_generator.py:102
+#: froide/foirequest/pdf_generator.py:113
 msgid "URL:"
 msgstr "URL:"
 
-#: froide/foirequest/pdf_generator.py:103
+#: froide/foirequest/pdf_generator.py:114
 msgid "Subject:"
 msgstr "Betreff:"
 
-#: froide/foirequest/pdf_generator.py:108
+#: froide/foirequest/pdf_generator.py:119
 #: froide/foirequest/templates/foirequest/emails/formatted_message.txt:12
 msgid "Attachments:"
 msgstr "Anhänge:"
@@ -2739,10 +2736,6 @@ msgstr ""
 "        Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">"
 "%(title)s</a>“\n"
 "        "
-
-#: froide/foirequest/templates/foirequest/attachment/show.html:34
-msgid "Download original"
-msgstr "Original-Datei herunterladen"
 
 #: froide/foirequest/templates/foirequest/attachment/show.html:40
 msgid "This file cannot be previewed."
@@ -3940,19 +3933,23 @@ msgstr ""
 msgid "Click here to go to abgeordnetenwatch.de"
 msgstr "Klicken Sie hier um zu abgeordnetenwatch.de zu gelangen"
 
-#: froide/foirequest/templates/foirequest/sent.html:15
+#: froide/foirequest/templates/foirequest/sent.html:6
+msgid "Your request has been sent"
+msgstr "Ihre Anfrage wurde gesendet!"
+
+#: froide/foirequest/templates/foirequest/sent.html:13
 msgid "Request sent"
 msgstr "Anfrage versendet"
 
-#: froide/foirequest/templates/foirequest/sent.html:23
+#: froide/foirequest/templates/foirequest/sent.html:21
 msgid "Your project was created!"
 msgstr "Ihr Projekt wurde erstellt!"
 
-#: froide/foirequest/templates/foirequest/sent.html:25
+#: froide/foirequest/templates/foirequest/sent.html:23
 msgid "Your request has been sent!"
 msgstr "Ihre Anfrage wurde gesendet!"
 
-#: froide/foirequest/templates/foirequest/sent.html:41
+#: froide/foirequest/templates/foirequest/sent.html:39
 #, python-format
 msgid ""
 "\n"
@@ -5264,7 +5261,7 @@ msgstr ""
 "gibt?"
 
 #: froide/frontpage/models.py:20 froide/frontpage/models.py:40
-#: froide/templates/index.html:62
+#: froide/templates/index.html:63
 msgid "Featured Request"
 msgstr "Anfrage der Woche"
 
@@ -5666,8 +5663,8 @@ msgid "Confirm this Public Body "
 msgstr "Bestätigen Sie diese Behörde"
 
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html:9
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:21
-#: froide/templates/index.html:46
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:22
+#: froide/templates/index.html:47
 msgid "or"
 msgstr "oder"
 
@@ -5868,31 +5865,31 @@ msgstr[1] "%(num)s Anfragen"
 msgid "no requests yet"
 msgstr "noch keine Anfragen"
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:15
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:16
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:16
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:17
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:18
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:19
 msgid "Examples:"
 msgstr "Beispiele:"
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:19
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:20
 msgid "Environment"
 msgstr "Umwelt"
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:20
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:21
 msgid "Ministry of Labour"
 msgstr "Bundesministerium für Arbeit"
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:22
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:23
 msgid "No Public Bodies found for this query."
 msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
 
-#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:23
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:24
 msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
@@ -6285,7 +6282,7 @@ msgstr "%(name)s schrieb am %(date)s:"
 msgid "Read all"
 msgstr "Alles lesen"
 
-#: froide/templates/footer.html:20
+#: froide/templates/footer.html:21
 msgid ""
 "Froide is a free and Open Source Project by <a href=\"https://okfn.de\">the "
 "Open Knowledge Foundation</a>. If you want to support Froide, please visit "
@@ -6296,32 +6293,32 @@ msgstr ""
 "besuchen Sie bitte unser <a href=\"https://github.com/okfde/froide\">GitHub-"
 "Repo</a>"
 
-#: froide/templates/footer.html:42 froide/templates/header.html:116
+#: froide/templates/footer.html:43 froide/templates/header.html:119
 msgid "About"
 msgstr "Über uns"
 
-#: froide/templates/footer.html:47
+#: froide/templates/footer.html:48
 msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
-#: froide/templates/footer.html:50
+#: froide/templates/footer.html:51
 msgid "Privacy Statement"
 msgstr "Datenschutzerklärung"
 
-#: froide/templates/footer.html:53 froide/templates/header.html:121
+#: froide/templates/footer.html:54 froide/templates/header.html:124
 #: froide/templates/help/base.html:5
 msgid "Help"
 msgstr "Hilfe"
 
-#: froide/templates/header.html:14
+#: froide/templates/header.html:17
 msgid "Menu"
 msgstr "Menü"
 
-#: froide/templates/header.html:47
+#: froide/templates/header.html:50
 msgid "Make a Request!"
 msgstr "Stellen Sie eine Anfrage!"
 
-#: froide/templates/header.html:57
+#: froide/templates/header.html:60
 #, python-format
 msgid ""
 "\n"
@@ -6332,11 +6329,11 @@ msgstr ""
 "              Hallo %(name)s\n"
 "            "
 
-#: froide/templates/header.html:68
+#: froide/templates/header.html:71
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: froide/templates/header.html:77
+#: froide/templates/header.html:80
 msgid "Sign in"
 msgstr "Anmelden"
 
@@ -6345,7 +6342,7 @@ msgstr "Anmelden"
 msgid "help"
 msgstr "hilfe"
 
-#: froide/templates/index.html:21
+#: froide/templates/index.html:22
 msgid ""
 "This site publishes Freedom of Information requests and helps you to make "
 "your own!"
@@ -6353,36 +6350,36 @@ msgstr ""
 "Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen und hilft "
 "Ihnen, eigene Anfragen an den Staat zu stellen."
 
-#: froide/templates/index.html:28
+#: froide/templates/index.html:29
 #, python-format
 msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
 msgstr "Suchen Sie in %(foicount)s Anfragen und %(pbcount)s Behörden:"
 
-#: froide/templates/index.html:36 froide/templates/search/search.html:25
+#: froide/templates/index.html:37 froide/templates/search/search.html:25
 msgid "Search For Information"
 msgstr "Suchen!"
 
-#: froide/templates/index.html:44
+#: froide/templates/index.html:45
 msgid "Try the following:"
 msgstr "Versuchen Sie:"
 
-#: froide/templates/index.html:45
+#: froide/templates/index.html:46
 msgid "Nuclear"
 msgstr "Atom"
 
-#: froide/templates/index.html:47
+#: froide/templates/index.html:48
 msgid "Employment"
 msgstr "Arbeit"
 
-#: froide/templates/index.html:72
+#: froide/templates/index.html:73
 msgid "Read the blog post"
 msgstr "Lesen Sie den Blogeintrag"
 
-#: froide/templates/index.html:78
+#: froide/templates/index.html:79
 msgid "Visit this request"
 msgstr "Lesen Sie die Anfrage"
 
-#: froide/templates/index.html:84
+#: froide/templates/index.html:85
 msgid ""
 "Freedom of Information Request\n"
 "\n"
@@ -6400,15 +6397,15 @@ msgstr ""
 "ich beantrage Auskunft zu folgender Sachlage:\n"
 "…"
 
-#: froide/templates/index.html:91
+#: froide/templates/index.html:92
 msgid "Write a Request Now!"
 msgstr "Schreiben Sie jetzt eine Anfrage!"
 
-#: froide/templates/index.html:108
+#: froide/templates/index.html:109
 msgid "What is Freedom of Information?"
 msgstr "Was ist Informationsfreiheit?"
 
-#: froide/templates/index.html:109
+#: froide/templates/index.html:110
 msgid ""
 "Every citizen has the right under the Freedom of Information Laws to ask for "
 "and receive access to information from Public Bodies concerning public "
@@ -6417,15 +6414,15 @@ msgstr ""
 "Jeder Bürger hat nach den Informations&shy;gesetzen das Recht, Zugang zu "
 "Informationen der öffentlichen Hand zu erhalten."
 
-#: froide/templates/index.html:111
+#: froide/templates/index.html:112
 msgid "Read more about the Freedom of Information!"
 msgstr "Erfahren Sie mehr über Informations&shy;freiheit."
 
-#: froide/templates/index.html:118
+#: froide/templates/index.html:119
 msgid "What does this site do?"
 msgstr "Was macht diese Seite?"
 
-#: froide/templates/index.html:119
+#: froide/templates/index.html:120
 msgid ""
 "This site publishes Freedom of Information requests and replies so that "
 "others don't have to ask for the same information and replies can be "
@@ -6434,15 +6431,15 @@ msgstr ""
 "Diese Seite veröffentlicht Informations&shy;freiheits&shy;anfragen und ihre "
 "Antworten, so dass der Vorgang durch die Öffentlichkeit geprüft werden kann."
 
-#: froide/templates/index.html:121
+#: froide/templates/index.html:122
 msgid "Read more about the concept!"
 msgstr "Erfahren Sie mehr über das Konzept."
 
-#: froide/templates/index.html:132
+#: froide/templates/index.html:133
 msgid "Successful Requests"
 msgstr "Erfolgreiche Anfragen"
 
-#: froide/templates/index.html:144
+#: froide/templates/index.html:145
 msgid "Unsuccessful Requests"
 msgstr "Abgelehnte Anfragen"
 
@@ -6515,10 +6512,15 @@ msgid ""
 msgstr ""
 "%(site)s hilft Ihnen, Informationsfreiheitsanfragen an Behörden zu stellen"
 
-#: froide/urls.py:111
+#: froide/urls.py:110
 msgctxt "url part"
 msgid "account"
 msgstr "account"
+
+#: froide/urls.py:111
+msgctxt "url part"
+msgid "documents"
+msgstr "dokumente"
 
 #: froide/urls.py:112
 msgctxt "url part"
@@ -6555,40 +6557,38 @@ msgid "law"
 msgstr "gesetz"
 
 #. Translators: URL part
-#: froide/urls.py:133
+#: froide/urls.py:135
 msgctxt "url part"
 msgid "profile"
 msgstr "profil"
 
 #. Translators: URL part
-#: froide/urls.py:175
-msgctxt "url part"
-msgid "help"
-msgstr "hilfe"
-
-#. Translators: URL part
 #: froide/urls.py:177
-msgctxt "url part"
-msgid "about"
-msgstr "ueber"
-
-#. Translators: URL part
-#: froide/urls.py:179
-msgctxt "url part"
-msgid "terms"
-msgstr "nutzungsbedingungen"
-
-#. Translators: URL part
-#: froide/urls.py:181
-msgctxt "url part"
-msgid "privacy"
-msgstr "datenschutzerklaerung"
-
-#. Translators: URL part
-#: froide/urls.py:196
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~ msgid "publicbody"
+#~ msgstr "behoerde"
+
+#~ msgid "requester"
+#~ msgstr "anfragesteller"
+
+#~ msgctxt "url part"
+#~ msgid "help"
+#~ msgstr "hilfe"
+
+#~ msgctxt "url part"
+#~ msgid "about"
+#~ msgstr "ueber"
+
+#~ msgctxt "url part"
+#~ msgid "terms"
+#~ msgstr "nutzungsbedingungen"
+
+#~ msgctxt "url part"
+#~ msgid "privacy"
+#~ msgstr "datenschutzerklaerung"
 
 #~ msgid "select all %(count)s"
 #~ msgstr "Alle %(count)s auswählen"
@@ -6609,10 +6609,6 @@ msgstr "zustaendigkeit"
 
 #~ msgid "?request-made"
 #~ msgstr "?anfrage-gestellt"
-
-#~ msgctxt "url part"
-#~ msgid "documents"
-#~ msgstr "dokumente"
 
 #~ msgid "published"
 #~ msgstr "veröffentlicht"
