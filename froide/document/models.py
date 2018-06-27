@@ -5,6 +5,7 @@ import functools
 from django.conf.locale import LANG_INFO
 from django.utils import timezone
 from django.db import models
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -124,6 +125,15 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('document-detail', kwargs={
+            'pk': self.pk,
+            'slug': self.slug
+        })
+
+    def get_file_url(self):
+        return settings.MEDIA_URL + self.pdf_file.url
 
 
 def get_page_filename(instance, filename, size=''):

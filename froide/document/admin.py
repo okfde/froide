@@ -16,6 +16,7 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at', 'num_pages', 'public')
     raw_id_fields = ('user',)
     readonly_fields = ('uid',)
+    prepopulated_fields = {'slug': ('title',)}
     actions = ('reprocess_document',)
 
     def save_model(self, request, doc, form, change):

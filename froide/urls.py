@@ -108,6 +108,7 @@ if len(settings.LANGUAGES) > 1:
     ]
 
 account = pgettext('url part', 'account')
+documents = pgettext('url part', 'documents')
 teams = pgettext('url part', 'teams')
 
 froide_urlpatterns += [
@@ -124,6 +125,8 @@ froide_urlpatterns += [
     url(r'^%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
     # Translators: URL part
     url(r'^%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
+    # Translators: URL part
+    url(r'^%s/' % documents, include('froide.document.urls')),
     # Translators: URL part
     url(r'^%s/' % account, include('froide.account.urls')),
     # Translators: URL part
