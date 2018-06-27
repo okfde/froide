@@ -10,5 +10,4 @@ class DocumentView(DetailView):
     def get_queryset(self):
         # import ipdb; ipdb.set_trace()
         qs = super(DocumentView, self).get_queryset()
-        print(qs)
         return qs.filter(public=True)
