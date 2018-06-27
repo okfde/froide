@@ -137,7 +137,9 @@ class Document(models.Model):
         })
 
     def get_file_url(self):
-        return settings.MEDIA_URL + self.pdf_file.url
+        if self.pdf_file:
+            return self.pdf_file.url
+        return ''
 
 
 def get_page_filename(instance, filename, size=''):
