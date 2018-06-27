@@ -127,9 +127,13 @@ class Document(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('document-detail', kwargs={
-            'pk': self.pk,
-            'slug': self.slug
+        if self.slug:
+            return reverse('document-detail', kwargs={
+                'pk': self.pk,
+                'slug': self.slug
+            })
+        return reverse('document-detail_short', kwargs={
+            'pk': self.pk
         })
 
     def get_file_url(self):
