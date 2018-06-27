@@ -33,7 +33,7 @@
           </dl>
           <div v-if="fullText">
             <div class="body-text review-body-text">{{ body }}
-{{ letterSignatureName }}</span></div>
+{{ letterSignatureName }}</div>
           </div>
           <div v-else>
             <div class="body-text review-body-text"><span>{{ letterStart }}</span>
