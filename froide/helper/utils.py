@@ -40,7 +40,8 @@ def get_client_ip(request):
     return ip
 
 
-def get_redirect_url(request, default='/', next=None, allowed_hosts=None, params=None):
+def get_redirect_url(request, default='/', next=None, allowed_hosts=None,
+                     params=None):
     if next is None:
         next = request.POST.get('next',
             request.GET.get('next', request.session.get('next')))
@@ -85,7 +86,6 @@ def update_query_params(url, params):
     scheme, netloc, path, query_string, fragment = urlsplit(url)
     query_params = parse_qs(query_string)
     query_params.update(params)
-
     new_query_string = urlencode(query_params, doseq=True)
-
-    return urlunsplit((scheme, netloc, path, new_query_string, fragment))
+    return urlunsplit((str(scheme), str(netloc), str(path),
+                       str(new_query_string), str(fragment)))
