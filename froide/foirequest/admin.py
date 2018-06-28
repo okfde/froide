@@ -199,7 +199,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = ('subject', 'timestamp', 'sender_email', 'recipient_email',)
     list_filter = (
-        'is_postal', 'is_response', 'sent', 'status',
+        'kind', 'is_response', 'sent', 'status',
         make_nullfilter('recipient_public_body',
                         _('Has recipient public body')),
         'deliverystatus__status',

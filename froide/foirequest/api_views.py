@@ -135,7 +135,8 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         model = FoiMessage
         depth = 0
         fields = (
-            'resource_uri', 'id', 'url', 'request', 'sent', 'is_response', 'is_postal',
+            'resource_uri', 'id', 'url', 'request', 'sent', 'is_response',
+            'is_postal', 'kind',
             'is_escalation', 'content_hidden', 'sender_public_body',
             'recipient_public_body', 'status', 'timestamp',
             'redacted', 'not_publishable', 'attachments',

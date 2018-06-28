@@ -26,6 +26,13 @@ class FoiMessageManager(models.Manager):
 
 @python_2_unicode_compatible
 class FoiMessage(models.Model):
+    MESSAGE_CHOICES = (
+        ('email', _('Email')),
+        ('post', _('Postal mail')),
+        ('fax', _('Fax')),
+        ('phone', _('Phone call')),
+        ('visit', _('Personal visit')),
+    )
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
@@ -34,6 +41,10 @@ class FoiMessage(models.Model):
     is_response = models.BooleanField(
         _("Is this message a response?"),
         default=True)
+    kind = models.CharField(
+        max_length=10, choices=MESSAGE_CHOICES,
+        default='email'
+    )
     is_postal = models.BooleanField(
         _("Postal?"),
         default=False)
@@ -98,16 +109,20 @@ class FoiMessage(models.Model):
         verbose_name = _('Freedom of Information Message')
         verbose_name_plural = _('Freedom of Information Messages')
 
-    @property
-    def content(self):
-        return self.plaintext
-
     def __str__(self):
         return _(
             "Message in '%(request)s' at %(time)s") % {
                 "request": self.request,
                 "time": self.timestamp
             }
+
+    @property
+    def is_postal(self):
+        return self.kind == 'post'
+
+    @property
+    def content(self):
+        return self.plaintext
 
     @property
     def readable_status(self):

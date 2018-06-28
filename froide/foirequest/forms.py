@@ -460,7 +460,7 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         foirequest = self.foirequest
         message = FoiMessage(
             request=foirequest,
-            is_postal=True,
+            kind='post',
         )
         # TODO: Check if timezone support is correct
         date = datetime.datetime.combine(self.cleaned_data['date'],

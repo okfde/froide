@@ -226,7 +226,6 @@ class FoiMessageFactory(factory.DjangoModelFactory):
 
     sent = True
     is_response = factory.LazyAttribute(lambda o: not o.sender_user)
-    is_postal = False
     is_escalation = False
     sender_user = None
     sender_email = 'sender@example.com'
