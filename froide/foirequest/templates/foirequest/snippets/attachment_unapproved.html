@@ -3,7 +3,7 @@
 {% load foirequest_tags %}
 
 <div class="col-lg-8 mb-2 ">
-  {% if object|can_write_foirequest:request and not attachment.can_redact %}
+  {% if object|can_write_foirequest:request and not object.can_approve_or_redact %}
     {# Link to attachment when unapproved, but write allowed and cannot redact #}
     {% include "foirequest/snippets/attachment_item.html" %}
   {% else %}
