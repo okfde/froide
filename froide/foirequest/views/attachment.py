@@ -193,7 +193,6 @@ def redact_attachment(request, slug, attachment_id):
             return render_400(request)
         name = attachment.name.rsplit('.', 1)[0]
         name = re.sub(r'[^\w\.\-]', '', name)
-        pdf_file = File(open(path, 'rb'))
         if already:
             att = already
         else:
@@ -205,9 +204,12 @@ def redact_attachment(request, slug, attachment_id):
                 approved=True,
                 can_approve=True
             )
-        att.file = pdf_file
-        att.size = pdf_file.size
-        att.approve_and_save()
+        with open(path, 'rb') as f:
+            pdf_file = File(f)
+            att.file = pdf_file
+            att.size = pdf_file.size
+            att.approve_and_save()
+
         if not attachment.is_redacted:
             attachment.redacted = att
             attachment.can_approve = False

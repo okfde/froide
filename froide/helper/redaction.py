@@ -5,6 +5,7 @@ import io
 import zlib
 
 from PyPDF2 import PdfFileReader, PdfFileWriter
+from PyPDF2.utils import PdfReadError
 
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
@@ -15,7 +16,7 @@ from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
-from .document import PDF_FILETYPES
+from .document import PDF_FILETYPES, decrypt_pdf_in_place
 
 
 def can_redact_file(filetype, name=None):
@@ -29,7 +30,16 @@ def redact_file(pdf_file, instructions):
     load_invisible_font()
     output = PdfFileWriter()
     pdf_reader = PdfFileReader(pdf_file, strict=False)
-    num_pages = pdf_reader.getNumPages()
+    try:
+        num_pages = pdf_reader.getNumPages()
+    except PdfReadError:
+        pdf_file_name = decrypt_pdf_in_place(pdf_file.name)
+        if pdf_file_name is None:
+            return None
+        pdf_file = open(pdf_file_name, 'rb')
+        pdf_reader = PdfFileReader(pdf_file, strict=False)
+        num_pages = pdf_reader.getNumPages()
+
     assert num_pages == len(instructions)
     for pageNum, instr in enumerate(instructions):
         instr['width'] = float(instr['width'])
