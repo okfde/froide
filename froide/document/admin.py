@@ -13,6 +13,7 @@ class PageInline(admin.StackedInline):
 
 class DocumentAdmin(admin.ModelAdmin):
     inlines = [PageInline]
+    save_on_top = True
     list_display = ('title', 'created_at', 'num_pages', 'public')
     raw_id_fields = ('user',)
     readonly_fields = ('uid',)
