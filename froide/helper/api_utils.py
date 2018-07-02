@@ -2,6 +2,7 @@ import json
 from collections import OrderedDict
 
 from django.conf import settings
+from django.utils.html import format_html
 
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -70,74 +71,45 @@ class OpenRefineReconciliationMixin(object):
         properties = []
         properties_dict = {}
 
-    @action(
-        detail=False,
-        methods=['get', 'post'],
-        permission_classes=(),
-        authentication_classes=(),
-    )
-    def reconciliation(self, request):
-        '''
-        This is a OpenRefine Reconciliation API endpoint
-        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
-        It's a bit messy.
-        '''
-        self._apply_openrefine_jsonp(request)
-
-        if request.method == 'GET':
-            return self._reconciliation_meta(request)
-
-        methods = {
-            'queries': self._get_reconciliation_results,
-            'extend': self._get_reconciliation_extend
-        }
-
-        payload = None
-        for kind in methods.keys():
-            if request.POST.get(kind):
-                payload = request.POST.get(kind)
-                break
-
-        if payload is None:
-            return Response([])
-        try:
-            payload = json.loads(payload)
-        except ValueError:
-            return Response([])
-
-        method = methods[kind]
-        return Response(method(request, payload))
-
     def _reconciliation_meta(self, request):
-        pb_api_url = reverse(self.RECONCILIATION_META.api_list, request=request)
+        api_url = reverse(self.RECONCILIATION_META.api_list, request=request)
 
-        pb_detail_url = ''
+        detail_url = ''
         if self.RECONCILIATION_META.obj_short_link:
             magic = '13374223'
-            pb_detail_url = reverse(
+            detail_url = reverse(
                 self.RECONCILIATION_META.obj_short_link,
                 kwargs={'obj_id': magic}, request=request)
-            pb_detail_url = pb_detail_url.replace(magic, '{{id}}')
+            detail_url = detail_url.replace(magic, '{{id}}')
+
+        name = self.RECONCILIATION_META.name
 
         return Response({
             'name': "%s Reconciliation Service %s" % (
                 settings.SITE_NAME,
-                self.RECONCILIATION_META.name
+                name
             ),
-            'identifierSpace': pb_api_url,
-            'schemaSpace': pb_api_url,
+            'identifierSpace': api_url,
+            'schemaSpace': api_url,
             'view': {
-                'url': pb_detail_url
+                'url': detail_url
             },
             'defaultTypes': [
                 {
                     'id': self.RECONCILIATION_META.id,
-                    'name': self.RECONCILIATION_META.name,
+                    'name': name
                 }
             ],
+            # 'suggest': {
+            #     self.RECONCILIATION_META.id: {
+            #         'service_path': 'reconciliation-suggest-service/',
+            #         'service_url': api_url,
+            #         'flyout_service_path': 'reconciliation-flyout/',
+            #     }
+            # },
             'extend': {
                 'propose_properties': {
-                    'service_url': pb_api_url,
+                    'service_url': api_url,
                     'service_path': 'reconciliation-propose-properties/'
                 },
                 'property_settings': []
@@ -165,21 +137,24 @@ class OpenRefineReconciliationMixin(object):
         limit = min(query.get('limit', 3), 10)
         q = query.get('query')
         properties = query.get('properties', [])
-        ALLOWED_PROPERTIES = set(self.RECONCILIATION_META.filters)
+        ALLOWED_FILTERS = set(self.RECONCILIATION_META.filters)
+        queries = self.RECONCILIATION_META.properties_dict
         filters = {}
         for prop in properties:
-            if prop.get('p', None) in ALLOWED_PROPERTIES:
-                v = prop.get('v', None)
-                if v is None:
+            p = prop.get('p', prop.get('pid', None))
+            if p not in ALLOWED_FILTERS:
+                continue
+            v = prop.get('v', None)
+            if v is None:
+                continue
+            if isinstance(v, list):
+                if not v:
                     continue
-                if isinstance(v, list):
-                    if not v:
-                        continue
-                    v = v[0]
-                filters[prop['p']] = str(v)
+                v = v[0]
+            query = queries[p].get('query', p)
+            filters[query] = str(v)
         if not q:
             return
-
         return self._search_reconciliation_results(q, filters, limit)
 
     def _search_reconciliation_results(self, query, filters, limit):
@@ -251,6 +226,43 @@ class OpenRefineReconciliationMixin(object):
         methods=['get', 'post'],
         permission_classes=(),
         authentication_classes=(),
+    )
+    def reconciliation(self, request):
+        '''
+        This is a OpenRefine Reconciliation API endpoint
+        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+        It's a bit messy.
+        '''
+        self._apply_openrefine_jsonp(request)
+        if request.method == 'GET':
+            return self._reconciliation_meta(request)
+
+        methods = {
+            'queries': self._get_reconciliation_results,
+            'extend': self._get_reconciliation_extend
+        }
+
+        payload = None
+        for kind in methods.keys():
+            if request.POST.get(kind):
+                payload = request.POST.get(kind)
+                break
+
+        if payload is None:
+            return Response([])
+        try:
+            payload = json.loads(payload)
+        except ValueError:
+            return Response([])
+
+        method = methods[kind]
+        return Response(method(request, payload))
+
+    @action(
+        detail=False,
+        methods=['get', 'post'],
+        permission_classes=(),
+        authentication_classes=(),
         url_path='reconciliation-propose-properties'
     )
     def reconciliation_propose_properties(self, request):
@@ -269,3 +281,67 @@ class OpenRefineReconciliationMixin(object):
             'type': self.RECONCILIATION_META.id,
             'limit': limit
         })
+
+    @action(
+        detail=False,
+        methods=['get', 'post'],
+        permission_classes=(),
+        authentication_classes=(),
+        url_path='reconciliation-flyout'
+    )
+    def reconciliation_flyout_entity(self, request):
+        """
+        Implements OpenRefine Flyout Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+
+        """
+        self._apply_openrefine_jsonp(request)
+        req_id = request.GET.get('id')
+        if req_id is None:
+            return Response({})
+        model = self.RECONCILIATION_META.model
+        try:
+            obj = model.objects.get(pk=req_id)
+        except model.DoesNotExist:
+            return Response({})
+        return Response({
+            'id': str(obj.obj),
+            'html': format_html('<p>{}</p>', obj)
+        })
+
+    @action(
+        detail=False,
+        methods=['get', 'post'],
+        permission_classes=(),
+        authentication_classes=(),
+        url_path='reconciliation-suggest-service'
+    )
+    def reconciliation_suggest_service(self, request):
+        """
+        Implements OpenRefine Suggest Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+
+        Only implements prefix
+        """
+        print(request.GET)
+        self._apply_openrefine_jsonp(request)
+        q = request.GET.get('prefix')
+        response = {
+            "code": "/api/status/ok",
+            "status": "200 OK",
+            "prefix": q or '',
+            "result": []
+        }
+        if q is None:
+            return Response(response)
+
+        results = []
+        for f in self.RECONCILIATION_META.filters:
+            if f.startswith(q):
+                results.append({
+                    'id': f,
+                    'name': f,
+                })
+        response['result'] = results
+
+        return Response(response)
