@@ -2,13 +2,14 @@
 
 {% load i18n %}
 {% load static %}
+{% load markup %}
 
 {% block body %}
 <div class="container mt-3 mb-5">
     <h2>{{ object.title }}</h2>
     {% if object.description %}
       <p>
-         {{ object.description|linebreaksbr }} 
+         {{ object.description|markdown }} 
       </p>
     {% endif %}
 </div>
