@@ -122,11 +122,15 @@ def add_message_to_doc(doc, message):
     doc.append(LineBreak())
 
     lines = message.plaintext.splitlines()
+    line_broken = True
     with doc.create(FlushLeft()):
         for i, line in enumerate(lines):
             last = i == len(lines) - 1
-            if not line.strip() and not last:
+            if not line_broken and not line.strip() and not last:
                 doc.append(LineBreak())
+                line_broken = True
+                continue
+            if not line.strip():
                 continue
             doc.append(line + ('' if last else '\n'))
-            # doc.append(LineBreak())
+            line_broken = False
