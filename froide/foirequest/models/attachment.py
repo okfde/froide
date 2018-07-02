@@ -79,8 +79,8 @@ class FoiAttachment(models.Model):
         return can_redact_file(self.filetype, name=self.name)
 
     @property
-    def can_approve_or_redact(self):
-        return self.can_redact or self.can_approve
+    def allow_link(self):
+        return self.approved or not (self.can_redact and self.can_approve)
 
     @property
     def is_pdf(self):
