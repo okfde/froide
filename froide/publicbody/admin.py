@@ -45,6 +45,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     form = PublicBodyAdminForm
 
     prepopulated_fields = {"slug": ("name",)}
+    save_on_top = True
     fieldsets = (
         (None, {
             'fields': (
