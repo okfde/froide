@@ -84,7 +84,9 @@ class FoiAttachment(models.Model):
 
     @property
     def is_pdf(self):
-        return self.filetype in PDF_FILETYPES
+        return self.filetype in PDF_FILETYPES or (
+            self.name.endswith('.pdf') and self.filetype == 'application/octet-stream'
+        )
 
     @property
     def can_embed(self):
