@@ -236,6 +236,17 @@ class MailTest(TestCase):
             self.assertEqual(len(mail['attachments']), 1)
             self.assertEqual(mail['attachments'][0].name, 'Eingangsbestätigung Akteneinsicht.doc')
 
+    def test_html_only_mail(self):
+        with open(p("test_mail_13.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+        mail = parser.parse(BytesIO(content))
+
+        self.assertTrue(len(mail['body']) > 10)
+        # Markdown like links are rendered
+        self.assertIn('](https://', mail['body'])
+        self.assertIn('*peter.mueller@kreis-steinfurt.de*', mail['body'])
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):

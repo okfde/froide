@@ -26,6 +26,8 @@ from django.utils.six import BytesIO, text_type as str, binary_type as bytes
 
 import pytz
 
+from .text_utils import convert_html_to_text
+
 
 def get_unread_mails(host, port, user, password, ssl=True):
     klass = imaplib.IMAP4
@@ -218,8 +220,11 @@ class EmailParser(object):
         msgobj = p.parse(bytesfile)
         subject = self.parse_header_field(msgobj['Subject'])
         body, html, attachments = self.parse_body(msgobj.walk())
-        body = '\n'.join(body)
-        html = '\n'.join(html)
+        body = '\n'.join(body).strip()
+        html = '\n'.join(html).strip()
+
+        if not body and html:
+            body = convert_html_to_text(html)
 
         tos = self.get_address_list(msgobj.get_all('To', []))
         tos.extend(self.get_address_list(msgobj.get_all('X-Original-To', [])))

@@ -10,6 +10,7 @@ except ImportError:
 
 from django.utils.six import text_type as str, unichr as chr
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import strip_tags
 from django.conf import settings
 
 SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
@@ -100,3 +101,52 @@ def remove_closing(closings, content):
             content = content[:match.end()]
             break
     return content
+
+
+def make_strong(x):
+    return '**%s**' % x.text_content()
+
+
+def make_italic(x):
+    return '*%s*' % x.text_content()
+
+
+HTML_CONVERTERS = {
+    'a': lambda x: '[%s](%s)' % (x.text_content(), x.attrib.get('href', '')),
+    'strong': make_strong,
+    'b': make_strong,
+    'i': make_italic,
+    'em': make_italic
+}
+
+
+def convert_html_to_text(html_str):
+    """
+    If lxml is available, convert to Markdown (but badly)
+    otherwise just strip_tags
+    """
+
+    try:
+        from lxml import html
+    except ImportError:
+        return strip_tags(html_str)
+
+    root = html.fromstring(html_str)
+    body = root.xpath('./body')[0]
+
+    for tag, func in HTML_CONVERTERS.items():
+        els = body.xpath('.//' + tag)
+        for el in els:
+            replacement = func(el)
+            repl_tag = html.Element("span")
+            repl_tag.text = replacement
+            el.getparent().replace(el, repl_tag)
+
+    text = html.tostring(
+        body,
+        pretty_print=True,
+        method='text',
+        encoding='utf-8'
+    ).decode('utf-8')
+
+    return '\n'.join(x.strip() for x in text.splitlines()).strip()
