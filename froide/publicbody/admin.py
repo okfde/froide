@@ -95,7 +95,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     exclude = ('confirmed',)
     raw_id_fields = (
         'parent', 'root', '_created_by', '_updated_by',
-        'region',
+        'region', 'classification'
     )
     tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
