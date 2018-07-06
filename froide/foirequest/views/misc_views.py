@@ -21,7 +21,7 @@ from ..models import FoiRequest
 from ..tasks import process_mail
 from ..foi_mail import package_foirequest
 from ..auth import can_read_foirequest_authenticated
-from ..pdf_generator import get_foirequest_pdf_bytes
+from ..pdf_generator import FoiRequestPDFGenerator
 
 
 X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
@@ -107,7 +107,11 @@ def download_foirequest_pdf(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not can_read_foirequest_authenticated(foirequest, request):
         return render_403(request)
-    response = HttpResponse(get_foirequest_pdf_bytes(foirequest), content_type='application/pdf')
+    pdf_generator = FoiRequestPDFGenerator(foirequest)
+    response = HttpResponse(
+        pdf_generator.get_pdf_bytes(),
+        content_type='application/pdf'
+    )
     response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
     return response
 

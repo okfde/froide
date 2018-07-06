@@ -15,7 +15,7 @@ from froide.helper.email_utils import (EmailParser, get_unread_mails,
 from froide.helper.name_generator import get_name_from_number
 
 from .utils import get_publicbody_for_email
-from .pdf_generator import get_foirequest_pdf_bytes
+from .pdf_generator import FoiRequestPDFGenerator
 
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
 No corresponding request could be identified, please investigate! %(url)s
@@ -238,7 +238,8 @@ def package_foirequest(foirequest):
         last_date = None
         date_count = 1
         path = str(foirequest.pk)
-        correspondence_bytes = get_foirequest_pdf_bytes(foirequest)
+        pdf_generator = FoiRequestPDFGenerator(foirequest)
+        correspondence_bytes = pdf_generator.get_pdf_bytes()
         zfile.writestr('%s/%s.pdf' % (path, foirequest.pk), correspondence_bytes)
         for message in foirequest.messages:
             current_date = message.timestamp.date()
