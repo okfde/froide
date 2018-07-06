@@ -45,9 +45,6 @@ class FoiMessage(models.Model):
         max_length=10, choices=MESSAGE_CHOICES,
         default='email'
     )
-    is_postal = models.BooleanField(
-        _("Postal?"),
-        default=False)
     is_escalation = models.BooleanField(
         _("Escalation?"),
         default=False)
