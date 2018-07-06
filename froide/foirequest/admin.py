@@ -180,7 +180,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
 class FoiAttachmentInline(admin.TabularInline):
     model = FoiAttachment
-    raw_id_fields = ('redacted', 'converted')
+    raw_id_fields = ('redacted', 'converted', 'document')
     formfield_overrides = {
         models.FileField: {'widget': AttachmentFileWidget},
     }
