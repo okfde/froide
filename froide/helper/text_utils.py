@@ -94,13 +94,29 @@ def replace_custom(regex_list, replacement, content):
     return content
 
 
-def remove_closing(closings, content):
-    for closing in closings:
-        match = closing.search(content)
+def remove_part(regexes, content, func=None):
+    for regex in regexes:
+        match = regex.search(content)
         if match is not None:
-            content = content[:match.end()]
+            content = func(content, match)
             break
     return content
+
+
+def remove_closing(content, regexes=None):
+    if regexes is None:
+        regexes = settings.FROIDE_CONFIG.get('closings', [])
+    return remove_part(regexes, content, func=lambda c, m: c[:m.end()].strip())
+
+
+def remove_closing_inclusive(content):
+    regexes = settings.FROIDE_CONFIG.get('closings', [])
+    return remove_part(regexes, content, func=lambda c, m: c[:m.start()].strip())
+
+
+def remove_greeting_inclusive(content):
+    regexes = settings.FROIDE_CONFIG.get('greetings', [])
+    return remove_part(regexes, content, func=lambda c, m: c[m.end():].strip())
 
 
 def make_strong(x):

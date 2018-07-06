@@ -40,7 +40,7 @@ More stuff here
             rec(r'i\. ?A\.'), rec(r'[iI]m Auftrag')
         ]
 
-        removed = remove_closing(closings, content)
+        removed = remove_closing(content, closings)
         self.assertNotIn('Peter Parker', removed)
 
 

@@ -284,11 +284,9 @@ class FoiMessage(models.Model):
 
         if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
             if self.is_response:
-                if settings.FROIDE_CONFIG.get('closings'):
-                    content = remove_closing(
-                        settings.FROIDE_CONFIG['closings'],
-                        content
-                    )
+                content = remove_closing(
+                    content
+                )
 
             else:
                 if settings.FROIDE_CONFIG.get('greetings'):
