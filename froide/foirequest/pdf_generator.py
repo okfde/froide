@@ -35,6 +35,10 @@ class PDFGenerator(object):
 
     @contextlib.contextmanager
     def get_pdf_filename(self):
+        if not PDF_EXPORT_AVAILABLE:
+            yield None
+            return
+
         try:
             path = tempfile.mkdtemp()
             filename = os.path.join(path, 'output')

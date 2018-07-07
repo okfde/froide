@@ -30,7 +30,6 @@ django-treebeard = "*"
 djangorestframework-jsonp = "*"
 "geoip2" = "*"
 pdflib = "*"
-pylatex = "*"
 
 [dev-packages]
 selenium = "*"
