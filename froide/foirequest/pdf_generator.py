@@ -46,6 +46,7 @@ class PDFGenerator(object):
             try:
                 self.run(self.obj, filename)
             except pylatex.errors.CompilerError as e:
+                logger.exception(e)
                 yield None
             else:
                 yield filename + '.pdf'
