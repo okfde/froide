@@ -212,14 +212,14 @@ class LetterPDFGenerator(PDFGenerator):
         email = message.sender_email
 
         doc.append(NoEscape(
-            '\\setkomavar{fromemail}{\href{mailto:%(email)s}{%(email)s}}' % {
+            '\\setkomavar{fromemail}{\\href{mailto:%(email)s}{%(email)s}}' % {
                 'email': email
             }
         ))
 
         url = message.request.get_absolute_domain_short_url()
         doc.append(NoEscape(
-            '\\setkomavar{fromurl}[]{\href{%(url)s}{%(url)s}}' % {
+            '\\setkomavar{fromurl}[]{\\href{%(url)s}{%(url)s}}' % {
                 'url': url
             }
         ))
