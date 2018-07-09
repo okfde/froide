@@ -59,6 +59,7 @@ class WebTest(TestCase):
         )
 
     def test_list_requests(self):
+        factories.rebuild_index()
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
         for urlpart in FOIREQUEST_FILTER_DICT:
@@ -68,16 +69,14 @@ class WebTest(TestCase):
 
         for topic in Category.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
-                kwargs={"topic": topic.slug}))
+                kwargs={"category": topic.slug}))
             self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(reverse('foirequest-list_not_foi'))
-        self.assertEqual(response.status_code, 200)
-
         response = self.client.get(reverse('foirequest-list') + '?page=99999')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
     def test_list_jurisdiction_requests(self):
+        factories.rebuild_index()
         juris = Jurisdiction.objects.all()[0]
         response = self.client.get(reverse('foirequest-list'),
                 kwargs={'jurisdiction': juris.slug})
@@ -89,10 +88,11 @@ class WebTest(TestCase):
 
         for topic in Category.objects.filter(is_topic=True):
             response = self.client.get(reverse('foirequest-list',
-                kwargs={"topic": topic.slug, 'jurisdiction': juris.slug}))
+                kwargs={"category": topic.slug, 'jurisdiction': juris.slug}))
             self.assertEqual(response.status_code, 200)
 
     def test_tagged_requests(self):
+        factories.rebuild_index()
         tag_slug = 'awesome'
         req = FoiRequest.published.all()[0]
         req.tags.add(tag_slug)
@@ -110,6 +110,7 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_publicbody_requests(self):
+        factories.rebuild_index()
         req = FoiRequest.published.all()[0]
         pb = req.public_body
         response = self.client.get(reverse('foirequest-list', kwargs={"publicbody": pb.slug}))
@@ -121,6 +122,8 @@ class WebTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_list_no_identical(self):
+        factories.rebuild_index()
+
         factories.FoiRequestFactory.create(site=self.site)
         reqs = FoiRequest.published.all()
         req1 = reqs[0]
@@ -201,6 +204,8 @@ class WebTest(TestCase):
         self.assertTrue(response['Location'].endswith(req.get_absolute_url()))
 
     def test_feed(self):
+        factories.rebuild_index()
+
         response = self.client.get(reverse('foirequest-feed_latest'))
         self.assertRedirects(response, reverse('foirequest-list_feed'),
             status_code=301)
@@ -226,12 +231,12 @@ class WebTest(TestCase):
         topic = Category.objects.filter(is_topic=True)[0]
         response = self.client.get(reverse('foirequest-list_feed', kwargs={
             'jurisdiction': juris.slug,
-            'topic': topic.slug
+            'category': topic.slug
         }))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('foirequest-list_feed_atom', kwargs={
             'jurisdiction': juris.slug,
-            'topic': topic.slug
+            'category': topic.slug
         }))
         self.assertEqual(response.status_code, 200)
 
@@ -279,7 +284,8 @@ class WebTest(TestCase):
 
     def test_search(self):
         response = self.client.get(reverse('foirequest-search'))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('foirequest-list'), response['Location'])
 
 
 class MediaServingTest(TestCase):

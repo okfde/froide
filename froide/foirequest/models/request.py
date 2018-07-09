@@ -95,9 +95,6 @@ class PublishedFoiRequestManager(CurrentSiteManager):
             models.Q(project__isnull=True) | models.Q(project_order=0)
         )
 
-    def get_for_search_index(self):
-        return self.get_queryset().filter(same_as__isnull=True)
-
     def get_resolution_count_by_public_body(self, obj):
         from ..filters import REVERSE_FILTER_DICT
 
@@ -420,6 +417,14 @@ class FoiRequest(models.Model):
     def is_public(self):
         return self.visibility == self.VISIBLE_TO_PUBLIC
 
+    def in_public_search_index(self):
+        return (
+            self.is_public() and
+            self.is_foi and
+            self.same_as_id is None and
+            (self.project_id is None or self.project_order == 0)
+        )
+
     def get_redaction_regexes(self):
         user = self.user
         foimail_domain = settings.FOI_EMAIL_DOMAIN
@@ -459,13 +464,6 @@ class FoiRequest(models.Model):
 
     def status_is_final(self):
         return self.status == 'resolved'
-
-    def is_visible(self):
-        return self.visibility == self.VISIBLE_TO_PUBLIC
-
-    def in_search_index(self):
-        return (self.is_visible() and
-            self.is_foi and self.same_as is None)
 
     def needs_public_body(self):
         return self.status == 'publicbody_needed'

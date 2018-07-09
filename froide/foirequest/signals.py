@@ -5,20 +5,18 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from haystack.utils import get_identifier
-
 from froide.helper.document import can_convert_to_pdf
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent, FoiProject
 
 
 def trigger_index_update(klass, instance_pk):
+    """ Trigger index update by save """
     try:
-        from celery_haystack.utils import get_update_task
-    except ImportError:
+        obj = klass.objects.get(pk=instance_pk)
+    except klass.DoesNotExist:
         return
-    task = get_update_task()
-    task.delay('update', get_identifier(klass(id=instance_pk)))
+    obj.save()
 
 
 @receiver(FoiRequest.became_overdue,

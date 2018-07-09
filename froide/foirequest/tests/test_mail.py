@@ -265,7 +265,7 @@ class DeferredMessageTest(TestCase):
         factories.FoiMessageFactory.create(request=self.req)
 
     def test_deferred(self):
-        count_messages = len(self.req.messages)
+        count_messages = len(self.req.get_messages())
         name, domain = self.req.secret_address.split('@')
         bad_mail = '@'.join((name + 'x', domain))
         with open(p("test_mail_01.txt"), 'rb') as f:
@@ -285,7 +285,7 @@ class DeferredMessageTest(TestCase):
         self.assertEqual(dm.request, req)
 
     def test_double_deferred(self):
-        count_messages = len(self.req.messages)
+        count_messages = len(self.req.get_messages())
         name, domain = self.req.secret_address.split('@')
         bad_mail = '@'.join((name + 'x', domain))
         with open(p("test_mail_01.txt"), 'rb') as f:
@@ -319,7 +319,7 @@ class SpamMailTest(TestCase):
         factories.FoiMessageFactory.create(request=self.req, is_response=True)
 
     def test_spam(self):
-        count_messages = len(self.req.messages)
+        count_messages = len(self.req.get_messages())
         name, domain = self.req.secret_address.split('@')
         recipient = self.secret_address
         with open(p("test_mail_01.txt"), 'rb') as f:
@@ -341,7 +341,7 @@ class ClosedRequestTest(TestCase):
         factories.FoiMessageFactory.create(request=self.req, is_response=True)
 
     def test_closed(self):
-        count_messages = len(self.req.messages)
+        count_messages = len(self.req.get_messages())
         name, domain = self.req.secret_address.split('@')
         recipient = self.secret_address
         with open(p("test_mail_01.txt"), 'rb') as f:

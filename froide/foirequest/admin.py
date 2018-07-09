@@ -152,12 +152,10 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     mark_same_as.short_description = _("Mark selected requests as identical to...")
 
     def remove_from_index(self, request, queryset):
-        from haystack import connections as haystack_connections
+        from django_elasticsearch_dsl.registries import registry
 
         for obj in queryset:
-            for using in haystack_connections.connections_info.keys():
-                backend = haystack_connections[using].get_backend()
-                backend.remove(obj)
+            registry.delete(obj, raise_on_error=False)
 
         self.message_user(request, _("Removed from search index"))
     remove_from_index.short_description = _("Remove from search index")

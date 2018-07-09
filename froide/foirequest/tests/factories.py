@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.core.management import call_command
 
 from froide.publicbody.models import (Jurisdiction, FoiLaw, PublicBody,
     Classification, Category, PublicBodyTag)
@@ -354,10 +355,5 @@ def make_world():
 
 
 def rebuild_index():
-    from haystack import connections
-    from haystack.constants import DEFAULT_ALIAS
-
-    from django.core.management import call_command
-
-    connections[DEFAULT_ALIAS].get_backend().clear()
-    call_command('update_index')
+    with open(os.devnull, 'a') as f:
+        call_command('search_index', action='rebuild', force=True, stdout=f)

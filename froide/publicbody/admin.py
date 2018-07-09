@@ -167,12 +167,10 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     export_csv.short_description = _("Export to CSV")
 
     def remove_from_index(self, request, queryset):
-        from haystack import connections as haystack_connections
+        from django_elasticsearch_dsl.registries import registry
 
         for obj in queryset:
-            for using in haystack_connections.connections_info.keys():
-                backend = haystack_connections[using].get_backend()
-                backend.remove(obj)
+            registry.delete(obj, raise_on_error=False)
 
         self.message_user(request, _("Removed from search index"))
     remove_from_index.short_description = _("Remove from search index")
@@ -354,7 +352,31 @@ class CategoryAdmin(AssignCategoryParentMixin, TreeAdmin):
     form = movenodeform_factory(Category)
     prepopulated_fields = {"slug": ["name"]}
     search_fields = ["name"]
+    list_filter = ('is_topic', 'depth')
+    list_display = ('name', 'is_topic', 'num_publicbodies', 'publicbody_link')
     actions = AssignCategoryParentMixin.actions
+
+    def get_queryset(self, request):
+        """Use this so we can annotate with additional info."""
+
+        qs = super(CategoryAdmin, self).get_queryset(request)
+        return qs.annotate(
+            num_publicbodies=Count('categorized_publicbodies', distinct=True)
+        )
+
+    def num_publicbodies(self, obj):
+        """# of companies an expert has."""
+
+        return obj.num_publicbodies
+    num_publicbodies.short_description = _('# public bodies')
+
+    def publicbody_link(self, obj):
+        return format_html('<a href="{}">{}</a>',
+            reverse('admin:publicbody_publicbody_changelist') + (
+                '?categories__id__exact={}'.format(obj.id)
+            ),
+            _('Public bodies with this category')
+        )
 
 
 class CategorizedPublicBodyAdmin(admin.ModelAdmin):

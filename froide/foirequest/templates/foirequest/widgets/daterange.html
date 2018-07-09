@@ -1,0 +1,15 @@
+{% load i18n %}
+<div class="input-group">
+  <div class="input-group-prepend">
+      <span class="input-group-text">{% trans "from" %}</span>
+    </div>    
+  {% with subwidget=widget.subwidgets.0 %}
+    {% include subwidget.template_name with widget=subwidget %}
+  {% endwith %}
+  <div class="input-group-prepend">
+    <span class="input-group-text">{% trans "until" %}</span>
+  </div>
+  {% with subwidget=widget.subwidgets.0 %}
+    {% include subwidget.template_name with widget=subwidget %}
+  {% endwith %}
+</div>

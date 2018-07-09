@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import os
 import re
 import zipfile
+from urllib.parse import quote
 
 from mock import patch
 
@@ -1188,8 +1189,8 @@ class RequestTest(TestCase):
         factories.rebuild_index()
         response = self.client.get('%s?q=%s' % (
             reverse('foirequest-search'), pb.name[:6]))
-        self.assertContains(response, pb.name)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(quote(pb.name[:6]), response['Location'])
 
     def test_full_text_request(self):
         self.client.login(email="dummy@example.org", password="froide")

@@ -38,7 +38,7 @@ setup(
         'Markdown',
         'celery',
         'geoip2',
-        'django-haystack',
+        'django-elasticsearch-dsl',
         'django-taggit',
         'pytz',
         'requests',

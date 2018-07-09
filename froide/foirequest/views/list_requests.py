@@ -1,90 +1,128 @@
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic import ListView
+from django.urls import reverse
 
-from haystack.query import SearchQuerySet
-
-from froide.publicbody.models import PublicBody
 from froide.helper.utils import render_403
+from froide.helper.search import (
+    SearchQuerySetWrapper, resolve_facet, make_filter_url,
+    get_pagination_vars
+)
+
+from froide.publicbody.models import Jurisdiction
 
 from ..models import FoiRequest, FoiAttachment
 from ..feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
-from ..filters import get_filter_data, FoiRequestFilterSet
+from ..filters import (
+    get_filter_data, get_active_filters, FoiRequestFilterSet
+)
+from ..documents import FoiRequestDocument
 
 
-def list_requests(request, not_foi=False, feed=None, **filter_kwargs):
-    context = {
-        'filtered': True
-    }
-    manager = FoiRequest.published
-    if not_foi:
-        manager = FoiRequest.published_not_foi
+def make_url(data):
+    return make_filter_url(
+        'foirequest-list',
+        data,
+        get_active_filters=get_active_filters
+    )
 
-    foi_requests = manager.for_list_view()
 
-    data = get_filter_data(filter_kwargs, dict(request.GET.items()))
-    filtered = FoiRequestFilterSet(data, queryset=foi_requests)
-    form = filtered.form
-    form.is_valid()
+class ListRequestView(ListView):
+    allow_empty = True
+    template_name = 'foirequest/list.html'
+    paginate_by = 30
+    feed = None
 
-    # Set only valid data on widgets so they can render filter links
-    data_clean_only = {k: v for k, v in data.items() if k in form.cleaned_data}
-    for name, field in filtered.form.fields.items():
-        field.widget.data = data_clean_only
+    def get_queryset(self):
+        self.filter_data = get_filter_data(self.kwargs, dict(self.request.GET.items()))
+        s = FoiRequestDocument.search().filter('term', public=True)
 
-    foi_requests = filtered.qs
-
-    filtered_objs = filtered.form.cleaned_data
-    filtered_objs = {k: v for k, v in filtered_objs.items() if v}
-
-    if feed is not None:
-        foi_requests = foi_requests[:50]
-        if feed == 'rss':
-            klass = LatestFoiRequestsFeed
+        self.has_query = self.filter_data.get('q')
+        if not self.has_query:
+            s = s.sort('-last_message')
         else:
-            klass = LatestFoiRequestsFeedAtom
-        return klass(foi_requests, **filtered_objs)(request)
+            s = s.sort('_score', '-last_message')
 
-    page = request.GET.get('page')
-    paginator = Paginator(foi_requests, 30)
+        sqs = SearchQuerySetWrapper(s, FoiRequest)
 
-    try:
-        foi_requests = paginator.page(page)
-    except PageNotAnInteger:
-        foi_requests = paginator.page(1)
-    except EmptyPage:
-        foi_requests = paginator.page(paginator.num_pages)
+        filtered = FoiRequestFilterSet(self.filter_data, queryset=sqs)
+        self.form = filtered.form
+        self.form.is_valid()
 
-    context.update({
-        'page_title': _("FoI Requests"),
-        'count': paginator.count,
-        'not_foi': not_foi,
-        'object_list': foi_requests,
-        'form': form,
-        'filtered_objects': filtered_objs
-    })
+        # Set only valid data on widgets so they can render filter links
+        data_clean_only = {
+            k: v for k, v in self.filter_data.items()
+            if k in self.form.cleaned_data
+        }
+        for name, field in filtered.form.fields.items():
+            field.widget.data = data_clean_only
 
-    return render(request, 'foirequest/list.html', context)
+        sqs = filtered.qs
+
+        if self.has_query:
+            sqs = sqs.add_aggregation([
+                'jurisdiction'
+            ])
+
+        filtered_objs = filtered.form.cleaned_data
+        self.filtered_objs = {k: v for k, v in filtered_objs.items() if v}
+
+        return sqs
+
+    def paginate_queryset(self, sqs, page_size):
+        """
+        Paginate with SearchQuerySet, but return queryset
+        """
+        paginator, page, sqs, is_paginated = super().paginate_queryset(sqs, page_size)
+
+        self.count = sqs.count()
+        queryset = sqs.to_queryset().select_related(
+            'public_body',
+            'jurisdiction'
+        )
+        self.facets = None
+        if self.has_query:
+            self.facets = sqs.get_facets(resolvers={
+                'jurisdiction': resolve_facet(
+                    self.filter_data,
+                    lambda o: o.slug,
+                    Jurisdiction,
+                    make_url=make_url
+                )
+            })
+
+        return (paginator, page, queryset, is_paginated)
+
+    def get_context_data(self, **kwargs):
+        context = super(ListRequestView, self).get_context_data(**kwargs)
+
+        context.update({
+            'page_title': _("FoI Requests"),
+            'count': self.count,
+            'form': self.form,
+            'facets': self.facets,
+            'has_query': self.has_query,
+            'getvars': get_pagination_vars(self.filter_data),
+            'filtered_objects': self.filtered_objs
+        })
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.feed is not None:
+            if self.feed == 'rss':
+                klass = LatestFoiRequestsFeed
+            else:
+                klass = LatestFoiRequestsFeedAtom
+            feed_obj = klass(context['object_list'], **self.filtered_objs)
+            return feed_obj(self.request)
+
+        return super(ListRequestView, self).render_to_response(
+            context, **response_kwargs
+        )
 
 
 def search(request):
-    query = request.GET.get("q", "")
-    foirequests = []
-    publicbodies = []
-    if query:
-        results = SearchQuerySet().models(FoiRequest).auto_query(query)[:25]
-        for result in results:
-            if result.object and result.object.in_search_index():
-                foirequests.append(result.object)
-        results = SearchQuerySet().models(PublicBody).auto_query(query)[:25]
-        for result in results:
-            publicbodies.append(result.object)
-    context = {
-        "foirequests": foirequests,
-        "publicbodies": publicbodies,
-        "query": query
-    }
-    return render(request, "search/search.html", context)
+    return redirect(reverse('foirequest-list') + '?q=' + request.GET.get("q", ""))
 
 
 def list_unchecked(request):

@@ -18,10 +18,10 @@ def clean(val):
 
 
 class LatestFoiRequestsFeed(Feed):
-    def __init__(self, items, topic=None, jurisdiction=None,
+    def __init__(self, items, category=None, jurisdiction=None,
                  publicbody=None, tag=None, status=None):
         self.items = items
-        self.topic = topic
+        self.category = category
         self.jurisdiction = jurisdiction
         self.tag = tag
         self.status = status
@@ -30,8 +30,8 @@ class LatestFoiRequestsFeed(Feed):
 
     def get_filter_string(self):
         by = []
-        if self.topic:
-            by.append(_('by topic %(topic)s') % {'topic': self.topic.name})
+        if self.category:
+            by.append(_('by category %(category)s') % {'category': self.category.name})
         if self.status:
             by.append(_('by status %(status)s') % {
                 'status': FOIREQUEST_FILTER_DICT[self.status][1]
@@ -70,8 +70,8 @@ class LatestFoiRequestsFeed(Feed):
 
     def get_link_kwargs(self):
         kwargs = {}
-        if self.topic:
-            kwargs['topic'] = self.topic.slug
+        if self.category:
+            kwargs['category'] = self.category.slug
         if self.jurisdiction:
             kwargs['jurisdiction'] = self.jurisdiction.slug
         if self.status:

@@ -33,11 +33,10 @@
       <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
       <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
       <dd>{{ object.classification }}</dd>
-      <dt>{% blocktrans %}Topics:{% endblocktrans %}</dt>
+      <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
       <dd>
-        {% for tag in object.tags.all %}
-          {{ tag.name }}
-          {% if not forloop.last %}, {% endif %}
+        {% for category in object.categories.all %}
+          {{ category.name }}{% if not forloop.last %}, {% endif %}
         {% endfor %}
       </dd>
       {% if object.url %}

@@ -17,7 +17,7 @@ class FoiEventManager(models.Manager):
     def create_event(self, event_name, request, **context):
         assert event_name in FoiEvent.event_texts
         event = FoiEvent(request=request,
-                public=request.is_visible(),
+                public=request.is_public(),
                 event_name=event_name)
         event.user = context.pop("user", None)
         event.public_body = context.pop("public_body", None)

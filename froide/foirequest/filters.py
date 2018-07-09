@@ -1,27 +1,28 @@
-from django.db.models import Q
+from django import forms
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from taggit.models import Tag
 import django_filters
+from elasticsearch_dsl.query import Q
 
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
 
 from .models import FoiRequest
-from .widgets import DropDownFilterWidget
+from .widgets import DropDownFilterWidget, DateRangeWidget
 
 
 def resolution_filter(x):
-    return Q(resolution=x)
+    return Q('term', resolution=x)
 
 
 def status_filter(x):
-    return Q(status=x)
+    return Q('term', status=x)
 
 
-FILTER_ORDER = ('jurisdiction', 'publicbody', 'status', 'topic', 'tag')
+FILTER_ORDER = ('jurisdiction', 'publicbody', 'status', 'category', 'tag')
 SUB_FILTERS = {
-    'jurisdiction': ('status', 'topic', 'tag', 'publicbody')
+    'jurisdiction': ('status', 'category', 'tag', 'publicbody')
 }
 
 
@@ -34,11 +35,13 @@ FOIREQUEST_FILTERS = [
     (_("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
     (_("awaiting-response"), status_filter, 'awaiting_response'),
     (_("overdue"), (lambda x:
-        Q(due_date__lt=timezone.now()) & Q(status='awaiting_response')),
+        Q('range', due_date={
+            'lt': timezone.now()
+        }) & Q('term', status='awaiting_response')),
         'overdue'),
     (_("asleep"), status_filter, 'asleep'),
     (_("not-held"), resolution_filter, 'not_held'),
-    (_("has-fee"), lambda x: Q(costs__gt=0), 'has_fee')
+    (_("has-fee"), lambda x: Q('range', costs={'gt': 0}), 'has_fee')
 ]
 
 FOIREQUEST_FILTERS = [
@@ -86,43 +89,101 @@ class DropDownStatusFilterWidget(DropDownFilterWidget):
 
 
 class FoiRequestFilterSet(django_filters.FilterSet):
+    q = django_filters.CharFilter(
+        method='auto_query',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': _('Search requests'),
+                'class': 'form-control'
+            }
+        ),
+    )
     status = django_filters.ChoiceFilter(
         choices=FOIREQUEST_FILTER_CHOICES,
-        widget=DropDownStatusFilterWidget(
-            attrs={'label': _('By status')}
+        empty_label=_('any status'),
+        widget=forms.Select(
+            attrs={
+                'label': _('status'),
+                'class': 'form-control'
+            }
         ),
         method='filter_status',
     )
     jurisdiction = django_filters.ModelChoiceFilter(
         queryset=Jurisdiction.objects.get_visible(),
         to_field_name='slug',
-        widget=DropDownFilterWidget(
-            attrs={'label': _('By jurisdiction')}
+        empty_label=_('all jurisdictions'),
+        widget=forms.Select(
+            attrs={
+                'label': _('jurisdiction'),
+                'class': 'form-control'
+            }
         ),
         method='filter_jurisdiction'
     )
-    topic = django_filters.ModelChoiceFilter(
+    category = django_filters.ModelChoiceFilter(
         queryset=Category.objects.get_category_list(),
         to_field_name='slug',
-        widget=DropDownFilterWidget(
-            attrs={'label': _('By category')}
+        empty_label=_('all categories'),
+        widget=forms.Select(
+            attrs={
+                'label': _('category'),
+                'class': 'form-control'
+            }
         ),
-        method='filter_topic'
+        method='filter_category'
     )
     tag = django_filters.ModelChoiceFilter(
         queryset=Tag.objects.all(),
         to_field_name='slug',
-        method='filter_tag'
+        method='filter_tag',
+        widget=forms.HiddenInput()
     )
     publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody.objects.all(),
         to_field_name='slug',
-        method='filter_publicbody'
+        method='filter_publicbody',
+        widget=forms.HiddenInput()
+    )
+
+    first = django_filters.DateFromToRangeFilter(
+        method='filter_first',
+        widget=DateRangeWidget,
+    )
+    last = django_filters.DateFromToRangeFilter(
+        method='filter_last',
+        widget=DateRangeWidget
     )
 
     class Meta:
         model = FoiRequest
-        fields = ['status', 'jurisdiction', 'topic', 'tag', 'publicbody']
+        fields = [
+            'q', 'status', 'jurisdiction',
+            'category', 'tag', 'publicbody'
+        ]
+
+    def filter_queryset(self, queryset):
+        """
+        Filter the queryset with the underlying form's `cleaned_data`. You must
+        call `is_valid()` or `errors` before calling this method.
+        This method should be overridden if additional filtering needs to be
+        applied to the queryset before it is cached.
+        """
+        for name, value in self.form.cleaned_data.items():
+            queryset = self.filters[name].filter(queryset, value)
+            # assert isinstance(queryset, models.QuerySet), \
+            #     "Expected '%s.%s' to return a QuerySet, but got a %s instead." \
+            #     % (type(self).__name__, name, type(queryset).__name__)
+        return queryset
+
+    def auto_query(self, qs, name, value):
+        if value:
+            return qs.set_query(Q(
+                "multi_match",
+                query=value,
+                fields=['content', 'title', 'description']
+            ))
+        return qs
 
     def filter_status(self, qs, name, value):
         parts = FOIREQUEST_FILTER_DICT[value]
@@ -131,13 +192,30 @@ class FoiRequestFilterSet(django_filters.FilterSet):
         return qs.filter(func(status_name))
 
     def filter_jurisdiction(self, qs, name, value):
-        return qs.filter(jurisdiction=value)
+        return qs.filter(jurisdiction=value.id)
 
-    def filter_topic(self, qs, name, value):
-        return qs.filter(public_body__categories=value)
+    def filter_category(self, qs, name, value):
+        return qs.filter(public_body__categories=value.id)
 
     def filter_tag(self, qs, name, value):
-        return qs.filter(tags=value)
+        return qs.filter(tags=value.name)
 
     def filter_publicbody(self, qs, name, value):
-        return qs.filter(public_body=value)
+        return qs.filter(publicbody=value.id)
+
+    def filter_first(self, qs, name, value):
+        range_kwargs = {}
+        if value.start is not None:
+            range_kwargs['gte'] = value.start
+        if value.stop is not None:
+            range_kwargs['lte'] = value.stop
+
+        return qs.filter(Q('range', first_message=range_kwargs))
+
+    def filter_last(self, qs, name, value):
+        range_kwargs = {}
+        if value.start is not None:
+            range_kwargs['gte'] = value.start
+        if value.stop is not None:
+            range_kwargs['lte'] = value.stop
+        return qs.filter(Q('range', last_message=range_kwargs))

@@ -16,7 +16,7 @@ from rest_framework.test import APIRequestFactory
 
 from rest_framework_jsonp.renderers import JSONPRenderer
 
-from haystack.query import SearchQuerySet
+from elasticsearch_dsl.query import Q
 
 
 def get_fake_api_context(url='/'):
@@ -42,6 +42,30 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
             ])),
             ('objects', data),
         ]))
+
+
+class ElasticLimitOffsetPagination(CustomLimitOffsetPagination):
+    def paginate_queryset(self, queryset, request, view=None):
+        self.limit = self.get_limit(request)
+        if self.limit is None:
+            return None
+
+        self.offset = self.get_offset(request)
+        self.request = request
+
+        # Set offset limit on sqs before calling count!
+        queryset = queryset[self.offset:self.offset + self.limit]
+
+        self.count = self.get_count(queryset)
+
+        if self.count > self.limit and self.template is not None:
+            self.display_page_controls = True
+
+        if self.count == 0 or self.offset > self.count:
+            return None
+
+        # Do not return anything
+        return None
 
 
 class SearchFacetListSerializer(ListSerializer):
@@ -158,17 +182,21 @@ class OpenRefineReconciliationMixin(object):
         return self._search_reconciliation_results(q, filters, limit)
 
     def _search_reconciliation_results(self, query, filters, limit):
-        sqs = SearchQuerySet().models(self.RECONCILIATION_META.model)
+        sqs = self.RECONCILIATION_META.document.search()
         for key, val in filters.items():
             sqs = sqs.filter(**{key: val})
-        sqs = sqs.auto_query(query)[:limit]
+        sqs = sqs.query(Q(
+                "multi_match",
+                query=query,
+                fields=self.RECONCILIATION_META.query_fields
+        ))[:limit]
         for r in sqs:
             yield {
-                'id': str(r.pk),
+                'id': str(r.meta.id),
                 'name': r.name,
-                'type': [r.model_name],
-                'score': r.score,
-                'match': r.score >= 4  # FIXME: this is quite arbitrary
+                'type': [self.RECONCILIATION_META.model.__class__.name],
+                'score': r.meta.score,
+                'match': r.meta.score >= 4  # FIXME: this is quite arbitrary
             }
 
     def _get_reconciliation_extend(self, request, query):

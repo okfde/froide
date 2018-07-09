@@ -35,8 +35,12 @@ class Base(Configuration):
         'django.contrib.humanize',
         'django.contrib.gis',
 
+        # overwrite management command in
+        # django_elasticsearch_dsl
+        'froide.helper',
+
         # external
-        'haystack',
+        'django_elasticsearch_dsl',
         'taggit',
         'overextends',
         'storages',
@@ -56,7 +60,6 @@ class Base(Configuration):
         'froide.account',
         'froide.team',
         'froide.foisite',
-        'froide.helper',
 
         # API
         'oauth2_provider',
@@ -368,13 +371,15 @@ class Base(Configuration):
         'queue': 'email'
     }
 
-    # ######## Haystack ###########
+    # ######## Search ###########
 
-    HAYSTACK_CONNECTIONS = {
+    ELASTICSEARCH_INDEX_PREFIX = 'froide'
+    ELASTICSEARCH_DSL = {
         'default': {
-            'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-        }
+            'hosts': 'localhost:9200'
+        },
     }
+    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = 'django_elasticsearch_dsl.signals.RealTimeSignalProcessor'
 
     # ######### API #########
 
@@ -552,15 +557,6 @@ class Test(Base):
     DEFAULT_FROM_EMAIL = 'info@example.com'
 
     FOI_EMAIL_DOMAIN = 'fragdenstaat.de'
-
-    @property
-    def HAYSTACK_CONNECTIONS(self):
-        return {
-            'default': {
-                'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-                'PATH': os.path.join(super(Test, self).PROJECT_ROOT, 'tests/froide_test_whoosh_db'),
-            },
-        }
 
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True

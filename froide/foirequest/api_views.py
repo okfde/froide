@@ -9,9 +9,10 @@ from oauth2_provider.contrib.rest_framework import TokenHasScope
 
 from django_filters import rest_framework as filters
 
-from haystack.query import RelatedSearchQuerySet
+from elasticsearch_dsl.query import Q as ESQ
 
 from froide.helper.search import SearchQuerySetWrapper
+from froide.helper.api_utils import ElasticLimitOffsetPagination
 from froide.publicbody.api_views import (
     FoiLawSerializer, SimplePublicBodySerializer, PublicBodySerializer
 )
@@ -25,6 +26,7 @@ from .services import CreateRequestService
 from .validators import clean_reference
 from .utils import check_throttle
 from .auth import can_read_foirequest_authenticated
+from .documents import FoiRequestDocument
 
 
 User = get_user_model()
@@ -426,14 +428,17 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
 
     @action(detail=False, methods=['get'])
     def search(self, request):
-        queryset = self.get_searchqueryset(request)
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        self.sqs = self.get_searchqueryset(request)
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        paginator = ElasticLimitOffsetPagination()
+        paginator.paginate_queryset(self.sqs, self.request, view=self)
+
+        self.queryset = self.optimize_query(self.sqs.to_queryset())
+
+        serializer = self.get_serializer(self.queryset, many=True)
+        data = serializer.data
+
+        return paginator.get_paginated_response(data)
 
     @action(detail=False, methods=['get'], url_path='tags/autocomplete',
                 url_name='tags-autocomplete')
@@ -447,16 +452,41 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
 
     def get_searchqueryset(self, request):
         query = request.GET.get('q', '')
-        sqs = RelatedSearchQuerySet().models(FoiRequest).load_all()
-        if len(query) > 2:
-            sqs = sqs.auto_query(query)
-        else:
-            return SearchQuerySetWrapper(sqs.none(), FoiRequest)
 
-        sqs = sqs.load_all_queryset(FoiRequest, self.optimize_query(
-            FoiRequest.objects.all()
-        ))
-        return SearchQuerySetWrapper(sqs, FoiRequest)
+        user = self.request.user
+        token = self.request.auth
+
+        s = FoiRequestDocument.search()
+        if user.is_authenticated:
+            # Either not OAuth or OAuth and valid token
+            if not token and user.is_superuser:
+                # No filters for super users
+                pass
+            elif not token or token.is_valid(['read:request']):
+                s = s.filter('bool', should=[
+                    # Bool query in filter context
+                    # at least one should clause is required to match.
+                    ESQ('term', public=True),
+                    ESQ('term', user=user.pk),
+                ])
+            else:
+                s = s.filter('term', public=True)
+        else:
+            s = s.filter('term', public=True)
+
+        sqs = SearchQuerySetWrapper(
+            s,
+            FoiRequest
+        )
+
+        if len(query) > 2:
+            sqs = sqs.set_query(ESQ(
+                "multi_match",
+                query=query,
+                fields=['content', 'title', 'description']
+            ))
+
+        return sqs
 
     @throttle_action((MakeRequestThrottle,))
     def create(self, request, *args, **kwargs):

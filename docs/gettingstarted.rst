@@ -88,18 +88,16 @@ Go into the ``froide`` directory and copy the `local_settings.py.example` to `lo
 Now you can customize that settings file to your liking.
 
 
-Search with Haystack
+Search with Elasticsearch
 --------------------
 
-In order to get a real search engine running you need to override the `HAYSTACK_CONNECTIONS` setting with the details of your search engine. Find out `how to configure your search engine at the Haystack Docs <http://django-haystack.readthedocs.org/en/latest/tutorial.html#modify-your-settings-py>`_.
+An example configuration for Elasticsearch would look like this::
 
-An example configuration for solr would look like this::
-
-    HAYSTACK_CONNECTIONS = {
+    ELASTICSEARCH_INDEX_PREFIX = 'froide'
+    ELASTICSEARCH_DSL = {
         'default': {
-            'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-            'URL': 'http://127.0.0.1:8983/solr/froide'
-        }
+            'hosts': 'localhost:9200'
+        },
     }
 
 .. _background-tasks-with-celery:

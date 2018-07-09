@@ -1,36 +1,27 @@
 from django import forms
-from django.utils.http import urlencode
-from django.urls import reverse
 
-
-def make_filter_url(data):
-    from .filters import get_active_filters
-
-    data = dict(data)
-    url_kwargs = {}
-    for key in get_active_filters(data):
-        url_kwargs[key] = data.pop(key)
-
-    query_string = ''
-    data = {k: v for k, v in data.items() if v}
-    if data:
-        query_string = '?' + urlencode(data)
-    return reverse('foirequest-list', kwargs=url_kwargs) + query_string
+from django_filters.widgets import RangeWidget
 
 
 class DropDownFilterWidget(forms.widgets.ChoiceWidget):
     template_name = 'foirequest/widgets/dropdown_filter.html'
+
+    def __init__(self, *args, **kwargs):
+        self.get_url = kwargs.pop('get_url')
+        super().__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None, renderer=None):
         value = super(DropDownFilterWidget, self).render(name, value, attrs=attrs, renderer=renderer)
         return value
 
     def get_context(self, name, value, attrs):
-        self.selected_label = self.attrs.get('label', '')
+        self.default_label = self.attrs.get('label', '')
+        self.selected_label = self.default_label
         context = super(DropDownFilterWidget, self).get_context(
             name, value, attrs
         )
         context['selected_label'] = self.selected_label
+        context['default_label'] = self.default_label
         return context
 
     def create_option(self, name, value, label, selected, index,
@@ -42,9 +33,20 @@ class DropDownFilterWidget(forms.widgets.ChoiceWidget):
         # Data is set on widget directly before rendering
         data = self.data.copy()
         data[name] = value
-        option['url'] = make_filter_url(data)
+        option['url'] = self.get_url(data)
         return option
 
 
 class AttachmentFileWidget(forms.ClearableFileInput):
     template_name = 'foirequest/widgets/attachment_file.html'
+
+
+class DateRangeWidget(RangeWidget):
+    template_name = 'foirequest/widgets/daterange.html'
+
+    def __init__(self):
+        widgets = [
+            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+        ]
+        super(RangeWidget, self).__init__(widgets)

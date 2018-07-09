@@ -23,7 +23,7 @@ class PublicBodyTest(TestCase):
         category = factories.CategoryFactory.create()
         pb.categories.add(category)
         response = self.client.get(reverse('publicbody-list', kwargs={
-            'topic': category.slug
+            'category': category.slug
         }))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, pb.name)
@@ -34,7 +34,7 @@ class PublicBodyTest(TestCase):
         self.assertContains(response, pb.name)
         response = self.client.get(reverse('publicbody-list', kwargs={
             'jurisdiction': pb.jurisdiction.slug,
-            'topic': category.slug
+            'category': category.slug
         }))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, pb.name)

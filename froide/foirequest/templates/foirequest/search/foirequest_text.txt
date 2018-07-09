@@ -1,0 +1,27 @@
+{{ object.title }}
+
+{{ object.description }}
+
+{{ object.resolution }} {{ object.refusal_reason }}
+
+{% for tag in object.tags.all %}
+	{{ tag.name }}
+{% endfor %}
+
+{% for message in object.get_messages %}
+    {% if not message.content_hidden %}
+    {{ message.subject_redacted }}
+    {{ message.plaintext_redacted }}
+      {% for att in message.foiattachment_set.all %}
+          {{ att.name }}
+      {% endfor %}
+    {% endif %}
+{% endfor %}
+
+{{ object.public_body.name }}
+
+{{ object.public_body.classification.name }}
+
+{% for cat in object.public_body.categories.all %}
+    {{ cat.name }}
+{% endfor %}

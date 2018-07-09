@@ -13,7 +13,7 @@
 
 <div class="mb-3 mt-3">
   <h2>
-  {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.topic %}
+  {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.category %}
     {% trans "Requests" %}
     {% if filtered_objects.publicbody %}
       <small>
@@ -25,9 +25,9 @@
         {% blocktrans with name=filtered_objects.tag.name %}with tag “{{ name }}”{% endblocktrans %}
       </small>
     {% endif %}
-    {% if filtered_objects.topic %}
+    {% if filtered_objects.category %}
       <small>
-        {% blocktrans with name=filtered_objects.topic.name %}in topic “{{ name }}”{% endblocktrans %}
+        {% blocktrans with name=filtered_objects.category.name %}in category “{{ name }}”{% endblocktrans %}
       </small>
     {% endif %}
   {% else %}
@@ -37,25 +37,41 @@
 </div>
 
 {% endblock headline %}
+<form action="{% url 'foirequest-list' %}" method="get">
 
-<div class="row mb-5 align-items-start">
-  {% if form.jurisdiction.field.choices|length > 1 %}
-    <div class="col-md-3">
-      {{ form.jurisdiction }}
+  <div class="row mb-2 align-items-start">
+    <div class="col-md-6">
+      <div class="input-group">
+        {{ form.q }}
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-outline-primary">
+            {% trans "Search" %}
+          </button>
+        </div>
+      </div>
     </div>
-  {% endif %}
-
-  <div class="col-md-3">
-    {{ form.status }}
   </div>
 
-  {% comment %}
-  <div class="col-auto">
-    {{ form.topic }}
-  </div>
-  {% endcomment %}
+  <div class="row mb-5 align-items-start">
+    {% if form.jurisdiction.field.choices|length > 1 %}
+      <div class="col-md-3">
+        {{ form.jurisdiction }}
+      </div>
+    {% endif %}
 
+    <div class="col-md-3">
+      {{ form.status }}
+    </div>
 
+    {% comment %}
+    <div class="col-md-8">
+      {{ form.first }}
+    </div>
+
+    <div class="col-auto">
+      {{ form.category }}
+    </div>
+    {% endcomment %}
 
   {% if filtered_objects %}
     <div class="ml-auto col-auto">
@@ -70,9 +86,26 @@
   </div>
 </div>
 
+</form>
+
 
 <div class="row">
-  <div class="col-lg-12">
+  <div class="col-md-4">
+    <h2>By jurisdiction</h2>
+    <dl>
+      {{ facets }}
+        {% if facets.fields.jurisdiction %}
+            <dt>jurisdiction</dt>
+            {# Provide only the top 5 jurisdictions #}
+            {% for jurisdiction in facets.fields.jurisdiction|slice:":5" %}
+                <dd><a href="{{ request.get_full_path }}&amp;selected_facets=jurisdiction_exact:{{ jurisdiction.0|urlencode }}">{{ jurisdiction.0 }}</a> ({{ jurisdiction.1 }})</dd>
+            {% endfor %}
+        {% else %}
+            <p>No jurisdiction facets.</p>
+        {% endif %}
+    </dl>
+  </div>
+  <div class="col-md-8">
     {% block col-8-headline %}{% endblock col-8-headline %}
     <ul class="list-unstyled">
       {% for object in object_list %}
@@ -89,8 +122,9 @@
         </li>
       {% endfor %}
     </ul>
-    {% if object_list.paginator.num_pages > 1 %}
-      {% include "pagination/pagination.html" with page_obj=object_list %}
+
+    {% if paginator.num_pages > 1 %}
+      {% include "pagination/pagination.html" with page_obj=page_obj %}
     {% endif %}
 
     <ul class="nav nav-compact flex-column">

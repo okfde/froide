@@ -246,17 +246,6 @@ class Dev(Base):
     # # Set to false to actually use celery
     # CELERY_TASK_ALWAYS_EAGER = True
 
-    ######### Haystack ###########
-
-    # # Add a real engine like solr
-    # HAYSTACK_CONNECTIONS = {
-    #     'default': {
-    #         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    #     }
-    # }
-
-    # HAYSTACK_SIGNAL_PROCESSOR = 'celery_haystack.signals.CelerySignalProcessor'
-
     ########## Froide settings ########
 
     # FROIDE_CONFIG.update(dict(

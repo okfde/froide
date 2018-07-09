@@ -6,18 +6,19 @@ from rest_framework.settings import api_settings
 
 from rest_framework_jsonp.renderers import JSONPRenderer
 
+from elasticsearch_dsl.query import Q
+
 from django_filters import rest_framework as filters
 
-from haystack.query import RelatedSearchQuerySet
-from haystack.inputs import AutoQuery
-
 from froide.helper.api_utils import (
-    SearchFacetListSerializer, OpenRefineReconciliationMixin
+    SearchFacetListSerializer, OpenRefineReconciliationMixin,
+    ElasticLimitOffsetPagination
 )
 from froide.helper.search import SearchQuerySetWrapper
 
 from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
                      Classification)
+from .documents import PublicBodyDocument
 
 
 class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
@@ -367,8 +368,10 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
         name = 'Public Body'
         id = 'publicbody'
         model = PublicBody
+        document = PublicBodyDocument
         api_list = 'api:publicbody-list'
         obj_short_link = 'publicbody-publicbody_shortlink'
+        query_fields = ['name', 'content']
         filters = ['jurisdiction', 'classification']
         properties = [{
             'id': 'classification',
@@ -414,52 +417,57 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
 
     @action(detail=False, methods=['get'])
     def search(self, request):
-        self.queryset = self.get_searchqueryset(request)
+        self.sqs = self.get_searchqueryset(request)
 
-        page = self.paginate_queryset(self.queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(self.queryset, many=True)
+        paginator = ElasticLimitOffsetPagination()
+        paginator.paginate_queryset(self.sqs, self.request, view=self)
 
+        self.queryset = self.optimize_query(self.sqs.to_queryset())
+
+        serializer = self.get_serializer(self.queryset, many=True)
         data = serializer.data
 
-        if page is not None:
-            return self.get_paginated_response(data)
-        return Response(data)
+        return paginator.get_paginated_response(data)
 
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
         if self.action == 'search':
-            ctx['facets'] = self.queryset.sqs.facet_counts()
+            ctx['facets'] = self.sqs.get_aggregations()
         return ctx
 
     def get_searchqueryset(self, request):
         query = request.GET.get('q', '')
-        sqs = RelatedSearchQuerySet().models(PublicBody).load_all()
+
+        sqs = SearchQuerySetWrapper(
+            PublicBodyDocument.search(),
+            PublicBody
+        )
+
         if len(query) > 2:
-            sqs = sqs.filter(name_auto=AutoQuery(query))
-        else:
-            sqs = sqs.all()
+            sqs = sqs.set_query(Q(
+                "multi_match",
+                query=query,
+                fields=['name_auto', 'content']
+            ))
 
-        sqs = sqs.facet('jurisdiction', size=30)
-        juris = request.GET.get('jurisdiction')
-        if juris:
-            sqs = sqs.filter(jurisdiction=juris)
+        filters = {
+            'jurisdiction': Jurisdiction,
+            'classification': Classification,
+            'categories': Category
+        }
+        for key, model in filters.items():
+            pks = request.GET.getlist(key)
+            if pks:
+                try:
+                    obj = model.objects.filter(pk__in=pks)
+                    sqs = sqs.filter(**{key: [o.pk for o in obj]})
+                except ValueError:
+                    # Make result set empty, no 0 pk present
+                    sqs = sqs.filter(**{key: 0})
 
-        sqs = sqs.facet('classification', size=100)
-        classification = request.GET.get('classification')
-        if classification:
-            sqs = sqs.filter(classification=classification)
-
-        sqs = sqs.facet('categories', size=100)
-        categories = request.GET.getlist('categories')
-        if categories:
-            for cat in categories:
-                sqs = sqs.filter(categories=cat)
-
-        sqs = sqs.load_all_queryset(PublicBody, self.optimize_query(
-            PublicBody.objects.all()
-        ))
-
-        return SearchQuerySetWrapper(sqs, PublicBody)
+        sqs = sqs.add_aggregation([
+            'jurisdiction',
+            'classification',
+            'categories'
+        ])
+        return sqs

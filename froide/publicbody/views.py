@@ -8,8 +8,6 @@ from django.template import TemplateDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import FormView
 
-from haystack.query import SearchQuerySet
-
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
 
@@ -17,24 +15,19 @@ from .models import PublicBody, Category, FoiLaw, Jurisdiction
 from .forms import PublicBodyProposalForm
 
 
-def index(request, jurisdiction=None, topic=None):
+def index(request, jurisdiction=None, category=None):
     if jurisdiction is not None:
         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
 
-    if topic is not None:
-        topic = get_object_or_404(Category, slug=topic)
+    if category is not None:
+        category = get_object_or_404(Category, slug=category)
 
-    query = request.GET.get('q', '')
-    if query:
-        publicbodies = SearchQuerySet().models(PublicBody).auto_query(query)
-    else:
-        publicbodies = PublicBody.objects.get_list()
+    publicbodies = PublicBody.objects.get_list()
 
-    if topic:
-        publicbodies = publicbodies.filter(categories=topic.name if query else topic)
+    if category:
+        publicbodies = publicbodies.filter(categories=category)
     if jurisdiction:
-        publicbodies = publicbodies.filter(
-                jurisdiction=jurisdiction.name if query else jurisdiction)
+        publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
 
     page = request.GET.get('page')
     paginator = Paginator(publicbodies, 50)
@@ -49,9 +42,8 @@ def index(request, jurisdiction=None, topic=None):
         'object_list': publicbodies,
         'jurisdictions': Jurisdiction.objects.get_list(),
         'jurisdiction': jurisdiction,
-        'topic': topic,
-        'topics': Category.objects.get_category_list(),
-        'query': query,
+        'category': category,
+        'categories': Category.objects.get_category_list(),
     })
 
 

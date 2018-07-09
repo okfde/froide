@@ -55,7 +55,7 @@
     </div>
   </div>
   <div class="col-md-3 col-lg-3">
-    {% if jurisdiction or topic %}
+    {% if jurisdiction or category %}
     <div class="mb-3 mt-3">
       <a href="{% url 'publicbody-list' %}">{% trans "Show all public bodies" %}</a>
     </div>
@@ -63,10 +63,10 @@
     <h4>{% trans "Jurisdictions" %}</h4>
     <ul class="nav nav-compact flex-column">
       {% for juris in jurisdictions %}
-        {% if topic and jurisdiction == juris %}
-          {% url 'publicbody-list' topic=topic.slug as jur_url %}
-        {% elif topic %}
-          {% url 'publicbody-list' jurisdiction=juris.slug topic=topic.slug as jur_url %}
+        {% if category and jurisdiction == juris %}
+          {% url 'publicbody-list' category=category.slug as jur_url %}
+        {% elif category %}
+          {% url 'publicbody-list' jurisdiction=juris.slug category=category.slug as jur_url %}
         {% elif jurisdiction == juris %}
           {% url 'publicbody-list' as jur_url %}
         {% else %}
@@ -80,18 +80,18 @@
     </li>
     <h4 class="mt-3">{% trans "Topics" %}</h4>
     <ul class="nav nav-compact flex-column">
-      {% for top in topics %}
+      {% for top in categories %}
         {% if jurisdiction and topic == top %}
           {% url 'publicbody-list' jurisdiction=jurisdiction.slug as top_url %}
         {% elif jurisdiction %}
-          {% url 'publicbody-list' jurisdiction=jurisdiction.slug topic=top.slug as top_url %}
-        {% elif topic == top %}
+          {% url 'publicbody-list' jurisdiction=jurisdiction.slug category=top.slug as top_url %}
+        {% elif category == top %}
           {% url 'publicbody-list' as top_url %}
         {% else %}
-          {% url 'publicbody-list' topic=top.slug as top_url %}
+          {% url 'publicbody-list' category=top.slug as top_url %}
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link{% if topic == top %} active{% endif %}" href="{{ top_url }}{% if query %}?q={{ query }}{% endif %}">
+          <a class="nav-link{% if category == top %} active{% endif %}" href="{{ top_url }}{% if query %}?q={{ query }}{% endif %}">
             {{ top.name }}
           </a>
         </li>

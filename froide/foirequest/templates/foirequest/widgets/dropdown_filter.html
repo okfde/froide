@@ -1,6 +1,10 @@
 <div class="dropdown show">
   <a class="btn btn-light btn-block text-truncate dropdown-toggle" href="#" role="button" id="dropdown-{{ widget.attrs.id }}" title="{{ selected_label }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    {{ selected_label }}
+    {% if selected_label == default_label %}
+      {{ default_label }}
+    {% else %}
+      {{ default_label }}: {{ selected_label }}
+    {% endif %}
   </a>
   <div class="dropdown-menu" aria-labelledby="dropdown-{{ widget.attrs.id }}">
     {% for group_name, group_choices, group_index in widget.optgroups %}
