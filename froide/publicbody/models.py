@@ -136,6 +136,7 @@ class FoiLaw(models.Model):
             default=None, on_delete=models.SET_NULL,
             related_name="mediating_laws")
     email_only = models.BooleanField(_('E-Mail only'), default=False)
+    requires_signature = models.BooleanField(_('Requires signature'), default=False)
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL,
             default=settings.SITE_ID)
