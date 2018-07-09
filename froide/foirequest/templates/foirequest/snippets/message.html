@@ -17,7 +17,9 @@
                 {% trans "change" %}
               </a>)
             </span>
-            {% if message.is_postal %}<em>{% trans "via postal mail" %}</em>{% endif %}
+            {% if message.kind != 'email' %}
+              <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
+            {% endif %}
             <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
               {% with message_pb_form=message.get_public_body_sender_form %}
                 <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
@@ -30,7 +32,9 @@
             </div>
           {% else %}
             {{ message.user_real_sender }}
-            {% if message.is_postal %}<em>{% trans "via postal mail" %}</em>{% endif %}
+            {% if message.kind != 'email' %}
+              <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
+            {% endif %}
           {% endif %}
         {% else %}
           {% if message.is_response %}
