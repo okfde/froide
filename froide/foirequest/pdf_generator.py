@@ -15,13 +15,16 @@ try:
         Description, Foot, NewPage, LineBreak,
         FlushLeft, Itemize
     )
-    from pylatex.utils import italic
+    from pylatex.utils import escape_latex, italic
 
     PDF_EXPORT_AVAILABLE = True
 
 except ImportError:
     PDF_EXPORT_AVAILABLE = False
 
+from froide.helper.text_utils import (
+    remove_closing_inclusive, remove_greeting_inclusive
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,18 +43,20 @@ class PDFGenerator(object):
             return
 
         try:
-            path = tempfile.mkdtemp()
-            filename = os.path.join(path, 'output')
+            self.path = tempfile.mkdtemp()
+            filename = os.path.join(self.path, 'output')
 
+            doc = self.make_doc(self.obj)
             try:
-                self.run(self.obj, filename)
+                doc.generate_pdf(filename, clean=False, compiler="xelatex")
+                doc.generate_pdf(filename, clean_tex=False, compiler="xelatex")
             except pylatex.errors.CompilerError as e:
                 logger.exception(e)
                 yield None
             else:
                 yield filename + '.pdf'
         finally:
-            shutil.rmtree(path)
+            shutil.rmtree(self.path)
 
     def get_pdf_bytes(self):
         if not PDF_EXPORT_AVAILABLE:
@@ -65,7 +70,7 @@ class PDFGenerator(object):
 
 
 class FoiRequestPDFGenerator(PDFGenerator):
-    def run(self, foirequest, filename):
+    def make_doc(self, foirequest):
         doc = Document(
             lmodern=True,
             geometry_options={
@@ -112,8 +117,7 @@ class FoiRequestPDFGenerator(PDFGenerator):
             if not last:
                 doc.append(NewPage())
 
-        doc.generate_pdf(filename, clean=False, compiler="xelatex")
-        doc.generate_pdf(filename, clean_tex=False, compiler="xelatex")
+        return doc
 
 
 def add_message_to_doc(doc, message):
@@ -160,3 +164,105 @@ def append_text(doc, text):
                 continue
             doc.append(line + ('' if last else '\n'))
             line_broken = False
+
+
+class LetterPDFGenerator(PDFGenerator):
+    def make_doc(self, message):
+        doc = Document(
+            documentclass='scrlttr2',
+            document_options=[
+                'fontsize=11pt',
+                'parskip=full',
+                'paper=A4',
+                'fromalign=right',
+                'fromemail=true',
+                'fromurl=true',
+                'version=last'
+            ],
+            inputenc='utf8',
+            fontenc=None,
+            page_numbers=False,
+            geometry_options=None,
+            lmodern=None,
+            textcomp=True,
+        )
+        doc.packages.append(Package('fontspec,xunicode'))
+        doc.packages.append(Package('inputenc', 'utf8'))
+        doc.packages.append(Package('eurosym'))
+        doc.packages.append(Package('graphicx'))
+        doc.packages.append(Package('babel', 'ngerman'))
+        # doc.packages.append(Package('pdfpages'))
+        doc.packages.append(Package('hyperref', 'hidelinks'))
+
+        doc.append(NoEscape("\\lefthyphenmin=5"))
+
+        doc.append(NoEscape(
+            '\\setkomavar{fromname}{%s}' % message.sender_name))
+
+        user_address = message.sender_user.address
+        if user_address:
+            address = '\\\\'.join(
+                escape_latex(x) for x in user_address.splitlines()
+                if x.strip())
+            doc.append(NoEscape(
+                '\\setkomavar{fromaddress}{%s}' % address
+            ))
+
+        email = message.sender_email
+
+        doc.append(NoEscape(
+            '\\setkomavar{fromemail}{\href{mailto:%(email)s}{%(email)s}}' % {
+                'email': email
+            }
+        ))
+
+        url = message.request.get_absolute_domain_short_url()
+        doc.append(NoEscape(
+            '\\setkomavar{fromurl}[]{\href{%(url)s}{%(url)s}}' % {
+                'url': url
+            }
+        ))
+
+        doc.append(NoEscape('\\setkomavar{myref}[\\myrefname]{%s}' % (
+            escape_latex('#' + str(message.request.pk))
+        )))
+
+        doc.append(NoEscape('\\setkomavar{customer}[%s]{%s}' % (
+            escape_latex(_('Zustellung')),
+            escape_latex(_('Per Fax und E-Mail')),
+        )))
+
+        doc.append(NoEscape('\\setkomavar{date}{\\today}'))
+        doc.append(NoEscape(
+            '\\setkomavar{subject}{%s}' % escape_latex(message.subject)
+        ))
+
+        pb = message.recipient_public_body
+        if pb is not None:
+            address = pb.address.splitlines()
+            recipient_line = [pb.name] + address
+            recipient_line = '\\\\'.join(
+                escape_latex(x) for x in recipient_line
+            )
+            doc.append(NoEscape('''\\begin{letter}{%s}''' % recipient_line))
+
+        doc.append(NoEscape('\\opening{Sehr geehrte Damen und Herren,}'))
+
+        text = self.get_letter_text()
+        append_text(doc, text)
+
+        self.append_closing(doc)
+
+        doc.append(NoEscape('\\end{letter}'))
+
+        return doc
+
+    def get_letter_text(self):
+        message = self.obj
+        text = message.plaintext.split(message.sender_email)[0]
+        text = remove_greeting_inclusive(text)
+        text = remove_closing_inclusive(text)
+        return text
+
+    def append_closing(self, doc):
+        doc.append(NoEscape('\\closing{Mit freundlichen Grüßen}'))
