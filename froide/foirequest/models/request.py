@@ -17,7 +17,6 @@ from django.core.files import File
 import django.dispatch
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
-from django.utils.html import strip_tags
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -647,8 +646,6 @@ class FoiRequest(models.Model):
         message.recipient = self.user.display_name()
         message.plaintext = email['body']
         message.html = email['html']
-        if not message.plaintext and message.html:
-            message.plaintext = strip_tags(email['html'])
         message.subject_redacted = message.redact_subject()[:250]
         message.plaintext_redacted = message.redact_plaintext()
         message.save()
