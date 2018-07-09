@@ -439,6 +439,9 @@ class Base(Configuration):
             'privary': '/privacy/',
             'about': '/about/',
             'help': '/help/',
+        },
+        message_handlers={
+            'email': 'froide.foirequest.message_handlers.EmailMessageHandler'
         }
     )
 

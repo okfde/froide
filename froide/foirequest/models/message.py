@@ -15,8 +15,9 @@ from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (redact_content, remove_closing,
                                       replace_custom)
 
-from ..foi_mail import send_foi_mail
+
 from .request import FoiRequest
+from ..message_handlers import send_message, resend_message
 
 
 class FoiMessageManager(models.Manager):
@@ -369,53 +370,11 @@ class FoiMessage(models.Model):
                 countdown=5**count * 60
             )
 
-    def send(self, notify=True, attachments=None):
-        extra_kwargs = {}
-        if settings.FROIDE_CONFIG['dryrun']:
-            recp = self.recipient_email.replace("@", "+")
-            self.recipient_email = "%s@%s" % (
-                recp,
-                settings.FROIDE_CONFIG['dryrun_domain']
-            )
-        # Use send_foi_mail here
-        from_addr = make_address(
-            self.request.secret_address,
-            self.request.user.get_full_name()
-        )
-        get_notified = (self.sender_user.is_superuser and
-                        not self.request.public)
-        if settings.FROIDE_CONFIG['read_receipt'] and get_notified:
-            extra_kwargs['read_receipt'] = True
-        if settings.FROIDE_CONFIG['delivery_receipt'] and get_notified:
-            extra_kwargs['delivery_receipt'] = True
-        if settings.FROIDE_CONFIG['dsn'] and get_notified:
-            extra_kwargs['dsn'] = True
+    def send(self, notify=True, **kwargs):
+        send_message(self, notify=notify, **kwargs)
 
-        self.save()
-        message_id = self.get_absolute_domain_short_url()
-        extra_kwargs['froide_message_id'] = message_id
-
-        if not self.request.is_blocked:
-            send_foi_mail(
-                self.subject, self.plaintext, from_addr,
-                [self.recipient_email.strip()], attachments=attachments,
-                **extra_kwargs
-            )
-            self.email_message_id = ''
-            self.sent = True
-            self.save()
-            ds = self.get_delivery_status()
-            if ds is not None:
-                ds.delete()
-
-            # Check delivery status in 2 minutes
-            from ..tasks import check_delivery_status
-            check_delivery_status.apply_async((self.id,), {'count': 0},
-                                              countdown=2 * 60)
-
-        self.request._messages = None
-        if notify:
-            FoiRequest.message_sent.send(sender=self.request, message=self)
+    def resend(self, **kwargs):
+        resend_message(self, **kwargs)
 
 
 @python_2_unicode_compatible

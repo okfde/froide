@@ -232,9 +232,9 @@ class FoiMessageAdmin(admin.ModelAdmin):
     def resend_message(self, request, queryset):
         count = 0
         total = len(queryset)
-        queryset = queryset.exclude(recipient_email='').filter(sent=False)
+        queryset = queryset.filter(sent=False)
         for message in queryset:
-            message.send(notify=False)
+            message.resend()
             count += 1
         self.message_user(request,
             _("{num} of {total} selected messages were sent.").format(
