@@ -421,26 +421,30 @@ class FoiMessage(models.Model):
 @python_2_unicode_compatible
 class DeliveryStatus(models.Model):
     STATUS_UNKNOWN = 'unknown'
+    STATUS_SENDING = 'sending'
     STATUS_SENT = 'sent'
     STATUS_RECEIVED = 'received'
     STATUS_READ = 'read'
     STATUS_DEFERRED = 'deferred'
     STATUS_BOUNCED = 'bounced'
     STATUS_EXPIRED = 'expired'
+    STATUS_FAILED = 'failed'
 
     FINAL_STATUS = (
         STATUS_SENT, STATUS_RECEIVED, STATUS_READ, STATUS_BOUNCED,
-        STATUS_EXPIRED
+        STATUS_EXPIRED, STATUS_FAILED
     )
 
     STATUS_CHOICES = (
         (STATUS_UNKNOWN, _('unknown')),
+        (STATUS_SENDING, _('sending')),
         (STATUS_SENT, _('sent')),
         (STATUS_RECEIVED, _('received')),
         (STATUS_READ, _('read')),
         (STATUS_DEFERRED, _('deferred')),
         (STATUS_BOUNCED, _('bounced')),
         (STATUS_EXPIRED, _('expired')),
+        (STATUS_FAILED, _('failed')),
     )
 
     message = models.OneToOneField(FoiMessage, on_delete=models.CASCADE)
@@ -465,11 +469,13 @@ class DeliveryStatus(models.Model):
         )
 
     def is_pending(self):
-        return self.status == self.STATUS_DEFERRED
+        return self.status in (
+            self.STATUS_DEFERRED, self.STATUS_SENDING
+        )
 
     def is_failed(self):
         return self.status in (
-            self.STATUS_BOUNCED, self.STATUS_EXPIRED
+            self.STATUS_BOUNCED, self.STATUS_EXPIRED, self.STATUS_FAILED
         )
 
     def is_log_status_final(self):
