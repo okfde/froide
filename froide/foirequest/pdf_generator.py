@@ -229,8 +229,8 @@ class LetterPDFGenerator(PDFGenerator):
         )))
 
         doc.append(NoEscape('\\setkomavar{customer}[%s]{%s}' % (
-            escape_latex(_('Zustellung')),
-            escape_latex(_('Per Fax und E-Mail')),
+            escape_latex(_('Delivery')),
+            escape_latex(_('Via fax and email')),
         )))
 
         doc.append(NoEscape('\\setkomavar{date}{\\today}'))
@@ -247,7 +247,9 @@ class LetterPDFGenerator(PDFGenerator):
             )
             doc.append(NoEscape('''\\begin{letter}{%s}''' % recipient_line))
 
-        doc.append(NoEscape('\\opening{Sehr geehrte Damen und Herren,}'))
+        doc.append(NoEscape('\\opening{%s}' % (
+            escape_latex(_('Dear Ladies and Gentlemen,'))
+        )))
 
         text = self.get_letter_text()
         append_text(doc, text)
@@ -266,4 +268,6 @@ class LetterPDFGenerator(PDFGenerator):
         return text
 
     def append_closing(self, doc):
-        doc.append(NoEscape('\\closing{Mit freundlichen Grüßen}'))
+        doc.append(NoEscape('\\closing{%s}' % (
+            escape_latex(_('Kind Regards,'))
+        )))
