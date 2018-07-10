@@ -184,7 +184,6 @@ class CreateRequestService(BaseService):
 
         FoiRequest.request_to_public_body.send(sender=request)
 
-        message.original = ''
         message.save()
         FoiRequest.request_created.send(
             sender=request,

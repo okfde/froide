@@ -94,9 +94,12 @@ class FoiMessage(models.Model):
     plaintext_redacted = models.TextField(
         _("redacted plain text"), blank=True, null=True)
     html = models.TextField(_("HTML"), blank=True, null=True)
-    original = models.TextField(_("Original"), blank=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
     not_publishable = models.BooleanField(_('Not publishable'), default=False)
+    original = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='message_copies'
+    )
 
     objects = FoiMessageManager()
 

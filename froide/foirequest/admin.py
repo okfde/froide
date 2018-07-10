@@ -211,9 +211,9 @@ class FoiMessageAdmin(admin.ModelAdmin):
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
-    exclude = ('original',)
     raw_id_fields = (
-        'request', 'sender_user', 'sender_public_body', 'recipient_public_body'
+        'request', 'sender_user', 'sender_public_body',
+        'recipient_public_body', 'original'
     )
     inlines = [
         DeliveryStatusInline,
