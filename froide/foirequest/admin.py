@@ -33,7 +33,8 @@ SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
 class FoiMessageInline(admin.StackedInline):
     model = FoiMessage
     raw_id_fields = (
-        'request', 'sender_user', 'sender_public_body', 'recipient_public_body'
+        'request', 'sender_user', 'sender_public_body', 'recipient_public_body',
+        'original'
     )
 
 
