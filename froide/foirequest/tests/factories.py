@@ -245,7 +245,6 @@ class FoiMessageFactory(factory.DjangoModelFactory):
     plaintext = 'plaintext'
     plaintext_redacted = 'plaintext'
     html = ''
-    original = 'E-mailOriginal'
     redacted = False
     not_publishable = False
 
