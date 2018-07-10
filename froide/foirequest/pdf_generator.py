@@ -198,7 +198,7 @@ class LetterPDFGenerator(PDFGenerator):
         doc.append(NoEscape("\\lefthyphenmin=5"))
 
         doc.append(NoEscape(
-            '\\setkomavar{fromname}{%s}' % message.sender_name))
+            '\\setkomavar{fromname}{%s}' % message.real_sender))
 
         user_address = message.sender_user.address
         if user_address:
