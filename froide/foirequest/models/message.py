@@ -122,6 +122,10 @@ class FoiMessage(models.Model):
         return self.kind == 'post'
 
     @property
+    def is_not_email(self):
+        return self.kind != 'email'
+
+    @property
     def content(self):
         return self.plaintext
 
@@ -161,14 +165,20 @@ class FoiMessage(models.Model):
             alternative = self.recipient
             if self.recipient_public_body:
                 alternative = self.recipient_public_body.name
-            if self.is_postal:
-                return _('{} (via post)').format(self.recipient or alternative)
+            if self.is_not_email:
+                return _('{name} (via {via})').format(
+                    name=self.recipient or alternative,
+                    kind=self.get_kind_display()
+                )
             return make_address(self.recipient_email,
                                 self.recipient or alternative)
 
         recipient = self.recipient or self.request.user.get_full_name()
-        if self.is_postal:
-            return _('{} (via post)').format(recipient)
+        if self.is_not_email:
+            return _('{name} (via {via})').format(
+                name=recipient,
+                kind=self.get_kind_display()
+            )
         email = self.recipient_email or self.request.secret_address
         return make_address(email, recipient)
 
@@ -332,7 +342,7 @@ class FoiMessage(models.Model):
         return self._delivery_status
 
     def check_delivery_status(self, count=None, extended=False):
-        if self.is_postal or self.is_response:
+        if self.is_not_email or self.is_response:
             return
 
         from froide.foirequest.delivery import get_delivery_report

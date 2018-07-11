@@ -130,14 +130,9 @@ def add_message_to_doc(doc, message):
     with doc.create(Description()) as descr:
         descr.add_item(str(_('From:')), message.real_sender)
         descr.add_item(str(_('To:')), message.get_text_recipient())
-        if message.is_postal:
-            descr.add_item(str(_('Date:')),
-                formats.date_format(message.timestamp, "DATE_FORMAT"))
-            descr.add_item(str(_('Via:')), str(_('Postal Mail')))
-        else:
-            descr.add_item(str(_('Date:')),
-                formats.date_format(message.timestamp, "DATETIME_FORMAT"))
-            descr.add_item(str(_('Via:')), str(_('Email')))
+        descr.add_item(str(_('Date:')),
+            formats.date_format(message.timestamp, "DATETIME_FORMAT"))
+        descr.add_item(str(_('Via:')), message.get_kind_display())
         descr.add_item(str(_('URL:')), message.get_accessible_link())
         descr.add_item(str(_('Subject:')), message.subject)
         if len(att_queryset):
