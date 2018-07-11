@@ -168,7 +168,7 @@ class FoiMessage(models.Model):
             if self.is_not_email:
                 return _('{name} (via {via})').format(
                     name=self.recipient or alternative,
-                    kind=self.get_kind_display()
+                    via=self.get_kind_display()
                 )
             return make_address(self.recipient_email,
                                 self.recipient or alternative)
@@ -177,7 +177,7 @@ class FoiMessage(models.Model):
         if self.is_not_email:
             return _('{name} (via {via})').format(
                 name=recipient,
-                kind=self.get_kind_display()
+                via=self.get_kind_display()
             )
         email = self.recipient_email or self.request.secret_address
         return make_address(email, recipient)
