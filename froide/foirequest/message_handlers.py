@@ -44,6 +44,10 @@ class MessageHandler(object):
             return
         request = message.request
 
+        ds = message.get_delivery_status()
+        if ds is not None:
+            raise ValueError('Delivery Status exists!')
+
         if not request.is_blocked:
             self.run_send(**kwargs)
 
@@ -54,6 +58,20 @@ class MessageHandler(object):
             )
 
     def resend(self, **kwargs):
+        message = self.message
+
+        ds = message.get_delivery_status()
+        if ds is not None and ds.is_sent():
+            # If status is received, do not send
+            return
+
+        if ds is not None:
+            # Remove existing delivery status prior to sending
+            ds.delete()
+
+        message.sent = False
+        message.save()
+
         kwargs['notify'] = False
         self.send(**kwargs)
 
@@ -62,7 +80,7 @@ class MessageHandler(object):
 
 
 class DefaultMessageHandler(MessageHandler):
-    def send(self, notify=True, **kwargs):
+    def send(self, **kwargs):
         pass
 
     def resend(self, **kwargs):
@@ -109,9 +127,6 @@ class EmailMessageHandler(MessageHandler):
         message.email_message_id = ''
         message.sent = True
         message.save()
-        ds = message.get_delivery_status()
-        if ds is not None:
-            ds.delete()
 
         # Check delivery status in 2 minutes
         from .tasks import check_delivery_status

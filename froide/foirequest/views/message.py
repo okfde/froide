@@ -155,10 +155,14 @@ def approve_message(request, foirequest, message):
 @allow_write_foirequest
 def resend_message(request, foirequest):
     try:
-        mes = FoiMessage.objects.get(sent=False, request=foirequest, pk=int(request.POST.get('message', 0)))
+        mes = FoiMessage.objects.get(
+            sent=False,
+            request=foirequest,
+            pk=int(request.POST.get('message', 0))
+        )
     except (FoiMessage.DoesNotExist, ValueError):
         messages.add_message(request, messages.ERROR,
                     _('Invalid input!'))
         return render_400(request)
-    mes.send(notify=False)
+    mes.resend()
     return redirect('admin:foirequest_foimessage_change', mes.id)
