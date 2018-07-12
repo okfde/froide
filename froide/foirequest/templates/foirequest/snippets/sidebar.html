@@ -66,22 +66,6 @@
     <input type="text" class="form-control form-control-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
   </li>
 
-{% block feeds %}
-  <li class="nav-header">{% trans "Feeds" %}</li>
-  <li class="nav-item">
-    <a href="{% url 'foirequest-feed' slug=object.slug %}">
-      <i class="fa fa-rss" aria-hidden="true"></i>
-      {% trans "RSS Feed" %}
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">
-      <i class="fa fa-rss-square" aria-hidden="true"></i>
-      {% trans "Atom Feed" %}
-    </a>
-  </li>
-{% endblock feeds%}
-
   {% if not object.public %}
     <li class="nav-header">{% trans "Secret Short URL" %}</li>
     <li class="nav-item">
@@ -92,7 +76,25 @@
     </li>
   {% endif %}
 
- {% if object|can_write_foirequest:request %}
+{% block feeds %}
+  {% if object.public %}
+    <li class="nav-header">{% trans "Feeds" %}</li>
+    <li class="nav-item">
+      <a href="{% url 'foirequest-feed' slug=object.slug %}">
+        <i class="fa fa-rss" aria-hidden="true"></i>
+        {% trans "RSS Feed" %}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'foirequest-feed_atom' slug=object.slug %}">
+        <i class="fa fa-rss-square" aria-hidden="true"></i>
+        {% trans "Atom Feed" %}
+      </a>
+    </li>
+  {% endif %}
+{% endblock feeds%}
+
+ {% if object|can_write_foirequest:request or object|can_read_foirequest_anonymous:request %}
     <li class="nav-header">{% trans "Download" %}</li>
     <li class="nav-item">
       <a class="btn btn-light" href="{% url 'foirequest-download' slug=object.slug %}">

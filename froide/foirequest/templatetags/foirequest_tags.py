@@ -14,7 +14,9 @@ from froide.helper.text_utils import unescape, split_text_by_separator
 
 from ..models import FoiRequest
 from ..foi_mail import get_alternative_mail
-from ..auth import can_read_foirequest, can_write_foirequest
+from ..auth import (
+    can_read_foirequest, can_write_foirequest, can_read_foirequest_anonymous
+)
 
 register = template.Library()
 
@@ -82,14 +84,20 @@ def mark_differences(content_a, content_b,
     return mark_safe(''.join(new_content))
 
 
-def redact_message(message, user):
+def redact_message(message, request):
     real_content = message.get_real_content().replace("\r\n", "\n")
     redacted_content = message.get_content().replace("\r\n", "\n")
 
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
 
-    if message.request.user == user or user.is_staff:
+    foirequest = message.request
+    authenticated_read = (
+        can_write_foirequest(foirequest, request) or
+        can_read_foirequest_anonymous(foirequest, request)
+    )
+
+    if authenticated_read:
         content_1 = mark_differences(c_1, r_1,
             attrs=' class="redacted redacted-hover"'
             ' data-toggle="tooltip" title="{title}"'.format(
@@ -144,6 +152,11 @@ def can_read_foirequest_filter(foirequest, request):
 @register.filter(name='can_write_foirequest')
 def can_write_foirequest_filter(foirequest, request):
     return can_write_foirequest(foirequest, request)
+
+
+@register.filter(name='can_read_foirequest_anonymous')
+def can_read_foirequest_anonymous_filter(foirequest, request):
+    return can_read_foirequest_anonymous(foirequest, request)
 
 
 def alternative_address(foirequest):

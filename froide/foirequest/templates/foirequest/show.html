@@ -33,7 +33,7 @@
 
 {% block app_body %}
 
-{% if not user.is_authenticated and object.awaits_classification %}
+{% if not user.is_authenticated and object.awaits_classification and not object|can_read_foirequest_anonymous:request %}
   {% url "account-login" as login_url %}
   <div class="alert alert-info d-print-none">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
 {% endif %}
@@ -83,6 +83,15 @@
     <h2 class="mb-5 mt-3">{{ object.title }}</h2>
   </div>
 </div>
+
+{% if not object.public and object|can_read_foirequest_anonymous:request %}
+  <div class="alert alert-warning">
+    <h4>{% trans "This request is not public!" %}</h4>
+    <p>
+      {% trans "You clicked a special URL that gave you access. Share this link responsibly." %}
+    </p>
+  </div>
+{% endif %}
 
 {% if not object.public and object.is_foi and object|can_write_foirequest:request %}
   <div class="row">

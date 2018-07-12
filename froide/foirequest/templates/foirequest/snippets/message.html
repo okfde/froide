@@ -181,14 +181,14 @@
                 <button class="btn btn-secondary" type="submit">{% trans "I want to publish this message" %}</button>
               </form>
             </div>
-            <div class="content-text">{% redact_message message user %}</div>
+            <div class="content-text">{% redact_message message request %}</div>
           {% else %}
             <div class="alert alert-warning">
               <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
             </div>
           {% endif %}
         {% else %}
-          <div class="content-text">{% redact_message message user %}</div>
+          <div class="content-text">{% redact_message message request %}</div>
         {% endif %}
       {% endif %}
     </div>
