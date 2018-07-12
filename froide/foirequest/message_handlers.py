@@ -67,7 +67,7 @@ class MessageHandler(object):
 
         if ds is not None:
             # Remove existing delivery status prior to sending
-            ds.delete()
+            message.delete_delivery_status()
 
         message.sent = False
         message.save()
