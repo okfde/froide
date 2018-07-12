@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n %}
+
+{% block object-tools-items %}
+  {% if not original.confirmed %}
+  <li><form method="post" action="{% url 'admin:publicbody-proposedpublicbody-confirm' pk=original.pk %}">{% csrf_token %}
+    <input type="submit" value="{% blocktrans %}Confirm this Public Body {% endblocktrans %}"/>
+  </form></li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

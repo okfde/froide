@@ -4,7 +4,7 @@
 {% block content %}
   {{ block.super }}
   <div>
-    <form enctype="multipart/form-data" method="post" action="{% url 'publicbody-import' %}">{% csrf_token %}
+    <form enctype="multipart/form-data" method="post" action="{% url 'admin:publicbody-publicbody-import_csv' %}">{% csrf_token %}
       <input type="url" name="url" value="" placeholder="http://example.com/data.csv"/>
       {% trans "or" %}
       <input type="file" name="file"/>

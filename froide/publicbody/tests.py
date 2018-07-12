@@ -99,24 +99,28 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         csv_file.close()
 
     def test_csv_import_request(self):
-        url = reverse('publicbody-import')
+        url = reverse('admin:publicbody-publicbody-import_csv')
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/admin/login/?next=', response.url)
 
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/admin/login/?next=', response.url)
 
         self.client.logout()
-        self.client.login(email='info@fragdenstaat.de', password='froide')
+        self.client.login(email='superuser@fragdenstaat.de', password='froide')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 403)
 
         response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
+        self.assertIn('/admin/publicbody/publicbody/', response.url)
 
         response = self.client.post(url, {'url': 'test'})
         self.assertEqual(response.status_code, 302)
+        self.assertIn('/admin/publicbody/publicbody/', response.url)
 
     def test_show_law(self):
         law = FoiLaw.objects.filter(meta=False)[0]

@@ -31,6 +31,7 @@ markupsafe==1.0
 maxminddb==1.4.0
 oauthlib==2.1.0
 pdflib==0.1.7
+phonenumbers==8.9.10
 pillow==5.1.0
 pypdf2==1.26.0
 python-magic==0.4.15

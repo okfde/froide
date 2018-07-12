@@ -8,12 +8,35 @@
 
 {% block metadescription %}{% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a {{ classification }} in {{ juris }} on {{ site_name }}{% endblocktrans %}{% endblock %}
 
+{% block extra_head %}
+  {% if not object.confirmed %}
+    <meta name="robots" content="noindex"/>
+  {% endif %}
+{% endblock %}
+
 {% block app_body %}
 <div itemscope itemtype="http://schema.org/Organization">
 
+{% if not object.confirmed %}
+  <div class="alert alert-warning">
+    <h3>
+      {% trans "Proposal" %}
+    </h3>
+    {% if object.created_by == request.user %}
+      <p>
+        {% trans "You have proposed this public body, but it has not been confirmed yet." %}
+      </p>
+    {% else %}
+      <p>
+        {% trans "This public body has been proposed and has not been confirmed yet." %}
+      </p>
+    {% endif %}
+  </div>
+{% endif %}
+
 <h2 itemprop="name">{{ object.name }}</h2>
 
-{% if object.email %}
+{% if object.email and object.confirmed %}
 <p>
   <a class="btn btn-primary" href="{% url 'foirequest-make_request' publicbody_slug=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
 </p>
@@ -45,6 +68,14 @@
           <span itemprop="email">{{ object.email }}</span>
         </dd>
       {% endif %}
+
+      {% if object.fax %}
+        <dt>{% blocktrans %}Fax:{% endblocktrans %}</dt>
+        <dd>
+          <span itemprop="fax">{{ object.fax }}</span>
+        </dd>
+      {% endif %}
+
       <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
       <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>
       <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
@@ -66,7 +97,12 @@
     </dl>
 
     {% if user.is_staff %}
-      <a class="btn btn-secondary" href="{% url 'admin:publicbody_publicbody_change' object.id %}">
+      {% if object.confirmed %}
+        {% url 'admin:publicbody_publicbody_change' object.id as admin_url %}
+      {% else %}
+        {% url 'admin:publicbody_proposedpublicbody_change' object.id as admin_url %}
+      {% endif %}
+      <a class="btn btn-secondary" href="{{ admin_url }}">
         <i class="fa fa-cog"></i>
         {% trans "View on Admin site" %}
       </a>

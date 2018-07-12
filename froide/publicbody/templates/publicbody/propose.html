@@ -1,0 +1,49 @@
+{% extends "publicbody/base.html" %}
+
+{% load i18n %}
+{% load form_helper %}
+{% load block_helper %}
+
+{% block app_body %}
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h2>
+      {% trans "Propose a new public body" %}
+    </h2>
+
+    <p>
+      {% url 'publicbody-list' as pb_list %}
+      {% blocktrans with url=pb_list %}
+        <a href="{{ url }}">Please check the list of public bodies</a> if it really does not exist yet.
+      {% endblocktrans %}
+    </p>
+    <p>
+      {% blocktrans %}
+        Then fill as many fields as you can in the form below.
+      {% endblocktrans %}
+    </p>
+
+    <form action="{% url 'publicbody-propose' %}" method="post">
+      {% csrf_token %}
+      {% render_form form %}
+      <p class="text-muted">
+        {% trans "If you'd like to add a lot of public bodies at once, please contact the site moderators." %}
+      </p>
+      <div class="text-right">
+        <button type="submit" class="btn btn-primary">
+          {% trans "Propose new public body" %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% addtoblock "css" %}
+  {{ form.media.css }}
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+  {{ form.media.js }}
+{% endaddtoblock %}
+
+{% endblock %}

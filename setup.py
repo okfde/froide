@@ -53,6 +53,7 @@ setup(
         'dj-database-url',
         'django-cache-url',
         'django-filter',
+        'phonenumbers',
     ],
     include_package_data=True,
     classifiers=[

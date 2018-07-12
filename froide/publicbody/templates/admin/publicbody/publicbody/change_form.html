@@ -6,11 +6,5 @@
     {% trans "This public body's requests" %}
   </a>
 </li>
-{% if not original.confirmed %}
-<li><form method="post" action="{% url 'publicbody-confirm' %}">{% csrf_token %}
-  <input type="hidden" name="public_body" value="{{ original.pk }}"/>
-  <input type="submit" value="{% blocktrans %}Confirm this Public Body {% endblocktrans %}"/>
-</form></li>
-{% endif %}
 {{ block.super }}
 {% endblock %}

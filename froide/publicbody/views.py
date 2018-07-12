@@ -1,20 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
-from django.utils.translation import ugettext_lazy as _, ungettext
+from django.shortcuts import render, redirect, get_object_or_404, Http404
+from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.sitemaps import Sitemap
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template import TemplateDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic import FormView
 
 from haystack.query import SearchQuerySet
 
 from froide.foirequest.models import FoiRequest
-from froide.helper.utils import render_400, render_403
 from froide.helper.cache import cache_anonymous_page
 
 from .models import PublicBody, Category, FoiLaw, Jurisdiction
-from .csv_import import CSVImporter
+from .forms import PublicBodyProposalForm
 
 
 def index(request, jurisdiction=None, topic=None):
@@ -85,7 +85,10 @@ def publicbody_shortlink(request, obj_id):
 
 
 def show_publicbody(request, slug):
-    obj = get_object_or_404(PublicBody, slug=slug)
+    obj = get_object_or_404(PublicBody._default_manager, slug=slug)
+    if not obj.confirmed:
+        if request.user != obj._created_by and not request.user.is_staff:
+            raise Http404
     context = {
         'object': obj,
         'foirequests': FoiRequest.published.filter(
@@ -94,54 +97,6 @@ def show_publicbody(request, slug):
         'foirequest_count': FoiRequest.published.filter(public_body=obj).count()
     }
     return render(request, 'publicbody/show.html', context)
-
-
-@require_POST
-def confirm(request):
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff and not request.user.is_superuser:
-        return render_403(request)
-    try:
-        pb = get_object_or_404(PublicBody, pk=int(request.POST.get('public_body', '')))
-    except ValueError:
-        return render_400(request)
-    result = pb.confirm()
-    if result is None:
-        messages.add_message(request, messages.ERROR,
-            _('This request was already confirmed.'))
-    else:
-        messages.add_message(request, messages.ERROR,
-                ungettext('%(count)d message was sent.',
-                    '%(count)d messages were sent', result
-                    ) % {"count": result})
-    return redirect('admin:publicbody_publicbody_change', pb.id)
-
-
-@require_POST
-def import_csv(request):
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff and not request.user.is_superuser:
-        return render_403(request)
-    if not request.method == 'POST':
-        return render_403(request)
-    importer = CSVImporter()
-    url = request.POST.get('url')
-    csv_file = request.FILES.get('file')
-    try:
-        if not url and not csv_file:
-            raise ValueError(_('You need to provide a url or a file.'))
-        if url:
-            importer.import_from_url(url)
-        else:
-            importer.import_from_file(csv_file)
-    except Exception as e:
-        messages.add_message(request, messages.ERROR, str(e))
-    else:
-        messages.add_message(request, messages.SUCCESS,
-            _('Public Bodies were imported.'))
-    return redirect('admin:publicbody_publicbody_changelist')
 
 
 SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
@@ -178,3 +133,26 @@ class FoiLawSitemap(Sitemap):
 
     def lastmod(self, obj):
         return obj.updated
+
+
+class PublicBodyProposalView(LoginRequiredMixin, FormView):
+    template_name = 'publicbody/propose.html'
+    form_class = PublicBodyProposalForm
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def form_valid(self, form):
+        self.object = form.save(self.request.user)
+        messages.add_message(
+            self.request, messages.INFO,
+            _('Thank you for your proposal. We will send you an email when it has been approved.')
+        )
+        return super(PublicBodyProposalView, self).form_valid(form)
+
+    def handle_no_permission(self):
+        messages.add_message(
+            self.request, messages.WARNING,
+            _('You need to register an account and login in order to propose a new public body.')
+        )
+        return super(PublicBodyProposalView, self).handle_no_permission()

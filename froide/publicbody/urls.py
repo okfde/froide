@@ -1,12 +1,14 @@
 from django.conf.urls import url
 from django.utils.translation import pgettext
 
-from .views import confirm, import_csv, index
+from .views import (
+    index, PublicBodyProposalView
+)
 
 
 urlpatterns = [
-    url(r"^confirm/$", confirm, name="publicbody-confirm"),
-    url(r"^import/$", import_csv, name="publicbody-import"),
+    url(r"^%s/$" % pgettext('URL part', 'propose'),
+        PublicBodyProposalView.as_view(), name="publicbody-propose"),
 
     url(r"^$", index, name="publicbody-list"),
     # Translators: part in Public Body URL

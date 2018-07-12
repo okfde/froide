@@ -1,12 +1,17 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
+from django.conf import settings
 from django.db.models import Count
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ungettext
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django import forms
 from django.urls import reverse
+from django.conf.urls import url
 from django.utils.html import format_html
 
 from treebeard.admin import TreeAdmin
@@ -20,9 +25,12 @@ from froide.helper.forms import get_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.csv_utils import export_csv_response
 
-from .models import (PublicBody, PublicBodyTag, TaggedPublicBody, FoiLaw,
-                     Jurisdiction, Classification,
-                     Category, CategorizedPublicBody)
+from .models import (
+    PublicBody, PublicBodyTag, TaggedPublicBody, FoiLaw,
+    Jurisdiction, Classification, Category, CategorizedPublicBody,
+    ProposedPublicBody
+)
+from .csv_import import CSVImporter
 
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy('api:category-autocomplete')
@@ -104,6 +112,40 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
             'export_csv', 'remove_from_index', 'tag_all'
     ]
 
+    def get_urls(self):
+        urls = super(PublicBodyAdminMixin, self).get_urls()
+        my_urls = [
+            url(r'^import/$',
+                self.admin_site.admin_view(self.import_csv),
+                name='publicbody-publicbody-import_csv'),
+        ]
+        return my_urls + urls
+
+    def import_csv(self, request):
+        if not request.method == 'POST':
+            raise PermissionDenied
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        importer = CSVImporter()
+        url = request.POST.get('url')
+        csv_file = request.FILES.get('file')
+        try:
+            if not url and not csv_file:
+                raise ValueError(_('You need to provide a url or a file.'))
+            if url:
+                importer.import_from_url(url)
+            else:
+                importer.import_from_file(csv_file)
+        except Exception as e:
+            self.message_user(request, str(e))
+        else:
+            self.message_user(
+                request,
+                _('Public Bodies were imported.')
+            )
+        return redirect('admin:publicbody_publicbody_changelist')
+
     def save_model(self, request, obj, form, change):
         obj._updated_by = request.user
         obj.updated_at = timezone.now()
@@ -134,6 +176,54 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
 
 class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
     pass
+
+
+class PublicBodyProposalAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
+    def get_urls(self):
+        urls = super(PublicBodyProposalAdmin, self).get_urls()
+        my_urls = [
+            url(r'^(?P<pk>\d+)/confirm/$',
+                self.admin_site.admin_view(self.confirm),
+                name='publicbody-proposedpublicbody-confirm'),
+        ]
+        return my_urls + urls
+
+    def confirm(self, request, pk):
+        if not request.method == 'POST':
+            raise PermissionDenied
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        pb = ProposedPublicBody.objects.get(pk=pk)
+        pb._updated_by = request.user
+        result = pb.confirm()
+
+        if result is None:
+            self.message_user(
+                request, _('This public body is already confirmed.'))
+        else:
+            self.message_user(request,
+                ungettext(
+                    'Public body confirmed. %(count)d message was sent.',
+                    'Public body confirmed. %(count)d messages were sent',
+                    result
+                ) % {"count": result})
+        creator = pb.created_by
+        if (result is not None and creator and
+                creator != request.user and creator.email):
+            send_mail(
+                _('Public body “%s” has been approved') % pb.name,
+                _('Hello,\n\nYou can find the approved public body here:\n\n'
+                  '{url}\n\nAll the Best,\n{site_name}'.format(
+                      url=pb.get_absolute_domain_url(),
+                      site_name=settings.SITE_NAME
+                  )
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                [creator.email],
+                fail_silently=True
+            )
+        return redirect('admin:publicbody_publicbody_change', pb.id)
 
 
 class FoiLawAdmin(admin.ModelAdmin):
@@ -232,6 +322,7 @@ class CategorizedPublicBodyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PublicBody, PublicBodyAdmin)
+admin.site.register(ProposedPublicBody, PublicBodyProposalAdmin)
 admin.site.register(FoiLaw, FoiLawAdmin)
 admin.site.register(Jurisdiction, JurisdictionAdmin)
 admin.site.register(PublicBodyTag, PublicBodyTagAdmin)

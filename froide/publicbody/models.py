@@ -300,14 +300,16 @@ class Classification(MP_Node):
 class PublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
         return (super(PublicBodyManager, self).get_queryset()
-                .exclude(email='')
-                .filter(email__isnull=False)
+            .exclude(email='')
+            .filter(email__isnull=False, confirmed=True)
         )
 
     def get_list(self):
-        return self.get_queryset()\
-            .filter(jurisdiction__hidden=False)\
+        return (
+            self.get_queryset()
+            .filter(jurisdiction__hidden=False)
             .select_related('jurisdiction')
+        )
 
     def get_for_search_index(self):
         return self.get_queryset()
@@ -440,18 +442,14 @@ class PublicBody(models.Model):
         return law.mediator
 
     def get_label(self):
-        return mark_safe('%(name)s - <a href="%(url)s" target="_blank" class="info-link">%(detail)s</a>' % {"name": escape(self.name), "url": self.get_absolute_url(), "detail": _("More Info")})
-
-    def confirm(self):
-        if self.confirmed:
-            return None
-        self.confirmed = True
-        self.save()
-        counter = 0
-        for request in self.foirequest_set.all():
-            if request.confirmed_public_body():
-                counter += 1
-        return counter
+        return mark_safe(
+            '%(name)s - <a href="%(url)s" target="_blank" '
+            'class="info-link">%(detail)s</a>' % {
+                "name": escape(self.name),
+                "url": self.get_absolute_url(),
+                "detail": _("More Info")
+            }
+        )
 
     def as_data(self):
         from .api_views import PublicBodySerializer
@@ -480,3 +478,30 @@ class PublicBody(models.Model):
         )
 
         return export_csv(queryset, fields)
+
+
+class ProposedPublicBodyManager(CurrentSiteManager):
+    def get_queryset(self):
+        return (super(ProposedPublicBodyManager, self).get_queryset()
+            .filter(confirmed=False)
+        )
+
+
+class ProposedPublicBody(PublicBody):
+    objects = ProposedPublicBodyManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = _('Proposed Public Body')
+        verbose_name_plural = _('Proposed Public Bodies')
+
+    def confirm(self):
+        if self.confirmed:
+            return None
+        self.confirmed = True
+        self.save()
+        counter = 0
+        for request in self.foirequest_set.all():
+            if request.confirmed_public_body():
+                counter += 1
+        return counter

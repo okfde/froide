@@ -59,8 +59,9 @@
           <h6>{% trans "Can't find what you're looking for?" %}</h6>
           <p>
             {% url 'publicbody-list' as pb_search_url %}
-            {% blocktrans with search_url=pb_search_url suggest_url="mailto:"|add:SITE_EMAIL %}
-              <a href="{{ search_url }}">Search in all public bodies</a> or <a href="{{ suggest_url }}">suggest a new one</a>.
+            {% url 'publicbody-propose' as pb_propose_url %}
+            {% blocktrans with search_url=pb_search_url propose_url=pb_propose_url %}
+              <a href="{{ search_url }}">Search in all public bodies</a> or <a href="{{ propose_url }}">suggest a new one</a>.
             {% endblocktrans %}
           </p>
         </div>
