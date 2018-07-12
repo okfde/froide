@@ -16,10 +16,13 @@ class FoiEmailBackend(EmailBackend):
         from_email = sanitize_address(email_message.from_email, encoding)
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()
+        rcpt_options = []
+        if from_email.startswith('sw.'):
+            rcpt_options = self.RCPT_OPTIONS
         try:
             self.connection.sendmail(from_email, recipients,
                                      message.as_bytes(linesep='\r\n'),
-                                     rcpt_options=self.RCPT_OPTIONS)
+                                     rcpt_options=rcpt_options)
         except smtplib.SMTPException:
             if not self.fail_silently:
                 raise
