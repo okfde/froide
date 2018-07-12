@@ -333,10 +333,11 @@ class FoiMessage(models.Model):
         return self.get_delivery_status() is not None
 
     def delete_delivery_status(self):
+        delattr(self, '_delivery_status')
         ds = self.get_delivery_status()
         if ds is not None:
             ds.delete()
-            delattr(self, '_delivery_status')
+        delattr(self, '_delivery_status')
 
     def get_delivery_status(self):
         if hasattr(self, '_delivery_status'):
