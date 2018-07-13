@@ -173,7 +173,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         pb.confirmed = False
         pb._created_by = user
         pb.save()
-        pb.laws.add(*pb.jurisdiction.laws)
+        pb.laws.add(*pb.jurisdiction.get_all_laws())
         mail_managers(
             _('New public body proposal'),
             pb.get_absolute_domain_url()

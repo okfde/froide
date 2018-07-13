@@ -97,6 +97,12 @@ class Jurisdiction(models.Model):
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
+    def get_all_laws(self):
+        laws = FoiLaw.objects.filter(jurisdiction=self)
+        meta_ids = laws.filter(meta=True).values_list('combined', flat=True)
+        meta_laws = FoiLaw.objects.filter(pk__in=meta_ids)
+        return laws.union(meta_laws)
+
 
 @python_2_unicode_compatible
 class FoiLaw(models.Model):
