@@ -158,7 +158,7 @@ class FoiAttachment(models.Model):
         if self.document is not None:
             return self.document
 
-        if self.is_pdf:
+        if not self.is_pdf:
             return
 
         foirequest = self.belongs_to.request
