@@ -12,8 +12,10 @@ if PY3:
 else:
     import unicodecsv as csv
 
-from froide.publicbody.models import (PublicBody, PublicBodyTag,
-    Jurisdiction, FoiLaw, Classification, Category)
+from froide.publicbody.models import (
+    PublicBody, PublicBodyTag,
+    Jurisdiction, Classification, Category
+)
 
 User = get_user_model()
 
