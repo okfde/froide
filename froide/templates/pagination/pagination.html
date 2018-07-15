@@ -2,7 +2,7 @@
 {% load pagination_tags %}
 
 <nav aria-label="Page navigation example">
-<ul class="pagination">
+<ul class="pagination flex-wrap">
   {% if page_obj.has_previous %}
     <li class="page-item">
       <a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" class="page-link prev" title="{% trans "previous" %}">
