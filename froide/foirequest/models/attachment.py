@@ -90,7 +90,7 @@ class FoiAttachment(models.Model):
 
     @property
     def can_embed(self):
-        return self.filetype in EMBEDDABLE_FILETYPES
+        return self.filetype in EMBEDDABLE_FILETYPES or self.is_pdf
 
     def get_anchor_url(self):
         if self.belongs_to:
