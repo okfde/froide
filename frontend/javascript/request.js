@@ -44,7 +44,7 @@ $(function () {
     $('.nav-link[href="' + $(this).attr('href') + '"]').tab('show')
   })
 
-  let activeTab = window.Froide.config.activeTab
+  let activeTab = $('.request-nav').data('activetab')
   if (activeTab && activeTab !== 'info') {
     $('.request-nav a[href="#' + activeTab + '"]').tab('show')
   } else {
