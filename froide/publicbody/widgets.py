@@ -1,8 +1,37 @@
 import json
 
 from django import forms
+from django.urls import reverse
+from django.utils.translation import ugettext as _
+from django.contrib.staticfiles.templatetags.staticfiles import static
+
+from froide.helper.content_urls import get_content_url
 
 from .models import PublicBody
+
+
+def get_widget_context():
+    return {
+        'url': {
+            'searchPublicBody': reverse('api:publicbody-search'),
+            'getPublicBody': reverse('api:publicbody-detail', kwargs={'pk': '0'}),
+            'helpAbout': get_content_url('about')
+        },
+        'i18n': {
+            'missingPublicBody': _('Are we missing a public body?'),
+            'publicBodySearchPlaceholder': _('Ministry of...'),
+            'search': _('Search'),
+            'examples': _('Examples:'),
+            'environment': _('Environment'),
+            'ministryOfLabour': _('Ministry of Labour'),
+            'or': _('or'),
+            'noPublicBodiesFound': _('No Public Bodies found for this query.'),
+            'letUsKnow': _('Please let us know!'),
+        },
+        'resources': {
+            'spinner': static('img/spinner.gif')
+        }
+    }
 
 
 class PublicBodySelect(forms.Widget):
@@ -39,4 +68,5 @@ class PublicBodySelect(forms.Widget):
                 }
             })
         })
+        context['config'] = json.dumps(get_widget_context())
         return context

@@ -65,6 +65,9 @@ class RequestForm(JSONMixin, forms.Form):
     hide_publicbody = forms.BooleanField(
         widget=forms.HiddenInput, initial=False, required=False
     )
+    hide_editing = forms.BooleanField(
+        widget=forms.HiddenInput, initial=False, required=False
+    )
     draft = forms.ModelChoiceField(
         queryset=None, required=False, widget=forms.HiddenInput
     )

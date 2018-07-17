@@ -21,7 +21,7 @@
 import {mapMutations} from 'vuex'
 import {sortBy} from 'underscore'
 
-import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../store/mutation_types'
+import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../../store/mutation_types'
 
 import PbTableRow from './pb-table-row'
 
@@ -75,7 +75,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
 
   .sort-control {
     cursor: pointer;

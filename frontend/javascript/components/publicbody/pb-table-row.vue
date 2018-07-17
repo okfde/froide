@@ -24,7 +24,7 @@
 <script>
 
 import {mapGetters, mapMutations} from 'vuex'
-import {ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../store/mutation_types'
+import {ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../../store/mutation_types'
 
 export default {
   name: 'pb-table-row',
@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
 
   .row-data {
     cursor: pointer;

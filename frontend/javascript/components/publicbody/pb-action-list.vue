@@ -4,7 +4,7 @@
       {{ i18n._('publicBodiesFound', {count: searchResultsLength} ) }}
     </p>
     <ul v-if="searchResultsLength > 0 || emptyResults" class="search-results list-unstyled">
-      <li v-for="result in searchResults" class="search-result" @click.prevent="selectSearchResult" :data-pbid="result.id">
+      <li v-for="result in searchResults" :key="result.id" class="search-result" @click.prevent="selectSearchResult(result.id)">
         <div class="row">
           <div class="col-sm-8">
             <h4 class="pb-heading">
@@ -16,7 +16,7 @@
             </small>
           </div>
           <div class="col-sm-4">
-            <a class="btn btn-primary" href="#step-request" @click.prevent="selectSearchResult" :data-pbid="result.id">
+            <a class="btn btn-primary" :href="getMakeRequestURLForResult(result)" @click.prevent="selectSearchResult(result.id)">
               {{ i18n.makeRequest }}
             </a>
           </div>
@@ -59,24 +59,25 @@
 
 <script>
 import {mapMutations} from 'vuex'
-import {SET_STEP_REQUEST, SET_PUBLICBODY_ID} from '../store/mutation_types'
+import {SET_STEP_REQUEST, SET_PUBLICBODY_ID} from '../../store/mutation_types'
 
-import PBListMixin from '../lib/pb-list-mixin'
+import PBListMixin from '../../lib/pb-list-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'pb-action-list',
-  mixins: [PBListMixin],
-  props: ['name', 'scope', 'i18n'],
+  mixins: [PBListMixin, I18nMixin],
+  props: ['name', 'scope', 'config'],
   methods: {
-    selectSearchResult (e) {
-      let pbid = e.currentTarget.dataset.pbid
+    selectSearchResult (pbid) {
       this.setPublicBodyId({
         publicBodyId: pbid,
         scope: this.scope
       })
       this.setStepRequest()
-      window.history.pushState(null, '', '#step-request')
-      window.scrollTo(0, 0)
+    },
+    getMakeRequestURLForResult (result) {
+      return this.config.url.makeRequestTo.replace(/0/, result.id)
     },
     ...mapMutations({
       setStepRequest: SET_STEP_REQUEST,
@@ -88,7 +89,7 @@ export default {
 
 <style lang="scss" scoped>
 
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
 
   .search-result-container {
     margin-top: 30px;
@@ -113,9 +114,6 @@ export default {
 
   .pb-heading {
     margin-bottom: 0;
-  }
-
-  .search-result:hover {
   }
 
 </style>

@@ -1,22 +1,15 @@
-<div id="publicbody-chooser-{{ widget.attrs.id }}">
-  <publicbody-chooser name="{{ widget.name }}" :config="config"
-  form-json="{{ widget.json }}"
+<div id="publicbody-chooser-{{ widget.attrs.id }}" class="publicbody-chooser">
+  <publicbody-chooser name="{{ widget.name }}"
+  :form="{{ widget.json }}"
+  :config="{{ config }}"
   scope="pb-{{ widget.attrs.id }}"
   defaultsearch="{% if widget.search %}{{ widget.search }}{% endif %}"
   >
-    {% if value %}
-      <label>
-        <input type="radio" name="{{ widget.name }}" value="{% if widget.value %}{{ widget.value }}{% endif %}"/>
-        {% if widget.value_label %}{{ widget.value_label }}{% endif %}
-      </label>
-    {% endif %}
-  </publicbody-chooser>
+    {% if widget.value %}
+    <label>
+      <input type="radio" name="{{ widget.name }}" value="{% if widget.value %}{{ widget.value }}{% endif %}"/>
+      {% if widget.value_label %}{{ widget.value_label }}{% endif %}
+    </label>
+    {% endif %} 
+  </publicbody-chooser> 
 </div>
-{% include "publicbody/widget/_add_js_vars.html" %}
-
-<script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function () {
-    /* eslint-disable no-undef */
-    Froide.components.publicbody.createPublicbodyChooser('#publicbody-chooser-{{ widget.attrs.id }}', Froide)
-  })
-</script>

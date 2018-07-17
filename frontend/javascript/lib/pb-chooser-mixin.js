@@ -48,20 +48,17 @@ var PBChooserMixin = {
       ]
     },
     hasForm () {
-      return (this.formJson !== undefined && this.formJson !== null &&
-              this.formJson !== '')
+      return (this.form !== undefined && this.form !== null &&
+              this.form !== '')
     },
-    _form () {
-      return JSON.parse(this.formJson)
-    },
-    form () {
-      return this._form.fields
+    formFields () {
+      return this.form.fields
     },
     field () {
-      return this.form[this.name]
+      return this.formFields[this.name]
     },
     errors () {
-      return this._form.errors
+      return this.form.errors
     },
     hasPublicBodies () {
       return this.publicBodies.length > 0
@@ -78,6 +75,9 @@ var PBChooserMixin = {
     },
     searchResults () {
       return this.getScopedSearchResults(this.scope)
+    },
+    searchMeta () {
+      return this.getScopedSearchMeta(this.scope)
     },
     ...mapGetters([
       'getPublicBodyByScope',

@@ -20,8 +20,8 @@ import Vue from 'vue'
 import {mapGetters} from 'vuex'
 import {debounce} from 'underscore'
 
-import {FroideSearch} from '../lib/search'
-import FilterMixin from '../lib/filter-mixin'
+import {FroideSearch} from '../../lib/search'
+import FilterMixin from '../../lib/filter-mixin'
 
 import PbFilterList from './pb-filter-list'
 
@@ -153,7 +153,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
   .filter-heading {
     font-size: 0.9em;
     cursor: pointer;

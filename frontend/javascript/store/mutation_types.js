@@ -37,12 +37,3 @@ export const STEPS = {
   REVIEW_PUBLICBODY: 2,
   WRITE_REQUEST: 3
 }
-
-export const URLS_TO_STEP = {
-  '#step-publicbody': 1,
-  '#step-request': 3
-}
-export const STEP_TO_URLS = {}
-for (var key in URLS_TO_STEP) {
-  STEP_TO_URLS[URLS_TO_STEP[key]] = key
-}

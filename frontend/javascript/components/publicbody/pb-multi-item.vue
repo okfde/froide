@@ -11,7 +11,7 @@
 <script>
 
 import {mapGetters, mapMutations} from 'vuex'
-import {ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../store/mutation_types'
+import {ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../../store/mutation_types'
 
 export default {
   name: 'pb-multi-item',

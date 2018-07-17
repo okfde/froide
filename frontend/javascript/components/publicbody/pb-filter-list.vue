@@ -83,7 +83,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
   .filter-list-wrapper {
     padding-bottom: 2em;
   }
@@ -102,5 +102,8 @@ export default {
     .remove-filter, .load-children {
       cursor: pointer;
     }
+  }
+  .load-children {
+    color: #999;
   }
 </style>

@@ -8,14 +8,16 @@ except ImportError:
 
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.http import Http404
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, DetailView, TemplateView
 
 from froide.account.forms import NewUserForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
+from froide.publicbody.widgets import get_widget_context
 from froide.publicbody.models import PublicBody
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
@@ -59,6 +61,126 @@ class MakeRequestView(FormView):
         initial['jurisdiction'] = request.GET.get("jurisdiction", None)
         initial.update(self.get_form_config_initial())
         return initial
+
+    def get_js_context(self):
+        ctx = {
+            'settings': {
+                'user_can_hide_web': settings.FROIDE_CONFIG.get('user_can_hide_web')
+            },
+            'url': {
+                'searchRequests': reverse('api:request-search'),
+                'listJurisdictions': reverse('api:jurisdiction-list'),
+                'listCategories': reverse('api:category-list'),
+                'listClassifications': reverse('api:classification-list'),
+                'listPublicBodies': reverse('api:publicbody-list'),
+                'search': reverse('foirequest-search'),
+                'loginSimple': reverse('account-login') + '?simple&email=',
+                'makeRequestTo': reverse('foirequest-make_request', kwargs={
+                    'publicbody_ids': '0'
+                }),
+                'makeRequest': reverse('foirequest-make_request')
+            },
+            'i18n': {
+                'publicBodiesFound': [
+                    _('one public body found'),
+                    _('{count} public bodies found').format(count='${count}'),
+                ],
+                'publicBodiesChosen': [
+                    _('one public body chosen'),
+                    _('{count} public bodies chosen').format(count='${count}'),
+                ],
+                'publicBodiesCount': [
+                    _('one public body'),
+                    _('{count} public bodies').format(count='${count}'),
+                ],
+                'requestCount': [
+                    _('one request'),
+                    _('{count} requests').format(count='${count}'),
+                ],
+                # Translators: not url
+                'requests': _('requests'),
+                'makeRequest': _('make request'),
+                'writingRequestTo': _('You are writing a request to'),
+                'toMultiPublicBodies': _('To: {count} public bodies').format(count='${count}'),
+                'selectPublicBodies': _('Select public bodies'),
+                'continue': _('continue'),
+                'selectAll': [
+                    _('select one'),
+                    _('select all')
+                ],
+                'selectingAll': _('Selecting all public bodies, please wait...'),
+                'name': _('Name'),
+                'jurisdictionPlural': [
+                    _('Jurisdiction'),
+                    _('Jurisdictions'),
+                ],
+                'topicPlural': [
+                    _('topic'),
+                    _('topics'),
+                ],
+                'classificationPlural': [
+                    _('classification'),
+                    _('classifications'),
+                ],
+
+                'toPublicBody': _('To: {name}').format(name='${name}'),
+                'change': _('change'),
+                'searchPlaceholder': _('Search...'),
+                'clearSearchResults': _('clear search'),
+                'clearSelection': _('clear selection'),
+                'reallyClearSelection': _('Are you sure you want to discard your current selection?'),
+                'loadMore': _('load more...'),
+                'next': _('next'),
+                'previous': _('previous'),
+                'subject': _('Subject'),
+                'defaultLetterStart': _('Please send me the following information:'),
+                'warnFullText': _('Watch out! You are requesting information across jurisdictions! If you write the full text, we cannot customize it according to applicable laws. Instead you have to write the text to be jurisdiction agnostic.'),
+                'resetFullText': _('Reset text to template version'),
+                'savedFullTextChanges': _('Your previous customized text'),
+                'saveAsDraft': _('Save as draft'),
+                'reviewRequest': _('Review request'),
+                'reviewTitle': _('Review your request and submit'),
+                'reviewEdit': _('Edit'),
+                'reviewFrom': _('From'),
+                'reviewTo': _('To'),
+                'reviewPublicbodies': _('public bodies'),
+                'reviewSpelling': _('Please use proper spelling.'),
+                'reviewPoliteness': _('Please stay polite.'),
+                'submitRequest': _('Submit request'),
+                'loginWindowLink': _('Login using that email address'),
+
+                'greeting': _('Dear Sir or Madam'),
+                'kindRegards': _('Kind regards'),
+
+                'yourFirstName': _('Your first name'),
+                'yourLastName': _('Your last name'),
+                'yourEmail': _('Your email address'),
+                'yourAddress': _('Your postal address'),
+                'giveName': _('Please fill out your name below'),
+
+                'similarExist': _('Please make sure the information is not already requested or public'),
+                'similarRequests': _('Similar requests'),
+                'moreSimilarRequests': _('Search for more similar requests'),
+                'relevantResources': _('Relevant resources'),
+                'officialWebsite': _('Official website: '),
+                'noSubject': _('Please add a subject.'),
+                'noBody': _('Please describe the information you want to request!'),
+                'dontAddClosing': _('Do not add a closing, it is added automatically at the end of the letter.'),
+                'dontAddGreeting': _('Do not add a greeting, it is added automatically at the start of the letter.'),
+                'dontInsertName': _('Do not insert your name, we will add it automatically at the end of the letter.')
+            },
+            'regex': {
+                'greetings': [_('Dear Sir or Madam')],
+                'closings': [_('Kind Regards')]
+            }
+        }
+        pb_ctx = get_widget_context()
+        for key in pb_ctx:
+            if key in ctx:
+                ctx[key].update(pb_ctx[key])
+            else:
+                ctx[key] = pb_ctx[key]
+        return ctx
 
     def get_form_config_initial(self):
         return {k: True for k in self.FORM_CONFIG_PARAMS
@@ -298,6 +420,7 @@ class MakeRequestView(FormView):
             'publicbodies_json': publicbodies_json,
             'multi_request': is_multi,
             'config': config,
+            'js_config': json.dumps(self.get_js_context()),
             'public_body_search': self.request.GET.get('topic', '')
         })
         return kwargs

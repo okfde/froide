@@ -10,7 +10,7 @@
         </a>
       </div>
       <ul class="search-results list-unstyled">
-        <li v-for="result in searchResults" class="search-result">
+        <li v-for="result in searchResults" :key="result.id" class="search-result">
           <pb-multi-item :name="name" :result="result" :scope="scope"></pb-multi-item>
         </li>
       </ul>
@@ -26,16 +26,17 @@
 <script>
 
 import {mapMutations} from 'vuex'
-import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../store/mutation_types'
+import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../../store/mutation_types'
 
-import PBListMixin from '../lib/pb-list-mixin'
+import PBListMixin from '../../lib/pb-list-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
 
 import PbMultiItem from './pb-multi-item'
 
 export default {
   name: 'pb-multi-list',
-  props: ['name', 'scope', 'i18n'],
-  mixins: [PBListMixin],
+  props: ['name', 'scope', 'config'],
+  mixins: [PBListMixin, I18nMixin],
   methods: {
     selectAll () {
       this.searchResults.forEach((r) => {

@@ -19,7 +19,11 @@
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
-                :config="config"></publicbody-multi-chooser>
+                :config="config">
+                <template slot="publicbody-missing">
+                  <slot name="publicbody-missing"></slot>
+                </template>
+              </publicbody-multi-chooser>
             </div>
             <div v-else>
               <div class="row">
@@ -62,7 +66,7 @@
                 <p>
                   {{ i18n._('toMultiPublicBodies', {count: publicBodies.length}) }}
                   <span v-if="!hidePublicbodyChooser">
-                    <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepSelectPublicBody">
+                    <a class="pb-change-link badge badge-pill badge-primary ml-3" :href="config.url.makeRequest" @click.prevent="setStepSelectPublicBody">
                       {{ i18n.change }}
                     </a>
                   </span>
@@ -75,7 +79,7 @@
                   <p>
                     {{ i18n._('toPublicBody', {name: publicBody.name}) }}
                     <span v-if="!hidePublicbodyChooser">
-                      <a class="pb-change-link badge badge-pill badge-primary ml-3" href="#step-publicbody" @click="setStepSelectPublicBody">
+                      <a class="pb-change-link badge badge-pill badge-primary ml-3" :href="config.url.makeRequest" @click.prevent="setStepSelectPublicBody">
                         {{ i18n.change }}
                       </a>
                     </span>
@@ -111,7 +115,7 @@
                       <small>{{ i18n.reviewEdit }}</small>
                     </button>
                   </div>
-                  <input v-else v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="form.subject.placeholder" @keydown.enter.prevent/>
+                  <input v-else v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="formFields.subject.placeholder" @keydown.enter.prevent/>
                 </div>
               </div>
             </div>
@@ -141,11 +145,11 @@
                   <div class="col-md-8 order-1">
                     <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
                     <div v-if="editingDisabled" class="body-text">{{ body }}</div>
-                    <textarea v-show="!editingDisabled" v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="form.body.placeholder"></textarea>
+                    <textarea v-show="!editingDisabled" v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="formFields.body.placeholder"></textarea>
                     <label class="small pull-right text-muted" v-if="allowFullText && !editingDisabled">
                       <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
                       <i v-if="warnFullText" class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                      {{ form.full_text.label }}
+                      {{ formFields.full_text.label }}
                     </label>
                     <input type="hidden" name="full_text" v-model="fullText">
                     <div v-if="!fullText" class="body-text"><template v-if="!fullLetter"><a class="show-full-letter" href="#" @click.prevent="showFullLetter">[&hellip;]</a>
@@ -162,7 +166,7 @@
                         <label class="control-label field-required" for="id_first_name" :class="{ 'text-danger': usererrors.first_name }">
                           {{ i18n.yourFirstName }}
                         </label>
-                        <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': usererrors.first_name }" id="id_first_name" :placeholder="userform.first_name.placeholder" required/>
+                        <input v-model="first_name" type="text" name="first_name" class="form-control" :class="{ 'is-invalid': usererrors.first_name }" id="id_first_name" :placeholder="userformFields.first_name.placeholder" required/>
                         <p v-for="e in usererrors.first_name" :key="e.message">{{ e.message }}</p>
                       </div>
 
@@ -170,20 +174,20 @@
                         <label class="control-label field-required" for="id_last_name" :class="{ 'text-danger': usererrors.last_name }">
                           {{ i18n.yourLastName }}
                         </label>
-                        <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': usererrors.last_name }" id="id_last_name" :placeholder="userform.last_name.placeholder" required/>
+                        <input v-model="last_name" type="text" name="last_name" class="form-control" :class="{ 'is-invalid': usererrors.last_name }" id="id_last_name" :placeholder="userformFields.last_name.placeholder" required/>
                         <p v-for="e in usererrors.last_name" :key="e.message">{{ e.message }}</p>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4 mt-4"  v-if="!user.id">
-                    <small v-if="userform.last_name.help_text" v-html="userform.last_name.help_text"></small>
+                    <small v-if="userformFields.last_name.help_text" v-html="userformFields.last_name.help_text"></small>
                   </div>
                 </div>
               </div>
             </div>
 
 
-            <user-registration v-if="!user.id" :form-json="userFormJson" :config="config"></user-registration>
+            <user-registration v-if="!user.id" :form="userForm" :config="config"></user-registration>
 
             <div class="row">
               <div class="col-md-12">
@@ -224,11 +228,11 @@
 
 <script>
 import SimilarRequests from './similar-requests'
-import PublicbodyChooser from './publicbody-chooser'
-import PublicbodyMultiChooser from './publicbody-multichooser'
+import PublicbodyChooser from './publicbody/publicbody-chooser'
+import PublicbodyMultiChooser from './publicbody/publicbody-multichooser'
 import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
-import PbMultiReview from './pb-multi-review'
+import PbMultiReview from './publicbody/pb-multi-review'
 import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 
 import {mapGetters, mapMutations, mapActions} from 'vuex'
@@ -239,7 +243,7 @@ import {
   SET_PUBLICBODY, SET_PUBLICBODIES, CACHE_PUBLICBODIES,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME,
   SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
-  UPDATE_LAW_TYPE
+  UPDATE_LAW_TYPE, SET_CONFIG
 } from '../store/mutation_types'
 
 import LetterMixin from '../lib/letter-mixin'
@@ -257,20 +261,24 @@ export default {
     publicbodyDefaultSearch: {
         type: String
     },
-    publicbodyFormJson: {
-      type: String
+    publicbodyForm: {
+      type: Object,
+      default: null
     },
-    publicbodiesJson: {
-      type: String
+    publicbodies: {
+      type: Array,
+      default: null
     },
-    userJson: {
-      type: String
+    userInfo: {
+      type: Object,
+      default: null
     },
-    requestFormJson: {
-      type: String
+    requestForm: {
+      type: Object
     },
-    userFormJson: {
-      type: String
+    userForm: {
+      type: Object,
+      default: null
     },
     showSimilar: {
       type: Boolean,
@@ -319,15 +327,16 @@ export default {
   },
   created () {
     this.pbScope = 'make-request'
+    this.setConfig(this.config)
     this.updateSubject(this.originalSubject)
     this.updateBody(this.originalBody)
-    this.updateFullText(this.form.full_text.value || this.form.full_text.initial)
-    if (this.userJson) {
-      this.setUser(JSON.parse(this.userJson))
+    this.updateFullText(this.formFields.full_text.value || this.formFields.full_text.initial)
+    if (this.userInfo !== null) {
+      this.setUser(this.userInfo)
     }
-    this.updateLawType(this.form.law_type.value || this.form.law_type.initial)
-    if (this.publicbodiesJson) {
-      let pbs = JSON.parse(this.publicbodiesJson)
+    this.updateLawType(this.formFields.law_type.value || this.formFields.law_type.initial)
+    if (this.publicbodies !== null) {
+      let pbs = this.publicbodies
       this.setPublicBodies({
         publicBodies: pbs,
         scope: this.pbScope
@@ -341,34 +350,31 @@ export default {
       this.setStepRequest()
       step = STEPS.WRITE_REQUEST
     }
-    let hash = STEP_TO_URLS[step]
-
     window.onpopstate = (event) => {
+      console.log('on pop state')
       let hash = document.location.hash
-      this.setStepByURL({hash, scope: this.pbScope})
+      let pathname = document.location.pathname
+      this.setStepByUrl({hash, pathname})
     }
   },
   computed: {
     nonFieldErrors () {
-      return this._form.nonFieldErrors
-    },
-    _form () {
-      return JSON.parse(this.requestFormJson)
+      return this.form.nonFieldErrors
     },
     form () {
-      return this._form.fields
+      return this.requestForm
+    },
+    formFields () {
+      return this.form.fields
     },
     errors () {
-      return this._form.errors
+      return this.form.errors
     },
-    _userform () {
-      return JSON.parse(this.userFormJson)
-    },
-    userform () {
-      return this._userform.fields
+    userformFields () {
+      return this.userForm.fields
     },
     usererrors () {
-      return this._userform.errors
+      return this.userForm.errors
     },
     hasNotes () {
       if (this.defaultLaw) {
@@ -404,19 +410,19 @@ export default {
       }
     },
     originalSubject () {
-      return this.form.subject.value || this.form.subject.initial || ''
+      return this.formFields.subject.value || this.formFields.subject.initial || ''
     },
     subjectWasChanged () {
-      return this.subject !== this.form.subject.initial
+      return this.subject !== this.formFields.subject.initial
     },
     hasBody () {
       return this.body && this.body.length > 0
     },
     originalBody () {
-      return this.form.body.value || this.form.body.initial || ''
+      return this.formFields.body.value || this.formFields.body.initial || ''
     },
     bodyWasChanged () {
-      return this.body !== this.form.body.initial
+      return this.body !== this.formFields.body.initial
     },
     body: {
       get () {
@@ -488,6 +494,7 @@ export default {
       'stepWriteRequest',
       'stepReviewPublicBodies',
       'stepSelectPublicBody',
+      'step',
       'lawType'
     ])
   },
@@ -514,12 +521,43 @@ export default {
     showFullLetter () {
       this.fullLetter = true
     },
+    goToRequestPbUrl (args) {
+      if (this.publicBody === null) {
+        this.setPublicBodyById({scope: this.pbScope, id: parseInt(args[1])})
+      } else {
+        this.setStepRequest()
+      }
+    },
+    gotToSelectPbUrl () {
+      if (this.hidePublicbodyChooser) {
+        return
+      }
+      this.setStepSelectPublicBody()
+    },
+    setStepByUrl ({hash, pathname}) {
+      const pbUrl = '^' + this.config.url.makeRequestTo.replace(/0/, '([\\d\\+]+)') + '$'
+      const startUrl = '^' + this.config.url.makeRequest + '$'
+      const URLS = {
+        [pbUrl]: 'goToRequestPbUrl',
+        [startUrl]: 'gotToSelectPbUrl'
+      }
+      this.ignoreWatchStep = true
+      for (let regex in URLS) {
+        let res = (new RegExp(regex)).exec(pathname)
+        if (res) {
+          this[URLS[regex]](res)
+          break
+        }
+      }
+      this.ignoreWatchStep = false
+    },
     ...mapMutations({
       setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
       setStepRequest: SET_STEP_REQUEST,
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,
       updateFullText: UPDATE_FULL_TEXT,
+      setConfig: SET_CONFIG,
       setUser: SET_USER,
       updateFirstName: UPDATE_FIRST_NAME,
       updateLastName: UPDATE_LAST_NAME,
@@ -528,9 +566,41 @@ export default {
       setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES
     }),
-    ...mapActions({
-      setStepByURL: SET_STEP_BY_URL
-    })
+    ...mapActions([
+      'setPublicBodyById'
+    ])
+  },
+  watch: {
+    step (newStep, oldStep) {
+      if (this.ignoreWatchStep) {
+        return
+      }
+      if (oldStep === newStep) {
+        return
+      }
+      let nextUrl
+      if (newStep === STEPS.SELECT_PUBLICBODY) {
+        nextUrl = this.config.url.makeRequest
+      } else if (newStep === STEPS.WRITE_REQUEST && oldStep < newStep) {
+        if (this.publicBody === null) {
+          console.error('WARNING', newStep, oldStep)
+          return
+        }
+        if (this.multiRequest) {
+          return
+        }
+        nextUrl = this.config.url.makeRequestTo.replace(/0/, this.publicBody.id)
+      }
+      if (nextUrl === undefined || nextUrl === document.location.pathname) {
+        return
+      }
+      if (this.hidePublicbodyChooser) {
+        window.history.replaceState(null, '', nextUrl + document.location.search)
+      } else {
+        window.history.pushState(null, '', nextUrl + document.location.search)
+      }
+      window.scrollTo(0, 0)
+    }
   }
 }
 </script>

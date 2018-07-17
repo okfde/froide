@@ -11,8 +11,8 @@
             {{ user.email }}
           </p>
           <div v-else>
-            <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="form.user_email.placeholder" required/>
-            <p v-for="e in errors.user_email" class="text-danger">{{ e.message }}</p>
+            <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="formFields.user_email.placeholder" required/>
+            <p v-for="e in errors.user_email" :key="e.message" class="text-danger">{{ e.message }}</p>
             <p v-if="authRequired">
               <a id="simple-login-link" class="btn btn-success" :href="authRequiredUrl" @click.prevent="openLoginWindow">
                 {{ i18n.loginWindowLink }}
@@ -31,9 +31,9 @@
             {{ user.address }}
           </p>
           <div v-else>
-            <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="form.address.placeholder"></textarea>
-            <p v-for="e in errors.address">{{ e.message }}</p>
-            <p class="help-block">{{ form.address.help_text }}</p>
+            <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder"></textarea>
+            <p v-for="e in errors.address" :key="e.message">{{ e.message }}</p>
+            <p class="help-block">{{ formFields.address.help_text }}</p>
           </div>
         </div>
       </div>
@@ -43,11 +43,11 @@
           <div class="col-md-8">
             <div class="checkbox">
               <label>
-                <input id="id_private" v-model="private" type="checkbox" name="private" />
-                {{ form.private.label }}
+                <input id="id_private" v-model="userPrivate" type="checkbox" name="private" />
+                {{ formFields.private.label }}
               </label>
               <br/>
-              <p class="help-block" v-html="form.private.help_text">
+              <p class="help-block" v-html="formFields.private.help_text">
               </p>
             </div>
           </div>
@@ -71,35 +71,32 @@ import I18nMixin from '../lib/i18n-mixin'
 export default {
   name: 'user-registration',
   props: [
-    'config', 'formJson'
+    'config', 'form'
   ],
   mixins: [I18nMixin],
   created () {
-    if (this.form.first_name.value !== null) {
-      this.updateFirstName(this.form.first_name.value)
+    if (this.formFields.first_name.value !== null) {
+      this.updateFirstName(this.formFields.first_name.value)
     }
-    if (this.form.last_name.value !== null) {
-      this.updateLastName(this.form.last_name.value)
+    if (this.formFields.last_name.value !== null) {
+      this.updateLastName(this.formFields.last_name.value)
     }
-    if (this.form.user_email.value !== null) {
-      this.updateEmail(this.form.user_email.value)
+    if (this.formFields.user_email.value !== null) {
+      this.updateEmail(this.formFields.user_email.value)
     }
-    if (this.form.address.value !== null) {
-      this.updateAddress(this.form.address.value)
+    if (this.formFields.address.value !== null) {
+      this.updateAddress(this.formFields.address.value)
     }
-    if (this.form.private.value !== null) {
-      this.updatePrivate(this.form.private.value)
+    if (this.formFields.private.value !== null) {
+      this.updatePrivate(this.formFields.private.value)
     }
   },
   computed: {
-    _form () {
-      return JSON.parse(this.formJson)
-    },
-    form () {
-      return this._form.fields
+    formFields () {
+      return this.form.fields
     },
     errors () {
-      return this._form.errors
+      return this.form.errors
     },
     authRequired () {
       if (this.errors && this.errors.user_email) {
@@ -142,7 +139,7 @@ export default {
         this.updateAddress(value)
       }
     },
-    private: {
+    userPrivate: {
       get () {
         return this.$store.state.user.private
       },

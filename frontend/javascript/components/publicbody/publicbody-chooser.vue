@@ -2,7 +2,7 @@
   <div class="publicbody-chooser mb-3">
     <div class="form-search">
       <div class="input-group">
-        <input type="search" v-model:value="search" class="search-public_bodies form-control" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
+        <input type="search" v-model="search" class="search-public_bodies form-control" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
         <div class="input-group-append">
           <button type="button" class="btn btn-primary search-public_bodies-submit" @click="triggerAutocomplete">
             <i class="fa fa-search"></i>
@@ -14,29 +14,40 @@
     <div v-if="searching" class="search-spinner">
       <img :src="config.resources.spinner" alt="Loading..."/>
     </div>
-    <component :is="getListView" :name="name" :scope="scope" :i18n="i18n"></component>
+    <component :is="getListView" :name="name" :scope="scope" :config="config"></component>
   </div>
 </template>
 
 <script>
+import {mapMutations} from 'vuex'
 
 import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
 
-import PBChooserMixin from '../lib/pb-chooser-mixin'
-import I18nMixin from '../lib/i18n-mixin'
+import PBChooserMixin from '../../lib/pb-chooser-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
+
+import { SET_CONFIG } from '../../store/mutation_types'
 
 export default {
   name: 'publicbody-chooser',
   mixins: [PBChooserMixin, I18nMixin],
-  props: ['name', 'scope', 'defaultsearch', 'formJson', 'config', 'listView'],
+  props: ['name', 'scope', 'defaultsearch', 'form', 'config', 'listView'],
   data () {
     return {
       search: this.defaultsearch,
       lastQuery: null,
       emptyResults: false,
       searching: false
+    }
+  },
+  created () {
+    this.setConfig(this.config)
+  },
+  mounted () {
+    if (this.defaultsearch && this.searchMeta === null) {
+      this.triggerAutocomplete()
     }
   },
   components: {
@@ -60,10 +71,10 @@ export default {
       return this.getPublicBodyByScope(this.scope)
     }
   },
-  watch: {
-    defaultsearch: function () {
-      this.triggerAutocomplete()
-    }
+  methods: {
+    ...mapMutations({
+      setConfig: SET_CONFIG,
+    })
   }
 }
 </script>

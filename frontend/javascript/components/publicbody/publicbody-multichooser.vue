@@ -45,6 +45,7 @@
         <div class="col-md-8 col-lg-9 order-2">
           <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="currentHeaders"
                     :options="selectOptions" :rows="searchResults" @selectAllRows="selectAllRows"></pb-table>
+          <slot name="publicbody-missing"></slot>
           <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
         </div>
         <div class="col-md-4  col-lg-3 order-md-1">
@@ -72,12 +73,12 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {
   SET_STEP_REQUEST, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   CLEAR_PUBLICBODIES
-} from '../store/mutation_types'
+} from '../../store/mutation_types'
 
-import {FroideSearch} from '../lib/search'
-import PBChooserMixin from '../lib/pb-chooser-mixin'
-import I18nMixin from '../lib/i18n-mixin'
-import PBListMixin from '../lib/pb-list-mixin'
+import {FroideSearch} from '../../lib/search'
+import PBChooserMixin from '../../lib/pb-chooser-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
+import PBListMixin from '../../lib/pb-list-mixin'
 
 import PbTable from './pb-table'
 import PbPagination from './pb-pagination'
@@ -308,7 +309,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
 
   button[disabled] {
     cursor: not-allowed;

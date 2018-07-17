@@ -3,9 +3,9 @@ import Vuex from 'vuex'
 
 import {
   SET_CONFIG,
-  SET_STEP, SET_STEP_BY_URL,
+  SET_STEP,
   SET_STEP_SELECT_PUBLICBODY, SET_STEP_REVIEW_PUBLICBODY, SET_STEP_REQUEST,
-  STEPS, URLS_TO_STEP,
+  STEPS,
   SET_PUBLICBODY, SET_PUBLICBODIES,
   SET_PUBLICBODY_ID, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   CLEAR_PUBLICBODIES,
@@ -131,11 +131,14 @@ export default new Vuex.Store({
     stepReviewPublicBodiesDone: state => state.step > STEPS.REVIEW_PUBLICBODY,
     stepWriteRequest: state => state.step === STEPS.WRITE_REQUEST,
     stepWriteRequestDone: state => state.step > STEPS.WRITE_REQUEST,
+    step: state => state.step,
     lawType: state => state.lawType
   },
   mutations: {
     [SET_CONFIG] (state, config) {
-      state.config = config
+      if (state.config === null || state.config === undefined) {
+        state.config = config
+      }
     },
     [SET_STEP] (state, step) {
       state.step = step
@@ -243,17 +246,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    [SET_STEP_BY_URL] ({commit, getters}, {hash, scope}) {
-      let step = URLS_TO_STEP[hash]
-      if (step === undefined) {
-        return
-      }
-      let pbs = getters.getPublicBodiesByScope(scope)
-      if (step > STEPS.SELECT_PUBLICBODY && pbs.length === 0) {
-        return
-      }
-      commit(SET_STEP, step)
-    },
     setSearchResults ({ commit }, {scope, results}) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects.results,
@@ -269,6 +261,17 @@ export default new Vuex.Store({
       return searcher.searchPublicBodies(search, filters).then((results) => {
         dispatch('setSearchResults', {results, scope})
       })
+    },
+    setPublicBodyById ({ state, dispatch }, {scope, id}) {
+      let searcher = new FroideSearch(state.config)
+      return searcher.getPublicBody(id).then((result) => {
+        dispatch('setPublicBodyByIdDone', {result, scope, id})
+      })
+    },
+    setPublicBodyByIdDone ({commit}, {scope, result, id}) {
+      commit(CACHE_PUBLICBODIES, [result])
+      commit(SET_PUBLICBODY_ID, {publicBodyId: id, scope})
+      commit(SET_STEP_REQUEST)
     },
     getSearchResultsUrl ({ commit, state, getters, dispatch }, { scope, url }) {
       commit(CLEAR_SEARCHRESULTS, {scope})

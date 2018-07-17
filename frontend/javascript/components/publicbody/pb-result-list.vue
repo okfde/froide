@@ -10,7 +10,7 @@
       </label>
     </div>
     <ul v-if="searchResults.length > 0 || emptyResults" class="search-results list-unstyled">
-      <li v-for="result in searchResults" class="search-result">
+      <li v-for="result in searchResults" :key="result.id" class="search-result">
         <label>
           <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" @click="selectSearchResult" v-model="value"/>
           {{ result.name }}
@@ -25,12 +25,13 @@
 
 <script>
 
-import PBListMixin from '../lib/pb-list-mixin'
+import PBListMixin from '../../lib/pb-list-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'pb-result-list',
-  props: ['name', 'scope', 'i18n'],
-  mixins: [PBListMixin],
+  props: ['name', 'scope', 'config'],
+  mixins: [PBListMixin, I18nMixin],
   computed: {
     value: {
       get () {
