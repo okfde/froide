@@ -4,17 +4,17 @@ import Redaction from './components/redaction'
 
 Vue.config.productionTip = false
 
-function createRedaction (selector, pdfPath, config) {
+function createRedaction (selector) {
   /* eslint-disable no-new */
   new Vue({
-    data: {
-      config: config,
-      pdfPath: pdfPath
-    },
     components: { Redaction },
     el: selector
   })
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+  createRedaction('#redact')
+})
 
 const exp = {
   createRedaction

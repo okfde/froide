@@ -83,7 +83,13 @@
     </form>
     <div class="card">
       <div class="card-body" id="redact">
-        <redaction :pdf-path="pdfPath" attachment-url="{{ attachment.get_anchor_url }}" redact-regex-json="{{ foirequest.get_redaction_regexes }}" {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %} :config="config">
+        <redaction
+          pdf-path="{{ attachment_url }}"
+          attachment-url="{{ attachment.get_anchor_url }}"
+          :redact-regex="{{ foirequest.get_redaction_regexes }}"
+          {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
+          :config="{{ config }}"
+          >
           <div class="text-center">
             <h3>
                 {% trans "Redaction tool is loading..." %}
@@ -99,37 +105,6 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script>
-    var Froide = window.Froide || {}
-    Froide.resources = Froide.resources || {}
-    Froide.resources.pdfjsWorker = '{% static "js/pdf.worker.min.js" %}'
-    Froide.config = Froide.config || {}
-    Froide.config.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
-    Froide.config.publishUrl = "{% url 'foirequest-approve_attachment' slug=foirequest.slug attachment=attachment.pk %}"
-
-    Froide.i18n = Froide.i18n || {};
-    (function () {
-      var i18n = {
-        previousPage: '{% trans "Previous Page" %}',
-        nextPage: '{% trans "Next Page" %}',
-        pageCurrentOfTotal: function (obj) {
-          return '{% blocktrans with current="$current" total="$total" %}{{ current }} of {{ total }}{% endblocktrans %}'.replace(/\$current/, obj.current).replace(/\$total/, obj.total)
-        },
-        redactAndPublish: '{% trans "Save redaction" %}',
-        publishWithoutRedaction: '{% trans "No redaction needed" %}',
-        toggleText: '{% trans "Text only" %}',
-        disableText: '{% trans "Hide text" %}',
-        cancel: '{% trans "Cancel" %}',
-        loadingPdf: '{% trans "Loading PDF..." %}',
-        redacting: '{% trans "Redaction process started, please wait..." %}',
-        sending: '{% trans "Saving redacted PDF, please wait..." %}',
-        autoRedacted: '{% trans "We automatically redacted some text for you already. Please check if we got everything." %}'
-      }
-      for (var key in i18n) {
-        Froide.i18n[key] = i18n[key]
-      }
-    }())
-  </script>
   {% addtoblock "js" %}
     <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
   {% endaddtoblock %}
@@ -138,14 +113,6 @@
   {% endaddtoblock %}
   {% addtoblock "css" %}
     <link rel="stylesheet" href="{% static 'css/redact.css' %}"/>
-  {% endaddtoblock %}
-  {% addtoblock "js" %}
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        window.Froide.components.redact.createRedaction('#redact',
-          '{{ attachment_url|escapejs }}', window.Froide)
-      })
-    </script>
   {% endaddtoblock %}
 
 {% endblock %}

@@ -68,7 +68,7 @@
         </div>
         <div class="btn-group mr-4" v-if="canPublish">
           <form method="post" :action="config.config.publishUrl">
-            <input type="hidden" name="csrfmiddlewaretoken" :value="config.config.csrfToken"/>
+            <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken"/>
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check"></i>
               {{ i18n.publishWithoutRedaction }}
@@ -124,7 +124,7 @@ const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 export default {
   name: 'redaction',
-  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegexJson', 'canPublish'],
+  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegex', 'canPublish'],
   data () {
     return {
       doc: null,
@@ -176,15 +176,12 @@ export default {
     },
     pageOfTotal () {
       if (this.numPages !== null) {
-        return this.i18n.pageCurrentOfTotal({
-          current: this.currentPage,
-          total: this.numPages
-        })
+        return this.i18n.pageCurrentOfTotal.replace(/\$current/, this.currentPage).replace(/\$total/, this.numPages)
       }
       return ''
     },
     regexList () {
-      return JSON.parse(this.redactRegexJson).map(r => {
+      return this.redactRegex.map(r => {
         r = r.replace(/ /g, '\\s+')
         return new RegExp(r, 'gi')
       })
@@ -224,11 +221,17 @@ export default {
     },
     progressWidth () {
       return `width: ${this.progressPercent}%`
+    },
+    csrfToken () {
+      return document.querySelector('[name=csrfmiddlewaretoken]').value
     }
   },
   methods: {
     loadDocument () {
-      let loadingTask = PDFJS.getDocument(this.pdfPath)
+      let loadingTask = PDFJS.getDocument({
+        url: this.pdfPath,
+        isEvalSupported: false
+      })
       loadingTask.onProgress = (progress) => {
         this.progressCurrent = progress.loaded
         this.progressTotal = progress.total
@@ -358,7 +361,7 @@ export default {
         var xhr = new window.XMLHttpRequest()
         xhr.open('POST', document.location.href)
         xhr.setRequestHeader('Content-Type', 'application/json')
-        xhr.setRequestHeader('X-CSRFToken', this.config.config.csrfToken)
+        xhr.setRequestHeader('X-CSRFToken', this.csrfToken)
         xhr.addEventListener("progress", (e) => {
           if (e.lengthComputable) {
             this.progressCurrent = e.loaded

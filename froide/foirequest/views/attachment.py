@@ -6,12 +6,14 @@ import logging
 
 from django.conf import settings
 from django.core.files import File
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.views.static import serve
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from froide.helper.utils import render_400, render_403
 from froide.helper.redaction import redact_file
@@ -170,6 +172,34 @@ def send_attachment_file(attachment):
     return response
 
 
+def get_redact_context(foirequest, attachment):
+    return {
+        'resources': {
+            'pdfjsWorker': static('js/pdf.worker.min.js')
+        },
+        'config': {
+            'publishUrl': reverse('foirequest-approve_attachment', kwargs={
+                'slug': foirequest.slug,
+                'attachment': attachment.pk
+            })
+        },
+        'i18n': {
+            'previousPage': _('Previous Page'),
+            'nextPage': _('Next Page'),
+            'pageCurrentOfTotal': _('{current} of {total}').format(current='$current', total='$total'),
+            'redactAndPublish': _('Save redaction'),
+            'publishWithoutRedaction': _('No redaction needed'),
+            'toggleText': _('Text only'),
+            'disableText': _('Hide text'),
+            'cancel': _('Cancel'),
+            'loadingPdf': _('Loading PDF...'),
+            'redacting': _('Redaction process started, please wait...'),
+            'sending': _('Saving redacted PDF, please wait...'),
+            'autoRedacted': _('We automatically redacted some text for you already. Please check if we got everything.'),
+        }
+    }
+
+
 def redact_attachment(request, slug, attachment_id):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
 
@@ -219,8 +249,11 @@ def redact_attachment(request, slug, attachment_id):
 
     attachment_url = get_accessible_attachment_url(foirequest, attachment)
 
-    return render(request, 'foirequest/redact.html', {
+    ctx = {
         'foirequest': foirequest,
         'attachment': attachment,
-        'attachment_url': attachment_url
-    })
+        'attachment_url': attachment_url,
+        'config': json.dumps(get_redact_context(foirequest, attachment))
+    }
+
+    return render(request, 'foirequest/redact.html', ctx)
