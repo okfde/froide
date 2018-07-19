@@ -355,8 +355,7 @@ class FoiRequest(models.Model):
 
     @property
     def messages(self):
-        if not hasattr(self, "_messages") or \
-                self._messages is None:
+        if not hasattr(self, "_messages") or self._messages is None:
             self._messages = list(self.foimessage_set.select_related(
                 "sender_user",
                 "sender_public_body",
