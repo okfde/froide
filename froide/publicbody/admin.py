@@ -50,7 +50,7 @@ class PublicBodyAdminForm(forms.ModelForm):
 ClassificationAssignMixin = make_admin_assign_action('classification')
 
 
-class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
+class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     form = PublicBodyAdminForm
 
     prepopulated_fields = {"slug": ("name",)}
@@ -113,8 +113,13 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
             'export_csv', 'remove_from_index', 'tag_all'
     ]
 
+    def get_queryset(self, request):
+        qs = super(PublicBodyBaseAdminMixin, self).get_queryset(request)
+        qs = qs.select_related('classification', 'jurisdiction')
+        return qs
+
     def get_urls(self):
-        urls = super(PublicBodyAdminMixin, self).get_urls()
+        urls = super(PublicBodyBaseAdminMixin, self).get_urls()
         my_urls = [
             url(r'^import/$',
                 self.admin_site.admin_view(self.import_csv),
@@ -154,7 +159,7 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
             obj._created_by = obj._updated_by
             obj.created_at = obj.updated_at
 
-        super(PublicBodyAdminMixin, self).save_model(request, obj, form, change)
+        super(PublicBodyBaseAdminMixin, self).save_model(request, obj, form, change)
 
     def category_list(self, obj):
         return ", ".join(o.name for o in obj.categories.all())
@@ -175,13 +180,20 @@ class PublicBodyAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     remove_from_index.short_description = _("Remove from search index")
 
 
+class PublicBodyAdminMixin(PublicBodyBaseAdminMixin):
+    def get_queryset(self, request):
+        qs = super(PublicBodyAdminMixin, self).get_queryset(request)
+        qs = qs.filter(confirmed=True)
+        return qs
+
+
 class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
     pass
 
 
-class PublicBodyProposalAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
+class ProposedPublicBodyAdmin(PublicBodyBaseAdminMixin, admin.ModelAdmin):
     def get_urls(self):
-        urls = super(PublicBodyProposalAdmin, self).get_urls()
+        urls = super(ProposedPublicBodyAdmin, self).get_urls()
         my_urls = [
             url(r'^(?P<pk>\d+)/confirm/$',
                 self.admin_site.admin_view(self.confirm),
@@ -323,7 +335,7 @@ class CategorizedPublicBodyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PublicBody, PublicBodyAdmin)
-admin.site.register(ProposedPublicBody, PublicBodyProposalAdmin)
+admin.site.register(ProposedPublicBody, ProposedPublicBodyAdmin)
 admin.site.register(FoiLaw, FoiLawAdmin)
 admin.site.register(Jurisdiction, JurisdictionAdmin)
 admin.site.register(PublicBodyTag, PublicBodyTagAdmin)
