@@ -82,8 +82,9 @@
       {% csrf_token %}
     </form>
     <div class="card">
-      <div class="card-body" id="redact">
+      <div class="card-body">
         <redaction
+          id="redact"
           pdf-path="{{ attachment_url }}"
           attachment-url="{{ attachment.get_anchor_url }}"
           :redact-regex="{{ foirequest.get_redaction_regexes }}"

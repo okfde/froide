@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+import {renderComponent} from './lib/vue-helper'
+
 import Redaction from './components/redaction'
 
 Vue.config.productionTip = false
@@ -8,8 +10,8 @@ function createRedaction (selector) {
   /* eslint-disable no-new */
   new Vue({
     components: { Redaction },
-    el: selector
-  })
+    render: renderComponent(selector, Redaction)
+  }).$mount(selector)
 }
 
 document.addEventListener('DOMContentLoaded', function () {

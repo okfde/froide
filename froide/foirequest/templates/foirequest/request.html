@@ -14,7 +14,7 @@
 {% endblock messages %}
 
 {% block body %}
-  <form method="post" action="{% url 'foirequest-make_request' %}" id="make-request" novalidate>
+  <form method="post" action="{% url 'foirequest-make_request' %}" novalidate>
 
     {% csrf_token %}
     {{ request_form.reference }}
@@ -28,6 +28,7 @@
     {% endfor %}
 
       <request-form
+        id="make-request" 
         v-cloak
         publicbody-default-search="{{ public_body_search }}"
         :publicbodies="{{ publicbodies_json }}"
