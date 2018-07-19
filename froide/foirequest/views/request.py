@@ -19,13 +19,12 @@ def shortlink(request, obj_id):
 
 def auth(request, obj_id, code):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
-    if can_read_foirequest(foirequest, request):
-        return redirect(foirequest)
     if check_foirequest_auth_code(foirequest, code):
         request.session['pb_auth'] = code
         return redirect(foirequest)
-    else:
-        return render_403(request)
+    if can_read_foirequest(foirequest, request):
+        return redirect(foirequest)
+    return render_403(request)
 
 
 def show(request, slug, **kwargs):
