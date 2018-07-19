@@ -2,8 +2,16 @@
 {% load comments %}
 {% load foirequest_tags %}
 
+{% block before_message_container %}{% endblock %}
+
 <div id="{{ message.get_html_id }}" class="message-container">
+
+  {% block before_message %}{% endblock %}
+
   <div class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
+
+    {% block before_meta %}{% endblock %}
+
     <dl class="message-meta">
       <dt>
         {% blocktrans %}From{% endblocktrans %}
@@ -129,6 +137,9 @@
       </dd>
     {% endif %}
   </dl>
+
+  {% block after_meta %}{% endblock %}
+
   {% if object|can_write_foirequest:request and message.is_postal %}
     <div class="d-print-none">
       <h6>
@@ -145,6 +156,8 @@
     </div>
   {% endif %}
 
+  {% block before_attachments %}{% endblock %}
+
   {% if message.all_attachments %}
     <h6>
       {% blocktrans %}Attachments{% endblocktrans %}
@@ -156,6 +169,8 @@
     </div>
   {% endif %}
 
+  {% block after_attachments %}{% endblock %}
+
     {% if object|can_write_foirequest:request %}
       {% if object.message_needs_status == message %}
         <div class="alert alert-danger">
@@ -163,7 +178,11 @@
         </div>
       {% endif %}
     {% endif %}
+
+    {% block before_message_body %}
     <hr/>
+    {% endblock %}
+
     <div id="{{ message.get_html_id }}-content" class="message-content">
       {% if forloop.counter0 == 0 %}
         <div class="content-text">{% highlight_request message %}<div class="d-print-none">
@@ -193,6 +212,9 @@
       {% endif %}
     </div>
   </div>
+
+  {% block after_message %}{% endblock %}
+
   {% if object|can_write_foirequest:request %}
     {% if message.is_response %}
       <div class="alert alert-info d-print-none">
@@ -200,6 +222,8 @@
       </div>
     {% endif %}
   {% endif %}
+
+  {% block before_events %}{% endblock %}
 
   {% if message.events %}
     <div class="events">
@@ -213,6 +237,8 @@
       </ol>
     </div>
   {% endif %}
+
+  {% block before_comments %}{% endblock %}
 
   <div class="comments-container d-print-none">
     {% get_comment_list for message as comment_list %}
@@ -230,4 +256,7 @@
       </div>
     </div>
   </div>
+  {% block after_comments %}{% endblock %}
 </div>
+
+{% block after_message_container %}{% endblock %}
