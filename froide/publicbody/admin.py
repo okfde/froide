@@ -191,9 +191,9 @@ class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
     pass
 
 
-class ProposedPublicBodyAdmin(PublicBodyBaseAdminMixin, admin.ModelAdmin):
+class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
     def get_urls(self):
-        urls = super(ProposedPublicBodyAdmin, self).get_urls()
+        urls = super(ProposedPublicBodyAdminMixin, self).get_urls()
         my_urls = [
             url(r'^(?P<pk>\d+)/confirm/$',
                 self.admin_site.admin_view(self.confirm),
@@ -237,6 +237,10 @@ class ProposedPublicBodyAdmin(PublicBodyBaseAdminMixin, admin.ModelAdmin):
                 fail_silently=True
             )
         return redirect('admin:publicbody_publicbody_change', pb.id)
+
+
+class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
+    pass
 
 
 class FoiLawAdmin(admin.ModelAdmin):
