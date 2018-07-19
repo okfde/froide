@@ -45,8 +45,8 @@ class MessageHandler(object):
         request = message.request
 
         ds = message.get_delivery_status()
-        if ds is not None:
-            raise ValueError('Delivery Status exists!')
+        if ds is not None and ds.is_sent():
+            raise ValueError('Delivery Status with sent exists!')
 
         if not request.is_blocked:
             self.run_send(**kwargs)
@@ -65,8 +65,9 @@ class MessageHandler(object):
             # If status is received, do not send
             return
 
-        # Remove existing delivery status prior to sending
-        message.delete_delivery_status()
+        if ds:
+            ds.retry_count += 1
+            ds.save()
 
         message.sent = False
         message.save()

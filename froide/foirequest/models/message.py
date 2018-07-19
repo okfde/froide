@@ -259,7 +259,7 @@ class FoiMessage(models.Model):
 
     @property
     def attachments(self):
-        if not hasattr(self, "_attachments"):
+        if not hasattr(self, '_attachments') or self._attachments is None:
             self._attachments = list(self.foiattachment_set.all().order_by('id'))
         return self._attachments
 
@@ -428,6 +428,7 @@ class DeliveryStatus(models.Model):
 
     message = models.OneToOneField(FoiMessage, on_delete=models.CASCADE)
     status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=32)
+    retry_count = models.PositiveIntegerField(default=0)
     log = models.TextField(blank=True)
     last_update = models.DateTimeField()
 
