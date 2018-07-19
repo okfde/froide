@@ -198,7 +198,10 @@ class DeliveryStatusInline(admin.TabularInline):
 
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display = ('subject', 'timestamp', 'sender_email', 'recipient_email',)
+    list_display = (
+        'subject', 'timestamp', 'sender_email', 'recipient_email',
+        'get_deliverystatus_display'
+    )
     list_filter = (
         'kind', 'is_response', 'sent', 'status',
         make_nullfilter('recipient_public_body',
@@ -221,6 +224,15 @@ class FoiMessageAdmin(admin.ModelAdmin):
         FoiAttachmentInline,
     ]
     actions = ['check_delivery_status', 'resend_message']
+
+    def get_queryset(self, request):
+        qs = super(FoiMessageAdmin, self).get_queryset(request)
+        qs = qs.select_related('deliverystatus')
+        return qs
+
+    def get_deliverystatus_display(self, obj):
+        return obj.deliverystatus.get_status_display()
+    get_deliverystatus_display.short_description = _('delivery status')
 
     def check_delivery_status(self, request, queryset):
         from .tasks import check_delivery_status
