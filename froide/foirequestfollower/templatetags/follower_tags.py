@@ -6,7 +6,7 @@ register = template.Library()
 
 
 def get_context(foirequest, request, **kwargs):
-    form = FollowRequestForm(foirequest, request)
+    form = FollowRequestForm(foirequest=foirequest, request=request)
     following = False
     user = request.user
     if user.is_authenticated and foirequest.followed_by(user):

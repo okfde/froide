@@ -287,11 +287,11 @@ class FoiMessage(models.Model):
 
     def get_postal_attachment_form(self):
         from ..forms import get_postal_attachment_form
-        return get_postal_attachment_form(self)
+        return get_postal_attachment_form(foimessage=self)
 
     def get_public_body_sender_form(self):
         from ..forms import get_message_sender_form
-        return get_message_sender_form(self)
+        return get_message_sender_form(foimessage=self)
 
     def has_delivery_status(self):
         if not self.sent or self.is_response:

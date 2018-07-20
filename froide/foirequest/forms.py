@@ -97,7 +97,8 @@ class RequestForm(JSONMixin, forms.Form):
         return ''
 
 
-def get_message_sender_form(foimessage, *args):
+def get_message_sender_form(*args, **kwargs):
+    foimessage = kwargs.pop('foimessage')
     return MessagePublicBodySenderForm(*args, message=foimessage)
 
 
@@ -108,7 +109,8 @@ class MessagePublicBodySenderForm(forms.Form):
         widget=PublicBodySelect
     )
 
-    def __init__(self, *args, message=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        message = kwargs.pop('message', None)
         if 'initial' not in kwargs:
             if message.sender_public_body:
                 kwargs['initial'] = {'sender': message.sender_public_body.id}
@@ -143,8 +145,10 @@ class MakePublicBodySuggestionForm(forms.Form):
         return publicbody
 
 
-def get_escalation_message_form(foirequest, *args,
-            template='foirequest/emails/mediation_message.txt'):
+def get_escalation_message_form(*args, **kwargs):
+    foirequest = kwargs.pop('foirequest')
+    template = kwargs.pop('template',
+                          'foirequest/emails/mediation_message.txt')
     subject = _(
         'Complaint about request “{title}”'
         ).format(title=foirequest.title)
@@ -174,14 +178,15 @@ class EscalationMessageForm(forms.Form):
                 attrs={"class": "form-control"}),
             label=_("Your message"), )
 
-    def __init__(self, *args, foirequest=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        foirequest = kwargs.pop('foirequest')
         super(EscalationMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
     def clean_message(self):
         message = self.cleaned_data['message']
         message = message.replace('\r\n', '\n').strip()
-        empty_form = get_escalation_message_form(self.foirequest)
+        empty_form = get_escalation_message_form(foirequest=self.foirequest)
         if message == empty_form.initial['message'].strip():
             raise forms.ValidationError(
                 _('You need to fill in the blanks in the template!')
@@ -237,7 +242,8 @@ class EscalationMessageForm(forms.Form):
 
 
 class PublicBodySuggestionsForm(forms.Form):
-    def __init__(self, foirequest, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        foirequest = kwargs.pop('foirequest')
         super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
@@ -342,7 +348,8 @@ class FoiRequestStatusForm(forms.Form):
             help_text=_('Please specify what the Public Body charges for the information.')
         )
 
-    def __init__(self, foirequest, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        foirequest = kwargs.pop('foirequest')
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
         refusal_choices = []
@@ -420,7 +427,8 @@ class FoiRequestStatusForm(forms.Form):
 
 
 class ConcreteLawForm(forms.Form):
-    def __init__(self, foirequest, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        foirequest = kwargs.pop('foirequest')
         super(ConcreteLawForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
         self.possible_laws = foirequest.law.combined.all()
@@ -497,7 +505,8 @@ class AttachmentSaverMixin(object):
         return added, updated
 
 
-def get_send_message_form(foirequest, *args):
+def get_send_message_form(*args, **kwargs):
+    foirequest = kwargs.pop('foirequest')
     last_message = list(foirequest.messages)[-1]
     subject = _("Re: %(subject)s"
             ) % {"subject": last_message.subject}
@@ -552,7 +561,8 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         widget=forms.FileInput(attrs={'multiple': True})
     )
 
-    def __init__(self, *args, foirequest=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        foirequest = kwargs.pop('foirequest')
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
@@ -575,7 +585,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
     def clean_message(self):
         message = self.cleaned_data['message']
         message = message.replace('\r\n', '\n').strip()
-        empty_form = get_send_message_form(self.foirequest)
+        empty_form = get_send_message_form(foirequest=self.foirequest)
         if message == empty_form.initial['message'].strip():
             raise forms.ValidationError(
                 _('You need to fill in the blanks in the template!')
@@ -675,8 +685,9 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
             help_text=scan_help_text, widget=forms.FileInput(attrs={'multiple': True}))
     FIELD_ORDER = ['publicbody', 'date', 'subject', 'text', 'files']
 
-    def __init__(self, *args, foirequest=None, **kwargs):
-        self.foirequest = foirequest
+    def __init__(self, *args, **kwargs):
+
+        self.foirequest = kwargs.pop('foirequest')
         super(PostalBaseForm, self).__init__(*args, **kwargs)
         self.fields['publicbody'].label = self.PUBLICBODY_LABEL
         self.fields['publicbody'].initial = self.foirequest.public_body
@@ -731,7 +742,8 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         return message
 
 
-def get_postal_reply_form(foirequest, *args):
+def get_postal_reply_form(*args, **kwargs):
+    foirequest = kwargs.pop('foirequest')
     return PostalReplyForm(*args, prefix='postal_reply', foirequest=foirequest)
 
 
@@ -763,8 +775,11 @@ class PostalReplyForm(PostalBaseForm):
         return message
 
 
-def get_postal_message_form(foirequest, *args):
-    return PostalMessageForm(*args, prefix='postal_message', foirequest=foirequest)
+def get_postal_message_form(*args, **kwargs):
+    foirequest = kwargs.pop('foirequest')
+    return PostalMessageForm(
+        *args, prefix='postal_message', foirequest=foirequest
+    )
 
 
 class PostalMessageForm(PostalBaseForm):
@@ -785,7 +800,8 @@ class PostalMessageForm(PostalBaseForm):
         return message
 
 
-def get_postal_attachment_form(foimessage, *args):
+def get_postal_attachment_form(*args, **kwargs):
+    foimessage = kwargs.pop('foimessage')
     prefix = 'postal-attachment-%s' % foimessage.pk
     return PostalAttachmentForm(*args, prefix=prefix)
 

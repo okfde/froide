@@ -692,7 +692,7 @@ class RequestTest(TestCase):
         self.assertIn(req.get_absolute_short_url(), response['Location'])
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
-        form = get_message_sender_form(message)
+        form = get_message_sender_form(foimessage=message)
         post_var = form.add_prefix("sender")
         self.assertTrue(message.is_response)
         original_pb = req.public_body
@@ -1236,11 +1236,11 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertNotIn(name, last.plaintext_redacted)
-        form = get_send_message_form(req, {
+        form = get_send_message_form({
             'sendmessage-to': '0',
             'sendmessage-subject': 'Testing',
-            'sendmessage-message': 'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
-        })
+            'sendmessage-cmessage': 'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
+        }, foirequest=req)
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -1406,11 +1406,11 @@ class RequestTest(TestCase):
 
     def test_remove_double_numbering(self):
         req = FoiRequest.objects.all()[0]
-        form = get_send_message_form(req, {
+        form = get_send_message_form({
             'sendmessage-to': '0',
             'sendmessage-subject': req.title + ' [#%s]' % req.pk,
             'sendmessage-message': 'Test'
-        })
+        }, foirequest=req)
         self.assertTrue(form.is_valid())
         form.save()
         req = FoiRequest.objects.all()[0]
@@ -1490,10 +1490,10 @@ class MediatorTest(TestCase):
     def test_hiding_content(self):
         req = FoiRequest.objects.all()[0]
         mediator = req.law.mediator
-        form = get_escalation_message_form(req, {
+        form = get_escalation_message_form({
                 'subject': 'Escalate',
                 'message': 'Content'
-        })
+        }, foirequest=req)
         self.assertTrue(form.is_valid())
         form.save()
         req = FoiRequest.objects.all()[0]

@@ -513,6 +513,14 @@ class FoiRequest(models.Model):
                 'request_public_after_due_days', 14))
         return None
 
+    def possible_reply_addresses(self):
+        addresses = {}
+        for message in reversed(self.messages):
+            if message.is_response:
+                if message.sender_email and message.sender_email not in addresses:
+                    addresses[message.sender_email] = message
+        return addresses
+
     def get_set_tags_form(self):
         from ..forms import TagFoiRequestForm
         return TagFoiRequestForm(tags=self.tags.all())
@@ -523,19 +531,11 @@ class FoiRequest(models.Model):
             status = ''
         else:
             status = self.status
-        return FoiRequestStatusForm(self,
+        return FoiRequestStatusForm(foirequest=self,
                     initial={"status": status,
                         'resolution': self.resolution,
                         "costs": self.costs,
                         "refusal_reason": self.refusal_reason})
-
-    def possible_reply_addresses(self):
-        addresses = {}
-        for message in reversed(self.messages):
-            if message.is_response:
-                if message.sender_email and message.sender_email not in addresses:
-                    addresses[message.sender_email] = message
-        return addresses
 
     def public_body_suggestions_form(self):
         from ..forms import PublicBodySuggestionsForm
@@ -547,23 +547,23 @@ class FoiRequest(models.Model):
 
     def get_concrete_law_form(self):
         from ..forms import ConcreteLawForm
-        return ConcreteLawForm(self)
+        return ConcreteLawForm(foirequest=self)
 
     def get_postal_reply_form(self):
         from ..forms import get_postal_reply_form
-        return get_postal_reply_form(self)
+        return get_postal_reply_form(foirequest=self)
 
     def get_postal_message_form(self):
         from ..forms import get_postal_message_form
-        return get_postal_message_form(self)
+        return get_postal_message_form(foirequest=self)
 
     def get_send_message_form(self):
         from ..forms import get_send_message_form
-        return get_send_message_form(self)
+        return get_send_message_form(foirequest=self)
 
     def get_escalation_message_form(self):
         from ..forms import get_escalation_message_form
-        return get_escalation_message_form(self)
+        return get_escalation_message_form(foirequest=self)
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()

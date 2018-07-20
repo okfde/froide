@@ -36,7 +36,7 @@ def allow_write_foirequest(func):
 @require_POST
 @allow_write_foirequest
 def set_public_body(request, foirequest):
-    form = PublicBodySuggestionsForm(foirequest, request.POST)
+    form = PublicBodySuggestionsForm(request.POST, foirequest=foirequest)
     if not form.is_valid():
         return render_400(request)
 
@@ -88,7 +88,7 @@ def suggest_public_body(request, slug):
 @require_POST
 @allow_write_foirequest
 def set_status(request, foirequest):
-    form = FoiRequestStatusForm(foirequest, request.POST)
+    form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
         form.set_status()
         messages.add_message(request, messages.SUCCESS,
@@ -126,7 +126,7 @@ def set_law(request, foirequest):
         return render_400(request)
     if not foirequest.law.meta:
         return render_400(request)
-    form = ConcreteLawForm(foirequest, request.POST)
+    form = ConcreteLawForm(request.POST, foirequest=foirequest)
     if not form.is_valid():
         return render_400(request)
     form.save()

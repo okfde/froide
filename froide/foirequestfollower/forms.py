@@ -12,10 +12,10 @@ User = get_user_model()
 
 
 class FollowRequestForm(forms.Form):
-    def __init__(self, foirequest, request, *args, **kwargs):
-        self.foirequest = foirequest
-        self.request = request
-        self.user = request.user
+    def __init__(self, *args, **kwargs):
+        self.foirequest = kwargs.pop('foirequest')
+        self.request = kwargs.pop('request')
+        self.user = self.request.user
         super(FollowRequestForm, self).__init__(*args, **kwargs)
         if not self.user.is_authenticated:
             self.fields["email"] = forms.EmailField(label=_("Your Email address"),

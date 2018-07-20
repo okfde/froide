@@ -23,7 +23,9 @@ from .request_actions import allow_write_foirequest
 @require_POST
 @allow_write_foirequest
 def send_message(request, foirequest):
-    form = get_send_message_form(foirequest, request.POST, request.FILES)
+    form = get_send_message_form(
+        request.POST, request.FILES, foirequest=foirequest
+    )
 
     throttle_message = check_throttle(foirequest.user, FoiMessage)
     if throttle_message:
@@ -48,7 +50,7 @@ def escalation_message(request, foirequest):
                 _('Your request cannot be escalated.'))
         return show_foirequest(request, foirequest, status=400)
 
-    form = get_escalation_message_form(foirequest, request.POST)
+    form = get_escalation_message_form(request.POST, foirequest=foirequest)
 
     throttle_message = check_throttle(foirequest.user, FoiMessage)
     if throttle_message:
@@ -109,7 +111,9 @@ def add_postal_reply_attachment(request, foirequest, message_id):
     if not message.is_postal:
         return render_400(request)
 
-    form = get_postal_attachment_form(message, request.POST, request.FILES)
+    form = get_postal_attachment_form(
+        request.POST, request.FILES, foimessage=message
+    )
     if form.is_valid():
         result = form.save(message)
         added, updated = result
@@ -138,7 +142,7 @@ def set_message_sender(request, foirequest, message_id):
         raise Http404
     if not message.is_response:
         return render_400(request)
-    form = get_message_sender_form(message, request.POST)
+    form = get_message_sender_form(request.POST, foimessage=message)
     if form.is_valid():
         form.save()
         return redirect(message)
