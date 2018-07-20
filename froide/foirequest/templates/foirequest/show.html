@@ -602,6 +602,16 @@
   </div>
 </div>
 
+{% if object.is_blocked %}
+  <div class="row mt-5">
+    <div class="col-lg-12 text-right">
+      <small class="text-muted">
+        {% trans "This request has been detected as spam and its messages are not sent." %}
+      </small>
+    </div>
+  </div>
+{% endif %}
+
 {% endblock %}
 
 {% block scripts %}
