@@ -1,21 +1,33 @@
 from __future__ import unicode_literals
 
+import re
+
 from django.db import IntegrityError
 from django.utils import timezone
 from django.contrib.sites.models import Site
+from django.core.files import File
+from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
 from froide.account.services import AccountService
+from froide.helper.text_utils import redact_subject, redact_plaintext
+from froide.helper.storage import add_number_to_filename
 
-from .models import FoiRequest, FoiMessage, RequestDraft, FoiProject
-from .utils import generate_secret_address, construct_message_body
+from .models import (
+    FoiRequest, FoiMessage, RequestDraft, FoiProject, FoiAttachment
+)
+from .utils import (
+    generate_secret_address, construct_initial_message_body,
+    get_publicbody_for_email
+)
 from .hooks import registry
 from .tasks import create_project_requests
 
 
 class BaseService(object):
-    def __init__(self, data):
+    def __init__(self, data, **kwargs):
         self.data = data
+        self.kwargs = kwargs
 
     def execute(self, request=None):
         return self.process(request=request)
@@ -153,6 +165,7 @@ class CreateRequestService(BaseService):
         if 'tags' in data and data['tags']:
             request.tags.add(*data['tags'])
 
+        subject = '%s [#%s]' % (request.title, request.pk)
         message = FoiMessage(
             request=request,
             sent=False,
@@ -162,21 +175,26 @@ class CreateRequestService(BaseService):
             sender_name=user.display_name(),
             timestamp=now,
             status='awaiting_response',
-            subject='%s [#%s]' % (request.title, request.pk)
+            subject=subject,
+            subject_redacted=redact_subject(subject, user=user)
         )
-        message.subject_redacted = message.redact_subject()
 
         send_address = True
         if request.law:
             send_address = not request.law.email_only
 
-        message.plaintext = construct_message_body(
+        message.plaintext = construct_initial_message_body(
                 request,
                 text=data['body'],
                 foilaw=foilaw,
                 full_text=data.get('full_text', False),
                 send_address=send_address)
-        message.plaintext_redacted = message.redact_plaintext()
+
+        message.plaintext_redacted = redact_plaintext(
+            message.plaintext,
+            is_response=False,
+            user=user
+        )
 
         message.recipient_public_body = publicbody
         message.recipient = publicbody.name
@@ -277,3 +295,95 @@ class SaveDraftService(BaseService):
             )
         draft.publicbodies.set(data['publicbodies'])
         return draft
+
+
+class ReceiveEmailService(BaseService):
+
+    def process(self, request=None):
+        foirequest = self.kwargs['foirequest']
+        publicbody = self.kwargs.get('publicbody', None)
+        email = self.data
+
+        subject = email['subject'] or ''
+        subject = subject[:250]
+
+        message_id = email.get('message_id', '') or ''
+        if message_id:
+            message_id = message_id[:512]
+
+        message = FoiMessage(
+            request=foirequest,
+            subject=subject,
+            email_message_id=message_id,
+            is_response=True,
+            sender_name=email['from'][0],
+            sender_email=email['from'][1],
+            recipient_email=foirequest.secret_address,
+            recipient=foirequest.user.display_name(),
+            plaintext=email['body'],
+            html=email['html'],
+        )
+
+        if publicbody is None:
+            publicbody = get_publicbody_for_email(
+                message.sender_email, foirequest
+            )
+        if publicbody is None:
+            publicbody = foirequest.public_body
+
+        message.sender_public_body = publicbody
+
+        if foirequest.law and publicbody == foirequest.law.mediator:
+            message.content_hidden = True
+
+        if email['date'] is None:
+            message.timestamp = timezone.now()
+        else:
+            message.timestamp = email['date']
+
+        message.subject_redacted = redact_subject(
+            message.subject, user=foirequest.user
+        )
+        message.plaintext_redacted = redact_plaintext(
+            message.plaintext, is_response=True,
+            user=foirequest.user
+        )
+        message.save()
+
+        foirequest._messages = None
+        foirequest.status = 'awaiting_classification'
+        foirequest.last_message = message.timestamp
+        foirequest.save()
+
+        self.add_attachments(foirequest, message, email['attachments'])
+
+        foirequest.message_received.send(sender=foirequest, message=message)
+
+    def add_attachments(self, foirequest, message, attachments):
+        account_service = AccountService(foirequest.user)
+        names = set()
+
+        for i, attachment in enumerate(attachments):
+            att = FoiAttachment(
+                belongs_to=message,
+                name=attachment.name,
+                size=attachment.size,
+                filetype=attachment.content_type
+            )
+            if not att.name:
+                att.name = _("attached_file_%d") % i
+
+            # Translators: replacement for person name in filename
+            repl = str(_('NAME'))
+            att.name = account_service.apply_name_redaction(att.name, repl)
+            att.name = re.sub(r'[^A-Za-z0-9_\.\-]', '', att.name)
+            att.name = att.name[:250]
+
+            # Assure name is unique
+            if att.name in names:
+                att.name = add_number_to_filename(att.name, i)
+            names.add(att.name)
+
+            attachment._committed = False
+            att.file = File(attachment)
+            att.save()

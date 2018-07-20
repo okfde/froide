@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 from datetime import timedelta
 import json
-import re
-import os
 
 from django.utils.six import string_types, text_type as str
 from django.db import models
@@ -13,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.urls import reverse
-from django.core.files import File
+
 import django.dispatch
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
@@ -24,11 +22,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
-from froide.account.services import AccountService
-from froide.helper.text_utils import redact_content
-
-from ..foi_mail import package_foirequest
-from ..utils import construct_message_body, get_publicbody_for_email
+from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
 
@@ -443,7 +437,7 @@ class FoiRequest(models.Model):
         return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
-        return redact_content(self.description)
+        return redact_plaintext(self.description, is_response=False, user=self.user)
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))
@@ -543,19 +537,9 @@ class FoiRequest(models.Model):
                     addresses[message.sender_email] = message
         return addresses
 
-    def public_body_suggestions(self):
-        if not hasattr(self, "_public_body_suggestion"):
-            from .suggestion import PublicBodySuggestion
-
-            self._public_body_suggestion = \
-                    PublicBodySuggestion.objects.filter(
-                        request=self
-                    ).select_related("public_body", "request")
-        return self._public_body_suggestion
-
     def public_body_suggestions_form(self):
         from ..forms import PublicBodySuggestionsForm
-        return PublicBodySuggestionsForm(self.public_body_suggestions())
+        return PublicBodySuggestionsForm(self)
 
     def make_public_body_suggestion_form(self):
         from ..forms import MakePublicBodySuggestionForm
@@ -566,183 +550,23 @@ class FoiRequest(models.Model):
         return ConcreteLawForm(self)
 
     def get_postal_reply_form(self):
-        from ..forms import PostalReplyForm
-        return PostalReplyForm(prefix='reply', foirequest=self)
+        from ..forms import get_postal_reply_form
+        return get_postal_reply_form(self)
 
     def get_postal_message_form(self):
-        from ..forms import PostalMessageForm
-        return PostalMessageForm(prefix='message', foirequest=self)
+        from ..forms import get_postal_message_form
+        return get_postal_message_form(self)
+
+    def get_send_message_form(self):
+        from ..forms import get_send_message_form
+        return get_send_message_form(self)
+
+    def get_escalation_message_form(self):
+        from ..forms import get_escalation_message_form
+        return get_escalation_message_form(self)
 
     def quote_last_message(self):
         return list(self.messages)[-1].get_quoted()
-
-    def get_send_message_form(self):
-        from ..forms import SendMessageForm
-        last_message = list(self.messages)[-1]
-        subject = _("Re: %(subject)s"
-                ) % {"subject": last_message.subject}
-        if self.is_overdue() and self.awaits_response():
-            days = (timezone.now() - self.due_date).days + 1
-            message = render_to_string('foirequest/emails/overdue_reply.txt', {
-                'due': ungettext_lazy(
-                    "%(count)s day",
-                    "%(count)s days",
-                    days) % {'count': days},
-                'foirequest': self
-            })
-        else:
-            message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n%(name)s\n")
-            message = message % {'name': self.user.get_full_name()}
-        return SendMessageForm(self,
-                initial={"subject": subject,
-                    "message": message})
-
-    def get_escalation_message_form(self):
-        from ..forms import EscalationMessageForm
-
-        subject = _(
-            'Complaint about request "%(title)s"'
-        ) % {"title": self.title}
-        return EscalationMessageForm(
-            self,
-            initial={
-                "subject": subject,
-                "message": render_to_string(
-                    "foirequest/emails/mediation_message.txt",
-                    {
-                        "law": self.law.name,
-                        "link": self.get_auth_link(),
-                        "name": self.user.get_full_name()
-                    }
-                )}
-        )
-
-    def add_message_from_email(self, email, publicbody=None):
-        from .message import FoiMessage
-        from .attachment import FoiAttachment
-
-        message = FoiMessage(request=self)
-        message.subject = email['subject'] or ''
-        message.subject = message.subject[:250]
-        message_id = email.get('message_id', '')
-        if message_id:
-            message.email_message_id = message_id[:512]
-        message.is_response = True
-        message.sender_name = email['from'][0]
-        message.sender_email = email['from'][1]
-
-        if publicbody is None:
-            publicbody = get_publicbody_for_email(message.sender_email, self)
-        if publicbody is None:
-            publicbody = self.public_body
-
-        message.sender_public_body = publicbody
-
-        if self.law and message.sender_public_body == self.law.mediator:
-            message.content_hidden = True
-
-        if email['date'] is None:
-            message.timestamp = timezone.now()
-        else:
-            message.timestamp = email['date']
-        message.recipient_email = self.secret_address
-        message.recipient = self.user.display_name()
-        message.plaintext = email['body']
-        message.html = email['html']
-        message.subject_redacted = message.redact_subject()[:250]
-        message.plaintext_redacted = message.redact_plaintext()
-        message.save()
-        self._messages = None
-        self.status = 'awaiting_classification'
-        self.last_message = message.timestamp
-        self.save()
-
-        account_service = AccountService(self.user)
-
-        names = set()
-        for i, attachment in enumerate(email['attachments']):
-            att = FoiAttachment(
-                belongs_to=message,
-                name=attachment.name,
-                size=attachment.size,
-                filetype=attachment.content_type
-            )
-            if not att.name:
-                att.name = _("attached_file_%d") % i
-
-            # Translators: replacement for person name in filename
-            repl = str(_('NAME'))
-            att.name = account_service.apply_name_redaction(att.name, repl)
-            att.name = re.sub(r'[^A-Za-z0-9_\.\-]', '', att.name)
-            att.name = att.name[:250]
-
-            # Assure name is unique
-            if att.name in names:
-                att.name = self._add_number_to_filename(att.name, i)
-            names.add(att.name)
-
-            attachment._committed = False
-            att.file = File(attachment)
-            att.save()
-
-        self.message_received.send(sender=self, message=message)
-
-    def _add_number_to_filename(self, filename, num):
-        path, ext = os.path.splitext(filename)
-        return '%s_%d%s' % (path, num, ext)
-
-    def add_message(self, user, recipient_name, recipient_email,
-            subject, message, recipient_pb=None, send_address=True):
-        from .message import FoiMessage
-
-        message_body = message
-        message = FoiMessage(request=self)
-        subject = re.sub(r'\s*\[#%s\]\s*$' % self.pk, '', subject)
-        message.subject = '%s [#%s]' % (subject, self.pk)
-        message.subject_redacted = message.redact_subject()
-        message.is_response = False
-        message.sender_user = user
-        message.sender_name = user.display_name()
-        message.sender_email = self.secret_address
-        message.recipient_email = recipient_email.strip()
-        message.recipient_public_body = recipient_pb
-        message.recipient = recipient_name
-        message.timestamp = timezone.now()
-        message.plaintext = self.construct_standard_message_body(
-            message_body,
-            send_address=send_address)
-        message.plaintext_redacted = message.redact_plaintext()
-        message.save()
-        message.send()
-        return message
-
-    def add_escalation_message(self, subject, message, send_address=False):
-        from .message import FoiMessage
-
-        message_body = message
-        message = FoiMessage(request=self)
-        subject = re.sub(r'\s*\[#%s\]\s*$' % self.pk, '', subject)
-        message.subject = '%s [#%s]' % (subject, self.pk)
-        message.subject_redacted = message.redact_subject()
-        message.is_response = False
-        message.is_escalation = True
-        message.sender_user = self.user
-        message.sender_name = self.user.display_name()
-        message.sender_email = self.secret_address
-        message.recipient_email = self.law.mediator.email
-        message.recipient_public_body = self.law.mediator
-        message.recipient = self.law.mediator.name
-        message.timestamp = timezone.now()
-        message.plaintext = self.construct_standard_message_body(message_body,
-            send_address=send_address)
-        message.plaintext_redacted = message.redact_plaintext()
-        filename = _('request_%(num)s.zip') % {'num': self.pk}
-        zip_bytes = package_foirequest(self)
-        attachments = [(filename, zip_bytes, 'application/zip')]
-        message.save()
-        message.send(attachments=attachments)
-        self.escalated.send(sender=self)
-        return message
 
     @property
     def readable_status(self):
@@ -759,10 +583,6 @@ class FoiRequest(models.Model):
     @classmethod
     def get_status_description(cls, status):
         return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
-
-    def construct_standard_message_body(self, text, send_address=True):
-        return render_to_string("foirequest/emails/mail_with_userinfo.txt",
-                {"request": self, "body": text, 'send_address': send_address})
 
     def determine_visibility(self):
         if self.public:
@@ -837,38 +657,6 @@ class FoiRequest(models.Model):
             return suggestion
         else:
             return False
-
-    def set_publicbody(self, publicbody, law):
-        assert self.public_body is None
-        assert self.status == "publicbody_needed"
-        self.public_body = publicbody
-        self.law = law
-        self.jurisdiction = publicbody.jurisdiction
-        send_now = self.set_status_after_change()
-        if send_now:
-            self.due_date = self.law.calculate_due_date()
-        self.save()
-        self.request_to_public_body.send(sender=self)
-        if self.law:
-            send_address = not self.law.email_only
-        if send_now:
-            messages = self.foimessage_set.all()
-            assert len(messages) == 1
-            message = messages[0]
-            message.recipient_public_body = publicbody
-            message.sender_user = self.user
-            message.recipient = publicbody.name
-            message.recipient_email = publicbody.email
-            message.plaintext = construct_message_body(
-                self,
-                text=self.description,
-                foilaw=self.law,
-                full_text=False,
-                send_address=send_address)
-            message.plaintext_redacted = message.redact_plaintext()
-            message.save()
-            assert not message.sent
-            message.send()
 
     def make_public(self):
         self.public = True

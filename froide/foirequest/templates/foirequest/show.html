@@ -310,7 +310,7 @@
 
       {# Reply #}
       <div role="tabpanel" class="tab-pane d-print-none" id="write-message">
-        <form class="form-horizontal" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message">
+        <form class="form-horizontal" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
           {% csrf_token %}
           <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
           {% if object.is_overdue %}

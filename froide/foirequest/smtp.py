@@ -17,8 +17,6 @@ class FoiEmailBackend(EmailBackend):
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         message = email_message.message()
         rcpt_options = []
-        if from_email.startswith('sw.'):
-            rcpt_options = self.RCPT_OPTIONS
         try:
             self.connection.sendmail(from_email, recipients,
                                      message.as_bytes(linesep='\r\n'),

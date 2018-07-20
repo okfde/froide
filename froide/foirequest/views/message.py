@@ -9,9 +9,11 @@ from django.contrib import messages
 from froide.helper.utils import render_400
 
 from ..models import FoiMessage
-from ..forms import (SendMessageForm, PostalReplyForm, PostalMessageForm,
-        PostalAttachmentForm, MessagePublicBodySenderForm,
-        EscalationMessageForm)
+from ..forms import (
+    get_send_message_form, get_postal_reply_form, get_postal_message_form,
+    get_escalation_message_form, get_postal_attachment_form,
+    get_message_sender_form
+)
 from ..utils import check_throttle
 
 from .request import show_foirequest
@@ -21,16 +23,16 @@ from .request_actions import allow_write_foirequest
 @require_POST
 @allow_write_foirequest
 def send_message(request, foirequest):
-    form = SendMessageForm(foirequest, request.POST)
+    form = get_send_message_form(foirequest, request.POST, request.FILES)
 
     throttle_message = check_throttle(foirequest.user, FoiMessage)
     if throttle_message:
         form.add_error(None, throttle_message)
 
     if form.is_valid():
-        mes = form.save(foirequest.user)
+        mes = form.save()
         messages.add_message(request, messages.SUCCESS,
-                _('Your Message has been sent.'))
+                _('Your message has been sent.'))
         return redirect(mes)
     else:
         return show_foirequest(request, foirequest, context={
@@ -45,7 +47,8 @@ def escalation_message(request, foirequest):
         messages.add_message(request, messages.ERROR,
                 _('Your request cannot be escalated.'))
         return show_foirequest(request, foirequest, status=400)
-    form = EscalationMessageForm(foirequest, request.POST)
+
+    form = get_escalation_message_form(foirequest, request.POST)
 
     throttle_message = check_throttle(foirequest.user, FoiMessage)
     if throttle_message:
@@ -64,18 +67,21 @@ def escalation_message(request, foirequest):
 
 @require_POST
 @allow_write_foirequest
-def add_postal_reply(request, foirequest, form_class=PostalReplyForm,
+def add_postal_reply(request, foirequest, form_func=get_postal_reply_form,
             success_message=_('A postal reply was successfully added!'),
             error_message=_('There were errors with your form submission!'),
-            form_key='postal_reply_form', form_prefix='reply'):
+            form_key='postal_reply_form'):
+
     if not foirequest.public_body:
         return render_400(request)
-    form = form_class(request.POST, request.FILES, foirequest=foirequest,
-                      prefix=form_prefix)
+
+    form = form_func(foirequest, request.POST, request.FILES)
+
     if form.is_valid():
         message = form.save()
         messages.add_message(request, messages.SUCCESS, success_message)
         return redirect(message)
+
     messages.add_message(request, messages.ERROR, error_message)
     return show_foirequest(request, foirequest, context={
         form_key: form
@@ -86,10 +92,10 @@ def add_postal_message(request, slug):
     return add_postal_reply(
         request,
         slug,
-        form_class=PostalMessageForm,
+        form_func=get_postal_message_form,
         success_message=_('A sent letter was successfully added!'),
         error_message=_('There were errors with your form submission!'),
-        form_key='postal_message_form', form_prefix='message'
+        form_key='postal_message_form'
     )
 
 
@@ -102,7 +108,8 @@ def add_postal_reply_attachment(request, foirequest, message_id):
         raise Http404
     if not message.is_postal:
         return render_400(request)
-    form = PostalAttachmentForm(request.POST, request.FILES)
+
+    form = get_postal_attachment_form(message, request.POST, request.FILES)
     if form.is_valid():
         result = form.save(message)
         added, updated = result
@@ -131,7 +138,7 @@ def set_message_sender(request, foirequest, message_id):
         raise Http404
     if not message.is_response:
         return render_400(request)
-    form = MessagePublicBodySenderForm(message, request.POST)
+    form = get_message_sender_form(message, request.POST)
     if form.is_valid():
         form.save()
         return redirect(message)

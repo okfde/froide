@@ -54,3 +54,8 @@ class HashedFilenameStorage(FileSystemStorage):
             return hashed_name
         # if the file is new, DO call it
         return super(HashedFilenameStorage, self)._save(hashed_name, content)
+
+
+def add_number_to_filename(filename, num):
+    path, ext = os.path.splitext(filename)
+    return '%s_%d%s' % (path, num, ext)

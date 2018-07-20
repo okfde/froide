@@ -74,6 +74,13 @@ class FoiAttachment(models.Model):
     def get_internal_url(self):
         return settings.FOI_MEDIA_URL + self.file.name
 
+    def get_bytes(self):
+        self.file.open(mode='rb')
+        try:
+            return self.file.read()
+        finally:
+            self.file.close()
+
     @property
     def can_redact(self):
         return can_redact_file(self.filetype, name=self.name)

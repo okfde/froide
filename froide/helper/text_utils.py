@@ -56,6 +56,40 @@ def split_text_by_separator(text, separator=None):
     return split_text
 
 
+def redact_subject(content, user=None):
+    if user:
+        account_service = user.get_account_service()
+        content = account_service.apply_message_redaction(content)
+    content = redact_content(content)
+    return content[:255]
+
+
+def redact_plaintext(content, is_response=True, user=None):
+    content = redact_content(content)
+
+    greeting_replacement = str(_("<< Greeting >>"))
+
+    if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
+        if is_response:
+            content = remove_closing(
+                content
+            )
+
+        else:
+            if settings.FROIDE_CONFIG.get('greetings'):
+                content = replace_custom(
+                    settings.FROIDE_CONFIG['greetings'],
+                    greeting_replacement,
+                    content
+                )
+
+    if user:
+        account_service = user.get_account_service()
+        content = account_service.apply_message_redaction(content)
+
+    return content
+
+
 def redact_content(content):
     content = replace_email_name(content, _("<<name and email address>>"))
     content = replace_email(content, _("<<email address>>"))

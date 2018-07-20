@@ -10,14 +10,12 @@ from django.utils.html import escape
 from django.utils.encoding import python_2_unicode_compatible
 
 from froide.publicbody.models import PublicBody
-from froide.account.services import AccountService
 from froide.helper.email_utils import make_address
-from froide.helper.text_utils import (redact_content, remove_closing,
-                                      replace_custom)
-
+from froide.helper.text_utils import (
+    redact_subject, redact_plaintext
+)
 
 from .request import FoiRequest
-from ..message_handlers import send_message, resend_message
 
 
 class FoiMessageManager(models.Manager):
@@ -156,10 +154,6 @@ class FoiMessage(models.Model):
         return "%s#%s" % (self.request.get_accessible_link(),
                           self.get_html_id())
 
-    def get_public_body_sender_form(self):
-        from froide.foirequest.forms import MessagePublicBodySenderForm
-        return MessagePublicBodySenderForm(self)
-
     def get_text_recipient(self):
         if not self.is_response:
             alternative = self.recipient
@@ -265,53 +259,21 @@ class FoiMessage(models.Model):
 
     def get_subject(self, user=None):
         if self.subject_redacted is None:
-            self.subject_redacted = self.redact_subject()
+            self.subject_redacted = redact_subject(
+                self.subject, user=self.request.user
+            )
             self.save()
         return self.subject_redacted
 
-    def redact_subject(self):
-        content = self.subject
-        if self.request.user:
-            account_service = AccountService(self.request.user)
-            content = account_service.apply_message_redaction(content)
-        content = redact_content(content)
-        return content[:255]
-
     def get_content(self):
         if self.plaintext_redacted is None:
-            self.plaintext_redacted = self.redact_plaintext()
+            self.plaintext_redacted = redact_plaintext(
+                self.plaintext,
+                self.is_response,
+                user=self.request.user
+            )
             self.save()
         return self.plaintext_redacted
-
-    def get_content_check(self):
-        return self.get_content() if not self.content_hidden else None
-
-    def redact_plaintext(self):
-        content = self.plaintext
-
-        content = redact_content(content)
-
-        greeting_replacement = str(_("<< Greeting >>"))
-
-        if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
-            if self.is_response:
-                content = remove_closing(
-                    content
-                )
-
-            else:
-                if settings.FROIDE_CONFIG.get('greetings'):
-                    content = replace_custom(
-                        settings.FROIDE_CONFIG['greetings'],
-                        greeting_replacement,
-                        content
-                    )
-
-        if self.request.user:
-            account_service = AccountService(self.request.user)
-            content = account_service.apply_message_redaction(content)
-
-        return content
 
     def get_real_content(self):
         content = self.content
@@ -324,8 +286,12 @@ class FoiMessage(models.Model):
                     'Message may not be from user and public body')
 
     def get_postal_attachment_form(self):
-        from froide.foirequest.forms import PostalAttachmentForm
-        return PostalAttachmentForm()
+        from ..forms import get_postal_attachment_form
+        return get_postal_attachment_form(self)
+
+    def get_public_body_sender_form(self):
+        from ..forms import get_message_sender_form
+        return get_message_sender_form(self)
 
     def has_delivery_status(self):
         if not self.sent or self.is_response:
@@ -391,9 +357,13 @@ class FoiMessage(models.Model):
             )
 
     def send(self, notify=True, **kwargs):
+        from ..message_handlers import send_message
+
         send_message(self, notify=notify, **kwargs)
 
     def resend(self, **kwargs):
+        from ..message_handlers import resend_message
+
         resend_message(self, **kwargs)
 
 

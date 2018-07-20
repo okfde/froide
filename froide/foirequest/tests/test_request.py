@@ -20,8 +20,13 @@ from django.http import QueryDict
 
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
-from froide.foirequest.foi_mail import package_foirequest
+from froide.foirequest.foi_mail import (
+    package_foirequest, add_message_from_email
+)
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.foirequest.forms import (
+    get_send_message_form, get_escalation_message_form
+)
 
 User = get_user_model()
 
@@ -140,19 +145,21 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
         new_foi_email = "foi@" + pb.email.split("@")[1]
-        req.add_message_from_email({
-            'msgobj': None,
-            'date': timezone.now() - timedelta(days=1),
-            'subject': "Re: %s" % req.title,
-            'body': """Message""",
-            'html': None,
-            'from': ("FoI Officer", new_foi_email),
-            'to': [(req.user.get_full_name(), req.secret_address)],
-            'cc': [],
-            'resent_to': [],
-            'resent_cc': [],
-            'attachments': []
-        })
+        add_message_from_email(
+            req, {
+                'msgobj': None,
+                'date': timezone.now() - timedelta(days=1),
+                'subject': "Re: %s" % req.title,
+                'body': """Message""",
+                'html': None,
+                'from': ("FoI Officer", new_foi_email),
+                'to': [(req.user.get_full_name(), req.secret_address)],
+                'cc': [],
+                'resent_to': [],
+                'resent_cc': [],
+                'attachments': []
+            }
+        )
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertTrue(req.awaits_classification())
         self.assertEqual(len(req.messages), 2)
@@ -181,17 +188,17 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 400)
 
-        post = {"message": "My custom reply"}
+        post = {"sendmessage-message": "My custom reply"}
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
 
-        post["to"] = 'abc'
+        post["sendmessage-to"] = 'abc'
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
 
-        post["to"] = '9' * 10
+        post["sendmessage-to"] = '9' * 10
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
@@ -199,24 +206,24 @@ class RequestTest(TestCase):
         pb_email = req.public_body.email
         req.public_body.email = ''
         req.public_body.save()
-        post["to"] = '0'
-        post["subject"] = "Re: Custom subject"
+        post["sendmessage-to"] = '0'
+        post["sendmessage-subject"] = "Re: Custom subject"
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
         req.public_body.email = pb_email
         req.public_body.save()
 
-        post["subject"] = "Re: Custom subject"
-        post["to"] = str(list(req.possible_reply_addresses().values())[0].id)
+        post["sendmessage-subject"] = "Re: Custom subject"
+        post["sendmessage-to"] = str(list(req.possible_reply_addresses().values())[0].id)
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
         new_len = len(mail.outbox)
         self.assertEqual(old_len + 2, new_len)
-        message = list(filter(lambda x: x.subject.startswith(post['subject']), mail.outbox))[-1]
+        message = list(filter(lambda x: x.subject.startswith(post['sendmessage-subject']), mail.outbox))[-1]
         self.assertTrue(message.subject.endswith('[#%s]' % req.pk))
-        self.assertTrue(message.body.startswith(post['message']))
+        self.assertTrue(message.body.startswith(post['sendmessage-message']))
         self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(user.address, message.body)
         self.assertIn(new_foi_email, message.to[0])
@@ -470,7 +477,7 @@ class RequestTest(TestCase):
                 reverse('foirequest-set_public_body',
                 kwargs={"slug": req.slug}),
                 {})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 400)
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertIsNone(req.public_body)
 
@@ -527,10 +534,10 @@ class RequestTest(TestCase):
         file_size = os.path.getsize(factories.TEST_PDF_PATH)
         post = QueryDict(mutable=True)
         post.update({
-            "reply-date": "3000-01-01",  # far future
-            "reply-sender": "Some Sender",
-            "reply-subject": "",
-            "reply-text": "Some Text",
+            "postal_reply-date": "3000-01-01",  # far future
+            "postal_reply-sender": "Some Sender",
+            "postal_reply-subject": "",
+            "postal_reply-text": "Some Text",
         })
 
         self.client.logout()
@@ -551,16 +558,16 @@ class RequestTest(TestCase):
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
-        post['reply-date'] = "01/41garbl"
+        post['postal_reply-date'] = "01/41garbl"
         response = self.client.post(reverse("foirequest-add_postal_reply",
                 kwargs={"slug": req.slug}), post)
         self.assertIn('postal_reply_form', response.context)
         self.assertEqual(response.status_code, 400)
-        post['reply-date'] = "2011-01-02"
-        post['reply-publicbody'] = str(pb.pk)
-        post['reply-text'] = ''
+        post['postal_reply-date'] = "2011-01-02"
+        post['postal_reply-publicbody'] = str(pb.pk)
+        post['postal_reply-text'] = ''
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post['reply-files'] = f
+            post['postal_reply-files'] = f
             response = self.client.post(reverse("foirequest-add_postal_reply",
                     kwargs={"slug": req.slug}), post)
 
@@ -582,8 +589,10 @@ class RequestTest(TestCase):
 
         post = QueryDict(mutable=True)
 
+        post_var = postal_attachment_form.add_prefix('files')
+
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post.update({'files': f})
+            post.update({post_var: f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
                 kwargs={"slug": req.slug, "message_id": "9" * 5}), post)
 
@@ -591,14 +600,14 @@ class RequestTest(TestCase):
 
         self.client.logout()
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post.update({'files': f})
+            post.update({post_var: f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
                 kwargs={"slug": req.slug, "message_id": message.pk}), post)
         self.assertEqual(response.status_code, 403)
 
         self.client.login(email="dummy@example.org", password="froide")
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post.update({'files': f})
+            post.update({post_var: f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}), post)
 
@@ -609,7 +618,7 @@ class RequestTest(TestCase):
         message = req.foimessage_set.all()[0]
 
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post.update({'files': f})
+            post.update({post_var: f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}), post)
 
@@ -621,7 +630,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post.update({'files': f})
+            post.update({post_var: f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}), post)
 
@@ -630,7 +639,7 @@ class RequestTest(TestCase):
 
         # Adding the same document again should override the first one
         with open(factories.TEST_PDF_PATH, "rb") as f:
-            post.update({'files': f})
+            post.update({post_var: f})
             response = self.client.post(reverse('foirequest-add_postal_reply_attachment',
             kwargs={"slug": req.slug, "message_id": message.pk}), post)
 
@@ -638,7 +647,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
     def test_set_message_sender(self):
-        from froide.foirequest.forms import MessagePublicBodySenderForm
+        from froide.foirequest.forms import get_message_sender_form
         mail.outbox = []
         self.client.login(email="dummy@example.org", password="froide")
         pb = PublicBody.objects.all()[0]
@@ -651,19 +660,21 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 2)
         req = FoiRequest.objects.get(title=post['subject'])
-        req.add_message_from_email({
-            'msgobj': None,
-            'date': timezone.now() + timedelta(days=1),
-            'subject': "Re: %s" % req.title,
-            'body': """Message""",
-            'html': None,
-            'from': ("FoI Officer", "randomfoi@example.com"),
-            'to': [(req.user.get_full_name(), req.secret_address)],
-            'cc': [],
-            'resent_to': [],
-            'resent_cc': [],
-            'attachments': []
-        })
+        add_message_from_email(
+            req, {
+                'msgobj': None,
+                'date': timezone.now() + timedelta(days=1),
+                'subject': "Re: %s" % req.title,
+                'body': """Message""",
+                'html': None,
+                'from': ("FoI Officer", "randomfoi@example.com"),
+                'to': [(req.user.get_full_name(), req.secret_address)],
+                'cc': [],
+                'resent_to': [],
+                'resent_cc': [],
+                'attachments': []
+            }
+        )
         req = FoiRequest.objects.get(title=post['subject'])
         self.assertEqual(len(req.messages), 2)
         self.assertEqual(len(mail.outbox), 3)
@@ -681,7 +692,7 @@ class RequestTest(TestCase):
         self.assertIn(req.get_absolute_short_url(), response['Location'])
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 200)
-        form = MessagePublicBodySenderForm(message)
+        form = get_message_sender_form(message)
         post_var = form.add_prefix("sender")
         self.assertTrue(message.is_response)
         original_pb = req.public_body
@@ -1205,28 +1216,34 @@ class RequestTest(TestCase):
         self.client.login(email="dummy@example.org", password="froide")
         req = FoiRequest.objects.all()[0]
         name = "Petra Radetzky"
-        req.add_message_from_email({
-            'msgobj': None,
-            'date': timezone.now(),
-            'subject': 'Reply',
-            'body': ("Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
-                     "Mit freundlichen Grüßen\n" +
-                     name),
-            'html': 'html',
-            'from': ('Petra Radetzky', 'petra.radetsky@bund.example.org'),
-            'to': [req.secret_address],
-            'cc': [],
-            'resent_to': [],
-            'resent_cc': [],
-            'attachments': []
-        })
+        add_message_from_email(
+            req, {
+                'msgobj': None,
+                'date': timezone.now(),
+                'subject': 'Reply',
+                'body': ("Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
+                        "Mit freundlichen Grüßen\n" +
+                        name),
+                'html': 'html',
+                'from': ('Petra Radetzky', 'petra.radetsky@bund.example.org'),
+                'to': [req.secret_address],
+                'cc': [],
+                'resent_to': [],
+                'resent_cc': [],
+                'attachments': []
+            }
+        )
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertNotIn(name, last.plaintext_redacted)
-        req.add_message(req.user, 'Test', 'test@example.com',
-            'Testing',
-            'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
-        )
+        form = get_send_message_form(req, {
+            'sendmessage-to': '0',
+            'sendmessage-subject': 'Testing',
+            'sendmessage-message': 'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
+
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertNotIn('Radetzky', last.plaintext_redacted)
@@ -1389,10 +1406,13 @@ class RequestTest(TestCase):
 
     def test_remove_double_numbering(self):
         req = FoiRequest.objects.all()[0]
-        req.add_message(req.user, 'Test', 'test@example.com',
-            req.title + ' [#%s]' % req.pk,
-            'Test'
-        )
+        form = get_send_message_form(req, {
+            'sendmessage-to': '0',
+            'sendmessage-subject': req.title + ' [#%s]' % req.pk,
+            'sendmessage-message': 'Test'
+        })
+        self.assertTrue(form.is_valid())
+        form.save()
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertEqual(last.subject.count('[#%s]' % req.pk), 1)
@@ -1470,21 +1490,28 @@ class MediatorTest(TestCase):
     def test_hiding_content(self):
         req = FoiRequest.objects.all()[0]
         mediator = req.law.mediator
-        req.add_escalation_message('Escalate', 'Content')
-        req = FoiRequest.objects.all()[0]
-        req.add_message_from_email({
-            'msgobj': None,
-            'date': timezone.now(),
-            'subject': 'Reply',
-            'body': 'Content',
-            'html': 'html',
-            'from': ('Name', mediator.email),
-            'to': [req.secret_address],
-            'cc': [],
-            'resent_to': [],
-            'resent_cc': [],
-            'attachments': []
+        form = get_escalation_message_form(req, {
+                'subject': 'Escalate',
+                'message': 'Content'
         })
+        self.assertTrue(form.is_valid())
+        form.save()
+        req = FoiRequest.objects.all()[0]
+        add_message_from_email(
+            req, {
+                'msgobj': None,
+                'date': timezone.now(),
+                'subject': 'Reply',
+                'body': 'Content',
+                'html': 'html',
+                'from': ('Name', mediator.email),
+                'to': [req.secret_address],
+                'cc': [],
+                'resent_to': [],
+                'resent_cc': [],
+                'attachments': []
+            }
+        )
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
         self.assertTrue(last.content_hidden)

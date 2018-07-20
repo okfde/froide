@@ -169,7 +169,18 @@ def _deliver_mail(email, mail_bytes=None, manual=False):
             recipient_email, sender_email, mail_bytes, manual=manual
         )
         if foirequest is not None:
-            foirequest.add_message_from_email(email, publicbody=pb)
+            add_message_from_email(foirequest, email, publicbody=pb)
+
+
+def add_message_from_email(foirequest, email, publicbody=None):
+    from .services import ReceiveEmailService
+
+    service = ReceiveEmailService(
+        email,
+        foirequest=foirequest,
+        publicbody=publicbody
+    )
+    service.process()
 
 
 def check_delivery_conditions(recipient_mail, sender_email,

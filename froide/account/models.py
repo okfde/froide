@@ -186,6 +186,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             else:
                 return self.get_full_name()
 
+    def get_account_service(self):
+        from .services import AccountService
+
+        return AccountService(self)
+
     def get_autologin_url(self, url):
         from .services import AccountService
 

@@ -8,12 +8,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 
 from froide.account.forms import NewUserForm
-from froide.publicbody.models import PublicBody
 from froide.helper.utils import render_400, render_403
 
 from ..models import FoiRequest, FoiMessage, FoiEvent
-from ..forms import (ConcreteLawForm, TagFoiRequestForm,
-        FoiRequestStatusForm, MakePublicBodySuggestionForm)
+from ..forms import (
+    ConcreteLawForm, TagFoiRequestForm, FoiRequestStatusForm,
+    MakePublicBodySuggestionForm, PublicBodySuggestionsForm
+)
 from ..utils import check_throttle
 from ..services import CreateSameAsRequestService
 from ..auth import can_write_foirequest
@@ -35,21 +36,8 @@ def allow_write_foirequest(func):
 @require_POST
 @allow_write_foirequest
 def set_public_body(request, foirequest):
-    try:
-        publicbody_pk = int(request.POST.get('suggestion', ''))
-    except ValueError:
-        messages.add_message(request, messages.ERROR,
-            _('Missing or invalid input!'))
-        return redirect(foirequest)
-    try:
-        publicbody = PublicBody.objects.get(pk=publicbody_pk)
-    except PublicBody.DoesNotExist:
-        messages.add_message(request, messages.ERROR,
-            _('Missing or invalid input!'))
-        return render_400(request)
-    if not foirequest.needs_public_body():
-        messages.add_message(request, messages.ERROR,
-            _("This request doesn't need a Public Body!"))
+    form = PublicBodySuggestionsForm(foirequest, request.POST)
+    if not form.is_valid():
         return render_400(request)
 
     throttle_message = check_throttle(request.user, FoiRequest)
@@ -57,11 +45,14 @@ def set_public_body(request, foirequest):
         messages.add_message(request, messages.ERROR, throttle_message)
         return render_400(request)
 
-    foilaw = publicbody.default_law
-    foirequest.set_publicbody(publicbody, foilaw)
+    form.save()
 
-    messages.add_message(request, messages.SUCCESS,
-            _("Request was sent to: %(name)s.") % {"name": publicbody.name})
+    messages.add_message(
+        request,
+        messages.SUCCESS,
+        _('Request was sent to: {name}.').format(
+            name=foirequest.public_body.name)
+    )
     return redirect(foirequest)
 
 
@@ -220,7 +211,7 @@ def make_same_request(request, slug, message_id):
         user = request.user
         if foirequest.user == user:
             return render_400(request)
-        same_requests = FoiRequest.objects.filter(user=user, same_as=foirequest).count()
+        same_requests = FoiRequest.objects.filter(user=user, same_as=foirequest).exists()
         if same_requests:
             messages.add_message(request, messages.ERROR,
                 _("You already made an identical request"))

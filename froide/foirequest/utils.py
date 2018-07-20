@@ -60,9 +60,21 @@ def generate_secret_address(user, length=10):
     return "%s.%s@%s" % (username, secret, FOI_EMAIL_DOMAIN)
 
 
-def construct_message_body(foirequest, text='', foilaw=None, full_text=False,
-                           send_address=True,
-                           template='foirequest/emails/foi_request_mail.txt'):
+def construct_message_body(foirequest, text, send_address=True,
+                           template='foirequest/emails/mail_with_userinfo.txt'):
+    return render_to_string(
+        template,
+        {
+            'request': foirequest,
+            'body': text,
+            'send_address': send_address
+        }
+    )
+
+
+def construct_initial_message_body(
+        foirequest, text='', foilaw=None, full_text=False, send_address=True,
+        template='foirequest/emails/foi_request_mail.txt'):
     if full_text:
         body = text
     else:
