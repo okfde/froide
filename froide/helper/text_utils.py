@@ -182,7 +182,11 @@ def convert_html_to_text(html_str):
         return strip_tags(html_str)
 
     root = html.fromstring(html_str)
-    body = root.xpath('./body')[0]
+    try:
+        body = root.xpath('./body')[0]
+    except IndexError:
+        # No body element
+        body = root
 
     for tag, func in HTML_CONVERTERS.items():
         els = body.xpath('.//' + tag)
