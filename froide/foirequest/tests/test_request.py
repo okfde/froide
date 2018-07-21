@@ -1239,7 +1239,7 @@ class RequestTest(TestCase):
         form = get_send_message_form({
             'sendmessage-to': '0',
             'sendmessage-subject': 'Testing',
-            'sendmessage-cmessage': 'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
+            'sendmessage-message': 'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
         }, foirequest=req)
         self.assertTrue(form.is_valid())
         form.save()
