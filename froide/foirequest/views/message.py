@@ -77,7 +77,7 @@ def add_postal_reply(request, foirequest, form_func=get_postal_reply_form,
     if not foirequest.public_body:
         return render_400(request)
 
-    form = form_func(foirequest, request.POST, request.FILES)
+    form = form_func(request.POST, request.FILES, foirequest=foirequest)
 
     if form.is_valid():
         message = form.save()
