@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-21 20:54+0200\n"
-"PO-Revision-Date: 2018-07-21 20:57+0100\n"
+"POT-Creation-Date: 2018-07-23 10:18+0200\n"
+"PO-Revision-Date: 2018-07-23 10:35+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1643,7 +1643,7 @@ msgstr "anfrage_%(num)s.zip"
 msgid "Suggestions"
 msgstr "Vorschläge"
 
-#: froide/foirequest/forms.py:262 froide/publicbody/models.py:456
+#: froide/foirequest/forms.py:262 froide/publicbody/models.py:464
 msgid "More Info"
 msgstr "Details"
 
@@ -2550,7 +2550,7 @@ msgstr "ist geschlossen"
 #: froide/foirequest/models/request.py:307
 #: froide/foirequest/views/make_request.py:114 froide/publicbody/models.py:86
 #: froide/publicbody/models.py:125 froide/publicbody/models.py:370
-#: froide/publicbody/templates/publicbody/show.html:49
+#: froide/publicbody/templates/publicbody/show.html:32
 msgid "Jurisdiction"
 msgstr "Zuständigkeitsbereich"
 
@@ -3275,13 +3275,13 @@ msgstr "Feeds für diese Anfragen"
 
 #: froide/foirequest/templates/foirequest/list.html:102
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:85
-#: froide/publicbody/templates/publicbody/show.html:158
+#: froide/publicbody/templates/publicbody/show.html:157
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
 #: froide/foirequest/templates/foirequest/list.html:108
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:91
-#: froide/publicbody/templates/publicbody/show.html:163
+#: froide/publicbody/templates/publicbody/show.html:162
 msgid "Atom Feed"
 msgstr "Atom-Feed"
 
@@ -3292,7 +3292,7 @@ msgstr "Informationsfreiheitsanfragen"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:16
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:118
-#: froide/publicbody/templates/publicbody/show.html:107
+#: froide/publicbody/templates/publicbody/show.html:90
 msgid "View on Admin site"
 msgstr "Im Admin-Bereich ansehen"
 
@@ -5483,7 +5483,7 @@ msgstr "Meta"
 msgid "Has geo coordinates"
 msgstr "Hat Geo-Koordinaten"
 
-#: froide/publicbody/admin.py:96 froide/publicbody/admin.py:259
+#: froide/publicbody/admin.py:96 froide/publicbody/admin.py:281
 msgid "Has region"
 msgstr "Hat Region"
 
@@ -5495,23 +5495,23 @@ msgstr "Sie müssen eine URL angeben oder eine Datei hochladen."
 msgid "Public Bodies were imported."
 msgstr "Behörden wurden importiert."
 
-#: froide/publicbody/admin.py:216
+#: froide/publicbody/admin.py:219
 msgid "This public body is already confirmed."
 msgstr "Diese Behörde ist schon bestätigt."
 
-#: froide/publicbody/admin.py:220
+#: froide/publicbody/admin.py:223
 #, python-format
 msgid "Public body confirmed. %(count)d message was sent."
 msgid_plural "Public body confirmed. %(count)d messages were sent"
 msgstr[0] "Behörde wurde bestätigt. %(count)d Nachricht wurde gesendet."
 msgstr[1] "Behörde wurde bestätigt. %(count)d Nachrichten wurden gesendet."
 
-#: froide/publicbody/admin.py:228
+#: froide/publicbody/admin.py:231
 #, python-format
 msgid "Public body “%s” has been approved"
 msgstr "Behörde „%s“ wurde freigeschaltet"
 
-#: froide/publicbody/admin.py:229
+#: froide/publicbody/admin.py:232
 #, python-brace-format
 msgid ""
 "Hello,\n"
@@ -5532,11 +5532,16 @@ msgstr ""
 "Beste Grüße\n"
 "{site_name}"
 
-#: froide/publicbody/admin.py:311
+#: froide/publicbody/admin.py:255
+#, python-format
+msgid "Concerning your public body proposal “%s”"
+msgstr "Ihr Vorschlag für Behörde „%s“"
+
+#: froide/publicbody/admin.py:333
 msgid "# public bodies"
 msgstr "Anzahl Behörden"
 
-#: froide/publicbody/admin.py:318
+#: froide/publicbody/admin.py:340
 msgid "Public bodies with this classification"
 msgstr "Behörden mit dieser Klassifikation"
 
@@ -5822,17 +5827,40 @@ msgstr "Anzahl der Anfragen"
 msgid "Public Bodies"
 msgstr "Behörden"
 
-#: froide/publicbody/models.py:501
+#: froide/publicbody/models.py:509
 msgid "Proposed Public Body"
 msgstr "Vorgeschlagene Behörde"
 
-#: froide/publicbody/models.py:502
+#: froide/publicbody/models.py:510
 msgid "Proposed Public Bodies"
 msgstr "Vorgeschlagene Behörden"
 
-#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:8
-msgid "Confirm this Public Body "
+#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:7
+msgid "Confirm this Public Body"
 msgstr "Bestätigen Sie diese Behörde"
+
+#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:11
+#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:30
+msgid "Send message to creator"
+msgstr "Nachricht an Ersteller/in senden"
+
+#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:22
+#, python-format
+msgid ""
+"Dear %(user_name)s,\n"
+"the public body “%(name)s” you proposed could not be approved, because it "
+"already exists.\n"
+"You can find it here:\n"
+"\n"
+"All the Best\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(user_name)s,\n"
+"die Behörde „%(name)s“, die Sie vorgeschlagen haben, existiert schon.\n"
+"Sie finden die Behörde hier:\n"
+"\n"
+"Beste Grüße\n"
+"%(site_name)s"
 
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_form.html:6
 msgid "This public body's requests"
@@ -5989,82 +6017,82 @@ msgstr "Behörde vorschlagen"
 msgid "%(name)s is a %(classification)s in %(juris)s on %(site_name)s"
 msgstr "%(name)s ist ein(e) %(classification)s in %(juris)s auf %(site_name)s"
 
-#: froide/publicbody/templates/publicbody/show.html:23
+#: froide/publicbody/templates/publicbody/show.html:24
+msgid "Make a Request to this public body!"
+msgstr "Stellen Sie eine Anfrage an diese Behörde"
+
+#: froide/publicbody/templates/publicbody/show.html:34
+msgid "Classification:"
+msgstr "Klassifikation:"
+
+#: froide/publicbody/templates/publicbody/show.html:36
+msgid "Topics:"
+msgstr "Themen:"
+
+#: froide/publicbody/templates/publicbody/show.html:44
+msgid "Website:"
+msgstr "Webseite:"
+
+#: froide/publicbody/templates/publicbody/show.html:49
+msgid "Email:"
+msgstr "E-Mail:"
+
+#: froide/publicbody/templates/publicbody/show.html:56
+msgid "Fax:"
+msgstr "Fax:"
+
+#: froide/publicbody/templates/publicbody/show.html:62
+msgid "Contact:"
+msgstr "Kontakt:"
+
+#: froide/publicbody/templates/publicbody/show.html:64
+msgid "Mailing Address:"
+msgstr "Postadresse:"
+
+#: froide/publicbody/templates/publicbody/show.html:69
+msgid "File Index:"
+msgstr "Aktenplan:"
+
+#: froide/publicbody/templates/publicbody/show.html:75
+msgid "Organisation Chart:"
+msgstr "Organigramm:"
+
+#: froide/publicbody/templates/publicbody/show.html:98
 msgid "Proposal"
 msgstr "Vorschlag"
 
-#: froide/publicbody/templates/publicbody/show.html:27
+#: froide/publicbody/templates/publicbody/show.html:102
 msgid "You have proposed this public body, but it has not been confirmed yet."
 msgstr ""
 "Sie haben diese Behörde vorgeschlagen, aber sie wurde noch nicht "
 "freigeschaltet."
 
-#: froide/publicbody/templates/publicbody/show.html:31
+#: froide/publicbody/templates/publicbody/show.html:106
 msgid "This public body has been proposed and has not been confirmed yet."
 msgstr "Diese Behörde wurde vorgeschlagen und ist noch nicht bestätigt."
 
-#: froide/publicbody/templates/publicbody/show.html:41
-msgid "Make a Request to this public body!"
-msgstr "Stellen Sie eine Anfrage an diese Behörde"
-
-#: froide/publicbody/templates/publicbody/show.html:51
-msgid "Classification:"
-msgstr "Klassifikation:"
-
-#: froide/publicbody/templates/publicbody/show.html:53
-msgid "Topics:"
-msgstr "Themen:"
-
-#: froide/publicbody/templates/publicbody/show.html:61
-msgid "Website:"
-msgstr "Webseite:"
-
-#: froide/publicbody/templates/publicbody/show.html:66
-msgid "Email:"
-msgstr "E-Mail:"
-
-#: froide/publicbody/templates/publicbody/show.html:73
-msgid "Fax:"
-msgstr "Fax:"
-
-#: froide/publicbody/templates/publicbody/show.html:79
-msgid "Contact:"
-msgstr "Kontakt:"
-
-#: froide/publicbody/templates/publicbody/show.html:81
-msgid "Mailing Address:"
-msgstr "Postadresse:"
-
-#: froide/publicbody/templates/publicbody/show.html:86
-msgid "File Index:"
-msgstr "Aktenplan:"
-
-#: froide/publicbody/templates/publicbody/show.html:92
-msgid "Organisation Chart:"
-msgstr "Organigramm:"
-
-#: froide/publicbody/templates/publicbody/show.html:115
+#: froide/publicbody/templates/publicbody/show.html:114
 msgid "Special note"
 msgstr "Besonderer Hinweis"
 
-#: froide/publicbody/templates/publicbody/show.html:123
+#: froide/publicbody/templates/publicbody/show.html:122
 msgid "Summary of Results"
 msgstr "Zusammenfassung der Ergebnisse"
 
-#: froide/publicbody/templates/publicbody/show.html:146
+#: froide/publicbody/templates/publicbody/show.html:145
 #, python-format
 msgid "One requests to this public body"
 msgid_plural "%(count)s requests to this public body"
 msgstr[0] "Eine Anfrage an diese Behörde"
 msgstr[1] "%(count)s Anfragen an diese Behörde"
 
-#: froide/publicbody/templates/publicbody/show.html:169
+#: froide/publicbody/templates/publicbody/show.html:168
 msgid "See all FOI requests for this public body"
 msgstr "Alle Anfragen an diese Behörde ansehen"
 
-#: froide/publicbody/templates/publicbody/show.html:174
-msgid "There are no requests for this public body yet"
-msgstr "Es gibt noch keine Anfragen an diese Behörde"
+#: froide/publicbody/templates/publicbody/show.html:173
+msgid "There are no requests for this public body yet."
+msgstr "Es gibt noch keine Anfragen an diese Behörde."
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html:9
 msgid "Link to law text:"
