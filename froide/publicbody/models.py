@@ -438,8 +438,16 @@ class PublicBody(models.Model):
     def get_absolute_url(self):
         return reverse('publicbody-show', kwargs={"slug": self.slug})
 
+    def get_absolute_short_url(self):
+        return reverse('publicbody-publicbody_shortlink', kwargs={
+            'obj_id': self.pk
+        })
+
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
+
+    def get_absolute_domain_short_url(self):
+        return "%s%s" % (settings.SITE_URL, self.get_absolute_short_url())
 
     def get_mediator(self):
         law = self.default_law
