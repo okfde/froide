@@ -3,35 +3,39 @@
 {% load i18n %}
 
 {% block object-tools-items %}
-  <li><form method="post" action="{% url 'admin:publicbody-proposedpublicbody-confirm' pk=original.pk %}">{% csrf_token %}
-    <input type="submit" value="{% blocktrans %}Confirm this Public Body{% endblocktrans %}"/>
-  </form></li>
-  <li>
-    <a href="#message-creator">
-      {% trans "Send message to creator" %}
-    </a>
-  </li>
+  {% if original.pk %}
+    <li><form method="post" action="{% url 'admin:publicbody-proposedpublicbody-confirm' pk=original.pk %}">{% csrf_token %}
+      <input type="submit" value="{% blocktrans %}Confirm this Public Body{% endblocktrans %}"/>
+    </form></li>
+    <li>
+      <a href="#message-creator">
+        {% trans "Send message to creator" %}
+      </a>
+    </li>
+  {% endif %}
   {{ block.super }}
 {% endblock %}
 
 {% block footer %}
-<div id="footer">
-  <div id="message-creator" class="form-row">
-    <form method="post" action="{% url 'admin:publicbody-proposedpublicbody-send_message' pk=original.pk %}">{% csrf_token %}
-      <div>
-      <textarea name="message" rows="10" cols="60">{% blocktrans with name=original.name user_name=original.created_by.get_full_name site_name=SITE_NAME %}Dear {{ user_name }},
-the public body “{{ name }}” you proposed already exists. You can find it here:
+{% if original.pk %}
+  <div id="footer">
+    <div id="message-creator" class="form-row">
+      <form method="post" action="{% url 'admin:publicbody-proposedpublicbody-send_message' pk=original.pk %}">{% csrf_token %}
+        <div>
+        <textarea name="message" rows="10" cols="60">{% blocktrans with name=original.name user_name=original.created_by.get_full_name site_name=SITE_NAME %}Dear {{ user_name }},
+  the public body “{{ name }}” you proposed already exists. You can find it here:
 
 
 
-All the Best
-{{ site_name }}{% endblocktrans %}</textarea>
-      </div>
-      <p>
-        <input type="submit" value="{% blocktrans %}Send message to creator{% endblocktrans %}"/>
-      </p>
-    </form>
+  All the Best
+  {{ site_name }}{% endblocktrans %}</textarea>
+        </div>
+        <p>
+          <input type="submit" value="{% blocktrans %}Send message to creator{% endblocktrans %}"/>
+        </p>
+      </form>
+    </div>
   </div>
-</div>
+{% endif %}
 {% endblock %}
 

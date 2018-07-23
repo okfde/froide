@@ -1,12 +1,12 @@
 {% extends "admin/change_form.html" %}
 {% load i18n %}
 {% block object-tools-items %}
-{% if not original.sent %}
-<li>
-  <form method="post" action="{% url 'admin:foirequest-foimessage-resend_message' pk=original.pk %}">{% csrf_token %}
-  <button type="submit" class="btn btn-secondary">{% blocktrans %}Resend message{% endblocktrans %}</button>
-</form></li>
-{% endif %}
-{{ block.super }}
+  {% if original.pk and not original.sent %}
+    <li>
+      <form method="post" action="{% url 'admin:foirequest-foimessage-resend_message' pk=original.pk %}">{% csrf_token %}
+      <button type="submit" class="btn btn-secondary">{% blocktrans %}Resend message{% endblocktrans %}</button>
+    </form></li>
+  {% endif %}
+  {{ block.super }}
 {% endblock %}
 
