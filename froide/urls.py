@@ -120,7 +120,8 @@ froide_urlpatterns += [
     # Translators: URL part
     url(r"^%s/(?P<slug>[-\w]+)/$" % pgettext('url part', 'entity'), show_publicbody,
             name="publicbody-show"),
-    url(r"^%s/$" % pgettext('url part', 'entity'), lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
+    url(r"^%s/$" % pgettext('url part', 'entity'),
+        lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
     # Translators: URL part
     url(r'^%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
     # Translators: URL part
