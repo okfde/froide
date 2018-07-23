@@ -1,0 +1,93 @@
+{% load i18n %}
+{% load humanize %}
+
+
+<div class="heroine-unit main-folders">
+  <div class="container">
+    <div class="row">
+      {% block first_index_row %}
+      <div class="col-lg-6 col-md-6">
+        {% block first_index_row_search %}
+        <h2>{% block site_name %}{{ SITE_NAME }}{% endblock %}</h2>
+        {% block site_description %}
+          <p class="lead">
+            {% blocktrans %}This site publishes Freedom of Information requests and helps you to make your own!{% endblocktrans %}
+          </p>
+        {% endblock %}
+        {% block index-search %}
+          <form method="get" action="{% url 'foirequest-search' %}">
+            <div class="form-group">
+              <label for="index-search">
+                {% blocktrans with foicount=foicount|intcomma pbcount=pbcount|intcomma %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
+              </label>
+
+              <div class="input-group">
+                <input id="index-search" class="form-control" type="text" name="q" autocomplete="off" placeholder="{% block index-search-placeholder %}{% endblock %}"/>
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-search"></i>
+                    {% blocktrans %}Search For Information{% endblocktrans %}
+                  </button>
+                </div>
+              </div>
+            </div>
+            {% block example_search_terms_block %}
+            <span class="form-text text-muted">
+              {% block example_search_terms %}
+                {% blocktrans %}Try the following:{% endblocktrans %}
+                <a href="{% url 'foirequest-search' %}?q={% trans "Nuclear" %}">{% trans "Nuclear" %}</a>
+                {% trans "or" %}
+                <a href="{% url 'foirequest-search' %}?q={% trans "Employment" %}">{% trans "Employment" %}</a>
+              {% endblock %}
+            </span>
+            {% endblock %}
+          </form>
+        {% endblock index-search %}
+
+        {% endblock first_index_row_search %}
+      </div>
+      <div class="col-lg-6 col-md-6">
+        {% block first_index_row_featured %}
+        <div id="main-foirequests" class="well">
+          {% if featured %}
+          <div>
+            <h3>
+              <small>{% trans "Featured Request" %}</small><br/>
+              {{ featured.title }}
+            </h3>
+            <p>
+              {{ featured.text|truncatewords:55|linebreaksbr }}
+            </p>
+            <p>
+              {% if featured.url %}
+                <a href="{{ featured.url }}" class="btn btn-primary">
+                  <i class="fa fa-bullhorn"></i>
+                  {% blocktrans %}Read the blog post{% endblocktrans %}
+                </a>
+              {% endif %}
+              {% if featured.request %}
+                <a href="{% url 'foirequest-show' slug=featured.request.slug %}" class="btn btn-secondary">
+                  <i class="fa fa-envelope"></i>
+                  {% blocktrans %}Visit this request{% endblocktrans %}
+                </a>
+              {% endif %}
+            </p>
+          </div>
+          {% else %}
+          <div class="sample-letter">{% blocktrans %}Freedom of Information Request
+
+      To: Ministry of Interior
+
+      Dear Sir or Madam,
+      I request information about the following:
+      ...{% endblocktrans %}
+        <a class="make-request-icon" href="{% url 'foirequest-make_request' %}">{% blocktrans %}Write a Request Now!{% endblocktrans %}</a>
+        </div>
+        {% endif %}
+        </div>
+        {% endblock first_index_row_featured %}
+      </div>
+      {% endblock first_index_row %}
+    </div>
+  </div>
+</div>
