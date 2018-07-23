@@ -506,6 +506,7 @@ class ProposedPublicBody(PublicBody):
 
     class Meta:
         proxy = True
+        ordering = ('-created_at',)
         verbose_name = _('Proposed Public Body')
         verbose_name_plural = _('Proposed Public Bodies')
 

@@ -53,6 +53,7 @@ ClassificationAssignMixin = make_admin_assign_action('classification')
 class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     form = PublicBodyAdminForm
 
+    date_hierarchy = 'updated_at'
     prepopulated_fields = {"slug": ("name",)}
     save_on_top = True
     fieldsets = (
@@ -192,6 +193,9 @@ class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
 
 
 class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
+    list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'created_at')
+    date_hierarchy = 'created_at'
+
     def get_urls(self):
         urls = super(ProposedPublicBodyAdminMixin, self).get_urls()
         my_urls = [
