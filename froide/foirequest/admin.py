@@ -4,6 +4,7 @@ import re
 
 from django.contrib import admin
 from django.db import models
+from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
@@ -11,6 +12,7 @@ from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
 from django.utils.six import BytesIO
 from django import forms
+from django.conf.urls import url
 from django.utils.html import format_html
 
 from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
@@ -223,7 +225,16 @@ class FoiMessageAdmin(admin.ModelAdmin):
         DeliveryStatusInline,
         FoiAttachmentInline,
     ]
-    actions = ['check_delivery_status', 'resend_message']
+    actions = ['check_delivery_status', 'resend_messages']
+
+    def get_urls(self):
+        urls = super(FoiMessageAdmin, self).get_urls()
+        my_urls = [
+            url(r'^(?P<pk>\d+)/resend-message/$',
+                self.admin_site.admin_view(self.resend_message),
+                name='foirequest-foimessage-resend_message'),
+        ]
+        return my_urls + urls
 
     def get_queryset(self, request):
         qs = super(FoiMessageAdmin, self).get_queryset(request)
@@ -242,12 +253,29 @@ class FoiMessageAdmin(admin.ModelAdmin):
             _("Selected messages are being checked for delivery."))
     check_delivery_status.short_description = _("Check delivery status")
 
-    def resend_message(self, request, queryset):
+    def resend_message(self, request, pk):
+        if not request.method == 'POST':
+            raise PermissionDenied
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        message = FoiMessage.objects.get(pk=pk, sent=False)
+        message.force_resend()
+
+        self.message_user(request, _('Message was send again.'))
+        return redirect('admin:foirequest_foimessage_change', message.id)
+
+    def resend_messages(self, request, queryset):
+        if not request.method == 'POST':
+            raise PermissionDenied
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
         count = 0
         total = len(queryset)
         queryset = queryset.filter(sent=False)
         for message in queryset:
-            message.resend()
+            message.force_resend()
             count += 1
         self.message_user(request,
             _("{num} of {total} selected messages were sent.").format(

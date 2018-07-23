@@ -2,8 +2,8 @@
 {% load i18n %}
 {% block object-tools-items %}
 {% if not original.sent %}
-<li><form method="post" action="{% url 'foirequest-resend_message' slug=original.request.slug %}">{% csrf_token %}
-  <input type="hidden" name="message" value="{{ original.pk }}"/>
+<li>
+  <form method="post" action="{% url 'admin:foirequest-foimessage-resend_message' pk=original.pk %}">{% csrf_token %}
   <button type="submit" class="btn btn-secondary">{% blocktrans %}Resend message{% endblocktrans %}</button>
 </form></li>
 {% endif %}

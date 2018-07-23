@@ -299,14 +299,14 @@ class FoiMessage(models.Model):
         return self.get_delivery_status() is not None
 
     def delete_delivery_status(self):
-        delattr(self, '_delivery_status')
+        self._delivery_status = None
         ds = self.get_delivery_status()
         if ds is not None:
             ds.delete()
-        delattr(self, '_delivery_status')
+        self._delivery_status = None
 
     def get_delivery_status(self):
-        if hasattr(self, '_delivery_status'):
+        if hasattr(self, '_delivery_status') and self._delivery_status is None:
             return self._delivery_status
         try:
             self._delivery_status = self.deliverystatus
@@ -360,6 +360,10 @@ class FoiMessage(models.Model):
         from ..message_handlers import send_message
 
         send_message(self, notify=notify, **kwargs)
+
+    def force_resend(self):
+        self.delete_delivery_status()
+        self.resend()
 
     def resend(self, **kwargs):
         from ..message_handlers import resend_message
