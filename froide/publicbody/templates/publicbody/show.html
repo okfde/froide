@@ -17,23 +17,6 @@
 {% block app_body %}
 <div itemscope itemtype="http://schema.org/Organization">
 
-{% if not object.confirmed %}
-  <div class="alert alert-warning">
-    <h3>
-      {% trans "Proposal" %}
-    </h3>
-    {% if object.created_by == request.user %}
-      <p>
-        {% trans "You have proposed this public body, but it has not been confirmed yet." %}
-      </p>
-    {% else %}
-      <p>
-        {% trans "This public body has been proposed and has not been confirmed yet." %}
-      </p>
-    {% endif %}
-  </div>
-{% endif %}
-
 <h2 itemprop="name">{{ object.name }}</h2>
 
 {% if object.email and object.confirmed %}
@@ -44,7 +27,7 @@
 
 
 <div class="row">
-  <div class="col-lg-4 col-md-4">
+  <div class="col-lg-4 col-md-4 mb-5">
     <dl>
       <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
       <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
@@ -109,6 +92,22 @@
     {% endif %}
   </div>
   <div class="col-lg-8 col-md-8">
+    {% if not object.confirmed %}
+      <div class="alert alert-warning">
+        <h3>
+          {% trans "Proposal" %}
+        </h3>
+        {% if object.created_by == request.user %}
+          <p>
+            {% trans "You have proposed this public body, but it has not been confirmed yet." %}
+          </p>
+        {% else %}
+          <p>
+            {% trans "This public body has been proposed and has not been confirmed yet." %}
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
     {% if object.request_note %}
       <div class="panel panel-info">
         <div class="card-header">
@@ -171,7 +170,7 @@
         </p>
       {% endif %}
     {% else %}
-      <p>{% trans "There are no requests for this public body yet" %}</p>
+      <p>{% trans "There are no requests for this public body yet." %}</p>
     {% endif %}
   </div>
 </div>
