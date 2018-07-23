@@ -198,6 +198,9 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
             url(r'^(?P<pk>\d+)/confirm/$',
                 self.admin_site.admin_view(self.confirm),
                 name='publicbody-proposedpublicbody-confirm'),
+            url(r'^(?P<pk>\d+)/send-message/$',
+                self.admin_site.admin_view(self.send_message),
+                name='publicbody-proposedpublicbody-send_message'),
         ]
         return my_urls + urls
 
@@ -237,6 +240,25 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 fail_silently=True
             )
         return redirect('admin:publicbody_publicbody_change', pb.id)
+
+    def send_message(self, request, pk):
+        if not request.method == 'POST':
+            raise PermissionDenied
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        pb = ProposedPublicBody.objects.get(pk=pk)
+
+        creator = pb.created_by
+        if creator and creator.email:
+            send_mail(
+                _('Concerning your public body proposal “%s”') % pb.name,
+                request.POST.get('message'),
+                settings.DEFAULT_FROM_EMAIL,
+                [creator.email],
+                fail_silently=True
+            )
+        return redirect('admin:publicbody_proposedpublicbody_change', pb.id)
 
 
 class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
