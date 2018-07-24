@@ -509,9 +509,16 @@ class AttachmentSaverMixin(object):
 def get_send_message_form(*args, **kwargs):
     foirequest = kwargs.pop('foirequest')
     last_message = list(foirequest.messages)[-1]
-    subject = _("Re: %(subject)s"
-            ) % {"subject": last_message.subject}
+    # Translators: message reply prefix
+    prefix = _('Re:')
+    subject = last_message.subject
+    if not subject.startswith(str(prefix)):
+        subject = '{prefix} {subject}'.format(
+            prefix=prefix, subject=last_message.subject
+        )
+    message_ready = False
     if foirequest.is_overdue() and foirequest.awaits_response():
+        message_ready = True
         days = (timezone.now() - foirequest.due_date).days + 1
         message = render_to_string('foirequest/emails/overdue_reply.txt', {
             'due': ungettext_lazy(
@@ -527,6 +534,7 @@ def get_send_message_form(*args, **kwargs):
     return SendMessageForm(
         *args,
         foirequest=foirequest,
+        message_ready=message_ready,
         prefix='sendmessage',
         initial={
             "subject": subject,
@@ -564,6 +572,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         foirequest = kwargs.pop('foirequest')
+        self.message_ready = kwargs.pop('message_ready')
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
@@ -585,12 +594,15 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
 
     def clean_message(self):
         message = self.cleaned_data['message']
-        message = message.replace('\r\n', '\n').strip()
-        empty_form = get_send_message_form(foirequest=self.foirequest)
-        if message == empty_form.initial['message'].strip():
-            raise forms.ValidationError(
-                _('You need to fill in the blanks in the template!')
-            )
+        if not self.message_ready:
+            # Initial message needs to be filled out
+            # Check if submitted message is still the initial
+            message = message.replace('\r\n', '\n').strip()
+            empty_form = get_send_message_form(foirequest=self.foirequest)
+            if message == empty_form.initial['message'].strip():
+                raise forms.ValidationError(
+                    _('You need to fill in the blanks in the template!')
+                )
         return message
 
     def make_message(self):
