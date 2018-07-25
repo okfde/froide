@@ -27,6 +27,13 @@ class BootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
     option_template_name = 'helper/forms/widgets/radio_option.html'
 
 
+class BootstrapFileInput(forms.FileInput):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('attrs', {})
+        kwargs['attrs'].update({'class': 'form-control'})
+        super(BootstrapFileInput, self).__init__(*args, **kwargs)
+
+
 class PriceInput(forms.TextInput):
     template_name = "helper/forms/widgets/price_input.html"
 

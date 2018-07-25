@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load comments %}
 {% load foirequest_tags %}
+{% load form_helper %}
 
 {% block before_message_container %}{% endblock %}
 
@@ -148,7 +149,7 @@
       {% with form=message.get_postal_attachment_form %}
         <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
           {% csrf_token %}
-          {{ form.files }}
+          {% render_field form.files %}
           <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
           <span class="form-text text-muted">{{ form.files.help_text }}</span>
         </form>

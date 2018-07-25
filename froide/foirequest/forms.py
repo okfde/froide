@@ -17,7 +17,9 @@ from django.template.loader import render_to_string
 
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
-from froide.helper.widgets import PriceInput, BootstrapRadioSelect
+from froide.helper.widgets import (
+    PriceInput, BootstrapRadioSelect, BootstrapFileInput
+)
 from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import redact_subject, redact_plaintext
@@ -567,7 +569,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         required=False,
         validators=[validate_upload_document],
         help_text=files_help_text,
-        widget=forms.FileInput(attrs={'multiple': True})
+        widget=BootstrapFileInput(attrs={'multiple': True})
     )
 
     def __init__(self, *args, **kwargs):
@@ -695,7 +697,8 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
             help_text=_("The text can be left empty, instead you can upload scanned documents."))
     files = forms.FileField(label=_("Scanned Letter"), required=False,
             validators=[validate_upload_document],
-            help_text=scan_help_text, widget=forms.FileInput(attrs={'multiple': True}))
+            help_text=scan_help_text,
+            widget=BootstrapFileInput(attrs={'multiple': True}))
     FIELD_ORDER = ['publicbody', 'date', 'subject', 'text', 'files']
 
     def __init__(self, *args, **kwargs):
@@ -824,7 +827,7 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
         label=_("Scanned Document"),
         help_text=PostalBaseForm.scan_help_text,
         validators=[validate_upload_document],
-        widget=forms.FileInput(attrs={'multiple': True})
+        widget=BootstrapFileInput(attrs={'multiple': True})
     )
 
     def save(self, message):
