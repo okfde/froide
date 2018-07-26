@@ -205,7 +205,7 @@ def login(request, base="account/base.html", context=None,
     if not context:
         context = {}
     if "reset_form" not in context:
-        context['reset_form'] = PasswordResetForm()
+        context['reset_form'] = PasswordResetForm(prefix='pwreset')
     if "signup_form" not in context:
         context['signup_form'] = NewUserForm()
 
@@ -305,7 +305,7 @@ def send_reset_password_link(request):
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot get a password reset link.'))
         return redirect(next_url)
-    form = auth.forms.PasswordResetForm(request.POST)
+    form = auth.forms.PasswordResetForm(request.POST, prefix='pwreset')
     if form.is_valid():
         if next:
             request.session['next'] = next
