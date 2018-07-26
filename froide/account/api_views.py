@@ -1,14 +1,12 @@
 from rest_framework import serializers, views, permissions, response
 
-from oauth2_provider.contrib.rest_framework import TokenHasScope
-
 from .models import User
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('id',)
+        fields = ('id', 'private')
 
     def to_representation(self, obj):
         default = super(UserSerializer, self).to_representation(obj)
@@ -31,17 +29,35 @@ class UserEmailSerializer(UserSerializer):
         fields = UserDetailSerializer.Meta.fields + ('email',)
 
 
+class UserFullSerializer(UserSerializer):
+    class Meta:
+        model = User
+        fields = UserEmailSerializer.Meta.fields + ('address',)
+
+
 class ProfileView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated, TokenHasScope]
-    required_scopes = ['read:user']
+    permission_classes = [permissions.IsAuthenticated]
+
+    def has_permission(self, request, view):
+        token = request.auth
+        if token and not token.is_valid(['read:user']):
+            return False
+
+        return super(ProfileView, self).has_permission(
+            request, view
+        )
 
     def get(self, request, format=None):
         token = request.auth
         user = request.user
-        if token.is_valid(['read:email']):
-            serializer = UserEmailSerializer(user)
-        elif token.is_valid(['read:profile']):
-            serializer = UserDetailSerializer(user)
+        if token:
+            if token.is_valid(['read:email']):
+                serializer = UserEmailSerializer(user)
+            elif token.is_valid(['read:profile']):
+                serializer = UserDetailSerializer(user)
+            else:
+                serializer = UserSerializer(user)
         else:
-            serializer = UserSerializer(user)
+            # if token is None, user is currently logged in user
+            serializer = UserFullSerializer(user)
         return response.Response(serializer.data)
