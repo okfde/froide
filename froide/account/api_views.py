@@ -1,5 +1,7 @@
 from rest_framework import serializers, views, permissions, response
 
+from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+
 from .models import User
 
 
@@ -36,16 +38,8 @@ class UserFullSerializer(UserSerializer):
 
 
 class ProfileView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def has_permission(self, request, view):
-        token = request.auth
-        if token and not token.is_valid(['read:user']):
-            return False
-
-        return super(ProfileView, self).has_permission(
-            request, view
-        )
+    permission_classes = [IsAuthenticatedOrTokenHasScope]
+    required_scopes = ['read:user']
 
     def get(self, request, format=None):
         token = request.auth
