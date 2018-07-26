@@ -20,7 +20,7 @@ import Vue from 'vue'
 import {mapGetters} from 'vuex'
 import {debounce} from 'underscore'
 
-import {FroideSearch} from '../../lib/search'
+import {FroideAPI} from '../../lib/search'
 import FilterMixin from '../../lib/filter-mixin'
 
 import PbFilterList from './pb-filter-list'
@@ -80,7 +80,7 @@ export default {
       return items
     },
     searcher () {
-      let searcher = new FroideSearch(this.globalConfig)
+      let searcher = new FroideAPI(this.globalConfig)
       return searcher
     },
     ...mapGetters(['getScopedSearchFacets'])

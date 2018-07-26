@@ -18,7 +18,7 @@ import {
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from './mutation_types'
 
-import {FroideSearch} from '../lib/search'
+import {FroideAPI} from '../lib/search'
 
 Vue.use(Vuex)
 
@@ -257,13 +257,13 @@ export default new Vuex.Store({
     },
     getSearchResults ({ commit, state, dispatch }, {scope, search, filters}) {
       commit(CLEAR_SEARCHRESULTS, {scope})
-      let searcher = new FroideSearch(state.config)
+      let searcher = new FroideAPI(state.config)
       return searcher.searchPublicBodies(search, filters).then((results) => {
         dispatch('setSearchResults', {results, scope})
       })
     },
     setPublicBodyById ({ state, dispatch }, {scope, id}) {
-      let searcher = new FroideSearch(state.config)
+      let searcher = new FroideAPI(state.config)
       return searcher.getPublicBody(id).then((result) => {
         dispatch('setPublicBodyByIdDone', {result, scope, id})
       })
@@ -275,7 +275,7 @@ export default new Vuex.Store({
     },
     getSearchResultsUrl ({ commit, state, getters, dispatch }, { scope, url }) {
       commit(CLEAR_SEARCHRESULTS, {scope})
-      let searcher = new FroideSearch(state.config)
+      let searcher = new FroideAPI(state.config)
       return searcher.getJson(url).then((results) => {
         dispatch('setSearchResults', {results, scope})
       })

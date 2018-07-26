@@ -22,7 +22,7 @@
             {{ i18n.similarRequests }}
           </h6>
           <ul class="similar-requests">
-            <li v-for="req in similarRequests">
+            <li v-for="req in similarRequests" :key="req.url">
               <a :href="req.url" target="_blank">
                 {{ req.title }}
               </a>
@@ -45,7 +45,7 @@ import {debounce} from 'underscore'
 
 import {mapGetters} from 'vuex'
 
-import {FroideSearch} from '../lib/search'
+import {FroideAPI} from '../lib/search'
 import I18nMixin from '../lib/i18n-mixin'
 
 const MAX_SIMILAR = 5
@@ -62,7 +62,7 @@ export default {
     }
   },
   created () {
-    this.search = new FroideSearch(this.config)
+    this.search = new FroideAPI(this.config)
     this.$store.watch(this.$store.getters.getSubject, this.debouncedSearch)
     this.runSearch()
   },

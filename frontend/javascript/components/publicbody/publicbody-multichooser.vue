@@ -75,7 +75,7 @@ import {
   CLEAR_PUBLICBODIES
 } from '../../store/mutation_types'
 
-import {FroideSearch} from '../../lib/search'
+import {FroideAPI} from '../../lib/search'
 import PBChooserMixin from '../../lib/pb-chooser-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 import PBListMixin from '../../lib/pb-list-mixin'
@@ -141,7 +141,7 @@ export default {
       return this.listView
     },
     filterConfig () {
-      let searcher = new FroideSearch(this.config)
+      let searcher = new FroideAPI(this.config)
       return {
         classification: {
           label: this.i18n.classificationPlural[1],

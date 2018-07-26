@@ -1,6 +1,6 @@
 /* globals XMLHttpRequest */
 
-class FroideSearch {
+class FroideAPI {
   constructor (config) {
     this.config = config
   }
@@ -10,7 +10,11 @@ class FroideSearch {
       request.open('GET', url, true)
       request.onload = function () {
         if (request.status >= 400) {
-          return reject(request.responseText)
+          try {
+            return reject(JSON.parse(request.responseText))
+          } catch (e) {
+            return reject(request.responseText)
+          }
         }
         resolve(JSON.parse(request.responseText))
       }
@@ -45,6 +49,10 @@ class FroideSearch {
     let query = encodeURIComponent(term)
     let url = this.config.url.autocompletePublicBody + '?query=' + query
     return this.getJsonObjects(url)
+  }
+
+  getUser () {
+    return this.getJson(this.config.url.user)
   }
 
   getJsonForUrl (url, term, filters) {
@@ -100,5 +108,5 @@ class FroideSearch {
 }
 
 export {
-  FroideSearch
+  FroideAPI
 }
