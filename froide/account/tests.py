@@ -717,6 +717,11 @@ class ApiTest(TestCase):
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, 200)
 
+    def test_authentication_logged_in_no_jsonp(self):
+        self.client.login(email=self.test_user, password='froide')
+        response = self.client.get(self.profile_url + '?format=jsonp')
+        self.assertNotContains(response, 'callback({', status_code=404)
+
     def test_authentication_not_loggedin(self):
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, 403)
