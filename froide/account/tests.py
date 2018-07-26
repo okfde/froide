@@ -316,7 +316,7 @@ class AccountTest(TestCase):
         response = self.client.get(reverse('account-send_reset_password_link'))
         self.assertEqual(response.status_code, 405)
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
-        data = {"email": "unknown@example.com"}
+        data = {"pwreset-email": "unknown@example.com"}
         response = self.client.post(reverse('account-send_reset_password_link'))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 0)
@@ -324,7 +324,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 0)
-        data['email'] = 'info@fragdenstaat.de'
+        data['pwreset-email'] = 'info@fragdenstaat.de'
         response = self.client.post(reverse('account-send_reset_password_link'), data)
         self.assertEqual(response.status_code, 302)
         message = mail.outbox[0]
@@ -355,7 +355,7 @@ class AccountTest(TestCase):
         mes = FoiMessage.objects.all()[0]
         url = mes.get_absolute_url()
         data = {
-            'email': 'info@fragdenstaat.de',
+            'pwreset-email': 'info@fragdenstaat.de',
             'next': url
         }
         response = self.client.post(reverse('account-send_reset_password_link'), data)
