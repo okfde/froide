@@ -75,6 +75,7 @@ class MakeRequestView(FormView):
                 'listPublicBodies': reverse('api:publicbody-list'),
                 'search': reverse('foirequest-search'),
                 'loginSimple': reverse('account-login') + '?simple&email=',
+                'user': reverse('api-user-profile'),
                 'makeRequestTo': reverse('foirequest-make_request', kwargs={
                     'publicbody_ids': '0'
                 }),

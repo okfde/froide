@@ -1,27 +1,19 @@
 {% extends custom_base %}
 
 {% load i18n %}
+{% load static %}
 {% load form_helper %}
+{% load block_helper %}
 
 {% block app_body %}
-{% if user.is_authenticated %}
-<h2>{% blocktrans %}You are now logged in.{% endblocktrans %}</h2>
-{% if simple %}
-  <script>
-    if (window.opener && window.opener.loggedInCallback) {
-      window.opener.loggedInCallback({
-        'id': '{{ user.id }}',
-        'email': '{{ user.email|escapejs }}',
-        'first_name': '{{ user.first_name|escapejs }}',
-        'last_name': '{{ user.last_name|escapejs }}',
-        'address': '{{ user.address|escapejs }}',
-        'private': {% if not user.private %}true{% else %}false{% endif %},
-        'csrf_token': "{% csrf_token %}"
-      })
-    }
-    window.close()
-  </script>
-{% endif %}
+{% if simple and user.is_authenticated %}
+<div data-loggedin>
+  <h2>{% blocktrans %}You are now logged in.{% endblocktrans %}</h2>
+  {% csrf_token %}
+  </div>
+  {% addtoblock "js" %}
+  <script src="{% static 'js/account/loggedin.js' %}"></script>
+  {% endaddtoblock %}
 {% else %}
 <div class="row">
   <div class="col-lg-6 col-md-6">

@@ -67,6 +67,7 @@ import {
 } from '../store/mutation_types'
 
 import I18nMixin from '../lib/i18n-mixin'
+import {FroideAPI} from '../lib/search'
 
 export default {
   name: 'user-registration',
@@ -160,20 +161,24 @@ export default {
   methods: {
     openLoginWindow (e) {
       let url = e.target.href
-      this.popup = window.open(url, 'popup', 'height=500,width=800,resizable=yes,scrollbars=yes')
+      this.popup = window.open(url, 'popup', 'height=500,width=640,resizable=yes,scrollbars=yes')
       this.popup.focus()
       window.loggedInCallback = this.loggedInCallback
     },
     loggedInCallback (params) {
-      this.updateFirstName(params.first_name)
-      this.updateLastName(params.last_name)
-      this.updateAddress(params.address)
-      this.updateEmail(params.email)
-      this.updatePrivate(params.private)
-      this.updateUserId(params.id)
+      let api = new FroideAPI(this.config)
+      api.getUser().then((user) => {
+        this.updateFirstName(user.first_name)
+        this.updateLastName(user.last_name)
+        this.updateAddress(user.address)
+        this.updateEmail(user.email)
+        this.updatePrivate(user.private)
+        this.updateUserId(user.id)
+      }).catch(((e) => {
+        console.error('Could not get user data from API', e)
+      }))
 
-      let csrfTag = params.csrf_token
-      let csrfValue = csrfTag.match(/value=.(\w+)/)[1]
+      let csrfValue = params.csrfToken
       if (csrfValue !== undefined) {
         let csrfInputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]')
         for (var i = 0; i < csrfInputs.length; i += 1) {
