@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
-import froide.document.models
+import filingcabinet.models
 import taggit.managers
 import uuid
 
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(blank=True, default='', max_length=500)),
                 ('slug', models.SlugField(blank=True, max_length=250)),
                 ('description', models.TextField(blank=True, default='')),
-                ('pdf_file', models.FileField(blank=True, upload_to=froide.document.models.get_document_path)),
+                ('pdf_file', models.FileField(blank=True, upload_to=filingcabinet.models.get_document_path)),
                 ('original', models.FileField(blank=True, upload_to='')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, null=True)),
                 ('updated_at', models.DateTimeField(default=django.utils.timezone.now, null=True)),

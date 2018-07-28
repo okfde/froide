@@ -54,6 +54,7 @@ setup(
         'django-cache-url',
         'django-filter',
         'phonenumbers',
+        'django-filingcabinet',
     ],
     include_package_data=True,
     classifiers=[

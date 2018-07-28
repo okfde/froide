@@ -48,8 +48,9 @@ class FoiAttachment(models.Model):
         related_name='original_set')
     is_converted = models.BooleanField(_("Is converted"), default=False)
 
-    document = models.ForeignKey(
+    document = models.OneToOneField(
         Document, null=True, blank=True,
+        related_name='attachment',
         on_delete=models.SET_NULL
     )
 
@@ -135,6 +136,14 @@ class FoiAttachment(models.Model):
             value = signer.sign(url).split(':', 1)[1]
             return '%s?token=%s' % (url, value)
         return url
+
+    def get_file_url(self):
+        return self.get_absolute_domain_file_url()
+
+    def get_file_path(self):
+        if self.file:
+            return self.file.path
+        return ''
 
     def get_absolute_domain_file_url(self, authenticated=False):
         return '%s%s' % (

@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import froide.document.models
+import filingcabinet.models
 
 
 class Migration(migrations.Migration):
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pageannotation',
             name='image',
-            field=models.ImageField(blank=True, max_length=255, upload_to=froide.document.models.get_page_annotation_filename),
+            field=models.ImageField(blank=True, max_length=255, upload_to=filingcabinet.models.get_page_annotation_filename),
         ),
     ]

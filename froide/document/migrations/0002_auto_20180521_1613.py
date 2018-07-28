@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import froide.document.models
+import filingcabinet.models
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='pdf_file',
-            field=models.FileField(blank=True, max_length=255, upload_to=froide.document.models.get_document_path),
+            field=models.FileField(blank=True, max_length=255, upload_to=filingcabinet.models.get_document_path),
         ),
         migrations.AlterField(
             model_name='page',

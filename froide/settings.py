@@ -49,6 +49,9 @@ class Base(Configuration):
         'treebeard',
         'django_filters',
 
+        # Semi-external
+        'filingcabinet',
+
         # local
         'froide.foirequest',
         'froide.foirequestfollower',
@@ -319,6 +322,14 @@ class Base(Configuration):
     SESSION_COOKIE_AGE = values.IntegerValue(3628800)  # six weeks
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
+
+    # ######## FilingCabinet Document ####
+
+    # FILINGCABINET_DOCUMENT_MODEL = 'document.Document'
+    # FILINGCABINET_DOCUMENTCOLLECTION_MODEL = 'document.DocumentCollection'
+
+    FILINGCABINET_DOCUMENT_MODEL = 'document.Document'
+    FILINGCABINET_DOCUMENTCOLLECTION_MODEL = 'document.DocumentCollection'
 
     # ######## Celery #############
 

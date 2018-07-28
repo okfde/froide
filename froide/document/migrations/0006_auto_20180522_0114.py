@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import froide.document.models
-import froide.helper.storage
+import filingcabinet.models
+import filingcabinet.storage
 import functools
 
 
@@ -18,26 +18,26 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='pdf_file',
-            field=models.FileField(blank=True, max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=froide.document.models.get_document_path),
+            field=models.FileField(blank=True, max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=filingcabinet.models.get_document_path),
         ),
         migrations.AlterField(
             model_name='page',
             name='image',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(froide.document.models.get_page_filename, *(), **{'size': 'original'})),
+            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'original'})),
         ),
         migrations.AlterField(
             model_name='page',
             name='image_large',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(froide.document.models.get_page_filename, *(), **{'size': 'large'})),
+            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'large'})),
         ),
         migrations.AlterField(
             model_name='page',
             name='image_normal',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(froide.document.models.get_page_filename, *(), **{'size': 'normal'})),
+            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'normal'})),
         ),
         migrations.AlterField(
             model_name='page',
             name='image_small',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(froide.document.models.get_page_filename, *(), **{'size': 'small'})),
+            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'small'})),
         ),
     ]
