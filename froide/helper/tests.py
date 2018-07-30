@@ -8,6 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from .text_utils import replace_email_name, remove_closing
+from .text_diff import mark_differences
 from .date_utils import calc_easter, calculate_month_range_de
 
 
@@ -42,6 +43,51 @@ More stuff here
 
         removed = remove_closing(content, closings)
         self.assertNotIn('Peter Parker', removed)
+
+    def test_redactions_simple(self):
+        original = '''Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an amtsleitung-jobcenter@kreis-warendorf.de
+
+Mit freundlichen Grüßen
+
+Peter Parker
+'''
+        redacted = '''Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an <<E-Mail-Adresse>>
+
+Mit freundlichen Grüßen'''
+
+        differences = mark_differences(original, redacted)
+        self.assertEqual(2, differences.count('</span>'))
+
+    def test_email_redaction(self):
+        content = '''Sehr geehrte(r) Anfragende(r),
+
+die E-Mailadresse, an die Sie sich wenden können, lautet informationsfreiheitsgesetz@example.com. Hier werden Ihre Anfragen unmittelbar bearbeitet.
+
+Eine inhaltliche Prüfung Ihrer Anfrage werden wir erst vornehmen, wenn Sie Ihre Identität mitteilen. Von einem Anfragenden kann erwartet werden, dass er/sie ein ernsthaftes Begehren vorbringt und zu seinem/ihrem Anliegen steht. Zudem kann ein Verwaltungsverfahren nicht aus dem Verborgenen heraus geführt werden.
+
+Sollten Sie kein Interesse an der Veröffentlichung Ihres Namens auf der Website von FragDenStaat haben, können Sie uns auch gern direkt eine E-Mail zukommen lassen.
+
+Vielen Dank für Ihr Verständnis.
+
+Mit freundlichen Grüßen'''
+
+        redacted = '''Sehr geehrte(r) Anfragende(r),
+
+die E-Mailadresse, an die Sie sich wenden können, lautet <<E-Mail-Adresse>>. Hier werden Ihre Anfragen unmittelbar bearbeitet.
+
+Eine inhaltliche Prüfung Ihrer Anfrage werden wir erst vornehmen, wenn Sie Ihre Identität mitteilen. Von einem Anfragenden kann erwartet werden, dass er/sie ein ernsthaftes Begehren vorbringt und zu seinem/ihrem Anliegen steht. Zudem kann ein Verwaltungsverfahren nicht aus dem Verborgenen heraus geführt werden.
+
+Sollten Sie kein Interesse an der Veröffentlichung Ihres Namens auf der Website von FragDenStaat haben, können Sie uns auch gern direkt eine E-Mail zukommen lassen.
+
+Vielen Dank für Ihr Verständnis.
+
+Mit freundlichen Grüßen'''
+        res = mark_differences(content, redacted)
+        fake_res = content.replace('informationsfreiheitsgesetz@example.com', '<span class="redacted">informationsfreiheitsgesetz@example.com</span>')
+        print(res)
+        print('-' * 25)
+        print(fake_res)
+        self.assertEqual(fake_res, res)
 
 
 @override_settings(
