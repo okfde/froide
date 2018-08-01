@@ -17,7 +17,7 @@ django-overextends==0.4.3
 django-storages==1.6.6
 django-taggit==0.22.2
 django-treebeard==4.3
-django==1.11.13
+django==1.11.15
 djangorestframework-jsonp==1.0.2
 djangorestframework==3.8.2
 geoip2==2.9.0
