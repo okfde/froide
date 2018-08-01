@@ -191,6 +191,16 @@ class LetterPDFGenerator(PDFGenerator):
         doc.packages.append(Package('hyperref', 'hidelinks'))
 
         doc.append(NoEscape("\\lefthyphenmin=5"))
+        doc.append(NoEscape('''
+            \\newif\\ifquoteopen
+                \\catcode`\\"=\\active
+                \\DeclareRobustCommand*{"}{%
+                \\ifquoteopen
+                    \\quoteopenfalse \grqq%
+                \\else
+                    \\quoteopentrue \glqq%
+                \\fi
+        }'''))
 
         doc.append(NoEscape(
             '\\setkomavar{fromname}{%s}' % message.real_sender))
