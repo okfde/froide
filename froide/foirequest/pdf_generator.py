@@ -196,9 +196,9 @@ class LetterPDFGenerator(PDFGenerator):
                 \\catcode`\\"=\\active
                 \\DeclareRobustCommand*{"}{%
                 \\ifquoteopen
-                    \\quoteopenfalse \grqq%
+                    \\quoteopenfalse \\grqq%
                 \\else
-                    \\quoteopentrue \glqq%
+                    \\quoteopentrue \\glqq%
                 \\fi
         }'''))
 
