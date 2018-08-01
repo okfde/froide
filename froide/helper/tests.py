@@ -84,9 +84,6 @@ Vielen Dank für Ihr Verständnis.
 Mit freundlichen Grüßen'''
         res = mark_differences(content, redacted)
         fake_res = content.replace('informationsfreiheitsgesetz@example.com', '<span class="redacted">informationsfreiheitsgesetz@example.com</span>')
-        print(res)
-        print('-' * 25)
-        print(fake_res)
         self.assertEqual(fake_res, res)
 
 

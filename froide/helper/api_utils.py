@@ -323,7 +323,6 @@ class OpenRefineReconciliationMixin(object):
 
         Only implements prefix
         """
-        print(request.GET)
         self._apply_openrefine_jsonp(request)
         q = request.GET.get('prefix')
         response = {
