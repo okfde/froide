@@ -15,8 +15,10 @@ from django import forms
 from django.conf.urls import url
 from django.utils.html import format_html
 
-from froide.helper.admin_utils import (make_nullfilter, AdminTagAllMixIn,
-                                      ForeignKeyFilter, TaggitListFilter)
+from froide.helper.admin_utils import (
+    make_nullfilter, make_greaterzerofilter, AdminTagAllMixIn,
+    ForeignKeyFilter, TaggitListFilter
+)
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
@@ -69,7 +71,8 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'is_blocked',
         make_nullfilter('same_as', _('Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
-        ('project', ForeignKeyFilter), FoiRequestTagsFilter
+        ('project', ForeignKeyFilter), FoiRequestTagsFilter,
+        make_greaterzerofilter('costs', _('Kosten angegeben'))
     )
     search_fields = ['title', 'description', 'secret_address', 'reference']
     ordering = ('-last_message',)

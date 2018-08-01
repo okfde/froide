@@ -155,6 +155,35 @@ def make_nullfilter(field, title):
     })
 
 
+class GreaterZeroFilter(SimpleListFilter):
+    title = ''
+    parameter_name = ''
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', _('Greater zero')),
+            ('0', _('Zero')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == '0':
+            return queryset.filter(**{
+                '%s' % self.parameter_name: 0
+            })
+        if self.value() == '1':
+            return queryset.filter(**{
+                '%s__gt' % self.parameter_name: 0
+            })
+        return queryset
+
+
+def make_greaterzerofilter(field, title):
+    return type(str('%sGreaterZeroFilter' % field.title()), (GreaterZeroFilter,), {
+        'title': title,
+        'parameter_name': field
+    })
+
+
 class EmptyFilter(SimpleListFilter):
     title = ''
     parameter_name = ''
