@@ -24,6 +24,7 @@ Content-Type: text/html; charset="utf-8"
 X-Mailer: MIME::Lite 3.027 (F2.77; T1.32; A2.08; B3.13; Q3.13)
 Date: Tue, 12 Mar 2013 11:53:10 +0100
 From: <Reidt.A@zdf.de>
+X-Autoreply:
 To: <info@zdf.de>, <sw+yurpykc1hr@fragdenstaat.de>
 CC: <KÃ¤mmerer.a@zdf.de>, <Biogiani.D@zdf.de>
 Reply-To: kundendialog@example.com

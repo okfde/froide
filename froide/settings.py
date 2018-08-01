@@ -441,7 +441,9 @@ class Base(Configuration):
         },
         message_handlers={
             'email': 'froide.foirequest.message_handlers.EmailMessageHandler'
-        }
+        },
+        auto_reply_subject_regex=rec('^(Auto-?Reply|Out of office)'),
+        auto_reply_email_regex=rec('^auto(reply|responder)@')
     )
 
     TESSERACT_DATA_PATH = values.Value('/usr/local/share/tessdata')

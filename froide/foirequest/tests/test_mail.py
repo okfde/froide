@@ -127,6 +127,7 @@ class MailTest(TestCase):
             mail = parser.parse(BytesIO(content))
         self.assertEqual(len(mail['cc']), 2)
         self.assertEqual(len(mail['to']), 3)  # contains X-Original-To as well
+        self.assertTrue(mail['is_auto_reply'])
 
     def test_strip_html(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)

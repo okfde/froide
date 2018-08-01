@@ -322,6 +322,7 @@ class ReceiveEmailService(BaseService):
             recipient=foirequest.user.display_name(),
             plaintext=email['body'],
             html=email['html'],
+            content_hidden=email.get('is_auto_reply', False)
         )
 
         if publicbody is None:

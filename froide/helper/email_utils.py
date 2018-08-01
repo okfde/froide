@@ -23,10 +23,20 @@ from email.utils import parseaddr, formataddr, parsedate_tz, getaddresses
 import imaplib
 
 from django.utils.six import BytesIO, text_type as str, binary_type as bytes
+from django.conf import settings
 
 import pytz
 
 from .text_utils import convert_html_to_text
+
+
+AUTO_REPLY_SUBJECT_REGEX = settings.FROIDE_CONFIG.get('auto_reply_subject_regex', None)
+AUTO_REPLY_EMAIL_REGEX = settings.FROIDE_CONFIG.get('auto_reply_email_regex', None)
+AUTO_REPLY_HEADERS = (
+    ('X-Autoreply', None),
+    ('X-Autorespond', None),
+    ('Auto-Submitted', 'auto-replied'),
+)
 
 
 def get_unread_mails(host, port, user, password, ssl=True):
@@ -236,7 +246,8 @@ class EmailParser(object):
         from_field = (self.parse_header_field(from_field[0]),
                       from_field[1].lower() if from_field[1] else from_field[1])
         date = self.parse_date(self.get(msgobj.get("Date")))
-        return {
+
+        email = {
             'msgobj': msgobj,
             'message_id': msgobj.get('Message-Id'),
             'date': date,
@@ -250,6 +261,32 @@ class EmailParser(object):
             'resent_cc': resent_ccs,
             'attachments': attachments
         }
+
+        email['is_auto_reply'] = self.detect_auto_reply(email)
+
+        return email
+
+    def detect_auto_reply(self, email):
+        msgobj = email.get('msgobj')
+        if msgobj:
+            for header, val in AUTO_REPLY_HEADERS:
+                header_val = msgobj.get(header, None)
+                if header_val is None:
+                    continue
+                if val is None or val in header_val:
+                    return True
+
+        from_field = email['from']
+        if AUTO_REPLY_EMAIL_REGEX is not None:
+            if AUTO_REPLY_EMAIL_REGEX.search(from_field[0]):
+                return True
+
+        subject = email['subject']
+        if AUTO_REPLY_SUBJECT_REGEX is not None:
+            if AUTO_REPLY_SUBJECT_REGEX.search(subject) is not None:
+                return True
+
+        return False
 
     def parse_postmark(self, obj):
         from_field = (obj['FromFull']['Name'], obj['FromFull']['Email'])
