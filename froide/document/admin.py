@@ -7,7 +7,7 @@ from .models import Document
 
 class DocumentAdmin(DocumentBaseAdmin):
     raw_id_fields = DocumentBaseAdmin.raw_id_fields + (
-        'original',
+        'original', 'foirequest', 'publicbody'
     )
 
 
