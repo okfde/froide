@@ -12,6 +12,13 @@
          {{ object.description|markdown }} 
       </p>
     {% endif %}
+    {% if object.foirequest %}
+    <p>
+        {% blocktrans with title=object.foirequest.title request_url=object.foirequest.get_absolute_url %}
+        This document is part of the request ”<a href="{{ request_url }}">{{ title }}</a>”.
+        {% endblocktrans %}
+    </p>
+    {% endif %}
 </div>
 
 <div class="container-sm-full">
