@@ -59,6 +59,9 @@ def show_attachment(request, slug, message_id, attachment_name):
     if not has_attachment_access(request, foirequest, attachment):
         return render_403(request)
 
+    if attachment.document is not None and attachment.document.public:
+        return redirect(attachment.document)
+
     attachment_url = get_accessible_attachment_url(foirequest, attachment)
 
     return render(request, 'foirequest/attachment/show.html', {
