@@ -16,6 +16,7 @@ def set_original_fk(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('foirequest', '0019_foiattachment_document'),
         ('document', '0009_document_original'),
     ]
 

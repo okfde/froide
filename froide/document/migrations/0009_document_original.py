@@ -9,8 +9,8 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0028_auto_20180807_1520'),
         ('document', '0008_auto_20180807_1452'),
+        ('foirequest', '0018_requestdraft_law_type'),
     ]
 
     operations = [

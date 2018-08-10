@@ -20,6 +20,10 @@ class Migration(migrations.Migration):
         ('taggit', '0002_auto_20150616_2121'),
     ]
 
+    run_before = [
+        ('filingcabinet', '__first__'),
+    ]
+
     operations = [
         migrations.CreateModel(
             name='Document',
