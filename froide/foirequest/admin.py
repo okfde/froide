@@ -72,7 +72,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         make_nullfilter('same_as', _('Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
         ('project', ForeignKeyFilter), FoiRequestTagsFilter,
-        make_greaterzerofilter('costs', _('Kosten angegeben'))
+        make_greaterzerofilter('costs', _('Costs given'))
     )
     search_fields = ['title', 'description', 'secret_address', 'reference']
     ordering = ('-last_message',)
