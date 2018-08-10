@@ -179,10 +179,12 @@ class FoiAttachment(models.Model):
 
         foirequest = self.belongs_to.request
         doc = Document.objects.create(
-            original=self.file.name,
+            original=self,
             user=foirequest.user,
             public=foirequest.public,
-            title=self.name
+            title=self.name,
+            foirequest=self.belongs_to.request,
+            publicbody=self.belongs_to.sender_public_body
         )
         self.document = doc
         self.save()
