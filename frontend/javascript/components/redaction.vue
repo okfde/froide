@@ -362,7 +362,8 @@ export default {
         xhr.open('POST', document.location.href)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.csrfToken)
-        xhr.addEventListener("progress", (e) => {
+        let xhrUpload = xhr.upload ? xhr.upload : xhr
+        xhrUpload.addEventListener("progress", (e) => {
           if (e.lengthComputable) {
             this.progressCurrent = e.loaded
             this.progressTotal = e.total
