@@ -31,6 +31,7 @@ djangorestframework-jsonp = "*"
 "geoip2" = "*"
 pdflib = "*"
 phonenumbers = "*"
+djangorestframework-csv = "*"
 
 [dev-packages]
 selenium = "*"

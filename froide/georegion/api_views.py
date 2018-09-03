@@ -2,7 +2,7 @@ import json
 
 from rest_framework import serializers
 from rest_framework import viewsets
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.settings import api_settings
 
 from rest_framework_jsonp.renderers import JSONPRenderer
 
@@ -87,7 +87,7 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
 
     # OpenRefine needs JSONP responses
     # This is OK because authentication is not considered
-    renderer_classes = (JSONRenderer, BrowsableAPIRenderer, JSONPRenderer)
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (JSONPRenderer,)
 
     class RECONCILIATION_META:
         name = 'GeoRegion'

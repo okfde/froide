@@ -413,6 +413,7 @@ class Base(Configuration):
         'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
+            'froide.helper.api_renderers.CustomPaginatedCSVRenderer',
             'rest_framework.renderers.BrowsableAPIRenderer',
         )
     }

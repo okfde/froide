@@ -45,6 +45,7 @@ setup(
         'django_overextends',
         'python-magic',
         'djangorestframework',
+        'djangorestframework-csv',
         'djangorestframework-jsonp',
         'python-mimeparse',
         'unicodecsv',
