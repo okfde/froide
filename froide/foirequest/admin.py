@@ -82,7 +82,9 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     actions = ['mark_checked', 'mark_not_foi', 'mark_successfully_resolved',
                'tag_all', 'mark_same_as', 'remove_from_index',
-               'confirm_request', 'set_visible_to_user', 'unpublish']
+               'confirm_request', 'set_visible_to_user', 'unpublish',
+               'add_to_project'
+    ]
     raw_id_fields = ('same_as', 'public_body', 'user', 'project')
     save_on_top = True
 
@@ -182,6 +184,49 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         queryset.update(public=False)
         self.message_user(request, _("Selected requests are now unpublished."))
     unpublish.short_description = _("Unpublish")
+
+    def add_to_project(self, request, queryset):
+        """
+        Mark selected requests as same as the one we are choosing now.
+
+        """
+        opts = self.model._meta
+        # Check that the user has change permission for the actual model
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        queryset = queryset.filter(project__isnull=True)
+
+        Form = get_fk_form_class(self.model, 'project', self.admin_site)
+        # User has already chosen the other req
+        if request.POST.get('obj'):
+            f = Form(request.POST)
+            if f.is_valid():
+                project = f.cleaned_data['obj']
+                project.add_requests(queryset)
+                self.message_user(request,
+                    _("Successfully added requests to project."))
+                # Return None to display the change list page again.
+                return None
+        else:
+            f = Form()
+
+        context = {
+            'opts': opts,
+            'queryset': queryset,
+            'media': self.media,
+            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
+            'form': f,
+            'applabel': opts.app_label
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(
+            request,
+            'foirequest/admin/add_to_project.html',
+            context
+        )
+    add_to_project.short_description = _("Add selected requests to project...")
 
 
 class FoiAttachmentInline(admin.TabularInline):
@@ -458,6 +503,7 @@ class FoiProjectAdminForm(forms.ModelForm):
 class FoiProjectAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
+    prepopulated_fields = {"slug": ("title",)}
     list_display = ('title', 'created',
         'requests_admin_link',
         'user', 'public', 'status', 'request_count', 'site_link')

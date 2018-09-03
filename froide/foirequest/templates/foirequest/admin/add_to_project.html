@@ -1,0 +1,31 @@
+{% extends "helper/admin_base_action.html" %}
+
+{% load i18n l10n %}
+
+{% block action_title %}{% trans 'Add requests to existing project' %}{% endblock %}
+
+{% block breadcrumbs_action_label %}
+  {% trans 'Add requests to existing project' %}
+{% endblock %}
+
+{% block action_content %}
+<form action="" method="post">{% csrf_token %}
+<div>
+<p>{% blocktrans %}These FoI request...{% endblocktrans %}<br/>
+<ul>
+{% for obj in queryset %}
+    <li>
+    {{ obj }}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+    </li>
+{% endfor %}
+</ul>
+<br/>{% blocktrans %}are added to this project:{% endblocktrans %}</p>
+
+{{ form.as_p }}
+
+<input type="hidden" name="action" value="add_to_project" />
+<input type="submit" value="{% trans 'Add requests to this project' %}" />
+</div>
+</form>
+{% endblock %}

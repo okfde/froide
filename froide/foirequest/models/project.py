@@ -105,3 +105,18 @@ class FoiProject(models.Model):
 
     def is_public(self):
         return self.public
+
+    def add_requests(self, queryset):
+        order_max = self.foirequest_set.all().aggregate(models.Max('project_order'))
+        order_max = order_max['project_order__max']
+        if order_max is None:
+            order_max = -1
+        for req in queryset:
+            order_max += 1
+            req.project = self
+            req.project_order = order_max
+            req.save()
+            if req.public_body:
+                self.publicbodies.add(req.public_body)
+        self.request_count = self.foirequest_set.all().count()
+        self.save()
