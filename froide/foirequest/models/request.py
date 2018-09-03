@@ -373,6 +373,12 @@ class FoiRequest(models.Model):
         return self.awaits_classification()
 
     @property
+    def project_number(self):
+        if self.project_order is not None:
+            return self.project_order + 1
+        return None
+
+    @property
     def has_fee(self):
         return self.costs > 0
 

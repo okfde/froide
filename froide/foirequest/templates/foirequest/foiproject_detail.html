@@ -61,7 +61,7 @@
       {% for req in object.foirequest_set.all %}
       <tr>
         <td>
-          {{ req.project_order }}
+          {{ req.project_number }}
         </td>
         <td>
           <a href="{{ req.get_absolute_url }}">
