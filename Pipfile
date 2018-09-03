@@ -32,6 +32,7 @@ djangorestframework-jsonp = "*"
 pdflib = "*"
 phonenumbers = "*"
 djangorestframework-csv = "*"
+django-filingcabinet = {git = "git://github.com/okfde/django-filingcabinet.git", editable = true, ref = "master"}
 
 [dev-packages]
 selenium = "*"
