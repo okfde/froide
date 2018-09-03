@@ -434,12 +434,14 @@
             {% endif %}
           </dd>
           {% if object.project %}
-            <dt>{% blocktrans %}Project:{% endblocktrans %}</dt>
-            <dd>
-              <a href="{{ object.project.get_absolute_url }}">
-                {{ object.project.title }}
-              </a>
-            </dd>
+            {% if object.project.public or object|can_write_foirequest:request %}
+              <dt>{% blocktrans %}Project:{% endblocktrans %}</dt>
+              <dd>
+                <a href="{{ object.project.get_absolute_url }}">
+                  {{ object.project.title }}
+                </a>
+              </dd>
+            {% endif %}
           {% endif %}
           {% if object.law %}
             {% if object.law.meta %}
