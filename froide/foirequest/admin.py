@@ -147,7 +147,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         }
 
         # Display the confirmation page
-        return TemplateResponse(request, 'foirequest/admin_mark_same_as.html',
+        return TemplateResponse(request, 'foirequest/admin/mark_same_as.html',
             context)
     mark_same_as.short_description = _("Mark selected requests as identical to...")
 
