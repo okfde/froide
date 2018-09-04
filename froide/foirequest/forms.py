@@ -215,6 +215,10 @@ class EscalationMessageForm(forms.Form):
             is_response=False,
             user=self.foirequest.user
         )
+        plaintext_redacted = plaintext_redacted.replace(
+            self.foirequest.get_auth_link(),
+            self.foirequest.get_absolute_domain_short_url(),
+        )
 
         return FoiMessage(
             request=self.foirequest,

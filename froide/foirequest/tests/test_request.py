@@ -825,12 +825,16 @@ class RequestTest(TestCase):
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug}), {
                     'subject': 'My Escalation Subject',
-                    'message': 'My Escalation Message'
+                    'message': (
+                        'My Escalation Message'
+                        '\n%s\nDone' % req.get_auth_link()
+                    )
                 }
         )
         self.assertEqual(response.status_code, 302)
         self.assertIn(req.get_absolute_url(), response['Location'])
         self.assertEqual(req.law.mediator, req.messages[-1].recipient_public_body)
+        self.assertNotIn(req.get_auth_link(), req.messages[-1].plaintext_redacted)
         self.assertEqual(len(mail.outbox), 2)
         message = list(filter(lambda x: x.to[0] == req.law.mediator.email, mail.outbox))[-1]
         self.assertEqual(message.attachments[0][0], 'request_%s.zip' % req.pk)
