@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('population', models.IntegerField(blank=True, null=True)),
                 ('valid_on', models.DateTimeField(blank=True, null=True)),
                 ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(geography=True, srid=4326, verbose_name='geometry')),
-                ('gov_seat', django.contrib.gis.db.models.fields.PointField(geography=True, null=True, srid=4326, verbose_name='gov seat')),
+                ('gov_seat', django.contrib.gis.db.models.fields.PointField(geography=True, null=True, blank=True, srid=4326, verbose_name='gov seat')),
                 ('part_of', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='georegion.GeoRegion', verbose_name='Part of')),
                 ('kind_detail', models.CharField(blank=True, max_length=255)),
             ],
