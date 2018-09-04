@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 
 
-SPLITTER = r'([^\w\-@/])'
+SPLITTER = r'([^\w\-@/\.])'
 SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile('^%s$' % SPLITTER)
 
