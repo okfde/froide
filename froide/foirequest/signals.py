@@ -310,13 +310,6 @@ def create_event_set_concrete_law(sender, **kwargs):
             user=sender.user, name=kwargs['name'])
 
 
-@receiver(FoiRequest.add_postal_reply,
-    dispatch_uid="create_event_add_postal_reply")
-def create_event_add_postal_reply(sender, **kwargs):
-    FoiEvent.objects.create_event("add_postal_reply", sender,
-            user=sender.user)
-
-
 @receiver(FoiRequest.escalated,
     dispatch_uid="create_event_escalated")
 def create_event_escalated(sender, **kwargs):

@@ -73,7 +73,9 @@ class FoiEvent(models.Model):
         "set_concrete_law": _(
             "%(user)s set '%(name)s' as the information law for the request %(request)s."),
         "add_postal_reply": _(
-            "%(user)s added a reply that was received via snail mail."),
+            "%(user)s added a reply that was received via postal mail."),
+        "add_postal_message": _(
+            "%(user)s has sent a postal mail."),
         "escalated": _(
             "%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s."),
         "deadline_extended": _(

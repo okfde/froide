@@ -755,10 +755,15 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         foirequest.last_message = message.timestamp
         foirequest.status = 'awaiting_classification'
         foirequest.save()
-        foirequest.add_postal_reply.send(sender=foirequest)
 
         if self.cleaned_data.get('files'):
             self.save_attachments(self.files.getlist('%s-files' % self.prefix), message)
+
+        if message.is_response:
+            foirequest.message_received.send(sender=foirequest, message=message)
+        else:
+            foirequest.message_sent.send(sender=foirequest, message=message)
+
         return message
 
 
