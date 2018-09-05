@@ -50,7 +50,10 @@ class FoiRequestFollowerTest(TestCase):
         self.assertEqual(response.status_code, 302)
         follower = FoiRequestFollower.objects.get(request=req, user=user)
         self.assertEqual(len(mail.outbox), 0)
-        req.message_received.send(sender=req, message=req.messages[0])
+        # Make second message postal message
+        # So there's no notification to requester about sent mail
+        req.messages[1].kind = 'post'
+        req.message_sent.send(sender=req, message=req.messages[1])
         self.assertEqual(len(mail.outbox), 1)
         mes = mail.outbox[0]
         match = re.search(r'/%d/(\w+)/' % follower.pk, mes.body)

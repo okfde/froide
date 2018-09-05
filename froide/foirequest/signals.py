@@ -74,42 +74,54 @@ def notify_user_message_received(sender, message=None, **kwargs):
         return
     if not sender.user.email:
         return
-    send_mail('{0} [#{1}]'.format(
-                _("%(site_name)s: New reply to your request") % {
-                    "site_name": settings.SITE_NAME
-                },
-                sender.pk),
-            render_to_string("foirequest/emails/message_received_notification.txt", {
-                "message": message,
-                "request": sender,
-                "go_url": sender.user.get_autologin_url(
-                    message.get_absolute_short_url()
-                ),
+    if message.kind != 'email':
+        # All non-email received messages the user actively contributed
+        # Don't inform them about it
+        return
+
+    send_mail(
+        '{0} [#{1}]'.format(
+            _("%(site_name)s: New reply to your request") % {
                 "site_name": settings.SITE_NAME
-            }),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
+            },
+            sender.pk
+        ),
+        render_to_string("foirequest/emails/message_received_notification.txt", {
+            "message": message,
+            "request": sender,
+            "go_url": sender.user.get_autologin_url(
+                message.get_absolute_short_url()
+            ),
+            "site_name": settings.SITE_NAME
+        }),
+        settings.DEFAULT_FROM_EMAIL,
+        [sender.user.email]
+    )
 
 
 @receiver(FoiRequest.public_body_suggested,
         dispatch_uid="notify_user_public_body_suggested")
 def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
-    if sender.user != suggestion.user:
-        send_mail('{0} [#{1}]'.format(
-                    _("%(site_name)s: New suggestion for a Public Body") % {
-                        "site_name": settings.SITE_NAME
-                    },
-                    sender.pk),
-                render_to_string("foirequest/emails/public_body_suggestion_received.txt", {
-                    "suggestion": suggestion,
-                    "request": sender,
-                    "go_url": sender.user.get_autologin_url(
-                        sender.get_absolute_short_url()
-                    ),
-                    "site_name": settings.SITE_NAME
-                }),
-                settings.DEFAULT_FROM_EMAIL,
-                [sender.user.email])
+    if sender.user == suggestion.user:
+        return
+    send_mail(
+        '{0} [#{1}]'.format(
+            _("%(site_name)s: New suggestion for a Public Body") % {
+                "site_name": settings.SITE_NAME
+            },
+            sender.pk
+        ),
+        render_to_string("foirequest/emails/public_body_suggestion_received.txt", {
+            "suggestion": suggestion,
+            "request": sender,
+            "go_url": sender.user.get_autologin_url(
+                sender.get_absolute_short_url()
+            ),
+            "site_name": settings.SITE_NAME
+        }),
+        settings.DEFAULT_FROM_EMAIL,
+        [sender.user.email]
+    )
 
 
 @receiver(FoiRequest.message_sent,
@@ -155,6 +167,11 @@ def send_foiproject_created_confirmation(sender, **kwargs):
 @receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
+    if message.kind != 'email':
+        # All non-email sent messages are not interesting to users.
+        # Don't inform them about it.
+        return
+
     messages = sender.get_messages()
     if len(messages) == 1:
         if sender.project_id is not None:
