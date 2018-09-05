@@ -57,10 +57,16 @@ def cancel_user(user):
     user.organization_url = ''
     user.private = True
     user.newsletter = False
+    user.terms = False
     user.address = ''
+    user.profile_text = ''
+    user.profile_photo.delete()
     user.save()
     user.first_name = ''
     user.last_name = ''
+    user.is_trusted = False
+    user.is_staff = False
+    user.is_superuser = False
     user.is_active = False
     user.is_deleted = True
     user.date_left = timezone.now()
