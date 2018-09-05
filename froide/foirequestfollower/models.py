@@ -140,30 +140,34 @@ class FoiRequestFollower(models.Model):
 @receiver(FoiRequest.message_received,
     dispatch_uid="notify_followers_message_received")
 def notify_followers_message_received(sender, message=None, **kwargs):
-    FoiRequestFollower.objects.send_update(sender,
-        _("The request '%(request)s' received a reply.") % {
-            "request": sender.title},
-        template='foirequestfollower/instant_update_follower.txt'
-        )
+    from .tasks import update_followers
+
+    countdown = 0
+    if message and message.is_postal:
+        # Add delay so attachments can be uploaded/processed
+        countdown = 10 * 60  # 10 minutes
+
+    update_followers.apply_async(
+        args=[sender.pk, _("The request '%(request)s' received a reply.") % {
+            "request": sender.title}],
+        kwargs={'template': 'foirequestfollower/instant_update_follower.txt'},
+        countdown=countdown
+    )
 
 
 @receiver(FoiRequest.message_sent,
         dispatch_uid="notify_followers_send_foimessage")
 def notify_followers_send_foimessage(sender, message=None, **kwargs):
-    FoiRequestFollower.objects.send_update(sender,
-        _("A message was sent in the request '%(request)s'.") % {
-            "request": sender.title},
-        template='foirequestfollower/instant_update_follower.txt')
-
-
-@receiver(FoiRequest.add_postal_reply,
-    dispatch_uid="notify_followers_add_postal_reply")
-def notify_followers_add_postal_reply(sender, **kwargs):
     from .tasks import update_followers
 
+    countdown = 0
+    if message and message.is_postal:
+        # Add delay so attachments can be uploaded/processed
+        countdown = 10 * 60  # 10 minutes
+
     update_followers.apply_async(
-        args=[sender.pk, _("The request '%(request)s' received a postal reply.") % {
+        args=[sender.pk, _("A message was sent in the request '%(request)s'.") % {
             "request": sender.title}],
         kwargs={'template': 'foirequestfollower/instant_update_follower.txt'},
-        countdown=10 * 60  # Run this in 10 minutes
+        countdown=countdown
     )
