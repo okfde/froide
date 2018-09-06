@@ -1,10 +1,7 @@
-from __future__ import unicode_literals
-
 import random
 from datetime import timedelta
 
 from django.utils import timezone
-from django.utils.six import string_types
 from django.core.mail import mail_managers
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -47,7 +44,7 @@ def generate_secret_address(user, length=10):
     template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
 
     domains = settings.FOI_EMAIL_DOMAIN
-    if isinstance(domains, string_types):
+    if isinstance(domains, str):
         domains = [domains]
     FOI_EMAIL_DOMAIN = domains[0]
 

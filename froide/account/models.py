@@ -1,17 +1,13 @@
-from __future__ import unicode_literals
-
 import json
 import os
 
 from django.db import models
-from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 
 from oauth2_provider.models import AbstractApplication
@@ -62,7 +58,6 @@ def profile_photo_path(instance=None, filename=None):
     return os.path.join(*path)
 
 
-@python_2_unicode_compatible
 class User(AbstractBaseUser, PermissionsMixin):
 
     username_validator = UnicodeUsernameValidator()

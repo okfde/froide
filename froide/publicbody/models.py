@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import json
 from datetime import timedelta
@@ -14,7 +13,6 @@ from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, ItemBase
@@ -69,7 +67,6 @@ class JurisdictionManager(models.Manager):
         )
 
 
-@python_2_unicode_compatible
 class Jurisdiction(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -104,7 +101,6 @@ class Jurisdiction(models.Model):
         return laws.union(meta_laws)
 
 
-@python_2_unicode_compatible
 class FoiLaw(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255)
@@ -288,7 +284,6 @@ class CategorizedPublicBody(ItemBase):
         }).distinct()
 
 
-@python_2_unicode_compatible
 class Classification(MP_Node):
     name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(_("slug"), max_length=255)
@@ -321,7 +316,6 @@ class PublicBodyManager(CurrentSiteManager):
         return self.get_queryset()
 
 
-@python_2_unicode_compatible
 class PublicBody(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)

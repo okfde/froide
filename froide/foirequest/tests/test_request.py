@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import re
+from io import BytesIO
 from datetime import datetime, timedelta
 import os
+import re
 import zipfile
 
 from mock import patch
@@ -14,7 +12,6 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core import mail
 from django.utils import timezone
-from django.utils.six import BytesIO
 from django.test.utils import override_settings
 from django.http import QueryDict
 

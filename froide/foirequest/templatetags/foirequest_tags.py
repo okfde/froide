@@ -1,6 +1,3 @@
-# -*- encoding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape

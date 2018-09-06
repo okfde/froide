@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from datetime import timedelta
 
 from django.test import TestCase

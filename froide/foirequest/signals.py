@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.db.models import signals
 from django.dispatch import receiver
 from django.core.mail import send_mail

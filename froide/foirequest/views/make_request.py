@@ -1,10 +1,5 @@
-from __future__ import unicode_literals
-
 import json
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect

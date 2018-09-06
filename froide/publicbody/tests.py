@@ -1,9 +1,7 @@
-from __future__ import unicode_literals
-
+from io import BytesIO
 import json
 import tempfile
 
-from django.utils import six
 from django.test import TestCase
 from django.urls import reverse
 
@@ -53,7 +51,7 @@ class PublicBodyTest(TestCase):
         csv = export_csv_bytes(PublicBody.export_csv(PublicBody.objects.all()))
         prev_count = PublicBody.objects.all().count()
         imp = CSVImporter()
-        csv_file = six.BytesIO(csv)
+        csv_file = BytesIO(csv)
         imp.import_from_file(csv_file)
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
@@ -73,7 +71,7 @@ class PublicBodyTest(TestCase):
         csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
-        imp.import_from_file(six.BytesIO(csv.encode('utf-8')))
+        imp.import_from_file(BytesIO(csv.encode('utf-8')))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
 
@@ -84,7 +82,7 @@ Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://examp
         csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
-        imp.import_from_file(six.BytesIO(csv.encode('utf-8')))
+        imp.import_from_file(BytesIO(csv.encode('utf-8')))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count - 1, prev_count)
 

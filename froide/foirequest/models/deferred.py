@@ -1,15 +1,11 @@
-from __future__ import unicode_literals
-
 import base64
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 from .request import FoiRequest
 
 
-@python_2_unicode_compatible
 class DeferredMessage(models.Model):
     recipient = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)

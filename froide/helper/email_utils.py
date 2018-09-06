@@ -5,24 +5,17 @@ http://www.ianlewis.org/en/parsing-email-attachments-python
 Licensed under MIT
 
 """
-from __future__ import unicode_literals
 
+from io import BytesIO
 from datetime import datetime, timedelta
 import time
 import base64
 import re
-
-try:
-    from email.header import decode_header, make_header
-    from email.parser import BytesParser as Parser
-except ImportError:
-    from email.Header import decode_header, make_header
-    from email.Parser import Parser
-
+from email.header import decode_header, make_header
+from email.parser import BytesParser as Parser
 from email.utils import parseaddr, formataddr, parsedate_tz, getaddresses
 import imaplib
 
-from django.utils.six import BytesIO, text_type as str, binary_type as bytes
 from django.conf import settings
 
 import pytz

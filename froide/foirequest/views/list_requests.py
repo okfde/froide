@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _

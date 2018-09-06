@@ -1,6 +1,3 @@
-from __future__ import unicode_literals
-
-from django.utils.six import text_type as str
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.contrib import auth

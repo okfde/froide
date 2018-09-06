@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _

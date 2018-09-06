@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import json
 
 from django.db import models
@@ -9,7 +7,6 @@ from django.utils import timezone
 from django.utils.timesince import timesince
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
-from django.utils.encoding import python_2_unicode_compatible
 
 from froide.publicbody.models import PublicBody
 
@@ -29,7 +26,6 @@ class FoiEventManager(models.Manager):
         return event
 
 
-@python_2_unicode_compatible
 class FoiEvent(models.Model):
     request = models.ForeignKey(FoiRequest,
             verbose_name=_("Freedom of Information Request"),

@@ -1,13 +1,7 @@
-from __future__ import unicode_literals
-
 import hashlib
 import re
 import hmac
-
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.db import transaction, IntegrityError
 from django.conf import settings
@@ -18,7 +12,6 @@ from django.template.loader import render_to_string
 from django.utils.crypto import constant_time_compare
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.six import text_type as str
 
 from froide.helper.text_utils import replace_custom, replace_word
 

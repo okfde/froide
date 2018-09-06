@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory

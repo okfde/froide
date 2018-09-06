@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import os
 import sys
 import re
@@ -15,9 +12,6 @@ from django.utils.translation import ugettext_lazy as _
 
 def rec(x):
     return re.compile(x, re.I | re.U)
-
-
-# Django settings for froide project.
 
 
 class Base(Configuration):

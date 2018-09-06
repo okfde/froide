@@ -1,5 +1,6 @@
 import base64
 import json
+from io import BytesIO
 import zipfile
 from email.utils import parseaddr
 import random
@@ -8,7 +9,6 @@ from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
 from django.urls import reverse
 from django.utils.translation import override, ugettext_lazy as _
-from django.utils.six import BytesIO, string_types
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails,
                                        make_address)
@@ -105,7 +105,7 @@ def create_deferred(secret_mail, mail_bytes, spam=False,
 def get_alternative_mail(req):
     name = get_name_from_number(req.pk)
     domains = settings.FOI_EMAIL_DOMAIN
-    if isinstance(domains, string_types):
+    if isinstance(domains, str):
         domains = [domains]
     if len(domains) > 1:
         domains = domains[1:]
@@ -145,7 +145,7 @@ def _deliver_mail(email, mail_bytes=None, manual=False):
     received_list = [(r[0], r[1].lower()) for r in received_list]
 
     domains = settings.FOI_EMAIL_DOMAIN
-    if isinstance(domains, string_types):
+    if isinstance(domains, str):
         domains = [domains]
 
     def mail_filter(x):

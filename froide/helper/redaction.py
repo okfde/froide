@@ -148,7 +148,7 @@ pylRc2Zn+XDQWZIL8iO5KC9S+1RekOex1uOyZGR/w/Hf1lhzqVfFsxE39B/ws7Rm3N3nDrhPuMfc
 w3R/aE28KsfY2J+RPNp+j+KaOoCey4h+Dd48b9O5G0v2K7j0AM6s+5WQ/E0wVoK+pA6/3bup7bJf
 CMGjwvxTsr74/f/F95m3TH9x8o0/TU//N+7/D/ScVcA=
 """.encode('latin1')
-    uncompressed = bytearray(zlib.decompress(base64.decodestring(font)))
+    uncompressed = bytearray(zlib.decompress(base64.decodebytes(font)))
     ttf = io.BytesIO(uncompressed)
     setattr(ttf, "name", "(invisible.ttf)")
     pdfmetrics.registerFont(TTFont('invisible', ttf))

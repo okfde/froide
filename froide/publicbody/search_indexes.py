@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from django.conf import settings
 
 from haystack import indexes

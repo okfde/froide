@@ -1,12 +1,6 @@
-from __future__ import unicode_literals
-
 from datetime import timedelta
 import json
-
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.test import TestCase
 from django.core import mail

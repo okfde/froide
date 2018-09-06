@@ -1,8 +1,5 @@
-from __future__ import with_statement
-
 import unittest
 
-from django.utils.six import text_type as str
 from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings

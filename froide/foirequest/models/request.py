@@ -1,9 +1,6 @@
-from __future__ import unicode_literals
-
 from datetime import timedelta
 import json
 
-from django.utils.six import string_types, text_type as str
 from django.db import models
 from django.db.models import Q, When, Case, Value
 from django.conf import settings
@@ -16,7 +13,6 @@ import django.dispatch
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
@@ -146,7 +142,6 @@ class TaggedFoiRequest(TaggedItemBase):
         verbose_name_plural = _('FoI Request Tags')
 
 
-@python_2_unicode_compatible
 class FoiRequest(models.Model):
     STATUS_CHOICES = (
         ('awaiting_user_confirmation',
@@ -503,12 +498,17 @@ class FoiRequest(models.Model):
     def followed_by(self, user):
         from froide.foirequestfollower.models import FoiRequestFollower
         try:
-            if isinstance(user, string_types):
-                return FoiRequestFollower.objects.get(request=self,
-                        email=user, confirmed=True)
+            if isinstance(user, str):
+                return FoiRequestFollower.objects.get(
+                    request=self,
+                    email=user,
+                    confirmed=True
+                )
             else:
-                return FoiRequestFollower.objects.get(request=self,
-                        user=user)
+                return FoiRequestFollower.objects.get(
+                    request=self,
+                    user=user
+                )
         except FoiRequestFollower.DoesNotExist:
             return False
 

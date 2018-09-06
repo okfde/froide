@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from datetime import datetime
+from io import BytesIO
 import json
 import unittest
 import sys
@@ -12,7 +10,6 @@ from django.core import mail
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
-from django.utils.six import BytesIO
 from django.urls import reverse
 from django.test.utils import override_settings
 

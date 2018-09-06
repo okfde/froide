@@ -1,4 +1,3 @@
-from django.utils.six import text_type as str
 from django.urls import reverse
 from django.conf.urls import url, include
 from django.utils.translation import pgettext

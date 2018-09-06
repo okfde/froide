@@ -83,7 +83,7 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
     serializer_class = GeoRegionSerializer
     queryset = GeoRegion.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = GeoRegionFilter
+    filterset_class = GeoRegionFilter
 
     # OpenRefine needs JSONP responses
     # This is OK because authentication is not considered

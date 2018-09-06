@@ -1,10 +1,7 @@
-from __future__ import unicode_literals
-
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.sites.models import Site
 from django.dispatch import Signal
 from django.contrib.sites.managers import CurrentSiteManager
@@ -36,7 +33,6 @@ class FoiProjectManager(CurrentSiteManager):
         return qs
 
 
-@python_2_unicode_compatible
 class FoiProject(models.Model):
     STATUS_PENDING = 'pending'
     STATUS_READY = 'ready'

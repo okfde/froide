@@ -1,7 +1,6 @@
 from datetime import timedelta
 from collections import defaultdict
 
-from django.utils.six import iteritems
 from django.utils.translation import ugettext as _
 from django.utils import translation
 from django.utils.dateformat import TimeFormat
@@ -65,7 +64,7 @@ def _batch_update(update_requester=True, update_follower=True):
     if update_requester:
         requester_updates = defaultdict(dict)
         # send out update on comments to request users
-        for req_id, request in iteritems(requests):
+        for req_id, request in requests.items():
             if not request.user.is_active:
                 continue
             if not request.user.email:
@@ -81,7 +80,7 @@ def _batch_update(update_requester=True, update_follower=True):
                 'events': [x[1] for x in sorted_events]
             }
 
-        for user, request_dict in iteritems(requester_updates):
+        for user, request_dict in requester_updates.items():
             FoiRequest.send_update(request_dict, user=user)
 
     if update_follower:
@@ -107,7 +106,7 @@ def _batch_update(update_requester=True, update_follower=True):
 
         # Send out update on comments and event to followers
         follower_updates = defaultdict(dict)
-        for req_id, request in iteritems(requests):
+        for req_id, request in requests.items():
             if not updates[req_id]:
                 continue
             updates[req_id].sort(key=lambda x: x[0])
@@ -130,7 +129,7 @@ def _batch_update(update_requester=True, update_follower=True):
                     'events': [x[1] for x in updates[req_id]]
                 }
 
-        for user_id, req_event_dict in iteritems(follower_updates):
+        for user_id, req_event_dict in follower_updates.items():
             user = users.get(user_id)
             email = None
             if user is None:

@@ -1,11 +1,8 @@
-from __future__ import unicode_literals
-
 from django.db import models
 from django.conf import settings
 from django.dispatch import Signal
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 from django.core.signing import (
     TimestampSigner, SignatureExpired, BadSignature
 )
@@ -25,7 +22,6 @@ def upload_to(instance, filename):
     return "%s/%s" % (settings.FOI_MEDIA_PATH, instance.name)
 
 
-@python_2_unicode_compatible
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(FoiMessage, null=True,
             verbose_name=_("Belongs to request"), on_delete=models.CASCADE)

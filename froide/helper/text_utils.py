@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
+from html.entities import name2codepoint
 
-try:
-    from html.entities import name2codepoint
-except ImportError:
-    from htmlentitydefs import name2codepoint
-
-from django.utils.six import text_type as str, unichr as chr
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import strip_tags
 from django.conf import settings

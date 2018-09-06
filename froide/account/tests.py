@@ -1,14 +1,7 @@
-from __future__ import unicode_literals
-
 import re
 from datetime import timedelta
+from urllib.parse import urlencode
 
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
-
-from django.utils.six import text_type as str
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory

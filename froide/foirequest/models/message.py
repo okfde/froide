@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -7,7 +5,6 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from django.utils.html import escape
-from django.utils.encoding import python_2_unicode_compatible
 
 from froide.publicbody.models import PublicBody
 from froide.helper.email_utils import make_address
@@ -23,7 +20,6 @@ class FoiMessageManager(models.Manager):
         return self.get_queryset().filter(sender_user=user), 'timestamp'
 
 
-@python_2_unicode_compatible
 class FoiMessage(models.Model):
     MESSAGE_CHOICES = (
         ('email', _('Email')),
@@ -371,7 +367,6 @@ class FoiMessage(models.Model):
         resend_message(self, **kwargs)
 
 
-@python_2_unicode_compatible
 class DeliveryStatus(models.Model):
     STATUS_UNKNOWN = 'unknown'
     STATUS_SENDING = 'sending'

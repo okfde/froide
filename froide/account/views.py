@@ -1,7 +1,4 @@
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse

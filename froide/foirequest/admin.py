@@ -1,5 +1,4 @@
-from __future__ import unicode_literals
-
+from io import BytesIO
 import re
 
 from django.contrib import admin
@@ -10,7 +9,6 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
 from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
-from django.utils.six import BytesIO
 from django import forms
 from django.conf.urls import url
 from django.utils.html import format_html

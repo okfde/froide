@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils.crypto import constant_time_compare
-from django.utils.encoding import python_2_unicode_compatible
 
 from froide.foirequest.models import FoiRequest
 
@@ -20,7 +19,9 @@ class FoiRequestFollowerManager(models.Manager):
             if following:
                 following.delete()
                 return False
-            FoiRequestFollower.objects.create(request=request, user=user, confirmed=True)
+            FoiRequestFollower.objects.create(
+                request=request, user=user, confirmed=True
+            )
             return True
         else:
             following = request.followed_by(email)
@@ -30,12 +31,17 @@ class FoiRequestFollowerManager(models.Manager):
                 following = FoiRequestFollower.objects.get(email=email)
                 return None
             except FoiRequestFollower.DoesNotExist:
-                following = FoiRequestFollower.objects.create(request=request, email=email)
+                following = FoiRequestFollower.objects.create(
+                    request=request, email=email
+                )
                 following.send_follow_mail()
             return True
 
     def send_update(self, request, update_message, template=None):
-        for follower in FoiRequestFollower.objects.filter(request=request, confirmed=True):
+        followers = FoiRequestFollower.objects.filter(
+            request=request, confirmed=True
+        )
+        for follower in followers:
             FoiRequestFollower.send_update(
                 {
                     request: {
@@ -49,12 +55,15 @@ class FoiRequestFollowerManager(models.Manager):
             )
 
 
-@python_2_unicode_compatible
 class FoiRequestFollower(models.Model):
-    request = models.ForeignKey(FoiRequest, on_delete=models.CASCADE,
-            verbose_name=_("Freedom of Information Request"))
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-            verbose_name=_("User"), on_delete=models.CASCADE)
+    request = models.ForeignKey(
+        FoiRequest,
+        on_delete=models.CASCADE,
+        verbose_name=_("Freedom of Information Request")
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        verbose_name=_("User"), on_delete=models.CASCADE)
     email = models.CharField(max_length=255, blank=True)
     confirmed = models.BooleanField(default=False)
     timestamp = models.DateTimeField(_("Timestamp of Following"),
@@ -80,14 +89,19 @@ class FoiRequestFollower(models.Model):
         return self.get_link()
 
     def get_link(self, kind="follow"):
-        return settings.SITE_URL + reverse('foirequestfollower-confirm_%s' % kind, kwargs={'follow_id': self.id,
-            'check': self.get_follow_secret()})
+        return settings.SITE_URL + reverse(
+            'foirequestfollower-confirm_%s' % kind,
+            kwargs={
+                'follow_id': self.id,
+                'check': self.get_follow_secret()
+            }
+        )
 
     def get_follow_secret(self):
         to_sign = [self.email, str(self.request.id), str(self.id)]
         return hmac.new(
-                settings.SECRET_KEY.encode('utf-8'),
-                (".".join(to_sign)).encode('utf-8')
+            settings.SECRET_KEY.encode('utf-8'),
+            (".".join(to_sign)).encode('utf-8')
         ).hexdigest()
 
     def check_and_unfollow(self, check):
@@ -98,7 +112,9 @@ class FoiRequestFollower(models.Model):
         return False
 
     def send_follow_mail(self):
-        send_mail(_("%(site_name)s: Please confirm that you want to follow this request") % {"site_name": settings.SITE_NAME},
+        send_mail(
+            _('%(site_name)s: Please confirm that you want '
+              'to follow this request') % {"site_name": settings.SITE_NAME},
             render_to_string("foirequestfollowers/confirm_follow.txt",
                 {"request": self.request,
                 "follow_link": self.get_follow_link(),

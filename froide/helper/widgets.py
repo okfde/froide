@@ -1,11 +1,7 @@
-# -*- encoding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django import forms
 from django.utils.safestring import mark_safe
 
 from django.conf import settings
-from django.utils import six
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 
@@ -74,13 +70,13 @@ class TagAutocompleteWidget(forms.TextInput):
     def render(self, name, value, attrs=None, renderer=None):
         """ Render HTML code """
         options = ''
-        if value is not None and not isinstance(value, six.string_types):
+        if value is not None and not isinstance(value, str):
             value = [o.tag for o in value.select_related('tag')]
             value = edit_string_for_tags(value)
 
         options = [
             '<option value="{value}" selected>{value}</option>'.format(
-                value=escape(six.text_type(o))) for o in parse_tags(value)]
+                value=escape(str(o))) for o in parse_tags(value)]
         options = '\n'.join(options)
 
         html = super(TagAutocompleteWidget, self).render(

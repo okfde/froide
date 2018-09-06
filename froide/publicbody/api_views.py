@@ -141,7 +141,7 @@ class ClassificationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ClassificationSerializer
     queryset = Classification.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = ClassificationFilter
+    filterset_class = ClassificationFilter
 
 
 class CategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
@@ -180,7 +180,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = CategoryFilter
+    filterset_class = CategoryFilter
 
     @action(detail=False, methods=['get'], url_path='autocomplete',
             url_name='autocomplete')
@@ -267,7 +267,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
     serializer_class = PublicBodySerializer
     queryset = PublicBody.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = PublicBodyFilter
+    filterset_class = PublicBodyFilter
 
     # OpenRefine needs JSONP responses
     # This is OK because authentication is not considered

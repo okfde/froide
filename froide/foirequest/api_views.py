@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 
@@ -347,7 +345,7 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
         'retrieve': FoiRequestDetailSerializer
     }
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = FoiRequestFilter
+    filterset_class = FoiRequestFilter
     permission_classes = (CreateOnlyWithScopePermission,)
     required_scopes = ['make:request']
 
