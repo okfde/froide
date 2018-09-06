@@ -26,7 +26,7 @@ idna==2.6
 itypes==1.1.0
 jinja2==2.10
 kombu==4.2.1
-lxml==4.2.1
+lxml==4.2.4
 markdown==2.6.11
 markupsafe==1.0
 maxminddb==1.4.0
