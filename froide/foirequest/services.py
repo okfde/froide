@@ -1,15 +1,14 @@
 import re
 
-from django.db import IntegrityError
 from django.utils import timezone
 from django.contrib.sites.models import Site
 from django.core.files import File
 from django.utils.translation import ugettext_lazy as _
-from django.template.defaultfilters import slugify
 
 from froide.account.services import AccountService
 from froide.helper.text_utils import redact_subject, redact_plaintext
 from froide.helper.storage import add_number_to_filename
+from froide.helper.db_utils import save_obj_with_slug
 
 from .models import (
     FoiRequest, FoiMessage, RequestDraft, FoiProject, FoiAttachment
@@ -90,8 +89,7 @@ class CreateRequestService(BaseService):
             reference=data.get('reference', ''),
             request_count=len(self.data['publicbodies'])
         )
-
-        self.save_obj_with_slug(project)
+        save_obj_with_slug(project)
         project.publicbodies.add(*data['publicbodies'])
 
         if 'tags' in data and data['tags']:
@@ -158,7 +156,7 @@ class CreateRequestService(BaseService):
             request.is_blocked = True
 
         self.pre_save_request(request)
-        self.save_obj_with_slug(request, count=sequence)
+        save_obj_with_slug(request, count=sequence)
 
         if 'tags' in data and data['tags']:
             request.tags.add(*data['tags'])
@@ -224,37 +222,6 @@ class CreateRequestService(BaseService):
                 draft.project = foi_object
                 draft.request = None
             draft.save()
-
-    def save_obj_with_slug(self, obj, attribute='title', count=0):
-        MAX_COUNT = 10000000  # max 10 million loops
-        obj.slug = slugify(getattr(obj, attribute))
-        first_round = count == 0
-        postfix = ''
-        while True:
-            try:
-                while count < MAX_COUNT:
-                    if not first_round:
-                        postfix = '-%d' % count
-                    if not FoiRequest.objects.filter(
-                            slug=obj.slug + postfix).exists():
-                        break
-                    if first_round:
-                        first_round = False
-                        count = FoiRequest.objects.filter(
-                                slug__startswith=obj.slug).count()
-                    else:
-                        count += 1
-                obj.slug += postfix
-                obj.save()
-            except IntegrityError:
-                if count < MAX_COUNT:
-                    first_round = False
-                    count = FoiRequest.objects.filter(
-                            slug__startswith=obj.slug).count()
-                else:
-                    raise
-            else:
-                break
 
 
 class CreateRequestFromProjectService(CreateRequestService):
