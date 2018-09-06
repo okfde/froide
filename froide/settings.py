@@ -52,7 +52,6 @@ class Base(Configuration):
         'filingcabinet',
 
         # local
-        'froide.problem',
         'froide.foirequest',
         'froide.foirequestfollower',
         'froide.frontpage',
@@ -63,6 +62,8 @@ class Base(Configuration):
         'froide.bounce',
         'froide.team',
         'froide.foisite',
+        'froide.problem',
+        'froide.accesstoken',
 
         # API
         'oauth2_provider',

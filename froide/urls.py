@@ -126,17 +126,13 @@ froide_urlpatterns += [
     url(r'^%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
     # Translators: URL part
     url(r'^%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
-    # Translators: URL part
     url(r'^%s/' % documents, include('froide.document.urls')),
-    # Translators: URL part
     url(r'^%s/' % account, include('froide.account.urls')),
-    # Translators: URL part
     url(r'^%s/%s/' % (account, teams), include('froide.team.urls')),
+    url(r'^%s/access-token/' % account, include('froide.accesstoken.urls')),
     # Translators: URL part
     url(r'^%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
-    # Translators: URL part
     url(r'^comments/', include('django_comments.urls')),
-    # Translators: URL part
     url(r'^problem/', include('froide.problem.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
