@@ -544,7 +544,7 @@ class FoiRequest(models.Model):
 
     def public_body_suggestions_form(self):
         from ..forms import PublicBodySuggestionsForm
-        return PublicBodySuggestionsForm(self)
+        return PublicBodySuggestionsForm(foirequest=self)
 
     def make_public_body_suggestion_form(self):
         from ..forms import MakePublicBodySuggestionForm
