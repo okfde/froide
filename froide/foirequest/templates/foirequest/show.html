@@ -133,6 +133,11 @@
         {% endif %}
         {% if object.public_body %}
           <li class="nav-item">
+            <a href="#write-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="write-message" aria-expanded="false">
+              {% blocktrans %}Send a message{% endblocktrans %}
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="#add-postal-reply" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-reply" aria-expanded="false">
               {% blocktrans %}Got Mail?{% endblocktrans %}
             </a>
@@ -140,11 +145,6 @@
           <li class="nav-item">
             <a href="#add-postal-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-message" aria-expanded="false">
               {% blocktrans %}Sent Mail?{% endblocktrans %}
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#write-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="write-message" aria-expanded="false">
-              {% blocktrans %}Send a message{% endblocktrans %}
             </a>
           </li>
         {% endif %}
