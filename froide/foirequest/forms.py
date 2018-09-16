@@ -18,6 +18,7 @@ from froide.helper.widgets import (
     PriceInput, BootstrapRadioSelect, BootstrapFileInput
 )
 from froide.helper.forms import TagObjectForm
+from froide.helper.widgets import BootstrapCheckboxInput
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import redact_subject, redact_plaintext
 from froide.helper.auth import get_read_queryset
@@ -561,7 +562,12 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
     )
     message = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"}),
-        label=_("Your message")
+        label=_("Your message"),
+        help_text=_(
+            "Don't include personal information. "
+            "If you need to give your postal address "
+            "enter it below."
+        )
     )
 
     files_help_text = _('Uploaded scans can be PDF, JPG, PNG or GIF.')
@@ -591,9 +597,28 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         if foirequest.law and foirequest.law.email_only:
             self.fields['send_address'] = forms.BooleanField(
                 label=_("Send physical address"),
-                help_text=(_('If the public body is asking for your post '
-                    'address, check this and we will append it to your message.')),
+                widget=BootstrapCheckboxInput,
+                help_text=_(
+                    'If the public body is asking for your post '
+                    'address, check this and we will append the '
+                    'address below.'
+                ),
                 required=False)
+
+        self.fields['address'] = forms.CharField(
+            max_length=300,
+            required=False,
+            initial=foirequest.user.address,
+            label=_('Mailing Address'),
+            help_text=_(
+                'Optional. Your address will not be displayed '
+                'publicly.'),
+            widget=forms.Textarea(attrs={
+                'rows': '3',
+                'class': 'form-control',
+                'placeholder': _('Street, Post Code, City'),
+            })
+        )
 
     def clean_message(self):
         message = self.cleaned_data['message']
@@ -608,8 +633,19 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
                 )
         return message
 
+    def clean(self):
+        if (self.cleaned_data.get('send_address', False) and
+                not self.cleaned_data['address'].strip()):
+            raise forms.ValidationError('You need to give a postal address, '
+                                        'if you want to send it.')
+
     def make_message(self):
         user = self.foirequest.user
+
+        address = self.cleaned_data.get('address', '')
+        if address.strip() and address != user.address:
+            user.address = address
+            user.save()
 
         if self.cleaned_data["to"] == 0:
             recipient_name = self.foirequest.public_body.name
@@ -639,7 +675,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         plaintext_redacted = redact_plaintext(
             plaintext,
             is_response=False,
-            user=self.foirequest.user
+            user=user
         )
 
         return FoiMessage(
