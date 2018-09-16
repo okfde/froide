@@ -30,14 +30,18 @@ class NewUserBaseForm(forms.Form):
             widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
                 'class': 'form-control'}))
     address = forms.CharField(max_length=300,
-            required=False,
-            label=_('Mailing Address'),
-            help_text=_('Optional. Your address will not be displayed publicly and is only needed in case a public body needs to send you paper.'),
-            widget=forms.Textarea(attrs={
-                'rows': '3',
-                'class': 'form-control',
-                'placeholder': _('Street, Post Code, City'),
-            }))
+        required=False,
+        label=_('Mailing Address'),
+        help_text=_(
+            'Optional. Your address will not be displayed '
+            'publicly and is only needed in case a public body '
+            'needs to send you paper.'),
+        widget=forms.Textarea(attrs={
+            'rows': '3',
+            'class': 'form-control',
+            'placeholder': _('Street, Post Code, City'),
+        })
+    )
     user_email = forms.EmailField(label=_('Email address'),
             max_length=75,
             help_text=_('Not public. The given address will '
