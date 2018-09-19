@@ -173,7 +173,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     confirm_request.short_description = _("Confirm request if unconfirmed")
 
     def set_visible_to_user(self, request, queryset):
-        queryset.update(visibility=1)
+        queryset.update(visibility=FoiRequest.VISIBLE_TO_REQUESTER)
         self.message_user(request,
             _("Selected requests are now only visible to requester."))
     set_visible_to_user.short_description = _("Set only visible to requester")
