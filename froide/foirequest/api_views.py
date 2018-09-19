@@ -82,8 +82,18 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_absolute_domain_file_url(authenticated=True)
 
 
+class FoiAttachmentFilter(filters.FilterSet):
+    class Meta:
+        model = FoiAttachment
+        fields = (
+            'name', 'filetype', 'approved', 'is_redacted', 'belongs_to',
+        )
+
+
 class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FoiAttachmentSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = FoiAttachmentFilter
 
     def get_queryset(self):
         user = self.request.user
