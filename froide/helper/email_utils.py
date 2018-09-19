@@ -15,6 +15,7 @@ from email.header import decode_header, make_header
 from email.parser import BytesParser as Parser
 from email.utils import parseaddr, formataddr, parsedate_tz, getaddresses
 import imaplib
+from urllib.parse import unquote
 
 from django.conf import settings
 
@@ -107,10 +108,14 @@ class EmailParser(object):
             attachment.read_date = None
             if "filename" in dispo_dict:
                 attachment.name = dispo_dict['filename']
+            if attachment.name is None and 'filename*' in dispo_dict:
+                attachment.name = self.parse_extended_header_field(dispo_dict['filename*'])
             if content_type:
                 _, content_dict = self.parse_dispositions(content_type)
                 if 'name' in content_dict:
                     attachment.name = content_dict['name']
+                if attachment.name is None and 'name*' in content_dict:
+                    attachment.name = self.parse_extended_header_field(content_dict['name*'])
             if attachment.name is None and content_type == 'message/rfc822':
                 p = Parser()
                 msgobj = p.parse(BytesIO(attachment.getvalue()))
@@ -153,6 +158,16 @@ class EmailParser(object):
             fragments.append(decoded.strip(' '))
         field = ' '.join(fragments)
         return field.replace('\n\t', " ").replace('\n', '').replace('\r', '')
+
+    def parse_extended_header_field(self, field):
+        '''
+        https://tools.ietf.org/html/rfc5987#section-3.2
+        '''
+        try:
+            fname_encoding, fname_lang, fname = field.split("'")
+        except ValueError:
+            return str(field)
+        return unquote(fname, encoding=fname_encoding)
 
     def try_decoding(self, encoded, encoding=None):
         decoded = None

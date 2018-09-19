@@ -175,6 +175,15 @@ class MailTest(TestCase):
         self.assertEqual(mail['attachments'][0].name, 'Bescheid Fäker.pdf')
         self.assertEqual(mail['attachments'][1].name, '180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf')
 
+    def test_attachment_name_parsing_2(self):
+        with open(p("test_mail_11.txt"), 'rb') as f:
+            parser = EmailParser()
+            content = f.read()
+        mail = parser.parse(BytesIO(content))
+        self.assertEqual(mail['subject'], 'Bescheid zu Ihrer ergänzten IFG-Anfrage Bestellung Infomaterial, Broschüren... [#32154]')
+        self.assertEqual(len(mail['attachments']), 1)
+        self.assertEqual(mail['attachments'][0].name, '20180904_Bescheid Broschüren.pdf')
+
     def test_address_list(self):
         with open(p("test_mail_01.txt"), 'rb') as f:
             parser = EmailParser()
