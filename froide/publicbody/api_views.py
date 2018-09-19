@@ -8,7 +8,7 @@ from rest_framework_jsonp.renderers import JSONPRenderer
 
 from django_filters import rest_framework as filters
 
-from haystack.query import SearchQuerySet
+from haystack.query import RelatedSearchQuerySet
 from haystack.inputs import AutoQuery
 
 from froide.helper.api_utils import (
@@ -41,7 +41,7 @@ class JurisdictionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Jurisdiction.objects.all()
 
 
-class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
+class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:law-detail',
         lookup_field='pk'
@@ -56,12 +56,6 @@ class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk',
         read_only=True
     )
-    combined = serializers.HyperlinkedRelatedField(
-        view_name='api:law-detail',
-        lookup_field='pk',
-        read_only=True,
-        many=True
-    )
     site_url = serializers.CharField(source='get_absolute_domain_url')
 
     class Meta:
@@ -71,10 +65,24 @@ class FoiLawSerializer(serializers.HyperlinkedModelSerializer):
             'resource_uri', 'id', 'name', 'slug', 'description',
             'long_description', 'law_type',
             'created', 'updated', 'request_note', 'request_note_html', 'meta',
-            'combined', 'letter_start', 'letter_end', 'jurisdiction',
-            'priority', 'url', 'max_response_time', 'site_url', 'email_only',
-            'requires_signature', 'max_response_time_unit', 'refusal_reasons',
-            'mediator'
+            'site_url', 'jurisdiction', 'email_only', 'mediator',
+            'priority', 'url', 'max_response_time', 'email_only',
+            'requires_signature', 'max_response_time_unit',
+            'letter_start', 'letter_end'
+        )
+
+
+class FoiLawSerializer(SimpleFoiLawSerializer):
+    combined = serializers.HyperlinkedRelatedField(
+        view_name='api:law-detail',
+        lookup_field='pk',
+        read_only=True,
+        many=True
+    )
+
+    class Meta(SimpleFoiLawSerializer.Meta):
+        fields = SimpleFoiLawSerializer.Meta.fields + (
+            'refusal_reasons', 'combined',
         )
 
 
@@ -193,7 +201,46 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(tags)
 
 
-class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
+class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
+    resource_uri = serializers.HyperlinkedIdentityField(
+        view_name='api:publicbody-detail',
+        lookup_field='pk'
+    )
+    id = serializers.IntegerField(source='pk')
+    jurisdiction = serializers.HyperlinkedIdentityField(
+        view_name='api:jurisdiction-detail',
+        lookup_field='pk',
+        read_only=True,
+    )
+    default_law = serializers.HyperlinkedIdentityField(
+        view_name='api:law-detail',
+        lookup_field='pk',
+        read_only=True,
+    )
+    classification = serializers.HyperlinkedIdentityField(
+        view_name='api:classification-detail',
+        lookup_field='pk',
+        read_only=True
+    )
+
+    site_url = serializers.CharField(source='get_absolute_domain_url')
+
+    class Meta:
+        model = PublicBody
+        depth = 0
+        fields = (
+            'resource_uri', 'id', 'name', 'slug', 'other_names',
+            'description', 'url',
+            'depth', 'classification',
+            'email', 'contact', 'address',
+            'request_note', 'number_of_requests',
+            'site_url',
+            'jurisdiction', 'request_note_html',
+            'default_law',
+        )
+
+
+class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:publicbody-detail',
         lookup_field='pk'
@@ -211,8 +258,8 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
 
     id = serializers.IntegerField(source='pk')
     jurisdiction = JurisdictionSerializer(read_only=True)
-    default_law = FoiLawSerializer(read_only=True)
-    laws = FoiLawSerializer(
+    default_law = SimpleFoiLawSerializer(read_only=True)
+    laws = SimpleFoiLawSerializer(
         many=True,
         read_only=True
     )
@@ -231,10 +278,19 @@ class PublicBodySerializer(serializers.HyperlinkedModelSerializer):
             'depth', 'classification', 'categories',
             'email', 'contact', 'address',
             'request_note', 'number_of_requests',
-            'laws', 'site_url',
-            'jurisdiction', 'request_note_html',
+            'site_url', 'request_note_html',
+            'jurisdiction',
+            'laws',
             'default_law',
         )
+
+
+class PublicBodySerializer(PublicBodyListSerializer):
+    default_law = FoiLawSerializer(read_only=True)
+    laws = FoiLawSerializer(
+        many=True,
+        read_only=True
+    )
 
 
 class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
@@ -264,14 +320,18 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
 
 class PublicBodyViewSet(OpenRefineReconciliationMixin,
                         viewsets.ReadOnlyModelViewSet):
-    serializer_class = PublicBodySerializer
-    queryset = PublicBody.objects.all()
+    serializer_action_classes = {
+        'list': PublicBodyListSerializer,
+        'retrieve': PublicBodySerializer
+    }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = PublicBodyFilter
 
     # OpenRefine needs JSONP responses
     # This is OK because authentication is not considered
-    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (JSONPRenderer,)
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (
+        JSONPRenderer,
+    )
 
     class RECONCILIATION_META:
         name = 'Public Body'
@@ -305,6 +365,24 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
             p['id']: p for p in properties
         }
 
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return PublicBodyListSerializer
+
+    def get_queryset(self):
+        return self.optimize_query(PublicBody.objects.all())
+
+    def optimize_query(self, qs):
+        return qs.prefetch_related(
+            'classification',
+            'jurisdiction',
+            'categories',
+            'laws',
+            'laws__combined'
+        )
+
     @action(detail=False, methods=['get'])
     def search(self, request):
         self.queryset = self.get_searchqueryset(request)
@@ -329,7 +407,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
 
     def get_searchqueryset(self, request):
         query = request.GET.get('q', '')
-        sqs = SearchQuerySet().models(PublicBody).load_all()
+        sqs = RelatedSearchQuerySet().models(PublicBody).load_all()
         if len(query) > 2:
             sqs = sqs.filter(name_auto=AutoQuery(query))
         else:
@@ -350,5 +428,9 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
         if categories:
             for cat in categories:
                 sqs = sqs.filter(categories=cat)
+
+        sqs = sqs.load_all_queryset(PublicBody, self.optimize_query(
+            PublicBody.objects.all()
+        ))
 
         return SearchQuerySetWrapper(sqs, PublicBody)

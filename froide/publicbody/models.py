@@ -15,7 +15,7 @@ from django.utils.html import escape
 from django.utils import timezone
 
 from taggit.managers import TaggableManager
-from taggit.models import TagBase, ItemBase
+from taggit.models import TagBase, TaggedItemBase
 from taggit.utils import edit_string_for_tags
 from treebeard.mp_tree import MP_Node, MP_NodeManager
 
@@ -213,7 +213,7 @@ class PublicBodyTag(TagBase):
         verbose_name_plural = _("Public Body Tags")
 
 
-class TaggedPublicBody(ItemBase):
+class TaggedPublicBody(TaggedItemBase):
     tag = models.ForeignKey(PublicBodyTag, on_delete=models.CASCADE,
                             related_name="publicbodies")
     content_object = models.ForeignKey('PublicBody', on_delete=models.CASCADE)
@@ -221,16 +221,6 @@ class TaggedPublicBody(ItemBase):
     class Meta:
         verbose_name = _('Tagged Public Body')
         verbose_name_plural = _('Tagged Public Bodies')
-
-    @classmethod
-    def tags_for(cls, model, instance=None):
-        if instance is not None:
-            return cls.tag_model().objects.filter(**{
-                '%s__content_object' % cls.tag_relname(): instance
-            })
-        return cls.tag_model().objects.filter(**{
-            '%s__content_object__isnull' % cls.tag_relname(): False
-        }).distinct()
 
 
 class CategoryManager(MP_NodeManager):
@@ -264,7 +254,7 @@ class Category(TagBase, MP_Node):
             TagBase.save(self, *args, **kwargs)
 
 
-class CategorizedPublicBody(ItemBase):
+class CategorizedPublicBody(TaggedItemBase):
     tag = models.ForeignKey(Category, on_delete=models.CASCADE,
                             related_name="categorized_publicbodies")
     content_object = models.ForeignKey('PublicBody', on_delete=models.CASCADE)
@@ -272,16 +262,6 @@ class CategorizedPublicBody(ItemBase):
     class Meta:
         verbose_name = _('Categorized Public Body')
         verbose_name_plural = _('Categorized Public Bodies')
-
-    @classmethod
-    def tags_for(cls, model, instance=None):
-        if instance is not None:
-            return cls.tag_model().objects.filter(**{
-                '%s__content_object' % cls.tag_relname(): instance
-            })
-        return cls.tag_model().objects.filter(**{
-            '%s__content_object__isnull' % cls.tag_relname(): False
-        }).distinct()
 
 
 class Classification(MP_Node):
@@ -424,6 +404,7 @@ class PublicBody(models.Model):
 
     @property
     def default_law(self):
+        # FIXME: Materialize this?
         return self.get_applicable_law()
 
     def get_applicable_law(self, law_type=None):

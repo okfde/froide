@@ -9,10 +9,12 @@ from oauth2_provider.contrib.rest_framework import TokenHasScope
 
 from django_filters import rest_framework as filters
 
-from haystack.query import SearchQuerySet
+from haystack.query import RelatedSearchQuerySet
 
 from froide.helper.search import SearchQuerySetWrapper
-from froide.publicbody.api_views import PublicBodySerializer, FoiLawSerializer
+from froide.publicbody.api_views import (
+    FoiLawSerializer, SimplePublicBodySerializer, PublicBodySerializer
+)
 
 from taggit.models import Tag
 
@@ -106,10 +108,17 @@ class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
 
         if user.is_authenticated:
             if not token and user.is_superuser:
-                return FoiAttachment.objects.all()
+                return self.optimize_query(FoiAttachment.objects.all())
             if not token or token.is_valid(['read:request']):
                 vis_filter |= Q(belongs_to__request__user=user)
-        return FoiAttachment.objects.filter(vis_filter)
+        return self.optimize_query(FoiAttachment.objects.filter(vis_filter))
+
+    def optimize_query(self, qs):
+        return qs.prefetch_related(
+            'belongs_to',
+            'belongs_to__request',
+            'belongs_to__request__user',
+        )
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
@@ -187,10 +196,18 @@ class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
 
         if user.is_authenticated:
             if not token and user.is_superuser:
-                return FoiMessage.objects.all()
+                return self.optimize_query(FoiMessage.objects.all())
             if not token or token.is_valid(['read:request']):
                 vis_filter |= Q(request__user=user)
-        return FoiMessage.objects.filter(vis_filter)
+        return self.optimize_query(FoiMessage.objects.filter(vis_filter))
+
+    def optimize_query(self, qs):
+        return qs.prefetch_related(
+            'request',
+            'request__user',
+            'sender_user',
+            'foiattachment_set'
+        )
 
 
 class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
@@ -198,10 +215,9 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:request-detail',
         lookup_field='pk'
     )
-    public_body = PublicBodySerializer(read_only=True)
-    law = FoiLawSerializer(read_only=True)
-    messages = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='api:message-detail'
+    public_body = SimplePublicBodySerializer(read_only=True)
+    law = serializers.HyperlinkedIdentityField(
+        read_only=True, view_name='api:law-detail', lookup_field='pk'
     )
     jurisdiction = serializers.HyperlinkedRelatedField(
         view_name='api:jurisdiction-detail',
@@ -240,7 +256,6 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             'resolution', 'slug',
             'title',
             'reference',
-            'messages',
             'user'
         )
 
@@ -256,7 +271,12 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
+    public_body = PublicBodySerializer(read_only=True)
+    law = FoiLawSerializer(read_only=True)
     messages = FoiMessageSerializer(read_only=True, many=True)
+
+    class Meta(FoiRequestListSerializer.Meta):
+        fields = FoiRequestListSerializer.Meta.fields + ('messages',)
 
 
 class MakeRequestSerializer(serializers.Serializer):
@@ -292,6 +312,20 @@ class FoiRequestFilter(filters.FilterSet):
     tags = filters.CharFilter(method='tag_filter')
     categories = filters.CharFilter(method='categories_filter')
     reference = filters.CharFilter(method='reference_filter')
+
+    # FIXME: default ordering should be undetermined?
+    # ordering = filters.OrderingFilter(
+    #     fields=(
+    #         ('last_message', 'last_message'),
+    #         ('first_message', 'first_message')
+    #     ),
+    #     field_labels={
+    #         '-last_message': 'By last message (latest first)',
+    #         '-first_message': 'By first message (latest first)',
+    #         'last_message': 'By last message (oldest first)',
+    #         'first_message': 'By first message (oldest first)',
+    #     }
+    # )
 
     class Meta:
         model = FoiRequest
@@ -348,7 +382,6 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
                         viewsets.GenericViewSet):
-    ordering_fields = ('first_message', 'last_message')
     serializer_action_classes = {
         'create': MakeRequestSerializer,
         'list': FoiRequestListSerializer,
@@ -372,10 +405,24 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
         if user.is_authenticated:
             # Either not OAuth or OAuth and valid token
             if not token and user.is_superuser:
-                return FoiRequest.objects.all()
+                return self.optimize_query(FoiRequest.objects.all())
             if not token or token.is_valid(['read:request']):
                 vis_filter |= Q(user=user)
-        return FoiRequest.objects.filter(vis_filter)
+        return self.optimize_query(FoiRequest.objects.filter(vis_filter))
+
+    def optimize_query(self, qs):
+        extras = ()
+        if self.action == 'retrieve':
+            extras = (
+                'law',
+            )
+        qs = qs.prefetch_related(
+            'public_body',
+            'user',
+            'public_body__jurisdiction',
+            *extras
+        )
+        return qs
 
     @action(detail=False, methods=['get'])
     def search(self, request):
@@ -400,12 +447,15 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
 
     def get_searchqueryset(self, request):
         query = request.GET.get('q', '')
-        sqs = SearchQuerySet().models(FoiRequest).load_all()
+        sqs = RelatedSearchQuerySet().models(FoiRequest).load_all()
         if len(query) > 2:
             sqs = sqs.auto_query(query)
         else:
-            sqs = sqs.none()
+            return SearchQuerySetWrapper(sqs.none(), FoiRequest)
 
+        sqs = sqs.load_all_queryset(FoiRequest, self.optimize_query(
+            FoiRequest.objects.all()
+        ))
         return SearchQuerySetWrapper(sqs, FoiRequest)
 
     @throttle_action((MakeRequestThrottle,))
