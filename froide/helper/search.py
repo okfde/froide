@@ -21,7 +21,8 @@ class SearchQuerySetWrapper(object):
 
     def __iter__(self):
         for result in self.sqs:
-            yield result.object
+            if result is not None:
+                yield result.object
 
     def __getitem__(self, key):
         if isinstance(key, int) and (key >= 0 or key < self.count()):
