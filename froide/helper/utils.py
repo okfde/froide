@@ -1,7 +1,4 @@
-try:
-    from urllib.parse import parse_qs, urlsplit, urlunsplit
-except ImportError:
-    from urlparse import parse_qs, urlsplit, urlunsplit
+from urllib.parse import parse_qs, urlsplit, urlunsplit
 
 from django.shortcuts import render, redirect
 from django.urls import reverse, NoReverseMatch
