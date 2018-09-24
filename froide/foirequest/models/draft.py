@@ -11,7 +11,11 @@ from .request import FoiRequest, FoiProject
 
 
 class RequestDraft(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.CASCADE
+    )
+    token = models.UUIDField(null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
     save_date = models.DateTimeField(auto_now=True)
 
