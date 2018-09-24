@@ -4,7 +4,7 @@ from django.utils.translation import pgettext
 from django.shortcuts import redirect
 
 from ..views import (
-    list_requests, list_unchecked, delete_draft,
+    list_requests, list_unchecked, delete_draft, claim_draft
 )
 from ..filters import FOIREQUEST_FILTERS
 
@@ -25,6 +25,7 @@ urlpatterns = [
 
     url(r'^unchecked/$', list_unchecked, name='foirequest-list_unchecked'),
     url(r'^delete-draft$', delete_draft, name='foirequest-delete_draft'),
+    url(r'^claim/(?P<token>[^/]+)/$', claim_draft, name='foirequest-claim_draft'),
 ]
 
 foirequest_urls = [

@@ -1,6 +1,9 @@
 import re
+import uuid
 
 from django.utils import timezone
+from django.urls import reverse
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.files import File
 from django.utils.translation import ugettext_lazy as _
@@ -19,6 +22,9 @@ from .utils import (
 )
 from .hooks import registry
 from .tasks import create_project_requests
+
+
+User = get_user_model()
 
 
 class BaseService(object):
@@ -45,11 +51,16 @@ class CreateRequestService(BaseService):
         data = self.data
         user = data['user']
         user_created = False
+        user_auth = user.is_authenticated
 
-        if not user.is_authenticated:
-            user_created = True
-            user, password = AccountService.create_user(**self.data)
+        if not user_auth:
+            user, password, user_created = AccountService.create_user(
+                **self.data
+            )
             self.data['user'] = user
+
+        if not user_created and not user_auth:
+            return self.create_token_draft(user)
 
         if request is not None:
             extra = registry.run_hook('pre_request_creation',
@@ -74,6 +85,39 @@ class CreateRequestService(BaseService):
                 )
         self.post_creation(foi_object)
         return foi_object
+
+    def create_token_draft(self, user):
+        '''
+        User is not authenticated, but has given valid email.
+        Create a draft object with a token, send token to email.
+
+        '''
+        data = self.data
+        additional_kwargs = dict(
+            subject=data.get('subject', ''),
+            body=data.get('body', ''),
+            full_text=data['full_text'],
+            public=data['public'],
+            reference=data.get('reference', ''),
+            law_type=data.get('law_type', ''),
+        )
+
+        draft = RequestDraft.objects.create(
+            user=None,
+            token=uuid.uuid4(),
+            **additional_kwargs
+        )
+        draft.publicbodies.set(data['publicbodies'])
+
+        claim_url = reverse('foirequest-claim_draft', kwargs={'token': draft.token})
+        AccountService(user).send_confirm_action_mail(
+            claim_url,
+            draft.subject,
+            reference=draft.reference,
+            redirect_url=self.data.get('redirect_url')
+        )
+
+        return draft
 
     def create_project(self):
         data = self.data

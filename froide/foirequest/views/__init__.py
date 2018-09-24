@@ -2,7 +2,7 @@ from .attachment import (
     show_attachment,
     approve_attachment, auth_message_attachment, redact_attachment
 )
-from .draft import delete_draft
+from .draft import delete_draft, claim_draft
 from .list_requests import (
     list_requests, search, list_unchecked,
 )
@@ -33,7 +33,7 @@ from .request import (
 __all__ = [
     show_attachment,
     approve_attachment, auth_message_attachment, redact_attachment,
-    delete_draft,
+    delete_draft, claim_draft,
     list_requests, search, list_unchecked,
     MakeRequestView, DraftRequestView, RequestSentView,
     send_message, escalation_message, add_postal_reply, add_postal_message,

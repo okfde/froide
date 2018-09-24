@@ -343,9 +343,11 @@ class MakeRequestView(FormView):
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
 
-        return self.make_redirect(request_form, foi_object)
+        return self.make_redirect(
+            request_form, foi_object, email=data.get('user_email')
+        )
 
-    def make_redirect(self, request_form, foi_object):
+    def make_redirect(self, request_form, foi_object, email=None):
         user = self.request.user
         special_redirect = request_form.cleaned_data['redirect_url']
 
@@ -371,7 +373,7 @@ class MakeRequestView(FormView):
             )
             return redirect(req_url)
 
-        return redirect(get_new_account_url(foi_object))
+        return redirect(get_new_account_url(foi_object, email=email))
 
     def get_config(self, form):
         config = {}
@@ -440,12 +442,14 @@ class DraftRequestView(MakeRequestView, DetailView):
         return self.object.publicbodies.all()
 
 
-def get_new_account_url(foi_object):
+def get_new_account_url(foi_object, email=None):
     url = reverse('account-new')
-    query = urlencode({
-        'email': foi_object.user.email.encode('utf-8'),
+    d = {
         'title': foi_object.title.encode('utf-8')
-    })
+    }
+    if email is not None:
+        d['email'] = email.encode('utf-8')
+    query = urlencode(d)
     return '%s?%s' % (url, query)
 
 

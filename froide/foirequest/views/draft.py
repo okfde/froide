@@ -20,3 +20,15 @@ def delete_draft(request):
         _('The draft has been deleted.'))
 
     return redirect('account-drafts')
+
+
+def claim_draft(request, token):
+    if not request.user.is_authenticated:
+        return render_403(request)
+    draft = get_object_or_404(RequestDraft, token=token, user=None)
+    draft.token = None
+    draft.user = request.user
+    draft.save()
+    messages.add_message(request, messages.INFO,
+        _('Please check the request you wanted to make and send it when you are ready.'))
+    return redirect(draft)

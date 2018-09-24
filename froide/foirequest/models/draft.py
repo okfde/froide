@@ -49,6 +49,10 @@ class RequestDraft(models.Model):
     def request_or_project(self):
         return self.request or self.project
 
+    @property
+    def title(self):
+        return self.subject
+
     def get_absolute_url(self):
         return reverse('foirequest-make_draftrequest', kwargs={'pk': self.id})
 

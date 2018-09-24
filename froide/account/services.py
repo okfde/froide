@@ -3,7 +3,6 @@ import re
 import hmac
 from urllib.parse import urlencode
 
-from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.dispatch import Signal
 from django.core.mail import send_mail
@@ -20,6 +19,13 @@ from .models import User
 
 
 user_activated_signal = Signal(providing_args=[])
+
+
+def get_user_for_email(email):
+    try:
+        return User.objects.get(email=email)
+    except User.DoesNotExist:
+        return False
 
 
 class AccountService(object):
@@ -44,9 +50,15 @@ class AccountService(object):
 
     @classmethod
     def create_user(cls, **data):
-        user = User(first_name=data['first_name'],
-                last_name=data['last_name'],
-                email=data['user_email'])
+        existing_user = get_user_for_email(data['user_email'])
+        if existing_user:
+            return existing_user, None, False
+
+        user = User(
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            email=data['user_email']
+        )
         username_base = cls.get_username_base(user.first_name, user.last_name)
 
         user.is_active = False
@@ -76,9 +88,11 @@ class AccountService(object):
         return True
 
     def get_autologin_url(self, url):
-        return settings.SITE_URL + reverse('account-go', kwargs={"user_id": self.user.id,
+        return settings.SITE_URL + reverse('account-go', kwargs={
+            "user_id": self.user.id,
             "secret": self.generate_autologin_secret(),
-            "url": url})
+            "url": url
+        })
 
     def check_autologin_secret(self, secret):
         return constant_time_compare(self.generate_autologin_secret(), secret)
@@ -129,18 +143,71 @@ class AccountService(object):
         if params:
             url = '%s?%s' % (url, urlencode(params))
 
-        message = render_to_string('account/confirmation_mail.txt',
-                {'url': settings.SITE_URL + url,
-                'password': password,
-                'name': self.user.get_full_name(),
-                'site_name': settings.SITE_NAME,
-                'site_url': settings.SITE_URL
-            })
+        message = render_to_string('account/emails/confirmation_mail.txt', {
+            'url': settings.SITE_URL + url,
+            'password': password,
+            'name': self.user.get_full_name(),
+            'site_name': settings.SITE_NAME,
+            'site_url': settings.SITE_URL
+        })
 
         # Translators: Mail subject
         send_mail(str(_("%(site_name)s: please confirm your account") % {
                     "site_name": settings.SITE_NAME}),
                 message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+
+    def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None,
+                                 template='account/emails/confirm_action.txt'):
+        secret_url = self.get_autologin_url(url)
+
+        params = {}
+        if reference:
+            params['ref'] = reference.encode('utf-8')
+        if redirect_url:
+            params['next'] = redirect_url.encode('utf-8')
+        if params:
+            secret_url = '%s?%s' % (secret_url, urlencode(params))
+
+        message = render_to_string(
+            template, {
+                'url': secret_url,
+                'title': title,
+                'name': self.user.get_full_name(),
+                'site_name': settings.SITE_NAME,
+                'site_url': settings.SITE_URL
+            }
+        )
+
+        # Translators: Mail subject
+        send_mail(
+            str(_("%(site_name)s: please confirm your action") % {
+                    "site_name": settings.SITE_NAME}),
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [self.user.email]
+        )
+
+    def send_reminder_mail(self, reference=None, redirect_url=None,
+                           template='account/emails/account_reminder.txt'):
+        secret_url = self.get_autologin_url(reverse('account-show'))
+
+        message = render_to_string(
+            template, {
+                'url': secret_url,
+                'name': self.user.get_full_name(),
+                'site_name': settings.SITE_NAME,
+                'site_url': settings.SITE_URL
+            }
+        )
+
+        # Translators: Mail subject
+        send_mail(
+            str(_("%(site_name)s: account reminder") % {
+                    "site_name": settings.SITE_NAME}),
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [self.user.email]
+        )
 
     def send_email_change_mail(self, email):
         secret = self.generate_confirmation_secret(email)
@@ -154,12 +221,12 @@ class AccountService(object):
             reverse('account-change_email'),
             urlencode(url_kwargs)
         )
-        message = render_to_string('account/change_email.txt',
-                {'url': url,
-                'name': self.user.get_full_name(),
-                'site_name': settings.SITE_NAME,
-                'site_url': settings.SITE_URL
-            })
+        message = render_to_string('account/emails/change_email.txt', {
+            'url': url,
+            'name': self.user.get_full_name(),
+            'site_name': settings.SITE_NAME,
+            'site_url': settings.SITE_URL
+        })
         # Translators: Mail subject
         send_mail(str(_("%(site_name)s: please confirm your new email address") % {
                     "site_name": settings.SITE_NAME}),

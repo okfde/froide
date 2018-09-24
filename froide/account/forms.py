@@ -80,23 +80,6 @@ class NewUserBaseForm(forms.Form):
     def clean_last_name(self):
         return self.cleaned_data['last_name'].strip()
 
-    def clean_user_email(self):
-        email = self.cleaned_data['user_email']
-        user_model = get_user_model()
-        try:
-            user = user_model.objects.get(email=email)
-        except user_model.DoesNotExist:
-            pass
-        else:
-            if user.is_active:
-                raise forms.ValidationError(_('This email address already has '
-                                              'an account.'),
-                                            code='auth_required')
-            else:
-                raise forms.ValidationError(
-                    _('This email address is already registered, but not yet confirmed! Please click on the confirmation link in the mail we send you.'))
-        return email
-
 
 class TermsForm(forms.Form):
     terms = forms.BooleanField(
