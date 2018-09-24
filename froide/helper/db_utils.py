@@ -2,33 +2,41 @@ from django.db import IntegrityError
 from django.template.defaultfilters import slugify
 
 
-def save_obj_with_slug(obj, attribute='title', count=0):
-    klass = obj.__class__
-    MAX_COUNT = 10000000  # max 10 million loops
+def save_obj_with_slug(obj, attribute='title', **kwargs):
     obj.slug = slugify(getattr(obj, attribute))
+    return save_obj_unique(obj, 'slug', **kwargs)
+
+
+def save_obj_unique(obj, attr, count=0, postfix_format='-{count}'):
+    klass = obj.__class__
+    MAX_COUNT = 10000  # max 10 thousand loops
+    base_attr = getattr(obj, attr)
     first_round = count == 0
     postfix = ''
     while True:
         try:
             while count < MAX_COUNT:
                 if not first_round:
-                    postfix = '-%d' % count
-                if not klass.objects.filter(
-                        slug=obj.slug + postfix).exists():
+                    postfix = postfix_format.format(count=count)
+                if not klass.objects.filter(**{
+                            attr: getattr(obj, attr) + postfix
+                        }).exists():
                     break
                 if first_round:
                     first_round = False
-                    count = klass.objects.filter(
-                            slug__startswith=obj.slug).count()
+                    count = klass.objects.filter(**{
+                        '%s__startswith' % attr: base_attr
+                    }).count()
                 else:
                     count += 1
-            obj.slug += postfix
+            setattr(obj, attr, base_attr + postfix)
             obj.save()
         except IntegrityError:
             if count < MAX_COUNT:
                 first_round = False
-                count = klass.objects.filter(
-                        slug__startswith=obj.slug).count()
+                count = klass.objects.filter(**{
+                    '%s__startswith' % attr: base_attr
+                }).count()
             else:
                 raise
         else:

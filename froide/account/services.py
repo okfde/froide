@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from froide.helper.text_utils import replace_custom, replace_word
+from froide.helper.db_utils import save_obj_unique
 
 from .models import User
 
@@ -61,31 +62,10 @@ class AccountService(object):
             setattr(user, key, data.get(key, ''))
 
         # ensure username is unique
-        username = username_base
-        first_round = True
-        count = 0
-        postfix = ""
-        while True:
-            try:
-                with transaction.atomic():
-                    while True:
-                        if not first_round:
-                            postfix = "_%d" % count
-                        if not User.objects.filter(username=username + postfix).exists():
-                            break
-                        if first_round:
-                            first_round = False
-                            count = User.objects.filter(username__startswith=username).count()
-                        else:
-                            count += 1
-                    user.username = username + postfix
-                    user.save()
-            except IntegrityError:
-                pass
-            else:
-                break
+        user.username = username_base
+        save_obj_unique(user, 'username', postfix_format='_{count}')
 
-        return user, password
+        return user, password, True
 
     def confirm_account(self, secret, request_id=None):
         if not self.check_confirmation_secret(secret, request_id):
