@@ -33,9 +33,8 @@
     {% if email %}
       <ol class="lead">
         <li>
-          {% blocktrans with email=email %}
-            Check your emails for your account <strong class="highlight">{{ email }}</strong>
-          {% endblocktrans %}
+          {% blocktrans%}Check your emails for your account{% endblocktrans %}<br/>
+          <strong class="highlight">{{ email }}</strong>
         </li>
         <li>
           {% blocktrans %}
