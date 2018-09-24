@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-24 14:18+0200\n"
-"PO-Revision-Date: 2018-09-24 14:22+0100\n"
+"POT-Creation-Date: 2018-09-24 14:48+0200\n"
+"PO-Revision-Date: 2018-09-24 14:51+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -687,19 +687,10 @@ msgstr ""
 "          "
 
 #: froide/account/templates/account/new.html:36
-#, python-format
-msgid ""
-"\n"
-"            Check your emails for your account <strong class=\"highlight\">"
-"%(email)s</strong>\n"
-"          "
-msgstr ""
-"\n"
-"            Rufen Sie Ihre E-Mails für diese Adresse ab: <strong class="
-"\"highlight\">%(email)s</strong>\n"
-"          "
+msgid "Check your emails for your account"
+msgstr "Rufen Sie Ihre E-Mails für diese Adresse ab:"
 
-#: froide/account/templates/account/new.html:41
+#: froide/account/templates/account/new.html:40
 #, python-format
 msgid ""
 "\n"
@@ -712,7 +703,7 @@ msgstr ""
 "strong> in der E-Mail von %(SITE_NAME)s.\n"
 "          "
 
-#: froide/account/templates/account/new.html:48
+#: froide/account/templates/account/new.html:47
 msgid ""
 "Please go to your email account and <strong>click the confirmation link.</"
 "strong>"
@@ -720,7 +711,7 @@ msgstr ""
 "Bitte rufen Sie Ihre E-Mails ab und <strong>klicken Sie auf den "
 "Bestätigungslink</strong>, den Sie von uns erhalten haben."
 
-#: froide/account/templates/account/new.html:53
+#: froide/account/templates/account/new.html:52
 msgid "If you do not confirm your email address, we cannot send your request."
 msgstr ""
 "Wenn Sie Ihre E-Mail-Adresse nicht bestätigen, können wir Ihre Anfrage nicht "
@@ -4671,6 +4662,13 @@ msgstr "%s_geschwaerzt.pdf"
 msgid "The draft has been deleted."
 msgstr "Der Entwurf wurde gelöscht."
 
+#: froide/foirequest/views/draft.py:33
+msgid ""
+"Please check the request you wanted to make and send it when you are ready."
+msgstr ""
+"Bitte prüfen Sie noch einmal Ihre Anfrage und versenden Sie sie, wenn Sie "
+"bereit sind."
+
 #: froide/foirequest/views/make_request.py:80
 msgid "one public body found"
 msgstr "Eine Behörde gefunden"
@@ -6921,6 +6919,17 @@ msgstr "profil"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~ msgid ""
+#~ "\n"
+#~ "            Check your emails for your account <strong class=\"highlight"
+#~ "\">%(email)s</strong>\n"
+#~ "          "
+#~ msgstr ""
+#~ "\n"
+#~ "            Rufen Sie Ihre E-Mails für diese Adresse ab: <strong class="
+#~ "\"highlight\">%(email)s</strong>\n"
+#~ "          "
 
 #~ msgid "Login using that email address"
 #~ msgstr "Melden Sie sich mit dieser E-Mail-Adresse an"
