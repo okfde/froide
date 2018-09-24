@@ -69,7 +69,6 @@ class MakeRequestView(FormView):
                 'listClassifications': reverse('api:classification-list'),
                 'listPublicBodies': reverse('api:publicbody-list'),
                 'search': reverse('foirequest-search'),
-                'loginSimple': reverse('account-login') + '?simple&email=',
                 'user': reverse('api-user-profile'),
                 'makeRequestTo': reverse('foirequest-make_request', kwargs={
                     'publicbody_ids': '0'
@@ -143,7 +142,6 @@ class MakeRequestView(FormView):
                 'reviewSpelling': _('Please use proper spelling.'),
                 'reviewPoliteness': _('Please stay polite.'),
                 'submitRequest': _('Submit request'),
-                'loginWindowLink': _('Login using that email address'),
 
                 'greeting': _('Dear Sir or Madam'),
                 'kindRegards': _('Kind regards'),

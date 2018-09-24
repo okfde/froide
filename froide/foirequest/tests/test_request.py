@@ -82,16 +82,6 @@ class RequestTest(TestCase):
             "subject": "Test-Subject With New User",
             "body": "This is a test body with new user",
             "first_name": "Stefan", "last_name": "Wehrmeyer",
-            "user_email": "dummy@example.com",
-            "publicbody": pb.pk,
-        }
-        response = self.client.post(reverse('foirequest-make_request'), post)
-        self.assertTrue(response.context['user_form']['user_email'].errors)
-        self.assertEqual(response.status_code, 400)
-        post = {
-            "subject": "Test-Subject With New User",
-            "body": "This is a test body with new user",
-            "first_name": "Stefan", "last_name": "Wehrmeyer",
             "address": "TestStreet 3\n55555 Town",
             "user_email": "sw@example.com",
             "terms": "on",

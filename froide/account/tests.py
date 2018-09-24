@@ -88,18 +88,12 @@ class AccountTest(TestCase):
         # already logged in, login again gives 302
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('account-show'), response.url)
+        # logout only via POST
         response = self.client.get(reverse('account-logout'))
         self.assertEqual(response.status_code, 405)
         response = self.client.post(reverse('account-logout'))
         self.assertEqual(response.status_code, 302)
-        response = self.client.get(reverse('account-login') + "?simple")
-        self.assertIn("simple_base.html", map(lambda x: x.name,
-                response.templates))
-        response = self.client.post(reverse('account-login') + "?simple",
-                {"email": "info@fragdenstaat.de",
-                "password": "froide"})
-        self.assertTrue(response.status_code, 302)
-        self.assertIn("simple", response.url)
+
         user = User.objects.get(email="info@fragdenstaat.de")
         user.is_active = False
         user.save()
@@ -107,7 +101,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-login'),
                 {"email": "info@fragdenstaat.de",
                 "password": "froide"})
-        # inactive users can't login
+        # inactive users can't login via password
         self.assertEqual(response.status_code, 400)
         response = self.client.get(reverse('account-show'))
         self.assertEqual(response.status_code, 302)
@@ -202,7 +196,7 @@ class AccountTest(TestCase):
 
     def test_confirmation_process(self):
         self.client.logout()
-        user, password = AccountService.create_user(first_name="Stefan",
+        user, password, user_created = AccountService.create_user(first_name="Stefan",
                 last_name="Wehrmeyer", user_email="sw@example.com",
                 address="SomeRandomAddress\n11234 Bern", private=True)
         AccountService(user).send_confirmation_mail(password=password)
@@ -438,12 +432,13 @@ class AccountTest(TestCase):
         self.assertTrue(response.context['user'].is_authenticated)
         self.client.logout()
 
-        # Try logging in via link: user not active
+        # Try logging in via link: user is blocked
         autologin = user.get_autologin_url(test_url)
-        user.is_active = False
+        user.is_blocked = True
         user.save()
         response = self.client.get(autologin)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], test_url)
         response = self.client.get(test_url)
         self.assertTrue(response.context['user'].is_anonymous)
 

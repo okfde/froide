@@ -93,10 +93,13 @@ def go(request, user_id, secret, url):
         user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
         account_manager = AccountService(user)
         if account_manager.check_autologin_secret(secret):
+            if user.is_deleted or user.is_blocked:
+                # This will fail, but that's OK here
+                return redirect(url)
             if not user.is_active:
-                messages.add_message(request, messages.ERROR,
-                    _('Your account is not active.'))
-                raise Http404
+                # Confirm user account (link came from email)
+                user.is_active = True
+                user.save()
             auth.login(request, user)
     return redirect(url)
 
@@ -196,9 +199,12 @@ def logout(request):
 
 
 def login(request, base="account/base.html", context=None,
-        template='account/login.html', status=200):
-    simple = False
+          template='account/login.html', status=200):
+    if request.user.is_authenticated:
+        return redirect('account-show')
+
     initial = None
+
     if not context:
         context = {}
     if "reset_form" not in context:
@@ -206,14 +212,6 @@ def login(request, base="account/base.html", context=None,
     if "signup_form" not in context:
         context['signup_form'] = NewUserForm()
 
-    if request.GET.get("simple") is not None:
-        base = "simple_base.html"
-        simple = True
-        if request.GET.get('email'):
-            initial = {'email': request.GET.get('email')}
-    else:
-        if request.user.is_authenticated:
-            return redirect('account-show')
     if request.method == "POST" and status == 200:
         status = 400  # if ok, we are going to redirect anyways
         form = UserLoginForm(request.POST)
@@ -225,10 +223,7 @@ def login(request, base="account/base.html", context=None,
                     auth.login(request, user)
                     messages.add_message(request, messages.INFO,
                             _('You are now logged in.'))
-                    if simple:
-                        return redirect(reverse('account-login') + "?simple")
-                    else:
-                        return get_redirect(request, default='account-show')
+                    return get_redirect(request, default='account-show')
                 else:
                     messages.add_message(request, messages.ERROR,
                             _('Please activate your mail address before logging in.'))
@@ -240,14 +235,13 @@ def login(request, base="account/base.html", context=None,
     context.update({
         "form": form,
         "custom_base": base,
-        "simple": simple,
         'next': request.GET.get('next')
     })
     return render(request, template, context, status=status)
 
 
 @require_POST
-def signup(request):
+def signup(request, base_template='base.html'):
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot signup.'))
@@ -255,13 +249,27 @@ def signup(request):
     form = UserLoginForm()
     signup_form = NewUserForm(request.POST)
     if signup_form.is_valid():
-        user, password = AccountService.create_user(**signup_form.cleaned_data)
-        signup_form.save(user)
-        AccountService(user).send_confirmation_mail(password=password)
+        user, password, user_created = AccountService.create_user(**signup_form.cleaned_data)
+        if user_created:
+            signup_form.save(user)
+
+        next_url = request.POST.get('next')
+        account_service = AccountService(user)
+
+        if user_created:
+            account_service.send_confirmation_mail(
+                password=password, redirect_url=next_url
+            )
+        elif user.is_active:
+            # Send login-link email
+            account_service.send_reminder_mail()
+        elif not user.is_blocked:
+            # User exists, but not activated
+            account_service.send_confirmation_mail()
+
         messages.add_message(request, messages.SUCCESS,
                 _('Please check your emails for a mail from us with a confirmation link.'))
 
-        next_url = request.POST.get('next')
         if next_url:
             # Store next in session to redirect on confirm
             request.session['next'] = next_url
@@ -273,8 +281,7 @@ def signup(request):
     return render(request, 'account/login.html', {
         "form": form,
         "signup_form": signup_form,
-        "custom_base": "base.html",
-        "simple": False
+        "custom_base": base_template,
     }, status=400)
 
 
@@ -290,8 +297,11 @@ def change_password(request):
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been changed.'))
         return get_redirect(request, default=reverse('account-show'))
-    return account_settings(request,
-            context={"password_change_form": form}, status=400)
+    return account_settings(
+        request,
+        context={"password_change_form": form},
+        status=400
+    )
 
 
 @require_POST
@@ -306,7 +316,7 @@ def send_reset_password_link(request):
     if form.is_valid():
         if next:
             request.session['next'] = next
-        form.save(use_https=True, email_template_name="account/password_reset_email.txt")
+        form.save(use_https=True, email_template_name="account/emails/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
                 _("Check your mail, we sent you a password reset link."
                 " If you don't receive an email, check if you entered your"

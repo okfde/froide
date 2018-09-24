@@ -13,11 +13,6 @@
           <div v-else>
             <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="formFields.user_email.placeholder" required/>
             <p v-for="e in errors.user_email" :key="e.message" class="text-danger">{{ e.message }}</p>
-            <p v-if="authRequired">
-              <a id="simple-login-link" class="btn btn-success" :href="authRequiredUrl" @click.prevent="openLoginWindow">
-                {{ i18n.loginWindowLink }}
-              </a>
-            </p>
           </div>
         </div>
       </div>
@@ -27,7 +22,7 @@
           {{ i18n.yourAddress }}
         </label>
         <div class="col-sm-9">
-          <p v-if="user.id" id="email_address" class="form-control">
+          <p v-if="user.id" id="id_address" class="form-control">
             {{ user.address }}
           </p>
           <div v-else>
@@ -99,15 +94,6 @@ export default {
     errors () {
       return this.form.errors
     },
-    authRequired () {
-      if (this.errors && this.errors.user_email) {
-        return this.errors.user_email.some(er => er.code === 'auth_required')
-      }
-      return false
-    },
-    authRequiredUrl () {
-      return this.config.url.loginSimple + this.email
-    },
     first_name: {
       get () {
         return this.$store.state.user.first_name
@@ -159,37 +145,6 @@ export default {
     ])
   },
   methods: {
-    openLoginWindow (e) {
-      let url = e.target.href
-      this.popup = window.open(url, 'popup', 'height=500,width=640,resizable=yes,scrollbars=yes')
-      this.popup.focus()
-      window.loggedInCallback = this.loggedInCallback
-    },
-    loggedInCallback (params) {
-      let api = new FroideAPI(this.config)
-      api.getUser().then((user) => {
-        this.updateFirstName(user.first_name)
-        this.updateLastName(user.last_name)
-        this.updateAddress(user.address)
-        this.updateEmail(user.email)
-        this.updatePrivate(user.private)
-        this.updateUserId(user.id)
-      }).catch(((e) => {
-        console.error('Could not get user data from API', e)
-      }))
-
-      let csrfValue = params.csrfToken
-      if (csrfValue !== undefined) {
-        let csrfInputs = document.querySelectorAll('input[name="csrfmiddlewaretoken"]')
-        for (var i = 0; i < csrfInputs.length; i += 1) {
-          csrfInputs[i].value = csrfValue
-        }
-      }
-      if (this.popup) {
-        this.popup.close()
-      }
-      window.loggedInCallback = undefined
-    },
     ...mapMutations({
       updateFirstName: UPDATE_FIRST_NAME,
       updateLastName: UPDATE_LAST_NAME,

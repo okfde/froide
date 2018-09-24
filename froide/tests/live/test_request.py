@@ -12,7 +12,7 @@ from django.core import mail
 from selenium.webdriver.support.wait import WebDriverWait
 
 from froide.foirequest.tests import factories
-from froide.foirequest.models import FoiRequest
+from froide.foirequest.models import FoiRequest, RequestDraft
 from froide.publicbody.models import PublicBody
 
 User = get_user_model()
@@ -302,43 +302,25 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
 
         WebDriverWait(self.selenium, 10).until(
             lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
-        self.selenium.find_element_by_id('send-request-button').click()
-        main_window_handle = self.selenium.current_window_handle
-        login_link = '#simple-login-link'
-        with CheckJSErrors(self.selenium):
-            WebDriverWait(self.selenium, 10).until(
-                lambda driver: self.selenium.find_element_by_css_selector(login_link)
-            )
-            self.scrollTo(login_link[1:])
-            WebDriverWait(self.selenium, 10).until(
-                lambda driver: self.selenium.find_element_by_css_selector(login_link).is_displayed())
-            self.selenium.find_element_by_css_selector(login_link).click()
 
-        popup_handle = [wh for wh in self.selenium.window_handles if wh != main_window_handle][0]
-        self.selenium.switch_to.window(popup_handle)
-
-        with CheckJSErrors(self.selenium):
-            password_input = self.selenium.find_element_by_name('password')
-            password_input.send_keys('froide')
-
-        self.selenium.find_element_by_xpath(
-            '//form//button[contains(text(), "Log In")]').click()
-        self.selenium.switch_to.window(main_window_handle)
-
-        with CheckJSErrors(self.selenium):
-            self.selenium.find_element_by_id('review-button').click()
-            self.scrollTo('send-request-button')
-
-        WebDriverWait(self.selenium, 10).until(
-            lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
+        old_count = FoiRequest.objects.filter(user=self.user).count()
+        draft_count = RequestDraft.objects.filter(user=None).count()
         self.selenium.find_element_by_id('send-request-button').click()
 
-        req = FoiRequest.objects.filter(user=self.user).order_by('-id')[0]
-        sent_url = reverse('foirequest-request_sent')
-        self.assertIn(sent_url, self.selenium.current_url)
+        new_account_url = reverse('account-new')
+        WebDriverWait(self.selenium, 5).until(
+            lambda driver: new_account_url in driver.current_url)
+        self.assertIn(new_account_url, self.selenium.current_url)
+
+        new_count = FoiRequest.objects.filter(user=self.user).count()
+        self.assertEqual(old_count, new_count)
+        new_draft_count = RequestDraft.objects.filter(user=None).count()
+        self.assertEqual(draft_count + 1, new_draft_count)
+
+        req = RequestDraft.objects.get(user=None)
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, False)
-        self.assertEqual(req.public_body, self.pb)
+        self.assertIn(self.pb, req.publicbodies.all())
 
 
 class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
