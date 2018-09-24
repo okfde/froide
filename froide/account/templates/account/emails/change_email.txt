@@ -10,3 +10,4 @@ Please visit the link below:
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
+{% include "foirequest/emails/user_footer.txt" %}
