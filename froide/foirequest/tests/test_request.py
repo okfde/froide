@@ -18,7 +18,7 @@ from django.http import QueryDict
 from froide.publicbody.models import PublicBody, FoiLaw
 from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import (
-    package_foirequest, add_message_from_email
+    package_foirequest, generate_foirequest_files, add_message_from_email
 )
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.foirequest.forms import (
@@ -790,7 +790,7 @@ class RequestTest(TestCase):
 
     def test_escalation_message(self):
         req = FoiRequest.objects.all()[0]
-        zip_bytes = package_foirequest(req)
+        attachments = list(generate_foirequest_files(req))
         req._messages = None  # Reset messages cache
         response = self.client.post(reverse('foirequest-escalation_message',
                 kwargs={"slug": req.slug + 'blub'}))
@@ -824,10 +824,11 @@ class RequestTest(TestCase):
         self.assertNotIn(req.get_auth_link(), req.messages[-1].plaintext_redacted)
         self.assertEqual(len(mail.outbox), 2)
         message = list(filter(lambda x: x.to[0] == req.law.mediator.email, mail.outbox))[-1]
-        self.assertEqual(message.attachments[0][0], 'request_%s.zip' % req.pk)
-        self.assertEqual(message.attachments[0][2], 'application/zip')
-        self.assertEqual(zipfile.ZipFile(BytesIO(message.attachments[0][1]), 'r').namelist(),
-                         zipfile.ZipFile(BytesIO(zip_bytes), 'r').namelist())
+        self.assertEqual(message.attachments[0][0], '%s.pdf' % req.pk)
+        self.assertEqual(message.attachments[0][2], 'application/pdf')
+        self.assertEqual(len(message.attachments), len(attachments))
+        self.assertEqual([x[0] for x in message.attachments], [
+                          x[0] for x in attachments])
 
     def test_set_tags(self):
         req = FoiRequest.objects.all()[0]

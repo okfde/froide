@@ -242,35 +242,50 @@ def fetch_and_process():
     return count
 
 
+def generate_foirequest_files(foirequest):
+    pdf_generator = FoiRequestPDFGenerator(foirequest)
+    correspondence_bytes = pdf_generator.get_pdf_bytes()
+    yield ('%s.pdf' % foirequest.pk, correspondence_bytes, 'application/pdf')
+    yield from get_attachments_for_package(foirequest)
+
+
+def get_attachments_for_package(foirequest):
+    last_date = None
+    date_count = 1
+
+    for message in foirequest.messages:
+        current_date = message.timestamp.date()
+        date_prefix = current_date.isoformat()
+        if current_date == last_date:
+            date_count += 1
+        else:
+            date_count = 1
+        date_prefix += '_%d' % date_count
+        last_date = current_date
+
+        att_queryset = message.foiattachment_set.filter(
+            is_redacted=False,
+            is_converted=False
+        )
+
+        for attachment in att_queryset:
+            if not attachment.file:
+                continue
+            filename = '%s-%s' % (date_prefix, attachment.name)
+            with open(attachment.file.path, 'rb') as f:
+                yield (filename, f.read(), attachment.filetype)
+
+
 def package_foirequest(foirequest):
     zfile_obj = BytesIO()
     with override(settings.LANGUAGE_CODE):
         zfile = zipfile.ZipFile(zfile_obj, 'w')
-        last_date = None
-        date_count = 1
         path = str(foirequest.pk)
         pdf_generator = FoiRequestPDFGenerator(foirequest)
         correspondence_bytes = pdf_generator.get_pdf_bytes()
         zfile.writestr('%s/%s.pdf' % (path, foirequest.pk), correspondence_bytes)
-        for message in foirequest.messages:
-            current_date = message.timestamp.date()
-            date_prefix = current_date.isoformat()
-            if current_date == last_date:
-                date_count += 1
-            else:
-                date_count = 1
-            date_prefix += '_%d' % date_count
-            last_date = current_date
-
-            att_queryset = message.foiattachment_set.filter(
-                is_redacted=False,
-                is_converted=False
-            )
-
-            for attachment in att_queryset:
-                if not attachment.file:
-                    continue
-                filename = '%s/%s-%s' % (path, date_prefix, attachment.name)
-                zfile.write(attachment.file.path, arcname=filename)
+        atts = get_attachments_for_package(foirequest)
+        for filename, filebytes, content_type in atts:
+            zfile.writestr('%s/%s' % (path, filename), filebytes)
         zfile.close()
     return zfile_obj.getvalue()

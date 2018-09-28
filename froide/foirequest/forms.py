@@ -28,7 +28,7 @@ from .models import (
 )
 from .validators import validate_upload_document, clean_reference
 from .utils import construct_initial_message_body, construct_message_body
-from .foi_mail import package_foirequest
+from .foi_mail import generate_foirequest_files
 
 
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
@@ -237,9 +237,7 @@ class EscalationMessageForm(forms.Form):
 
     def save(self):
         message = self.make_message()
-        filename = _('request_%(num)s.zip') % {'num': self.foirequest.pk}
-        zip_bytes = package_foirequest(self.foirequest)
-        attachments = [(filename, zip_bytes, 'application/zip')]
+        attachments = list(generate_foirequest_files(self.foirequest))
         message.save()
         message.send(attachments=attachments)
         self.foirequest.escalated.send(sender=self.foirequest)
