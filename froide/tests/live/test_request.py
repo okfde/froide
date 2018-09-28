@@ -160,7 +160,6 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_user_confirmation')
-
         message = mail.outbox[0]
         match = re.search(r'http://[^/]+(/.+)', message.body)
         activate_url = match.group(1)
@@ -170,6 +169,9 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         WebDriverWait(self.selenium, 5).until(
             lambda driver: account_confirmed in driver.current_url)
         self.assertIn(account_confirmed, self.selenium.current_url)
+        headline = self.selenium.find_element_by_xpath(
+            '//h2[contains(text(), "Your email address is now confirmed!")]')
+        self.assertTrue(headline)
         req = FoiRequest.objects.get(user=new_user)
         self.assertEqual(req.status, 'awaiting_response')
 

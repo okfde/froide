@@ -105,11 +105,19 @@ class RequestTest(TestCase):
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
         match = re.search(r'/%d/%d/(\w+)/' % (user.pk, req.pk),
                 message.body)
+        match_full = re.search(r'http://[^/]+(/.+)', message.body)
         self.assertIsNotNone(match)
+        self.assertIsNotNone(match_full)
+        url = match_full.group(1)
         secret = match.group(1)
-        response = self.client.get(reverse('account-confirm',
+        generated_url = reverse('account-confirm',
                 kwargs={'user_id': user.pk,
-                'secret': secret, 'request_id': req.pk}))
+                'secret': secret, 'request_id': req.pk})
+        self.assertIn(generated_url, url)
+        self.assertFalse(user.is_active)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
         req = FoiRequest.objects.get(pk=req.pk)
         mes = req.messages[0]
         mes.timestamp = mes.timestamp - timedelta(days=2)

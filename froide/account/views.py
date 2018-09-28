@@ -79,8 +79,7 @@ def confirm(request, user_id, secret, request_id=None):
         foirequest = FoiRequest.confirmed_request(user, request_id)
         if foirequest:
             params['request'] = str(foirequest.pk).encode('utf-8')
-
-    default_url = reverse('account-confirmed') + urlencode(params)
+    default_url = '%s?%s' % (reverse('account-confirmed'), urlencode(params))
     return get_redirect(request, default=default_url, params=params)
 
 
