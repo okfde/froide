@@ -343,11 +343,11 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
         properties = [{
             'id': 'classification',
             'name': 'Classification',
-            'query': 'classification__name'
+            'query': 'classification'
             }, {
             'id': 'jurisdiction',
             'name': 'Jurisdiction',
-            'query': 'jurisdiction__name'
+            'query': 'jurisdiction'
             }, {
             'id': 'email',
             'name': 'Email'
