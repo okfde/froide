@@ -25,6 +25,11 @@ class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:jurisdiction-detail',
         lookup_field='pk'
     )
+    region = serializers.HyperlinkedRelatedField(
+        view_name='api:georegion-detail',
+        lookup_field='pk',
+        read_only=True
+    )
     site_url = serializers.CharField(source='get_absolute_domain_url')
 
     class Meta:
@@ -32,7 +37,7 @@ class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
         depth = 0
         fields = (
             'resource_uri', 'id', 'name', 'rank', 'description', 'slug',
-            'site_url'
+            'site_url', 'region'
         )
 
 
@@ -265,6 +270,11 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
     )
     categories = CategorySerializer(read_only=True, many=True)
     classification = ClassificationSerializer(read_only=True)
+    region = serializers.HyperlinkedRelatedField(
+        view_name='api:georegion-detail',
+        lookup_field='pk',
+        read_only=True
+    )
 
     site_url = serializers.CharField(source='get_absolute_domain_url')
 
@@ -280,7 +290,7 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
             'request_note', 'number_of_requests',
             'site_url', 'request_note_html',
             'jurisdiction',
-            'laws',
+            'laws', 'region',
             'default_law',
         )
 
