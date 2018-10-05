@@ -121,6 +121,12 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
             }, {
             'id': 'kind',
             'name': 'Kind'
+            }, {
+            'id': 'region_identifier',
+            'name': 'Region identifier'
+            }, {
+            'id': 'global_identifier',
+            'name': 'Global identifier'
         }]
         properties_dict = {
             p['id']: p for p in properties
