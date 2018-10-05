@@ -1,4 +1,5 @@
 import json
+import re
 
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -11,6 +12,9 @@ from django_filters import rest_framework as filters
 from froide.helper.api_utils import OpenRefineReconciliationMixin
 
 from .models import GeoRegion
+
+
+GERMAN_PLZ_RE = re.compile('\d{5}')
 
 
 class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
@@ -126,7 +130,18 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
         qs = GeoRegion.objects.all()
         for key, val in filters.items():
             qs = qs.filter(**{key: val})
-        qs = qs.filter(name__contains=query)[:limit]
+        match = GERMAN_PLZ_RE.match(query)
+        zip_region = None
+        if match:
+            try:
+                zip_region = GeoRegion.objects.get(name=query, kind='zipcode')
+                qs = qs.filter(geom__covers=zip_region.geom.centroid)
+            except GeoRegion.DoesNotExist:
+                pass
+
+        if not match or not zip_region:
+            qs = qs.filter(name__contains=query)[:limit]
+
         for r in qs:
             yield {
                 'id': str(r.pk),
