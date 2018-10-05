@@ -385,6 +385,9 @@ class FoiRequest(models.Model):
         return reverse('foirequest-show',
                 kwargs={'slug': self.slug})
 
+    def get_absolute_url_last_message(self):
+        return self.get_absolute_url() + '#last'
+
     @property
     def url(self):
         return self.get_absolute_url()
