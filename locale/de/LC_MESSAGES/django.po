@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-24 14:48+0200\n"
-"PO-Revision-Date: 2018-09-24 14:51+0100\n"
+"PO-Revision-Date: 2018-10-07 19:19+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1780,7 +1780,7 @@ msgstr "Ungültiger Wert"
 
 #: froide/foirequest/forms.py:390
 msgid "Please give a resolution to this request"
-msgstr "Bitte schreiben Sie eine Zusammenfassung des Ergebnisses"
+msgstr "Bitte geben Sie ein Ergebnis dieser Anfrage an."
 
 #: froide/foirequest/forms.py:440
 msgid "Information Law"
