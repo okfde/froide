@@ -378,14 +378,16 @@ class FoiRequestStatusForm(forms.Form):
         status = self.cleaned_data.get('status', None)
         if status == "request_redirected":
             if pk is None:
-                raise forms.ValidationError(_("Provide the redirected public body!"))
+                self.add_error('redirected', _("Provide the redirected public body!"))
+                return self.cleaned_data
             try:
                 self._redirected_publicbody = PublicBody.objects.get(id=pk)
             except PublicBody.DoesNotExist:
                 raise forms.ValidationError(_("Invalid value"))
         if status == 'resolved':
             if not self.cleaned_data.get('resolution', ''):
-                raise forms.ValidationError(_('Please give a resolution to this request'))
+                self.add_error('resolution', _('Please give a resolution to this request'))
+                return self.cleaned_data
 
         # if resolution is successful or partially_successful, set status to resolved
         if self.cleaned_data.get('resolution', '') in ('successful', 'partially_successful'):
