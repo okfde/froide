@@ -1,6 +1,3 @@
-
-
-import json
 from datetime import timedelta
 
 from django.contrib.gis.db import models
@@ -176,9 +173,14 @@ class FoiLaw(models.Model):
                     [(x, Truncator(x).words(12))
                     for x in self.refusal_reasons.splitlines()])
 
-    def as_data(self):
+    def as_data(self, request=None):
         from .api_views import FoiLawSerializer
-        ctx = get_fake_api_context()
+        if request is None:
+            ctx = get_fake_api_context()
+        else:
+            ctx = {
+                'request': request
+            }
         return FoiLawSerializer(self, context=ctx).data
 
     def calculate_due_date(self, date=None, value=None):
@@ -440,14 +442,15 @@ class PublicBody(models.Model):
             }
         )
 
-    def as_data(self):
-        from .api_views import PublicBodySerializer
-
-        ctx = get_fake_api_context()
-        return PublicBodySerializer(self, context=ctx).data
-
-    def as_json(self):
-        return json.dumps(self.as_data())
+    def as_data(self, request=None):
+        from .api_views import PublicBodyListSerializer
+        if request is None:
+            ctx = get_fake_api_context()
+        else:
+            ctx = {
+                'request': request
+            }
+        return PublicBodyListSerializer(self, context=ctx).data
 
     @property
     def children_count(self):
