@@ -1,38 +1,42 @@
 <template>
-  <div v-if="hasResources || hasSimilarRequests" class="card mb-3">
-    <h5 class="card-header">
-      {{ i18n.similarExist }}
-    </h5>
-    <div class="card-body">
-      <div class="row">
-        <div v-show="hasResources" class="col-md-6">
-          <h6>
-            {{ i18n.relevantResources }}
-          </h6>
-          <ul>
-            <li v-if="publicBody.url">
-              <a :href="publicBody.url" target="_blank" rel="noopener">
-                {{ i18n.officialWebsite }} {{ publicBody.name }}
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div v-show="hasSimilarRequests" class="col-md-6">
-          <h6>
-            {{ i18n.similarRequests }}
-          </h6>
-          <ul class="similar-requests">
-            <li v-for="req in similarRequests" :key="req.url">
-              <a :href="req.url" target="_blank">
-                {{ req.title }}
-              </a>
-            </li>
-          </ul>
-          <p v-if="moreSimilarRequestsAvailable">
-            <a :href="searchUrl" target="_blank">
-              {{ i18n.moreSimilarRequests}}
-            </a>
-          </p>
+  <div class="row">
+    <div class="col-md-12">
+      <div v-if="hasResources || hasSimilarRequests" class="card mb-3">
+        <h5 class="card-header">
+          {{ i18n.similarExist }}
+        </h5>
+        <div class="card-body">
+          <div class="row">
+            <div v-show="hasResources" class="col-md-6">
+              <h6>
+                {{ i18n.relevantResources }}
+              </h6>
+              <ul>
+                <li v-if="publicBody.url">
+                  <a :href="publicBody.url" target="_blank" rel="noopener">
+                    {{ i18n.officialWebsite }} {{ publicBody.name }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div v-show="hasSimilarRequests" class="col-md-6">
+              <h6>
+                {{ i18n.similarRequests }}
+              </h6>
+              <ul class="similar-requests">
+                <li v-for="req in similarRequests" :key="req.url">
+                  <a :href="req.url" target="_blank">
+                    {{ req.title }}
+                  </a>
+                </li>
+              </ul>
+              <p v-if="moreSimilarRequestsAvailable">
+                <a :href="searchUrl" target="_blank">
+                  {{ i18n.moreSimilarRequests}}
+                </a>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -43,8 +47,6 @@
 
 import {debounce} from 'underscore'
 
-import {mapGetters} from 'vuex'
-
 import {FroideAPI} from '../lib/search'
 import I18nMixin from '../lib/i18n-mixin'
 
@@ -52,7 +54,7 @@ const MAX_SIMILAR = 5
 
 export default {
   name: 'similar-requests',
-  props: ['config', 'pbScope'],
+  props: ['config', 'publicbodies', 'subject'],
   mixins: [I18nMixin],
   data () {
     return {
@@ -63,7 +65,6 @@ export default {
   },
   created () {
     this.search = new FroideAPI(this.config)
-    this.$store.watch(this.$store.getters.getSubject, this.debouncedSearch)
     this.runSearch()
   },
   computed: {
@@ -80,9 +81,8 @@ export default {
       return debounce(this.runSearch, 1000)
     },
     publicBody () {
-      return this.getPublicBodyByScope(this.pbScope)
-    },
-    ...mapGetters(['getPublicBodyByScope', 'subject'])
+      return this.publicbodies[0]
+    }
   },
   methods: {
     runSearch () {
@@ -103,6 +103,11 @@ export default {
           this.searches[subject] = result
         })
       })(this.subject)
+    }
+  },
+  watch: {
+    subject: function (val, oldVal) {
+      this.debouncedSearch()
     }
   }
 }

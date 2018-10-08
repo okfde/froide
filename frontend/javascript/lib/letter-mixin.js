@@ -1,5 +1,3 @@
-import {mapGetters} from 'vuex'
-
 var LetterMixin = {
   computed: {
     letterStart () {
@@ -11,8 +9,8 @@ var LetterMixin = {
     },
     letterSignatureName () {
       let name = ''
-      if (this.user.id || this.user.first_name || this.user.last_name) {
-        name = `${this.user.first_name || ''} ${this.user.last_name || ''}`
+      if (this.first_name || this.last_name) {
+        name = `${this.first_name || ''} ${this.last_name || ''}`
       }
       return name.trim()
     },
@@ -34,14 +32,11 @@ var LetterMixin = {
       return `${this.defaultLaw.letter_end}`
     },
     letterSignature () {
-      if (!this.user.id && !this.user.first_name && !this.user.last_name) {
+      if (!this.user && (!this.first_name && !this.last_name)) {
         return this.i18n.giveName
       }
       return false
-    },
-    ...mapGetters([
-      'user', 'defaultLaw'
-    ])
+    }
   }
 }
 

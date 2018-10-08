@@ -9,7 +9,7 @@ import {
   SET_PUBLICBODY, SET_PUBLICBODIES,
   SET_PUBLICBODY_ID, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   CLEAR_PUBLICBODIES,
-  CACHE_PUBLICBODIES,
+  CACHE_PUBLICBODIES, CACHE_LAWS,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS,
   UPDATE_LAW_TYPE,
   SET_USER,
@@ -19,6 +19,7 @@ import {
 } from './mutation_types'
 
 import {FroideAPI} from '../lib/search'
+import {selectBestLaw} from '../lib/law-select'
 
 Vue.use(Vuex)
 
@@ -31,6 +32,8 @@ export default new Vuex.Store({
     scopedSearchFacets: {},
     scopedSearchMeta: {},
     scopedPublicBodies: {},
+    scopedPublicBodiesMap: {},
+    lawCache: {},
     publicBodies: {},
     lawType: null,
     user: {},
@@ -54,14 +57,14 @@ export default new Vuex.Store({
       }
       return pbs
     },
-    isPublicBodySelectedByScope: (state, getters) => (scope, id) => {
-      let pbs = state.scopedPublicBodies[scope]
-      if (pbs === undefined) {
+    isPublicBodySelectedByScope: (state) => (scope, id) => {
+      let pbMap = state.scopedPublicBodiesMap[scope]
+      if (pbMap === undefined) {
         return false
       }
-      return pbs.some((r) => r.id === id)
+      return pbMap[id] !== undefined
     },
-    getPublicBody: (state, getters) => (id) => {
+    getPublicBody: (state) => (id) => {
       return state.publicBodies[id]
     },
     getScopedSearchResults: (state, getters) => (scope) => {
@@ -71,47 +74,48 @@ export default new Vuex.Store({
       }
       return srs
     },
-    getScopedSearchFacets: (state, getters) => (scope) => {
+    getScopedSearchFacets: (state) => (scope) => {
       let facets = state.scopedSearchFacets[scope]
       if (facets === undefined) {
         return null
       }
       return facets
     },
-    getScopedSearchMeta: (state, getters) => (scope) => {
+    getScopedSearchMeta: (state) => (scope) => {
       let meta = state.scopedSearchMeta[scope]
       if (meta === undefined) {
         return null
       }
       return meta
     },
-    defaultLaw: (state) => {
-      let sortMetaLawsFirst = (a, b) => {
-        if (a.meta && b.meta) return 0
-        if (a.meta) return -1
-        if (b.meta) return 1
-        return 0
-      }
+    getLawsForPublicBody: (state) => (pb) => {
+      return pb.laws.map((law) => {
+        return state.lawCache[law]
+      }).filter((law) => law !== undefined)
+    },
+    defaultLaw: (state, getters) => {
       var key = null
+      // Get first key in scoped public bodies
       for (key in state.scopedPublicBodies) {}
       let pbs = state.scopedPublicBodies[key]
       let lastLaw = null
       let sameLaw = true
       for (let i = 0; i < pbs.length; i += 1) {
         let pb = pbs[i]
-        let laws = pb.laws.filter((l) => {
-          return state.lawType ? l.law_type === state.lawType : true
-        })
-        laws = laws.sort(sortMetaLawsFirst)
-        if (i === 0) {
-          lastLaw = laws[0]
+        let laws = getters.getLawsForPublicBody(pb)
+        let bestLaw = selectBestLaw(laws, state.lawType)
+        if (bestLaw === null) {
           continue
         }
-        if (lastLaw.id !== laws[0].id) {
+        if (i === 0) {
+          lastLaw = bestLaw
+          continue
+        }
+        if (lastLaw.id !== bestLaw.id) {
           sameLaw = false
           break
         }
-        lastLaw = laws[0]
+        lastLaw = bestLaw
       }
       if (sameLaw) {
         return lastLaw
@@ -154,13 +158,45 @@ export default new Vuex.Store({
     },
     [SET_PUBLICBODY] (state, {publicBody, scope}) {
       Vue.set(state.scopedPublicBodies, scope, [publicBody])
+      Vue.set(state.scopedPublicBodiesMap, scope, {[publicBody.id]: true})
+      state.scopedSearchResults[scope].forEach((sr) => {
+        if (sr.id === publicBody.id) {
+          sr.isSelected = true
+        } else {
+          sr.isSelected = false
+        }
+      })
     },
     [SET_PUBLICBODIES] (state, {publicBodies, scope}) {
       Vue.set(state.scopedPublicBodies, scope, publicBodies)
+      let pbMap = {}
+      publicBodies.forEach((pb) => {
+        pbMap[pb.id] = true
+      })
+      Vue.set(state.scopedPublicBodiesMap, scope, pbMap)
+      if (state.scopedSearchResults[scope]) {
+        state.scopedSearchResults[scope].forEach((sr) => {
+          if (pbMap[sr.id] !== undefined) {
+            sr.isSelected = true
+          } else {
+            sr.isSelected = false
+          }
+        })
+      }
     },
     [SET_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
       let pb = state.publicBodies[publicBodyId]
       Vue.set(state.scopedPublicBodies, scope, [pb])
+      Vue.set(state.scopedPublicBodiesMap, scope, {publicBodyId: true})
+      if (state.scopedSearchResults[scope]) {
+        state.scopedSearchResults[scope].forEach((sr) => {
+          if (sr.id === publicBodyId) {
+            sr.isSelected = true
+          } else {
+            sr.isSelected = false
+          }
+        })
+      }
     },
     [ADD_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
       let pb = state.publicBodies[publicBodyId]
@@ -179,6 +215,14 @@ export default new Vuex.Store({
           ])
         }
       }
+      Vue.set(state.scopedPublicBodiesMap[scope], publicBodyId, true)
+      if (state.scopedSearchResults[scope]) {
+        state.scopedSearchResults[scope].forEach((sr) => {
+          if (sr.id === publicBodyId) {
+            sr.isSelected = true
+          }
+        })
+      }
     },
     [REMOVE_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
       let pbs = state.scopedPublicBodies[scope]
@@ -187,9 +231,23 @@ export default new Vuex.Store({
       }
       pbs = pbs.filter((p) => p.id !== publicBodyId)
       Vue.set(state.scopedPublicBodies, scope, pbs)
+      Vue.set(state.scopedPublicBodiesMap[scope], publicBodyId, undefined)
+      if (state.scopedSearchResults[scope]) {
+        state.scopedSearchResults[scope].forEach((sr) => {
+          if (sr.id === publicBodyId) {
+            sr.isSelected = false
+          }
+        })
+      }
     },
     [CLEAR_PUBLICBODIES] (state, {scope}) {
       Vue.set(state.scopedPublicBodies, scope, [])
+      Vue.set(state.scopedPublicBodiesMap, scope, {})
+      if (state.scopedSearchResults[scope]) {
+        state.scopedSearchResults[scope].forEach((sr) => {
+          sr.isSelected = false
+        })
+      }
     },
     [CACHE_PUBLICBODIES] (state, publicBodies) {
       let newPublicBodies = {}
@@ -202,6 +260,10 @@ export default new Vuex.Store({
       }
     },
     [SET_SEARCHRESULTS] (state, {searchResults, searchFacets, searchMeta, scope}) {
+      searchResults = searchResults.map((sr) => {
+        sr.isSelected = state.scopedPublicBodiesMap[scope][sr.id] !== undefined
+        return sr
+      })
       Vue.set(state.scopedSearchResults, scope, searchResults)
       Vue.set(state.scopedSearchFacets, scope, searchFacets)
       Vue.set(state.scopedSearchMeta, scope, searchMeta)
@@ -243,10 +305,15 @@ export default new Vuex.Store({
     },
     [UPDATE_LAW_TYPE] (state, val) {
       state.lawType = val
+    },
+    [CACHE_LAWS] (state, {laws}) {
+      laws.forEach((law) => {
+        Vue.set(state.lawCache, law.resource_uri, law)
+      })
     }
   },
   actions: {
-    setSearchResults ({ commit }, {scope, results}) {
+    setSearchResults ({ commit, state, dispatch }, {scope, results}) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects.results,
         searchFacets: results.objects.facets.fields,
@@ -254,6 +321,18 @@ export default new Vuex.Store({
         scope: scope
       })
       commit(CACHE_PUBLICBODIES, results.objects.results)
+      dispatch('getLawsForPublicBodies', results.objects.results)
+    },
+    cacheLaws ({ commit }, { laws }) {
+      commit(CACHE_LAWS, {
+        laws
+      })
+    },
+    getLawsForPublicBodies ({ state, dispatch }, publicBodies) {
+      let searcher = new FroideAPI(state.config)
+      searcher.getLawsForPublicBodies(publicBodies, state.lawCache).then((laws) => {
+        dispatch('cacheLaws', {laws})
+      })
     },
     getSearchResults ({ commit, state, dispatch }, {scope, search, filters}) {
       commit(CLEAR_SEARCHRESULTS, {scope})
@@ -268,10 +347,11 @@ export default new Vuex.Store({
         dispatch('setPublicBodyByIdDone', {result, scope, id})
       })
     },
-    setPublicBodyByIdDone ({commit}, {scope, result, id}) {
+    setPublicBodyByIdDone ({commit, dispatch}, {scope, result, id}) {
       commit(CACHE_PUBLICBODIES, [result])
       commit(SET_PUBLICBODY_ID, {publicBodyId: id, scope})
       commit(SET_STEP_REQUEST)
+      dispatch('getLawsForPublicBodies', [result])
     },
     getSearchResultsUrl ({ commit, state, getters, dispatch }, { scope, url }) {
       commit(CLEAR_SEARCHRESULTS, {scope})

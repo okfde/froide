@@ -23,32 +23,19 @@
 
 <script>
 
-import {mapGetters, mapMutations} from 'vuex'
-import {ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../../store/mutation_types'
-
 export default {
   name: 'pb-table-row',
-  props: ['name', 'row', 'scope', 'headers'],
+  props: ['name', 'row', 'selected',  'headers'],
   computed: {
     rowCategories () {
       return this.row.categories.map((x) => x.name).join(', ')
     },
     value: {
       get () {
-        return this.isPublicBodySelectedByScope(this.scope, this.row.id)
+        return this.selected
       },
       set (value) {
-        if (value) {
-          this.addPublicBodyId({
-            publicBodyId: this.row.id,
-            scope: this.scope
-          })
-        } else {
-          this.removePublicBodyId({
-            publicBodyId: this.row.id,
-            scope: this.scope
-          })
-        }
+        this.$emit('update:row', {id: this.row.id, value: value})
       }
     },
     hasJurisdiction () {
@@ -59,22 +46,12 @@ export default {
     },
     hasCategories () {
       return this.headers.filter((x) => x.key === 'categories').length > 0
-    },
-    ...mapGetters([
-      'isPublicBodySelectedByScope'
-    ])
+    }
   },
   methods: {
     toggleRow (event) {
       this.value = !this.value
-    },
-    selectSearchResult (event) {
-      this.value = event.target.value
-    },
-    ...mapMutations({
-      addPublicBodyId: ADD_PUBLICBODY_ID,
-      removePublicBodyId: REMOVE_PUBLICBODY_ID
-    })
+    }
   }
 }
 </script>

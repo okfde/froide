@@ -4,25 +4,25 @@ import store from './store'
 
 import {renderComponent} from './lib/vue-helper'
 
-import RequestForm from './components/request-form'
+import RequestPage from './components/request-page'
 
 Vue.config.productionTip = false
 
-function createRequestForm (selector) {
+function createRequestPage (selector) {
   /* eslint-disable no-new */
   new Vue({
     store: store,
-    components: { RequestForm },
-    render: renderComponent(selector, RequestForm)
+    components: { RequestPage },
+    render: renderComponent(selector, RequestPage)
   }).$mount(selector)
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  createRequestForm('#make-request')
+  createRequestPage('#make-request')
 })
 
 const exp = {
-  createRequestForm
+  createRequestPage
 }
 module.exports = exp
 export default exp

@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th>
-          <input v-if="options.selectAllCheckbox" type="checkbox" v-model="selectAllRows"/>
+          <!-- <input v-if="options.selectAllCheckbox" type="checkbox" v-model="selectAllRows"/> -->
         </th>
         <th v-for="header in headers" :key="header.label" :class="header.class">
           {{ header.label }}
@@ -12,16 +12,22 @@
       </tr>
     </thead>
     <transition-group name="table" tag="tbody">
-      <pb-table-row v-for="row in sortedRows" :key="row.id" :name="name" :row="row" :scope="scope" :headers="headers"></pb-table-row>
+      <pb-table-row v-for="row in sortedRows" :key="row.id"
+        :name="name"
+        :row="row"
+        :headers="headers"
+        :selected="row.isSelected"
+        @update:row="updateRow"
+      ></pb-table-row>
     </transition-group>
   </table>
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import {mapMutations, mapGetters} from 'vuex'
 import {sortBy} from 'underscore'
 
-import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../../store/mutation_types'
+import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../../store/mutation_types'
 
 import PbTableRow from './pb-table-row'
 
@@ -63,9 +69,23 @@ export default {
       }
       this.sortHeader = sortHeader
     },
+    updateRow ({id, value}) {
+      if (value) {
+        this.addPublicBodyId({
+          publicBodyId: id,
+          scope: this.scope
+        })
+      } else {
+        this.removePublicBodyId({
+          publicBodyId: id,
+          scope: this.scope
+        })
+      }
+    },
     ...mapMutations({
       setStepRequest: SET_STEP_REQUEST,
-      addPublicBodyId: ADD_PUBLICBODY_ID
+      addPublicBodyId: ADD_PUBLICBODY_ID,
+      removePublicBodyId: REMOVE_PUBLICBODY_ID
     })
   },
   components: {

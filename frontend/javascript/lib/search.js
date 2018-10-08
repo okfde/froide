@@ -88,6 +88,33 @@ class FroideAPI {
     return this.getJsonForUrl(this.config.url.listPublicBodies, term, filters)
   }
 
+  getLawsForPublicBodies (publicBodies, cachedLaws) {
+    cachedLaws = cachedLaws || {}
+    let lawIdMap = {}
+    let lawIds = []
+    publicBodies.forEach((pb) => {
+      pb.laws.forEach((law) => {
+        if (typeof law === 'string') {
+          if (cachedLaws[law] !== undefined) {
+            return
+          }
+          let parts = law.split('/')
+          let lawId = parts[parts.length - 2]
+          if (lawIdMap[lawId] === undefined) {
+            lawIdMap[lawId] = true
+            lawIds.push(lawId)
+          }
+        }
+      })
+    })
+    if (lawIds.length === 0) {
+      return Promise.resolve([])
+    }
+    return this.getJsonForUrl(this.config.url.listLaws, null, {
+      'id': lawIds.join(',')
+    }).then((data) => data.objects)
+  }
+
   listJurisdictions (term, filters) {
     return this.getJsonForUrl(this.config.url.listJurisdictions, term, filters)
   }

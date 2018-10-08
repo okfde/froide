@@ -12,8 +12,8 @@
         </div>
         <div class="modal-body">
           <dl class="message-meta">
-            <dt>{{ i18n.reviewFrom }}</dt>
-            <dd>
+            <dt :class="{'text-danger': !userValid}">{{ i18n.reviewFrom }}</dt>
+            <dd :class="{'text-danger': !userValid}">
               {{ user.first_name }} {{ user.last_name }} &lt;{{ user.email }}&gt;
             </dd>
             <dt>{{ i18n.reviewTo }}</dt>
@@ -26,8 +26,8 @@
             <dd v-else>
               -
             </dd>
-            <dt>{{ i18n.subject }}</dt>
-            <dd>
+            <dt :class="{'text-danger': !subjectValid}">{{ i18n.subject }}</dt>
+            <dd :class="{'text-danger': !subjectValid}">
               {{ subject }}
             </dd>
           </dl>
@@ -67,8 +67,6 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-
 import LetterMixin from '../lib/letter-mixin'
 
 function erx (text) {
@@ -77,7 +75,14 @@ function erx (text) {
 
 export default {
   name: 'review-request',
-  props: ['i18n', 'pbScope'],
+  props: ['i18n',
+    'publicbodies',
+    'user',
+    'defaultLaw',
+    'subject',
+    'body',
+    'fullText'
+  ],
   mixins: [LetterMixin],
   computed: {
     canSend () {
@@ -86,9 +91,15 @@ export default {
     hasErrors () {
       return this.errors.length > 0
     },
+    userValid () {
+      return this.user.first_name && this.user.last_name && this.user.email
+    },
+    subjectValid () {
+      return this.subject && this.subject.length > 0
+    },
     errors () {
       let errors = []
-      if (!this.subject || this.subject.length === 0) {
+      if (!this.subjectValid) {
         errors.push(this.i18n.noSubject)
       }
       if (!this.body || this.body.length === 0) {
@@ -144,15 +155,11 @@ export default {
       return new RegExp(regex.join('|'), 'gi')
     },
     publicBody () {
-      return this.getPublicBodyByScope(this.pbScope)
+      return this.publicbodies[0]
     },
     publicBodies () {
-      return this.getPublicBodiesByScope(this.pbScope)
-    },
-    ...mapGetters([
-      'getPublicBodiesByScope', 'getPublicBodyByScope', 'subject', 'body',
-      'fullText'
-    ])
+      return this.publicbodies
+    }
   }
 }
 </script>

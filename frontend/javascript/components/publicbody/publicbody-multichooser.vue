@@ -45,7 +45,8 @@
         <div class="col-md-8 col-lg-9 order-2">
           <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="currentHeaders"
                     :options="selectOptions" :rows="searchResults" @selectAllRows="selectAllRows"></pb-table>
-          <slot name="publicbody-missing"></slot>
+          <img v-show="searching" :src="config.resources.spinner" alt="Loading..."/>
+          <slot name="publicbody-missing" v-if="!searching"></slot>
           <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
         </div>
         <div class="col-md-4  col-lg-3 order-md-1">
