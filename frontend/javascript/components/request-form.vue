@@ -88,7 +88,7 @@
           </div>
           <div class="col-md-8 order-1">
             <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
-            <div v-if="editingDisabled" class="body-text">{{ body }}</div>
+            <div v-if="editingDisabled" class="body-text body-text-em">{{ body }}</div>
             <textarea v-show="!editingDisabled" v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="formFields.body.placeholder"></textarea>
             <label class="small pull-right text-muted" v-if="allowFullText && !editingDisabled">
               <input type="checkbox" id="full_text_checkbox" name="full_text_checkbox" v-model="fullText" :disabled="fullTextDisabled">
@@ -418,6 +418,10 @@ legend {
   white-space: pre-wrap;
   word-wrap: break-word;
   color: #999;
+}
+
+.body-text-em {
+  color: #555;
 }
 
 .body-textarea {
