@@ -14,7 +14,7 @@ from froide.helper.api_utils import OpenRefineReconciliationMixin
 from .models import GeoRegion
 
 
-GERMAN_PLZ_RE = re.compile('\d{5}')
+GERMAN_PLZ_RE = re.compile(r'\d{5}')
 
 
 class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
