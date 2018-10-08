@@ -17,7 +17,10 @@ To: <sw+yurpykc1hr@fragdenstaat.de>
 Cc: Peter Freudenberg <peter@example.org>, Stefan Wehrmeyer <stefan.wehrmeyer@example.org>, 
 	Harry Porters <harry.porters@example.org>, Julia Romeo <julia.romeo@example.org>, 
 	UKF DE Executive Board <ukf-de-board@lists.example.org>
-Subject: Latest Improvements
+Subject: =?iso-8859-1?Q?Anfrage_nach_dem_Informationsfreiheitsgesetz;
+ _F=F6rderantr?=
+ =?iso-8859-1?Q?=E4ge_und_Verwendungsnachweise_der_Hanns-Seidel-Stiftung;
+ _?= =?iso-8859-1?Q?Vg._375-2018?=
 Date: Mon, 5 Jul 2010 07:54:40 +0200
 Message-ID: <002e01cb1c06$8f9ec680$320abd$@example.com>
 MIME-Version: 1.0

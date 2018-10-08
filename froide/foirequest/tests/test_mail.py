@@ -45,6 +45,10 @@ class MailTest(TestCase):
         message = messages[1]
         self.assertEqual(message.timestamp,
                 datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
+        self.assertEqual(
+            message.subject,
+            'Anfrage nach dem Informationsfreiheitsgesetz;  Förderanträge und Verwendungsnachweise der Hanns-Seidel-Stiftung;  Vg. 375-2018'
+        )
 
     def test_working_with_attachment(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)

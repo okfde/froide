@@ -148,6 +148,17 @@ class EmailParser(object):
                 return field
             return self.try_decoding(field)
 
+        if (decodefrag and isinstance(decodefrag[0][0], bytes) and
+                b'=?' in decodefrag[0][0]):
+            # Likely failed to decode!
+            # Python expects encoded words in individual lines
+            # https://github.com/python/cpython/blob/a8d5e2f255f1a20fc8af7dc16a7cb708e014952a/Lib/email/header.py#L86
+            # But encoded words may have been split up!
+            # Let's remove newlines that are not preceded by
+            # encoded word terminator and try again
+            field = re.sub(r'(?<!\?\=)\n ', '=20', field)
+            decodefrag = decode_header(field)
+
         fragments = []
         for s, enc in decodefrag:
             decoded = None
