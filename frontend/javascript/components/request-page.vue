@@ -282,6 +282,9 @@ export default {
         private: this.updatePrivate,
       })
     }
+    this.originalBody = this.body,
+    this.originalSubject = this.subject
+
   },
   mounted () {
     let step = STEPS.SELECT_PUBLICBODY
@@ -321,13 +324,13 @@ export default {
       }
     },
     subjectWasChanged () {
-      return this.subject !== this.formFields.subject.initial
+      return this.subject !== this.originalSubject
     },
     hasBody () {
       return this.body && this.body.length > 0
     },
     bodyWasChanged () {
-      return this.body !== this.formFields.body.initial
+      return this.body !== this.originalBody
     },
     body: {
       get () {
