@@ -33,9 +33,9 @@
         publicbody-default-search="{{ public_body_search }}"
         :publicbodies="{{ publicbodies_json }}"
         :request-form="{{ request_form.as_json }}"
+        :user-form="{{ user_form.as_json }}"
         {% if request.user.is_authenticated %}:user-info="{{ request.user.as_json }}"{% endif %}
         {% if publicbody_form %}:publicbody-form="{{ publicbody_form.as_json }}"{% endif %}
-        {% if not request.user.is_authenticated %}:user-form="{{ user_form.as_json }}"{% endif %}
         {% if not config.hide_similar %}:show-similar="true"{% endif %}
         {% if not config.hide_draft %}:show-draft="true"{% endif %}
         {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %}

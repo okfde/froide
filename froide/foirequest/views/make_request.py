@@ -10,10 +10,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, DetailView, TemplateView
 
-from froide.account.forms import NewUserForm
+from froide.account.forms import NewUserForm, AddressForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
 from froide.publicbody.widgets import get_widget_context
 from froide.publicbody.models import PublicBody
+from froide.publicbody.api_views import PublicBodyListSerializer
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
 
@@ -197,15 +198,24 @@ class MakeRequestView(FormView):
         return initial_user_data
 
     def get_user_form(self):
-        kwargs = {
-            'initial': self.get_user_initial()
-        }
+        if self.request.user.is_authenticated:
+            form_klass = AddressForm
+            kwargs = {
+                'initial': {
+                    'address': self.request.user.address
+                }
+            }
+        else:
+            form_klass = NewUserForm
+            kwargs = {
+                'initial': self.get_user_initial()
+            }
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
                 'files': self.request.FILES,
             })
-        return NewUserForm(**kwargs)
+        return form_klass(**kwargs)
 
     def get_publicbody_form_kwargs(self):
         kwargs = {}
@@ -283,11 +293,9 @@ class MakeRequestView(FormView):
         if request.user.is_authenticated and request.POST.get('save_draft', ''):
             return self.save_draft(request_form, publicbody_form)
 
-        user_form = None
-        if not request.user.is_authenticated:
-            user_form = self.get_user_form()
-            if not user_form.is_valid():
-                error = True
+        user_form = self.get_user_form()
+        if not user_form.is_valid():
+            error = True
 
         form_kwargs = {
             'request_form': request_form,
@@ -337,6 +345,8 @@ class MakeRequestView(FormView):
 
         if not user.is_authenticated:
             data.update(user_form.cleaned_data)
+        elif user_form is not None:
+            user_form.save(user=user)
 
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
@@ -396,9 +406,11 @@ class MakeRequestView(FormView):
         if not publicbodies:
             publicbodies = kwargs['publicbody_form'].get_publicbodies()
         if publicbodies:
-            publicbodies_json = json.dumps([p.as_data() for p in publicbodies])
+            publicbodies_json = json.dumps(PublicBodyListSerializer(
+                publicbodies, context={'request': self.request}, many=True
+            ).data['results'])
 
-        if not self.request.user.is_authenticated and 'user_form' not in kwargs:
+        if 'user_form' not in kwargs:
             kwargs['user_form'] = self.get_user_form()
 
         config = self.get_config(kwargs['request_form'])

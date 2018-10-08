@@ -64,7 +64,7 @@ class NewUserBaseForm(forms.Form):
         private = forms.BooleanField(
             required=False,
             widget=BootstrapCheckboxInput,
-            label=_("Hide my name on the web"),
+            label=_("Hide my name from public view"),
             help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
     def __init__(self, *args, **kwargs):
@@ -79,6 +79,28 @@ class NewUserBaseForm(forms.Form):
 
     def clean_last_name(self):
         return self.cleaned_data['last_name'].strip()
+
+
+class AddressForm(JSONMixin, forms.Form):
+    address = forms.CharField(max_length=300,
+        required=False,
+        label=_('Mailing Address'),
+        help_text=_(
+            'Your address will not be displayed '
+            'publicly and is only needed because a public body '
+            'will likely want to send you paper.'),
+        widget=forms.Textarea(attrs={
+            'rows': '3',
+            'class': 'form-control',
+            'placeholder': _('Street, Post Code, City'),
+        })
+    )
+
+    def save(self, user):
+        address = self.cleaned_data['address']
+        if address:
+            user.address = address
+            user.save()
 
 
 class TermsForm(forms.Form):
