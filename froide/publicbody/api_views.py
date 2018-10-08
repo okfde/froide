@@ -91,9 +91,33 @@ class FoiLawSerializer(SimpleFoiLawSerializer):
         )
 
 
+class FoiLawFilter(filters.FilterSet):
+    id = filters.CharFilter(method='id_filter')
+
+    class Meta:
+        model = FoiLaw
+        fields = (
+            'jurisdiction', 'mediator', 'id'
+        )
+
+    def id_filter(self, queryset, name, value):
+        ids = value.split(',')
+        return queryset.filter(pk__in=ids)
+
+
 class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FoiLawSerializer
     queryset = FoiLaw.objects.all()
+    filterset_class = FoiLawFilter
+
+    def get_queryset(self):
+        return self.optimize_query(FoiLaw.objects.all())
+
+    def optimize_query(self, qs):
+        return qs.select_related(
+            'jurisdiction',
+            'mediator',
+        ).prefetch_related('combined')
 
 
 class TreeMixin(object):
@@ -104,7 +128,15 @@ class TreeMixin(object):
         return obj.get_children()
 
 
-class ClassificationSerializer(serializers.HyperlinkedModelSerializer):
+class SimpleClassificationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Classification
+        fields = (
+            'id', 'name', 'slug', 'depth',
+        )
+
+
+class ClassificationSerializer(SimpleClassificationSerializer):
     parent = serializers.HyperlinkedRelatedField(
         source='get_parent', read_only=True,
         view_name='api:classification-detail'
@@ -114,12 +146,8 @@ class ClassificationSerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:classification-detail'
     )
 
-    class Meta:
-        model = Classification
-        fields = (
-            'id', 'name', 'slug', 'depth',
-            'parent', 'children'
-        )
+    class Meta(SimpleClassificationSerializer.Meta):
+        fields = SimpleClassificationSerializer.Meta.fields + ('parent', 'children')
 
 
 class SearchFilterMixin(object):
@@ -157,7 +185,16 @@ class ClassificationViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = ClassificationFilter
 
 
-class CategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
+class SimpleCategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = (
+            'id', 'name', 'slug', 'is_topic', 'depth',
+        )
+
+
+class CategorySerializer(SimpleCategorySerializer):
     parent = serializers.HyperlinkedRelatedField(
         source='get_parent', read_only=True,
         view_name='api:category-detail'
@@ -167,12 +204,8 @@ class CategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
         view_name='api:category-detail'
     )
 
-    class Meta:
-        model = Category
-        fields = (
-            'id', 'name', 'slug', 'is_topic', 'depth',
-            'parent', 'children'
-        )
+    class Meta(SimpleCategorySerializer.Meta):
+        fields = SimpleCategorySerializer.Meta.fields + ('parent', 'children')
 
 
 class CategoryFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
@@ -212,19 +245,12 @@ class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk'
     )
     id = serializers.IntegerField(source='pk')
-    jurisdiction = serializers.HyperlinkedIdentityField(
+    jurisdiction = serializers.HyperlinkedRelatedField(
         view_name='api:jurisdiction-detail',
-        lookup_field='pk',
         read_only=True,
     )
-    default_law = serializers.HyperlinkedIdentityField(
-        view_name='api:law-detail',
-        lookup_field='pk',
-        read_only=True,
-    )
-    classification = serializers.HyperlinkedIdentityField(
+    classification = serializers.HyperlinkedRelatedField(
         view_name='api:classification-detail',
-        lookup_field='pk',
         read_only=True
     )
 
@@ -241,7 +267,6 @@ class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
             'request_note', 'number_of_requests',
             'site_url',
             'jurisdiction', 'request_note_html',
-            'default_law',
         )
 
 
@@ -252,27 +277,24 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
     )
     root = serializers.HyperlinkedRelatedField(
         view_name='api:publicbody-detail',
-        lookup_field='pk',
         read_only=True
     )
     parent = serializers.HyperlinkedRelatedField(
         view_name='api:publicbody-detail',
-        lookup_field='pk',
         read_only=True
     )
 
     id = serializers.IntegerField(source='pk')
     jurisdiction = JurisdictionSerializer(read_only=True)
-    default_law = SimpleFoiLawSerializer(read_only=True)
-    laws = SimpleFoiLawSerializer(
+    laws = serializers.HyperlinkedRelatedField(
+        view_name='api:law-detail',
         many=True,
         read_only=True
     )
-    categories = CategorySerializer(read_only=True, many=True)
-    classification = ClassificationSerializer(read_only=True)
+    categories = SimpleCategorySerializer(read_only=True, many=True)
+    classification = SimpleClassificationSerializer(read_only=True)
     region = serializers.HyperlinkedRelatedField(
         view_name='api:georegion-detail',
-        lookup_field='pk',
         read_only=True
     )
 
@@ -291,12 +313,10 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
             'site_url', 'request_note_html',
             'jurisdiction',
             'laws', 'region',
-            'default_law',
         )
 
 
 class PublicBodySerializer(PublicBodyListSerializer):
-    default_law = FoiLawSerializer(read_only=True)
     laws = FoiLawSerializer(
         many=True,
         read_only=True
@@ -389,8 +409,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
             'classification',
             'jurisdiction',
             'categories',
-            'laws',
-            'laws__combined'
+            'laws'
         )
 
     @action(detail=False, methods=['get'])
