@@ -36,8 +36,13 @@ class PublicBodyForm(JSONMixin, forms.Form):
 
 class MultiplePublicBodyForm(PublicBodyForm):
     publicbody = forms.ModelMultipleChoiceField(
-            queryset=PublicBody.objects.all(),
-            label=_("Search for a topic or a public body:")
+        queryset=PublicBody.objects.all().prefetch_related(
+            'classification',
+            'jurisdiction',
+            'categories',
+            'laws',
+        ),
+        label=_("Search for a topic or a public body:")
     )
 
     is_multi = True
