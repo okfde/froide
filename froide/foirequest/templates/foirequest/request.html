@@ -27,7 +27,7 @@
       {% endif %}
     {% endfor %}
 
-      <request-form
+      <request-page
         id="make-request" 
         v-cloak
         publicbody-default-search="{{ public_body_search }}"
@@ -41,6 +41,7 @@
         {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %}
         {% if config.hide_full_text %}:hide-full-text="true"{% endif %}
         {% if config.hide_editing %}:hide-editing="true"{% endif %}
+        {% if config.hide_public %}:hide-public="true"{% endif %}
         {% if multi_request %}:multi-request="true"{% endif %}
         :config="{{ js_config }}"
         >
@@ -72,7 +73,7 @@
           {% blocktrans %}Write the request{% endblocktrans %}
         </legend>
 
-        <div slot="requesthints" class="">
+        <div slot="request-hints" class="">
           <div class="request-hints">
             <h6>
               {% blocktrans %}Important Notes:{% endblocktrans %}
@@ -99,38 +100,6 @@
             </ul>
           </div>
         </div>
-        <div slot="public">
-          {{ request_form.hide_public }}
-          {% if config.hide_public %}
-            <div style="display: none">
-              {{ request_form.public }}
-            </div>
-          {% else %}
-            <div class="card mb-3">
-              <div class="card-body">
-                <div class="checkbox">
-                  <label>
-                    {{ request_form.public }}
-                    {{ request_form.public.label }}
-                  </label>
-                  <small class="form-text text-muted">
-                    {{ request_form.public.help_text }}
-                  </small>
-                </div>
-              </div>
-            </div>
-          {% endif %}
-        </div>
-        <div slot="terms">
-          {% if not user.is_authenticated and user_form.terms%}
-            <div class="card mb-3">
-              <div class="card-body">
-                {% render_field user_form.terms horizontal=False %}
-              </div>
-            </div>
-          {% endif %}
-        </div>
-
       </request-form>
 
     </form>

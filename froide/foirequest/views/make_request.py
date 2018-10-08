@@ -69,6 +69,7 @@ class MakeRequestView(FormView):
                 'listCategories': reverse('api:category-list'),
                 'listClassifications': reverse('api:classification-list'),
                 'listPublicBodies': reverse('api:publicbody-list'),
+                'listLaws': reverse('api:law-list'),
                 'search': reverse('foirequest-search'),
                 'user': reverse('api-user-profile'),
                 'makeRequestTo': reverse('foirequest-make_request', kwargs={
