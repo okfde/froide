@@ -25,7 +25,10 @@ def delete_draft(request):
 def claim_draft(request, token):
     if not request.user.is_authenticated:
         return render_403(request)
-    draft = get_object_or_404(RequestDraft, token=token, user=None)
+    try:
+        draft = RequestDraft.objects.get(token=token, user=None)
+    except RequestDraft.DoesNotExist:
+        return redirect('account-drafts')
     draft.token = None
     draft.user = request.user
     draft.save()
