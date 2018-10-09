@@ -1,4 +1,4 @@
-/* global $ */
+import $ from 'jquery'
 
 import 'select2'
 import 'select2/src/scss/core.scss'

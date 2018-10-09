@@ -1,13 +1,11 @@
 import $ from 'jquery'
 
-import 'bootstrap/js/src/tooltip'
-import 'bootstrap/js/src/tab'
+import {Tab} from 'bootstrap.native'
 
 $(function () {
   $('form').submit(function () {
     $(this).find('button[type="submit"]').prop('disabled', true)
   })
-  $('*[data-toggle=tooltip]').tooltip()
 
   $(document).on('click', '.hideparent', function (e) {
     e.preventDefault()
@@ -34,6 +32,15 @@ $(function () {
     }
   }
 
+  var requestNav = document.querySelector('.request-nav')
+
+  // let's give the initialization a JavaScript reference for the "target" option
+  var myTabsCollection = requestNav.getElementsByTagName('A')
+  for (var i = 0; i < myTabsCollection.length; i++) {
+    /* eslint-disable no-new */
+    new Tab(myTabsCollection[i], {height: false})
+  }
+
   $('#id_resolution').change(setStatus)
 
   $('input[name="status"]').change(setStatus)
@@ -41,18 +48,20 @@ $(function () {
   setStatus()
 
   $('a[data-tabgo="tab"]').click(function (e) {
-    $('.nav-link[href="' + $(this).attr('href') + '"]').tab('show')
+    document.querySelector('.nav-link[href="' + $(this).attr('href') + '"]').Tab.show()
   })
 
-  let activeTab = $('.request-nav').data('activetab')
+  let activeTab = requestNav.dataset.activetab
   if (activeTab && activeTab !== 'info') {
-    $('.request-nav a[href="#' + activeTab + '"]').tab('show')
+    requestNav.querySelector('a[href="#' + activeTab + '"]').Tab.show()
   } else {
-    var hashNav = $('.request-nav a[href="' + document.location.hash + '"]')
+    var hash = document.location.hash
+    hash = hash.replace(/[^#\w\-]/g, '')
+    var hashNav = $('.request-nav a[href="' + hash + '"]')
     if (hashNav.length > 0) {
-      $('.request-nav a[href="' + document.location.hash + '"]').tab('show')
-    } else {
-      $('.request-nav a[href="#info"]').tab('show')
+      requestNav.querySelector('a[href="' + hash + '"]').Tab.show()
+    } else if (activeTab !== 'info') {
+      requestNav.querySelector('a[href="#info"]').Tab.show()
     }
   }
 

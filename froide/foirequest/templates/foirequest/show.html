@@ -115,42 +115,42 @@
     <div class="col-md-3">
       <ul class="request-nav nav" data-activetab="{{ active_tab }}">
         <li class="nav-item">
-          <a href="#info" data-toggle="pill" class="nav-link{% if active_tab == 'info' %} active{% endif %}" role="tab" aria-controls="info" aria-expanded="false">
+          <a href="#info" data-toggle="tab" class="nav-link active" role="tab" aria-controls="info" aria-expanded="false">
             {% trans "Request" %}
           </a>
         </li>
         <li class="nav-item">
-          <a href="#set-status" data-toggle="pill" class="nav-link" role="tab" aria-controls="set-status" aria-expanded="false">
+          <a href="#set-status" data-toggle="tab" class="nav-link" role="tab" aria-controls="set-status" aria-expanded="false">
               {% trans "Set status" %}
             </a>
         </li>
         {% if object.status == "publicbody_needed" %}
           <li class="nav-item">
-            <a href="#choose-public-body" data-toggle="pill" class="nav-link" role="tab" aria-controls="choose-public-body" aria-expanded="false">
+            <a href="#choose-public-body" data-toggle="tab" class="nav-link" role="tab" aria-controls="choose-public-body" aria-expanded="false">
               {% trans "Choose Public Body" %}
             </a>
           </li>
         {% endif %}
         {% if object.public_body %}
           <li class="nav-item">
-            <a href="#write-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="write-message" aria-expanded="false">
+            <a href="#write-message" data-toggle="tab" class="nav-link" role="tab" aria-controls="write-message" aria-expanded="false">
               {% blocktrans %}Send a message{% endblocktrans %}
             </a>
           </li>
           <li class="nav-item">
-            <a href="#add-postal-reply" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-reply" aria-expanded="false">
+            <a href="#add-postal-reply" data-toggle="tab" class="nav-link" role="tab" aria-controls="add-postal-reply" aria-expanded="false">
               {% blocktrans %}Got Mail?{% endblocktrans %}
             </a>
           </li>
           <li class="nav-item">
-            <a href="#add-postal-message" data-toggle="pill" class="nav-link" role="tab" aria-controls="add-postal-message" aria-expanded="false">
+            <a href="#add-postal-message" data-toggle="tab" class="nav-link" role="tab" aria-controls="add-postal-message" aria-expanded="false">
               {% blocktrans %}Sent Mail?{% endblocktrans %}
             </a>
           </li>
         {% endif %}
         {% if object.law.mediator and object.can_be_escalated %}
           <li class="nav-item">
-            <a href="#escalate" data-toggle="pill" class="nav-link" role="tab" aria-controls="escalate" aria-expanded="false">
+            <a href="#escalate" data-toggle="tab" class="nav-link" role="tab" aria-controls="escalate" aria-expanded="false">
               {% trans "Mediation" %}
             </a>
           </li>
@@ -158,7 +158,7 @@
 
       {% if froide.can_make_meta_request and object.can_be_escalated %}
         <li class="nav-item">
-          <a href="#meta-request" data-toggle="pill" class="nav-link" role="tab" aria-controls="meta-request" aria-expanded="false">
+          <a href="#meta-request" data-toggle="tab" class="nav-link" role="tab" aria-controls="meta-request" aria-expanded="false">
             {% trans "Make Meta Request" %}
           </a>
         </li>
@@ -166,7 +166,7 @@
 
       {% if object.response_messages and object.law.meta %}
         <li class="nav-item">
-          <a href="#concrete-law" data-toggle="pill" class="nav-link" role="tab" aria-controls="concrete-law" aria-expanded="false">
+          <a href="#concrete-law" data-toggle="tab" class="nav-link" role="tab" aria-controls="concrete-law" aria-expanded="false">
             {% blocktrans %}Set law{% endblocktrans %}
           </a>
         </li>
@@ -174,7 +174,7 @@
 
       {% if object.status_is_final %}
         <li class="nav-item">
-          <a href="#resolution-summary" data-toggle="pill" class="nav-link" role="tab" aria-controls="resolution-summary" aria-expanded="false">
+          <a href="#resolution-summary" data-toggle="tab" class="nav-link" role="tab" aria-controls="resolution-summary" aria-expanded="false">
             {% blocktrans %}Write summary{% endblocktrans %}
           </a>
         </li>
@@ -617,7 +617,7 @@
     {% endif %}
   {% endaddtoblock %}
   {% addtoblock "js" %}
-    <script src="{% static "js/common.js" %}" async></script>
+    <script src="{% static 'js/common.js' %}" async></script>
   {% endaddtoblock %}
   {% addtoblock "js" %}
     <script src="{% static 'js/request.js' %}" charset="utf-8"></script>

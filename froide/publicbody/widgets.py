@@ -14,6 +14,7 @@ def get_widget_context():
     return {
         'url': {
             'searchPublicBody': reverse('api:publicbody-search'),
+            'listLaws': reverse('api:law-list'),
             'getPublicBody': reverse('api:publicbody-detail', kwargs={'pk': '0'}),
             'helpAbout': get_content_url('about')
         },

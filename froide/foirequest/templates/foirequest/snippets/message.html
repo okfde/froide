@@ -107,7 +107,7 @@
               &mdash;
             {% endif %}
             {% if object|can_write_foirequest:request %}
-              <span data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog">
+              <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" class="text-unlink">
             {% endif %}
             {% if deliverystatus.is_sent %}
               <i class="fa fa-check-circle-o"></i>
@@ -123,7 +123,7 @@
               {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
             {% endif %}
             {% if object|can_write_foirequest:request %}
-              </span><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ deliverystatus.log }}</pre>
+              </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ deliverystatus.log }}</pre>
             {% endif %}
           {% endwith %}
         {% endif %}
