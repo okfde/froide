@@ -160,4 +160,6 @@ def convert_attachment(att):
         new_att.file.save(new_att.name, new_file)
     new_att.save()
     att.converted = new_att
+    att.can_approve = False
+    att.approved = False
     att.save()
