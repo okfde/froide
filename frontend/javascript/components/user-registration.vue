@@ -18,14 +18,14 @@
         </div>
 
         <div class="form-group row" v-if="requiresPostalAddress">
-          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address }">
+          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address, 'field-required': requiresPostalAddress }">
             {{ i18n.yourAddress }}
           </label>
           <div class="col-sm-9">
             <div>
-              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder"></textarea>
+              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder" :required="requiresPostalAddress"></textarea>
               <p v-for="e in errors.address" :key="e.message">{{ e.message }}</p>
-              <p class="help-block">{{ formFields.address.help_text }}</p>
+              <p class="help-block">{{ addressHelpText }}</p>
             </div>
           </div>
         </div>
@@ -81,6 +81,10 @@ export default {
     initialPrivate: {
       type: Boolean,
       default: false
+    },
+    addressHelpText: {
+      type: String,
+      default: null
     }
   },
   mixins: [I18nMixin],
@@ -100,6 +104,12 @@ export default {
         return this.form.errors
       }
       return {}
+    },
+    addressHelpTextValue () {
+      if (this.addressHelpText !== null) {
+        return this.addressHelpText
+      }
+      return formFields.address.help_text
     },
     email: {
       get () {
