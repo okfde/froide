@@ -2,7 +2,10 @@
   "name": "froide",
   "version": "1.0.0",
   "description": "Froide",
-  "main": "index.js",
+  "main": "frontend/javascript/main.js",
+  "files": [
+    "frontend/"
+  ],
   "directories": {
     "doc": "docs"
   },
@@ -10,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .js,.vue frontend",
     "dev": "webpack --watch",
-    "build": "NODE_ENV=production webpack",
+    "build": "NODE_ENV=production webpack --mode production",
     "favicon": "real-favicon generate froide/static/img/logo/favicon.json favicon-result.json froide/static/img/logo"
   },
   "repository": {
@@ -30,6 +33,7 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "bootstrap.native-loader": "^1.0.7",
     "cli-real-favicon": "0.0.6",
     "copy-webpack-plugin": "^4.5.1",
     "css-hot-loader": "^1.3.9",
@@ -50,6 +54,7 @@
     "sass-loader": "^7.0.1",
     "style-loader": "^0.21.0",
     "uglify-es": "^3.3.9",
+    "uglify-js": "^3.4.9",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^1.0.1",
     "vue-loader": "^15.1.0",
@@ -64,6 +69,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.1.1",
+    "bootstrap.native": "^2.0.23",
     "es6-promise": "^4.1.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",

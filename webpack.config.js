@@ -10,15 +10,28 @@ const webpack = require('webpack')
 
 const devMode = process.env.NODE_ENV !== 'production'
 
+const ENTRY = {
+  main: ['./frontend/javascript/main.js'],
+  publicbody: ['./frontend/javascript/publicbody.js'],
+  makerequest: ['./frontend/javascript/makerequest.js'],
+  request: ['./frontend/javascript/request.js'],
+  redact: ['./frontend/javascript/redact.js'],
+  tagautocomplete: ['./frontend/javascript/tagautocomplete.js']
+}
+
+const EXCLUDE_CHUNKS = [
+  'main', 'tagautocomplete'
+].join('|')
+
+let CHUNK_LIST = []
+for (let key in ENTRY) {
+  if (EXCLUDE_CHUNKS.indexOf(key) !== -1) { continue }
+  CHUNK_LIST.push(key)
+}
+CHUNK_LIST = CHUNK_LIST.join('|')
+
 const config = {
-  entry: {
-    main: ['./frontend/javascript/main.js'],
-    publicbody: ['./frontend/javascript/publicbody.js'],
-    makerequest: ['./frontend/javascript/makerequest.js'],
-    request: ['./frontend/javascript/request.js'],
-    redact: ['./frontend/javascript/redact.js'],
-    tagautocomplete: ['./frontend/javascript/tagautocomplete.js']
-  },
+  entry: ENTRY,
   output: {
     path: path.resolve(__dirname, 'froide/static/js'),
     filename: '[name].js',
@@ -37,6 +50,15 @@ const config = {
   },
   module: {
     rules: [
+      {
+        test: /bootstrap\.native/,
+        use: {
+          loader: 'bootstrap.native-loader',
+          options: {
+            only: ['modal', 'dropdown', 'collapse', 'alert', 'tab', 'tooltip']
+          }
+        }
+      },
       {
         test: /\.js$/,
         include: /(froide\/frontend|node_modules\/(bootstrap))/,
@@ -124,11 +146,6 @@ const config = {
     new CopyWebpackPlugin([
       {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
     ]),
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      Popper: ['popper.js/dist/popper.js', 'default']
-    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: `"${process.env.NODE_ENV}"`
@@ -149,7 +166,20 @@ const config = {
           discardComments: { removeAll: true }
         }
       })
-    ] : [])
+    ] : []),
+    splitChunks: {
+      cacheGroups: {
+        common: {
+          test: /[\\/]node_modules[\\/]/,
+          chunks (chunk) {
+            return CHUNK_LIST.indexOf(chunk.name) !== -1
+          },
+          name: 'common',
+          minChunks: 2,
+          minSize: 0
+        }
+      }
+    }
   }
 }
 
