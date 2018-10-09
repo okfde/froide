@@ -103,13 +103,8 @@ def go(request, user_id, secret, url):
     return redirect(url)
 
 
-class BaseRequestListView(ListView):
+class BaseRequestListView(LoginRequiredMixin, ListView):
     paginate_by = 20
-
-    def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect('account-login')
-        return super(BaseRequestListView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(BaseRequestListView, self).get_context_data(**kwargs)
