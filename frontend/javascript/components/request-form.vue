@@ -103,9 +103,9 @@
             <div v-if="!letterSignature && fullText" class="body-text">{{ letterSignatureName }}</div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="!hasUser">
           <div class="col-md-8">
-            <div class="form-group row" v-if="!hasUser">
+            <div class="form-group row">
               <div class="col" :class="{ 'text-danger': usererrors.first_name }">
                 <label class="control-label field-required" for="id_first_name" :class="{ 'text-danger': usererrors.first_name }">
                   {{ i18n.yourFirstName }}
@@ -123,7 +123,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4 mt-4"  v-if="!hasUser">
+          <div class="col-md-4 mt-4" v-if="usePseudonym">
             <small v-if="userformFields.last_name.help_text" v-html="userformFields.last_name.help_text"></small>
           </div>
         </div>
@@ -187,6 +187,10 @@ export default {
     multiRequest: {
       type: Boolean,
       default: false
+    },
+    usePseudonym: {
+      type: Boolean,
+      default: true
     },
     initialSubject: {
       type: String,
