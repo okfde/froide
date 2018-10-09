@@ -108,6 +108,17 @@
         {% trans "Download request as PDF" %}
       </a>
     </li>
+
+    <li class="nav-header">{% trans "Extend deadline" %}</li>
+    <li class="nav-item">
+      <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+        {% csrf_token %}
+        <input type="number" name="months" value="6" class="form-control"/>
+        <button class="btn btn-light" type="submit">
+          {% trans "Extend Deadline by Months" %}
+        </button>
+      </form>
+    </li>
   {% endif %}
 
   {% if user.is_staff %}
@@ -146,15 +157,5 @@
         </div>
       </li>
     {% endif %}
-    <li class="nav-header">{% trans "Extend deadline" %}</li>
-    <li class="nav-item">
-      <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
-        {% csrf_token %}
-        <input type="number" name="months" value="6" class="form-control"/>
-        <button class="btn btn-light" type="submit">
-          {% trans "Extend Deadline by Months" %}
-        </button>
-      </form>
-    </li>
   {% endif %}
 </ul>

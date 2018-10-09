@@ -255,12 +255,8 @@ def make_same_request(request, slug, message_id):
 
 
 @require_POST
-def extend_deadline(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff:
-        return render_403(request)
+@allow_write_foirequest
+def extend_deadline(request, foirequest):
     try:
         months = int(request.POST.get('months', 6))
     except ValueError:
