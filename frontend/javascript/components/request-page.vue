@@ -114,7 +114,7 @@
           ></similar-requests>
 
           <review-request
-            v-if="stepWriteRequest"
+            v-if="stepWriteRequest && showReview"
             :i18n="i18n"
             :publicbodies="publicBodies"
             :user="user"
@@ -122,9 +122,10 @@
             :subject="subject"
             :body="body"
             :fullText="fullText"
+            @close="showReview = false"
           ></review-request>
 
-          <button v-if="stepWriteRequest && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary" data-toggle="modal" data-target="#step-review">
+          <button v-if="stepWriteRequest && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary" @click="showReview = true">
             <i class="fa fa-check" aria-hidden="true"></i>
             {{ i18n.reviewRequest }}
           </button>
@@ -243,7 +244,8 @@ export default {
     return {
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
-      fullLetter: false
+      fullLetter: false,
+      showReview: false
     }
   },
   created () {

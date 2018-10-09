@@ -1,14 +1,14 @@
 <template>
-  <div class="modal fade" id="step-review" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-mask" id="step-review" @click.self="close">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
             {{ i18n.reviewTitle }}
           </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
-           </button>
+          <button type="button" class="close" aria-label="Close" @click="close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
         <div class="modal-body">
           <dl class="message-meta">
@@ -52,7 +52,7 @@
           </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" :class="{ 'btn-secondary': canSend, 'btn-primary': !canSend }" data-dismiss="modal">
+          <button type="button" class="btn" :class="{ 'btn-secondary': canSend, 'btn-primary': !canSend }" @click="close">
             <i class="fa fa-edit" aria-hidden="true"></i>
             {{ i18n.reviewEdit }}
           </button>
@@ -160,12 +160,29 @@ export default {
     publicBodies () {
       return this.publicbodies
     }
+  },
+  methods: {
+    close () {
+      this.$emit('close')
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
   @import "../../styles/variables";
+
+  .modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    display: flex;
+    transition: opacity .3s ease;
+  }
 
   .review-body-text {
     color: #333;
