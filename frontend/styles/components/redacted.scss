@@ -3,26 +3,26 @@
   .redacted:hover,
   .redacted:active,
   .redacted a {
-      background-color: #000 !important;
-      color: #000 !important;
+      background-color: #eee !important;
+      color: #eee !important;
   }
 
   .redacted::selection {
     /* Separate because otherwise it breaks in firefox */
-    background-color: #000 !important;
-    color: #000 !important;
+    background-color: #eee !important;
+    color: #eee !important;
   }
 
   .redacted::-moz-selection {
     /* See https://developer.mozilla.org/en-US/docs/Web/CSS/::selection */
-    background-color: #000 !important;
-    color: #000 !important;
+    background-color: #eee !important;
+    color: #eee !important;
   }
 
   .redacted.redacted-hover:hover,
   .redacted.redacted-hover:hover a {
-      color: #ddd !important;
-      background-color: #000 !important;
+      color: #555 !important;
+      background-color: transparent !important;
   }
 }
 
