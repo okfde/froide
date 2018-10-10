@@ -55,6 +55,10 @@
           </a>
         {% endblocktrans %}
       </small>
+    {% else %}
+      <br/><small class="text-muted">
+        {% trans "no request made yet" %}
+      </small>
     {% endif %}
   </td>
   <td>
