@@ -24,7 +24,8 @@ def delete_draft(request):
 
 def claim_draft(request, token):
     if not request.user.is_authenticated:
-        return render_403(request)
+        # This should lead to a login page with next set to drafts
+        return redirect('account-drafts')
     try:
         draft = RequestDraft.objects.get(token=token, user=None)
     except RequestDraft.DoesNotExist:
