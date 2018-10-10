@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-08 15:33+0200\n"
-"PO-Revision-Date: 2018-10-08 15:35+0100\n"
+"POT-Creation-Date: 2018-10-10 08:45+0200\n"
+"PO-Revision-Date: 2018-10-10 08:46+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -413,7 +413,7 @@ msgstr "Durchsuchen Sie Ihre Anfragen nach Titel"
 
 #: froide/account/templates/account/_account_search.html:9
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:18
-#: froide/publicbody/widgets.py:23 froide/templates/header.html:23
+#: froide/publicbody/widgets.py:24 froide/templates/header.html:23
 #: froide/templates/header.html:27 froide/templates/header.html:36
 #: froide/templates/search/search.html:14
 msgid "Search"
@@ -987,12 +987,16 @@ msgstr ""
 "\t</a>\n"
 "      "
 
-#: froide/account/templates/account/show_drafts.html:63
+#: froide/account/templates/account/show_drafts.html:60
+msgid "no request made yet"
+msgstr "noch keine Anfrage gestellt"
+
+#: froide/account/templates/account/show_drafts.html:67
 #: froide/foirequest/views/make_request.py:140
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: froide/account/templates/account/show_drafts.html:72
+#: froide/account/templates/account/show_drafts.html:76
 msgid "Delete"
 msgstr "Löschen"
 
@@ -1135,48 +1139,48 @@ msgstr ""
 "Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich "
 "erst aus, bevor Sie den E-Mail-Link benutzen."
 
-#: froide/account/views.py:196
+#: froide/account/views.py:191
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
-#: froide/account/views.py:224
+#: froide/account/views.py:219
 msgid "You are now logged in."
 msgstr "Sie sind jetzt eingeloggt."
 
-#: froide/account/views.py:228
+#: froide/account/views.py:223
 msgid "Please activate your mail address before logging in."
 msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich einloggen."
 
-#: froide/account/views.py:231
+#: froide/account/views.py:226
 msgid "E-mail and password do not match."
 msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
 
-#: froide/account/views.py:246
+#: froide/account/views.py:241
 msgid "You are currently logged in, you cannot signup."
 msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 
-#: froide/account/views.py:270
+#: froide/account/views.py:265
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem "
 "Bestätigungslink von uns erhalten."
 
-#: froide/account/views.py:291
+#: froide/account/views.py:286
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihr Passwort nicht ändern."
 
-#: froide/account/views.py:297
+#: froide/account/views.py:292
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: froide/account/views.py:312
+#: froide/account/views.py:307
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Sie sind gerade eingeloggt. Sie können keinen Passwort-Zurücksetzen-Link "
 "erhalten."
 
-#: froide/account/views.py:320
+#: froide/account/views.py:315
 msgid ""
 "Check your mail, we sent you a password reset link. If you don't receive an "
 "email, check if you entered your email correctly or if you really have an "
@@ -1187,13 +1191,13 @@ msgstr ""
 "Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit einen "
 "Account haben."
 
-#: froide/account/views.py:356
+#: froide/account/views.py:351
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre Adresse nicht "
 "ändern."
 
-#: froide/account/views.py:365
+#: froide/account/views.py:360
 msgid ""
 "We sent a confirmation email to your new address. Please click the link in "
 "there."
@@ -1201,61 +1205,61 @@ msgstr ""
 "Wir haben eine Bestätigungs-E-Mail an Ihre neue Adresse gesendet. Bitte "
 "klicken Sie den Link in der E-Mail."
 
-#: froide/account/views.py:368
+#: froide/account/views.py:363
 msgid "Your profile information has been changed."
 msgstr "Ihre Profilinformationen wurden geändert."
 
-#: froide/account/views.py:371
+#: froide/account/views.py:366
 msgid ""
 "Please correct the errors below. You profile information was not changed."
 msgstr ""
 "Bitte korrigieren Sie die Fehler unten. Ihre Profilinformationen wurden "
 "nicht geändert."
 
-#: froide/account/views.py:380
+#: froide/account/views.py:375
 msgid "You are not currently logged in, you cannot change your email address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre E-Mail-Adresse "
 "nicht ändern."
 
-#: froide/account/views.py:387
+#: froide/account/views.py:382
 msgid "Your email address has been changed."
 msgstr "Ihre E-Mail-Adresse wurde geändert."
 
-#: froide/account/views.py:390
+#: froide/account/views.py:385
 msgid "The email confirmation link was invalid or expired."
 msgstr "Der E-Mail-Bestätigungs-Link ist ungültig oder abgelaufen."
 
-#: froide/account/views.py:400
+#: froide/account/views.py:395
 msgid "You successfully subscribed to our newsletter!"
 msgstr "Sie haben sich erfolgreich in unseren Newsletter eingetragen!"
 
-#: froide/account/views.py:412
+#: froide/account/views.py:407
 msgid "You are not currently logged in, you cannot delete your account."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihren Account nicht "
 "löschen."
 
-#: froide/account/views.py:417
+#: froide/account/views.py:412
 msgid "Password or confirmation phrase were wrong. Account was not deleted."
 msgstr ""
 "Passwort oder Bestätigungssatz waren falsch. Ihr Account wurde nicht "
 "gelöscht."
 
-#: froide/account/views.py:429
+#: froide/account/views.py:424
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Ihr Account wurde gelöscht und Sie wurden ausgeloggt."
 
-#: froide/account/views.py:447
+#: froide/account/views.py:442
 msgid "Thank you for accepting our new terms!"
 msgstr "Danke, dass Sie unsere neuen Nutzungsbedingungen akzeptiert haben!"
 
-#: froide/account/views.py:451
+#: froide/account/views.py:446
 msgid "You need to accept our new terms to continue."
 msgstr ""
 "Sie müssen unsere neuen Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: froide/account/views.py:460
+#: froide/account/views.py:455
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -1436,12 +1440,12 @@ msgstr "Markiere ausgewählte Anhänge als genehmigt"
 
 #: froide/foirequest/admin.py:361
 #, python-format
-msgid "%d attachment(s) successfully marked as not approvable."
-msgstr "%d Anhänge als nicht genehmigungsfähig markiert."
+msgid "%d attachment(s) successfully marked as not approvable/approved."
+msgstr "%d Anhänge als nicht genehmigungsfähig/genehmigt markiert."
 
 #: froide/foirequest/admin.py:362
-msgid "Mark selected as NOT approvable"
-msgstr "Markiere ausgewählte Anhänge als NICHT genehmigungsfähig"
+msgid "Mark selected as not approvable/approved"
+msgstr "Markiere ausgewählte Anhänge als nicht genehmigungsfähig/genehmigt"
 
 #: froide/foirequest/admin.py:374
 #, python-format
@@ -1633,7 +1637,7 @@ msgstr ""
 "Bitte dem nachgehen!\n"
 "%(url)s\n"
 
-#: froide/foirequest/foi_mail.py:81 froide/foirequest/tests/test_mail.py:83
+#: froide/foirequest/foi_mail.py:81 froide/foirequest/tests/test_mail.py:87
 msgid "Unknown FoI-Mail Recipient"
 msgstr "Unbekannter IFG-Mail-Empfänger"
 
@@ -3384,18 +3388,18 @@ msgid "FoI Requests"
 msgstr "Informationsfreiheitsanfragen"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:16
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:118
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:129
 #: froide/publicbody/templates/publicbody/show.html:90
 msgid "View on Admin site"
 msgstr "Im Admin-Bereich ansehen"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:19
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:128
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:139
 msgid "Mark as checked"
 msgstr "Als gesehen markieren"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:23
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:142
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:153
 msgid "Mark as NOT FoI"
 msgstr "Als nicht-IF markieren"
 
@@ -4451,27 +4455,27 @@ msgstr "Download der Anfrage als ZIP"
 msgid "Download request as PDF"
 msgstr "Nachrichten als PDF"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:114
-msgid "Staff Actions"
-msgstr "Admin-Aktionen"
-
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:122
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:132
-msgid "Marked as checked"
-msgstr "Als gesehen markiert"
-
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:137
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:145
-msgid "Marked as NOT FoI"
-msgstr "Als nicht-IF markiert"
-
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:149
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:112
 msgid "Extend deadline"
 msgstr "Verlängere Frist"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:155
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:118
 msgid "Extend Deadline by Months"
 msgstr "Verlängere Frist um Monate"
+
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:125
+msgid "Staff Actions"
+msgstr "Admin-Aktionen"
+
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:133
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:143
+msgid "Marked as checked"
+msgstr "Als gesehen markiert"
+
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:148
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:156
+msgid "Marked as NOT FoI"
+msgstr "Als nicht-IF markiert"
 
 #: froide/foirequest/templatetags/foirequest_tags.py:52
 #: froide/foirequest/templatetags/foirequest_tags.py:57
@@ -4666,7 +4670,7 @@ msgstr "%s_geschwaerzt.pdf"
 msgid "The draft has been deleted."
 msgstr "Der Entwurf wurde gelöscht."
 
-#: froide/foirequest/views/draft.py:33
+#: froide/foirequest/views/draft.py:37
 msgid ""
 "Please check the request you wanted to make and send it when you are ready."
 msgstr ""
@@ -5003,7 +5007,7 @@ msgid "Content published."
 msgstr "Nachricht veröffentlicht."
 
 #: froide/foirequest/views/message.py:174
-#: froide/foirequest/views/request_actions.py:268
+#: froide/foirequest/views/request_actions.py:264
 msgid "Invalid input!"
 msgstr "Ungültige Eingabe!"
 
@@ -5078,7 +5082,7 @@ msgstr ""
 "Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mail-"
 "Adresse."
 
-#: froide/foirequest/views/request_actions.py:275
+#: froide/foirequest/views/request_actions.py:271
 msgid "Deadline has been extended."
 msgstr "Frist wurde verlängert."
 
@@ -5954,7 +5958,7 @@ msgstr "Anfragen an diese Behörde"
 
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html:9
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:22
-#: froide/publicbody/widgets.py:27
+#: froide/publicbody/widgets.py:28
 #: froide/templates/snippets/homepage_hero.html:39
 msgid "or"
 msgstr "oder"
@@ -6214,37 +6218,37 @@ msgid "no requests yet"
 msgstr "noch keine Anfragen"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:16
-#: froide/publicbody/widgets.py:21
+#: froide/publicbody/widgets.py:22
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:17
-#: froide/publicbody/widgets.py:22
+#: froide/publicbody/widgets.py:23
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:19
-#: froide/publicbody/widgets.py:24
+#: froide/publicbody/widgets.py:25
 msgid "Examples:"
 msgstr "Beispiele:"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:20
-#: froide/publicbody/widgets.py:25
+#: froide/publicbody/widgets.py:26
 msgid "Environment"
 msgstr "Umwelt"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:21
-#: froide/publicbody/widgets.py:26
+#: froide/publicbody/widgets.py:27
 msgid "Ministry of Labour"
 msgstr "Bundesministerium für Arbeit"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:23
-#: froide/publicbody/widgets.py:28
+#: froide/publicbody/widgets.py:29
 msgid "No Public Bodies found for this query."
 msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:24
-#: froide/publicbody/widgets.py:29
+#: froide/publicbody/widgets.py:30
 msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
