@@ -357,9 +357,9 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     approve.short_description = _("Mark selected as approved")
 
     def cannot_approve(self, request, queryset):
-        rows_updated = queryset.update(can_approve=False)
-        self.message_user(request, _("%d attachment(s) successfully marked as not approvable." % rows_updated))
-    cannot_approve.short_description = _("Mark selected as NOT approvable")
+        rows_updated = queryset.update(can_approve=False, approved=False)
+        self.message_user(request, _("%d attachment(s) successfully marked as not approvable/approved." % rows_updated))
+    cannot_approve.short_description = _("Mark selected as not approvable/approved")
 
     def convert(self, request, queryset):
         if not queryset:
