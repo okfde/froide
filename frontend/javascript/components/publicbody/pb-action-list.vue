@@ -1,8 +1,5 @@
 <template>
   <div class="search-result-container">
-    <p v-if="hasSearchResults">
-      {{ i18n._('publicBodiesFound', {count: searchResultsLength} ) }}
-    </p>
     <ul v-if="searchResultsLength > 0 || emptyResults" class="search-results list-unstyled">
       <li v-for="result in searchResults" :key="result.id" class="search-result" @click.prevent="selectSearchResult(result.id)">
         <div class="row">

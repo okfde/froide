@@ -106,7 +106,7 @@
         <div class="row" v-if="!hasUser">
           <div class="col-md-8">
             <div class="form-group row">
-              <div class="col" :class="{ 'text-danger': usererrors.first_name }">
+              <div class="col-sm-6" :class="{ 'text-danger': usererrors.first_name }">
                 <label class="control-label field-required" for="id_first_name" :class="{ 'text-danger': usererrors.first_name }">
                   {{ i18n.yourFirstName }}
                 </label>
@@ -114,7 +114,7 @@
                 <p v-for="e in usererrors.first_name" :key="e.message">{{ e.message }}</p>
               </div>
 
-              <div class="col" :class="{ 'text-danger': usererrors.last_name }">
+              <div class="col-sm-6" :class="{ 'text-danger': usererrors.last_name }">
                 <label class="control-label field-required" for="id_last_name" :class="{ 'text-danger': usererrors.last_name }">
                   {{ i18n.yourLastName }}
                 </label>

@@ -1,14 +1,27 @@
 <template>
   <div class="filter-list-wrapper">
     <ul class="filter-list">
-      <li v-for="item in filteredItems" :key="item.value" :class="{ active: isActive(item.value) }">
-        <a href="#" @click.prevent="setFilter(item.value)">
+      <li v-for="item in filteredItems" :key="item.id" :class="{ active: isActive(item.id) }">
+        <a href="#" @click.prevent="setFilter(item)">
           {{ item.label }}
         </a>
         <small v-if="item.count">({{ item.count }})</small>
-        <i v-if="item.children && item.children.length > 0 && !item.subItems" class="fa fa-chevron-down load-children" @click="loadChildren(item)"></i>
+        <i v-if="item.children && item.children.length > 0 && !item.subItems"
+          class="fa fa-chevron-down load-children"
+          @click="loadChildren(item)"
+        ></i>
 
-        <pb-filter-list v-if="item.subItems && item.subItems.length > 0" :config="config" :i18n="i18n" :scope="scope" :value="value" :items="item.subItems" @removeFilter="removeFilter" @setFilter="setFilter" @loadMore="loadMore" @loadChildren="loadChildren"></pb-filter-list>
+        <pb-filter-list v-if="item.subItems && item.subItems.length > 0"
+          :config="config"
+          :i18n="i18n"
+          :scope="scope"
+          :value="value"
+          :items="item.subItems"
+          @removeFilter="removeFilter"
+          @setFilter="setFilter"
+          @loadMore="loadMore"
+          @loadChildren="loadChildren"
+        ></pb-filter-list>
       </li>
     </ul>
     <small v-if="hasMore" class="text-right">
@@ -28,7 +41,7 @@ export default {
     facetMap () {
       let facets = this.getScopedSearchFacets(this.scope)
       if (!facets) {
-        return null
+        return {}
       }
       let counts = facets[this.config.key]
       if (counts) {
@@ -38,7 +51,7 @@ export default {
         })
         return facetMap
       }
-      return null
+      return {}
     },
     filteredItems () {
       // if (!this.value) {
@@ -50,7 +63,7 @@ export default {
       let items = this.items
       if (this.facetMap) {
         return items.map((x) => {
-          x.count = this.facetMap[x.value]
+          x.count = this.facetMap[x.id] || null
           return x
         })
       }
@@ -59,18 +72,18 @@ export default {
     ...mapGetters(['getScopedSearchFacets'])
   },
   methods: {
-    isActive (itemValue) {
+    isActive (itemId) {
       if (this.config.multi) {
-        return this.value && this.value.some((x) => itemValue === x)
+        return this.value && this.value.some((x) => itemId === x.id)
       } else {
-        return itemValue === this.value
+        return this.value && itemId === this.value.id
       }
     },
-    removeFilter (itemValue) {
-      this.$emit('removeFilter', itemValue)
+    removeFilter (item) {
+      this.$emit('removeFilter', item)
     },
-    setFilter (itemValue) {
-      this.$emit('setFilter', itemValue)
+    setFilter (item) {
+      this.$emit('setFilter', item)
     },
     loadMore () {
       this.$emit('loadMore')

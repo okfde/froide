@@ -13,7 +13,11 @@
         <div class="form-search col-md-8 mt-3">
           <label for="publicbody-multi-search-input">Suchen Sie nach Behörden</label>
           <div class="input-group">
-            <input id="publicbody-multi-search-input" type="search" v-model="search" class="search-public_bodies form-control form-control-lg" :placeholder="i18n.publicBodySearchPlaceholder" @keyup="triggerAutocomplete" @keydown.enter.prevent="triggerAutocomplete"/>
+            <input id="publicbody-multi-search-input" type="search" class="search-public_bodies form-control form-control-lg"
+              v-model="search"
+              :placeholder="i18n.publicBodySearchPlaceholder"
+              @keyup="triggerAutocomplete"
+              @keydown.enter.prevent="triggerAutocomplete"/>
             <div class="input-group-append">
               <button type="button" class="btn btn-primary search-public_bodies-submit" @click="triggerAutocomplete">
                 <i class="fa fa-search"></i>
@@ -58,7 +62,16 @@
           </pb-filter-selected>
           <div class="row mt-3">
             <div v-for="filterKey in filterOrder" :key="filterKey" class="col-sm-4 col-md-12 filter-column">
-              <pb-filter :global-config="config" :expanded="filterExpanded[filterKey]" :config="filterConfig[filterKey]" :i18n="i18n" :scope="scope" @update="updateFilter" @setFilterExpand="setFilterExpand" :value="filters[filterKey]"></pb-filter>
+              <pb-filter
+              :global-config="config"
+              :expanded="filterExpanded[filterKey]"
+              :config="filterConfig[filterKey]"
+              :i18n="i18n"
+              :scope="scope"
+              :value="filters[filterKey]"
+              @update="updateFilter"
+              @setFilterExpand="setFilterExpand"
+            ></pb-filter>
             </div>
           </div>
         </div>
@@ -154,7 +167,6 @@ export default {
           itemMap: (item) => {
             return {
               label: treeLabel(item),
-              value: item.name,
               id: item.id,
               children: item.children
             }
@@ -167,7 +179,7 @@ export default {
           getItems: () => searcher.listJurisdictions(),
           // itemFilter: (item) => item.rank < 3,
           itemMap: (item) => {
-            return { label: item.name, value: item.name, id: item.id }
+            return { label: item.name, id: item.id }
           }
         },
         categories: {
@@ -180,7 +192,6 @@ export default {
           itemMap: (item) => {
             return {
               label: treeLabel(item),
-              value: item.name,
               id: item.id,
               children: item.children
             }

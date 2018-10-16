@@ -70,6 +70,19 @@ var PBChooserMixin = {
       if (!this.filters) { return false }
       return Object.keys(this.filters).length > 0
     },
+    searchFilters () {
+      let f = {}
+      if (!this.hasFilters) {
+        return f
+      }
+      for (let k in this.filters) {
+        if (this.filters[k] === null || this.filters[k].length === 0) {
+          continue
+        }
+        f[k] = this.filters[k].id
+      }
+      return f
+    },
     hasSearchResults () {
       return this.searchResults.length > 0
     },
@@ -141,7 +154,7 @@ var PBChooserMixin = {
       return this.getSearchResults({
         scope: this.scope,
         search: this.search,
-        filters: this.filters
+        filters: this.searchFilters
       }).then(() => {
         this.searching = false
       })

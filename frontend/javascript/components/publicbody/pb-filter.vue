@@ -68,7 +68,7 @@ export default {
       if (this.facetMap) {
         let applyFacetMap = function (facetMap, items) {
           return items.map((x) => {
-            x.count = facetMap[x.value]
+            x.count = facetMap[x.id]
             if (x.subItems) {
               x.subItems = applyFacetMap(facetMap, x.subItems)
             }
@@ -134,18 +134,18 @@ export default {
         Vue.set(item, 'subItems', items)
       })
     },
-    setFilter (itemValue) {
+    setFilter (item) {
       if (this.config.multi) {
         if (!this.value) {
-          var val = [itemValue]
-        } else if (!this.value.some((x) => itemValue === x)) {
-          val = [...this.value, itemValue]
+          var val = [item]
+        } else if (!this.value.some((x) => item.id === x.id)) {
+          val = [...this.value, item]
         }
         if (val) {
           this.$emit('update', this.config, val)
         }
       } else {
-        this.$emit('update', this.config, itemValue)
+        this.$emit('update', this.config, item)
       }
     }
   }
