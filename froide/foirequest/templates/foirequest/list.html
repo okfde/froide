@@ -67,11 +67,13 @@
     <div class="col-md-8">
       {{ form.first }}
     </div>
-
+    {% endcomment %}
     <div class="col-auto">
       {{ form.category }}
     </div>
-    {% endcomment %}
+
+    {{ form.publicbody }}
+    {{ form.tag }}
 
   {% if filtered_objects %}
     <div class="ml-auto col-auto">
@@ -90,21 +92,34 @@
 
 
 <div class="row">
+  {% if has_query %}
   <div class="col-md-4">
-    <h2>By jurisdiction</h2>
     <dl>
-      {{ facets }}
-        {% if facets.fields.jurisdiction %}
-            <dt>jurisdiction</dt>
-            {# Provide only the top 5 jurisdictions #}
-            {% for jurisdiction in facets.fields.jurisdiction|slice:":5" %}
-                <dd><a href="{{ request.get_full_path }}&amp;selected_facets=jurisdiction_exact:{{ jurisdiction.0|urlencode }}">{{ jurisdiction.0 }}</a> ({{ jurisdiction.1 }})</dd>
-            {% endfor %}
+      {% if facets.jurisdiction %}
+        <dt>{% trans "Jurisdiction" %}</dt>
+        {# Provide only the top 5 jurisdictions #}
+        <dd>
+          <ul>
+          {% for bucket in facets.jurisdiction.buckets|slice:":5" %}
+              <li>
+                <a href="{{ bucket.url }}" {% if bucket.active %} class="text-unlink"{% endif %}>
+                  {{ bucket.object.name }}
+                </a> ({{ bucket.doc_count }})
+                {% if bucket.active %}
+                  <a href="{{ bucket.clear_url }}">
+                    &times;
+                  </a>
+                {% endif %}
+              </li>
+          {% endfor %}
         {% else %}
-            <p>No jurisdiction facets.</p>
+          <p>No jurisdiction facets.</p>
         {% endif %}
+        </ul>
+      </dd>
     </dl>
   </div>
+  {% endif %}
   <div class="col-md-8">
     {% block col-8-headline %}{% endblock col-8-headline %}
     <ul class="list-unstyled">
