@@ -8,6 +8,13 @@
   }
 }
 
+.request-link__highlight {
+  font-size: 0.8em;
+  em {
+    @extend .highlight;
+  }
+}
+
 .request-link__icon {
   @extend .mr-3;
 }
