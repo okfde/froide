@@ -1,0 +1,43 @@
+{% extends "account/show.html" %}
+{% load i18n %}
+{% load searchtags %}
+
+{% block pre_table %}
+  <div class="row">
+    <div class="col-12 mt-2">
+      {% trans "Search your requests" as search_title %}
+      {% include "foirequest/_request_search.html" with title=search_title %}
+
+      <p>
+        {% if is_filtered %}
+          {% blocktrans count request_count=page_obj.paginator.count %}
+            Your search produced one search result.
+          {% plural %}
+            Your search produced {{ request_count }} search results.
+          {% endblocktrans %}
+        {% else %}
+          {% blocktrans count request_count=page_obj.paginator.count %}
+            You have one request so far.
+          {% plural %}
+            You have {{ request_count }} requests.
+          {% endblocktrans %}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <dl>
+        {% for key, _ in facet_config.items %}
+          {% show_facet key facets facet_config %}
+        {% endfor %}
+      </dl>
+    </div>
+    <div class="col-md-9">
+{% endblock %}
+
+
+{% block post_table %}
+</div>
+</div>
+{% endblock %}

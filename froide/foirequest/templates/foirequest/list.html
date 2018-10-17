@@ -1,6 +1,7 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 {% load humanize %}
+{% load searchtags %}
 
 {% block extra_head %}
   <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
@@ -95,28 +96,9 @@
   {% if has_query %}
   <div class="col-md-4">
     <dl>
-      {% if facets.jurisdiction %}
-        <dt>{% trans "Jurisdiction" %}</dt>
-        {# Provide only the top 5 jurisdictions #}
-        <dd>
-          <ul>
-          {% for bucket in facets.jurisdiction.buckets|slice:":5" %}
-              <li>
-                <a href="{{ bucket.url }}" {% if bucket.active %} class="text-unlink"{% endif %}>
-                  {{ bucket.object.name }}
-                </a> ({{ bucket.doc_count }})
-                {% if bucket.active %}
-                  <a href="{{ bucket.clear_url }}">
-                    &times;
-                  </a>
-                {% endif %}
-              </li>
-          {% endfor %}
-        {% else %}
-          <p>No jurisdiction facets.</p>
-        {% endif %}
-        </ul>
-      </dd>
+      {% for key, _ in facet_config.items %}
+        {% show_facet key facets facet_config %}
+      {% endfor %}
     </dl>
   </div>
   {% endif %}

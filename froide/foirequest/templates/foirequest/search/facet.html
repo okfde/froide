@@ -1,0 +1,18 @@
+{% if buckets %}
+<dt>{{ label }}</dt>
+<dd>
+  <ul class="list-unstyled">
+    {% for bucket in buckets %}
+      <li>
+        <a href="{{ bucket.url }}" {% if bucket.active %} class="text-unlink"{% endif %}>
+          {{ bucket.label }}</a>&nbsp;({{ bucket.doc_count }})
+        {% if bucket.active %}
+          <a href="{{ bucket.clear_url }}">
+            &times;
+          </a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</dd>
+{% endif %}

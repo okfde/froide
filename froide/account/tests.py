@@ -37,7 +37,7 @@ class AccountTest(TestCase):
         self.assertFalse(ok)
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
-        response = self.client.get(reverse('account-show'))
+        response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 200)
 
     def test_account_drafts(self):
@@ -65,7 +65,7 @@ class AccountTest(TestCase):
 
     def test_login_page(self):
         self.client.logout()
-        response = self.client.get(reverse('account-show'))
+        response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 302)
         self.client.get(reverse('account-login'))
         response = self.client.post(reverse('account-login'),
@@ -80,7 +80,7 @@ class AccountTest(TestCase):
                 {"email": "info@fragdenstaat.de",
                 "password": "froide"})
         self.assertEqual(response.status_code, 302)
-        response = self.client.get(reverse('account-show'))
+        response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 200)
         response = self.client.post(reverse('account-login'),
                 {"email": "info@fragdenstaat.de",
@@ -103,7 +103,7 @@ class AccountTest(TestCase):
                 "password": "froide"})
         # inactive users can't login via password
         self.assertEqual(response.status_code, 400)
-        response = self.client.get(reverse('account-show'))
+        response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 302)
 
     def test_signup(self):
@@ -210,7 +210,7 @@ class AccountTest(TestCase):
         self.assertIn(reverse('account-show'), response.url)
         response = self.client.get(response.url)
         self.assertEqual(response.status_code, 200)
-        response = self.client.get(reverse('account-show'))
+        response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse('account-confirm',
                 kwargs={'user_id': user.pk,
@@ -331,7 +331,7 @@ class AccountTest(TestCase):
         response = self.client.post(response.wsgi_request.path, data)
         self.assertEqual(response.status_code, 302)
         # we are already logged in after redirect
-        response = self.client.get(reverse('account-show'))
+        response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 200)
         self.client.logout()
         ok = self.client.login(email='info@fragdenstaat.de', password='froide4')

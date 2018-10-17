@@ -2,24 +2,27 @@ from urllib.parse import urlencode
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.http import Http404, QueryDict
+from django.http import Http404
 from django.contrib import auth
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.views.generic import ListView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 
-from froide.foirequest.models import (FoiRequest, FoiProject, FoiEvent,
-                                      RequestDraft)
+from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .services import AccountService
 from .utils import cancel_user
+
+
+class AccountView(RedirectView):
+    # Temporary redirect
+    pattern_name = 'account-requests'
 
 
 class NewAccountView(TemplateView):
@@ -101,74 +104,6 @@ def go(request, user_id, secret, url):
                 user.save()
             auth.login(request, user)
     return redirect(url)
-
-
-class BaseRequestListView(LoginRequiredMixin, ListView):
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super(BaseRequestListView, self).get_context_data(**kwargs)
-        no_page_query = QueryDict(self.request.GET.urlencode().encode('utf-8'),
-                                  mutable=True)
-        no_page_query.pop('page', None)
-        context['getvars'] = no_page_query.urlencode()
-        context['menu'] = self.menu_item
-        return context
-
-
-class MyRequestsView(BaseRequestListView):
-    template_name = 'account/show_requests.html'
-    menu_item = 'requests'
-
-    def get_queryset(self):
-        self.query = self.request.GET.get('q', None)
-        return FoiRequest.objects.get_dashboard_requests(self.request.user, query=self.query)
-
-    def get_context_data(self, **kwargs):
-        context = super(MyRequestsView, self).get_context_data(**kwargs)
-        if 'new' in self.request.GET:
-            self.request.user.is_new = True
-        return context
-
-
-class FollowingRequestsView(BaseRequestListView):
-    template_name = 'account/show_following.html'
-    menu_item = 'following'
-
-    def get_queryset(self):
-        self.query = self.request.GET.get('q', None)
-        query_kwargs = {}
-        if self.query:
-            query_kwargs = {'title__icontains': self.query}
-        return FoiRequest.objects.filter(
-                foirequestfollower__user=self.request.user, **query_kwargs)
-
-
-class DraftRequestsView(BaseRequestListView):
-    template_name = 'account/show_drafts.html'
-    menu_item = 'drafts'
-
-    def get_queryset(self):
-        self.query = self.request.GET.get('q', None)
-        query_kwargs = {}
-        if self.query:
-            query_kwargs = {'subject__icontains': self.query}
-        return RequestDraft.objects.filter(
-                user=self.request.user, **query_kwargs)
-
-
-class FoiProjectListView(BaseRequestListView):
-    template_name = 'account/show_projects.html'
-    menu_item = 'projects'
-
-    def get_queryset(self):
-        self.query = self.request.GET.get('q', None)
-        query_kwargs = {}
-        if self.query:
-            query_kwargs = {'title__icontains': self.query}
-        return FoiProject.objects.get_for_user(
-            self.request.user, **query_kwargs
-        )
 
 
 def profile(request, slug):

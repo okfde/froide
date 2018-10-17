@@ -43,47 +43,49 @@
     </ul>
     <div class="tab-content">
       {% block pre_table %}{% endblock %}
-      <table class="table table-hover mt-3">
-        <thead>
-          <tr>
-            {% block table_head %}
-            <th>{% blocktrans %}Status{% endblocktrans %}</th>
-            <th>{% blocktrans %}Title{% endblocktrans %}</th>
-            {% endblock table_head %}
-          </tr>
-        </thead>
-        <tbody>
-      {% for object in object_list %}
-        {% block table_row %}
-        <tr class="{% if object.user == request.user and object.is_important %}warning{% endif %}">
-          <td>
-            <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
-          </td>
-          <td class="request-link__body">
-            {% include "foirequest/snippets/request_item_inner.html" %}
+      <div class="table-responsive">
+        <table class="table table-hover mt-3">
+          <thead>
+            <tr>
+              {% block table_head %}
+              <th>{% blocktrans %}Status{% endblocktrans %}</th>
+              <th>{% blocktrans %}Title{% endblocktrans %}</th>
+              {% endblock table_head %}
+            </tr>
+          </thead>
+          <tbody>
+        {% for object in object_list %}
+          {% block table_row %}
+          <tr class="{% if object.user == request.user and object.is_important %}warning{% endif %}">
+            <td>
+              <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
+            </td>
+            <td class="request-link__body">
+              {% include "foirequest/snippets/request_item_inner.html" %}
 
-            {% if object.status == "awaiting_response" %}
-              {% if object.due_date %}
-                <small>
-                  {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
-                </small>
+              {% if object.status == "awaiting_response" %}
+                {% if object.due_date %}
+                  <small>
+                    {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
+                  </small>
+                {% endif %}
               {% endif %}
-            {% endif %}
 
-            {% if not object.public and object.user == request.user %}
-              <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-                {% csrf_token %}
-                  <button type="submit" class="btn btn-secondary">
-                    {% blocktrans %}Publish{% endblocktrans %}
-                  </button>
-                </form>
-            {% endif %}
-          </td>
-        </tr>
-        {% endblock %}
-      {% endfor %}
-        </tbody>
-      </table>
+              {% if not object.public and object.user == request.user %}
+                <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+                  {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">
+                      {% blocktrans %}Publish{% endblocktrans %}
+                    </button>
+                  </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endblock %}
+        {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% if page_obj.has_other_pages %}
         {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
       {% endif %}

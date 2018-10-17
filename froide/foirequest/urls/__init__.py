@@ -11,7 +11,8 @@ from . import (
     make_request_urls,
     list_requests_urls,
     request_urls,
-    project_urls
+    project_urls,
+    account_urls
 )
 
 
@@ -25,6 +26,8 @@ urlpatterns = [
     # Translators: project URL
     url(r'^%s/' % pgettext('url part', 'project'), include(project_urls)),
 
+    # Translators: project URL
+    url(r'^%s/' % pgettext('url part', 'account'), include(account_urls)),
 
     # Translators: request URL
     url(r'^%s/' % pgettext('url part', 'search'), search, name="foirequest-search"),

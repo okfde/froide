@@ -88,7 +88,7 @@ class DropDownStatusFilterWidget(DropDownFilterWidget):
         return option
 
 
-class FoiRequestFilterSet(django_filters.FilterSet):
+class BaseFoiRequestFilterSet(django_filters.FilterSet):
     q = django_filters.CharFilter(
         method='auto_query',
         widget=forms.TextInput(
@@ -159,7 +159,7 @@ class FoiRequestFilterSet(django_filters.FilterSet):
         model = FoiRequest
         fields = [
             'q', 'status', 'jurisdiction',
-            'category', 'tag', 'publicbody'
+            'category', 'tag', 'publicbody', 'first'
         ]
 
     def filter_queryset(self, queryset):
@@ -179,9 +179,12 @@ class FoiRequestFilterSet(django_filters.FilterSet):
     def auto_query(self, qs, name, value):
         if value:
             return qs.set_query(Q(
-                "multi_match",
+                "simple_query_string",
                 query=value,
-                fields=['content', 'title', 'description']
+                analyzer='standard',
+                fields=['title^5', 'description^3', 'content'],
+                default_operator='and',
+                lenient=True
             ))
         return qs
 
@@ -198,7 +201,7 @@ class FoiRequestFilterSet(django_filters.FilterSet):
         return qs.filter(public_body__categories=value.id)
 
     def filter_tag(self, qs, name, value):
-        return qs.filter(tags=value.name)
+        return qs.filter(tags=value.id)
 
     def filter_publicbody(self, qs, name, value):
         return qs.filter(publicbody=value.id)
@@ -219,3 +222,7 @@ class FoiRequestFilterSet(django_filters.FilterSet):
         if value.stop is not None:
             range_kwargs['lte'] = value.stop
         return qs.filter(Q('range', last_message=range_kwargs))
+
+
+class FoiRequestFilterSet(BaseFoiRequestFilterSet):
+    pass

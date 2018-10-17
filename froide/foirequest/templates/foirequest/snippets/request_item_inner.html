@@ -26,3 +26,9 @@
     </small>
   </h5>
 </div>
+{% if object.es_highlight %}
+<div class="request-link__highlight">
+  {{ object.es_highlight }}
+</div>
+{% endif %}
+

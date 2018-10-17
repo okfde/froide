@@ -1,0 +1,73 @@
+{% load i18n %}
+{% load humanize %}
+
+<form action="" method="get" class="mb-5 search-form">
+  <div class="row mt-2 mb-2 align-items-start">
+    <div class="col-md-6">
+      <div class="input-group">
+        {{ form.q }}
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-outline-primary">
+            {% trans "Search" %}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 text-right">
+      <a class="btn btn-light" role="button" aria-expanded="false" aria-controls="search-filter-advanced"
+        data-toggle="collapse" href="#search-filter-advanced">
+          <i class="fa fa-cogs"></i>
+          <span class="sr-only">{% trans "Show advanced filter" %}</span>
+      </a>
+      {% if filtered_objects %}
+      <a class="btn btn btn-light" href="./">
+        <i class="fa fa-remove"></i>
+        <span class="sr-only">{% trans "Show all FoI requests" %}</span>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="collapse{% if is_filtered %} show{% endif %}" id="search-filter-advanced">
+
+    <div class="row align-items-start">
+      {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+        <div class="col-md-3">
+          {{ form.jurisdiction }}
+        </div>
+      {% else %}
+        {{ form.jurisdiction }}
+      {% endif %}
+
+      {% if "status" in show_filters %}
+        <div class="col-md-3">
+          {{ form.status }}
+        </div>
+      {% else %}
+        {{ form.status }}
+      {% endif %}
+
+      {% if "category" in show_filters %}
+        <div class="col-md-3">
+          {{ form.category }}
+        </div>
+      {% else %}
+        {{ form.category }}
+      {% endif %}
+
+      {{ form.publicbody }}
+      {{ form.tag }}
+    </div>
+
+    <div class="row mt-2">
+      {% if 'first' in show_filters %}
+        <div class="col-md-6">
+          <label>
+            {% trans "request date" %}
+            {{ form.first }}
+          </label>
+        </div>
+      {% endif %}
+    </div>  
+  </div>
+  
+</form>
