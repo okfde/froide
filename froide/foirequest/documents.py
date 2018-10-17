@@ -54,7 +54,7 @@ class FoiRequestDocument(DocType):
         })
 
     def prepare_tags(self, obj):
-        return [tag.name for tag in obj.tags.all()]
+        return [tag.id for tag in obj.tags.all()]
 
     def prepare_public(self, obj):
         return obj.in_public_search_index()
