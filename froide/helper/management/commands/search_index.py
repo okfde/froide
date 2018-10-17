@@ -9,10 +9,11 @@ class Command(DESCommand):
     def _populate(self, models, options):
         for doc in registry.get_documents(models):
             qs = doc().get_queryset()
+            chunk_size = getattr(doc._doc_type, 'queryset_pagination', CHUNK_SIZE)
             self.stdout.write(
                 "Indexing {} '{}' objects "
                 "with custom chunk_size {}".format(
-                    qs.count(), doc._doc_type.model.__name__, CHUNK_SIZE
+                    qs.count(), doc._doc_type.model.__name__, chunk_size
                 )
             )
-            doc().update(qs, chunk_size=CHUNK_SIZE)
+            doc().update(qs, chunk_size=chunk_size)
