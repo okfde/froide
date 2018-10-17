@@ -12,7 +12,8 @@ analyzer = get_text_analyzer()
 @index.doc_type
 class FoiRequestDocument(DocType):
     content = fields.TextField(
-        analyzer=analyzer
+        analyzer=analyzer,
+        index_options='offsets'
     )
     title = fields.TextField()
     description = fields.TextField()
@@ -39,7 +40,7 @@ class FoiRequestDocument(DocType):
 
     class Meta:
         model = FoiRequest
-        queryset_pagination = 100
+        queryset_pagination = 50
 
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""

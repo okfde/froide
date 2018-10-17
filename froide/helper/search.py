@@ -3,6 +3,8 @@ import importlib
 from django.conf import settings
 from django.utils.http import urlencode
 from django.urls import reverse
+from django.core.paginator import Paginator
+from django.utils.safestring import mark_safe
 
 from django_elasticsearch_dsl import Index
 from django_elasticsearch_dsl.signals import RealTimeSignalProcessor
@@ -116,7 +118,17 @@ def get_facet_with_label(info, model=None, attr='name'):
         }
 
 
-def resolve_facet(data, getter, model=None, make_url=None):
+def key_getter(item):
+    return item['key']
+
+
+def resolve_facet(data, getter=None, label_getter=None, model=None, make_url=None):
+    if getter is None:
+        getter = key_getter
+
+    if label_getter is None:
+        label_getter = key_getter
+
     def resolve(key, info):
         if model is not None:
             pks = [item['key'] for item in info['buckets']]
@@ -126,14 +138,20 @@ def resolve_facet(data, getter, model=None, make_url=None):
             for item in info['buckets']:
                 item['object'] = objs[item['key']]
         for item in info['buckets']:
-            item['active'] = getter(item['object']) == data.get(key)
+            item['active'] = getter(item) == data.get(key)
+            item['label'] = label_getter(item)
             d = data.copy()
-            d[key] = getter(item['object'])
+            d[key] = getter(item)
             item['url'] = make_url(d)
             d.pop(key)
             item['clear_url'] = make_url(d)
         return info
     return resolve
+
+
+class EmtpyResponse(list):
+    class hits:
+        total = 0
 
 
 class SearchQuerySetWrapper(object):
@@ -147,13 +165,15 @@ class SearchQuerySetWrapper(object):
         self.filters = []
         self.query = None
         self.aggs = []
-        self._response = None
 
     def count(self):
         return self.response.hits.total
 
     def to_queryset(self):
         return self.sqs.to_queryset()
+
+    def wrap_queryset(self, qs):
+        return ESQuerySetWrapper(qs, self.response)
 
     def update_query(self):
         if self.filters:
@@ -166,7 +186,10 @@ class SearchQuerySetWrapper(object):
     def response(self):
         if not hasattr(self.sqs, '_response'):
             self.sqs = self.sqs.source(excludes=['*'])
-        return self.sqs.execute()
+        try:
+            return self.sqs.execute()
+        except Exception:
+            return EmtpyResponse()
 
     def add_aggregation(self, aggs):
         for field in aggs:
@@ -212,6 +235,57 @@ class SearchQuerySetWrapper(object):
 
     def __iter__(self):
         return iter(self.sqs)
+
+
+class ESQuerySetWrapper(object):
+    def __init__(self, qs, es_response):
+        self.__class__ = type(
+            qs.__class__.__name__,
+            (self.__class__, qs.__class__),
+            {}
+        )
+        self.__dict__ = qs.__dict__
+        self._qs = qs
+        self._es_response = es_response
+        self._es_map = {
+            int(hit.meta.id): hit for hit in es_response
+        }
+
+    def __iter__(self):
+        for obj in self._qs:
+            hit = self._es_map[obj.pk]
+            # mark_safe should work because highlight_options
+            # has been set with encoder="html"
+            obj.es_highlight = mark_safe(' '.join(self._get_highlight(hit)))
+            yield obj
+
+    def _get_highlight(self, hit):
+        if hasattr(hit.meta, 'highlight'):
+            for key in hit.meta.highlight:
+                yield from hit.meta.highlight[key]
+
+
+class ElasticsearchPaginator(Paginator):
+    """
+    Paginator that prevents two queries to ES (for count and objects)
+    as ES gives count with objects
+    """
+
+    def page(self, number):
+        """
+        Returns a Page object for the given 1-based page number.
+        """
+        bottom = (number - 1) * self.per_page
+        top = bottom + self.per_page
+        self.object_list = self.object_list[bottom:top]
+
+        # ignore top boundary
+        # if top + self.orphans >= self.count:
+        #     top = self.count
+
+        # Validate number after limit/offset has been set
+        number = self.validate_number(number)
+        return self._get_page(self.object_list, number, self)
 
 
 class CelerySignalProcessor(RealTimeSignalProcessor):

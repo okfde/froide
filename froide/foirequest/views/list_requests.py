@@ -6,7 +6,7 @@ from django.urls import reverse
 from froide.helper.utils import render_403
 from froide.helper.search import (
     SearchQuerySetWrapper, resolve_facet, make_filter_url,
-    get_pagination_vars
+    get_pagination_vars, ElasticsearchPaginator
 )
 
 from froide.publicbody.models import Jurisdiction
@@ -19,33 +19,44 @@ from ..filters import (
 from ..documents import FoiRequestDocument
 
 
-def make_url(data):
-    return make_filter_url(
-        'foirequest-list',
-        data,
-        get_active_filters=get_active_filters
-    )
-
-
-class ListRequestView(ListView):
+class BaseListRequestView(ListView):
     allow_empty = True
     template_name = 'foirequest/list.html'
     paginate_by = 30
-    feed = None
+    paginator_class = ElasticsearchPaginator
+    show_filters = {
+        'jurisdiction', 'status', 'category'
+    }
+
+    facet_config = {
+        'jurisdiction': {
+            'model': Jurisdiction,
+            'getter': lambda x: x['object'].slug,
+            'label_getter': lambda x: x['object'].name,
+            'label': _('jurisdictions'),
+        }
+    }
+
+    def get_base_search(self):
+        return FoiRequestDocument.search().filter('term', public=True)
+
+    def get_filterset(self, *args, **kwargs):
+        return FoiRequestFilterSet(*args, **kwargs)
 
     def get_queryset(self):
         self.filter_data = get_filter_data(self.kwargs, dict(self.request.GET.items()))
-        s = FoiRequestDocument.search().filter('term', public=True)
-
+        s = self.get_base_search()
         self.has_query = self.filter_data.get('q')
         if not self.has_query:
             s = s.sort('-last_message')
         else:
+            # s = s.highlight_options(encoder='html')
+            s = s.highlight('content')
             s = s.sort('_score', '-last_message')
 
         sqs = SearchQuerySetWrapper(s, FoiRequest)
 
-        filtered = FoiRequestFilterSet(self.filter_data, queryset=sqs)
+        filtered = self.get_filterset(self.filter_data, queryset=sqs)
         self.form = filtered.form
         self.form.is_valid()
 
@@ -59,15 +70,44 @@ class ListRequestView(ListView):
 
         sqs = filtered.qs
 
-        if self.has_query:
-            sqs = sqs.add_aggregation([
-                'jurisdiction'
-            ])
+        sqs = self.add_facets(sqs)
 
         filtered_objs = filtered.form.cleaned_data
         self.filtered_objs = {k: v for k, v in filtered_objs.items() if v}
 
         return sqs
+
+    def make_filter_url(self, data):
+        return make_filter_url(
+            self.request.resolver_match.url_name,
+            data
+        )
+
+    def show_facets(self):
+        return True
+
+    def add_facets(self, sqs):
+        if self.show_facets():
+            sqs = sqs.add_aggregation(
+                list(self.facet_config.keys())
+            )
+        return sqs
+
+    def get_facet_resolvers(self):
+        return {
+            key: resolve_facet(
+                self.filter_data,
+                getter=config.get('getter'),
+                model=config.get('model'),
+                label_getter=config.get('label_getter'),
+                make_url=self.make_filter_url
+            ) for key, config in self.facet_config.items()
+        }
+
+    def resolve_facets(self, sqs):
+        if self.show_facets():
+            return sqs.get_facets(resolvers=self.get_facet_resolvers())
+        return None
 
     def paginate_queryset(self, sqs, page_size):
         """
@@ -76,36 +116,44 @@ class ListRequestView(ListView):
         paginator, page, sqs, is_paginated = super().paginate_queryset(sqs, page_size)
 
         self.count = sqs.count()
-        queryset = sqs.to_queryset().select_related(
+        queryset = sqs.wrap_queryset(sqs.to_queryset().select_related(
             'public_body',
             'jurisdiction'
-        )
-        self.facets = None
-        if self.has_query:
-            self.facets = sqs.get_facets(resolvers={
-                'jurisdiction': resolve_facet(
-                    self.filter_data,
-                    lambda o: o.slug,
-                    Jurisdiction,
-                    make_url=make_url
-                )
-            })
+        ))
+        self.facets = self.resolve_facets(sqs)
 
         return (paginator, page, queryset, is_paginated)
 
     def get_context_data(self, **kwargs):
-        context = super(ListRequestView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context.update({
             'page_title': _("FoI Requests"),
             'count': self.count,
             'form': self.form,
             'facets': self.facets,
+            'facet_config': self.facet_config,
             'has_query': self.has_query,
+            'show_filters': self.show_filters,
+            'is_filtered': bool(set(self.filter_data) - {'q'}),
             'getvars': get_pagination_vars(self.filter_data),
             'filtered_objects': self.filtered_objs
         })
         return context
+
+
+class ListRequestView(BaseListRequestView):
+    feed = None
+
+    def show_facets(self):
+        return self.has_query
+
+    def make_filter_url(self, data):
+        return make_filter_url(
+            self.request.resolver_match.url_name,
+            data,
+            get_active_filters=get_active_filters
+        )
 
     def render_to_response(self, context, **response_kwargs):
         if self.feed is not None:
@@ -116,7 +164,7 @@ class ListRequestView(ListView):
             feed_obj = klass(context['object_list'], **self.filtered_objs)
             return feed_obj(self.request)
 
-        return super(ListRequestView, self).render_to_response(
+        return super().render_to_response(
             context, **response_kwargs
         )
 
