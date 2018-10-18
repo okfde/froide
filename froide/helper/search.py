@@ -1,12 +1,14 @@
 import importlib
 
 from django.conf import settings
+from django.db import models
 from django.utils.http import urlencode
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.utils.safestring import mark_safe
 
 from django_elasticsearch_dsl import Index
+from django_elasticsearch_dsl.registries import registry
 from django_elasticsearch_dsl.signals import RealTimeSignalProcessor
 
 from elasticsearch_dsl import analyzer, tokenizer, A
@@ -289,6 +291,22 @@ class ElasticsearchPaginator(Paginator):
 
 
 class CelerySignalProcessor(RealTimeSignalProcessor):
+    def setup(self):
+        for model in registry.get_models():
+            models.signals.post_save.connect(self.handle_save, sender=model)
+            models.signals.post_delete.connect(self.handle_delete, sender=model)
+
+            models.signals.m2m_changed.connect(self.handle_m2m_changed, sender=model)
+            models.signals.pre_delete.connect(self.handle_pre_delete, sender=model)
+
+    def teardown(self):
+        # Listen to all model saves.
+        for model in registry.get_models():
+            models.signals.post_save.disconnect(self.handle_save, sender=model)
+            models.signals.post_delete.disconnect(self.handle_delete, sender=model)
+            models.signals.m2m_changed.disconnect(self.handle_m2m_changed, sender=model)
+            models.signals.pre_delete.disconnect(self.handle_pre_delete, sender=model)
+
     def handle_save(self, sender, instance, **kwargs):
         """Handle save.
 
