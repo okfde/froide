@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 12:47+0200\n"
-"PO-Revision-Date: 2018-10-18 12:48+0100\n"
+"POT-Creation-Date: 2018-10-18 13:34+0200\n"
+"PO-Revision-Date: 2018-10-18 13:37+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3393,30 +3393,49 @@ msgstr "in der Kategorie „%(name)s“"
 
 #: froide/foirequest/templates/foirequest/list.html:48
 #, python-format
+msgid ""
+"\n"
+"        Your search produced one search result.\n"
+"      "
+msgid_plural ""
+"\n"
+"        Your search produced %(request_count)s search results.\n"
+"      "
+msgstr[0] ""
+"\n"
+"            Ihre Suche nach ergab eine Anfrage.\n"
+"          "
+msgstr[1] ""
+"\n"
+"            Ihre Suche ergab %(request_count)s Anfragen.\n"
+"          "
+
+#: froide/foirequest/templates/foirequest/list.html:54
+#, python-format
 msgid "One request"
 msgid_plural "%(num)s requests"
 msgstr[0] "Eine Anfrage"
 msgstr[1] "%(num)s Anfragen"
 
-#: froide/foirequest/templates/foirequest/list.html:70
+#: froide/foirequest/templates/foirequest/list.html:81
 msgid "No requests with these filters."
 msgstr "Noch keine Anfragen mit diesen Filtereinstellungen."
 
-#: froide/foirequest/templates/foirequest/list.html:72
+#: froide/foirequest/templates/foirequest/list.html:83
 msgid "No requests yet."
 msgstr "Noch keine Anfragen."
 
-#: froide/foirequest/templates/foirequest/list.html:83
+#: froide/foirequest/templates/foirequest/list.html:94
 msgid "Feeds for these requests"
 msgstr "Feeds für diese Anfragen"
 
-#: froide/foirequest/templates/foirequest/list.html:87
+#: froide/foirequest/templates/foirequest/list.html:98
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:85
 #: froide/publicbody/templates/publicbody/show.html:156
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
-#: froide/foirequest/templates/foirequest/list.html:93
+#: froide/foirequest/templates/foirequest/list.html:104
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:91
 #: froide/publicbody/templates/publicbody/show.html:161
 msgid "Atom Feed"
