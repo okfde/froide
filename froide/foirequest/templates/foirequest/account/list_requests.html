@@ -1,6 +1,7 @@
 {% extends "account/show.html" %}
 {% load i18n %}
 {% load searchtags %}
+{% load humanize %}
 
 {% block pre_table %}
   <div class="row">
@@ -10,13 +11,13 @@
 
       <p>
         {% if is_filtered %}
-          {% blocktrans count request_count=page_obj.paginator.count %}
+          {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
             Your search produced one search result.
           {% plural %}
             Your search produced {{ request_count }} search results.
           {% endblocktrans %}
         {% else %}
-          {% blocktrans count request_count=page_obj.paginator.count %}
+          {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
             You have one request so far.
           {% plural %}
             You have {{ request_count }} requests.

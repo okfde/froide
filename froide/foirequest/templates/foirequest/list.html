@@ -43,10 +43,21 @@
 {% include "foirequest/_request_search.html" with search_url=search_url %}
 
 <div class="row">
-<!-- 
   <div class="ml-auto col-auto">
-    {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
-  </div> -->
+    {% if filtered_objects %}
+      {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
+        Your search produced one search result.
+      {% plural %}
+        Your search produced {{ request_count }} search results.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+
 
   {% if has_query %}
   <div class="col-md-4">
