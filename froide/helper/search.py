@@ -313,10 +313,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         Given an individual model instance, update the object in the index.
         Update the related objects either.
         """
-        if instance.in_public_search_index():
-            search_instance_delete.delay(instance)
-        else:
-            search_instance_save.delay(instance)
+        search_instance_save.delay(instance)
 
     def handle_pre_delete(self, sender, instance, **kwargs):
         """Handle removing of instance object from related models instance.
