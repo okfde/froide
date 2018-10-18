@@ -1,3 +1,6 @@
+import re
+from urllib.parse import urlencode
+
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView
@@ -17,6 +20,9 @@ from ..filters import (
     get_filter_data, get_active_filters, FoiRequestFilterSet
 )
 from ..documents import FoiRequestDocument
+
+
+NUM_RE = re.compile(r'^\[?\#?(\d+)\]?$')
 
 
 class BaseListRequestView(ListView):
@@ -145,6 +151,17 @@ class BaseListRequestView(ListView):
 class ListRequestView(BaseListRequestView):
     feed = None
 
+    def get(self, request, *args, **kwargs):
+        q = request.GET.get('q', '')
+        id_match = NUM_RE.match(q)
+        if id_match is not None:
+            try:
+                req = FoiRequest.objects.get(pk=id_match.group(1))
+                return redirect(req)
+            except FoiRequest.DoesNotExist:
+                pass
+        return super().get(request, *args, **kwargs)
+
     def show_facets(self):
         return self.has_query
 
@@ -170,7 +187,8 @@ class ListRequestView(BaseListRequestView):
 
 
 def search(request):
-    return redirect(reverse('foirequest-list') + '?q=' + request.GET.get("q", ""))
+    params = urlencode({'q': request.GET.get('q', '')})
+    return redirect(reverse('foirequest-list') + '?' + params)
 
 
 def list_unchecked(request):
