@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 13:34+0200\n"
-"PO-Revision-Date: 2018-10-18 13:37+0100\n"
+"POT-Creation-Date: 2018-10-18 23:33+0200\n"
+"PO-Revision-Date: 2018-10-18 23:35+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1439,6 +1439,30 @@ msgstr "alle Kategorien"
 msgid "category"
 msgstr "Kategorie"
 
+#: froide/foirequest/filters.py:168
+msgid "last message (newest first)"
+msgstr "letzte Nachricht (neuere zuerst)"
+
+#: froide/foirequest/filters.py:169
+msgid "last message (oldest first)"
+msgstr "letzte Nachricht (ältere zuerst)"
+
+#: froide/foirequest/filters.py:170
+msgid "request date (newest first)"
+msgstr "Anfragedatum (neuere zuerst)"
+
+#: froide/foirequest/filters.py:171
+msgid "request date (oldest first)"
+msgstr "Anfragedatum (ältere zuerst)"
+
+#: froide/foirequest/filters.py:173 froide/foirequest/filters.py:177
+msgid "sort"
+msgstr "Sortierung"
+
+#: froide/foirequest/filters.py:174
+msgid "default sort"
+msgstr "Standard-Sortierung"
+
 #: froide/foirequest/foi_mail.py:20
 #, python-format
 msgid ""
@@ -2635,6 +2659,7 @@ msgid "Show all FoI requests"
 msgstr "Zeige alle Informationsfreiheitsanfragen"
 
 #: froide/foirequest/templates/foirequest/_request_search.html:64
+#: froide/foirequest/templates/foirequest/_request_search.html:71
 msgid "request date"
 msgstr "Anfragedatum"
 
@@ -2803,7 +2828,7 @@ msgstr[1] ""
 msgid "Requests"
 msgstr "Anfragen"
 
-#: froide/foirequest/templates/foirequest/account/list_requests.html:13
+#: froide/foirequest/templates/foirequest/account/list_requests.html:14
 #, python-format
 msgid ""
 "\n"
@@ -2822,7 +2847,7 @@ msgstr[1] ""
 "            Ihre Suche ergab %(request_count)s Anfragen.\n"
 "          "
 
-#: froide/foirequest/templates/foirequest/account/list_requests.html:19
+#: froide/foirequest/templates/foirequest/account/list_requests.html:20
 #, python-format
 msgid ""
 "\n"
