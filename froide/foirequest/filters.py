@@ -212,7 +212,7 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
         return qs.filter(jurisdiction=value.id)
 
     def filter_category(self, qs, name, value):
-        return qs.filter(public_body__categories=value.id)
+        return qs.filter(categories=value.id)
 
     def filter_tag(self, qs, name, value):
         return qs.filter(tags=value.id)
