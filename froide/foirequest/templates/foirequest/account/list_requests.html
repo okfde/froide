@@ -5,8 +5,8 @@
 {% block pre_table %}
   <div class="row">
     <div class="col-12 mt-2">
-      {% trans "Search your requests" as search_title %}
-      {% include "foirequest/_request_search.html" with title=search_title %}
+      {% url "account-requests" as search_url %}
+      {% include "foirequest/_request_search.html" with search_url=search_url %}
 
       <p>
         {% if is_filtered %}

@@ -7,7 +7,7 @@ class DropDownFilterWidget(forms.widgets.ChoiceWidget):
     template_name = 'foirequest/widgets/dropdown_filter.html'
 
     def __init__(self, *args, **kwargs):
-        self.get_url = kwargs.pop('get_url')
+        self.get_url = kwargs.pop('get_url', None)
         super().__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None, renderer=None):

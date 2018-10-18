@@ -1,15 +1,16 @@
 <div class="dropdown show">
+  <input type="hidden" name="{{ widget.name }}" value="{{ widget.value.0 }}"/>
   <a class="btn btn-light btn-block text-truncate dropdown-toggle" href="#" role="button" id="dropdown-{{ widget.attrs.id }}" title="{{ selected_label }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     {% if selected_label == default_label %}
       {{ default_label }}
     {% else %}
-      {{ default_label }}: {{ selected_label }}
+      {{ selected_label|truncatewords:4 }}
     {% endif %}
   </a>
   <div class="dropdown-menu" aria-labelledby="dropdown-{{ widget.attrs.id }}">
     {% for group_name, group_choices, group_index in widget.optgroups %}
       {% for option in group_choices %}
-        <a class="dropdown-item{% if option.selected %} active{% endif %}" href="{{ option.url }}">
+        <a class="dropdown-item{% if option.selected %} active{% endif %}" href="{{ option.url }}" data-value="{{ option.value }}">
           {% if option.icon %}
             <span class="small-icon {{ option.icon }}"></span>
           {% endif %}

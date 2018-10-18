@@ -38,61 +38,16 @@
 </div>
 
 {% endblock headline %}
-<form action="{% url 'foirequest-list' %}" method="get">
 
-  <div class="row mb-2 align-items-start">
-    <div class="col-md-6">
-      <div class="input-group">
-        {{ form.q }}
-        <div class="input-group-append">
-          <button type="submit" class="btn btn-outline-primary">
-            {% trans "Search" %}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-5 align-items-start">
-    {% if form.jurisdiction.field.choices|length > 1 %}
-      <div class="col-md-3">
-        {{ form.jurisdiction }}
-      </div>
-    {% endif %}
-
-    <div class="col-md-3">
-      {{ form.status }}
-    </div>
-
-    {% comment %}
-    <div class="col-md-8">
-      {{ form.first }}
-    </div>
-    {% endcomment %}
-    <div class="col-auto">
-      {{ form.category }}
-    </div>
-
-    {{ form.publicbody }}
-    {{ form.tag }}
-
-  {% if filtered_objects %}
-    <div class="ml-auto col-auto">
-      <a class="btn btn btn-light" href="{% url 'foirequest-list' %}">
-        {% trans "Show all FoI requests" %}
-      </a>
-    </div>
-  {% endif %}
-
-  <div class="ml-auto col-auto">
-    {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
-  </div>
-</div>
-
-</form>
-
+{% url "foirequest-list" as search_url %}
+{% include "foirequest/_request_search.html" with search_url=search_url %}
 
 <div class="row">
+<!-- 
+  <div class="ml-auto col-auto">
+    {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
+  </div> -->
+
   {% if has_query %}
   <div class="col-md-4">
     <dl>

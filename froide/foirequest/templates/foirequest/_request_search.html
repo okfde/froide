@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load humanize %}
 
-<form action="" method="get" class="mb-5 search-form">
+<form action="{{ search_url }}" method="get" class="mb-5 request-search">
   <div class="row mt-2 mb-2 align-items-start">
     <div class="col-md-6">
       <div class="input-group">
@@ -13,11 +13,18 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6 text-right">
+    {% if "status" in show_filters %}
+    <div class="col-md-4">
+      {{ form.status }}
+    </div>
+    {% else %}
+      {{ form.status }}
+    {% endif %}
+    <div class="col-md-2 ml-auto text-right">
       <a class="btn btn-light" role="button" aria-expanded="false" aria-controls="search-filter-advanced"
         data-toggle="collapse" href="#search-filter-advanced">
-          <i class="fa fa-cogs"></i>
-          <span class="sr-only">{% trans "Show advanced filter" %}</span>
+        <i class="fa fa-cogs"></i>
+        <span class="sr-only">{% trans "Show advanced filter" %}</span>
       </a>
       {% if filtered_objects %}
       <a class="btn btn btn-light" href="./">
@@ -27,7 +34,7 @@
       {% endif %}
     </div>
   </div>
-  <div class="collapse{% if is_filtered %} show{% endif %}" id="search-filter-advanced">
+  <div class="collapse{% if view.has_advanced_filters %} show{% endif %}" id="search-filter-advanced">
 
     <div class="row align-items-start">
       {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
@@ -36,14 +43,6 @@
         </div>
       {% else %}
         {{ form.jurisdiction }}
-      {% endif %}
-
-      {% if "status" in show_filters %}
-        <div class="col-md-3">
-          {{ form.status }}
-        </div>
-      {% else %}
-        {{ form.status }}
       {% endif %}
 
       {% if "category" in show_filters %}
@@ -58,16 +57,16 @@
       {{ form.tag }}
     </div>
 
-    <div class="row mt-2">
-      {% if 'first' in show_filters %}
+    {% if 'first' in show_filters %}
+      <div class="row mt-2">
         <div class="col-md-6">
           <label>
             {% trans "request date" %}
             {{ form.first }}
           </label>
         </div>
-      {% endif %}
-    </div>  
+      </div>
+    {% endif %}
   </div>
   
 </form>

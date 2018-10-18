@@ -27,6 +27,9 @@ SUB_FILTERS = {
 
 
 FOIREQUEST_FILTERS = [
+    (_("awaiting-classification"), (lambda x:
+        Q('term', status='awaiting_classification')),
+        'awaiting_classification'),
     (_("successful"), resolution_filter, 'successful'),
     (_("partially-successful"), resolution_filter,
         'partially_successful'),
@@ -54,6 +57,10 @@ FOIREQUEST_FILTER_CHOICES = [(x[0], x[3]) for x in FOIREQUEST_FILTERS]
 FOIREQUEST_FILTER_DICT = dict([(x[0], x[1:]) for x in FOIREQUEST_FILTERS])
 REVERSE_FILTER_DICT = dict([(x[2], x[:2] + x[3:]) for x in FOIREQUEST_FILTERS])
 FOIREQUEST_FILTER_RENDER = [(x[0], x[3], x[2]) for x in FOIREQUEST_FILTERS]
+
+FOIREQUEST_LIST_FILTER_CHOICES = [
+    x for x in FOIREQUEST_FILTER_CHOICES if x[0] not in {_("awaiting-classification")}
+]
 
 
 def get_active_filters(data):
@@ -98,10 +105,12 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
             }
         ),
     )
+    FOIREQUEST_FILTER_DICT = FOIREQUEST_FILTER_DICT
     status = django_filters.ChoiceFilter(
-        choices=FOIREQUEST_FILTER_CHOICES,
+        choices=FOIREQUEST_LIST_FILTER_CHOICES,
+        label=_('status'),
         empty_label=_('any status'),
-        widget=forms.Select(
+        widget=DropDownStatusFilterWidget(
             attrs={
                 'label': _('status'),
                 'class': 'form-control'
@@ -162,6 +171,11 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
             'category', 'tag', 'publicbody', 'first'
         ]
 
+    def __init__(self, *args, **kwargs):
+        self.view = kwargs.pop('view')
+        super().__init__(*args, **kwargs)
+        self.filters['status'].field.widget.get_url = self.view.make_filter_url
+
     def filter_queryset(self, queryset):
         """
         Filter the queryset with the underlying form's `cleaned_data`. You must
@@ -189,7 +203,7 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
         return qs
 
     def filter_status(self, qs, name, value):
-        parts = FOIREQUEST_FILTER_DICT[value]
+        parts = self.FOIREQUEST_FILTER_DICT[value]
         func = parts[0]
         status_name = parts[1]
         return qs.filter(func(status_name))

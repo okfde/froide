@@ -13,21 +13,31 @@ from .list_requests import BaseListRequestView
 
 from ..models import FoiRequest, FoiProject, RequestDraft
 from ..documents import FoiRequestDocument
-from ..filters import BaseFoiRequestFilterSet
+from ..filters import (
+    BaseFoiRequestFilterSet,
+    FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTER_CHOICES,
+    DropDownStatusFilterWidget
+)
+
 
 ACCOUNT_FILTERS = {'q', 'first', 'status', 'project'}
 
 
-class BaseAccountMixin(LoginRequiredMixin):
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['menu'] = self.menu_item
-        return context
-
-
 class AccountRequestFilterSet(BaseFoiRequestFilterSet):
+    FOIREQUEST_FILTER_DICT = FOIREQUEST_FILTER_DICT
+
+    status = django_filters.ChoiceFilter(
+        choices=FOIREQUEST_FILTER_CHOICES,
+        empty_label=_('any status'),
+        widget=DropDownStatusFilterWidget(
+            attrs={
+                'label': _('status'),
+                'class': 'form-control'
+            }
+        ),
+        method='filter_status',
+    )
+
     project = django_filters.ModelChoiceFilter(
         queryset=None,
         empty_label=_('all projects'),
@@ -44,10 +54,9 @@ class AccountRequestFilterSet(BaseFoiRequestFilterSet):
         fields = BaseFoiRequestFilterSet.Meta.fields + ['resolution']
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
-        project_qs = FoiProject.objects.filter(user=self.user)
+        project_qs = FoiProject.objects.filter(user=self.view.request.user)
         self.filters['project'].field.queryset = project_qs
 
         for field in self.filters:
@@ -56,6 +65,15 @@ class AccountRequestFilterSet(BaseFoiRequestFilterSet):
 
     def filter_project(self, qs, name, value):
         return qs.filter(project=value.id)
+
+
+class BaseAccountMixin(LoginRequiredMixin):
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = self.menu_item
+        return context
 
 
 class MyBaseListRequestView(BaseListRequestView):
@@ -86,9 +104,12 @@ class MyBaseListRequestView(BaseListRequestView):
         }
     }
     show_filters = ACCOUNT_FILTERS
+    advanced_filters = {
+        'first', 'project'
+    }
 
     def get_filterset(self, *args, **kwargs):
-        return AccountRequestFilterSet(*args, user=self.request.user, **kwargs)
+        return AccountRequestFilterSet(*args, view=self, **kwargs)
 
 
 class MyRequestsView(BaseAccountMixin, MyBaseListRequestView):

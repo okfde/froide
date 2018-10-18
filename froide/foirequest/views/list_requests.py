@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 from froide.helper.utils import render_403
 from froide.helper.search import (
@@ -33,6 +34,9 @@ class BaseListRequestView(ListView):
     show_filters = {
         'jurisdiction', 'status', 'category'
     }
+    advanced_filters = {
+        'jurisdiction', 'category'
+    }
 
     facet_config = {
         'jurisdiction': {
@@ -47,7 +51,11 @@ class BaseListRequestView(ListView):
         return FoiRequestDocument.search().filter('term', public=True)
 
     def get_filterset(self, *args, **kwargs):
-        return FoiRequestFilterSet(*args, **kwargs)
+        return FoiRequestFilterSet(*args, **kwargs, view=self)
+
+    @cached_property
+    def has_advanced_filters(self):
+        return bool(set(self.filtered_objs) & self.advanced_filters)
 
     def get_queryset(self):
         self.filter_data = get_filter_data(self.kwargs, dict(self.request.GET.items()))
