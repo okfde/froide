@@ -163,6 +163,23 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
         method='filter_last',
         widget=DateRangeWidget
     )
+    sort = django_filters.ChoiceFilter(
+        choices=[
+            ('-last', _('last message (newest first)')),
+            ('last', _('last message (oldest first)')),
+            ('-first', _('request date (newest first)')),
+            ('first', _('request date (oldest first)')),
+        ],
+        label=_('sort'),
+        empty_label=_('default sort'),
+        widget=forms.Select(
+            attrs={
+                'label': _('sort'),
+                'class': 'form-control'
+            }
+        ),
+        method='add_sort',
+    )
 
     class Meta:
         model = FoiRequest
@@ -236,6 +253,11 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
         if value.stop is not None:
             range_kwargs['lte'] = value.stop
         return qs.filter(Q('range', last_message=range_kwargs))
+
+    def add_sort(self, qs, name, value):
+        if value:
+            return qs.add_sort('%s_message' % value)
+        return qs
 
 
 class FoiRequestFilterSet(BaseFoiRequestFilterSet):

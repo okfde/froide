@@ -20,7 +20,7 @@ from ..filters import (
 )
 
 
-ACCOUNT_FILTERS = {'q', 'first', 'status', 'project'}
+ACCOUNT_FILTERS = {'q', 'first', 'status', 'project', 'sort'}
 
 
 class AccountRequestFilterSet(BaseFoiRequestFilterSet):
@@ -105,7 +105,7 @@ class MyBaseListRequestView(BaseListRequestView):
     }
     show_filters = ACCOUNT_FILTERS
     advanced_filters = {
-        'first', 'project'
+        'first', 'project', 'sort'
     }
 
     def get_filterset(self, *args, **kwargs):

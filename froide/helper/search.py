@@ -231,6 +231,10 @@ class SearchQuerySetWrapper(object):
         self.sqs = self.sqs.query(self.query)
         return self
 
+    def add_sort(self, *sorts):
+        self.sqs = self.sqs.sort(*sorts)
+        return self
+
     def __getitem__(self, key):
         self.sqs = self.sqs[key]
         return self
