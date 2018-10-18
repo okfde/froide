@@ -48,7 +48,12 @@ $(function () {
   setStatus()
 
   $('a[data-tabgo="tab"]').click(function (e) {
-    document.querySelector('.nav-link[href="' + $(this).attr('href') + '"]').Tab.show()
+    var href = this.attributes.getNamedItem('href').value
+    var el = document.querySelector(href)
+    if (el.style.display === 'none') {
+      document.querySelector('.nav-link[href="' + href + '"]').Tab.show()
+    }
+    el.scrollTo({behavior: 'smooth'})
   })
 
   let activeTab = requestNav.dataset.activetab
