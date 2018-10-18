@@ -4,9 +4,7 @@ import 'es6-promise/auto'
 
 import 'bootstrap.native'
 
-// let el = document.querySelector('[data-toggle="collapse"]')
-// /* eslint-disable no-new */
-// new Collapse(el)
+import './snippets/request-search.js'
 
 module.exports = {
 }
