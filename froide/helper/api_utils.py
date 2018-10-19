@@ -184,7 +184,7 @@ class OpenRefineReconciliationMixin(object):
     def _search_reconciliation_results(self, query, filters, limit):
         sqs = self.RECONCILIATION_META.document.search()
         for key, val in filters.items():
-            sqs = sqs.filter(**{key: val})
+            sqs = sqs.filter('term', **{key: val})
         sqs = sqs.query(Q(
                 "multi_match",
                 query=query,
@@ -194,7 +194,7 @@ class OpenRefineReconciliationMixin(object):
             yield {
                 'id': str(r.meta.id),
                 'name': r.name,
-                'type': [self.RECONCILIATION_META.model.__class__.name],
+                'type': [self.RECONCILIATION_META.model.__name__],
                 'score': r.meta.score,
                 'match': r.meta.score >= 4  # FIXME: this is quite arbitrary
             }
