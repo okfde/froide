@@ -117,7 +117,7 @@ export default {
       },
       set (value) {
         this.emailValue = value
-        this.$emit('update:intialEmail', value)
+        this.$emit('update:initialEmail', value)
       }
     },
     address: {
