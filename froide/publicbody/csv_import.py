@@ -6,6 +6,7 @@ import requests
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 from taggit.utils import parse_tags
 
@@ -13,6 +14,7 @@ from froide.publicbody.models import (
     PublicBody, PublicBodyTag,
     Jurisdiction, Classification, Category
 )
+from froide.georegion.models import GeoRegion
 
 User = get_user_model()
 
@@ -48,12 +50,21 @@ class CSVImporter(object):
 
     def import_row(self, row):
         # generate slugs
-        row['name'] = row['name'].strip()
-        row['email'] = row['email'].lower()
-        if row['url'] and not row['url'].startswith(('http://', 'https://')):
-            row['url'] = 'http://' + row['url']
-        row['slug'] = slugify(row['name'])
-        row['classification'] = self.get_classification(row.pop('classification', None))
+        if 'name' in row:
+            row['name'] = row['name'].strip()
+
+        if 'email' in row:
+            row['email'] = row['email'].lower()
+
+        if 'url' in row:
+            if row['url'] and not row['url'].startswith(('http://', 'https://')):
+                row['url'] = 'http://' + row['url']
+
+        if 'slug' not in row and 'name' in row:
+            row['slug'] = slugify(row['name'])
+
+        if 'classification' in row:
+            row['classification'] = self.get_classification(row.pop('classification', None))
 
         categories = parse_tags(row.pop('categories', ''))
         categories = list(self.get_categories(categories))
@@ -65,17 +76,28 @@ class CSVImporter(object):
             tags.append(self.get_topic(topic_slug))
 
         # resolve foreign keys
-        row['jurisdiction'] = self.get_jurisdiction(row.pop('jurisdiction__slug'))
+        if 'jurisdiction__slug' in row:
+            row['jurisdiction'] = self.get_jurisdiction(row.pop('jurisdiction__slug'))
+
+        if 'georegion_id' in row:
+            row['georegion'] = self.get_georegion(id=row.pop('georegion_id'))
+        elif 'georegion_identifier' in row:
+            row['georegion'] = self.get_georegion(
+                identifier=row.pop('georegion_identifier')
+            )
+
         parent = row.pop('parent__name', None)
         if parent:
             row['parent'] = PublicBody.objects.get(slug=slugify(parent))
+
         parent = row.pop('parent__id', None)
         if parent:
             row['parent'] = PublicBody.objects.get(pk=parent)
 
         # get optional values
         for n in ('description', 'other_names', 'request_note', 'website_dump'):
-            row[n] = row.get(n, '')
+            if n in row:
+                row[n] = row.get(n, '').strip()
 
         try:
             if 'id' in row and row['id']:
@@ -86,6 +108,7 @@ class CSVImporter(object):
             row.pop('id', None)  # Do not update id though
             row.pop('slug', None)  # Do not update slug either
             row['_updated_by'] = self.user
+            row['updated_at'] = timezone.now()
             PublicBody.objects.filter(id=pb.id).update(**row)
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
@@ -98,6 +121,8 @@ class CSVImporter(object):
         pb = PublicBody(**row)
         pb._created_by = self.user
         pb._updated_by = self.user
+        pb.created_at = timezone.now()
+        pb.updated_at = timezone.now()
         pb.confirmed = True
         pb.site = self.site
         pb.save()
@@ -121,6 +146,13 @@ class CSVImporter(object):
                 category = Category.objects.get(name=cat)
                 self.category_cache[cat] = category
                 yield category
+
+    def get_georegion(self, id=None, identifier=None, name=None):
+        if id is not None:
+            return GeoRegion.objects.get(id=id)
+        if identifier is not None:
+            return GeoRegion.objects.get(region_identifier=identifier)
+        return None
 
     def get_topic(self, slug):
         if slug not in self.topic_cache:
