@@ -187,6 +187,11 @@ def check_delivery_conditions(recipient_mail, sender_email,
                               mail_bytes, manual=False):
     from .models import DeferredMessage
 
+    if (not settings.FOI_EMAIL_FIXED_FROM_ADDRESS and
+            recipient_mail == settings.FOI_EMAIL_HOST_USER):
+        # foi mailbox email, but custom email required, dropping
+        return None, None
+
     foirequest = get_foirequest_from_mail(recipient_mail)
     if not foirequest:
         deferred = DeferredMessage.objects.filter(
