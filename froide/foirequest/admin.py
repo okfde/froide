@@ -409,7 +409,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     ordering = ('-timestamp',)
     list_display = (
         'recipient', 'timestamp', 'spam', 'delivered', 'get_email_details',
-        'request_last_message', 'request_status', 'request',)
+        'request_last_message', 'request_status', 'request_page',)
     raw_id_fields = ('request',)
     actions = [
         'deliver_no_spam', 'redeliver', 'redeliver_subject', 'close_request'
@@ -432,6 +432,12 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     def request_status(self, obj):
         if obj.request:
             return obj.request.get_status_display()
+
+    def request_page(self, obj):
+        if obj.request:
+            return format_html('<a href="{}">{}</a>',
+                obj.request.get_absolute_url(), obj.request.title)
+    request_page.allow_tags = True
 
     def get_email_details(self, obj):
         parser = EmailParser()
