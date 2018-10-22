@@ -411,7 +411,9 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         'recipient', 'timestamp', 'spam', 'delivered', 'get_email_details',
         'request_last_message', 'request_status', 'request',)
     raw_id_fields = ('request',)
-    actions = ['deliver_no_spam', 'redeliver', 'redeliver_subject']
+    actions = [
+        'deliver_no_spam', 'redeliver', 'redeliver_subject', 'close_request'
+    ]
 
     # Reduce per page because parsing emails is heavy
     list_per_page = 20
