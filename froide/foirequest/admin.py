@@ -407,8 +407,9 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     search_fields = ['recipient']
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
-    list_display = ('recipient', 'timestamp', 'spam', 'delivered',
-                    'get_email_details', 'request',)
+    list_display = (
+        'recipient', 'timestamp', 'spam', 'delivered', 'get_email_details',
+        'request_last_message', 'request_status', 'request',)
     raw_id_fields = ('request',)
     actions = ['deliver_no_spam', 'redeliver', 'redeliver_subject']
 
@@ -417,11 +418,31 @@ class DeferredMessageAdmin(admin.ModelAdmin):
 
     save_on_top = True
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.select_related('request')
+        return qs
+
+    def request_last_message(self, obj):
+        if obj.request:
+            return obj.request.last_message
+
+    def request_status(self, obj):
+        if obj.request:
+            return obj.request.get_status_display()
+
     def get_email_details(self, obj):
         parser = EmailParser()
         email = parser.parse(BytesIO(obj.encoded_mail()))
         return '%s (%s...)' % (email['from'][1], email.get('subject')[:20])
     get_email_details.short_description = _('email details')
+
+    def close_request(self, request, queryset):
+        for mes in queryset:
+            mes.request.closed = True
+            mes.request.save()
+        return None
+    close_request.short_description = _('Close associated requests')
 
     def redeliver_subject(self, request, queryset):
         parser = EmailParser()
