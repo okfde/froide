@@ -304,6 +304,10 @@ class FoiMessageAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         message = FoiMessage.objects.get(pk=pk, sent=False)
+        message.request.is_blocked = False
+        message.request.save()
+        message.request.user.is_blocked = False
+        message.request.user.save()
         message.force_resend()
 
         self.message_user(request, _('Message was send again.'))
@@ -317,8 +321,12 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
         count = 0
         total = len(queryset)
-        queryset = queryset.filter(sent=False)
+        queryset = queryset.filter(sent=False).select_related('request')
         for message in queryset:
+            message.request.is_blocked = False
+            message.request.save()
+            message.request.user.is_blocked = False
+            message.request.user.save()
             message.force_resend()
             count += 1
         self.message_user(request,
