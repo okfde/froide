@@ -151,6 +151,13 @@ def resolve_facet(data, getter=None, label_getter=None, model=None, make_url=Non
     return resolve
 
 
+def _make_values_lists(kwargs):
+    return {
+        k: v if isinstance(v, (list, tuple)) else [v]
+        for k, v in kwargs.items()
+    }
+
+
 class EmtpyResponse(list):
     class hits:
         total = 0
@@ -219,7 +226,7 @@ class SearchQuerySetWrapper(object):
 
     def filter(self, *args, **kwargs):
         if kwargs:
-            value = Q('term', **kwargs)
+            value = Q('terms', **_make_values_lists(kwargs))
         else:
             value = args[0]
         self.filters.append(value)
