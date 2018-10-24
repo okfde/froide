@@ -21,6 +21,7 @@ class BounceManager(models.Manager):
             bounce.bounces.append(
                 convert_bounce_info(bounce_info)
             )
+            bounce.save()
         except Bounce.DoesNotExist:
             try:
                 user = User.objects.get(email__iexact=email)
