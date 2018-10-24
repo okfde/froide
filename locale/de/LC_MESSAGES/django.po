@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-24 12:34+0200\n"
-"PO-Revision-Date: 2018-10-24 12:38+0100\n"
+"POT-Creation-Date: 2018-10-24 15:02+0200\n"
+"PO-Revision-Date: 2018-10-24 15:04+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -47,7 +47,7 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:10 froide/settings.py:223 froide/settings.py:592
+#: froide/_local_settings.py:10 froide/settings.py:223 froide/settings.py:590
 msgid "German"
 msgstr "Deutsch"
 
@@ -2534,10 +2534,10 @@ msgstr "Bitte setzen Sie den Status Ihrer Anfrage"
 
 #: froide/foirequest/models/request.py:703
 #, python-format
-msgid "%(site_name)s: Update on one of your request"
-msgid_plural "%(site_name)s: Update on %(count)s of your requests"
-msgstr[0] "%(site_name)s: Neues bei einer Ihrer Anfragen"
-msgstr[1] "%(site_name)s: Neues bei %(count)s Ihrer Anfragen"
+msgid "Update on one of your request"
+msgid_plural "Update on %(count)s of your requests"
+msgstr[0] "Neues bei einer Anfrage, der Sie folgen"
+msgstr[1] "Neues bei %(count)s Anfragen, denen Sie folgen"
 
 #: froide/foirequest/models/suggestion.py:19
 msgid "Timestamp of Suggestion"
@@ -2634,20 +2634,16 @@ msgid "New suggestion for a Public Body"
 msgstr "Neuer Behördenvorschlag für Ihre Anfrage"
 
 #: froide/foirequest/signals.py:113
-#, python-format
-msgid "%(site_name)s: Your Freedom of Information Project has been created"
-msgstr ""
-"%(site_name)s: Ihr Projekt wurde erstellt und Ihre Anfragen werden versendet"
+msgid "Your Freedom of Information Project has been created"
+msgstr "Ihr Projekt wurde erstellt und Ihre Anfragen werden versendet"
 
 #: froide/foirequest/signals.py:136
-#, python-format
-msgid "%(site_name)s: Your Freedom of Information Request was sent"
-msgstr "%(site_name)s: Ihre Anfrage wurde versendet"
+msgid "Your Freedom of Information Request was sent"
+msgstr "Ihre Informationsfreiheitsanfrage wurde versendet"
 
 #: froide/foirequest/signals.py:139
-#, python-format
-msgid "%(site_name)s: Your Message was sent"
-msgstr "%(site_name)s: Ihre Nachricht wurde versendet"
+msgid "Your message was sent"
+msgstr "Ihre Nachricht wurde gesendet"
 
 #: froide/foirequest/tasks.py:147
 #, python-brace-format
@@ -3772,7 +3768,7 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/request/purpose_check.html:43
 msgid "Continue"
-msgstr "zum nächsten Schritt"
+msgstr "weiter"
 
 #: froide/foirequest/templates/foirequest/request/purpose_check.html:46
 msgid "Please select one of the above options!"
@@ -7043,6 +7039,37 @@ msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
 
+#, fuzzy
+#~| msgid "Document Tags"
+#~ msgid "Document pages"
+#~ msgstr "Dokumenten-Schlagwörter"
+
+#, fuzzy
+#~| msgid "Continue"
+#~ msgid "Continue Link"
+#~ msgstr "zum nächsten Schritt"
+
+#, fuzzy
+#~| msgid "is FoI request"
+#~ msgid "Latest FOI requests"
+#~ msgstr "ist eine IF-Anfrage"
+
+#, fuzzy
+#~| msgid "Due date:"
+#~ msgid "Full date"
+#~ msgstr "Frist:"
+
+#~ msgid "%(site_name)s: Update on one of your request"
+#~ msgid_plural "%(site_name)s: Update on %(count)s of your requests"
+#~ msgstr[0] "%(site_name)s: Neues bei einer Ihrer Anfragen"
+#~ msgstr[1] "%(site_name)s: Neues bei %(count)s Ihrer Anfragen"
+
+#~ msgid "%(site_name)s: Your Freedom of Information Request was sent"
+#~ msgstr "%(site_name)s: Ihre Anfrage wurde versendet"
+
+#~ msgid "%(site_name)s: Your Message was sent"
+#~ msgstr "%(site_name)s: Ihre Nachricht wurde versendet"
+
 #~ msgid "%(site_name)s: Request became overdue"
 #~ msgstr "%(site_name)s: Frist für Antwort abgelaufen"
 
@@ -7135,9 +7162,6 @@ msgstr "zustaendigkeit"
 
 #~ msgid "Document Tag"
 #~ msgstr "Dokumenten-Schlagwort"
-
-#~ msgid "Document Tags"
-#~ msgstr "Dokumenten-Schlagwörter"
 
 #~ msgid "Re: %(subject)s"
 #~ msgstr "AW: %(subject)s "
@@ -7585,9 +7609,6 @@ msgstr "zustaendigkeit"
 #~ msgstr ""
 #~ "Ihr Account ist nicht aktiv. Sie müssen auf den Link klicken, den wir an "
 #~ "Ihre E-Mail-Adresse %(email)s gesendet haben."
-
-#~ msgid "Your Freedom of Information Requests"
-#~ msgstr "Ihre Informationsfreiheitsanfragen"
 
 #~ msgid "Tag all with..."
 #~ msgstr "Alle taggen mit..."
