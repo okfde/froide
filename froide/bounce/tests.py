@@ -1,11 +1,15 @@
 import os
+from datetime import datetime, timedelta
 
 from django.test import TestCase
 
 from froide.helper.email_utils import EmailParser
+from froide.foirequest.tests.factories import UserFactory
 
 from .models import Bounce
-from .utils import make_bounce_address, add_bounce_mail
+from .utils import (
+    make_bounce_address, add_bounce_mail, check_user_deactivation
+)
 
 
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), 'testdata'))
@@ -35,3 +39,38 @@ class MailTest(TestCase):
         self.assertEqual(bounce.email, self.email)
         self.assertIsNone(bounce.user)
         self.assertEqual(len(bounce.bounces), 1)
+
+    def test_bounce_handling(self):
+        def days_ago(days):
+            return (datetime.now() - timedelta(days=days)).isoformat()
+
+        def bounce_factory(days, bounce_type='hard'):
+            return [{
+                'is_bounce': True, 'bounce_type': bounce_type,
+                'timestamp': days_ago(day)}
+                for day in days
+            ]
+
+        bounce = Bounce(user=None, email='a@example.org',
+                        bounces=bounce_factory([1, 5]))
+        result = check_user_deactivation(bounce)
+        self.assertIsNone(result)
+
+        user = UserFactory()
+        bounce = Bounce(user=user, email=user.email,
+                        bounces=bounce_factory([1, 5]))
+        result = check_user_deactivation(bounce)
+        self.assertFalse(result)
+
+        user = UserFactory()
+        bounce = Bounce(user=user, email=user.email,
+                        bounces=bounce_factory([1, 5, 12]))
+        result = check_user_deactivation(bounce)
+        self.assertTrue(result)
+
+        user = UserFactory()
+        bounce = Bounce(
+            user=user, email=user.email,
+            bounces=bounce_factory([1, 5, 12], bounce_type='soft'))
+        result = check_user_deactivation(bounce)
+        self.assertFalse(result)

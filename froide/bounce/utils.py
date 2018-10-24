@@ -21,6 +21,7 @@ SIGN_SEP = ':'
 SEP_REPL = '+'
 MAX_BOUNCE_AGE = settings.FROIDE_CONFIG['bounce_max_age']
 
+MAX_BOUNCE_COUNT = 20
 HARD_BOUNCE_COUNT = 3
 HARD_BOUNCE_PERIOD = timedelta(seconds=3 * 7 * 24 * 60 * 60)  # 3 weeks
 
@@ -100,16 +101,25 @@ def add_bounce_mail(email):
             )
 
 
-def get_bounce_stats(bounces, bounce_type='hard'):
+def get_bounce_stats(bounces, bounce_type='hard', start_date=None):
     filtered_bounces = [
         datetime.strptime(b['timestamp'][:19], '%Y-%m-%dT%H:%M:%S')
         for b in bounces if b['bounce_type'] == bounce_type
     ]
-    if not filtered_bounces:
-        return 0, timedelta(seconds=0)
-    min_date, max_date = min(filtered_bounces), max(filtered_bounces)
-    diff = max_date - min_date
-    return len(filtered_bounces), diff
+    filtered_bounces = [
+        b for b in filtered_bounces if b >= start_date or start_date is None
+    ]
+    return len(filtered_bounces)
+
+
+def check_bounce_status(bounces, bounce_type, period, threshold):
+    start_date = datetime.now() - period
+    count = get_bounce_stats(
+        bounces, bounce_type=bounce_type, start_date=start_date
+    )
+    if count >= MAX_BOUNCE_COUNT:
+        return True
+    return count >= threshold
 
 
 def check_user_deactivation(bounce):
@@ -119,13 +129,14 @@ def check_user_deactivation(bounce):
     if not bounce.user:
         return
 
-    count, diff = get_bounce_stats(bounce.bounces, bounce_type='hard')
-    if count >= HARD_BOUNCE_COUNT and diff >= HARD_BOUNCE_PERIOD:
+    if check_bounce_status(bounce.bounces, 'hard', HARD_BOUNCE_PERIOD,
+                           HARD_BOUNCE_COUNT):
         bounce.user.deactivate()
         return True
 
-    count, diff = get_bounce_stats(bounce.bounces, bounce_type='soft')
-    if count >= SOFT_BOUNCE_COUNT and diff >= SOFT_BOUNCE_PERIOD:
+    if check_bounce_status(bounce.bounces, 'soft', SOFT_BOUNCE_PERIOD,
+                           SOFT_BOUNCE_COUNT):
         bounce.user.deactivate()
         return True
+
     return False
