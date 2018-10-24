@@ -352,6 +352,11 @@ class Base(Configuration):
             'task': 'froide.foirequest.tasks.classification_reminder',
             'schedule': crontab(hour=7, minute=0, day_of_week=6),
         },
+        'bounce-checker': {
+            'task': 'froide.bounce.tasks.check_bounces',
+            'schedule': crontab(hour=7, minute=0),
+        },
+
     }
 
     CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(True)
