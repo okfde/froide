@@ -1,6 +1,5 @@
 from django.db.models import signals
 from django.dispatch import receiver
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -8,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from froide.helper.document import can_convert_to_pdf
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent, FoiProject
+from .utils import send_request_user_email
 
 
 def trigger_index_update(klass, instance_pk):
@@ -22,66 +22,44 @@ def trigger_index_update(klass, instance_pk):
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="send_notification_became_overdue")
 def send_notification_became_overdue(sender, **kwargs):
-    if not sender.user.is_active:
-        return
-    if not sender.user.email:
-        return
-    send_mail('{0} [#{1}]'.format(
-                _("%(site_name)s: Request became overdue") % {
-                    "site_name": settings.SITE_NAME
-                },
-                sender.pk),
-            render_to_string("foirequest/emails/became_overdue.txt", {
-                "request": sender,
-                "go_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
-                "site_name": settings.SITE_NAME
-            }),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
+    send_request_user_email(
+        sender,
+        _("Request became overdue"),
+        render_to_string("foirequest/emails/became_overdue.txt", {
+            "request": sender,
+            "go_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
+            "site_name": settings.SITE_NAME
+        }),
+    )
 
 
 @receiver(FoiRequest.became_asleep,
         dispatch_uid="send_notification_became_asleep")
 def send_notification_became_asleep(sender, **kwargs):
-    if not sender.user.is_active:
-        return
-    if not sender.user.email:
-        return
-    send_mail('{0} [#{1}]'.format(
-                _("%(site_name)s: Request became asleep") % {
-                    "site_name": settings.SITE_NAME
-                },
-                sender.pk),
-            render_to_string("foirequest/emails/became_asleep.txt", {
-                "request": sender,
-                "go_url": sender.user.get_autologin_url(
-                    sender.get_absolute_short_url()
-                ),
-                "site_name": settings.SITE_NAME
-            }),
-            settings.DEFAULT_FROM_EMAIL,
-            [sender.user.email])
+    send_request_user_email(
+        sender,
+        _("Request became asleep"),
+        render_to_string("foirequest/emails/became_asleep.txt", {
+            "request": sender,
+            "go_url": sender.user.get_autologin_url(
+                sender.get_absolute_short_url()
+            ),
+            "site_name": settings.SITE_NAME
+        }),
+    )
 
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    if not sender.user.is_active:
-        return
-    if not sender.user.email:
-        return
     if message.kind != 'email':
         # All non-email received messages the user actively contributed
         # Don't inform them about it
         return
 
-    send_mail(
-        '{0} [#{1}]'.format(
-            _("%(site_name)s: New reply to your request") % {
-                "site_name": settings.SITE_NAME
-            },
-            sender.pk
-        ),
+    send_request_user_email(
+        sender,
+        _("New reply to your request"),
         render_to_string("foirequest/emails/message_received_notification.txt", {
             "message": message,
             "request": sender,
@@ -89,9 +67,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
                 message.get_absolute_short_url()
             ),
             "site_name": settings.SITE_NAME
-        }),
-        settings.DEFAULT_FROM_EMAIL,
-        [sender.user.email]
+        })
     )
 
 
@@ -100,13 +76,10 @@ def notify_user_message_received(sender, message=None, **kwargs):
 def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
     if sender.user == suggestion.user:
         return
-    send_mail(
-        '{0} [#{1}]'.format(
-            _("%(site_name)s: New suggestion for a Public Body") % {
-                "site_name": settings.SITE_NAME
-            },
-            sender.pk
-        ),
+
+    send_request_user_email(
+        sender,
+        _("New suggestion for a Public Body"),
         render_to_string("foirequest/emails/public_body_suggestion_received.txt", {
             "suggestion": suggestion,
             "request": sender,
@@ -114,9 +87,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
                 sender.get_absolute_short_url()
             ),
             "site_name": settings.SITE_NAME
-        }),
-        settings.DEFAULT_FROM_EMAIL,
-        [sender.user.email]
+        })
     )
 
 
@@ -136,28 +107,18 @@ def set_last_message_date_on_message_received(sender, message=None, **kwargs):
         sender.save()
 
 
-def send_request_notification_email(sender, subject, template, message=None):
-    subject = subject % {"site_name": settings.SITE_NAME}
-    if isinstance(sender, FoiRequest):
-        subject = '{0} [#{1}]'.format(subject, sender.pk)
-    send_mail(
-        subject,
-        render_to_string(template, {
-            "request": sender,
-            "message": message,
-            "site_name": settings.SITE_NAME
-        }),
-        settings.DEFAULT_FROM_EMAIL,
-        [sender.user.email]
-    )
-
-
 @receiver(FoiProject.project_created,
         dispatch_uid="send_foiproject_created_confirmation")
 def send_foiproject_created_confirmation(sender, **kwargs):
     subject = _("%(site_name)s: Your Freedom of Information Project has been created")
     template = "foirequest/emails/confirm_foi_project_created.txt"
-    send_request_notification_email(sender, subject, template)
+
+    body = render_to_string(template, {
+        "request": sender,
+        "site_name": settings.SITE_NAME
+    })
+
+    send_request_user_email(sender, subject, body, add_idmark=False)
 
 
 @receiver(FoiRequest.message_sent,
@@ -177,7 +138,14 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     else:
         subject = _("%(site_name)s: Your Message was sent")
         template = "foirequest/emails/confirm_foi_message_sent.txt"
-    send_request_notification_email(sender, subject, template, message=message)
+
+    body = render_to_string(template, {
+        "request": sender,
+        "message": message,
+        "site_name": settings.SITE_NAME
+    })
+
+    send_request_user_email(sender, subject, body)
 
 
 # Updating same_as foirequest count

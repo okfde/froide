@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand
-from django.core.mail import send_mail
 from django.utils import translation
 from django.conf import settings
 
@@ -25,8 +24,10 @@ class Command(BaseCommand):
         users = users.exclude(email='')
 
         for user in users.iterator():
-            send_mail(subject, content, settings.DEFAULT_FROM_EMAIL,
-                [user.email], fail_silently=False)
+            user.send_mail(
+                subject, content,
+                fail_silently=False
+            )
             yield user.pk
 
     def get_content(self, content):

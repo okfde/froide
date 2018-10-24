@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _, ungettext
@@ -225,18 +224,15 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 ) % {"count": result})
         creator = pb.created_by
         if (result is not None and creator and
-                creator != request.user and creator.email):
-            send_mail(
+                creator != request.user):
+            creator.send_mail(
                 _('Public body “%s” has been approved') % pb.name,
                 _('Hello,\n\nYou can find the approved public body here:\n\n'
                   '{url}\n\nAll the Best,\n{site_name}'.format(
                       url=pb.get_absolute_domain_url(),
                       site_name=settings.SITE_NAME
                   )
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [creator.email],
-                fail_silently=True
+                )
             )
         return redirect('admin:publicbody_publicbody_change', pb.id)
 
@@ -249,13 +245,10 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
         pb = ProposedPublicBody.objects.get(pk=pk)
 
         creator = pb.created_by
-        if creator and creator.email:
-            send_mail(
+        if creator:
+            creator.send_mail(
                 _('Concerning your public body proposal “%s”') % pb.name,
-                request.POST.get('message'),
-                settings.DEFAULT_FROM_EMAIL,
-                [creator.email],
-                fail_silently=True
+                request.POST.get('message')
             )
         return redirect('admin:publicbody_proposedpublicbody_change', pb.id)
 

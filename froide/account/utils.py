@@ -1,6 +1,29 @@
 from django.utils import timezone
 from django.contrib.sessions.models import Session
 
+from froide.helper.email_sending import send_mail
+
+from .models import User
+
+
+def send_mail_users(subject, body, users,
+              **kwargs):
+    for user in users:
+        send_mail_user(
+            subject, body, user,
+            **kwargs
+        )
+
+
+def send_mail_user(subject, body, user: User,
+                   ignore_active=False, **kwargs):
+    if not ignore_active and not user.is_active:
+        return
+    if not user.email:
+        return
+
+    return send_mail(subject, body, user.email, bounce_check=False, **kwargs)
+
 
 def merge_accounts(old_user, new_user):
     from froide.foirequest.models import (FoiRequest, PublicBodySuggestion, FoiMessage,

@@ -200,6 +200,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         from .forms import UserChangeForm
         return UserChangeForm(self, *args, **kwargs)
 
+    def send_mail(self, subject, body, **kwargs):
+        from .utils import send_mail_user
+        return send_mail_user(subject, body, self, **kwargs)
+
 
 class Application(AbstractApplication):
     description = models.TextField(blank=True)

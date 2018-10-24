@@ -6,10 +6,10 @@ from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.urls import reverse
 from django.dispatch import receiver
 from django.template.loader import render_to_string
-from django.core.mail import send_mail
 from django.utils.crypto import constant_time_compare
 
 from froide.foirequest.models import FoiRequest
+from froide.helper.email_sending import send_mail
 
 
 class FoiRequestFollowerManager(models.Manager):
@@ -113,15 +113,14 @@ class FoiRequestFollower(models.Model):
 
     def send_follow_mail(self):
         send_mail(
-            _('%(site_name)s: Please confirm that you want '
-              'to follow this request') % {"site_name": settings.SITE_NAME},
+            _('Please confirm that you want to follow this request'),
             render_to_string("foirequestfollowers/confirm_follow.txt",
                 {"request": self.request,
                 "follow_link": self.get_follow_link(),
                 "unfollow_link": self.get_unfollow_link(),
                 "site_name": settings.SITE_NAME}),
-            settings.DEFAULT_FROM_EMAIL,
-            [self.email])
+            self.email
+        )
 
     @classmethod
     def send_update(cls, req_event_dict, user=None, email=None,
@@ -133,13 +132,13 @@ class FoiRequestFollower(models.Model):
 
         count = len(req_event_dict)
         subject = ungettext_lazy(
-            "%(site_name)s: Update on one followed request",
-            "%(site_name)s: Update on %(count)s followed requests",
+            "Update on one followed request",
+            "Update on %(count)s followed requests",
             count) % {
-                'site_name': settings.SITE_NAME,
                 'count': count
             }
-        send_mail(subject,
+        send_mail(
+            subject,
             render_to_string(template,
                 {
                     "req_event_dict": req_event_dict,
@@ -148,8 +147,7 @@ class FoiRequestFollower(models.Model):
                     "site_name": settings.SITE_NAME
                 }
             ),
-            settings.DEFAULT_FROM_EMAIL,
-            [email or user.email]
+            email or user.email
         )
 
 

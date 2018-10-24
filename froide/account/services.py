@@ -5,7 +5,6 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.dispatch import Signal
-from django.core.mail import send_mail
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.crypto import constant_time_compare
@@ -14,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from froide.helper.text_utils import replace_custom, replace_word
 from froide.helper.db_utils import save_obj_unique
+from froide.helper.email_sending import send_mail
 
 from .models import User
 
@@ -152,9 +152,13 @@ class AccountService(object):
         })
 
         # Translators: Mail subject
-        send_mail(str(_("%(site_name)s: please confirm your account") % {
-                    "site_name": settings.SITE_NAME}),
-                message, settings.DEFAULT_FROM_EMAIL, [self.user.email])
+        subject = str(_("%(site_name)s: please confirm your account") % {
+            "site_name": settings.SITE_NAME
+        })
+        self.user.send_mail(
+            subject, message,
+            ignore_active=True
+        )
 
     def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None,
                                  template='account/emails/confirm_action.txt'):
@@ -179,12 +183,12 @@ class AccountService(object):
         )
 
         # Translators: Mail subject
-        send_mail(
-            str(_("%(site_name)s: please confirm your action") % {
-                    "site_name": settings.SITE_NAME}),
+        subject = str(_("%(site_name)s: please confirm your action") % {
+            "site_name": settings.SITE_NAME
+        })
+        self.user.send_mail(
+            subject,
             message,
-            settings.DEFAULT_FROM_EMAIL,
-            [self.user.email]
         )
 
     def send_reminder_mail(self, reference=None, redirect_url=None,
@@ -201,12 +205,12 @@ class AccountService(object):
         )
 
         # Translators: Mail subject
-        send_mail(
-            str(_("%(site_name)s: account reminder") % {
-                    "site_name": settings.SITE_NAME}),
+        subject = str(_("%(site_name)s: account reminder") % {
+            "site_name": settings.SITE_NAME
+        }),
+        self.user.send_mail(
+            subject,
             message,
-            settings.DEFAULT_FROM_EMAIL,
-            [self.user.email]
         )
 
     def send_email_change_mail(self, email):
@@ -228,9 +232,14 @@ class AccountService(object):
             'site_url': settings.SITE_URL
         })
         # Translators: Mail subject
-        send_mail(str(_("%(site_name)s: please confirm your new email address") % {
-                    "site_name": settings.SITE_NAME}),
-                message, settings.DEFAULT_FROM_EMAIL, [email])
+        subject = str(_("%(site_name)s: please confirm your new email address") % {
+            "site_name": settings.SITE_NAME
+        })
+        send_mail(
+            subject,
+            message,
+            email
+        )
 
     def apply_name_redaction(self, content, replacement=''):
         if not self.user.private:

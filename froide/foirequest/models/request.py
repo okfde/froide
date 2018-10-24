@@ -11,16 +11,17 @@ from django.urls import reverse
 
 import django.dispatch
 from django.template.loader import render_to_string
-from django.core.mail import send_mail
 from django.utils import timezone
 
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
+from froide.account.utils import send_mail_user
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
+from ..utils import send_request_user_email
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -681,23 +682,16 @@ class FoiRequest(models.Model):
     def send_classification_reminder(self):
         if self.user is None:
             return
-        if not self.user.is_active:
-            return
-        if not self.user.email:
-            return
-        send_mail('{0} [#{1}]'.format(
-                _("%(site_name)s: Please classify the reply to your request") % {
-                    "site_name": settings.SITE_NAME
-                },
-                self.pk
-        ),
-            render_to_string("foirequest/emails/classification_reminder.txt", {
-                "request": self,
-                "go_url": self.user.get_autologin_url(self.get_absolute_short_url()),
-                "site_name": settings.SITE_NAME
-            }),
-            settings.DEFAULT_FROM_EMAIL,
-            [self.user.email]
+        subject = _("Please classify the reply to your request")
+        body = render_to_string("foirequest/emails/classification_reminder.txt", {
+            "request": self,
+            "go_url": self.user.get_autologin_url(self.get_absolute_short_url()),
+            "site_name": settings.SITE_NAME
+        })
+        send_request_user_email(
+            self,
+            subject,
+            body,
         )
 
     @classmethod
@@ -721,7 +715,8 @@ class FoiRequest(models.Model):
                 )
             })
 
-        send_mail(subject,
+        send_mail_user(
+            subject,
             render_to_string("foirequest/emails/request_update.txt",
                 {
                     "user": user,
@@ -730,8 +725,7 @@ class FoiRequest(models.Model):
                     "site_name": settings.SITE_NAME
                 }
             ),
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email]
+            user
         )
 
     def days_to_resolution(self):

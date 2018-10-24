@@ -454,6 +454,10 @@ class Base(Configuration):
         message_handlers={
             'email': 'froide.foirequest.message_handlers.EmailMessageHandler'
         },
+        max_attachment_size=1024 * 1024 * 10,  # 10 MB
+        bounce_enabled=False,
+        bounce_max_age=60 * 60 * 24 * 14,  # 14 days
+        bounce_format='bounce+{token}@example.com',
         auto_reply_subject_regex=rec('^(Auto-?Reply|Out of office)'),
         auto_reply_email_regex=rec('^auto(reply|responder)@')
     )

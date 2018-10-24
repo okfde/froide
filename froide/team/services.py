@@ -2,11 +2,12 @@ import hashlib
 import hmac
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.crypto import constant_time_compare
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+
+from froide.helper.email_sending import send_mail
 
 from .models import Team
 
@@ -53,8 +54,10 @@ class TeamService(object):
                 'site_url': settings.SITE_URL
             })
         # Translators: Mail subject
-        send_mail(str(_("%(site_name)s: team invite from %(name)s") % {
-                    "site_name": settings.SITE_NAME,
-                    "name": invited_by.get_full_name()
-                }),
-                message, settings.DEFAULT_FROM_EMAIL, [self.member.email])
+        send_mail(
+            str(_("Team invite from %(name)s") % {
+                "name": invited_by.get_full_name()
+            }),
+            message,
+            self.member.email
+        )

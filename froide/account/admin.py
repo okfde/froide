@@ -1,7 +1,5 @@
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
 from django.template.response import TemplateResponse
-from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
@@ -13,7 +11,9 @@ from froide.helper.csv_utils import export_csv_response
 
 from .models import User
 from .services import AccountService
-from .utils import delete_all_unexpired_sessions_for_user, cancel_user
+from .utils import (
+    delete_all_unexpired_sessions_for_user, cancel_user
+)
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -111,11 +111,12 @@ class UserAdmin(DjangoUserAdmin):
                 }
                 user_subject = subject.format(**mail_context)
                 user_body = body.format(**mail_context)
-                send_mail(
+                sent = user.send_mail(
                     user_subject,
-                    user_body, settings.DEFAULT_FROM_EMAIL, [user.email]
+                    user_body,
                 )
-                mails_sent += 1
+                if sent:
+                    mails_sent += 1
             self.message_user(request, _("%d mails sent." % mails_sent))
             # Return None to display the change list page again.
             return None

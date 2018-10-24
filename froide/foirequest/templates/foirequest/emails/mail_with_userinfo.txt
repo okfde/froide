@@ -1,5 +1,11 @@
 {% load i18n %}{% autoescape off %}{{ body }}
 
+{% if attachment_names %}{% trans "Attachments:" %}
+{% for att in attachment_names %} - {{ att }}
+{% endfor %}{% endif %}
+{% if attachment_missing %}{% trans "The following attachments could not be sent via email because of their size. You can find them via the provided link:" %}
+{% for att in attachment_missing %} - {{ att }}
+{% endfor %}{% endif %}
 {% blocktrans with num=request.pk %}Request Number: {{ num }}{% endblocktrans %}
 {% blocktrans with email=request.secret_address %}Reply To: {{ email }}{% endblocktrans %}
 {% if send_address %}
