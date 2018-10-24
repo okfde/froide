@@ -110,7 +110,7 @@ def set_last_message_date_on_message_received(sender, message=None, **kwargs):
 @receiver(FoiProject.project_created,
         dispatch_uid="send_foiproject_created_confirmation")
 def send_foiproject_created_confirmation(sender, **kwargs):
-    subject = _("%(site_name)s: Your Freedom of Information Project has been created")
+    subject = _("Your Freedom of Information Project has been created")
     template = "foirequest/emails/confirm_foi_project_created.txt"
 
     body = render_to_string(template, {
@@ -133,10 +133,10 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     if len(messages) == 1:
         if sender.project_id is not None:
             return
-        subject = _("%(site_name)s: Your Freedom of Information Request was sent")
+        subject = _("Your Freedom of Information Request was sent")
         template = "foirequest/emails/confirm_foi_request_sent.txt"
     else:
-        subject = _("%(site_name)s: Your Message was sent")
+        subject = _("Your message was sent")
         template = "foirequest/emails/confirm_foi_message_sent.txt"
 
     body = render_to_string(template, {

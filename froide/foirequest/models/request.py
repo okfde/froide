@@ -700,10 +700,9 @@ class FoiRequest(models.Model):
             return
         count = len(req_event_dict)
         subject = ungettext_lazy(
-            "%(site_name)s: Update on one of your request",
-            "%(site_name)s: Update on %(count)s of your requests",
+            "Update on one of your request",
+            "Update on %(count)s of your requests",
             count) % {
-                'site_name': settings.SITE_NAME,
                 'count': count
             }
 
