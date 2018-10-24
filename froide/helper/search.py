@@ -182,6 +182,7 @@ class SearchQuerySetWrapper(object):
         return self.response.hits.total
 
     def to_queryset(self):
+        self.get_response()
         return self.sqs.to_queryset()
 
     def wrap_queryset(self, qs):
@@ -196,6 +197,9 @@ class SearchQuerySetWrapper(object):
 
     @property
     def response(self):
+        return self.get_response()
+
+    def get_response(self):
         if not hasattr(self.sqs, '_response'):
             self.sqs = self.sqs.source(excludes=['*'])
         try:
