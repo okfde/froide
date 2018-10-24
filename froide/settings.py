@@ -58,6 +58,7 @@ class Base(Configuration):
         'froide.publicbody',
         'froide.document',
         'froide.account',
+        'froide.bounce',
         'froide.team',
         'froide.foisite',
 
@@ -509,6 +510,12 @@ class Base(Configuration):
     # Is the message you can send from fixed
     # or can you send from any address you like?
     FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(True)
+
+    BOUNCE_EMAIL_HOST_IMAP = values.Value('')
+    BOUNCE_EMAIL_PORT_IMAP = values.Value(587)
+    BOUNCE_EMAIL_ACCOUNT_NAME = values.Value('')
+    BOUNCE_EMAIL_ACCOUNT_PASSWORD = values.Value('')
+    BOUNCE_EMAIL_USE_SSL = values.Value(True)
 
 
 class Dev(Base):

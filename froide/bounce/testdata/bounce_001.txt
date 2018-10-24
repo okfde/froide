@@ -1,0 +1,101 @@
+Return-Path: <MAILER-DAEMON>
+X-Original-To: info@fragdenstaat.de
+Delivered-To: mail@fragdenstaat.de
+Received: by fragdenstaat.de (Postfix)
+	id D863295C0B8; Fri, 13 Nov 2015 20:32:40 +0100 (CET)
+Date: Fri, 13 Nov 2015 20:32:40 +0100 (CET)
+From: MAILER-DAEMON@fragdenstaat.de (Mail Delivery System)
+Subject: Undelivered Mail Returned to Sender
+To: info@fragdenstaat.de
+Auto-Submitted: auto-replied
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="0380295C09C.1447443160/fragdenstaat.de"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20151113193240.D863295C0B8@fragdenstaat.de>
+
+This is a MIME-encapsulated message.
+
+--0380295C09C.1447443160/fragdenstaat.de
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host fragdenstaat.de.
+
+I'm sorry to have to inform you that your message could not
+be delivered to one or more recipients. It's attached below.
+
+For further assistance, please send mail to postmaster.
+
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
+
+                   The mail system
+
+<nonexistant@example.org>: host
+    example.org.inbound10.mxlogic.net[208.65.145.3] said: 553
+    Invalid recipient nonexistant@example.org (Mode: normal)
+    (in reply to RCPT TO command)
+
+--0380295C09C.1447443160/fragdenstaat.de
+Content-Description: Delivery report
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; fragdenstaat.de
+X-Postfix-Queue-ID: 0380295C09C
+X-Postfix-Sender: rfc822; info@fragdenstaat.de
+Arrival-Date: Fri, 13 Nov 2015 20:32:39 +0100 (CET)
+
+Final-Recipient: rfc822; nonexistant@example.org
+Original-Recipient: rfc822;nonexistant@example.org
+Action: failed
+Status: 5.0.0
+Remote-MTA: dns; example.org.inbound10.mxlogic.net
+Diagnostic-Code: smtp; 553 Invalid recipient
+    nonexistant@example.org (Mode: normal)
+
+--0380295C09C.1447443160/fragdenstaat.de
+Content-Description: Undelivered Message
+Content-Type: message/rfc822
+Content-Transfer-Encoding: 8bit
+
+Return-Path: <info@fragdenstaat.de>
+Received: from localhost (localhost [127.0.0.1])
+	by fragdenstaat.de (Postfix) with ESMTP id 0380295C09C
+	for <nonexistant@example.org>; Fri, 13 Nov 2015 20:32:39 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at fragdenstaat.de
+Received: from fragdenstaat.de ([127.0.0.1])
+	by localhost (fragdenstaat.de [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id H6e8RSGOjfkc
+	for <nonexistant@example.org>;
+	Fri, 13 Nov 2015 20:32:38 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	(using TLSv1.1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: mail@fragdenstaat.de)
+	by fragdenstaat.de (Postfix) with ESMTPSA id 46E2895C094
+	for <nonexistant@example.org>; Fri, 13 Nov 2015 20:32:38 +0100 (CET)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Subject: =?utf-8?q?Frag_den_Staat=3A_Bitte_best=C3=A4tigen_Sie_Ihren_Account?=
+From: info@fragdenstaat.de
+To: nonexistant@example.org
+Date: Fri, 13 Nov 2015 19:32:38 -0000
+Message-ID: <20151113193238.4583.84610@localhost>
+
+Hallo Concerned Citizen,
+
+dies ist eine E-Mail von Frag den Staat, um Ihre E-Mail-Adresse zu bestÃ¤tigen.
+Bitte besuchen Sie folgenden Link:
+
+https://fragdenstaat.de/account/confirm/
+
+Wir haben fÃ¼r Sie ein zufÃ¤lliges Passwort generiert. Sie kÃ¶nnen sich damit einloggen, aber Sie kÃ¶nnen es auch Ã¤ndern, wenn Sie wÃ¼nschen.
+
+Ihr Passwort lautet:
+
+GrÃ¼Ãe
+Frag den Staat
+
+--0380295C09C.1447443160/fragdenstaat.de--
