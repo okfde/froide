@@ -25,6 +25,7 @@ from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.foirequest.forms import (
     get_send_message_form, get_escalation_message_form
 )
+from froide.helper.email_utils import ParsedEmail
 
 User = get_user_model()
 
@@ -142,19 +143,18 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         new_foi_email = "foi@" + pb.email.split("@")[1]
         add_message_from_email(
-            req, {
-                'msgobj': None,
+            req, ParsedEmail(None, **{
                 'date': timezone.now() - timedelta(days=1),
                 'subject': "Re: %s" % req.title,
                 'body': """Message""",
                 'html': None,
-                'from': ("FoI Officer", new_foi_email),
+                'from_': ("FoI Officer", new_foi_email),
                 'to': [(req.user.get_full_name(), req.secret_address)],
                 'cc': [],
                 'resent_to': [],
                 'resent_cc': [],
                 'attachments': []
-            }
+            })
         )
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertTrue(req.awaits_classification())
@@ -657,19 +657,18 @@ class RequestTest(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         req = FoiRequest.objects.get(title=post['subject'])
         add_message_from_email(
-            req, {
-                'msgobj': None,
+            req, ParsedEmail(None, **{
                 'date': timezone.now() + timedelta(days=1),
                 'subject': "Re: %s" % req.title,
                 'body': """Message""",
                 'html': None,
-                'from': ("FoI Officer", "randomfoi@example.com"),
+                'from_': ("FoI Officer", "randomfoi@example.com"),
                 'to': [(req.user.get_full_name(), req.secret_address)],
                 'cc': [],
                 'resent_to': [],
                 'resent_cc': [],
                 'attachments': []
-            }
+            })
         )
         req = FoiRequest.objects.get(title=post['subject'])
         self.assertEqual(len(req.messages), 2)
@@ -1218,21 +1217,24 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         name = "Petra Radetzky"
         add_message_from_email(
-            req, {
-                'msgobj': None,
+            req, ParsedEmail(None, **{
                 'date': timezone.now(),
                 'subject': 'Reply',
-                'body': ("Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
-                        "Mit freundlichen Grüßen\n" +
-                        name),
+                'body': (
+                    "Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
+                    "Mit freundlichen Grüßen\n" +
+                    name
+                ),
                 'html': 'html',
-                'from': ('Petra Radetzky', 'petra.radetsky@bund.example.org'),
+                'from_': (
+                    'Petra Radetzky', 'petra.radetsky@bund.example.org'
+                ),
                 'to': [req.secret_address],
                 'cc': [],
                 'resent_to': [],
                 'resent_cc': [],
                 'attachments': []
-            }
+            })
         )
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
@@ -1240,7 +1242,11 @@ class RequestTest(TestCase):
         form = get_send_message_form({
             'sendmessage-to': '0',
             'sendmessage-subject': 'Testing',
-            'sendmessage-message': 'Sehr geehrte Frau Radetzky,\n\nblub\n\nMit freundlichen Grüßen\nStefan Wehrmeyer'
+            'sendmessage-message': (
+                'Sehr geehrte Frau Radetzky,'
+                '\n\nblub\n\nMit freundlichen Grüßen'
+                '\nStefan Wehrmeyer'
+            )
         }, foirequest=req)
         self.assertTrue(form.is_valid())
         form.save()
@@ -1499,19 +1505,18 @@ class MediatorTest(TestCase):
         form.save()
         req = FoiRequest.objects.all()[0]
         add_message_from_email(
-            req, {
-                'msgobj': None,
+            req, ParsedEmail(None, **{
                 'date': timezone.now(),
                 'subject': 'Reply',
                 'body': 'Content',
                 'html': 'html',
-                'from': ('Name', mediator.email),
+                'from_': ('Name', mediator.email),
                 'to': [req.secret_address],
                 'cc': [],
                 'resent_to': [],
                 'resent_cc': [],
                 'attachments': []
-            }
+            })
         )
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]

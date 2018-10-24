@@ -450,7 +450,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     def get_email_details(self, obj):
         parser = EmailParser()
         email = parser.parse(BytesIO(obj.encoded_mail()))
-        return '%s (%s...)' % (email['from'][1], email.get('subject')[:20])
+        return '%s (%s...)' % (email.from_[1], email.subject[:20])
     get_email_details.short_description = _('email details')
 
     def close_request(self, request, queryset):
@@ -464,7 +464,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         parser = EmailParser()
         for deferred in queryset:
             email = parser.parse(BytesIO(deferred.encoded_mail()))
-            match = SUBJECT_REQUEST_ID.search(email['subject'])
+            match = SUBJECT_REQUEST_ID.search(email.subject)
             if match is not None:
                 try:
                     req = FoiRequest.objects.get(pk=match.group(1))

@@ -1,3 +1,4 @@
+from contextlib import closing
 import base64
 import json
 from io import BytesIO
@@ -71,7 +72,8 @@ def send_foi_mail(subject, message, from_email, recipient_list,
 def _process_mail(mail_bytes, mail_type=None, manual=False):
     parser = EmailParser()
     if mail_type is None:
-        email = parser.parse(BytesIO(mail_bytes))
+        with closing(BytesIO(mail_bytes)) as stream:
+            email = parser.parse(stream)
     elif mail_type == 'postmark':
         email = parser.parse_postmark(json.loads(mail_bytes.decode('utf-8')))
     return _deliver_mail(email, mail_bytes=mail_bytes, manual=manual)
@@ -140,8 +142,8 @@ def get_foirequest_from_mail(email):
 
 
 def _deliver_mail(email, mail_bytes=None, manual=False):
-    received_list = (email['to'] + email['cc'] +
-                     email['resent_to'] + email['resent_cc'])
+    received_list = (email.to + email.cc +
+                     email.resent_to + email.resent_cc)
     received_list = [(r[0], r[1].lower()) for r in received_list]
 
     domains = settings.FOI_EMAIL_DOMAIN
@@ -157,7 +159,7 @@ def _deliver_mail(email, mail_bytes=None, manual=False):
     received_list = [(x[0], '@'.join(
         (x[1].split('@')[0], domains[0]))) for x in received_list]
 
-    sender_email = email['from'][1]
+    sender_email = email.from_[1]
 
     already = set()
     for received in received_list:

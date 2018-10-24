@@ -313,10 +313,10 @@ class ReceiveEmailService(BaseService):
         publicbody = self.kwargs.get('publicbody', None)
         email = self.data
 
-        subject = email['subject'] or ''
+        subject = email.subject or ''
         subject = subject[:250]
 
-        message_id = email.get('message_id', '') or ''
+        message_id = email.message_id or ''
         if message_id:
             message_id = message_id[:512]
 
@@ -325,13 +325,13 @@ class ReceiveEmailService(BaseService):
             subject=subject,
             email_message_id=message_id,
             is_response=True,
-            sender_name=email['from'][0],
-            sender_email=email['from'][1],
+            sender_name=email.from_[0],
+            sender_email=email.from_[1],
             recipient_email=foirequest.secret_address,
             recipient=foirequest.user.display_name(),
-            plaintext=email['body'],
-            html=email['html'],
-            content_hidden=email.get('is_auto_reply', False)
+            plaintext=email.body,
+            html=email.html,
+            content_hidden=email.is_auto_reply
         )
 
         if publicbody is None:
@@ -346,10 +346,10 @@ class ReceiveEmailService(BaseService):
         if foirequest.law and publicbody == foirequest.law.mediator:
             message.content_hidden = True
 
-        if email['date'] is None:
+        if email.date is None:
             message.timestamp = timezone.now()
         else:
-            message.timestamp = email['date']
+            message.timestamp = email.date
 
         message.subject_redacted = redact_subject(
             message.subject, user=foirequest.user
@@ -365,7 +365,7 @@ class ReceiveEmailService(BaseService):
         foirequest.last_message = message.timestamp
         foirequest.save()
 
-        self.add_attachments(foirequest, message, email['attachments'])
+        self.add_attachments(foirequest, message, email.attachments)
 
         foirequest.message_received.send(sender=foirequest, message=message)
 

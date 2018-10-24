@@ -93,8 +93,8 @@ class MailTest(TestCase):
         parser = EmailParser()
         with open(p("test_mail_03.txt"), 'rb') as f:
             email = parser.parse(f)
-        self.assertEqual(len(email['attachments']), 1)
-        self.assertEqual(email['subject'], 'Öffentlicher Personennahverkehr')
+        self.assertEqual(len(email.attachments), 1)
+        self.assertEqual(email.subject, 'Öffentlicher Personennahverkehr')
 
     def test_long_attachment_names(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
@@ -102,16 +102,16 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-        self.assertEqual(mail['subject'], 'Kooperationen des Ministerium für Schule und '
+        self.assertEqual(mail.subject, 'Kooperationen des Ministerium für Schule und '
                 'Weiterbildung des Landes Nordrhein-Westfalen mit außerschulischen Partnern')
-        self.assertEqual(mail['attachments'][0].name, 'Kooperationen des MSW, Antrag '
+        self.assertEqual(mail.attachments[0].name, 'Kooperationen des MSW, Antrag '
                 'nach Informationsfreiheitsgesetz NRW, Stefan Safario vom 06.12.2012 - AW vom '
                 '08.01.2013 - RS.pdf')
         add_message_from_email(request, mail)
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
-        self.assertEqual(messages[1].subject, mail['subject'])
+        self.assertEqual(messages[1].subject, mail.subject)
         self.assertEqual(len(messages[1].attachments), 2)
         names = set([a.name for a in messages[1].attachments])
         self.assertEqual(names, set([
@@ -124,9 +124,9 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-        self.assertEqual(len(mail['cc']), 2)
-        self.assertEqual(len(mail['to']), 3)  # contains X-Original-To as well
-        self.assertTrue(mail['is_auto_reply'])
+        self.assertEqual(len(mail.cc), 2)
+        self.assertEqual(len(mail.to), 3)  # contains X-Original-To as well
+        self.assertTrue(mail.is_auto_reply)
 
     def test_strip_html(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
@@ -146,9 +146,9 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
         mail = parser.parse(BytesIO(content))
-        self.assertEqual(len(mail['attachments']), 2)
-        self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
-        self.assertEqual(mail['attachments'][1].name, '15-725_002 II_0367.pdf')
+        self.assertEqual(len(mail.attachments), 2)
+        self.assertEqual(mail.attachments[0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+        self.assertEqual(mail.attachments[1].name, '15-725_002 II_0367.pdf')
 
     def test_attachment_name_redaction(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
@@ -161,8 +161,8 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail['attachments']), 2)
-            self.assertEqual(mail['attachments'][0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
+            self.assertEqual(len(mail.attachments), 2)
+            self.assertEqual(mail.attachments[0].name, 'usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf')
         add_message_from_email(request, mail)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -174,26 +174,26 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
         mail = parser.parse(BytesIO(content))
-        self.assertEqual(mail['subject'], 'Anfrage nach dem Informationsfreiheitsgesetz; Gespräch damaliger BM Steinmeier Matthias Müller VW AG; Vg. 069-2018')
-        self.assertEqual(len(mail['attachments']), 2)
-        self.assertEqual(mail['attachments'][0].name, 'Bescheid Fäker.pdf')
-        self.assertEqual(mail['attachments'][1].name, '180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf')
+        self.assertEqual(mail.subject, 'Anfrage nach dem Informationsfreiheitsgesetz; Gespräch damaliger BM Steinmeier Matthias Müller VW AG; Vg. 069-2018')
+        self.assertEqual(len(mail.attachments), 2)
+        self.assertEqual(mail.attachments[0].name, 'Bescheid Fäker.pdf')
+        self.assertEqual(mail.attachments[1].name, '180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf')
 
     def test_attachment_name_parsing_2(self):
         with open(p("test_mail_11.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
         mail = parser.parse(BytesIO(content))
-        self.assertEqual(mail['subject'], 'Bescheid zu Ihrer ergänzten IFG-Anfrage Bestellung Infomaterial, Broschüren... [#32154]')
-        self.assertEqual(len(mail['attachments']), 1)
-        self.assertEqual(mail['attachments'][0].name, '20180904_Bescheid Broschüren.pdf')
+        self.assertEqual(mail.subject, 'Bescheid zu Ihrer ergänzten IFG-Anfrage Bestellung Infomaterial, Broschüren... [#32154]')
+        self.assertEqual(len(mail.attachments), 1)
+        self.assertEqual(mail.attachments[0].name, '20180904_Bescheid Broschüren.pdf')
 
     def test_address_list(self):
         with open(p("test_mail_01.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail['cc']), 5)
+            self.assertEqual(len(mail.cc), 5)
 
     @override_settings(FOI_EMAIL_DOMAIN=['fragdenstaat.de', 'example.com'])
     def test_additional_domains(self):
@@ -213,7 +213,7 @@ class MailTest(TestCase):
             content = f.read()
             mail = parser.parse(BytesIO(content))
             subject = 'WG: Disziplinarverfahren u.a. gegen Bürgermeister/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche Bürgermeister/Ortsvorsteher/Landräte im Land Brandenburg in den letzten Jahren [#5617]'
-            self.assertEqual(mail['attachments'][0].name,
+            self.assertEqual(mail.attachments[0].name,
                 '%s.eml' % subject[:45])
 
     def test_missing_date(self):
@@ -231,16 +231,16 @@ class MailTest(TestCase):
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-            self.assertIn('Unterlagen nach', mail['subject'])
-            self.assertIn('E-Mail Empfangsbest', mail['subject'])
+            self.assertIn('Unterlagen nach', mail.subject)
+            self.assertIn('E-Mail Empfangsbest', mail.subject)
 
     def test_attachment_name_parsing_header(self):
         with open(p("test_mail_10.txt"), 'rb') as f:
             parser = EmailParser()
             content = f.read()
             mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail['attachments']), 1)
-            self.assertEqual(mail['attachments'][0].name, 'Eingangsbestätigung Akteneinsicht.doc')
+            self.assertEqual(len(mail.attachments), 1)
+            self.assertEqual(mail.attachments[0].name, 'Eingangsbestätigung Akteneinsicht.doc')
 
     def test_html_only_mail(self):
         with open(p("test_mail_13.txt"), 'rb') as f:
@@ -248,10 +248,10 @@ class MailTest(TestCase):
             content = f.read()
         mail = parser.parse(BytesIO(content))
 
-        self.assertTrue(len(mail['body']) > 10)
+        self.assertTrue(len(mail.body) > 10)
         # Markdown like links are rendered
-        self.assertIn('](https://', mail['body'])
-        self.assertIn('*peter.mueller@kreis-steinfurt.de*', mail['body'])
+        self.assertIn('](https://', mail.body)
+        self.assertIn('*peter.mueller@kreis-steinfurt.de*', mail.body)
 
 
 class DeferredMessageTest(TestCase):
