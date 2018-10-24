@@ -18,31 +18,31 @@ def clean(val):
 
 
 class LatestFoiRequestsFeed(Feed):
-    def __init__(self, items, category=None, jurisdiction=None,
-                 publicbody=None, tag=None, status=None):
+    url_name = 'foirequest-list_feed'
+
+    def __init__(self, items, data, make_url):
         self.items = items
-        self.category = category
-        self.jurisdiction = jurisdiction
-        self.tag = tag
-        self.status = status
-        self.publicbody = publicbody
+        self.data = data
+        self.make_url = make_url
         super(LatestFoiRequestsFeed, self).__init__()
 
     def get_filter_string(self):
         by = []
-        if self.category:
-            by.append(_('by category %(category)s') % {'category': self.category.name})
-        if self.status:
+        if self.data.get('q'):
+            by.append(_('search for "%s"' % self.data['q']))
+        if self.data.get('category'):
+            by.append(_('by category %(category)s') % {'category': self.data['category'].name})
+        if self.data.get('status'):
             by.append(_('by status %(status)s') % {
-                'status': FOIREQUEST_FILTER_DICT[self.status][1]
+                'status': FOIREQUEST_FILTER_DICT[self.filter_obj['status']][1]
             })
-        if self.tag:
-            by.append(_('by tag %(tag)s') % {'tag': self.tag.name})
-        if self.jurisdiction:
-            by.append(_('for %(juris)s') % {'juris': self.jurisdiction.name})
-        if self.publicbody:
-            by.append(_('to %(publicbody)s') % {'publicbody': self.publicbody.name})
-        return ' '.join(by)
+        if self.data.get('tag'):
+            by.append(_('by tag %(tag)s') % {'tag': self.data['tag'].name})
+        if self.data.get('jurisdiction'):
+            by.append(_('for %(juris)s') % {'juris': self.data['jurisdiction'].name})
+        if self.data.get('publicbody'):
+            by.append(_('to %(publicbody)s') % {'publicbody': self.data['publicbody'].name})
+        return ' '.join(str(x) for x in by)
 
     def title(self, obj):
         by = self.get_filter_string()
@@ -68,22 +68,8 @@ class LatestFoiRequestsFeed(Feed):
                 "sitename": settings.SITE_NAME
             })
 
-    def get_link_kwargs(self):
-        kwargs = {}
-        if self.category:
-            kwargs['category'] = self.category.slug
-        if self.jurisdiction:
-            kwargs['jurisdiction'] = self.jurisdiction.slug
-        if self.status:
-            kwargs['status'] = self.status
-        if self.tag:
-            kwargs['tag'] = self.tag.slug
-        if self.publicbody:
-            kwargs['publicbody'] = self.publicbody.slug
-        return kwargs
-
     def link(self):
-        return reverse('foirequest-list_feed', kwargs=self.get_link_kwargs())
+        return self.make_url(self.url_name)
 
     def items(self):
         return self.items.order_by("-first_message")[:15]
@@ -108,9 +94,7 @@ class LatestFoiRequestsFeed(Feed):
 class LatestFoiRequestsFeedAtom(LatestFoiRequestsFeed):
     feed_type = Atom1Feed
     subtitle = LatestFoiRequestsFeed.description
-
-    def link(self):
-        return reverse('foirequest-list_feed_atom', kwargs=self.get_link_kwargs())
+    url_name = 'foirequest-list_feed_atom'
 
 
 class FoiRequestFeed(Feed):

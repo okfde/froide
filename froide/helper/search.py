@@ -88,7 +88,9 @@ get_text_analyzer = get_func('search_text_analyzer', get_default_text_analyzer)
 get_ngram_analyzer = get_func('search_ngram_analyzer', get_default_ngram_analyzer)
 
 
-def make_filter_url(url_name, data, get_active_filters=None):
+def make_filter_url(url_name, data=None, get_active_filters=None):
+    if data is None:
+        data = {}
     data = dict(data)
     url_kwargs = {}
 
@@ -124,7 +126,8 @@ def key_getter(item):
     return item['key']
 
 
-def resolve_facet(data, getter=None, label_getter=None, model=None, make_url=None):
+def resolve_facet(data, getter=None, label_getter=None,
+                  model=None, make_url=None):
     if getter is None:
         getter = key_getter
 

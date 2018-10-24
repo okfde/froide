@@ -1,3 +1,4 @@
+import functools
 import re
 from urllib.parse import urlencode
 
@@ -186,7 +187,15 @@ class ListRequestView(BaseListRequestView):
                 klass = LatestFoiRequestsFeed
             else:
                 klass = LatestFoiRequestsFeedAtom
-            feed_obj = klass(context['object_list'], **self.filtered_objs)
+            feed_obj = klass(
+                context['object_list'],
+                data=self.filtered_objs,
+                make_url=functools.partial(
+                    make_filter_url,
+                    data=self.filter_data,
+                    get_active_filters=get_active_filters
+                )
+            )
             return feed_obj(self.request)
 
         return super().render_to_response(

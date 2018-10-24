@@ -93,13 +93,13 @@
     <ul class="nav nav-compact flex-column">
       <li class="nav-header">{% blocktrans %}Feeds for these requests{% endblocktrans %}</li>
        <li class="nav-item">
-        <a class="nav-link" href="./rss/">
+        <a class="nav-link" href="{% url 'foirequest-list_feed' %}?{{ getvars }}">
           <i class="fa fa-rss" aria-hidden="true"></i>
           {% trans "RSS Feed" %}
         </a>
       </li>
        <li class="nav-item">
-        <a class="nav-link" href="./feed/">
+        <a class="nav-link" href="{% url 'foirequest-list_feed_atom' %}?{{ getvars }}">
           <i class="fa fa-rss-square" aria-hidden="true"></i>
           {% trans "Atom Feed" %}
         </a>
