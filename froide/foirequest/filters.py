@@ -212,7 +212,7 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
             return qs.set_query(Q(
                 "simple_query_string",
                 query=value,
-                analyzer='standard',
+                # analyzer='standard',
                 fields=['title^5', 'description^3', 'content'],
                 default_operator='and',
                 lenient=True
