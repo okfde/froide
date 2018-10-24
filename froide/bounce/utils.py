@@ -105,6 +105,8 @@ def get_bounce_stats(bounces, bounce_type='hard'):
         datetime.strptime(b['timestamp'][:19], '%Y-%m-%dT%H:%M:%S')
         for b in bounces if b['bounce_type'] == bounce_type
     ]
+    if not filtered_bounces:
+        return 0, timedelta(seconds=0)
     min_date, max_date = min(filtered_bounces), max(filtered_bounces)
     diff = max_date - min_date
     return len(filtered_bounces), diff
