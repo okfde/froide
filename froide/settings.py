@@ -510,7 +510,7 @@ class Base(Configuration):
     FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(True)
 
     BOUNCE_EMAIL_HOST_IMAP = values.Value('')
-    BOUNCE_EMAIL_PORT_IMAP = values.Value(587)
+    BOUNCE_EMAIL_PORT_IMAP = values.Value(993)
     BOUNCE_EMAIL_ACCOUNT_NAME = values.Value('')
     BOUNCE_EMAIL_ACCOUNT_PASSWORD = values.Value('')
     BOUNCE_EMAIL_USE_SSL = values.Value(False)
