@@ -177,12 +177,14 @@ class SearchQuerySetWrapper(object):
         self.filters = []
         self.query = None
         self.aggs = []
+        self.broken_query = False
 
     def count(self):
         return self.response.hits.total
 
     def to_queryset(self):
-        self.get_response()
+        if self.broken_query:
+            return self.model.objects.none()
         return self.sqs.to_queryset()
 
     def wrap_queryset(self, qs):
@@ -205,6 +207,7 @@ class SearchQuerySetWrapper(object):
         try:
             return self.sqs.execute()
         except Exception:
+            self.broken_query = True
             return EmtpyResponse()
 
     def add_aggregation(self, aggs):
