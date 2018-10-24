@@ -4,15 +4,16 @@ from datetime import timedelta
 from django.utils import timezone
 from django.core.mail import mail_managers
 from django.conf import settings
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 from froide.helper.date_utils import format_seconds
-
 from froide.account.utils import send_mail_user
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
+
 
 def throttle(qs, throttle_config, date_param='first_message'):
     if throttle_config is None:
@@ -35,9 +36,14 @@ def check_throttle(user, klass):
         throttle_kind = throttle(qs, throttle_settings, date_param=date_param)
         if throttle_kind:
             mail_managers(_('User exceeded request limit'), str(user.pk))
-            return _('You exceeded your request limit of {count} requests in {time}.'
-                    ).format(count=throttle_kind[0],
-                             time=format_seconds(throttle_kind[1])
+            message = _('You exceeded your request limit of %(count)s requests in %(time)s.')
+            return forms.ValidationError(
+                message,
+                params={
+                    'count': throttle_kind[0],
+                    'time': format_seconds(throttle_kind[1])
+                },
+                code='throttled'
             )
 
 
