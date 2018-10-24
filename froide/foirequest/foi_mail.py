@@ -26,24 +26,24 @@ spam_message = _('''We received a possible spam mail to this address: %(address)
 Please investigate! %(url)s
 ''')
 
+DSN_RCPT_OPTIONS = ['NOTIFY=SUCCESS,DELAY,FAILURE']
+
 
 def send_foi_mail(subject, message, from_email, recipient_list,
                   attachments=None, fail_silently=False, **kwargs):
-    backend = None
+    backend_kwargs = {}
     if kwargs.get('dsn'):
-        if hasattr(settings, 'FOI_EMAIL_BACKEND'):
-            backend = settings.FOI_EMAIL_BACKEND
+        backend_kwargs['rcpt_options'] = DSN_RCPT_OPTIONS
 
-    if not backend:
-        backend = settings.EMAIL_BACKEND
     connection = get_connection(
-        backend=backend,
+        backend=settings.EMAIL_BACKEND,
         username=settings.FOI_EMAIL_HOST_USER,
         password=settings.FOI_EMAIL_HOST_PASSWORD,
         host=settings.FOI_EMAIL_HOST,
         port=settings.FOI_EMAIL_PORT,
         use_tls=settings.FOI_EMAIL_USE_TLS,
-        fail_silently=fail_silently
+        fail_silently=fail_silently,
+        **backend_kwargs
     )
     headers = {}
     if settings.FOI_EMAIL_FIXED_FROM_ADDRESS:

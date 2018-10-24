@@ -482,8 +482,6 @@ class Base(Configuration):
     EMAIL_HOST_PASSWORD = values.Value("")
     EMAIL_USE_TLS = values.BooleanValue(True)
 
-    # Custom backend that also requests Delivery Status
-    FOI_EMAIL_BACKEND = 'froide.foirequest.smtp.FoiEmailBackend'
     # Froide special case settings
     # IMAP settings for fetching mail
     FOI_EMAIL_PORT_IMAP = values.IntegerValue(993)
