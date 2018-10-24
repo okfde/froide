@@ -513,7 +513,7 @@ class Base(Configuration):
     BOUNCE_EMAIL_PORT_IMAP = values.Value(587)
     BOUNCE_EMAIL_ACCOUNT_NAME = values.Value('')
     BOUNCE_EMAIL_ACCOUNT_PASSWORD = values.Value('')
-    BOUNCE_EMAIL_USE_SSL = values.Value(True)
+    BOUNCE_EMAIL_USE_SSL = values.Value(False)
 
 
 class Dev(Base):
