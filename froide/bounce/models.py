@@ -6,6 +6,12 @@ from django.utils.translation import ugettext_lazy as _
 from froide.account.models import User
 
 
+def convert_bounce_info(bounce_info):
+    d = dict(bounce_info._asdict())
+    d['timestamp'] = d['timestamp'].isoformat()
+    return d
+
+
 class BounceManager(models.Manager):
     def update_bounce(self, email, bounce_info):
         email = email.lower()
@@ -13,7 +19,7 @@ class BounceManager(models.Manager):
             bounce = Bounce.objects.get(email=email.lower())
             bounce.last_update = timezone.now()
             bounce.bounces.append(
-                dict(bounce_info._asdict())
+                convert_bounce_info(bounce_info)
             )
         except Bounce.DoesNotExist:
             try:
@@ -23,7 +29,7 @@ class BounceManager(models.Manager):
             bounce = Bounce.objects.create(
                 email=email,
                 user=user,
-                bounces=[dict(bounce_info._asdict())]
+                bounces=[convert_bounce_info(bounce_info)]
             )
         return bounce
 

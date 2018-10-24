@@ -16,6 +16,7 @@ from email.utils import formataddr
 import imaplib
 
 from django.conf import settings
+from django.utils import timezone
 from django.utils.functional import cached_property
 
 from .text_utils import convert_html_to_text
@@ -37,7 +38,7 @@ BOUNCE_STATUS_RE = re.compile(r'\d\.\d+\.\d+', re.IGNORECASE)
 
 DsnStatus = namedtuple('DsnStatus', 'class_ subject detail')
 
-BounceResult = namedtuple('BounceResult', 'status is_bounce bounce_type diagnostic_code')
+BounceResult = namedtuple('BounceResult', 'status is_bounce bounce_type diagnostic_code timestamp')
 
 
 MAILBOX_FULL = DsnStatus(5, 2, 2)
@@ -94,6 +95,7 @@ def classify_bounce_status(status):
 
 class ParsedEmail(object):
     message_id = None
+    date = None
 
     def __init__(self, msgobj, **kwargs):
         self.msgobj = msgobj
@@ -112,7 +114,8 @@ class ParsedEmail(object):
             status=status,
             bounce_type=bounce_type,
             is_bounce=bool(bounce_type),
-            diagnostic_code=headers.get('Diagnostic-Code', [None])[0]
+            diagnostic_code=headers.get('Diagnostic-Code', [None])[0],
+            timestamp=self.date or timezone.now()
         )
 
     @cached_property
