@@ -108,9 +108,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_trusted = models.BooleanField(_('Trusted'), default=False)
     is_blocked = models.BooleanField(_('Blocked'), default=False)
 
+    date_deactivated = models.DateTimeField(
+        _('date deactivated'), default=None, null=True, blank=True)
     is_deleted = models.BooleanField(_('deleted'), default=False,
             help_text=_('Designates whether this user was deleted.'))
-    date_left = models.DateTimeField(_('date left'), default=None, null=True, blank=True)
+    date_left = models.DateTimeField(
+        _('date left'), default=None, null=True, blank=True)
 
     objects = UserManager()
 
@@ -203,6 +206,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def send_mail(self, subject, body, **kwargs):
         from .utils import send_mail_user
         return send_mail_user(subject, body, self, **kwargs)
+
+    def deactivate(self):
+        from .utils import delete_all_unexpired_sessions_for_user
+
+        delete_all_unexpired_sessions_for_user(self)
+
+        self.is_active = False
+        self.date_deactivated = timezone.now()
+        self.save()
 
 
 class Application(AbstractApplication):

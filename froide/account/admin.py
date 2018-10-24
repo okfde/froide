@@ -44,8 +44,10 @@ class UserAdmin(DjangoUserAdmin):
             'organization_url', 'private', 'newsletter',
             'profile_text', 'profile_photo'
         )}),
-        (_('Advanced'), {'fields': ('is_trusted', 'terms', 'is_blocked',
-                                    'is_deleted', 'date_left')})
+        (_('Advanced'), {'fields': (
+            'is_trusted', 'terms', 'is_blocked',
+            'date_deactivated',
+            'is_deleted', 'date_left')})
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
             'private', 'terms', 'is_trusted',

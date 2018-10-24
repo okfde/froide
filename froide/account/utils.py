@@ -91,6 +91,7 @@ def cancel_user(user):
     user.is_staff = False
     user.is_superuser = False
     user.is_active = False
+    user.date_deactivated = timezone.now()
     user.is_deleted = True
     user.date_left = timezone.now()
     user.email = None
