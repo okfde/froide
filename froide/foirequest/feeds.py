@@ -34,7 +34,7 @@ class LatestFoiRequestsFeed(Feed):
             by.append(_('by category %(category)s') % {'category': self.data['category'].name})
         if self.data.get('status'):
             by.append(_('by status %(status)s') % {
-                'status': FOIREQUEST_FILTER_DICT[self.filter_obj['status']][1]
+                'status': FOIREQUEST_FILTER_DICT[self.data['status']][1]
             })
         if self.data.get('tag'):
             by.append(_('by tag %(tag)s') % {'tag': self.data['tag'].name})
