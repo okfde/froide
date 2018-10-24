@@ -246,7 +246,7 @@ def get_address_list(values):
     address_list = getaddresses(values)
     fixed = []
     for addr in address_list:
-        fixed.append((parse_header_field(addr[0]), addr[1].lower()))
+        fixed.append((parse_header_field(addr[0]), addr[1]))
     return fixed
 
 
