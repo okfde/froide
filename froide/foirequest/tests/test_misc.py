@@ -9,6 +9,7 @@ from froide.foirequest.templatetags.foirequest_tags import check_same_request
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tasks import (detect_asleep, detect_overdue,
     classification_reminder)
+from froide.foirequest.utils import MailAttachmentSizeChecker
 
 
 class TemplateTagTest(TestCase):
@@ -84,3 +85,18 @@ class TaskTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('Please classify the reply to your request',
                       mail.outbox[0].subject)
+
+
+class MailAttachmentSizeCheckerTest(TestCase):
+    def test_attachment_size_checker(self):
+        files = [
+            ('test1.txt', b'0' * 10, 'text/plain'),
+            ('test2.txt', b'0' * 10, 'text/plain'),
+            ('test3.txt', b'0' * 10, 'text/plain'),
+        ]
+        checker = MailAttachmentSizeChecker(files, max_size=25)
+        atts = list(checker)
+        self.assertEqual(len(atts), 2)
+        self.assertEqual(atts, files[:2])
+        self.assertEqual(checker.send_files, ['test1.txt', 'test2.txt'])
+        self.assertEqual(checker.non_send_files, ['test3.txt'])

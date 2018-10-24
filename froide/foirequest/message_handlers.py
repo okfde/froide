@@ -119,10 +119,6 @@ class EmailMessageHandler(MessageHandler):
         message_id = message.get_absolute_domain_short_url()
         extra_kwargs['froide_message_id'] = message_id
 
-        attachments.extend([
-            (a.name, a.get_bytes(), a.filetype) for a in message.attachments
-        ])
-
         send_foi_mail(
             message.subject, message.plaintext, from_addr,
             [message.recipient_email.strip()],

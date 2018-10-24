@@ -253,6 +253,9 @@ class FoiMessage(models.Model):
             self._attachments = list(self.foiattachment_set.all().order_by('id'))
         return self._attachments
 
+    def get_mime_attachments(self):
+        return [(a.name, a.get_bytes(), a.filetype) for a in self.attachments]
+
     def get_subject(self, user=None):
         if self.subject_redacted is None:
             self.subject_redacted = redact_subject(

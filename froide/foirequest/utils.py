@@ -9,6 +9,10 @@ from django.template.loader import render_to_string
 
 from froide.helper.date_utils import format_seconds
 
+from froide.account.utils import send_mail_user
+
+
+MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
 
 def throttle(qs, throttle_config, date_param='first_message'):
     if throttle_config is None:
@@ -58,12 +62,15 @@ def generate_secret_address(user, length=10):
 
 
 def construct_message_body(foirequest, text, send_address=True,
+                           attachment_names=None, attachment_missing=None,
                            template='foirequest/emails/mail_with_userinfo.txt'):
     return render_to_string(
         template,
         {
             'request': foirequest,
             'body': text,
+            'attachment_names': attachment_names,
+            'attachment_missing': attachment_missing,
             'send_address': send_address
         }
     )
@@ -173,3 +180,29 @@ def get_publicbody_for_email(email, foi_request):
         # likely the request's public body
         return foi_request.public_body
     return None
+
+
+def send_request_user_email(foiobject, subject, body, add_idmark=True, **kwargs):
+    if not foiobject.user:
+        return
+    if add_idmark:
+        subject = '{} [#{}]'.format(subject, foiobject.pk)
+    send_mail_user(subject, body, foiobject.user, **kwargs)
+
+
+class MailAttachmentSizeChecker():
+    def __init__(self, generator, max_size=MAX_ATTACHMENT_SIZE):
+        self.generator = generator
+        self.max_size = max_size
+
+    def __iter__(self):
+        sum_bytes = 0
+        self.non_send_files = []
+        self.send_files = []
+        for name, filebytes, mimetype in self.generator:
+            sum_bytes += len(filebytes)
+            if sum_bytes > self.max_size:
+                self.non_send_files.append(name)
+            else:
+                self.send_files.append(name)
+                yield name, filebytes, mimetype

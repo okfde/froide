@@ -27,8 +27,11 @@ from .models import (
     FoiRequest, FoiMessage, FoiAttachment, RequestDraft, PublicBodySuggestion
 )
 from .validators import validate_upload_document, clean_reference
-from .utils import construct_initial_message_body, construct_message_body
 from .foi_mail import generate_foirequest_files
+from .utils import (
+    construct_initial_message_body, construct_message_body,
+    MailAttachmentSizeChecker
+)
 
 
 payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
@@ -194,7 +197,7 @@ class EscalationMessageForm(forms.Form):
             )
         return message
 
-    def make_message(self):
+    def make_message(self, attachment_names=(), attachment_missing=()):
         user = self.foirequest.user
         subject = self.cleaned_data['subject']
         subject = re.sub(r'\s*\[#%s\]\s*$' % self.foirequest.pk, '', subject)
@@ -206,7 +209,9 @@ class EscalationMessageForm(forms.Form):
         plaintext = construct_message_body(
             self.foirequest,
             self.cleaned_data['message'],
-            send_address=False
+            send_address=False,
+            attachment_names=attachment_names,
+            attachment_missing=attachment_missing,
         )
         plaintext_redacted = redact_plaintext(
             plaintext,
@@ -236,8 +241,15 @@ class EscalationMessageForm(forms.Form):
         )
 
     def save(self):
-        message = self.make_message()
-        attachments = list(generate_foirequest_files(self.foirequest))
+        file_generator = generate_foirequest_files(
+            self.foirequest
+        )
+        att_gen = MailAttachmentSizeChecker(file_generator)
+        attachments = list(att_gen)
+        message = self.make_message(
+            attachment_names=att_gen.send_files,
+            attachment_missing=att_gen.non_send_files,
+        )
         message.save()
         message.send(attachments=attachments)
         self.foirequest.escalated.send(sender=self.foirequest)
@@ -639,6 +651,23 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             raise forms.ValidationError('You need to give a postal address, '
                                         'if you want to send it.')
 
+    def add_message_body(self, message,
+                         attachment_names=(), attachment_missing=()):
+        message_body = self.cleaned_data['message']
+        send_address = self.cleaned_data.get('send_address', True)
+        message.plaintext = construct_message_body(
+            self.foirequest,
+            message_body,
+            send_address=send_address,
+            attachment_names=attachment_names,
+            attachment_missing=attachment_missing,
+        )
+        message.plaintext_redacted = redact_plaintext(
+            message.plaintext,
+            is_response=False,
+            user=self.foirequest.user
+        )
+
     def make_message(self):
         user = self.foirequest.user
 
@@ -658,7 +687,6 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             recipient_email = message.sender_email
             recipient_pb = message.sender_public_body
 
-        message_body = self.cleaned_data['message']
         subject = re.sub(
             r'\s*\[#%s\]\s*$' % self.foirequest.pk, '',
             self.cleaned_data["subject"]
@@ -666,19 +694,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         subject = '%s [#%s]' % (subject, self.foirequest.pk)
         subject_redacted = redact_subject(subject, user=user)
 
-        send_address = self.cleaned_data.get('send_address', True)
-        plaintext = construct_message_body(
-            self.foirequest,
-            message_body,
-            send_address=send_address
-        )
-        plaintext_redacted = redact_plaintext(
-            plaintext,
-            is_response=False,
-            user=user
-        )
-
-        return FoiMessage(
+        message = FoiMessage(
             request=self.foirequest,
             subject=subject,
             kind='email',
@@ -691,9 +707,8 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             recipient_public_body=recipient_pb,
             recipient=recipient_name,
             timestamp=timezone.now(),
-            plaintext=plaintext,
-            plaintext_redacted=plaintext_redacted
         )
+        return message
 
     def save(self):
         message = self.make_message()
@@ -702,7 +717,19 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         if self.cleaned_data.get('files'):
             self.save_attachments(self.files.getlist('%s-files' % self.prefix), message)
 
-        message.send()
+        message._attachments = None
+        files = message.get_mime_attachments()
+        att_gen = MailAttachmentSizeChecker(files)
+        attachments = list(att_gen)
+
+        self.add_message_body(
+            message,
+            attachment_names=att_gen.send_files,
+            attachment_missing=att_gen.non_send_files,
+        )
+        message.save()
+
+        message.send(attachments=attachments)
         return message
 
 
