@@ -40,7 +40,7 @@ def get_recipient_address_from_bounce(bounce_email):
     parts = escaped_mail.rsplit('=', 1)
     email = '@'.join(parts)
 
-    original = '%s:%s' % (email, signature)
+    original = SIGN_SEP.join([email, signature])
     signer = TimestampSigner(sep=SIGN_SEP)
     try:
         signer.unsign(original, max_age=MAX_BOUNCE_AGE)
