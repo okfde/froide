@@ -136,9 +136,13 @@ class BaseListRequestView(ListView):
             'jurisdiction'
         ))
 
-        self.facets = None
         if queryset:
             self.facets = self.resolve_facets(sqs)
+        else:
+            # Empty facets
+            self.facets = {
+                k: {'buckets': []} for k in self.facet_config
+            }
 
         return (paginator, page, queryset, is_paginated)
 
