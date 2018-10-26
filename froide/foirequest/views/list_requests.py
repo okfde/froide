@@ -135,7 +135,10 @@ class BaseListRequestView(ListView):
             'public_body',
             'jurisdiction'
         ))
-        self.facets = self.resolve_facets(sqs)
+
+        self.facets = None
+        if queryset:
+            self.facets = self.resolve_facets(sqs)
 
         return (paginator, page, queryset, is_paginated)
 
