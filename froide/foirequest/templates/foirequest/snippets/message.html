@@ -186,11 +186,7 @@
 
     <div id="{{ message.get_html_id }}-content" class="message-content">
       {% if forloop.counter0 == 0 %}
-        <div class="content-text">{% highlight_request message %}<div class="d-print-none">
-<a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{% trans "[... Show complete request text]" %}</a>
-{% blocktrans %}Kind Regards,{% endblocktrans %}
-{{ message.sender }}</div>
-        </div>
+        <div class="content-text">{% highlight_request message object|can_write_foirequest:request %}</div>
       {% else %}
         {% if message.content_hidden %}
           {% if object|can_write_foirequest:request %}

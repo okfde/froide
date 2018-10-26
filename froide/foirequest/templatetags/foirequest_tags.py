@@ -3,8 +3,11 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.template.defaultfilters import urlizetrunc
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
 
-from froide.helper.text_utils import unescape, split_text_by_separator
+from froide.helper.text_utils import (
+    unescape, split_text_by_separator, redact_content
+)
 from froide.helper.text_diff import mark_differences
 
 from ..models import FoiRequest
@@ -16,25 +19,51 @@ from ..auth import (
 register = template.Library()
 
 
-def highlight_request(message):
-    content = unescape(message.get_content().replace("\r\n", "\n"))
-    description = message.request.description
-    description = description.replace("\r\n", "\n")
+def unify(text):
+    text = text.replace("\r\n", "\n")
+    return text
+
+
+def highlight_request(message, unredacted=False):
+    if unredacted:
+        content = message.get_real_content()
+        description = message.request.description
+    else:
+        content = message.get_content()
+        description = redact_content(message.request.description)
+
+    content = unescape(unify(content))
+    description = unify(description)
     try:
         index = content.index(description)
     except ValueError:
         return content
     offset = index + len(description)
-    return mark_safe('<div>%s</div><div class="highlight">%s</div><div class="collapse" id="letter_end">%s</div>' % (
-            escape(content[:index]),
-            urlizetrunc(escape(description), 40),
-            escape(content[offset:]))
-    )
+    html = []
+    if content[:index]:
+        html.append(
+            format_html('<div>{pre}</div>', pre=content[:index])
+        )
+    html.append(format_html('''
+<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
+<div class="d-print-none"><a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>''',
+        description=urlizetrunc(escape(description), 40),
+        post=content[offset:],
+        show_letter=_("[... Show complete request text]"),
+    ))
+    if content[:index]:
+        html.append(format_html('''{regards}
+{message_sender}''',
+            regards=_('Kind Regards,'),
+            message_sender=message.sender
+        ))
+    html.append(format_html('</div>'))
+    return mark_safe(''.join(html))
 
 
 def redact_message(message, request):
-    real_content = message.get_real_content().replace("\r\n", "\n")
-    redacted_content = message.get_content().replace("\r\n", "\n")
+    real_content = unify(message.get_real_content())
+    redacted_content = unify(message.get_content())
 
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
