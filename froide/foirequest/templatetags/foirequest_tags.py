@@ -52,7 +52,8 @@ def highlight_request(message, unredacted=False):
         show_letter=_("[... Show complete request text]"),
     ))
     if content[:index]:
-        html.append(format_html('''{regards}
+        html.append(format_html('''
+{regards}
 {message_sender}''',
             regards=_('Kind Regards,'),
             message_sender=message.sender
