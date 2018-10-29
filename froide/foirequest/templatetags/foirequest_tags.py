@@ -1,12 +1,11 @@
 from django import template
 from django.utils.safestring import mark_safe
-from django.utils.html import escape
 from django.template.defaultfilters import urlizetrunc
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
 
 from froide.helper.text_utils import (
-    unescape, split_text_by_separator, redact_content
+    split_text_by_separator, redact_plaintext
 )
 from froide.helper.text_diff import mark_differences
 
@@ -24,31 +23,68 @@ def unify(text):
     return text
 
 
-def highlight_request(message, unredacted=False):
-    if unredacted:
-        content = message.get_real_content()
-        description = message.request.description
-    else:
-        content = message.get_content()
-        description = redact_content(message.request.description)
+def is_authenticated_read(message, request):
+    foirequest = message.request
+    return (
+        can_write_foirequest(foirequest, request) or
+        can_read_foirequest_anonymous(foirequest, request)
+    )
 
-    content = unescape(unify(content))
-    description = unify(description)
+
+def highlight_request(message, request):
+    auth_read = is_authenticated_read(message, request)
+
+    real_content = unify(message.get_real_content())
+    redacted_content = unify(message.get_content())
+
+    real_description = unify(message.request.description)
+    redacted_description = redact_plaintext(
+        unify(message.request.description), is_response=False, user=message.sender_user
+    )
+
+    if auth_read:
+        content = real_content
+        description = real_description
+    else:
+        content = redacted_content
+        description = redacted_description
+
     try:
         index = content.index(description)
     except ValueError:
-        return content
+        return markup_redacted_content(
+            real_content, redacted_content,
+            authenticated_read=auth_read,
+            message_id=message.id
+        )
+
     offset = index + len(description)
     html = []
     if content[:index]:
         html.append(
-            format_html('<div>{pre}</div>', pre=content[:index])
+            markup_redacted_content(
+                real_content[:index], redacted_content[:index],
+                authenticated_read=auth_read
+            )
+            # format_html('<div>{pre}</div>', pre=content[:index])
         )
-    html.append(format_html('''
-<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
+
+    html_descr = markup_redacted_content(
+        real_description,
+        redacted_description,
+        authenticated_read=auth_read
+    )
+
+    html_post = markup_redacted_content(
+        real_content[offset:],
+        redacted_content[offset:],
+        authenticated_read=auth_read
+    )
+
+    html.append(format_html('''<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
 <div class="d-print-none"><a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>''',
-        description=urlizetrunc(escape(description), 40),
-        post=content[offset:],
+        description=html_descr,
+        post=html_post,
         show_letter=_("[... Show complete request text]"),
     ))
     if content[:index]:
@@ -66,14 +102,18 @@ def redact_message(message, request):
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
 
+    authenticated_read = is_authenticated_read(message, request)
+    return markup_redacted_content(
+        real_content, redacted_content,
+        authenticated_read=authenticated_read,
+        message_id=message.id
+    )
+
+
+def markup_redacted_content(real_content, redacted_content,
+                            authenticated_read=False, message_id=None):
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
-
-    foirequest = message.request
-    authenticated_read = (
-        can_write_foirequest(foirequest, request) or
-        can_read_foirequest_anonymous(foirequest, request)
-    )
 
     if authenticated_read:
         content_1 = mark_differences(c_1, r_1,
@@ -93,13 +133,13 @@ def redact_message(message, request):
     content_1 = urlizetrunc(content_1, 40, autoescape=False)
     content_2 = urlizetrunc(content_2, 40, autoescape=False)
 
-    if content_2:
+    if content_2 and message_id:
         return mark_safe(''.join([
             content_1,
             ('<a href="#message-footer-{message_id}" data-toggle="collapse" '
-            ' aria-expanded="false" aria-controls="collapseExample">…</a>'
+            ' aria-expanded="false" aria-controls="message-footer-{message_id}">…</a>'
             '<div id="message-footer-{message_id}" class="collapse">'
-            .format(message_id=message.id)),
+            .format(message_id=message_id)),
             content_2,
             '</div>'
         ]))

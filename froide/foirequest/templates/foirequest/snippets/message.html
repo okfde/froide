@@ -186,7 +186,7 @@
 
     <div id="{{ message.get_html_id }}-content" class="message-content">
       {% if forloop.counter0 == 0 %}
-        <div class="content-text">{% highlight_request message object|can_write_foirequest:request %}</div>
+        <div class="content-text">{% highlight_request message request %}</div>
       {% else %}
         {% if message.content_hidden %}
           {% if object|can_write_foirequest:request %}
