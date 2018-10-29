@@ -1229,7 +1229,7 @@ class RequestTest(TestCase):
                 'from_': (
                     'Petra Radetzky', 'petra.radetsky@bund.example.org'
                 ),
-                'to': [req.secret_address],
+                'to': [('', req.secret_address)],
                 'cc': [],
                 'resent_to': [],
                 'resent_cc': [],
@@ -1511,7 +1511,7 @@ class MediatorTest(TestCase):
                 'body': 'Content',
                 'html': 'html',
                 'from_': ('Name', mediator.email),
-                'to': [req.secret_address],
+                'to': [('', req.secret_address)],
                 'cc': [],
                 'resent_to': [],
                 'resent_cc': [],
