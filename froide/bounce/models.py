@@ -42,7 +42,7 @@ class Bounce(models.Model):
         User, null=True, blank=True,
         on_delete=models.CASCADE
     )
-    bounces = JSONField(default=list)
+    bounces = JSONField(default=list, blank=True)
     last_update = models.DateTimeField(default=timezone.now)
 
     objects = BounceManager()
