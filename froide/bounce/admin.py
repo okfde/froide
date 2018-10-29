@@ -17,8 +17,12 @@ class BounceAdmin(admin.ModelAdmin):
     user_is_active.boolean = True
 
     def deactivate_users(self, request, queryset):
-        for user in queryset.filter(user__isnull=False, user__is_active=True):
-            user.deactivate()
+        queryset = queryset.filter(
+            user__isnull=False, user__is_active=True
+            ).select_related('user')
+
+        for bounce in queryset:
+            bounce.user.deactivate()
     deactivate_users.short_description = _('Deactivate bounced accounts')
 
 
