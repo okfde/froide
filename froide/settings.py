@@ -46,6 +46,7 @@ class Base(Configuration):
         'storages',
         'treebeard',
         'django_filters',
+        'leaflet',
 
         # Semi-external
         'filingcabinet',
