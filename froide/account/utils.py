@@ -10,8 +10,8 @@ from .models import User
 from .tasks import cancel_account_task
 
 
-DAYS_EXPIRE_UNCONFIRMED_USERS = timedelta(days=365)
-DAYS_CANCEL_DEACTIVATED_USERS = timedelta(days=365)
+DAYS_EXPIRE_UNCONFIRMED_USERS = timedelta(days=30)
+DAYS_CANCEL_DEACTIVATED_USERS = timedelta(days=100)
 
 
 def send_mail_users(subject, body, users,
