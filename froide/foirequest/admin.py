@@ -81,7 +81,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     actions = ['mark_checked', 'mark_not_foi', 'mark_successfully_resolved',
                'tag_all', 'mark_same_as', 'remove_from_index',
                'confirm_request', 'set_visible_to_user', 'unpublish',
-               'add_to_project'
+               'add_to_project', 'unblock_request'
     ]
     raw_id_fields = ('same_as', 'public_body', 'user', 'project')
     save_on_top = True
@@ -180,6 +180,13 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         queryset.update(public=False)
         self.message_user(request, _("Selected requests are now unpublished."))
     unpublish.short_description = _("Unpublish")
+
+    def unblock_request(self, request, queryset):
+        queryset.update(is_blocked=False)
+        for req in queryset:
+            mes = req.messages[0]
+            mes.resend()
+    unblock_request.short_description = _("Unblock requests and send first message")
 
     def add_to_project(self, request, queryset):
         """
