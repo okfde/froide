@@ -1,9 +1,17 @@
+from datetime import timedelta
 from django.utils import timezone
+from django.db import transaction
 from django.contrib.sessions.models import Session
 
 from froide.helper.email_sending import send_mail
 
+from . import account_canceled
 from .models import User
+from .tasks import cancel_account_task
+
+
+DAYS_EXPIRE_UNCONFIRMED_USERS = timedelta(days=365)
+DAYS_CANCEL_DEACTIVATED_USERS = timedelta(days=365)
 
 
 def send_mail_users(subject, body, users,
@@ -75,7 +83,25 @@ def delete_all_unexpired_sessions_for_user(user, session_to_omit=None):
     session_list.delete()
 
 
+def start_cancel_account_process(user):
+    user.private = True
+    user.email = None
+    user.is_active = False
+    user.set_unusable_password()
+    user.date_deactivated = timezone.now()
+
+    user.save()
+    delete_all_unexpired_sessions_for_user(user)
+
+    # Asynchronously delete account
+    # So more expensive anonymization can run in the background
+    cancel_account_task.delay(user.pk)
+
+
 def cancel_user(user):
+    with transaction.atomic():
+        account_canceled.send(sender=User, user=user)
+
     user.organization = ''
     user.organization_url = ''
     user.private = True
@@ -97,7 +123,28 @@ def cancel_user(user):
     user.email = None
     user.set_unusable_password()
     user.username = 'u%s' % user.pk
-    # FIXME: teams without owner may appear
-    user.teammembership_set.all().delete()
     user.save()
     delete_all_unexpired_sessions_for_user(user)
+
+
+def delete_unconfirmed_users():
+    time_ago = timezone.now() - timedelta(days=DAYS_EXPIRE_UNCONFIRMED_USERS)
+    expired_users = User.objects.filter(
+        is_active=False,
+        is_deleted=False,
+        last_login__isnull=True,
+        date_joined__lt=time_ago
+    )
+    for user in expired_users:
+        start_cancel_account_process(user)
+
+
+def delete_deactivated_users():
+    time_ago = timezone.now() - timedelta(days=DAYS_CANCEL_DEACTIVATED_USERS)
+    expired_users = User.objects.filter(
+        is_active=False,
+        is_deleted=False,
+        date_deactivated__lt=time_ago
+    )
+    for user in expired_users:
+        start_cancel_account_process(user)

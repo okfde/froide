@@ -581,6 +581,14 @@ class AccountTest(TestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+        req = user.foirequest_set.all()[0]
+        self.assertFalse(req.closed)
+        messages = req.messages
+        mes = messages[1]
+        mes.recipient = user.get_full_name()
+        mes.plaintext = user.first_name
+        mes.save()
+
         response = self.client.post(reverse('account-delete_account'),
             {
                 'password': 'froide',
@@ -600,6 +608,13 @@ class AccountTest(TestCase):
         self.assertTrue(user.private)
         self.assertTrue(user.is_deleted)
         self.assertIsNotNone(user.date_left)
+
+        req = user.foirequest_set.all()[0]
+        self.assertTrue(req.closed)
+        messages = req.messages
+        mes = messages[1]
+        self.assertEqual(mes.plaintext, '<information-removed>')
+
 
     def test_merge_account(self):
         from froide.foirequestfollower.models import FoiRequestFollower

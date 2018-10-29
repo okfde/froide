@@ -17,7 +17,7 @@ from froide.helper.utils import render_403, get_redirect, get_redirect_url
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .services import AccountService
-from .utils import cancel_user
+from .utils import start_cancel_account_process
 
 
 class AccountView(RedirectView):
@@ -100,6 +100,7 @@ def go(request, user_id, secret, url):
                 return redirect(url)
             if not user.is_active:
                 # Confirm user account (link came from email)
+                user.date_deactivated = None
                 user.is_active = True
                 user.save()
             auth.login(request, user)
@@ -353,7 +354,7 @@ def delete_account(request):
             status=400
         )
     # Removing all personal data from account
-    cancel_user(request.user)
+    start_cancel_account_process(request.user)
     auth.logout(request)
     messages.add_message(request, messages.INFO,
             _('Your account has been deleted and you have been logged out.'))

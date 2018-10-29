@@ -212,3 +212,59 @@ class MailAttachmentSizeChecker():
             else:
                 self.send_files.append(name)
                 yield name, filebytes, mimetype
+
+
+def cancel_user(sender, user=None, **kwargs):
+    from .models import FoiRequest, RequestDraft
+
+    if user is None:
+        return
+
+    FoiRequest.objects.delete_private_requests(user)
+    RequestDraft.objects.filter(user=user).delete()
+
+    permanently_anonymize_requests(
+        FoiRequest.objects.filter(user=user).select_related('user')
+    )
+
+
+def permanently_anonymize_requests(foirequests):
+    from .models import FoiAttachment
+
+    replacements = {
+        'name': str(_('<information-removed>')),
+        'email': str(_('<information-removed>')),
+        'address': str(_('<information-removed>')),
+    }
+    foirequests.update(
+        closed=True
+    )
+    for foirequest in foirequests:
+        user = foirequest.user
+        user.private = True
+        account_service = user.get_account_service()
+        for message in foirequest.messages:
+            message.plaintext_redacted = account_service.apply_message_redaction(
+                message.plaintext_redacted
+            )
+            message.plaintext = account_service.apply_message_redaction(
+                message.plaintext, replacements=replacements
+            )
+            message.html = ''
+            if message.is_response:
+                # This may occasionally delete real sender name
+                # when user was only in CC
+                message.recipient = ''
+            else:
+                message.sender_name = ''
+
+            message.save()
+
+        # Delete original attachments, if they have a redacted version
+        FoiAttachment.objects.filter(
+            approved=False,
+            can_approve=False,
+            belongs_to__request=foirequest,
+            redacted__isnull=False,
+            is_redacted=False
+        ).delete()

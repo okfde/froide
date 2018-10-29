@@ -78,6 +78,16 @@ class FoiRequestManager(CurrentSiteManager):
     def get_throttle_filter(self, user):
         return self.get_queryset().filter(user=user), 'first_message'
 
+    def delete_private_requests(self, user):
+        if not user:
+            return
+        self.get_queryset().filter(
+            user=user
+        ).filter(
+            Q(visibility=FoiRequest.VISIBLE_TO_REQUESTER) |
+            Q(visibility=FoiRequest.INVISIBLE)
+        ).delete()
+
 
 class PublishedFoiRequestManager(CurrentSiteManager):
     def get_queryset(self):
