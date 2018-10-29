@@ -37,6 +37,7 @@ class UserAdmin(DjangoUserAdmin):
         'date_joined', 'is_active', 'is_staff', 'private', 'is_trusted',
         'is_deleted'
     )
+    date_hierarchy = 'date_joined'
     ordering = ('-date_joined',)
 
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
