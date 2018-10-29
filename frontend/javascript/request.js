@@ -50,10 +50,14 @@ $(function () {
   $('a[data-tabgo="tab"]').click(function (e) {
     var href = this.attributes.getNamedItem('href').value
     var el = document.querySelector(href)
-    if (el.style.display === 'none') {
+    var display = window.getComputedStyle(el, null).display
+    if (display === 'none') {
       document.querySelector('.nav-link[href="' + href + '"]').Tab.show()
     }
-    el.scrollTo({behavior: 'smooth'})
+    if (el.scrollIntoView) {
+      e.preventDefault()
+      el.scrollIntoView({behavior: 'smooth'})
+    }
   })
 
   let activeTab = requestNav.dataset.activetab
