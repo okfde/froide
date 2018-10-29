@@ -17,13 +17,13 @@
           </div>
         </div>
 
-        <div class="form-group row" v-if="requiresPostalAddress">
-          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address, 'field-required': requiresPostalAddress }">
+        <div class="form-group row">
+          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address}">
             {{ i18n.yourAddress }}
           </label>
           <div class="col-sm-9">
             <div>
-              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder" :required="requiresPostalAddress"></textarea>
+              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder"></textarea>
               <p v-for="e in errors.address" :key="e.message">{{ e.message }}</p>
               <p class="help-block">{{ addressHelpText }}</p>
             </div>
