@@ -6,7 +6,7 @@ from .models import GeoRegion
 class GeoRegionMixin(object):
     search_fields = ['name', 'region_identifier']
     list_display = ('name', 'kind', 'kind_detail', 'region_identifier')
-    list_filter = ('kind',)
+    list_filter = ('kind', 'kind_detail')
     raw_id_fields = ('part_of',)
 
 
