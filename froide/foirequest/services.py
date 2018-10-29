@@ -320,6 +320,18 @@ class ReceiveEmailService(BaseService):
         if message_id:
             message_id = message_id[:512]
 
+        recipient_name = ''
+        recipient_email = ''
+        if email.is_direct_recipient(foirequest.secret_address):
+            recipient_name = foirequest.user.display_name(),
+            recipient_email = foirequest.secret_address,
+        else:
+            try:
+                recipient_name = email.to[0][0]
+                recipient_email = email.to[0][1]
+            except IndexError:
+                pass
+
         message = FoiMessage(
             request=foirequest,
             subject=subject,
@@ -327,8 +339,8 @@ class ReceiveEmailService(BaseService):
             is_response=True,
             sender_name=email.from_[0],
             sender_email=email.from_[1],
-            recipient_email=foirequest.secret_address,
-            recipient=foirequest.user.display_name(),
+            recipient=recipient_name,
+            recipient_email=recipient_email,
             plaintext=email.body,
             html=email.html,
             content_hidden=email.is_auto_reply

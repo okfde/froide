@@ -144,6 +144,11 @@ class ParsedEmail(object):
 
         return False
 
+    def is_direct_recipient(self, email_address):
+        return any(
+            email.lower() == email_address.lower() for name, email in self.to
+        )
+
 
 class EmailParser(object):
 
