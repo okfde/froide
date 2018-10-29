@@ -615,7 +615,6 @@ class AccountTest(TestCase):
         mes = messages[1]
         self.assertEqual(mes.plaintext, '<information-removed>')
 
-
     def test_merge_account(self):
         from froide.foirequestfollower.models import FoiRequestFollower
         from froide.foirequestfollower.tests import FoiRequestFollowerFactory
