@@ -1,0 +1,63 @@
+{% extends "helper/admin_base_action.html" %}
+
+{% load i18n l10n %}
+{% load leaflet_tags %}
+
+{% block action_title %}{% trans 'Show Georegions' %}{% endblock %}
+
+{% block breadcrumbs_action_label %}
+  {% trans 'Show Georegions' %}
+{% endblock %}
+
+{% block action_content %}
+{% leaflet_js %}
+{% leaflet_css %}
+<style>
+  .leaflet-container {  /* all maps */
+    width:  100%;
+    height: 80vh;
+}
+</style>
+{% leaflet_map "main" callback="main_map_init" %}
+
+{% if no_regions %}
+  <h2>{% trans "No geo region available for these public bodies" %}</h2>
+  <ul>
+  {% for obj in no_regions %}
+    <li>
+      {{ obj.name}}
+    </li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+<script type="text/javascript">
+  var initUrl = '/api/v1/georegion/?id={{ region_string }}'
+    function main_map_init (map, options) {
+      getData(initUrl, map)
+    }
+    function getData (url, map) {
+      window.fetch(url).then(function(response) {
+        return response.json()
+      }).then(function(data) {
+        if (data.meta.next) {
+          getData(data.meta.next, map)
+        }
+        var geoData = data.objects.map(function(x) {
+          return x.geom
+        })
+        console.log(geoData.length)
+        var layer = L.geoJson(geoData, {
+          style: function() {
+            return {
+              fillOpacity: 0.9
+            }
+          }
+        })
+        layer.addTo(map);
+        map.fitBounds(layer.getBounds())
+      })
+    }
+</script>
+
+{% endblock %}

@@ -10,6 +10,7 @@ from django import forms
 from django.urls import reverse
 from django.conf.urls import url
 from django.utils.html import format_html
+from django.template.response import TemplateResponse
 
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
@@ -107,7 +108,7 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
 
     actions = ClassificationAssignMixin.actions + [
-            'export_csv', 'remove_from_index', 'tag_all'
+        'export_csv', 'remove_from_index', 'tag_all', 'show_georegions'
     ]
 
     def get_queryset(self, request):
@@ -173,6 +174,26 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
 
         self.message_user(request, _("Removed from search index"))
     remove_from_index.short_description = _("Remove from search index")
+
+    def show_georegions(self, request, queryset):
+        opts = self.model._meta
+
+        queryset = queryset
+        context = {
+            'opts': opts,
+            'media': self.media,
+            'applabel': opts.app_label,
+            'no_regions': queryset.filter(region__isnull=True),
+            'region_string': ','.join([
+                str(pb.region_id) for pb in queryset.filter(region__isnull=False)
+            ])
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(
+            request, 'publicbody/admin/show_georegions.html',
+            context
+        )
 
 
 class PublicBodyAdminMixin(PublicBodyBaseAdminMixin):
