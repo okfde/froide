@@ -14,5 +14,4 @@
 {{ request.user.organization }}{% endif %}
 {{ request.user.address }}{% endif %}
 
-{% include "foirequest/emails/request_footer.txt" %}
-{% endautoescape %}
+{% include "foirequest/emails/request_footer.txt" %}{% endautoescape %}
