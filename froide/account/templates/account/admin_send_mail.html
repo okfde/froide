@@ -16,7 +16,7 @@
       <label>{% trans "Subject" %}: <input type="text" name="subject" value=""/>
     </p>
     <textarea name="body" rows="8" style="width: 100%"></textarea><br/>
-    <small>{% trans "You can use the following placeholders:" %} <code>{name}, {first_name}, {last_name}</code></small>
+    <small>{% trans "You can use the following placeholders:" %} <code>{name}, {first_name}, {last_name}, {url}</code></small>
     <input type="hidden" name="action" value="send_mail" />
     <p>
       <input type="submit" value="{% blocktrans count count=count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />

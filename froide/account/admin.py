@@ -110,6 +110,7 @@ class UserAdmin(DjangoUserAdmin):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'name': user.get_full_name(),
+                    'url': user.get_autologin_url('/'),
                 }
                 user_subject = subject.format(**mail_context)
                 user_body = body.format(**mail_context)
