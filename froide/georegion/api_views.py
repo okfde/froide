@@ -62,6 +62,7 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class GeoRegionFilter(filters.FilterSet):
+    id = filters.CharFilter(method='id_filter')
     q = filters.CharFilter(method='search_filter')
     kind = filters.CharFilter(method='kind_filter')
     level = filters.NumberFilter(method='level_filter')
@@ -80,6 +81,10 @@ class GeoRegionFilter(filters.FilterSet):
 
     def level_filter(self, queryset, name, value):
         return queryset.filter(level=value)
+
+    def id_filter(self, queryset, name, value):
+        ids = value.split(',')
+        return queryset.filter(pk__in=ids)
 
 
 class GeoRegionViewSet(OpenRefineReconciliationMixin,
