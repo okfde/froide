@@ -35,7 +35,7 @@ class Command(BaseCommand):
         translation.activate(settings.LANGUAGE_CODE)
         filename = options['filename']
 
-        pbs = PublicBody.objects.all().iterator()
+        pbs = PublicBody.objects.all()
         validator = PublicBodyValidator(pbs)
 
         with self.get_stream(filename) as stream:
