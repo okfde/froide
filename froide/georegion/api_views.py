@@ -141,6 +141,7 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
         qs = GeoRegion.objects.all()
         for key, val in filters.items():
             qs = qs.filter(**{key: val})
+        # FIXME: Special German case
         match = GERMAN_PLZ_RE.match(query)
         zip_region = None
         if match:
