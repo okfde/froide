@@ -323,8 +323,8 @@ class ReceiveEmailService(BaseService):
         recipient_name = ''
         recipient_email = ''
         if email.is_direct_recipient(foirequest.secret_address):
-            recipient_name = foirequest.user.display_name(),
-            recipient_email = foirequest.secret_address,
+            recipient_name = foirequest.user.display_name()
+            recipient_email = foirequest.secret_address
         else:
             try:
                 recipient_name = email.to[0][0]
