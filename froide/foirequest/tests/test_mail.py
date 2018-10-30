@@ -49,7 +49,7 @@ class MailTest(TestCase):
             message.subject,
             'Anfrage nach dem Informationsfreiheitsgesetz;  Förderanträge und Verwendungsnachweise der Hanns-Seidel-Stiftung;  Vg. 375-2018'
         )
-        self.assertEqual(message.recipient, '')
+        self.assertEqual(message.recipient, request.user.display_name())
         self.assertEqual(message.recipient_email, 'sw+yurpykc1hr@fragdenstaat.de')
 
     def test_working_with_attachment(self):
