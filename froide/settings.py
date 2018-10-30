@@ -376,7 +376,7 @@ class Base(Configuration):
     CELERY_ACCEPT_CONTENT = ['pickle']
 
     CELERY_EMAIL_TASK_CONFIG = {
-        'queue': 'email'
+        'queue': 'emailsend'
     }
 
     # ######## Search ###########
