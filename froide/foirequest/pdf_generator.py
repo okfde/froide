@@ -46,6 +46,14 @@ class PDFGenerator(object):
             self.path = tempfile.mkdtemp()
             filename = os.path.join(self.path, 'output')
 
+            curdir = None
+            try:
+                curdir = os.getcwd()
+            except (IOError, OSError) as e:
+                logger.warning('Could not get cwd: %s', e)
+
+            os.chdir(self.path)
+
             doc = self.make_doc(self.obj)
             try:
                 doc.generate_pdf(filename, clean=False, compiler="xelatex")
@@ -57,6 +65,8 @@ class PDFGenerator(object):
                 yield filename + '.pdf'
         finally:
             shutil.rmtree(self.path)
+            if curdir is not None:
+                os.chdir(curdir)
 
     def get_pdf_bytes(self):
         if not PDF_EXPORT_AVAILABLE:
