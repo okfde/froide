@@ -56,8 +56,11 @@ class UserAdmin(DjangoUserAdmin):
     ]
     search_fields = ('email', 'username', 'first_name', 'last_name')
 
-    actions = ['export_csv', 'resend_activation',
-               'send_mail', 'delete_sessions', 'cancel_users']
+    actions = [
+        'export_csv', 'resend_activation',
+        'send_mail', 'delete_sessions', 'cancel_users',
+        'deactivate_users'
+    ]
 
     def export_csv(self, request, queryset):
         return export_csv_response(User.export_csv(queryset))
@@ -149,6 +152,13 @@ class UserAdmin(DjangoUserAdmin):
         self.message_user(request, _("Users canceled."))
         return None
     cancel_users.short_description = _('Cancel account of users')
+
+    def deactivate_users(self, request, queryset):
+        for user in queryset:
+            user.deactivate()
+        self.message_user(request, _("Users deactivated."))
+        return None
+    deactivate_users.short_description = _('Deactivate users')
 
 
 admin.site.register(User, UserAdmin)
