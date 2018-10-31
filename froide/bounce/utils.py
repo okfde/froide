@@ -91,7 +91,7 @@ def get_signing_methods(email, signature):
     2. standard django TimestampSigner
     '''
     # base32 alphabet is uppercase
-    original = SIGN_SEP.join([email, signature.upper()])
+    original = SIGN_SEP.join([email.lower(), signature.upper()])
     yield CustomTimestampSigner, original
     original = SIGN_SEP.join([email, signature])
     yield TimestampSigner, original
@@ -106,7 +106,7 @@ def get_recipient_address_from_bounce(bounce_email):
 
     escaped_mail = SEP_REPL.join(parts[2:])
     email_parts = escaped_mail.rsplit('=', 1)
-    email = '@'.join(email_parts).lower()
+    email = '@'.join(email_parts)
 
     for klass, original in get_signing_methods(email, signature):
         signer = klass(sep=SIGN_SEP)
