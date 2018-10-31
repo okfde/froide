@@ -34,7 +34,7 @@ AUTO_REPLY_HEADERS = (
     ('X-Autorespond', None),
     ('Auto-Submitted', 'auto-replied'),
 )
-BOUNCE_STATUS_RE = re.compile(r'\d\.\d+\.\d+', re.IGNORECASE)
+BOUNCE_STATUS_RE = re.compile(r'(\d\.\d+\.\d+)', re.IGNORECASE)
 
 DsnStatus = namedtuple('DsnStatus', 'class_ subject detail')
 
@@ -73,8 +73,9 @@ class UnsupportedMailFormat(Exception):
 
 def find_bounce_status(headers):
     for v in headers.get('Status', []):
-        if BOUNCE_STATUS_RE.match(v.strip()):
-            return DsnStatus(*[int(x) for x in v.strip().split('.')])
+        match = BOUNCE_STATUS_RE.match(v.strip())
+        if match is not None:
+            return DsnStatus(*[int(x) for x in match.group(1).split('.')])
 
     return None
 
