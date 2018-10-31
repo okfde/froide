@@ -149,7 +149,7 @@ class BaseFoiRequestFilterSet(django_filters.FilterSet):
         widget=forms.HiddenInput()
     )
     publicbody = django_filters.ModelChoiceFilter(
-        queryset=PublicBody.objects.all(),
+        queryset=PublicBody._default_manager.all(),
         to_field_name='slug',
         method='filter_publicbody',
         widget=forms.HiddenInput()
