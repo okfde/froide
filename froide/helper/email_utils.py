@@ -35,6 +35,15 @@ AUTO_REPLY_HEADERS = (
     ('Auto-Submitted', 'auto-replied'),
 )
 BOUNCE_STATUS_RE = re.compile(r'(\d\.\d+\.\d+)', re.IGNORECASE)
+BOUNCE_TEXT = re.compile(r'''5\d{2}\ Requested\ action\ not\ taken |
+mailbox\ unavailable |
+RCPT\ TO\ command |
+permanent\ error |
+SMTP\ error |
+original\ message |
+Return-Path:\ # If headers are given in verbose
+''', re.X | re.I)
+BOUNCE_TEXT_THRESHOLD = 3  # At least three occurences of above patterns
 
 DsnStatus = namedtuple('DsnStatus', 'class_ subject detail')
 
@@ -71,12 +80,17 @@ class UnsupportedMailFormat(Exception):
     pass
 
 
-def find_bounce_status(headers):
+def find_bounce_status(headers, body=None):
     for v in headers.get('Status', []):
         match = BOUNCE_STATUS_RE.match(v.strip())
         if match is not None:
             return DsnStatus(*[int(x) for x in match.group(1).split('.')])
 
+    if body is not None:
+        bounce_matches = len(BOUNCE_TEXT.findall(body))
+        if bounce_matches >= BOUNCE_TEXT_THRESHOLD:
+            # Declare a DSN status of 5.5.0
+            return DsnStatus(5, 5, 0)
     return None
 
 
@@ -105,11 +119,11 @@ class ParsedEmail(object):
 
     @cached_property
     def bounce_info(self):
-        return self._get_bounce_info()
+        return self.get_bounce_info()
 
-    def _get_bounce_info(self):
+    def get_bounce_info(self):
         headers = get_bounce_headers(self.msgobj)
-        status = find_bounce_status(headers)
+        status = find_bounce_status(headers, self.body)
         bounce_type = classify_bounce_status(status)
         return BounceResult(
             status=status,

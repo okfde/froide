@@ -78,6 +78,8 @@ def process_bounce_mail(mail_bytes):
     if bounce_info.is_bounce:
         add_bounce_mail(email)
     else:
+        if email.is_auto_reply:
+            return
         mail_managers(
             'No bounce detected in bounce mailbox',
             email.subject

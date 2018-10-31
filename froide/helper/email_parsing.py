@@ -268,24 +268,3 @@ def get_bounce_headers(msgobj):
             if k in BOUNCE_HEADERS:
                 headers[k].append(v)
     return headers
-
-
-# def _collect_headers(message):
-#     collected = deque()
-#     for p in message.walk(with_self=True):
-#         for h in _HEADERS:
-#             if h in p.headers:
-#                 collected.append((h, p.headers[h]))
-#         if p.content_type.is_delivery_status():  # 'message/delivery-status'
-#             collected += _collect_headers_from_status(p.body)
-
-#     return MimeHeaders(collected)
-
-
-# def _collect_headers_from_status(body):
-#     out = deque()
-#     with closing(six.StringIO(body)) as stream:
-#         for i in range(3):
-#             out += parse_stream(stream)
-
-#     return out
