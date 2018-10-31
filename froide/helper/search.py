@@ -138,7 +138,7 @@ def resolve_facet(data, getter=None, label_getter=None,
         if model is not None:
             pks = [item['key'] for item in info['buckets']]
             objs = {
-                o.pk: o for o in model.objects.filter(pk__in=pks)
+                o.pk: o for o in model._default_manager.filter(pk__in=pks)
             }
             for item in info['buckets']:
                 item['object'] = objs[item['key']]
