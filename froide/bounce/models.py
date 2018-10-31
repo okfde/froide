@@ -14,19 +14,24 @@ def convert_bounce_info(bounce_info):
 
 class BounceManager(models.Manager):
     def update_bounce(self, email, bounce_info):
-        email = email.lower()
+        email_lower = email.lower()
         try:
-            bounce = Bounce.objects.get(email=email.lower())
+            bounce = Bounce.objects.get(email=email_lower)
             bounce.last_update = timezone.now()
             bounce.bounces.append(
                 convert_bounce_info(bounce_info)
             )
             bounce.save()
         except Bounce.DoesNotExist:
-            try:
-                user = User.objects.get(email__iexact=email)
-            except User.DoesNotExist:
-                user = None
+            user = None
+            users = User.objects.filter(email__iexact=email_lower)
+            if len(users) > 1:
+                try:
+                    user = User.objects.get(email=email)
+                except User.DoesNotExist:
+                    pass
+            if users and not user:
+                user = users[0]
             bounce = Bounce.objects.create(
                 email=email,
                 user=user,
