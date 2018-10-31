@@ -51,7 +51,7 @@ class BounceTest(TestCase):
         bounce_info = email.bounce_info
         self.assertTrue(bounce_info.is_bounce)
         self.assertEqual(bounce_info.bounce_type, 'hard')
-        self.assertEqual(bounce_info.status, (5, 0, 0))
+        self.assertEqual(bounce_info.status, (5, 1, 1))
 
     def test_bounce_handling(self):
         def days_ago(days):
