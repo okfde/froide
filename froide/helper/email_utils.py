@@ -36,6 +36,8 @@ AUTO_REPLY_HEADERS = (
 )
 BOUNCE_STATUS_RE = re.compile(r'(\d\.\d+\.\d+)', re.IGNORECASE)
 BOUNCE_TEXT = re.compile(r'''5\d{2}\ Requested\ action\ not\ taken |
+5\.\d\.\d |
+RESOLVER\.ADR\.RecipNotFound |
 mailbox\ unavailable |
 RCPT\ TO\ command |
 permanent\ error |
