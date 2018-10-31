@@ -19,7 +19,7 @@ def p(path):
     return os.path.join(TEST_DATA_ROOT, path)
 
 
-class MailTest(TestCase):
+class BounceTest(TestCase):
     def setUp(self):
         self.email = 'nonexistant@example.org'
 
@@ -29,6 +29,7 @@ class MailTest(TestCase):
             email = parser.parse(f)
 
         bounce_address = make_bounce_address(self.email)
+        self.assertEqual(bounce_address, bounce_address.lower())
         email.to = [('', bounce_address)]
         bounce_info = email.bounce_info
         self.assertTrue(bounce_info.is_bounce)
@@ -39,6 +40,18 @@ class MailTest(TestCase):
         self.assertEqual(bounce.email, self.email)
         self.assertIsNone(bounce.user)
         self.assertEqual(len(bounce.bounces), 1)
+
+    def test_bounce_parsing_2(self):
+        parser = EmailParser()
+        with open(p("bounce_002.txt"), 'rb') as f:
+            email = parser.parse(f)
+
+        bounce_address = make_bounce_address(self.email)
+        email.to = [('', bounce_address)]
+        bounce_info = email.bounce_info
+        self.assertTrue(bounce_info.is_bounce)
+        self.assertEqual(bounce_info.bounce_type, 'hard')
+        self.assertEqual(bounce_info.status, (5, 0, 0))
 
     def test_bounce_handling(self):
         def days_ago(days):

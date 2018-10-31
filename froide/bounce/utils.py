@@ -3,8 +3,10 @@ This contains a basic implementation of VERP and bounce detection
 https://en.wikipedia.org/wiki/Variable_envelope_return_path
 
 """
+import base64
+import time
 from contextlib import closing
-from datetime import datetime, timedelta
+import datetime
 from io import BytesIO
 
 from django.conf import settings
@@ -12,6 +14,7 @@ from django.core.mail import mail_managers
 from django.core.signing import (
     TimestampSigner, SignatureExpired, BadSignature
 )
+from django.utils.crypto import salted_hmac
 
 from froide.helper.email_utils import EmailParser, get_unread_mails
 
@@ -23,19 +26,75 @@ MAX_BOUNCE_AGE = settings.FROIDE_CONFIG['bounce_max_age']
 
 MAX_BOUNCE_COUNT = 20
 HARD_BOUNCE_COUNT = 3
-HARD_BOUNCE_PERIOD = timedelta(seconds=3 * 7 * 24 * 60 * 60)  # 3 weeks
+HARD_BOUNCE_PERIOD = datetime.timedelta(seconds=3 * 7 * 24 * 60 * 60)  # 3 weeks
 
 SOFT_BOUNCE_COUNT = 5
-SOFT_BOUNCE_PERIOD = timedelta(seconds=5 * 7 * 24 * 60 * 60)  # 5 weeks
+SOFT_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * 7 * 24 * 60 * 60)  # 5 weeks
+
+
+def b32_encode(s):
+    return base64.b32encode(s).strip(b'=')
+
+
+def base32_hmac(salt, value, key):
+    return b32_encode(salted_hmac(salt, value, key).digest()).decode()
+
+
+def int_to_bytes(x):
+    return x.to_bytes((x.bit_length() + 7) // 8, 'big')
+
+
+def bytes_to_int(xbytes):
+    return int.from_bytes(xbytes, 'big')
+
+
+class CustomTimestampSigner(TimestampSigner):
+    def signature(self, value):
+        return base32_hmac(self.salt + 'signer', value, self.key)
+
+    def timestamp(self):
+        return base64.b32encode(int_to_bytes(int(time.time()))).decode('ascii')
+
+    def unsign(self, value, max_age=None):
+        """
+        Retrieve original value and check it wasn't signed more
+        than max_age seconds ago.
+        """
+        result = super(TimestampSigner, self).unsign(value)
+        value, timestamp = result.rsplit(self.sep, 1)
+        timestamp = bytes_to_int(base64.b32decode(timestamp))
+        if max_age is not None:
+            if isinstance(max_age, datetime.timedelta):
+                max_age = max_age.total_seconds()
+            # Check timestamp is not older than max_age
+            age = time.time() - timestamp
+            if age > max_age:
+                raise SignatureExpired(
+                    'Signature age %s > %s seconds' % (age, max_age))
+        return value
 
 
 def make_bounce_address(email):
-    signer = TimestampSigner(sep=SIGN_SEP)
+    signer = CustomTimestampSigner(sep=SIGN_SEP)
     value = signer.sign(email).split(SIGN_SEP, 1)[1]
-    value = value.replace(SIGN_SEP, SEP_REPL)
-    escaped_mail = email.replace('@', '=')
+    value = value.replace(SIGN_SEP, SEP_REPL).lower()
+    # normalize email to lower case, some bounces may go to lower case
+    escaped_mail = email.lower().replace('@', '=')
     token = '{}+{}'.format(value, escaped_mail)
     return BOUNCE_FORMAT.format(token=token)
+
+
+def get_signing_methods(email, signature):
+    '''
+    This tries two different signing methods
+    1. Custom signer using base32 alphabet
+    2. standard django TimestampSigner
+    '''
+    # base32 alphabet is uppercase
+    original = SIGN_SEP.join([email, signature.upper()])
+    yield CustomTimestampSigner, original
+    original = SIGN_SEP.join([email, signature])
+    yield TimestampSigner, original
 
 
 def get_recipient_address_from_bounce(bounce_email):
@@ -44,19 +103,21 @@ def get_recipient_address_from_bounce(bounce_email):
     token = bounce_email[len(head):-len(tail)]
     parts = token.split(SEP_REPL)
     signature = SIGN_SEP.join(parts[:2])
-    escaped_mail = SEP_REPL.join(parts[2:])
-    parts = escaped_mail.rsplit('=', 1)
-    email = '@'.join(parts)
 
-    original = SIGN_SEP.join([email, signature])
-    signer = TimestampSigner(sep=SIGN_SEP)
-    try:
-        signer.unsign(original, max_age=MAX_BOUNCE_AGE)
-    except SignatureExpired:
-        return email, None
-    except BadSignature:
-        return email, False
-    return email, True
+    escaped_mail = SEP_REPL.join(parts[2:])
+    email_parts = escaped_mail.rsplit('=', 1)
+    email = '@'.join(email_parts).lower()
+
+    for klass, original in get_signing_methods(email, signature):
+        signer = klass(sep=SIGN_SEP)
+        try:
+            signer.unsign(original, max_age=MAX_BOUNCE_AGE)
+            return email, True
+        except SignatureExpired:
+            return email, None
+        except BadSignature:
+            continue
+    return email, False
 
 
 def check_bounce_mails():
@@ -105,7 +166,7 @@ def add_bounce_mail(email):
 
 def get_bounce_stats(bounces, bounce_type='hard', start_date=None):
     filtered_bounces = [
-        datetime.strptime(b['timestamp'][:19], '%Y-%m-%dT%H:%M:%S')
+        datetime.datetime.strptime(b['timestamp'][:19], '%Y-%m-%dT%H:%M:%S')
         for b in bounces if b['bounce_type'] == bounce_type
     ]
     filtered_bounces = [
@@ -115,7 +176,7 @@ def get_bounce_stats(bounces, bounce_type='hard', start_date=None):
 
 
 def check_bounce_status(bounces, bounce_type, period, threshold):
-    start_date = datetime.now() - period
+    start_date = datetime.datetime.now() - period
     count = get_bounce_stats(
         bounces, bounce_type=bounce_type, start_date=start_date
     )
