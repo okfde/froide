@@ -226,6 +226,10 @@ class SearchQuerySetWrapper(object):
         }
 
     def get_aggregations(self):
+        if self.broken_query:
+            return {
+                'fields': {}
+            }
         return {'fields': {
             k: [
                 [i['key'], i['doc_count']]
