@@ -526,12 +526,12 @@ class Dev(Base):
     pass
 
 
-class Test(Base):
+class TestBase(Base):
     DEBUG = False
 
     @property
     def TEMPLATES(self):
-        TEMP = super(Test, self).TEMPLATES
+        TEMP = super().TEMPLATES
         TEMP[0]['OPTIONS']['debug'] = True
         return TEMP
 
@@ -544,7 +544,7 @@ class Test(Base):
 
     @property
     def FROIDE_CONFIG(self):
-        config = dict(super(Test, self).FROIDE_CONFIG)
+        config = dict(super().FROIDE_CONFIG)
         config.update(dict(
             doc_conversion_call_func=self._fake_convert_pdf,
             default_law=10000,
@@ -556,7 +556,7 @@ class Test(Base):
 
     @property
     def MEDIA_ROOT(self):
-        return os.path.abspath(os.path.join(super(Test, self).PROJECT_ROOT, "tests", "testdata"))
+        return os.path.abspath(os.path.join(super().PROJECT_ROOT, "tests", "testdata"))
 
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
@@ -586,7 +586,7 @@ class Test(Base):
     ]
 
 
-class CustomTest(Test):
+class Test(TestBase):
     pass
 
 
@@ -621,7 +621,7 @@ class German(object):
 
     @property
     def FROIDE_CONFIG(self):
-        german_config = dict(super(German, self).FROIDE_CONFIG)
+        german_config = dict(super().FROIDE_CONFIG)
         german_config.update({
             "payment_possible": True,
             "currency": "Euro",
@@ -648,7 +648,7 @@ class Production(Base):
 
     @property
     def TEMPLATES(self):
-        TEMP = super(Production, self).TEMPLATES
+        TEMP = super().TEMPLATES
         TEMP[0]['OPTIONS']['debug'] = False
         return TEMP
 
@@ -695,7 +695,7 @@ class Heroku(Production):
 
     @property
     def LOGGING(self):
-        logging = super(Heroku, self).LOGGING
+        logging = super().LOGGING
         logging['handlers']['console']['stream'] = sys.stdout
         logging['loggers']['django.request']['handlers'] = ['console']
         return logging

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .settings import Base
 
 
@@ -36,6 +34,14 @@ class Dev(Base):
     #         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
     #         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     #     }
+    # }
+
+
+    # ELASTICSEARCH_INDEX_PREFIX = 'froide'
+    # ELASTICSEARCH_DSL = {
+    #     'default': {
+    #        'hosts': 'localhost:9200'
+    #    },
     # }
 
     # # Add real cache
@@ -103,20 +109,6 @@ class Dev(Base):
     #     "admin": "admin"
     # }
 
-    ######### Backends, Finders, Processors, Classes ####
-
-    # List of finder classes that know how to find static files in
-    # various locations.
-
-    # MIDDLEWARE_CLASSES = [
-    #     'django.middleware.common.CommonMiddleware',
-    #     'djangosecure.middleware.SecurityMiddleware',
-    #     'django.contrib.sessions.middleware.SessionMiddleware',
-    #     'django.middleware.csrf.CsrfViewMiddleware',
-    #     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #     'django.contrib.messages.middleware.MessageMiddleware',
-    #     'pagination.middleware.PaginationMiddleware',
-    # ]
 
     ########## I18N and L10N ##################
 

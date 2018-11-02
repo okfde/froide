@@ -1,5 +1,5 @@
 export DJANGO_SETTINGS_MODULE=froide.settings
-export DJANGO_CONFIGURATION=CustomTest
+export DJANGO_CONFIGURATION=Test
 export PYTHONWARNINGS=default
 
 test:
