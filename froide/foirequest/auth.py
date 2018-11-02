@@ -1,8 +1,11 @@
+from functools import lru_cache
+
 from django.utils.crypto import salted_hmac, constant_time_compare
 
-from froide.helper.auth import (can_read_object, can_write_object,
-                                can_manage_object, has_authenticated_access,
-                                lru_cache)
+from froide.helper.auth import (
+    can_read_object, can_write_object,
+    can_manage_object, has_authenticated_access,
+)
 
 from .models import FoiRequest
 

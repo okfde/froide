@@ -1,13 +1,4 @@
-try:
-    from functools import lru_cache
-except ImportError:
-    # FIXME: Fake lru cache on Python2
-    def lru_cache():
-        def inner(func):
-            def _inner(*args, **kwargs):
-                return func(*args, **kwargs)
-            return _inner
-        return inner
+from functools import lru_cache
 
 from django.contrib.auth import get_permission_codename
 from django.db.models import Q
