@@ -10,6 +10,7 @@ from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
 from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
+from froide.helper.auth import clear_lru_caches
 
 
 class WebTest(TestCase):
@@ -290,6 +291,7 @@ class WebTest(TestCase):
 
 class MediaServingTest(TestCase):
     def setUp(self):
+        clear_lru_caches()
         self.site = factories.make_world()
 
     @override_settings(
