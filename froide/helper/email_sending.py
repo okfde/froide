@@ -1,7 +1,10 @@
 from django.core.mail import EmailMessage, get_connection
 from django.conf import settings
 
-from froide.bounce.utils import make_bounce_address
+try:
+    from froide.bounce.utils import make_bounce_address
+except ImportError:
+    make_bounce_address = None
 
 HANDLE_BOUNCES = settings.FROIDE_CONFIG['bounce_enabled']
 
@@ -27,7 +30,7 @@ def send_mail(subject, body, user_email,
         from_email = settings.DEFAULT_FROM_EMAIL
 
     backend_kwargs = {}
-    if HANDLE_BOUNCES and auto_bounce:
+    if HANDLE_BOUNCES and auto_bounce and make_bounce_address:
         backend_kwargs['return_path'] = make_bounce_address(user_email)
 
     connection = get_mail_connection(**backend_kwargs)
