@@ -1,6 +1,7 @@
 from django_elasticsearch_dsl import DocType, fields
-from froide.helper.search import get_index, get_text_analyzer
 from django.template.loader import render_to_string
+
+from froide.helper.search import get_index, get_text_analyzer
 
 from .models import FoiRequest
 
