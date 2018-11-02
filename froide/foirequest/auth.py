@@ -81,3 +81,9 @@ def check_foirequest_auth_code(foirequest, code):
 
 def is_attachment_public(foirequest, attachment):
     return can_read_object(foirequest) and attachment.approved
+
+
+def clear_lru_caches():
+    for f in (can_write_foirequest, can_read_foirequest,
+              can_read_foirequest_authenticated):
+        f.cache_clear()

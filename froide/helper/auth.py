@@ -81,3 +81,8 @@ def get_user_queryset(qs, request, has_team=False):
         # or their team
         filter_arg |= Q(team__in=Team.objects.get_for_user(user))
     return qs.filter(filter_arg)
+
+
+def clear_lru_caches():
+    for f in (can_manage_object, can_write_object, can_read_object):
+        f.cache_clear()
