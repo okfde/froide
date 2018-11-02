@@ -1,7 +1,9 @@
 import os
+import unittest
 from datetime import datetime, timedelta
 
 from django.test import TestCase
+from django.db import connection
 
 from froide.helper.email_utils import EmailParser
 from froide.foirequest.tests.factories import UserFactory
@@ -19,6 +21,7 @@ def p(path):
     return os.path.join(TEST_DATA_ROOT, path)
 
 
+@unittest.skipUnless(connection.vendor == 'postgresql', "PostgreSQL specific tests")
 class BounceTest(TestCase):
     def setUp(self):
         self.email = 'nonexistant@example.org'
