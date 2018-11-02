@@ -354,6 +354,11 @@ def make_world():
     return site
 
 
+def delete_index():
+    with open(os.devnull, 'a') as f:
+        call_command('search_index', action='delete', force=True, stdout=f)
+
+
 def rebuild_index():
     with open(os.devnull, 'a') as f:
         call_command('search_index', action='rebuild', force=True, stdout=f)
