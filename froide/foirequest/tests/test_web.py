@@ -13,7 +13,14 @@ from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
 from froide.helper.auth import clear_lru_caches
 
 
-class WebTest(TestCase):
+class TestCaseHelpers():
+    def assertForbidden(self, response):
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('account-login'), response['Location'])
+        self.assertIn('?next=', response['Location'])
+
+
+class WebTest(TestCaseHelpers, TestCase):
     def setUp(self):
         self.site = factories.make_world()
 
@@ -154,7 +161,7 @@ class WebTest(TestCase):
         req.save()
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.get(reverse('foirequest-show',
                 kwargs={"slug": req.slug}))
@@ -176,7 +183,7 @@ class WebTest(TestCase):
         req.save()
         response = self.client.get(reverse('foirequest-shortlink',
                 kwargs={"obj_id": req.id}))
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
 
     def test_auth_links(self):
         from froide.foirequest.auth import get_foirequest_auth_code
@@ -186,10 +193,10 @@ class WebTest(TestCase):
         req.save()
         response = self.client.get(reverse('foirequest-show',
             kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         response = self.client.get(reverse('foirequest-auth',
             kwargs={'obj_id': req.id, 'code': '0a'}))
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         response = self.client.get(reverse('foirequest-auth',
             kwargs={
                 'obj_id': req.id,
@@ -263,7 +270,7 @@ class WebTest(TestCase):
 
     def test_unchecked(self):
         response = self.client.get(reverse('foirequest-list_unchecked'))
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         self.client.login(email="dummy@example.org", password="froide")
         response = self.client.get(reverse('foirequest-list_unchecked'))
         self.assertEqual(response.status_code, 403)
@@ -274,7 +281,7 @@ class WebTest(TestCase):
 
     def test_dashboard(self):
         response = self.client.get(reverse('dashboard'))
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         self.client.login(email="dummy@example.org", password="froide")
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 403)
@@ -289,7 +296,7 @@ class WebTest(TestCase):
         self.assertIn(reverse('foirequest-list'), response['Location'])
 
 
-class MediaServingTest(TestCase):
+class MediaServingTest(TestCaseHelpers, TestCase):
     def setUp(self):
         clear_lru_caches()
         self.site = factories.make_world()
@@ -303,7 +310,7 @@ class MediaServingTest(TestCase):
         req.visibility = 1
         req.save()
         response = self.client.get(att.get_absolute_file_url())
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(att.get_absolute_file_url())
         self.assertEqual(response.status_code, 200)
@@ -327,7 +334,7 @@ class MediaServingTest(TestCase):
             att.get_absolute_file_url(),
             HTTP_HOST='fragdenstaat.de'
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         self.client.login(email='info@fragdenstaat.de', password='froide')
 
         response = self.client.get(
@@ -394,7 +401,7 @@ class MediaServingTest(TestCase):
     def test_attachment_not_approved(self):
         att = FoiAttachment.objects.filter(approved=False)[0]
         response = self.client.get(att.get_absolute_url())
-        self.assertEqual(response.status_code, 403)
+        self.assertForbidden(response)
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 200)

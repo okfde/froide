@@ -32,6 +32,11 @@ class AccountTest(TestCase):
     def setUp(self):
         factories.make_world()
 
+    def assertForbidden(self, response):
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('account-login'), response['Location'])
+        self.assertIn('?next=', response['Location'])
+
     def test_account_page(self):
         ok = self.client.login(email='info@fragdenstaat.de', password='wrong')
         self.assertFalse(ok)
@@ -285,7 +290,8 @@ class AccountTest(TestCase):
         data = {"new_password1": "froide1",
                 "new_password2": "froide2"}
         response = self.client.post(reverse('account-change_password'), data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertForbidden(response)
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 400)
@@ -389,7 +395,8 @@ class AccountTest(TestCase):
     def test_change_user(self):
         data = {}
         response = self.client.post(reverse('account-change_user'), data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertForbidden(response)
 
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
@@ -485,7 +492,8 @@ class AccountTest(TestCase):
                 'email': 'not-email',
             }
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertForbidden(response)
         self.assertEqual(len(mail.outbox), 0)
 
         self.client.login(email='info@fragdenstaat.de', password='froide')
@@ -557,7 +565,8 @@ class AccountTest(TestCase):
                 'confirmation': 'Freedom of Information Act'
             }
         )
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertForbidden(response)
 
         user = User.objects.get(username='sw')
         self.client.login(email='info@fragdenstaat.de', password='froide')
