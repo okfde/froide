@@ -25,7 +25,7 @@ def render_405(request):
 
 def render_403(request, message=''):
     if not request.user.is_authenticated:
-        return get_redirect(request, 'account-login', params={'next': request.get_full_path()})
+        return get_redirect(request, default='account-login', params={'next': request.get_full_path()})
     return render_code(403, request,
             context={"message": message})
 
