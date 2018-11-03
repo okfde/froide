@@ -8,6 +8,7 @@ class BounceAdmin(admin.ModelAdmin):
     list_display = ('email', 'user', 'user_is_active', 'last_update')
     list_filter = ('user__is_active', 'user__is_deleted')
     raw_id_fields = ('user',)
+    search_fields = ('email',)
     actions = ['deactivate_users']
 
     def user_is_active(self, obj):
