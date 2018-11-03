@@ -558,6 +558,8 @@ class TestBase(Base):
     def MEDIA_ROOT(self):
         return os.path.abspath(os.path.join(super().PROJECT_ROOT, "tests", "testdata"))
 
+    ELASTICSEARCH_INDEX_PREFIX = 'froide_test'
+
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
     CACHES = values.CacheURLValue('locmem://')
 
