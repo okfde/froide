@@ -2,22 +2,20 @@
 Getting Started
 ===============
 
-This is a guide that will get you started with Froide in no time. Some
-more advanced features are discussed at the end.
+This is a guide that will get you started with Froide.
+If you plan to setup a site based on Froide, you should not run Froide directly, but instead use Froide as a dependency in your own project.
 
 
 Set up the development environment
 ----------------------------------
 
-You should be using a Python virtual environment.
-Setup a virtual environment for development with `virtualenv`like so::
+Froide requires Python 3.5+. You should be using a Python 3 virtual environment or similar setup.
+Setup a virtual environment for development with `venv`like so::
 
-    # Install virtualenv
-    curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.10.1.tar.gz
-    tar -xvf virtualenv-1.10.1.tar.gz
-    python virtualenv-1.10.1/virtualenv.py pyenv
+    # Create virtualenv
+    python -m venv venv
     # Activate it
-    source pyenv/bin/activate
+    source venv/bin/activate
 
 Get the source code with Git from the GitHub repository::
 
@@ -30,9 +28,17 @@ Install the requirements inside the virtual env with `pip`::
 
     pip install -r requirements.txt
 
-The dependency installation may take a couple of minutes, but after that everything is in place.
+This installs the Python dependencies into the virtual environment.
 
-Sync and migrate and *do NOT* create a superuser just yet::
+Froide requires one of Django's geospatial database backends. `<https://docs.djangoproject.com/en/1.11/ref/contrib/gis/install/#spatial-database>`_.
+
+Froide is designed to run with the PostgreSQL database with PostGIS extension. You may be able to use a different Django-supported geospatial database, but it is not recommended. Elasticsearch is used as a search engine.
+
+You can install these services as you wish. There is a `docker-compose.yml` that provides a set of these services for use with Docker.
+
+You need to configure these services in your Django settings or via environment variables. There's a `local_settings.py.example` that can be used to locally override settings.
+
+After configuring database and search engine, run database migrations::
 
     python manage.py migrate
 
