@@ -10,7 +10,8 @@ from froide.foirequest.tests.factories import UserFactory
 
 from .models import Bounce
 from .utils import (
-    make_bounce_address, add_bounce_mail, check_user_deactivation
+    make_bounce_address, add_bounce_mail, check_user_deactivation,
+    get_recipient_address_from_bounce
 )
 
 
@@ -26,13 +27,20 @@ class BounceTest(TestCase):
     def setUp(self):
         self.email = 'nonexistant@example.org'
 
+    def test_bounce_address(self):
+        email = 'Upper_Case@example.org'
+        bounce_address = make_bounce_address(email)
+        self.assertEqual(bounce_address, bounce_address.lower())
+        recovered_email, status = get_recipient_address_from_bounce(bounce_address)
+        self.assertEqual(recovered_email, email.lower())
+        self.assertTrue(status)
+
     def test_bounce_parsing(self):
         parser = EmailParser()
         with open(p("bounce_001.txt"), 'rb') as f:
             email = parser.parse(f)
 
         bounce_address = make_bounce_address(self.email)
-        self.assertEqual(bounce_address, bounce_address.lower())
         email.to = [('', bounce_address)]
         bounce_info = email.bounce_info
         self.assertTrue(bounce_info.is_bounce)

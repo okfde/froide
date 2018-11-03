@@ -76,10 +76,11 @@ class CustomTimestampSigner(TimestampSigner):
 
 def make_bounce_address(email):
     signer = CustomTimestampSigner(sep=SIGN_SEP)
+    email = email.lower()
     value = signer.sign(email).split(SIGN_SEP, 1)[1]
     value = value.replace(SIGN_SEP, SEP_REPL).lower()
     # normalize email to lower case, some bounces may go to lower case
-    escaped_mail = email.lower().replace('@', '=')
+    escaped_mail = email.replace('@', '=')
     token = '{}+{}'.format(value, escaped_mail)
     return BOUNCE_FORMAT.format(token=token)
 
