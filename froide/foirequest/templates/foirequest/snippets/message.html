@@ -20,7 +20,7 @@
       <dd>
         {% if object|can_write_foirequest:request %}
           {% if message.is_response %}
-            {{ message.user_real_sender }} – {{ message.sender_public_body.name }}
+            <span title="{{ message.sender_email }}">{{ message.user_real_sender }} – {{ message.sender_public_body.name }}</span>
             <span class="d-print-none">
               (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
                 {% trans "change" %}
