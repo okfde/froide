@@ -12,6 +12,7 @@ from django.contrib.admin import helpers
 from django import forms
 from django.conf.urls import url
 from django.utils.html import format_html
+from django.utils import timezone
 
 from froide.helper.admin_utils import (
     make_nullfilter, make_greaterzerofilter, AdminTagAllMixIn,
@@ -185,7 +186,12 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         queryset.update(is_blocked=False)
         for req in queryset:
             mes = req.messages[0]
+            mes.timestamp = timezone.now()
             mes.resend()
+            if req.law:
+                req.due_date = req.law.calculate_due_date()
+            req.first_message = mes.timestamp
+            req.save()
     unblock_request.short_description = _("Unblock requests and send first message")
 
     def add_to_project(self, request, queryset):
