@@ -8,11 +8,12 @@ from .request import FoiRequest
 
 class DeferredMessage(models.Model):
     recipient = models.CharField(max_length=255, blank=True)
+    sender = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     request = models.ForeignKey(FoiRequest, null=True, blank=True,
         on_delete=models.CASCADE)
     mail = models.TextField(blank=True)
-    spam = models.BooleanField(default=False)
+    spam = models.NullBooleanField(null=True, default=False)
     delivered = models.BooleanField(default=False)
 
     class Meta:
