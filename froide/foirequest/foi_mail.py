@@ -80,9 +80,17 @@ def _process_mail(mail_bytes, mail_type=None, manual=False):
 
 
 def create_deferred(secret_mail, mail_bytes, spam=False,
+                    sender_email=None,
                     subject=_('Unknown FoI-Mail Recipient'),
                     body=unknown_foimail_message, request=None):
     from .models import DeferredMessage
+
+    if sender_email is not None and spam is None:
+        is_spammer = DeferredMessage.objects.filter(
+            sender=sender_email, spam=True
+        ).exists()
+        if is_spammer:
+            spam = True
 
     mail_string = ''
     if mail_bytes is not None:
@@ -93,6 +101,10 @@ def create_deferred(secret_mail, mail_bytes, spam=False,
         spam=spam,
         request=request
     )
+    if spam:
+        # Do not notify on identified spam
+        return
+
     with override(settings.LANGUAGE_CODE):
         url = reverse('admin:foirequest_deferredmessage_changelist')
         mail_managers(
@@ -203,6 +215,7 @@ def check_delivery_conditions(recipient_mail, sender_email,
             # Can't do automatic matching!
             create_deferred(
                 recipient_mail, mail_bytes,
+                sender_email=sender_email,
                 spam=False
             )
             return None, None
@@ -222,7 +235,8 @@ def check_delivery_conditions(recipient_mail, sender_email,
         if pb is None:
             create_deferred(
                 recipient_mail, mail_bytes,
-                spam=True,
+                spam=None,
+                sender_email=sender_email,
                 subject=_('Possible Spam Mail received'),
                 body=spam_message,
                 request=foirequest
