@@ -431,15 +431,12 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
     ordering = ('-timestamp',)
     list_display = (
-        'recipient', 'timestamp', 'spam', 'delivered', 'get_email_details',
+        'recipient', 'timestamp', 'spam', 'delivered', 'sender',
         'request_last_message', 'request_status', 'request_page',)
     raw_id_fields = ('request',)
     actions = [
         'deliver_no_spam', 'redeliver', 'redeliver_subject', 'close_request'
     ]
-
-    # Reduce per page because parsing emails is heavy
-    list_per_page = 20
 
     save_on_top = True
 
@@ -461,12 +458,6 @@ class DeferredMessageAdmin(admin.ModelAdmin):
             return format_html('<a href="{}">{}</a>',
                 obj.request.get_absolute_url(), obj.request.title)
     request_page.allow_tags = True
-
-    def get_email_details(self, obj):
-        parser = EmailParser()
-        email = parser.parse(BytesIO(obj.encoded_mail()))
-        return '%s (%s...)' % (email.from_[1], email.subject[:20])
-    get_email_details.short_description = _('email details')
 
     def close_request(self, request, queryset):
         for mes in queryset:
