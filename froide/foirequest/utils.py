@@ -154,7 +154,7 @@ def compare_publicbody_email(email, foi_request,
                 return message_pb
 
 
-def get_publicbody_for_email(email, foi_request):
+def get_publicbody_for_email(email, foi_request, include_deferred=False):
     if not email:
         return None
 
@@ -185,6 +185,14 @@ def get_publicbody_for_email(email, foi_request):
     elif foi_request.public_body in pbs:
         # likely the request's public body
         return foi_request.public_body
+
+    if include_deferred:
+        from .models import DeferredMessage
+
+        pb = DeferredMessage.objects.get_publicbody_for_email(email)
+        if pb is not None:
+            return pb
+
     return None
 
 

@@ -6,6 +6,17 @@ from django.utils.translation import ugettext_lazy as _
 from .request import FoiRequest
 
 
+class DeferredMessageManager(models.Manager):
+    def get_publicbody_for_email(self, email):
+        deferreds = self.get_queryset().filter(
+            sender=email, request__isnull=False,
+            delivered=True, spam=False
+        ).order_by('-timestamp')
+        if deferreds:
+            deferred = deferreds[0]
+            return deferred.request.public_body
+
+
 class DeferredMessage(models.Model):
     recipient = models.CharField(max_length=255, blank=True)
     sender = models.CharField(max_length=255, blank=True)
@@ -15,6 +26,8 @@ class DeferredMessage(models.Model):
     mail = models.TextField(blank=True)
     spam = models.NullBooleanField(null=True, default=False)
     delivered = models.BooleanField(default=False)
+
+    objects = DeferredMessageManager()
 
     class Meta:
         ordering = ('timestamp',)
@@ -39,6 +52,7 @@ class DeferredMessage(models.Model):
 
         self.request = request
         self.delivered = True
+        self.spam = False
         self.save()
         mail = base64.b64decode(self.mail)
         mail = mail.replace(self.recipient.encode('utf-8'),

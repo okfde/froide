@@ -230,7 +230,9 @@ def check_delivery_conditions(recipient_mail, sender_email,
             return None, None
 
         # Check for spam
-        pb = get_publicbody_for_email(sender_email, foirequest)
+        pb = get_publicbody_for_email(
+            sender_email, foirequest, include_deferred=True
+        )
 
         if pb is None:
             create_deferred(
