@@ -188,10 +188,11 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
             mes.timestamp = timezone.now()
             if req.law:
                 req.due_date = req.law.calculate_due_date()
-            req.blocked = False
+            req.is_blocked = False
             req.first_message = mes.timestamp
             req.save()
-            mes.resend()
+            mes.save()
+            mes.force_resend()
     unblock_request.short_description = _("Unblock requests and send first message")
 
     def add_to_project(self, request, queryset):
