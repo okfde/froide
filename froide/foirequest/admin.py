@@ -183,15 +183,15 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     unpublish.short_description = _("Unpublish")
 
     def unblock_request(self, request, queryset):
-        queryset.update(is_blocked=False)
         for req in queryset:
             mes = req.messages[0]
             mes.timestamp = timezone.now()
-            mes.resend()
             if req.law:
                 req.due_date = req.law.calculate_due_date()
+            req.blocked = False
             req.first_message = mes.timestamp
             req.save()
+            mes.resend()
     unblock_request.short_description = _("Unblock requests and send first message")
 
     def add_to_project(self, request, queryset):
@@ -340,6 +340,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
             message.request.save()
             message.request.user.is_blocked = False
             message.request.user.save()
+            message.timestamp = timezone.now()
             message.force_resend()
             count += 1
         self.message_user(request,
