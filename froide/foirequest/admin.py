@@ -489,6 +489,26 @@ class DeferredMessageAdmin(admin.ModelAdmin):
                     deferred.redeliver(deferred.request)
     deliver_no_spam.short_description = _("Deliver and mark as no spam")
 
+    def mark_as_spam(self, request, queryset):
+        spam_senders = set()
+        marked = 0
+        deleted = 0
+        for mes in queryset:
+            if mes.sender in spam_senders:
+                mes.delete()
+                deleted += 1
+                continue
+            mes.spam = True
+            mes.save()
+            spam_senders.add(mes.sender)
+            marked += 1
+        self.message_user(
+            request,
+            _("Marked {marked} as spam, deleted {deleted} duplicates.").format(
+                marked=marked, deleted=deleted
+            ))
+    mark_as_spam.short_description = _("Mark as spam (delete all except one per sender)")
+
     def redeliver(self, request, queryset, auto=False):
         """
         Redeliver undelivered mails
