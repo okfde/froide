@@ -329,7 +329,7 @@ class SpamMailTest(TestCase):
         process_mail.delay(mail.encode('ascii'))
         self.assertEqual(count_messages,
             FoiMessage.objects.filter(request=self.req).count())
-        dms = DeferredMessage.objects.filter(recipient=recipient, spam=True)
+        dms = DeferredMessage.objects.filter(recipient=recipient, spam=None)
         self.assertEqual(len(dms), 1)
 
 
