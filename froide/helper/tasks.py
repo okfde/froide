@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 @celery_app.task(expires=60 * 60)
 def search_instance_save(instance):
     try:
-        print('indexing in celery')
         registry.update(instance)
         registry.update_related(instance)
     except Exception as e:
