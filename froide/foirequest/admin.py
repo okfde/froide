@@ -435,7 +435,8 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         'request_last_message', 'request_status', 'request_page',)
     raw_id_fields = ('request',)
     actions = [
-        'deliver_no_spam', 'redeliver', 'redeliver_subject', 'close_request'
+        'mark_as_spam', 'deliver_no_spam', 'redeliver', 'redeliver_subject',
+        'close_request'
     ]
 
     save_on_top = True
