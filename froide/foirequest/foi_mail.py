@@ -85,13 +85,6 @@ def create_deferred(secret_mail, mail_bytes, spam=False,
                     body=unknown_foimail_message, request=None):
     from .models import DeferredMessage
 
-    if sender_email is not None and spam is None:
-        is_spammer = DeferredMessage.objects.filter(
-            sender=sender_email, spam=True
-        ).exists()
-        if is_spammer:
-            spam = True
-
     mail_string = ''
     if mail_bytes is not None:
         mail_string = base64.b64encode(mail_bytes).decode("utf-8")
@@ -180,7 +173,9 @@ def _deliver_mail(email, mail_bytes=None, manual=False):
             continue
         already.add(recipient_email)
         foirequest, pb = check_delivery_conditions(
-            recipient_email, sender_email, mail_bytes, manual=manual
+            recipient_email, sender_email,
+            parsed_email=email, mail_bytes=mail_bytes,
+            manual=manual
         )
         if foirequest is not None:
             add_message_from_email(foirequest, email, publicbody=pb)
@@ -198,7 +193,8 @@ def add_message_from_email(foirequest, email, publicbody=None):
 
 
 def check_delivery_conditions(recipient_mail, sender_email,
-                              mail_bytes, manual=False):
+                              parsed_email=None,
+                              mail_bytes=b'', manual=False):
     from .models import DeferredMessage
 
     if (not settings.FOI_EMAIL_FIXED_FROM_ADDRESS and
@@ -235,9 +231,17 @@ def check_delivery_conditions(recipient_mail, sender_email,
         )
 
         if pb is None:
+            is_spammer = None
+            if sender_email is not None:
+                is_spammer = DeferredMessage.objects.filter(
+                    sender=sender_email, spam=True).exists()
+
+            if parsed_email.bounce_info.is_bounce:
+                return foirequest, None
+
             create_deferred(
                 recipient_mail, mail_bytes,
-                spam=None,
+                spam=is_spammer,
                 sender_email=sender_email,
                 subject=_('Possible Spam Mail received'),
                 body=spam_message,
