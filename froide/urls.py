@@ -136,6 +136,8 @@ froide_urlpatterns += [
     url(r'^%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
     # Translators: URL part
     url(r'^comments/', include('django_comments.urls')),
+    # Translators: URL part
+    url(r'^problem/', include('froide.problem.urls')),
     # Secret URLs
     url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
 ]

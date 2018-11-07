@@ -52,6 +52,7 @@ class Base(Configuration):
         'filingcabinet',
 
         # local
+        'froide.problem',
         'froide.foirequest',
         'froide.foirequestfollower',
         'froide.frontpage',
