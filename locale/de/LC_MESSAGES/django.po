@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-07 19:44+0100\n"
-"PO-Revision-Date: 2018-11-07 20:02+0100\n"
+"POT-Creation-Date: 2018-11-07 20:42+0100\n"
+"PO-Revision-Date: 2018-11-07 20:44+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1621,6 +1621,7 @@ msgid "This request is finished."
 msgstr "Diese Anfrage ist abgeschlossen."
 
 #: froide/foirequest/forms.py:346 froide/foirequest/models/request.py:264
+#: froide/problem/templates/problem/message_toolbar_item.html:87
 msgid "Resolution"
 msgstr "Ergebnis"
 
@@ -2747,6 +2748,7 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:29
 #: froide/foirequest/templates/foirequest/account/list_projects.html:31
 #: froide/foirequest/templates/foirequest/snippets/message.html:78
+#: froide/problem/templates/problem/message_toolbar_item.html:47
 #: froide/team/templates/team/team_detail.html:134
 msgid "Date"
 msgstr "Datum"
@@ -4447,9 +4449,8 @@ msgstr "%(kind)s wird verschickt..."
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:121
 #, python-format
-msgid "%(kind)s delivery has failed. Please contact site moderators."
-msgstr ""
-"%(kind)s-Versand ist fehlgeschlagen. Bitte kontaktieren Sie Moderatoren."
+msgid "%(kind)s delivery has failed."
+msgstr "%(kind)s-Versand ist fehlgeschlagen."
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:124
 #, python-format
@@ -4801,7 +4802,7 @@ msgid "Hide text"
 msgstr "Text ausblenden"
 
 #: froide/foirequest/views/attachment.py:195
-#: froide/problem/templates/problem/message_toolbar_item.html:107
+#: froide/problem/templates/problem/message_toolbar_item.html:106
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -5796,6 +5797,7 @@ msgid "Problem?"
 msgstr "Problem?"
 
 #: froide/problem/templates/problem/message_toolbar_item.html:11
+#: froide/problem/templates/problem/message_toolbar_item.html:46
 msgid "Problem"
 msgid_plural "Problems"
 msgstr[0] "Problem"
@@ -5817,36 +5819,36 @@ msgstr "Bisher gemeldete Probleme"
 msgid "Moderators are already informed about the following problems:"
 msgstr "Moderatoren sind schon über die folgenden Probleme informiert:"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:63
+#: froide/problem/templates/problem/message_toolbar_item.html:48
+msgid "State"
+msgstr "Zustand"
+
+#: froide/problem/templates/problem/message_toolbar_item.html:62
 msgid "auto detected"
 msgstr "automatisch erkannt"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:72
+#: froide/problem/templates/problem/message_toolbar_item.html:71
 msgid "Resolved"
 msgstr "Gelöst"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:76
+#: froide/problem/templates/problem/message_toolbar_item.html:75
 msgid "Pending"
 msgstr "Läuft"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:88
-msgid "Resolution notice"
-msgstr "Hinweise zur Lösung"
-
-#: froide/problem/templates/problem/message_toolbar_item.html:100
+#: froide/problem/templates/problem/message_toolbar_item.html:99
 msgid "Report a new problem"
 msgstr "Melden Sie ein neues Problem"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:110
+#: froide/problem/templates/problem/message_toolbar_item.html:109
 msgid "Report problem"
 msgstr "Problem melden"
 
-#: froide/problem/utils.py:9
+#: froide/problem/utils.py:12
 #, python-brace-format
 msgid "New problem: {label} [#{reqid}]"
 msgstr "Neues Problem: {label} [#{reqid}]"
 
-#: froide/problem/utils.py:25
+#: froide/problem/utils.py:29
 msgid "Problem resolved on your request"
 msgstr "Das Problem bei Ihrer Anfrage wurde behoben"
 
@@ -7234,6 +7236,13 @@ msgstr "profil"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~ msgid "%(kind)s delivery has failed. Please contact site moderators."
+#~ msgstr ""
+#~ "%(kind)s-Versand ist fehlgeschlagen. Bitte kontaktieren Sie Moderatoren."
+
+#~ msgid "Resolution notice"
+#~ msgstr "Hinweise zur Lösung"
 
 #~ msgid "I want to publish this message"
 #~ msgstr "Ich möchte diese Nachricht veröffentlichen"
