@@ -5,3 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 class ProblemConfig(AppConfig):
     name = 'froide.problem'
     verbose_name = _('Problems')
+
+    def ready(self):
+        from . import signals  # noqa
