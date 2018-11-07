@@ -193,7 +193,7 @@
           </div>
         {% endif %}
         {% block message_toolbar_item %}{% endblock %}
-        {% render_problem_button message %}
+        {% if not message.original %}{% render_problem_button message %}{% endif %}
       </div>
       {% endif %}
     {% endblock message_toolbar %}
