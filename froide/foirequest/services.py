@@ -321,17 +321,7 @@ class ReceiveEmailService(BaseService):
         if message_id:
             message_id = message_id[:512]
 
-        recipient_name = ''
-        recipient_email = ''
-        if email.is_direct_recipient(foirequest.secret_address):
-            recipient_name = foirequest.user.display_name()
-            recipient_email = foirequest.secret_address
-        else:
-            try:
-                recipient_name = email.to[0][0]
-                recipient_email = email.to[0][1]
-            except IndexError:
-                pass
+        recipient_name, recipient_email = self.get_recipient_name_email()
 
         is_bounce = email.bounce_info.is_bounce
         hide_content = email.is_auto_reply or is_bounce
@@ -362,7 +352,8 @@ class ReceiveEmailService(BaseService):
 
         message.sender_public_body = publicbody
 
-        if foirequest.law and publicbody == foirequest.law.mediator:
+        if (foirequest.law and foirequest.law.mediator and
+                publicbody == foirequest.law.mediator):
             message.content_hidden = True
 
         if email.date is None:
@@ -379,7 +370,7 @@ class ReceiveEmailService(BaseService):
         )
 
         if is_bounce:
-            self.process_bounce_message()
+            self.process_bounce_message(message)
             return
 
         message.save()
@@ -392,6 +383,22 @@ class ReceiveEmailService(BaseService):
         self.add_attachments(foirequest, message, email.attachments)
 
         foirequest.message_received.send(sender=foirequest, message=message)
+
+    def get_recipient_name_email(self):
+        foirequest = self.kwargs['foirequest']
+        email = self.data
+
+        recipient_name, recipient_email = '', ''
+        if email.is_direct_recipient(foirequest.secret_address):
+            recipient_name = foirequest.user.display_name()
+            recipient_email = foirequest.secret_address
+        else:
+            try:
+                recipient_name = email.to[0][0]
+                recipient_email = email.to[0][1]
+            except IndexError:
+                pass
+        return recipient_name, recipient_email
 
     def process_bounce_message(self, message):
         email = self.data
