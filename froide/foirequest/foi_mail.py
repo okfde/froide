@@ -90,6 +90,7 @@ def create_deferred(secret_mail, mail_bytes, spam=False,
         mail_string = base64.b64encode(mail_bytes).decode("utf-8")
     DeferredMessage.objects.create(
         recipient=secret_mail,
+        sender=sender_email or '',
         mail=mail_string,
         spam=spam,
         request=request
