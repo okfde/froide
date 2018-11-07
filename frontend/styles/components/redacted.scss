@@ -20,7 +20,9 @@
   }
 
   .redacted.redacted-hover:hover,
-  .redacted.redacted-hover:hover a {
+  .redacted:active,
+  .redacted.redacted-hover:hover a,
+  .redacted:active a {
       color: #555 !important;
       background-color: transparent !important;
   }

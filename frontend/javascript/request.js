@@ -58,6 +58,11 @@ $(function () {
       e.preventDefault()
       el.scrollIntoView({behavior: 'smooth'})
     }
+
+    if (this.dataset && this.dataset.value) {
+      var sel = '[name="' + this.dataset.name + '"][value="' + this.dataset.value + '"]'
+      el.querySelector(sel).checked = true
+    }
   })
 
   let activeTab = requestNav.dataset.activetab

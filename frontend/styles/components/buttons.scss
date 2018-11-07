@@ -29,3 +29,20 @@
 .btn.hover-btn-danger:hover {
   @extend .btn-danger;
 }
+
+.btn-warning-blink {
+  @extend .btn-warning;
+  animation: warning-blink 1s ease-in-out infinite;
+}
+.btn-warning-blink:hover {
+  animation: none;
+}
+
+@keyframes warning-blink {
+  0% {
+    background-color: $warning;
+  }
+  50% {
+    background-color: lighten($warning, 25%);
+  }
+}

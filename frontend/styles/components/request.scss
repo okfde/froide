@@ -13,8 +13,11 @@
 
 .message {
     border: 1px solid #ddd;
-    padding:10px;
     margin: 0;
+}
+
+.message-header, .message-body {
+    padding:10px;
 }
 
 .message-received {
