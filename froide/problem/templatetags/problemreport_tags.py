@@ -7,8 +7,8 @@ from ..forms import ProblemReportForm
 register = template.Library()
 
 
-@register.simple_tag
-def get_problemreports(message):
+@register.inclusion_tag('problem/message_toolbar_item.html')
+def render_problem_button(message):
     if not hasattr(message, 'problemreports'):
         # Get all problem reports for all messages
         request = message.request
@@ -24,4 +24,6 @@ def get_problemreports(message):
             message.problemreports_count = len(message.problemreports)
             message.problemreports_form = ProblemReportForm(message=message)
 
-    return message.problemreports
+    return {
+        'message': message
+    }

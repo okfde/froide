@@ -2,6 +2,7 @@
 {% load comments %}
 {% load foirequest_tags %}
 {% load form_helper %}
+{% load problemreport_tags %}
 
 {% block before_message_container %}{% endblock %}
 
@@ -192,6 +193,7 @@
           </div>
         {% endif %}
         {% block message_toolbar_item %}{% endblock %}
+        {% render_problem_button message %}
       </div>
       {% endif %}
     {% endblock message_toolbar %}
