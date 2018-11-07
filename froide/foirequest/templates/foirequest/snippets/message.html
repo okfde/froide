@@ -211,7 +211,9 @@
                 <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
                 <form class="form-horizontal" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message=message.pk %}">
                   {% csrf_token %}
-                  <button class="btn btn-secondary" type="submit">{% trans "I want to publish this message" %}</button>
+                  <button class="btn btn-secondary" type="submit">
+                    {% trans "Publish message content" %}
+                  </button>
                 </form>
               </div>
               <div class="content-text">{% redact_message message request %}</div>
