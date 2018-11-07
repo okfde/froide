@@ -251,6 +251,9 @@ export default new Vuex.Store({
     },
     [CACHE_PUBLICBODIES] (state, publicBodies) {
       let newPublicBodies = {}
+      if (!publicBodies) {
+        return
+      }
       publicBodies.forEach(function (r) {
         newPublicBodies[r.id] = r
       })
