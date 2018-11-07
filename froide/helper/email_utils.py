@@ -35,6 +35,7 @@ AUTO_REPLY_HEADERS = (
     ('Auto-Submitted', 'auto-replied'),
 )
 BOUNCE_STATUS_RE = re.compile(r'(\d\.\d+\.\d+)', re.IGNORECASE)
+BOUNCE_DIAGNOSTIC_STATUS_RE = re.compile(r'smtp; (\d{3})')
 BOUNCE_TEXT = re.compile(r'''5\d{2}\ Requested\ action\ not\ taken |
 5\.\d\.\d |
 RESOLVER\.ADR\.RecipNotFound |
@@ -51,7 +52,7 @@ DsnStatus = namedtuple('DsnStatus', 'class_ subject detail')
 
 BounceResult = namedtuple('BounceResult', 'status is_bounce bounce_type diagnostic_code timestamp')
 
-
+GENERIC_ERROR = DsnStatus(5, 0, 0)
 MAILBOX_FULL = DsnStatus(5, 2, 2)
 
 
@@ -96,6 +97,15 @@ def find_bounce_status(headers, body=None):
     return None
 
 
+def find_status_from_diagnostic(message):
+    if not message:
+        return
+    match = BOUNCE_DIAGNOSTIC_STATUS_RE.search(message)
+    if match is None:
+        return
+    return DsnStatus(*[int(x) for x in match.group(1)])
+
+
 def classify_bounce_status(status):
     if status is None:
         return
@@ -128,12 +138,16 @@ class ParsedEmail(object):
         if self.msgobj is not None:
             headers = get_bounce_headers(self.msgobj)
         status = find_bounce_status(headers, self.body)
+        diagnostic_code = headers.get('Diagnostic-Code', [None])[0]
+        diagnostic_status = find_status_from_diagnostic(diagnostic_code)
+        if status == GENERIC_ERROR and diagnostic_status != status:
+            status = diagnostic_status
         bounce_type = classify_bounce_status(status)
         return BounceResult(
             status=status,
             bounce_type=bounce_type,
             is_bounce=bool(bounce_type),
-            diagnostic_code=headers.get('Diagnostic-Code', [None])[0],
+            diagnostic_code=diagnostic_code,
             timestamp=self.date or timezone.now()
         )
 
