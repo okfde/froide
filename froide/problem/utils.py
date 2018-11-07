@@ -1,18 +1,22 @@
 from django.core.mail import mail_managers
 from django.conf import settings
+from django.urls import reverse
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 
 def inform_managers(report):
+    admin_url = settings.SITE_URL + reverse(
+        'admin:problem_problemreport_change', args=(report.id,))
     mail_managers(
         _('New problem: {label} [#{reqid}]').format(
             label=report.get_kind_display(),
             reqid=report.message.request_id
         ),
-        '{}\n{}'.format(
+        '{}\n\n---\n\n{}\n'.format(
             report.description,
-            report.get_absolute_domain_url()
+            report.get_absolute_domain_url(),
+            admin_url
         )
     )
 
