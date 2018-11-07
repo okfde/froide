@@ -39,6 +39,7 @@ class ProblemReport(models.Model):
     resolved = models.BooleanField(default=False)
     description = models.TextField(blank=True)
     resolution = models.TextField(blank=True)
+    resolution_timestamp = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('-timestamp',)
