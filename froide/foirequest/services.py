@@ -12,6 +12,7 @@ from froide.account.services import AccountService
 from froide.helper.text_utils import redact_subject, redact_plaintext
 from froide.helper.storage import add_number_to_filename
 from froide.helper.db_utils import save_obj_with_slug
+from froide.problem.models import ProblemReport
 
 from .models import (
     FoiRequest, FoiMessage, RequestDraft, FoiProject, FoiAttachment
@@ -332,6 +333,9 @@ class ReceiveEmailService(BaseService):
             except IndexError:
                 pass
 
+        is_bounce = email.bounce_info.is_bounce
+        hide_content = email.is_auto_reply or is_bounce
+
         message = FoiMessage(
             request=foirequest,
             subject=subject,
@@ -343,15 +347,18 @@ class ReceiveEmailService(BaseService):
             recipient_email=recipient_email,
             plaintext=email.body,
             html=email.html,
-            content_hidden=email.is_auto_reply
+            content_hidden=hide_content
         )
 
-        if publicbody is None:
-            publicbody = get_publicbody_for_email(
-                message.sender_email, foirequest
-            )
-        if publicbody is None:
-            publicbody = foirequest.public_body
+        if not is_bounce:
+            if publicbody is None:
+                publicbody = get_publicbody_for_email(
+                    message.sender_email, foirequest
+                )
+            if publicbody is None:
+                publicbody = foirequest.public_body
+        else:
+            publicbody = None
 
         message.sender_public_body = publicbody
 
@@ -370,6 +377,11 @@ class ReceiveEmailService(BaseService):
             message.plaintext, is_response=True,
             user=foirequest.user
         )
+
+        if is_bounce:
+            self.process_bounce_message()
+            return
+
         message.save()
 
         foirequest._messages = None
@@ -380,6 +392,32 @@ class ReceiveEmailService(BaseService):
         self.add_attachments(foirequest, message, email.attachments)
 
         foirequest.message_received.send(sender=foirequest, message=message)
+
+    def process_bounce_message(self, message):
+        email = self.data
+        foirequest = self.kwargs['foirequest']
+
+        # Find message
+        for mes in reversed(foirequest.messages):
+            if mes.recipient_email and mes.recipient_email in message.plaintext:
+                break
+        else:
+            mes = None
+
+        message.original = mes
+        message.save()
+
+        ProblemReport.objects.create(
+            message=mes,
+            kind='bounce_publicbody',
+            description=email.bounce_info.diagnostic_code,
+            auto_submitted=True
+        )
+
+        foirequest._messages = None
+        foirequest.save()
+
+        self.add_attachments(foirequest, message, email.attachments)
 
     def add_attachments(self, foirequest, message, attachments):
         account_service = AccountService(foirequest.user)
