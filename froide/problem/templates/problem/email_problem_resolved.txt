@@ -1,0 +1,16 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.get_full_name %}Hello {{ name }},{% endblocktrans %}
+{% if report.auto_submitted %}
+{% blocktrans with title=title %}We have resolved a problem that had been automatically detected on your request “{{ title }}”.{% endblocktrans %}
+{% else %}
+{% blocktrans with title=title %}We have resolved the problem you reported on you request “{{ title }}”.{% endblocktrans %}
+{% endif %}
+{% if report.resolution %}
+{{ report.resolution }}{% endif %}
+{% trans "You can go to your request here:" %}
+
+{{ url }}
+{% blocktrans with site_name=site_name %}
+Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "foirequest/emails/user_footer.txt" %}
