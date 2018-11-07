@@ -118,7 +118,7 @@
                 {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
               {% elif deliverystatus.is_failed %}
                 <i class="fa fa-ban"></i>
-                {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed. Please contact site moderators.{% endblocktrans %}
+                {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
               {% else %}
                 <i class="fa fa-circle-o"></i>
                 {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
@@ -174,7 +174,7 @@
     {% block after_attachments %}{% endblock %}
 
     {% block message_toolbar %}
-      {% if object|can_write_foirequest:request %}
+      {% if not message.original and object|can_write_foirequest:request %}
       <div class="btn-toolbar mt-3 mb-3 d-print-none" role="toolbar" aria-label="{% trans 'Message toolbar' %}">
         {% if message.is_response %}
           <div class="btn-group btn-group-sm mr-2">
@@ -193,7 +193,7 @@
           </div>
         {% endif %}
         {% block message_toolbar_item %}{% endblock %}
-        {% if not message.original %}{% render_problem_button message %}{% endif %}
+        {% render_problem_button message %}
       </div>
       {% endif %}
     {% endblock message_toolbar %}

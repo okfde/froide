@@ -41,13 +41,13 @@
           </p>
           <div class="table-responsive">
             <table class="table table-sm">
-              {% comment %} <thead>
+              <thead>
                 <tr>
                   <th>{% trans "Problem" %}</th>
                   <th>{% trans "Date" %}</th>
                   <th>{% trans "State" %}</th>
                 </tr>
-              </thead> {% endcomment %}
+              </thead>
               <tbody>
               {% for report in message.problemreports %}
                 <tr>
@@ -81,7 +81,7 @@
                   <tr>
                     <td colspan="3" class="border-top-0">
                       {% if report.description %}
-                        <p>{{ report.description | linebreaksbr }}</p>
+                        <blockquote><p>{{ report.description | linebreaksbr }}</p></blockquote>
                       {% endif %}
                       {% if report.resolution %}
                         <h6>{% trans "Resolution" %}</h6>
