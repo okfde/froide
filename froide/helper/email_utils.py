@@ -124,7 +124,9 @@ class ParsedEmail(object):
         return self.get_bounce_info()
 
     def get_bounce_info(self):
-        headers = get_bounce_headers(self.msgobj)
+        headers = {}
+        if self.msgobj is not None:
+            headers = get_bounce_headers(self.msgobj)
         status = find_bounce_status(headers, self.body)
         bounce_type = classify_bounce_status(status)
         return BounceResult(
