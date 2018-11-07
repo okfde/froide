@@ -18,10 +18,10 @@ def render_problem_button(message):
             message_reports[report.message_id].append(report)
         for message in request.messages:
             message.problemreports = message_reports[message.id]
-            message.problemreports_unresolved = any(
-                not r.resolved for r in message.problemreports
-            )
             message.problemreports_count = len(message.problemreports)
+            message.problemreports_unresolved_count = len([
+                r for r in message.problemreports if not r.resolved
+            ])
             message.problemreports_form = ProblemReportForm(message=message)
 
     return {

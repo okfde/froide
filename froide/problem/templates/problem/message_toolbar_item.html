@@ -4,13 +4,13 @@
 
 <div class="btn-group btn-group-sm ml-auto">
   <button type="button" class="btn btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
-    {% if not message.problemreports_count %}
+    {% if not message.problemreports_unresolved_count %}
       {% trans "Problem?" %}
     {% else %}
       <span class="fa fa-exclamation-circle"></span>
-      {% blocktrans count counter=message.problemreports_count %}Problem{% plural %}Problems{% endblocktrans %}
-      <span class="badge {% if message.problemreports_unresolved %}badge-warning{% else %}badge-white{% endif %}">
-        {{ message.problemreports_count }}
+      {% blocktrans count counter=message.problemreports_unresolved_count %}Problem{% plural %}Problems{% endblocktrans %}
+      <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
+        {{ message.problemreports_unresolved_count }}
       </span>
     {% endif %}
   </button>
@@ -84,8 +84,8 @@
                         <p>{{ report.description | linebreaksbr }}</p>
                       {% endif %}
                       {% if report.resolution %}
-                        <h6>{% trans "Resolution notice" %}</h6>
-                        {{ resolution | markdown}}
+                        <h6>{% trans "Resolution" %}</h6>
+                        {{ report.resolution | markdown}}
                       {% endif %}
                     </td>
                   </tr>
