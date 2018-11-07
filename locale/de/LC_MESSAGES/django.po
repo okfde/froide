@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-11-07 19:44+0100\n"
-"PO-Revision-Date: 2018-11-07 19:46+0100\n"
+"PO-Revision-Date: 2018-11-07 20:02+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -5735,7 +5735,7 @@ msgstr "Die Anhänge scheinen nicht zu funktionieren."
 
 #: froide/problem/models.py:12
 msgid "You want to unpublish the request."
-msgstr "Sie möchten diese Nachricht"
+msgstr "Sie möchten die Anfrage depublizieren."
 
 #: froide/problem/models.py:13
 msgid "You need more redaction."
