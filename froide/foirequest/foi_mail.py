@@ -236,6 +236,8 @@ def check_delivery_conditions(recipient_mail, sender_email,
             if sender_email is not None:
                 is_spammer = DeferredMessage.objects.filter(
                     sender=sender_email, spam=True).exists()
+                # If no spam found, treat as unknown
+                is_spammer = is_spammer or None
 
             if parsed_email.bounce_info.is_bounce:
                 return foirequest, None

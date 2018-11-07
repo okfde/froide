@@ -320,17 +320,41 @@ class SpamMailTest(TestCase):
         factories.FoiMessageFactory.create(request=self.req)
         factories.FoiMessageFactory.create(request=self.req, is_response=True)
 
+    @override_settings(MANAGERS=[('Name', 'manager@example.com')])
     def test_spam(self):
+        mail.outbox = []
+
         count_messages = len(self.req.get_messages())
         name, domain = self.req.secret_address.split('@')
         recipient = self.secret_address
         with open(p("test_mail_01.txt"), 'rb') as f:
-            mail = f.read().decode('ascii').replace('hb@example.com', 'hb@bad-example.com')
-        process_mail.delay(mail.encode('ascii'))
+            email = f.read().decode('ascii').replace('hb@example.com', 'hb@bad-example.com')
+        process_mail.delay(email.encode('ascii'))
         self.assertEqual(count_messages,
             FoiMessage.objects.filter(request=self.req).count())
         dms = DeferredMessage.objects.filter(recipient=recipient, spam=None)
         self.assertEqual(len(dms), 1)
+        self.assertEqual(len(mail.outbox), 1)
+
+    @override_settings(MANAGERS=[('Name', 'manager@example.com')])
+    def test_existing_spam(self):
+        mail.outbox = []
+
+        count_messages = len(self.req.get_messages())
+        name, domain = self.req.secret_address.split('@')
+        recipient = self.secret_address
+        sender = 'hb@bad-example.com'
+        DeferredMessage.objects.create(
+            recipient=recipient, spam=True, sender=sender
+        )
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            email = f.read().decode('ascii').replace('hb@example.com', sender)
+        process_mail.delay(email.encode('ascii'))
+        self.assertEqual(count_messages,
+            FoiMessage.objects.filter(request=self.req).count())
+        dms = DeferredMessage.objects.filter(recipient=recipient, spam=True)
+        self.assertEqual(len(dms), 2)
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class BounceMailTest(TestCase):
