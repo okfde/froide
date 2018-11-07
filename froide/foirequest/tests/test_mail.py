@@ -364,6 +364,7 @@ class ClosedRequestTest(TestCase):
         self.req = factories.FoiRequestFactory.create(site=self.site,
             secret_address=self.secret_address, closed=True)
         factories.FoiMessageFactory.create(request=self.req)
+        factories.FoiMessageFactory.create(request=self.req, is_response=True)
 
     def test_closed(self):
         count_messages = len(self.req.get_messages())

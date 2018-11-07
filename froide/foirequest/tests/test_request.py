@@ -1500,6 +1500,7 @@ class RequestTest(TestCase):
 class MediatorTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
+        self.msgobj = Parser().parse(BytesIO())
 
     def test_hiding_content(self):
         req = FoiRequest.objects.all()[0]
