@@ -45,7 +45,7 @@ class BounceTest(TestCase):
         bounce_info = email.bounce_info
         self.assertTrue(bounce_info.is_bounce)
         self.assertEqual(bounce_info.bounce_type, 'hard')
-        self.assertEqual(bounce_info.status, (5, 0, 0))
+        self.assertEqual(bounce_info.status, (5, 5, 3))
         add_bounce_mail(email)
         bounce = Bounce.objects.get(email=self.email)
         self.assertEqual(bounce.email, self.email)
