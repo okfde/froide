@@ -609,22 +609,20 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% addtoblock "js" %}
-    {% if object|can_write_foirequest:request %}
+  {% if object|can_write_foirequest:request %}
+    {% addtoblock "js" %}
       {% with object.get_set_tags_form as set_tags_form %}
         {{ set_tags_form.media.js }}
       {% endwith %}
-    {% endif %}
-  {% endaddtoblock %}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/common.js' %}" async></script>
-  {% endaddtoblock %}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/request.js' %}" charset="utf-8"></script>
-  {% endaddtoblock %}
-  {% if request.user.is_authenticated %}
+    {% endaddtoblock %}
     {% addtoblock "js" %}
-      <script src="{% static 'js/publicbody.js' %}" charset="utf-8"></script>
+      <script src="{% static 'js/common.js' %}" defer></script>
+    {% endaddtoblock %}
+    {% addtoblock "js" %}
+      <script src="{% static 'js/request.js' %}" defer></script>
+    {% endaddtoblock %}
+    {% addtoblock "js" %}
+      <script src="{% static 'js/publicbody.js' %}" defer></script>
     {% endaddtoblock %}
   {% endif %}
 {% endblock %}
