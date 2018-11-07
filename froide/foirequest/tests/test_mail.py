@@ -333,6 +333,30 @@ class SpamMailTest(TestCase):
         self.assertEqual(len(dms), 1)
 
 
+class BounceMailTest(TestCase):
+    def setUp(self):
+        self.secret_address = 'sw+yurpykc1hr@fragdenstaat.de'
+        self.site = factories.make_world()
+        self.req = factories.FoiRequestFactory.create(site=self.site,
+            secret_address=self.secret_address)
+        factories.FoiMessageFactory.create(
+            timestamp=datetime(2012, 1, 1),
+            request=self.req, recipient_email='nonexistant@example.org')
+
+    @override_settings(MANAGERS=[('Name', 'manager@example.com')])
+    def test_bounce(self):
+        mail.outbox = []
+
+        with open(p("test_mail_12.txt"), 'rb') as f:
+            process_mail.delay(f.read())
+
+        req = FoiRequest.objects.get(pk=self.req.pk)
+        self.assertEqual(req.messages[-1].original, req.messages[0])
+        # No notification mails, only to managers
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], 'manager@example.com')
+
+
 class ClosedRequestTest(TestCase):
     def setUp(self):
         self.secret_address = 'sw+yurpykc1hr@fragdenstaat.de'
@@ -340,7 +364,6 @@ class ClosedRequestTest(TestCase):
         self.req = factories.FoiRequestFactory.create(site=self.site,
             secret_address=self.secret_address, closed=True)
         factories.FoiMessageFactory.create(request=self.req)
-        factories.FoiMessageFactory.create(request=self.req, is_response=True)
 
     def test_closed(self):
         count_messages = len(self.req.get_messages())

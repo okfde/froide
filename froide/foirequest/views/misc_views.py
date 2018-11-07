@@ -89,6 +89,7 @@ def postmark_inbound(request, bounce=False):
 @require_POST
 @csrf_exempt
 def postmark_bounce(request):
+    # FIXME: bounces are not handled correctly from postmark
     return postmark_inbound(request, bounce=True)
 
 

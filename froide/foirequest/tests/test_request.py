@@ -1,5 +1,6 @@
-from io import BytesIO
 from datetime import datetime, timedelta
+from email.parser import BytesParser as Parser
+from io import BytesIO
 import os
 import re
 import zipfile
@@ -34,6 +35,7 @@ class RequestTest(TestCase):
 
     def setUp(self):
         factories.make_world()
+        self.msgobj = Parser().parse(BytesIO())
 
     def assertForbidden(self, response):
         self.assertEqual(response.status_code, 302)
@@ -148,7 +150,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         new_foi_email = "foi@" + pb.email.split("@")[1]
         add_message_from_email(
-            req, ParsedEmail(None, **{
+            req, ParsedEmail(self.msgobj, **{
                 'date': timezone.now() - timedelta(days=1),
                 'subject': "Re: %s" % req.title,
                 'body': """Message""",
@@ -662,7 +664,7 @@ class RequestTest(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         req = FoiRequest.objects.get(title=post['subject'])
         add_message_from_email(
-            req, ParsedEmail(None, **{
+            req, ParsedEmail(self.msgobj, **{
                 'date': timezone.now() + timedelta(days=1),
                 'subject': "Re: %s" % req.title,
                 'body': """Message""",
@@ -1222,7 +1224,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         name = "Petra Radetzky"
         add_message_from_email(
-            req, ParsedEmail(None, **{
+            req, ParsedEmail(self.msgobj, **{
                 'date': timezone.now(),
                 'subject': 'Reply',
                 'body': (
@@ -1510,7 +1512,7 @@ class MediatorTest(TestCase):
         form.save()
         req = FoiRequest.objects.all()[0]
         add_message_from_email(
-            req, ParsedEmail(None, **{
+            req, ParsedEmail(self.msgobj, **{
                 'date': timezone.now(),
                 'subject': 'Reply',
                 'body': 'Content',
