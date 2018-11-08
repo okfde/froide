@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.utils import timezone
+from django.utils.html import format_html
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from .models import ProblemReport
@@ -11,7 +13,7 @@ class ProblemReportAdmin(admin.ModelAdmin):
     raw_id_fields = ('message', 'user',)
     list_filter = ('auto_submitted', 'resolved')
     list_display = (
-        'kind', 'timestamp', 'message',
+        'kind', 'timestamp', 'admin_link_message',
         'auto_submitted', 'resolved',
     )
 
@@ -19,6 +21,12 @@ class ProblemReportAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         qs = qs.select_related('message')
         return qs
+
+    def admin_link_message(self, obj):
+        return format_html('<a href="{}">{}</a>',
+            reverse('admin:foirequest_foimessage_change',
+                args=(obj.message_id,)), str(obj.message))
+    admin_link_message.allow_tags = True
 
     def save_model(self, request, obj, form, change):
         if 'resolved' in form.changed_data and obj.resolved:
