@@ -3,6 +3,11 @@
   @extend .flex-column;
 }
 
+$response: #fffdf0;
+$mediator: #eaf0f7;
+$escalation: #fff2f0;
+
+
 .message-timeline-sticky {
   @extend .col-12;
   position: sticky;
@@ -144,11 +149,15 @@
 }
 
 .message.is-response {
-  background-color: #FFF9DC;
+  background-color: $response;
+}
+
+.message.is-mediator {
+  background-color: $mediator;
 }
 
 .message.is-escalation {
-  background-color: #FFE9EE;
+  background-color: $escalation;
 }
 
 .message-meta {

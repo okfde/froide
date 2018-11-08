@@ -200,19 +200,28 @@ class FoiMessage(models.Model):
             return 'is-mediator'
         if self.is_response:
             return 'is-response'
+        if self.is_escalation_message:
+            return 'is-escalation'
         return 'is-message'
 
     @property
+    def is_escalation_message(self):
+        return self.is_mediator_message(self.recipient_public_body_id)
+
+    @property
     def is_mediator(self):
+        return self.is_mediator_message(self.sender_public_body_id)
+
+    def is_mediator_message(self, pb_id):
         request = self.request
         if not request.law:
-            return False
+            return None
         if not request.law.mediator_id:
-            return False
+            return None
         if request.law.mediator_id == request.public_body_id:
             # If the request goes to the mediator, we don't know
-            return False
-        return self.sender_public_body_id == request.law.mediator_id
+            return None
+        return pb_id == request.law.mediator_id
 
     @property
     def sender(self):
