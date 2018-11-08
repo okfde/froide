@@ -305,11 +305,13 @@ def get_timeline_marks(foirequest, num_slices=6):
                 current = last_date
         percent = (current - first_date) / duration * 100
         label = formats.date_format(timezone.localtime(current), format_choice)
-        if last_label == label:
+        if last_label == label and i < num_slices - 1:
             continue
         last_label = label
         if i == 0 or i == num_slices - 1:
             label = formats.date_format(timezone.localtime(current), 'd. b Y')
+            if last_label == label:
+                continue
         yield {
             'percent': '{}%'.format(round(percent, 2)),
             'label': label,

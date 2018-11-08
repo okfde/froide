@@ -72,6 +72,7 @@ $escalation: #fff2f0;
 
     &.is-duedate {
       width: 3px;
+      z-index: 120;
       background-color: #333;
     }
 
@@ -83,7 +84,7 @@ $escalation: #fff2f0;
     &:hover, &.active, &:active {
       z-index: 100;
       outline: 1px solid black;
-      transform-origin: center top;
+      transform-origin: center center;
       transform: scale(1.1);
       transition: transform 0.5s ease-in;
     }
