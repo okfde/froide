@@ -193,6 +193,27 @@ class FoiMessage(models.Model):
     def needs_status_input(self):
         return self.request.message_needs_status() == self
 
+    def get_css_class(self):
+        if self.is_escalation:
+            return 'is-escalation'
+        if self.is_mediator:
+            return 'is-mediator'
+        if self.is_response:
+            return 'is-response'
+        return 'is-message'
+
+    @property
+    def is_mediator(self):
+        request = self.request
+        if not request.law:
+            return False
+        if not request.law.mediator_id:
+            return False
+        if request.law.mediator_id == request.public_body_id:
+            # If the request goes to the mediator, we don't know
+            return False
+        return self.sender_public_body_id == request.law.mediator_id
+
     @property
     def sender(self):
         if self.sender_user:

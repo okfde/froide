@@ -270,9 +270,7 @@ def get_timeline_message_items(messages, first_date, duration):
         yield {
             'percent': '{}%'.format(round(percent, 2)),
             'href': message.get_html_id(),
-            'class_name': 'is-escalation' if message.is_escalation else (
-                'is-response' if message.is_response else 'is-message'
-            ),
+            'class_name': message.get_css_class(),
             'label': label,
             'timestamp': message.timestamp
         }

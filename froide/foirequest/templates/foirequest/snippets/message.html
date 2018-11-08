@@ -10,7 +10,7 @@
 
   {% block before_message %}{% endblock %}
 
-  <div {% if message.timestamp == object.last_message %}id="last" {% endif %}class="message{% if not message.sender_user %} message-received{% endif %}{% if message.is_escalation %} message-escalated{% endif %}">
+  <div {% if message.timestamp == object.last_message %}id="last" {% endif %}class="message {{ message.get_css_class }}">
     <div class="message-header">
       {% block before_meta %}{% endblock %}
 
