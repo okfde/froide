@@ -224,15 +224,15 @@ def get_timeline_items(foirequest):
             'items': False
         }
 
-    if foirequest.due_date > timezone.now():
-        percent = (timezone.now() - first_date) / duration * 100
-        yield {
-            'percent': '{}%'.format(round(percent, 2)),
-            'class_name': 'is-now',
-            'label': _('Today'),
-            'timestamp': timezone.now(),
-            'items': False
-        }
+        if foirequest.due_date > timezone.now():
+            percent = (timezone.now() - first_date) / duration * 100
+            yield {
+                'percent': '{}%'.format(round(percent, 2)),
+                'class_name': 'is-now',
+                'label': _('Today'),
+                'timestamp': timezone.now(),
+                'items': False
+            }
 
     clusters = []
     current_cluster = []
