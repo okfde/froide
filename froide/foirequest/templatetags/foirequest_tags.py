@@ -204,8 +204,10 @@ def get_duration(foirequest):
     if foirequest.due_date:
         last_date = max(last_date, foirequest.due_date)
     duration = last_date - first_date
-    if duration == 0:
+    if duration == timedelta(0):
+        # fallback duration
         duration = timedelta(days=30)
+        last_date = first_date + duration
     return duration, last_date
 
 

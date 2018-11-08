@@ -3,7 +3,7 @@
     <ol class="message-timline-wrapper">
       {% for item in items %}
         <li class="message-timeline-listitem"
-            style="{% if forloop.last %}right: 0%{% else %}left: {{ item.percent }}{% endif %}">
+            style="{% if forloop.last and not forloop.first %}right: 0%{% else %}left: {{ item.percent }}{% endif %}">
           {% if item.items %}
             <div class="message-timeline-itemwrapper">
               {% for subitem in item.items %}
