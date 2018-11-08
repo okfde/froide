@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-07 20:42+0100\n"
-"PO-Revision-Date: 2018-11-07 20:44+0100\n"
+"POT-Creation-Date: 2018-11-08 20:47+0100\n"
+"PO-Revision-Date: 2018-11-08 20:48+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1222,7 +1222,7 @@ msgstr "Hat Empfänger-Behörde"
 msgid "Has delivery status"
 msgstr "Hat Zustellungsstatus"
 
-#: froide/foirequest/admin.py:304 froide/foirequest/models/message.py:423
+#: froide/foirequest/admin.py:304 froide/foirequest/models/message.py:444
 msgid "delivery status"
 msgstr "Zustellungsstatus"
 
@@ -2203,43 +2203,43 @@ msgstr "nachricht-%(id)d"
 msgid "{name} (via {via})"
 msgstr "{name} (per {via})"
 
-#: froide/foirequest/models/message.py:403
+#: froide/foirequest/models/message.py:424
 msgid "unknown"
 msgstr "unbekannt"
 
-#: froide/foirequest/models/message.py:404
+#: froide/foirequest/models/message.py:425
 msgid "sending"
 msgstr "wird gesendet"
 
-#: froide/foirequest/models/message.py:405
+#: froide/foirequest/models/message.py:426
 msgid "sent"
 msgstr "gesendet"
 
-#: froide/foirequest/models/message.py:406
+#: froide/foirequest/models/message.py:427
 msgid "received"
 msgstr "erhalten"
 
-#: froide/foirequest/models/message.py:407
+#: froide/foirequest/models/message.py:428
 msgid "read"
 msgstr "gelesen"
 
-#: froide/foirequest/models/message.py:408
+#: froide/foirequest/models/message.py:429
 msgid "deferred"
 msgstr "zurückgestellt"
 
-#: froide/foirequest/models/message.py:409
+#: froide/foirequest/models/message.py:430
 msgid "bounced"
 msgstr "abgewiesen"
 
-#: froide/foirequest/models/message.py:410
+#: froide/foirequest/models/message.py:431
 msgid "expired"
 msgstr "abgelaufen"
 
-#: froide/foirequest/models/message.py:411
+#: froide/foirequest/models/message.py:432
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: froide/foirequest/models/message.py:424
+#: froide/foirequest/models/message.py:445
 msgid "delivery statii"
 msgstr "Zustellungsstatus"
 
@@ -2630,7 +2630,7 @@ msgid "Dear Ladies and Gentlemen,"
 msgstr "Sehr geehrte Damen und Herren,"
 
 #: froide/foirequest/pdf_generator.py:286
-#: froide/foirequest/templatetags/foirequest_tags.py:94
+#: froide/foirequest/templatetags/foirequest_tags.py:98
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
 
@@ -4285,22 +4285,22 @@ msgstr ""
 msgid "Messages in this request"
 msgstr "Korrespondenz"
 
-#: froide/foirequest/templates/foirequest/show.html:572
+#: froide/foirequest/templates/foirequest/show.html:549
 msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
-#: froide/foirequest/templates/foirequest/show.html:577
+#: froide/foirequest/templates/foirequest/show.html:554
 #, python-format
 msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
 msgstr[0] "eine identische Anfrage"
 msgstr[1] "%(counter)s identische Anfragen"
 
-#: froide/foirequest/templates/foirequest/show.html:590
+#: froide/foirequest/templates/foirequest/show.html:567
 msgid "This request is identical to:"
 msgstr "Diese Anfrage ist identisch zu:"
 
-#: froide/foirequest/templates/foirequest/show.html:602
+#: froide/foirequest/templates/foirequest/show.html:579
 msgid "This request has been detected as spam and its messages are not sent."
 msgstr ""
 "Diese Anfrage wurde als Spam erkannt und die Nachrichten wurden nicht "
@@ -4613,14 +4613,22 @@ msgstr "von"
 msgid "until"
 msgstr "bis"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:88
+#: froide/foirequest/templatetags/foirequest_tags.py:92
 msgid "[... Show complete request text]"
 msgstr "[… Zeige kompletten Anfragetext]"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:122
-#: froide/foirequest/templatetags/foirequest_tags.py:127
+#: froide/foirequest/templatetags/foirequest_tags.py:126
+#: froide/foirequest/templatetags/foirequest_tags.py:131
 msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
+
+#: froide/foirequest/templatetags/foirequest_tags.py:222
+msgid "Due date"
+msgstr "Frist"
+
+#: froide/foirequest/templatetags/foirequest_tags.py:232
+msgid "Today"
+msgstr "Heute"
 
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:21
@@ -5714,7 +5722,7 @@ msgstr "Keine Ergebnisse"
 msgid "Searching…"
 msgstr "Suchen..."
 
-#: froide/problem/admin.py:30
+#: froide/problem/admin.py:38
 msgid "User will be notified of resolution"
 msgstr "Nutzer wird über Lösung benachrichtigt"
 
