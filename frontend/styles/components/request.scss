@@ -1,31 +1,149 @@
 .request-nav {
   @extend .nav-pills;
   @extend .flex-column;
-
 }
 
+.message-timeline-sticky {
+  @extend .col-12;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.message-timeline {
+
+  .message-timeline-container {
+    height: 1.5rem;
+    user-select: none;
+  }
+
+  .message-timeline-markcontainer {
+    height: 1.5rem;
+  }
+
+  .message-timline-wrapper, .message-timline-markwrapper {
+    position: relative;
+    list-style-type: none;
+    margin: 0;
+    width: 100%;
+  }
+
+  .message-timeline-listitem {
+    position: absolute;
+    top: 0;
+    z-index: 90;
+  }
+
+  .message-timeline-itemwrapper {
+    display: flex;
+  }
+
+  .message-timeline-item {
+
+    height: 1.5rem;
+    transform: scale(1.0);
+    transition: transform 0.1s ease-in-out;
+
+    &.is-message {
+      width: 0.5rem;
+      background-color: $gray-200;
+    }
+
+    &.is-response {
+      width: 0.5rem;
+      background-color: $blue;
+    }
+
+    &.is-escalation {
+      width: 0.5rem;
+      background-color: lighten($blue, 15);
+    }
+
+    &.is-duedate {
+      width: 3px;
+      background-color: #333;
+    }
+
+    &.is-now {
+      width: 3px;
+      background-color: $red;
+    }
+
+    &:hover, &.active, &:active {
+      z-index: 100;
+      outline: 1px solid black;
+      transform-origin: center top;
+      transform: scale(1.1);
+      transition: transform 0.5s ease-in-out;
+    }
+  }
+
+  .message-timeline-mark {
+    position: absolute;
+    top: 0;
+    border-left: 1px solid #999;
+    padding-left: 0.25rem;
+    font-size: 0.8rem;
+
+    &:last-child {
+      border-left: 0;
+      padding-left: 0;
+      border-right: 1px solid #999;
+      padding-right: 0.25rem;
+        
+    }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .message-timeline-mark {
+    display: none;
+  }
+  .message-timeline-mark:first-child,
+  .message-timeline-mark:last-child,
+  .message-timeline-mark.odd {
+    display: block;
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .message-timeline-mark,
+  .message-timeline-mark.odd {
+    display: none;
+  }
+  .message-timeline-mark:first-child,
+  .message-timeline-mark:last-child, {
+    display: block;
+  }
+}
+
+
 .message-container:not(:last-child) {
-    border-bottom: 1px solid #ddd;
-    padding: 0 0 0.75em;
-    margin: 0 0 0.75em;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.75em;
+  margin-bottom: 0.75em;
+}
+.message-container {
+  padding-top: 3rem;
 }
 
 
 .message {
-    border: 1px solid #ddd;
-    margin: 0;
+  border: 1px solid #ddd;
+  margin: 0;
 }
 
 .message-header, .message-body {
-    padding:10px;
+  padding:10px;
 }
 
 .message-received {
-    background-color: #FFF9DC;
+  background-color: #FFF9DC;
 }
 
 .message-escalated {
-    background-color: #FFE9EE;
+  background-color: #FFE9EE;
 }
 
 .message-meta {
@@ -41,33 +159,33 @@
 }
 
 .content-text {
-    white-space: nowrap;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  white-space: nowrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .events {
-    color: #999;
-    font-size: 0.8em;
-    margin: 0.5em 0 0;
+  color: #999;
+  font-size: 0.8em;
+  margin: 0.5em 0 0;
 }
 
 .events ol {
-    margin-bottom: 0;
-    list-style-type: none;
+  margin-bottom: 0;
+  list-style-type: none;
 }
 
 .event {
-    color: #999;
+  color: #999;
 }
 
 .event a {
-    color: #999;
-    text-decoration: none;
+  color: #999;
+  text-decoration: none;
 }
 
 .event a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .message-nav {
@@ -77,14 +195,14 @@
 }
 
 .message-nav li a {
-    padding: 5px 15px 5px !important;
+  padding: 5px 15px 5px !important;
 }
 
 .message-nav li.active a {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .message-nav .nav-header {
-    margin-top: 10px;
-    margin-bottom: -5px;
+  margin-top: 10px;
+  margin-bottom: -5px;
 }

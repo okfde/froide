@@ -1,6 +1,6 @@
 import $ from 'jquery'
 
-import {Tab} from 'bootstrap.native'
+import {Tab, Tooltip} from 'bootstrap.native'
 
 $(function () {
   $('form').submit(function () {
@@ -98,4 +98,48 @@ $(function () {
     form.find('button').attr('disabled', 'disabled')
     form.find('input').attr('disabled', 'disabled')
   })
+
+  var messages = []
+  document.querySelectorAll('.message-container').forEach(function (el) {
+    var rect = el.getBoundingClientRect()
+    var offset = rect.top + window.pageYOffset
+    messages.push({
+      top: offset,
+      height: rect.height,
+      id: el.id
+    })
+  })
+  var activeMessage = null
+  document.addEventListener('scroll', function () {
+    var py = window.pageYOffset
+    for (var i = 0; i < messages.length; i += 1) {
+      var message = messages[i]
+      if (py >= message.top && py <= message.top + message.height) {
+        if (activeMessage !== message.id) {
+          activeMessage = message.id
+          var navEls = document.querySelectorAll('.message-timeline-listitem a')
+          navEls.forEach(function (el) {
+            el.classList.remove('active')
+          })
+          var navEl = document.querySelector('.message-timeline-listitem [href="#' + message.id + '"]')
+          navEl.classList.add('active')
+        }
+        break
+      }
+    }
+  })
+
+  if (!('ontouchstart' in document)) {
+    document.querySelectorAll('.message-timeline-item').forEach(function (el) {
+      new Tooltip(el)
+    })
+  } else {
+    var click = function () {
+      this.click()
+    }
+    document.querySelectorAll('.message-timeline-item').forEach(function (el) {
+      el.addEventListener('touchstart', click)
+      // el.addEventListener('touchmove', click)
+    })
+  }
 })

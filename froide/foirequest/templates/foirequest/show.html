@@ -535,34 +535,11 @@
       {% blocktrans %}Messages in this request{% endblocktrans %}
     </h4>
   </div>
-  <div id="message-nav-container" class="order-md-2 col-md-3 d-print-none">
-    {% if object.messages %}
-      <ul class="message-nav nav flex-column mb-3">
-      {% for message in object.messages %}
-        {% ifchanged message.sender %}
-          <li class="nav-item nav-header d-flex">
-            {% if message.sender_public_body %}
-              <span class="d-inline-block text-truncate" title="{{ message.sender_public_body.name }}">
-                {{ message.sender_public_body.name }}
-              </span>
-            {% else %}
-              <span class="d-inline-block text-truncate" title="{{ message.sender }}">
-                {{ message.sender }}
-              </span>
-            {% endif %}
-          </li>
-        {% endifchanged %}
-        <li class="nav-item">
-          <a class="nav-link" href="#{{ message.get_html_id }}">
-            {{ message.timestamp|date:"SHORT_DATE_FORMAT" }}
-          </a>
-        </li>
-      {% endfor %}
-      </ul>
-    {% endif %}
+  <div class="message-timeline-sticky d-print-none">
+    {% show_timeline object %}
   </div>
 
-  <div class="messages order-md-1">
+  <div class="messages">
     {% for message in object.messages %}
       {% include "foirequest/snippets/message.html" %}
       {% if not forloop.last %}

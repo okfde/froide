@@ -1,8 +1,12 @@
+from datetime import timedelta
+
 from django import template
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import urlizetrunc
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
+from django.utils import formats
+from django.utils import timezone
 
 from froide.helper.text_utils import (
     split_text_by_separator, redact_plaintext
@@ -179,6 +183,137 @@ def can_read_foirequest_anonymous_filter(foirequest, request):
 
 def alternative_address(foirequest):
     return get_alternative_mail(foirequest)
+
+
+@register.inclusion_tag('foirequest/snippets/message_timeline.html')
+def show_timeline(foirequest):
+
+    items = get_timeline_items(foirequest)
+    items = sorted(items, key=lambda x: x['timestamp'])
+
+    return {
+        'items': items,
+        'mark_items': list(get_timeline_marks(foirequest))
+    }
+
+
+def get_duration(foirequest):
+    messages = foirequest.messages
+    first_date = messages[0].timestamp
+    last_date = messages[-1].timestamp
+    if foirequest.due_date:
+        last_date = max(last_date, foirequest.due_date)
+    duration = last_date - first_date
+    if duration == 0:
+        duration = timedelta(days=30)
+    return duration, last_date
+
+
+def get_timeline_items(foirequest):
+    messages = foirequest.messages
+    first_date = foirequest.first_message
+    duration, last_date = get_duration(foirequest)
+
+    if foirequest.due_date:
+        percent = (foirequest.due_date - first_date) / duration * 100
+        yield {
+            'percent': '{}%'.format(round(percent, 2)),
+            'class_name': 'is-duedate',
+            'label': _('Due date'),
+            'timestamp': foirequest.due_date,
+            'items': False
+        }
+
+    if foirequest.due_date > timezone.now():
+        percent = (timezone.now() - first_date) / duration * 100
+        yield {
+            'percent': '{}%'.format(round(percent, 2)),
+            'class_name': 'is-now',
+            'label': _('Today'),
+            'timestamp': timezone.now(),
+            'items': False
+        }
+
+    clusters = []
+    current_cluster = []
+    clusters.append(current_cluster)
+    items = get_timeline_message_items(messages, first_date, duration)
+    last_item = None
+    for item in items:
+        if last_item is None:
+            current_cluster.append(item)
+            last_item = item
+            continue
+        diff = abs(last_item['timestamp'] - item['timestamp']) / duration * 100
+        if diff > 2:
+            current_cluster = []
+            clusters.append(current_cluster)
+        current_cluster.append(item)
+        last_item = item
+    for cluster in clusters:
+        yield {
+            'timestamp': cluster[0]['timestamp'],
+            'percent': cluster[0]['percent'],
+            'items': cluster
+        }
+
+
+def get_timeline_message_items(messages, first_date, duration):
+    for message in messages:
+        percent = (message.timestamp - first_date) / duration * 100
+
+        if message.sender_public_body:
+            label = message.sender_public_body.name
+        else:
+            label = message.sender
+
+        yield {
+            'percent': '{}%'.format(round(percent, 2)),
+            'href': message.get_html_id(),
+            'class_name': 'is-escalation' if message.is_escalation else (
+                'is-response' if message.is_response else 'is-message'
+            ),
+            'label': label,
+            'timestamp': message.timestamp
+        }
+
+
+FORMAT_CHOICES = [
+    (60, 'd. b', lambda x: x),
+    (700, 'b Y', lambda x: x.replace(day=1)),
+    (1000, 'Y', lambda x: x.replace(day=1, month=1)),
+]
+
+
+def get_timeline_marks(foirequest, num_slices=6):
+
+    first_date = foirequest.first_message
+    duration, last_date = get_duration(foirequest)
+    for days, format_choice, round_func in FORMAT_CHOICES:
+        if duration.days < days:
+            break
+    duration_slice = duration / (num_slices - 1)
+    last_label = None
+    for i in range(num_slices):
+        if i > 0 and i < num_slices - 1:
+            current = first_date + duration_slice * i
+            current = round_func(current)
+        else:
+            if i == 0:
+                current = first_date
+            else:
+                current = last_date
+        percent = (current - first_date) / duration * 100
+        label = formats.date_format(timezone.localtime(current), format_choice)
+        if last_label == label:
+            continue
+        last_label = label
+        if i == 0 or i == num_slices - 1:
+            label = formats.date_format(timezone.localtime(current), 'd. b Y')
+        yield {
+            'percent': '{}%'.format(round(percent, 2)),
+            'label': label,
+        }
 
 
 register.simple_tag(highlight_request)

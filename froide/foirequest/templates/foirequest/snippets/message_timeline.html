@@ -1,0 +1,44 @@
+<div class="message-timeline">
+  <div class="message-timeline-container">
+    <ol class="message-timline-wrapper">
+      {% for item in items %}
+        <li class="message-timeline-listitem"
+            style="{% if forloop.last %}right: 0%{% else %}left: {{ item.percent }}{% endif %}">
+          {% if item.items %}
+            <div class="message-timeline-itemwrapper">
+              {% for subitem in item.items %}
+                <a
+                href="#{{ subitem.href }}"
+                class="message-timeline-item {{ subitem.class_name }}"
+                title="{{ subitem.label }} - {{ subitem.timestamp|date:'SHORT_DATE_FORMAT' }}"
+                >
+                  <span class="sr-only">
+                    {{ subitem.label }} – {{ subitem.timestamp|date:'SHORT_DATE_FORMAT' }}
+                  </span>
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div 
+              title="{{ item.label }} - {{ item.timestamp|date:'SHORT_DATE_FORMAT' }}"
+              class="message-timeline-item {{ item.class_name }}"
+              >
+              <span class="sr-only">
+                {{ item.label }} – {{ item.timestamp|date:'SHORT_DATE_FORMAT' }}
+              </span>
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+  <div class="message-timeline-markcontainer">
+    <ol class="message-timline-markwrapper">
+      {% for item in mark_items %}
+        <li class="message-timeline-mark {% if not forloop.first and not forloop.last %}{% cycle 'even' 'odd' %}{% endif %}" style="{% if forloop.last %}right: 0%{% else %}left: {{ item.percent }}{% endif %}">
+          {{ item.label }}
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
