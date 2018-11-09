@@ -16,13 +16,13 @@ def render_problem_button(message):
         message_reports = defaultdict(list)
         for report in reports:
             message_reports[report.message_id].append(report)
-        for message in request.messages:
-            message.problemreports = message_reports[message.id]
-            message.problemreports_count = len(message.problemreports)
-            message.problemreports_unresolved_count = len([
-                r for r in message.problemreports if not r.resolved
+        for mes in request.messages:
+            mes.problemreports = message_reports[mes.id]
+            mes.problemreports_count = len(mes.problemreports)
+            mes.problemreports_unresolved_count = len([
+                r for r in mes.problemreports if not r.resolved
             ])
-            message.problemreports_form = ProblemReportForm(message=message)
+            mes.problemreports_form = ProblemReportForm(message=mes)
 
     return {
         'message': message
