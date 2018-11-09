@@ -286,7 +286,6 @@ FORMAT_CHOICES = [
 
 
 def get_timeline_marks(foirequest, num_slices=6):
-
     first_date = foirequest.first_message
     duration, last_date = get_duration(foirequest)
     for days, format_choice, round_func in FORMAT_CHOICES:
@@ -304,6 +303,11 @@ def get_timeline_marks(foirequest, num_slices=6):
             else:
                 current = last_date
         percent = (current - first_date) / duration * 100
+
+        if i > 0 and i < num_slices - 1:
+            if percent > 90 or percent < 10:
+                continue
+
         label = formats.date_format(timezone.localtime(current), format_choice)
         if last_label == label and i < num_slices - 1:
             continue
