@@ -377,7 +377,6 @@ class ReceiveEmailService(BaseService):
 
         foirequest._messages = None
         foirequest.status = 'awaiting_classification'
-        foirequest.last_message = message.timestamp
         foirequest.save()
 
         self.add_attachments(foirequest, message, email.attachments)

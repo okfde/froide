@@ -95,7 +95,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
         dispatch_uid="set_last_message_date_on_message_sent")
 def set_last_message_date_on_message_sent(sender, message=None, **kwargs):
     if message is not None:
-        sender.last_message = message.timestamp
+        sender.last_message = sender.messages[-1].timestamp
         sender.save()
 
 
@@ -103,7 +103,7 @@ def set_last_message_date_on_message_sent(sender, message=None, **kwargs):
         dispatch_uid="set_last_message_date_on_message_received")
 def set_last_message_date_on_message_received(sender, message=None, **kwargs):
     if message is not None:
-        sender.last_message = message.timestamp
+        sender.last_message = sender.messages[-1].timestamp
         sender.save()
 
 

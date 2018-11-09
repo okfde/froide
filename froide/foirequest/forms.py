@@ -812,7 +812,7 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         message = self.contribute_to_message(message)
         message.save()
 
-        foirequest.last_message = message.timestamp
+        foirequest._messages = None
         foirequest.status = 'awaiting_classification'
         foirequest.save()
 
