@@ -13,7 +13,7 @@ def inform_managers(report):
             label=report.get_kind_display(),
             reqid=report.message.request_id
         ),
-        '{}\n\n---\n\n{}\n'.format(
+        '{}\n\n---\n\n{}\n{}'.format(
             report.description,
             report.get_absolute_domain_url(),
             admin_url
