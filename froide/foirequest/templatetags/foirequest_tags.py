@@ -256,6 +256,8 @@ def get_timeline_items(foirequest):
         current_cluster.append(item)
         last_item = item
     for cluster in clusters:
+        if not cluster:
+            continue
         yield {
             'timestamp': cluster[0]['timestamp'],
             'percent': cluster[0]['percent'],
