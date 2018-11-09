@@ -198,9 +198,12 @@ def show_timeline(foirequest):
 
 
 def get_duration(foirequest):
-    messages = foirequest.messages
-    first_date = messages[0].timestamp
-    last_date = messages[-1].timestamp
+    first_date = foirequest.first_message
+    last_date = foirequest.last_message
+    if first_date is None:
+        first_date = timezone.now()
+    if last_date is None:
+        last_date = timezone.now()
     if foirequest.due_date:
         last_date = max(last_date, foirequest.due_date)
     duration = last_date - first_date
