@@ -48,7 +48,8 @@ class NewUserBaseForm(forms.Form):
                         'need to be confirmed.'),
             widget=forms.EmailInput(attrs={
                     'placeholder': _('mail@ddress.net'),
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'autocomplete': 'username'
             }))
 
     if HAVE_ORGANIZATION:
@@ -142,10 +143,24 @@ class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
 
 
 class NewUserWithPasswordForm(NewUserForm):
-    password = forms.CharField(widget=forms.PasswordInput,
-            label=_('Password'))
-    password2 = forms.CharField(widget=forms.PasswordInput,
-            label=_('Password (repeat)'))
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'autocomplete': 'new-password'
+            }
+        ),
+        label=_('Password')
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'autocomplete': 'new-password'
+            }
+        ),
+        label=_('Password (repeat)')
+    )
 
     def clean(self):
         cleaned = super(NewUserWithPasswordForm, self).clean()
@@ -158,12 +173,14 @@ class UserLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(
         attrs={
             'placeholder': _('mail@ddress.net'),
-            'class': 'form-control'
+            'class': 'form-control',
+            'autocomplete': 'username'
         }),
         label=_('Email address'))
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
-            'class': 'form-control'
+            'class': 'form-control',
+            'autocomplete': "current-password"
         }),
         label=_('Password'))
 
@@ -172,7 +189,8 @@ class PasswordResetForm(auth.forms.PasswordResetForm):
     email = forms.EmailField(widget=forms.EmailInput(
         attrs={
             'placeholder': _('mail@ddress.net'),
-            'class': 'form-control'
+            'class': 'form-control',
+            'autocomplete': 'username'
         }),
         label=_('Email address'))
 
@@ -181,7 +199,8 @@ class UserChangeForm(forms.Form):
     email = forms.EmailField(required=False, widget=forms.EmailInput(
         attrs={
             'placeholder': _('mail@ddress.net'),
-            'class': 'form-control'
+            'class': 'form-control',
+            'autocomplete': 'username'
         }),
         label=_('Your email address'))
 
