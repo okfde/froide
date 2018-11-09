@@ -55,6 +55,9 @@ def show_attachment(request, slug, message_id, attachment_name):
                                    name=attachment_name)
 
     if not has_attachment_access(request, foirequest, attachment):
+        if attachment.redacted and has_attachment_access(
+                request, foirequest, attachment.redacted):
+            return redirect(attachment.redacted)
         return render_403(request)
 
     if attachment.document is not None and attachment.document.public:
