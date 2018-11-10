@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="form-row">
+  <div class="col-7">
+    <input type="text" {% if widget.token %}value="{{ widget.url }}"{% endif %}
+      {% if not widget.token %}placeholder="{% trans 'No URL created yet.' %}"{% endif %}
+      data-toggle="tooltip"
+      title="{% trans 'Click to copy' %}"
+      data-copied="{% trans 'URL copied' %}"
+      class="form-control copy-text" readonly/>
+  </div>
+  <div class="col-5">
+    {% if widget.token %}
+      <button type="submit" name="reset" value="{{ widget.purpose }}" class="btn btn-light">
+        <span class="fa fa-refresh"></span>
+        {% trans "Reset" %}
+      </button>
+      <button type="submit" name="remove" value="{{ widget.purpose }}" class="btn hover-btn-danger">
+        <span class="fa fa-close"></span>
+        {% trans "Remove" %}
+      </button>
+    {% else %}
+      <div class="input-group-append">
+        <button type="submit" name="create" value="{{ widget.purpose }}" class="btn btn-light">
+          <span class="fa fa-plus-square"></span>
+          {% trans "Create URL" %}
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</div>

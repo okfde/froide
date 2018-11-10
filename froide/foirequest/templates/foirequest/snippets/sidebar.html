@@ -63,7 +63,12 @@
     {% trans "Short URL" %}
   </li>
   <li class="nav-item">
-    <input type="text" class="form-control form-control-sm copyinput" readonly="readonly" value="{{ object.get_absolute_domain_short_url }}"/>
+    <input type="text"
+      value="{{ object.get_absolute_domain_short_url }}"
+      data-toggle="tooltip"
+      title="{% trans 'Click to copy' %}"
+      data-copied="{% trans 'URL copied' %}"
+      class="form-control input-sm copy-text" readonly/>
   </li>
 
   {% if not object.public %}
@@ -72,7 +77,12 @@
       <span class="small help">
         {% trans "This URL gives read access to others." %}
       </span>
-      <input type="text" class="form-control input-sm copyinput" readonly="readonly" value="{{ object.get_accessible_link }}"/>
+      <input type="text" 
+        value="{{ object.get_accessible_link }}"
+        data-toggle="tooltip"
+        title="{% trans 'Click to copy' %}"
+        data-copied="{% trans 'URL copied' %}"
+        class="form-control input-sm copy-text" readonly/>
     </li>
   {% endif %}
 
