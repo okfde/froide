@@ -55,11 +55,11 @@ foirequest_urls = [
     url(r'^%s/(?P<publicbody>[-\w]+)/rss/$' % pgettext('URL part', 'to'),
         ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
 
-    url(r'^%s/(?P<token>[-\w]+)/feed/$' % pgettext('URL part', 'user'),
+    url(r'^%s/(?P<token>[-\w]+)/feed/$' % pgettext('URL part', 'token'),
         UserRequestFeedView.as_view(feed='atom'), name='foirequest-user_list_feed_atom'),
-    url(r'^%s/(?P<token>[-\w]+)/rss/$' % pgettext('URL part', 'user'),
+    url(r'^%s/(?P<token>[-\w]+)/rss/$' % pgettext('URL part', 'token'),
         UserRequestFeedView.as_view(feed='rss'), name='foirequest-user_list_feed'),
-    url(r'^%s/(?P<token>[-\w]+)/calendar/$' % pgettext('URL part', 'user'),
+    url(r'^%s/(?P<token>[-\w]+)/calendar/$' % pgettext('URL part', 'token'),
         user_calendar, name='foirequest-user_ical_calendar'),
 
 ] + [url(r'^(?P<status>%s)/$' % status, ListRequestView.as_view(),
