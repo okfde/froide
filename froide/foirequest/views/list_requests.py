@@ -14,6 +14,7 @@ from froide.helper.search import (
     get_pagination_vars, ElasticsearchPaginator
 )
 
+from froide.accesstoken.utils import get_user_by_token_or_404
 from froide.publicbody.models import Jurisdiction
 
 from ..models import FoiRequest, FoiAttachment
@@ -208,6 +209,25 @@ class ListRequestView(BaseListRequestView):
         return super().render_to_response(
             context, **response_kwargs
         )
+
+
+class UserRequestFeedView(ListRequestView):
+    def get_queryset(self):
+        token = self.kwargs['token']
+        user = get_user_by_token_or_404(token, purpose='user-request-feed')
+        self.filtered_objs = {
+            'user': user
+        }
+        self.filter_data = {
+            'user': token
+        }
+        return FoiRequest.objects.filter(user=user)
+
+    def paginate_queryset(self, *args, **kwargs):
+        return ListView.paginate_queryset(self, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return ListView.get_context_data(self, **kwargs)
 
 
 def search(request):

@@ -4,7 +4,7 @@ from django.views.generic.base import RedirectView
 
 from ..views import (
     list_unchecked, delete_draft, claim_draft,
-    ListRequestView
+    ListRequestView, UserRequestFeedView
 )
 from ..filters import FOIREQUEST_FILTERS
 
@@ -53,6 +53,11 @@ foirequest_urls = [
         ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom'),
     url(r'^%s/(?P<publicbody>[-\w]+)/rss/$' % pgettext('URL part', 'to'),
         ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
+
+    url(r'^%s/(?P<token>[-\w]+)/feed/$' % pgettext('URL part', 'user'),
+        UserRequestFeedView.as_view(feed='atom'), name='foirequest-user_list_feed_atom'),
+    url(r'^%s/(?P<token>[-\w]+)/rss/$' % pgettext('URL part', 'user'),
+        UserRequestFeedView.as_view(feed='rss'), name='foirequest-user_list_feed'),
 
 ] + [url(r'^(?P<status>%s)/$' % status, ListRequestView.as_view(),
          name='foirequest-list')
