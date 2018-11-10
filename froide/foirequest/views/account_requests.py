@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -8,6 +8,7 @@ import django_filters
 from taggit.models import Tag
 
 from froide.publicbody.models import Jurisdiction, PublicBody
+from froide.accesstoken.utils import get_user_by_token_or_404
 
 from .list_requests import BaseListRequestView
 
@@ -163,3 +164,38 @@ class FoiProjectListView(BaseAccountMixin, ListView):
         return FoiProject.objects.get_for_user(
             self.request.user, **query_kwargs
         )
+
+
+class RequestSubscriptionsView(BaseAccountMixin, TemplateView):
+    template_name = 'foirequest/account/list_subscriptions.html'
+    menu_item = 'subscriptions'
+
+    def get_queryset(self):
+        self.query = self.request.GET.get('q', None)
+        query_kwargs = {}
+        if self.query:
+            query_kwargs = {'title__icontains': self.query}
+        return FoiProject.objects.get_for_user(
+            self.request.user, **query_kwargs
+        )
+
+
+class UserRequestFeedView(BaseListRequestView):
+    feed = None
+
+    def get_queryset(self):
+        token = self.kwargs['token']
+        user = get_user_by_token_or_404(token, purpose='user-request-feed')
+        self.filtered_objs = {
+            'user': user
+        }
+        self.filter_data = {
+            'user': token
+        }
+        return FoiRequest.objects.filter(user=user)
+
+    def paginate_queryset(self, *args, **kwargs):
+        return ListView.paginate_queryset(self, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return ListView.get_context_data(self, **kwargs)

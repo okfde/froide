@@ -1,0 +1,25 @@
+{% extends "account/show.html" %}
+{% load i18n %}
+{% load form_helper %}
+{% load token_tags %}
+
+{% block tab_content %}
+<div class="mt-5 mb-3">
+  <h3 id="subscription-urls">
+    {% trans "Private Subscription URLs" %}
+  </h3>
+  <p>
+    {% trans "You can generate private URLs to subscribe to your requests in other applications." %}
+  </p>
+
+  <form action="{% url 'accesstoken-reset' %}#subscription-urls" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}"/>
+
+    {% trans "Private RSS feed URL" as url_label %}
+    {% get_token_url_form purpose='user-request-feed' label=url_label url_name='foirequest-user_list_feed' as url_form %}
+    {% render_form url_form %}
+
+  </form>
+</div>
+{% endblock %}

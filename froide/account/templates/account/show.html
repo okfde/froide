@@ -40,8 +40,14 @@
           {% trans "Requests you follow" %}
         </a>
       </li>
+      <li class="nav-item">
+        <a href="{% if menu != 'subscriptions' %}{% url 'account-subscriptions' %}{% endif %}" class="nav-link{% if menu == 'subscriptions' %} active{% endif %}">
+          {% trans "Subscriptions" %}
+        </a>
+      </li>
     </ul>
     <div class="tab-content">
+      {% block tab_content %}
       {% block pre_table %}{% endblock %}
       <div class="table-responsive">
         <table class="table table-hover mt-3">
@@ -90,6 +96,7 @@
         {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
       {% endif %}
       {% block post_table %}{% endblock %}
+      {% endblock %}
     </div>
   </div>
 </div>
