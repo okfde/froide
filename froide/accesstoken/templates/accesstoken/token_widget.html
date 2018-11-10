@@ -3,10 +3,11 @@
   <div class="col-7">
     <input type="text" {% if widget.token %}value="{{ widget.url }}"{% endif %}
       {% if not widget.token %}placeholder="{% trans 'No URL created yet.' %}"{% endif %}
-      data-toggle="tooltip"
+      {% if widget.token %}data-toggle="tooltip"
       title="{% trans 'Click to copy' %}"
       data-copied="{% trans 'URL copied' %}"
-      class="form-control copy-text" readonly/>
+      {% endif %}
+      class="form-control{% if widget.token %} copy-text{% endif %}" readonly/>
   </div>
   <div class="col-5">
     {% if widget.token %}
