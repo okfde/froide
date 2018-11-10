@@ -12,11 +12,13 @@ var PBChooserMixin = {
   created () {
     if (this.hasForm && this.field.value) {
       let pbs = this.field.objects
-      this.cachePublicBodies(pbs)
-      this.setPublicBodies({
-        publicBodies: pbs,
-        scope: this.scope
-      })
+      if (pbs) {
+        this.cachePublicBodies(pbs)
+        this.setPublicBodies({
+          publicBodies: pbs,
+          scope: this.scope
+        })
+      }
     }
   },
   computed: {
