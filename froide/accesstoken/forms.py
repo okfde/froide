@@ -53,7 +53,8 @@ class ResetTokenForm(forms.Form):
 
 class AccessTokenForm(forms.Form):
     token = forms.CharField(
-        widget=TokenWidget()
+        widget=TokenWidget(),
+        required=False
     )
 
     def __init__(self, *args, **kwargs):
