@@ -337,7 +337,8 @@ class PublicBodySuggestionsForm(forms.Form):
 class FoiRequestStatusForm(forms.Form):
     status = forms.ChoiceField(label=_("Status"),
             widget=BootstrapRadioSelect,
-            choices=[('awaiting_response', _('This request is still ongoing.')),
+            choices=[
+                ('awaiting_response', _('This request is still ongoing.')),
                 ('resolved', _('This request is finished.')),
                 # ('request_redirected', _('This request has been redirected to a different public body.'))
             ]
