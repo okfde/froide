@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-08 20:47+0100\n"
-"PO-Revision-Date: 2018-11-08 20:48+0100\n"
+"POT-Creation-Date: 2018-11-10 20:44+0100\n"
+"PO-Revision-Date: 2018-11-10 21:01+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -47,9 +47,67 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:10 froide/settings.py:225 froide/settings.py:599
+#: froide/_local_settings.py:10 froide/settings.py:226 froide/settings.py:600
 msgid "German"
 msgstr "Deutsch"
+
+#: froide/accesstoken/apps.py:7
+msgid "Secret Access Token"
+msgstr "Geheime Zugangs-Tokens"
+
+#: froide/accesstoken/forms.py:45
+msgid "URL has been reset."
+msgstr "URL wurde zurückgesetzt."
+
+#: froide/accesstoken/forms.py:48
+msgid "URL has been created."
+msgstr "URL wurde erstellt."
+
+#: froide/accesstoken/forms.py:51
+msgid "URL has been removed."
+msgstr "URL wurde gelöscht."
+
+#: froide/accesstoken/models.py:54
+msgid "access token"
+msgstr "Zugangs-Token"
+
+#: froide/accesstoken/models.py:55
+msgid "access tokens"
+msgstr "Zugangs-Tokens"
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html:5
+msgid "No URL created yet."
+msgstr "Noch keine URL erstellt."
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html:7
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:69
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:83
+msgid "Click to copy"
+msgstr "Klicken zum Kopieren"
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html:8
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:70
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:84
+msgid "URL copied"
+msgstr "URL kopiert"
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html:16
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html:20
+#: froide/team/templates/team/team_detail.html:29
+#: froide/team/templates/team/team_detail.html:73
+msgid "Remove"
+msgstr "Entfernen"
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html:26
+msgid "Create URL"
+msgstr "URL erstellen"
+
+#: froide/accesstoken/views.py:20
+msgid "Failed to reset token."
+msgstr "Konnte URL nicht zurücksetzen."
 
 #: froide/account/admin.py:44
 msgid "Profile info"
@@ -127,8 +185,8 @@ msgstr "Nachname"
 msgid "Last Name"
 msgstr "Nachname"
 
-#: froide/account/forms.py:34 froide/account/forms.py:87
-#: froide/foirequest/forms.py:624
+#: froide/account/forms.py:34 froide/account/forms.py:88
+#: froide/foirequest/forms.py:625
 msgid "Mailing Address"
 msgstr "Postadresse"
 
@@ -140,13 +198,13 @@ msgstr ""
 "Optional. Ihre Adresse wird nicht öffentlich angezeigt und wird nur für den "
 "Fall verwendet, dass eine Behörde Ihnen etwas per Post zusenden muss."
 
-#: froide/account/forms.py:42 froide/account/forms.py:95
-#: froide/account/forms.py:193 froide/foirequest/forms.py:631
+#: froide/account/forms.py:42 froide/account/forms.py:96
+#: froide/account/forms.py:212 froide/foirequest/forms.py:632
 msgid "Street, Post Code, City"
 msgstr "Straße, Hausnummer, PLZ, Ort"
 
-#: froide/account/forms.py:45 froide/account/forms.py:163
-#: froide/account/forms.py:177 froide/team/forms.py:55
+#: froide/account/forms.py:45 froide/account/forms.py:179
+#: froide/account/forms.py:195 froide/team/forms.py:55
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
@@ -154,26 +212,26 @@ msgstr "E-Mail-Adresse"
 msgid "Not public. The given address will need to be confirmed."
 msgstr "Nicht öffentlich. Sie müssen diese Adresse bestätigen."
 
-#: froide/account/forms.py:50 froide/account/forms.py:160
-#: froide/account/forms.py:174 froide/account/forms.py:183
+#: froide/account/forms.py:50 froide/account/forms.py:175
+#: froide/account/forms.py:191 froide/account/forms.py:201
 msgid "mail@ddress.net"
 msgstr "email@dresse.net"
 
-#: froide/account/forms.py:56 froide/account/forms.py:59
-#: froide/account/forms.py:202 froide/account/forms.py:205
+#: froide/account/forms.py:57 froide/account/forms.py:60
+#: froide/account/forms.py:221 froide/account/forms.py:224
 #: froide/account/models.py:94
 msgid "Organization"
 msgstr "Organisation"
 
-#: froide/account/forms.py:57 froide/account/forms.py:203
+#: froide/account/forms.py:58 froide/account/forms.py:222
 msgid "Optional. Affiliation will be shown next to your name"
 msgstr "Optional. Ihre Organisation wird neben Ihrem Namen angezeigt."
 
-#: froide/account/forms.py:67
+#: froide/account/forms.py:68
 msgid "Hide my name from public view"
 msgstr "Zeige meinen Namen nicht öffentlich an"
 
-#: froide/account/forms.py:68
+#: froide/account/forms.py:69
 msgid ""
 "If you check this, your name will still appear in requests to public bodies, "
 "but we will do our best to not display it publicly. However, we cannot "
@@ -183,7 +241,7 @@ msgstr ""
 "nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen "
 "<b>keine</b> komplette Anonymität garantieren."
 
-#: froide/account/forms.py:74
+#: froide/account/forms.py:75
 #, python-brace-format
 msgid ""
 "<a target=\"_blank\" href=\"{url}\">You may use a pseudonym if you don't "
@@ -192,7 +250,7 @@ msgstr ""
 "<a target=\"_blank\" href=\"{url}\">Sie können ein Pseudonym verwenden, wenn "
 "Sie keine Post erhalten müssen</a>."
 
-#: froide/account/forms.py:89
+#: froide/account/forms.py:90
 msgid ""
 "Your address will not be displayed publicly and is only needed because a "
 "public body will likely want to send you paper."
@@ -200,11 +258,11 @@ msgstr ""
 "Ihre Adresse wird nicht öffentlich angezeigt und wird nur gebraucht, weil "
 "eine Behörde Ihnen wahrscheinlich etwas per Post zusenden will."
 
-#: froide/account/forms.py:110
+#: froide/account/forms.py:111
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
 msgstr "Sie müssen unsere Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: froide/account/forms.py:118
+#: froide/account/forms.py:119
 #, python-brace-format
 msgid ""
 "You agree to our <a href=\"{url_terms}\" target=\"_blank\">Terms and "
@@ -217,73 +275,73 @@ msgstr ""
 "\">Nutzungsbedingungen Archivplattform</a> und unseren <a href="
 "\"{url_privacy}\" target=\"_blank\">Datenschutzbedingungen</a> zu."
 
-#: froide/account/forms.py:130 froide/account/forms.py:224
+#: froide/account/forms.py:131 froide/account/forms.py:243
 msgid "Check if you want to receive our newsletter."
 msgstr "Setzen Sie einen Haken, wenn Sie unseren Newsletter erhalten wollen"
 
-#: froide/account/forms.py:146 froide/account/forms.py:168
-#: froide/account/forms.py:285
+#: froide/account/forms.py:153 froide/account/forms.py:185
+#: froide/account/forms.py:307
 msgid "Password"
 msgstr "Passwort"
 
-#: froide/account/forms.py:148
+#: froide/account/forms.py:162
 msgid "Password (repeat)"
 msgstr "Passwort (wiederholen)"
 
-#: froide/account/forms.py:153
+#: froide/account/forms.py:168
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
 
-#: froide/account/forms.py:186 froide/foirequest/views/make_request.py:153
+#: froide/account/forms.py:205 froide/foirequest/views/make_request.py:153
 msgid "Your email address"
 msgstr "Ihre E-Mail-Adresse"
 
-#: froide/account/forms.py:190
+#: froide/account/forms.py:209
 msgid "Your mailing address"
 msgstr "Ihre Postadresse"
 
-#: froide/account/forms.py:191
+#: froide/account/forms.py:210
 msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
-#: froide/account/forms.py:222
+#: froide/account/forms.py:241
 #: froide/account/templates/account/includes/newsletter_button.html:12
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: froide/account/forms.py:234
+#: froide/account/forms.py:253
 msgid "Another user with that email address already exists!"
 msgstr "Es existiert bereits eine Nutzerin mit dieser E-Mail-Adresse."
 
-#: froide/account/forms.py:260
+#: froide/account/forms.py:279
 msgid "Logged in user does not match this link!"
 msgstr "Der eingeloggte Nutzer passt nicht zu dem geklickten Link!"
 
-#: froide/account/forms.py:271
+#: froide/account/forms.py:290
 msgid "Link is invalid or has expired!"
 msgstr "Link ist ungültig oder abgelaufen!"
 
-#: froide/account/forms.py:281
+#: froide/account/forms.py:300
 msgid "Freedom of Information Act"
 msgstr "Informationsfreiheitsgesetz"
 
-#: froide/account/forms.py:286
+#: froide/account/forms.py:308
 msgid "Please type your password to confirm."
 msgstr "Bitte geben Sie Ihr Passwort zum Bestätigen ein."
 
-#: froide/account/forms.py:293
+#: froide/account/forms.py:315
 msgid "Confirmation Phrase"
 msgstr "Bestätigungs-Satz"
 
-#: froide/account/forms.py:294
+#: froide/account/forms.py:316
 msgid "Type the phrase above exactly as displayed."
 msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
 
-#: froide/account/forms.py:308
+#: froide/account/forms.py:330
 msgid "You provided the wrong password!"
 msgstr "Sie haben ein falsches Passwort angegeben!"
 
-#: froide/account/forms.py:316
+#: froide/account/forms.py:338
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "Sie haben das Bestätigungswort nicht korrekt eingegeben!"
 
@@ -423,8 +481,8 @@ msgstr "Antragsteller/in"
 
 #: froide/account/templates/account/admin_send_mail.html:16
 #: froide/foirequest/forms.py:42 froide/foirequest/forms.py:45
-#: froide/foirequest/forms.py:177 froide/foirequest/forms.py:571
-#: froide/foirequest/forms.py:751 froide/foirequest/forms.py:754
+#: froide/foirequest/forms.py:177 froide/foirequest/forms.py:572
+#: froide/foirequest/forms.py:752 froide/foirequest/forms.py:755
 #: froide/foirequest/models/message.py:85
 #: froide/foirequest/templates/foirequest/snippets/message.html:72
 #: froide/foirequest/views/make_request.py:132
@@ -884,7 +942,11 @@ msgstr "Anfrageentwürfe"
 msgid "Requests you follow"
 msgstr "Anfragen, denen Sie folgen"
 
-#: froide/account/templates/account/show.html:51
+#: froide/account/templates/account/show.html:45
+msgid "Subscriptions"
+msgstr "Abonnements"
+
+#: froide/account/templates/account/show.html:57
 #: froide/foirequest/forms.py:338 froide/foirequest/models/message.py:80
 #: froide/foirequest/models/request.py:262
 #: froide/foirequest/templates/foirequest/snippets/message.html:99
@@ -892,7 +954,7 @@ msgstr "Anfragen, denen Sie folgen"
 msgid "Status"
 msgstr "Status"
 
-#: froide/account/templates/account/show.html:52
+#: froide/account/templates/account/show.html:58
 #: froide/foirequest/models/project.py:49
 #: froide/foirequest/models/request.py:254
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:30
@@ -902,12 +964,12 @@ msgstr "Status"
 msgid "Title"
 msgstr "Titel"
 
-#: froide/account/templates/account/show.html:69
+#: froide/account/templates/account/show.html:75
 #, python-format
 msgid "Deadline: %(date)s"
 msgstr "Frist: %(date)s"
 
-#: froide/account/templates/account/show.html:78
+#: froide/account/templates/account/show.html:84
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -1222,7 +1284,7 @@ msgstr "Hat Empfänger-Behörde"
 msgid "Has delivery status"
 msgstr "Hat Zustellungsstatus"
 
-#: froide/foirequest/admin.py:304 froide/foirequest/models/message.py:444
+#: froide/foirequest/admin.py:304 froide/foirequest/models/message.py:453
 msgid "delivery status"
 msgstr "Zustellungsstatus"
 
@@ -1459,12 +1521,12 @@ msgstr "Anfragen durchsuchen"
 
 #: froide/foirequest/filters.py:111 froide/foirequest/filters.py:115
 #: froide/foirequest/templates/foirequest/foiproject_detail.html:50
-#: froide/foirequest/views/account_requests.py:34
+#: froide/foirequest/views/account_requests.py:42
 msgid "status"
 msgstr "Zustand"
 
 #: froide/foirequest/filters.py:112
-#: froide/foirequest/views/account_requests.py:31
+#: froide/foirequest/views/account_requests.py:39
 msgid "any status"
 msgstr "alle Zustände"
 
@@ -1566,7 +1628,7 @@ msgstr ""
 msgid "Sending Public Body"
 msgstr "Absender (Behörde)"
 
-#: froide/foirequest/forms.py:137 froide/foirequest/forms.py:739
+#: froide/foirequest/forms.py:137 froide/foirequest/forms.py:740
 msgid "Public body"
 msgstr "Behörde"
 
@@ -1583,11 +1645,11 @@ msgstr "Begründung"
 msgid "Complaint about request “{title}”"
 msgstr "Vermittlung bei Anfrage „{title}“"
 
-#: froide/foirequest/forms.py:183 froide/foirequest/forms.py:577
+#: froide/foirequest/forms.py:183 froide/foirequest/forms.py:578
 msgid "Your message"
 msgstr "Ihre Nachricht"
 
-#: froide/foirequest/forms.py:196 froide/foirequest/forms.py:644
+#: froide/foirequest/forms.py:196 froide/foirequest/forms.py:645
 msgid "You need to fill in the blanks in the template!"
 msgstr "Sie müssen eine Begründung angeben."
 
@@ -1612,32 +1674,32 @@ msgstr "Fehlende oder ungültige Eingabe!"
 msgid "This request doesn't need a Public Body!"
 msgstr "Diese Anfrage benötigt keine Behörde!"
 
-#: froide/foirequest/forms.py:340
+#: froide/foirequest/forms.py:341
 msgid "This request is still ongoing."
 msgstr "Diese Anfrage läuft noch."
 
-#: froide/foirequest/forms.py:341
+#: froide/foirequest/forms.py:342
 msgid "This request is finished."
 msgstr "Diese Anfrage ist abgeschlossen."
 
-#: froide/foirequest/forms.py:346 froide/foirequest/models/request.py:264
-#: froide/problem/templates/problem/message_toolbar_item.html:87
+#: froide/foirequest/forms.py:347 froide/foirequest/models/request.py:264
+#: froide/problem/templates/problem/message_toolbar_item.html:89
 msgid "Resolution"
 msgstr "Ergebnis"
 
-#: froide/foirequest/forms.py:347
+#: froide/foirequest/forms.py:348
 msgid "No outcome yet"
 msgstr "Noch kein Ergebnis"
 
-#: froide/foirequest/forms.py:350
+#: froide/foirequest/forms.py:351
 msgid "How would you describe the current outcome of this request?"
 msgstr "Wie würden Sie das Ergebnis dieser Anfrage beschreiben?"
 
-#: froide/foirequest/forms.py:352
+#: froide/foirequest/forms.py:353
 msgid "Redirected to"
 msgstr "Weitergeleitet an"
 
-#: froide/foirequest/forms.py:355
+#: froide/foirequest/forms.py:356
 msgid ""
 "If your message is redirected to a different Public Body, please specify the "
 "new Public Body"
@@ -1645,26 +1707,26 @@ msgstr ""
 "Wenn Ihre Anfrage zu einer anderen Behörde weitergeleitet wurde, geben Sie "
 "bitte die neue Behörde an."
 
-#: froide/foirequest/forms.py:359
+#: froide/foirequest/forms.py:360
 msgid "Costs"
 msgstr "Kosten"
 
-#: froide/foirequest/forms.py:363
+#: froide/foirequest/forms.py:364
 msgid "Please specify what the Public Body charges for the information."
 msgstr ""
 "Bitte geben Sie an, welchen Betrag die Behörde für diese Information "
 "verlangt."
 
-#: froide/foirequest/forms.py:374
+#: froide/foirequest/forms.py:375
 #: froide/foirequest/templates/foirequest/show.html:474
 msgid "Refusal Reason"
 msgstr "Verweigerungsgrund"
 
-#: froide/foirequest/forms.py:375
+#: froide/foirequest/forms.py:376
 msgid "No or other reason given"
 msgstr "Kein oder anderer Grund"
 
-#: froide/foirequest/forms.py:378
+#: froide/foirequest/forms.py:379
 msgid ""
 "When you are (partially) denied access to information, the Public Body "
 "should always state the reason."
@@ -1672,43 +1734,43 @@ msgstr ""
 "Wenn Ihnen (auch nur teilweise) Auskunft verweigert wird, sollte die Behörde "
 "immer eine Begründung angeben."
 
-#: froide/foirequest/forms.py:393
+#: froide/foirequest/forms.py:394
 msgid "Provide the redirected public body!"
 msgstr "Bitte geben Sie die neue Behörde an!"
 
-#: froide/foirequest/forms.py:398
+#: froide/foirequest/forms.py:399
 msgid "Invalid value"
 msgstr "Ungültiger Wert"
 
-#: froide/foirequest/forms.py:401
+#: froide/foirequest/forms.py:402
 msgid "Please give a resolution to this request"
 msgstr "Bitte geben Sie ein Ergebnis dieser Anfrage an."
 
-#: froide/foirequest/forms.py:452
+#: froide/foirequest/forms.py:453
 msgid "Information Law"
 msgstr "Informationsgesetz"
 
-#: froide/foirequest/forms.py:461
+#: froide/foirequest/forms.py:462
 msgid "Invalid FoI Request for this operation"
 msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
 
-#: froide/foirequest/forms.py:487
+#: froide/foirequest/forms.py:488
 msgid "Upload files must have distinct names"
 msgstr "Hochgeladene Dateien müssen eindeutige Namen haben"
 
 #. Translators: message reply prefix
-#: froide/foirequest/forms.py:529
+#: froide/foirequest/forms.py:530
 msgid "Re:"
 msgstr "AW:"
 
-#: froide/foirequest/forms.py:541
+#: froide/foirequest/forms.py:542
 #, python-format
 msgid "%(count)s day"
 msgid_plural "%(count)s days"
 msgstr[0] "%(count)s Tag"
 msgstr[1] "%(count)s Tage"
 
-#: froide/foirequest/forms.py:547
+#: froide/foirequest/forms.py:548
 #, python-format
 msgid ""
 "Dear Sir or Madam,\n"
@@ -1725,13 +1787,13 @@ msgstr ""
 "Mit freundlichen Grüßen\n"
 "%(name)s\n"
 
-#: froide/foirequest/forms.py:564
+#: froide/foirequest/forms.py:565
 #: froide/foirequest/templates/foirequest/snippets/message.html:91
 #: froide/foirequest/views/make_request.py:142
 msgid "To"
 msgstr "An"
 
-#: froide/foirequest/forms.py:579
+#: froide/foirequest/forms.py:580
 msgid ""
 "Don't include personal information. If you need to give your postal address "
 "enter it below."
@@ -1739,26 +1801,26 @@ msgstr ""
 "Versenden Sie keine privaten Informationen. Falls Sie Ihre Postadresse "
 "angeben sollen, geben Sie sie unten ein."
 
-#: froide/foirequest/forms.py:585 froide/foirequest/forms.py:737
+#: froide/foirequest/forms.py:586 froide/foirequest/forms.py:738
 msgid "Uploaded scans can be PDF, JPG, PNG or GIF."
 msgstr "Dateien können als PDF, JPG, PNG oder GIF hochgeladen werden."
 
-#: froide/foirequest/forms.py:587 froide/foirequest/models/attachment.py:60
+#: froide/foirequest/forms.py:588 froide/foirequest/models/attachment.py:60
 #: froide/foirequest/templates/foirequest/list_unchecked.html:30
 #: froide/foirequest/templates/foirequest/snippets/message.html:165
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: froide/foirequest/forms.py:602
+#: froide/foirequest/forms.py:603
 #, python-format
 msgid "Default address of %(publicbody)s"
 msgstr "Standardadresse von %(publicbody)s"
 
-#: froide/foirequest/forms.py:611
+#: froide/foirequest/forms.py:612
 msgid "Send physical address"
 msgstr "Adresse mitsenden"
 
-#: froide/foirequest/forms.py:614
+#: froide/foirequest/forms.py:615
 msgid ""
 "If the public body is asking for your post address, check this and we will "
 "append the address below."
@@ -1766,67 +1828,67 @@ msgstr ""
 "Falls die Behörde Ihre Postanschrift benötigt, setzen Sie den Haken und wir "
 "werden Ihre Anschrift an die Nachricht anhängen."
 
-#: froide/foirequest/forms.py:626
+#: froide/foirequest/forms.py:627
 msgid "Optional. Your address will not be displayed publicly."
 msgstr "Optional. Ihre Adresse wird nicht öffentlich angezeigt werden."
 
-#: froide/foirequest/forms.py:746
+#: froide/foirequest/forms.py:747
 msgid "mm/dd/YYYY"
 msgstr "dd.mm.YYYY"
 
-#: froide/foirequest/forms.py:748
+#: froide/foirequest/forms.py:749
 msgid "Send Date"
 msgstr "Sendedatum"
 
-#: froide/foirequest/forms.py:749
+#: froide/foirequest/forms.py:750
 msgid "Please give the date the reply was sent."
 msgstr "Bitte geben Sie das Datum an, an dem der Brief versendet wurde."
 
-#: froide/foirequest/forms.py:755
+#: froide/foirequest/forms.py:756
 msgid "Letter"
 msgstr "Brief"
 
-#: froide/foirequest/forms.py:757
+#: froide/foirequest/forms.py:758
 msgid "Letter text"
 msgstr "Brieftext"
 
-#: froide/foirequest/forms.py:761
+#: froide/foirequest/forms.py:762
 msgid "The text can be left empty, instead you can upload scanned documents."
 msgstr ""
 "Der Text kann leer bleiben, wenn Sie stattdessen den gescannten Brief "
 "hochladen."
 
-#: froide/foirequest/forms.py:762
+#: froide/foirequest/forms.py:763
 msgid "Scanned Letter"
 msgstr "Gescannter Brief"
 
-#: froide/foirequest/forms.py:780
+#: froide/foirequest/forms.py:781
 msgid "Your reply date is in the future, that is not possible."
 msgstr "Ihr Sendedatum ist in der Zukunft, das ist nicht möglich."
 
-#: froide/foirequest/forms.py:791
+#: froide/foirequest/forms.py:792
 msgid "You need to provide either the letter text or a scanned document."
 msgstr ""
 "Bitte geben Sie entweder den Brieftext an oder laden Sie ein gescanntes "
 "Dokument hoch."
 
-#: froide/foirequest/forms.py:838
+#: froide/foirequest/forms.py:839
 msgid "Sender public body"
 msgstr "Absender (Behörde)"
 
-#: froide/foirequest/forms.py:840
+#: froide/foirequest/forms.py:841
 msgid "Sender name"
 msgstr "Absendername"
 
-#: froide/foirequest/forms.py:842
+#: froide/foirequest/forms.py:843
 msgid "Sender Name"
 msgstr "Absender"
 
-#: froide/foirequest/forms.py:845
+#: froide/foirequest/forms.py:846
 msgid "You are not allowed to publish some received documents"
 msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen."
 
-#: froide/foirequest/forms.py:849
+#: froide/foirequest/forms.py:850
 msgid ""
 "If the reply explicitly states that you are not allowed to publish some of "
 "the documents (e.g. due to copyright), check this."
@@ -1835,15 +1897,15 @@ msgstr ""
 "Dokumenten untersagt (z.B. wegen des Urheberrechts), machen Sie hier einen "
 "Haken."
 
-#: froide/foirequest/forms.py:873
+#: froide/foirequest/forms.py:874
 msgid "Receiving public body"
 msgstr "Empfänger (Behörde)"
 
-#: froide/foirequest/forms.py:875 froide/foirequest/forms.py:877
+#: froide/foirequest/forms.py:876 froide/foirequest/forms.py:878
 msgid "Recipient Name"
 msgstr "Empfängername"
 
-#: froide/foirequest/forms.py:896
+#: froide/foirequest/forms.py:897
 msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
@@ -2203,43 +2265,43 @@ msgstr "nachricht-%(id)d"
 msgid "{name} (via {via})"
 msgstr "{name} (per {via})"
 
-#: froide/foirequest/models/message.py:424
+#: froide/foirequest/models/message.py:433
 msgid "unknown"
 msgstr "unbekannt"
 
-#: froide/foirequest/models/message.py:425
+#: froide/foirequest/models/message.py:434
 msgid "sending"
 msgstr "wird gesendet"
 
-#: froide/foirequest/models/message.py:426
+#: froide/foirequest/models/message.py:435
 msgid "sent"
 msgstr "gesendet"
 
-#: froide/foirequest/models/message.py:427
+#: froide/foirequest/models/message.py:436
 msgid "received"
 msgstr "erhalten"
 
-#: froide/foirequest/models/message.py:428
+#: froide/foirequest/models/message.py:437
 msgid "read"
 msgstr "gelesen"
 
-#: froide/foirequest/models/message.py:429
+#: froide/foirequest/models/message.py:438
 msgid "deferred"
 msgstr "zurückgestellt"
 
-#: froide/foirequest/models/message.py:430
+#: froide/foirequest/models/message.py:439
 msgid "bounced"
 msgstr "abgewiesen"
 
-#: froide/foirequest/models/message.py:431
+#: froide/foirequest/models/message.py:440
 msgid "expired"
 msgstr "abgelaufen"
 
-#: froide/foirequest/models/message.py:432
+#: froide/foirequest/models/message.py:441
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: froide/foirequest/models/message.py:445
+#: froide/foirequest/models/message.py:454
 msgid "delivery statii"
 msgstr "Zustellungsstatus"
 
@@ -2497,8 +2559,8 @@ msgid "Identical request count"
 msgstr "Anzahl Identischer Anfragen"
 
 #: froide/foirequest/models/request.py:296
-#: froide/foirequest/views/account_requests.py:46
-#: froide/foirequest/views/account_requests.py:100
+#: froide/foirequest/views/account_requests.py:54
+#: froide/foirequest/views/account_requests.py:108
 msgid "project"
 msgstr "projekt"
 
@@ -2634,13 +2696,13 @@ msgstr "Sehr geehrte Damen und Herren,"
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
 
-#: froide/foirequest/services.py:441
+#: froide/foirequest/services.py:440
 #, python-format
 msgid "attached_file_%d"
 msgstr "angehaengte_datei_%d"
 
 #. Translators: replacement for person name in filename
-#: froide/foirequest/services.py:444
+#: froide/foirequest/services.py:443
 msgid "NAME"
 msgstr "NAME"
 
@@ -2748,7 +2810,7 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:29
 #: froide/foirequest/templates/foirequest/account/list_projects.html:31
 #: froide/foirequest/templates/foirequest/snippets/message.html:78
-#: froide/problem/templates/problem/message_toolbar_item.html:47
+#: froide/problem/templates/problem/message_toolbar_item.html:49
 #: froide/team/templates/team/team_detail.html:134
 msgid "Date"
 msgstr "Datum"
@@ -2867,7 +2929,7 @@ msgstr[1] ""
 msgid "Requests"
 msgstr "Anfragen"
 
-#: froide/foirequest/templates/foirequest/account/list_requests.html:14
+#: froide/foirequest/templates/foirequest/account/list_requests.html:16
 #, python-format
 msgid ""
 "\n"
@@ -2886,7 +2948,7 @@ msgstr[1] ""
 "            Ihre Suche ergab %(request_count)s Anfragen.\n"
 "          "
 
-#: froide/foirequest/templates/foirequest/account/list_requests.html:20
+#: froide/foirequest/templates/foirequest/account/list_requests.html:22
 #, python-format
 msgid ""
 "\n"
@@ -2904,6 +2966,26 @@ msgstr[1] ""
 "\n"
 "            Sie haben %(request_count)s Anfragen.\n"
 "          "
+
+#: froide/foirequest/templates/foirequest/account/list_subscriptions.html:9
+msgid "Private Subscription URLs"
+msgstr "Private Abonnement-URLs"
+
+#: froide/foirequest/templates/foirequest/account/list_subscriptions.html:12
+msgid ""
+"You can generate private URLs to subscribe to your requests in other "
+"applications."
+msgstr ""
+"Hier können Sie private URLs generieren, um Ihre Anfragen in anderen "
+"Anwendungen zu abonnieren."
+
+#: froide/foirequest/templates/foirequest/account/list_subscriptions.html:19
+msgid "Private RSS feed URL"
+msgstr "Private RSS-Feed-URL"
+
+#: froide/foirequest/templates/foirequest/account/list_subscriptions.html:23
+msgid "Private iCal subscription URL (beta)"
+msgstr "Privates iCal-Abonnement-URL (beta)"
 
 #: froide/foirequest/templates/foirequest/admin/add_to_project.html:5
 #: froide/foirequest/templates/foirequest/admin/add_to_project.html:8
@@ -3503,13 +3585,13 @@ msgid "Feeds for these requests"
 msgstr "Feeds für diese Anfragen"
 
 #: froide/foirequest/templates/foirequest/list.html:98
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:85
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:95
 #: froide/publicbody/templates/publicbody/show.html:156
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
 #: froide/foirequest/templates/foirequest/list.html:104
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:91
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:101
 #: froide/publicbody/templates/publicbody/show.html:161
 msgid "Atom Feed"
 msgstr "Atom-Feed"
@@ -3520,18 +3602,18 @@ msgid "FoI Requests"
 msgstr "Informationsfreiheitsanfragen"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:16
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:129
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:139
 #: froide/publicbody/templates/publicbody/show.html:89
 msgid "View on Admin site"
 msgstr "Im Admin-Bereich ansehen"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:19
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:139
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:149
 msgid "Mark as checked"
 msgstr "Als gesehen markieren"
 
 #: froide/foirequest/templates/foirequest/list_unchecked.html:23
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:153
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:163
 msgid "Mark as NOT FoI"
 msgstr "Als nicht-IF markieren"
 
@@ -4559,49 +4641,49 @@ msgstr "Speichern"
 msgid "Short URL"
 msgstr "Kurz-URL"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:70
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:75
 msgid "Secret Short URL"
 msgstr "Geheime Kurz-URL"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:73
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:78
 msgid "This URL gives read access to others."
 msgstr "Diese URL gibt anderen Lese-Zugriff."
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:81
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:91
 msgid "Feeds"
 msgstr "Feeds"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:98
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:108
 msgid "Download"
 msgstr "Download"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:102
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:112
 msgid "Download request as ZIP-file"
 msgstr "Download der Anfrage als ZIP"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:108
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:118
 msgid "Download request as PDF"
 msgstr "Nachrichten als PDF"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:112
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:122
 msgid "Extend deadline"
 msgstr "Verlängere Frist"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:118
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:128
 msgid "Extend Deadline by Months"
 msgstr "Verlängere Frist um Monate"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:125
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:135
 msgid "Staff Actions"
 msgstr "Admin-Aktionen"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:133
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:143
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:153
 msgid "Marked as checked"
 msgstr "Als gesehen markiert"
 
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:148
-#: froide/foirequest/templates/foirequest/snippets/sidebar.html:156
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:158
+#: froide/foirequest/templates/foirequest/snippets/sidebar.html:166
 msgid "Marked as NOT FoI"
 msgstr "Als nicht-IF markiert"
 
@@ -4622,11 +4704,11 @@ msgstr "[… Zeige kompletten Anfragetext]"
 msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:222
+#: froide/foirequest/templatetags/foirequest_tags.py:227
 msgid "Due date"
 msgstr "Frist"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:232
+#: froide/foirequest/templatetags/foirequest_tags.py:237
 msgid "Today"
 msgstr "Heute"
 
@@ -4679,39 +4761,46 @@ msgctxt "url part"
 msgid "p"
 msgstr "p"
 
-#: froide/foirequest/urls/list_requests_urls.py:16
-#: froide/foirequest/urls/list_requests_urls.py:19
+#: froide/foirequest/urls/list_requests_urls.py:17
+#: froide/foirequest/urls/list_requests_urls.py:20
 msgctxt "URL part"
 msgid "latest"
 msgstr "neueste"
 
 #. Translators: part in request filter URL
 #. Translators: part in Public Body URL
-#: froide/foirequest/urls/list_requests_urls.py:34
-#: froide/foirequest/urls/list_requests_urls.py:36
-#: froide/foirequest/urls/list_requests_urls.py:38
+#: froide/foirequest/urls/list_requests_urls.py:35
+#: froide/foirequest/urls/list_requests_urls.py:37
+#: froide/foirequest/urls/list_requests_urls.py:39
 #: froide/publicbody/urls.py:15 froide/publicbody/urls.py:20
 msgctxt "URL part"
 msgid "topic"
 msgstr "thema"
 
 #. Translators: part in request filter URL
-#: froide/foirequest/urls/list_requests_urls.py:42
-#: froide/foirequest/urls/list_requests_urls.py:44
-#: froide/foirequest/urls/list_requests_urls.py:46
+#: froide/foirequest/urls/list_requests_urls.py:43
+#: froide/foirequest/urls/list_requests_urls.py:45
+#: froide/foirequest/urls/list_requests_urls.py:47
 msgctxt "URL part"
 msgid "tag"
 msgstr "tag"
 
 #. Translators: part in request filter URL
-#: froide/foirequest/urls/list_requests_urls.py:50
-#: froide/foirequest/urls/list_requests_urls.py:52
-#: froide/foirequest/urls/list_requests_urls.py:54
+#: froide/foirequest/urls/list_requests_urls.py:51
+#: froide/foirequest/urls/list_requests_urls.py:53
+#: froide/foirequest/urls/list_requests_urls.py:55
 #: froide/foirequest/urls/make_request_urls.py:12
 #: froide/foirequest/urls/make_request_urls.py:14
 msgctxt "URL part"
 msgid "to"
 msgstr "an"
+
+#: froide/foirequest/urls/list_requests_urls.py:58
+#: froide/foirequest/urls/list_requests_urls.py:60
+#: froide/foirequest/urls/list_requests_urls.py:62
+msgctxt "URL part"
+msgid "user"
+msgstr "user"
 
 #: froide/foirequest/urls/make_request_urls.py:16
 msgctxt "URL part"
@@ -4728,11 +4817,11 @@ msgctxt "url component"
 msgid "attachment"
 msgstr "anhang"
 
-#: froide/foirequest/utils.py:38
+#: froide/foirequest/utils.py:41
 msgid "User exceeded request limit"
 msgstr "Nutzer hat Anfragenbeschränkung überschritten"
 
-#: froide/foirequest/utils.py:39
+#: froide/foirequest/utils.py:42
 #, python-format
 msgid "You exceeded your request limit of %(count)s requests in %(time)s."
 msgstr ""
@@ -4740,10 +4829,20 @@ msgstr ""
 "Dies ist eine automatische Vorsichtsmaßnahme. Bei Fragen kontaktieren Sie "
 "bitte den Webmaster."
 
-#: froide/foirequest/utils.py:243 froide/foirequest/utils.py:244
-#: froide/foirequest/utils.py:245
+#: froide/foirequest/utils.py:246 froide/foirequest/utils.py:247
+#: froide/foirequest/utils.py:248
 msgid "<information-removed>"
 msgstr "<Information-entfernt>"
+
+#: froide/foirequest/utils.py:311
+#, python-format
+msgid "Due date: %s"
+msgstr "Antwortfrist: %s"
+
+#: froide/foirequest/utils.py:328 froide/foirequest/utils.py:333
+#, python-format
+msgid "Appeal deadline: %s"
+msgstr "Widerspruchs-Termin: %s"
 
 #: froide/foirequest/validators.py:27
 #, python-format
@@ -4754,79 +4853,79 @@ msgstr ""
 "Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, "
 "wurde aber als %(content_type)s erkannt!"
 
-#: froide/foirequest/views/account_requests.py:43
+#: froide/foirequest/views/account_requests.py:51
 msgid "all projects"
 msgstr "alle Projekte"
 
-#: froide/foirequest/views/account_requests.py:85
+#: froide/foirequest/views/account_requests.py:93
 #: froide/foirequest/views/list_requests.py:47
 msgid "jurisdictions"
 msgstr "Zuständigkeitsbereiche"
 
-#: froide/foirequest/views/account_requests.py:90
+#: froide/foirequest/views/account_requests.py:98
 #: froide/foirequest/views/make_request.py:143
 msgid "public bodies"
 msgstr "Behörden"
 
-#: froide/foirequest/views/account_requests.py:94
+#: froide/foirequest/views/account_requests.py:102
 msgid "tag"
 msgstr "Schlagwort"
 
-#: froide/foirequest/views/attachment.py:84
+#: froide/foirequest/views/attachment.py:87
 msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
 
-#: froide/foirequest/views/attachment.py:108
+#: froide/foirequest/views/attachment.py:111
 msgid "Document created."
 msgstr "Dokument erstellt."
 
-#: froide/foirequest/views/attachment.py:188
+#: froide/foirequest/views/attachment.py:191
 msgid "Previous Page"
 msgstr "vorherige Seite"
 
-#: froide/foirequest/views/attachment.py:189
+#: froide/foirequest/views/attachment.py:192
 msgid "Next Page"
 msgstr "nächste Seite"
 
-#: froide/foirequest/views/attachment.py:190
+#: froide/foirequest/views/attachment.py:193
 #, python-brace-format
 msgid "{current} of {total}"
 msgstr "{current} von {total}"
 
-#: froide/foirequest/views/attachment.py:191
+#: froide/foirequest/views/attachment.py:194
 msgid "Save redaction"
 msgstr "Schwärzungen anwenden"
 
-#: froide/foirequest/views/attachment.py:192
+#: froide/foirequest/views/attachment.py:195
 msgid "No redaction needed"
 msgstr "Keine Schwärzung benötigt"
 
-#: froide/foirequest/views/attachment.py:193
+#: froide/foirequest/views/attachment.py:196
 msgid "Text only"
 msgstr "Nur Text"
 
-#: froide/foirequest/views/attachment.py:194
+#: froide/foirequest/views/attachment.py:197
 msgid "Hide text"
 msgstr "Text ausblenden"
 
-#: froide/foirequest/views/attachment.py:195
-#: froide/problem/templates/problem/message_toolbar_item.html:106
+#: froide/foirequest/views/attachment.py:198
+#: froide/problem/templates/problem/message_toolbar_item.html:108
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: froide/foirequest/views/attachment.py:196
+#: froide/foirequest/views/attachment.py:199
 msgid "Loading PDF..."
 msgstr "Lade PDF..."
 
-#: froide/foirequest/views/attachment.py:197
+#: froide/foirequest/views/attachment.py:200
 msgid "Redaction process started, please wait..."
 msgstr "Schwärzung erfolgt, bitte warten..."
 
-#: froide/foirequest/views/attachment.py:198
+#: froide/foirequest/views/attachment.py:201
 msgid "Saving redacted PDF, please wait..."
 msgstr "Geschwärztes PDF wird gespeichert, bitte warten..."
 
-#: froide/foirequest/views/attachment.py:199
+#: froide/foirequest/views/attachment.py:202
 msgid ""
 "We automatically redacted some text for you already. Please check if we got "
 "everything."
@@ -4834,7 +4933,7 @@ msgstr ""
 "Wir haben schon automatisiert ein paar Textstellen geschwärzt. Bitte prüfen "
 "Sie, ob wir etwas übersehen haben."
 
-#: froide/foirequest/views/attachment.py:232
+#: froide/foirequest/views/attachment.py:235
 #, python-format
 msgid "%s_redacted.pdf"
 msgstr "%s_geschwaerzt.pdf"
@@ -5804,50 +5903,50 @@ msgstr ""
 msgid "Problem?"
 msgstr "Problem?"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:11
-#: froide/problem/templates/problem/message_toolbar_item.html:46
+#: froide/problem/templates/problem/message_toolbar_item.html:13
+#: froide/problem/templates/problem/message_toolbar_item.html:48
 msgid "Problem"
 msgid_plural "Problems"
 msgstr[0] "Problem"
 msgstr[1] "Probleme"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:25
+#: froide/problem/templates/problem/message_toolbar_item.html:27
 msgid "Report a problem"
 msgstr "Melden Sie ein Problem"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:27
+#: froide/problem/templates/problem/message_toolbar_item.html:29
 msgid "Problem reports"
 msgstr "Problemberichte"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:37
+#: froide/problem/templates/problem/message_toolbar_item.html:39
 msgid "Previously reported problems"
 msgstr "Bisher gemeldete Probleme"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:40
+#: froide/problem/templates/problem/message_toolbar_item.html:42
 msgid "Moderators are already informed about the following problems:"
 msgstr "Moderatoren sind schon über die folgenden Probleme informiert:"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:48
+#: froide/problem/templates/problem/message_toolbar_item.html:50
 msgid "State"
 msgstr "Zustand"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:62
+#: froide/problem/templates/problem/message_toolbar_item.html:64
 msgid "auto detected"
 msgstr "automatisch erkannt"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:71
+#: froide/problem/templates/problem/message_toolbar_item.html:73
 msgid "Resolved"
 msgstr "Gelöst"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:75
+#: froide/problem/templates/problem/message_toolbar_item.html:77
 msgid "Pending"
 msgstr "Läuft"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:99
+#: froide/problem/templates/problem/message_toolbar_item.html:101
 msgid "Report a new problem"
 msgstr "Melden Sie ein neues Problem"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:109
+#: froide/problem/templates/problem/message_toolbar_item.html:111
 msgid "Report problem"
 msgstr "Problem melden"
 
@@ -5860,7 +5959,7 @@ msgstr "Neues Problem: {label} [#{reqid}]"
 msgid "Problem resolved on your request"
 msgstr "Das Problem bei Ihrer Anfrage wurde behoben"
 
-#: froide/problem/views.py:28
+#: froide/problem/views.py:30
 msgid "Your report could not be created."
 msgstr "Ihr Problembericht konnte nicht erstellt werden."
 
@@ -6594,63 +6693,63 @@ msgid ""
 "body."
 msgstr "Sie benötigen einen Account, um eine neue Behörde vorzuschlagen."
 
-#: froide/settings.py:222
+#: froide/settings.py:223
 msgid "English"
 msgstr "Englisch"
 
-#: froide/settings.py:223
+#: froide/settings.py:224
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: froide/settings.py:224
+#: froide/settings.py:225
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
 
-#: froide/settings.py:226
+#: froide/settings.py:227
 msgid "Danish (Denmark)"
 msgstr "Dänisch (Dänemark)"
 
-#: froide/settings.py:227
+#: froide/settings.py:228
 msgid "Italian"
 msgstr "Italienisch"
 
-#: froide/settings.py:228
+#: froide/settings.py:229
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: froide/settings.py:229
+#: froide/settings.py:230
 msgid "Swedish (Sweden)"
 msgstr "Schwedisch (Schweden)"
 
-#: froide/settings.py:230
+#: froide/settings.py:231
 msgid "Swedish (Finland)"
 msgstr "Schwedisch (Finnland)"
 
-#: froide/settings.py:231
+#: froide/settings.py:232
 msgid "Chinese (Simplified)"
 msgstr "Chinesisch (Kurzzeichen)"
 
-#: froide/settings.py:232
+#: froide/settings.py:233
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "Chinesisch (Traditionell, Honk Kong)"
 
-#: froide/settings.py:400
+#: froide/settings.py:401
 msgid "Access to user status"
 msgstr "Kann Sie als Nutzer auf FragDenStaat.de identifizieren"
 
-#: froide/settings.py:401
+#: froide/settings.py:402
 msgid "Read user profile information"
 msgstr "Kann meine Profil-Informationen sehen"
 
-#: froide/settings.py:402
+#: froide/settings.py:403
 msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
-#: froide/settings.py:403
+#: froide/settings.py:404
 msgid "Read my (private) requests"
 msgstr "Kann meine (privaten) Anfragen sehen"
 
-#: froide/settings.py:404
+#: froide/settings.py:405
 msgid "Make requests on my behalf"
 msgstr "Anfragen in meinem Namen stellen"
 
@@ -6769,11 +6868,6 @@ msgstr "Mitglied"
 #: froide/team/templates/team/team_detail.html:26
 msgid "Role"
 msgstr "Funktion"
-
-#: froide/team/templates/team/team_detail.html:29
-#: froide/team/templates/team/team_detail.html:73
-msgid "Remove"
-msgstr "Entfernen"
 
 #: froide/team/templates/team/team_detail.html:47
 msgid "– that's you!"
@@ -7234,13 +7328,13 @@ msgid "law"
 msgstr "gesetz"
 
 #. Translators: URL part
-#: froide/urls.py:136
+#: froide/urls.py:134
 msgctxt "url part"
 msgid "profile"
 msgstr "profil"
 
 #. Translators: URL part
-#: froide/urls.py:180
+#: froide/urls.py:176
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
@@ -7598,9 +7692,6 @@ msgstr "zustaendigkeit"
 
 #~ msgid "Save and publish blacked out version"
 #~ msgstr "Speichern und geschwärzte Version veröffentlichen"
-
-#~ msgid "Reset"
-#~ msgstr "Zurücksetzen"
 
 #~ msgid "edit your request again"
 #~ msgstr "Bearbeiten Sie Ihre Anfrage noch mal"
