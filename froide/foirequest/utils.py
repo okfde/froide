@@ -8,6 +8,9 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
+import icalendar
+import pytz
+
 from froide.helper.date_utils import format_seconds
 from froide.account.utils import send_mail_user
 
@@ -276,3 +279,57 @@ def permanently_anonymize_requests(foirequests):
             redacted__isnull=False,
             is_redacted=False
         ).delete()
+
+
+def add_ical_events(foirequest, cal):
+    event_timezone = pytz.timezone(settings.TIME_ZONE)
+
+    def tz(x):
+        return x.astimezone(event_timezone)
+
+    uid = 'event-%s-{pk}@{domain}'.format(
+        pk=foirequest.id, domain=settings.SITE_URL.split('/')[-1])
+
+    title = '{} [#{}]'.format(foirequest.title, foirequest.pk)
+    url = settings.SITE_URL + foirequest.get_absolute_url()
+
+    event = icalendar.Event()
+    event.add('uid', uid % 'request')
+    event.add('dtstamp', tz(timezone.now()))
+    event.add('dtstart', tz(foirequest.first_message))
+    event.add('url', url)
+    event.add('summary', title)
+    event.add('description', foirequest.description)
+    cal.add_component(event)
+
+    if foirequest.due_date:
+        event = icalendar.Event()
+        event.add('uid', uid % 'duedate')
+        event.add('dtstamp', tz(timezone.now()))
+        event.add('dtstart', tz(foirequest.due_date).date())
+        event.add('url', url)
+        event.add('summary', _('Due date: %s') % title)
+        event.add('description', foirequest.description)
+        cal.add_component(event)
+
+    if foirequest.status == 'awaiting_response' and (
+            foirequest.resolution in ('partially_successful', 'refused')):
+
+        responses = foirequest.response_messages
+        if responses:
+            appeal_deadline = foirequest.law.calculate_due_date(
+                date=responses[-1].timestamp
+            )
+        event = icalendar.Event()
+        event.add('uid', uid % 'appeal_deadline')
+        event.add('dtstamp', tz(timezone.now()))
+        event.add('dtstart', tz(appeal_deadline).date())
+        event.add('url', url)
+        event.add('summary', _('Appeal deadline: %s') % title)
+        event.add('description', foirequest.description)
+        alarm = icalendar.Alarm()
+        alarm.add('trigger', icalendar.prop.vDuration(-timedelta(days=1)))
+        alarm.add('action', 'DISPLAY')
+        alarm.add('description', _('Appeal deadline: %s') % title)
+        event.add_component(alarm)
+        cal.add_component(event)

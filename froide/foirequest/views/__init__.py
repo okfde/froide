@@ -1,7 +1,7 @@
 from .account_requests import (
     MyRequestsView, DraftRequestsView, FollowingRequestsView,
     FoiProjectListView, RequestSubscriptionsView,
-    UserRequestFeedView
+    UserRequestFeedView, user_calendar
 )
 from .attachment import (
     show_attachment,
@@ -37,7 +37,7 @@ from .request import (
 
 __all__ = [
     MyRequestsView, DraftRequestsView, FollowingRequestsView,
-    FoiProjectListView, RequestSubscriptionsView,
+    FoiProjectListView, RequestSubscriptionsView, user_calendar,
     show_attachment,
     approve_attachment, auth_message_attachment, redact_attachment,
     delete_draft, claim_draft,

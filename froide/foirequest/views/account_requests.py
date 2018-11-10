@@ -1,10 +1,16 @@
+from datetime import timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
+from django.db.models import Q
 from django.views.generic import ListView, TemplateView
+from django.conf import settings
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 import django_filters
-
+import icalendar
 from taggit.models import Tag
 
 from froide.publicbody.models import Jurisdiction, PublicBody
@@ -14,6 +20,7 @@ from .list_requests import BaseListRequestView
 
 from ..models import FoiRequest, FoiProject, RequestDraft
 from ..documents import FoiRequestDocument
+from ..utils import add_ical_events
 from ..filters import (
     BaseFoiRequestFilterSet,
     FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTER_CHOICES,
@@ -199,3 +206,30 @@ class UserRequestFeedView(BaseListRequestView):
 
     def get_context_data(self, **kwargs):
         return ListView.get_context_data(self, **kwargs)
+
+
+def user_calendar(request, token):
+    user = get_user_by_token_or_404(token, purpose='user-request-calendar')
+
+    three_months_ago = timezone.now() - timedelta(days=31 * 3)
+    queryset = FoiRequest.objects.filter(
+        user=user
+    ).filter(
+        Q(due_date__gte=three_months_ago) |
+        Q(last_message__gte=three_months_ago)
+    ).select_related('law')
+
+    cal = icalendar.Calendar()
+    cal.add('prodid', '-//{site_name} //{domain}//'.format(
+        site_name=settings.SITE_NAME,
+        domain=settings.SITE_URL.split('/')[-1]
+    ))
+    cal.add('version', '2.0')
+    cal.add('method', 'PUBLISH')
+    for obj in queryset:
+        add_ical_events(obj, cal)
+
+    response = HttpResponse(cal.to_ical(),
+                content_type='text/calendar; charset=utf-8')
+    response['Content-Disposition'] = 'attachment; filename=events.ics'
+    return response

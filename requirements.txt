@@ -25,6 +25,7 @@ djangorestframework-csv==2.1.0
 djangorestframework-jsonp==1.0.2
 djangorestframework==3.8.2
 geoip2==2.9.0
+icalendar==4.0.3
 idna==2.7
 itypes==1.1.0
 jinja2==2.10

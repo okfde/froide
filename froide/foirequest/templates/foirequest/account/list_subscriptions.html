@@ -20,6 +20,10 @@
     {% get_token_url_form purpose='user-request-feed' label=url_label url_name='foirequest-user_list_feed' as url_form %}
     {% render_form url_form %}
 
+    {% trans "Private iCal subscription URL (beta)" as url_label %}
+    {% get_token_url_form purpose='user-request-calendar' label=url_label url_name='foirequest-user_ical_calendar' as url_form %}
+    {% render_form url_form %}
+
   </form>
 </div>
 {% endblock %}
