@@ -300,7 +300,10 @@ class UserDeleteForm(forms.Form):
     CONFIRMATION_PHRASE = str(_('Freedom of Information Act'))
 
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'autocomplete': 'current-password'
+        }),
         label=_('Password'),
         help_text=_('Please type your password to confirm.')
     )
@@ -339,10 +342,25 @@ class UserDeleteForm(forms.Form):
 
 class SetPasswordForm(DjangoSetPasswordForm):
     """
-    Subclass just to set widget class
+    Subclass to:
+    - set widget class
+    - provide password autocomplete username
     """
+
+    pw_change_email = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'autocomplete': 'username'
+            }
+        ))
+
     def __init__(self, *args, **kwargs):
         super(SetPasswordForm, self).__init__(*args, **kwargs)
+        self.fields['pw_change_email'].initial = self.user.email
         for i in range(1, 3):
             widget = self.fields['new_password%d' % i].widget
-            widget.attrs.update({'class': 'form-control'})
+            widget.attrs.update({
+                'class': 'form-control',
+                'autocomplete': 'new-password',
+            })
