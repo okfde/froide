@@ -16,7 +16,7 @@ from taggit.models import Tag
 from froide.publicbody.models import Jurisdiction, PublicBody
 from froide.accesstoken.utils import get_user_by_token_or_404
 
-from .list_requests import BaseListRequestView
+from .list_requests import BaseListRequestView, ListRequestView
 
 from ..models import FoiRequest, FoiProject, RequestDraft
 from ..documents import FoiRequestDocument
@@ -187,7 +187,7 @@ class RequestSubscriptionsView(BaseAccountMixin, TemplateView):
         )
 
 
-class UserRequestFeedView(BaseListRequestView):
+class UserRequestFeedView(ListRequestView):
     feed = None
 
     def get_queryset(self):
