@@ -1,20 +1,52 @@
-import {Tooltip} from 'bootstrap.native'
-
 document.querySelectorAll('.copy-text').forEach(function (el) {
   el.addEventListener('click', function () {
     let el = this
-    el.select()
+    var selection
+
+    var isiOSDevice = navigator.userAgent.match(/ipad|iphone/i)
+
+    if (isiOSDevice) {
+      var editable = el.contentEditable
+      var readOnly = el.readOnly
+
+      el.contentEditable = true
+      el.readOnly = false
+
+      var range = document.createRange()
+      range.selectNodeContents(el)
+
+      selection = window.getSelection()
+      selection.removeAllRanges()
+      selection.addRange(range)
+
+      el.setSelectionRange(0, 999999)
+      el.contentEditable = editable
+      el.readOnly = readOnly
+    } else {
+      el.select()
+    }
+
     document.execCommand('copy')
+
+    if (isiOSDevice) {
+      selection.removeAllRanges()
+    }
+
     if (el.Tooltip) {
       let originalTitle = el.title
+      el.title = el.dataset.copied
       el.Tooltip.hide()
-      el.title = this.dataset.copied
-      let t = new Tooltip(el)
-      t.show()
-      window.setTimeout(function () {
-        t.hide()
-        el.title = originalTitle
-      }, 3000)
+      var switchTooltip = function () {
+        el.Tooltip.show()
+        el.removeEventListener('hidden.bs.tooltip', switchTooltip)
+
+        window.setTimeout(function () {
+          el.Tooltip.hide()
+          el.title = originalTitle
+        }, 3000)
+      }
+
+      el.addEventListener('hidden.bs.tooltip', switchTooltip)
     }
   })
 })
