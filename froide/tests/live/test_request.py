@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.utils import timezone
 
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -270,6 +271,55 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
         self.assertEqual(req.status, 'awaiting_response')
+
+    def test_make_logged_in_request_too_many(self):
+        for i in range(5):
+            req = factories.FoiRequestFactory.create(
+                user=self.user,
+                first_message=timezone.now(),
+            )
+            factories.FoiMessageFactory.create(
+                request=req,
+                is_response=False,
+                sender_user=self.user
+            )
+
+        froide_config = settings.FROIDE_CONFIG
+        froide_config['request_throttle'] = [(2, 60), (5, 60 * 60)]
+
+        with self.settings(FROIDE_CONFIG=froide_config):
+
+            self.do_login()
+            self.go_to_make_request_url(pb=self.pb)
+
+            with CheckJSErrors(self.selenium):
+                req_title = 'FoiRequest Number'
+                WebDriverWait(self.selenium, 5).until(
+                    lambda driver: driver.find_element_by_name('body').is_displayed()
+                )
+                self.selenium.find_element_by_name('subject').send_keys(req_title)
+                self.scrollTo('id_body')
+                self.selenium.find_element_by_name('body').clear()
+                body_text = 'Documents describing & something...'
+                self.selenium.find_element_by_name('body').send_keys(body_text)
+                WebDriverWait(self.selenium, 5).until(
+                    lambda driver: driver.find_elements_by_css_selector('.similar-requests li'))
+                self.scrollTo('review-button')
+                WebDriverWait(self.selenium, 5).until(
+                    lambda driver: driver.find_element_by_id('review-button').is_displayed()
+                )
+                self.selenium.find_element_by_id('review-button').click()
+                self.scrollTo('send-request-button')
+
+            WebDriverWait(self.selenium, 10).until(
+                lambda driver: self.selenium.find_element_by_id('send-request-button').is_displayed())
+
+            self.selenium.find_element_by_id('send-request-button').click()
+            make_request = reverse('foirequest-make_request')
+            self.assertIn(make_request, self.selenium.current_url)
+
+            alert_text = self.selenium.find_element_by_css_selector('.alert.alert-danger').text
+            self.assertIn('exceeded your request limit', alert_text)
 
     def test_make_request_logged_out_with_existing_account(self):
         self.go_to_make_request_url(pb=self.pb)
