@@ -111,15 +111,13 @@
 {% if form %}
   <div class="row mt-5">
     <div class="col-md-8">
+      <h4>{% trans "Add team member" %}</h4>
       <form class="form-inline" method="post" action="{% url 'team-invite' pk=object.pk %}">
         {% csrf_token %}
-        <fieldset>
-          <legend>{% trans "Add team member" %}</legend>
-          {% render_form form %}
-          <button type="submit" class="btn btn-primary">
-            {% trans "Invite as team member" %}
-          </button>
-        </fieldset>
+        {% render_form form %}
+        <button type="submit" class="btn btn-primary">
+          {% trans "Invite as team member" %}
+        </button>
       </form>
     </div>
   </div>
