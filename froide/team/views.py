@@ -1,8 +1,7 @@
 from django.db import models
 from django.shortcuts import redirect
 from django.views.generic import ListView, FormView, DetailView, UpdateView
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-    PermissionRequiredMixin)
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.utils import timezone
 
