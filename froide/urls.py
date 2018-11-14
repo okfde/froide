@@ -127,8 +127,8 @@ froide_urlpatterns += [
     # Translators: URL part
     url(r'^%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
     url(r'^%s/' % documents, include('froide.document.urls')),
-    url(r'^%s/' % account, include('froide.account.urls')),
     url(r'^%s/%s/' % (account, teams), include('froide.team.urls')),
+    url(r'^%s/' % account, include('froide.account.urls')),
     url(r'^%s/access-token/' % account, include('froide.accesstoken.urls')),
     # Translators: URL part
     url(r'^%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
