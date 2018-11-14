@@ -4,6 +4,7 @@ from django.views.generic import ListView, FormView, DetailView, UpdateView
 from django.contrib.auth.mixins import (LoginRequiredMixin,
     PermissionRequiredMixin)
 from django.http import Http404
+from django.utils import timezone
 
 from froide.helper.auth import can_manage_object
 
@@ -35,7 +36,11 @@ class TeamListView(AuthMixin, ListView):
     def get_queryset(self):
         return Team.objects.filter(
             members=self.request.user
-        ).distinct().annotate(role=models.F('teammembership__role'))
+        ).distinct().annotate(
+            role=models.F('teammembership__role'),
+            status=models.F('teammembership__status'),
+            member_id=models.F('teammembership__id')
+        )
 
     def get_context_data(self, **kwargs):
         context = super(TeamListView, self).get_context_data(**kwargs)
@@ -135,7 +140,17 @@ class DeleteTeamMemberRoleView(AuthMixin, DetailView):
         return redirect(team)
 
 
-class JoinTeamView(AuthMixin, DetailView):
+class JoinMixin():
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.user = request.user
+        self.object.updated = timezone.now()
+        self.object.status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
+        self.object.save()
+        return redirect(self.object.team)
+
+
+class JoinTeamView(AuthMixin, JoinMixin, DetailView):
     template_name = 'team/team_join.html'
 
     def get_queryset(self):
@@ -144,18 +159,24 @@ class JoinTeamView(AuthMixin, DetailView):
         )
 
     def get_object(self):
-        member = super(JoinTeamView, self).get_object()
+        member = super().get_object()
         service = TeamService(member)
         if not service.check_invite_secret(self.kwargs['secret']):
             raise Http404
         return member
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.user = request.user
-        self.object.status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
-        self.object.save()
-        return redirect(self.object.team)
+
+class JoinTeamUserView(AuthMixin, JoinMixin, DetailView):
+    def get_queryset(self):
+        return TeamMembership.objects.filter(
+            status=TeamMembership.MEMBERSHIP_STATUS_INVITED,
+            user=self.request.user
+        )
+
+    # def get_object(self):
+    #     import ipdb ; ipdb.set_trace()
+    #     member = super().get_object()
+    #     return member
 
 
 class AssignTeamView(UpdateView):

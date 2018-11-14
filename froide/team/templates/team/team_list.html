@@ -24,12 +24,25 @@
         {% for object in object_list %}
           <tr>
             <td>
-              <a href="{{ object.get_absolute_url }}">
+              {% if object.status == 'active' %}
+                <a href="{{ object.get_absolute_url }}">
+              {% endif %}
                 {{ object.name }}
-              </a>
+              {% if object.status == 'active' %}
+                </a>
+              {% endif %}
             </td>
             <td>
-              {{ object.role }}
+              {% if object.status == 'invited' %}
+                <form method="post" action="{% url 'team-join_user' pk=object.member_id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-primary">
+                    {% trans "Join this team" %}
+                  </button>
+                </form>
+              {% else %}
+                {{ object.get_role_display }}
+              {% endif %}
             </td>
             <td>
                {{ object.member_count }}

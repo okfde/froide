@@ -44,7 +44,8 @@
                   {{ member.user.get_full_name }}
                 {% endif %}
                 {% if user_member == member %}
-                  <em>{% trans "– that's you!" %}</em>
+                  <span class="fa fa-user"></span>
+                  <em class="sr-only">{% trans "– that's you!" %}</em>
                 {% endif %}
               </td>
               <td>

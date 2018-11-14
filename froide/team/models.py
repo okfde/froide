@@ -14,6 +14,7 @@ class TeamMembership(models.Model):
         (ROLE_EDITOR, _('editor')),
         (ROLE_VIEWER, _('viewer')),
     )
+    ROLES_DICT = dict(ROLES)
     MEMBERSHIP_STATUS_INACTIVE = 'inactive'
     MEMBERSHIP_STATUS_INVITED = 'invited'
     MEMBERSHIP_STATUS_ACTIVE = 'active'
@@ -78,6 +79,11 @@ class Team(models.Model):
 
     def get_absolute_url(self):
         return reverse('team-detail', kwargs={'pk': self.pk})
+
+    def get_role_display(self):
+        if hasattr(self, 'role'):
+            return TeamMembership.ROLES_DICT[self.role]
+        return ''
 
     @property
     def member_count(self):
