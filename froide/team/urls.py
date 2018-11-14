@@ -16,8 +16,8 @@ urlpatterns = [
         name='team-change_member'),
     url(r'^(?P<pk>\d+)/delete-member/$', DeleteTeamMemberRoleView.as_view(),
         name='team-delete_member'),
-    url(r'^join/(?P<pk>\d+)/(?P<secret>\w+)/$', JoinTeamView.as_view(),
-        name='team-join'),
     url(r'^join/(?P<pk>\d+)/$', JoinTeamUserView.as_view(),
         name='team-join_user'),
+    url(r'^join/(?P<pk>\d+)/(?P<secret>\w+)/$', JoinTeamView.as_view(),
+        name='team-join'),
 ]

@@ -14,8 +14,8 @@ from .models import Team, TeamMembership
 from .services import TeamService
 
 
-class AuthMixin(PermissionRequiredMixin, LoginRequiredMixin):
-    permission_required = 'team.can_use_teams'
+class AuthMixin(LoginRequiredMixin):
+    pass
 
 
 class CreateTeamView(AuthMixin, FormView):
