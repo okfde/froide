@@ -294,9 +294,10 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
     )
     categories = SimpleCategorySerializer(read_only=True, many=True)
     classification = SimpleClassificationSerializer(read_only=True)
-    region = serializers.HyperlinkedRelatedField(
+    regions = serializers.HyperlinkedRelatedField(
         view_name='api:georegion-detail',
-        read_only=True
+        read_only=True,
+        many=True
     )
 
     site_url = serializers.CharField(source='get_absolute_domain_url')
@@ -313,7 +314,7 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
             'request_note', 'number_of_requests',
             'site_url', 'request_note_html',
             'jurisdiction',
-            'laws', 'region',
+            'laws', 'regions',
         )
 
 

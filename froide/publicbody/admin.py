@@ -77,7 +77,7 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
         }),
         (_('Geo'), {
             'classes': ('collapse',),
-            'fields': ('geo', 'region'),
+            'fields': ('regions', 'geo'),
         }),
         (_('Advanced'), {
             'classes': ('collapse',),
@@ -91,8 +91,7 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     list_filter = (
         'jurisdiction', 'classification', 'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
-        make_nullfilter('region', _('Has region')),
-        'region__kind', 'region__kind_detail',
+        make_nullfilter('regions', _('Has regions')),
         make_emptyfilter('email', 'E-Mail'),
         make_emptyfilter('fax', 'Fax')
     )
@@ -102,7 +101,7 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     exclude = ('confirmed',)
     raw_id_fields = (
         'parent', 'root', '_created_by', '_updated_by',
-        'region', 'classification'
+        'regions', 'classification'
     )
     tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
@@ -183,9 +182,9 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
             'opts': opts,
             'media': self.media,
             'applabel': opts.app_label,
-            'no_regions': queryset.filter(region__isnull=True),
+            'no_regions': queryset.filter(regions=None),
             'region_string': ','.join([
-                str(pb.region_id) for pb in queryset.filter(region__isnull=False)
+                str(reg.id) for pb in queryset.exclude(regions=None) for reg in pb.regions.all()
             ])
         }
 
@@ -194,6 +193,7 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
             request, 'publicbody/admin/show_georegions.html',
             context
         )
+    show_georegions.short_description = _("Show georegions of")
 
 
 class PublicBodyAdminMixin(PublicBodyBaseAdminMixin):
