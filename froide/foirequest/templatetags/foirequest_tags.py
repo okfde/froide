@@ -310,7 +310,7 @@ def get_timeline_marks(foirequest, num_slices=6):
         percent = (current - first_date) / duration * 100
 
         if i > 0 and i < num_slices - 1:
-            if percent > 90 or percent < 10:
+            if percent > 75 or percent < 10:
                 continue
 
         label = formats.date_format(timezone.localtime(current), format_choice)
