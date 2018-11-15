@@ -354,6 +354,8 @@ class FoiMessage(models.Model):
     def check_delivery_status(self, count=None, extended=False):
         if self.is_not_email or self.is_response:
             return
+        if not self.sender_email or not self.recipient_email:
+            return
 
         from froide.foirequest.delivery import get_delivery_report
         from ..tasks import check_delivery_status
