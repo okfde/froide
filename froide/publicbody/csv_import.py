@@ -79,13 +79,19 @@ class CSVImporter(object):
         if 'jurisdiction__slug' in row:
             row['jurisdiction'] = self.get_jurisdiction(row.pop('jurisdiction__slug'))
 
-        region = None
+        regions = None
         if 'georegion_id' in row:
-            region = self.get_georegion(id=row.pop('georegion_id'))
+            regions = [self.get_georegion(id=row.pop('georegion_id'))]
         elif 'georegion_identifier' in row:
-            region = self.get_georegion(
+            regions = [self.get_georegion(
                 identifier=row.pop('georegion_identifier')
-            )
+            )]
+        elif 'regions' in row:
+            regions = row.pop('regions')
+            if regions:
+                regions = [
+                    self.get_georegion(id=r) for r in regions.split(',')
+                ]
 
         parent = row.pop('parent__name', None)
         if parent:
@@ -114,8 +120,8 @@ class CSVImporter(object):
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
             pb.tags.set(*tags)
-            if region:
-                pb.regions.add(region)
+            if regions:
+                pb.regions.set(*regions)
             pb.categories.set(*categories)
             return pb
         except PublicBody.DoesNotExist:
@@ -131,8 +137,8 @@ class CSVImporter(object):
         pb.save()
         pb.laws.add(*row['jurisdiction'].laws)
         pb.tags.set(*list(tags))
-        if region:
-            pb.regions.add(region)
+        if regions:
+            pb.regions.set(*regions)
         pb.categories.set(*categories)
         return pb
 
