@@ -2,9 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 from django.utils import timezone
-from django.utils.html import escape
+from django.utils.html import format_html
 
 from froide.publicbody.models import PublicBody
 from froide.helper.email_utils import make_address
@@ -175,9 +174,11 @@ class FoiMessage(models.Model):
 
     def get_recipient(self):
         if self.recipient_public_body:
-            return mark_safe('<a href="%(url)s">%(name)s</a>' % {
-                "url": self.recipient_public_body.get_absolute_url(),
-                "name": escape(self.recipient_public_body.name)})
+            return format_html(
+                '<a href="{url}">{name}</a>',
+                url=self.recipient_public_body.get_absolute_url(),
+                name=self.recipient_public_body.name
+            )
         else:
             return self.recipient
 
