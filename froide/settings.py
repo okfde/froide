@@ -64,6 +64,7 @@ class Base(Configuration):
         'froide.foisite',
         'froide.problem',
         'froide.accesstoken',
+        'froide.comments',
 
         # API
         'oauth2_provider',
@@ -203,6 +204,8 @@ class Base(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
+
+    COMMENTS_APP = 'froide.comments'
 
     # ######### I18N and L10N ##################
 

@@ -1,20 +1,27 @@
 {% load i18n %}
-<dl class="comments-list">
+
+{% if comment_list %}
+  <dl class="comments-list">
   {% for comment in comment_list %}
-    <dt id="c{{ comment.id }}">{% if comment.user.is_staff %}<span class="moderator">{% trans "Moderator" %}</span>{% endif %}
-    {% blocktrans with date=comment.submit_date name=comment.name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}</dt>
-    <dd{% if comment.user.is_staff %} class="moderator"{% endif %}>
-        {% if comment.user.is_staff %}
-            <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
+    <dt id="c{{ comment.id }}">
+      {% if comment.user.is_staff %}
+        <span class="moderator">{% trans "Moderator" %}</span>
+      {% endif %}
+      {% blocktrans with date=comment.submit_date name=comment.name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}
+    </dt>
+    <dd {% if comment.user.is_staff %}class="moderator"{% endif %}>
+      {% if comment.user.is_staff %}
+        <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
+      {% else %}
+        {% if comment.comment != comment.comment|truncatewords:20 %}
+          <p id="comment-{{ comment.id }}">{{ comment.comment|truncatewords:20 }}
+            <a href="#comment-{{ comment.id }}-full" class="hideparent" data-toggle="collapse" aria-expanded="false" aria-controls="comment-{{ comment.id }}-full">{% trans "Read all" %}</a></p>
+          <p class="collapse" id="comment-{{ comment.id }}-full">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
         {% else %}
-            {% if comment.comment != comment.comment|truncatewords:20 %}
-                <p id="comment-{{ comment.id }}">{{ comment.comment|truncatewords:20 }}
-                    <a href="#comment-{{ comment.id }}-full" class="hideparent" data-toggle="collapse" aria-expanded="false" aria-controls="comment-{{ comment.id }}-full">{% trans "Read all" %}</a></p>
-                <p class="collapse" id="comment-{{ comment.id }}-full">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
-            {% else %}
-                <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
-            {% endif %}
+          <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
         {% endif %}
+      {% endif %}
     </dd>
   {% endfor %}
-</dl>
+  </dl>
+{% endif %}
