@@ -71,7 +71,9 @@ class Guidance(models.Model):
         )
 
     def __str__(self):
-        return '{} -> {}'.format(self.action.name, self.message_id)
+        if self.action:
+            return '{} -> {}'.format(self.action.name, self.message_id)
+        return '{} -> {}'.format(self.label, self.message_id)
 
     def get_description(self):
         if self.action:
