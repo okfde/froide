@@ -29,7 +29,8 @@ class Action(models.Model):
     snippet = models.TextField(blank=True)
 
     tag = models.ForeignKey(
-        MessageTag, null=True, blank=True
+        MessageTag, null=True, blank=True,
+        on_delete=models.SET_NULL
     )
 
     class Meta:
@@ -97,11 +98,13 @@ class Rule(models.Model):
 
     has_tag = models.ForeignKey(
         MessageTag, null=True, blank=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL
     )
     has_no_tag = models.ForeignKey(
         MessageTag, null=True, blank=True,
-        related_name='+'
+        related_name='+',
+        on_delete=models.SET_NULL
     )
 
     references = models.CharField(max_length=255, blank=True)
