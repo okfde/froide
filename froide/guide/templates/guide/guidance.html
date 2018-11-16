@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load markup %}
+
+{% if message.guidances or request.user.is_staff %}
+<div class="message-guidance-sticky">
+  {% for guidance in message.guidances %}
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title" {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>
+          {{ guidance.get_label }}
+        </h5>
+        <div class="card-text">
+          {{ guidance.get_description | markdown }}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  {% if request.user.is_staff %}
+    <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post" class="text-right mt-1">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm btn-info">{% trans "Rerun guidance" %}</button>
+    </form>
+  {% endif %}
+</div>
+{% endif %}

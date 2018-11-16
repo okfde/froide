@@ -5,6 +5,9 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import format_html
 
+from taggit.managers import TaggableManager
+from taggit.models import TagBase, TaggedItemBase
+
 from froide.publicbody.models import PublicBody
 from froide.helper.email_utils import make_address
 from froide.helper.text_utils import (
@@ -18,6 +21,23 @@ from .request import FoiRequest
 class FoiMessageManager(models.Manager):
     def get_throttle_filter(self, user):
         return self.get_queryset().filter(sender_user=user), 'timestamp'
+
+
+class MessageTag(TagBase):
+    class Meta:
+        verbose_name = _("message tag")
+        verbose_name_plural = _("message tags")
+
+
+class TaggedMessage(TaggedItemBase):
+    tag = models.ForeignKey(
+        MessageTag, on_delete=models.CASCADE,
+        related_name="tagged_messages")
+    content_object = models.ForeignKey('FoiMessage', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('tagged message')
+        verbose_name_plural = _('tagged messages')
 
 
 class FoiMessage(models.Model):
@@ -93,6 +113,11 @@ class FoiMessage(models.Model):
     original = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.SET_NULL,
         related_name='message_copies'
+    )
+    tags = TaggableManager(
+        through=TaggedMessage,
+        verbose_name=_('tags'),
+        blank=True
     )
 
     objects = FoiMessageManager()

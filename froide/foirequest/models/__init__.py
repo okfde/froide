@@ -1,6 +1,6 @@
 from .draft import RequestDraft
 from .request import FoiRequest, TaggedFoiRequest
-from .message import FoiMessage, DeliveryStatus
+from .message import FoiMessage, DeliveryStatus, MessageTag
 from .attachment import FoiAttachment
 from .event import FoiEvent
 from .deferred import DeferredMessage
@@ -11,5 +11,5 @@ from .project import FoiProject
 __all__ = [
     FoiRequest, TaggedFoiRequest, FoiMessage, FoiAttachment, FoiEvent,
     DeferredMessage, PublicBodySuggestion, RequestDraft, FoiProject,
-    DeliveryStatus
+    DeliveryStatus, MessageTag
 ]

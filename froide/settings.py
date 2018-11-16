@@ -64,6 +64,7 @@ class Base(Configuration):
         'froide.foisite',
         'froide.problem',
         'froide.accesstoken',
+        'froide.guide',
         'froide.comments',
 
         # API

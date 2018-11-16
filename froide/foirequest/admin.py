@@ -24,7 +24,7 @@ from froide.helper.email_utils import EmailParser
 from froide.helper.document import can_convert_to_pdf
 
 from .models import (FoiRequest, FoiMessage, FoiProject,
-        FoiAttachment, FoiEvent, PublicBodySuggestion,
+        FoiAttachment, FoiEvent, PublicBodySuggestion, MessageTag,
         DeferredMessage, TaggedFoiRequest, RequestDraft, DeliveryStatus)
 from .tasks import count_same_foirequests, convert_attachment_task
 from .widgets import AttachmentFileWidget
@@ -351,6 +351,10 @@ class FoiMessageAdmin(admin.ModelAdmin):
     resend_message.short_description = _('Resend selected messages')
 
 
+class MessageTagAdmin(admin.ModelAdmin):
+    pass
+
+
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted', 'document')
     ordering = ('-id',)
@@ -599,6 +603,7 @@ class RequestDraftAdmin(admin.ModelAdmin):
 
 admin.site.register(FoiRequest, FoiRequestAdmin)
 admin.site.register(FoiMessage, FoiMessageAdmin)
+admin.site.register(MessageTag, MessageTagAdmin)
 admin.site.register(FoiAttachment, FoiAttachmentAdmin)
 admin.site.register(FoiEvent, FoiEventAdmin)
 admin.site.register(PublicBodySuggestion, PublicBodySuggestionAdmin)
