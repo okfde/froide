@@ -461,7 +461,7 @@
           {% if object.awaits_response %}
             <dt>{% blocktrans %}Due date:{% endblocktrans %}</dt>
             {% if object.is_overdue %}
-              <dd class="red">
+              <dd class="text-danger">
                 {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}
             {% else %}
               <dd>

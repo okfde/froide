@@ -1,13 +1,241 @@
+$response: #fffdf0;
+$mediator: #eaf0f7;
+$escalation: #fff2f0;
 
 .messages {
   @include make-col-ready();
-  @include media-breakpoint-up(sm) {
-    @include make-col(9);
+  @include make-col(12);
+}
+
+.message-timeline-sticky {
+  @extend .col-12;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #fff;
+}
+
+.message-timeline {
+
+  .message-timeline-container {
+    height: 1.5rem;
+    user-select: none;
+  }
+
+  .message-timeline-markcontainer {
+    height: 1.5rem;
+  }
+
+  .message-timline-wrapper, .message-timline-markwrapper {
+    position: relative;
+    list-style-type: none;
+    margin: 0;
+    width: 100%;
+  }
+
+  .message-timeline-listitem {
+    position: absolute;
+    top: 0;
+    z-index: 90;
+  }
+
+  .message-timeline-itemwrapper {
+    display: flex;
+  }
+
+  .message-timeline-item {
+
+    height: 1.5rem;
+    transform: scale(1.0);
+    transition: transform 0.1s ease-in;
+
+    &.is-message {
+      width: 0.5rem;
+      background-color: $gray-200;
+    }
+    
+    &.is-escalation {
+      width: 0.5rem;
+      background-color: $gray-500;
+    }
+
+    &.is-response {
+      width: 0.5rem;
+      background-color: $blue;
+    }
+
+    &.is-mediator {
+      width: 0.5rem;
+      background-color: lighten($blue, 15);
+    }
+
+    &.is-duedate {
+      width: 3px;
+      z-index: 120;
+      background-color: #333;
+    }
+
+    &.is-now {
+      width: 3px;
+      background-color: $red;
+    }
+
+    &:hover, &.active, &:active {
+      z-index: 100;
+      outline: 1px solid black;
+      transform-origin: center center;
+      transform: scale(1.1);
+      transition: transform 0.5s ease-in;
+    }
+  }
+
+  .message-timeline-mark {
+    position: absolute;
+    top: 0;
+    border-left: 1px solid #999;
+    padding-left: 0.25rem;
+    font-size: 0.8rem;
+
+    &:last-child {
+      border-left: 0;
+      padding-left: 0;
+      border-right: 1px solid #999;
+      padding-right: 0.25rem;
+        
+    }
   }
 }
 
-@media print {
-  .messages {
-     @include make-col(12);
+@include media-breakpoint-down(md) {
+  .message-timeline-mark {
+    display: none;
   }
+  .message-timeline-mark:first-child,
+  .message-timeline-mark:last-child,
+  .message-timeline-mark.odd {
+    display: block;
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .message-timeline-mark,
+  .message-timeline-mark.odd {
+    display: none;
+  }
+  .message-timeline-mark:first-child,
+  .message-timeline-mark:last-child, {
+    display: block;
+  }
+}
+
+
+.message-container:not(:last-child) {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1.5em;
+  margin-bottom: 0.75em;
+}
+.message-container {
+  padding-top: 3rem;
+}
+
+
+.message {
+  @include make-col-ready();
+  @include make-col(12);
+  @include media-breakpoint-up(md) {
+    @include make-col(9);
+  }
+  @include media-breakpoint-up(lg) {
+    @include make-col(8);
+  }
+  border: 1px solid #ddd;
+  margin: 0;
+}
+
+.message-guidance {
+  @include make-col-ready();
+  @include make-col(12);
+  margin-top: 0.5em;
+
+  @include media-breakpoint-up(md) {
+    @include make-col(3);
+    margin-top: 0;
+  }
+  @include media-breakpoint-up(lg) {
+    @include make-col(4);
+  }
+}
+
+.message-guidance-sticky {
+  position: sticky;
+  top: 50px;
+}
+
+.message-header, .message-body {
+  padding: 10px 0 10px;
+}
+
+.message.is-response {
+  background-color: $response;
+}
+
+.message.is-mediator {
+  background-color: $mediator;
+}
+
+.message.is-escalation {
+  background-color: $escalation;
+}
+
+.message-meta {
+  @extend .row;
+}
+
+.message-meta > dt {
+  @extend .col-sm-2;
+}
+
+.message-meta > dd {
+  @extend .col-sm-10;
+}
+
+.content-text {
+  white-space: nowrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+
+.events-container {
+  @include make-col-ready();
+  @include make-col(12);
+  @include media-breakpoint-up(md) {
+    @include make-col(9);
+  }
+  @include media-breakpoint-up(lg) {
+    @include make-col(8);
+  }
+
+  color: #999;
+  font-size: 0.8em;
+  margin: 0.5em 0 0;
+}
+
+.events {
+  margin-bottom: 0;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.event {
+  color: #999;
+}
+
+.event a {
+  color: #999;
+  text-decoration: none;
+}
+
+.event a:hover {
+  text-decoration: underline;
 }

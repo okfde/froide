@@ -235,6 +235,10 @@ class FoiMessage(models.Model):
         return self.is_mediator_message(self.recipient_public_body_id)
 
     @property
+    def is_publicbody_response(self):
+        return self.is_response and not self.is_mediator
+
+    @property
     def is_mediator(self):
         return self.is_mediator_message(self.sender_public_body_id)
 

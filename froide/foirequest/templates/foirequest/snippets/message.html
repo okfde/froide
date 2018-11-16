@@ -3,13 +3,14 @@
 {% load foirequest_tags %}
 {% load form_helper %}
 {% load problemreport_tags %}
+{% load guidance_tags %}
 
 {% block before_message_container %}{% endblock %}
 
 <div id="{{ message.get_html_id }}" class="message-container">
 
   {% block before_message %}{% endblock %}
-
+  <div class="row">
   <div {% if message.timestamp == object.last_message %}id="last" {% endif %}class="message {{ message.get_css_class }}">
     <div class="message-header">
       {% block before_meta %}{% endblock %}
@@ -136,6 +137,9 @@
         </dt>
         <dd class="d-print-none">
           <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
+          {% for tag in message.tags.all %}
+            <span class="badge badge-light">{{ tag.name }}</span>
+          {% endfor %}
         </dd>
       {% endif %}
     </dl>
@@ -231,38 +235,49 @@
       </div>
     </div>
   </div>
+  {% if message|can_see_guidance:request %}
+    <div class="message-guidance">
+      {% render_guidance message %}
+    </div>
+  {% endif %}
+  </div>{# close row #}
 
   {% block after_message %}{% endblock %}
 
   {% block before_events %}{% endblock %}
 
   {% if message.events %}
-    <div class="events">
-      <ol>
-        {% for event in message.events %}
-          <li class="event" id="{{ event.get_html_id }}">
-            <span class="d-print-none" title="{{ event.timestamp }}">
-              {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-none d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
-          </li>
-        {% endfor %}
-      </ol>
+    <div class="row">
+      <div class="events-container">
+        <ol class="events">
+          {% for event in message.events %}
+            <li class="event" id="{{ event.get_html_id }}">
+              <span class="d-print-none" title="{{ event.timestamp }}">
+                {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-none d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
     </div>
   {% endif %}
 
   {% block before_comments %}{% endblock %}
-
   <div class="comments-container d-print-none">
     {% get_comment_list for message as comment_list %}
     <div id="comments-{{ message.id }}" class="comments">
       {% include "comments/foirequest/list.html" %}
-      <a data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
-        {% blocktrans %}Write a comment{% endblocktrans %}
-      </a>
+      <div class="text-right">
+        <a class="small text-muted" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+          {% trans "Write a comment" %}
+        </a>
+      </div>
       <div class="collapse" id="comment-form-{{ message.id }}">
         {% if user.is_authenticated %}
           {% include "comments/foirequest/form.html" %}
         {% else %}
-          <a href="{% url 'account-login' %}" class="d-print-none">{% blocktrans %}Please login to write a comment.{% endblocktrans %}</a><br/>
+          <a href="{% url 'account-login' %}" class="d-print-none">
+            {% blocktrans %}Please login to write a comment.{% endblocktrans %}
+          </a>
         {% endif %}
       </div>
     </div>
