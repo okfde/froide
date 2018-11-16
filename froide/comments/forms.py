@@ -10,6 +10,10 @@ from django_comments.forms import (
 class CommentForm(DjangoCommentForm):
     comment = forms.CharField(
         label=_('Comment'),
+        help_text=_(
+            'Your comment will be published with your'
+            ' registered name visible.'
+        ),
         widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
