@@ -6,8 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.core import mail
 from django.contrib.auth import get_user_model
-from django_comments.forms import CommentForm
-from django_comments.models import Comment
+from django_comments import get_model, get_form
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tests import factories
@@ -16,6 +15,8 @@ from .models import FoiRequestFollower
 from .tasks import _batch_update
 
 User = get_user_model()
+Comment = get_model()
+CommentForm = get_form()
 
 
 class FoiRequestFollowerFactory(factory.DjangoModelFactory):

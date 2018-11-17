@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 from django.utils import translation
 from django.utils.dateformat import TimeFormat
 from django.conf import settings
-from django_comments.models import Comment
+from django_comments import get_model
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
@@ -13,6 +13,8 @@ from froide.celery import app as celery_app
 from froide.foirequest.models import FoiRequest, FoiEvent, FoiMessage
 
 from .models import FoiRequestFollower
+
+Comment = get_model()
 
 
 @celery_app.task
