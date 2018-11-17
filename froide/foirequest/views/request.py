@@ -53,7 +53,9 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
 
     can_write = can_write_foirequest(obj, request)
 
-    for message in obj.messages:
+    messages = obj.get_messages(with_tags=request.user.is_staff)
+
+    for message in messages:
         message.request = obj
         if message.not_publishable:
             obj.not_publishable_message = message

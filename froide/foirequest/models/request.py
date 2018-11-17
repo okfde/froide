@@ -352,19 +352,20 @@ class FoiRequest(models.Model):
     @property
     def messages(self):
         if not hasattr(self, "_messages") or self._messages is None:
-            self._messages = list(
-                self.foimessage_set.select_related(
-                    "sender_user",
-                    "sender_public_body",
-                    "recipient_public_body"
-                ).prefetch_related(
-                    'tags'
-                ).order_by("timestamp"))
+            self.get_messages()
         return self._messages
 
-    def get_messages(self):
-        self._messages = None
-        return self.messages
+    def get_messages(self, with_tags=False):
+        qs = self.foimessage_set.select_related(
+            "sender_user",
+            "sender_public_body",
+            "recipient_public_body"
+        ).order_by("timestamp")
+        if with_tags:
+            qs = qs.prefetch_related('tags')
+
+        self._messages = list(qs)
+        return self._messages
 
     @property
     def status_representation(self):

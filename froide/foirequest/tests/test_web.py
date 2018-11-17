@@ -422,12 +422,13 @@ class PerformanceTest(TestCase):
         """
         FoiRequest page should query for non-loggedin users
         - FoiRequest (+1)
+        - FoiRequest Tags (+1)
         - FoiMessages of that request (+1)
         - FoiAttachments of that request (+1)
         - FoiEvents of that request (+1)
         - FoiRequestFollowerCount (+1)
-        - Tags (+1)
-        - ContentType + Comments for each FoiMessage (+3)
+        - Delivery Status (+1)
+        - ContentType + Comments for each FoiMessage (+2)
         """
         req = factories.FoiRequestFactory.create(site=self.site)
         factories.FoiMessageFactory.create(request=req)
@@ -442,13 +443,14 @@ class PerformanceTest(TestCase):
         FoiRequest page should query for non-staff loggedin users
         - Django session + Django user (+3)
         - FoiRequest (+1)
+        - FoiRequest Tags (+1)
         - FoiMessages of that request (+1)
         - FoiAttachments of that request (+1)
         - FoiEvents of that request (+1)
         - FoiRequestFollowerCount + if following (+2)
         - team menu: has teams + permissions/groups (+3)
-        - Tags (+1)
-        - ContentType + Comments for each FoiMessage (+3)
+        - Delivery Status (+1)
+        - ContentType + Comments for each FoiMessage (+2)
         """
         TOTAL_EXPECTED_REQUESTS = 15
         req = factories.FoiRequestFactory.create(site=self.site)
