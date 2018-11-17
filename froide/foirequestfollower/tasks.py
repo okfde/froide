@@ -33,17 +33,19 @@ def batch_update():
     return _batch_update()
 
 
-def _batch_update(update_requester=True, update_follower=True):
+def _batch_update(update_requester=True, update_follower=True, since=None):
+    if since is None:
+        since = timezone.now() - timedelta(days=1)
+
     event_black_list = ("message_received", "message_sent", 'set_concrete_law',)
     translation.activate(settings.LANGUAGE_CODE)
     requests = {}
     users = {}
-    gte_date = timezone.now() - timedelta(days=1)
     updates = {}
 
     message_type = ContentType.objects.get_for_model(FoiMessage)
     for comment in Comment.objects.filter(content_type=message_type,
-            submit_date__gte=gte_date):
+            submit_date__gte=since):
         try:
             message = FoiMessage.objects.get(pk=comment.object_pk)
             if message.request_id not in requests:
@@ -88,7 +90,7 @@ def _batch_update(update_requester=True, update_follower=True):
     if update_follower:
         # update followers
 
-        for event in FoiEvent.objects.filter(timestamp__gte=gte_date).select_related("request"):
+        for event in FoiEvent.objects.filter(timestamp__gte=since).select_related("request"):
             if event.event_name in event_black_list:
                 continue
             if event.request_id not in requests:
