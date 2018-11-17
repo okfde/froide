@@ -1,5 +1,4 @@
 {% load i18n %}
-{% load comments %}
 {% load foirequest_tags %}
 {% load form_helper %}
 {% load problemreport_tags %}
@@ -95,7 +94,8 @@
           {{ message.get_recipient }}
         </dd>
     {% endif %}
-      {% if message.status or message.has_delivery_status %}
+      {% get_delivery_status message as delivery_status %}
+      {% if message.status or delivery_status %}
         <dt>
           {% blocktrans %}Status{% endblocktrans %}
         </dt>
@@ -103,31 +103,29 @@
           {% if message.status %}
             {{ message.readable_status }}
           {% endif %}
-          {% if message.has_delivery_status %}
-            {% with deliverystatus=message.get_delivery_status %}
-              {% if message.status %}
-                &mdash;
-              {% endif %}
-              {% if object|can_write_foirequest:request %}
-                <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" class="text-unlink">
-              {% endif %}
-              {% if deliverystatus.is_sent %}
-                <i class="fa fa-check-circle-o"></i>
-                {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
-              {% elif deliverystatus.is_pending %}
-                <i class="fa fa-clock-o"></i>
-                {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
-              {% elif deliverystatus.is_failed %}
-                <i class="fa fa-ban"></i>
-                {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
-              {% else %}
-                <i class="fa fa-circle-o"></i>
-                {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
-              {% endif %}
-              {% if object|can_write_foirequest:request %}
-                </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ deliverystatus.log }}</pre>
-              {% endif %}
-            {% endwith %}
+          {% if delivery_status %}
+            {% if message.status %}
+              &mdash;
+            {% endif %}
+            {% if object|can_write_foirequest:request %}
+              <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" class="text-unlink">
+            {% endif %}
+            {% if deliverystatus.is_sent %}
+              <i class="fa fa-check-circle-o"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
+            {% elif deliverystatus.is_pending %}
+              <i class="fa fa-clock-o"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
+            {% elif deliverystatus.is_failed %}
+              <i class="fa fa-ban"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
+            {% else %}
+              <i class="fa fa-circle-o"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
+            {% endif %}
+            {% if object|can_write_foirequest:request %}
+              </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ deliverystatus.log }}</pre>
+            {% endif %}
           {% endif %}
         </dd>
       {% endif %}
@@ -263,7 +261,7 @@
 
   {% block before_comments %}{% endblock %}
   <div class="comments-container d-print-none">
-    {% get_comment_list for message as comment_list %}
+    {% get_comment_list message as comment_list %}
     <div id="comments-{{ message.id }}" class="comments">
       {% include "comments/foirequest/list.html" %}
       <div class="text-right">

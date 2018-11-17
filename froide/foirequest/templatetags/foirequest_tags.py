@@ -1,4 +1,5 @@
 from datetime import timedelta
+from collections import defaultdict
 
 from django import template
 from django.utils.safestring import mark_safe
@@ -7,17 +8,22 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
 from django.utils import formats
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+
+from django_comments import get_model
 
 from froide.helper.text_utils import (
     split_text_by_separator, redact_plaintext
 )
 from froide.helper.text_diff import mark_differences
 
-from ..models import FoiRequest
+from ..models import FoiRequest, FoiMessage, DeliveryStatus
 from ..foi_mail import get_alternative_mail
 from ..auth import (
     can_read_foirequest, can_write_foirequest, can_read_foirequest_anonymous
 )
+
+Comment = get_model()
 
 register = template.Library()
 
@@ -183,6 +189,39 @@ def can_read_foirequest_anonymous_filter(foirequest, request):
 
 def alternative_address(foirequest):
     return get_alternative_mail(foirequest)
+
+
+@register.simple_tag(takes_context=True)
+def get_comment_list(context, message):
+    if not hasattr(message, 'comment_list'):
+        ct = ContentType.objects.get_for_model(FoiMessage)
+        foirequest = message.request
+        mids = [m.id for m in foirequest.messages]
+        comments = Comment.objects.filter(
+            content_type=ct,
+            object_pk__in=(mids),
+            site_id=foirequest.site_id
+        )
+        comment_mapping = defaultdict(list)
+        for c in comments:
+            comment_mapping[c.object_pk] = c
+        for m in foirequest.messages:
+            m.comment_list = comment_mapping[m.id]
+    return message.comment_list
+
+
+@register.simple_tag
+def get_delivery_status(message):
+    if not hasattr(message, '_delivery_status'):
+        foirequest = message.request
+        mids = [m.id for m in foirequest.messages]
+        qs = DeliveryStatus.objects.filter(message_id__in=mids)
+        ds_mapping = defaultdict(lambda: None)
+        for ds in qs:
+            ds_mapping[ds.message_id] = ds
+        for m in foirequest.messages:
+            m._delivery_status = ds_mapping[m.id]
+    return message._delivery_status
 
 
 @register.inclusion_tag('foirequest/snippets/message_timeline.html')
