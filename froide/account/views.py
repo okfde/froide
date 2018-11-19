@@ -128,12 +128,9 @@ def logout(request):
     return redirect("/")
 
 
-def login(request, base="account/base.html", context=None,
-          template='account/login.html', status=200):
+def login(request, context=None, template='account/login.html', status=200):
     if request.user.is_authenticated:
         return redirect('account-show')
-
-    initial = None
 
     if not context:
         context = {}
@@ -161,17 +158,16 @@ def login(request, base="account/base.html", context=None,
                 messages.add_message(request, messages.ERROR,
                         _('E-mail and password do not match.'))
     else:
-        form = UserLoginForm(initial=initial)
+        form = UserLoginForm(initial=None)
     context.update({
         "form": form,
-        "custom_base": base,
         'next': request.GET.get('next')
     })
     return render(request, template, context, status=status)
 
 
 @require_POST
-def signup(request, base_template='base.html'):
+def signup(request):
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot signup.'))
@@ -211,7 +207,6 @@ def signup(request, base_template='base.html'):
     return render(request, 'account/login.html', {
         "form": form,
         "signup_form": signup_form,
-        "custom_base": base_template,
     }, status=400)
 
 
