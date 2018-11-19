@@ -199,14 +199,14 @@ def get_comment_list(context, message):
         mids = [m.id for m in foirequest.messages]
         comments = Comment.objects.filter(
             content_type=ct,
-            object_pk__in=(mids),
+            object_pk__in=mids,
             site_id=foirequest.site_id
         )
         comment_mapping = defaultdict(list)
         for c in comments:
-            comment_mapping[c.object_pk] = c
+            comment_mapping[c.object_pk].append(c)
         for m in foirequest.messages:
-            m.comment_list = comment_mapping[m.id]
+            m.comment_list = comment_mapping[str(m.pk)]
     return message.comment_list
 
 
