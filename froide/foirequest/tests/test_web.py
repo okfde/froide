@@ -431,7 +431,7 @@ class PerformanceTest(TestCase):
         - ContentType + Comments for each FoiMessage (+2)
         """
         req = factories.FoiRequestFactory.create(site=self.site)
-        factories.FoiMessageFactory.create(request=req)
+        factories.FoiMessageFactory.create(request=req, is_response=False)
         mes2 = factories.FoiMessageFactory.create(request=req)
         factories.FoiAttachmentFactory.create(belongs_to=mes2)
         ContentType.objects.clear_cache()
@@ -454,7 +454,7 @@ class PerformanceTest(TestCase):
         """
         TOTAL_EXPECTED_REQUESTS = 15
         req = factories.FoiRequestFactory.create(site=self.site)
-        factories.FoiMessageFactory.create(request=req)
+        factories.FoiMessageFactory.create(request=req, is_response=False)
         mes2 = factories.FoiMessageFactory.create(request=req)
         factories.FoiAttachmentFactory.create(belongs_to=mes2)
         self.client.login(email='dummy@example.org', password='froide')
