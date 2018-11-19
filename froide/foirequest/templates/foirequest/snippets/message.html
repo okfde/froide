@@ -110,13 +110,13 @@
             {% if object|can_write_foirequest:request %}
               <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" class="text-unlink">
             {% endif %}
-            {% if deliverystatus.is_sent %}
+            {% if delivery_status.is_sent %}
               <i class="fa fa-check-circle-o"></i>
               {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
-            {% elif deliverystatus.is_pending %}
+            {% elif delivery_status.is_pending %}
               <i class="fa fa-clock-o"></i>
               {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
-            {% elif deliverystatus.is_failed %}
+            {% elif delivery_status.is_failed %}
               <i class="fa fa-ban"></i>
               {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
             {% else %}
@@ -124,7 +124,7 @@
               {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
             {% endif %}
             {% if object|can_write_foirequest:request %}
-              </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ deliverystatus.log }}</pre>
+              </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
             {% endif %}
           {% endif %}
         </dd>

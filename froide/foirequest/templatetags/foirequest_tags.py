@@ -214,7 +214,7 @@ def get_comment_list(context, message):
 def get_delivery_status(message):
     if not hasattr(message, '_delivery_status'):
         foirequest = message.request
-        mids = [m.id for m in foirequest.messages]
+        mids = [m.id for m in foirequest.sent_messages()]
         qs = DeliveryStatus.objects.filter(message_id__in=mids)
         ds_mapping = defaultdict(lambda: None)
         for ds in qs:

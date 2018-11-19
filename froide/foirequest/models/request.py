@@ -467,7 +467,7 @@ class FoiRequest(models.Model):
         return list(filter(lambda m: m.is_response, self.messages))
 
     def sent_messages(self):
-        return list(filter(lambda m: m.is_response, self.messages))
+        return list(filter(lambda m: not m.is_response, self.messages))
 
     def reply_received(self):
         return len(self.response_messages()) > 0
