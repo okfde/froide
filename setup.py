@@ -47,7 +47,6 @@ setup(
         'djangorestframework-csv',
         'djangorestframework-jsonp',
         'python-mimeparse',
-        'unicodecsv',
         'django-configurations',
         'django-storages',
         'dj-database-url',
@@ -55,6 +54,7 @@ setup(
         'django-filter',
         'phonenumbers',
         'django-filingcabinet',
+        'icalendar',
     ],
     include_package_data=True,
     classifiers=[
