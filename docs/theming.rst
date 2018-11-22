@@ -40,12 +40,10 @@ Templates
 ---------
 
 Most likely you want to change some parts of the site, but keep most of it the same.
-The Django template language allows you to extend base template and override blocks. However, if you override the base template you have to copy over all blocks. To circumvent that Froide comes with the template tag `overextend`.
-It allows to override only the specific blocks in templates and keeps the other blocks the same.
 
 An example for the `base.html` template could look like this::
 
-  {% overextends "base.html" %}
+  {% extends "base.html" %}
   {% load i18n %}
 
   {% block footer_description %}

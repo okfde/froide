@@ -42,7 +42,6 @@ setup(
         'django-taggit',
         'pytz',
         'requests',
-        'django_overextends',
         'python-magic',
         'djangorestframework',
         'djangorestframework-csv',
