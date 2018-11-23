@@ -3,7 +3,7 @@ import importlib
 from django.conf import settings
 from django.db import models
 from django.utils.http import urlencode
-from django.urls import reverse
+from django.urls import reverse, NoReverseMatch
 from django.core.paginator import Paginator
 from django.utils.safestring import mark_safe
 
@@ -106,7 +106,10 @@ def make_filter_url(url_name, data=None, get_active_filters=None):
     data = {k: v for k, v in data.items() if v}
     if data:
         query_string = '?' + urlencode(data)
-    return reverse(url_name, kwargs=url_kwargs) + query_string
+    try:
+        return reverse(url_name, kwargs=url_kwargs) + query_string
+    except NoReverseMatch:
+        return ''
 
 
 def get_facet_with_label(info, model=None, attr='name'):
