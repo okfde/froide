@@ -18,7 +18,7 @@ import {
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from './mutation_types'
 
-import {FroideAPI} from '../lib/search'
+import {FroideAPI} from '../lib/api'
 import {selectBestLaw} from '../lib/law-select'
 
 Vue.use(Vuex)

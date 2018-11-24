@@ -52,7 +52,7 @@
 
 <script>
 
-import I18nMixin from '../lib/i18n-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'user-registration',

@@ -36,9 +36,9 @@ import {
   SET_STEP_SELECT_PUBLICBODY
 } from '../../store/mutation_types'
 
-import PBChooserMixin from '../../lib/pb-chooser-mixin'
+import PBChooserMixin from './lib/pb-chooser-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
-import PBListMixin from '../../lib/pb-list-mixin'
+import PBListMixin from './lib/pb-list-mixin'
 import {summaryDimensions} from '../../store/multi_settings'
 
 import PbTable from './pb-table'

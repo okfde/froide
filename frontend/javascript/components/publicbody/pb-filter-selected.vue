@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import FilterMixin from '../../lib/filter-mixin'
+import FilterMixin from './lib/filter-mixin'
 
 export default {
   name: 'pb-filter-selected',

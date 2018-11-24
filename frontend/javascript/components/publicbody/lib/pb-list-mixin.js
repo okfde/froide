@@ -1,5 +1,5 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
-import {SET_PUBLICBODY, CLEAR_SEARCHRESULTS} from '../store/mutation_types'
+import {SET_PUBLICBODY, CLEAR_SEARCHRESULTS} from '../../../store/mutation_types'
 
 var PBListMixin = {
   computed: {

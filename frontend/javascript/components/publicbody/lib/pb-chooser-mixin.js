@@ -6,7 +6,7 @@ import {
   ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS, CACHE_PUBLICBODIES,
   CLEAR_PUBLICBODIES, SET_STEP_SELECT_PUBLICBODY
-} from '../store/mutation_types'
+} from '../../../store/mutation_types'
 
 var PBChooserMixin = {
   created () {

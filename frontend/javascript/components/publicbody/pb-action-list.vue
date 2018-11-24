@@ -58,7 +58,7 @@
 import {mapMutations} from 'vuex'
 import {SET_STEP_REQUEST, SET_PUBLICBODY_ID} from '../../store/mutation_types'
 
-import PBListMixin from '../../lib/pb-list-mixin'
+import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {

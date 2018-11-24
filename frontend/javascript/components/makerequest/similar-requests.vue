@@ -47,8 +47,8 @@
 
 import {debounce} from 'underscore'
 
-import {FroideAPI} from '../lib/search'
-import I18nMixin from '../lib/i18n-mixin'
+import {FroideAPI} from '../../lib/api'
+import I18nMixin from '../../lib/i18n-mixin'
 
 const MAX_SIMILAR = 5
 

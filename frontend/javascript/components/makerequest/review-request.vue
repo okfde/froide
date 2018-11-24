@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import LetterMixin from '../lib/letter-mixin'
+import LetterMixin from './lib/letter-mixin'
 
 function erx (text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
@@ -170,7 +170,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variables";
+  @import "../../../styles/variables";
 
   .modal-mask {
     position: fixed;

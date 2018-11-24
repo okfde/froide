@@ -134,8 +134,8 @@
 
 <script>
 
-import LetterMixin from '../lib/letter-mixin'
-import I18nMixin from '../lib/i18n-mixin'
+import LetterMixin from './lib/letter-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
 
 const MAX_BODY_ROWS = 10
 const MIN_BODY_ROWS = 3
@@ -372,7 +372,7 @@ export default {
 
 <style lang="scss" scoped>
 
-@import "../../styles/variables";
+@import "../../../styles/variables";
 
 .make-request-container {
   padding-bottom: 1rem;

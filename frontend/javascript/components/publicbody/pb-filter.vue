@@ -20,8 +20,8 @@ import Vue from 'vue'
 import {mapGetters} from 'vuex'
 import {debounce} from 'underscore'
 
-import {FroideAPI} from '../../lib/search'
-import FilterMixin from '../../lib/filter-mixin'
+import {FroideAPI} from '../../lib/api'
+import FilterMixin from './lib/filter-mixin'
 
 import PbFilterList from './pb-filter-list'
 

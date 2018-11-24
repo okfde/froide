@@ -61,7 +61,7 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
   SET_STEP_SELECT_PUBLICBODY, SET_STEP_REVIEW_PUBLICBODY, SET_STEP_REQUEST
-} from '../store/mutation_types'
+} from '../../store/mutation_types'
 
 
 export default {
@@ -128,7 +128,7 @@ export default {
 
 <style lang="scss" scoped>
 
-@import "../../styles/variables";
+@import "../../../styles/variables";
 
 .process-breadcrumbs-container {
   background-color: #f5f5f5;

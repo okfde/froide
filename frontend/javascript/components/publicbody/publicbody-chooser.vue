@@ -25,7 +25,7 @@ import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
 
-import PBChooserMixin from '../../lib/pb-chooser-mixin'
+import PBChooserMixin from './lib/pb-chooser-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 import { SET_CONFIG } from '../../store/mutation_types'

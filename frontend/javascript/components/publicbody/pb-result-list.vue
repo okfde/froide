@@ -25,7 +25,7 @@
 
 <script>
 
-import PBListMixin from '../../lib/pb-list-mixin'
+import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {

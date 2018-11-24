@@ -28,7 +28,7 @@
 import {mapMutations} from 'vuex'
 import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID} from '../../store/mutation_types'
 
-import PBListMixin from '../../lib/pb-list-mixin'
+import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 import PbMultiItem from './pb-multi-item'

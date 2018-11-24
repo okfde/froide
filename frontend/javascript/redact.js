@@ -2,7 +2,7 @@ import Vue from 'vue'
 
 import {renderComponent} from './lib/vue-helper'
 
-import Redaction from './components/redaction'
+import Redaction from './components/redaction/redaction'
 
 Vue.config.productionTip = false
 

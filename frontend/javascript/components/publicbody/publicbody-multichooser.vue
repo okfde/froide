@@ -89,10 +89,11 @@ import {
   CLEAR_PUBLICBODIES
 } from '../../store/mutation_types'
 
-import {FroideAPI} from '../../lib/search'
-import PBChooserMixin from '../../lib/pb-chooser-mixin'
+import {FroideAPI} from '../../lib/api'
 import I18nMixin from '../../lib/i18n-mixin'
-import PBListMixin from '../../lib/pb-list-mixin'
+
+import PBChooserMixin from './lib/pb-chooser-mixin'
+import PBListMixin from './lib/pb-list-mixin'
 
 import PbTable from './pb-table'
 import PbPagination from './pb-pagination'

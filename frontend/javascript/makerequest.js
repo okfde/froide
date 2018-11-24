@@ -4,7 +4,7 @@ import store from './store'
 
 import {renderComponent} from './lib/vue-helper'
 
-import RequestPage from './components/request-page'
+import RequestPage from './components/makerequest/request-page'
 
 Vue.config.productionTip = false
 

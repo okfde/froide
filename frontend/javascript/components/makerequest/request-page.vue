@@ -145,11 +145,11 @@
 
 <script>
 import SimilarRequests from './similar-requests'
-import PublicbodyChooser from './publicbody/publicbody-chooser'
-import PublicbodyMultiChooser from './publicbody/publicbody-multichooser'
+import PublicbodyChooser from '../publicbody/publicbody-chooser'
+import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
 import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
-import PbMultiReview from './publicbody/pb-multi-review'
+import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
 import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
@@ -166,10 +166,10 @@ import {
   SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
   UPDATE_ADDRESS, UPDATE_EMAIL, UPDATE_PRIVATE,
   UPDATE_LAW_TYPE, SET_CONFIG
-} from '../store/mutation_types'
+} from '../../store/mutation_types'
 
-import LetterMixin from '../lib/letter-mixin'
-import I18nMixin from '../lib/i18n-mixin'
+import LetterMixin from './lib/letter-mixin'
+import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'request-page',
@@ -461,7 +461,7 @@ export default {
 
 <style lang="scss" scoped>
 
-@import "../../styles/variables";
+@import "../../../styles/variables";
 
 .make-request-container {
   padding-bottom: 1rem;
