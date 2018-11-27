@@ -521,10 +521,13 @@
 </div>
   {% endif %}
 
-{% block before_correspondence %}
+{% block make_samq_request %}
   {% if object.not_publishable_message %}
     {% include "foirequest/snippets/make_same_request.html" %}
   {% endif %}
+{% endblock %}
+
+{% block before_correspondence %}
 {% endblock %}
 
 <hr class="page-break"/>
