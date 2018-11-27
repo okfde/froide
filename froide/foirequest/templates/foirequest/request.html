@@ -107,7 +107,7 @@
     <noscript>
       <div class="container">
         <div class="alert alert-danger">
-          {% trans "You have JavaScript disabled. For an better experience please enable JavaScript." %}
+          {% trans "You have JavaScript disabled. For a better experience please enable JavaScript." %}
         </div>
         {% if not user.is_authenticated %}
           <div class="alert alert-warning">
@@ -134,7 +134,7 @@
     </noscript>
 
 {% addtoblock "js" %}
-  <script src="{% static "js/common.js" %}"></script>
+  <script src="{% static 'js/common.js' %}"></script>
 {% endaddtoblock %}
 {% addtoblock "js" %}
   <script src="{% static 'js/makerequest.js' %}" charset="utf-8"></script>
