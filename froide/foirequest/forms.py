@@ -494,8 +494,8 @@ class AttachmentSaverMixin(object):
         return '.'.join([slugify(n) for n in name])
 
     def save_attachments(self, files, message, replace=False):
-        added = 0
-        updated = 0
+        added = []
+        updated = []
 
         for file in files:
             filename = self.make_filename(file.name)
@@ -506,12 +506,12 @@ class AttachmentSaverMixin(object):
                         belongs_to=message,
                         name=filename
                     )
-                    updated += 1
+                    updated.append(att)
                 except FoiAttachment.DoesNotExist:
                     pass
             if att is None:
-                added += 1
                 att = FoiAttachment(belongs_to=message, name=filename)
+                added.append(att)
             att.size = file.size
             att.filetype = file.content_type
             att.file.save(filename, file)

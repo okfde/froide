@@ -11,7 +11,8 @@ from ..views import (
     extend_deadline, approve_attachment, approve_message,
     make_same_request, resend_message,
     download_foirequest_zip, download_foirequest_pdf,
-    show_attachment, redact_attachment
+    show_attachment, redact_attachment,
+    upload_attachments
 )
 
 urlpatterns = [
@@ -43,6 +44,9 @@ urlpatterns = [
     # Attachments
     url(r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/%s/(?P<attachment_name>.+)$'
         % pgettext('url component', 'attachment'), show_attachment, name='foirequest-show_attachment'),
+    # Attachment Upload
+    url(r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/%s/$'
+        % pgettext('url component', 'upload'), upload_attachments, name='foirequest-upload_attachments'),
     # Redaction
     url(r"^(?P<slug>[-\w]+)/redact/(?P<attachment_id>\d+)/$", redact_attachment, name="foirequest-redact_attachment"),
 

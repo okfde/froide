@@ -1,0 +1,48 @@
+{% extends 'foirequest/base.html' %}
+
+{% load i18n %}
+{% load static %}
+{% load block_helper %}
+
+{% block body %}
+
+  <div class="container">
+    <a href="{{ message.get_absolute_url }}" class="btn btn-light float-right">{% trans "Back" %}</a>
+
+    <h2>{% trans "Upload and manage attachments" %}</h2>
+
+    <p>
+      {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" sender=message.sender title=foirequest.title url=message.get_absolute_url %}
+      Attachments for <a href="{{ url }}">message dated {{ date }}</a> from <b>{{ sender }}</b> in request “{{ title }}”.
+      {% endblocktrans %}
+    </p>
+
+    {% csrf_token %}
+    <document-uploader
+      id="document-uploader"
+      :message="{{ message_json }}"
+      :config="{{ config_json }}"
+    >
+      <div class="text-center">
+        <h4>
+          {% trans "Attachments are loading..." %}
+        </h4>
+        <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+          <span class="sr-only">{% trans "Loading..." %}</span>
+        </div>
+      </div>
+    </document-uploader>
+
+    <p class="text-right">
+      <a href="{{ message.get_absolute_url }}" class="btn btn-secondary">{% trans "Return to message" %}</a>
+    </p>
+  </div>
+
+{% addtoblock "js" %}
+  <script src="{% static 'js/common.js' %}"></script>
+{% endaddtoblock %}
+{% addtoblock "js" %}
+  <script src="{% static 'js/docupload.js' %}" charset="utf-8"></script>
+{% endaddtoblock %}
+
+{% endblock %}
