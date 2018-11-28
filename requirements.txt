@@ -42,6 +42,7 @@ pypdf2==1.26.0
 python-magic==0.4.15
 python-mimeparse==1.6.0
 pytz==2018.5
+pyyaml==3.13
 reportlab==3.5.11
 requests==2.20.1
 uritemplate==3.0.0
