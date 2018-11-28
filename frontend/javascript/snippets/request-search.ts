@@ -1,4 +1,4 @@
-function applyToForm (requestSearch) {
+function applyToForm (requestSearch: HTMLFormElement) {
   function submitForm () {
     requestSearch.submit()
   }
@@ -9,10 +9,10 @@ function applyToForm (requestSearch) {
     selectInput.addEventListener('change', submitForm)
   }
 
-  function dropdownSubmit (input) {
-    return function (e) {
+  function dropdownSubmit (input: HTMLInputElement) {
+    return function (this: HTMLElement, e: Event) {
       e.preventDefault()
-      input.value = this.dataset.value
+      input.value = this.dataset.value || ''
       requestSearch.submit()
     }
   }
@@ -20,7 +20,7 @@ function applyToForm (requestSearch) {
   var dropdowns = requestSearch.querySelectorAll('.dropdown')
   for (i = 0; i < dropdowns.length; i += 1) {
     var dropdown = dropdowns[i]
-    var input = dropdown.querySelector('input')
+    var input = <HTMLInputElement> dropdown.querySelector('input')
     var dropdownLinks = dropdown.querySelectorAll('.dropdown-menu a')
     for (var j = 0; j < dropdownLinks.length; j += 1) {
       var dropdownLink = dropdownLinks[j]
@@ -29,7 +29,7 @@ function applyToForm (requestSearch) {
   }
 }
 
-var requestSearch = document.querySelector('.request-search')
+var requestSearch = <HTMLFormElement> document.querySelector('.request-search')
 if (requestSearch !== null) {
   applyToForm(requestSearch)
 }

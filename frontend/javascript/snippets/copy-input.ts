@@ -1,18 +1,20 @@
+interface HTMLInputElement { Tooltip: any; }
+
 document.querySelectorAll('.copy-text').forEach(function (el) {
-  el.addEventListener('click', function () {
+  el.addEventListener('click', function (this: HTMLInputElement) {
     let el = this
     var selection
 
     var isiOSDevice = navigator.userAgent.match(/ipad|iphone/i)
 
     if (isiOSDevice) {
-      var editable = el.contentEditable
-      var readOnly = el.readOnly
+      const editable = el.contentEditable
+      const readOnly = el.readOnly
 
-      el.contentEditable = true
+      el.contentEditable = ''
       el.readOnly = false
 
-      var range = document.createRange()
+      const range = document.createRange()
       range.selectNodeContents(el)
 
       selection = window.getSelection()
@@ -28,13 +30,13 @@ document.querySelectorAll('.copy-text').forEach(function (el) {
 
     document.execCommand('copy')
 
-    if (isiOSDevice) {
+    if (isiOSDevice && selection) {
       selection.removeAllRanges()
     }
 
     if (el.Tooltip) {
       let originalTitle = el.title
-      el.title = el.dataset.copied
+      el.title = el.dataset.copied || ''
       el.Tooltip.hide()
       var switchTooltip = function () {
         el.Tooltip.show()
