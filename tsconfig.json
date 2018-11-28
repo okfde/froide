@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es5",
+      "es2015",
+      "es2015.promise"
+    ],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es5",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": [
+    "./frontend/javascript/**/*"
+  ],
+  "exclude":[
+    "node_modules"
+  ]
+}

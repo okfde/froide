@@ -11,7 +11,7 @@ const webpack = require('webpack')
 const devMode = process.env.NODE_ENV !== 'production'
 
 const ENTRY = {
-  main: ['./frontend/javascript/main.js'],
+  main: ['./frontend/javascript/main.ts'],
   publicbody: ['./frontend/javascript/publicbody.js'],
   makerequest: ['./frontend/javascript/makerequest.js'],
   request: ['./frontend/javascript/request.js'],
@@ -41,7 +41,7 @@ const config = {
   devtool: 'source-map', // any "source-map"-like devtool is possible
   resolve: {
     modules: ['node_modules', 'froide/static'],
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['.js', '.ts', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.runtime.esm.js',
       'froide': path.resolve('.'),
@@ -58,6 +58,28 @@ const config = {
             only: ['modal', 'dropdown', 'collapse', 'alert', 'tab', 'tooltip']
           }
         }
+      },
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          // {
+          //   loader: 'babel-loader',
+          //   options: {
+          //     presets: [path.resolve('./node_modules/babel-preset-env')],
+          //     babelrc: false,
+          //     plugins: [
+          //       require('babel-plugin-transform-object-rest-spread')
+          //     ]
+          //   }
+          // },
+          {
+            loader: 'ts-loader',
+            options: {
+              appendTsSuffixTo: [/\.vue$/]
+            }
+          }
+        ]
       },
       {
         test: /\.js$/,
