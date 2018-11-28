@@ -11,9 +11,10 @@ $footer-color-hover: $gray-100;
     padding-top: $spacer;
   }
 
-  h3 {
+  h6 {
     color: $gray-100;
-    margin-bottom: $spacer;
+    margin-bottom: $spacer * 0.5;
+    margin-top: $spacer;
   }
 }
 
