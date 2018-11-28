@@ -48,11 +48,10 @@ $footer-color-hover: $gray-100;
 
 .footer__menu {
   @extend .list-unstyled;
-  @extend .row;
+
   li {
-    @extend .col-4;
     font-size: $font-size-sm;
-    padding: 0 $spacer $spacer;
+    padding: $spacer*0.5 0 0;
 
     a {
       color: $footer-color;
