@@ -34,7 +34,7 @@ class Command(DESCommand):
             working_chunk_divider = None
             obj_iterator = qs.iterator()
             for i, obj_group in enumerate(grouper(CHUNK_SIZE, obj_iterator)):
-                percentage = round(i / count * 100, 2)
+                percentage = round((i * CHUNK_SIZE) / count * 100, 2)
                 self.stdout.write('Indexing {}%'.format(
                     percentage
                 ), ending='\r')
