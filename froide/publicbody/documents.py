@@ -33,7 +33,7 @@ class PublicBodyDocument(DocType):
 
     class Meta:
         model = PublicBody
-        queryset_pagination = 100
+        queryset_chunk_size = 100
 
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
