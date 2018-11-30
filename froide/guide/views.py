@@ -7,7 +7,7 @@ from django.contrib import messages
 from froide.foirequest.models import FoiMessage
 from froide.helper.utils import render_403
 
-from .utils import apply_rules
+from .utils import run_guidance
 
 
 @require_POST
@@ -17,13 +17,9 @@ def rerun_rules(request, message_id):
         return render_403(request)
 
     message = get_object_or_404(FoiMessage, id=message_id)
-    new_guidances = apply_rules(message)
 
-    # Delete all guidances that were there before
-    # but are not returned
-    message.guidance_set.all().exclude(
-        id__in=[n.id for n in new_guidances]
-    ).delete()
+    run_guidance(message)
+
     messages.add_message(
         request, messages.SUCCESS,
         _('Guidance refreshed for message.')

@@ -77,3 +77,14 @@ def apply_rule(message, rule, includes=None, excludes=None, tags=None):
             }
         )
         yield guidance
+
+
+def run_guidance(message):
+    new_guidances = apply_rules(message)
+
+    # Delete all guidances that were there before
+    # but are not returned, keep custom guidances
+    message.guidance_set.all().exclude(
+        id__in=[n.id for n in new_guidances],
+        user__isnull=False
+    ).delete()

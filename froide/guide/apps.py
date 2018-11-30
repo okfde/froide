@@ -7,4 +7,7 @@ class GuideConfig(AppConfig):
     verbose_name = _('Guide')
 
     def ready(self):
-        from . import signals  # noqa
+        from .signals import start_guidance_task
+        from froide.foirequest.models import FoiRequest
+
+        FoiRequest.message_received.connect(start_guidance_task)
