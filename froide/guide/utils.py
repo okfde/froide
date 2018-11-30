@@ -80,6 +80,9 @@ def apply_rule(message, rule, includes=None, excludes=None, tags=None):
 
 
 def run_guidance(message):
+    if not message.is_response:
+        return
+
     new_guidances = apply_rules(message)
 
     # Delete all guidances that were there before
