@@ -4,7 +4,7 @@
 {% if message.guidances or request.user.is_staff %}
 <div class="message-guidance-sticky">
   {% for guidance in message.guidances %}
-    <div class="card">
+    <div class="card mb-2">
       <div class="card-body">
         <h5 class="card-title" {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>
           {{ guidance.get_label }}
