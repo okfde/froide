@@ -19,6 +19,23 @@ $(function () {
     $(this).parent().find('.hidden-text').toggle()
   })
 
+  var addText = function (dataset) {
+    const textField = document.querySelector(dataset.addtextfield)
+    let text = textField.value
+    let addedText = dataset.addtext
+    if (text.indexOf(addedText) !== -1) {
+      return
+    }
+    if (text.indexOf('\n...\n') !== -1) {
+      text = text.replace('...', addedText)
+    } else {
+      let textParts = text.split('\n\n')
+      textParts = textParts.slice(0, textParts.length - 1).concat([addedText, textParts[textParts.length - 1]])
+      text = textParts.join('\n\n')
+    }
+    textField.value = text
+  }
+
   var setStatus = function () {
     $('.status-refusal').hide()
     var resolution = $('#id_resolution').val()
@@ -62,6 +79,9 @@ $(function () {
     if (this.dataset && this.dataset.value) {
       var sel = '[name="' + this.dataset.name + '"][value="' + this.dataset.value + '"]'
       el.querySelector(sel).checked = true
+    }
+    if (this.dataset && this.dataset.addtextfield) {
+      addText(this.dataset)
     }
   })
 
