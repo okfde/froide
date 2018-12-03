@@ -1,7 +1,7 @@
 Froide
 ======
 
-[![Build Status](https://travis-ci.org/okfde/froide.png?branch=master)](https://travis-ci.org/okfde/froide) [![Coverage Status](https://coveralls.io/repos/okfde/froide/badge.png?branch=master)](https://coveralls.io/r/okfde/froide?branch=master)
+[![Build Status](https://travis-ci.org/okfde/froide.svg?branch=master)](https://travis-ci.org/okfde/froide) [![Coverage Status](https://coveralls.io/repos/github/okfde/froide/badge.svg?branch=master)](https://coveralls.io/r/okfde/froide?branch=master)
 
 
 Froide is a Freedom Of Information Portal using Django 1.11. It supports Python 2.7, 3.5, 3.6.
