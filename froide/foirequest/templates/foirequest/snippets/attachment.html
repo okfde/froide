@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="attachment-card ajax-parent {% if not attachment.can_approve %}list-group-item-dark{% elif not attachment.approved %}list-group-item-secondary{% endif %}">
+<div class="attachment-card ajax-parent {% if not attachment.approved %}{% if not attachment.can_approve %}list-group-item-dark{% else %}list-group-item-secondary{% endif %}{% endif %}">
   <div class="attachment-body row">
     {% if attachment.approved or attachment.redacted %}
       {% include "foirequest/snippets/attachment_approved.html" with attachment=attachment %}

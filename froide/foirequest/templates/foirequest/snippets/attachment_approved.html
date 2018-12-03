@@ -8,7 +8,7 @@
       {% blocktrans %}protected original{% endblocktrans %}
     </span>
   {% endif %}
-  {% if attachment.converted %}
+  {% if attachment.converted and not attachment.approved %}
     <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
       {% blocktrans %}protected original{% endblocktrans %}
     </span>
@@ -32,7 +32,7 @@
 </div>
 <div class="col-lg-4 text-right">
   {% if attachment.can_redact and object|can_write_foirequest:request %}
-    <a class="btn btn-sm btn-dark d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
+    <a class="btn btn-sm btn-dark d-print-none" href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">
       {% trans "Redact" %}
     </a>
   {% endif %}
