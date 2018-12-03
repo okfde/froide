@@ -39,6 +39,8 @@ def show(request, slug, **kwargs):
 
 
 def can_see_attachment(att, can_write):
+    if att.approved:
+        return True
     if att.redacted_id and not can_write:
         return False
     if att.converted_id and not can_write:
