@@ -15,7 +15,7 @@ const ENTRY = {
   main: ['./frontend/javascript/main.ts'],
   publicbody: ['./frontend/javascript/publicbody.js'],
   makerequest: ['./frontend/javascript/makerequest.js'],
-  request: ['./frontend/javascript/request.js'],
+  request: ['./frontend/javascript/request.ts'],
   redact: ['./frontend/javascript/redact.js'],
   tagautocomplete: ['./frontend/javascript/tagautocomplete.js']
 }
