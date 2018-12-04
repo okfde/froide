@@ -103,6 +103,9 @@
           {% if message.status %}
             {{ message.readable_status }}
           {% endif %}
+          {% if not message.sent %}
+            <small class="text-light">{% trans "Message was not sent" %}</small>
+          {% endif %}
           {% if delivery_status %}
             {% if message.status %}
               &mdash;
