@@ -49,7 +49,7 @@ const setStatus = () => {
     if (resolutionElement) {
       var resolution = resolutionElement.value
       if (/refus/.exec(resolution) !== null || /partial/.exec(resolution) !== null) {
-        toggleSlide(refusal)
+        toggleSlide(refusal, 0.5)
       }
     }
   }
@@ -58,7 +58,7 @@ const setStatus = () => {
     redirectedStatus.style.display = 'none'
     const isRedirected = document.querySelector('input[name="status"][value="request_redirected"]')
     if (isRedirected !== null && isRedirected.getAttribute('checked')) {
-      toggleSlide(redirectedStatus)
+      toggleSlide(redirectedStatus, 0.5)
     }
   }
 }

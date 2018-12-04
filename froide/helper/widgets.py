@@ -69,35 +69,36 @@ class TagAutocompleteWidget(forms.TextInput):
 
     def render(self, name, value, attrs=None, renderer=None):
         """ Render HTML code """
-        options = ''
         if value is not None and not isinstance(value, str):
-            value = [o.tag for o in value.select_related('tag')]
-            value = edit_string_for_tags(value)
+            value_list = [o.tag for o in value.select_related('tag')]
+            value = edit_string_for_tags(value_list)
 
         options = [
             '<option value="{value}" selected>{value}</option>'.format(
                 value=escape(str(o))) for o in parse_tags(value)]
         options = '\n'.join(options)
 
+        context = {
+            'data-additemtext': _('Press Enter to add <b>${value}</b>'),
+            'data-uniqueitemtext': _('This tag is already set.'),
+            'data-loading': _('Searching…'),
+            'data-noresults': _('No results'),
+            'data-nochoices': _('No results'),
+            'data-fetchurl': self.autocomplete_url
+        }
+        context = {k: escape(v) for k, v in context.items()}
+        context = ['%s="%s"' % (k, v) for k, v in context.items()]
+
         html = super(TagAutocompleteWidget, self).render(
             name, value, attrs, renderer=renderer
         )
-
-        html = """<div style="display: none">%(input)s</div><select id="%(objectid)s_select2" name="%(objectid)s_select2" multiple>%(options)s</select>
-        <script type="text/javascript">
-          document.addEventListener('DOMContentLoaded', function () {
-            window.Froide.components.tagautocomplete.setupTagging('%(objectid)s', '%(sourceurl)s', {
-                noResults: '%(noResults)s',
-                searching: '%(searching)s'
-            })
-          });
-            </script>""" % dict(
+        html = """<div style="display: none">{input}</div>
+        <select class="tagautocomplete"
+        {dataitems}
+        id="{objectid}_select" multiple>{options}</select>""".format(
                 input=html,
                 objectid=attrs['id'],
-                sourceurl=self.autocomplete_url,
                 options=options,
-                noResults=_('No results'),
-                searching=_('Searching…')
+                dataitems=' '.join(context)
         )
-
         return mark_safe(html)
