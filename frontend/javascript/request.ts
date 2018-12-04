@@ -1,6 +1,5 @@
 import {toggleSlide} from './lib/misc'
 
-// / <reference patdh="shims-misc.d.ts"/>
 import {Tab, Tooltip} from 'bootstrap.native'
 
 
