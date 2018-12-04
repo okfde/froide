@@ -22,5 +22,4 @@ const exp = {
   createRedaction
 }
 
-module.exports = exp
 export default exp
