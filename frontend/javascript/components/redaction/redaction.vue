@@ -114,7 +114,7 @@
 <script>
 import 'string.prototype.repeat'
 
-import {range} from 'underscore'
+import range from 'lodash.range'
 
 import Vue from 'vue'
 

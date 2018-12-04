@@ -45,7 +45,7 @@
 
 <script>
 
-import {debounce} from 'underscore'
+import debounce from 'lodash.debounce'
 
 import {FroideAPI} from '../../lib/api'
 import I18nMixin from '../../lib/i18n-mixin'

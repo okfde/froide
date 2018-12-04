@@ -18,7 +18,7 @@
 <script>
 import Vue from 'vue'
 import {mapGetters} from 'vuex'
-import {debounce} from 'underscore'
+import debounce from 'lodash.debounce'
 
 import {FroideAPI} from '../../lib/api'
 import FilterMixin from './lib/filter-mixin'

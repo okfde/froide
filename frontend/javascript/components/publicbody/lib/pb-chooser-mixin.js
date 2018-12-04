@@ -1,4 +1,4 @@
-import {debounce} from 'underscore'
+import debounce from 'lodash.debounce'
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {

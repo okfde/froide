@@ -25,7 +25,7 @@
 
 <script>
 import {mapMutations, mapGetters} from 'vuex'
-import {sortBy} from 'underscore'
+import sortBy from 'lodash.sortby'
 
 import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../../store/mutation_types'
 
