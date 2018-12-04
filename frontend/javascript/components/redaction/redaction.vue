@@ -172,6 +172,9 @@ export default {
     },
     canRedo () {
       let actions = this.actionsPerPage[this.currentPage]
+      if (actions === undefined) {
+        return false
+      }
       return this.actionIndexPerPage[this.currentPage] < actions.length
     },
     pageOfTotal () {
@@ -240,7 +243,7 @@ export default {
         this.workingState = null
         this.ready = true
         this.doc = pdfDocument
-        this.numPages = this.doc.pdfInfo.numPages
+        this.numPages = this.doc.numPages
 
         for (var i = 1; i <= this.numPages; i += 1) {
           Vue.set(this.actionsPerPage, i, [])
