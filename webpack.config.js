@@ -5,6 +5,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const { CheckerPlugin } = require('awesome-typescript-loader')
 
 const webpack = require('webpack')
 
@@ -74,7 +75,7 @@ const config = {
           //   }
           // },
           {
-            loader: 'ts-loader',
+            loader: 'awesome-typescript-loader',
             options: {
               appendTsSuffixTo: [/\.vue$/]
             }
@@ -158,6 +159,7 @@ const config = {
   },
   plugins: [
     new VueLoaderPlugin(),
+    new CheckerPlugin(),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
