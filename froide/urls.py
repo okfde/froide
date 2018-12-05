@@ -36,18 +36,18 @@ def handler500(request):
     return render(request, '500.html', {'request': request}, status=500)
 
 
-api_router.register(r'request', FoiRequestViewSet, base_name='request')
-api_router.register(r'message', FoiMessageViewSet, base_name='message')
+api_router.register(r'request', FoiRequestViewSet, basename='request')
+api_router.register(r'message', FoiMessageViewSet, basename='message')
 api_router.register(r'attachment', FoiAttachmentViewSet,
-                    base_name='attachment')
-api_router.register(r'publicbody', PublicBodyViewSet, base_name='publicbody')
-api_router.register(r'category', CategoryViewSet, base_name='category')
+                    basename='attachment')
+api_router.register(r'publicbody', PublicBodyViewSet, basename='publicbody')
+api_router.register(r'category', CategoryViewSet, basename='category')
 api_router.register(r'classification', ClassificationViewSet,
-                    base_name='classification')
+                    basename='classification')
 api_router.register(r'jurisdiction', JurisdictionViewSet,
-                    base_name='jurisdiction')
-api_router.register(r'law', FoiLawViewSet, base_name='law')
-api_router.register(r'georegion', GeoRegionViewSet, base_name='georegion')
+                    basename='jurisdiction')
+api_router.register(r'law', FoiLawViewSet, basename='law')
+api_router.register(r'georegion', GeoRegionViewSet, basename='georegion')
 
 
 class StaticViewSitemap(Sitemap):
