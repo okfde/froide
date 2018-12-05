@@ -181,7 +181,8 @@ const runOnPage = () => {
 
       var request = new XMLHttpRequest();
       request.open(method, url, true);
-      
+      request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
       request.onload = function() {
         if (request.status === 302) {
           const loc = request.getResponseHeader('Location')
