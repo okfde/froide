@@ -14,6 +14,7 @@ from django.views.generic import TemplateView, RedirectView
 from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
+from . import account_activated
 from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .services import AccountService
@@ -103,6 +104,7 @@ def go(request, user_id, secret, url):
                 user.date_deactivated = None
                 user.is_active = True
                 user.save()
+                account_activated.send_robust(sender=user)
             auth.login(request, user)
     return redirect(url)
 

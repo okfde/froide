@@ -4,7 +4,6 @@ import hmac
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.dispatch import Signal
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.crypto import constant_time_compare
@@ -16,9 +15,7 @@ from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import send_mail
 
 from .models import User
-
-
-user_activated_signal = Signal(providing_args=[])
+from . import account_activated
 
 
 def get_user_for_email(email):
@@ -84,7 +81,7 @@ class AccountService(object):
             return False
         self.user.is_active = True
         self.user.save()
-        user_activated_signal.send_robust(sender=self.user)
+        account_activated.send_robust(sender=self.user)
         return True
 
     def get_autologin_url(self, url):
