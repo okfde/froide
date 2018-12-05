@@ -99,7 +99,11 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     mark_checked.short_description = _("Mark selected requests as checked")
 
     def mark_not_foi(self, request, queryset):
-        rows_updated = queryset.update(is_foi=False)
+        rows_updated = queryset.update(
+            is_foi=False,
+            public=False,
+            visibility=FoiRequest.VISIBLE_TO_REQUESTER
+        )
         self.message_user(request,
             _("%d request(s) successfully marked as not FoI." % rows_updated))
     mark_not_foi.short_description = _("Mark selected requests as not FoI")
