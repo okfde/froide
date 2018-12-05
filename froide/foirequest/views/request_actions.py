@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils import timezone
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
@@ -170,6 +171,8 @@ def mark_not_foi(request, slug):
     foirequest.public = False
     foirequest.visibility = FoiRequest.VISIBLE_TO_REQUESTER
     foirequest.save()
+    if request.is_ajax():
+        return HttpResponse()
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as not a FoI request.'))
     return redirect(foirequest)
@@ -184,6 +187,8 @@ def mark_checked(request, slug):
         return render_403(request)
     foirequest.checked = True
     foirequest.save()
+    if request.is_ajax():
+        return HttpResponse()
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as checked.'))
     return redirect(foirequest)
