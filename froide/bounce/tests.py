@@ -10,8 +10,9 @@ from froide.foirequest.tests.factories import UserFactory
 
 from .models import Bounce
 from .utils import (
-    make_bounce_address, add_bounce_mail, check_user_deactivation,
-    get_recipient_address_from_bounce
+    make_bounce_address, add_bounce_mail,
+    get_recipient_address_from_bounce,
+    check_deactivation_condition
 )
 
 
@@ -77,24 +78,24 @@ class BounceTest(TestCase):
 
         bounce = Bounce(user=None, email='a@example.org',
                         bounces=bounce_factory([1, 5]))
-        result = check_user_deactivation(bounce)
-        self.assertIsNone(result)
+        result = check_deactivation_condition(bounce)
+        self.assertFalse(result)
 
         user = UserFactory()
         bounce = Bounce(user=user, email=user.email,
                         bounces=bounce_factory([1, 5]))
-        result = check_user_deactivation(bounce)
+        result = check_deactivation_condition(bounce)
         self.assertFalse(result)
 
         user = UserFactory()
         bounce = Bounce(user=user, email=user.email,
                         bounces=bounce_factory([1, 5, 12]))
-        result = check_user_deactivation(bounce)
+        result = check_deactivation_condition(bounce)
         self.assertTrue(result)
 
         user = UserFactory()
         bounce = Bounce(
             user=user, email=user.email,
             bounces=bounce_factory([1, 5, 12], bounce_type='soft'))
-        result = check_user_deactivation(bounce)
+        result = check_deactivation_condition(bounce)
         self.assertFalse(result)

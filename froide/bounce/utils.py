@@ -18,6 +18,9 @@ from django.utils.crypto import salted_hmac
 
 from froide.helper.email_utils import EmailParser, get_unread_mails
 
+from .signals import user_email_bounced, email_bounced
+from .models import Bounce
+
 
 BOUNCE_FORMAT = settings.FROIDE_CONFIG['bounce_format']
 SIGN_SEP = ':'
@@ -149,20 +152,26 @@ def process_bounce_mail(mail_bytes):
 
 
 def add_bounce_mail(email):
-    from .models import Bounce
-
     recipient_list = set([
         get_recipient_address_from_bounce(addr) for name, addr in email.to
     ])
     for recipient, status in recipient_list:
         if status:
-            bounce = Bounce.objects.update_bounce(recipient, email.bounce_info)
-            check_user_deactivation(bounce)
+            update_bounce(email, recipient)
         else:
             mail_managers(
                 'Bad bounce address found',
                 '%s: %s (%s)' % (email.subject, recipient, status)
             )
+
+
+def update_bounce(email, recipient):
+    bounce = Bounce.objects.update_bounce(recipient, email.bounce_info)
+    should_deactivate = check_deactivation_condition(bounce)
+
+    email_bounced.send(bounce, should_deactivate=should_deactivate)
+    if bounce.user:
+        user_email_bounced.send(bounce, should_deactivate=should_deactivate)
 
 
 def get_bounce_stats(bounces, bounce_type='hard', start_date=None):
@@ -186,21 +195,17 @@ def check_bounce_status(bounces, bounce_type, period, threshold):
     return count >= threshold
 
 
-def check_user_deactivation(bounce):
+def check_deactivation_condition(bounce):
     """
     Decide if current bounce state warrants deactivation
     """
-    if not bounce.user:
-        return
 
     if check_bounce_status(bounce.bounces, 'hard', HARD_BOUNCE_PERIOD,
                            HARD_BOUNCE_COUNT):
-        bounce.user.deactivate()
         return True
 
     if check_bounce_status(bounce.bounces, 'soft', SOFT_BOUNCE_PERIOD,
                            SOFT_BOUNCE_COUNT):
-        bounce.user.deactivate()
         return True
 
     return False
