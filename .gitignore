@@ -4,7 +4,6 @@
 *.db
 local_*.py
 data/
-solr/
 files/
 froide/tests/testdata/*/
 .coverage
@@ -15,9 +14,9 @@ public/
 build/
 dist/
 venv/
+froide-env/
 *.egg-info
 *.log
-froide/tests/froide_test_whoosh_db
 node_modules/
 *.map
 favicon-result.json
