@@ -1,4 +1,6 @@
-from django.core.mail import EmailMessage, get_connection
+from django.core.mail import (
+    EmailMessage, EmailMultiAlternatives, get_connection
+)
 from django.conf import settings
 
 try:
@@ -18,8 +20,9 @@ def get_mail_connection(**kwargs):
 
 def send_mail(subject, body, user_email,
               from_email=None,
+              html=None,
               attachments=None, fail_silently=False,
-              bounce_check=True,
+              bounce_check=True, headers=None,
               auto_bounce=True, **kwargs):
     if not user_email:
         return
@@ -35,9 +38,22 @@ def send_mail(subject, body, user_email,
 
     connection = get_mail_connection(**backend_kwargs)
 
-    email = EmailMessage(subject, body, from_email, [user_email],
-                         connection=connection)
+    if html is None:
+        email_klass = EmailMessage
+    else:
+        email_klass = EmailMultiAlternatives
+
+    email = email_klass(subject, body, from_email, [user_email],
+                         connection=connection, headers=headers)
+
+    if html is not None:
+        email.attach_alternative(
+            html,
+            "text/html"
+        )
+
     if attachments is not None:
         for name, data, mime_type in attachments:
             email.attach(name, data, mime_type)
+
     return email.send(fail_silently=fail_silently)
