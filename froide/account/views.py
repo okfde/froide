@@ -318,20 +318,6 @@ def change_email(request):
 
 
 @require_POST
-def subscribe_newsletter(request):
-    if not request.user.is_authenticated:
-        return render_403(request)
-
-    messages.add_message(request, messages.SUCCESS,
-            _('You successfully subscribed to our newsletter!'))
-
-    user = request.user
-    user.newsletter = True
-    user.save()
-    return get_redirect(request)
-
-
-@require_POST
 def delete_account(request):
     if not request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,

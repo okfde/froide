@@ -113,13 +113,11 @@ class AccountTest(TestCase):
 
     def test_signup(self):
         froide_config = settings.FROIDE_CONFIG
-        froide_config['have_newsletter'] = True
         mail.outbox = []
         post = {"first_name": "Horst",
                 "last_name": "Porst",
                 "organization": "Porst AG",
                 "terms": "on",
-                "newsletter": "on",
                 "user_email": "horst.porst"}
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-signup'), post)
@@ -144,7 +142,6 @@ class AccountTest(TestCase):
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
         self.assertEqual(user.address, post['address'])
-        self.assertTrue(user.newsletter)
         self.assertEqual(user.organization, post['organization'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
@@ -179,8 +176,6 @@ class AccountTest(TestCase):
         post['first_name'] = post['first_name'][:-1]
         response = self.client.post(reverse('account-signup'), post)
         self.assertEqual(response.status_code, 302)
-        user = User.objects.get(email=post['user_email'])
-        self.assertFalse(user.newsletter)
 
     def test_signup_same_name(self):
         self.client.logout()

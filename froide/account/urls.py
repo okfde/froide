@@ -7,7 +7,6 @@ from .views import (
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
-    subscribe_newsletter,
     CustomPasswordResetConfirmView
 )
 from .import oauth_urls
@@ -22,8 +21,6 @@ urlpatterns = [
     url(r'^logout/$', logout, name='account-logout'),
     url(r'^login/$', login, name='account-login'),
     url(r'^signup/$', signup, name='account-signup'),
-    url(r'^newsletter/subscribe/$', subscribe_newsletter,
-        name='account-newsletter_subscribe'),
     url(r'^reset/$', send_reset_password_link, name='account-send_reset_password_link'),
     url(r'^change_password/$', change_password, name='account-change_password'),
     url(r'^change_user/$', change_user, name='account-change_user'),
