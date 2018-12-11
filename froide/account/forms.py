@@ -12,12 +12,34 @@ from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
 from .services import AccountService
-from .models import has_newsletter
 
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
+
+
+class UserExtrasRegistry():
+    def __init__(self):
+        self.registry = []
+
+    def register(self, form_extender):
+        self.registry.append(form_extender)
+
+    def on_init(self, form):
+        for fe in self.registry:
+            fe.on_init(form)
+
+    def on_clean(self, form):
+        for fe in self.registry:
+            fe.on_clean(form)
+
+    def on_save(self, form, user):
+        for fe in self.registry:
+            fe.on_save(form, user)
+
+
+user_extra_registry = UserExtrasRegistry()
 
 
 class NewUserBaseForm(forms.Form):
@@ -123,18 +145,15 @@ class TermsForm(forms.Form):
                     url_privacy=get_content_url("privacy")
                 )
         )
+        user_extra_registry.on_init(self)
 
-        if has_newsletter():
-            self.fields['newsletter'] = forms.BooleanField(
-                required=False,
-                widget=BootstrapCheckboxInput,
-                label=_("Check if you want to receive our newsletter.")
-            )
+    def clean(self):
+        user_extra_registry.on_clean(self)
+        return self.cleaned_data
 
     def save(self, user):
         user.terms = True
-        if has_newsletter():
-            user.newsletter = self.cleaned_data['newsletter']
+        user_extra_registry.on_save(self, user)
         user.save()
 
 
@@ -224,9 +243,9 @@ class UserChangeForm(forms.Form):
                 'placeholder': _('Organization'),
                 'class': 'form-control'})
         )
-        field_order = ['email', 'newsletter', 'address', 'organization']
+        field_order = ['email', 'address', 'organization']
     else:
-        field_order = ['email', 'newsletter', 'address']
+        field_order = ['email', 'address']
 
     def __init__(self, user, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
@@ -235,14 +254,6 @@ class UserChangeForm(forms.Form):
         self.fields['email'].initial = self.user.email
         if HAVE_ORGANIZATION:
             self.fields['organization'].initial = self.user.organization
-        if has_newsletter():
-            self.fields['newsletter'] = forms.BooleanField(
-                required=False,
-                label=_("Newsletter"),
-                widget=BootstrapCheckboxInput,
-                help_text=_("Check if you want to receive our newsletter.")
-            )
-            self.fields['newsletter'].initial = self.user.newsletter
         self.order_fields(self.field_order)
 
     def clean_email(self):
@@ -258,8 +269,6 @@ class UserChangeForm(forms.Form):
         self.user.address = self.cleaned_data['address']
         if HAVE_ORGANIZATION:
             self.user.organization = self.cleaned_data['organization']
-        if has_newsletter():
-            self.user.newsletter = self.cleaned_data['newsletter']
         self.user.save()
 
 
