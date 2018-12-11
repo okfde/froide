@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.conf import settings
 
 from oauth2_provider.models import AbstractApplication
 
