@@ -97,7 +97,7 @@ class CreateRequestService(BaseService):
         additional_kwargs = dict(
             subject=data.get('subject', ''),
             body=data.get('body', ''),
-            full_text=data['full_text'],
+            full_text=data.get('full_text', False),
             public=data['public'],
             reference=data.get('reference', ''),
             law_type=data.get('law_type', ''),
@@ -289,7 +289,7 @@ class SaveDraftService(BaseService):
         additional_kwargs = dict(
             subject=request_form.cleaned_data.get('subject', ''),
             body=request_form.cleaned_data.get('body', ''),
-            full_text=request_form.cleaned_data['full_text'],
+            full_text=request_form.cleaned_data.get('full_text', False),
             public=request_form.cleaned_data['public'],
             reference=request_form.cleaned_data.get('reference', ''),
             law_type=request_form.cleaned_data.get('law_type', ''),
