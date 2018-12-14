@@ -169,9 +169,15 @@ def update_bounce(email, recipient):
     bounce = Bounce.objects.update_bounce(recipient, email.bounce_info)
     should_deactivate = check_deactivation_condition(bounce)
 
-    email_bounced.send(bounce, should_deactivate=should_deactivate)
+    email_bounced.send(
+        sender=Bounce, bounce=bounce,
+        should_deactivate=should_deactivate
+    )
     if bounce.user:
-        user_email_bounced.send(bounce, should_deactivate=should_deactivate)
+        user_email_bounced.send(
+            sender=Bounce, bounce=bounce,
+            should_deactivate=should_deactivate
+        )
 
 
 def get_bounce_stats(bounces, bounce_type='hard', start_date=None):

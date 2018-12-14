@@ -12,7 +12,7 @@ class AccountConfig(AppConfig):
         user_email_bounced.connect(deactivate_user_after_bounce)
 
 
-def deactivate_user_after_bounce(bounce, should_deactivate=False, **kwargs):
+def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwargs):
     if not should_deactivate:
         return
     if not bounce.user:
