@@ -135,8 +135,10 @@ froide_urlpatterns += [
     url(r'^comments/', include('django_comments.urls')),
     url(r'^problem/', include('froide.problem.urls')),
     url(r'^guide/', include('froide.guide.urls')),
-    # Secret URLs
-    url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
+]
+
+admin_urls = [
+        url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
 ]
 
 if SECRET_URLS.get('postmark_inbound'):
