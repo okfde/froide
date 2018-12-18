@@ -364,7 +364,7 @@ class BounceMailTest(TestCase):
         self.req = factories.FoiRequestFactory.create(site=self.site,
             secret_address=self.secret_address)
         factories.FoiMessageFactory.create(
-            timestamp=datetime(2012, 1, 1),
+            timestamp=timezone.now().replace(2012, 1, 1),
             request=self.req, recipient_email='nonexistant@example.org')
 
     @override_settings(MANAGERS=[('Name', 'manager@example.com')])
