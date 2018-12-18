@@ -324,13 +324,15 @@ class UserDeleteForm(forms.Form):
         label=_('Confirmation Phrase'),
         help_text=_('Type the phrase above exactly as displayed.'))
 
-    def __init__(self, user, *args, **kwargs):
-        self.user = user
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        self.user = request.user
         super(UserDeleteForm, self).__init__(*args, **kwargs)
 
     def clean_password(self):
         password = self.cleaned_data['password']
         user = auth.authenticate(
+            self.request,
             username=self.user.email,
             password=password
         )

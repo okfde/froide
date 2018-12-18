@@ -27,7 +27,7 @@ class Command(BaseCommand):
         translation.activate(settings.LANGUAGE_CODE)
 
         if not hasattr(os, 'scandir'):
-            raise NotImplemented('Requires Python 3.5+')
+            raise NotImplementedError('Requires Python 3.5+')
 
         self.storage = HashedFilenameStorage()
 

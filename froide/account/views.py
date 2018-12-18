@@ -145,8 +145,11 @@ def login(request, context=None, template='account/login.html', status=200):
         status = 400  # if ok, we are going to redirect anyways
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            user = auth.authenticate(username=form.cleaned_data['email'],
-                    password=form.cleaned_data['password'])
+            user = auth.authenticate(
+                request,
+                username=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
+            )
             if user is not None:
                 if user.is_active:
                     auth.login(request, user)
@@ -271,7 +274,7 @@ def account_settings(request, context=None, status=200):
     if 'new' in request.GET:
         request.user.is_new = True
     if 'user_delete_form' not in context:
-        context['user_delete_form'] = UserDeleteForm(request.user)
+        context['user_delete_form'] = UserDeleteForm(request)
     if 'change_form' not in context:
         context['change_form'] = UserChangeForm(request.user)
     return render(request, 'account/settings.html', context, status=status)
@@ -325,7 +328,7 @@ def delete_account(request):
         messages.add_message(request, messages.ERROR,
                 _('You are not currently logged in, you cannot delete your account.'))
         return render_403(request)
-    form = UserDeleteForm(request.user, request.POST)
+    form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
         messages.add_message(request, messages.ERROR,
                 _('Password or confirmation phrase were wrong. Account was not deleted.'))

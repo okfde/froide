@@ -2,51 +2,55 @@
 language: python
 
 sudo: required
-dist: trusty
+dist: xenial
 
 addons:
   chrome: stable
-  postgresql: "10"
+  postgresql: '10'
   apt:
     packages:
-    - postgresql-10
-    - postgresql-client-10
+      - postgresql-10-postgis-2.4
+      - chromium-chromedriver
+
 env:
   global:
-  - PGPORT=5433
-  - ES_VERSION=6.3.2 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
+    - ES_VERSION=6.3.2 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
 
 python:
-  - '3.5'
-  - '3.6'
+  - '3.6.6'
+  - '3.7.1'
 
 services:
   - postgresql
   - elasticsearch
 
-before_script:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y postgresql-10-postgis-2.4
-  - sudo -u postgres psql -c 'create database froide WITH OWNER travis;' -U postgres
-  - sudo -u postgres psql -c 'CREATE EXTENSION postgis;' -U postgres -d froide
-  - sudo -u postgres psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d froide
-  - sudo -u postgres psql -c "ALTER USER travis WITH PASSWORD 'travis';"
-  - "export DISPLAY=:99.0"
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+before_install:
+  - sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
 install:
   - wget ${ES_DOWNLOAD_URL}
   - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
   - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
-  - wget -N http://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip -P ~/
-  - unzip ~/chromedriver_linux64.zip -d ~/
-  - rm ~/chromedriver_linux64.zip
-  - sudo mv -f ~/chromedriver /usr/local/share/
-  - sudo chmod +x /usr/local/share/chromedriver
-  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+  # - wget -N http://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip -P ~/
+  # - unzip ~/chromedriver_linux64.zip -d ~/
+  # - rm ~/chromedriver_linux64.zip
+  # - sudo mv -f ~/chromedriver /usr/local/share/
+  # - sudo chmod +x /usr/local/share/chromedriver
+  # - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
   - pip install -r requirements-test.txt
-  - pip install psycopg2 coveralls
+  - pip install psycopg2-binary coveralls
   - pip install -e .
+
+before_script:
+  - sudo /etc/init.d/postgresql stop
+  - sudo /etc/init.d/postgresql start 10
+  - psql -U postgres -c 'create database froide WITH OWNER travis;'
+  - psql -U postgres -c 'CREATE EXTENSION postgis;' -d froide
+  - psql -U postgres -c 'CREATE EXTENSION postgis_topology;' -d froide
+  - psql -U postgres -c "ALTER USER travis WITH PASSWORD 'travis';"
+  - "export DISPLAY=:99.0"
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+
 script:
   - set -e
   - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
