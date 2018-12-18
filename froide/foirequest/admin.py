@@ -90,7 +90,6 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     def request_page(self, obj):
         return format_html('<a href="{}">{}</a>',
             obj.get_absolute_url(), _('request page'))
-    request_page.allow_tags = True
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
@@ -378,7 +377,6 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>',
             reverse('admin:foirequest_foimessage_change',
                 args=(obj.belongs_to_id,)), _('See FoiMessage'))
-    admin_link_message.allow_tags = True
 
     def approve(self, request, queryset):
         rows_updated = queryset.update(approved=True)
@@ -466,7 +464,6 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         if obj.request:
             return format_html('<a href="{}">{}</a>',
                 obj.request.get_absolute_url(), obj.request.title)
-    request_page.allow_tags = True
 
     def close_request(self, request, queryset):
         for mes in queryset:

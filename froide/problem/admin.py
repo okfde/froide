@@ -26,7 +26,6 @@ class ProblemReportAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>',
             reverse('admin:foirequest_foimessage_change',
                 args=(obj.message_id,)), str(obj.message))
-    admin_link_message.allow_tags = True
 
     def save_model(self, request, obj, form, change):
         if 'resolved' in form.changed_data and obj.resolved:
