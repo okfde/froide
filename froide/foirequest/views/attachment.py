@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.views.static import serve
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 
 from froide.helper.utils import render_400, render_403
 from froide.helper.redaction import redact_file
