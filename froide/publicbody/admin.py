@@ -244,8 +244,7 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                     result
                 ) % {"count": result})
         creator = pb.created_by
-        if (result is not None and creator and
-                creator != request.user):
+        if result is not None and creator and creator != request.user:
             creator.send_mail(
                 _('Public body “%s” has been approved') % pb.name,
                 _('Hello,\n\nYou can find the approved public body here:\n\n'
