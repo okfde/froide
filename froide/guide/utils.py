@@ -88,6 +88,6 @@ def run_guidance(message):
     # Delete all guidances that were there before
     # but are not returned, keep custom guidances
     message.guidance_set.all().exclude(
-        id__in=[n.id for n in new_guidances],
-        user__isnull=False
+        Q(id__in=[n.id for n in new_guidances]) |
+        Q(user__isnull=False)
     ).delete()
