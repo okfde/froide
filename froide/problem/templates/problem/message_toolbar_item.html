@@ -68,6 +68,9 @@
                     {% endif %}
                   </td>
                   <td>
+                    {% if request.user.is_staff %}
+                      <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
+                    {% endif %}
                     {% if report.resolved %}
                       <span class="badge badge-success">
                         {% trans "Resolved" %}
@@ -76,6 +79,9 @@
                       <span class="badge badge-secondary">
                         {% trans "Pending" %}
                       </span>
+                    {% endif %}
+                    {% if request.user.is_staff %}
+                      </a>
                     {% endif %}
                   </td>
                 </tr>

@@ -7,16 +7,18 @@ from ..forms import ProblemReportForm
 register = template.Library()
 
 
-@register.inclusion_tag('problem/message_toolbar_item.html')
-def render_problem_button(message):
+@register.inclusion_tag('problem/message_toolbar_item.html',
+                        takes_context=True)
+def render_problem_button(context, message):
+    request = context['request']
     if not hasattr(message, 'problemreports'):
         # Get all problem reports for all messages
-        request = message.request
-        reports = ProblemReport.objects.filter(message__in=request.messages)
+        foirequest = message.request
+        reports = ProblemReport.objects.filter(message__in=foirequest.messages)
         message_reports = defaultdict(list)
         for report in reports:
             message_reports[report.message_id].append(report)
-        for mes in request.messages:
+        for mes in foirequest.messages:
             mes.problemreports = message_reports[mes.id]
             mes.problemreports_count = len(mes.problemreports)
             mes.problemreports_unresolved_count = len([
@@ -25,5 +27,6 @@ def render_problem_button(message):
             mes.problemreports_form = ProblemReportForm(message=mes)
 
     return {
+        'request': request,
         'message': message
     }
