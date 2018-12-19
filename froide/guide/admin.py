@@ -21,6 +21,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 class GuidanceAdmin(admin.ModelAdmin):
     raw_id_fields = ('message', 'user',)
+    list_display = ('message', 'action', 'timestamp')
 
 
 admin.site.register(Rule, RuleAdmin)
