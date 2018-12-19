@@ -55,10 +55,10 @@ def escalation_message(request, foirequest):
         form.add_error(None, throttle_message)
 
     if form.is_valid():
-        form.save()
+        message = form.save()
         messages.add_message(request, messages.SUCCESS,
                 _('Your Escalation Message has been sent.'))
-        return redirect(foirequest)
+        return redirect(message)
     else:
         return show_foirequest(request, foirequest, context={
             "escalation_form": form
