@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'css/main.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block app_body %}
 <h2>{% blocktrans %}500 - Server Error{% endblocktrans %}</h2>
