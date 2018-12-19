@@ -1,7 +1,11 @@
+import logging
+
 from django.db import models
 from django.conf import settings
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+
+logger = logging.getLogger(__name__)
 
 
 class FoiSite(models.Model):
@@ -32,8 +36,16 @@ except ImportError:
 
 class SiteAdivsor(object):
     def __init__(self):
-        self.geoip = GeoIP2()
+        self.geoip = self.get_geoip()
         self.sites = None
+
+    def get_geoip(self):
+        if GeoIP2 is None:
+            return None
+        try:
+            return GeoIP2()
+        except Exception as e:
+            logger.exception(e)
 
     def update(self):
         sites = FoiSite.objects.filter(enabled=True)
@@ -45,7 +57,17 @@ class SiteAdivsor(object):
     def get_site(self, ip):
         if self.sites is None:
             self.update()
-        result = self.geoip.country(ip)
+        try:
+            if self.geoip is None:
+                self.geoip = self.get_geoip()
+            if self.geoip is None:
+                return
+            result = self.geoip.country(ip)
+        except Exception as e:
+            logger.exception(e)
+            # try recreating the geoIP2 object
+            self.geoip = GeoIP2()
+            return None
         return self.sites.get(result['country_code'], None)
 
 
