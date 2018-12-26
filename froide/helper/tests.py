@@ -117,3 +117,15 @@ class TestGermanDeadline(TestCase):
         deadline = calculate_month_range_de(month_before)
         deadline = deadline.replace(tzinfo=None)
         self.assertTrue((deadline - month_before).days > 33)
+
+    def test_long_period(self):
+        start = datetime(2014, 10, 30)
+        deadline = calculate_month_range_de(start, months=15)
+        deadline = deadline.replace(tzinfo=None)
+        self.assertEqual(deadline, datetime(2016, 2, 2))
+
+    def test_last_day(self):
+        start = datetime(2014, 1, 30)
+        deadline = calculate_month_range_de(start, months=1)
+        deadline = deadline.replace(tzinfo=None)
+        self.assertEqual(deadline, datetime(2014, 3, 1))

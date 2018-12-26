@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.timesince import timeuntil
 
 PYTZ_TIME_ZONE = pytz.timezone(settings.TIME_ZONE)
+MONTHS_IN_YEAR = 12
 
 
 def format_seconds(seconds):
@@ -18,24 +19,34 @@ def format_seconds(seconds):
 
 def calculate_month_range_de(date, months=1):
     """ Should calculate after German BGB Law § 130 and § 188"""
-    assert months < 12, "Can't calculate month_range > 12"
 
     if not isinstance(date, datetime):
         date = datetime(date.year, date.month, date.day, 23, 59, 59)
 
+    tempdate = date
     if date.hour >= 22:  # After 22h next working day is receival
-        tempdate = advance_after_holiday(date + timedelta(days=1))
-    else:
-        tempdate = advance_after_holiday(date)
-    tempdate = tempdate + timedelta(days=(31 * months))
-    m = tempdate.month
-    y = tempdate.year
+        tempdate = date + timedelta(days=1)
+    # Receival only on working days
+    tempdate = advance_after_holiday(tempdate)
+    # § 187 (1) BGB Fristbeginn
+    tempdate += timedelta(days=1)
+    # § 188 BGB (2) Fristende
+    # endigt im Falle des § 187 Abs. 1 mit dem Ablauf desjenigen Tages
+    # der letzten Woche oder des letzten Monats, welcher durch seine
+    # Benennung oder seine Zahl dem Tage entspricht, in den das Ereignis
+    # oder der Zeitpunkt fällt,
+    m = tempdate.month + (months % MONTHS_IN_YEAR)
+    y = tempdate.year + (months // MONTHS_IN_YEAR) + (m // MONTHS_IN_YEAR)
+    m = m % MONTHS_IN_YEAR
     d = tempdate.day
+    # § 188 BGB (3) Fristende
     last_day = calendar.monthrange(y, m)[1]
     if d > last_day:
         d = last_day
     due = datetime(y, m, d, 0, 0, 0)
+    # Move Fristende to after holiday.
     due = advance_after_holiday(due)
+    # Return first day after Fristende
     due += timedelta(days=1)
     return PYTZ_TIME_ZONE.localize(due)
 
