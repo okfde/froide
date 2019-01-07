@@ -18,12 +18,12 @@
         </div>
 
         <div class="form-group row">
-          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address}">
+          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address, 'field-required': requiresPostalAddress}">
             {{ i18n.yourAddress }}
           </label>
           <div class="col-sm-9">
             <div>
-              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder"></textarea>
+              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder" :required="requiresPostalAddress"></textarea>
               <p v-for="e in errors.address" :key="e.message">{{ e.message }}</p>
               <p class="help-block">{{ addressHelpText }}</p>
             </div>
@@ -85,7 +85,11 @@ export default {
     addressHelpText: {
       type: String,
       default: null
-    }
+    },
+    addressRequired: {
+      type: Boolean,
+      default: false
+    },
   },
   mixins: [I18nMixin],
   data () {
@@ -139,6 +143,9 @@ export default {
       }
     },
     requiresPostalAddress () {
+      if (this.addressRequired) {
+        return true
+      }
       if (this.defaultLaw) {
         return !this.defaultLaw.email_only
       }
