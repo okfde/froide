@@ -29,7 +29,7 @@ icalendar==4.0.3
 idna==2.7
 itypes==1.1.0
 jinja2==2.10
-kombu==4.2.2
+kombu==4.2.1
 lxml==4.2.5
 markdown==3.0.1
 markupsafe==1.1.0
