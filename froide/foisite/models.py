@@ -66,7 +66,7 @@ class SiteAdivsor(object):
         except Exception as e:
             logger.exception(e)
             # try recreating the geoIP2 object
-            self.geoip = GeoIP2()
+            self.geoip = self.get_geoip()
             return None
         return self.sites.get(result['country_code'], None)
 
