@@ -95,8 +95,8 @@ export default {
   data () {
     return {
       emailValue: this.initialEmail,
-      addressValue: this.initialAddress,
-      privateValue: this.initialPrivate
+      addressValue: this.initialAddress || (this.user && this.user.address) || '',
+      privateValue: this.initialPrivate || (this.user && this.user.private),
     }
   },
   computed: {
