@@ -419,6 +419,7 @@ legend {
 }
 
 .body-text {
+  hyphens: none;
   white-space: pre-wrap;
   word-wrap: break-word;
   color: #999;
