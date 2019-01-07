@@ -14,4 +14,4 @@ If this is not you, you can ignore this email.{% endblocktrans %}
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
-{% include "foirequest/emails/user_footer.txt" %}
+{% include "emails/footer.txt" %}

@@ -9,4 +9,4 @@ To read your response and set the right status, click the link below:
 Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
-{% include "foirequest/emails/user_footer.txt" %}
+{% include "emails/footer.txt" %}

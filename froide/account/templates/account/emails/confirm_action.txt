@@ -12,4 +12,4 @@ If you are not trying to send this request, please ignore this email. No further
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
-{% include "foirequest/emails/user_footer.txt" %}
+{% include "emails/footer.txt" %}

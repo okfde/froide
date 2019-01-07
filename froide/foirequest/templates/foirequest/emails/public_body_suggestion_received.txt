@@ -12,4 +12,4 @@ you received a suggestion for a Public Body on your request '{{ title }}'.{% end
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
-{% include "foirequest/emails/user_footer.txt" %}
+{% include "emails/footer.txt" %}

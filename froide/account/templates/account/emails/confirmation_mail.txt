@@ -12,3 +12,4 @@ Your password is: {{ password }}
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
+{% include "emails/footer.txt" %}

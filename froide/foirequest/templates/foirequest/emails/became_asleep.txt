@@ -8,4 +8,4 @@ If you have received a response and your request is resolved, please add the res
 Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
-{% include "foirequest/emails/user_footer.txt" %}
+{% include "emails/footer.txt" %}
