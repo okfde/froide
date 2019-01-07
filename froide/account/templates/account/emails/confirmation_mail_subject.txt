@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans %}{{ site_name }}: please confirm your account{% endblocktrans %}

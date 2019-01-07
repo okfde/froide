@@ -140,21 +140,41 @@ class AccountService(object):
         if params:
             url = '%s?%s' % (url, urlencode(params))
 
-        message = render_to_string('account/emails/confirmation_mail.txt', {
+        templates = []
+        html_templates = []
+        subject_templates = []
+        if reference is not None:
+            ref = reference.split(':', 1)[0]
+            template_name = 'account/emails/{}/confirmation_mail'.format(
+                ref
+            )
+            templates.append(template_name + '.txt')
+            html_templates.append(template_name + '.html')
+            subject_templates.append(
+                'account/emails/{}/confirmation_mail_subject.txt'.format(ref)
+            )
+
+        templates.append('account/emails/confirmation_mail.txt')
+        html_templates.append('account/emails/confirmation_mail.html')
+        subject_templates.append('account/emails/confirmation_mail_subject.txt')
+
+        context = {
             'url': settings.SITE_URL + url,
             'password': password,
             'name': self.user.get_full_name(),
             'site_name': settings.SITE_NAME,
             'site_url': settings.SITE_URL
-        })
+        }
 
-        # Translators: Mail subject
-        subject = str(_("%(site_name)s: please confirm your account") % {
-            "site_name": settings.SITE_NAME
-        })
+        message = render_to_string(templates, context)
+        html_message = render_to_string(html_templates, context)
+
+        subject = render_to_string(subject_templates, context)
+
         self.user.send_mail(
             subject, message,
-            ignore_active=True
+            ignore_active=True,
+            html=html_message
         )
 
     def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None,
