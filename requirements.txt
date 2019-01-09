@@ -20,7 +20,7 @@ django-oauth-toolkit==1.2.0
 django-storages==1.7.1
 django-taggit==0.23.0
 django-treebeard==4.3
-django==2.1.4
+Django==2.1.5
 djangorestframework-csv==2.1.0
 djangorestframework-jsonp==1.0.2
 djangorestframework==3.9.0
