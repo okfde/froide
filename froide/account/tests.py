@@ -730,7 +730,7 @@ class ApiTest(TestCase):
 
     def test_authentication_not_loggedin(self):
         response = self.client.get(self.profile_url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_authentication_empty_scope(self):
         self.access_token.scope = ""

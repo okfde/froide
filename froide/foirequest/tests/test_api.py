@@ -283,7 +283,7 @@ class OAuthApiTest(TestCase):
             'body': 'Testing',
             'publicbodies': [self.pb.pk]
         }), content_type="application/json")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
         new_count = FoiRequest.objects.all().count()
         self.assertEqual(old_count, new_count)
         self.assertEqual(len(mail.outbox), 0)
