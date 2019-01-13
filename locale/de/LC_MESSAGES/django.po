@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-01-07 14:31+0000\n"
-"PO-Revision-Date: 2019-01-07 14:37-0000\n"
+"PO-Revision-Date: 2019-01-13 21:10+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -260,7 +260,9 @@ msgstr ""
 
 #: froide/account/forms.py:133
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
-msgstr "Sie müssen unsere Nutzungs- und Datenschutzbedingungen akzeptieren."
+msgstr ""
+"Sie müssen die Nutzungs- und Datenschutzbedingungen von FragDenStaat.de "
+"akzeptieren."
 
 #: froide/account/forms.py:141
 #, python-brace-format
@@ -269,11 +271,11 @@ msgid ""
 "Conditions</a> and <a href=\"{url_privacy}\" target=\"_blank\">Privacy "
 "Statement</a>"
 msgstr ""
-"Sie stimmen unseren <a href=\"{url_terms}#nutzungsbedingungen-email-dienst\" "
-"target=\"_blank\">Nutzungsbedingungen E-Mail-Dienst</a>, unseren <a href="
+"Sie stimmen den <a href=\"{url_terms}#nutzungsbedingungen-email-dienst\" "
+"target=\"_blank\">Nutzungsbedingungen E-Mail-Dienst</a>, den <a href="
 "\"{url_terms}#nutzungsbedingungen-archivplattform\" target=\"_blank"
-"\">Nutzungsbedingungen Archivplattform</a> und unseren <a href="
-"\"{url_privacy}\" target=\"_blank\">Datenschutzbedingungen</a> zu."
+"\">Nutzungsbedingungen Archivplattform</a> und den <a href=\"{url_privacy}\" "
+"target=\"_blank\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
 
 #: froide/account/forms.py:172 froide/account/forms.py:204
 #: froide/account/forms.py:316
