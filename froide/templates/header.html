@@ -52,7 +52,7 @@
           </li>
         </ul>
         {% endblock nav %}
-        <ul class="navbar-nav col-auto">
+        <ul class="navbar-nav col-auto ml-auto">
           {% block nav_account_login %}
           {% if user.is_authenticated %}
           <li class="nav-item dropdown account-dropdown {% block nav_account %}{% endblock %}">
