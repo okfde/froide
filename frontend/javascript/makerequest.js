@@ -21,8 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
   createRequestPage('#make-request')
 })
 
-const exp = {
+export default {
   createRequestPage
 }
-module.exports = exp
-export default exp
