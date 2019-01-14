@@ -439,15 +439,15 @@ class DraftRequestView(MakeRequestView, DetailView):
     def get_queryset(self):
         return get_read_queryset(RequestDraft.objects.all(), self.request)
 
+    def get_config(self, form):
+        config = {}
+        for key in self.FORM_CONFIG_PARAMS:
+            if key in self.object.flags:
+                config[key] = self.object.flags[key]
+        return config
+
     def get_initial(self):
-        return {
-            'draft': self.object.pk,
-            'subject': self.object.subject,
-            'body': self.object.body,
-            'full_text': self.object.full_text,
-            'public': self.object.public,
-            'reference': self.object.reference,
-        }
+        return self.object.get_initial()
 
     def get_publicbodies_from_context(self):
         return self.object.publicbodies.all()

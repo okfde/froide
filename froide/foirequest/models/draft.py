@@ -4,10 +4,17 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.postgres.fields import JSONField
 
 from froide.publicbody.models import PublicBody
 
 from .request import FoiRequest, FoiProject
+
+
+def convert_flag(val):
+    if isinstance(val, bool):
+        return str(int(val))
+    return str(val)
 
 
 class RequestDraft(models.Model):
@@ -28,6 +35,7 @@ class RequestDraft(models.Model):
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
     law_type = models.CharField(max_length=255, blank=True)
+    flags = JSONField(blank=True, default=dict)
 
     request = models.ForeignKey(FoiRequest, null=True, blank=True,
                                 on_delete=models.SET_NULL)
@@ -56,6 +64,23 @@ class RequestDraft(models.Model):
     def get_absolute_url(self):
         return reverse('foirequest-make_draftrequest', kwargs={'pk': self.id})
 
+    def get_initial(self):
+        context = {
+            'draft': self.pk,
+            'subject': self.subject,
+            'body': self.body,
+            'public': self.public,
+            'full_text': self.full_text,
+        }
+        if self.reference:
+            context['ref'] = self.reference
+        if self.flags:
+            context.update(self.flags)
+        return context
+
+    def get_url_params(self):
+        return {k: convert_flag(v) for k, v in self.get_initial().items()}
+
     def get_absolute_public_url(self):
         pb_ids = '+'.join(str(pb.pk) for pb in self.publicbodies.all())
         url_kwargs = {}
@@ -64,15 +89,6 @@ class RequestDraft(models.Model):
                 'publicbody_ids': pb_ids
             }
         url = reverse('foirequest-make_request', kwargs=url_kwargs)
-        context = {
-            'draft': str(self.pk),
-            'subject': self.subject,
-            'body': self.body,
-            'public': ('1' if self.public else '0'),
-            'full_text': ('1' if self.full_text else '0'),
-        }
-        if self.reference:
-            context['ref'] = self.reference
-
-        query = urlencode({k: v.encode('utf-8') for k, v in context.items()})
+        context = self.get_url_params()
+        query = urlencode({k: str(v).encode('utf-8') for k, v in context.items()})
         return '%s?%s' % (url, query)

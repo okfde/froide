@@ -93,6 +93,8 @@ class CreateRequestService(BaseService):
         Create a draft object with a token, send token to email.
 
         '''
+        from .views import MakeRequestView
+
         data = self.data
         additional_kwargs = dict(
             subject=data.get('subject', ''),
@@ -102,6 +104,10 @@ class CreateRequestService(BaseService):
             reference=data.get('reference', ''),
             law_type=data.get('law_type', ''),
         )
+
+        flag_keys = set(MakeRequestView.FORM_CONFIG_PARAMS) | {'redirect_url'}
+        flags = {k: v for k, v in data.items() if k in flag_keys}
+        additional_kwargs['flags'] = flags
 
         draft = RequestDraft.objects.create(
             user=None,

@@ -128,3 +128,43 @@ class RequestDraftTest(TestCase):
         draft.publicbodies.add(self.pb)
         response = self.client.get(draft.get_absolute_url())
         self.assertEqual(response.status_code, 200)
+
+    def test_draft_token(self):
+        user = User.objects.get(email='info@fragdenstaat.de')
+        post = {
+            "subject": "Test-Subject",
+            "body": "This is another test body with Ümläut€n",
+            "first_name": "Stefan", "last_name": "Wehrmeyer",
+            "user_email": user.email,
+            "terms": "on",
+            'publicbody': str(self.pb.pk),
+            'hide_editing': '1',
+            'hide_similar': '1'
+        }
+        response = self.client.post(reverse('foirequest-make_request',
+                kwargs={'publicbody_slug': self.pb.slug}), post)
+        self.assertEqual(response.status_code, 302)
+        draft = RequestDraft.objects.all()[0]
+        self.assertIsNone(draft.user)
+        self.assertTrue(bool(draft.token))
+
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide')
+        self.assertTrue(ok)
+
+        response = self.client.get(
+            reverse('foirequest-claim_draft', kwargs={
+                'token': str(draft.token)
+            })
+        )
+        self.assertEqual(response.status_code, 302)
+        # import ipdb ; ipdb.set_trace()
+        self.assertTrue(response['Location'].endswith(
+            draft.get_absolute_url())
+        )
+        draft = RequestDraft.objects.get(id=draft.id)
+        self.assertEqual(draft.user, user)
+        flags = draft.flags
+        self.assertEqual(flags['hide_editing'], True)
+        self.assertEqual(flags['hide_similar'], True)
+        url = draft.get_absolute_public_url()
+        self.assertIn('hide_similar=1', url)
