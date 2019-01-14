@@ -420,7 +420,7 @@ class ReceiveEmailService(BaseService):
         message.save()
 
         ProblemReport.objects.create(
-            message=mes,
+            message=mes or message,
             kind='bounce_publicbody',
             description=email.bounce_info.diagnostic_code or '',
             auto_submitted=True
