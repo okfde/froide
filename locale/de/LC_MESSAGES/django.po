@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-07 14:31+0000\n"
-"PO-Revision-Date: 2019-01-13 21:10+0100\n"
+"POT-Creation-Date: 2019-01-15 14:03+0100\n"
+"PO-Revision-Date: 2019-01-15 14:03+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -2025,23 +2025,23 @@ msgstr "Nicht zugestellte Nachrichten"
 msgid "Undelievered Message to %(recipient)s (%(request)s)"
 msgstr "Unzugestellte Nachricht an %(recipient)s (%(request)s)"
 
-#: froide/foirequest/models/draft.py:24
+#: froide/foirequest/models/draft.py:31
 msgid "subject"
 msgstr "Betreff"
 
-#: froide/foirequest/models/draft.py:25
+#: froide/foirequest/models/draft.py:32
 msgid "body"
 msgstr "Inhalt"
 
-#: froide/foirequest/models/draft.py:38
+#: froide/foirequest/models/draft.py:46
 msgid "request draft"
 msgstr "Anfrageentwurf"
 
-#: froide/foirequest/models/draft.py:39
+#: froide/foirequest/models/draft.py:47
 msgid "request drafts"
 msgstr "Anfrageentwürfe"
 
-#: froide/foirequest/models/draft.py:43
+#: froide/foirequest/models/draft.py:51
 #, python-brace-format
 msgid "Draft \"{subject}\" by {user}"
 msgstr "Entwurf \"{subject}\" von {user}"
@@ -2757,13 +2757,13 @@ msgstr "Sehr geehrte Damen und Herren,"
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
 
-#: froide/foirequest/services.py:440
+#: froide/foirequest/services.py:446
 #, python-format
 msgid "attached_file_%d"
 msgstr "angehaengte_datei_%d"
 
 #. Translators: replacement for person name in filename
-#: froide/foirequest/services.py:443
+#: froide/foirequest/services.py:449
 msgid "NAME"
 msgstr "NAME"
 
@@ -3750,11 +3750,15 @@ msgstr ""
 msgid "Please remove email addresses of this site."
 msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
 
-#: froide/foirequest/templates/foirequest/redact.html:49
+#: froide/foirequest/templates/foirequest/redact.html:48
+msgid "Please remove all names of public body employees."
+msgstr "Bitte entfernen Sie alle Namen von Behördenmitarbeitern."
+
+#: froide/foirequest/templates/foirequest/redact.html:50
 msgid "Please remove hand-written signatures."
 msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften"
 
-#: froide/foirequest/templates/foirequest/redact.html:53
+#: froide/foirequest/templates/foirequest/redact.html:54
 msgid ""
 "The original version of the document will still be available to you (but not "
 "to the public)."
@@ -3762,15 +3766,15 @@ msgstr ""
 "Die Originalversion dieses Dokuments ist für Sie weiterhin verfügbar (aber "
 "nicht für die Öffentlichkeit)."
 
-#: froide/foirequest/templates/foirequest/redact.html:63
+#: froide/foirequest/templates/foirequest/redact.html:64
 msgid "How to redact"
 msgstr "So schwärzen Sie das Dokument"
 
-#: froide/foirequest/templates/foirequest/redact.html:66
+#: froide/foirequest/templates/foirequest/redact.html:67
 msgid "If this document is a letter to you:"
 msgstr "Falls dieses Dokument ein Brief an Sie ist:"
 
-#: froide/foirequest/templates/foirequest/redact.html:68
+#: froide/foirequest/templates/foirequest/redact.html:69
 msgid ""
 "Go to each page of the PDF and locate the parts that need to be blacked out. "
 "Redact text by selecting it. You can also draw rectangles by clicking the "
@@ -3780,7 +3784,7 @@ msgstr ""
 "die geschwärzt werden müssen. Ziehen Sie durch Klicken und Bewegen der Maus "
 "ein Viereck über die Stelle. "
 
-#: froide/foirequest/templates/foirequest/redact.html:70
+#: froide/foirequest/templates/foirequest/redact.html:71
 msgid ""
 "Check the text only view to see if the underlying text is also gone. If the "
 "document does not load correctly, cancel and inform a site moderator."
@@ -3789,7 +3793,7 @@ msgstr ""
 "Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie "
 "einen Moderator der Seite."
 
-#: froide/foirequest/templates/foirequest/redact.html:96
+#: froide/foirequest/templates/foirequest/redact.html:97
 msgid "Redaction tool is loading..."
 msgstr "Schwärzungs-Werkzeug wird geladen..."
 
