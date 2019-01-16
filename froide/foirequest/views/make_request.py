@@ -286,7 +286,9 @@ class MakeRequestView(FormView):
         error = False
         request = self.request
 
+        self.csrf_failed = False
         if not self.csrf_valid():
+            self.csrf_failed = True
             error = True
 
         request_form = self.get_form()
@@ -338,9 +340,13 @@ class MakeRequestView(FormView):
         return redirect('account-drafts')
 
     def form_invalid(self, **form_kwargs):
-        messages.add_message(self.request, messages.ERROR,
-            _('There were errors in your form submission. '
-              'Please review and submit again.'))
+        if not self.csrf_failed:
+            messages.add_message(self.request, messages.ERROR,
+                _('There were errors in your form submission. '
+                'Please review and submit again.'))
+        else:
+            messages.add_message(self.request, messages.INFO,
+                _('Please confirm your form submission.'))
         return self.render_to_response(
             self.get_context_data(**form_kwargs),
             status=400
