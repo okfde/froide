@@ -19,13 +19,13 @@
     color: #eee !important;
   }
 
-  .redacted.redacted-hover:hover,
-  .redacted:active,
-  .redacted.redacted-hover:hover a,
-  .redacted:active a {
-      color: #555 !important;
-      background-color: transparent !important;
+  .redacted-dummy,
+  .redacted-dummy:hover,
+  .redacted-dummy:active,
+  .redacted-dummy a {
+    background-color: #eee !important;
   }
+
 }
 
 

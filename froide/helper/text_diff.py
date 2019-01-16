@@ -43,7 +43,7 @@ def mark_differences(content_a, content_b,
         attrs=None,
         min_part_len=3):
     if attrs is None:
-        attrs = ' class="redacted"'
+        attrs = ''
     start_tag = start_tag.format(attrs=attrs)
     opened = False
     new_content = []

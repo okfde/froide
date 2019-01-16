@@ -127,18 +127,18 @@ def markup_redacted_content(real_content, redacted_content,
 
     if authenticated_read:
         content_1 = mark_differences(c_1, r_1,
-            attrs=' class="redacted redacted-hover"'
+            attrs=' class="redacted-dummy redacted-hover"'
             ' data-toggle="tooltip" title="{title}"'.format(
                 title=_('Only visible to you')
             ))
         content_2 = mark_differences(c_2, r_2,
-            attrs=' class="redacted redacted-hover"'
+            attrs=' class="redacted-dummy redacted-hover"'
             ' data-toggle="tooltip" title="{title}"'.format(
                 title=_('Only visible to you')
             ))
     else:
-        content_1 = mark_differences(r_1, c_1)
-        content_2 = mark_differences(r_2, c_2)
+        content_1 = mark_differences(r_1, c_1, attrs=' class="redacted"')
+        content_2 = mark_differences(r_2, c_2, attrs=' class="redacted"')
 
     content_1 = urlizetrunc(content_1, 40, autoescape=False)
     content_2 = urlizetrunc(content_2, 40, autoescape=False)
@@ -146,10 +146,13 @@ def markup_redacted_content(real_content, redacted_content,
     if content_2 and message_id:
         return mark_safe(''.join([
             content_1,
-            ('<a href="#message-footer-{message_id}" data-toggle="collapse" '
-            ' aria-expanded="false" aria-controls="message-footer-{message_id}">…</a>'
+            ('<a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-toggle="collapse" '
+            ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
             '<div id="message-footer-{message_id}" class="collapse">'
-            .format(message_id=message_id)),
+            .format(
+                message_id=message_id,
+                label=_('Show the quoted message')
+            )),
             content_2,
             '</div>'
         ]))
