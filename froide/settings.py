@@ -590,6 +590,7 @@ class TestBase(Base):
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
     ]
+    FROIDE_CSRF_MIDDLEWARE = 'django.middleware.csrf.CsrfViewMiddleware'
 
 
 class Test(TestBase):

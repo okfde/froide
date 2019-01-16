@@ -9,8 +9,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, DetailView, TemplateView
-from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.utils.module_loading import import_string
 
 from froide.account.forms import NewUserForm, AddressForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
@@ -26,7 +27,10 @@ from ..utils import check_throttle
 from ..services import CreateRequestService, SaveDraftService
 
 
-@method_decorator(xframe_options_exempt, name='dispatch')
+csrf_middleware_class = import_string(settings.FROIDE_CSRF_MIDDLEWARE)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class MakeRequestView(FormView):
     form_class = RequestForm
     template_name = 'foirequest/request.html'
@@ -275,9 +279,15 @@ class MakeRequestView(FormView):
             return form_class(**self.get_publicbody_form_kwargs())
         return None
 
+    def csrf_valid(self):
+        return not bool(csrf_middleware_class().process_view(self.request, None, (), {}))
+
     def post(self, request, *args, **kwargs):
         error = False
         request = self.request
+
+        if not self.csrf_valid():
+            error = True
 
         request_form = self.get_form()
 
