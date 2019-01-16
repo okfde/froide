@@ -38,7 +38,7 @@ def get_differences_by_chunk(content_a, content_b):
 
 
 def mark_differences(content_a, content_b,
-        start_tag='<span{attrs}>',
+        start_tag='<span {attrs}>',
         end_tag='</span>',
         attrs=None,
         min_part_len=3):

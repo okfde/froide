@@ -79,7 +79,7 @@ Sollten Sie kein Interesse an der Veröffentlichung Ihres Namens auf der Website
 Vielen Dank für Ihr Verständnis.
 
 Mit freundlichen Grüßen'''
-        res = mark_differences(content, redacted)
+        res = mark_differences(content, redacted, attrs='class="redacted"')
         fake_res = content.replace('informationsfreiheitsgesetz@example.com.', '<span class="redacted">informationsfreiheitsgesetz@example.com.</span>')
         self.assertEqual(fake_res, res)
 
