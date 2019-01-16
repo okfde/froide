@@ -236,7 +236,7 @@
       </div>
     </div>
   </div>
-  {% if message|can_see_guidance:request %}
+  {% if message|should_show_guidance:request %}
     <div class="message-guidance">
       {% render_guidance message %}
     </div>

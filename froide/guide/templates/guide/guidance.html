@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load markup %}
+{% load foirequest_tags %}
 
-{% if message.guidances or request.user.is_staff %}
 <div class="message-guidance-sticky">
   {% for guidance in message.guidances %}
     <div class="card mb-2">
@@ -12,7 +12,7 @@
         <div class="card-text">
           {{ guidance.get_description | markdown }}
         </div>
-      {% if guidance.get_snippet %}
+      {% if guidance.get_snippet and foirequest|can_write_foirequest:request %}
         <h6>{% trans "Suggested reply" %}</h6>
         <blockquote class="card-text small bg-light pl-2">
           <p>
@@ -39,4 +39,3 @@
     </form>
   {% endif %}
 </div>
-{% endif %}
