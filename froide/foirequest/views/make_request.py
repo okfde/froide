@@ -9,6 +9,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, DetailView, TemplateView
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.utils.decorators import method_decorator
 
 from froide.account.forms import NewUserForm, AddressForm
 from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
@@ -24,6 +26,7 @@ from ..utils import check_throttle
 from ..services import CreateRequestService, SaveDraftService
 
 
+@method_decorator(xframe_options_exempt, name='dispatch')
 class MakeRequestView(FormView):
     form_class = RequestForm
     template_name = 'foirequest/request.html'
