@@ -139,21 +139,23 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_dict(self, fields):
         d = get_dict(self, fields)
-        d['request_count'] = self.foirequest_set.all().count()
+        if "request_count" in fields:
+            d['request_count'] = self.foirequest_set.all().count()
         return d
 
     def trusted(self):
         return self.is_trusted or self.is_staff or self.is_superuser
 
     @classmethod
-    def export_csv(cls, queryset):
-        fields = (
-            "id", "first_name", "last_name", "email",
-            "organization", "organization_url", "private",
-            "date_joined", "is_staff",
-            "address", "terms",
-            "request_count",
-        )
+    def export_csv(cls, queryset, fields=None):
+        if fields is None:
+            fields = (
+                "id", "first_name", "last_name", "email",
+                "organization", "organization_url", "private",
+                "date_joined", "is_staff",
+                "address", "terms",
+                "request_count",
+            )
         return export_csv(queryset, fields)
 
     def as_json(self):
