@@ -16,9 +16,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-16 21:23+0100\n"
-"PO-Revision-Date: 2019-01-16 21:27+0100\n"
-"Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.org>\n"
+"POT-Creation-Date: 2019-01-21 15:02+0100\n"
+"PO-Revision-Date: 2019-01-21 15:06+0100\n"
+"Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -47,11 +47,11 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:10 froide/settings.py:228 froide/settings.py:603
+#: froide/_local_settings.py:10 froide/settings.py:228 froide/settings.py:607
 msgid "German"
 msgstr "Deutsch"
 
-#: froide/accesstoken/apps.py:7
+#: froide/accesstoken/apps.py:9
 msgid "Secret Access Token"
 msgstr "Geheime Zugangs-Tokens"
 
@@ -67,11 +67,11 @@ msgstr "URL wurde erstellt."
 msgid "URL has been removed."
 msgstr "URL wurde gelöscht."
 
-#: froide/accesstoken/models.py:54
+#: froide/accesstoken/models.py:63
 msgid "access token"
 msgstr "Zugangs-Token"
 
-#: froide/accesstoken/models.py:55
+#: froide/accesstoken/models.py:64
 msgid "access tokens"
 msgstr "Zugangs-Tokens"
 
@@ -168,6 +168,10 @@ msgstr "Nutzer deaktivieren"
 #: froide/account/apps.py:7
 msgid "Account"
 msgstr "Account"
+
+#: froide/account/export.py:142
+msgid "Your data export is ready"
+msgstr "Ihr Datenexport ist fertig"
 
 #: froide/account/forms.py:47
 msgid "First name"
@@ -432,7 +436,7 @@ msgstr "Zeigt an, ob Nutzer gelöscht wurde."
 msgid "date left"
 msgstr "Austrittsdatum"
 
-#: froide/account/models.py:172
+#: froide/account/models.py:174
 msgid "<< Name Not Public >>"
 msgstr "<< Anfragesteller/in >>"
 
@@ -698,6 +702,33 @@ msgstr ""
 msgid "%(site_name)s: please confirm your account"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
 
+#: froide/account/templates/account/emails/export_ready.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your data export is ready for download:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"This download will work for %(days)s days or until you generate the next "
+"export.\n"
+"\n"
+"Cheers\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihr Datenexport ist zum Download bereit:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Dieser Download steht für %(days)s Tage zur Verfügung oder bis Sie den "
+"nächsten Export anstoßen.\n"
+"\n"
+"Beste Grüße\n"
+"%(site_name)s"
+
 #: froide/account/templates/account/emails/password_reset_email.txt:2
 #, python-format
 msgid ""
@@ -927,15 +958,30 @@ msgid "Save changes"
 msgstr "Änderungen speichern"
 
 #: froide/account/templates/account/settings.html:76
+msgid "Export your data"
+msgstr "Exportieren Sie Ihre Daten"
+
+#: froide/account/templates/account/settings.html:82
+msgid ""
+"We will generate a data export and notify you by email when it is ready."
+msgstr ""
+"Wir erstellen Ihren Datenexport und teilen Ihnen per E-Mail mit, sobald der "
+"Export fertig ist."
+
+#: froide/account/templates/account/settings.html:85
+msgid "Request data export"
+msgstr "Starte Datenexport"
+
+#: froide/account/templates/account/settings.html:95
 msgid "Delete your account"
 msgstr "Löschen Sie Ihren Account"
 
-#: froide/account/templates/account/settings.html:82
+#: froide/account/templates/account/settings.html:101
 msgid "Danger: deleting your account cannot be undone."
 msgstr ""
 "Gefahr: das Löschen Ihres Account kann nicht rückgängig gemacht werden."
 
-#: froide/account/templates/account/settings.html:89
+#: froide/account/templates/account/settings.html:108
 msgid ""
 "Your FOI requests will not be removed. Only your personal information "
 "connected with your account will be removed."
@@ -943,11 +989,11 @@ msgstr ""
 "Ihre IFG-Anfragen werden nicht gelöscht. Nur die persönlichen Informationen "
 "Ihres Account werden entfernt."
 
-#: froide/account/templates/account/settings.html:93
+#: froide/account/templates/account/settings.html:112
 msgid "Delete account"
 msgstr "Account löschen"
 
-#: froide/account/templates/account/settings.html:103
+#: froide/account/templates/account/settings.html:122
 msgid "Your OAuth Applications"
 msgstr "Ihre OAuth-Anwendungen"
 
@@ -1020,19 +1066,19 @@ msgstr "%(name)s Zugriff geben?"
 msgid "Application requires following permissions"
 msgstr "Die Anwendung erfordert die folgenden Berechtigungen"
 
-#: froide/account/views.py:62
+#: froide/account/views.py:66
 msgid "You are logged in and cannot use a confirmation link."
 msgstr ""
 "Sie sind gerade eingeloggt und können daher Bestätigungslinks nicht nutzen."
 
-#: froide/account/views.py:71
+#: froide/account/views.py:75
 msgid ""
 "You can only use the confirmation link once, please login with your password."
 msgstr ""
 "Sie können den Bestätigungslink nur einmal benutzen, bitte loggen Sie sich "
 "mit Ihrem Passwort ein."
 
-#: froide/account/views.py:94
+#: froide/account/views.py:98
 msgid ""
 "You are logged in with a different user account. Please logout first before "
 "using this link."
@@ -1040,48 +1086,48 @@ msgstr ""
 "Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich "
 "erst aus, bevor Sie den E-Mail-Link benutzen."
 
-#: froide/account/views.py:129
+#: froide/account/views.py:133
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
-#: froide/account/views.py:157
+#: froide/account/views.py:161
 msgid "You are now logged in."
 msgstr "Sie sind jetzt eingeloggt."
 
-#: froide/account/views.py:161
+#: froide/account/views.py:165
 msgid "Please activate your mail address before logging in."
 msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich einloggen."
 
-#: froide/account/views.py:164
+#: froide/account/views.py:168
 msgid "E-mail and password do not match."
 msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
 
-#: froide/account/views.py:178
+#: froide/account/views.py:182
 msgid "You are currently logged in, you cannot signup."
 msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 
-#: froide/account/views.py:202
+#: froide/account/views.py:206
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem "
 "Bestätigungslink von uns erhalten."
 
-#: froide/account/views.py:222
+#: froide/account/views.py:226
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihr Passwort nicht ändern."
 
-#: froide/account/views.py:228
+#: froide/account/views.py:232
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: froide/account/views.py:243
+#: froide/account/views.py:247
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Sie sind gerade eingeloggt. Sie können keinen Passwort-Zurücksetzen-Link "
 "erhalten."
 
-#: froide/account/views.py:251
+#: froide/account/views.py:255
 msgid ""
 "Check your mail, we sent you a password reset link. If you don't receive an "
 "email, check if you entered your email correctly or if you really have an "
@@ -1092,13 +1138,13 @@ msgstr ""
 "Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit einen "
 "Account haben."
 
-#: froide/account/views.py:287
+#: froide/account/views.py:291
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre Adresse nicht "
 "ändern."
 
-#: froide/account/views.py:296
+#: froide/account/views.py:300
 msgid ""
 "We sent a confirmation email to your new address. Please click the link in "
 "there."
@@ -1106,57 +1152,57 @@ msgstr ""
 "Wir haben eine Bestätigungs-E-Mail an Ihre neue Adresse gesendet. Bitte "
 "klicken Sie den Link in der E-Mail."
 
-#: froide/account/views.py:299
+#: froide/account/views.py:303
 msgid "Your profile information has been changed."
 msgstr "Ihre Profilinformationen wurden geändert."
 
-#: froide/account/views.py:302
+#: froide/account/views.py:306
 msgid ""
 "Please correct the errors below. You profile information was not changed."
 msgstr ""
 "Bitte korrigieren Sie die Fehler unten. Ihre Profilinformationen wurden "
 "nicht geändert."
 
-#: froide/account/views.py:311
+#: froide/account/views.py:315
 msgid "You are not currently logged in, you cannot change your email address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre E-Mail-Adresse "
 "nicht ändern."
 
-#: froide/account/views.py:318
+#: froide/account/views.py:322
 msgid "Your email address has been changed."
 msgstr "Ihre E-Mail-Adresse wurde geändert."
 
-#: froide/account/views.py:321
+#: froide/account/views.py:325
 msgid "The email confirmation link was invalid or expired."
 msgstr "Der E-Mail-Bestätigungs-Link ist ungültig oder abgelaufen."
 
-#: froide/account/views.py:329
+#: froide/account/views.py:333
 msgid "You are not currently logged in, you cannot delete your account."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihren Account nicht "
 "löschen."
 
-#: froide/account/views.py:334
+#: froide/account/views.py:338
 msgid "Password or confirmation phrase were wrong. Account was not deleted."
 msgstr ""
 "Passwort oder Bestätigungssatz waren falsch. Ihr Account wurde nicht "
 "gelöscht."
 
-#: froide/account/views.py:346
+#: froide/account/views.py:350
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Ihr Account wurde gelöscht und Sie wurden ausgeloggt."
 
-#: froide/account/views.py:364
+#: froide/account/views.py:368
 msgid "Thank you for accepting our new terms!"
 msgstr "Danke, dass Sie unsere neuen Nutzungsbedingungen akzeptiert haben!"
 
-#: froide/account/views.py:368
+#: froide/account/views.py:372
 msgid "You need to accept our new terms to continue."
 msgstr ""
 "Sie müssen unsere neuen Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: froide/account/views.py:377
+#: froide/account/views.py:381
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -1168,11 +1214,35 @@ msgstr ""
 "sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: "
 "%(reason)s"
 
+#: froide/account/views.py:392
+msgid ""
+"Your export has been started. You will receive an email when it is finished."
+msgstr ""
+"Ihr Datenexport wurde gestartet. Sie erhalten eine E-Mail, sobald der Export "
+"fertiggestellt wurde."
+
+#: froide/account/views.py:397
+msgid ""
+"Your export is currently being created. You will receive an email once it is "
+"available."
+msgstr ""
+"Ihr Export wird gerade erstellt. Sie erhalten eine E-Mail, sobald der Export "
+"verfügbar ist."
+
+#: froide/account/views.py:403
+#, python-brace-format
+msgid ""
+"Your next export will be possible at {date}. <a href=\"{url}\">You can "
+"download your current export here</a>."
+msgstr ""
+"Ihr nächster Datenexport ist möglich am {date}. <a href=\"{url}\">Sie können "
+"Ihren Export hier herunterladen</a>."
+
 #: froide/bounce/admin.py:27
 msgid "Deactivate bounced accounts"
 msgstr "Gebouncte Konten deaktivieren"
 
-#: froide/bounce/apps.py:7 froide/bounce/models.py:56
+#: froide/bounce/apps.py:9 froide/bounce/models.py:56
 msgid "Bounce"
 msgstr "Bounce-Meldung"
 
@@ -1188,7 +1258,7 @@ msgstr "Inhalt"
 msgid "Metadata"
 msgstr "Metadaten"
 
-#: froide/comments/apps.py:7
+#: froide/comments/apps.py:9
 msgid "Comments"
 msgstr "Kommentare"
 
@@ -2673,16 +2743,16 @@ msgstr "Erstellen einer Batch-Anfrage"
 msgid "Request '%s'"
 msgstr "Anfrage '%s'"
 
-#: froide/foirequest/models/request.py:603
-#: froide/foirequest/models/request.py:607
+#: froide/foirequest/models/request.py:601
+#: froide/foirequest/models/request.py:605
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: froide/foirequest/models/request.py:700
+#: froide/foirequest/models/request.py:698
 msgid "Please classify the reply to your request"
 msgstr "Bitte setzen Sie den Status Ihrer Anfrage"
 
-#: froide/foirequest/models/request.py:718
+#: froide/foirequest/models/request.py:716
 #, python-format
 msgid "Update on one of your request"
 msgid_plural "Update on %(count)s of your requests"
@@ -4802,7 +4872,7 @@ msgid "project"
 msgstr "projekt"
 
 #. Translators: project URL
-#: froide/foirequest/urls/__init__.py:30 froide/urls.py:110
+#: froide/foirequest/urls/__init__.py:30 froide/urls.py:112
 msgctxt "url part"
 msgid "account"
 msgstr "account"
@@ -4882,11 +4952,11 @@ msgctxt "url component"
 msgid "attachment"
 msgstr "anhang"
 
-#: froide/foirequest/utils.py:41
+#: froide/foirequest/utils.py:43
 msgid "User exceeded request limit"
 msgstr "Nutzer hat Anfragenbeschränkung überschritten"
 
-#: froide/foirequest/utils.py:42
+#: froide/foirequest/utils.py:44
 #, python-format
 msgid "You exceeded your request limit of %(count)s requests in %(time)s."
 msgstr ""
@@ -4894,17 +4964,17 @@ msgstr ""
 "Dies ist eine automatische Vorsichtsmaßnahme. Bei Fragen kontaktieren Sie "
 "bitte den Webmaster."
 
-#: froide/foirequest/utils.py:246 froide/foirequest/utils.py:247
-#: froide/foirequest/utils.py:248
+#: froide/foirequest/utils.py:248 froide/foirequest/utils.py:249
+#: froide/foirequest/utils.py:250
 msgid "<information-removed>"
 msgstr "<Information-entfernt>"
 
-#: froide/foirequest/utils.py:311
+#: froide/foirequest/utils.py:313
 #, python-format
 msgid "Due date: %s"
 msgstr "Antwortfrist: %s"
 
-#: froide/foirequest/utils.py:328 froide/foirequest/utils.py:333
+#: froide/foirequest/utils.py:330 froide/foirequest/utils.py:335
 #, python-format
 msgid "Appeal deadline: %s"
 msgstr "Widerspruchs-Termin: %s"
@@ -5423,7 +5493,7 @@ msgstr ""
 msgid "Deadline has been extended."
 msgstr "Frist wurde verlängert."
 
-#: froide/foirequestfollower/apps.py:7
+#: froide/foirequestfollower/apps.py:9
 msgid "FOI Request Follower"
 msgstr "Anfrage-Abo"
 
@@ -5818,15 +5888,15 @@ msgstr "Regel"
 msgid "Rules"
 msgstr "Regeln"
 
-#: froide/guide/templates/guide/guidance.html:17
+#: froide/guide/templates/guide/guidance.html:16
 msgid "Suggested reply"
 msgstr "Antwortvorschlag"
 
-#: froide/guide/templates/guide/guidance.html:29
+#: froide/guide/templates/guide/guidance.html:28
 msgid "Add to reply"
 msgstr "Zur Antwort hinzufügen"
 
-#: froide/guide/templates/guide/guidance.html:39
+#: froide/guide/templates/guide/guidance.html:38
 msgid "Rerun guidance"
 msgstr "Beratung aktualisieren"
 
@@ -5947,7 +6017,7 @@ msgstr "Keine Ergebnisse"
 msgid "User will be notified of resolution"
 msgstr "Nutzer wird über Lösung benachrichtigt"
 
-#: froide/problem/apps.py:7
+#: froide/problem/apps.py:9
 msgid "Problems"
 msgstr "Probleme"
 
@@ -6863,31 +6933,35 @@ msgstr "Chinesisch (Kurzzeichen)"
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "Chinesisch (Traditionell, Honk Kong)"
 
-#: froide/settings.py:403
+#: froide/settings.py:406
 msgid "Access to user status"
 msgstr "Kann Sie als Nutzer auf FragDenStaat.de identifizieren"
 
-#: froide/settings.py:404
+#: froide/settings.py:407
 msgid "Read user profile information"
 msgstr "Kann meine Profil-Informationen sehen"
 
-#: froide/settings.py:405
+#: froide/settings.py:408
 msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
-#: froide/settings.py:406
+#: froide/settings.py:409
 msgid "Read my (private) requests"
 msgstr "Kann meine (privaten) Anfragen sehen"
 
-#: froide/settings.py:407
+#: froide/settings.py:410
 msgid "Make requests on my behalf"
 msgstr "Anfragen in meinem Namen stellen"
 
-#: froide/team/apps.py:9
+#: froide/settings.py:411
+msgid "Follow/Unfollow requests"
+msgstr "Folge/Entfolge Anfragen"
+
+#: froide/team/apps.py:11
 msgid "Teams"
 msgstr "Teams"
 
-#: froide/team/apps.py:24
+#: froide/team/apps.py:27
 msgid "Your teams"
 msgstr "Ihre Teams"
 
@@ -7430,53 +7504,53 @@ msgid ""
 msgstr ""
 "%(site)s hilft Ihnen, Informationsfreiheitsanfragen an Behörden zu stellen"
 
-#: froide/urls.py:111
+#: froide/urls.py:113
 msgctxt "url part"
 msgid "documents"
 msgstr "dokumente"
 
-#: froide/urls.py:112
+#: froide/urls.py:114
 msgctxt "url part"
 msgid "teams"
 msgstr "teams"
 
 #. Translators: follow request URL
-#: froide/urls.py:116
+#: froide/urls.py:118
 msgctxt "url part"
 msgid "follow"
 msgstr "benachrichtigen"
 
-#: froide/urls.py:118
+#: froide/urls.py:120
 msgctxt "url part"
 msgid "b"
 msgstr "b"
 
 #. Translators: URL part
-#: froide/urls.py:121 froide/urls.py:123
+#: froide/urls.py:123 froide/urls.py:125
 msgctxt "url part"
 msgid "entity"
 msgstr "behoerde"
 
 #. Translators: URL part
-#: froide/urls.py:126
+#: froide/urls.py:128
 msgctxt "url part"
 msgid "entities"
 msgstr "behoerden"
 
 #. Translators: URL part
-#: froide/urls.py:128
+#: froide/urls.py:130
 msgctxt "url part"
 msgid "law"
 msgstr "gesetz"
 
 #. Translators: URL part
-#: froide/urls.py:134
+#: froide/urls.py:136
 msgctxt "url part"
 msgid "profile"
 msgstr "profil"
 
 #. Translators: URL part
-#: froide/urls.py:179
+#: froide/urls.py:181
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
