@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from collections import OrderedDict
 
@@ -372,3 +373,28 @@ class OpenRefineReconciliationMixin(object):
         response['result'] = results
 
         return Response(response)
+
+
+def get_dict(obj, fields):
+    d = {}
+
+    for field in fields:
+        if isinstance(field, tuple):
+            field_name = field[0]
+        else:
+            field_name = field
+        if field_name in d:
+            continue
+        value = obj
+        for f in field_name.split('__'):
+            value = getattr(value, f, None)
+            if value is None:
+                break
+        if isinstance(field, tuple):
+            value = field[1](value)
+
+        if isinstance(value, datetime):
+            d[field_name] = value.isoformat()
+        else:
+            d[field_name] = value
+    return d
