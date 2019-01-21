@@ -1,4 +1,4 @@
-import random
+import json
 from datetime import timedelta
 
 from django.utils import timezone
@@ -7,6 +7,7 @@ from django.conf import settings
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 
 import icalendar
 import pytz
@@ -51,9 +52,9 @@ def check_throttle(user, klass):
 
 
 def generate_secret_address(user, length=10):
-    possible_chars = 'abcdefghkmnprstuvwxyz2345689'
+    allowed_chars = 'abcdefghkmnprstuvwxyz2345689'
     username = user.username.replace('_', '.')
-    secret = "".join([random.choice(possible_chars) for i in range(length)])
+    secret = get_random_string(length=length, allowed_chars=allowed_chars)
     template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
 
     domains = settings.FOI_EMAIL_DOMAIN
