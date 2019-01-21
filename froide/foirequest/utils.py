@@ -13,6 +13,7 @@ import icalendar
 import pytz
 
 from froide.helper.date_utils import format_seconds
+from froide.helper.api_utils import get_fake_api_context
 from froide.account.utils import send_mail_user
 
 
@@ -334,3 +335,136 @@ def add_ical_events(foirequest, cal):
             alarm.add('description', _('Appeal deadline: %s') % title)
             event.add_component(alarm)
             cal.add_component(event)
+
+
+def export_user_data(user):
+    from .api_views import (
+        FoiRequestListSerializer, FoiMessageSerializer,
+        FoiAttachmentSerializer
+    )
+    from .models import FoiAttachment, FoiProject
+
+    ctx = get_fake_api_context()
+    foirequests = user.foirequest_set.all().iterator()
+
+    for foirequest in foirequests:
+        data = FoiRequestListSerializer(
+            foirequest, context=ctx
+        ).data
+        yield (
+            'requests/%s/request.json' % foirequest.id,
+            json.dumps(data).encode('utf-8')
+        )
+
+        messages = foirequest.get_messages(with_tags=True)
+        for message in messages:
+            data = FoiMessageSerializer(
+                message, context=ctx
+            ).data
+            yield (
+                'requests/%s/%s/message.json' % (
+                    foirequest.id, message.id
+                ),
+                json.dumps(data).encode('utf-8')
+            )
+
+        all_attachments = (
+            FoiAttachment.objects
+            .select_related('redacted')
+            .filter(belongs_to__request=foirequest)
+        )
+        yield (
+            'requests/%s/%s/attachments.json' % (
+                foirequest.id, message.id
+            ),
+            json.dumps([
+                FoiAttachmentSerializer(
+                    att, context=ctx
+                ).data
+                for att in all_attachments
+            ]).encode('utf-8')
+        )
+        for attachment in all_attachments:
+            try:
+                yield ('requests/%s/%s/%s' % (
+                    foirequest.id, message.id,
+                    attachment.name
+                ), attachment.get_bytes())
+            except IOError:
+                pass
+
+    drafts = user.requestdraft_set.all()
+    if drafts:
+        yield (
+            'drafts.json',
+            json.dumps([
+                {
+                    'create_date': d.create_date.isoformat(),
+                    'save_date': d.save_date.isoformat(),
+                    'publicbodies': [p.id for p in d.publicbodies.all()],
+                    'subject': d.subject,
+                    'body': d.body,
+                    'full_text': d.full_text,
+                    'public': d.public,
+                    'reference': d.reference,
+                    'law_type': d.law_type,
+                    'flags': d.flags,
+                    'request': d.request_id,
+                    'project': d.project_id,
+                } for d in drafts
+            ]).encode('utf-8')
+        )
+    suggestions = user.publicbodysuggestion_set.all()
+    if suggestions:
+        yield (
+            'publicbody_suggestions.json',
+            json.dumps([
+                {
+                    'timestamp': s.timestamp.isoformat(),
+                    'publicbody': s.public_body_id,
+                    'request': s.request_id,
+                    'reasons': s.reason,
+                } for s in suggestions
+            ]).encode('utf-8')
+        )
+
+    events = user.foievent_set.all()
+    if events:
+        yield (
+            'events.json',
+            json.dumps([
+                {
+                    'timestamp': (
+                        e.timestamp.isoformat() if e.timestamp else None
+                    ),
+                    'publicbody': e.public_body_id,
+                    'request': e.request_id,
+                    'event_name': e.event_name,
+                    'public': e.public,
+                    'context_json': e.context_json,
+                } for e in events
+            ]).encode('utf-8')
+        )
+
+    projects = FoiProject.objects.get_for_user(user)
+    if projects:
+        yield (
+            'projects.json',
+            json.dumps([
+                {
+                    'title': p.title,
+                    'slug': p.slug,
+                    'description': p.description,
+                    'status': p.status,
+                    'created': p.created.isoformat() if p.created else None,
+                    'last_update': p.last_update.isoformat() if p.last_update else None,
+                    'public': p.public,
+                    'team_id': p.team_id,
+                    'request_count': p.request_count,
+                    'request_ids': [x.id for x in p.foirequest_set.all()],
+                    'reference': p.reference,
+                    'publicbodies': [x.id for x in p.publicbodies.all()],
+                    'site_id': p.site_id
+                } for p in projects
+            ]).encode('utf-8')
+        )

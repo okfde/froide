@@ -406,15 +406,13 @@ class FoiRequest(models.Model):
         return self.get_absolute_url()
 
     def get_absolute_short_url(self):
-        return reverse('foirequest-shortlink',
-                kwargs={'obj_id': self.id})
+        return get_absolute_short_url(self.id)
 
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_absolute_domain_short_url(self):
-        return "%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
-                kwargs={'obj_id': self.id}))
+        return get_absolute_domain_short_url(self.id)
 
     def get_auth_link(self):
         from ..auth import get_foirequest_auth_code
@@ -753,3 +751,13 @@ class FoiRequest(models.Model):
         if final is None:
             return None
         return (mes.timestamp - self.first_message).days
+
+
+def get_absolute_short_url(pk):
+    return reverse('foirequest-shortlink',
+            kwargs={'obj_id': pk})
+
+
+def get_absolute_domain_short_url(pk):
+    return "%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
+            kwargs={'obj_id': pk}))
