@@ -111,7 +111,7 @@ def create_export(user):
         zfile = zipfile.ZipFile(export_file, 'w')
         for path, filebytes in registry.get_export_files(user):
             zfile.writestr(os.path.join('export', path), filebytes)
-    except Exception as e:
+    except Exception:
         zfile.close()
         export_file.close()
         os.remove(export_file.name)
