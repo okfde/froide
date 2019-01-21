@@ -1,7 +1,6 @@
 from datetime import timedelta
 import json
 import os
-import shutil
 import tempfile
 import zipfile
 
@@ -21,7 +20,6 @@ PURPOSE = 'dataexport'
 MEDIA_PREFIX = 'export'
 EXPORT_MAX_AGE = timedelta(days=7)
 EXPORT_LIMIT = timedelta(hours=6)
-EXPORT_LIMIT = timedelta(seconds=2)
 
 
 def get_path(token):
