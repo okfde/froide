@@ -50,12 +50,15 @@ def can_see_attachment(att, can_write):
 
 def show_foirequest(request, obj, template_name="foirequest/show.html",
         context=None, status=200):
-    all_attachments = FoiAttachment.objects.select_related('redacted')\
-            .filter(belongs_to__request=obj).all()
+    all_attachments = (
+        FoiAttachment.objects
+        .select_related('redacted')
+        .filter(belongs_to__request=obj)
+    )
 
     can_write = can_write_foirequest(obj, request)
 
-    messages = obj.get_messages(with_tags=request.user.is_staff)
+    messages = obj.get_messages(with_tags=can_write)
 
     for message in messages:
         message.request = obj
