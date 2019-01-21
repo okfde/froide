@@ -1,3 +1,5 @@
+import json
+
 from django.apps import AppConfig
 from django.urls import reverse
 from django.db import models
@@ -11,6 +13,7 @@ class TeamConfig(AppConfig):
     def ready(self):
         from froide.account.menu import menu_registry, MenuItem
         from froide.account import account_canceled
+        from froide.account.export import registry
 
         from .services import can_use_team
 
@@ -25,6 +28,7 @@ class TeamConfig(AppConfig):
             )
 
         menu_registry.register(get_account_menu_item)
+        registry.register(export_user_data)
 
         account_canceled.connect(cancel_user)
 
@@ -42,3 +46,25 @@ def cancel_user(sender, user=None, **kwargs):
     Team.objects.all().annotate(
         num_members=models.Count('members', distinct=True)
     ).filter(num_members=0).delete()
+
+
+def export_user_data(user):
+    from .models import TeamMembership
+
+    memberships = TeamMembership.objects.filter(
+        user=user
+    ).select_related('team')
+    if not memberships:
+        return
+    yield ('teams.json', json.dumps([
+        {
+            'created': member.created.isoformat() if member.created else None,
+            'updated': member.updated.isoformat() if member.created else None,
+            'status': member.status,
+            'email': member.email,
+            'role': member.role,
+            'team_name': member.team.name,
+            'team_id': member.team_id,
+        }
+        for member in memberships]).encode('utf-8')
+    )
