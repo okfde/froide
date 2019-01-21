@@ -562,6 +562,8 @@ class TestBase(Base):
     def MEDIA_ROOT(self):
         return os.path.abspath(os.path.join(super().PROJECT_ROOT, "tests", "testdata"))
 
+    ALLOWED_HOSTS = ('localhost', 'testserver')
+
     ELASTICSEARCH_INDEX_PREFIX = 'froide_test'
 
     MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
