@@ -22,7 +22,8 @@ from elasticsearch_dsl.query import Q
 
 def get_fake_api_context(url='/'):
     factory = APIRequestFactory()
-    request = factory.get(url)
+    host = settings.SITE_URL.split('/')[-1]
+    request = factory.get(url, HTTP_HOST=host)
 
     return {
         'request': Request(request),
