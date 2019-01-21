@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=name url=url days=days %}Hello {{ name }},
+
+Your data export is ready for download:
+
+{{ url }}
+
+This download will work for {{ days }} days or until you generate the next export.
+
+Cheers
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

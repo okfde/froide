@@ -7,6 +7,7 @@ from .views import (
     new_terms, logout, login, signup, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
+    create_export, download_export,
     CustomPasswordResetConfirmView
 )
 from .import oauth_urls
@@ -34,4 +35,9 @@ urlpatterns = [
         name='account-password_reset_confirm'),
     url(r'^go/(?P<user_id>\d+)/(?P<secret>\w{32})(?P<url>/.*)$', go,
         name='account-go'),
+    url(r'^export/$', create_export,
+        name='account-create_export'),
+    url(r'^export/download/$', download_export,
+        name='account-download_export'),
+
 ]

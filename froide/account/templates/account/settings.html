@@ -71,6 +71,25 @@
 
     <hr/>
 
+    <div id="export" class="card mb-3">
+      <h5 class="card-header">
+        {% trans "Export your data" %}
+      </h5>
+      <div class="card-body">
+        <form action="{% url 'account-create_export' %}" method="post">
+          {% csrf_token %}
+          <p>
+            {% trans "We will generate a data export and notify you by email when it is ready." %}
+          </p>
+          <button type="submit" class="btn btn-secondary">
+            {% trans "Request data export" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <hr/>
+
     <div id="delete-account-section" class="card">
       <h5 class="card-header">
         {% blocktrans %}Delete your account{% endblocktrans %}

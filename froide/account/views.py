@@ -6,7 +6,10 @@ from django.http import Http404
 from django.contrib import auth
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.html import format_html
+from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, RedirectView
@@ -19,6 +22,7 @@ from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
         UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
 from .services import AccountService
 from .utils import start_cancel_account_process
+from .export import get_export_url, request_export
 
 
 class AccountView(RedirectView):
@@ -377,3 +381,40 @@ def csrf_failure(request, reason=''):
         'You probably do not have cookies enabled, but you need cookies to '
         'use this site! Cookies are only ever sent securely. The technical '
         'reason is: %(reason)s') % {'reason': reason})
+
+
+@login_required
+def create_export(request):
+    if request.method == 'POST':
+        result = request_export(request.user)
+        if result is None:
+            messages.add_message(request, messages.SUCCESS,
+                _('Your export has been started. '
+                  'You will receive an email when it is finished.'))
+        else:
+            if result is True:
+                messages.add_message(request, messages.INFO,
+                    _('Your export is currently being created. '
+                      'You will receive an email once it is available.'),
+                )
+            else:
+                messages.add_message(request, messages.INFO,
+                    format_html(
+                        _('Your next export will be possible at {date}. '
+                        '<a href="{url}">You can download your current '
+                        'export here</a>.'),
+                        date=formats.date_format(result, 'SHORT_DATETIME_FORMAT'),
+                        url=reverse('account-download_export')
+                    )
+                )
+
+    return redirect(reverse('account-settings'))
+
+
+@login_required
+def download_export(request):
+    url = get_export_url(request.user)
+    if not url:
+
+        return redirect(reverse('account-settings') + '#export')
+    return redirect(url)
