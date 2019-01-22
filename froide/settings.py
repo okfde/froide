@@ -405,6 +405,7 @@ class Base(Configuration):
             'read:email': _('Read user email'),
             'read:request': _('Read my (private) requests'),
             'make:request': _('Make requests on my behalf'),
+            'follow:request': _('Follow/Unfollow requests'),
         }
     }
     OAUTH2_PROVIDER_APPLICATION_MODEL = 'account.Application'

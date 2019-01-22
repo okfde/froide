@@ -12,6 +12,11 @@ from froide.helper.email_sending import send_mail
 
 
 class FoiRequestFollowerManager(models.Manager):
+    def get_followable_requests(self, user):
+        return FoiRequest.objects.exclude(
+            user=user
+        ).exclude(visibility=0)
+
     def follow(self, request, user, email=None, **kwargs):
         if user.is_authenticated:
             following = request.followed_by(user)
@@ -58,6 +63,7 @@ class FoiRequestFollower(models.Model):
     request = models.ForeignKey(
         FoiRequest,
         on_delete=models.CASCADE,
+        related_name='followers',
         verbose_name=_("Freedom of Information Request")
     )
     user = models.ForeignKey(

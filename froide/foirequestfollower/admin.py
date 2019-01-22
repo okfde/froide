@@ -4,7 +4,7 @@ from .models import FoiRequestFollower
 
 
 class FoiRequestFollowerAdmin(admin.ModelAdmin):
-    pass
+    raw_id_fields = ('user', 'request',)
 
 
 admin.site.register(FoiRequestFollower, FoiRequestFollowerAdmin)

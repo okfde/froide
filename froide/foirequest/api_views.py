@@ -32,6 +32,17 @@ from .documents import FoiRequestDocument
 User = get_user_model()
 
 
+def filter_foirequests(user, token):
+    vis_filter = Q(visibility=FoiRequest.VISIBLE_TO_PUBLIC)
+    if user.is_authenticated:
+        # Either not OAuth or OAuth and valid token
+        if not token and user.is_superuser:
+            return FoiRequest.objects.all()
+        if not token or token.is_valid(['read:request']):
+            vis_filter |= Q(user=user)
+    return FoiRequest.objects.filter(vis_filter)
+
+
 def filter_by_user_queryset(request):
     user_filter = Q(is_active=True, private=False)
     if request is None or not request.user.is_authenticated:
@@ -403,14 +414,7 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
     def get_queryset(self):
         user = self.request.user
         token = self.request.auth
-        vis_filter = Q(visibility=FoiRequest.VISIBLE_TO_PUBLIC)
-        if user.is_authenticated:
-            # Either not OAuth or OAuth and valid token
-            if not token and user.is_superuser:
-                return self.optimize_query(FoiRequest.objects.all())
-            if not token or token.is_valid(['read:request']):
-                vis_filter |= Q(user=user)
-        return self.optimize_query(FoiRequest.objects.filter(vis_filter))
+        return self.optimize_query(filter_foirequests(user, token))
 
     def optimize_query(self, qs):
         extras = ()
