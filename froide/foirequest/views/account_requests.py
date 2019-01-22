@@ -143,7 +143,7 @@ class FollowingRequestsView(BaseAccountMixin, ListView):
         if self.query:
             query_kwargs = {'title__icontains': self.query}
         return FoiRequest.objects.filter(
-                foirequestfollower__user=self.request.user, **query_kwargs)
+                followers__user=self.request.user, **query_kwargs)
 
 
 class DraftRequestsView(BaseAccountMixin, ListView):
