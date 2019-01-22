@@ -104,7 +104,10 @@ class EmailMessageHandler(MessageHandler):
         # Use send_foi_mail here
         from_addr = make_address(
             request.secret_address,
-            request.user.get_full_name()
+            '{} [#{}]'.format(
+                request.user.get_full_name(),
+                request.id
+            )
         )
         get_notified = (message.sender_user.is_superuser and
                         not request.public)
