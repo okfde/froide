@@ -229,7 +229,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk'
     )
     public_body = SimplePublicBodySerializer(read_only=True)
-    law = serializers.HyperlinkedIdentityField(
+    law = serializers.HyperlinkedRelatedField(
         read_only=True, view_name='api:law-detail', lookup_field='pk'
     )
     jurisdiction = serializers.HyperlinkedRelatedField(
