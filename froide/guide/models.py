@@ -94,6 +94,7 @@ class Guidance(models.Model):
 class Rule(models.Model):
     name = models.CharField(max_length=255)
     priority = models.SmallIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
 
     includes = models.TextField(blank=True)
     excludes = models.TextField(blank=True)
