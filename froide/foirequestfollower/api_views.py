@@ -4,7 +4,9 @@ from django.db.models import (
     Case, When
 )
 
-from rest_framework import serializers, viewsets, mixins
+from rest_framework import serializers, viewsets, mixins, status
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from oauth2_provider.contrib.rest_framework import TokenHasScope
 
@@ -13,6 +15,8 @@ from froide.foirequest.models.request import (
 )
 from froide.foirequest.auth import can_read_foirequest_authenticated
 from froide.foirequest.api_views import filter_foirequests
+from froide.helper.api_utils import CustomLimitOffsetPagination
+
 from .models import FoiRequestFollower
 
 
@@ -98,6 +102,11 @@ class FoiRequestFollowRequestSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk',
         read_only=True
     )
+    resource_uri = serializers.HyperlinkedRelatedField(
+        view_name='api:following-detail',
+        lookup_field='pk',
+        read_only=True
+    )
     request_url = serializers.SerializerMethodField(
         source='get_absolute_domain_url',
         read_only=True
@@ -108,11 +117,16 @@ class FoiRequestFollowRequestSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = FoiRequest
-        fields = ('request', 'request_url',
+        fields = ('request', 'request_url', 'resource_uri',
                   'follow_count', 'follows', 'can_follow')
 
     def get_request_url(self, obj):
         return get_absolute_domain_short_url(obj.id)
+
+
+class LargeResultsSetPagination(CustomLimitOffsetPagination):
+    default_limit = 150
+    max_limit = 200
 
 
 class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
@@ -123,6 +137,7 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
     permission_classes = (CreateOnlyWithScopePermission,)
     read_scopes = ['read:request']
     required_scopes = ['follow:request']
+    pagination_class = LargeResultsSetPagination
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -145,6 +160,7 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
             )
             qs = qs.annotate(
                 follows=Exists(follows),
+                resource_uri=Subquery(follows.values('pk')),
                 can_follow=Case(
                     When(user_id=user.id, then=Value(False)),
                     default=Value(True),
@@ -203,5 +219,17 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
         )
         return qs
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        data = {
+            'status': 'success',
+            'url': reverse('api:following-detail', kwargs={'pk': instance.pk},
+                           request=request)
+        }
+        headers = {'Location': data['url']}
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        return serializer.save(user=self.request.user)
