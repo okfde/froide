@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-21 15:02+0100\n"
-"PO-Revision-Date: 2019-01-21 15:06+0100\n"
+"POT-Creation-Date: 2019-01-23 10:10+0100\n"
+"PO-Revision-Date: 2019-01-23 10:15+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -47,7 +47,7 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:10 froide/settings.py:228 froide/settings.py:607
+#: froide/_local_settings.py:10 froide/settings.py:228 froide/settings.py:609
 msgid "German"
 msgstr "Deutsch"
 
@@ -169,7 +169,7 @@ msgstr "Nutzer deaktivieren"
 msgid "Account"
 msgstr "Account"
 
-#: froide/account/export.py:142
+#: froide/account/export.py:140
 msgid "Your data export is ready"
 msgstr "Ihr Datenexport ist fertig"
 
@@ -1395,7 +1395,7 @@ msgstr "Hat Empfänger-Behörde"
 msgid "Has delivery status"
 msgstr "Hat Zustellungsstatus"
 
-#: froide/foirequest/admin.py:307 froide/foirequest/models/message.py:485
+#: froide/foirequest/admin.py:307 froide/foirequest/models/message.py:486
 msgid "delivery status"
 msgstr "Zustellungsstatus"
 
@@ -2119,14 +2119,14 @@ msgstr "Entwurf \"{subject}\" von {user}"
 #: froide/foirequest/models/event.py:31 froide/foirequest/models/message.py:53
 #: froide/foirequest/models/request.py:325
 #: froide/foirequest/models/suggestion.py:12
-#: froide/foirequestfollower/models.py:61
+#: froide/foirequestfollower/models.py:67
 msgid "Freedom of Information Request"
 msgstr "Informationsfreiheitsanfrage"
 
 #: froide/foirequest/models/event.py:35 froide/foirequest/models/project.py:65
 #: froide/foirequest/models/request.py:273
 #: froide/foirequest/models/suggestion.py:18
-#: froide/foirequestfollower/models.py:65 froide/frontpage/models.py:30
+#: froide/foirequestfollower/models.py:71 froide/frontpage/models.py:30
 msgid "User"
 msgstr "Nutzer"
 
@@ -2390,49 +2390,49 @@ msgstr "Nachricht in '%(request)s' um %(time)s"
 msgid "message-%(id)d"
 msgstr "nachricht-%(id)d"
 
-#: froide/foirequest/models/message.py:184
-#: froide/foirequest/models/message.py:193
+#: froide/foirequest/models/message.py:185
+#: froide/foirequest/models/message.py:194
 #, python-brace-format
 msgid "{name} (via {via})"
 msgstr "{name} (per {via})"
 
-#: froide/foirequest/models/message.py:465
+#: froide/foirequest/models/message.py:466
 msgid "unknown"
 msgstr "unbekannt"
 
-#: froide/foirequest/models/message.py:466
+#: froide/foirequest/models/message.py:467
 msgid "sending"
 msgstr "wird gesendet"
 
-#: froide/foirequest/models/message.py:467
+#: froide/foirequest/models/message.py:468
 msgid "sent"
 msgstr "gesendet"
 
-#: froide/foirequest/models/message.py:468
+#: froide/foirequest/models/message.py:469
 msgid "received"
 msgstr "erhalten"
 
-#: froide/foirequest/models/message.py:469
+#: froide/foirequest/models/message.py:470
 msgid "read"
 msgstr "gelesen"
 
-#: froide/foirequest/models/message.py:470
+#: froide/foirequest/models/message.py:471
 msgid "deferred"
 msgstr "zurückgestellt"
 
-#: froide/foirequest/models/message.py:471
+#: froide/foirequest/models/message.py:472
 msgid "bounced"
 msgstr "abgewiesen"
 
-#: froide/foirequest/models/message.py:472
+#: froide/foirequest/models/message.py:473
 msgid "expired"
 msgstr "abgelaufen"
 
-#: froide/foirequest/models/message.py:473
+#: froide/foirequest/models/message.py:474
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: froide/foirequest/models/message.py:486
+#: froide/foirequest/models/message.py:487
 msgid "delivery statii"
 msgstr "Zustellungsstatus"
 
@@ -3569,6 +3569,7 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/emails/request_update.txt:1
 #: froide/foirequestfollower/templates/foirequestfollower/instant_update_follower.txt:1
 #: froide/foirequestfollower/templates/foirequestfollower/update_follower.txt:1
+#: froide/guide/templates/guide/emails/new_guidance.txt:1
 #: froide/problem/templates/problem/email_problem_resolved.txt:1
 #, python-format
 msgid "Hello %(name)s,"
@@ -5524,30 +5525,30 @@ msgstr ""
 msgid "You cannot follow your own requests."
 msgstr "Sie erhalten schon Benachrichtigungen für Ihre Anfragen."
 
-#: froide/foirequestfollower/models.py:68
+#: froide/foirequestfollower/models.py:74
 msgid "Timestamp of Following"
 msgstr "Zeitstempel des Abos"
 
-#: froide/foirequestfollower/models.py:76
+#: froide/foirequestfollower/models.py:82
 msgid "Request Follower"
 msgstr "Anfrage-Abo"
 
-#: froide/foirequestfollower/models.py:77
+#: froide/foirequestfollower/models.py:83
 msgid "Request Followers"
 msgstr "Anfrage-Abos"
 
-#: froide/foirequestfollower/models.py:80
+#: froide/foirequestfollower/models.py:86
 #, python-format
 msgid "%(user)s follows %(request)s"
 msgstr "%(user)s erhält Benachrichtigungen für %(request)s"
 
-#: froide/foirequestfollower/models.py:115
+#: froide/foirequestfollower/models.py:121
 msgid "Please confirm that you want to follow this request"
 msgstr ""
 "Bitte bestätigen Sie, dass Sie Benachrichtigungen für diese Anfrage erhalten "
 "möchten"
 
-#: froide/foirequestfollower/models.py:134
+#: froide/foirequestfollower/models.py:140
 #, python-format
 msgid "Update on one followed request"
 msgid_plural "Update on %(count)s followed requests"
@@ -5856,6 +5857,10 @@ msgstr "Geographische Region"
 msgid "Geo Regions"
 msgstr "Geographische Regionen"
 
+#: froide/guide/admin.py:35
+msgid "Has rule"
+msgstr "Hat Regel"
+
 #: froide/guide/apps.py:7
 msgid "Guide"
 msgstr "Berater"
@@ -5888,6 +5893,46 @@ msgstr "Regel"
 msgid "Rules"
 msgstr "Regeln"
 
+#: froide/guide/templates/guide/emails/new_guidance.txt:3
+#, python-format
+msgid "You recently received a reply to your request “%(title)s”."
+msgstr ""
+"Sie haben vor kurzem eine Antwort auf Ihre Anfrage „%(title)s“ erhalten."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:4
+msgid "You recently received replies to some of your requests."
+msgstr ""
+"Sie haben vor kurzem Antworten auf einige Ihrer Anfragen bei FragDenStaat.de "
+"erhalten."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:6
+msgid ""
+"We can now provide you with the following guidance concerning how you can "
+"procede."
+msgstr ""
+"Wir können Ihnen nun folgenden Hinweis geben, wie Sie sich verhalten können."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:11
+msgid "This guidance comes with a snippet you can use to reply."
+msgstr "Dieser Hinweis gibt Ihnen auch einen Textbaustein für Ihre Antwort."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:13
+msgid "This guidance applies to the following messages:"
+msgstr "Dieser Hinweis betrifft diese Nachrichten:"
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:20
+msgid "We hope this information can help you."
+msgstr "Wir hoffen, dass dieser Hinweis Ihnen weiterhilft."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:22
+#, python-format
+msgid ""
+"Cheers\n"
+"%(site_name)s"
+msgstr ""
+"Beste Grüße,\n"
+"%(site_name)s"
+
 #: froide/guide/templates/guide/guidance.html:16
 msgid "Suggested reply"
 msgstr "Antwortvorschlag"
@@ -5896,9 +5941,26 @@ msgstr "Antwortvorschlag"
 msgid "Add to reply"
 msgstr "Zur Antwort hinzufügen"
 
-#: froide/guide/templates/guide/guidance.html:38
+#: froide/guide/templates/guide/guidance.html:39
+msgid "In admin"
+msgstr "Im Admin"
+
+#: froide/guide/templates/guide/guidance.html:42
+msgid "Add custom"
+msgstr "Eigene hinzufügen"
+
+#: froide/guide/templates/guide/guidance.html:44
 msgid "Rerun guidance"
 msgstr "Beratung aktualisieren"
+
+#: froide/guide/utils.py:175
+#, python-format
+msgid "New guidance for your request [#%s]"
+msgstr "Neuer Hinweis zu Ihrer Anfrage [#%s]"
+
+#: froide/guide/utils.py:177
+msgid "New guidance for your requests"
+msgstr "Neue Hinweise zu Ihren Anfragen"
 
 #: froide/guide/views.py:25
 msgid "Guidance refreshed for message."
@@ -8305,6 +8367,3 @@ msgstr "zustaendigkeit"
 
 #~ msgid "As a moderator you are still able to publish it."
 #~ msgstr "As a moderator you are still able to publish it."
-
-#~ msgid "You received a reply to your Freedom of Information Request"
-#~ msgstr "You received a reply to your Freedom of Information Request"
