@@ -30,11 +30,4 @@ def render_guidance(context, message):
 def should_show_guidance(message, request):
     if not message.is_publicbody_response:
         return False
-    return request.user.has_perm('guide.can_run_guidance')
-
-
-@register.filter
-def can_act_guidance(message, request):
-    if not message.is_publicbody_response:
-        return False
-    return request.user.has_perm('guide.can_run_guidance')
+    return True
