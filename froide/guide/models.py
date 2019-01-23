@@ -40,6 +40,15 @@ class Action(models.Model):
     def __str__(self):
         return self.name
 
+    def get_description(self):
+        return self.description
+
+    def get_label(self):
+        return self.label
+
+    def get_snippet(self):
+        return self.snippet
+
 
 class Guidance(models.Model):
     message = models.ForeignKey(FoiMessage, on_delete=models.CASCADE)
