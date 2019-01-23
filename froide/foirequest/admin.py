@@ -311,6 +311,24 @@ class FoiMessageAdmin(admin.ModelAdmin):
         qs = qs.select_related('deliverystatus')
         return qs
 
+    def run_guidance(self, request, queryset):
+        self._run_guidance(queryset, notify=True)
+        self.message_user(request,
+            _("Guidance is being run against selected messages. Users are notified."))
+    run_guidance.short_description = _("Run guidance with user notifications")
+
+    def run_guidance(self, request, queryset):
+        self._run_guidance(queryset, notify=False)
+        self.message_user(request,
+            _("Guidance is being run against selected messages."))
+    run_guidance.short_description = _("Run guidance")
+
+    def _run_guidance(self, queryset, notify=False):
+        from froide.guide.tasks import run_guidance_on_queryset_task
+
+        message_ids = queryset.values_list('id', flat=True)
+        run_guidance_on_queryset_task.delay(message_ids, notify=notify)
+
     def get_deliverystatus_display(self, obj):
         return obj.deliverystatus.get_status_display()
     get_deliverystatus_display.short_description = _('delivery status')
