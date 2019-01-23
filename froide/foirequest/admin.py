@@ -295,7 +295,10 @@ class FoiMessageAdmin(admin.ModelAdmin):
         DeliveryStatusInline,
         FoiAttachmentInline,
     ]
-    actions = ['check_delivery_status', 'resend_messages']
+    actions = [
+        'check_delivery_status', 'resend_messages',
+        'run_guidance', 'run_guidance_notify'
+    ]
 
     def get_urls(self):
         urls = super(FoiMessageAdmin, self).get_urls()
@@ -311,11 +314,11 @@ class FoiMessageAdmin(admin.ModelAdmin):
         qs = qs.select_related('deliverystatus')
         return qs
 
-    def run_guidance(self, request, queryset):
+    def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)
         self.message_user(request,
             _("Guidance is being run against selected messages. Users are notified."))
-    run_guidance.short_description = _("Run guidance with user notifications")
+    run_guidance_notify.short_description = _("Run guidance with user notifications")
 
     def run_guidance(self, request, queryset):
         self._run_guidance(queryset, notify=False)
