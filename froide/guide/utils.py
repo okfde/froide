@@ -115,7 +115,7 @@ class GuidanceApplicator:
         )
 
 
-def apply_guidance(message):
+def run_guidance(message):
     if not message.is_response:
         return
 
@@ -125,11 +125,11 @@ def apply_guidance(message):
 
 def apply_guidance_generator(queryset):
     for message in queryset:
-        result = apply_guidance(message)
+        result = run_guidance(message)
         yield message, result
 
 
-def run_guidance(queryset, notify=False):
+def run_guidance_on_queryset(queryset, notify=False):
     queryset = queryset.order_by('request__user_id')
 
     gen = apply_guidance_generator(queryset)
