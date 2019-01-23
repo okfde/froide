@@ -132,6 +132,8 @@ def run_guidance(message, active_only=True):
 def apply_guidance_generator(queryset):
     for message in queryset:
         result = run_guidance(message)
+        if result is None:
+            continue
         yield message, result
 
 
@@ -172,7 +174,7 @@ def send_notifications(notifications):
     for message, result in notifications:
         requests.add(message.request_id)
         for guidance in result.guidances:
-            guidance_mapping[guidance].append(
+            guidance_mapping[guidance.action or guidance].append(
                 message
             )
     requests = list(requests)
