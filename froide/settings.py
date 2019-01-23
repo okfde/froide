@@ -359,7 +359,7 @@ class Base(Configuration):
         },
         'bounce-checker': {
             'task': 'froide.bounce.tasks.check_bounces',
-            'schedule': crontab(hour=7, minute=0),
+            'schedule': crontab(hour=3, minute=0),
         },
 
     }
