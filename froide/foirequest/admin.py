@@ -23,9 +23,12 @@ from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
 from froide.helper.document import can_convert_to_pdf
 
-from .models import (FoiRequest, FoiMessage, FoiProject,
-        FoiAttachment, FoiEvent, PublicBodySuggestion, MessageTag,
-        DeferredMessage, TaggedFoiRequest, RequestDraft, DeliveryStatus)
+from .models import (
+    FoiRequest, FoiMessage, FoiProject,
+    FoiAttachment, FoiEvent, PublicBodySuggestion, MessageTag,
+    TaggedMessage, DeferredMessage, TaggedFoiRequest,
+    RequestDraft, DeliveryStatus,
+)
 from .tasks import count_same_foirequests, convert_attachment_task
 from .widgets import AttachmentFileWidget
 
@@ -259,6 +262,10 @@ class DeliveryStatusInline(admin.TabularInline):
     readonly_fields = ('log', 'status', 'last_update')
 
 
+class MessageTagsFilter(TaggitListFilter):
+    tag_class = TaggedMessage
+
+
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
@@ -274,6 +281,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         'sender_user__is_active',
         'sender_user__is_blocked',
         'sender_user__is_deleted',
+        MessageTagsFilter,
     )
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
