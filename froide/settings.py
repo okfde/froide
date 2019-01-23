@@ -361,7 +361,10 @@ class Base(Configuration):
             'task': 'froide.bounce.tasks.check_bounces',
             'schedule': crontab(hour=3, minute=0),
         },
-
+        'account-maintenance': {
+            'task': 'froide.account.tasks.account_maintenance_task',
+            'schedule': crontab(hour=4, minute=0)
+        }
     }
 
     CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(True)
