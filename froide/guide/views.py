@@ -18,7 +18,7 @@ def rerun_rules(request, message_id):
 
     message = get_object_or_404(FoiMessage, id=message_id)
 
-    run_guidance(message)
+    run_guidance(message, active_only=False)
 
     messages.add_message(
         request, messages.SUCCESS,

@@ -16,15 +16,21 @@ GuidanceResult = namedtuple(
 
 
 class GuidanceApplicator:
-    def __init__(self, message):
+    def __init__(self, message, active_only=True):
         self.message = message
         self.created_count = 0
         self.deleted_count = 0
+        self.active_only = active_only
 
     def filter_rules(self, rules=None):
         foirequest = self.message.request
         if rules is None:
             rules = Rule.objects.all()
+
+        if self.active_only:
+            rules = rules.filter(
+                is_active=True
+            )
 
         rules = rules.filter(
             Q(jurisdictions=None) | Q(jurisdictions=foirequest.jurisdiction)
@@ -115,11 +121,11 @@ class GuidanceApplicator:
         )
 
 
-def run_guidance(message):
+def run_guidance(message, active_only=True):
     if not message.is_response:
         return
 
-    applicator = GuidanceApplicator(message)
+    applicator = GuidanceApplicator(message, active_only=active_only)
     return applicator.run()
 
 
