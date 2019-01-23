@@ -71,7 +71,7 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
             can_see_attachment(a, can_write)]
         message.hidden_attachments = [
             a for a in message.listed_attachments
-            if a.is_mail_decoration
+            if a.is_irrelevant
         ]
 
         for att in message.all_attachments:

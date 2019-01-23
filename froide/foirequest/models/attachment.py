@@ -96,11 +96,23 @@ class FoiAttachment(models.Model):
 
     @property
     def is_image(self):
-        return self.filetype in IMAGE_FILETYPES or self.name.endswith(('.jpg', '.jpeg', '.gif', '.png'))
+        return (
+            self.filetype.startswith('image/') or
+            self.filetype in IMAGE_FILETYPES or
+            self.name.endswith(('.jpg', '.jpeg', '.gif', '.png'))
+        )
 
     @property
     def is_mail_decoration(self):
         return self.is_image and self.size and self.size < 1024 * 15
+
+    @property
+    def is_irrelevant(self):
+        return self.is_mail_decoration or self.is_signature
+
+    @property
+    def is_signature(self):
+        return self.name.endswith(('.p7s', '.vcf', '.asc')) and self.size < 1024 * 15
 
     @property
     def can_embed(self):
