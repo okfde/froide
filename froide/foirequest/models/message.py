@@ -155,25 +155,26 @@ class FoiMessage(models.Model):
     def get_html_id(self):
         return _("message-%(id)d") % {"id": self.id}
 
+    def get_request_link(self, url):
+        return '%s#%s' % (url, self.get_html_id())
+
     def get_absolute_url(self):
-        return "%s#%s" % (self.request.get_absolute_url(),
-                          self.get_html_id())
+        return self.get_request_link(self.request.get_absolute_url())
 
     def get_absolute_short_url(self):
-        return "%s#%s" % (self.request.get_absolute_short_url(),
-                          self.get_html_id())
+        return self.get_request_link(self.request.get_absolute_short_url())
 
     def get_absolute_domain_short_url(self):
-        return "%s#%s" % (self.request.get_absolute_domain_short_url(),
-                          self.get_html_id())
+        return self.get_request_link(self.request.get_absolute_domain_short_url())
 
     def get_absolute_domain_url(self):
-        return "%s#%s" % (self.request.get_absolute_domain_url(),
-                          self.get_html_id())
+        return self.get_request_link(self.request.get_absolute_domain_url())
 
     def get_accessible_link(self):
-        return "%s#%s" % (self.request.get_accessible_link(),
-                          self.get_html_id())
+        return self.get_request_link(self.request.get_accessible_link())
+
+    def get_auth_link(self):
+        return self.get_request_link(self.request.get_auth_link())
 
     def get_text_recipient(self):
         if not self.is_response:

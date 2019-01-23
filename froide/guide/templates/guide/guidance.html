@@ -35,6 +35,12 @@
   {% if request.user.is_staff %}
     <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post" class="text-right mt-1">
       {% csrf_token %}
+      <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" class="btn btn-sm btn-light" target="_blank">
+        {% trans "In admin" %}
+      </a>
+      <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" class="btn btn-sm btn-light" target="_blank">
+        {% trans "Add custom" %}
+      </a>
       <button type="submit" class="btn btn-sm btn-info">{% trans "Rerun guidance" %}</button>
     </form>
   {% endif %}

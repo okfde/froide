@@ -237,7 +237,7 @@
     </div>
   </div>
   {% if message|should_show_guidance:request %}
-    <div class="message-guidance">
+    <div id="{{ message.get_html_id }}-guidance" class="message-guidance">
       {% render_guidance message %}
     </div>
   {% endif %}

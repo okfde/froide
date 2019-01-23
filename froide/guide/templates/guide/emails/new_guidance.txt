@@ -1,0 +1,25 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=name %}Hello {{ name }},{% endblocktrans %}
+
+{% if single_request %}{% blocktrans with title=request_title %}You recently received a reply to your request “{{ title }}”.{% endblocktrans %}
+{% else %}{% blocktrans %}You recently received replies to some of your requests.{% endblocktrans %}
+{% endif %}
+{% trans "We can now provide you with the following guidance concerning how you can procede." %}
+{% for guidance, messages in guidances %}
+## {{ guidance.get_label }}
+{{ guidance.get_description }}
+{% if guidance.get_snippet %}
+{% trans "This guidance comes with a snippet you can use to reply." %}
+{% endif %}
+{% trans "This guidance applies to the following messages:" %}
+
+{% for message in messages %}{{ message.request.title }}
+{{ message.get_auth_link }}-guidance
+
+{% endfor %}{% endfor %}
+
+{% trans "We hope this information can help you." %}
+
+{% blocktrans %}Cheers
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

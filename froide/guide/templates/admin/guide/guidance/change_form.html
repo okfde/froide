@@ -1,0 +1,13 @@
+{% extends "admin/change_form.html" %}
+{% block after_field_sets %}
+  <script>
+  (function(){
+    var query = window.location.search;
+    var match = query.match(/\?prefill_message=(\d+)$/);
+    if (match) {
+      document.getElementById('id_message').value = match[1]
+      document.getElementById('id_user').value = '{{ request.user.id }}';
+    }
+  }())
+  </script>
+{% endblock %}
