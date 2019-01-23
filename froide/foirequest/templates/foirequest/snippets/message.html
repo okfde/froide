@@ -171,8 +171,24 @@
       </h6>
       <div class="attachment-deck mb-3">
         {% for attachment in message.listed_attachments %}
-          {% include "foirequest/snippets/attachment.html" %}
+          {% if attachment not in message.hidden_attachments %}
+            {% include "foirequest/snippets/attachment.html" %}
+          {% endif %}
         {% endfor %}
+        {% if message.hidden_attachments %}
+          <a data-toggle="collapse" href="#{{ message.get_html_id }}-decoattachments" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-decoattachments" class="text-muted">
+            {% if message.hidden_attachments|length == message.listed_attachments|length %}
+              {% trans "Show irrelevant attachments" %}
+            {% else %}
+              {% trans "Show other irrelevant attachments" %}
+            {% endif %}
+          </a>
+          <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
+          {% for attachment in message.hidden_attachments %}
+            {% include "foirequest/snippets/attachment.html" %}
+          {% endfor %}
+          </div>
+        {% endif %}
       </div>
     {% endif %}
 

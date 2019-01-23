@@ -9,7 +9,9 @@ from django.core.signing import (
 
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
-from froide.helper.document import PDF_FILETYPES, EMBEDDABLE_FILETYPES
+from froide.helper.document import (
+    PDF_FILETYPES, EMBEDDABLE_FILETYPES, IMAGE_FILETYPES
+)
 from froide.document.models import Document
 
 from .message import FoiMessage
@@ -93,6 +95,14 @@ class FoiAttachment(models.Model):
         )
 
     @property
+    def is_image(self):
+        return self.filetype in IMAGE_FILETYPES or self.name.endswith(('.jpg', '.jpeg', '.gif', '.png'))
+
+    @property
+    def is_mail_decoration(self):
+        return self.is_image and self.size and self.size < 1024 * 15
+
+    @property
     def can_embed(self):
         return self.filetype in EMBEDDABLE_FILETYPES or self.is_pdf
 
@@ -140,6 +150,9 @@ class FoiAttachment(models.Model):
         if self.file:
             return self.file.path
         return ''
+
+    def get_authenticated_absolute_domain_file_url(self):
+        return self.get_absolute_domain_file_url(authenticated=True)
 
     def get_absolute_domain_file_url(self, authenticated=False):
         return '%s%s' % (
