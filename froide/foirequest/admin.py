@@ -16,7 +16,7 @@ from django.utils import timezone
 
 from froide.helper.admin_utils import (
     make_nullfilter, make_greaterzerofilter, AdminTagAllMixIn,
-    ForeignKeyFilter, TaggitListFilter
+    ForeignKeyFilter, TaggitListFilter, SearchFilter
 )
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fk_form_class
@@ -282,6 +282,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         'sender_user__is_blocked',
         'sender_user__is_deleted',
         MessageTagsFilter,
+        ('request__reference', SearchFilter)
     )
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)

@@ -249,7 +249,7 @@ class ForeignKeyFilter(admin.FieldListFilter):
     template = "helper/admin/fk_filter.html"
 
     def __init__(self, field, request, params, model, model_admin, field_path):
-        super(ForeignKeyFilter, self).__init__(
+        super().__init__(
             field, request, params, model, model_admin, field_path)
         self.lookup_val = request.GET.get(self.field_path, None)
 
@@ -263,3 +263,15 @@ class ForeignKeyFilter(admin.FieldListFilter):
             'query_string': cl.get_query_string({},
                 [self.field_path]),
         }]
+
+
+class SearchFilter(ForeignKeyFilter):
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        super().__init__(
+            field, request, params, model, model_admin, field_path)
+
+        self.lookup_val = request.GET.get(self.field_path, None)
+        param = self.field_path
+        val = self.used_parameters.pop(param, None)
+        if val is not None:
+            self.used_parameters['{}__startswith'.format(param)] = val
