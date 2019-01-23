@@ -172,18 +172,6 @@ export default {
 <style lang="scss" scoped>
   @import "../../../styles/variables";
 
-  .modal-mask {
-    position: fixed;
-    z-index: 9998;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, .5);
-    display: flex;
-    transition: opacity .3s ease;
-  }
-
   .review-body-text {
     color: #333;
     border: 1px solid #333;

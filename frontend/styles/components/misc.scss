@@ -80,3 +80,18 @@ input.copy-text {
 .aspect-ratio-4x3 {
   padding-bottom: 75%;
 }
+
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: flex;
+  transition: opacity .3s ease;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
