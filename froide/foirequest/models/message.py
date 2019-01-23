@@ -176,6 +176,9 @@ class FoiMessage(models.Model):
     def get_auth_link(self):
         return self.get_request_link(self.request.get_auth_link())
 
+    def get_autologin_url(self):
+        return self.get_request_link(self.request.get_autologin_url())
+
     def get_text_recipient(self):
         if not self.is_response:
             alternative = self.recipient

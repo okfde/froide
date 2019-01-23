@@ -4,16 +4,16 @@
 {% else %}{% blocktrans %}You recently received replies to some of your requests.{% endblocktrans %}
 {% endif %}
 {% trans "We can now provide you with the following guidance concerning how you can procede." %}
-{% for guidance, messages in guidances %}
-## {{ guidance.get_label }}
-{{ guidance.get_description }}
-{% if guidance.get_snippet %}
+{% for action, messages in guidances %}
+## {{ action.get_label }}
+{{ action.get_description }}
+{% if action.get_snippet %}
 {% trans "This guidance comes with a snippet you can use to reply." %}
 {% endif %}
 {% trans "This guidance applies to the following messages:" %}
 
 {% for message in messages %}{{ message.request.title }}
-{{ message.get_auth_link }}-guidance
+{{ message.get_autologin_url }}-guidance
 
 {% endfor %}{% endfor %}
 

@@ -428,6 +428,11 @@ class FoiRequest(models.Model):
             return self.get_auth_link()
         return self.get_absolute_domain_short_url()
 
+    def get_autologin_url(self):
+        return self.user.get_autologin_url(
+            self.get_absolute_short_url()
+        )
+
     def is_public(self):
         return self.visibility == self.VISIBLE_TO_PUBLIC
 
