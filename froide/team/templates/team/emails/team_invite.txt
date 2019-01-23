@@ -11,3 +11,4 @@ If you don't have an account on {{ site_name }} yet, you have to create one firs
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
+{% include "emails/footer.txt" %}
