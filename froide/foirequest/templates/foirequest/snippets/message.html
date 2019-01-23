@@ -177,11 +177,7 @@
         {% endfor %}
         {% if message.hidden_attachments %}
           <a data-toggle="collapse" href="#{{ message.get_html_id }}-decoattachments" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-decoattachments" class="text-muted">
-            {% if message.hidden_attachments|length == message.listed_attachments|length %}
-              {% trans "Show irrelevant attachments" %}
-            {% else %}
-              {% trans "Show other irrelevant attachments" %}
-            {% endif %}
+            {% trans "Show irrelevant attachments" %}
           </a>
           <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
           {% for attachment in message.hidden_attachments %}
