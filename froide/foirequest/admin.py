@@ -391,11 +391,15 @@ class MessageTagAdmin(admin.ModelAdmin):
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted', 'document')
     ordering = ('-id',)
-    list_display = ('name', 'filetype', 'admin_link_message',
-                    'approved', 'can_approve',)
-    list_filter = ('can_approve', 'approved', 'is_redacted', 'is_converted',
-                   make_nullfilter('redacted', _('Has redacted version')),
-                   make_nullfilter('converted', _('Has converted version'))
+    list_display = (
+        'name', 'filetype', 'size', 'admin_link_message',
+        'approved', 'can_approve',
+    )
+    list_filter = (
+        'can_approve', 'approved', 'is_redacted', 'is_converted',
+        make_nullfilter('redacted', _('Has redacted version')),
+        make_nullfilter('converted', _('Has converted version')),
+        'filetype'
     )
     search_fields = ['name']
     formfield_overrides = {
