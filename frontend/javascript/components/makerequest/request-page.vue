@@ -125,15 +125,15 @@
             @close="showReview = false"
           ></review-request>
 
-          <button v-if="stepWriteRequest && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary" @click="showReview = true">
+          <button v-if="stepWriteRequest && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary mt-3" @click="showReview = true">
             <i class="fa fa-check" aria-hidden="true"></i>
             {{ i18n.reviewRequest }}
           </button>
-          <button v-else-if="stepWriteRequest" type="submit" id="send-request-button" class="btn btn-primary">
+          <button v-else-if="stepWriteRequest" type="submit" id="send-request-button" class="btn btn-primary mt-3">
             <i class="fa fa-send" aria-hidden="true"></i>
             {{ i18n.submitRequest }}
           </button>
-          <button v-if="stepWriteRequest && user.id && showDraft" type="submit" class="btn btn-secondary" name="save_draft" value="true">
+          <button v-if="stepWriteRequest && user.id && showDraft" type="submit" class="btn btn-secondary mt-3" name="save_draft" value="true">
             <i class="fa fa-save" aria-hidden="true"></i>
             {{ i18n.saveAsDraft }}
           </button>
