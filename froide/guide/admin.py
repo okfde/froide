@@ -7,8 +7,8 @@ from .models import Rule, Action, Guidance
 
 
 class RuleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'priority',)
-    list_filter = ('priority',)
+    list_display = ('name', 'priority', 'is_active')
+    list_filter = ('priority', 'is_active')
     search_fields = ('name',)
 
     raw_id_fields = (
