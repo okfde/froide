@@ -10,8 +10,8 @@ from .models import User
 from .tasks import cancel_account_task
 
 
-DAYS_EXPIRE_UNCONFIRMED_USERS = timedelta(days=30)
-DAYS_CANCEL_DEACTIVATED_USERS = timedelta(days=100)
+EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
+CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
 
 
 def send_mail_users(subject, body, users,
@@ -128,7 +128,7 @@ def cancel_user(user):
 
 
 def delete_unconfirmed_users():
-    time_ago = timezone.now() - timedelta(days=DAYS_EXPIRE_UNCONFIRMED_USERS)
+    time_ago = timezone.now() - EXPIRE_UNCONFIRMED_USERS_AGE
     expired_users = User.objects.filter(
         is_active=False,
         is_deleted=False,
@@ -140,7 +140,7 @@ def delete_unconfirmed_users():
 
 
 def delete_deactivated_users():
-    time_ago = timezone.now() - timedelta(days=DAYS_CANCEL_DEACTIVATED_USERS)
+    time_ago = timezone.now() - CANCEL_DEACTIVATED_USERS_AGE
     expired_users = User.objects.filter(
         is_active=False,
         is_deleted=False,
