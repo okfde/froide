@@ -77,7 +77,7 @@ var makeChart = function(selector, data){
   var area = d3.area()
       .x(function(d) { return x(d.date); })
       .y0(y(0))
-      .y1(function(d) { return y(d.total); });
+      .y1(function(d) { return y(d.num); });
 
   var svg = d3.select(selector).append("svg")
       .attr("width", w + m[1] + m[3])
@@ -95,7 +95,7 @@ var makeChart = function(selector, data){
 
     // Compute the minimum and maximum date, and the maximum price.
     x.domain([data[0].date, data[data.length - 1].date]);
-    y.domain([0, d3.max(data, function(d) { return d.total; })]);
+    y.domain([0, d3.max(data, function(d) { return d.num; })]);
 
     svg.append("g")
         .attr("class", "x grid")

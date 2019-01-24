@@ -50,6 +50,7 @@ def dashboard(request):
             is_active=True,
             date_joined__gte=start_date):
         d = u.date_joined.date().isoformat()
+        d = '-'.join(d.split('-')[:2]) + '-01'
         user.setdefault(d, 0)
         user[d] += 1
     context['user'] = sorted([{'date': k, 'num': v, 'symbol': 'user'} for k, v in user.items()], key=lambda x: x['date'])
@@ -69,6 +70,7 @@ def dashboard(request):
         foi_query = foi_query.filter(visibility=FoiRequest.VISIBLE_TO_PUBLIC)
     for u in foi_query:
         d = u.first_message.date().isoformat()
+        d = '-'.join(d.split('-')[:2]) + '-01'
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
     context['foirequest'] = sorted([{'date': k, 'num': v, 'symbol': 'user'} for k, v in foirequest.items()], key=lambda x: x['date'])
