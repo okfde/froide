@@ -269,7 +269,9 @@ class MessageTagsFilter(TaggitListFilter):
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        'subject', 'timestamp', 'sender_email', 'recipient_email',
+        'subject', 'timestamp', 'message_page',
+        'sender_email', 'recipient_email',
+        'is_response', 'kind',
         'get_deliverystatus_display'
     )
     list_filter = (
@@ -313,6 +315,10 @@ class FoiMessageAdmin(admin.ModelAdmin):
         qs = super(FoiMessageAdmin, self).get_queryset(request)
         qs = qs.select_related('deliverystatus')
         return qs
+
+    def message_page(self, obj):
+        return format_html('<a href="{}">{}</a>',
+            obj.get_absolute_url(), _('on site'))
 
     def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)

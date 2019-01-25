@@ -54,7 +54,7 @@ class FoiMessage(models.Model):
         on_delete=models.CASCADE)
     sent = models.BooleanField(_("has message been sent?"), default=True)
     is_response = models.BooleanField(
-        _("Is this message a response?"),
+        _("response?"),
         default=True)
     kind = models.CharField(
         max_length=10, choices=MESSAGE_CHOICES,
