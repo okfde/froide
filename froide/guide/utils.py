@@ -122,12 +122,16 @@ class GuidanceApplicator:
         )
 
 
-def run_guidance(message, active_only=True):
+def run_guidance(message, active_only=True, notify=False):
     if not message.is_response:
         return
 
     applicator = GuidanceApplicator(message, active_only=active_only)
-    return applicator.run()
+    result = applicator.run()
+
+    if notify:
+        notify_users([(message, result)])
+    return result
 
 
 def apply_guidance_generator(queryset):
@@ -143,13 +147,19 @@ def run_guidance_on_queryset(queryset, notify=False):
 
     gen = apply_guidance_generator(queryset)
     if notify:
-        gen = notify_users(gen)
+        gen = notify_users_generator(gen)
 
     for message, result in gen:
         pass
 
 
-def notify_users(gen):
+def notify_users(message_results):
+    gen = notify_users_generator(message_results)
+    for message, result in gen:
+        pass
+
+
+def notify_users_generator(gen):
     last_user = None
     notifications = []
     for message, result in gen:

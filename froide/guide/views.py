@@ -17,8 +17,12 @@ def rerun_rules(request, message_id):
         return render_403(request)
 
     message = get_object_or_404(FoiMessage, id=message_id)
+    notify = False
 
-    run_guidance(message, active_only=False)
+    if request.POST.get('notify'):
+        notify = True
+
+    run_guidance(message, active_only=False, notify=notify)
 
     messages.add_message(
         request, messages.SUCCESS,
