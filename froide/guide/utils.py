@@ -99,23 +99,24 @@ class GuidanceApplicator:
                     'rule': rule
                 }
             )
+            guidance.created = created
             if created:
                 self.created_count += 1
             yield guidance
 
     def run(self):
-        new_guidances = self.apply_rules()
+        guidances = self.apply_rules()
 
         # Delete all guidances that were there before
         # but are not returned, keep custom guidances
         count, ctypes = self.message.guidance_set.all().exclude(
-            Q(id__in=[n.id for n in new_guidances]) |
+            Q(id__in=[n.id for n in guidances]) |
             Q(user__isnull=False)
         ).delete()
         self.deleted_count = count
 
         return GuidanceResult(
-            new_guidances,
+            guidances,
             self.created_count,
             self.deleted_count
         )
@@ -174,9 +175,13 @@ def send_notifications(notifications):
     for message, result in notifications:
         requests.add(message.request_id)
         for guidance in result.guidances:
+            if not guidance.created:
+                continue
             guidance_mapping[guidance.action or guidance].append(
                 message
             )
+    if not guidance_mapping:
+        return
     requests = list(requests)
     single_request = len(requests) == 1
     if single_request:
