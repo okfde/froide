@@ -1,4 +1,6 @@
 from collections import namedtuple, defaultdict
+import re
+
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -13,6 +15,15 @@ GuidanceResult = namedtuple(
     'GuidanceResult',
     ('guidances', 'created', 'deleted',)
 )
+
+WS = re.compile(r'\s+')
+
+
+def prepare_text(text):
+    text, _1 = split_text_by_separator(text)
+    text = ' '.join(text.splitlines())
+    text = WS.sub(' ', text)
+    return text
 
 
 class GuidanceApplicator:
@@ -53,8 +64,7 @@ class GuidanceApplicator:
 
         message = self.message
         tags = set(message.tags.all().values_list('id', flat=True))
-        text = message.plaintext
-        text, _1 = split_text_by_separator(text)
+        text = prepare_text(message.plaintext)
 
         for rule in rules:
             if rule.has_tag_id and rule.has_tag_id not in tags:
