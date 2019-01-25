@@ -34,7 +34,7 @@ class GeoRegion(models.Model):
     gov_seat = models.PointField(_('gov seat'), null=True, blank=True, geography=True)
 
     part_of = models.ForeignKey('self', verbose_name=_('Part of'), null=True,
-        on_delete=models.SET_NULL, blank=True
+        on_delete=models.SET_NULL, blank=True, related_name='sub_regions'
     )
 
     class Meta:
@@ -43,3 +43,10 @@ class GeoRegion(models.Model):
 
     def __str__(self):
         return '%s (%s)' % (self.name, self.pk)
+
+    def get_all_sub_regions(self):
+        def get_subregions(region):
+            for sub_region in region.sub_regions.all():
+                yield sub_region
+                yield from get_subregions(sub_region)
+        yield from get_subregions(self)
