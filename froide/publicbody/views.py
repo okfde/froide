@@ -22,7 +22,7 @@ def index(request, jurisdiction=None, category=None):
     if category is not None:
         category = get_object_or_404(Category, slug=category)
 
-    publicbodies = PublicBody.objects.get_list()
+    publicbodies = PublicBody.objects.all()
 
     if category:
         publicbodies = publicbodies.filter(categories=category)
