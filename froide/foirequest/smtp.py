@@ -1,8 +1,15 @@
 import smtplib
+import re
 
 from django.core.mail.backends.smtp import EmailBackend as DjangoEmailBackend
 from django.conf import settings
 from django.core.mail.message import sanitize_address
+
+FIX_RE = re.compile(r'^([^"].*) <(.*)>$')
+
+
+def fix_address(a):
+    return FIX_RE.sub('"\\1" <\\2>', a)
 
 
 class EmailBackend(DjangoEmailBackend):
@@ -16,6 +23,7 @@ class EmailBackend(DjangoEmailBackend):
         if not email_message.recipients():
             return False
         encoding = email_message.encoding or settings.DEFAULT_CHARSET
+        email_message.from_email = fix_address(email_message.from_email)
         from_email = sanitize_address(email_message.from_email, encoding)
         from_email = self.return_path or from_email
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]

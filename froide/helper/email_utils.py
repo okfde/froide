@@ -75,7 +75,7 @@ def get_unread_mails(host, port, user, password, ssl=True):
 
 def make_address(email, name=None):
     if name:
-        return str(make_header(decode_header(formataddr((name, email)))))
+        return '"%s" <%s>' % (name, email)
     return email
 
 
