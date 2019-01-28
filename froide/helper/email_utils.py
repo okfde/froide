@@ -103,6 +103,7 @@ def find_status_from_diagnostic(message):
         match = BOUNCE_STATUS_RE.search(message)
         if match is None:
             return
+        return DsnStatus(*[int(x) for x in match.group(1).split('.')])
     return DsnStatus(*[int(x) for x in match.group(1)])
 
 
