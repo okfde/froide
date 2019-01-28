@@ -397,6 +397,7 @@ class MessageTagAdmin(admin.ModelAdmin):
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted', 'document')
     ordering = ('-id',)
+    date_hierarchy = 'belongs_to__timestamp'
     list_display = (
         'name', 'filetype', 'size', 'admin_link_message',
         'approved', 'can_approve',
