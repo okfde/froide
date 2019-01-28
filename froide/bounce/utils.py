@@ -15,8 +15,15 @@ from django.core.signing import (
     TimestampSigner, SignatureExpired, BadSignature
 )
 from django.utils.crypto import salted_hmac
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
-from froide.helper.email_utils import EmailParser, get_unread_mails
+from froide.helper.email_utils import (
+    EmailParser, get_unread_mails, BounceResult,
+    find_status_from_diagnostic, classify_bounce_status
+)
+from froide.helper.email_parsing import parse_header_field
 
 from .signals import user_email_bounced, email_bounced
 from .models import Bounce
@@ -215,3 +222,28 @@ def check_deactivation_condition(bounce):
         return True
 
     return False
+
+
+def handle_smtp_error(exc):
+    '''
+    Handle SMTPRecipientsRefused exceptions
+    '''
+    recipients = exc.recipients
+    for recipient, info in recipients.items():
+        recipient = parse_header_field(recipient)
+        try:
+            validate_email(recipient)
+        except ValidationError:
+            continue
+        code, message = info
+        status = find_status_from_diagnostic(message)
+        bounce_type = classify_bounce_status(status)
+        bounce_info = BounceResult(
+            status=status,
+            bounce_type=bounce_type,
+            is_bounce=True,
+            diagnostic_code=code,
+            timestamp=timezone.now()
+        )
+        Bounce.objects.update_bounce(recipient, bounce_info)
+    return True

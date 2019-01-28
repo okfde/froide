@@ -10,9 +10,7 @@ from collections import namedtuple
 from io import BytesIO
 import base64
 import re
-from email.header import decode_header, make_header
 from email.parser import BytesParser as Parser
-from email.utils import formataddr
 import imaplib
 
 from django.conf import settings
@@ -102,7 +100,9 @@ def find_status_from_diagnostic(message):
         return
     match = BOUNCE_DIAGNOSTIC_STATUS_RE.search(message)
     if match is None:
-        return
+        match = BOUNCE_STATUS_RE.search(message)
+        if match is None:
+            return
     return DsnStatus(*[int(x) for x in match.group(1)])
 
 

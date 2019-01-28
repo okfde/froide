@@ -1,11 +1,16 @@
 import smtplib
+import logging
 import re
 
 from django.core.mail.backends.smtp import EmailBackend as DjangoEmailBackend
 from django.conf import settings
 from django.core.mail.message import sanitize_address
 
+from froide.bounce.utils import handle_smtp_error
+
 FIX_RE = re.compile(r'^([^"].*) <(.*)>$')
+
+logger = logging.getLogger(__name__)
 
 
 def fix_address(a):
@@ -32,8 +37,17 @@ class EmailBackend(DjangoEmailBackend):
             self.connection.sendmail(from_email, recipients,
                                      message.as_bytes(linesep='\r\n'),
                                      rcpt_options=self.rcpt_options)
-        except smtplib.SMTPException:
+        except smtplib.SMTPRecipientsRefused as e:
+            logger.exception(e)
+            if not handle_smtp_error(e):
+                raise
+            return False
+        except smtplib.SMTPException as e:
+            logger.exception(e)
             if not self.fail_silently:
                 raise
             return False
+        except Exception as e:
+            logger.exception(e)
+            raise
         return True
