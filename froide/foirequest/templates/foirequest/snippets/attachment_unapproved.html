@@ -19,6 +19,11 @@
       {{ attachment.size|filesizeformat }}
     </span>
   {% endif %}
+  {% if attachment.pending %}
+    <span class="badge badge-info">
+      {% blocktrans %}PDF Pending{% endblocktrans %}
+    </span>
+  {% endif %}
   <span class="badge badge-warning">
     {% blocktrans %}Not public!{% endblocktrans %}
   </span>
@@ -29,7 +34,7 @@
   {% endif %}
 </div>
 <div class="col-lg-4 text-right">
-  {% if attachment.can_approve and object|can_write_foirequest:request %}
+  {% if not attachment.pending and attachment.can_approve and object|can_write_foirequest:request %}
     <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
       {% if attachment.can_redact %}
         <a class="btn btn-sm btn-primary mr-1 d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
