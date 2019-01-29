@@ -179,7 +179,8 @@ def convert_to_pdf(request, foirequest, message, data):
     atts = message.foiattachment_set.filter(
         id__in=att_ids, filetype__startswith='image/'
     )
-    att_ids = [a.id for a in atts]
+    safe_att_ids = {a.id for a in atts}
+    att_ids = [aid for aid in att_ids if aid in safe_att_ids]
 
     name = '{}.pdf'.format(slugify(title))
 
