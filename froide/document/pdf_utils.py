@@ -80,12 +80,13 @@ class PDFProcessor(object):
                 path=self.config.get('TESSERACT_DATA_PATH', '')
             )
 
-    def run_ocr(self, language=None):
+    def run_ocr(self, timeout=180):
         from froide.helper.document import run_ocr
 
         output_bytes = run_ocr(
             self.filename,
             language=TESSERACT_LANGUAGE[self.language],
+            timeout=timeout
         )
         return output_bytes
 

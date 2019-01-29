@@ -6,6 +6,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from django.core.files.base import ContentFile
 
+from celery.exceptions import SoftTimeLimitExceeded
+
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.helper.document import convert_to_pdf, convert_images_to_ocred_pdf
@@ -165,8 +167,8 @@ def convert_attachment(att):
 
 
 @celery_app.task(name='froide.foirequest.tasks.convert_images_to_pdf_task',
-                 time_limit=60 * 5)
-def convert_images_to_pdf_task(att_ids, target_id):
+                 time_limit=60 * 5, soft_time_limit=60 * 4)
+def convert_images_to_pdf_task(att_ids, target_id, instructions):
     atts = FoiAttachment.objects.filter(
         id__in=att_ids
     )
@@ -176,7 +178,11 @@ def convert_images_to_pdf_task(att_ids, target_id):
         return
 
     paths = [a.file.path for a in atts]
-    pdf_bytes = convert_images_to_ocred_pdf(paths)
+    try:
+        pdf_bytes = convert_images_to_ocred_pdf(paths, instructions=instructions)
+    except SoftTimeLimitExceeded:
+        pdf_bytes = None
+
     if pdf_bytes is None:
         atts.update(
             can_approve=True

@@ -176,7 +176,7 @@ def convert_to_pdf(request, foirequest, message, data):
     title = data.get('title') or _('letter')
     names = set(a.name for a in message.attachments)
 
-    atts = FoiAttachment.objects.filter(
+    atts = message.foiattachment_set.filter(
         id__in=att_ids, filetype__startswith='image/'
     )
     att_ids = [a.id for a in atts]
@@ -202,8 +202,13 @@ def convert_to_pdf(request, foirequest, message, data):
     FoiAttachment.objects.filter(id__in=att_ids).update(
         converted_id=att.id, can_approve=False, approved=False
     )
-
-    convert_images_to_pdf_task.delay(att_ids, att.id)
+    instructions = {
+        d['id']: d for d in data['images'] if d['id'] in att_ids
+    }
+    instructions = [
+        instructions[i] for i in att_ids
+    ]
+    convert_images_to_pdf_task.delay(att_ids, att.id, instructions)
 
     attachment_data = FoiAttachmentSerializer(att, context={
         'request': request
@@ -274,7 +279,7 @@ def upload_attachments(request, foirequest, message_id):
                 'You can rearrange the pages and split it into multiple documents. '
                 'You can redact the PDF in the next step.'
             ),
-            'documentPending': _('This document is being generated.'),
+            'documentPending': _('This document is being generated. This can take several minutes.'),
             'documentTitle': _('Document title'),
             'documentTitlePlaceholder': _('e.g. Letter from date'),
             'showIrrelevantAttachments': _('Show irrelevant attachments'),

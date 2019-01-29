@@ -26,8 +26,11 @@ def upload_to(instance, filename):
 
 
 class FoiAttachment(models.Model):
-    belongs_to = models.ForeignKey(FoiMessage, null=True,
-            verbose_name=_("Belongs to request"), on_delete=models.CASCADE)
+    belongs_to = models.ForeignKey(
+        FoiMessage, null=True,
+        verbose_name=_("Belongs to request"),
+        on_delete=models.CASCADE
+    )
     name = models.CharField(_("Name"), max_length=255)
     file = models.FileField(
         _("File"), upload_to=upload_to, max_length=255,

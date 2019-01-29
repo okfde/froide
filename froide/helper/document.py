@@ -8,6 +8,7 @@ import tempfile
 from django.conf import settings
 
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 
 from wand.image import Image
@@ -64,7 +65,7 @@ def can_convert_to_pdf(filetype, name=None):
         name is not None and name.lower().endswith(OFFICE_EXTENSIONS))
 
 
-def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
+def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=120):
     if binary_name is None and construct_call is None:
         return
     outpath = tempfile.mkdtemp()
@@ -99,16 +100,16 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
     return None
 
 
-def convert_images_to_ocred_pdf(filenames):
+def convert_images_to_ocred_pdf(filenames, instructions=None):
     outpath = tempfile.mkdtemp()
     output_file = os.path.join(outpath, 'out.pdf')
-    pdf_bytes = convert_images_to_pdf(filenames)
+    pdf_bytes = convert_images_to_pdf(filenames, instructions=instructions)
     with open(output_file, 'wb') as f:
         f.write(pdf_bytes)
     processor = PDFProcessor(
         output_file, language=settings.LANGUAGE_CODE
     )
-    return processor.run_ocr()
+    return processor.run_ocr(timeout=180)
 
 
 def run_ocr(filename, language=None, binary_name='ocrmypdf', timeout=50):
@@ -129,7 +130,7 @@ def run_ocr(filename, language=None, binary_name='ocrmypdf', timeout=50):
         output_bytes = shell_call(arguments, outpath, output_file, timeout=timeout)
         return output_bytes
     except Exception as err:
-        logging.error("Error during PDF OCR conversion: %s", err)
+        logging.error("Error during PDF OCR: %s", err)
     finally:
         shutil.rmtree(outpath)
     return None
@@ -152,7 +153,6 @@ def shell_call(arguments, outpath, output_file, timeout=50):
         )
 
         out, err = p.communicate(timeout=timeout)
-        p.wait()
     except subprocess.TimeoutExpired:
         if p is not None:
             p.kill()
@@ -195,19 +195,39 @@ def decrypt_pdf_in_place(filename, timeout=50):
         shutil.rmtree(temp_dir)
 
 
-def convert_images_to_pdf(filenames, dpi=300):
+MAX_HEIGHT_A4 = 3507  # in pixels at 300 dpi
+
+
+def convert_images_to_pdf(filenames, instructions=None, dpi=300):
+    if instructions is None:
+        instructions = [{} for _ in range(len(filenames))]
     a4_width, a4_height = A4
     writer = io.BytesIO()
     pdf = canvas.Canvas(writer, pagesize=A4)
-    for filename in filenames:
+    for filename, instruction in zip(filenames, instructions):
         with Image(filename=filename, resolution=dpi) as image:
             image.background_color = Color('white')
             image.format = 'jpg'
             image.alpha_channel = 'remove'
+            try:
+                degree = instruction.get('rotate', 0)
+                if degree and degree % 90 == 0:
+                    image.rotate(degree)
+            except ValueError:
+                pass
+
+            if image.width > image.height:
+                ratio = MAX_HEIGHT_A4 / image.width
+            else:
+                ratio = MAX_HEIGHT_A4 / image.height
+            if ratio < 1:
+                image.resize(round(ratio * image.width), round(ratio * image.height))
+
             width = image.width * 72 / dpi
             height = image.height * 72 / dpi
             pdf.setPageSize((width, height))
-            pdf.drawImage(filename, 0, 0, width=width, height=height)
+            reportlab_io_img = ImageReader(io.BytesIO(image.make_blob()))
+            pdf.drawImage(reportlab_io_img, 0, 0, width=width, height=height)
             pdf.showPage()
     pdf.save()
     return writer.getvalue()
