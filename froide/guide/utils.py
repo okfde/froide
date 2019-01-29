@@ -191,12 +191,14 @@ def send_notifications(notifications):
         return
     user = notifications[0][0].request.user
     guidance_mapping = defaultdict(list)
+    guidances = []
     requests = set()
     for message, result in notifications:
         requests.add(message.request_id)
         for guidance in result.guidances:
-            if not guidance.created:
+            if guidance.notified:
                 continue
+            guidances.append(guidance)
             guidance_mapping[guidance.action or guidance].append(
                 message
             )
@@ -217,3 +219,6 @@ def send_notifications(notifications):
         'site_name': settings.SITE_NAME
     })
     user.send_mail(subject, body)
+    Guidance.objects.filter(
+        id__in=[g.id for g in guidances]
+    ).update(notified=True)
