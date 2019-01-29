@@ -22,6 +22,7 @@
                 :page="page"
                 :page-count="pages.length"
                 @pageupdated="$emit('pageupdated', {document, ...$event})"
+                @splitpages="splitPages"
               ></image-page>
           </draggable>
         </div>

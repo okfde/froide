@@ -182,6 +182,9 @@ export default {
     },
     splitPages (doc, pageNum) {
       let newPages = doc.pages.slice(pageNum)
+      newPages.forEach((p, i) => {
+        p.pageNum = i + 1
+      })
       doc.pages = doc.pages.slice(0, pageNum)
       doc.new = true
       this.documents = [

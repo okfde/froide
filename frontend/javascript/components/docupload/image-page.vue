@@ -2,10 +2,14 @@
   <div class="page">
     <div class="row justify-content-center">
       <div class="scol" :style="pageContainerStyle">
-        <img v-if="page.url" :src="page.url" alt="" class="page-image"
-          :style="pageStyle"
-          @load="imageLoaded"
-        />
+        <div class="rotation-wrapper-outer">
+          <div class="rotation-wrapper-inner">
+            <img v-if="page.url" :src="page.url" alt="" class="page-image"
+              :style="pageStyle"
+              @load="imageLoaded"
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div class="row justify-content-center">
@@ -83,7 +87,7 @@ export default {
   },
   methods: {
     splitPages () {
-      this.$emit('splitpages', page.pageNum)
+      this.$emit('splitpages', this.page.pageNum)
     },
     rotatePage () {
       this.$emit('pageupdated', {
@@ -137,11 +141,20 @@ export default {
     margin: 0 1rem;
     cursor: move;
   }
+  .rotation-wrapper-outer {
+    display: table;
+  }
+  .rotation-wrapper-inner {
+    padding: 50% 0;
+    height: 0;
+  }
   .page-image {
+    display: block;
     width: 100%;
     border: 1px solid #bbb;
     transform-origin: center center;
     transition: transform 0.5s linear;
+    margin-top: -50%;
   }
   .scol {
     flex-basis: 0;

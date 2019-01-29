@@ -83,7 +83,7 @@ export default {
               file_url: data.file_url,
             })
           } else {
-            this.$emit('docupdated', null)
+            document.location.reload()
           }
         }).catch(() => {
           window.setTimeout(() => this.checkProgress(), 5000);
