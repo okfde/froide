@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-29 16:04+0100\n"
-"PO-Revision-Date: 2019-01-29 16:05+0100\n"
+"POT-Creation-Date: 2019-01-29 19:40+0100\n"
+"PO-Revision-Date: 2019-01-29 19:43+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1934,7 +1934,7 @@ msgstr ""
 msgid "Uploaded scans can be PDF, JPG, PNG or GIF."
 msgstr "Dateien können als PDF, JPG, PNG oder GIF hochgeladen werden."
 
-#: froide/foirequest/forms.py:588 froide/foirequest/models/attachment.py:64
+#: froide/foirequest/forms.py:588 froide/foirequest/models/attachment.py:67
 #: froide/foirequest/templates/foirequest/list_unchecked.html:30
 #: froide/foirequest/templates/foirequest/snippets/message.html:174
 msgid "Attachments"
@@ -2038,11 +2038,11 @@ msgstr "Empfängername"
 msgid "Scanned Document"
 msgstr "Gescanntes Dokument"
 
-#: froide/foirequest/models/attachment.py:30
+#: froide/foirequest/models/attachment.py:31
 msgid "Belongs to request"
 msgstr "Gehört zur Anfrage"
 
-#: froide/foirequest/models/attachment.py:31
+#: froide/foirequest/models/attachment.py:34
 #: froide/foirequest/views/make_request.py:116 froide/foisite/models.py:14
 #: froide/georegion/models.py:6 froide/publicbody/forms.py:67
 #: froide/publicbody/models.py:68 froide/publicbody/models.py:102
@@ -2051,51 +2051,51 @@ msgstr "Gehört zur Anfrage"
 msgid "Name"
 msgstr "Name"
 
-#: froide/foirequest/models/attachment.py:33
+#: froide/foirequest/models/attachment.py:36
 msgid "File"
 msgstr "Datei"
 
-#: froide/foirequest/models/attachment.py:36
+#: froide/foirequest/models/attachment.py:39
 msgid "Size"
 msgstr "Größe"
 
-#: froide/foirequest/models/attachment.py:37
+#: froide/foirequest/models/attachment.py:40
 msgid "File type"
 msgstr "Dateityp"
 
-#: froide/foirequest/models/attachment.py:38
+#: froide/foirequest/models/attachment.py:41
 msgid "Format"
 msgstr "Format"
 
-#: froide/foirequest/models/attachment.py:39
+#: froide/foirequest/models/attachment.py:42
 msgid "User can approve"
 msgstr "Nutzer kann genehmigen"
 
-#: froide/foirequest/models/attachment.py:40
+#: froide/foirequest/models/attachment.py:43
 msgid "Approved"
 msgstr "Veröffentlicht"
 
-#: froide/foirequest/models/attachment.py:41
+#: froide/foirequest/models/attachment.py:44
 msgid "Redacted Version"
 msgstr "Geschwärzte Version"
 
-#: froide/foirequest/models/attachment.py:44
+#: froide/foirequest/models/attachment.py:47
 msgid "Is redacted"
 msgstr "Ist geschwärzt"
 
-#: froide/foirequest/models/attachment.py:45
+#: froide/foirequest/models/attachment.py:48
 msgid "Converted Version"
 msgstr "Konvertierte Version"
 
-#: froide/foirequest/models/attachment.py:48
+#: froide/foirequest/models/attachment.py:51
 msgid "Is converted"
 msgstr "Konvertiert?"
 
-#: froide/foirequest/models/attachment.py:63
+#: froide/foirequest/models/attachment.py:66
 msgid "Attachment"
 msgstr "Anhang"
 
-#: froide/foirequest/models/attachment.py:73
+#: froide/foirequest/models/attachment.py:76
 #, python-format
 msgid "attachment-%(id)d"
 msgstr "anhang-%(id)d"
@@ -2883,7 +2883,7 @@ msgstr "Ihre Informationsfreiheitsanfrage wurde versendet"
 msgid "Your message was sent"
 msgstr "Ihre Nachricht wurde gesendet"
 
-#: froide/foirequest/tasks.py:147
+#: froide/foirequest/tasks.py:149
 #, python-brace-format
 msgid "{name}_converted{ext}"
 msgstr "{name}_konvertiert{ext}"
@@ -3236,7 +3236,7 @@ msgid "Attachments are loading..."
 msgstr "Anhang werden geladen..."
 
 #: froide/foirequest/templates/foirequest/attachment/upload.html:31
-#: froide/foirequest/views/message.py:281
+#: froide/foirequest/views/message.py:286
 msgid "Loading..."
 msgstr "Wird geladen..."
 
@@ -4603,15 +4603,19 @@ msgstr "geschwärzt"
 msgid "Redact"
 msgstr "Schwärzen"
 
-#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:24
+#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:25
+msgid "PDF Pending"
+msgstr "PDF wird erstellt"
+
+#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:29
 msgid "Not public!"
 msgstr "Nicht öffentlich!"
 
-#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:37
+#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:42
 msgid "Review"
 msgstr "Überprüfen"
 
-#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:42
+#: froide/foirequest/templates/foirequest/snippets/attachment_unapproved.html:47
 msgid "Approve"
 msgstr "Freischalten"
 
@@ -4736,7 +4740,7 @@ msgid "Manage attachments"
 msgstr "Anhänge verwalten"
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:184
-#: froide/foirequest/views/message.py:280
+#: froide/foirequest/views/message.py:285
 msgid "Show irrelevant attachments"
 msgstr "Zeige belanglose Anhänge"
 
@@ -5473,40 +5477,40 @@ msgstr "Sie haben %d Dokument(e) zu der Nachricht hinzugefügt."
 msgid "letter"
 msgstr "Brief"
 
-#: froide/foirequest/views/message.py:263
+#: froide/foirequest/views/message.py:268
 msgid "New document with one page"
 msgstr "Neues Dokument mit einer Seite"
 
-#: froide/foirequest/views/message.py:264
+#: froide/foirequest/views/message.py:269
 #, python-brace-format
 msgid "New document with {count} pages"
 msgstr "Neues Dokument mit {count} Seiten"
 
-#: froide/foirequest/views/message.py:266
+#: froide/foirequest/views/message.py:271
 msgid "Take / Choose picture"
 msgstr "Foto machen oder auswählen"
 
-#: froide/foirequest/views/message.py:267
+#: froide/foirequest/views/message.py:272
 msgid "Convert images to document"
 msgstr "Bilder in Dokument"
 
-#: froide/foirequest/views/message.py:268
+#: froide/foirequest/views/message.py:273
 msgid "Open attachment page"
 msgstr "Anhangsseite öffnen"
 
-#: froide/foirequest/views/message.py:269
+#: froide/foirequest/views/message.py:274
 msgid "Load preview"
 msgstr "Vorschau laden"
 
-#: froide/foirequest/views/message.py:270
+#: froide/foirequest/views/message.py:275
 msgid "Upload PDF or picture"
 msgstr "PDF oder Bild hochladen"
 
-#: froide/foirequest/views/message.py:271
+#: froide/foirequest/views/message.py:276
 msgid "Other attachments that are not documents"
 msgstr "Andere Anhänge, die keine Dokumente sind"
 
-#: froide/foirequest/views/message.py:273
+#: froide/foirequest/views/message.py:278
 msgid ""
 "Here you can combine your uploaded images to a PDF document. You can "
 "rearrange the pages and split it into multiple documents. You can redact the "
@@ -5516,23 +5520,24 @@ msgstr ""
 "können die Seiten hier richtig anordnen und ggf. in mehrere Dokumente "
 "auftrennen. Das PDF können Sie im Anschluss schwärzen."
 
-#: froide/foirequest/views/message.py:277
-msgid "This document is being generated."
-msgstr "Dieses Dokument wird gerade erstellt."
+#: froide/foirequest/views/message.py:282
+msgid "This document is being generated. This can take several minutes."
+msgstr ""
+"Dieses Dokument wird gerade erstellt. Dies kann mehrere Minuten dauern."
 
-#: froide/foirequest/views/message.py:278
+#: froide/foirequest/views/message.py:283
 msgid "Document title"
 msgstr "Dokumententitel"
 
-#: froide/foirequest/views/message.py:279
+#: froide/foirequest/views/message.py:284
 msgid "e.g. Letter from date"
 msgstr "z.B. Brief mit Datum"
 
-#: froide/foirequest/views/message.py:322
+#: froide/foirequest/views/message.py:327
 msgid "Content published."
 msgstr "Nachricht veröffentlicht."
 
-#: froide/foirequest/views/message.py:337
+#: froide/foirequest/views/message.py:342
 #: froide/foirequest/views/request_actions.py:269
 msgid "Invalid input!"
 msgstr "Ungültige Eingabe!"
