@@ -4,11 +4,11 @@ from django.conf import settings
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
-from django.core.files import File
+from django.core.files.base import ContentFile
 
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
-from froide.helper.document import convert_to_pdf
+from froide.helper.document import convert_to_pdf, convert_images_to_ocred_pdf
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
@@ -125,7 +125,7 @@ def convert_attachment_task(instance_id):
 
 
 def convert_attachment(att):
-    result_file = convert_to_pdf(
+    output_bytes = convert_to_pdf(
         att.file.path,
         binary_name=settings.FROIDE_CONFIG.get(
             'doc_conversion_binary'
@@ -134,10 +134,10 @@ def convert_attachment(att):
             'doc_conversion_call_func'
         )
     )
-    if result_file is None:
+    if output_bytes is None:
         return
 
-    result_filename = os.path.basename(result_file)
+    result_filename = os.path.basename(att.file.path)
     result_name, result_ext = os.path.splitext(result_filename)
 
     if att.converted:
@@ -154,12 +154,37 @@ def convert_attachment(att):
             is_converted=True
         )
 
-    with open(result_file, 'rb') as f:
-        new_file = File(f)
-        new_att.size = new_file.size
-        new_att.file.save(new_att.name, new_file)
+    new_file = ContentFile(output_bytes)
+    new_att.size = new_file.size
+    new_att.file.save(new_att.name, new_file)
     new_att.save()
     att.converted = new_att
     att.can_approve = False
     att.approved = False
     att.save()
+
+
+@celery_app.task(name='froide.foirequest.tasks.convert_images_to_pdf_task',
+                 time_limit=60 * 5)
+def convert_images_to_pdf_task(att_ids, target_id):
+    atts = FoiAttachment.objects.filter(
+        id__in=att_ids
+    )
+    try:
+        target = FoiAttachment.objects.get(id=target_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    paths = [a.file.path for a in atts]
+    pdf_bytes = convert_images_to_ocred_pdf(paths)
+    if pdf_bytes is None:
+        atts.update(
+            can_approve=True
+        )
+        target.delete()
+        return
+
+    new_file = ContentFile(pdf_bytes)
+    target.size = new_file.size
+    target.file.save(target.name, new_file)
+    target.save()

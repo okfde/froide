@@ -66,10 +66,10 @@ class PDFProcessor(object):
                 page = self.pdf_reader.getPage(page_no)
                 text = page.extractText()
             if not text.strip():
-                text = self.run_ocr(page_no)
+                text = self.ocr_page(page_no)
             yield text.strip()
 
-    def run_ocr(self, page_no):
+    def ocr_page(self, page_no):
         if tesserocr is None:
             return ''
         with self.get_image(page_no, resolution=300) as img:
@@ -79,6 +79,15 @@ class PDFProcessor(object):
                 lang=TESSERACT_LANGUAGE[self.language],
                 path=self.config.get('TESSERACT_DATA_PATH', '')
             )
+
+    def run_ocr(self, language=None):
+        from froide.helper.document import run_ocr
+
+        output_bytes = run_ocr(
+            self.filename,
+            language=TESSERACT_LANGUAGE[self.language],
+        )
+        return output_bytes
 
     def save_pages(self, path, **kwargs):
         for page, img in enumerate(self.get_images(**kwargs), 1):

@@ -149,7 +149,10 @@
 
     {% if object|can_write_foirequest:request and message.is_postal %}
       <div class="d-print-none">
-        <h6>
+        <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}" class="btn btn-secondary">
+          {% trans "Manage attachments" %}
+        </a>
+        {% comment %} <h6>
           {% blocktrans %}Upload Attachments{% endblocktrans %}
         </h6>
         {% with form=message.get_postal_attachment_form %}
@@ -159,7 +162,7 @@
             <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
             <span class="form-text text-muted">{{ form.files.help_text }}</span>
           </form>
-        {% endwith %}
+        {% endwith %} {% endcomment %}
       </div>
     {% endif %}
 

@@ -17,7 +17,8 @@ const ENTRY = {
   makerequest: ['./frontend/javascript/makerequest.js'],
   request: ['./frontend/javascript/request.ts'],
   redact: ['./frontend/javascript/redact.js'],
-  tagautocomplete: ['./frontend/javascript/tagautocomplete.ts']
+  tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
+  docupload: ['./frontend/javascript/docupload.js']
 }
 
 const EXCLUDE_CHUNKS = [

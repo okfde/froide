@@ -67,6 +67,11 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         view_name='api:attachment-detail',
         lookup_field='pk'
     )
+    converted = serializers.HyperlinkedRelatedField(
+        view_name='api:attachment-detail',
+        lookup_field='pk',
+        read_only=True,
+    )
     belongs_to = serializers.HyperlinkedRelatedField(
         read_only=True,
         view_name='api:message-detail'
@@ -83,18 +88,25 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         source='get_file_url',
         read_only=True
     )
+    pending = serializers.SerializerMethodField(
+        source='get_pending',
+        read_only=True
+    )
 
     class Meta:
         model = FoiAttachment
         depth = 0
         fields = (
             'resource_uri', 'id', 'belongs_to', 'name', 'filetype',
-            'approved', 'is_redacted', 'size',
-            'site_url', 'anchor_url', 'file_url'
+            'approved', 'is_redacted', 'is_converted', 'converted',
+            'size', 'site_url', 'anchor_url', 'file_url', 'pending'
         )
 
     def get_file_url(self, obj):
         return obj.get_absolute_domain_file_url(authenticated=True)
+
+    def get_pending(self, obj):
+        return obj.pending
 
 
 class FoiAttachmentFilter(filters.FilterSet):

@@ -1,3 +1,7 @@
+@import "../variables.scss";
+
+$highlight: $yellow;
+
 .target-primary:target {
   @extend .border-success;
 }
@@ -19,7 +23,7 @@
 
 
 .highlight {
-    background: #FFFC78;
+    background: $highlight;
 }
 
 .top-buffer {
@@ -94,4 +98,21 @@ input.copy-text {
   transition: opacity .3s ease;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.is-new {
+  animation-name: is-new-flash;
+  animation-duration: 1500ms;
+  animation-timing-function: ease;
+  animation-iteration-count: 1;
+}
+
+@keyframes is-new-flash {
+  0% {
+      background-color: $highlight;
+      opacity: 1;
+  }
+  100% {
+      background-color: inherit;
+  }
 }

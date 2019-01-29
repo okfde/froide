@@ -1,16 +1,19 @@
-import os
-import tempfile
-import subprocess
-import shutil
+import io
 import logging
+import os
+import shutil
+import subprocess
+import tempfile
 
-try:
-    TimeoutExpired = subprocess.TimeoutExpired
-    HAS_TIMEOUT = True
-except AttributeError:
-    # Python 2
-    TimeoutExpired = Exception
-    HAS_TIMEOUT = False
+from django.conf import settings
+
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+
+from wand.image import Image
+from wand.color import Color
+
+from froide.document.pdf_utils import PDFProcessor
 
 
 OFFICE_FILETYPES = (
@@ -86,12 +89,49 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=50):
     if construct_call is not None:
         arguments, output_file = construct_call(filepath, outpath)
 
-    # Set different HOME so libreoffice can write to it
     try:
-        output_file = shell_call(arguments, outpath, output_file, timeout=timeout)
-        return output_file
+        output_bytes = shell_call(arguments, outpath, output_file, timeout=timeout)
+        return output_bytes
     except Exception as err:
         logging.error("Error during Doc to PDF conversion: %s", err)
+    finally:
+        shutil.rmtree(outpath)
+    return None
+
+
+def convert_images_to_ocred_pdf(filenames):
+    outpath = tempfile.mkdtemp()
+    output_file = os.path.join(outpath, 'out.pdf')
+    pdf_bytes = convert_images_to_pdf(filenames)
+    with open(output_file, 'wb') as f:
+        f.write(pdf_bytes)
+    processor = PDFProcessor(
+        output_file, language=settings.LANGUAGE_CODE
+    )
+    return processor.run_ocr()
+
+
+def run_ocr(filename, language=None, binary_name='ocrmypdf', timeout=50):
+    if binary_name is None:
+        return
+    outpath = tempfile.mkdtemp()
+    output_file = os.path.join(outpath, 'out.pdf')
+    arguments = [
+        binary_name,
+        '-l',
+        language,
+        '--deskew',
+        # '--title', title
+        filename,
+        output_file
+    ]
+    try:
+        output_bytes = shell_call(arguments, outpath, output_file, timeout=timeout)
+        return output_bytes
+    except Exception as err:
+        logging.error("Error during PDF OCR conversion: %s", err)
+    finally:
+        shutil.rmtree(outpath)
     return None
 
 
@@ -111,13 +151,9 @@ def shell_call(arguments, outpath, output_file, timeout=50):
             env=env
         )
 
-        kwargs = {}
-        if HAS_TIMEOUT:
-            kwargs['timeout'] = timeout
-
-        out, err = p.communicate(**kwargs)
+        out, err = p.communicate(timeout=timeout)
         p.wait()
-    except TimeoutExpired:
+    except subprocess.TimeoutExpired:
         if p is not None:
             p.kill()
             out, err = p.communicate()
@@ -127,7 +163,8 @@ def shell_call(arguments, outpath, output_file, timeout=50):
             out, err = p.communicate()
     if p is not None and p.returncode == 0:
         if os.path.exists(output_file):
-            return output_file
+            with open(output_file, 'rb') as f:
+                return f.read()
     raise Exception(err)
 
 
@@ -140,14 +177,15 @@ def decrypt_pdf_in_place(filename, timeout=50):
         temp_out = os.path.join(temp_dir, 'qpdf_out.pdf')
 
         arguments = ['qpdf', '--decrypt', filename, temp_out]
-        output_file = shell_call(arguments, temp_dir, temp_out, timeout=timeout)
+        output_bytes = shell_call(arguments, temp_dir, temp_out, timeout=timeout)
 
         # I'm not sure if a qpdf failure could leave the file in a halfway
         # state, so write to a temporary file and then use os.rename to
         # overwrite the original atomically.
         # (We use shutil.move instead of os.rename so it'll fall back to a copy
         #  operation if the dir= argument to mkdtemp() gets removed)
-        shutil.move(output_file, filename)
+        with open(filename, 'wb') as f:
+            f.write(output_bytes)
         return filename
     except Exception as err:
         logging.error("Error during PDF decryption %s", err)
@@ -155,3 +193,21 @@ def decrypt_pdf_in_place(filename, timeout=50):
     finally:
         # Delete all temporary files
         shutil.rmtree(temp_dir)
+
+
+def convert_images_to_pdf(filenames, dpi=300):
+    a4_width, a4_height = A4
+    writer = io.BytesIO()
+    pdf = canvas.Canvas(writer, pagesize=A4)
+    for filename in filenames:
+        with Image(filename=filename, resolution=dpi) as image:
+            image.background_color = Color('white')
+            image.format = 'jpg'
+            image.alpha_channel = 'remove'
+            width = image.width * 72 / dpi
+            height = image.height * 72 / dpi
+            pdf.setPageSize((width, height))
+            pdf.drawImage(filename, 0, 0, width=width, height=height)
+            pdf.showPage()
+    pdf.save()
+    return writer.getvalue()
