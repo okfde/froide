@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.signing import (
     TimestampSigner, SignatureExpired, BadSignature
 )
+from django.utils import timezone
 
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
@@ -45,6 +46,7 @@ class FoiAttachment(models.Model):
         null=True, blank=True, on_delete=models.SET_NULL,
         related_name='original_set')
     is_converted = models.BooleanField(_("Is converted"), default=False)
+    timestamp = models.DateTimeField(null=True, default=timezone.now)
 
     document = models.OneToOneField(
         Document, null=True, blank=True,
