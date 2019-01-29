@@ -169,9 +169,11 @@ def convert_attachment(att):
 @celery_app.task(name='froide.foirequest.tasks.convert_images_to_pdf_task',
                  time_limit=60 * 5, soft_time_limit=60 * 4)
 def convert_images_to_pdf_task(att_ids, target_id, instructions):
-    atts = FoiAttachment.objects.filter(
+    att_qs = FoiAttachment.objects.filter(
         id__in=att_ids
     )
+    att_map = {a.id: a for a in att_qs}
+    atts = [att_map[a_id] for a_id in att_ids]
     try:
         target = FoiAttachment.objects.get(id=target_id)
     except FoiAttachment.DoesNotExist:
@@ -184,7 +186,7 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions):
         pdf_bytes = None
 
     if pdf_bytes is None:
-        atts.update(
+        att_qs.update(
             can_approve=True
         )
         target.delete()
