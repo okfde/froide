@@ -1,7 +1,5 @@
 @import "../variables.scss";
 
-$highlight: $yellow;
-
 .target-primary:target {
   @extend .border-success;
 }
@@ -23,7 +21,7 @@ $highlight: $yellow;
 
 
 .highlight {
-    background: $highlight;
+    background: $highlight-yellow;
 }
 
 .top-buffer {
@@ -109,7 +107,7 @@ input.copy-text {
 
 @keyframes is-new-flash {
   0% {
-      background-color: $highlight;
+      background-color: $highlight-yellow;
       opacity: 1;
   }
   100% {
