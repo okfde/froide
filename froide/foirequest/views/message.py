@@ -268,10 +268,7 @@ def upload_attachments(request, foirequest, message_id):
             'openAttachmentPage': _('Open attachment page'),
             'loadPreview': _('Load preview'),
             'uploadPdfOrPicture': _('Upload PDF or picture'),
-            'otherAttachments': _('Andere Anhänge, die keine Dokumente sind'),
-            # Sie können Ihre hochgeladenen Bilder hier in ein PDF-Dokument umwandeln.
-            # Sie können die Seiten hier richtig anordnen und ggf. in mehrere Dokumente auftrennen.
-            # Das PDF können Sie im Anschluss schwärzen
+            'otherAttachments': _('Other attachments that are not documents'),
             'imageDocumentExplanation': _(
                 'Here you can combine your uploaded images to a PDF document. '
                 'You can rearrange the pages and split it into multiple documents. '
