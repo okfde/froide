@@ -85,6 +85,10 @@ class FoiAttachment(models.Model):
         return can_redact_file(self.filetype, name=self.name)
 
     @property
+    def pending(self):
+        return not self.file
+
+    @property
     def allow_link(self):
         return self.approved or not (self.can_redact and self.can_approve)
 
