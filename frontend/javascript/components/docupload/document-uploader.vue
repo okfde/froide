@@ -26,6 +26,7 @@
         @imagesconverted="imagesConverted"
         @namechanged="doc.name = $event"
         @docupdated="documentUpdated(doc, $event)"
+        @pageupdated="pageUpdated"
         @notnew="doc.new = false"
       ></component>
     </div>
@@ -48,6 +49,9 @@
 </template>
 
 <script>
+
+import Vue from 'vue'
+
 import I18nMixin from '../../lib/i18n-mixin'
 
 import PdfDocument from './pdf-document.vue'
@@ -68,10 +72,9 @@ export default {
     FullpdfDocument
   },
   data () {
-    const [docs, other] = this.buildDocuments()
     return {
-      documents: docs,
-      otherAttachments: other,
+      documents: [],
+      otherAttachments: [],
       showOther: false,
       imageDocId: 0
     }
@@ -79,6 +82,9 @@ export default {
   mounted () {
     this.$root.url = this.config.url
     this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    const [docs, other] = this.buildDocuments()
+    this.documents = docs
+    this.otherAttachments = other
   },
   computed: {
     isMobile () {
@@ -168,6 +174,12 @@ export default {
     loadPdf (doc) {
       doc.component = 'fullpdf-document'
     },
+    pageUpdated ({document, pageNum, data}) {
+      let page = document.pages[pageNum - 1]
+      for (let key in data) {
+        Vue.set(page, key, data[key])
+      }
+    },
     splitPages (doc, pageNum) {
       let newPages = doc.pages.slice(pageNum)
       doc.pages = doc.pages.slice(0, pageNum)
@@ -213,6 +225,10 @@ export default {
       ]
     },
     documentUpdated (doc, update) {
+      if (update === null) {
+        this.documents = this.documents.filter((d) => d.id !== doc.id)
+        return
+      }
       for (let key in update) {
         doc[key] = update[key]
       }

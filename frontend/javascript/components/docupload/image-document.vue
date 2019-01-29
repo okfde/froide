@@ -18,24 +18,11 @@
             <input v-model="documentName" type="text" class="form-control" :placeholder="i18n.documentTitlePlaceholder">
           </div>
           <draggable v-model="pages" @start="drag=true" @end="drag=false" class="pages">
-            <div v-for="page in pages" :key="page.pageNum" class="page">
-              <img v-if="page.url" :src="page.url" alt="" class="page-image"/>
-              <div class="float-right" v-if="page.pageNum != pages.length">
-                <button class="btn btn-sm text-muted small" @click="splitPages(page.pageNum)">
-                  <span class="fa fa-scissors"></span>
-                </button>
-              </div>
-              <div class="text-center">
-                {{ page.pageNum }}
-              </div>
-              <div v-if="page.uploading" class="progress">
-                <div class="progress-bar"
-                  :class="{'progress-bar-animated progress-bar-striped': page.progressPercent === null}"
-                  :style="{'width': page.progress ? page.progressPercentLabel : '100%'}"
-                  role="progressbar" :aria-valuenow="page.progressPercent ? page.progressPercent : 0"
-                  aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
+              <image-page v-for="page in pages" :key="page.pageNum"
+                :page="page"
+                :page-count="pages.length"
+                @pageupdated="$emit('pageupdated', {document, ...$event})"
+              ></image-page>
           </draggable>
         </div>
         <div class="row mt-3">
@@ -59,6 +46,8 @@
 
 import draggable from 'vuedraggable'
 
+import ImagePage from './image-page.vue'
+
 import I18nMixin from '../../lib/i18n-mixin'
 
 function postData (url = '', data = {}, csrfToken) {
@@ -81,7 +70,8 @@ export default {
   mixins: [I18nMixin],
   props: ['config', 'document'],
   components: {
-    draggable
+    draggable,
+    ImagePage
   },
   data () {
     return {
@@ -121,7 +111,6 @@ export default {
   },
   methods: {
     splitPages (pageNum) {
-      if (pageNum)
       this.$emit('splitpages', pageNum)
     },
     convertImages () {
@@ -132,7 +121,7 @@ export default {
         images: this.pages.map((p) => {
           return {
             id: p.attachment.id,
-            rotate: 0
+            rotate: (p.rotate || 0) + (p.implicitRotate || 0)
           }
         })
       }
@@ -161,18 +150,6 @@ export default {
     white-space: nowrap;
     overflow-x: scroll;
     overflow-scrolling: touch;
-  }
-  .page {
-    display: inline-block;
-    max-width: 75px;
-    height: 120px;
-    margin: 0 1rem;
-    cursor: move;
-  }
-  .page-image {
-    padding: 0 0.25rem;
-    width: 100%;
-    border: 1px solid #bbb;
   }
 
 </style>

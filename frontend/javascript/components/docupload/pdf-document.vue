@@ -71,17 +71,22 @@ export default {
     checkProgress () {
       window.fetch(`/api/v1/attachment/${this.document.id}/`)
         .then(response => response.json()).then((data) => {
-          if (data.pending) {
+          if (data.pending === true) {
             window.setTimeout(() => this.checkProgress(), 5000);
             return
+          } else if (data.pending === false) {
+            this.$emit('docupdated', {
+              pending: false,
+              new: true,
+              component: 'fullpdf-document',
+              site_url: data.site_url,
+              file_url: data.file_url,
+            })
+          } else {
+            this.$emit('docupdated', null)
           }
-          this.$emit('docupdated', {
-            pending: false,
-            new: true,
-            component: 'fullpdf-document',
-            site_url: data.site_url,
-            file_url: data.file_url,
-          })
+        }).catch(() => {
+          window.setTimeout(() => this.checkProgress(), 5000);
         })
     }
   }
