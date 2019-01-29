@@ -15,7 +15,7 @@ from froide.helper.text_utils import (
 )
 
 from ..utils import MailAttachmentSizeChecker
-from .request import FoiRequest
+from .request import FoiRequest, get_absolute_short_url
 
 
 class FoiMessageManager(models.Manager):
@@ -162,7 +162,7 @@ class FoiMessage(models.Model):
         return self.get_request_link(self.request.get_absolute_url())
 
     def get_absolute_short_url(self):
-        return self.get_request_link(self.request.get_absolute_short_url())
+        return self.get_request_link(get_absolute_short_url(self.request_id))
 
     def get_absolute_domain_short_url(self):
         return self.get_request_link(self.request.get_absolute_domain_short_url())

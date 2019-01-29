@@ -276,15 +276,16 @@ class FoiMessageAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'kind', 'is_response', 'sent', 'status',
-        make_nullfilter('recipient_public_body',
-                        _('Has recipient public body')),
         'deliverystatus__status',
         make_nullfilter('deliverystatus', _('Has delivery status')),
         'sender_user__is_active',
         'sender_user__is_blocked',
         'sender_user__is_deleted',
         MessageTagsFilter,
-        ('request__reference', SearchFilter)
+        ('request__reference', SearchFilter),
+        ('sender_public_body', ForeignKeyFilter),
+        ('recipient_public_body', ForeignKeyFilter),
+        ('request__user', ForeignKeyFilter),
     )
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
@@ -318,7 +319,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
     def message_page(self, obj):
         return format_html('<a href="{}">{}</a>',
-            obj.get_absolute_url(), _('on site'))
+            obj.get_absolute_short_url(), _('on site'))
 
     def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)

@@ -7,6 +7,16 @@
       {% trans "This public body's requests" %}
     </a>
   </li>
+  <li>
+    <a href="{% url 'admin:foirequest_foimessage_changelist' %}?recipient_public_body={{ original.pk }}">
+      {% trans "This public body's received messages" %}
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'admin:foirequest_foimessage_changelist' %}?sender_public_body={{ original.pk }}">
+      {% trans "This public body's sent messages" %}
+    </a>
+  </li>
 {% endif %}
 {{ block.super }}
 {% endblock %}

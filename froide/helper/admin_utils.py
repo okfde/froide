@@ -252,6 +252,15 @@ class ForeignKeyFilter(admin.FieldListFilter):
         super().__init__(
             field, request, params, model, model_admin, field_path)
         self.lookup_val = request.GET.get(self.field_path, None)
+        param = self.field_path
+        val = self.used_parameters.pop(param, None)
+        if val is not None:
+            if val == 'isnull':
+                self.used_parameters['{}__isnull'.format(param)] = True
+            elif val == 'notnull':
+                self.used_parameters['{}__isnull'.format(param)] = False
+            else:
+                self.used_parameters['{}__in'.format(param)] = val.split(',')
 
     def expected_parameters(self):
         return [self.field_path]
