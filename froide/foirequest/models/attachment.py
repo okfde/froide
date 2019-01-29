@@ -197,7 +197,7 @@ class FoiAttachment(models.Model):
         self.save()
         self.attachment_published.send(sender=self)
 
-    def create_document(self):
+    def create_document(self, title=None):
         if self.document is not None:
             return self.document
 
@@ -209,7 +209,7 @@ class FoiAttachment(models.Model):
             original=self,
             user=foirequest.user,
             public=foirequest.public,
-            title=self.name,
+            title=title or self.name,
             foirequest=self.belongs_to.request,
             publicbody=self.belongs_to.sender_public_body
         )
