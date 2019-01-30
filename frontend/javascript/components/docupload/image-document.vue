@@ -134,11 +134,13 @@ export default {
     margin-top: 2rem;
   }
   .pages {
-    padding-left: 0;
-    list-style-type: none;
-    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    overflow: auto;
     overflow-x: scroll;
     overflow-scrolling: touch;
+    padding-bottom: 2rem;
   }
 
 </style>

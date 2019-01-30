@@ -2,14 +2,10 @@
   <div class="page">
     <div class="row justify-content-center">
       <div class="scol" :style="pageContainerStyle">
-        <div class="rotation-wrapper-outer">
-          <div class="rotation-wrapper-inner">
-            <img v-if="page.url" :src="page.url" alt="" class="page-image"
-              :style="pageStyle"
-              @load="imageLoaded"
-            />
-          </div>
-        </div>
+        <img v-if="page.url" ref="pageImage" :src="page.url" alt="" class="page-image"
+          :style="pageStyle"
+          @load="imageLoaded"
+        />
       </div>
     </div>
     <div class="row justify-content-center">
@@ -53,30 +49,27 @@ export default {
   props: ['page', 'pageCount'],
   data () {
     return {
-      width: null,
-      height: null
+      pageContainerStyle: {}
     }
   },
   computed: {
     pageStyle () {
-      let rotDegree = (this.page.rotate || 0)
-      let degree = rotDegree + (this.page.implicitRotate || 0)
       let styles = {
-        transform: `rotate(${degree}deg)`
+        transform: `rotate(${this.totalRotate}deg)`
+      }
+      if (this.totalRotate % 180 !== 0) {
+        styles.maxHeight = '120px'
+        styles.maxWidth = '120px'
+        styles.width = 'auto'
+      } else {
+        styles.maxWidth = '120px'
+        styles.width = '100%'
       }
       return styles
     },
-    pageContainerStyle () {
+    totalRotate () {
       let rotDegree = (this.page.rotate || 0)
-      let styles = {}
-      if (this.page.width) {
-        if (rotDegree % 180 !== 0) {
-          styles.height = this.page.height + 'px'
-        } else {
-          styles.height = this.page.width + 'px'
-        }
-      }
-      return styles
+      return rotDegree + (this.page.implicitRotate || 0)
     },
     pageNum () {
       return this.page.pageNum
@@ -111,6 +104,25 @@ export default {
             rotate: ((this.page.rotate || 0) + 90) % 360
           }
       })
+      window.setTimeout(() => this.calculateContainerStyle(), 500)
+    },
+    calculateContainerStyle () {
+      console.log('update container style')
+      let pageImage = this.$refs.pageImage
+        if (!pageImage) {
+          return {}
+        }
+        let dims = this.$refs.pageImage.getBoundingClientRect()
+        let styles = {}
+        if (this.totalRotate % 180 !== 0) {
+          styles = {
+            // 'max-height': `${Math.min(120, dims.height)}px`,
+            'max-width': `${dims.width}px`
+          }
+        } else {
+          styles = {}
+        }
+        this.pageContainerStyle = styles
     },
     imageLoaded (e) {
       let width = e.target.width
@@ -142,7 +154,7 @@ export default {
           })
         })
       }
-    },
+    }
   }
 }
 
@@ -150,18 +162,10 @@ export default {
 
 <style lang="scss" scoped>
   .page {
-    display: inline-block;
-    max-width: 120px;
-    height: 120px;
+    flex: 0 0 120px; 
+    padding: 0 15px;
     margin: 0 1rem;
     cursor: move;
-  }
-  .rotation-wrapper-outer {
-    display: table;
-  }
-  .rotation-wrapper-inner {
-    padding: 50% 0;
-    height: 0;
   }
   .page-image {
     display: block;
@@ -169,7 +173,6 @@ export default {
     border: 1px solid #bbb;
     transform-origin: center center;
     transition: transform 0.5s linear;
-    margin-top: -50%;
   }
   .scol {
     flex-basis: 0;
