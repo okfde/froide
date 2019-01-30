@@ -35,9 +35,9 @@
     </div>
     <div v-if="page.uploading" class="progress">
       <div class="progress-bar"
-        :class="{'progress-bar-animated progress-bar-striped': page.progressPercent === null}"
-        :style="{'width': page.progress ? page.progressPercentLabel : '100%'}"
-        role="progressbar" :aria-valuenow="page.progressPercent ? page.progressPercent : 0"
+        :class="{'progress-bar-animated progress-bar-striped': progressUnknown}"
+        :style="{'width': progressPercentLabel}"
+        role="progressbar" :aria-valuenow="page.progress"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
@@ -83,6 +83,21 @@ export default {
     },
     isLast () {
       return this.page.pageNum === this.pageCount
+    },
+    progressUnknown () {
+      return this.progressPercent === null
+    },
+    progressPercent () {
+      if (!this.page.progressTotal) {
+        return null
+      }
+      return this.page.progress / this.page.progressTotal * 100
+    },
+    progressPercentLabel () {
+      if (this.progressPercent) {
+        return `${this.progressPercent}%`
+      }
+      return '100%'
     }
   },
   methods: {

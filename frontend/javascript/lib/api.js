@@ -134,6 +134,35 @@ class FroideAPI {
   }
 }
 
+function postData (url = '', data = {}, csrfToken) {
+  return window.fetch(url, {
+    method: 'POST',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(data)
+  }).then(response => response.json())
+}
+
+function getData (url = '') {
+  return window.fetch(url, {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+  }).then(response => response.json())
+}
+
 export {
-  FroideAPI
+  FroideAPI,
+  postData,
+  getData
 }

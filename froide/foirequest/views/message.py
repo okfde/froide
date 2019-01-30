@@ -259,10 +259,15 @@ def upload_attachments(request, foirequest, message_id):
         },
         'url': {
             'getMessage': reverse('api:message-detail', kwargs={'pk': message.id}),
+            'getAttachment': reverse('api:attachment-detail', kwargs={'pk': 0}),
             'convertAttachments': reverse('foirequest-upload_attachments',
                 kwargs={'slug': foirequest.slug, 'message_id': message.id}),
             'addAttachment': reverse('foirequest-add_postal_reply_attachment',
-                kwargs={'slug': foirequest.slug, 'message_id': message.id})
+                kwargs={'slug': foirequest.slug, 'message_id': message.id}),
+            'redactAttachment': reverse('foirequest-redact_attachment',
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
+            'approveAttachment': reverse('foirequest-approve_attachment',
+                kwargs={'slug': foirequest.slug, 'attachment': 0}),
         },
         'i18n': {
             'newDocumentPageCount': [
@@ -285,6 +290,12 @@ def upload_attachments(request, foirequest, message_id):
             'documentTitlePlaceholder': _('e.g. Letter from date'),
             'showIrrelevantAttachments': _('Show irrelevant attachments'),
             'loading': _('Loading...'),
+            'review': _('Review'),
+            'approve': _('Approve'),
+            'notPublic': _('not public'),
+            'redacted': _('redacted'),
+            'redact': _('Redact'),
+            'protectedOriginal': _('protected original'),
         }
     }
     request.auth = None

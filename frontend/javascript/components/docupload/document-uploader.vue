@@ -237,9 +237,6 @@ export default {
       }
     },
     uploadPage (page) {
-      page.progress = 0
-      page.uploading = true
-      page.progressTotal = null
       return new Promise((resolve, reject) => {
         var data = new FormData()
         data.append(`${this.config.settings.attachment_form_prefix}-files`, page.file)
@@ -251,13 +248,11 @@ export default {
         let xhrUpload = xhr.upload ? xhr.upload : xhr
         xhrUpload.addEventListener("progress", (e) => {
           if (e.lengthComputable) {
-            page.progress = e.loaded
-            page.progressTotal = e.total
-            page.progressPercent = Math.min(100, Math.round(page.progress / page.progressTotal * 100))
-            page.progressPercentLabel = page.progressPercent + '%'
+            Vue.set(page, 'progress', e.loaded)
+            Vue.set(page, 'progressTotal', e.total)
           } else {
-            page.progress = null
-            page.progressPercent = null
+            Vue.set(page, 'progress', null)
+            Vue.set(page, 'progressTotal', null)
           }
         })
         xhr.onreadystatechange = function () {
@@ -304,6 +299,8 @@ export default {
             size: f.size,
             progress: 0,
             type: 'pdf',
+            uploading: true,
+            progress: 0,
             new: true,
             name: f.name,
             component: 'pdf-document',
@@ -316,6 +313,8 @@ export default {
             filetype: f.type,
             file: f,
             size: f.size,
+            uploading: true,
+            progress: 0,
             type: 'image',
             url: window.URL.createObjectURL(f)
           }
@@ -326,6 +325,8 @@ export default {
             id: `${f.name}-${f.lastModified}-${f.size}`,
             name: f.name,
             file: f,
+            uploading: true,
+            progress: 0,
             filetype: f.type,
             type: 'other'
           })
@@ -363,7 +364,6 @@ export default {
       ]
       var p = Promise.resolve();
       pages.forEach(page => {
-        p.uploading = true
         p = p.then(() => this.uploadPage(page))
       })
     }

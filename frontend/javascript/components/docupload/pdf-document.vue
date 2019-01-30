@@ -2,23 +2,32 @@
   <div class="document mb-3">
     <div class="card">
       <div class="card-header">
-        <small>{{ document.name }}</small>
+        <pdf-header :config="config" :document="document"></pdf-header>
       </div>
       <div class="card-body" :class="{'is-new': document.new}">
         <div v-if="document.uploading" class="progress">
           <div class="progress-bar"
-            :class="{'progress-bar-animated progress-bar-striped': document.progressPercent === null}"
-            :style="{'width': document.progress ? document.progressPercentLabel : '100%'}"
-            role="progressbar" :aria-valuenow="document.progressPercent ? document.progressPercent : 0"
+            :class="{'progress-bar-animated progress-bar-striped': progressUnknown}"
+            :style="{'width': progressPercentLabel}"
+            role="progressbar" :aria-valuenow="document.progress"
             aria-valuemin="0" aria-valuemax="100"></div>
         </div>
         <template v-if="!document.pending">
-          <a :href="document.site_url" target="_blank" class="btn btn-sm btn-light">
-            {{ i18n.openAttachmentPage }}
-          </a>
-          <button class="btn btn-sm btn-light" @click="$emit('loadpdf')">
-            {{ i18n.loadPreview }}
-          </button>
+          <div class="row">
+            <div class="col-auto">
+              <a :href="document.site_url" target="_blank" class="btn btn-sm btn-light">
+                {{ i18n.openAttachmentPage }}
+              </a>
+              <button class="btn btn-sm btn-light" @click="$emit('loadpdf')">
+                {{ i18n.loadPreview }}
+              </button>
+            </div>
+            <div class="ml-auto col-auto">
+              <pdf-review :config="config" :document="document"
+                @documentupdated="$emit('docupdated', $event)"
+              ></pdf-review>
+            </div>
+          </div>
         </template>
         <div v-else>
           <div class="spinner-border spinner-border-sm" role="status">
@@ -36,6 +45,9 @@
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
 
+import PdfReview from './pdf-review.vue'
+import PdfHeader from './pdf-header.vue'
+
 const range = (len) => [...Array(len).keys()]
 
 export default {
@@ -43,6 +55,7 @@ export default {
   mixins: [I18nMixin],
   props: ['config', 'document'],
   components: {
+    PdfReview, PdfHeader
   },
   data () {
     return {
@@ -65,6 +78,21 @@ export default {
   computed: {
     pages () {
       return this.document.pages
+    },
+    progressUnknown () {
+      return this.progressPercent === null
+    },
+    progressPercent () {
+      if (!this.document.progressTotal) {
+        return null
+      }
+      return this.document.progress / this.document.progressTotal * 100
+    },
+    progressPercentLabel () {
+      if (this.progressPercent) {
+        return `${this.progressPercent}%`
+      }
+      return '100%'
     }
   },
   methods: {

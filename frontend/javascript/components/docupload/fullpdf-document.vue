@@ -2,7 +2,7 @@
   <div class="document mb-3">
     <div class="card">
       <div class="card-header">
-        <small>{{ document.name }}</small>
+        <pdf-header :config="config" :document="document"></pdf-header>
       </div>
       <div class="card-body" :class="{'is-new': document.new}">
         <div v-if="document.uploading" class="progress">
@@ -22,6 +22,13 @@
             </div>
           </li>
         </ol>
+        <div class="row">
+          <div class="ml-auto col-auto">
+            <pdf-review :config="config" :document="document"
+              @documentupdated="$emit('docupdated', $event)"
+            ></pdf-review>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -29,6 +36,9 @@
 
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
+
+import PdfReview from './pdf-review.vue'
+import PdfHeader from './pdf-header.vue'
 
 import PDFJS from 'pdfjs-dist'
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
@@ -40,6 +50,7 @@ export default {
   mixins: [I18nMixin],
   props: ['config', 'document'],
   components: {
+    PdfReview, PdfHeader
   },
   data () {
     return {

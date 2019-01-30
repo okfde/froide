@@ -50,19 +50,7 @@ import draggable from 'vuedraggable'
 import ImagePage from './image-page.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
-
-function postData (url = '', data = {}, csrfToken) {
-  return window.fetch(url, {
-    method: 'POST',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify(data)
-  }).then(response => response.json())
-}
+import postData from '../../lib/api.js'
 
 const range = (len) => [...Array(len).keys()]
 

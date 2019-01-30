@@ -98,7 +98,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         depth = 0
         fields = (
             'resource_uri', 'id', 'belongs_to', 'name', 'filetype',
-            'approved', 'is_redacted', 'is_converted', 'converted',
+            'approved', 'can_approve', 'is_redacted', 'is_converted', 'converted',
             'size', 'site_url', 'anchor_url', 'file_url', 'pending'
         )
 

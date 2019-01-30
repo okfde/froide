@@ -83,13 +83,16 @@ def approve_attachment(request, slug, attachment):
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
     att.approve_and_save()
-    messages.add_message(request, messages.SUCCESS,
-            _('Attachment approved.'))
+
     if request.is_ajax():
+        if request.content_type == 'application/json':
+            return JsonResponse({})
         return render(
             request, 'foirequest/snippets/attachment.html',
             {'attachment': att, 'object': foirequest}
         )
+    messages.add_message(request, messages.SUCCESS,
+            _('Attachment approved.'))
     return redirect(att.get_anchor_url())
 
 
