@@ -286,6 +286,7 @@ class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
         ('sender_public_body', ForeignKeyFilter),
         ('recipient_public_body', ForeignKeyFilter),
         ('request__user', ForeignKeyFilter),
+        make_nullfilter('foiattachment_set', _('Has attachments')),
     )
     search_fields = ['subject', 'sender_email', 'recipient_email']
     ordering = ('-timestamp',)
