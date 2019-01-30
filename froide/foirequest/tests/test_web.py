@@ -428,6 +428,7 @@ class PerformanceTest(TestCase):
         - FoiEvents of that request (+1)
         - FoiRequestFollowerCount (+1)
         - Delivery Status (+1)
+        - Guides (+1)
         - ContentType + Comments for each FoiMessage (+2)
         """
         req = factories.FoiRequestFactory.create(site=self.site)
@@ -435,7 +436,7 @@ class PerformanceTest(TestCase):
         mes2 = factories.FoiMessageFactory.create(request=req)
         factories.FoiAttachmentFactory.create(belongs_to=mes2)
         ContentType.objects.clear_cache()
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             self.client.get(req.get_absolute_url())
 
     def test_queries_foirequest_loggedin(self):
@@ -450,9 +451,10 @@ class PerformanceTest(TestCase):
         - FoiRequestFollowerCount + if following (+2)
         - team menu: has teams + permissions/groups (+3)
         - Delivery Status (+1)
+        - Guides (+1)
         - ContentType + Comments for each FoiMessage (+2)
         """
-        TOTAL_EXPECTED_REQUESTS = 15
+        TOTAL_EXPECTED_REQUESTS = 16
         req = factories.FoiRequestFactory.create(site=self.site)
         factories.FoiMessageFactory.create(request=req, is_response=False)
         mes2 = factories.FoiMessageFactory.create(request=req)
