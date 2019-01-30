@@ -29,6 +29,7 @@ register = template.Library()
 
 
 def unify(text):
+    text = text or ''
     text = text.replace("\r\n", "\n")
     return text
 
