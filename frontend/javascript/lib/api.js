@@ -163,7 +163,7 @@ function getData (url = '', headers = {}) {
   }).then(response => response.json())
 }
 
-function bustCache(url) {
+function bustCache (url) {
   return window.fetch(url, {
     method: 'GET',
     cache: 'no-cache',
