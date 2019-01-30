@@ -31,8 +31,10 @@
     <dl>
       <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
       <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
-      <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
-      <dd>{{ object.classification }}</dd>
+      {% if object.classification %}
+        <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
+        <dd>{{ object.classification }}</dd>
+      {% endif %}
       <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
       <dd>
         {% for category in object.categories.all %}
