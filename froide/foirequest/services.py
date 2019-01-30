@@ -22,8 +22,7 @@ from .utils import (
     get_publicbody_for_email
 )
 from .hooks import registry
-from .tasks import create_project_requests
-
+from .tasks import create_project_requests, convert_attachment_task
 
 User = get_user_model()
 
@@ -459,3 +458,6 @@ class ReceiveEmailService(BaseService):
             attachment._committed = False
             att.file = File(attachment)
             att.save()
+
+            if att.can_convert_to_pdf():
+                convert_attachment_task.delay(att.id)

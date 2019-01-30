@@ -11,7 +11,8 @@ from django.utils import timezone
 from froide.helper.redaction import can_redact_file
 from froide.helper.storage import HashedFilenameStorage
 from froide.helper.document import (
-    PDF_FILETYPES, EMBEDDABLE_FILETYPES, IMAGE_FILETYPES
+    PDF_FILETYPES, EMBEDDABLE_FILETYPES, IMAGE_FILETYPES,
+    can_convert_to_pdf
 )
 from froide.document.models import Document
 
@@ -199,6 +200,14 @@ class FoiAttachment(models.Model):
         self.approved = True
         self.save()
         self.attachment_published.send(sender=self)
+
+    def can_convert_to_pdf(self):
+        ft = self.filetype.lower()
+        name = self.name.lower()
+        return (
+            self.converted_id is None and
+            can_convert_to_pdf(ft, name=name)
+        )
 
     def create_document(self, title=None):
         if self.document is not None:

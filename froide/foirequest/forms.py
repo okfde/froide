@@ -26,6 +26,7 @@ from froide.helper.auth import get_read_queryset
 from .models import (
     FoiRequest, FoiMessage, FoiAttachment, RequestDraft, PublicBodySuggestion
 )
+from .tasks import convert_attachment_task
 from .validators import validate_upload_document, clean_reference
 from .foi_mail import generate_foirequest_files
 from .utils import (
@@ -517,6 +518,9 @@ class AttachmentSaverMixin(object):
             att.file.save(filename, file)
             att.approved = False
             att.save()
+
+            if att.can_convert_to_pdf():
+                convert_attachment_task.delay(att.id)
 
         message._attachments = None
 

@@ -4,8 +4,6 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from froide.helper.document import can_convert_to_pdf
-
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent, FoiProject
 from .utils import send_request_user_email
 

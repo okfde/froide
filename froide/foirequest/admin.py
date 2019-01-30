@@ -435,9 +435,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
             return
         count = 0
         for instance in queryset:
-            ft = instance.filetype.lower()
-            name = instance.name.lower()
-            if can_convert_to_pdf(ft, name=name):
+            if instance.can_convert_to_pdf():
                 count += 1
                 convert_attachment_task.delay(instance.pk)
         self.message_user(request, _("Conversion tasks started: %s") % count)
