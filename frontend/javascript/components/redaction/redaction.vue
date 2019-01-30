@@ -128,6 +128,8 @@ import Vue from 'vue'
 
 import PDFJS from 'pdfjs-dist'
 
+import {bustCache} from '../../lib/api.js'
+
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 export default {
@@ -351,7 +353,9 @@ export default {
             if (res.url) {
               this.progressCurrent = 100
               this.progressTotal = 100
-              document.location.href = res.url
+              bustCache(res.attachment_url).then(() => {
+                document.location.href = res.url
+              })
             } else {
               this.workingState = null
               this.errors = res

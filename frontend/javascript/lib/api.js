@@ -149,20 +149,35 @@ function postData (url = '', data = {}, csrfToken) {
   }).then(response => response.json())
 }
 
-function getData (url = '') {
+function getData (url = '', headers = {}) {
+  headers = headers || {}
   return window.fetch(url, {
     method: 'GET',
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
       'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest'
-    },
+      'X-Requested-With': 'XMLHttpRequest',
+      ...headers
+    }
   }).then(response => response.json())
+}
+
+function bustCache(url) {
+  return window.fetch(url, {
+    method: 'GET',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'pragma': 'no-cache',
+      'cache-control': 'no-cache'
+    }
+  })
 }
 
 export {
   FroideAPI,
   postData,
-  getData
+  getData,
+  bustCache
 }

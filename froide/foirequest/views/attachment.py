@@ -252,7 +252,14 @@ def redact_attachment(request, slug, attachment_id):
             attachment.can_approve = False
             attachment.approved = False
             attachment.save()
-        return JsonResponse({'url': att.get_anchor_url()})
+
+        attachment_url = get_accessible_attachment_url(
+            foirequest, attachment
+        )
+        return JsonResponse({
+            'url': att.get_anchor_url(),
+            'attachment_url': attachment_url
+        })
 
     attachment_url = get_accessible_attachment_url(foirequest, attachment)
 
