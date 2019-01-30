@@ -296,16 +296,3 @@ def create_event_set_concrete_law(sender, **kwargs):
 def create_event_escalated(sender, **kwargs):
     FoiEvent.objects.create_event("escalated", sender,
             user=sender.user, public_body=sender.law.mediator)
-
-
-@receiver(signals.post_save, sender=FoiAttachment,
-        dispatch_uid="foiattachment_convert_attachment")
-def foiattachment_convert_attachment(instance=None, created=False, **kwargs):
-    if kwargs.get('raw', False):
-        return
-
-    from .tasks import convert_attachment_task
-
-    if can_convert_to_pdf(instance.filetype, name=instance.name):
-        if instance.converted_id is None:
-            convert_attachment_task.delay(instance.id)
