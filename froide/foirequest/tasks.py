@@ -139,14 +139,11 @@ def convert_attachment(att):
     if output_bytes is None:
         return
 
-    result_filename = os.path.basename(att.file.path)
-    result_name, result_ext = os.path.splitext(result_filename)
-
     if att.converted:
         new_att = att.converted
     else:
         name, ext = os.path.splitext(att.name)
-        name = _('{name}_converted{ext}').format(name=name, ext=result_ext)
+        name = _('{name}_converted{ext}').format(name=name, ext='.pdf')
 
         new_att = FoiAttachment(
             name=name,
