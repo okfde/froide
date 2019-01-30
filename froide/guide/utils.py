@@ -7,6 +7,8 @@ from django.conf import settings
 from django.template.loader import render_to_string
 
 from froide.helper.text_utils import split_text_by_separator
+from froide.helper.forms import get_fk_form_class
+from froide.helper.admin_utils import AdminAssignActionBase
 
 from .models import Rule, Guidance
 
@@ -92,27 +94,28 @@ class GuidanceApplicator:
             yield from self.apply_rule(rule, **ctx)
 
     def apply_rule(self, rule, includes=None, excludes=None, tags=None):
-        if tags is None:
-            tags = set()
-
-        message = self.message
         for action in rule.actions.all():
-            if action.tag:
-                message.tags.add(action.tag)
+            yield self.apply_action(action, tags=tags, rule=rule)
+
+    def apply_action(self, action, tags=None, rule=None):
+        message = self.message
+        if action.tag:
+            message.tags.add(action.tag)
+            if tags is not None:
                 tags.add(action.tag_id)
-            if not action.label:
-                continue
-            guidance, created = Guidance.objects.get_or_create(
-                message=message,
-                action=action,
-                defaults={
-                    'rule': rule
-                }
-            )
-            guidance.created = created
-            if created:
-                self.created_count += 1
-            yield guidance
+        if not action.label:
+            return
+        guidance, created = Guidance.objects.get_or_create(
+            message=message,
+            action=action,
+            defaults={
+                'rule': rule
+            }
+        )
+        guidance.created = created
+        if created:
+            self.created_count += 1
+        return guidance
 
     def run(self):
         guidances = self.apply_rules()
@@ -222,3 +225,15 @@ def send_notifications(notifications):
     Guidance.objects.filter(
         id__in=[g.id for g in guidances]
     ).update(notified=True)
+
+
+class GuidanceSelectionMixin(AdminAssignActionBase):
+    action_label = _('Choose guidance action to attach')
+
+    def _get_assign_action_form_class(self, fieldname):
+        return get_fk_form_class(Guidance, 'action', self.admin_site)
+
+    def _execute_assign_action(self, obj, fieldname, assign_obj):
+        applicator = GuidanceApplicator(obj)
+        guidance = applicator.apply_action(assign_obj)
+        notify_users([(obj, GuidanceResult([guidance], applicator.created_count, 0))])

@@ -21,6 +21,7 @@ from froide.helper.admin_utils import (
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
+from froide.guide.utils import GuidanceSelectionMixin
 
 from .models import (
     FoiRequest, FoiMessage, FoiProject,
@@ -265,7 +266,7 @@ class MessageTagsFilter(TaggitListFilter):
     tag_class = TaggedMessage
 
 
-class FoiMessageAdmin(admin.ModelAdmin):
+class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'subject', 'timestamp', 'message_page',
@@ -299,7 +300,8 @@ class FoiMessageAdmin(admin.ModelAdmin):
     ]
     actions = [
         'check_delivery_status', 'resend_messages',
-        'run_guidance', 'run_guidance_notify'
+        'run_guidance', 'run_guidance_notify',
+        'attach_guidance_action'
     ]
 
     def get_urls(self):
@@ -319,6 +321,11 @@ class FoiMessageAdmin(admin.ModelAdmin):
     def message_page(self, obj):
         return format_html('<a href="{}">{}</a>',
             obj.get_absolute_short_url(), _('on site'))
+
+    def attach_guidance_action(self, request, queryset):
+        ''' Magic from GuidanceSelectionMixin'''
+        return self._assign_action_handler('', 'attach_guidance_action', request, queryset)
+    attach_guidance_action.short_description = _('Add guidance action to messages')
 
     def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)
