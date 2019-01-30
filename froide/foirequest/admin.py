@@ -21,7 +21,6 @@ from froide.helper.admin_utils import (
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
-from froide.helper.document import can_convert_to_pdf
 
 from .models import (
     FoiRequest, FoiMessage, FoiProject,
