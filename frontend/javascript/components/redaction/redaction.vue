@@ -61,33 +61,41 @@
           </button>
         </div>
 
-        <div class="btn-group mr-1 ml-auto">
+        <div class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
           <button class="btn btn-primary" @click="redact">
+            <i class="fa fa-paint-brush"></i>
             {{ i18n.redactAndPublish }}
           </button>
         </div>
-        <div class="btn-group mr-4" v-if="canPublish">
-          <form method="post" :action="config.config.publishUrl">
+        <div class="btn-group ml-auto mt-1 mt-lg-0" >
+          <form v-if="canPublish" method="post" :action="config.config.publishUrl">
             <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken"/>
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check"></i>
               {{ i18n.publishWithoutRedaction }}
             </button>
           </form>
-        </div>
-        <div class="btn-group mr-4" v-if="!canPublish">
-          <a class="btn btn-secondary" :href="attachmentUrl">
+          <a v-else  class="btn btn-secondary" :href="attachmentUrl">
             {{ i18n.cancel }}
           </a>
         </div>
       </div>
     </div>
     <div class="row mt-3">
-      <div class="col-lg-12">
+      <div class="col-lg-12 overflow-auto">
         <div :id="containerId" class="redactContainer" :class="{'hide-redacting': working}">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
-          <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></canvas>
-          <div :id="textLayerId" class="textLayer" :class="{ textActive: textOnly, textDisabled: textDisabled }" @mousedown="mouseDown" @mousemove="mouseMove" @mouseup="mouseUp"></div>
+          <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer"
+            @mousedown="mouseDown"
+            @mousemove="mouseMove"
+            @mouseup="mouseUp"
+          ></canvas>
+          <div :id="textLayerId" class="textLayer"
+            :class="{ textActive: textOnly, textDisabled: textDisabled }"
+            @mousedown="mouseDown"
+            @mousemove="mouseMove"
+            @mouseup="mouseUp"
+          ></div>
         </div>
       </div>
     </div>
@@ -186,7 +194,8 @@ export default {
     regexList () {
       return this.redactRegex.map(r => {
         r = r.replace(/ /g, '\\s+')
-        return new RegExp(r, 'gi')
+        r = `\\b${r}\\b`
+        return new RegExp(r, 'g')
       })
     },
     container () {
