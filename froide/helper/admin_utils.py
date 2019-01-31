@@ -252,6 +252,9 @@ class ForeignKeyFilter(admin.FieldListFilter):
         super().__init__(
             field, request, params, model, model_admin, field_path)
         self.lookup_val = request.GET.get(self.field_path, None)
+        self.create_used_parameters()
+
+    def create_used_parameters(self):
         param = self.field_path
         val = self.used_parameters.pop(param, None)
         if val is not None:
@@ -275,11 +278,7 @@ class ForeignKeyFilter(admin.FieldListFilter):
 
 
 class SearchFilter(ForeignKeyFilter):
-    def __init__(self, field, request, params, model, model_admin, field_path):
-        super().__init__(
-            field, request, params, model, model_admin, field_path)
-
-        self.lookup_val = request.GET.get(self.field_path, None)
+    def create_used_parameters(self):
         param = self.field_path
         val = self.used_parameters.pop(param, None)
         if val is not None:
