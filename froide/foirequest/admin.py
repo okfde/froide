@@ -22,6 +22,7 @@ from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fk_form_class
 from froide.helper.email_utils import EmailParser
 from froide.guide.utils import GuidanceSelectionMixin
+from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 
 from .models import (
     FoiRequest, FoiMessage, FoiProject,
@@ -399,7 +400,33 @@ class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
 
 
 class MessageTagAdmin(admin.ModelAdmin):
-    pass
+    actions = ['export_csv']
+
+    def export_csv(self, request, queryset):
+        from froide.publicbody.models import PublicBody
+
+        def get_stream(queryset):
+            for tag in queryset:
+                pbs = PublicBody.objects.filter(
+                    send_messages__tags=tag
+                ).annotate(
+                    tag_count=models.Count(
+                        'send_messages',
+                        filter=models.Q(
+                            send_messages__tags=tag
+                        )
+                    )
+                )
+                for pb in pbs:
+                    yield {
+                        'tag': tag.name,
+                        'publicbody_id': pb.id,
+                        'publicbody_name': pb.name,
+                        'tag_count': pb.tag_count
+                    }
+        csv_stream = dict_to_csv_stream(get_stream(queryset))
+        return export_csv_response(csv_stream, name='tag_stats.csv')
+    export_csv.short_description = _("Export public body tag stats to CSV")
 
 
 class FoiAttachmentAdmin(admin.ModelAdmin):

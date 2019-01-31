@@ -38,16 +38,27 @@ def get_dict(obj, fields):
 
 
 def export_csv(queryset, fields):
-    fake_file = FakeFile()
-    field_names = [f[0] if isinstance(f, tuple) else f for f in fields]
-    writer = csv.DictWriter(fake_file, field_names)
-    writer.writeheader()
-    yield fake_file._last_string
+    yield from dict_to_csv_stream(export_dict_stream(queryset, fields))
+
+
+def export_dict_stream(queryset, fields):
     for obj in queryset:
         if hasattr(obj, 'get_dict'):
             d = obj.get_dict(fields)
         else:
             d = get_dict(obj, fields)
+        yield d
+
+
+def dict_to_csv_stream(stream):
+    writer = None
+    fake_file = FakeFile()
+    for d in stream:
+        if writer is None:
+            field_names = list(d.keys())
+            writer = csv.DictWriter(fake_file, field_names)
+            writer.writeheader()
+            yield fake_file._last_string
         writer.writerow(d)
         yield fake_file._last_string
 
