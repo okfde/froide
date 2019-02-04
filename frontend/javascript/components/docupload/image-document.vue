@@ -1,7 +1,7 @@
 <template>
   <div class="document mb-3">
     <div class="card">
-      <div class="card-header">
+      <div class="card-header" ref="top">
         {{ i18n._('newDocumentPageCount', {count: numPages} ) }}
       </div>
       <div class="card-body" :class="{'is-new': document.new}">
@@ -17,7 +17,7 @@
             <label for="page-label">{{ i18n.documentTitle }}</label>
             <input v-model="documentName" type="text" class="form-control" :placeholder="i18n.documentTitlePlaceholder">
           </div>
-          <draggable v-model="pages" @start="drag=true" @end="drag=false" class="pages">
+          <draggable v-model="pages" @start="drag=true" @end="drag=false" class="pages bg-light">
               <image-page v-for="page in pages" :key="page.pageNum"
                 :page="page"
                 :page-count="pages.length"
@@ -50,7 +50,7 @@ import draggable from 'vuedraggable'
 import ImagePage from './image-page.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
-import postData from '../../lib/api.js'
+import {postData} from '../../lib/api.js'
 
 const range = (len) => [...Array(len).keys()]
 
@@ -104,6 +104,7 @@ export default {
     },
     convertImages () {
       this.converting = true
+      this.$refs.top.scrollIntoView(true)
       let data = {
         action: 'convert_to_pdf',
         title: this.document.name,

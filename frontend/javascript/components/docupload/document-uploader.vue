@@ -76,10 +76,15 @@ export default {
       documents: [],
       otherAttachments: [],
       showOther: false,
-      imageDocId: 0
+      imageDocId: 0,
+      uploadCount: 0,
+      exifSupport: null,
+      names: {}
     }
   },
   mounted () {
+    this.$root.exifSupport = this.exifSupport = null
+    this.testExifSupport()
     this.$root.url = this.config.url
     this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
     const [docs, other] = this.buildDocuments()
@@ -93,6 +98,21 @@ export default {
     },
   },
   methods: {
+    testExifSupport () {
+      /*
+      From Modernizr feature detection:
+      https://github.com/Modernizr/Modernizr/blob/master/feature-detects/exif-orientation.js
+      */
+      var img = new Image();
+      img.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAASUkqAAgAAAABABIBAwABAAAABgASAAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+/iiiigD/2Q==';
+      img.onload = () => {
+        document.body.appendChild(img)
+        const rect = img.getBoundingClientRect()
+        this.$root.exifSupport = this.exifSupport = rect.height === 2
+        console.log('Exif Support:', this.exifSupport, rect, img.width, img.naturalWidth, img.height, img.naturalHeight)
+        document.body.removeChild(img)
+      };
+    },
     buildDocuments () {
       const documents = []
       let images = []
@@ -130,6 +150,7 @@ export default {
             attachment: att
           })
         }
+        this.names[att.name] = true
       })
       if (images.length > 0) {
         images = this.prepareImages(images)
@@ -239,7 +260,16 @@ export default {
     uploadPage (page) {
       return new Promise((resolve, reject) => {
         var data = new FormData()
-        data.append(`${this.config.settings.attachment_form_prefix}-files`, page.file)
+        let filename = page.file.name
+        let parts = filename.split('.')
+        const ext = parts[parts.length - 1]
+        parts = parts.slice(0, parts.length - 1)
+        const basename = parts.join('.')
+        while (this.names[filename] !== undefined) {
+          this.uploadCount += 1
+          filename = `${basename}_${this.uploadCount}.${ext}`
+        }
+        data.append(`${this.config.settings.attachment_form_prefix}-files`, page.file, filename)
 
         var xhr = new window.XMLHttpRequest()
         xhr.open('POST', this.config.url.addAttachment)

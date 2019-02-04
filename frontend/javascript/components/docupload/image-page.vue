@@ -69,6 +69,9 @@ export default {
     },
     totalRotate () {
       let rotDegree = (this.page.rotate || 0)
+      if (this.$root.exifSupport) {
+        return rotDegree
+      }
       return rotDegree + (this.page.implicitRotate || 0)
     },
     pageNum () {
@@ -173,6 +176,7 @@ export default {
     border: 1px solid #bbb;
     transform-origin: center center;
     transition: transform 0.5s linear;
+    image-orientation: none; /* Always read exif ourselves */
   }
   .scol {
     flex-basis: 0;
