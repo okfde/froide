@@ -1,5 +1,5 @@
 <template>
-  <div id="pdf-viewer" class="pdf-redaction-tool">
+  <div id="pdf-viewer" class="pdf-redaction-tool" ref="top">
     <div v-if="message" class="row">
       <div class="col-lg-12">
         <div class="alert alert-info" role="alert">{{ message }}</div>
@@ -30,7 +30,7 @@
     </div>
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group mr-2">
+        <div class="btn-group mr-1">
           <button class="btn btn-light" @click="undo" :disabled="!canUndo">
             <i class="fa fa-undo"></i>
           </button>
@@ -38,7 +38,7 @@
             <i class="fa fa-repeat"></i>
           </button>
         </div>
-        <div class="btn-group mr-2">
+        <div class="btn-group mr-1">
           <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
             &laquo;
             <span class="sr-only">{{ i18n.previousPage}}</span>
@@ -52,7 +52,7 @@
           </button>
         </div>
 
-        <div class="btn-group mr-2">
+        <div class="btn-group mr-1">
           <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
             <i class="fa fa-align-justify"></i>
           </button>
@@ -89,12 +89,20 @@
             @mousedown="mouseDown"
             @mousemove="mouseMove"
             @mouseup="mouseUp"
+            @touchstart="touchStart"
+            @touchend="touchEnd"
+            @touchmove="touchMove"
+            @touchcancel="touchCancel"
           ></canvas>
           <div :id="textLayerId" class="textLayer"
             :class="{ textActive: textOnly, textDisabled: textDisabled }"
             @mousedown="mouseDown"
             @mousemove="mouseMove"
             @mouseup="mouseUp"
+            @touchstart="touchStart"
+            @touchend="touchEnd"
+            @touchmove="touchMove"
+            @touchcancel="touchCancel"
           ></div>
         </div>
       </div>
@@ -132,6 +140,10 @@ import {bustCache} from '../../lib/api.js'
 
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
+function isTouchDevice() {
+  return 'ontouchstart' in window;
+}
+
 export default {
   name: 'redaction',
   props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegex', 'canPublish'],
@@ -159,7 +171,9 @@ export default {
       errors: null,
       message: null,
       progressCurrent: null,
-      progressTotal: null
+      progressTotal: null,
+      hasTouch: isTouchDevice(),
+      doubleTap: false,
     }
   },
   created () {
@@ -332,6 +346,7 @@ export default {
       }
     },
     redact () {
+      this.$refs.top.scrollIntoView(true)
       this.ready = false
       this.workingState = 'redacting'
       this.progressCurrent = 0
@@ -359,6 +374,7 @@ export default {
             } else {
               this.workingState = null
               this.errors = res
+              this.$refs.top.scrollIntoView(true)
             }
           }).catch((err) => {
             this.workingState = null
@@ -366,6 +382,7 @@ export default {
             this.ready = true
             this.redacting = false
             this.errors = err
+            this.$refs.top.scrollIntoView(true)
           })
         })
     },
@@ -421,11 +438,41 @@ export default {
     getOffset (e) {
       let target = e.target || e.srcElement
       let rect = target.getBoundingClientRect()
-      let offsetX = e.clientX - rect.left
-      let offsetY = e.clientY - rect.top
+      let clientX = e.clientX
+      let clientY = e.clientY
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX
+        clientY = e.touches[0].clientY
+      } else if (e.changedTouches && e.changedTouches.length > 0) {
+        clientX = e.changedTouches[0].clientX
+        clientY = e.changedTouches[0].clientY
+      }
+      let offsetX = clientX - rect.left
+      let offsetY = clientY - rect.top
       return [offsetX, offsetY]
     },
-    mouseMove (e) {
+    touchStart (e) {
+      if(!this.doubleTap) {
+        this.doubleTap = true;
+        setTimeout( () => { this.doubleTap = false; }, 500 );
+        return false;
+      }
+      e.preventDefault()
+      this.mouseDown(e, true)
+    },
+    touchEnd (e) {
+      this.mouseUp(e, true);
+    },
+    touchMove (e) {
+      this.mouseMove(e, true)
+    },
+    touchCancel (e) {
+      this.startDrag = null
+    },
+    mouseMove (e, override) {
+      if (this.hasTouch && !override) {
+        return
+      }
       if (this.startDrag === null) {
         return
       }
@@ -436,10 +483,16 @@ export default {
       this.endDrag = this.getOffset(e)
       this.drawRectangles()
     },
-    mouseDown (e) {
+    mouseDown (e, override) {
+      if (this.hasTouch && !override) {
+        return
+      }
       this.startDrag = this.getOffset(e)
     },
-    mouseUp (e) {
+    mouseUp (e, override) {
+      if (this.hasTouch && !override) {
+        return
+      }
       let selection = window.getSelection()
 
       if (selection !== undefined && !selection.isCollapsed) {
