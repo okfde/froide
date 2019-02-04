@@ -61,6 +61,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
         render_to_string("foirequest/emails/message_received_notification.txt", {
             "message": message,
             "request": sender,
+            "publicbody": message.sender_public_body,
             "go_url": sender.user.get_autologin_url(
                 message.get_absolute_short_url()
             ),
@@ -139,6 +140,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
 
     body = render_to_string(template, {
         "request": sender,
+        "publicbody": message.recipient_public_body,
         "message": message,
         "site_name": settings.SITE_NAME
     })
