@@ -53,7 +53,7 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
         """
         Check that the blog post is about Django.
         """
-        if not can_read_foirequest_authenticated(value, self.context['view'].request):
+        if value.user == self.context['view'].request.user:
             raise serializers.ValidationError('Cannot follow your own requests')
         return value
 
