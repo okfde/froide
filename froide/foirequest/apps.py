@@ -7,10 +7,11 @@ class FoiRequestConfig(AppConfig):
     verbose_name = _('FOI Request')
 
     def ready(self):
-        from froide.account import account_canceled
+        from froide.account import account_canceled, account_merged
         from froide.account.export import registry
         import froide.foirequest.signals  # noqa
-        from .utils import cancel_user, export_user_data
+        from .utils import cancel_user, merge_user, export_user_data
 
         account_canceled.connect(cancel_user)
+        account_merged.connect(merge_user)
         registry.register(export_user_data)

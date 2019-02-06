@@ -9,10 +9,11 @@ class CommentConfig(AppConfig):
     verbose_name = _('Comments')
 
     def ready(self):
-        from froide.account import account_canceled
+        from froide.account import account_canceled, account_merged
         from froide.account.export import registry
 
         account_canceled.connect(cancel_user)
+        account_merged.connect(merge_user)
         registry.register(export_user_data)
 
 
@@ -26,6 +27,12 @@ def cancel_user(sender, user=None, **kwargs):
         user_email='',
         user_url=''
     )
+
+
+def merge_user(sender, old_user=None, new_user=None, **kwargs):
+    from .models import FroideComment
+
+    FroideComment.objects.filter(user=old_user).update(user=new_user)
 
 
 def export_user_data(user):

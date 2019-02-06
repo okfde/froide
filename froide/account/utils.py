@@ -5,7 +5,7 @@ from django.contrib.sessions.models import Session
 
 from froide.helper.email_sending import send_mail
 
-from . import account_canceled
+from . import account_canceled, account_merged
 from .models import User
 from .tasks import cancel_account_task
 
@@ -34,36 +34,23 @@ def send_mail_user(subject, body, user: User,
 
 
 def merge_accounts(old_user, new_user):
-    from froide.foirequest.models import (FoiRequest, PublicBodySuggestion, FoiMessage,
-            FoiEvent)
-    from froide.foirequestfollower.models import FoiRequestFollower
-    from froide.frontpage.models import FeaturedRequest
-    from froide.publicbody.models import PublicBody
-    from froide.team.models import TeamMembership
+    account_merged.send(
+        sender=User, old_user=old_user, new_user=new_user
+    )
+    start_cancel_account_process(old_user)
 
-    mapping = [
-        (FoiRequest, 'user', None),
-        (PublicBodySuggestion, 'user', None),
-        (FoiMessage, 'sender_user', None),
-        (FoiEvent, 'user', None),
-        (FoiRequestFollower, 'user', ('user', 'request',)),
-        (FeaturedRequest, 'user', None),
-        (PublicBody, '_created_by', None),
-        (PublicBody, '_updated_by', None),
-        (TeamMembership, 'user', ('user', 'team')),
-    ]
 
-    for klass, attr, dupe in mapping:
-        klass.objects.filter(**{attr: old_user}).update(**{attr: new_user})
-        if dupe is None:
-            continue
-        already = set()
-        for obj in klass.objects.filter(**{attr: new_user}):
-            tup = tuple([getattr(obj, a) for a in dupe])
-            if tup in already:
-                obj.delete()
-            else:
-                already.add(tup)
+def move_ownership(model, attr, old_user, new_user, dupe=None):
+    model.objects.filter(**{attr: old_user}).update(**{attr: new_user})
+    if dupe is None:
+        return
+    already = set()
+    for obj in model.objects.filter(**{attr: new_user}):
+        tup = tuple([getattr(obj, a) for a in dupe])
+        if tup in already:
+            obj.delete()
+        else:
+            already.add(tup)
 
 
 def all_unexpired_sessions_for_user(user):

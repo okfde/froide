@@ -12,7 +12,7 @@ class TeamConfig(AppConfig):
 
     def ready(self):
         from froide.account.menu import menu_registry, MenuItem
-        from froide.account import account_canceled
+        from froide.account import account_canceled, account_merged
         from froide.account.export import registry
 
         from .services import can_use_team
@@ -31,6 +31,17 @@ class TeamConfig(AppConfig):
         registry.register(export_user_data)
 
         account_canceled.connect(cancel_user)
+        account_merged.connect(merge_user)
+
+
+def merge_user(sender, old_user=None, new_user=None, **kwargs):
+    from froide.account.utils import move_ownership
+    from .models import TeamMembership
+
+    move_ownership(
+        TeamMembership, 'user', old_user, new_user,
+        dupe=('user', 'team')
+    )
 
 
 def cancel_user(sender, user=None, **kwargs):

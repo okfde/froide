@@ -4,9 +4,9 @@ from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
 
-class AccessTokenConfig(AppConfig):
-    name = 'froide.accesstoken'
-    verbose_name = _('Secret Access Token')
+class FrontpageConfig(AppConfig):
+    name = 'froide.frontpage'
+    verbose_name = _('Featured Request')
 
     def ready(self):
         from froide.account import account_canceled, account_merged
@@ -18,31 +18,34 @@ class AccessTokenConfig(AppConfig):
 
 
 def cancel_user(sender, user=None, **kwargs):
-    from .models import AccessToken
+    from .models import FeaturedRequest
 
     if user is None:
         return
-    AccessToken.objects.filter(user=user).delete()
+    FeaturedRequest.objects.filter(user=user).update(user=None)
 
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
-    from .models import AccessToken
+    from .models import FeaturedRequest
 
-    move_ownership(AccessToken, 'user', old_user, new_user, dupe=('user', 'purpose'))
+    move_ownership(FeaturedRequest, 'user', old_user, new_user)
 
 
 def export_user_data(user):
-    from .models import AccessToken
+    from .models import FeaturedRequest
 
-    access_tokens = (
-        AccessToken.objects.filter(user=user)
+    featured_requests = (
+        FeaturedRequest.objects.filter(user=user)
     )
-    if access_tokens:
-        yield ('access_tokens.json', json.dumps([
+    if featured_requests:
+        yield ('featured_requests.json', json.dumps([
             {
-                'purpose': a.purpose,
+                'request': a.request_id,
                 'timestamp': a.timestamp.isoformat(),
+                'title': a.title,
+                'text': a.text,
+                'url': a.url,
             }
-            for a in access_tokens]).encode('utf-8')
+            for a in featured_requests]).encode('utf-8')
         )

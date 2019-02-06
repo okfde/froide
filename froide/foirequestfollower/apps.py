@@ -9,11 +9,12 @@ class FoiRequestFollowerConfig(AppConfig):
     verbose_name = _('FOI Request Follower')
 
     def ready(self):
-        from froide.account import account_canceled
+        from froide.account import account_canceled, account_merged
         import froide.foirequestfollower.signals  # noqa
         from froide.account.export import registry
 
         account_canceled.connect(cancel_user)
+        account_merged.connect(merge_user)
         registry.register(export_user_data)
 
 
@@ -23,6 +24,21 @@ def cancel_user(sender, user=None, **kwargs):
     if user is None:
         return
     FoiRequestFollower.objects.filter(user=user).delete()
+
+
+def merge_user(sender, old_user=None, new_user=None, **kwargs):
+    from froide.account.utils import move_ownership
+    from .models import FoiRequestFollower
+
+    move_ownership(
+        FoiRequestFollower, 'user', old_user, new_user,
+        dupe=('user', 'request',)
+    )
+    # FIXME: this will not work in case foirequest signal has
+    # not run yet. Check if order is fix
+    FoiRequestFollower.objects.filter(
+        user=new_user, request__user=new_user
+    ).delete()
 
 
 def export_user_data(user):

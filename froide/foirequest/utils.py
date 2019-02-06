@@ -228,6 +228,23 @@ class MailAttachmentSizeChecker():
                 yield name, filebytes, mimetype
 
 
+def merge_user(sender, old_user=None, new_user=None, **kwargs):
+    from froide.account.utils import move_ownership
+    from .models import (
+        FoiRequest, PublicBodySuggestion, FoiMessage, FoiEvent, FoiProject
+    )
+
+    mapping = [
+        (FoiRequest, 'user', None),
+        (PublicBodySuggestion, 'user', None),
+        (FoiMessage, 'sender_user', None),
+        (FoiEvent, 'user', None),
+        (FoiProject, 'user', None),
+    ]
+    for model, attr, dupe in mapping:
+        move_ownership(model, attr, old_user, new_user, dupe=dupe)
+
+
 def cancel_user(sender, user=None, **kwargs):
     from .models import FoiRequest, RequestDraft
 

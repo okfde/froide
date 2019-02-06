@@ -16,21 +16,25 @@ class FeaturedRequestManager(CurrentSiteManager):
 
 
 class FeaturedRequest(models.Model):
-    request = models.ForeignKey(FoiRequest,
-            verbose_name=_("Featured Request"),
-            null=True, blank=True, on_delete=models.SET_NULL)
+    request = models.ForeignKey(
+        FoiRequest,
+        verbose_name=_("Featured Request"),
+        null=True, blank=True, on_delete=models.SET_NULL
+    )
     timestamp = models.DateTimeField(_("Timestamp"))
     title = models.CharField(_("Title"), max_length=255)
     text = models.TextField(_("Text"))
     url = models.CharField(_("URL"), max_length=255, blank=True)
     user = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            null=True,
-            on_delete=models.SET_NULL,
-            verbose_name=_("User")
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("User")
     )
-    site = models.ForeignKey(Site, null=True,
-            on_delete=models.SET_NULL, verbose_name=_("Site"))
+    site = models.ForeignKey(
+        Site, null=True,
+        on_delete=models.SET_NULL, verbose_name=_("Site")
+    )
 
     objects = FeaturedRequestManager()
 
