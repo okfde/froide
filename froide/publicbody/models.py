@@ -37,7 +37,7 @@ def get_applicable_law(pb=None, law_type=None):
         # Check pb laws and then, if empty, pb juris laws
         for qs in (pb_laws, juris_laws):
             if law_type is not None:
-                qs = qs.filter(law_type=law_type)
+                qs = qs.filter(law_type__contains=law_type)
             # Prefer meta laws
             qs = qs.order_by('-meta')
             if qs:

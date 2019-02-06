@@ -10,7 +10,7 @@ let selectBestLaw = (allLaws, lawType) => {
     return null
   }
   let laws = allLaws.filter((l) => {
-    return lawType ? l.law_type === lawType : true
+    return lawType ? l.law_type.indexOf(lawType) !== -1 : true
   })
   if (laws.length === 0) {
     // Fall back to all laws
