@@ -1,4 +1,5 @@
 import re
+import json
 
 import factory
 
@@ -10,6 +11,7 @@ from django_comments import get_model, get_form
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tests import factories
+from froide.foirequest.tests.test_api import OAuthAPIMixin
 
 from .models import FoiRequestFollower
 from .tasks import _batch_update
@@ -179,3 +181,175 @@ class FoiRequestFollowerTest(TestCase):
         _batch_update()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], req.user.email)
+
+
+class ApiTest(OAuthAPIMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.accessible = FoiRequest.objects.get(user=self.test_user)
+        self.inaccessible = FoiRequest.objects.get(user=self.dev_user)
+
+        self.other = factories.FoiRequestFactory.create(
+            visibility=FoiRequest.VISIBLE_TO_PUBLIC,
+            user=self.dev_user,
+            title='always shown'
+        )
+
+        self.following_request_url = '{}?request={},{},{}'.format(
+            reverse('api:following-list'),
+            self.accessible.id,
+            self.inaccessible.id,
+            self.other.id
+        )
+        self.follow_url = reverse('api:following-list')
+
+    def test_following_requests_unauth(self):
+        response = self.client.get(self.following_request_url)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(result['meta']['total_count'], 1)
+        self.assertTrue(
+            result['objects'][0]['request'].endswith('/request/{}/'.format(
+                self.other.id
+            ))
+        )
+
+    def test_following_requests_oauth_no_scope(self):
+        response, result = self.api_get(self.following_request_url)
+        self.assertEqual(result['meta']['total_count'], 1)
+        self.assertTrue(
+            result['objects'][0]['request'].endswith('/request/{}/'.format(
+                self.other.id
+            ))
+        )
+
+    def test_following_requests_login(self):
+        self.client.login(email="dummy@example.org", password="froide")
+        response = self.client.get(self.following_request_url)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(result['meta']['total_count'], 2)
+        result_ids = {int(x['request'].rsplit('/')[-2]) for x in result['objects']}
+        self.assertEqual(result_ids, {self.other.id, self.accessible.id})
+
+    def test_following_requests_oauth_read_scope(self):
+        self.access_token.scope = "read:user read:request"
+        self.access_token.save()
+
+        response, result = self.api_get(self.following_request_url)
+        self.assertEqual(result['meta']['total_count'], 2)
+        result_ids = {int(x['request'].rsplit('/')[-2]) for x in result['objects']}
+        self.assertEqual(result_ids, {self.other.id, self.accessible.id})
+
+    def test_follow_unauth(self):
+        request_ids = (
+            self.accessible.id, self.inaccessible.id, self.other.id
+        )
+        for request_id in request_ids:
+            response = self.client.post(self.follow_url, json.dumps({
+                'request': request_id
+            }), content_type="application/json")
+            self.assertEqual(response.status_code, 401)
+
+    def test_follow_loggedin(self):
+        self.client.login(email="dummy@example.org", password="froide")
+        response = self.client.post(self.follow_url, json.dumps({
+            'request': self.accessible.id
+        }), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(self.follow_url, json.dumps({
+            'request': self.inaccessible.id
+        }), content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+
+        response = self.client.post(self.follow_url, json.dumps({
+            'request': self.other.id
+        }), content_type="application/json")
+        self.assertEqual(response.status_code, 201)
+
+        response = self.client.get(self.follow_url)
+        self.assertEqual(response.status_code, 200)
+
+        result = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(result['meta']['total_count'], 1)
+        resource_uri = result['objects'][0]['resource_uri']
+        resource_uri_relative = '/'.join([''] + resource_uri.split('/')[3:])
+        response = self.client.delete(
+            resource_uri_relative, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 204)
+        response = self.client.get(self.follow_url)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(result['meta']['total_count'], 0)
+
+    def test_follow_oauth_no_scope(self):
+        self.access_token.scope = "read:user read:request"
+        self.access_token.save()
+
+        request_ids = (
+            self.accessible.id, self.inaccessible.id, self.other.id
+        )
+        for request_id in request_ids:
+            response, result = self.api_post(self.follow_url, {
+                'request': request_id
+            })
+            self.assertEqual(response.status_code, 403)
+
+    def test_follow_auth_with_scope(self):
+        self.access_token.scope = "read:user read:request follow:request"
+        self.access_token.save()
+
+        response, result = self.api_post(self.follow_url, {
+            'request': self.accessible.id
+        })
+        self.assertEqual(response.status_code, 400)
+
+        response, result = self.api_post(self.follow_url, {
+            'request': self.inaccessible.id
+        })
+        self.assertEqual(response.status_code, 400)
+
+        response, result = self.api_post(self.follow_url, {
+            'request': self.other.id
+        })
+        self.assertEqual(response.status_code, 201)
+        response, result = self.api_get(self.follow_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result['meta']['total_count'], 1)
+        resource_uri = result['objects'][0]['resource_uri']
+        resource_uri_relative = '/'.join([''] + resource_uri.split('/')[3:])
+        response, result = self.api_delete(
+            resource_uri_relative
+        )
+        self.assertEqual(response.status_code, 204)
+        response, result = self.api_get(self.follow_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result['meta']['total_count'], 0)
+
+    def test_delete_other(self):
+        ''' Try deleting other random things '''
+        self.client.login(email="dummy@example.org", password="froide")
+
+        ff_obj = FoiRequestFollower.objects.create(
+            id=self.accessible.id,
+            user=self.dev_user,
+            request=self.accessible
+        )
+
+        delete_url = reverse('api:following-detail', kwargs={
+            'pk': ff_obj.id
+        }) + '?request={}'.format(ff_obj.id)
+        response = self.client.delete(
+            delete_url, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 404)
+
+        delete_url = reverse('api:following-detail', kwargs={
+            'pk': ff_obj.id
+        })
+        response = self.client.delete(
+            delete_url, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 404)

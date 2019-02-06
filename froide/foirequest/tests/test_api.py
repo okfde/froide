@@ -126,7 +126,7 @@ class ApiTest(TestCase):
         self.assertContains(response, 'description')
 
 
-class OAuthApiTest(TestCase):
+class OAuthAPIMixin():
     def setUp(self):
         factories.make_world()
         self.test_user = User.objects.get(username='dummy')
@@ -183,12 +183,23 @@ class OAuthApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         return response, json.loads(response.content.decode('utf-8'))
 
-    def api_post(self, url, data):
+    def api_post(self, url, data=''):
         auth = self._create_authorization_header(self.access_token.token)
         response = self.client.post(url, json.dumps(data),
             content_type="application/json", HTTP_AUTHORIZATION=auth)
         return response, json.loads(response.content.decode('utf-8'))
 
+    def api_delete(self, url, data=''):
+        auth = self._create_authorization_header(self.access_token.token)
+        response = self.client.delete(url, json.dumps(data),
+            content_type="application/json", HTTP_AUTHORIZATION=auth)
+        result = None
+        if response.content:
+            result = json.loads(response.content.decode('utf-8'))
+        return response, result
+
+
+class OAuthApiTest(OAuthAPIMixin, TestCase):
     def test_list_public_requests(self):
         self.assertEqual(FoiRequest.objects.all().count(), 3)
         response = self.client.get(self.request_list_url)

@@ -13,7 +13,6 @@ from oauth2_provider.contrib.rest_framework import TokenHasScope
 from froide.foirequest.models.request import (
     FoiRequest, get_absolute_domain_short_url
 )
-from froide.foirequest.auth import can_read_foirequest_authenticated
 from froide.foirequest.api_views import filter_foirequests
 from froide.helper.api_utils import CustomLimitOffsetPagination
 
@@ -53,7 +52,15 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
         """
         Check that the blog post is about Django.
         """
-        if value.user == self.context['view'].request.user:
+
+        user = self.context['view'].request.user
+        token = self.context['view'].request.auth
+        qs = filter_foirequests(user, token)
+        try:
+            value = qs.get(id=value.id)
+        except FoiRequest.DoesNotExist:
+            raise serializers.ValidationError('No access')
+        if value.user == user:
             raise serializers.ValidationError('Cannot follow your own requests')
         return value
 
@@ -147,6 +154,8 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
         return self.serializer_class
 
     def get_foirequest_queryset(self, requests=None):
+        if self.action != 'list':
+            raise Exception('Bad call to foirequest queryset')
         user = self.request.user
         token = self.request.auth
         qs = filter_foirequests(user, token)
@@ -192,7 +201,8 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
         token = self.request.auth
         requests = self.get_request_filter()
         qs = None
-        if requests:
+        if requests and self.action == 'list':
+            # Never return on destructive action
             return self.get_foirequest_queryset(requests=requests)
         elif user.is_authenticated:
             if not token or token.is_valid(self.read_scopes):
@@ -204,19 +214,20 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
         if qs is None:
             qs = FoiRequestFollower.objects.none()
 
-        follower_count = (
-            FoiRequest.objects
-            .filter(id=OuterRef('request'))
-            .values('pk')
-            .annotate(count=Count('followers'))
-        )
-        qs = qs.annotate(
-            follow_count=Subquery(follower_count.values('count')),
-            # follows by query definition
-            follows=Value(True, output_field=NullBooleanField()),
-            # can_follow by query definition
-            can_follow=Value(True, output_field=NullBooleanField())
-        )
+        if self.action == 'list':
+            follower_count = (
+                FoiRequest.objects
+                .filter(id=OuterRef('request'))
+                .values('pk')
+                .annotate(count=Count('followers'))
+            )
+            qs = qs.annotate(
+                follow_count=Subquery(follower_count.values('count')),
+                # follows by query definition
+                follows=Value(True, output_field=NullBooleanField()),
+                # can_follow by query definition
+                can_follow=Value(True, output_field=NullBooleanField())
+            )
         return qs
 
     def create(self, request, *args, **kwargs):
