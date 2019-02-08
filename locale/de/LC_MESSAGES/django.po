@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-04 14:04+0100\n"
-"PO-Revision-Date: 2019-02-04 14:13+0100\n"
+"POT-Creation-Date: 2019-02-08 18:02+0100\n"
+"PO-Revision-Date: 2019-02-08 18:09+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -25,31 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2\n"
-
-#: docs/_build/html/_sources/theming.txt:53
-msgid ""
-"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-"\">the Open Knowledge Foundation</a>."
-msgstr ""
-"FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn.de"
-"\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie FragDenStaat."
-"de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
-"</a>"
-
-#: docs/_build/html/theming.html:95
-msgid ""
-"Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
-"org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
-msgstr ""
-"FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn.de"
-"\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie FragDenStaat."
-"de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
-"</a>"
-
-#: froide/_local_settings.py:10 froide/settings.py:228 froide/settings.py:609
-msgid "German"
-msgstr "Deutsch"
+"X-Generator: Poedit 2.2.1\n"
 
 #: froide/accesstoken/apps.py:9
 msgid "Secret Access Token"
@@ -1030,7 +1006,7 @@ msgstr "Status"
 #: froide/foirequest/models/request.py:254
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:30
 #: froide/foirequest/templates/foirequest/account/list_projects.html:29
-#: froide/frontpage/models.py:23
+#: froide/frontpage/models.py:25
 #: froide/team/templates/team/team_detail.html:131
 msgid "Title"
 msgstr "Titel"
@@ -2155,7 +2131,7 @@ msgstr "Informationsfreiheitsanfrage"
 #: froide/foirequest/models/event.py:35 froide/foirequest/models/project.py:65
 #: froide/foirequest/models/request.py:273
 #: froide/foirequest/models/suggestion.py:18
-#: froide/foirequestfollower/models.py:71 froide/frontpage/models.py:30
+#: froide/foirequestfollower/models.py:71 froide/frontpage/models.py:32
 msgid "User"
 msgstr "Nutzer"
 
@@ -2175,7 +2151,7 @@ msgid "Event Name"
 msgstr "Ereignisname"
 
 #: froide/foirequest/models/event.py:41 froide/foirequest/models/message.py:102
-#: froide/frontpage/models.py:22
+#: froide/frontpage/models.py:24
 msgid "Timestamp"
 msgstr "Zeitstempel"
 
@@ -2512,7 +2488,7 @@ msgid "Reference"
 msgstr "Referenz"
 
 #: froide/foirequest/models/project.py:75
-#: froide/foirequest/models/request.py:314 froide/frontpage/models.py:33
+#: froide/foirequest/models/request.py:314 froide/frontpage/models.py:36
 #: froide/publicbody/models.py:139 froide/publicbody/models.py:343
 msgid "Site"
 msgstr "Seite"
@@ -2778,7 +2754,7 @@ msgstr "Unbekannt"
 
 #: froide/foirequest/models/request.py:703
 msgid "Please classify the reply to your request"
-msgstr "Bitte setzen Sie den Status Ihrer Anfrage"
+msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
 
 #: froide/foirequest/models/request.py:721
 #, python-format
@@ -3333,10 +3309,11 @@ msgstr ""
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"This a reminder that your request \"%(title)s\" has received a reply and you "
-"need to set a new status.\n"
+"Your request \"%(title)s\" has received a reply, but it is unclear if the "
+"request is now finished.\n"
 "\n"
-"Go to your request now:\n"
+"Please use the following link to set if the request is still ongoing or "
+"finished:\n"
 "%(url)s\n"
 "\n"
 "\n"
@@ -3345,11 +3322,11 @@ msgid ""
 msgstr ""
 "Hallo %(name)s,\n"
 "\n"
-"dies ist eine Erinnerung, dass Ihre Anfrage „%(title)s“ eine Antwort "
-"erhalten hat und Sie bisher noch keinen neuen Status für Ihre Anfrage "
-"gesetzt haben.\n"
+"Ihre Anfrage „%(title)s“ hat zwar bereits eine Antwort erhalten, aber es ist "
+"unklar, ob die Anfrage damit abgeschlossen ist.\n"
 "\n"
-"Folgen Sie dem Link um einen neuen Status zu setzen:\n"
+"Bitte stellen Sie unter folgendem Link ein, ob die Anfrage noch läuft oder "
+"abgeschlossen ist:\n"
 "%(url)s\n"
 "\n"
 "\n"
@@ -5041,17 +5018,17 @@ msgstr ""
 "Dies ist eine automatische Vorsichtsmaßnahme. Bei Fragen kontaktieren Sie "
 "bitte den Webmaster."
 
-#: froide/foirequest/utils.py:249 froide/foirequest/utils.py:250
-#: froide/foirequest/utils.py:251
+#: froide/foirequest/utils.py:266 froide/foirequest/utils.py:267
+#: froide/foirequest/utils.py:268
 msgid "<information-removed>"
 msgstr "<Information-entfernt>"
 
-#: froide/foirequest/utils.py:314
+#: froide/foirequest/utils.py:331
 #, python-format
 msgid "Due date: %s"
 msgstr "Antwortfrist: %s"
 
-#: froide/foirequest/utils.py:331 froide/foirequest/utils.py:336
+#: froide/foirequest/utils.py:348 froide/foirequest/utils.py:353
 #, python-format
 msgid "Appeal deadline: %s"
 msgstr "Widerspruchs-Termin: %s"
@@ -5892,12 +5869,12 @@ msgstr "Länder-Kennung"
 msgid "Country Name"
 msgstr "Landname"
 
-#: froide/foisite/models.py:15 froide/frontpage/models.py:25
+#: froide/foisite/models.py:15 froide/frontpage/models.py:27
 #: froide/publicbody/models.py:121 froide/publicbody/models.py:306
 msgid "URL"
 msgstr "URL"
 
-#: froide/foisite/models.py:16 froide/frontpage/models.py:24
+#: froide/foisite/models.py:16 froide/frontpage/models.py:26
 msgid "Text"
 msgstr "Text"
 
@@ -5924,12 +5901,13 @@ msgstr ""
 "eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</a> "
 "gibt?"
 
-#: froide/frontpage/models.py:20 froide/frontpage/models.py:40
+#: froide/frontpage/apps.py:9 froide/frontpage/models.py:21
+#: froide/frontpage/models.py:44
 #: froide/templates/snippets/homepage_hero.html:55
 msgid "Featured Request"
 msgstr "Anfrage der Woche"
 
-#: froide/frontpage/models.py:41
+#: froide/frontpage/models.py:45
 msgid "Featured Requests"
 msgstr "Anfragen der Woche"
 
@@ -6001,7 +5979,7 @@ msgstr "Geographische Regionen"
 msgid "Has rule"
 msgstr "Hat Regel"
 
-#: froide/guide/apps.py:7
+#: froide/guide/apps.py:9
 msgid "Guide"
 msgstr "Berater"
 
@@ -7122,6 +7100,10 @@ msgstr "Spanisch"
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
 
+#: froide/settings.py:228 froide/settings.py:609
+msgid "German"
+msgstr "Deutsch"
+
 #: froide/settings.py:229
 msgid "Danish (Denmark)"
 msgstr "Dänisch (Dänemark)"
@@ -7771,6 +7753,323 @@ msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
 
+#, fuzzy
+#~| msgid "Send Message"
+#~ msgid "Messages"
+#~ msgstr "Nachricht absenden"
+
+#, fuzzy
+#~| msgid "Site"
+#~ msgid "Site Maps"
+#~ msgstr "Seite"
+
+#, fuzzy
+#~| msgid "Mediation"
+#~ msgid "Syndication"
+#~ msgstr "Vermittlung"
+
+#, fuzzy
+#~| msgid "Invalid value"
+#~ msgid "Enter a valid value."
+#~ msgstr "Ungültiger Wert"
+
+#, fuzzy
+#~| msgid "<<name and email address>>"
+#~ msgid "Enter a valid email address."
+#~ msgstr "<<Name und E-Mail-Adresse>>"
+
+#, fuzzy
+#~| msgid "Another user with that email address already exists!"
+#~ msgid "%(model_name)s with this %(field_labels)s already exists."
+#~ msgstr "Es existiert bereits eine Nutzerin mit dieser E-Mail-Adresse."
+
+#, fuzzy
+#~| msgid "This file cannot be previewed."
+#~ msgid "This field cannot be null."
+#~ msgstr "Eine Vorschau für diese Datei ist nicht möglich."
+
+#, fuzzy
+#~| msgid "This file cannot be previewed."
+#~ msgid "This field cannot be blank."
+#~ msgstr "Eine Vorschau für diese Datei ist nicht möglich."
+
+#, fuzzy
+#~| msgid "Comma separated and quoted"
+#~ msgid "Comma-separated integers"
+#~ msgstr "Komma-separiert und ggf. in \"\""
+
+#, fuzzy
+#~| msgid "Special note"
+#~ msgid "Decimal number"
+#~ msgstr "Besonderer Hinweis"
+
+#, fuzzy
+#~| msgid "Description"
+#~ msgid "Duration"
+#~ msgstr "Beschreibung"
+
+#, fuzzy
+#~| msgid "File type"
+#~ msgid "File path"
+#~ msgstr "Dateityp"
+
+#, fuzzy
+#~| msgid "Email address"
+#~ msgid "IPv4 address"
+#~ msgstr "E-Mail-Adresse"
+
+#, fuzzy
+#~| msgid "Address"
+#~ msgid "IP address"
+#~ msgstr "Adresse"
+
+#, fuzzy
+#~| msgid "Timestamp"
+#~ msgid "Time"
+#~ msgstr "Zeitstempel"
+
+#, fuzzy
+#~| msgid "This users requests"
+#~ msgid "This field is required."
+#~ msgstr "Anfragen des Nutzers"
+
+#, fuzzy
+#~| msgid "Nuclear"
+#~ msgid "Clear"
+#~ msgstr "Atom"
+
+#, fuzzy
+#~| msgid "None"
+#~ msgid "No"
+#~ msgstr "None"
+
+#, fuzzy
+#~| msgid "NAME"
+#~ msgid "AM"
+#~ msgstr "NAME"
+
+#, fuzzy
+#~| msgid "Trusted"
+#~ msgid "Tue"
+#~ msgstr "Vertrauenswürdig"
+
+#, fuzzy
+#~| msgid "State"
+#~ msgid "Sat"
+#~ msgstr "Zustand"
+
+#, fuzzy
+#~| msgid "Search"
+#~ msgid "March"
+#~ msgstr "Suchen"
+
+#, fuzzy
+#~| msgid "Member"
+#~ msgid "September"
+#~ msgstr "Mitglied"
+
+#, fuzzy
+#~| msgid "Member"
+#~ msgid "November"
+#~ msgstr "Mitglied"
+
+#, fuzzy
+#~| msgid "Member"
+#~ msgid "December"
+#~ msgstr "Mitglied"
+
+#, fuzzy
+#~| msgid "Summary"
+#~ msgid "mar"
+#~ msgstr "Zusammenfassung"
+
+#, fuzzy
+#~| msgid "Summary"
+#~ msgid "may"
+#~ msgstr "Zusammenfassung"
+
+#, fuzzy
+#~| msgid "tag"
+#~ msgid "aug"
+#~ msgstr "Schlagwort"
+
+#, fuzzy
+#~| msgid "asleep"
+#~ msgid "sep"
+#~ msgstr "eingeschlafen"
+
+#, fuzzy
+#~| msgid "project"
+#~ msgid "oct"
+#~ msgstr "projekt"
+
+#, fuzzy
+#~| msgid "Search"
+#~ msgctxt "abbrev. month"
+#~ msgid "March"
+#~ msgstr "Suchen"
+
+#, fuzzy
+#~| msgid "Search"
+#~ msgctxt "alt. month"
+#~ msgid "March"
+#~ msgstr "Suchen"
+
+#, fuzzy
+#~| msgid "Member"
+#~ msgctxt "alt. month"
+#~ msgid "September"
+#~ msgstr "Mitglied"
+
+#, fuzzy
+#~| msgid "Member"
+#~ msgctxt "alt. month"
+#~ msgid "November"
+#~ msgstr "Mitglied"
+
+#, fuzzy
+#~| msgid "Member"
+#~ msgctxt "alt. month"
+#~ msgid "December"
+#~ msgstr "Mitglied"
+
+#, fuzzy
+#~| msgid "%d mails sent."
+#~ msgid "%d minute"
+#~ msgid_plural "%d minutes"
+#~ msgstr[0] "%d E-Mails gesendet."
+#~ msgstr[1] "%d E-Mails gesendet."
+
+#, fuzzy
+#~| msgid "403 - Forbidden"
+#~ msgid "Forbidden"
+#~ msgstr "403 - Verboten"
+
+#, fuzzy
+#~| msgid "Date of first message"
+#~ msgid "Date out of range"
+#~ msgstr "Datum der ersten Nachricht"
+
+#, fuzzy
+#~| msgid "Scanned Document"
+#~ msgid "Django Documentation"
+#~ msgstr "Gescanntes Dokument"
+
+#, fuzzy
+#~| msgid "access tokens"
+#~ msgid "The access token is invalid."
+#~ msgstr "Zugangs-Tokens"
+
+#, fuzzy
+#~| msgid "access tokens"
+#~ msgid "The access token has expired."
+#~ msgstr "Zugangs-Tokens"
+
+#, fuzzy
+#~| msgid "File type"
+#~ msgid "Client type"
+#~ msgstr "Dateityp"
+
+#, fuzzy
+#~| msgid "Redirected to"
+#~ msgid "Redirect Uris"
+#~ msgstr "Weitergeleitet an"
+
+#, fuzzy
+#~| msgid "Back"
+#~ msgid "Go Back"
+#~ msgstr "Zurück"
+
+#, fuzzy
+#~| msgid "Your OAuth Applications"
+#~ msgid "Edit application"
+#~ msgstr "Ihre OAuth-Anwendungen"
+
+#, fuzzy
+#~| msgid "Your OAuth Applications"
+#~ msgid "Your applications"
+#~ msgstr "Ihre OAuth-Anwendungen"
+
+#, fuzzy
+#~| msgid "No redaction needed"
+#~ msgid "No applications defined"
+#~ msgstr "Keine Schwärzung benötigt"
+
+#, fuzzy
+#~| msgid "Check if you want to receive our newsletter."
+#~ msgid "if you want to register a new one"
+#~ msgstr "Setzen Sie einen Haken, wenn Sie unseren Newsletter erhalten wollen"
+
+#, fuzzy
+#~| msgid "Authorize %(name)s?"
+#~ msgid "Authorize"
+#~ msgstr "%(name)s Zugriff geben?"
+
+#, fuzzy
+#~| msgid "Are you sure you want to discard your current selection?"
+#~ msgid "Are you sure you want to delete this token?"
+#~ msgstr "Sind Sie sicher, dass Sie die aktuelle Auswahl verwerfen wollen?"
+
+#, fuzzy
+#~| msgctxt "URL part"
+#~| msgid "token"
+#~ msgid "Tokens"
+#~ msgstr "token"
+
+#, fuzzy
+#~| msgid "There are no suggestions yet"
+#~ msgid "There are no authorized tokens yet."
+#~ msgstr "Es gibt noch keine Vorschläge"
+
+#~ msgid "Started reprocessing documents."
+#~ msgstr "Neuverarbeitung der Dokumente gestartet."
+
+#~ msgid "Reprocess document"
+#~ msgstr "Dokument neuverarbeiten"
+
+#~ msgid "Document Tag"
+#~ msgstr "Dokumenten-Schlagwort"
+
+#, fuzzy
+#~| msgid "Document Tag"
+#~ msgid "Document Tags"
+#~ msgstr "Dokumenten-Schlagwort"
+
+#, fuzzy
+#~| msgctxt "url part"
+#~| msgid "documents"
+#~ msgid "document"
+#~ msgstr "dokumente"
+
+#, fuzzy
+#~| msgctxt "url part"
+#~| msgid "documents"
+#~ msgid "documents"
+#~ msgstr "dokumente"
+
+#, fuzzy
+#~| msgid "Download"
+#~ msgid "Download PDF"
+#~ msgstr "Download"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+#~ "\">the Open Knowledge Foundation</a>."
+#~ msgstr ""
+#~ "FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn."
+#~ "de\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie "
+#~ "FragDenStaat.de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns "
+#~ "über Ihre Spende!</a>"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
+#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ msgstr ""
+#~ "FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn."
+#~ "de\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie "
+#~ "FragDenStaat.de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns "
+#~ "über Ihre Spende!</a>"
+
 #~ msgid "Has recipient public body"
 #~ msgstr "Hat Empfänger-Behörde"
 
@@ -7779,9 +8078,6 @@ msgstr "zustaendigkeit"
 
 #~ msgid "Show other irrelevant attachments"
 #~ msgstr "Zeige andere belanglose Anhänge"
-
-#~ msgid "Check if you want to receive our newsletter."
-#~ msgstr "Setzen Sie einen Haken, wenn Sie unseren Newsletter erhalten wollen"
 
 #~ msgid "Newsletter"
 #~ msgstr "Newsletter"
@@ -7936,15 +8232,6 @@ msgstr "zustaendigkeit"
 
 #~ msgid "The request '%(request)s' received a postal reply."
 #~ msgstr "Die Anfrage „%(request)s“ hat eine Antwort per Post erhalten."
-
-#~ msgid "Started reprocessing documents."
-#~ msgstr "Neuverarbeitung der Dokumente gestartet."
-
-#~ msgid "Reprocess document"
-#~ msgstr "Dokument neuverarbeiten"
-
-#~ msgid "Document Tag"
-#~ msgstr "Dokumenten-Schlagwort"
 
 #~ msgid "Re: %(subject)s"
 #~ msgstr "AW: %(subject)s "
