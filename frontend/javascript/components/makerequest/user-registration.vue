@@ -25,7 +25,7 @@
             <div>
               <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder" :required="requiresPostalAddress"></textarea>
               <p v-for="e in errors.address" :key="e.message">{{ e.message }}</p>
-              <p class="help-block">{{ addressHelpText }}</p>
+              <p class="help-block"><span v-html="addressHelpText"></span></p>
             </div>
           </div>
         </div>
