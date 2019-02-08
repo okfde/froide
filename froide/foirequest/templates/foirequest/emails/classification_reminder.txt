@@ -1,8 +1,8 @@
 {% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=go_url %}Hello {{ name }},
 
-This a reminder that your request "{{ title }}" has received a reply and you need to set a new status.
+Your request "{{ title }}" has received a reply, but it is unclear if the request is now finished.
 
-Go to your request now:
+Please use the following link to set if the request is still ongoing or finished:
 {{ url }}
 
 
