@@ -304,6 +304,7 @@ class FoiRequest(models.Model):
             blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_blocked = models.BooleanField(_("Blocked"), default=False)
+    not_publishable = models.BooleanField(_('Not publishable'), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
     closed = models.BooleanField(_('is closed'), default=False)
 
