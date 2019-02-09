@@ -1007,22 +1007,22 @@ class RequestTest(TestCase):
 
         # req doesn't exist
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug + 'blub', "message_id": '9' * 4}))
+                kwargs={"slug": req.slug + 'blub'}))
         self.assertEqual(response.status_code, 404)
 
         # message doesn't exist
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": '9' * 4}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 404)
 
         # message is publishable
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": mes.id}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
         # message does not belong to request
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": fake_mes.id}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
         # not loged in, no form
@@ -1033,13 +1033,13 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": mes.id}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
         # user made original request
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": mes.id}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
         # make request
@@ -1047,7 +1047,7 @@ class RequestTest(TestCase):
         self.client.logout()
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": mes.id}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 2)
         user = User.objects.get(username='dummy')
@@ -1059,7 +1059,7 @@ class RequestTest(TestCase):
         self.assertEqual(req.identical_count(), 1)
 
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug, "message_id": mes.id}))
+                kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
         same_req = FoiRequest.objects.get(same_as=req, user=user)
 
@@ -1068,7 +1068,7 @@ class RequestTest(TestCase):
         self.client.logout()
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": same_req.slug, "message_id": same_mes.id}))
+                kwargs={"slug": same_req.slug}))
         self.assertEqual(response.status_code, 400)
 
         self.client.logout()
@@ -1080,7 +1080,7 @@ class RequestTest(TestCase):
                 "terms": "on"
         }
         response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": same_req.slug, "message_id": same_mes.id}), post)
+                kwargs={"slug": same_req.slug}), post)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(FoiRequest.objects.filter(same_as=req).count(), 2)
         same_req2 = FoiRequest.objects.get(same_as=req, user__email=post['user_email'])
@@ -1488,7 +1488,7 @@ class RequestTest(TestCase):
 
             for i, mes in enumerate(messages):
                 response = self.client.post(reverse('foirequest-make_same_request',
-                        kwargs={"slug": mes.request.slug, "message_id": mes.id}))
+                        kwargs={"slug": mes.request.slug}))
                 if i < 2:
                     self.assertEqual(response.status_code, 302)
 

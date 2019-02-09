@@ -17,7 +17,7 @@
         {% if same_request %}
           <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
         {% else %}
-          <form method="post" class="d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}">
+          <form method="post" class="d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug %}">
             {% csrf_token %}
             <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
             <p>{% blocktrans %}Your Post Address:{% endblocktrans %}<br/><strong><span id="post_address">{{ user.address }}</span></strong></p>
@@ -28,7 +28,7 @@
       {% endif %}
     {% endif %}
   {% else %}
-    <form method="post" id="make-same-request" class="form-horizontal d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug message_id=object.not_publishable_message.id %}#make-same-request">
+    <form method="post" id="make-same-request" class="form-horizontal d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug %}#make-same-request">
       {% csrf_token %}
       <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
       {% if not new_user_form %}

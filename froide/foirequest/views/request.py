@@ -62,8 +62,6 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
 
     for message in messages:
         message.request = obj
-        if message.not_publishable:
-            obj.not_publishable_message = message
         message.all_attachments = [a for a in all_attachments
                     if a.belongs_to_id == message.id]
         message.listed_attachments = [a for a in all_attachments

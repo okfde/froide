@@ -195,12 +195,9 @@ def mark_checked(request, slug):
 
 
 @require_POST
-def make_same_request(request, slug, message_id):
+def make_same_request(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
-    message = get_object_or_404(FoiMessage, id=int(message_id))
-    if not message.not_publishable:
-        return render_400(request)
-    if not foirequest == message.request:
+    if not foirequest.not_publishable:
         return render_400(request)
     if foirequest.same_as is not None:
         foirequest = foirequest.same_as
@@ -225,11 +222,15 @@ def make_same_request(request, slug, message_id):
         messages.add_message(request, messages.ERROR, '\n'.join(throttle_message))
         return render_400(request)
 
-    body = "%s\n\n%s" % (foirequest.description,
+    body = foirequest.description
+    if foirequest.status_is_final:
+        body = "{}\n\n{}" .format(
+            foirequest.description,
             _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
                 'url': foirequest.get_absolute_domain_short_url(),
                 'site_name': settings.SITE_NAME
-            })
+            }
+        )
 
     data = {
         'user': request.user,

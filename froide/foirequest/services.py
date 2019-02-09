@@ -283,7 +283,9 @@ class CreateRequestFromProjectService(CreateRequestService):
 
 class CreateSameAsRequestService(CreateRequestService):
     def pre_save_request(self, request):
-        request.same_as = self.data['original_foirequest']
+        original_request = self.data['original_foirequest']
+        request.same_as = original_request
+        request.not_publishable = original_request.not_publishable
 
 
 class SaveDraftService(BaseService):

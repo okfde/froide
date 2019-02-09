@@ -522,7 +522,7 @@
   {% endif %}
 
 {% block make_samq_request %}
-  {% if object.not_publishable_message %}
+  {% if object.not_publishable %}
     {% include "foirequest/snippets/make_same_request.html" %}
   {% endif %}
 {% endblock %}
