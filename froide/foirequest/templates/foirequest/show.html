@@ -523,7 +523,11 @@
 
 {% block make_samq_request %}
   {% if object.not_publishable %}
-    {% include "foirequest/snippets/make_same_request.html" %}
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        {% include "foirequest/snippets/make_same_request.html" %}
+      </div>
+    </div>
   {% endif %}
 {% endblock %}
 
