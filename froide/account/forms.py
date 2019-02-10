@@ -74,15 +74,6 @@ class NewUserBaseForm(forms.Form):
                     'autocomplete': 'username'
             }))
 
-    if HAVE_ORGANIZATION:
-        organization = forms.CharField(required=False,
-                label=_("Organization"),
-                help_text=_('Optional. Affiliation will be shown next to your name'),
-                widget=forms.TextInput(attrs={
-                    'placeholder': _('Organization'),
-                    'class': 'form-control'})
-        )
-
     if USER_CAN_HIDE_WEB:
         private = forms.BooleanField(
             required=False,
