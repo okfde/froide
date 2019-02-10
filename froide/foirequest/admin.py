@@ -71,7 +71,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
                     'public_body', 'status', 'visibility')
     list_filter = ('jurisdiction', 'first_message', 'last_message', 'status',
         'resolution', 'is_foi', 'checked', 'public', 'visibility',
-        'is_blocked',
+        'is_blocked', 'not_publishable',
         make_nullfilter('same_as', _('Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
         ('project', ForeignKeyFilter), FoiRequestTagsFilter,
