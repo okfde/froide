@@ -198,7 +198,7 @@ def mark_checked(request, slug):
 def make_same_request(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not foirequest.not_publishable:
-        return render_400(request)
+        return redirect(foirequest)
     if foirequest.same_as is not None:
         foirequest = foirequest.same_as
 
