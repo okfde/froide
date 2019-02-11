@@ -83,10 +83,12 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     tag_all_config = ('tags', reverse_lazy('api:request-tags-autocomplete'))
 
-    actions = ['mark_checked', 'mark_not_foi', 'mark_successfully_resolved',
-               'tag_all', 'mark_same_as', 'remove_from_index',
-               'confirm_request', 'set_visible_to_user', 'unpublish',
-               'add_to_project', 'unblock_request'
+    actions = [
+        'mark_checked', 'mark_not_foi',
+        'mark_successfully_resolved', 'mark_refused',
+        'tag_all', 'mark_same_as', 'remove_from_index',
+        'confirm_request', 'set_visible_to_user', 'unpublish',
+        'add_to_project', 'unblock_request'
     ]
     raw_id_fields = ('same_as', 'public_body', 'user', 'project')
     save_on_top = True
@@ -119,6 +121,16 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
             _("%d request(s) have been marked as successfully resolved." %
                 rows_updated))
     mark_successfully_resolved.short_description = _("Mark successfully resolved")
+
+    def mark_refused(self, request, queryset):
+        rows_updated = queryset.update(
+            status='resolved', resolution='refused'
+        )
+        self.message_user(request,
+            _("%d request(s) have been marked as refused." %
+                rows_updated))
+    mark_refused.short_description = _("Mark as refused")
+
 
     def mark_same_as(self, request, queryset):
         """
@@ -441,13 +453,15 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         'can_approve', 'approved', 'is_redacted', 'is_converted',
         make_nullfilter('redacted', _('Has redacted version')),
         make_nullfilter('converted', _('Has converted version')),
-        'filetype'
+        'filetype',
+        ('belongs_to__request', ForeignKeyFilter),
+        ('belongs_to__request__user', ForeignKeyFilter),
     )
     search_fields = ['name']
     formfield_overrides = {
         models.FileField: {'widget': AttachmentFileWidget},
     }
-    actions = ['approve', 'cannot_approve', 'convert', 'make_document']
+    actions = ['approve', 'disapprove' 'cannot_approve', 'convert', 'make_document']
 
     def admin_link_message(self, obj):
         return format_html('<a href="{}">{}</a>',
@@ -458,6 +472,11 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         rows_updated = queryset.update(approved=True)
         self.message_user(request, _("%d attachment(s) successfully approved." % rows_updated))
     approve.short_description = _("Mark selected as approved")
+
+    def disapprove(self, request, queryset):
+        rows_updated = queryset.update(approved=False)
+        self.message_user(request, _("%d attachment(s) successfully disapproved." % rows_updated))
+    approve.short_description = _("Mark selected as disapproved")
 
     def cannot_approve(self, request, queryset):
         rows_updated = queryset.update(can_approve=False, approved=False)
