@@ -258,7 +258,11 @@ export default {
     loadDocument () {
       let loadingTask = PDFJS.getDocument({
         url: this.pdfPath,
-        isEvalSupported: false
+        isEvalSupported: false,
+        httpHeaders: {
+          'pragma': 'no-cache',
+          'cache-control': 'no-cache'
+        }
       })
       loadingTask.onProgress = (progress) => {
         this.progressCurrent = progress.loaded
