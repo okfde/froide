@@ -262,6 +262,10 @@ class AccountService(object):
         if not self.user.private:
             return content
 
+        if self.user.is_deleted:
+            # No more info present about user to redact
+            return content
+
         needles = [
             self.user.last_name, self.user.first_name,
             self.user.get_full_name()
@@ -279,6 +283,10 @@ class AccountService(object):
     def apply_message_redaction(self, content, replacements=None):
         if replacements is None:
             replacements = {}
+
+        if self.user.is_deleted:
+            # No more info present about user to redact
+            return content
 
         if self.user.address and replacements.get('address') is not False:
             for line in self.user.address.splitlines():
