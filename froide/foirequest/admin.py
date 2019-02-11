@@ -460,7 +460,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.FileField: {'widget': AttachmentFileWidget},
     }
-    actions = ['approve', 'disapprove' 'cannot_approve', 'convert', 'make_document']
+    actions = ['approve', 'disapprove', 'cannot_approve', 'convert', 'make_document']
 
     def admin_link_message(self, obj):
         return format_html('<a href="{}">{}</a>',
@@ -475,7 +475,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     def disapprove(self, request, queryset):
         rows_updated = queryset.update(approved=False)
         self.message_user(request, _("%d attachment(s) successfully disapproved." % rows_updated))
-    approve.short_description = _("Mark selected as disapproved")
+    disapprove.short_description = _("Mark selected as disapproved")
 
     def cannot_approve(self, request, queryset):
         rows_updated = queryset.update(can_approve=False, approved=False)
