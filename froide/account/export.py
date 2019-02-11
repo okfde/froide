@@ -104,7 +104,7 @@ def create_export(user):
     token = access_token.token
     if not created:
         delete_export(token)
-        access_token = AccessToken.objects.reset(user, purpose=PURPOSE)
+        token = AccessToken.objects.reset(user, purpose=PURPOSE)
 
     export_file = tempfile.NamedTemporaryFile(delete=False)
     try:
