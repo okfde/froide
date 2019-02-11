@@ -51,7 +51,7 @@ def account_maintenance_task():
 
 
 @celery_app.task
-def start_export_task(user_id):
+def start_export_task(user_id, notification_user_id=None):
     from .export import create_export
 
     translation.activate(settings.LANGUAGE_CODE)
@@ -61,4 +61,11 @@ def start_export_task(user_id):
     except User.DoesNotExist:
         return
 
-    create_export(user)
+    notification_user = None
+    if notification_user_id is not None:
+        try:
+            notification_user = User.objects.get(id=notification_user_id)
+        except User.DoesNotExist:
+            pass
+
+    create_export(user, notification_user=notification_user)

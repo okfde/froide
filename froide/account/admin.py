@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.admin import helpers
@@ -11,6 +12,8 @@ from froide.helper.csv_utils import export_csv_response
 
 from .models import User
 from .services import AccountService
+from .export import get_export_url
+from .tasks import start_export_task
 from .utils import (
     delete_all_unexpired_sessions_for_user, cancel_user
 )
@@ -59,7 +62,7 @@ class UserAdmin(DjangoUserAdmin):
     actions = [
         'export_csv', 'resend_activation',
         'send_mail', 'delete_sessions', 'cancel_users',
-        'deactivate_users'
+        'deactivate_users', 'export_user_data',
     ]
 
     def export_csv(self, request, queryset):
@@ -159,6 +162,24 @@ class UserAdmin(DjangoUserAdmin):
         self.message_user(request, _("Users deactivated."))
         return None
     deactivate_users.short_description = _('Deactivate users')
+
+    def export_user_data(self, request, queryset):
+        if not request.user.is_superuser:
+            raise PermissionDenied
+
+        if not queryset:
+            return
+        export_user = queryset[0]
+        url = get_export_url(export_user)
+        if url:
+            return redirect(url)
+
+        start_export_task.delay(export_user.id, notification_user_id=request.user.id)
+        self.message_user(request, _("Export of user '{}' started.").format(
+            export_user
+        ))
+        return None
+    export_user_data.short_description = _('Start export of / download user data')
 
 
 admin.site.register(User, UserAdmin)

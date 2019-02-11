@@ -415,6 +415,5 @@ def create_export(request):
 def download_export(request):
     url = get_export_url(request.user)
     if not url:
-
         return redirect(reverse('account-settings') + '#export')
     return redirect(url)

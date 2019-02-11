@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=name days=days %}Hello,
+
+the data export of {{ name }} is ready for download from the user action menu.
+
+The download will work for {{ days }} days or until you generate the next export.
+
+Cheers
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

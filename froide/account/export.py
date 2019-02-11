@@ -95,8 +95,12 @@ def delete_all_expired_exports():
     access_tokens.delete()
 
 
-def create_export(user):
+def create_export(user, notification_user=None):
     from froide.accesstoken.models import AccessToken
+
+    if notification_user is not None and notification_user != user:
+        if not notification_user.is_superuser:
+            raise Exception('Can only export user as super user')
 
     access_token, created = AccessToken.objects.get_or_create(
         user=user, purpose=PURPOSE
@@ -131,13 +135,21 @@ def create_export(user):
     export_file.close()
     os.remove(export_file.name)
 
-    body = render_to_string('account/emails/export_ready.txt', {
-        'url': settings.SITE_URL + reverse('account-download_export'),
-        'name': user.get_full_name(),
+    if notification_user is None or notification_user == user:
+        email_template = 'account/emails/export_ready.txt'
+        notification_url = settings.SITE_URL + reverse('account-download_export')
+        notification_user = user
+    else:
+        email_template = 'account/emails/export_ready_admin.txt'
+        notification_url = ''
+
+    body = render_to_string(email_template, {
+        'url': notification_url,
+        'name': notification_user.get_full_name(),
         'days': EXPORT_MAX_AGE.days,
         'site_name': settings.SITE_NAME
     })
-    send_mail_user(_('Your data export is ready'), body, user)
+    send_mail_user(_('Your data export is ready'), body, notification_user)
 
 
 registry = ExportRegistry()
