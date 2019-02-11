@@ -145,7 +145,7 @@ def create_export(user, notification_user=None):
 
     body = render_to_string(email_template, {
         'url': notification_url,
-        'name': notification_user.get_full_name(),
+        'name': user.get_full_name(),
         'days': EXPORT_MAX_AGE.days,
         'site_name': settings.SITE_NAME
     })

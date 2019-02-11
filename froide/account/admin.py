@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.contrib import admin
-from django.shortcuts import redirect
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.admin import helpers
@@ -172,7 +172,13 @@ class UserAdmin(DjangoUserAdmin):
         export_user = queryset[0]
         url = get_export_url(export_user)
         if url:
-            return redirect(url)
+            message = format_html(
+                '<a href="{}">{}</a>',
+                url,
+                _("Download export of user '{}'").format(export_user)
+            )
+            self.message_user(request, message)
+            return
 
         start_export_task.delay(export_user.id, notification_user_id=request.user.id)
         self.message_user(request, _("Export of user '{}' started.").format(
