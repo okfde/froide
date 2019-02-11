@@ -221,7 +221,7 @@ def export_user_data(user):
             'accesstokens': [
                 get_dict(a, (
                     'id',
-                    'source_refresh_token',
+                    'source_refresh_token_id',
                     'token',
                     'application_id',
                     'application__name',
