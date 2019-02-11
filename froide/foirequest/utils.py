@@ -267,6 +267,9 @@ def permanently_anonymize_requests(foirequests):
         'email': str(_('<information-removed>')),
         'address': str(_('<information-removed>')),
     }
+    original_private = True
+    if foirequests:
+        original_private = foirequests[0].user.private
     foirequests.update(
         closed=True
     )
@@ -299,6 +302,13 @@ def permanently_anonymize_requests(foirequests):
             redacted__isnull=False,
             is_redacted=False
         ).delete()
+        if not original_private:
+            # Set other requests to non-approved, if user was not private
+            FoiAttachment.objects.filter(
+                belongs_to__request=foirequest
+            ).update(
+                approved=False
+            )
 
 
 def add_ical_events(foirequest, cal):
