@@ -131,7 +131,6 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
                 rows_updated))
     mark_refused.short_description = _("Mark as refused")
 
-
     def mark_same_as(self, request, queryset):
         """
         Mark selected requests as same as the one we are choosing now.
