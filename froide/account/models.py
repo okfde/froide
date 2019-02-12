@@ -9,10 +9,21 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
+from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
+
 from oauth2_provider.models import AbstractApplication
 
 from froide.helper.csv_utils import export_csv, get_dict
 from froide.helper.storage import HashedFilenameStorage
+
+
+class TaggedUser(TaggedItemBase):
+    content_object = models.ForeignKey('User', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('User Tag')
+        verbose_name_plural = _('User Tags')
 
 
 class UserManager(BaseUserManager):
@@ -109,6 +120,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             help_text=_('Designates whether this user was deleted.'))
     date_left = models.DateTimeField(
         _('date left'), default=None, null=True, blank=True)
+
+    tags = TaggableManager(through=TaggedUser, blank=True)
 
     objects = UserManager()
 

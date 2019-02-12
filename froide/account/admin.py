@@ -9,8 +9,9 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
+from froide.helper.admin_utils import TaggitListFilter
 
-from .models import User
+from .models import User, TaggedUser
 from .services import AccountService
 from .export import get_export_url
 from .tasks import start_export_task
@@ -31,6 +32,10 @@ class CustomUserChangeForm(UserChangeForm):
         fields = '__all__'
 
 
+class UserTagsFilter(TaggitListFilter):
+    tag_class = TaggedUser
+
+
 class UserAdmin(DjangoUserAdmin):
     # The forms to add and change user instances
     form = CustomUserChangeForm
@@ -49,13 +54,14 @@ class UserAdmin(DjangoUserAdmin):
             'profile_text', 'profile_photo'
         )}),
         (_('Advanced'), {'fields': (
-            'is_trusted', 'terms', 'is_blocked',
+            'tags', 'is_trusted', 'terms', 'is_blocked',
             'date_deactivated',
             'is_deleted', 'date_left')})
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
-            'private', 'terms', 'is_trusted',
-            'newsletter', 'is_deleted'
+        'private', 'terms', 'is_trusted',
+        'newsletter', 'is_deleted',
+        UserTagsFilter
     ]
     search_fields = ('email', 'username', 'first_name', 'last_name')
 
