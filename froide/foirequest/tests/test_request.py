@@ -1020,7 +1020,7 @@ class RequestTest(TestCase):
             "slug": req.slug
         }))
         self.assertEqual(response.status_code, 200)
-        
+
         mail.outbox = []
         user = User.objects.get(username='dummy')
 
@@ -1031,7 +1031,7 @@ class RequestTest(TestCase):
         self.assertEqual(
             FoiRequest.objects.filter(same_as=req, user=user).count(), 0
         )
-        
+
         # user made original request
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
