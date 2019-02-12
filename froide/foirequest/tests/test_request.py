@@ -1002,9 +1002,6 @@ class RequestTest(TestCase):
     def test_make_same_request(self):
         req = FoiRequest.objects.all()[0]
 
-        fake_mes = factories.FoiMessageFactory.create(not_publishable=True)
-        mes = req.messages[-1]
-
         # req doesn't exist
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug + 'blub'}))
@@ -1026,10 +1023,13 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # not loged in, no form
-        mes.not_publishable = True
-        mes.save()
 
-        response = self.client.get(reverse('foirequest-show', kwargs={"slug": req.slug}))
+        req.non_publishable = True
+        req.save()
+
+        response = self.client.get(reverse('foirequest-show', kwargs={
+            "slug": req.slug
+        }))
         self.assertEqual(response.status_code, 200)
 
         response = self.client.post(reverse('foirequest-make_same_request',
@@ -1063,8 +1063,6 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         same_req = FoiRequest.objects.get(same_as=req, user=user)
 
-        same_mes = factories.FoiMessageFactory.create(
-            request=same_req, not_publishable=True)
         self.client.logout()
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',

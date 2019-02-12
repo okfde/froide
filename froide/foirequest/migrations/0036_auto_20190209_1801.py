@@ -11,6 +11,7 @@ def assign_not_publishable(apps, schema_editor):
             not_publishable=True
         )
 
+
 class Migration(migrations.Migration):
 
     dependencies = [

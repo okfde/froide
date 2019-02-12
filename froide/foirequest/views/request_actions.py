@@ -9,7 +9,7 @@ from django.contrib import messages
 from froide.account.forms import NewUserForm
 from froide.helper.utils import render_400, render_403
 
-from ..models import FoiRequest, FoiMessage, FoiEvent
+from ..models import FoiRequest, FoiEvent
 from ..forms import (
     ConcreteLawForm, TagFoiRequestForm, FoiRequestStatusForm,
     MakePublicBodySuggestionForm, PublicBodySuggestionsForm
