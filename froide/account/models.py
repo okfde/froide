@@ -168,6 +168,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 "date_joined", "is_staff",
                 "address", "terms",
                 "request_count",
+                ('tags', lambda x: ','.join(str(t) for t in x.tags.all())),
             )
         return export_csv(queryset, fields)
 
