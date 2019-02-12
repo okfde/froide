@@ -1020,11 +1020,18 @@ class RequestTest(TestCase):
             "slug": req.slug
         }))
         self.assertEqual(response.status_code, 200)
+        
+        mail.outbox = []
+        user = User.objects.get(username='dummy')
 
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 400)
-
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(
+            FoiRequest.objects.filter(same_as=req, user=user).count(), 0
+        )
+        
         # user made original request
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
@@ -1032,14 +1039,12 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # make request
-        mail.outbox = []
         self.client.logout()
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 2)
-        user = User.objects.get(username='dummy')
         same_req = FoiRequest.objects.get(same_as=req, user=user)
         self.assertIn(same_req.get_absolute_url(), response['Location'])
         self.assertEqual(list(req.same_as_set), [same_req])
