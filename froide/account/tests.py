@@ -116,7 +116,6 @@ class AccountTest(TestCase):
         mail.outbox = []
         post = {"first_name": "Horst",
                 "last_name": "Porst",
-                "organization": "Porst AG",
                 "terms": "on",
                 "user_email": "horst.porst"}
         self.client.login(email='info@fragdenstaat.de', password='froide')
@@ -142,7 +141,6 @@ class AccountTest(TestCase):
         self.assertEqual(user.first_name, post['first_name'])
         self.assertEqual(user.last_name, post['last_name'])
         self.assertEqual(user.address, post['address'])
-        self.assertEqual(user.organization, post['organization'])
         self.assertEqual(mail.outbox[0].to[0], post['user_email'])
 
         # sign up with email that is not confirmed
