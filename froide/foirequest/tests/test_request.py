@@ -1010,18 +1010,12 @@ class RequestTest(TestCase):
         # message is publishable
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 400)
-
-        # message does not belong to request
-        response = self.client.post(reverse('foirequest-make_same_request',
-                kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 400)
-
-        # not loged in, no form
+        self.assertEqual(response.status_code, 302)
 
         req.non_publishable = True
         req.save()
 
+        # not loged in, no form
         response = self.client.get(reverse('foirequest-show', kwargs={
             "slug": req.slug
         }))
