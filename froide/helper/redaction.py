@@ -16,7 +16,9 @@ from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
-from .document import PDF_FILETYPES, decrypt_pdf_in_place
+from .document import (
+    PDF_FILETYPES, decrypt_pdf_in_place, rewrite_pdf_in_place
+)
 
 
 def can_redact_file(filetype, name=None):
@@ -29,7 +31,15 @@ def redact_file(pdf_file, instructions):
     dpi = 300
     load_invisible_font()
     output = PdfFileWriter()
-    pdf_reader = PdfFileReader(pdf_file, strict=False)
+    try:
+        pdf_reader = PdfFileReader(pdf_file, strict=False)
+    except PdfReadError:
+        pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
+        if pdf_file_name is None:
+            return None
+        pdf_file = open(pdf_file_name, 'rb')
+        pdf_reader = PdfFileReader(pdf_file, strict=False)
+
     try:
         num_pages = pdf_reader.getNumPages()
     except PdfReadError:
