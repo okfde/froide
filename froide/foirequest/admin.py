@@ -307,6 +307,11 @@ class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
         'request', 'sender_user', 'sender_public_body',
         'recipient_public_body', 'original'
     )
+    formfield_overrides = {
+        models.DateTimeField: {
+            'widget': forms.DateTimeInput(format='%Y-%m-%d %H:%M:%S.%f')
+        },
+    }
     inlines = [
         DeliveryStatusInline,
         FoiAttachmentInline,
