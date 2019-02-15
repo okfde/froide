@@ -1,4 +1,13 @@
 {% load form_helper %}
+{% if form.non_field_errors %}
+  <div class="alert alert-danger">
+  {% for error in form.non_field_errors %}
+    <p>
+      {{ error }}
+    </p>
+  {% endfor %}
+</div>
+{% endif %}
 {% for field in form.visible_fields %}
   {% render_field field %}
 {% endfor %}
