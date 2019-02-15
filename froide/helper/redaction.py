@@ -33,7 +33,7 @@ def redact_file(pdf_file, instructions):
     output = PdfFileWriter()
     try:
         pdf_reader = PdfFileReader(pdf_file, strict=False)
-    except PdfReadError:
+    except (PdfReadError, ValueError):
         pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
         if pdf_file_name is None:
             return None
