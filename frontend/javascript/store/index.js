@@ -263,6 +263,7 @@ export default new Vuex.Store({
       }
     },
     [SET_SEARCHRESULTS] (state, {searchResults, searchFacets, searchMeta, scope}) {
+      state.scopedPublicBodiesMap[scope] = state.scopedPublicBodiesMap[scope] || {}
       searchResults = searchResults.map((sr) => {
         sr.isSelected = state.scopedPublicBodiesMap[scope][sr.id] !== undefined
         return sr
