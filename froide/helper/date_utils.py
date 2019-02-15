@@ -38,6 +38,8 @@ def calculate_month_range_de(date, months=1):
     m = tempdate.month + (months % MONTHS_IN_YEAR)
     y = tempdate.year + (months // MONTHS_IN_YEAR) + (m // MONTHS_IN_YEAR)
     m = m % MONTHS_IN_YEAR
+    if m == 0:
+        m = 12
     d = tempdate.day
     # § 188 BGB (3) Fristende
     last_day = calendar.monthrange(y, m)[1]
