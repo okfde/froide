@@ -1012,7 +1012,7 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
 
-        req.non_publishable = True
+        req.not_publishable = True
         req.save()
 
         # not loged in, no form
@@ -1023,10 +1023,9 @@ class RequestTest(TestCase):
 
         mail.outbox = []
         user = User.objects.get(username='dummy')
-
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(len(mail.outbox), 0)
         self.assertEqual(
             FoiRequest.objects.filter(same_as=req, user=user).count(), 0
@@ -1034,6 +1033,7 @@ class RequestTest(TestCase):
 
         # user made original request
         self.client.login(email='info@fragdenstaat.de', password='froide')
+
         response = self.client.post(reverse('foirequest-make_same_request',
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
