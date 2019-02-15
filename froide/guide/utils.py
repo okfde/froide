@@ -82,7 +82,7 @@ class GuidanceApplicator:
             exclude_match = None
             if rule.excludes_re:
                 exclude_match = rule.excludes_re.search(text)
-                if exclude_match is None:
+                if exclude_match is not None:
                     continue
 
             # Rule applies
