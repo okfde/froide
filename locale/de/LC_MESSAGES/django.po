@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-02-10 19:52+0100\n"
-"PO-Revision-Date: 2019-02-10 19:56+0100\n"
+"PO-Revision-Date: 2019-02-15 20:16+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2\n"
 
 #: froide/accesstoken/apps.py:9
 msgid "Secret Access Token"
@@ -5027,8 +5027,7 @@ msgstr "Nutzer hat Anfragenbeschränkung überschritten"
 msgid "You exceeded your request limit of %(count)s requests in %(time)s."
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
-"Dies ist eine automatische Vorsichtsmaßnahme. Bei Fragen kontaktieren Sie "
-"bitte den Webmaster."
+"Dies ist eine automatische Vorsichtsmaßnahme."
 
 #: froide/foirequest/utils.py:266 froide/foirequest/utils.py:267
 #: froide/foirequest/utils.py:268
