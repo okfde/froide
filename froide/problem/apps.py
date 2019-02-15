@@ -29,7 +29,7 @@ def export_user_data(user):
             'message': pb.message.get_absolute_domain_short_url(),
             'timestamp': pb.timestamp.isoformat(),
             'resolved': pb.resolved,
-            'kind': pb.get_kind_detail(),
+            'kind': pb.kind,
             'description': pb.description,
             'resolution': pb.resolution,
             'resolution_timestamp': (
