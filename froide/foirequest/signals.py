@@ -226,10 +226,10 @@ def create_event_message_sent(sender, message, **kwargs):
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, **kwargs):
+def create_event_message_received(sender, message=None, **kwargs):
     FoiEvent.objects.create_event("message_received", sender,
             user=sender.user,
-            public_body=sender.public_body)
+            public_body=message.sender_public_body)
 
 
 @receiver(FoiAttachment.attachment_published,
