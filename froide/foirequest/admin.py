@@ -88,7 +88,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'mark_successfully_resolved', 'mark_refused',
         'tag_all', 'mark_same_as', 'remove_from_index',
         'confirm_request', 'set_visible_to_user', 'unpublish',
-        'add_to_project', 'unblock_request'
+        'add_to_project', 'unblock_request', 'close_requests'
     ]
     raw_id_fields = ('same_as', 'public_body', 'user', 'project')
     save_on_top = True
@@ -212,6 +212,10 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
             mes.save()
             mes.force_resend()
     unblock_request.short_description = _("Unblock requests and send first message")
+
+    def close_requests(self, request, queryset):
+        queryset.update(closed=True)
+    close_requests.short_description = _("Close requests")
 
     def add_to_project(self, request, queryset):
         """
