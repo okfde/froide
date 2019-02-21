@@ -251,11 +251,9 @@
       </div>
     </div>
   </div>
-  {% if message|should_show_guidance:request %}
-    <div id="{{ message.get_html_id }}-guidance" class="message-guidance">
-      {% render_guidance message %}
-    </div>
-  {% endif %}
+  <div id="{{ message.get_html_id }}-guidance" class="message-guidance">
+    {% render_guidance message %}
+  </div>
   </div>{# close row #}
 
   {% block after_message %}{% endblock %}

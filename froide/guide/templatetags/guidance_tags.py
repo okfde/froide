@@ -24,10 +24,3 @@ def render_guidance(context, message):
         'message': message,
         'foirequest': message.request
     }
-
-
-@register.filter
-def should_show_guidance(message, request):
-    if not message.is_publicbody_response:
-        return False
-    return True
