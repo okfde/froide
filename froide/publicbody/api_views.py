@@ -394,6 +394,9 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
             }, {
             'id': 'url',
             'name': 'URL'
+            }, {
+            'id': 'fax',
+            'name': 'Fax'
         }]
         properties_dict = {
             p['id']: p for p in properties
