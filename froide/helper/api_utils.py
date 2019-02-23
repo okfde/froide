@@ -211,7 +211,7 @@ class OpenRefineReconciliationMixin(object):
             p['id'] for p in properties
             if p.get('id') in self.RECONCILIATION_META.properties_dict
         ]
-        qs = self.RECONCILIATION_META.model.objects.filter(id__in=ids)
+        qs = self.RECONCILIATION_META.model._default_manager.filter(id__in=ids)
         for prop in self.RECONCILIATION_META.properties:
             if prop['id'] in props and '__' in prop.get('query', ''):
                 qs = qs.select_related(prop['query'].split('__')[0])
@@ -224,7 +224,7 @@ class OpenRefineReconciliationMixin(object):
 
         def make_prop(pk, objs, props):
             if pk not in objs:
-                return {p: {} for p in props}
+                return {p: [{}] for p in props}
             obj = objs[pk]
             result = {}
             for p in props:
@@ -245,7 +245,6 @@ class OpenRefineReconciliationMixin(object):
         rows = {
             id_: make_prop(id_, objs, props) for id_ in ids
         }
-
         return {
             'meta': meta,
             'rows': rows
@@ -286,7 +285,8 @@ class OpenRefineReconciliationMixin(object):
             return Response([])
 
         method = methods[kind]
-        return Response(method(request, payload))
+        result = method(request, payload)
+        return Response(result)
 
     @action(
         detail=False,
