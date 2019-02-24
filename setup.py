@@ -49,6 +49,7 @@ setup(
         'python-mimeparse',
         'django-configurations',
         'django-storages',
+        'django-wikidata',
         'dj-database-url',
         'django-cache-url',
         'django-filter',
