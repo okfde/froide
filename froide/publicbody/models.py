@@ -344,7 +344,7 @@ class PublicBody(models.Model):
     site = models.ForeignKey(Site, verbose_name=_("Site"),
             null=True, on_delete=models.SET_NULL, default=settings.SITE_ID)
 
-    wikidata_item = WikidataItemField()
+    wikidata_item = WikidataItemField(blank=True)
 
     jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
             blank=True, null=True, on_delete=models.SET_NULL)
