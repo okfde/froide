@@ -27,7 +27,13 @@ from ..utils import check_throttle
 from ..services import CreateRequestService, SaveDraftService
 
 
-csrf_middleware_class = import_string(settings.FROIDE_CSRF_MIDDLEWARE)
+csrf_middleware_class = import_string(
+    getattr(
+        settings,
+        'FROIDE_CSRF_MIDDLEWARE',
+        'django.middleware.csrf.CsrfViewMiddleware'
+    )
+)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -280,7 +286,9 @@ class MakeRequestView(FormView):
         return None
 
     def csrf_valid(self):
-        return not bool(csrf_middleware_class().process_view(self.request, None, (), {}))
+        return not bool(
+            csrf_middleware_class().process_view(self.request, None, (), {})
+        )
 
     def post(self, request, *args, **kwargs):
         error = False
