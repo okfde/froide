@@ -65,17 +65,6 @@ const runOnPage = () => {
         button.setAttribute('disabled', '')
       })
     })
-  })
-
-  const hideParents = document.querySelectorAll('.hideparent')
-  Array.from(hideParents).forEach((hideParent) => {
-    hideParent.addEventListener('click', function (this: HTMLElement, e) {
-      e.preventDefault()
-      const parent = this.parentElement
-      if (parent) {
-        parent.style.display = 'none'
-      }
-    })
   });
 
   (<HTMLElement[]> Array.from(document.querySelectorAll('.comment-form'))).forEach(el => {
