@@ -5,7 +5,7 @@ import django_filters
 
 from froide.helper.search.filters import BaseSearchFilterSet
 
-from .models import PublicBody, Jurisdiction
+from .models import PublicBody, Jurisdiction, Category
 
 
 class PublicBodyFilterSet(BaseSearchFilterSet):
@@ -33,28 +33,24 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
         ),
         method='filter_jurisdiction'
     )
-    # category = django_filters.ModelChoiceFilter(
-    #     queryset=Category.objects.get_category_list(),
-    #     to_field_name='slug',
-    #     empty_label=_('all categories'),
-    #     widget=forms.Select(
-    #         attrs={
-    #             'label': _('category'),
-    #             'class': 'form-control'
-    #         }
-    #     ),
-    #     method='filter_category'
-    # )
-    # tag = django_filters.ModelChoiceFilter(
-    #     queryset=Tag.objects.all(),
-    #     to_field_name='slug',
-    #     method='filter_tag',
-    #     widget=forms.HiddenInput()
-    # )
+    category = django_filters.ModelChoiceFilter(
+        queryset=Category.objects.get_category_list(),
+        to_field_name='slug',
+        empty_label=_('all categories'),
+        widget=forms.Select(
+            attrs={
+                'label': _('category'),
+                'class': 'form-control'
+            }
+        ),
+        method='filter_category'
+    )
 
     class Meta:
         model = PublicBody
         fields = [
-            'q', 'jurisdiction',
-            # 'category', 'tag', 'publicbody', 'first'
+            'q', 'jurisdiction', 'category'
         ]
+
+    def filter_category(self, qs, name, value):
+        return qs.filter(categories=value.id)

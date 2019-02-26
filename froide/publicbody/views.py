@@ -27,7 +27,7 @@ class PublicBodySearch(BaseSearchView):
     search_url = reverse_lazy('publicbody-list')
 
     show_filters = {
-        'jurisdiction',
+        'jurisdiction', 'category'
     }
     object_template = 'publicbody/snippets/publicbody_item.html'
     has_facets = True
