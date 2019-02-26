@@ -36,22 +36,6 @@
   {% include "foirequest/_request_search.html" with search_url=search_url %}
 {% endblock %}
 
-{% block search_results_label %}
-  <div class="mb-4 text-right">
-    <p>
-      {% if filtered_objects %}
-        {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
-          Your search produced one search result.
-        {% plural %}
-          Your search produced {{ request_count }} search results.
-        {% endblocktrans %}
-      {% else %}
-        {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
-      {% endif %}
-    </p>
-  </div>
-{% endblock %}
-
 {% block search_results %}
   <ul class="list-unstyled">
     {% for object in object_list %}
