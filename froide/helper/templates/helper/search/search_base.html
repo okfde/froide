@@ -90,7 +90,7 @@
     {% render_search_list search_name query=form.q.value num_results=page_obj.paginator.count %}
 
     {% block sidebar_facets %}
-      {% if has_query and facet_config %}
+      {% if has_query and facet_config and count %}
         <div class="card mb-3">
           <div class="card-body">
               <dl>
