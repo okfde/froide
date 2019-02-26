@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load humanize %}
+{% load searchtags %}
+{% load search_helper %}
+
+{% block app_body %}
+
+<div class="row">
+
+  <div class="col-md-8 order-2">
+    <div class="mb-3 mt-3">
+      <h2>
+        {% block search_title %}{% endblock %}
+      </h2>
+    </div>
+
+    {% block search_form %}
+    <form action="{{ search_url }}" method="get" class="mb-3">
+      {% block search_form_query %}
+        <div class="row mt-2 mb-2">
+          <div class="col-md-12">
+            <div class="input-group">
+              {{ form.q }}
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-primary">
+                  {% trans "Search" %}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endblock %}
+
+      {% block search_form_filters %}{% endblock %}
+
+    </form>
+    {% endblock %}
+
+    {% block search_results_label %}
+      <div class="mb-4 text-right">
+        <p>
+          {% if filtered_objects %}
+            {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
+              Your search produced one search result.
+            {% plural %}
+              Your search produced {{ request_count }} search results.
+            {% endblocktrans %}
+          {% else %}
+            {% blocktrans with num=count|intcomma count counter=count %}One result{% plural %}{{ num }} results{% endblocktrans %}
+          {% endif %}
+        </p>
+      </div>
+    {% endblock %}
+
+    {% block search_results %}
+
+    <ul class="list-unstyled">
+      {% for object in object_list %}
+        <li>
+          {% if object_template %}
+            {% include object_template with object=object %}
+          {% else %}
+            <a href="{{ object.get_absolute_url }}">
+              {{ object }}
+            </a>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li>
+          {% if filtered_objects %}
+            {% trans "No results with these filters." %}
+          {% else %}
+            {% trans "No results yet." %}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if paginator.num_pages > 1 %}
+      {% include "pagination/pagination.html" with page_obj=page_obj %}
+    {% endif %}
+
+    {% endblock %}
+
+  </div>
+
+  <div class="col-md-4 order-1">
+    {% render_search_list search_name query=form.q.value num_results=page_obj.paginator.count %}
+
+    {% block sidebar_facets %}
+      {% if has_query and facet_config %}
+        <div class="card mb-3">
+          <div class="card-body">
+              <dl>
+                {% for key, _ in facet_config.items %}
+                  {% show_facet key facets facet_config %}
+                {% endfor %}
+              </dl>
+          </div>
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block sidebar_bottom %}{% endblock %}
+
+  </div>
+
+</div>
+
+{% endblock %}

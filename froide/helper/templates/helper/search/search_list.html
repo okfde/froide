@@ -1,0 +1,21 @@
+{% load humanize %}
+
+<div class="list-group mt-2 mb-3">
+  {% for search in searches %}
+    {% if search.name == current %}
+      <span class="list-group-item d-flex justify-content-between align-items-center active">
+        {{ search.title }}
+        {% if num_results %}
+          <span class="badge badge-primary badge-pill badge-light">
+            {{ num_results|intcomma }}
+          </span>
+        {% endif %}
+      </span>
+    {% else %}
+      <a href="{{ search.url }}{% if query %}?q={{ query }}{% endif %}" class="list-group-item d-flex justify-content-between align-items-center">
+        {{ search.title }}
+        <span class="badge badge-primary badge-pill"></span>
+      </a>
+    {% endif %}
+  {% endfor %}
+</div>
