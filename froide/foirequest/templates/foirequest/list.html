@@ -1,19 +1,15 @@
-{% extends 'foirequest/base.html' %}
+{% extends 'helper/search/search_base.html' %}
 {% load i18n %}
 {% load humanize %}
 {% load searchtags %}
+{% load search_helper %}
 
 {% block extra_head %}
   <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
   <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans %}Atom feed for these request{% endblocktrans %}" href="./feed/" />
 {% endblock %}
 
-{% block app_body %}
-{% block headline %}
-
-
-<div class="mb-3 mt-3">
-  <h2>
+{% block search_title %}
   {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.category %}
     {% trans "Requests" %}
     {% if filtered_objects.publicbody %}
@@ -32,80 +28,71 @@
       </small>
     {% endif %}
   {% else %}
-    {{ page_title }}
+    {% trans "FoI Requests" %}
   {% endif %}
-  </h2>
-</div>
+{% endblock %}
 
-{% endblock headline %}
+{% block search_form %}
+  {% include "foirequest/_request_search.html" with search_url=search_url %}
+{% endblock %}
 
-{% url "foirequest-list" as search_url %}
-{% include "foirequest/_request_search.html" with search_url=search_url %}
-
-<div class="row">
-  <div class="ml-auto col-auto">
-    {% if filtered_objects %}
-      {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
-        Your search produced one search result.
-      {% plural %}
-        Your search produced {{ request_count }} search results.
-      {% endblocktrans %}
-    {% else %}
-      {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
-    {% endif %}
+{% block search_results_label %}
+  <div class="mb-4 text-right">
+    <p>
+      {% if filtered_objects %}
+        {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
+          Your search produced one search result.
+        {% plural %}
+          Your search produced {{ request_count }} search results.
+        {% endblocktrans %}
+      {% else %}
+        {% blocktrans with num=count|intcomma count counter=count %}One request{% plural %}{{ num }} requests{% endblocktrans %}
+      {% endif %}
+    </p>
   </div>
-</div>
+{% endblock %}
 
-<div class="row">
+{% block search_results %}
+  <ul class="list-unstyled">
+    {% for object in object_list %}
+      <li>
+        {% include "foirequest/snippets/request_item.html" %}
+      </li>
+    {% empty %}
+      <li>
+        {% if filtered_objects %}
+          {% trans "No requests with these filters." %}
+        {% else %}
+          {% trans "No requests yet." %}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
 
-
-  {% if has_query %}
-  <div class="col-md-4">
-    <dl>
-      {% for key, _ in facet_config.items %}
-        {% show_facet key facets facet_config %}
-      {% endfor %}
-    </dl>
-  </div>
+  {% if paginator.num_pages > 1 %}
+    {% include "pagination/pagination.html" with page_obj=page_obj %}
   {% endif %}
-  <div class="col-md-8">
-    {% block col-8-headline %}{% endblock col-8-headline %}
-    <ul class="list-unstyled">
-      {% for object in object_list %}
+
+{% endblock %}
+
+{% block sidebar_bottom %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6>{% blocktrans %}Feeds for these requests{% endblocktrans %}</h6>
+      <ul class="list-unstyled">
         <li>
-          {% include "foirequest/snippets/request_item.html" %}
+          <a href="{% url 'foirequest-list_feed' %}?{{ getvars }}">
+            <i class="fa fa-rss" aria-hidden="true"></i>
+            {% trans "RSS Feed" %}
+          </a>
         </li>
-      {% empty %}
         <li>
-          {% if filtered_objects %}
-            {% trans "No requests with these filters." %}
-          {% else %}
-            {% trans "No requests yet." %}
-          {% endif %}
+          <a href="{% url 'foirequest-list_feed_atom' %}?{{ getvars }}">
+            <i class="fa fa-rss-square" aria-hidden="true"></i>
+            {% trans "Atom Feed" %}
+          </a>
         </li>
-      {% endfor %}
-    </ul>
-
-    {% if paginator.num_pages > 1 %}
-      {% include "pagination/pagination.html" with page_obj=page_obj %}
-    {% endif %}
-
-    <ul class="nav nav-compact flex-column">
-      <li class="nav-header">{% blocktrans %}Feeds for these requests{% endblocktrans %}</li>
-       <li class="nav-item">
-        <a class="nav-link" href="{% url 'foirequest-list_feed' %}?{{ getvars }}">
-          <i class="fa fa-rss" aria-hidden="true"></i>
-          {% trans "RSS Feed" %}
-        </a>
-      </li>
-       <li class="nav-item">
-        <a class="nav-link" href="{% url 'foirequest-list_feed_atom' %}?{{ getvars }}">
-          <i class="fa fa-rss-square" aria-hidden="true"></i>
-          {% trans "Atom Feed" %}
-        </a>
-      </li>
-    </ul>
-
+      </ul>
+    </div>
   </div>
-</div>
 {% endblock %}
