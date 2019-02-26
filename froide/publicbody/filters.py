@@ -52,5 +52,8 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
             'q', 'jurisdiction', 'category'
         ]
 
+    def filter_jurisdiction(self, qs, name, value):
+        return qs.filter(jurisdiction=value.id)
+
     def filter_category(self, qs, name, value):
         return qs.filter(categories=value.id)

@@ -18,6 +18,33 @@ from .forms import PublicBodyProposalForm
 from .filters import PublicBodyFilterSet
 
 
+FILTER_ORDER = ('jurisdiction', 'category')
+SUB_FILTERS = {
+    'jurisdiction': ('category',)
+}
+
+
+def get_active_filters(data):
+    for key in FILTER_ORDER:
+        if not data.get(key):
+            continue
+        yield key
+        sub_filters = SUB_FILTERS.get(key, ())
+        for sub_key in sub_filters:
+            if data.get(sub_key):
+                yield sub_key
+                break
+        break
+
+
+def get_filter_data(filter_kwargs, data):
+    query = {}
+    for key in get_active_filters(filter_kwargs):
+        query[key] = filter_kwargs[key]
+    data.update(query)
+    return data
+
+
 class PublicBodySearch(BaseSearchView):
     search_name = 'publicbody'
     template_name = 'publicbody/list.html'
@@ -27,6 +54,9 @@ class PublicBodySearch(BaseSearchView):
     search_url = reverse_lazy('publicbody-list')
 
     show_filters = {
+        'jurisdiction', 'category'
+    }
+    advanced_filters = {
         'jurisdiction', 'category'
     }
     object_template = 'publicbody/snippets/publicbody_item.html'
@@ -40,37 +70,8 @@ class PublicBodySearch(BaseSearchView):
         }
     }
 
-
-# def index(request, jurisdiction=None, category=None):
-#     if jurisdiction is not None:
-#         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
-
-#     if category is not None:
-#         category = get_object_or_404(Category, slug=category)
-
-#     publicbodies = PublicBody.objects.all()
-
-#     if category:
-#         publicbodies = publicbodies.filter(categories=category)
-#     if jurisdiction:
-#         publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
-
-#     page = request.GET.get('page')
-#     paginator = Paginator(publicbodies, 50)
-#     try:
-#         publicbodies = paginator.page(page)
-#     except PageNotAnInteger:
-#         publicbodies = paginator.page(1)
-#     except EmptyPage:
-#         publicbodies = paginator.page(paginator.num_pages)
-
-#     return render(request, 'publicbody/list.html', {
-#         'object_list': publicbodies,
-#         'jurisdictions': Jurisdiction.objects.get_list(),
-#         'jurisdiction': jurisdiction,
-#         'category': category,
-#         'categories': Category.objects.get_category_list(),
-#     })
+    def get_filter_data(self, kwargs, get_dict):
+        return get_filter_data(kwargs, get_dict)
 
 
 @cache_anonymous_page(15 * 60)
