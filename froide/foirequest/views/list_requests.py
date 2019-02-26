@@ -5,7 +5,6 @@ from urllib.parse import urlencode
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse, reverse_lazy
-from django.utils.functional import cached_property
 
 from froide.helper.utils import render_403
 from froide.helper.search.views import BaseSearchView
@@ -32,7 +31,7 @@ class BaseListRequestView(BaseSearchView):
     advanced_filters = {
         'jurisdiction', 'category'
     }
-
+    has_facets = True
     facet_config = {
         'jurisdiction': {
             'model': Jurisdiction,
@@ -53,25 +52,6 @@ class BaseListRequestView(BaseSearchView):
 
     def get_filter_data(self, kwargs, get_dict):
         return get_filter_data(kwargs, get_dict)
-
-    @cached_property
-    def has_advanced_filters(self):
-        return bool(set(self.filtered_objs) & self.advanced_filters)
-
-    def get_search(self):
-        self.filter_data = get_filter_data(self.kwargs, dict(self.request.GET.items()))
-        s = self.get_base_search()
-        self.has_query = self.filter_data.get('q')
-        if not self.has_query:
-            s = s.sort(self.default_sort)
-        else:
-            # s = s.highlight_options(encoder='html')
-            s = s.highlight('content')
-            s = s.sort('_score', '-last_message')
-        return s
-
-    def show_facets(self):
-        return True
 
 
 class ListRequestView(BaseListRequestView):

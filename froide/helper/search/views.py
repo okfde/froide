@@ -1,4 +1,5 @@
 from django.views.generic import ListView
+from django.utils.functional import cached_property
 
 from .queryset import SearchQuerySetWrapper
 from .facets import resolve_facet, make_filter_url
@@ -36,6 +37,10 @@ class BaseSearchView(ListView):
 
     def get_filter_data(self, kwargs, get_dict):
         return get_dict
+
+    @cached_property
+    def has_advanced_filters(self):
+        return bool(set(self.filtered_objs) & self.advanced_filters)
 
     def get_search(self):
         self.filter_data = self.get_filter_data(self.kwargs, dict(self.request.GET.items()))
