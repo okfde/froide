@@ -12,7 +12,7 @@ from ..tasks import (
 class CelerySignalProcessor(RealTimeSignalProcessor):
     def setup(self):
         for doc in registry.get_documents():
-            if doc._doc_type.ignore_signals:
+            if getattr(doc, 'special_signals', False):
                 continue
             model = doc._doc_type.model
             models.signals.post_save.connect(self.handle_save, sender=model)
@@ -24,7 +24,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
     def teardown(self):
         # Listen to all model saves.
         for doc in registry.get_documents():
-            if doc._doc_type.ignore_signals:
+            if getattr(doc, 'special_signals', False):
                 continue
             model = doc._doc_type.model
             models.signals.post_save.disconnect(self.handle_save, sender=model)
