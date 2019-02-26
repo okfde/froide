@@ -114,3 +114,10 @@ input.copy-text {
       background-color: inherit;
   }
 }
+
+.search-highlight {
+  font-size: 0.8em;
+  em {
+    @extend .highlight;
+  }
+}
