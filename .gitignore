@@ -21,3 +21,4 @@ node_modules/
 *.map
 favicon-result.json
 .mypy_cache
+__pycache__/
