@@ -5,46 +5,72 @@ from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template import TemplateDoesNotExist
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import FormView
+from django.urls import reverse_lazy
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
+from froide.helper.search.views import BaseSearchView
 
-from .models import PublicBody, Category, FoiLaw, Jurisdiction
+from .models import PublicBody, FoiLaw, Jurisdiction
+from .documents import PublicBodyDocument
 from .forms import PublicBodyProposalForm
+from .filters import PublicBodyFilterSet
 
 
-def index(request, jurisdiction=None, category=None):
-    if jurisdiction is not None:
-        jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
+class PublicBodySearch(BaseSearchView):
+    search_name = 'publicbody'
+    template_name = 'publicbody/list.html'
+    model = PublicBody
+    document = PublicBodyDocument
+    filterset = PublicBodyFilterSet
+    search_url = reverse_lazy('publicbody-list')
 
-    if category is not None:
-        category = get_object_or_404(Category, slug=category)
+    show_filters = {
+        'jurisdiction',
+    }
+    object_template = 'publicbody/snippets/publicbody_item.html'
+    has_facets = True
+    facet_config = {
+        'jurisdiction': {
+            'model': Jurisdiction,
+            'getter': lambda x: x['object'].slug,
+            'label_getter': lambda x: x['object'].name,
+            'label': _('jurisdictions'),
+        }
+    }
 
-    publicbodies = PublicBody.objects.all()
 
-    if category:
-        publicbodies = publicbodies.filter(categories=category)
-    if jurisdiction:
-        publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
+# def index(request, jurisdiction=None, category=None):
+#     if jurisdiction is not None:
+#         jurisdiction = get_object_or_404(Jurisdiction, slug=jurisdiction)
 
-    page = request.GET.get('page')
-    paginator = Paginator(publicbodies, 50)
-    try:
-        publicbodies = paginator.page(page)
-    except PageNotAnInteger:
-        publicbodies = paginator.page(1)
-    except EmptyPage:
-        publicbodies = paginator.page(paginator.num_pages)
+#     if category is not None:
+#         category = get_object_or_404(Category, slug=category)
 
-    return render(request, 'publicbody/list.html', {
-        'object_list': publicbodies,
-        'jurisdictions': Jurisdiction.objects.get_list(),
-        'jurisdiction': jurisdiction,
-        'category': category,
-        'categories': Category.objects.get_category_list(),
-    })
+#     publicbodies = PublicBody.objects.all()
+
+#     if category:
+#         publicbodies = publicbodies.filter(categories=category)
+#     if jurisdiction:
+#         publicbodies = publicbodies.filter(jurisdiction=jurisdiction)
+
+#     page = request.GET.get('page')
+#     paginator = Paginator(publicbodies, 50)
+#     try:
+#         publicbodies = paginator.page(page)
+#     except PageNotAnInteger:
+#         publicbodies = paginator.page(1)
+#     except EmptyPage:
+#         publicbodies = paginator.page(paginator.num_pages)
+
+#     return render(request, 'publicbody/list.html', {
+#         'object_list': publicbodies,
+#         'jurisdictions': Jurisdiction.objects.get_list(),
+#         'jurisdiction': jurisdiction,
+#         'category': category,
+#         'categories': Category.objects.get_category_list(),
+#     })
 
 
 @cache_anonymous_page(15 * 60)

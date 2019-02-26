@@ -1,105 +1,31 @@
-{% extends 'publicbody/base.html' %}
-
+{% extends 'helper/search/search_base.html' %}
 {% load i18n %}
+{% load humanize %}
+{% load searchtags %}
+{% load search_helper %}
 
-{% block app_body %}
-
-<div class="row">
-  <div class="col-md-9 col-lg-9">
-    <h2>
-      {% blocktrans %}Public Bodies{% endblocktrans %}
-    </h2>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-9 col-lg-9">
-    {% comment %}
-      <div class="row">
-        <form method="get" action=".">
-          <div class="col-lg-12">
-            <div class="input-group">
-              <input class="form-control" type="search" placeholder="{% trans "Search Terms" %}" name="q" value="{{ query }}" autocomplete="off"/>
-              <div class="input-group-append">
-                <button class="btn btn-success" type="submit">
-                  <i class="fa fa-search"></i>
-                  {% blocktrans %}Search Public Bodies{% endblocktrans %}
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    {% endcomment %}
-    <div class="row top-buffer">
-      <div class="col-lg-12">
-        <ul class="list-unstyled">
-          {% for object in object_list %}
-          <li>
-            {% if object.object %}
-              {% with object=object.object %}
-                {% include "publicbody/snippets/publicbody_item.html" %}
-              {% endwith %}
-            {% else %}
-              {% include "publicbody/snippets/publicbody_item.html" %}
-            {% endif %}
-          </li>
-        {% endfor %}
-        </ul>
-        {% if query %}
-          {% with getvars="&q="|add:query %}
-            {% include "pagination/pagination.html" with page_obj=object_list %}
-          {% endwith %}
-        {% else %}
-          {% include "pagination/pagination.html" with page_obj=object_list %}
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3 col-lg-3">
-    {% if jurisdiction or category %}
-    <div class="mb-3 mt-3">
-      <a href="{% url 'publicbody-list' %}">{% trans "Show all public bodies" %}</a>
-    </div>
-    {% endif %}
-    <h4>{% trans "Jurisdictions" %}</h4>
-    <ul class="nav nav-compact flex-column">
-      {% for juris in jurisdictions %}
-        {% if category and jurisdiction == juris %}
-          {% url 'publicbody-list' category=category.slug as jur_url %}
-        {% elif category %}
-          {% url 'publicbody-list' jurisdiction=juris.slug category=category.slug as jur_url %}
-        {% elif jurisdiction == juris %}
-          {% url 'publicbody-list' as jur_url %}
-        {% else %}
-          {% url 'publicbody-list' jurisdiction=juris.slug as jur_url %}
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link{% if jurisdiction == juris %} active{% endif %}" href="{{ jur_url }}{% if query %}?q={{ query }}{% endif %}">
-            {{ juris.name }}
-          </a>
-      {% endfor %}
-    </li>
-    <h4 class="mt-3">{% trans "Topics" %}</h4>
-    <ul class="nav nav-compact flex-column">
-      {% for top in categories %}
-        {% if jurisdiction and topic == top %}
-          {% url 'publicbody-list' jurisdiction=jurisdiction.slug as top_url %}
-        {% elif jurisdiction %}
-          {% url 'publicbody-list' jurisdiction=jurisdiction.slug category=top.slug as top_url %}
-        {% elif category == top %}
-          {% url 'publicbody-list' as top_url %}
-        {% else %}
-          {% url 'publicbody-list' category=top.slug as top_url %}
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link{% if category == top %} active{% endif %}" href="{{ top_url }}{% if query %}?q={{ query }}{% endif %}">
-            {{ top.name }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-</div>
-
+{% block search_title %}
+  {% trans "Public Bodies" %}
 {% endblock %}
+
+
+{% block search_form_filters %}
+  <div class="row">
+    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+      <div class="col-md-6">
+        {{ form.jurisdiction }}
+      </div>
+    {% else %}
+      {{ form.jurisdiction }}
+    {% endif %}
+
+    {% if "category" in show_filters %}
+      <div class="col-md-6">
+        {{ form.category }}
+      </div>
+    {% else %}
+      {{ form.category }}
+    {% endif %}
+  </div>
+{% endblock %}
+
