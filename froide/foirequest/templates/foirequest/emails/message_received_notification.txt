@@ -2,7 +2,7 @@
 
 {{ pbname }} sent you a response to your request “{{ title }}”. Please read the response and change the status of the request if needed. You can also send another message.
 
-To read your response and set the right status, click the link below:
+To read your response and to reply to the authority, click the link below:
 
 {{ url }}
 
