@@ -72,6 +72,11 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk',
         read_only=True,
     )
+    redacted = serializers.HyperlinkedRelatedField(
+        view_name='api:attachment-detail',
+        lookup_field='pk',
+        read_only=True,
+    )
     belongs_to = serializers.HyperlinkedRelatedField(
         read_only=True,
         view_name='api:message-detail'
@@ -98,8 +103,11 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         depth = 0
         fields = (
             'resource_uri', 'id', 'belongs_to', 'name', 'filetype',
-            'approved', 'can_approve', 'is_redacted', 'is_converted', 'converted',
-            'size', 'site_url', 'anchor_url', 'file_url', 'pending'
+            'size', 'site_url', 'anchor_url', 'file_url', 'pending',
+            'is_converted', 'converted',
+            'approved', 'can_approve',
+            'redacted', 'is_redacted', 'can_redact',
+            'can_delete'
         )
 
     def get_file_url(self, obj):

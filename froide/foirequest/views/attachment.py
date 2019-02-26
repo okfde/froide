@@ -97,6 +97,33 @@ def approve_attachment(request, slug, attachment):
 
 
 @require_POST
+def delete_attachment(request, slug, attachment):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+
+    if not can_write_foirequest(foirequest, request):
+        return render_403(request)
+    att = get_object_or_404(FoiAttachment, id=int(attachment))
+    message = att.belongs_to
+    if not message.is_postal:
+        return render_403(request)
+    if not att.can_delete:
+        return render_403(request)
+    if att.is_redacted:
+        FoiAttachment.objects.filter(redacted=att).update(
+            can_approve=True
+        )
+    att.remove_file_and_delete()
+
+    if request.is_ajax():
+        if request.content_type == 'application/json':
+            return JsonResponse({})
+        return HttpResponse()
+    messages.add_message(request, messages.SUCCESS,
+            _('Attachment deleted.'))
+    return redirect(message.get_absolute_url())
+
+
+@require_POST
 def create_document(request, slug, attachment):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
 

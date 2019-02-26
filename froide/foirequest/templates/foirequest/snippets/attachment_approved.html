@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load foirequest_tags %}
 
-<div class="col-lg-8 mb-2 ">
+<div class="col-sm-10 mb-2 ">
   {% include "foirequest/snippets/attachment_item.html" %}
   {% if attachment.redacted %}
     <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
@@ -35,10 +35,11 @@
     </span>
   {% endif %}
 </div>
-<div class="col-lg-4 text-right">
+<div class="col-sm-2 text-right">
   {% if attachment.can_redact and object|can_write_foirequest:request %}
-    <a class="btn btn-sm btn-dark d-print-none" href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">
-      {% trans "Redact" %}
+    <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
+      <span class="fa fa-edit"></span>
+      <span class="sr-only">{% trans "Edit" %}</span>
     </a>
   {% endif %}
 </div>

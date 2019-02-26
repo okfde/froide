@@ -7,24 +7,27 @@
       <div class="card-body" :class="{'is-new': document.new}">
         <div v-if="document.uploading" class="progress">
           <div class="progress-bar"
-            :class="{'progress-bar-animated progress-bar-striped': progressUnknown}"
+            :class="{
+              'progress-bar-animated progress-bar-striped': progressAlmostComplete,
+              'bg-info progress-bar-striped': progressUnknown,
+            }"
             :style="{'width': progressPercentLabel}"
             role="progressbar" :aria-valuenow="document.progress"
             aria-valuemin="0" aria-valuemax="100"></div>
         </div>
-        <template v-if="!document.pending">
+        <template v-if="ready">
           <div class="row">
-            <div class="col-auto">
-              <a :href="document.site_url" target="_blank" class="btn btn-sm btn-light">
+            <div v-if="hasAttachment" class="col-auto mt-1">
+              <a :href="document.site_url" target="_blank" class="btn btn-sm btn-light mt-1">
                 {{ i18n.openAttachmentPage }}
               </a>
-              <button class="btn btn-sm btn-light" @click="$emit('loadpdf')">
+              <button class="btn btn-sm btn-light mt-1" @click="$emit('loadpdf')">
                 {{ i18n.loadPreview }}
               </button>
             </div>
-            <div class="ml-auto col-auto">
+            <div class="ml-auto mt-1 col-auto text-right">
               <pdf-review :config="config" :document="document"
-                @documentupdated="$emit('docupdated', $event)"
+                @docupdated="updateDocument"
               ></pdf-review>
             </div>
           </div>
@@ -33,8 +36,11 @@
           <div class="spinner-border spinner-border-sm" role="status">
             <span class="sr-only">{{ i18n.loading }}</span>
           </div>
-          <p>
+          <p v-if="document.pending">
             {{ i18n.documentPending }}
+          </p>
+          <p v-if="document.deleting">
+            {{ i18n.documentDeleting }}
           </p>
         </div>
       </div>
@@ -44,6 +50,7 @@
 
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
+import DocumentMixin from './lib/document_mixin'
 
 import PdfReview from './pdf-review.vue'
 import PdfHeader from './pdf-header.vue'
@@ -52,7 +59,7 @@ const range = (len) => [...Array(len).keys()]
 
 export default {
   name: 'pdf-document',
-  mixins: [I18nMixin],
+  mixins: [I18nMixin, DocumentMixin],
   props: ['config', 'document'],
   components: {
     PdfReview, PdfHeader
@@ -61,7 +68,6 @@ export default {
     return {
         progressTotal: null,
         progressCurrent: null,
-        ready: false,
         pdf: null,
         numPages: null,
         pdfPages: []
@@ -79,6 +85,12 @@ export default {
     pages () {
       return this.document.pages
     },
+    ready () {
+      return !this.document.pending && !this.document.deleting
+    },
+    progressAlmostComplete () {
+      return !this.progressUnknown && this.document.progress === this.document.progressTotal
+    },
     progressUnknown () {
       return this.progressPercent === null
     },
@@ -93,9 +105,22 @@ export default {
         return `${this.progressPercent}%`
       }
       return '100%'
-    }
+    },
+    hasAttachment () {
+      return !!this.document.attachment
+    },
+    approveUrl () {
+      return this.config.url.approveAttachment.replace('/0/', `/${this.document.id}/`)
+    },
+    attachmentUrl () {
+      return this.config.url.getAttachment.replace('/0/', `/${this.document.id}/`)
+    },
+    deleteUrl () {
+      return this.config.url.deleteAttachment.replace('/0/', `/${this.document.id}/`)
+    },
   },
   methods: {
+
     checkProgress () {
       window.fetch(`/api/v1/attachment/${this.document.id}/`)
         .then(response => response.json()).then((data) => {

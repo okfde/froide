@@ -17,7 +17,7 @@
             <label for="page-label">{{ i18n.documentTitle }}</label>
             <input v-model="documentName" type="text" class="form-control" :placeholder="i18n.documentTitlePlaceholder">
           </div>
-          <draggable v-model="pages" @start="drag=true" @end="drag=false" class="pages bg-light">
+          <draggable v-model="pages" @start="drag=true" @end="drag=false" class="row pages bg-light">
               <image-page v-for="page in pages" :key="page.pageNum"
                 :page="page"
                 :page-count="pages.length"
@@ -32,7 +32,7 @@
           </div>
           <div class="col-md-4">
             <p class="text-right">
-              <button class="btn btn-primary" :disabled="anyUploads || converting" @click="convertImages">
+              <button class="btn btn-primary mt-2" :disabled="anyUploads || converting" @click="convertImages">
                 {{ i18n.convertImages }}
               </button>
             </p>

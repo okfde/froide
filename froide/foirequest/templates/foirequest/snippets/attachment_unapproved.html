@@ -2,7 +2,7 @@
 
 {% load foirequest_tags %}
 
-<div class="col-lg-8 mb-2 ">
+<div class="col-sm-10 mb-2 ">
   {% if object|can_write_foirequest:request and attachment.allow_link %}
     {# Link to attachment when unapproved, but write allowed and cannot redact #}
     {% include "foirequest/snippets/attachment_item.html" %}
@@ -33,18 +33,15 @@
     </span>
   {% endif %}
 </div>
-<div class="col-lg-4 text-right">
-  {% if not attachment.pending and attachment.can_approve and object|can_write_foirequest:request %}
-    <form id="approve-attachment-{{ attachment.pk }}-form" class="ajaxified d-print-none" method="post" action="{% url 'foirequest-approve_attachment' slug=object.slug attachment=attachment.pk %}">
-      {% if attachment.can_redact %}
-        <a class="btn btn-sm btn-primary mr-1 d-print-none" href="{% url "foirequest-redact_attachment" slug=object.slug attachment_id=attachment.id %}">
-          {% trans "Review" %}
+<div class="col-sm-2 text-right">
+  <div class="btn-group-forms" role="group">
+    {% if object|can_write_foirequest:request %}
+      {% if attachment.can_edit %}
+        <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
+          <span class="fa fa-edit"></span>
+          <span class="sr-only">{% trans "Edit" %}</span>
         </a>
       {% endif %}
-      {% csrf_token %}
-      <button class="btn btn-sm btn-success" type="submit">
-        {% trans "Approve" %}
-      </button>
-    </form>
-  {% endif %}
+    {% endif %}
+  </div>
 </div>

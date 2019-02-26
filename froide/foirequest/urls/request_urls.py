@@ -12,7 +12,7 @@ from ..views import (
     make_same_request, resend_message,
     download_foirequest_zip, download_foirequest_pdf,
     show_attachment, redact_attachment,
-    upload_attachments
+    upload_attachments, delete_attachment
 )
 
 urlpatterns = [
@@ -36,6 +36,7 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/mark/checked/$", mark_checked, name="foirequest-mark_checked"),
     url(r"^(?P<slug>[-\w]+)/extend-deadline/$", extend_deadline, name="foirequest-extend_deadline"),
     url(r"^(?P<slug>[-\w]+)/approve/(?P<attachment>\d+)/$", approve_attachment, name="foirequest-approve_attachment"),
+    url(r"^(?P<slug>[-\w]+)/delete/(?P<attachment>\d+)/$", delete_attachment, name="foirequest-delete_attachment"),
     url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message>\d+)/$", approve_message, name="foirequest-approve_message"),
     url(r"^(?P<slug>[-\w]+)/make-same/$", make_same_request, name="foirequest-make_same_request"),
     url(r"^(?P<slug>[-\w]+)/resend/$", resend_message, name="foirequest-resend_message"),
@@ -49,7 +50,6 @@ urlpatterns = [
         % pgettext('url component', 'upload'), upload_attachments, name='foirequest-upload_attachments'),
     # Redaction
     url(r"^(?P<slug>[-\w]+)/redact/(?P<attachment_id>\d+)/$", redact_attachment, name="foirequest-redact_attachment"),
-
     # Feed
     url(r"^(?P<slug>[-\w]+)/feed/$", FoiRequestFeedAtom(), name="foirequest-feed_atom"),
     url(r"^(?P<slug>[-\w]+)/rss/$", FoiRequestFeed(), name="foirequest-feed")

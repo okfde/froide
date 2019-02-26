@@ -32,7 +32,7 @@
               {% endif %}
               <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
                 {% with message_pb_form=message.get_public_body_sender_form %}
-                  <form method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                  <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
                     {% csrf_token %}
                     <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
                     {{ message_pb_form.sender }}
@@ -152,17 +152,6 @@
         <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}" class="btn btn-secondary">
           {% trans "Manage attachments" %}
         </a>
-        {% comment %} <h6>
-          {% blocktrans %}Upload Attachments{% endblocktrans %}
-        </h6>
-        {% with form=message.get_postal_attachment_form %}
-          <form method="post" action="{% url 'foirequest-add_postal_reply_attachment' slug=object.slug message_id=message.pk %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% render_field form.files %}
-            <button type="submit" class="upload-button btn btn-secondary">{% blocktrans %}Upload Document{% endblocktrans %}</button>
-            <span class="form-text text-muted">{{ form.files.help_text }}</span>
-          </form>
-        {% endwith %} {% endcomment %}
       </div>
     {% endif %}
 
@@ -231,7 +220,7 @@
             {% if object|can_write_foirequest:request %}
               <div class="d-print-none alert alert-warning">
                 <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
-                <form class="form-horizontal" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message=message.pk %}">
+                <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message=message.pk %}">
                   {% csrf_token %}
                   <button class="btn btn-secondary" type="submit">
                     {% trans "Publish message content" %}

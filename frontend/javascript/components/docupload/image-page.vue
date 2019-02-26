@@ -1,11 +1,8 @@
 <template>
-  <div class="page">
+  <div class="page col-2">
     <div class="row justify-content-center">
-      <div class="scol" :style="pageContainerStyle">
-        <img v-if="page.url" ref="pageImage" :src="page.url" alt="" class="page-image"
-          :style="pageStyle"
-          @load="imageLoaded"
-        />
+      <div class="col-auto">
+        <img v-if="pageUrl" ref="pageImage" :src="pageUrl" alt="" class="page-image"/>
       </div>
     </div>
     <div class="row justify-content-center">
@@ -31,9 +28,12 @@
     </div>
     <div v-if="page.uploading" class="progress">
       <div class="progress-bar"
-        :class="{'progress-bar-animated progress-bar-striped': progressUnknown}"
+        :class="{
+          'progress-bar-animated progress-bar-striped': progressAlmostComplete,
+          'bg-info progress-bar-striped': progressUnknown,
+        }"
         :style="{'width': progressPercentLabel}"
-        role="progressbar" :aria-valuenow="page.progress"
+        role="progressbar" :aria-valuenow="document.progress"
         aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   </div>
@@ -49,24 +49,12 @@ export default {
   props: ['page', 'pageCount'],
   data () {
     return {
-      pageContainerStyle: {}
+      loaded: false,
+      width: null,
+      height: null,
     }
   },
   computed: {
-    pageStyle () {
-      let styles = {
-        transform: `rotate(${this.totalRotate}deg)`
-      }
-      if (this.totalRotate % 180 !== 0) {
-        styles.maxHeight = '120px'
-        styles.maxWidth = '120px'
-        styles.width = 'auto'
-      } else {
-        styles.maxWidth = '120px'
-        styles.width = '100%'
-      }
-      return styles
-    },
     totalRotate () {
       let rotDegree = (this.page.rotate || 0)
       if (this.$root.exifSupport) {
@@ -74,11 +62,33 @@ export default {
       }
       return rotDegree + (this.page.implicitRotate || 0)
     },
+    image () {
+      this.loaded = false
+      const image = new window.Image()
+      image.onload = this.imageLoaded
+      image.src = this.page.url
+      return image
+    },
+    pageUrl () {
+      if (!this.page.url) {
+        return false
+      }
+      if (this.image) {
+        if (this.totalRotate === 0) {
+          return this.page.url
+        }
+        return this.rotateImage(this.totalRotate) 
+      }
+      return false
+    },
     pageNum () {
       return this.page.pageNum
     },
     isLast () {
       return this.page.pageNum === this.pageCount
+    },
+    progressAlmostComplete () {
+      return !this.progressUnknown && this.page.progress === this.page.progressTotal
     },
     progressUnknown () {
       return this.progressPercent === null
@@ -101,35 +111,42 @@ export default {
       this.$emit('splitpages', this.page.pageNum)
     },
     rotatePage () {
+      const degree = ((this.page.rotate || 0) + 90) % 360
       this.$emit('pageupdated', {
           pageNum: this.pageNum,
           data: {
-            rotate: ((this.page.rotate || 0) + 90) % 360
+            rotate: degree
           }
       })
-      window.setTimeout(() => this.calculateContainerStyle(), 500)
     },
-    calculateContainerStyle () {
-      console.log('update container style')
-      let pageImage = this.$refs.pageImage
-        if (!pageImage) {
-          return {}
-        }
-        let dims = this.$refs.pageImage.getBoundingClientRect()
-        let styles = {}
-        if (this.totalRotate % 180 !== 0) {
-          styles = {
-            // 'max-height': `${Math.min(120, dims.height)}px`,
-            'max-width': `${dims.width}px`
-          }
-        } else {
-          styles = {}
-        }
-        this.pageContainerStyle = styles
+    rotateImage (degree) {
+      if (!this.loaded) {
+        return null
+      }
+      const img = this.image
+      const canvas = document.createElement('canvas')
+      if (degree % 180 === 0) {
+        canvas.width = this.width
+        canvas.height = this.height
+      } else {
+        canvas.width = this.height
+        canvas.height = this.width
+      }
+      const ctx = canvas.getContext('2d')
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.save()
+      
+      ctx.translate(canvas.width / 2, canvas.height / 2)
+      ctx.rotate(degree * Math.PI / 180)
+      ctx.drawImage(img, -img.width / 2, -img.height / 2)
+
+      ctx.restore()
+      return canvas.toDataURL('image/jpeg', 1.0)
     },
     imageLoaded (e) {
-      let width = e.target.width
-      let height = e.target.height
+      this.loaded = true
+      let width = this.width = e.target.width
+      let height = this.height = e.target.height
       let page = this.page
       if (page.exif === undefined) {
         let self = this
@@ -173,9 +190,8 @@ export default {
   .page-image {
     display: block;
     width: 100%;
+    max-width: 100%;
     border: 1px solid #bbb;
-    transform-origin: center center;
-    transition: transform 0.5s linear;
     image-orientation: none; /* Always read exif ourselves */
   }
   .scol {

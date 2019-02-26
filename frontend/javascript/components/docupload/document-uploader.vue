@@ -254,7 +254,7 @@ export default {
         return
       }
       for (let key in update) {
-        doc[key] = update[key]
+        Vue.set(doc, key, update[key])
       }
     },
     uploadPage (page) {

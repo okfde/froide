@@ -999,6 +999,106 @@ class RequestTest(TestCase):
         self.assertTrue(att.approved)
         self.assertFalse(att.can_approve)
 
+    def test_delete_attachment(self):
+        from froide.foirequest.models.attachment import DELETE_TIMEFRAME
+
+        now = timezone.now()
+
+        req = FoiRequest.objects.all()[0]
+        mes = req.messages[-1]
+        att = factories.FoiAttachmentFactory.create(
+            belongs_to=mes, approved=False,
+            timestamp=now
+        )
+
+        # Bad method
+        response = self.client.get(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 405)
+
+        # Bad slug
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug + 'blub', "attachment": att.id}))
+        self.assertEqual(response.status_code, 404)
+
+        # Not logged in
+        self.client.logout()
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertForbidden(response)
+
+        # Not user of request
+        self.client.login(email='dummy@example.org', password='froide')
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+        self.client.login(email='info@fragdenstaat.de', password='froide')
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": '9' * 8}))
+        self.assertEqual(response.status_code, 404)
+
+        user = User.objects.get(username='sw')
+        user.is_staff = False
+        user.save()
+
+        self.client.login(email='info@fragdenstaat.de', password='froide')
+
+        # Don't allow deleting from non-postal messages
+        mes.kind = 'email'
+        mes.save()
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+        att_exists = FoiAttachment.objects.filter(id=att.id).exists()
+        self.assertTrue(att_exists)
+
+        mes.kind = 'post'
+        mes.save()
+
+        att.can_approve = False
+        att.save()
+
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+        att_exists = FoiAttachment.objects.filter(id=att.id).exists()
+        self.assertTrue(att_exists)
+
+        att.can_approve = True
+        att.save()
+
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 302)
+        att_exists = FoiAttachment.objects.filter(id=att.id).exists()
+        self.assertFalse(att_exists)
+
+        att = factories.FoiAttachmentFactory.create(
+            belongs_to=mes, approved=False,
+            timestamp=now - DELETE_TIMEFRAME
+        )
+
+        self.client.login(email='info@fragdenstaat.de', password='froide')
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 403)
+        att = FoiAttachment.objects.get(id=att.id)
+
+        att = factories.FoiAttachmentFactory.create(
+            belongs_to=mes, approved=False,
+            timestamp=now
+        )
+
+        self.client.logout()
+        self.client.login(email='dummy_staff@example.org', password='froide')
+        response = self.client.post(reverse('foirequest-delete_attachment',
+                kwargs={"slug": req.slug, "attachment": att.id}))
+        self.assertEqual(response.status_code, 302)
+        att_exists = FoiAttachment.objects.filter(id=att.id).exists()
+        self.assertFalse(att_exists)
+
     def test_make_same_request(self):
         req = FoiRequest.objects.all()[0]
 

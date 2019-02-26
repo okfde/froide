@@ -1,17 +1,18 @@
 <template>
   <div>
     <small>{{ document.name }}</small>
-    <span v-if="!approved" class="badge badge-warning">
-      {{ i18n.notPublic }}
-    </span>
-    <span v-if="isRedacted" class="badge badge-dark">
-      {{ i18n.redacted }}
-    </span>
+    <template v-if="hasAttachment">
+      <span v-if="!approved" class="badge badge-warning">
+        {{ i18n.notPublic }}
+      </span>
+      <span v-if="isRedacted" class="badge badge-dark">
+        {{ i18n.redacted }}
+      </span>
 
-    <span v-if="isProtected" class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
-      {{ i18n.protectedOriginal }}
-    </span>
-
+      <span v-if="isProtected" class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+        {{ i18n.protectedOriginal }}
+      </span>
+    </template>
   </div>
 </template>
 
@@ -26,6 +27,9 @@ export default {
   computed: {
     attachment () {
       return this.document.attachment
+    },
+    hasAttachment () {
+      return !!this.document.attachment
     },
     isProtected () {
       return (this.attachment.converted && !this.attachment.approved) || this.attachment.redacted

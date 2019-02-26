@@ -62,7 +62,7 @@
         </div>
 
         <div class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
-          <button class="btn btn-primary" @click="redact">
+          <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush"></i>
             {{ i18n.redactAndPublish }}
           </button>

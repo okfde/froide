@@ -23,9 +23,9 @@
           </li>
         </ol>
         <div class="row">
-          <div class="ml-auto col-auto">
+          <div class="ml-auto col-auto mt-1">
             <pdf-review :config="config" :document="document"
-              @documentupdated="$emit('docupdated', $event)"
+              @docupdated="updateDocument"
             ></pdf-review>
           </div>
         </div>
@@ -36,6 +36,7 @@
 
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
+import DocumentMixin from './lib/document_mixin'
 
 import PdfReview from './pdf-review.vue'
 import PdfHeader from './pdf-header.vue'
@@ -47,7 +48,7 @@ const range = (len) => [...Array(len).keys()]
 
 export default {
   name: 'pdf-document',
-  mixins: [I18nMixin],
+  mixins: [I18nMixin, DocumentMixin],
   props: ['config', 'document'],
   components: {
     PdfReview, PdfHeader

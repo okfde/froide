@@ -97,7 +97,7 @@
   <div class="row">
     <div class="col-12">
       <div class="card d-print-none mb-5">
-        <form class="card-body" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+        <form class="card-body disable-submit" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
           {% csrf_token %}
           <p>
             {% blocktrans %}This request is <strong>not public</strong> at the moment.{% endblocktrans %}
@@ -192,7 +192,7 @@
       {% else %}
         <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4>
       {% endif %}
-      <form class="form-horizontal" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+      <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
         {% csrf_token %}
         {% if status_form %}
           {% include "foirequest/_set_status.html" %}
@@ -211,7 +211,7 @@
         {% with suggestions_form=object.public_body_suggestions_form %}
           {% if suggestions_form %}
             <p>{% blocktrans %}As the author of this request, please choose a public body from one of the suggestions:{% endblocktrans %}</p>
-            <form method="post" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
+            <form method="post disable-submit" action="{% url 'foirequest-set_public_body' slug=object.slug %}">
               {% csrf_token %}
               {{ suggestions_form }}
               <button class="btn btn-primary" type="submit">{% blocktrans %}Send this request to the selected Public Body{% endblocktrans %}</button>
@@ -224,7 +224,7 @@
     {# Escalate #}
     {% if object.law.mediator and object.can_be_escalated %}
       <div role="tabpanel" class="tab-pane d-print-none" id="escalate">
-        <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
           {% csrf_token %}
           <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
           <p>{% blocktrans with entity=object.law.mediator.name %}You can file a complaint to the {{ entity }} if you think your request was not properly handled.{% endblocktrans %}</p>
@@ -253,7 +253,7 @@
     {# Make Meta Request #}
     {% if froide.can_make_meta_request and object.can_be_escalated %}
       <div role="tabpanel" class="tab-pane d-print-none" id="meta-request">
-        <form class="form-horizontal" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
           {% csrf_token %}
           <h4>{% blocktrans %}Make a meta request{% endblocktrans %}</h4>
           <p>
@@ -268,7 +268,8 @@
     {% if object.public_body %}
       {# Postal Reply #}
       <div role="tabpanel" class="tab-pane d-print-none" id="add-postal-reply">
-        <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">{% csrf_token %}
+        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-add_postal_reply' slug=object.slug %}#add-postal-reply" enctype="multipart/form-data">
+          {% csrf_token %}
           <h4>{% blocktrans %}Upload postal replies you received{% endblocktrans %}</h4>
           {% if postal_reply_form %}
             {% render_form postal_reply_form %}
@@ -289,7 +290,8 @@
 
       {# Postal Send #}
       <div role="tabpanel" class="tab-pane d-print-none" id="add-postal-message">
-        <form class="form-horizontal" method="post" action="{% url 'foirequest-add_postal_message' slug=object.slug %}#add-postal-message" enctype="multipart/form-data">{% csrf_token %}
+        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-add_postal_message' slug=object.slug %}#add-postal-message" enctype="multipart/form-data">
+          {% csrf_token %}
           <h4>{% blocktrans %}Upload letters that you send via postal mail{% endblocktrans %}</h4>
           {% if postal_message_form %}
             {% render_form postal_message_form %}
@@ -310,7 +312,7 @@
 
       {# Reply #}
       <div role="tabpanel" class="tab-pane d-print-none" id="write-message">
-        <form class="form-horizontal" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
+        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
           {% csrf_token %}
           <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
           {% if object.is_overdue %}
@@ -349,7 +351,7 @@
     {% if object.response_messages and object.law.meta %}
       <div role="tabpanel" class="tab-pane d-print-none" id="concrete-law">
         <h4>{% trans "Set Law" %}</h4>
-        <form method="post" action="{% url 'foirequest-set_law' slug=object.slug %}">
+        <form method="post" class="disable-submit" action="{% url 'foirequest-set_law' slug=object.slug %}">
           {% csrf_token %}
           <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
           {{ object.get_concrete_law_form.as_p }}
@@ -362,7 +364,7 @@
     {% if object.status_is_final %}
       <div role="tabpanel" class="tab-pane d-print-none" id="resolution-summary">
         <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
-        <form method="post" action="{% url 'foirequest-set_summary' slug=object.slug %}">
+        <form method="post" class="disable-submit" action="{% url 'foirequest-set_summary' slug=object.slug %}">
           {% csrf_token %}
           <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
           <textarea rows="8" class="form-control" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea><br/>
@@ -401,7 +403,7 @@
               {% endfor %}
               </ul>
             {% endwith %}
-            <form class="horizontal-form" method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
+            <form class="horizontal-form disable-submit" method="post" action="{% url 'foirequest-suggest_public_body' slug=object.slug %}">
               {% csrf_token %}
               {% with form=object.make_public_body_suggestion_form %}
                 {{ form.public_body }}

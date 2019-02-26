@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from django.conf import settings
 from django.dispatch import Signal
@@ -19,6 +21,9 @@ from froide.document.models import Document
 from .message import FoiMessage
 
 
+DELETE_TIMEFRAME = timedelta(hours=36)
+
+
 def upload_to(instance, filename):
     # name will be irrelevant
     # as hashed filename storage will drop it
@@ -36,7 +41,8 @@ class FoiAttachment(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     file = models.FileField(
         _("File"), upload_to=upload_to, max_length=255,
-        storage=HashedFilenameStorage()
+        storage=HashedFilenameStorage(),
+        db_index=True
     )
     size = models.IntegerField(_("Size"), blank=True, null=True)
     filetype = models.CharField(_("File type"), blank=True, max_length=100)
@@ -92,8 +98,21 @@ class FoiAttachment(models.Model):
         return can_redact_file(self.filetype, name=self.name)
 
     @property
+    def can_delete(self):
+        if not self.belongs_to.is_postal:
+            return False
+        if not self.can_approve:
+            return False
+        now = timezone.now()
+        return self.timestamp > (now - DELETE_TIMEFRAME)
+
+    @property
     def pending(self):
         return not self.file
+
+    @property
+    def can_edit(self):
+        return self.can_redact or self.can_delete or self.can_approve
 
     @property
     def allow_link(self):
@@ -201,6 +220,15 @@ class FoiAttachment(models.Model):
         self.approved = True
         self.save()
         self.attachment_published.send(sender=self)
+
+    def remove_file_and_delete(self):
+        if self.file:
+            other_references = FoiAttachment.objects.filter(
+                file=self.file.name
+            ).exclude(id=self.id).exists()
+            if not other_references:
+                self.file.delete(save=False)
+        self.delete()
 
     def can_convert_to_pdf(self):
         ft = self.filetype.lower()

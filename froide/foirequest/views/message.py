@@ -268,6 +268,8 @@ def upload_attachments(request, foirequest, message_id):
                 kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'approveAttachment': reverse('foirequest-approve_attachment',
                 kwargs={'slug': foirequest.slug, 'attachment': 0}),
+            'deleteAttachment': reverse('foirequest-delete_attachment',
+                kwargs={'slug': foirequest.slug, 'attachment': 0}),
         },
         'i18n': {
             'newDocumentPageCount': [
@@ -286,6 +288,7 @@ def upload_attachments(request, foirequest, message_id):
                 'You can redact the PDF in the next step.'
             ),
             'documentPending': _('This document is being generated. This can take several minutes.'),
+            'documentDeleting': _('This document is being deleted...'),
             'documentTitle': _('Document title'),
             'documentTitlePlaceholder': _('e.g. Letter from date'),
             'showIrrelevantAttachments': _('Show irrelevant attachments'),
@@ -295,6 +298,8 @@ def upload_attachments(request, foirequest, message_id):
             'notPublic': _('not public'),
             'redacted': _('redacted'),
             'redact': _('Redact'),
+            'delete': _('Delete'),
+            'confirmDelete': _('Are you sure you want to delete this attachment?'),
             'protectedOriginal': _('protected original'),
         }
     }
