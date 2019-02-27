@@ -1,8 +1,8 @@
-function applyToForm (requestSearch: HTMLFormElement) {
+function applyToForm (searchForm: HTMLFormElement) {
   function submitForm () {
-    requestSearch.submit()
+    searchForm.submit()
   }
-  var inputs = requestSearch.querySelectorAll('select, input[type="date"]')
+  var inputs = searchForm.querySelectorAll('select, input[type="date"]')
   var i
   for (i = 0; i < inputs.length; i += 1) {
     var selectInput = inputs[i]
@@ -13,11 +13,11 @@ function applyToForm (requestSearch: HTMLFormElement) {
     return function (this: HTMLElement, e: Event) {
       e.preventDefault()
       input.value = this.dataset.value || ''
-      requestSearch.submit()
+      searchForm.submit()
     }
   }
 
-  var dropdowns = requestSearch.querySelectorAll('.dropdown')
+  var dropdowns = searchForm.querySelectorAll('.dropdown')
   for (i = 0; i < dropdowns.length; i += 1) {
     var dropdown = dropdowns[i]
     var input = <HTMLInputElement> dropdown.querySelector('input')
@@ -29,7 +29,7 @@ function applyToForm (requestSearch: HTMLFormElement) {
   }
 }
 
-var requestSearch = <HTMLFormElement> document.querySelector('.request-search')
-if (requestSearch !== null) {
-  applyToForm(requestSearch)
+var searchForm = <HTMLFormElement> document.querySelector('.search-form')
+if (searchForm !== null) {
+  applyToForm(searchForm)
 }
