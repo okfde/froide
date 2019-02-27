@@ -1,4 +1,5 @@
 from django.views.generic import ListView
+from django.urls import reverse
 from django.utils.functional import cached_property
 
 from .queryset import SearchQuerySetWrapper
@@ -24,7 +25,7 @@ class BaseSearchView(ListView):
     default_sort = '_score'
     filtered_objs = None
     select_related = ()
-    search_url = ''
+    search_url_name = ''
     object_template = None
 
     def get_base_search(self):
@@ -83,7 +84,7 @@ class BaseSearchView(ListView):
 
     def make_filter_url(self, data):
         return make_filter_url(
-            self.request.resolver_match.url_name,
+            self.search_url_name,
             data
         )
 
@@ -145,7 +146,7 @@ class BaseSearchView(ListView):
             'form': self.form,
             'facets': self.facets,
             'search_name': self.search_name,
-            'search_url': self.search_url,
+            'search_url': reverse(self.search_url_name),
             'facet_config': self.facet_config,
             'has_query': self.has_query,
             'object_template': self.object_template,

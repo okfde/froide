@@ -6,7 +6,6 @@ from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template import TemplateDoesNotExist
 from django.views.generic import FormView
-from django.urls import reverse_lazy
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
@@ -51,7 +50,7 @@ class PublicBodySearch(BaseSearchView):
     model = PublicBody
     document = PublicBodyDocument
     filterset = PublicBodyFilterSet
-    search_url = reverse_lazy('publicbody-list')
+    search_url_name = 'publicbody-list'
 
     show_filters = {
         'jurisdiction', 'category'

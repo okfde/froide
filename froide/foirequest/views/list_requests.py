@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 
 from froide.helper.utils import render_403
 from froide.helper.search.views import BaseSearchView
@@ -40,7 +40,7 @@ class BaseListRequestView(BaseSearchView):
             'label': _('jurisdictions'),
         }
     }
-    search_url = reverse_lazy('foirequest-list')
+    search_url_name = 'foirequest-list'
     default_sort = '-last_message'
     select_related = ('public_body', 'jurisdiction')
     model = FoiRequest
