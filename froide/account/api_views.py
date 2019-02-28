@@ -33,7 +33,7 @@ class UserDetailSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = UserEmailSerializer.Meta.fields + (
+        fields = UserSerializer.Meta.fields + (
             'first_name', 'last_name', 'full_name', 'username',
             'profile_photo',
         )
@@ -47,10 +47,16 @@ class UserDetailSerializer(UserSerializer):
         return None
 
 
-class UserFullSerializer(UserDetailSerializer):
+class UserEmailDetailSerializer(UserDetailSerializer):
     class Meta:
         model = User
-        fields = UserDetailSerializer.Meta.fields + ('address',)
+        fields = UserDetailSerializer.Meta.fields + ('email',)
+
+
+class UserFullSerializer(UserEmailDetailSerializer):
+    class Meta:
+        model = User
+        fields = UserEmailDetailSerializer.Meta.fields + ('address',)
 
 
 class ProfileView(views.APIView):
@@ -61,9 +67,13 @@ class ProfileView(views.APIView):
         token = request.auth
         user = request.user
         if token:
-            if token.is_valid(['read:email']):
+            has_email = token.is_valid(['read:email'])
+            has_profile = token.is_valid(['read:profile'])
+            if has_email and has_profile:
+                serializer = UserEmailDetailSerializer(user)
+            elif has_email:
                 serializer = UserEmailSerializer(user)
-            elif token.is_valid(['read:profile']):
+            elif has_profile:
                 serializer = UserDetailSerializer(user)
             else:
                 serializer = UserSerializer(user)
