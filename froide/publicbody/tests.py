@@ -20,7 +20,7 @@ class PublicBodyTest(TestCase):
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
         pb = PublicBody.objects.all()[0]
-        category = factories.CategoryFactory.create()
+        category = factories.CategoryFactory.create(is_topic=True)
         pb.categories.add(category)
         response = self.client.get(reverse('publicbody-list', kwargs={
             'category': category.slug
