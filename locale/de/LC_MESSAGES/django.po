@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-26 19:00+0100\n"
-"PO-Revision-Date: 2019-02-26 19:07+0100\n"
+"POT-Creation-Date: 2019-02-28 10:26+0100\n"
+"PO-Revision-Date: 2019-02-28 10:29+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1101,14 +1101,24 @@ msgstr "Anfragen des Nutzers"
 msgid "back to your account settings"
 msgstr "zurück zu Ihren Einstellungen"
 
-#: froide/account/templates/oauth2_provider/authorize.html:8
+#: froide/account/templates/oauth2_provider/authorize.html:10
 #, python-format
-msgid "Authorize %(name)s?"
-msgstr "%(name)s Zugriff geben?"
+msgid "Authorize the application '%(name)s'?"
+msgstr "Der Anwendung '%(name)s' Zugriff geben?"
 
-#: froide/account/templates/oauth2_provider/authorize.html:17
+#: froide/account/templates/oauth2_provider/authorize.html:19
 msgid "Application requires following permissions"
 msgstr "Die Anwendung erfordert die folgenden Berechtigungen"
+
+#: froide/account/templates/oauth2_provider/authorize.html:31
+#: froide/foirequest/views/attachment.py:201
+#: froide/problem/templates/problem/message_toolbar_item.html:114
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: froide/account/templates/oauth2_provider/authorize.html:32
+msgid "Authorize"
+msgstr "Zugriff erlauben"
 
 #: froide/account/views.py:66
 msgid "You are logged in and cannot use a confirmation link."
@@ -1753,11 +1763,12 @@ msgstr "alle Zuständigkeitsbereiche"
 msgid "jurisdiction"
 msgstr "Zuständigkeit"
 
-#: froide/foirequest/filters.py:139
+#: froide/foirequest/filters.py:139 froide/publicbody/filters.py:39
 msgid "all categories"
 msgstr "alle Kategorien"
 
-#: froide/foirequest/filters.py:142 froide/publicbody/models.py:245
+#: froide/foirequest/filters.py:142 froide/publicbody/filters.py:42
+#: froide/publicbody/models.py:245
 msgid "category"
 msgstr "Kategorie"
 
@@ -3811,51 +3822,25 @@ msgstr "in der Kategorie „%(name)s“"
 msgid "FoI Requests"
 msgstr "Informationsfreiheitsanfragen"
 
-#: froide/foirequest/templates/foirequest/list.html:43
-#, python-format
-msgid ""
-"\n"
-"          Your search produced one search result.\n"
-"        "
-msgid_plural ""
-"\n"
-"          Your search produced %(request_count)s search results.\n"
-"        "
-msgstr[0] ""
-"\n"
-"            Ihre Suche ergab ein Ergebnis.\n"
-"          "
-msgstr[1] ""
-"\n"
-"            Ihre Suche ergab %(request_count)s Ergebnisse.\n"
-"          "
-
-#: froide/foirequest/templates/foirequest/list.html:49
-#, python-format
-msgid "One request"
-msgid_plural "%(num)s requests"
-msgstr[0] "Eine Anfrage"
-msgstr[1] "%(num)s Anfragen"
-
-#: froide/foirequest/templates/foirequest/list.html:64
+#: froide/foirequest/templates/foirequest/list.html:48
 msgid "No requests with these filters."
 msgstr "Noch keine Anfragen mit diesen Filtereinstellungen."
 
-#: froide/foirequest/templates/foirequest/list.html:66
+#: froide/foirequest/templates/foirequest/list.html:50
 msgid "No requests yet."
 msgstr "Noch keine Anfragen."
 
-#: froide/foirequest/templates/foirequest/list.html:81
+#: froide/foirequest/templates/foirequest/list.html:65
 msgid "Feeds for these requests"
 msgstr "Feeds für diese Anfragen"
 
-#: froide/foirequest/templates/foirequest/list.html:86
+#: froide/foirequest/templates/foirequest/list.html:70
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:95
 #: froide/publicbody/templates/publicbody/show.html:158
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
-#: froide/foirequest/templates/foirequest/list.html:92
+#: froide/foirequest/templates/foirequest/list.html:76
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:101
 #: froide/publicbody/templates/publicbody/show.html:163
 msgid "Atom Feed"
@@ -5151,7 +5136,7 @@ msgid "all projects"
 msgstr "alle Projekte"
 
 #: froide/foirequest/views/account_requests.py:93
-#: froide/foirequest/views/list_requests.py:41 froide/publicbody/views.py:39
+#: froide/foirequest/views/list_requests.py:40 froide/publicbody/views.py:68
 msgid "jurisdictions"
 msgstr "Zuständigkeitsbereiche"
 
@@ -5200,11 +5185,6 @@ msgstr "Nur Text"
 #: froide/foirequest/views/attachment.py:200
 msgid "Hide text"
 msgstr "Text ausblenden"
-
-#: froide/foirequest/views/attachment.py:201
-#: froide/problem/templates/problem/message_toolbar_item.html:114
-msgid "Cancel"
-msgstr "Abbrechen"
 
 #: froide/foirequest/views/attachment.py:202
 msgid "Loading PDF..."
@@ -7278,12 +7258,12 @@ msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
 #: froide/settings.py:409
-msgid "Read my (private) requests"
-msgstr "Kann meine (privaten) Anfragen sehen"
+msgid "Read your (private) requests"
+msgstr "Kann Ihre (privaten) Anfragen sehen"
 
 #: froide/settings.py:410
-msgid "Make requests on my behalf"
-msgstr "Anfragen in meinem Namen stellen"
+msgid "Make requests on your behalf"
+msgstr "Kann Anfragen in Ihrem Namen stellen"
 
 #: froide/settings.py:411
 msgid "Follow/Unfollow requests"
@@ -7842,6 +7822,28 @@ msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
 
+#~ msgid ""
+#~ "\n"
+#~ "          Your search produced one search result.\n"
+#~ "        "
+#~ msgid_plural ""
+#~ "\n"
+#~ "          Your search produced %(request_count)s search results.\n"
+#~ "        "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "            Ihre Suche ergab ein Ergebnis.\n"
+#~ "          "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "            Ihre Suche ergab %(request_count)s Ergebnisse.\n"
+#~ "          "
+
+#~ msgid "One request"
+#~ msgid_plural "%(num)s requests"
+#~ msgstr[0] "Eine Anfrage"
+#~ msgstr[1] "%(num)s Anfragen"
+
 #~ msgid "No results yet."
 #~ msgstr "Noch keine "
 
@@ -8144,11 +8146,6 @@ msgstr "zustaendigkeit"
 #~| msgid "Check if you want to receive our newsletter."
 #~ msgid "if you want to register a new one"
 #~ msgstr "Setzen Sie einen Haken, wenn Sie unseren Newsletter erhalten wollen"
-
-#, fuzzy
-#~| msgid "Authorize %(name)s?"
-#~ msgid "Authorize"
-#~ msgstr "%(name)s Zugriff geben?"
 
 #, fuzzy
 #~| msgid "Are you sure you want to discard your current selection?"
