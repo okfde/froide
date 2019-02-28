@@ -406,8 +406,8 @@ class Base(Configuration):
             'read:user': _('Access to user status'),
             'read:profile': _('Read user profile information'),
             'read:email': _('Read user email'),
-            'read:request': _('Read my (private) requests'),
-            'make:request': _('Make requests on my behalf'),
+            'read:request': _('Read your (private) requests'),
+            'make:request': _('Make requests on your behalf'),
             'follow:request': _('Follow/Unfollow requests'),
         }
     }
