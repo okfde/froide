@@ -21,13 +21,19 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return default
 
 
+class UserEmailSerializer(UserSerializer):
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ('email',)
+
+
 class UserDetailSerializer(UserSerializer):
     full_name = serializers.SerializerMethodField()
     profile_photo = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + (
+        fields = UserEmailSerializer.Meta.fields + (
             'first_name', 'last_name', 'full_name', 'username',
             'profile_photo',
         )
@@ -41,16 +47,10 @@ class UserDetailSerializer(UserSerializer):
         return None
 
 
-class UserEmailSerializer(UserSerializer):
-    class Meta:
-        model = User
-        fields = UserDetailSerializer.Meta.fields + ('email',)
-
-
 class UserFullSerializer(UserDetailSerializer):
     class Meta:
         model = User
-        fields = UserEmailSerializer.Meta.fields + ('address',)
+        fields = UserDetailSerializer.Meta.fields + ('address',)
 
 
 class ProfileView(views.APIView):
