@@ -146,8 +146,9 @@ def markup_redacted_content(real_content, redacted_content,
 
     if content_2 and message_id:
         return mark_safe(''.join([
+            '<div class="text-content-visible">',
             content_1,
-            ('<a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-toggle="collapse" '
+            ('</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-toggle="collapse" '
             ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
             '<div id="message-footer-{message_id}" class="collapse">'
             .format(
