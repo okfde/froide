@@ -27,6 +27,24 @@ def can_redact_file(filetype, name=None):
     )
 
 
+def rewrite_pdf(pdf_file):
+    pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
+    if pdf_file_name is None:
+        return None, None
+    pdf_file = open(pdf_file_name, 'rb')
+    pdf_reader = PdfFileReader(pdf_file, strict=False)
+    return pdf_file, pdf_reader
+
+
+def decrypt_pdf(pdf_file):
+    pdf_file_name = decrypt_pdf_in_place(pdf_file.name)
+    if pdf_file_name is None:
+        return None, None
+    pdf_file = open(pdf_file_name, 'rb')
+    pdf_reader = PdfFileReader(pdf_file, strict=False)
+    return pdf_file, pdf_reader
+
+
 def redact_file(pdf_file, instructions):
     dpi = 300
     load_invisible_font()
@@ -34,20 +52,23 @@ def redact_file(pdf_file, instructions):
     try:
         pdf_reader = PdfFileReader(pdf_file, strict=False)
     except (PdfReadError, ValueError):
-        pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
-        if pdf_file_name is None:
-            return None
-        pdf_file = open(pdf_file_name, 'rb')
-        pdf_reader = PdfFileReader(pdf_file, strict=False)
+        pdf_file, pdf_reader = rewrite_pdf(pdf_file)
+        if pdf_file is None:
+            raise Exception('PDF Rewrite Error')
 
+    num_pages = None
     try:
         num_pages = pdf_reader.getNumPages()
+    except KeyError:  # catch KeyError '/Pages'
+        pdf_file, pdf_reader = rewrite_pdf(pdf_file)
+        if pdf_file is None:
+            raise Exception('PDF Rewrite Error')
     except PdfReadError:
-        pdf_file_name = decrypt_pdf_in_place(pdf_file.name)
-        if pdf_file_name is None:
-            return None
-        pdf_file = open(pdf_file_name, 'rb')
-        pdf_reader = PdfFileReader(pdf_file, strict=False)
+        pdf_file, pdf_reader = decrypt_pdf(pdf_file)
+        if pdf_file is None:
+            raise Exception('PDF Rewrite Error')
+
+    if num_pages is None:
         num_pages = pdf_reader.getNumPages()
 
     assert num_pages == len(instructions)
