@@ -192,6 +192,17 @@ def can_read_foirequest_anonymous_filter(foirequest, request):
     return can_read_foirequest_anonymous(foirequest, request)
 
 
+@register.filter
+def truncatefilename(filename, chars=20):
+    too_many = len(filename) - chars
+    if too_many <= 0:
+        return filename
+    is_even = chars % 2
+    half_chars = chars // 2
+    back = -half_chars + (0 if is_even else 1)
+    return '%s…%s' % (filename[:half_chars], filename[back:])
+
+
 def alternative_address(foirequest):
     return get_alternative_mail(foirequest)
 
