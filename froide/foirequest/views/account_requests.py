@@ -85,6 +85,7 @@ class BaseAccountMixin(LoginRequiredMixin):
 
 
 class MyBaseListRequestView(BaseListRequestView):
+    has_facets = True
     facet_config = {
         'jurisdiction': {
             'model': Jurisdiction,
@@ -111,13 +112,15 @@ class MyBaseListRequestView(BaseListRequestView):
             'label_getter': lambda x: x['object'].name
         }
     }
+    search_url_name = 'account-requests'
     show_filters = ACCOUNT_FILTERS
     advanced_filters = {
         'first', 'project', 'sort'
     }
-
-    def get_filterset(self, *args, **kwargs):
-        return AccountRequestFilterSet(*args, view=self, **kwargs)
+    model = FoiRequest
+    document = FoiRequestDocument
+    filterset = AccountRequestFilterSet
+    search_name = ''
 
 
 class MyRequestsView(BaseAccountMixin, MyBaseListRequestView):
@@ -125,7 +128,9 @@ class MyRequestsView(BaseAccountMixin, MyBaseListRequestView):
     menu_item = 'requests'
 
     def get_base_search(self):
-        return FoiRequestDocument.search().filter('term', user=self.request.user.pk)
+        return self.document.search().filter(
+            'term', user=self.request.user.pk
+        )
 
 
 class FollowingRequestsView(BaseAccountMixin, ListView):
