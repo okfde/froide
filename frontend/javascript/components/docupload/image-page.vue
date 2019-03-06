@@ -1,5 +1,5 @@
 <template>
-  <div class="page col-2">
+  <div class="page col-2 mt-3">
     <div class="row justify-content-center">
       <div class="col-auto">
         <img v-if="pageUrl" ref="pageImage" :src="pageUrl" alt="" class="page-image"/>

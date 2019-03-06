@@ -95,8 +95,10 @@ export default {
       }
     },
     anyUploads () {
-      return this.pages.some((p) => p.uploading)
-    }
+      return !this.pages.every((p) => {
+        return p.attachment && p.attachment.id
+      })
+    },
   },
   methods: {
     splitPages (pageNum) {
