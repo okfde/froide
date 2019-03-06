@@ -1,5 +1,5 @@
 <template>
-  <div class="document mb-3">
+  <div class="document mb-3" :id="attachmentId">
     <div class="card">
       <div class="card-header">
         <pdf-header :config="config" :document="document"></pdf-header>
@@ -118,6 +118,9 @@ export default {
     deleteUrl () {
       return this.config.url.deleteAttachment.replace('/0/', `/${this.document.id}/`)
     },
+    attachmentId () {
+      return `attachment-${this.document.id}`
+    }
   },
   methods: {
 
