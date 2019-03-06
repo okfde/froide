@@ -223,8 +223,6 @@ def upload_attachments(request, foirequest, message_id):
         message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404
-    if not message.is_postal:
-        return render_400(request)
 
     if request.method == 'POST':
         try:

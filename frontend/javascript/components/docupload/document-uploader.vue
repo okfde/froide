@@ -1,6 +1,6 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
-    <div class="upload">
+    <div v-if="canUpload" class="upload">
       <label :class="{'btn btn-primary isMobile': isMobile}">
         <i class="fa fa-cloud-upload"></i>
         <span v-if="isMobile">
@@ -96,6 +96,9 @@ export default {
       // device detection
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     },
+    canUpload () {
+      return this.message.kind === 'post'
+    }
   },
   methods: {
     testExifSupport () {
