@@ -9,7 +9,7 @@
         {{ i18n.redacted }}
       </span>
 
-      <span v-if="isProtected" class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+      <span v-if="isProtected" class="badge badge-info" data-toggle="tooltip" data-placement="top" :title="i18n.protectedOriginalExplanation">
         {{ i18n.protectedOriginal }}
       </span>
     </template>

@@ -9,7 +9,11 @@
   <div class="container">
     <a href="{{ message.get_absolute_url }}" class="btn btn-light float-right">{% trans "Back" %}</a>
 
-    <h2>{% trans "Upload and manage attachments" %}</h2>
+    {% if message.is_postal %}
+      <h2>{% trans "Upload and manage attachments" %}</h2>
+    {% else %}
+      <h2>{% trans "Manage attachments" %}</h2>
+    {% endif %}
 
     <p>
       {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" sender=message.sender title=foirequest.title url=message.get_absolute_url %}
