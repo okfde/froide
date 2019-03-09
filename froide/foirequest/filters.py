@@ -232,8 +232,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         return qs.filter(jurisdiction=value.id)
 
     def filter_campaign(self, qs, name, value):
-        if value == '-':
-            value = None
+        if value is None:
+            return qs.filter(campaign__isnull=True)
         return qs.filter(campaign=value.id)
 
     def filter_category(self, qs, name, value):
