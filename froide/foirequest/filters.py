@@ -202,7 +202,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     class Meta:
         model = FoiRequest
         fields = [
-            'q', 'status', 'jurisdiction',
+            'q', 'status', 'jurisdiction', 'campaign',
             'category', 'tag', 'publicbody', 'first'
         ]
 
@@ -234,7 +234,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     def filter_campaign(self, qs, name, value):
         if value == '-':
             value = None
-        return qs.filter(campaign=value)
+        return qs.filter(campaign=value.id)
 
     def filter_category(self, qs, name, value):
         return qs.filter(categories=value.id)
