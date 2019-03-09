@@ -26,6 +26,7 @@ class FoiRequestDocument(DocType):
     tags = fields.ListField(fields.KeywordField())
     classification = fields.ListField(fields.IntegerField())
     categories = fields.ListField(fields.IntegerField())
+    campaign = fields.IntegerField()
 
     due_date = fields.DateField()
     first_message = fields.DateField()
@@ -60,6 +61,9 @@ class FoiRequestDocument(DocType):
 
     def prepare_public(self, obj):
         return obj.in_public_search_index()
+
+    def prepare_campaign(self, obj):
+        return obj.campaign_id
 
     def prepare_classification(self, obj):
         if obj.public_body_id is None:

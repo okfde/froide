@@ -7,6 +7,7 @@ import django_filters
 from elasticsearch_dsl.query import Q
 
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
+from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
 
 from .models import FoiRequest
@@ -145,6 +146,20 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         ),
         method='filter_category'
     )
+    campaign = django_filters.ModelChoiceFilter(
+        queryset=Campaign.objects.get_filter_list(),
+        to_field_name='slug',
+        null_value='-',
+        empty_label=_('campaigns'),
+        null_label=_('no campaign'),
+        widget=forms.Select(
+            attrs={
+                'label': _('campaign'),
+                'class': 'form-control'
+            }
+        ),
+        method='filter_campaign'
+    )
     tag = django_filters.ModelChoiceFilter(
         queryset=Tag.objects.all(),
         to_field_name='slug',
@@ -215,6 +230,11 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_jurisdiction(self, qs, name, value):
         return qs.filter(jurisdiction=value.id)
+
+    def filter_campaign(self, qs, name, value):
+        if value == '-':
+            value = None
+        return qs.filter(campaign=value)
 
     def filter_category(self, qs, name, value):
         return qs.filter(categories=value.id)
