@@ -34,59 +34,55 @@
       {% endif %}
     </div>
   </div>
-  <div class="collapse{% if view.has_advanced_filters %} show{% endif %}" id="search-filter-advanced">
 
-    <div class="row align-items-start">
-      {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
-        <div class="col-md-4">
-          {{ form.jurisdiction }}
-        </div>
-      {% else %}
+  <div class="row align-items-start">
+    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+      <div class="col-md-4">
         {{ form.jurisdiction }}
-      {% endif %}
+      </div>
+    {% else %}
+      {{ form.jurisdiction }}
+    {% endif %}
 
-      {% if request.user.is_staff %}
-        {% if "campaign" in show_filters %}
-          <div class="col-md-4">
-            {{ form.campaign }}
-          </div>
-        {% else %}
-          {{ form.campaign }}
-        {% endif %}
-      {% endif %}
+    {% if "campaign" in show_filters %}
+      <div class="col-md-4">
+        {{ form.campaign }}
+      </div>
+    {% else %}
+      {{ form.campaign }}
+    {% endif %}
 
-      {% if "category" in show_filters %}
-        <div class="col-md-4">
-          {{ form.category }}
-        </div>
-      {% else %}
+    {% if "category" in show_filters %}
+      <div class="col-md-4">
         {{ form.category }}
-      {% endif %}
+      </div>
+    {% else %}
+      {{ form.category }}
+    {% endif %}
 
-      {{ form.publicbody }}
-      {{ form.tag }}
-    </div>
+    {{ form.publicbody }}
+    {{ form.tag }}
+  </div>
 
-    {% if 'first' in show_filters or 'sort' in show_filters %}
-      <div class="row mt-2">
-        <div class="col-md-6">
+  {% if 'first' in show_filters or 'sort' in show_filters %}
+    <div class="row mt-2">
+      <div class="col-md-6">
+        <label>
+          {% trans "request date" %}
+          {{ form.first }}
+        </label>
+      </div>
+      {% if "sort" in show_filters %}
+        <div class="col-md-3">
           <label>
-            {% trans "request date" %}
-            {{ form.first }}
+            {% trans "sort" %}
+            {{ form.sort }}
           </label>
         </div>
-        {% if "sort" in show_filters %}
-          <div class="col-md-3">
-            <label>
-              {% trans "sort" %}
-              {{ form.sort }}
-            </label>
-          </div>
-        {% else %}
-          {{ form.sort }}
-        {% endif %}
-      </div>
-    {% endif %}
-  </div>
+      {% else %}
+        {{ form.sort }}
+      {% endif %}
+    </div>
+  {% endif %}
   
 </form>

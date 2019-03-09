@@ -150,11 +150,11 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         queryset=Campaign.objects.get_filter_list(),
         to_field_name='slug',
         null_value='-',
-        empty_label=_('campaigns'),
+        empty_label=_('all/no campaigns'),
         null_label=_('no campaign'),
         widget=forms.Select(
             attrs={
-                'label': _('all/no campaigns'),
+                'label': _('campaign'),
                 'class': 'form-control'
             }
         ),
