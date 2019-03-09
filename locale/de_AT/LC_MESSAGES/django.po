@@ -2779,7 +2779,7 @@ msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
 
 #: froide/foirequest/templates/foirequest/redact.html:47
 msgid "Please remove hand-written signatures."
-msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften"
+msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
 
 #: froide/foirequest/templates/foirequest/redact.html:59
 msgid "How to redact"
