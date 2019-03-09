@@ -154,7 +154,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         null_label=_('no campaign'),
         widget=forms.Select(
             attrs={
-                'label': _('campaign'),
+                'label': _('all/no campaigns'),
                 'class': 'form-control'
             }
         ),
@@ -232,8 +232,12 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         return qs.filter(jurisdiction=value.id)
 
     def filter_campaign(self, qs, name, value):
-        if value is None:
-            return qs.filter(campaign__isnull=True)
+        if value == '-':
+            return qs.filter(
+                Q('bool', must_not={
+                    'exists': {'field': 'campaign'}
+                })
+            )
         return qs.filter(campaign=value.id)
 
     def filter_category(self, qs, name, value):
