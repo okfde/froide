@@ -21,11 +21,6 @@
       {{ form.status }}
     {% endif %}
     <div class="col-md-2 ml-auto text-right">
-      <a class="btn btn-light" role="button" aria-expanded="false" aria-controls="search-filter-advanced"
-        data-toggle="collapse" href="#search-filter-advanced">
-        <i class="fa fa-cogs"></i>
-        <span class="sr-only">{% trans "Show advanced filter" %}</span>
-      </a>
       {% if filtered_objects %}
       <a class="btn btn btn-light" href="./">
         <i class="fa fa-remove"></i>
@@ -34,7 +29,6 @@
       {% endif %}
     </div>
   </div>
-
   <div class="row align-items-start">
     {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
       <div class="col-md-4">
