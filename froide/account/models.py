@@ -10,7 +10,7 @@ from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
 from taggit.managers import TaggableManager
-from taggit.models import TaggedItemBase
+from taggit.models import TaggedItemBase, TagBase
 
 from oauth2_provider.models import AbstractApplication
 
@@ -18,12 +18,25 @@ from froide.helper.csv_utils import export_csv, get_dict
 from froide.helper.storage import HashedFilenameStorage
 
 
-class TaggedUser(TaggedItemBase):
-    content_object = models.ForeignKey('User', on_delete=models.CASCADE)
+class UserTag(TagBase):
+    public = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = _('User Tag')
-        verbose_name_plural = _('User Tags')
+        verbose_name = _("user tag")
+        verbose_name_plural = _("user tags")
+
+
+class TaggedUser(TaggedItemBase):
+    tag = models.ForeignKey(
+        UserTag, on_delete=models.CASCADE,
+        null=True,
+        related_name="tagged_users")
+    content_object = models.ForeignKey('User', on_delete=models.CASCADE)
+    count = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        verbose_name = _('tagged user')
+        verbose_name_plural = _('tagged users')
 
 
 class UserManager(BaseUserManager):
