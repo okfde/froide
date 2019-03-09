@@ -3947,7 +3947,7 @@ msgid ""
 "redaction</strong>."
 msgstr ""
 "Falls dieses Dokument <strong>kein Brief an Sie</strong> von einer Behörde "
-"ist, sondern ein andere Art von Dokument, dann müssen Sie es sehr "
+"ist, sondern eine andere Art von Dokument, dann müssen Sie es sehr "
 "wahrscheinlich <strong>nicht schwärzen</strong>."
 
 #: froide/foirequest/templates/foirequest/redact.html:35
@@ -3983,7 +3983,7 @@ msgstr "Bitte entfernen Sie alle Namen von Behördenmitarbeitern."
 
 #: froide/foirequest/templates/foirequest/redact.html:50
 msgid "Please remove hand-written signatures."
-msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften"
+msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
 
 #: froide/foirequest/templates/foirequest/redact.html:54
 msgid ""
@@ -4009,7 +4009,7 @@ msgid ""
 msgstr ""
 "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
 "die geschwärzt werden müssen. Ziehen Sie durch Klicken und Bewegen der Maus "
-"oder durch Doppel-Tab mit dem Finger ein Viereck über die Stelle. "
+"oder durch Doppel-Tippen mit dem Finger ein Viereck über die Stelle. "
 
 #: froide/foirequest/templates/foirequest/redact.html:71
 msgid ""
