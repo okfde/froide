@@ -18,6 +18,7 @@ from taggit.models import TaggedItemBase
 
 from froide.account.utils import send_mail_user
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
+from froide.campaign.models import Campaign
 from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
@@ -308,8 +309,16 @@ class FoiRequest(models.Model):
     is_foi = models.BooleanField(_("is FoI request"), default=True)
     closed = models.BooleanField(_('is closed'), default=False)
 
-    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
-            null=True, on_delete=models.SET_NULL)
+    campaign = models.ForeignKey(
+        Campaign, verbose_name=_('campaign'),
+        null=True, blank=True, on_delete=models.SET_NULL
+    )
+
+    jurisdiction = models.ForeignKey(
+        Jurisdiction,
+        verbose_name=_('Jurisdiction'),
+        null=True, on_delete=models.SET_NULL
+    )
 
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
