@@ -11,6 +11,8 @@ class Campaign(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
 
+    ident = models.CharField(max_length=50, blank=True)
+
     url = models.URLField(blank=True)
     description = models.TextField(blank=True)
     start_date = models.DateTimeField(null=True)
