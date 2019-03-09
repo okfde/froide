@@ -65,6 +65,7 @@ class Base(Configuration):
         'froide.accesstoken',
         'froide.guide',
         'froide.comments',
+        'froide.campaign',
 
         # API
         'oauth2_provider',
