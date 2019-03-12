@@ -122,7 +122,7 @@ export default {
       const other = []
       this.message.attachments.forEach((att) => {
         if (this.isDocumentAttachment(att)) {
-          if (this.config.settings.pdf_filetypes.includes(att.filetype)) {
+          if (att.is_pdf) {
             documents.push({
               id: att.id,
               name: att.name,
@@ -170,10 +170,7 @@ export default {
       if (att.converted !== null) {
         return false
       }
-      if (this.config.settings.document_filetypes.includes(att.filetype)) {
-        return true
-      }
-      if (this.config.settings.image_filetypes.includes(att.filetype) && att.size <= MIN_DOC_IMAGE_SIZE) {
+      if (att.is_pdf || att.is_image) {
         return true
       }
       return false
