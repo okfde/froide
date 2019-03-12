@@ -4,7 +4,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.flatpages.sitemaps import FlatPageSitemap
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext
 from django.contrib import admin
@@ -69,7 +68,6 @@ sitemaps = {
     'jurisdiction': JurisdictionSitemap,
     'foirequest': FoiRequestSitemap,
     'content': StaticViewSitemap,
-    'pages': FlatPageSitemap
 }
 
 
