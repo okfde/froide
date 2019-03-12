@@ -134,7 +134,7 @@ class FoiAttachment(models.Model):
 
     @property
     def is_mail_decoration(self):
-        return self.is_image and self.size and self.size < 1024 * 15
+        return self.is_image and self.size and self.size < 1024 * 60
 
     @property
     def is_irrelevant(self):
