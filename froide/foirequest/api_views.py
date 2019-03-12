@@ -107,7 +107,8 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
             'is_converted', 'converted',
             'approved', 'can_approve',
             'redacted', 'is_redacted', 'can_redact',
-            'can_delete'
+            'can_delete',
+            'is_pdf', 'is_image', 'is_irrelevant',
         )
 
     def get_file_url(self, obj):
