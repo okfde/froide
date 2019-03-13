@@ -228,6 +228,7 @@ def change_password(request):
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
+        auth.update_session_auth_hash(request, form.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been changed.'))
         return get_redirect(request, default=reverse('account-show'))
