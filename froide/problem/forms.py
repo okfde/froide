@@ -18,7 +18,7 @@ class ProblemReportForm(forms.Form):
         )
     )
     description = forms.CharField(
-        required=False,
+        required=True,
         label=_('Details'),
         widget=forms.Textarea(
             attrs={

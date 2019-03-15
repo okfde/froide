@@ -9,7 +9,6 @@ from froide.foirequest.models import FoiMessage
 USER_PROBLEM_CHOICES = [
     ('message_not_delivered', _('Your message was not delivered.')),
     ('attachment_broken', _('The attachments don\'t seem to work.')),
-    ('need_unpublish', _('You want to unpublish the request.')),
     ('redaction_needed', _('You need more redaction.')),
     ('foi_help_needed', _('You need help to understand or reply to this message.')),
     ('other', _('Something else...')),
