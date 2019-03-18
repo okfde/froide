@@ -337,6 +337,7 @@ class FoiMessage(models.Model):
         return self.subject_redacted
 
     def get_content(self):
+        self.plaintext = self.plaintext or ''
         if self.plaintext_redacted is None:
             self.plaintext_redacted = redact_plaintext(
                 self.plaintext,
