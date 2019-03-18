@@ -5,7 +5,7 @@
 {% if field_type == "radio" %}
 <fieldset class="form-group">
   <div class="row">
-    <legend class="col-form-legend col-lg-3{% if required %} field-required{% endif %}">{{ label }}</legend>
+    <legend class="col-form-label col-lg-3{% if required %} field-required{% endif %}">{{ label }}</legend>
     <div class="col-lg-9">
       {% for widget in field %}
         <div class="form-check">
