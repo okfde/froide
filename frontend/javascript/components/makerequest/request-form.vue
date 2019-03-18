@@ -27,9 +27,15 @@
           </p>
         </div>
       </div>
-      <div class="row" v-if="hasNotes">
+      <div class="row" v-if="hasLawNotes">
         <div class="col-lg-8">
-          <div class="alert alert-warning" v-html="requestNotes">
+          <div class="alert alert-warning" v-html="lawNotes">
+          </div>
+        </div>
+      </div>
+      <div class="row" v-if="hasPublicBodyNotes">
+        <div class="col-lg-8">
+          <div class="alert alert-warning" v-html="publicBodyNotes">
           </div>
         </div>
       </div>
@@ -248,16 +254,29 @@ export default {
     usererrors () {
       return this.userForm.errors
     },
-    hasNotes () {
+    hasLawNotes () {
       if (this.defaultLaw) {
         return !!this.defaultLaw.request_note_html
       }
       // FIXME: find all notes of all public body default laws?
       return false
     },
-    requestNotes () {
-      if (this.defaultLaw) {
+    hasPublicBodyNotes () {
+      if (this.publicBody) {
+        return !!this.publicBody.request_note_html
+      }
+      // FIXME: find all notes of all public body default laws?
+      return false
+    },
+    lawNotes () {
+      if (this.hasLawNotes) {
         return this.defaultLaw.request_note_html
+      }
+      return ''
+    },
+    publicBodyNotes () {
+      if (this.hasPublicBodyNotes) {
+        return this.publicBody.request_note_html
       }
       return ''
     },
