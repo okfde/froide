@@ -18,7 +18,7 @@
         <template v-if="ready">
           <div class="row">
             <div v-if="hasAttachment" class="col-auto mt-1">
-              <a :href="document.site_url" target="_blank" class="btn btn-sm btn-light mt-1">
+              <a :href="attachment.site_url" target="_blank" class="btn btn-sm btn-light mt-1">
                 {{ i18n.openAttachmentPage }}
               </a>
               <button v-if="attachment.is_pdf" class="btn btn-sm btn-light mt-1" @click="$emit('loadpdf')">

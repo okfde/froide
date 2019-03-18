@@ -44,8 +44,11 @@ export default {
     canDelete () {
       return this.attachment && this.attachment.can_delete && !this.document.approving
     },
+    canRedact () {
+
+    },
     canReview () {
-      return this.attachment
+      return this.attachment && this.attachment.can_redact
     },
     reviewUrl () {
       return this.config.url.redactAttachment.replace('/0/', `/${this.document.id}/`)
