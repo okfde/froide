@@ -70,7 +70,7 @@ class TagAutocompleteWidget(forms.TextInput):
     def render(self, name, value, attrs=None, renderer=None):
         """ Render HTML code """
         if value is not None and not isinstance(value, str):
-            value_list = [o.tag for o in value.select_related('tag')]
+            value_list = [o.tag for o in value]
             value = edit_string_for_tags(value_list)
 
         options = [
