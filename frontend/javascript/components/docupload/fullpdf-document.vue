@@ -38,8 +38,8 @@
 import I18nMixin from '../../lib/i18n-mixin'
 import DocumentMixin from './lib/document_mixin'
 
-import PdfReview from './pdf-review.vue'
-import PdfHeader from './pdf-header.vue'
+import FileReview from './file-review.vue'
+import FileHeader from './file-header.vue'
 
 import PDFJS from 'pdfjs-dist'
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
@@ -47,11 +47,11 @@ const PDF_TO_CSS_UNITS = 96.0 / 72.0
 const range = (len) => [...Array(len).keys()]
 
 export default {
-  name: 'pdf-document',
+  name: 'fullpdf-document',
   mixins: [I18nMixin, DocumentMixin],
   props: ['config', 'document'],
   components: {
-    PdfReview, PdfHeader
+    FileReview, FileHeader
   },
   data () {
     return {

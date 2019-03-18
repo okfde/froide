@@ -37,13 +37,17 @@
           {{ i18n.showIrrelevantAttachments}}
         </button>
       </p>
-      <ul v-if="showOther">
-        <li v-for="other in otherAttachments" :key="other.name">
-          <a :href="other.url" target="_blank">
-            {{ other.name }}
-          </a>
-        </li>
-      </ul>
+      <div v-if="showOther">
+        <component
+          v-for="doc in otherAttachments"
+          v-bind:is="doc.component"
+          :key="doc.id"
+          :document="doc"
+          :config="config"
+          @docupdated="documentUpdated(doc, $event)"
+          @notnew="doc.new = false"
+        ></component>
+      </div>
     </div>
   </div>
 </template>
@@ -54,9 +58,9 @@ import Vue from 'vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
-import PdfDocument from './pdf-document.vue'
 import FullpdfDocument from './fullpdf-document.vue'
 import ImageDocument from './image-document.vue'
+import FileDocument from './file-document.vue'
 
 // If smaller, likely not document image
 const MIN_DOC_IMAGE_SIZE = 50 * 1024
@@ -67,9 +71,9 @@ export default {
   mixins: [I18nMixin],
   props: ['config', 'message'],
   components: {
-    PdfDocument,
     ImageDocument,
-    FullpdfDocument
+    FullpdfDocument,
+    FileDocument
   },
   data () {
     return {
@@ -121,36 +125,44 @@ export default {
       let images = []
       const other = []
       this.message.attachments.forEach((att) => {
-        if (this.isDocumentAttachment(att)) {
-          if (att.is_pdf) {
-            documents.push({
-              id: att.id,
-              name: att.name,
-              url: att.file_url,
-              filetype: 'application/pdf',
-              site_url: att.site_url,
-              type: 'pdf',
-              pending: att.pending,
-              pages: null,
-              component: 'pdf-document',
-              attachment: att
-            })
-          } else {
-            images.push({
-              id: att.id,
-              name: att.name,
-              url: att.file_url,
-              attachment: att
-            })
-          }
-        } else {
+        if (att.is_irrelevant) {
           other.push({
             id: att.id,
             name: att.name,
             filetype: att.filetype,
             pending: att.pending,
-            url: att.site_url,
+            attachment: att,
+            component: 'file-document'
+          })
+        } else if (att.is_pdf) {
+          documents.push({
+            id: att.id,
+            name: att.name,
+            url: att.file_url,
+            filetype: 'application/pdf',
+            site_url: att.site_url,
+            type: 'pdf',
+            pending: att.pending,
+            pages: null,
+            component: 'file-document',
             attachment: att
+          })
+        } else if (att.is_image) {
+          images.push({
+            id: att.id,
+            name: att.name,
+            url: att.file_url,
+            attachment: att
+          })
+        } else {
+          documents.push({
+            id: att.id,
+            name: att.name,
+            filetype: att.filetype,
+            pending: att.pending,
+            url: att.site_url,
+            attachment: att,
+            component: 'file-document'
           })
         }
         this.names[att.name] = true
@@ -165,15 +177,6 @@ export default {
         )
       }
       return [documents, other]
-    },
-    isDocumentAttachment (att) {
-      if (att.converted !== null) {
-        return false
-      }
-      if (att.is_pdf || att.is_image) {
-        return true
-      }
-      return false
     },
     prepareImages (images) {
       images = images.sort((a, b) => {
@@ -242,7 +245,7 @@ export default {
           new: true,
           pages: null,
           pending: true,
-          component: 'pdf-document',
+          component: 'file-document',
           attachment: document
         },
         ...this.documents.filter((d) => d.type === 'pdf')
@@ -333,7 +336,7 @@ export default {
             progress: 0,
             new: true,
             name: f.name,
-            component: 'pdf-document',
+            component: 'file-document',
             url: window.URL.createObjectURL(f)
           })
         } else if (this.config.settings.image_filetypes.includes(f.type)) {

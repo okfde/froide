@@ -2,7 +2,7 @@
   <div class="document mb-3" :id="attachmentId">
     <div class="card">
       <div class="card-header">
-        <pdf-header :config="config" :document="document"></pdf-header>
+        <file-header :config="config" :document="document"></file-header>
       </div>
       <div class="card-body" :class="{'is-new': document.new}">
         <div v-if="document.uploading" class="progress">
@@ -21,14 +21,14 @@
               <a :href="document.site_url" target="_blank" class="btn btn-sm btn-light mt-1">
                 {{ i18n.openAttachmentPage }}
               </a>
-              <button class="btn btn-sm btn-light mt-1" @click="$emit('loadpdf')">
+              <button v-if="attachment.is_pdf" class="btn btn-sm btn-light mt-1" @click="$emit('loadpdf')">
                 {{ i18n.loadPreview }}
               </button>
             </div>
             <div class="ml-auto mt-1 col-auto text-right">
-              <pdf-review :config="config" :document="document"
+              <file-review :config="config" :document="document"
                 @docupdated="updateDocument"
-              ></pdf-review>
+              ></file-review>
             </div>
           </div>
         </template>
@@ -52,17 +52,17 @@
 import I18nMixin from '../../lib/i18n-mixin'
 import DocumentMixin from './lib/document_mixin'
 
-import PdfReview from './pdf-review.vue'
-import PdfHeader from './pdf-header.vue'
+import FileReview from './file-review.vue'
+import FileHeader from './file-header.vue'
 
 const range = (len) => [...Array(len).keys()]
 
 export default {
-  name: 'pdf-document',
+  name: 'file-document',
   mixins: [I18nMixin, DocumentMixin],
   props: ['config', 'document'],
   components: {
-    PdfReview, PdfHeader
+    FileReview, FileHeader
   },
   data () {
     return {
@@ -108,6 +108,9 @@ export default {
     },
     hasAttachment () {
       return !!this.document.attachment
+    },
+    attachment () {
+      return this.document.attachment
     },
     approveUrl () {
       return this.config.url.approveAttachment.replace('/0/', `/${this.document.id}/`)

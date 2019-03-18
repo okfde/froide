@@ -28,7 +28,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 import {postData, getData} from '../../lib/api.js'
 
 export default {
-  name: 'pdf-review',
+  name: 'file-review',
   mixins: [I18nMixin],
   props: ['config', 'document'],
   computed: {

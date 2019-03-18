@@ -21,7 +21,7 @@
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
-  name: 'pdf-header',
+  name: 'file-header',
   mixins: [I18nMixin],
   props: ['config', 'document'],
   computed: {
