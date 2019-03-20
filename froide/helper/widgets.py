@@ -64,7 +64,7 @@ class TagAutocompleteWidget(forms.TextInput):
         """ Force comma separation of tags by adding trailing comma """
         val = data.get(name, None)
         if val is None:
-            return None
+            return ''
         return val + ','
 
     def render(self, name, value, attrs=None, renderer=None):
