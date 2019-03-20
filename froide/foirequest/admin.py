@@ -91,7 +91,10 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'confirm_request', 'set_visible_to_user', 'unpublish',
         'add_to_project', 'unblock_request', 'close_requests'
     ]
-    raw_id_fields = ('same_as', 'public_body', 'user', 'project')
+    raw_id_fields = (
+        'same_as', 'public_body', 'user', 'project',
+        'jurisdiction', 'law'
+    )
     save_on_top = True
 
     def request_page(self, obj):
