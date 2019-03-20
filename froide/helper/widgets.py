@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 
 from taggit.forms import TagWidget
+from taggit.utils import parse_tags
 
 
 class BootstrapChoiceMixin(object):
@@ -62,7 +63,10 @@ class TagAutocompleteWidget(TagWidget):
         ctx = super().get_context(name, value, attrs)
         ctx['autocomplete_url'] = self.autocomplete_url
         if value is not None:
-            ctx['tags'] = [v.tag.name for v in value]
+            if isinstance(value, str):
+                ctx['tags'] = parse_tags(value)
+            else:
+                ctx['tags'] = [v.tag.name for v in value]
         else:
             ctx['tags'] = []
         return ctx
