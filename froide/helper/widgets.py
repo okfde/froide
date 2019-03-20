@@ -61,7 +61,7 @@ class TagAutocompleteWidget(TagWidget):
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
         ctx['autocomplete_url'] = self.autocomplete_url
-        if value is None:
+        if value is not None:
             ctx['tags'] = [v.tag.name for v in value]
         else:
             ctx['tags'] = []
