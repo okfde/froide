@@ -1,0 +1,15 @@
+{% load i18n %}
+
+<div style="display: none">
+{% include "django/forms/widgets/input.html" %}
+</div>
+<select class="tagautocomplete"
+  data-additemtext="{% trans 'Press Enter to add <b>${value}</b>' %}"
+  data-uniqueitemtext="{% trans 'This tag is already set.' %}"
+  data-loading="{% trans 'Searching…' %}"
+  data-noresults="{% trans 'No results' %}"
+  data-nochoices="{% trans 'No results' %}"
+  data-fetchurl="{{ autocomplete_url }}"
+  id="{{ widget.attrs.id }}_select" multiple>
+  {% for tag in tags %}<option value="{{ tag }}" selected>{{ tag }}</option>{% endfor %}
+</select>
