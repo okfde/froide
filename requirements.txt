@@ -18,7 +18,8 @@ elasticsearch-dsl==6.1.0
 django-leaflet==0.24.0
 django-oauth-toolkit==1.2.0
 django-storages==1.7.1
-django-taggit==1.0.0
+# Test taggit 1.0.0, seems broken
+django-taggit==0.24.0
 django-treebeard==4.3
 Django==2.1.7
 djangorestframework-csv==2.1.0
