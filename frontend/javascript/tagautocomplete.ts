@@ -18,6 +18,7 @@ function setupTagging () {
     const loadingText = select.dataset.loading || ''
     const noResultsText = select.dataset.noresults || ''
     const noChoicesText = select.dataset.nochoices || ''
+    const itemSelectText = select.dataset.itemselect || ''
     const uniqueItemText = select.dataset.uniqueitemtext || ''
     const fetchUrl = select.dataset.fetchurl || ''
     
@@ -33,6 +34,7 @@ function setupTagging () {
       noResultsText,
       loadingText,
       noChoicesText,
+      itemSelectText,
       uniqueItemText,
       classNames: {
         hiddenState: 'd-none'

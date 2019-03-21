@@ -9,6 +9,7 @@
   data-loading="{% trans 'Searching…' %}"
   data-noresults="{% trans 'No results' %}"
   data-nochoices="{% trans 'No results' %}"
+  data-itemselect="{% trans 'Press to select' %}"
   data-fetchurl="{{ autocomplete_url }}"
   id="{{ widget.attrs.id }}_select" multiple>
   {% for tag in tags %}<option value="{{ tag }}" selected>{{ tag }}</option>{% endfor %}
