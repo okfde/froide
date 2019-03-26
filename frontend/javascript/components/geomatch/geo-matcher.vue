@@ -168,17 +168,29 @@ export default {
       }
       getAllData(apiUrl).then((data) => {
         this.georegions = data
-        this.loadLinks()
+        this.loadLinks().then(() => {
+          this.searchPublicBodies()
+        })
       })
     },
-    loadLinks () {      
-      let ids = this.georegions.map((gr) => gr.id).join(',')
-      let apiUrl = `${this.config.url.listPublicBodies}?regions=${ids}`
+    loadLinks () {
+      const MAX_ITEMS = 40
+      const regions = this.georegions.map((gr) => gr.id)
+      const rounds = Math.ceil(regions.length / MAX_ITEMS)
+
+      const promises = [...Array(rounds).keys()].map((index) => {
+        let ids = regions.slice(index * MAX_ITEMS, index * MAX_ITEMS + MAX_ITEMS)
+        return this.loadPublicBodyWithRegions(ids)
+      })
+
+      return Promise.all(promises)
+    },
+    loadPublicBodyWithRegions (ids) {
+      let apiUrl = `${this.config.url.listPublicBodies}?regions=${ids.join(',')}`
       if (this.category) {
         apiUrl += `&category=${this.category}`
       }
-      getAllData(apiUrl).then((data) => {
-
+      return getAllData(apiUrl).then((data) => {
         data.forEach((pb) => {
           pb.regions.forEach((region_uri) => {
             let gr = this.georegions[this.georegionMapping[region_uri]]
@@ -188,7 +200,6 @@ export default {
             ])
           })
         })
-        this.searchPublicBodies()
       })
     },
     searchPublicBodies () {
