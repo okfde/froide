@@ -46,8 +46,51 @@ class PublicBodyAdminForm(forms.ModelForm):
 
 ClassificationAssignMixin = make_admin_assign_action('classification')
 
+PublicBodyReplacementBaseMixin = make_admin_assign_action(
+    'root', _('Choose replacement public body')
+)
 
-class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
+
+class PublicBodyReplacementMixin(PublicBodyReplacementBaseMixin):
+    def _get_assign_action_form_class(self, fieldname):
+        return get_fk_form_class(PublicBody, 'root', self.admin_site)
+
+    def _execute_assign_action(self, obj, fieldname, assign_obj):
+        '''
+        Replaces all non-blacklisted FK or M2M relationships
+        that point to obj with assign_obj.
+        Dark magic ahead.
+        '''
+        BLACK_LIST = [
+            CategorizedPublicBody,
+            TaggedPublicBody,
+            PublicBody
+        ]
+        relations = [
+            f for f in PublicBody._meta.get_fields()
+            if (f.one_to_many or f.one_to_one or f.many_to_many) and
+            f.auto_created and not f.concrete
+        ]
+        with transaction.atomic():
+            for rel in relations:
+                model = rel.related_model
+                if model in BLACK_LIST:
+                    continue
+                if rel.many_to_many:
+                    m2m_objs = model.objects.filter(**{rel.field.name: obj})
+                    for m2m_obj in m2m_objs:
+                        m2m_rel = getattr(m2m_obj, rel.field.name)
+                        m2m_rel.remove(obj)
+                        m2m_rel.add(assign_obj)
+                else:
+                    model.objects.filter(**{rel.field.name: obj}).update(
+                        **{rel.field.name: assign_obj}
+                    )
+
+
+class PublicBodyBaseAdminMixin(
+        ClassificationAssignMixin, PublicBodyReplacementMixin,
+        AdminTagAllMixIn):
     form = PublicBodyAdminForm
 
     date_hierarchy = 'updated_at'
@@ -106,9 +149,12 @@ class PublicBodyBaseAdminMixin(ClassificationAssignMixin, AdminTagAllMixIn):
     tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
 
-    actions = ClassificationAssignMixin.actions + [
-        'export_csv', 'remove_from_index', 'tag_all', 'show_georegions'
-    ]
+    actions = (
+        ClassificationAssignMixin.actions +
+        PublicBodyReplacementMixin.actions + [
+            'export_csv', 'remove_from_index', 'tag_all', 'show_georegions'
+        ]
+    )
 
     def get_queryset(self, request):
         qs = super(PublicBodyBaseAdminMixin, self).get_queryset(request)

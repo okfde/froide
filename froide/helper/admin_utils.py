@@ -12,7 +12,7 @@ from .forms import TagObjectForm, get_fk_form_class
 class AdminAssignActionBase():
     action_label = _('Choose object to assign')
 
-    def _assign_action_handler(self, fieldname, actionname, request, queryset):
+    def _assign_action_handler(self, fieldname, actionname, request, queryset, label=None):
 
         opts = self.model._meta
         # Check that the user has change permission for the actual model
@@ -38,7 +38,7 @@ class AdminAssignActionBase():
             'media': self.media,
             'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
             'form': form,
-            'headline': self.action_label,
+            'headline': label or self.action_label,
             'actionname': actionname,
             'applabel': opts.app_label
         }
@@ -55,14 +55,14 @@ class AdminAssignActionBase():
         obj.save()
 
 
-def make_admin_assign_action(fieldname):
+def make_admin_assign_action(fieldname, label=None):
     action_name = 'assign_%s' % fieldname
 
     def _assign(self, request, queryset):
         return self._assign_action_handler(fieldname, action_name,
-                                          request, queryset)
+                                          request, queryset, label=label)
 
-    _assign.short_description = _("Add %s to all selected") % fieldname
+    _assign.short_description = label or _("Add %s to all selected") % fieldname
 
     class AdminAssignAction(AdminAssignActionBase):
         actions = [action_name]
