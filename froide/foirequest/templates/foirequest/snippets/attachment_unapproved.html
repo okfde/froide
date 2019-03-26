@@ -11,13 +11,17 @@
       When unapproved and user can redact and can write, disallow direct access
       and force to review.
     {% endcomment %}
+    {% if attachment.can_edit %}
+      <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}">
+    {% endif %}
     <span title="{{ attachment.name }}">
       <i class="fa fa-paperclip" aria-hidden="true"></i>
       <span class="d-print-none">{{ attachment.name|truncatefilename:20 }}</span>
       <span class="d-none d-print-inline">{{ attachment.name }}</span>
-    </span>&nbsp;<span class="badge badge-light">
+    </span>{% if attachment.can_edit %}</a>{% endif %}&nbsp;<span class="badge badge-light">
       {{ attachment.size|filesizeformat }}
     </span>
+
   {% endif %}
   {% if attachment.pending %}
     <span class="badge badge-info">
