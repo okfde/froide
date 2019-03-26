@@ -1,5 +1,9 @@
+import json
+
+from django.db import transaction
 from django.contrib import admin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.db.models import Count
@@ -167,6 +171,9 @@ class PublicBodyBaseAdminMixin(
             url(r'^import/$',
                 self.admin_site.admin_view(self.import_csv),
                 name='publicbody-publicbody-import_csv'),
+            url(r'^geo-match/$',
+                self.admin_site.admin_view(self.geo_match),
+                name='publicbody-publicbody-geo_match'),
         ]
         return my_urls + urls
 
@@ -194,6 +201,49 @@ class PublicBodyBaseAdminMixin(
                 _('Public Bodies were imported.')
             )
         return redirect('admin:publicbody_publicbody_changelist')
+
+    def geo_match(self, request):
+        from froide.georegion.models import GeoRegion
+
+        if request.method == 'POST':
+            if not self.has_change_permission(request):
+                raise PermissionDenied
+
+            data = json.loads(request.body)
+            try:
+                georegion = GeoRegion.objects.get(id=data['georegion'])
+            except GeoRegion.DoesNotExist:
+                return HttpResponse(status=404)
+            try:
+                pb = PublicBody.objects.get(id=data['publicbody'])
+            except PublicBody.DoesNotExist:
+                return HttpResponse(status=404)
+
+            pb.regions.add(georegion)
+            return HttpResponse(status=201, content=b'{}')
+
+        opts = self.model._meta
+        config = {
+            'url': {
+                'listCategories': reverse('api:category-list'),
+                'listClassifications': reverse('api:classification-list'),
+                'listPublicBodies': reverse('api:publicbody-list'),
+                'searchPublicBody': reverse('api:publicbody-search'),
+                'listGeoregion': reverse('api:georegion-list'),
+                'detailGeoregion': reverse('api:georegion-detail', kwargs={'pk': 0}),
+                'detailJurisdiction': reverse('api:jurisdiction-detail', kwargs={'pk': 0}),
+                'georegionAdminUrl': reverse('admin:georegion_georegion_change', kwargs={'object_id': 0}),
+                'publicbodyAdminUrl': reverse('admin:publicbody_publicbody_changelist'),
+                'publicbodyAdminChangeUrl': reverse('admin:publicbody_publicbody_change', kwargs={'object_id': 0}),
+                'publicbodyAddAdminUrl': reverse('admin:publicbody_publicbody_add'),
+            }
+        }
+        ctx = {
+            'app_label': opts.app_label,
+            'opts': opts,
+            'config': json.dumps(config)
+        }
+        return render(request, 'publicbody/admin/match_georegions.html', ctx)
 
     def save_model(self, request, obj, form, change):
         obj._updated_by = request.user

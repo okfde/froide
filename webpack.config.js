@@ -18,7 +18,8 @@ const ENTRY = {
   request: ['./frontend/javascript/request.ts'],
   redact: ['./frontend/javascript/redact.js'],
   tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
-  docupload: ['./frontend/javascript/docupload.js']
+  docupload: ['./frontend/javascript/docupload.js'],
+  geomatch: ['./frontend/javascript/geomatch.js']
 }
 
 const EXCLUDE_CHUNKS = [

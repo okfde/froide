@@ -16,6 +16,8 @@ from froide.helper.api_utils import (
 )
 from froide.helper.search import SearchQuerySetWrapper
 
+from froide.georegion.models import GeoRegion
+
 from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
                      Classification)
 from .documents import PublicBodyDocument
@@ -327,10 +329,15 @@ class PublicBodySerializer(PublicBodyListSerializer):
 
 class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
     q = filters.CharFilter(method='search_filter')
-    classification = filters.ModelChoiceFilter(method='classification_filter',
-        queryset=Classification.objects.all())
-    category = filters.ModelMultipleChoiceFilter(method='category_filter',
-        queryset=Category.objects.all())
+    classification = filters.ModelChoiceFilter(
+        method='classification_filter',
+        queryset=Classification.objects.all()
+    )
+    category = filters.ModelMultipleChoiceFilter(
+        method='category_filter',
+        queryset=Category.objects.all()
+    )
+    regions = filters.CharFilter(method='regions_filter')
 
     class Meta:
         model = PublicBody
@@ -348,6 +355,9 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
                 categories__in=Category.get_tree(parent=v)
             )
         return queryset
+
+    def regions_filter(self, queryset, name, value):
+        return queryset.filter(regions__id__in=value.split(','))
 
 
 class PublicBodyViewSet(OpenRefineReconciliationMixin,

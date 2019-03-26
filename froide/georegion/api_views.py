@@ -28,9 +28,6 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         many=False
     )
-    geom = serializers.SerializerMethodField()
-    gov_seat = serializers.SerializerMethodField()
-    centroid = serializers.SerializerMethodField()
 
     class Meta:
         model = GeoRegion
@@ -40,9 +37,19 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
             'kind_detail', 'level',
             'region_identifier', 'global_identifier',
             'area', 'population', 'valid_on',
+            'part_of',
+        )
+
+
+class GeoRegionDetailSerializer(GeoRegionSerializer):
+    geom = serializers.SerializerMethodField()
+    gov_seat = serializers.SerializerMethodField()
+    centroid = serializers.SerializerMethodField()
+
+    class Meta(GeoRegionSerializer.Meta):
+        fields = GeoRegionSerializer.Meta.fields + (
             'geom', 'gov_seat',
             'centroid',
-            'part_of',
         )
 
     def get_geom(self, obj):
@@ -66,6 +73,10 @@ class GeoRegionFilter(filters.FilterSet):
     q = filters.CharFilter(method='search_filter')
     kind = filters.CharFilter(method='kind_filter')
     level = filters.NumberFilter(method='level_filter')
+    ancestor = filters.ModelChoiceFilter(
+        method='ancestor_filter',
+        queryset=GeoRegion.objects.all()
+    )
 
     class Meta:
         model = GeoRegion
@@ -86,10 +97,19 @@ class GeoRegionFilter(filters.FilterSet):
         ids = value.split(',')
         return queryset.filter(pk__in=ids)
 
+    def ancestor_filter(self, queryset, name, value):
+        descendants = value.get_descendants()
+        return queryset.filter(
+            id__in=descendants
+        )
+
 
 class GeoRegionViewSet(OpenRefineReconciliationMixin,
                        viewsets.ReadOnlyModelViewSet):
-    serializer_class = GeoRegionSerializer
+    serializer_action_classes = {
+        'list': GeoRegionSerializer,
+        'retrieve': GeoRegionDetailSerializer
+    }
     queryset = GeoRegion.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = GeoRegionFilter
@@ -136,6 +156,12 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
         properties_dict = {
             p['id']: p for p in properties
         }
+
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return GeoRegionSerializer
 
     def _search_reconciliation_results(self, query, filters, limit):
         qs = GeoRegion.objects.all()
