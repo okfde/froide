@@ -16,8 +16,6 @@ from froide.helper.api_utils import (
 )
 from froide.helper.search import SearchQuerySetWrapper
 
-from froide.georegion.models import GeoRegion
-
 from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
                      Classification)
 from .documents import PublicBodyDocument

@@ -11,7 +11,7 @@ def make_nodes(apps, schema_editor):
         newpos = MP_Node._str2int(path[-MP_Node.steplen:]) + 1
         key = MP_Node._int2str(newpos)
         if len(key) > MP_Node.steplen:
-            raise Exception("Path Overflow from: '%s'" % (self.path, ))
+            raise Exception("Path Overflow from")
         return '{0}{1}{2}'.format(
             path[:-MP_Node.steplen],
             MP_Node.alphabet[0] * (MP_Node.steplen - len(key)),
