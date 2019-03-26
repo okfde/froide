@@ -2,7 +2,7 @@
   <div class="document mb-3">
     <div class="card">
       <div class="card-header">
-        <pdf-header :config="config" :document="document"></pdf-header>
+        <file-header :config="config" :document="document"></file-header>
       </div>
       <div class="card-body" :class="{'is-new': document.new}">
         <div v-if="document.uploading" class="progress">
@@ -24,9 +24,9 @@
         </ol>
         <div class="row">
           <div class="ml-auto col-auto mt-1">
-            <pdf-review :config="config" :document="document"
+            <file-review :config="config" :document="document"
               @docupdated="updateDocument"
-            ></pdf-review>
+            ></file-review>
           </div>
         </div>
       </div>
