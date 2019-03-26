@@ -84,8 +84,8 @@
       </div>
     </div>
     <div class="row mt-3">
-      <div class="col-lg-12 overflow-auto">
-        <div :id="containerId" class="redactContainer" :class="{'hide-redacting': working}">
+      <div class="col-lg-12 overflow-auto" ref="containerWrapper">
+        <div :id="containerId" ref="container" class="redactContainer" :class="{'hide-redacting': working}">
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
           <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer"
             @mousedown="mouseDown"
@@ -217,7 +217,7 @@ export default {
       })
     },
     container () {
-      return document.getElementById(this.containerId)
+      return this.$refs.container
     },
     canvas () {
       return document.getElementById(this.canvasId)
@@ -288,9 +288,13 @@ export default {
         console.log('# Page ' + pageNum)
         this.page = page
         var viewport = page.getViewport(this.scaleFactor)
+        var maxWidth = this.$refs.containerWrapper.offsetWidth
+        if (viewport.width > maxWidth) {
+          this.scaleFactor = maxWidth / viewport.width
+          viewport = page.getViewport(this.scaleFactor)
+        }
         this.viewport = viewport
-        console.log('Size: ' + viewport.width + 'x' + viewport.height)
-        console.log()
+        console.log(this.scaleFactor, 'Size: ' + viewport.width + 'x' + viewport.height, 'at maxwidth', maxWidth)
         var canvas = this.canvas
         canvas.width = viewport.width
         canvas.height = viewport.height
