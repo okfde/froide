@@ -35,7 +35,7 @@
     </span>
   {% endif %}
 </div>
-<div class="col-sm-2 text-right">
+<div class="col-sm-2 text-right d-print-none">
   {% if attachment.can_redact and object|can_write_foirequest:request %}
     <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
       <span class="fa fa-edit"></span>

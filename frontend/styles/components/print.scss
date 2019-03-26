@@ -12,7 +12,7 @@
 
   html, body {
     display: block !important;
-    font-size: 0.85rem;
+    font-size: 1rem;
     overflow: visible !important;
     overflow-x: visible !important;
     overflow-y: visible !important;
@@ -55,6 +55,16 @@
   .message {
     border: none;
     background-color: #fff !important;
+    @include make-col-ready();
+    @include make-col(12);
+
+
+    @include media-breakpoint-up(md) {
+      @include make-col(12);
+    }
+    @include media-breakpoint-up(lg) {
+      @include make-col(12);
+    }
   }
 
   .message-meta, .request-info, .attachment-card {
