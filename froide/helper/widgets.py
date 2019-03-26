@@ -59,6 +59,13 @@ class TagAutocompleteWidget(TagWidget):
         self.autocomplete_url = kwargs.pop('autocomplete_url', None)
         super().__init__(*args, **kwargs)
 
+    def value_from_datadict(self, data, files, name):
+        """ Force comma separation of tags by adding trailing comma """
+        val = data.get(name, None)
+        if val is None:
+            return ''
+        return val + ','
+
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
         ctx['autocomplete_url'] = self.autocomplete_url
