@@ -226,6 +226,8 @@ def get_redact_context(foirequest, attachment):
             'toggleText': _('Text only'),
             'disableText': _('Hide text'),
             'cancel': _('Cancel'),
+            'undo': _('Undo'),
+            'redo': _('Redo'),
             'loadingPdf': _('Loading PDF...'),
             'redacting': _('Redaction process started, please wait...'),
             'sending': _('Saving redacted PDF, please wait...'),

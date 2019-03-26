@@ -31,13 +31,24 @@
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group mr-1">
-          <button class="btn btn-light" @click="undo" :disabled="!canUndo">
-            <i class="fa fa-undo"></i>
+          <button class="btn btn-light" @click="undo" :disabled="!canUndo" :title="i18n.undo">
+            <i class="fa fa-step-backward"></i>
           </button>
-          <button class="btn btn-light" @click="redo" :disabled="!canRedo">
-            <i class="fa fa-repeat"></i>
+          <button class="btn btn-light" @click="redo" :disabled="!canRedo"
+            data-toggle="tooltip" data-placement="top" :title="i18n.redo">
+            <i class="fa fa-step-forward"></i>
           </button>
         </div>
+
+        <div class="btn-group mr-1">
+          <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
+            <i class="fa fa-align-justify"></i>
+          </button>
+          <button class="btn" :class="{'btn-outline-info': !textDisabled, 'btn-info': textDisabled}" @click.stop="toggleDrawing" :title="i18n.disableText">
+            <i class="fa fa-image"></i>
+          </button>
+        </div>
+
         <div class="btn-group mr-1">
           <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
             &laquo;
@@ -49,15 +60,6 @@
           <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
             <span class="sr-only">{{ i18n.nextPage }}</span>
             &raquo;
-          </button>
-        </div>
-
-        <div class="btn-group mr-1">
-          <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
-            <i class="fa fa-align-justify"></i>
-          </button>
-          <button class="btn" :class="{'btn-outline-info': !textDisabled, 'btn-info': textDisabled}" @click.stop="toggleDrawing" :title="i18n.disableText">
-            <i class="fa fa-image"></i>
           </button>
         </div>
 
