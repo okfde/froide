@@ -1,8 +1,14 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
 
+from treebeard.mp_tree import MP_Node, MP_NodeManager
 
-class GeoRegion(models.Model):
+
+class GeoRegionManager(MP_NodeManager):
+    pass
+
+
+class GeoRegion(MP_Node):
     name = models.CharField(_('Name'), max_length=255)
     slug = models.SlugField(_('Slug'), max_length=255)
 
@@ -37,9 +43,12 @@ class GeoRegion(models.Model):
         on_delete=models.SET_NULL, blank=True, related_name='sub_regions'
     )
 
+    node_order_by = ('name',)
+
     class Meta:
         verbose_name = _('Geo Region')
         verbose_name_plural = _('Geo Regions')
+        ordering = ('name',)
 
     def __str__(self):
         return '%s (%s)' % (self.name, self.pk)
