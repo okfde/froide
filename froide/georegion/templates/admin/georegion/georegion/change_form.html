@@ -1,0 +1,34 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n %}
+
+{% block after_field_sets %}
+  {% if original.pk %}
+    <h3>{% trans "Ancestors" %}</h3>
+    <ul>
+      {% for ancestor in original.get_ancestors %}
+        <li>
+          <a href="{% url 'admin:georegion_georegion_change' object_id=ancestor.pk %}">
+            {{ ancestor.name }}
+          </a>
+          - {{ ancestor.kind_detail }} ({{ ancestor.get_kind_display }}, {{ ancestor.id }})
+        </li>
+      {% endfor %}
+    </ul>
+    <p>
+      {% trans "Descendants:" %} {{ original.get_descendant_count }}
+    </p>
+    <p>
+      {% trans "Children:" %} {{ original.get_children_count }}
+    </p>
+    <h3>{% trans "Children" %}</h3>
+    {% for child in original.get_children %}
+      <li>
+        <a href="{% url 'admin:georegion_georegion_change' object_id=child.pk %}">
+          {{ child.name }}
+        </a>
+        - {{ child.kind_detail }} ({{ child.get_kind_display }}, {{ child.id }})
+      </li>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
