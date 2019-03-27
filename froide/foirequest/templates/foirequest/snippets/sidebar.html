@@ -104,7 +104,7 @@
   {% endif %}
 {% endblock feeds%}
 
- {% if object|can_write_foirequest:request or object|can_read_foirequest_anonymous:request %}
+ {% if object|can_read_foirequest_authenticated:request %}
     <li class="nav-header">{% trans "Download" %}</li>
     <li class="nav-item">
       <a class="btn btn-light" href="{% url 'foirequest-download' slug=object.slug %}">
@@ -118,7 +118,9 @@
         {% trans "Download request as PDF" %}
       </a>
     </li>
+  {% endif %}
 
+  {% if object|can_write_foirequest:request %}
     <li class="nav-header">{% trans "Extend deadline" %}</li>
     <li class="nav-item">
       <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
