@@ -27,7 +27,7 @@
       Unlinked Regions: {{ unlinkedRegionCount }}<br />
       Unmatched Regions: {{ unmatchedRegionCount }}
     </p>
-    <table>
+    <table class="geo-matcher-table">
       <thead>
         <tr>
           <th>Name</th>
@@ -95,9 +95,22 @@ export default {
     this.jurisdiction = getQueryVariable('jurisdiction') || ''
     this.searchHint = getQueryVariable('searchhint') || ''
 
+    this.api = new FroideAPI(this.config)
+
     this.loadCategoryName()
     this.loadAncestorName()
     this.loadJurisdictionName()
+
+    this.intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.intersectionRatio > 0) {
+          this.intersectionObserver.unobserve(entry.target)
+          let region_uri = entry.target.dataset.region
+          let gr = this.georegions[this.georegionMapping[region_uri]]
+          this.searchPublicBodiesForRegion(gr)
+        }
+      });
+    });
   },
   computed: {
     regionCount () {
@@ -125,7 +138,20 @@ export default {
   },
   methods: {
     load () {
+      this.deactivateIntersectionObserver()
       this.loadGeoRegions()
+    },
+    activateIntersectionObserver () {
+      const rows = document.querySelectorAll('.geo-matcher-table tbody tr')
+      Array.from(rows).forEach((row) => {
+        this.intersectionObserver.observe(row);
+      })
+    },
+    deactivateIntersectionObserver () {
+      const rows = document.querySelectorAll('.geo-matcher-table tbody tr')
+      Array.from(rows).forEach((row) => {
+        this.intersectionObserver.unobserve(row);
+      })
     },
     categoryChanged () {
       this.loadCategoryName()
@@ -168,6 +194,11 @@ export default {
       }
       getAllData(apiUrl).then((data) => {
         this.georegions = data
+        this.georegions.forEach((gr) => {
+          Vue.set(gr, 'loading', false)
+          Vue.set(gr, 'links', null)
+          Vue.set(gr, 'matches', null)
+        })
         this.loadLinks().then(() => {
           this.searchPublicBodies()
         })
@@ -194,6 +225,9 @@ export default {
         data.forEach((pb) => {
           pb.regions.forEach((region_uri) => {
             let gr = this.georegions[this.georegionMapping[region_uri]]
+            if (gr === undefined) {
+              return
+            }
             Vue.set(gr, 'links', [
               ...(gr.links || []),
               pb
@@ -203,6 +237,21 @@ export default {
       })
     },
     searchPublicBodies () {
+      this.activateIntersectionObserver()
+    },
+    searchPublicBodiesForRegion (gr) {
+      if (gr.links !== null) {
+        return
+      } 
+      if (gr.matches !== null || gr.loading) {
+        return
+      }
+      Vue.set(gr, 'loading', true)
+      let term = gr.name
+      if (this.searchHint) {
+        term = `${this.searchHint} ${term}`
+      }
+
       const filter = {}
       if (this.category) {
         filter.categories = this.category
@@ -210,19 +259,9 @@ export default {
       if (this.jurisdiction) {
         filter.jurisdiction = this.jurisdiction
       }
-      const api = new FroideAPI(this.config)
-      this.georegions.forEach((gr) => {
-        if (gr.links === undefined || gr.links.length === 0) {
-          Vue.set(gr, 'loading', true)
-          let term = gr.name
-          if (this.searchHint) {
-            term = `${this.searchHint} ${term}`
-          }
-          api.searchPublicBodies(term, filter).then((data) => {
-            Vue.set(gr, 'loading', false)
-            Vue.set(gr, 'matches', data.objects.results.slice(0, 5))
-          })
-        }
+      this.api.searchPublicBodies(term, filter).then((data) => {
+        Vue.set(gr, 'loading', false)
+        Vue.set(gr, 'matches', data.objects.results.slice(0, 5))
       })
     },
     connectPublicBody (payload) {
