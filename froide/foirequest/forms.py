@@ -689,7 +689,10 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             message = list(filter(lambda x: x.id == self.cleaned_data["to"],
                     list(self.foirequest.messages)))[0]
             recipient_name = message.sender_name
-            recipient_email = message.sender_email
+            recipient_email = message.sender_email or (
+                message.sender_public_body and
+                message.sender_public_body.email
+            )
             recipient_pb = message.sender_public_body
 
         subject = re.sub(

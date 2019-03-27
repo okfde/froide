@@ -552,8 +552,13 @@ class FoiRequest(models.Model):
         addresses = {}
         for message in reversed(self.messages):
             if message.is_response:
-                if message.sender_email and message.sender_email not in addresses:
-                    addresses[message.sender_email] = message
+                email = (
+                    message.sender_email or
+                    (message.sender_public_body and
+                     message.sender_public_body.email)
+                )
+                if email and email not in addresses:
+                    addresses[email] = message
         return addresses
 
     def get_set_tags_form(self):
