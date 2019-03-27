@@ -12,7 +12,8 @@ from ..views import (
     make_same_request, resend_message,
     download_foirequest_zip, download_foirequest_pdf,
     show_attachment, redact_attachment,
-    upload_attachments, delete_attachment
+    upload_attachments, delete_attachment,
+    SetTeamView
 )
 
 urlpatterns = [
@@ -42,6 +43,7 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/resend/$", resend_message, name="foirequest-resend_message"),
     url(r"^(?P<slug>[-\w]+)/download/$", download_foirequest_zip, name="foirequest-download"),
     url(r"^(?P<slug>[-\w]+)/pdf/$", download_foirequest_pdf, name="foirequest-pdf"),
+    url(r"^(?P<slug>[-\w]+)/set-team/$", SetTeamView.as_view(), name="foirequest-set_team"),
     # Attachments
     url(r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/%s/(?P<attachment_name>.+)$'
         % pgettext('url component', 'attachment'), show_attachment, name='foirequest-show_attachment'),

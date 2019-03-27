@@ -26,7 +26,7 @@ def can_read_foirequest(foirequest, request, allow_code=True):
 @lru_cache()
 def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
     user = request.user
-    if has_authenticated_access(foirequest, request):
+    if has_authenticated_access(foirequest, request, verb='read'):
         return True
 
     if user.is_staff and user.has_perm('foirequest.see_private'):
@@ -53,6 +53,10 @@ def can_write_foirequest(foirequest, request):
     if foirequest.project:
         return can_write_foiproject(foirequest.project, request)
     return False
+
+
+def can_manage_foirequest(foirequest, request):
+    return can_manage_object(foirequest, request)
 
 
 def can_write_foiproject(foiproject, request):

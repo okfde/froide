@@ -75,6 +75,7 @@ class TeamDetailView(AuthMixin, DetailView):
 
         context['user_member'] = user_member
         context['projects'] = self.object.foiproject_set.all()
+        context['foirequests'] = self.object.foirequest_set.all()
         return context
 
 
@@ -172,17 +173,13 @@ class JoinTeamUserView(AuthMixin, JoinMixin, DetailView):
             user=self.request.user
         )
 
-    # def get_object(self):
-    #     import ipdb ; ipdb.set_trace()
-    #     member = super().get_object()
-    #     return member
-
 
 class AssignTeamView(UpdateView):
     """
     Subclass this view to set a team for your object
     """
     form_class = AssignTeamForm
+    template_name = 'team/team_detail.html'
 
     def get_object(self, queryset=None):
         obj = super(AssignTeamView, self).get_object(queryset=queryset)

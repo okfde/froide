@@ -4,6 +4,7 @@
 {% load static %}
 {% load markup %}
 {% load foirequest_tags %}
+{% load team_tags %}
 {% load form_helper %}
 {% load block_helper %}
 
@@ -176,6 +177,13 @@
         <li class="nav-item">
           <a href="#resolution-summary" data-toggle="tab" class="nav-link" role="tab" aria-controls="resolution-summary" aria-expanded="false">
             {% blocktrans %}Write summary{% endblocktrans %}
+          </a>
+        </li>
+      {% endif %}
+      {% if object|can_manage_foirequest:request %}
+        <li class="nav-item">
+          <a href="#team-access" data-toggle="tab" class="nav-link" role="tab" aria-controls="team-access" aria-expanded="false">
+            {% blocktrans %}Team access{% endblocktrans %}
           </a>
         </li>
       {% endif %}
@@ -372,6 +380,17 @@
         </form>
       </div>
     {% endif %}
+
+    {% if object|can_manage_foirequest:request %}
+      <div role="tabpanel" class="tab-pane d-print-none" id="team-access">
+        {% get_team_form object as team_form %}
+        {% trans "Assign team to request" as legend %}
+        {% trans "Set team for request" as submit_button %}
+        {% url 'foirequest-set_team' slug=object.slug as submit_url %}
+        {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
+
+      </div>
+      {% endif %}
 
     {% block request_action_pane_footer %}{% endblock %}
 

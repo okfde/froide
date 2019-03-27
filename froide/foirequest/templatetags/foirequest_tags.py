@@ -20,7 +20,8 @@ from froide.helper.text_diff import mark_differences
 from ..models import FoiRequest, FoiMessage, DeliveryStatus
 from ..foi_mail import get_alternative_mail
 from ..auth import (
-    can_read_foirequest, can_write_foirequest, can_read_foirequest_anonymous
+    can_read_foirequest, can_write_foirequest, can_manage_foirequest,
+    can_read_foirequest_anonymous, can_read_foirequest_authenticated
 )
 
 Comment = get_model()
@@ -182,14 +183,25 @@ def can_read_foirequest_filter(foirequest, request):
     return can_read_foirequest(foirequest, request)
 
 
+@register.filter(name='can_read_foirequest_authenticated')
+def can_read_foirequest_authenticated_filter(foirequest, request):
+    return can_read_foirequest_authenticated(foirequest, request)
+
+
 @register.filter(name='can_write_foirequest')
 def can_write_foirequest_filter(foirequest, request):
     return can_write_foirequest(foirequest, request)
 
 
+@register.filter(name='can_manage_foirequest')
+def can_manage_foirequest_filter(foirequest, request):
+    return can_manage_foirequest(foirequest, request)
+
+
 @register.filter(name='can_read_foirequest_anonymous')
 def can_read_foirequest_anonymous_filter(foirequest, request):
     return can_read_foirequest_anonymous(foirequest, request)
+
 
 
 @register.filter

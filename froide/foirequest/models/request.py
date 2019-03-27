@@ -19,6 +19,7 @@ from taggit.models import TaggedItemBase
 from froide.account.utils import send_mail_user
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.campaign.models import Campaign
+from froide.team.models import Team
 from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
@@ -272,6 +273,8 @@ class FoiRequest(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
             verbose_name=_("User"))
+    team = models.ForeignKey(Team, null=True, blank=True,
+            on_delete=models.SET_NULL, verbose_name=_("Team"))
 
     first_message = models.DateTimeField(_("Date of first message"),
             blank=True, null=True)

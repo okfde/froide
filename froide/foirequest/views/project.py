@@ -39,4 +39,3 @@ class ProjectView(AuthRequiredMixin, DetailView):
 
 class SetProjectTeamView(AssignTeamView):
     model = FoiProject
-    template_name = 'team/team_detail.html'

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 
 from froide.account.forms import NewUserForm
+from froide.team.views import AssignTeamView
 from froide.helper.utils import render_400, render_403
 
 from ..models import FoiRequest, FoiEvent
@@ -277,3 +278,7 @@ def extend_deadline(request, foirequest):
             _('Deadline has been extended.'))
     FoiEvent.objects.create_event('deadline_extended', foirequest)
     return redirect(foirequest)
+
+
+class SetTeamView(AssignTeamView):
+    model = FoiRequest

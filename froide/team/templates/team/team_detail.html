@@ -123,6 +123,33 @@
   </div>
 {% endif %}
 
+
+<div class="row mt-5">
+  <div class="col-md-8">
+    <h3>{% trans "Requests accessible to this team" %}</h3>
+    <table class="table table-responsive">
+      <thead>
+        <th>{% blocktrans %}Title{% endblocktrans %}</th>
+        <th>{% blocktrans %}Date{% endblocktrans %}</th>
+      </thead>
+      <tbody>
+        {% for foirequest in foirequests %}
+          <tr>
+            <td>
+              <a href="{{ foirequest.get_absolute_url }}">
+                {{ foirequest.title }}
+              </a>
+            </td>
+            <td>
+              {{ foirequest.last_message|date:"DATETIME_FORMAT" }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <div class="row mt-5">
   <div class="col-md-8">
     <h3>{% trans "Team projects" %}</h3>
@@ -152,4 +179,5 @@
     </table>
   </div>
 </div>
+
 {% endblock %}
