@@ -203,7 +203,6 @@ def can_read_foirequest_anonymous_filter(foirequest, request):
     return can_read_foirequest_anonymous(foirequest, request)
 
 
-
 @register.filter
 def truncatefilename(filename, chars=20):
     too_many = len(filename) - chars
