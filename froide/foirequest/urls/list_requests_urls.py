@@ -1,4 +1,5 @@
 from django.conf.urls import url, include
+from django.urls import path
 from django.utils.translation import pgettext
 from django.views.generic.base import RedirectView
 
@@ -23,7 +24,7 @@ urlpatterns = [
 
     url(r'^unchecked/$', list_unchecked, name='foirequest-list_unchecked'),
     url(r'^delete-draft$', delete_draft, name='foirequest-delete_draft'),
-    url(r'^claim/(?P<token>[^/]+)/$', claim_draft, name='foirequest-claim_draft'),
+    path('claim/<uuid:token>/', claim_draft, name='foirequest-claim_draft'),
 ]
 
 foirequest_urls = [
