@@ -14,18 +14,19 @@ class GeoRegion(MP_Node):
 
     description = models.TextField(blank=True)
 
+    KIND_CHOICES = (
+        ('country', _('country')),
+        ('state', _('state')),
+        ('admin_district', _('administrative district')),
+        ('district', _('district')),
+        ('admin_cooperation', _('administrative cooperation')),
+        ('municipality', _('municipality')),
+        ('borough', _('borough')),
+        ('zipcode', _('zipcode')),
+        ('admin_court_jurisdiction', _('administrative court jurisdiction')),
+    )
     kind = models.CharField(_('Kind of Region'), max_length=255,
-        choices=(
-            ('country', _('country')),
-            ('state', _('state')),
-            ('admin_district', _('administrative district')),
-            ('district', _('district')),
-            ('admin_cooperation', _('administrative cooperation')),
-            ('municipality', _('municipality')),
-            ('borough', _('borough')),
-            ('zipcode', _('zipcode')),
-            ('admin_court_jurisdiction', _('administrative court jurisdiction')),
-        )
+        choices=KIND_CHOICES
     )
     kind_detail = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)

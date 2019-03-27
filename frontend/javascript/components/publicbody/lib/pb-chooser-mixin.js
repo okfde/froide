@@ -81,7 +81,11 @@ var PBChooserMixin = {
         if (this.filters[k] === null || this.filters[k].length === 0) {
           continue
         }
-        f[k] = this.filters[k].id
+        if (Array.isArray(this.filters[k])) {
+          f[k] = this.filters[k].map((x) => x.id)
+        } else {
+          f[k] = this.filters[k].id
+        }
       }
       return f
     },

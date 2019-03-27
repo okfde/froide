@@ -104,6 +104,10 @@ export default {
     list-style: none;
     padding-left: 0;
 
+    li a {
+      cursor: pointer;
+    }
+
     ul.filter-list {
       list-style-type: '-';
       padding-left: 15px;

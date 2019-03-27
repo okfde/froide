@@ -32,7 +32,11 @@
           <h3 v-show="!searching">
             {{ i18n._('publicBodiesFound', {count: searchResultsLength} ) }}
           </h3>
-          <img v-show="searching" class="col-auto" :src="config.resources.spinner" alt="Loading..."/>
+          <div v-show="searching" class="col-auto">
+            <div class="spinner-border text-secondary" role="status">
+              <span class="sr-only">{{ i18n.loading }}</span>
+            </div>
+          </div>
         </div>
         <div class="col-auto">
           <button @click.prevent="selectAll" class="btn btn-sm btn-light" :disabled="selectAllButtonDisabled">
@@ -49,7 +53,9 @@
         <div class="col-md-8 col-lg-9 order-2">
           <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="currentHeaders"
                     :options="selectOptions" :rows="searchResults" @selectAllRows="selectAllRows"></pb-table>
-          <img v-show="searching" :src="config.resources.spinner" alt="Loading..."/>
+          <div v-show="searching" class="spinner-border text-secondary" role="status">
+            <span class="sr-only">{{ i18n.loading }}</span>
+          </div>
           <slot name="publicbody-missing" v-if="!searching"></slot>
           <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
         </div>
@@ -137,15 +143,11 @@ export default {
       selectOptions: {
         selectAllCheckbox: true
       },
-      filters: {
-        classification: null,
-        jurisdiction: null,
-        categories: []
-      },
+      filters: this.getEmptyFilters(),
       filterExpanded: {
         classification: true
       },
-      filterOrder: ['classification', 'jurisdiction', 'categories']
+      filterOrder: ['classification', 'jurisdiction', 'categories', 'regions_kind', 'regions']
     }
   },
   computed: {
@@ -187,7 +189,7 @@ export default {
           label: this.i18n.topicPlural[1],
           key: 'categories',
           expanded: this.filterExpanded.categories,
-          getItems: (q) => searcher.listCategories(q),
+          getItems: (q, filters) => searcher.listCategories(q, filters),
           hasSearch: true,
           multi: true,
           itemMap: (item) => {
@@ -196,6 +198,33 @@ export default {
               id: item.id,
               children: item.children
             }
+          }
+        },
+        regions: {
+          label: this.i18n.containingGeoregionsPlural[0],
+          key: 'regions',
+          expanded: this.filterExpanded.georegion,
+          getItems: (q, filters) => searcher.listGeoregions(q, filters),
+          hasSearch: true,
+          choices: [
+            'kind', this.config.fixtures.georegion_kind
+          ],
+          itemMap: (item) => {
+            return {
+              label: item.name,
+              id: item.id,
+            }
+          }
+        },
+        regions_kind: {
+          label: this.i18n.administrativeUnitKind,
+          key: 'regions_kind',
+          getItems: () => Promise.resolve({
+            meta: {next: null},
+            objects: this.config.fixtures.georegion_kind
+          }),
+          itemMap: (item) => {
+            return {label: item[1], id: item[0]}
           }
         }
       }
@@ -243,6 +272,15 @@ export default {
     togglePane (e) {
       this.tabPane = e.target.dataset.pane
     },
+    getEmptyFilters () {
+      return {
+        classification: null,
+        jurisdiction: null,
+        categories: [],
+        regions: null,
+        regions_kind: null
+      }
+    },
     hasFilter (key) {
       let v = this.filters[key]
       if (v === undefined) {
@@ -284,7 +322,7 @@ export default {
     },
     clearSearch () {
       this.clearResults()
-      this.filters = {}
+      this.filters = this.getEmptyFilters()
     },
     setFilterExpand (filter, expand) {
       let expanded = {

@@ -18,6 +18,7 @@ from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
 from froide.publicbody.widgets import get_widget_context
 from froide.publicbody.models import PublicBody
 from froide.publicbody.api_views import PublicBodyListSerializer
+from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
 
@@ -81,6 +82,7 @@ class MakeRequestView(FormView):
                 'listJurisdictions': reverse('api:jurisdiction-list'),
                 'listCategories': reverse('api:category-list'),
                 'listClassifications': reverse('api:classification-list'),
+                'listGeoregions': reverse('api:georegion-list'),
                 'listPublicBodies': reverse('api:publicbody-list'),
                 'listLaws': reverse('api:law-list'),
                 'search': reverse('foirequest-search'),
@@ -132,7 +134,11 @@ class MakeRequestView(FormView):
                     _('classification'),
                     _('classifications'),
                 ],
-
+                'containingGeoregionsPlural': [
+                    _('part of administrative region'),
+                    _('part of administrative regions'),
+                ],
+                'administrativeUnitKind': _('type of administrative unit'),
                 'toPublicBody': _('To: {name}').format(name='${name}'),
                 'change': _('change'),
                 'searchPlaceholder': _('Search...'),
@@ -181,6 +187,11 @@ class MakeRequestView(FormView):
             'regex': {
                 'greetings': [_('Dear Sir or Madam')],
                 'closings': [_('Kind Regards')]
+            },
+            'fixtures': {
+                'georegion_kind': [
+                    [str(k), str(v)] for k, v in GeoRegion.KIND_CHOICES
+                ]
             }
         }
         pb_ctx = get_widget_context()

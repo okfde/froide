@@ -1,5 +1,5 @@
 <template>
-  <div if="hasValue">
+  <div v-if="hasValue">
     <div v-for="v in valueList" :key="v.id" class="filter-badge">
       {{ v.label }}
       <i @click="removeFilter(v)" class="remove-filter fa fa-close" aria-hidden="true"></i>

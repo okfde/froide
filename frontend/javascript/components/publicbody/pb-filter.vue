@@ -5,9 +5,22 @@
     </h5>
     <transition name="expand">
       <div v-show="expanded" class="filter-container">
-        <input v-if="hasSearch" type="search" class="form-control form-control-sm" :placeholder="i18n.searchPlaceholder" v-model="search" @keyup="triggerSearch" @keydown.enter.prevent="triggerSearch">
+        <select v-if="hasChoices" v-model="choice" @change="triggerSearch" class="form-control">
+          <option v-for="opt in config.choices[1]" :value="opt[0]" :key="opt[0]">
+            {{ opt[1] }}
+          </option>
+        </select>
+        <input v-if="hasSearch" type="search"
+          class="form-control form-control-sm"
+          :placeholder="i18n.searchPlaceholder"
+          v-model="search"
+          @keyup="triggerSearch"
+          @keydown.enter.prevent="triggerSearch">
         <div class="filter-list-container">
-          <pb-filter-list :config="config" :i18n="i18n" :scope="scope" :has-more="hasMore" :items="orderedItems" :value="value"
+          <div v-if="loading" class="spinner-border text-secondary" role="status">
+            <span class="sr-only">{{ i18n.loading }}</span>
+          </div>
+          <pb-filter-list v-else :config="config" :i18n="i18n" :scope="scope" :has-more="hasMore" :items="orderedItems" :value="value"
           @removeFilter="removeFilter" @setFilter="setFilter" @loadMore="loadMore" @loadChildren="loadChildren"></pb-filter-list>
         </div>
       </div>
@@ -34,8 +47,10 @@ export default {
     return {
       items: [],
       search: '',
+      choice: null,
       lastSearch: null,
-      searchMeta: null
+      searchMeta: null,
+      loading: false
     }
   },
   mounted () {
@@ -44,6 +59,9 @@ export default {
   computed: {
     hasSearch () {
       return this.config.hasSearch
+    },
+    hasChoices () {
+      return this.config.choices
     },
     triggerSearch () {
       return debounce(this.runSearch, 300)
@@ -94,20 +112,33 @@ export default {
       this.removeFilter(this.value)
     },
     runSearch () {
-      if (this.lastSearch === this.search) {
+      let filters = {}
+      if (this.search === '') {
+        filters = {
+          ...filters,
+          ...this.config.initialFilters
+        }
+      }
+      if (this.config.choices && this.choice) {
+        filters[this.config.choices[0]] = this.choice
+      }
+      let searchDump = JSON.stringify({
+        q: this.search,
+        ...filters
+      })
+      if (this.lastSearch === searchDump) {
         return
       }
-      this.lastSearch = this.search
-      let filters = null
-      if (this.search === '') {
-        filters = this.config.initialFilters
-      }
+      this.items = []
+      this.lastSearch = searchDump
+      this.loading = true
       this.getItems(this.search, filters)
     },
     getItems (q, filters) {
       this.search = q
       this.config.getItems(q, filters).then((result) => {
         this.searchMeta = result.meta
+        this.loading = false
         this.items = this.processItems(result.objects)
       })
     },

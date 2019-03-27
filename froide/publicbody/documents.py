@@ -30,6 +30,9 @@ class PublicBodyDocument(DocType):
 
     classification = fields.ListField(fields.IntegerField())
     categories = fields.ListField(fields.IntegerField())
+    regions = fields.ListField(fields.IntegerField())
+    regions_exact = fields.ListField(fields.IntegerField())
+    regions_kind = fields.ListField(fields.KeywordField())
 
     class Meta:
         model = PublicBody
@@ -42,6 +45,7 @@ class PublicBodyDocument(DocType):
         ).prefetch_related(
             'classification',
             'categories',
+            'regions'
         )
 
     def prepare_content(self, obj):
@@ -68,3 +72,16 @@ class PublicBodyDocument(DocType):
         cats = obj.categories.all()
         return [o.id for o in cats] + [
                 c.id for o in cats for c in o.get_ancestors()]
+
+    def prepare_regions(self, obj):
+        regs = obj.regions.all()
+        return [o.id for o in regs] + [
+                c.id for o in regs for c in o.get_ancestors()]
+
+    def prepare_regions_exact(self, obj):
+        regs = obj.regions.all()
+        return [o.id for o in regs]
+
+    def prepare_regions_kind(self, obj):
+        regs = obj.regions.all()
+        return [o.kind for o in regs]

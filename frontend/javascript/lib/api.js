@@ -127,6 +127,10 @@ class FroideAPI {
     return this.getJsonForUrl(this.config.url.listClassifications, term, filters)
   }
 
+  listGeoregions (term, filters) {
+    return this.getJsonForUrl(this.config.url.listGeoregions, term, filters)
+  }
+
   searchFoiRequests (term) {
     let query = encodeURIComponent(term)
     let url = this.config.url.searchRequests + '?q=' + query
