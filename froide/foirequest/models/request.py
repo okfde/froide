@@ -501,7 +501,7 @@ class FoiRequest(models.Model):
         return self.status == 'publicbody_needed'
 
     def awaits_response(self):
-        return self.status == 'awaiting_response'
+        return self.status == 'awaiting_response' or self.status == 'asleep'
 
     def can_be_escalated(self):
         return not self.needs_public_body() and (
