@@ -65,7 +65,8 @@ export default {
     image () {
       this.loaded = false
       const image = new window.Image()
-      image.onload = this.imageLoaded
+      image.crossOrigin = "Anonymous"
+      image.addEventListener("load", this.imageLoaded, false);
       image.src = this.page.url
       return image
     },
