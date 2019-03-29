@@ -5,6 +5,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.postgres.fields import JSONField
+from django.utils.functional import cached_property
 
 from froide.publicbody.models import PublicBody
 
@@ -60,6 +61,10 @@ class RequestDraft(models.Model):
     @property
     def title(self):
         return self.subject
+
+    @cached_property
+    def is_multi_request(self):
+        return self.publicbodies.all().count() > 1
 
     def get_absolute_url(self):
         return reverse('foirequest-make_draftrequest', kwargs={'pk': self.id})

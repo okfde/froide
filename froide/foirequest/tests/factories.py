@@ -15,10 +15,14 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
-from froide.publicbody.models import (Jurisdiction, FoiLaw, PublicBody,
-    Classification, Category, PublicBodyTag)
-from froide.foirequest.models import (FoiRequest, FoiMessage, FoiAttachment,
-    FoiEvent, PublicBodySuggestion, DeferredMessage, RequestDraft)
+from froide.publicbody.models import (
+    Jurisdiction, FoiLaw, PublicBody,
+    Classification, Category, PublicBodyTag
+)
+from froide.foirequest.models import (
+    FoiRequest, FoiMessage, FoiAttachment, FoiProject,
+    FoiEvent, PublicBodySuggestion, DeferredMessage, RequestDraft
+)
 
 
 TEST_PDF_URL = "test.pdf"
@@ -194,6 +198,15 @@ class RequestDraftFactory(factory.DjangoModelFactory):
     user = factory.LazyAttribute(lambda o: UserFactory())
     subject = factory.Sequence(lambda n: 'My FoiRequest Number {0}'.format(n))
     body = factory.Sequence(lambda n: 'My FoiRequest Body Number {0}'.format(n))
+
+
+class FoiProjectFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = FoiProject
+
+    user = factory.LazyAttribute(lambda o: UserFactory())
+    title = factory.Sequence(lambda n: 'My FoiProject Number {0}'.format(n))
+    slug = factory.LazyAttribute(lambda o: slugify(o.title))
 
 
 class DeferredMessageFactory(factory.DjangoModelFactory):

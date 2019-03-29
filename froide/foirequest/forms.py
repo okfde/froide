@@ -85,9 +85,9 @@ class RequestForm(JSONMixin, forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request', None)
+        self.request = kwargs.pop('request', None)
         super(RequestForm, self).__init__(*args, **kwargs)
-        draft_qs = get_read_queryset(RequestDraft.objects.all(), request)
+        draft_qs = get_read_queryset(RequestDraft.objects.all(), self.request)
         self.fields['draft'].queryset = draft_qs
 
     def clean_reference(self):
@@ -100,6 +100,9 @@ class RequestForm(JSONMixin, forms.Form):
                        allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
             return redirect_url
         return ''
+
+    def get_draft(self):
+        return self.cleaned_data.get('draft')
 
 
 def get_message_sender_form(*args, **kwargs):

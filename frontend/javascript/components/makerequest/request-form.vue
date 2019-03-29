@@ -2,7 +2,7 @@
   <div>
     <slot name="request-legend-title"></slot>
 
-    <div v-if="multiRequest && publicBodies.length > 1" class="publicbody-summary-container">
+    <div v-if="multiRequest && canBatchRequest && publicBodies.length > 1" class="publicbody-summary-container">
       <div class="publicbody-summary">
         <p>
           {{ i18n._('toMultiPublicBodies', {count: publicBodies.length}) }}
@@ -14,6 +14,18 @@
         </p>
       </div>
     </div>
+    <div v-if="multiRequest && !canBatchRequest" class="mb-5 mt-5">
+      <p>{{ i18n._('toMultiPublicBodies', {count: publicBodies.length}) }}</p>
+      <div class="publicbody-summary-list">
+        <ul>
+          <li v-for="pb in publicBodies" :key="pb.id">
+            {{ pb.name }}
+          </li>
+        </ul>
+      </div>
+      <small>{{ i18n.batchRequestDraftOnly }}</small>
+    </div>
+
     <div v-else class="publicbody-summary-container">
       <div class="row">
         <div class="col-lg-12 publicbody-summary">
@@ -280,6 +292,9 @@ export default {
       }
       return ''
     },
+    canBatchRequest () {
+      return this.config.settings.user_can_create_batch
+    },
     hasUser () {
       return this.user && this.user.id
     },
@@ -430,6 +445,12 @@ legend {
 
 .publicbody-summary {
   font-size: $font-size-lg;
+}
+
+.publicbody-summary-list {
+  max-height: 5rem;
+  border: 1px solid #aaa;
+  overflow: auto;
 }
 
 .pb-change-link {
