@@ -45,6 +45,7 @@
           :document="doc"
           :config="config"
           @docupdated="documentUpdated(doc, $event)"
+          @makerelevant="makeRelevant(doc)"
           @notnew="doc.new = false"
         ></component>
       </div>
@@ -131,6 +132,7 @@ export default {
             name: att.name,
             filetype: att.filetype,
             pending: att.pending,
+            url: att.file_url,
             attachment: att,
             component: 'file-document'
           })
@@ -259,6 +261,26 @@ export default {
       for (let key in update) {
         Vue.set(doc, key, update[key])
       }
+    },
+    makeRelevant (doc) {
+      let imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
+      if (imageDoc.length > 0) {
+        doc.pageNum = imageDoc[0].pages.length + 1
+        Vue.set(imageDoc[0], 'pages', [
+          ...imageDoc[0].pages,
+          doc
+        ])
+      } else {
+        doc.pageNum = 1
+        this.documents = [
+          ...this.documents,
+          this.getNewImageDoc({
+            pages: [doc],
+            new: true
+          })
+        ]
+      }
+      this.otherAttachments = this.otherAttachments.filter((o) => o !== doc)
     },
     uploadPage (page) {
       return new Promise((resolve, reject) => {

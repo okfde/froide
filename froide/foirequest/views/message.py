@@ -307,6 +307,7 @@ def upload_attachments(request, foirequest, message_id):
             'documentTitle': _('Document title'),
             'documentTitlePlaceholder': _('e.g. Letter from date'),
             'showIrrelevantAttachments': _('Show irrelevant attachments'),
+            'makeRelevant': _('Make relevant'),
             'loading': _('Loading...'),
             'review': _('Review'),
             'approve': _('Approve'),

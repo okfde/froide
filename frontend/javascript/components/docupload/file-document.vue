@@ -19,6 +19,7 @@
           <file-review :config="config" :document="document"
             @docupdated="updateDocument"
             @loadpdf="$emit('loadpdf')"
+            @makerelevant="$emit('makerelevant')"
             :can-preview="true"
           ></file-review>
         </template>

@@ -1,6 +1,10 @@
 <template>
   <div class="row">
     <div v-if="hasAttachment" class="col-auto mt-1">
+      <button v-if="attachment.is_irrelevant && attachment.is_image" class="btn btn-sm btn-light mt-1" @click="$emit('makerelevant')">
+        {{ i18n.makeRelevant }}
+      </button>
+
       <a v-if="canOpen" :href="attachment.site_url" target="_blank" class="btn btn-sm btn-light mt-1">
         {{ i18n.openAttachmentPage }}
       </a>
