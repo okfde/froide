@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.urls import reverse
 from django.test.utils import override_settings
-from django.db import transaction
 
 from froide.helper.email_utils import EmailParser
 
