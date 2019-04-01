@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 
-from froide.account.forms import NewUserForm
+from froide.account.forms import NewUserForm, AddressForm
 from froide.team.views import AssignTeamView
 from froide.helper.utils import render_400, render_403
 
@@ -217,6 +217,9 @@ def make_same_request(request, slug):
             messages.add_message(request, messages.ERROR,
                 _("You already made an identical request"))
             return render_400(request)
+        address_form = AddressForm(request.POST)
+        if address_form.is_valid():
+            address_form.save()
 
     throttle_message = check_throttle(request.user, FoiRequest)
     if throttle_message:
@@ -241,6 +244,8 @@ def make_same_request(request, slug):
         'public': foirequest.public,
         'original_foirequest': foirequest
     }
+    if request.POST.get('redirect_url'):
+        data['redirect_url'] = request.POST['redirect_url']
 
     if not request.user.is_authenticated:
         data.update(new_user_form.cleaned_data)

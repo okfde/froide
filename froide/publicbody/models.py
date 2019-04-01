@@ -162,6 +162,10 @@ class FoiLaw(models.Model):
     def description_html(self):
         return markdown(self.description)
 
+    @property
+    def address_required(self):
+        return not self.email_only
+
     def get_refusal_reason_choices(self):
         not_applicable = [('n/a', _("No law can be applied"))]
         if self.meta:

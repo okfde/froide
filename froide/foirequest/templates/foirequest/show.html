@@ -546,7 +546,9 @@
   {% if object.not_publishable %}
     <div class="row justify-content-center">
       <div class="col-md-8">
-        {% include "foirequest/snippets/make_same_request.html" %}
+        <div class="alert d-print-none alert-info mt-5" id="make-same-request">
+          {% include "foirequest/snippets/make_same_request.html" %}
+        </div>
       </div>
     </div>
   {% endif %}
