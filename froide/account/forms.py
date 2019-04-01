@@ -40,6 +40,11 @@ class UserExtrasRegistry():
 
 
 user_extra_registry = UserExtrasRegistry()
+ADDRESS_HELP_TEXT = _(
+    'Your address will not be displayed '
+    'publicly and is only needed because a public body '
+    'will likely want to send you paper.'
+)
 
 
 class NewUserBaseForm(forms.Form):
@@ -82,11 +87,15 @@ class NewUserBaseForm(forms.Form):
             help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
     def __init__(self, *args, **kwargs):
+        address_required = kwargs.pop('address_required', False)
         super(NewUserBaseForm, self).__init__(*args, **kwargs)
-        if ALLOW_PSEUDONYM:
+        self.fields['address'].required = address_required
+        if ALLOW_PSEUDONYM and not address_required:
             self.fields["last_name"].help_text = mark_safe(
                     _('<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.')
                     .format(url=get_content_url("privacy") + '#pseudonym'))
+        if address_required:
+            self.fields['address'].help_text = ADDRESS_HELP_TEXT
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()
@@ -99,16 +108,18 @@ class AddressForm(JSONMixin, forms.Form):
     address = forms.CharField(max_length=300,
         required=False,
         label=_('Mailing Address'),
-        help_text=_(
-            'Your address will not be displayed '
-            'publicly and is only needed because a public body '
-            'will likely want to send you paper.'),
+        help_text=ADDRESS_HELP_TEXT,
         widget=forms.Textarea(attrs={
             'rows': '3',
             'class': 'form-control',
             'placeholder': _('Street, Post Code, City'),
         })
     )
+
+    def __init__(self, *args, **kwargs):
+        address_required = kwargs.pop('address_required', False)
+        super().__init__(*args, **kwargs)
+        self.fields['address'].required = address_required
 
     def save(self, user):
         address = self.cleaned_data['address']
