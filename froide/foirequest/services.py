@@ -1,6 +1,7 @@
 import re
 import uuid
 
+from django.db import transaction
 from django.utils import timezone
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -462,4 +463,7 @@ class ReceiveEmailService(BaseService):
             att.save()
 
             if att.can_convert_to_pdf():
-                convert_attachment_task.delay(att.id)
+                self.trigger_convert_pdf(att.id)
+
+    def trigger_convert_pdf(self, att_id):
+        transaction.on_commit(lambda: convert_attachment_task.delay(att_id))
