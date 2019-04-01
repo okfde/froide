@@ -458,6 +458,9 @@ class ReceiveEmailService(BaseService):
                 att.name = add_number_to_filename(att.name, i)
             names.add(att.name)
 
+            if foirequest.not_publishable:
+                att.can_approve = False
+
             attachment._committed = False
             att.file = File(attachment)
             att.save()

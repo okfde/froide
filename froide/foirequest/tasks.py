@@ -151,7 +151,8 @@ def convert_attachment(att):
             belongs_to=att.belongs_to,
             approved=False,
             filetype='application/pdf',
-            is_converted=True
+            is_converted=True,
+            can_approve=att.can_approve
         )
 
     new_file = ContentFile(output_bytes)

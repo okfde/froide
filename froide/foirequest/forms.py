@@ -519,6 +519,7 @@ class AttachmentSaverMixin(object):
             att.size = file.size
             att.filetype = file.content_type
             att.file.save(filename, file)
+            att.can_approve = not message.request.not_publishable
             att.approved = False
             att.save()
 

@@ -82,7 +82,10 @@ def approve_attachment(request, slug, attachment):
     att = get_object_or_404(FoiAttachment, id=int(attachment))
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
-    att.approve_and_save()
+
+    # hard guard against publishing of non publishable requests
+    if not foirequest.not_publishable:
+        att.approve_and_save()
 
     if request.is_ajax():
         if request.content_type == 'application/json':
@@ -274,7 +277,10 @@ def redact_attachment(request, slug, attachment_id):
             pdf_file = File(f)
             att.file = pdf_file
             att.size = pdf_file.size
-            att.approve_and_save()
+            if foirequest.not_publishable:
+                att.save()
+            else:
+                att.approve_and_save()
 
         if not attachment.is_redacted:
             attachment.redacted = att
