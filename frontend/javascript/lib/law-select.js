@@ -2,7 +2,8 @@ let sortMetaLawsFirst = (a, b) => {
   if (a.meta && !b.meta) return -1
   if (b.meta && !a.meta) return 1
 
-  return a.priority > b.priority
+  // 'highest' priority = lowest value
+  return a.priority < b.priority
 }
 
 let selectBestLaw = (allLaws, lawType) => {
