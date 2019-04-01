@@ -70,7 +70,8 @@ def convert_to_pdf(filepath, binary_name=None, construct_call=None, timeout=120)
         return
     outpath = tempfile.mkdtemp()
     path, filename = os.path.split(filepath)
-    name, extension = filename.rsplit('.', 1)
+    parts = filename.rsplit('.', 1)
+    name = parts[0]
     output_file = os.path.join(outpath, '%s.pdf' % name)
     arguments = [
         binary_name,
