@@ -219,7 +219,7 @@ def make_same_request(request, slug):
             return render_400(request)
         address_form = AddressForm(request.POST)
         if address_form.is_valid():
-            address_form.save()
+            address_form.save(user)
 
     throttle_message = check_throttle(request.user, FoiRequest)
     if throttle_message:
