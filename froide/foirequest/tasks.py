@@ -123,7 +123,8 @@ def convert_attachment_task(instance_id):
         att = FoiAttachment.objects.get(pk=instance_id)
     except FoiAttachment.DoesNotExist:
         return
-    return convert_attachment(att)
+    if att.can_convert_to_pdf():
+        return convert_attachment(att)
 
 
 def convert_attachment(att):
