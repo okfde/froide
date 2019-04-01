@@ -21,7 +21,7 @@ django-storages==1.7.1
 # Test taggit 1.0.0, seems broken
 django-taggit==0.24.0
 django-treebeard==4.3
-Django==2.1.7
+Django==2.2.0
 djangorestframework-csv==2.1.0
 djangorestframework-jsonp==1.0.2
 djangorestframework==3.9.2
