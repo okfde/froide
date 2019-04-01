@@ -3,13 +3,14 @@ from io import BytesIO
 import json
 import os
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.core import mail
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.urls import reverse
 from django.test.utils import override_settings
+from django.db import transaction
 
 from froide.helper.email_utils import EmailParser
 
@@ -25,7 +26,7 @@ def p(path):
     return os.path.join(TEST_DATA_ROOT, path)
 
 
-class MailTest(TestCase):
+class MailTestMixin():
     def setUp(self):
         self.secret_address = 'sw+yurpykc1hr@fragdenstaat.de'
         site = factories.make_world()
@@ -35,29 +36,13 @@ class MailTest(TestCase):
             first_message=date, last_message=date)
         factories.FoiMessageFactory.create(request=req, timestamp=date)
 
-    def test_working(self):
-        with open(p("test_mail_01.txt"), 'rb') as f:
-            process_mail.delay(f.read())
-        request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
-        messages = request.messages
-        self.assertEqual(len(messages), 2)
-        self.assertIn('Jörg Gahl-Killen', [m.sender_name for m in messages])
-        message = messages[1]
-        self.assertEqual(message.timestamp,
-                datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
-        self.assertEqual(
-            message.subject,
-            'Anfrage nach dem Informationsfreiheitsgesetz;  Förderanträge und Verwendungsnachweise der Hanns-Seidel-Stiftung;  Vg. 375-2018'
-        )
-        self.assertEqual(message.recipient, request.user.display_name())
-        self.assertEqual(message.recipient_email, 'sw+yurpykc1hr@fragdenstaat.de')
 
+class MailTransactionTest(MailTestMixin, TransactionTestCase):
     def test_working_with_attachment(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
         domain = request.public_body.email.split('@')[1]
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 1)
-
         with open(p("test_mail_02.txt"), 'rb') as f:
             mail_string = f.read().replace(b'abcd@me.com', b'abcde@' + domain.encode('ascii'))
             process_mail.delay(mail_string)
@@ -77,6 +62,25 @@ class MailTest(TestCase):
             messages[1].attachments[0].converted,
             messages[1].attachments[1]
         )
+
+
+class MailTest(MailTestMixin, TestCase):
+    def test_working(self):
+        with open(p("test_mail_01.txt"), 'rb') as f:
+            process_mail.delay(f.read())
+        request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
+        messages = request.messages
+        self.assertEqual(len(messages), 2)
+        self.assertIn('Jörg Gahl-Killen', [m.sender_name for m in messages])
+        message = messages[1]
+        self.assertEqual(message.timestamp,
+                datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc))
+        self.assertEqual(
+            message.subject,
+            'Anfrage nach dem Informationsfreiheitsgesetz;  Förderanträge und Verwendungsnachweise der Hanns-Seidel-Stiftung;  Vg. 375-2018'
+        )
+        self.assertEqual(message.recipient, request.user.display_name())
+        self.assertEqual(message.recipient_email, 'sw+yurpykc1hr@fragdenstaat.de')
 
     def test_wrong_address(self):
         request = FoiRequest.objects.get_by_secret_mail(
