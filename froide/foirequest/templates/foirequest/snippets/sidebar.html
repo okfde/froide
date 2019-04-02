@@ -107,15 +107,15 @@
  {% if object|can_read_foirequest_authenticated:request %}
     <li class="nav-header">{% trans "Download" %}</li>
     <li class="nav-item">
-      <a class="btn btn-light w-100 mb-1" href="{% url 'foirequest-download' slug=object.slug %}">
+      <a class="btn btn-light btn-block mb-1" href="{% url 'foirequest-download' slug=object.slug %}">
         <i class="fa fa-download"></i>
-        {% trans "Download request as ZIP-file" %}
+        {% trans "Download as ZIP" %}
       </a>
     </li>
     <li class="nav-item">
-      <a class="btn btn-light w-100" href="{% url 'foirequest-pdf' slug=object.slug %}">
+      <a class="btn btn-light btn-block" href="{% url 'foirequest-pdf' slug=object.slug %}">
         <i class="fa fa-file-pdf-o"></i>
-        {% trans "Download request as PDF" %}
+        {% trans "Download as PDF" %}
       </a>
     </li>
   {% endif %}
@@ -126,7 +126,7 @@
       <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
         {% csrf_token %}
         <input type="number" name="months" value="6" class="form-control"/>
-        <button class="btn btn-light" type="submit">
+        <button class="btn btn-light btn-block mb-1" type="submit">
           {% trans "Extend Deadline by Months" %}
         </button>
       </form>
@@ -136,7 +136,7 @@
   {% if user.is_staff %}
     <li class="nav-header">{% trans "Staff Actions" %}</li>
     <li class="nav-item">
-      <a class="btn btn-light" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+      <a class="btn btn-light btn-block mb-1" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
         <i class="fa fa-cog"></i>
         {% trans "View on Admin site" %}
       </a>
@@ -147,7 +147,7 @@
       <li class="nav-item">
         <form id="mark-checked-form" class="ajaxified" class="ajaxified" method="post" action="{% url 'foirequest-mark_checked' slug=object.slug %}">
           {% csrf_token %}
-          <button class="btn btn-light" type="submit">
+          <button class="btn btn-light btn-block mb-1" type="submit">
             {% trans "Mark as checked" %}
           </button>
         </form>
@@ -162,7 +162,7 @@
       <li class="nav-item">
         <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
           {% csrf_token %}
-          <button class="btn btn-light" type="submit">{% trans "Mark as NOT FoI" %}</button>
+          <button class="btn btn-light btn-block mb-1" type="submit">{% trans "Mark as NOT FoI" %}</button>
         </form>
         <div style="display:none" id="mark-not-foi-form-success">
           {% trans "Marked as NOT FoI" %}
