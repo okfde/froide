@@ -1138,6 +1138,9 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 400)
 
+        req.same_as_count = 12000
+        req.save()
+
         # make request
         self.client.logout()
         self.client.login(email='dummy@example.org', password='froide')
@@ -1146,6 +1149,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 2)
         same_req = FoiRequest.objects.get(same_as=req, user=user)
+        self.assertTrue(same_req.slug.endswith('-12001'))
         self.assertIn(same_req.get_absolute_url(), response['Location'])
         self.assertEqual(list(req.same_as_set), [same_req])
         self.assertEqual(same_req.identical_count(), 1)

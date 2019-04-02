@@ -283,6 +283,11 @@ class CreateRequestFromProjectService(CreateRequestService):
 
 
 class CreateSameAsRequestService(CreateRequestService):
+    def create_request(self, publicbody, sequence=0):
+        original_request = self.data['original_foirequest']
+        sequence = original_request.same_as_count + 1
+        return super().create_request(publicbody, sequence=sequence)
+
     def pre_save_request(self, request):
         original_request = self.data['original_foirequest']
         request.same_as = original_request
