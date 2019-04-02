@@ -2,6 +2,7 @@
 
 {% load foirequest_tags %}
 {% load account_tags %}
+{% load humanize %}
 {% load form_helper %}
 
 {% if not hide_intro %}
@@ -65,4 +66,4 @@
     </p>
   </form>
 {% endif %}
-<p class="mt-3 mb-3">{% blocktrans count counter=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
+<p class="mt-3 mb-3">{% blocktrans with counter=object.identical_count|intcomma count count=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
