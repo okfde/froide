@@ -30,7 +30,7 @@ from .models import (
     TaggedMessage, DeferredMessage, TaggedFoiRequest,
     RequestDraft, DeliveryStatus,
 )
-from .tasks import count_same_foirequests, convert_attachment_task
+from .tasks import convert_attachment_task
 from .widgets import AttachmentFileWidget
 
 
@@ -152,7 +152,11 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
             if f.is_valid():
                 req = f.cleaned_data['obj']
                 queryset.update(same_as=req)
-                count_same_foirequests.delay(req.id)
+                count = FoiRequest.objects.filter(same_as=req).count()
+                FoiRequest.objects.filter(id=req.id).update(
+                    same_as_count=count
+                )
+
                 self.message_user(request,
                     _("Successfully marked requests as identical."))
                 # Return None to display the change list page again.

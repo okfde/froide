@@ -148,19 +148,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     send_request_user_email(sender, subject, body)
 
 
-# Updating same_as foirequest count
-@receiver(signals.post_save, sender=FoiRequest,
-        dispatch_uid="foirequest_add_up_sameascount")
-def foirequest_add_same_as_count(instance=None, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
-        return
-    from .tasks import count_same_foirequests
-    if instance.same_as:
-        count_same_foirequests.delay(instance.same_as.id)
-
-
 # Updating public body request counts
-
 @receiver(FoiRequest.request_to_public_body,
         dispatch_uid="foirequest_increment_request_count")
 def increment_request_count(sender, **kwargs):

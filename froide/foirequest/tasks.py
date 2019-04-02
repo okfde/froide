@@ -53,16 +53,6 @@ def classification_reminder():
 
 
 @celery_app.task
-def count_same_foirequests(instance_id):
-    translation.activate(settings.LANGUAGE_CODE)
-    try:
-        count = FoiRequest.objects.filter(same_as_id=instance_id).count()
-        FoiRequest.objects.filter(id=instance_id).update(same_as_count=count)
-    except FoiRequest.DoesNotExist:
-        pass
-
-
-@celery_app.task
 def check_delivery_status(message_id, count=None, extended=False):
     try:
         message = FoiMessage.objects.get(id=message_id)
