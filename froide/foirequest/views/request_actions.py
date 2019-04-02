@@ -227,7 +227,7 @@ def make_same_request(request, slug):
         return render_400(request)
 
     body = foirequest.description
-    if foirequest.status_is_final:
+    if foirequest.status_is_final():
         body = "{}\n\n{}" .format(
             foirequest.description,
             _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
