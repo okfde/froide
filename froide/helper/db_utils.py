@@ -9,7 +9,7 @@ def save_obj_with_slug(obj, attribute='title', **kwargs):
 
 def save_obj_unique(obj, attr, count=0, postfix_format='-{count}'):
     klass = obj.__class__
-    MAX_COUNT = 10000  # max 10 thousand loops
+    MAX_COUNT = 100000  # max 10 thousand loops
     base_attr = getattr(obj, attr)
     first_round = count == 0
     postfix = ''
