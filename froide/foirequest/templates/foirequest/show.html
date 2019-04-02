@@ -7,7 +7,7 @@
 {% load team_tags %}
 {% load form_helper %}
 {% load block_helper %}
-
+{% load humanize %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -581,7 +581,7 @@
 
     {% if object.same_as_count %}
       <div class="d-print-none" id="identical">
-        <h5>{% blocktrans count counter=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
+        <h5>{% blocktrans with counter=object.same_as_count|intcomma count count=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
         <ul>
           {% for foirequest in object.same_as_set.all %}
             <li>
