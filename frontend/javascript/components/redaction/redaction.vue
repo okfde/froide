@@ -162,7 +162,7 @@ export default {
       workingState: 'loading',
       ready: false,
       textOnly: false,
-      textDisabled: false,
+      textDisabled: true,
       scaleFactor: PDF_TO_CSS_UNITS,
       actionsPerPage: {},
       actionIndexPerPage: {},
@@ -345,15 +345,11 @@ export default {
     },
     toggleText () {
       this.textOnly = !this.textOnly
-      if (this.textOnly) {
-        this.textDisabled = false
-      }
+      this.textDisabled = !this.textOnly
     },
     toggleDrawing () {
       this.textDisabled = !this.textDisabled
-      if (this.textDisabled) {
-        this.textOnly = false
-      }
+      this.textOnly = !this.textDisabled
     },
     redact () {
       this.$refs.top.scrollIntoView(true)
