@@ -79,6 +79,21 @@
 
 {% block foirequest_header %}{% endblock %}
 
+{% if object.campaign and not object|can_write_foirequest:request %}
+  <div class="card">
+    <div class="card-body">
+      <p class="text-right">
+        {% blocktrans with name=object.campaign.name url=object.campaign.url %}
+          This request was made as part of the campaign <a href="{{ url }}">“{{ name }}”</a>.
+        {% endblocktrans %}
+      </p>
+      <p class="text-right">
+        <a href="{{ object.campaign.url }}" class="btn btn-primary">{% trans "Make a request yourself" %}</a>
+      </p>
+    </div>
+  </div>
+{% endif %}
+
 <div class="row">
   <div class="col-12">
     <h2 class="mb-5 mt-3">{{ object.title }}</h2>
