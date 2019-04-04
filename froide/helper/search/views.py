@@ -63,7 +63,10 @@ class BaseSearchView(ListView):
         self.form = None
         if filtered is not None:
             self.form = filtered.form
-            self.form.is_valid()
+            try:
+                self.form.is_valid()
+            except Exception:
+                pass
 
             # Set only valid data on widgets so they can render filter links
             data_clean_only = {
