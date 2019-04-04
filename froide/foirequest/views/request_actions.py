@@ -246,6 +246,8 @@ def make_same_request(request, slug):
     }
     if request.POST.get('redirect_url'):
         data['redirect_url'] = request.POST['redirect_url']
+    if request.POST.get('reference'):
+        data['reference'] = request.POST['reference']
 
     if not request.user.is_authenticated:
         data.update(new_user_form.cleaned_data)
