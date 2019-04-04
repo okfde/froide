@@ -158,6 +158,21 @@ class Base(Configuration):
         'django.contrib.auth.hashers.PBKDF2PasswordHasher',
         'froide.account.hashers.PBKDF2WrappedSHA1PasswordHasher',
     ]
+    MIN_PASSWORD_LENGTH = 9
+    AUTH_PASSWORD_VALIDATORS = [
+        {
+            'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+            'OPTIONS': {
+                'min_length': MIN_PASSWORD_LENGTH,
+            }
+        },
+        {
+            'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        },
+    ]
 
     # List of finder classes that know how to find static files in
     # various locations.

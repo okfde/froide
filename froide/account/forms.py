@@ -4,6 +4,9 @@ from django.contrib import auth
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
+from django.contrib.auth.password_validation import (
+    password_validators_help_text_html
+)
 from django import forms
 
 from froide.helper.form_utils import JSONMixin
@@ -171,7 +174,9 @@ class NewUserWithPasswordForm(NewUserForm):
                 'autocomplete': 'new-password'
             }
         ),
-        label=_('Password')
+        label=_('Password'),
+        min_length=settings.MIN_PASSWORD_LENGTH,
+        help_text=_('')
     )
     password2 = forms.CharField(
         widget=forms.PasswordInput(
@@ -370,10 +375,13 @@ class SetPasswordForm(DjangoSetPasswordForm):
 
     def __init__(self, *args, **kwargs):
         super(SetPasswordForm, self).__init__(*args, **kwargs)
+        help_text = password_validators_help_text_html()
+        self.fields['new_password1'].help_text = help_text
         self.fields['pw_change_email'].initial = self.user.email
-        for i in range(1, 3):
+        for i in (1, 2):
             widget = self.fields['new_password%d' % i].widget
             widget.attrs.update({
+                'minlength': settings.MIN_PASSWORD_LENGTH,
                 'class': 'form-control',
                 'autocomplete': 'new-password',
             })

@@ -280,21 +280,24 @@ class AccountTest(TestCase):
     def test_change_password(self):
         response = self.client.get(reverse('account-change_password'))
         self.assertEqual(response.status_code, 405)
-        data = {"new_password1": "froide1",
-                "new_password2": "froide2"}
+        data = {"new_password1": "froide1froide2",
+                "new_password2": "froide1froide3"}
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 302)
         self.assertForbidden(response)
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 400)
-        data["new_password2"] = "froide1"
+        data["new_password2"] = "froide1froide2"
         response = self.client.post(reverse('account-change_password'), data)
         self.assertEqual(response.status_code, 302)
         self.client.logout()
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertFalse(ok)
-        ok = self.client.login(email='info@fragdenstaat.de', password='froide1')
+        ok = self.client.login(
+            email='info@fragdenstaat.de',
+            password=data["new_password2"]
+        )
         self.assertTrue(ok)
 
     def test_send_reset_password_link(self):
@@ -325,15 +328,15 @@ class AccountTest(TestCase):
             kwargs={"uidb64": uidb64, "token": token}), follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['validlink'])
-        data = {"new_password1": "froide4",
-                "new_password2": "froide4"}
+        data = {"new_password1": "froide4froide5",
+                "new_password2": "froide4froide5"}
         response = self.client.post(response.wsgi_request.path, data)
         self.assertEqual(response.status_code, 302)
         # we are already logged in after redirect
         response = self.client.get(reverse('account-requests'))
         self.assertEqual(response.status_code, 200)
         self.client.logout()
-        ok = self.client.login(email='info@fragdenstaat.de', password='froide4')
+        ok = self.client.login(email='info@fragdenstaat.de', password='froide4froide5')
         self.assertTrue(ok)
 
     def test_next_password_reset(self):
@@ -354,8 +357,8 @@ class AccountTest(TestCase):
         response = self.client.get(reverse('account-password_reset_confirm',
             kwargs={"uidb64": uidb64, "token": token}), follow=True)
         self.assertEqual(response.status_code, 200)
-        data = {"new_password1": "froide4",
-                "new_password2": "froide4"}
+        data = {"new_password1": "froide4froide5",
+                "new_password2": "froide4froide5"}
         response = self.client.post(response.wsgi_request.path, data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
