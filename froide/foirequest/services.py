@@ -290,6 +290,7 @@ class CreateSameAsRequestService(CreateRequestService):
     def pre_save_request(self, request):
         original_request = self.data['original_foirequest']
         request.same_as = original_request
+        request.campaign = original_request.campaign
         request.not_publishable = original_request.not_publishable
 
 
