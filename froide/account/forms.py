@@ -175,8 +175,8 @@ class NewUserWithPasswordForm(NewUserForm):
             }
         ),
         label=_('Password'),
+        help_text=password_validators_help_text_html(),
         min_length=settings.MIN_PASSWORD_LENGTH,
-        help_text=_('')
     )
     password2 = forms.CharField(
         widget=forms.PasswordInput(
@@ -189,7 +189,7 @@ class NewUserWithPasswordForm(NewUserForm):
     )
 
     def clean(self):
-        cleaned = super(NewUserWithPasswordForm, self).clean()
+        cleaned = super().clean()
         if cleaned['password'] != cleaned['password2']:
             raise forms.ValidationError(_("Passwords do not match!"))
         return cleaned
