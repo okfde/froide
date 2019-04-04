@@ -1,0 +1,24 @@
+{% load i18n %}
+{% load markup %}
+
+{% with campaign=object.campaign %}
+  <div class="card">
+    <div class="card-body">
+      {% if campaign.description %}
+        {{ campaign.description|markdown }}
+      {% endif %}
+      <p class="text-right">
+        {% blocktrans with name=campaign.name url=campaign.url %}
+          This request was made as part of the campaign <a href="{{ url }}">“{{ name }}”</a>.
+        {% endblocktrans %}
+      </p>
+      {% if campaign.active %}
+        {% if not request.user.is_authenticated or campaign.ident not in request.user.tags %}
+          <p class="text-right">
+            <a href="{{ campaign.url }}" class="btn btn-primary">{% trans "Make a request yourself" %}</a>
+          </p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+{% endwith %}
