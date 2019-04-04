@@ -37,6 +37,10 @@
           {% if redirect_url %}
             <input type="hidden" name="redirect_url" value="{{ redirect_url }}"/>
           {% endif %}
+          {% if reference %}
+            <input type="hidden" name="reference" value="{{ reference }}"/>
+          {% endif %}
+
           <p class="text-right">
             <button type="submit" class="btn btn-primary">
               &rarr;
