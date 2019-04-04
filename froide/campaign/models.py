@@ -17,6 +17,7 @@ class Campaign(models.Model):
     description = models.TextField(blank=True)
     start_date = models.DateTimeField(null=True)
     public = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
 
     objects = CampaignManager()
 
