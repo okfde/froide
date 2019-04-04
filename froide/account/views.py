@@ -184,7 +184,7 @@ def signup(request):
     form = UserLoginForm()
     signup_form = NewUserForm(request.POST)
     if signup_form.is_valid():
-        user, password, user_created = AccountService.create_user(**signup_form.cleaned_data)
+        user, user_created = AccountService.create_user(**signup_form.cleaned_data)
         if user_created:
             signup_form.save(user)
 
@@ -193,7 +193,7 @@ def signup(request):
 
         if user_created:
             account_service.send_confirmation_mail(
-                password=password, redirect_url=next_url
+                redirect_url=next_url
             )
         elif user.is_active:
             # Send login-link email

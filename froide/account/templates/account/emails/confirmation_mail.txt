@@ -4,11 +4,8 @@ This is an email from {{ site_name }} to confirm your email address.
 Please visit the link below:
 
 {{ url }}
+{% endblocktrans %}
 
-{% endblocktrans %}{% if password %}{% blocktrans %}We have also generated a random password for you. You can use it to login, but you can also change it, if you want to.
-
-Your password is: {{ password }}
-{% endblocktrans %}{% endif %}
 {% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}

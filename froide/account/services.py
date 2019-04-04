@@ -49,7 +49,7 @@ class AccountService(object):
     def create_user(cls, **data):
         existing_user = get_user_for_email(data['user_email'])
         if existing_user:
-            return existing_user, None, False
+            return existing_user, False
 
         user = User(
             first_name=data['first_name'],
@@ -60,10 +60,7 @@ class AccountService(object):
 
         user.is_active = False
         if 'password' in data:
-            password = data['password']
-        else:
-            password = User.objects.make_random_password()
-        user.set_password(password)
+            user.set_password(data['password'])
 
         user.private = data['private']
 
@@ -74,7 +71,7 @@ class AccountService(object):
         user.username = username_base
         save_obj_unique(user, 'username', postfix_format='_{count}')
 
-        return user, password, True
+        return user, True
 
     def confirm_account(self, secret, request_id=None):
         if not self.check_confirmation_secret(secret, request_id):
@@ -124,8 +121,8 @@ class AccountService(object):
             digestmod=hashlib.md5
         ).hexdigest()
 
-    def send_confirmation_mail(self, request_id=None, password=None,
-                               reference=None, redirect_url=None):
+    def send_confirmation_mail(self, request_id=None, reference=None,
+                               redirect_url=None):
         secret = self.generate_confirmation_secret(request_id)
         url_kwargs = {"user_id": self.user.pk, "secret": secret}
         if request_id:
@@ -160,7 +157,6 @@ class AccountService(object):
 
         context = {
             'url': settings.SITE_URL + url,
-            'password': password,
             'name': self.user.get_full_name(),
             'site_name': settings.SITE_NAME,
             'site_url': settings.SITE_URL

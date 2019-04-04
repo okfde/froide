@@ -55,7 +55,7 @@ class CreateRequestService(BaseService):
         user_auth = user.is_authenticated
 
         if not user_auth:
-            user, password, user_created = AccountService.create_user(
+            user, user_created = AccountService.create_user(
                 **self.data
             )
             self.data['user'] = user
@@ -80,7 +80,6 @@ class CreateRequestService(BaseService):
             if user_created:
                 AccountService(user).send_confirmation_mail(
                     request_id=foi_object.pk,
-                    password=password,
                     reference=foi_object.reference,
                     redirect_url=self.data.get('redirect_url')
                 )

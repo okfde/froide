@@ -194,10 +194,11 @@ class AccountTest(TestCase):
 
     def test_confirmation_process(self):
         self.client.logout()
-        user, password, user_created = AccountService.create_user(first_name="Stefan",
-                last_name="Wehrmeyer", user_email="sw@example.com",
+        user, user_created = AccountService.create_user(
+                first_name="Stefan", last_name="Wehrmeyer",
+                user_email="sw@example.com",
                 address="SomeRandomAddress\n11234 Bern", private=True)
-        AccountService(user).send_confirmation_mail(password=password)
+        AccountService(user).send_confirmation_mail()
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
         match = re.search(r'/%d/(\w+)/' % user.pk, message.body)
