@@ -38,7 +38,8 @@
       <div class="row mt-5 justify-content-center">
         <div class="col-lg-8">
           {% trans "Please set a password for your account now" as form_title %}
-          {% include "account/includes/change_password_form.html" with form_title=form_title %}
+          {% trans "Set password" as form_button %}
+          {% include "account/includes/change_password_form.html" with form_title=form_title form_button=form_button %}
         </div>
       </div>
     {% endblock %}

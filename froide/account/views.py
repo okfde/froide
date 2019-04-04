@@ -18,8 +18,10 @@ from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
 from . import account_activated
-from .forms import (UserLoginForm, PasswordResetForm, NewUserForm,
-        UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm)
+from .forms import (
+    UserLoginForm, PasswordResetForm, NewUserForm, SetPasswordForm,
+    UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm
+)
 from .services import AccountService
 from .utils import start_cancel_account_process
 from .export import get_export_url, request_export
@@ -232,6 +234,9 @@ def change_password(request):
         messages.add_message(request, messages.SUCCESS,
                 _('Your password has been changed.'))
         return get_redirect(request, default=reverse('account-show'))
+    else:
+        messages.add_message(request, messages.ERROR,
+                _('Your password was NOT changed. Please fix the errors.'))
     return account_settings(
         request,
         context={"password_change_form": form},
@@ -263,6 +268,14 @@ def send_reset_password_link(request):
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'account/password_reset_confirm.html'
     post_reset_login = True
+    form_class = SetPasswordForm
+
+    def form_valid(self, form):
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            _('Your password has been set and you are now logged in.')
+        )
+        return super().form_valid(form)
 
     def get_success_url(self):
         """
