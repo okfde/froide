@@ -15,3 +15,8 @@ def connect_campaign(sender, **kwargs):
         return
     sender.campaign = campaign
     sender.save()
+
+    sender.user.tags.add(campaign.ident)
+    if not sender.user.is_active:
+        # First-time requester
+        sender.user.tags.add('%s-first' % campaign.ident)
