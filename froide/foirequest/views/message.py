@@ -199,13 +199,14 @@ def convert_to_pdf(request, foirequest, message, data):
         i += 1
         name = add_number_to_filename(name, i)
 
+    can_approve = not foirequest.not_publishable
     att = FoiAttachment.objects.create(
         name=name,
         belongs_to=message,
         approved=False,
         filetype='application/pdf',
         is_converted=True,
-        can_approve=True,
+        can_approve=can_approve,
     )
 
     FoiAttachment.objects.filter(id__in=att_ids).update(
@@ -217,7 +218,9 @@ def convert_to_pdf(request, foirequest, message, data):
     instructions = [
         instructions[i] for i in att_ids
     ]
-    convert_images_to_pdf_task.delay(att_ids, att.id, instructions)
+    convert_images_to_pdf_task.delay(
+        att_ids, att.id, instructions, can_approve=can_approve
+    )
 
     attachment_data = FoiAttachmentSerializer(att, context={
         'request': request
