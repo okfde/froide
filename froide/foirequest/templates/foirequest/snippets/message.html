@@ -21,7 +21,12 @@
         <dd>
           {% if object|can_write_foirequest:request %}
             {% if message.is_response %}
-              <span title="{{ message.sender_email }}">{{ message.user_real_sender }} – {{ message.sender_public_body.name }}</span>
+              <span title="{{ message.sender_email }}">
+                <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+                  {{ message.user_real_sender }}
+                </span>
+                – {{ message.sender_public_body.name }}
+              </span>
               <span class="d-print-none">
                 (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
                   {% trans "change" %}
@@ -41,11 +46,14 @@
                 {% endwith %}
               </div>
             {% else %}
-              {{ message.user_real_sender }}
+              <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+                {{ message.user_real_sender }}
+              </span>
               {% if message.kind != 'email' %}
                 <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
               {% endif %}
             {% endif %}
+            </span>
           {% else %}
             {% if message.is_response %}
               {% if froide.public_body_officials_public %}
