@@ -46,7 +46,11 @@
                 {% endwith %}
               </div>
             {% else %}
-              <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+              {% if object.user.private %}
+                <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+              {% else %}
+                <span>
+              {% endif %}
                 {{ message.user_real_sender }}
               </span>
               {% if message.kind != 'email' %}
