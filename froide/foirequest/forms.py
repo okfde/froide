@@ -615,7 +615,9 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
                 foirequest.possible_reply_addresses().items()])
         self.fields['to'].choices = choices
 
-        if foirequest.law and foirequest.law.email_only:
+        address_optional = foirequest.law and foirequest.law.email_only
+
+        if address_optional:
             self.fields['send_address'] = forms.BooleanField(
                 label=_("Send physical address"),
                 widget=BootstrapCheckboxInput,
@@ -628,7 +630,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
 
         self.fields['address'] = forms.CharField(
             max_length=300,
-            required=False,
+            required=not address_optional,
             initial=foirequest.user.address,
             label=_('Mailing Address'),
             help_text=_(
