@@ -18,6 +18,27 @@
 {% endblock messages %}
 
 {% block body %}
+
+  {% block before_form %}
+    {% if campaigns %}
+      <div class="bg-light">
+        <div class="container pb-4 pt-3">
+          <h3 class="text-center mb-3">{% trans "Join our current FOI campaigns" %}</h3>
+          <div class="row justify-content-center">
+            {% for campaign in campaigns %}
+              <div class="col-auto">
+                <h4>{{ campaign.name }}</h4>
+                <a href="{{ campaign.url }}" class="btn btn-primary">
+                  {% trans "Make a request" %}
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endblock %}
+
   <form method="post" action="{% url 'foirequest-make_request' %}" novalidate>
 
     {% csrf_token %}
@@ -136,6 +157,8 @@
         {% endif %}
       </div>
     </noscript>
+
+    {% block after_form %}{% endblock %}
 
 {% addtoblock "js" %}
   <script src="{% static 'js/common.js' %}"></script>

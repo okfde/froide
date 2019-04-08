@@ -7,6 +7,9 @@ class CampaignManager(models.Manager):
     def get_filter_list(self):
         return super().get_queryset().filter(public=True)
 
+    def get_active(self):
+        return super().get_queryset().filter(active=True)
+
 
 class Campaign(models.Model):
     name = models.CharField(max_length=255)

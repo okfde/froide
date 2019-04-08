@@ -19,6 +19,7 @@ from froide.publicbody.widgets import get_widget_context
 from froide.publicbody.models import PublicBody
 from froide.publicbody.api_views import PublicBodyListSerializer
 from froide.georegion.models import GeoRegion
+from froide.campaign.models import Campaign
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
 
@@ -494,11 +495,17 @@ class MakeRequestView(FormView):
         if self.request.GET.get('single') is not None:
             is_multi = False
 
+        if self.request.method == 'POST' or publicbodies or is_multi:
+            campaigns = None
+        else:
+            campaigns = Campaign.objects.get_active()
+
         kwargs.update({
             'publicbodies': publicbodies,
             'publicbodies_json': publicbodies_json,
             'multi_request': is_multi,
             'config': config,
+            'campaigns': campaigns,
             'js_config': json.dumps(self.get_js_context()),
             'public_body_search': self.request.GET.get('topic', '')
         })
