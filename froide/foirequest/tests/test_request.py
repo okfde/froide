@@ -191,7 +191,10 @@ class RequestTest(TestCase):
                 kwargs={"slug": req.slug}), {})
         self.assertEqual(response.status_code, 400)
 
-        post = {"sendmessage-message": "My custom reply"}
+        post = {
+            "sendmessage-message": "My custom reply",
+            "sendmessage-address": user.address
+        }
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 400)
@@ -1345,6 +1348,7 @@ class RequestTest(TestCase):
         form = get_send_message_form({
             'sendmessage-to': '0',
             'sendmessage-subject': 'Testing',
+            "sendmessage-address": 'Address',
             'sendmessage-message': (
                 'Sehr geehrte Frau Radetzky,'
                 '\n\nblub\n\nMit freundlichen Grüßen'
@@ -1519,7 +1523,8 @@ class RequestTest(TestCase):
         form = get_send_message_form({
             'sendmessage-to': '0',
             'sendmessage-subject': req.title + ' [#%s]' % req.pk,
-            'sendmessage-message': 'Test'
+            'sendmessage-message': 'Test',
+            "sendmessage-address": 'Address',
         }, foirequest=req)
         self.assertTrue(form.is_valid())
         form.save()
