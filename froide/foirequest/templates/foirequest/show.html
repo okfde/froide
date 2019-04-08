@@ -586,13 +586,6 @@
     {% if object.same_as_count %}
       <div class="d-print-none" id="identical">
         <h5>{% blocktrans with counter=object.same_as_count|intcomma count count=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
-        <ul>
-          {% for foirequest in object.same_as_set.all %}
-            <li>
-              {{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }}: <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.readable_status }}</a>
-            </li>
-          {% endfor %}
-        </ul>
       </div>
     {% endif %}
     {% if object.same_as %}
