@@ -62,6 +62,23 @@ def filter_by_user_queryset(request):
     return User.objects.filter(user_filter)
 
 
+def filter_by_authenticated_user_queryset(request):
+    if request is None or not request.user.is_authenticated:
+        return User.objects.none()
+
+    user = request.user
+    token = request.auth
+
+    if not token and user.is_superuser:
+        # Allow superusers complete access
+        return User.objects.all()
+
+    if not token or token.is_valid(['read:request']):
+        # allow filter by own user
+        return User.objects.filter(id=user.id)
+    return User.objects.none()
+
+
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name='api:attachment-detail',
@@ -346,6 +363,10 @@ class FoiRequestFilter(filters.FilterSet):
     tags = filters.CharFilter(method='tag_filter')
     categories = filters.CharFilter(method='categories_filter')
     reference = filters.CharFilter(method='reference_filter')
+    follower = filters.ModelChoiceFilter(
+        queryset=filter_by_authenticated_user_queryset,
+        method='follower_filter'
+    )
 
     # FIXME: default ordering should be undetermined?
     # ordering = filters.OrderingFilter(
@@ -382,6 +403,9 @@ class FoiRequestFilter(filters.FilterSet):
         return queryset.filter(**{
             'reference__startswith': value,
         })
+
+    def follower_filter(self, queryset, name, value):
+        return queryset.filter(followers__user=value)
 
 
 class CreateOnlyWithScopePermission(TokenHasScope):
