@@ -11,6 +11,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.helper.document import convert_to_pdf, convert_images_to_ocred_pdf
+from froide.document.pdf_utils import PDFProcessor
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
@@ -117,6 +118,32 @@ def convert_attachment_task(instance_id):
         return convert_attachment(att)
 
 
+def ocr_pdf_attachment(att):
+    if att.converted:
+        ocred_att = att.converted
+    else:
+        name, ext = os.path.splitext(att.name)
+        name = _('{name}_ocr{ext}').format(name=name, ext='.pdf')
+
+        ocred_att = FoiAttachment.objects.create(
+            name=name,
+            belongs_to=att.belongs_to,
+            approved=False,
+            filetype='application/pdf',
+            is_converted=True,
+            can_approve=att.can_approve,
+        )
+
+    att.converted = ocred_att
+    att.can_approve = False
+    att.approved = False
+    att.save()
+
+    ocr_pdf_task.delay(
+        att.pk, ocred_att.pk,
+    )
+
+
 def convert_attachment(att):
     output_bytes = convert_to_pdf(
         att.file.path,
@@ -178,6 +205,38 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
         att_qs.update(
             can_approve=can_approve
         )
+        target.delete()
+        return
+
+    new_file = ContentFile(pdf_bytes)
+    target.size = new_file.size
+    target.file.save(target.name, new_file)
+    target.save()
+
+
+@celery_app.task(name='froide.foirequest.tasks.ocr_pdf_task',
+                 time_limit=60 * 5, soft_time_limit=60 * 4)
+def ocr_pdf_task(att_id, target_id, can_approve=True):
+    try:
+        attachment = FoiAttachment.objects.get(pk=att_id)
+    except FoiAttachment.DoesNotExist:
+        return
+    try:
+        target = FoiAttachment.objects.get(pk=target_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    processor = PDFProcessor(
+        attachment.file.path, language=settings.LANGUAGE_CODE
+    )
+    try:
+        pdf_bytes = processor.run_ocr(timeout=180)
+    except SoftTimeLimitExceeded:
+        pdf_bytes = None
+
+    if pdf_bytes is None:
+        attachment.can_approve = can_approve
+        attachment.save()
         target.delete()
         return
 

@@ -30,7 +30,7 @@ from .models import (
     TaggedMessage, DeferredMessage, TaggedFoiRequest,
     RequestDraft, DeliveryStatus,
 )
-from .tasks import convert_attachment_task
+from .tasks import convert_attachment_task, ocr_pdf_attachment
 from .widgets import AttachmentFileWidget
 
 
@@ -472,7 +472,8 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.FileField: {'widget': AttachmentFileWidget},
     }
-    actions = ['approve', 'disapprove', 'cannot_approve', 'convert', 'make_document']
+    actions = ['approve', 'disapprove', 'cannot_approve',
+               'convert', 'ocr_attachment', 'make_document']
 
     def admin_link_message(self, obj):
         return format_html('<a href="{}">{}</a>',
@@ -513,6 +514,11 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
                 count += 1
         self.message_user(request, _("%s document(s) created") % count)
     make_document.short_description = _("Make into document")
+
+    def ocr_attachment(self, request, queryset):
+        for att in queryset:
+            ocr_pdf_attachment(att)
+    ocr_attachment.short_description = _('OCR PDF')
 
 
 class FoiEventAdmin(admin.ModelAdmin):
