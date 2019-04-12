@@ -634,10 +634,10 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             initial=foirequest.user.address,
             label=_('Mailing Address'),
             help_text=_(
-                    'Optional. Your address will not be displayed publicly.'
-                ) if address_optional else _(
-                    'Your address will not be displayed publicly.'
-                ),
+                'Optional. Your address will not be displayed publicly.'
+            ) if address_optional else _(
+                'Your address will not be displayed publicly.'
+            ),
             widget=forms.Textarea(attrs={
                 'rows': '3',
                 'class': 'form-control',
