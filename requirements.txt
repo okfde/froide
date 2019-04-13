@@ -29,7 +29,7 @@ geoip2==2.9.0
 icalendar==4.0.3
 idna==2.8
 itypes==1.1.0
-jinja2==2.10
+jinja2==2.10.1
 kombu==4.4.0
 lxml==4.3.2
 markdown==3.0.1
