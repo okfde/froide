@@ -15,12 +15,7 @@ class TeamConfig(AppConfig):
         from froide.account import account_canceled, account_merged
         from froide.account.export import registry
 
-        from .services import can_use_team
-
         def get_account_menu_item(request):
-            if not can_use_team(request.user):
-                return None
-
             return MenuItem(
                 section='before_settings', order=0,
                 url=reverse('team-list'),
