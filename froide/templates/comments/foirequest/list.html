@@ -11,7 +11,7 @@
     </dt>
     <dd {% if comment.user.is_staff %}class="moderator"{% endif %}>
       {% if comment.is_removed %}
-        <p class="text-muted">{% trans "Kommentar wurde entfernt" %}</p>
+        <p class="text-muted">{% trans "Comment was removed." %}</p>
       {% else %}
         {% if comment.user.is_staff %}
           <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
