@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-12 12:25+0200\n"
-"PO-Revision-Date: 2019-04-12 12:28+0200\n"
+"POT-Creation-Date: 2019-04-15 12:51+0200\n"
+"PO-Revision-Date: 2019-04-15 13:20+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -7401,7 +7401,7 @@ msgstr "Folge/Entfolge Anfragen"
 msgid "Teams"
 msgstr "Teams"
 
-#: froide/team/apps.py:27
+#: froide/team/apps.py:22
 msgid "Your teams"
 msgstr "Ihre Teams"
 
@@ -7472,6 +7472,10 @@ msgstr ""
 #: froide/team/templates/team/_assign_team_form.html:16
 msgid "Currently no team assigned."
 msgstr "Aktuell kein Team ausgewählt."
+
+#: froide/team/templates/team/_assign_team_form.html:24
+msgid "Create a new team."
+msgstr "Lege ein neues Team an."
 
 #: froide/team/templates/team/emails/team_invite.txt:1
 #, python-format
@@ -7697,7 +7701,11 @@ msgstr "Moderator"
 msgid "On %(date)s, %(name)s wrote:"
 msgstr "%(name)s schrieb am %(date)s:"
 
-#: froide/templates/comments/foirequest/list.html:18
+#: froide/templates/comments/foirequest/list.html:14
+msgid "Comment was removed."
+msgstr "Kommentar wurde entfernt."
+
+#: froide/templates/comments/foirequest/list.html:21
 msgid "Read all"
 msgstr "Alles lesen"
 
