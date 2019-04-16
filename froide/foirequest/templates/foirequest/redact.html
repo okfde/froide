@@ -96,7 +96,9 @@
             <h3>
                 {% trans "Redaction tool is loading..." %}
             </h3>
-            <img src="{% static 'img/spinner.gif' %}" alt=""/>
+            <div class="spinner-border" role="status">
+              <span class="sr-only">{% trans "Loading..." %}</span>
+            </div>
           </div>
         </redaction>
       </div>

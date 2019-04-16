@@ -28,9 +28,6 @@ def get_widget_context():
             'or': _('or'),
             'noPublicBodiesFound': _('No Public Bodies found for this query.'),
             'letUsKnow': _('Please let us know!'),
-        },
-        'resources': {
-            'spinner': static('img/spinner.gif')
         }
     }
 
