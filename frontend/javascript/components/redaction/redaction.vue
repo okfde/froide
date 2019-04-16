@@ -32,11 +32,11 @@
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group mr-1">
           <button class="btn btn-light" @click="undo" :disabled="!canUndo" :title="i18n.undo">
-            <i class="fa fa-step-backward"></i>
+            <i class="fa fa-undo"></i>
           </button>
           <button class="btn btn-light" @click="redo" :disabled="!canRedo"
             data-toggle="tooltip" data-placement="top" :title="i18n.redo">
-            <i class="fa fa-step-forward"></i>
+            <i class="fa fa-repeat"></i>
           </button>
         </div>
 
