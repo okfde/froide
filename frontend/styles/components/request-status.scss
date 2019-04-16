@@ -9,7 +9,7 @@
 
     &.--has-fee::after {
       content: '';
-      background-image: url('~froide_static/img/status/icon-fee.svg');
+      background-image: url('~froide/froide/static/img/status/icon-fee.svg');
       background-repeat: no-repeat;
       width: 1.5rem;
       height: 1.5rem;
@@ -27,41 +27,41 @@
 }
 
 .status-successful {
-    background-image: url('~froide_static/img/status/icon-successful.svg')
+    background-image: url('~froide/froide/static/img/status/icon-successful.svg')
 }
 .status-partially_successful {
-    background-image: url('~froide_static/img/status/icon-partially_successful.svg')
+    background-image: url('~froide/froide/static/img/status/icon-partially_successful.svg')
 }
 .status-refused {
-    background-image: url('~froide_static/img/status/icon-refused.svg')
+    background-image: url('~froide/froide/static/img/status/icon-refused.svg')
 }
 .status-user_withdrew {
-    background-image: url('~froide_static/img/status/icon-user_withdrew.svg')
+    background-image: url('~froide/froide/static/img/status/icon-user_withdrew.svg')
 }
 // .status-user_withdrew_costs {
-//     background-image: url('~froide_static/img/status/icon-user_withdrew_costs.svg')
+//     background-image: url('~froide/froide/static/img/status/icon-user_withdrew_costs.svg')
 // }
 // .status-publicbody_needed {
-//     background-image: url('~froide_static/img/status/icon-publicbody_needed.svg')
+//     background-image: url('~froide/froide/static/img/status/icon-publicbody_needed.svg')
 // }
 .status-awaiting_response {
-    background-image: url('~froide_static/img/status/icon-awaiting_response.svg')
+    background-image: url('~froide/froide/static/img/status/icon-awaiting_response.svg')
 }
 .status-overdue {
-    background-image: url('~froide_static/img/status/icon-overdue.svg')
+    background-image: url('~froide/froide/static/img/status/icon-overdue.svg')
 }
 .status-asleep {
-    background-image: url('~froide_static/img/status/icon-asleep.svg')
+    background-image: url('~froide/froide/static/img/status/icon-asleep.svg')
 }
 .status-not_held {
-    background-image: url('~froide_static/img/status/icon-not_held.svg')
+    background-image: url('~froide/froide/static/img/status/icon-not_held.svg')
 }
 .status-has_fee {
-    background-image: url('~froide_static/img/status/icon-has_fee.svg')
+    background-image: url('~froide/froide/static/img/status/icon-has_fee.svg')
 }
 
 .status-awaiting_classification {
-    background-image: url('~froide_static/img/status/icon-awaiting_classification.svg')
+    background-image: url('~froide/froide/static/img/status/icon-awaiting_classification.svg')
 }
 
 .js .status-section {

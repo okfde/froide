@@ -12,7 +12,9 @@
       </div>
     </div>
     <div v-if="searching" class="search-spinner">
-      <img :src="config.resources.spinner" alt="Loading..."/>
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
     </div>
     <component :is="getListView" :name="name" :scope="scope" :config="config"></component>
   </div>
