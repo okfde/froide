@@ -49,17 +49,12 @@ def highlight_request(message, request):
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
 
-    real_description = unify(message.request.description)
-    redacted_description = redact_plaintext(
-        unify(message.request.description), is_response=False, user=message.sender_user
-    )
+    description = unify(message.request.description)
 
     if auth_read:
         content = real_content
-        description = real_description
     else:
         content = redacted_content
-        description = redacted_description
 
     try:
         index = content.index(description)
@@ -81,12 +76,6 @@ def highlight_request(message, request):
             # format_html('<div>{pre}</div>', pre=content[:index])
         )
 
-    html_descr = markup_redacted_content(
-        real_description,
-        redacted_description,
-        authenticated_read=auth_read
-    )
-
     html_post = markup_redacted_content(
         real_content[offset:],
         redacted_content[offset:],
@@ -95,7 +84,7 @@ def highlight_request(message, request):
 
     html.append(format_html('''<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
 <div class="d-print-none"><a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>''',
-        description=html_descr,
+        description=description,
         post=html_post,
         show_letter=_("[... Show complete request text]"),
     ))
