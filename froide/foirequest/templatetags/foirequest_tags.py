@@ -12,9 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from django_comments import get_model
 
-from froide.helper.text_utils import (
-    split_text_by_separator, redact_plaintext
-)
+from froide.helper.text_utils import split_text_by_separator
 from froide.helper.text_diff import mark_differences
 
 from ..models import FoiRequest, FoiMessage, DeliveryStatus
