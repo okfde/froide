@@ -3,7 +3,6 @@ import json
 from django import forms
 from django.urls import reverse
 from django.utils.translation import ugettext as _
-from django.templatetags.static import static
 
 from froide.helper.content_urls import get_content_url
 
