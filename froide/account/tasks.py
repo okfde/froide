@@ -4,6 +4,7 @@ from django.utils import translation
 from froide.celery import app as celery_app
 
 from .models import User
+from .utils import send_template_mail
 
 
 @celery_app.task
@@ -69,3 +70,16 @@ def start_export_task(user_id, notification_user_id=None):
             pass
 
     create_export(user, notification_user=notification_user)
+
+
+def chunker(seq, size):
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+
+@celery_app.task
+def send_bulk_mail(user_ids, subject, body):
+    chunks = chunker(user_ids, 200)
+    for chunk in chunks:
+        users = User.objects.filter(id__in=chunk)
+        for user in users:
+            send_template_mail(user, subject, body)

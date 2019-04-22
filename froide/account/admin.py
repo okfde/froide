@@ -14,7 +14,7 @@ from froide.helper.admin_utils import TaggitListFilter
 from .models import User, TaggedUser, UserTag
 from .services import AccountService
 from .export import get_export_url
-from .tasks import start_export_task
+from .tasks import start_export_task, send_bulk_mail
 from .utils import (
     delete_all_unexpired_sessions_for_user, cancel_user
 )
@@ -109,37 +109,21 @@ class UserAdmin(DjangoUserAdmin):
 
     def send_mail(self, request, queryset):
         """
-        Mark selected requests as same as the one we are choosing now.
+        Send mail to users
 
         """
 
         # Check that the user has change permission for the actual model
         if not request.user.is_superuser:
             raise PermissionDenied
-        # User has already chosen the other req
+
         if request.POST.get('subject'):
-            mails_sent = 0
             subject = request.POST.get('subject', '')
             body = request.POST.get('body', '')
-            for user in queryset:
-                if not user.is_active and not user.email:
-                    continue
-                mail_context = {
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'name': user.get_full_name(),
-                    'url': user.get_autologin_url('/'),
-                }
-                user_subject = subject.format(**mail_context)
-                user_body = body.format(**mail_context)
-                sent = user.send_mail(
-                    user_subject,
-                    user_body,
-                )
-                if sent:
-                    mails_sent += 1
-            self.message_user(request, _("%d mails sent." % mails_sent))
-            # Return None to display the change list page again.
+            count = queryset.count()
+            user_ids = queryset.values_list('id', flat=True)
+            send_bulk_mail.delay(user_ids, subject, body)
+            self.message_user(request, _("%d mail tasks queued." % count))
             return None
 
         context = {

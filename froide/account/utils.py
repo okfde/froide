@@ -7,7 +7,6 @@ from froide.helper.email_sending import send_mail
 
 from . import account_canceled, account_merged
 from .models import User
-from .tasks import cancel_account_task
 
 
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
@@ -31,6 +30,21 @@ def send_mail_user(subject, body, user: User,
         return
 
     return send_mail(subject, body, user.email, bounce_check=False, **kwargs)
+
+
+def send_template_mail(user: User, subject: str, body: str):
+    mail_context = {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'name': user.get_full_name(),
+        'url': user.get_autologin_url('/'),
+    }
+    user_subject = subject.format(**mail_context)
+    user_body = body.format(**mail_context)
+    return user.send_mail(
+        user_subject,
+        user_body,
+    )
 
 
 def merge_accounts(old_user, new_user):
@@ -71,6 +85,8 @@ def delete_all_unexpired_sessions_for_user(user, session_to_omit=None):
 
 
 def start_cancel_account_process(user):
+    from .tasks import cancel_account_task
+
     user.private = True
     user.email = None
     user.is_active = False
