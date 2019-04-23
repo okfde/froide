@@ -449,12 +449,11 @@ class PerformanceTest(TestCase):
         - FoiAttachments of that request (+1)
         - FoiEvents of that request (+1)
         - FoiRequestFollowerCount + if following (+2)
-        - team menu: has teams + permissions/groups (+3)
         - Delivery Status (+1)
         - Guides (+1)
         - ContentType + Comments for each FoiMessage (+2)
         """
-        TOTAL_EXPECTED_REQUESTS = 16
+        TOTAL_EXPECTED_REQUESTS = 13
         req = factories.FoiRequestFactory.create(site=self.site)
         factories.FoiMessageFactory.create(request=req, is_response=False)
         mes2 = factories.FoiMessageFactory.create(request=req)
