@@ -289,7 +289,7 @@ class UserEmailConfirmationForm(forms.Form):
         super(UserEmailConfirmationForm, self).__init__(*args, **kwargs)
 
     def clean_user_id(self):
-        user_id = self.cleaned_data['user_id']
+        user_id = self.cleaned_data.get('user_id')
         if user_id != self.user.pk:
             raise forms.ValidationError(
                 _('Logged in user does not match this link!')
@@ -298,8 +298,8 @@ class UserEmailConfirmationForm(forms.Form):
 
     def clean(self):
         check = AccountService(self.user).check_confirmation_secret(
-            self.cleaned_data['secret'],
-            self.cleaned_data['email'],
+            self.cleaned_data.get('secret', ''),
+            self.cleaned_data.get('email', '')
         )
         if not check:
             raise forms.ValidationError(
