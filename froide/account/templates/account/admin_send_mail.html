@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block action_content %}
-{% with count=queryset.count %}
 <form action="" method="post">{% csrf_token %}
   <div>
     <p>
@@ -19,12 +18,17 @@
     <small>{% trans "You can use the following placeholders:" %} <code>{name}, {first_name}, {last_name}, {url}</code></small>
     <input type="hidden" name="action" value="send_mail" />
     <p>
-      <input type="submit" value="{% blocktrans count count=count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />
+      <input type="submit" value="{% blocktrans count count=queryset.count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />
     </p>
   </div>
-  {% for obj in queryset %}
-    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
-  {% endfor %}
+  {% if select_across %}
+    <input type="hidden" name="select_across" value="1"/>
+    {# set invalid selected, so confirmation action path is chosen in admin #}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="_" />
+  {% else %}
+    {% for obj in queryset %}
+      <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+    {% endfor %}
+  {% endif %}
 </form>
-{% endwith %}
 {% endblock %}

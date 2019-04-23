@@ -126,10 +126,12 @@ class UserAdmin(DjangoUserAdmin):
             self.message_user(request, _("%d mail tasks queued." % count))
             return None
 
+        select_across = bool(request.POST.get('select_across'))
         context = {
             'opts': self.model._meta,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
-            'queryset': queryset
+            'queryset': queryset,
+            'select_across': select_across
         }
 
         # Display the confirmation page
