@@ -32,7 +32,7 @@ def send_mail_user(subject, body, user: User,
     return send_mail(subject, body, user.email, bounce_check=False, **kwargs)
 
 
-def send_template_mail(user: User, subject: str, body: str):
+def send_template_mail(user: User, subject: str, body: str, **kwargs):
     mail_context = {
         'first_name': user.first_name,
         'last_name': user.last_name,
@@ -44,6 +44,7 @@ def send_template_mail(user: User, subject: str, body: str):
     return user.send_mail(
         user_subject,
         user_body,
+        **kwargs
     )
 
 

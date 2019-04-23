@@ -401,6 +401,7 @@ class Base(Configuration):
     CELERY_EMAIL_TASK_CONFIG = {
         'queue': 'emailsend'
     }
+    EMAIL_BULK_QUEUE = 'emailsend_bulk'
 
     # ######## Search ###########
 
