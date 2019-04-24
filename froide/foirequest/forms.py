@@ -15,10 +15,10 @@ from django.template.loader import render_to_string
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import (
-    PriceInput, BootstrapRadioSelect, BootstrapFileInput
+    PriceInput, BootstrapRadioSelect, BootstrapFileInput,
+    BootstrapCheckboxInput
 )
 from froide.helper.forms import TagObjectForm
-from froide.helper.widgets import BootstrapCheckboxInput
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import redact_subject, redact_plaintext
 from froide.helper.auth import get_read_queryset
