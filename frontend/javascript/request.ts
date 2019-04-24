@@ -55,18 +55,6 @@ const setStatus = () => {
 }
 
 const runOnPage = () => {
-  /* Set all form submit buttons to disabled on form submit */
-  const forms = document.querySelectorAll('form.disable-submit')
-  Array.from(forms).forEach(form => {
-    form.addEventListener('submit', function (this: HTMLFormElement) {
-      const form = this
-      const buttons = form.querySelectorAll('button[type="submit"]')
-      Array.from(buttons).forEach(button => {
-        button.setAttribute('disabled', '')
-      })
-    })
-  });
-
   (<HTMLElement[]> Array.from(document.querySelectorAll('.comment-form'))).forEach(el => {
     el.style.display = 'none'
   });
