@@ -49,7 +49,7 @@ class FoiEvent(models.Model):
         "reported_costs": _(
             "%(user)s reported costs of %(amount)s for this request."),
         "message_received": _(
-            "Received an email from %(public_body)s."),
+            "Received a message from %(public_body)s."),
         "message_sent": _(
             "%(user)s sent a message to %(public_body)s."),
         "attachment_published": _(
