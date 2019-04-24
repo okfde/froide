@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-15 12:51+0200\n"
-"PO-Revision-Date: 2019-04-15 13:20+0200\n"
+"POT-Creation-Date: 2019-04-24 19:41+0200\n"
+"PO-Revision-Date: 2019-04-24 19:44+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -47,7 +47,7 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:10 froide/settings.py:244 froide/settings.py:625
+#: froide/_local_settings.py:10 froide/settings.py:244 froide/settings.py:626
 msgid "German"
 msgstr "Deutsch"
 
@@ -130,50 +130,50 @@ msgstr "%d Aktivierungs-E-Mails versendet."
 msgid "Resend activation mail"
 msgstr "Aktivierungs-Mail neuversenden"
 
-#: froide/account/admin.py:141
+#: froide/account/admin.py:126
 #, python-format
-msgid "%d mails sent."
-msgstr "%d E-Mails gesendet."
+msgid "%d mail tasks queued."
+msgstr "%d E-Mails zur Zustellung vorbereitet."
 
-#: froide/account/admin.py:154
+#: froide/account/admin.py:140
 #: froide/account/templates/account/admin_send_mail.html:5
 #: froide/account/templates/account/admin_send_mail.html:8
 msgid "Send mail to users"
 msgstr "Sende E-Mail an Nutzer"
 
-#: froide/account/admin.py:159
+#: froide/account/admin.py:145
 msgid "Sessions deleted."
 msgstr "Sessions gelöscht."
 
-#: froide/account/admin.py:161
+#: froide/account/admin.py:147
 msgid "Delete sessions of users"
 msgstr "Sessions des Nutzers löschen"
 
-#: froide/account/admin.py:166
+#: froide/account/admin.py:152
 msgid "Users canceled."
 msgstr "Nutzer gekündigt."
 
-#: froide/account/admin.py:168
+#: froide/account/admin.py:154
 msgid "Cancel account of users"
 msgstr "Nutzerkonto kündigen"
 
-#: froide/account/admin.py:173
+#: froide/account/admin.py:159
 msgid "Users deactivated."
 msgstr "Nutzer deaktiviert."
 
-#: froide/account/admin.py:175
+#: froide/account/admin.py:161
 msgid "Deactivate users"
 msgstr "Nutzer deaktivieren"
 
-#: froide/account/admin.py:189
+#: froide/account/admin.py:175
 msgid "Download export of user '{}'"
 msgstr "Export von Nutzer '{}' downloaden"
 
-#: froide/account/admin.py:195
+#: froide/account/admin.py:181
 msgid "Export of user '{}' started."
 msgstr "Export von Nutzer '{}' gestartet."
 
-#: froide/account/admin.py:199
+#: froide/account/admin.py:185
 msgid "Start export of / download user data"
 msgstr "Export/Download von allen Nutzerdaten"
 
@@ -497,7 +497,7 @@ msgstr "<< E-Mail entfernt >>"
 msgid "<< Name removed >>"
 msgstr "Antragsteller/in"
 
-#: froide/account/templates/account/admin_send_mail.html:16
+#: froide/account/templates/account/admin_send_mail.html:15
 #: froide/foirequest/forms.py:43 froide/foirequest/forms.py:46
 #: froide/foirequest/forms.py:181 froide/foirequest/forms.py:580
 #: froide/foirequest/forms.py:767 froide/foirequest/forms.py:770
@@ -507,11 +507,11 @@ msgstr "Antragsteller/in"
 msgid "Subject"
 msgstr "Betreff"
 
-#: froide/account/templates/account/admin_send_mail.html:19
+#: froide/account/templates/account/admin_send_mail.html:18
 msgid "You can use the following placeholders:"
 msgstr "Sie können die folgenden Platzhalter verwenden:"
 
-#: froide/account/templates/account/admin_send_mail.html:22
+#: froide/account/templates/account/admin_send_mail.html:21
 #, python-format
 msgid "Send mail to one user"
 msgid_plural "Send mail to %(count)s users"
@@ -2313,8 +2313,8 @@ msgstr ""
 
 #: froide/foirequest/models/event.py:52
 #, python-format
-msgid "Received an email from %(public_body)s."
-msgstr "E-Mail von %(public_body)s erhalten."
+msgid "Received a message from %(public_body)s."
+msgstr "Nachricht von %(public_body)s erhalten."
 
 #: froide/foirequest/models/event.py:54
 #, python-format
@@ -2970,7 +2970,7 @@ msgid "Dear Ladies and Gentlemen,"
 msgstr "Sehr geehrte Damen und Herren,"
 
 #: froide/foirequest/pdf_generator.py:286
-#: froide/foirequest/templatetags/foirequest_tags.py:106
+#: froide/foirequest/templatetags/foirequest_tags.py:93
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
 
@@ -3029,7 +3029,7 @@ msgstr "Nachricht erneut senden"
 #: froide/foirequest/templates/foirequest/_request_search.html:11
 #: froide/helper/templates/helper/search/search_base.html:28
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:18
-#: froide/publicbody/widgets.py:24 froide/templates/header.html:23
+#: froide/publicbody/widgets.py:23 froide/templates/header.html:23
 #: froide/templates/header.html:27 froide/templates/header.html:36
 msgid "Search"
 msgstr "Suchen"
@@ -3373,6 +3373,7 @@ msgid "Attachments are loading..."
 msgstr "Anhang werden geladen..."
 
 #: froide/foirequest/templates/foirequest/attachment/upload.html:35
+#: froide/foirequest/templates/foirequest/redact.html:100
 #: froide/foirequest/views/message.py:314
 #: froide/publicbody/templates/publicbody/admin/match_georegions.html:27
 msgid "Loading..."
@@ -4817,8 +4818,8 @@ msgstr "Von"
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:25
 #: froide/foirequest/templates/foirequest/snippets/message.html:50
-#: froide/foirequest/templatetags/foirequest_tags.py:134
-#: froide/foirequest/templatetags/foirequest_tags.py:139
+#: froide/foirequest/templatetags/foirequest_tags.py:121
+#: froide/foirequest/templatetags/foirequest_tags.py:126
 msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
 
@@ -5012,19 +5013,19 @@ msgstr "von"
 msgid "until"
 msgstr "bis"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:100
+#: froide/foirequest/templatetags/foirequest_tags.py:87
 msgid "[... Show complete request text]"
 msgstr "[… Zeige kompletten Anfragetext]"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:157
+#: froide/foirequest/templatetags/foirequest_tags.py:144
 msgid "Show the quoted message"
 msgstr "Zeige die zitierte Nachricht an"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:293
+#: froide/foirequest/templatetags/foirequest_tags.py:280
 msgid "Due date"
 msgstr "Frist"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:303
+#: froide/foirequest/templatetags/foirequest_tags.py:290
 msgid "Today"
 msgstr "Heute"
 
@@ -7022,7 +7023,7 @@ msgstr "Georegionsabgleich"
 
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html:18
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:22
-#: froide/publicbody/widgets.py:28
+#: froide/publicbody/widgets.py:27
 #: froide/templates/snippets/homepage_hero.html:39
 msgid "or"
 msgstr "oder"
@@ -7280,37 +7281,37 @@ msgid "no requests yet"
 msgstr "noch keine Anfragen"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:16
-#: froide/publicbody/widgets.py:22
+#: froide/publicbody/widgets.py:21
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:17
-#: froide/publicbody/widgets.py:23
+#: froide/publicbody/widgets.py:22
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:19
-#: froide/publicbody/widgets.py:25
+#: froide/publicbody/widgets.py:24
 msgid "Examples:"
 msgstr "Beispiele:"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:20
-#: froide/publicbody/widgets.py:26
+#: froide/publicbody/widgets.py:25
 msgid "Environment"
 msgstr "Umwelt"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:21
-#: froide/publicbody/widgets.py:27
+#: froide/publicbody/widgets.py:26
 msgid "Ministry of Labour"
 msgstr "Bundesministerium für Arbeit"
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:23
-#: froide/publicbody/widgets.py:29
+#: froide/publicbody/widgets.py:28
 msgid "No Public Bodies found for this query."
 msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
 
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html:24
-#: froide/publicbody/widgets.py:30
+#: froide/publicbody/widgets.py:29
 msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
@@ -7373,27 +7374,27 @@ msgstr "Chinesisch (Kurzzeichen)"
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "Chinesisch (Traditionell, Honk Kong)"
 
-#: froide/settings.py:422
+#: froide/settings.py:423
 msgid "Access to user status"
 msgstr "Kann Sie als Nutzer auf FragDenStaat.de identifizieren"
 
-#: froide/settings.py:423
+#: froide/settings.py:424
 msgid "Read user profile information"
 msgstr "Kann meine Profil-Informationen sehen"
 
-#: froide/settings.py:424
+#: froide/settings.py:425
 msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
-#: froide/settings.py:425
+#: froide/settings.py:426
 msgid "Read your (private) requests"
 msgstr "Kann Ihre (privaten) Anfragen sehen"
 
-#: froide/settings.py:426
+#: froide/settings.py:427
 msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
-#: froide/settings.py:427
+#: froide/settings.py:428
 msgid "Follow/Unfollow requests"
 msgstr "Folge/Entfolge Anfragen"
 
