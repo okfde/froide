@@ -66,8 +66,7 @@ def redact_plaintext(content, is_response=True, user=None):
             content = remove_closing(
                 content
             )
-
-        if not is_response or (user and user.private):
+        else:
             if settings.FROIDE_CONFIG.get('greetings'):
                 content = replace_custom(
                     settings.FROIDE_CONFIG['greetings'],
