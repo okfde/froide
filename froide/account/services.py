@@ -103,8 +103,8 @@ class AccountService(object):
 
     def check_confirmation_secret(self, secret, *args):
         return constant_time_compare(
-                secret,
-                self.generate_confirmation_secret(*args)
+            secret,
+            self.generate_confirmation_secret(*args)
         )
 
     def generate_confirmation_secret(self, *args):
@@ -170,7 +170,8 @@ class AccountService(object):
         self.user.send_mail(
             subject, message,
             ignore_active=True,
-            html=html_message
+            html=html_message,
+            priority=True
         )
 
     def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None,
@@ -202,6 +203,7 @@ class AccountService(object):
         self.user.send_mail(
             subject,
             message,
+            priority=True
         )
 
     def send_reminder_mail(self, reference=None, redirect_url=None,
@@ -224,6 +226,7 @@ class AccountService(object):
         self.user.send_mail(
             subject,
             message,
+            priority=True
         )
 
     def send_email_change_mail(self, email):
@@ -251,7 +254,8 @@ class AccountService(object):
         send_mail(
             subject,
             message,
-            email
+            email,
+            priority=True
         )
 
     def apply_name_redaction(self, content, replacement=''):

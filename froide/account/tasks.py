@@ -84,5 +84,5 @@ def send_bulk_mail(user_ids, subject, body):
         for user in users:
             send_template_mail(
                 user, subject, body,
-                queue=settings.EMAIL_BULK_QUEUE
+                priority=False
             )

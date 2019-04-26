@@ -37,5 +37,5 @@ def inform_user_problem_resolved(report):
         "site_name": settings.SITE_NAME
     })
 
-    report.user.send_mail(subject, body)
+    report.user.send_mail(subject, body, priority=False)
     return True

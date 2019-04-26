@@ -728,6 +728,7 @@ class FoiRequest(models.Model):
             self,
             subject,
             body,
+            priority=False
         )
 
     @classmethod
@@ -760,7 +761,8 @@ class FoiRequest(models.Model):
                     "site_name": settings.SITE_NAME
                 }
             ),
-            user
+            user,
+            priority=False
         )
 
     def days_to_resolution(self):

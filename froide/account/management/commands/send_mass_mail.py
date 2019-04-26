@@ -26,7 +26,8 @@ class Command(BaseCommand):
         for user in users.iterator():
             user.send_mail(
                 subject, content,
-                fail_silently=False
+                fail_silently=False,
+                priority=False
             )
             yield user.pk
 

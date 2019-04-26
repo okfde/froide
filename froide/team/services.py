@@ -59,5 +59,6 @@ class TeamService(object):
                 "name": invited_by.get_full_name()
             }),
             message,
-            self.member.email
+            self.member.email,
+            priority=True
         )

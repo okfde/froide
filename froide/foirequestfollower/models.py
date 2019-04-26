@@ -124,7 +124,8 @@ class FoiRequestFollower(models.Model):
                 "follow_link": self.get_follow_link(),
                 "unfollow_link": self.get_unfollow_link(),
                 "site_name": settings.SITE_NAME}),
-            self.email
+            self.email,
+            priority=True
         )
 
     @classmethod
@@ -152,5 +153,6 @@ class FoiRequestFollower(models.Model):
                     "site_name": settings.SITE_NAME
                 }
             ),
-            email or user.email
+            email or user.email,
+            priority=False
         )

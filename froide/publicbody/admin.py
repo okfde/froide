@@ -348,7 +348,8 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                       url=pb.get_absolute_domain_url(),
                       site_name=settings.SITE_NAME
                   )
-                )
+                ),
+                priority=False
             )
         return redirect('admin:publicbody_publicbody_change', pb.id)
 
@@ -364,7 +365,8 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
         if creator:
             creator.send_mail(
                 _('Concerning your public body proposal “%s”') % pb.name,
-                request.POST.get('message')
+                request.POST.get('message'),
+                priority=False
             )
         return redirect('admin:publicbody_proposedpublicbody_change', pb.id)
 

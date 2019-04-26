@@ -28,6 +28,7 @@ def send_notification_became_overdue(sender, **kwargs):
             "go_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
             "site_name": settings.SITE_NAME
         }),
+        priority=False
     )
 
 
@@ -44,6 +45,7 @@ def send_notification_became_asleep(sender, **kwargs):
             ),
             "site_name": settings.SITE_NAME
         }),
+        priority=False
     )
 
 
@@ -66,7 +68,8 @@ def notify_user_message_received(sender, message=None, **kwargs):
                 message.get_absolute_short_url()
             ),
             "site_name": settings.SITE_NAME
-        })
+        }),
+        priority=False
     )
 
 
@@ -86,7 +89,8 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
                 sender.get_absolute_short_url()
             ),
             "site_name": settings.SITE_NAME
-        })
+        }),
+        priority=False
     )
 
 

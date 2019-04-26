@@ -220,7 +220,7 @@ def send_notifications(notifications):
         'guidances': list(guidance_mapping.items()),
         'site_name': settings.SITE_NAME
     })
-    user.send_mail(subject, body)
+    user.send_mail(subject, body, priority=False)
     Guidance.objects.filter(
         id__in=[g.id for g in guidances]
     ).update(notified=True)
