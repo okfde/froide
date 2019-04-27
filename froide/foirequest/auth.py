@@ -33,7 +33,9 @@ def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
         return True
 
     if foirequest.project:
-        return can_read_foiproject(foirequest.project, request)
+        return has_authenticated_access(
+            foirequest.project, request, verb='read'
+        )
 
     # if authenticated may still have code
     if allow_code:
