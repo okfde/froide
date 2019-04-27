@@ -5,7 +5,6 @@ sudo: required
 dist: xenial
 
 addons:
-  chrome: stable
   postgresql: '10'
   apt:
     packages:
