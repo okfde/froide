@@ -57,6 +57,19 @@ class TeamManager(models.Manager):
             **kwargs
         )
 
+    def get_owner_teams(self, user):
+        return self.get_for_user(
+            user,
+            teammembership__role=TeamMembership.ROLE_OWNER
+        )
+
+    def get_editor_owner_teams(self, user):
+        return self.get_for_user(
+            user,
+            models.Q(teammembership__role=TeamMembership.ROLE_OWNER) |
+            models.Q(teammembership__role=TeamMembership.ROLE_EDITOR)
+        )
+
 
 class Team(models.Model):
     name = models.CharField(max_length=255)

@@ -1,14 +1,18 @@
 from django.db import models
 from django.shortcuts import redirect
-from django.views.generic import ListView, FormView, DetailView, UpdateView
+from django.views.generic import (
+    ListView, FormView, DetailView, UpdateView, DeleteView
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.utils import timezone
+from django.urls import reverse_lazy
 
 from froide.helper.auth import can_manage_object
 
-from .forms import (CreateTeamForm, TeamInviteForm, TeamMemberChangeRoleForm,
-                    AssignTeamForm)
+from .forms import (
+    CreateTeamForm, TeamInviteForm, TeamMemberChangeRoleForm, AssignTeamForm
+)
 from .models import Team, TeamMembership
 from .services import TeamService
 
@@ -84,11 +88,7 @@ class InviteTeamMemberView(AuthMixin, UpdateView):
     template_name = 'team/team_detail.html'
 
     def get_queryset(self):
-        return Team.objects.filter(
-            teammembership__user=self.request.user,
-            teammembership__role=TeamMembership.ROLE_OWNER,
-            teammembership__status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE
-        )
+        return Team.objects.get_owner_teams(self.request.user)
 
     def get(self, request, *args, **kwargs):
         return redirect(self.get_object())
@@ -120,6 +120,16 @@ class ChangeTeamMemberRoleView(AuthMixin, UpdateView):
         owner = member.team.teammembership_set.get(user=self.request.user)
         kwargs['owner'] = owner
         return kwargs
+
+
+class DeleteTeamView(AuthMixin, DeleteView):
+    success_url = reverse_lazy('team-list')
+
+    def get(self, request, *args, **kwargs):
+        return redirect(self.get_object())
+
+    def get_queryset(self):
+        return Team.objects.get_owner_teams(self.request.user)
 
 
 class DeleteTeamMemberRoleView(AuthMixin, DetailView):

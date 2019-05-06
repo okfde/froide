@@ -41,12 +41,12 @@
                   </button>
                 </form>
               {% else %}
-                {{ object.role }}
+                {{ object.get_role_display }}
               {% endif %}
             </td>
             <td>
-               {{ object.member_count }}
-             </td>
+              {{ object.member_count }}
+            </td>
           </tr>
         {% endfor %}
       </tbody>

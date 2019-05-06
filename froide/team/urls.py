@@ -3,7 +3,7 @@ from django.conf.urls import url
 from .views import (
     TeamListView, TeamDetailView, CreateTeamView, InviteTeamMemberView,
     JoinTeamView, ChangeTeamMemberRoleView, DeleteTeamMemberRoleView,
-    JoinTeamUserView
+    JoinTeamUserView, DeleteTeamView
 )
 
 urlpatterns = [
@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/$', TeamDetailView.as_view(), name='team-detail'),
     url(r'^(?P<pk>\d+)/invite/$', InviteTeamMemberView.as_view(),
         name='team-invite'),
+    url(r'^(?P<pk>\d+)/delete/$', DeleteTeamView.as_view(),
+        name='team-delete'),
     url(r'^(?P<pk>\d+)/change-member/$', ChangeTeamMemberRoleView.as_view(),
         name='team-change_member'),
     url(r'^(?P<pk>\d+)/delete-member/$', DeleteTeamMemberRoleView.as_view(),
