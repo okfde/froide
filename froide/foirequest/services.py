@@ -368,8 +368,6 @@ class ReceiveEmailService(BaseService):
         if (foirequest.law and foirequest.law.mediator and
                 publicbody == foirequest.law.mediator):
             message.content_hidden = True
-        if foirequest.not_publishable:
-            message.content_hidden = True
 
         if email.date is None:
             message.timestamp = timezone.now()
