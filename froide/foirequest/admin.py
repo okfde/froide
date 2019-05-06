@@ -32,6 +32,7 @@ from .models import (
 )
 from .tasks import convert_attachment_task, ocr_pdf_attachment
 from .widgets import AttachmentFileWidget
+from .services import ActivatePendingRequestService
 
 
 SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
@@ -188,12 +189,15 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     remove_from_index.short_description = _("Remove from search index")
 
     def confirm_request(self, request, queryset):
-        foireq = queryset[0]
-        if foireq.status != 'awaiting_user_confirmation':
+        foirequest = queryset[0]
+        if foirequest.status != 'awaiting_user_confirmation':
             self.message_user(request, _("Request not in correct state!"))
             return None
         self.message_user(request, _("Message send successfully!"))
-        FoiRequest.confirmed_request(foireq.user, foireq.pk)
+        req_service = ActivatePendingRequestService({
+            'foirequest': foirequest
+        })
+        foirequest = req_service.process(request=None)
         return None
     confirm_request.short_description = _("Confirm request if unconfirmed")
 

@@ -475,3 +475,25 @@ class ReceiveEmailService(BaseService):
 
     def trigger_convert_pdf(self, att_id):
         transaction.on_commit(lambda: convert_attachment_task.delay(att_id))
+
+
+class ActivatePendingRequestService(BaseService):
+    def process(self, request=None):
+        if 'request_id' in self.data:
+            try:
+                foirequest = FoiRequest.objects.get(id=self.data['request_id'])
+            except FoiRequest.DoesNotExist:
+                return None
+        else:
+            foirequest = self.data['foirequest']
+
+        if request is not None and request.user != foirequest.user:
+            return
+
+        send_now = foirequest.set_status_after_change()
+        if send_now and foirequest.law:
+            foirequest.due_date = foirequest.law.calculate_due_date()
+        foirequest.save()
+        if send_now:
+            foirequest.safe_send_first_message()
+        return foirequest

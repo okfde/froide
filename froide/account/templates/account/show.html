@@ -69,6 +69,21 @@
             <td class="request-link__body">
               {% include "foirequest/snippets/request_item_inner.html" %}
 
+              {% if object.status == "awaiting_user_confirmation" %}
+                <form action="{% url 'foirequest-confirm_request' slug=object.slug %}" method="post">
+                  {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">
+                      {% blocktrans %}Send request{% endblocktrans %}
+                    </button>
+                  </form>
+                  <form action="{% url 'foirequest-delete_request' slug=object.slug %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">
+                      {% blocktrans %}Delete request{% endblocktrans %}
+                    </button>
+                  </form>
+              {% endif %}
+
               {% if object.status == "awaiting_response" %}
                 {% if object.due_date %}
                   <small>

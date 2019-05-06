@@ -655,30 +655,14 @@ class FoiRequest(models.Model):
         if message.sent:
             return None
         message.send()
-        return self
-
-    @classmethod
-    def confirmed_request(cls, user, request_id):
-        try:
-            request = FoiRequest.objects.get(pk=request_id)
-        except FoiRequest.DoesNotExist:
-            return None
-        if not request.user == user:
-            return None
-        send_now = request.set_status_after_change()
-        if send_now:
-            request.due_date = request.law.calculate_due_date()
-        request.save()
-        if send_now:
-            return request.safe_send_first_message()
-        return None
 
     def confirmed_public_body(self):
         send_now = self.set_status_after_change()
         self.save()
         if send_now:
-            return self.safe_send_first_message()
-        return None
+            self.safe_send_first_message()
+            return True
+        return False
 
     def suggest_public_body(self, public_body, reason, user):
         from .suggestion import PublicBodySuggestion

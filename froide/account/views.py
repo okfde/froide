@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, RedirectView
 
 from froide.foirequest.models import FoiRequest, FoiEvent
+from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
 from . import account_activated
@@ -86,7 +87,10 @@ def confirm(request, user_id, secret, request_id=None):
         params['ref'] = request.GET['ref']
 
     if request_id is not None:
-        foirequest = FoiRequest.confirmed_request(user, request_id)
+        req_service = ActivatePendingRequestService({
+            'request_id': request_id
+        })
+        foirequest = req_service.process(request=request)
         if foirequest:
             params['request'] = str(foirequest.pk).encode('utf-8')
     default_url = '%s?%s' % (reverse('account-confirmed'), urlencode(params))

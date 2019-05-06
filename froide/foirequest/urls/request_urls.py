@@ -5,6 +5,7 @@ from ..feeds import FoiRequestFeed, FoiRequestFeedAtom
 from ..views import (
     shortlink, auth, show, suggest_public_body, set_public_body,
     set_status, send_message, escalation_message, make_public,
+    confirm_request, delete_request,
     set_law, set_tags, set_summary, add_postal_reply,
     add_postal_message, add_postal_reply_attachment,
     set_message_sender, mark_not_foi, mark_checked,
@@ -26,6 +27,8 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/send/message/$", send_message, name="foirequest-send_message"),
     url(r"^(?P<slug>[-\w]+)/escalation/message/$", escalation_message, name="foirequest-escalation_message"),
     url(r"^(?P<slug>[-\w]+)/make/public/$", make_public, name="foirequest-make_public"),
+    url(r"^(?P<slug>[-\w]+)/confirm-request/$", confirm_request, name="foirequest-confirm_request"),
+    url(r"^(?P<slug>[-\w]+)/delete-request/$", delete_request, name="foirequest-delete_request"),
     url(r"^(?P<slug>[-\w]+)/set/law/$", set_law, name="foirequest-set_law"),
     url(r"^(?P<slug>[-\w]+)/set/tags/$", set_tags, name="foirequest-set_tags"),
     url(r"^(?P<slug>[-\w]+)/set/resolution/$", set_summary, name="foirequest-set_summary"),
