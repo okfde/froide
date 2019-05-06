@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-06 18:10+0200\n"
-"PO-Revision-Date: 2019-05-06 18:11+0200\n"
+"POT-Creation-Date: 2019-05-06 21:22+0200\n"
+"PO-Revision-Date: 2019-05-06 21:33+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -228,7 +228,7 @@ msgid "Street, Post Code, City"
 msgstr "Straße, Hausnummer, PLZ, Ort"
 
 #: froide/account/forms.py:75 froide/account/forms.py:205
-#: froide/account/forms.py:221 froide/team/forms.py:55
+#: froide/account/forms.py:221 froide/team/forms.py:54
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
@@ -7414,19 +7414,19 @@ msgstr "Teams"
 msgid "Your teams"
 msgstr "Ihre Teams"
 
-#: froide/team/forms.py:13
+#: froide/team/forms.py:12
 msgid "Name of this team"
 msgstr "Name dieses Teams"
 
-#: froide/team/forms.py:40
+#: froide/team/forms.py:39
 msgid "You cannot change your own role."
 msgstr "Sie können Ihre eigene Funktion nicht ändern."
 
-#: froide/team/forms.py:43
+#: froide/team/forms.py:42
 msgid "Only owners can change roles."
 msgstr "Nur Eigentümer können die Funktionen ändern."
 
-#: froide/team/forms.py:68
+#: froide/team/forms.py:67
 msgid "Member already present in team."
 msgstr "Das Mitglied gehört schon zum Team."
 
@@ -7450,15 +7450,15 @@ msgstr "inaktiv"
 msgid "invited"
 msgstr "eingeladen"
 
-#: froide/team/models.py:71
+#: froide/team/models.py:84
 msgid "team"
 msgstr "Team"
 
-#: froide/team/models.py:72
+#: froide/team/models.py:85
 msgid "teams"
 msgstr "Teams"
 
-#: froide/team/models.py:74
+#: froide/team/models.py:87
 msgid "Can use teams"
 msgstr "Kann Teams nutzen"
 
@@ -7578,13 +7578,14 @@ msgstr "Eigentümer"
 msgid ""
 "\n"
 "            An owner can do everything an editor can do. In addition they "
-"can also add or remove team members and change their roles.\n"
+"can also add or remove team members, change their roles and delete the "
+"team.\n"
 "          "
 msgstr ""
 "\n"
 "            Ein Eigentümer kann alles, was ein Bearbeiter auch kann. "
-"Zusätzlich können Eigentümer auch Team-Mitglieder anlegen, entfernen und "
-"ihre Funktionen ändern.\n"
+"Zusätzlich können Eigentümer auch Team-Mitglieder anlegen, entfernen. ihre "
+"Funktionen ändern und das Team löschen.\n"
 "          "
 
 #: froide/team/templates/team/team_detail.html:114
@@ -7602,6 +7603,32 @@ msgstr "Anfragen dieses Teams"
 #: froide/team/templates/team/team_detail.html:155
 msgid "Team projects"
 msgstr "Projekte des Teams"
+
+#: froide/team/templates/team/team_detail.html:186
+#: froide/team/templates/team/team_detail.html:194
+msgid "Delete team"
+msgstr "Team löschen"
+
+#: froide/team/templates/team/team_detail.html:188
+msgid ""
+"Deleting the team will remove access of team members to all requests and "
+"projects they did not create."
+msgstr ""
+"Das Löschen des Teams wird den Zugang aller Mitglieder auf Anfragen und "
+"Projekte entfernen, die sind nicht selbst erstellt haben."
+
+#: froide/team/templates/team/team_detail.html:204
+msgid "Are you sure you want to delete this team?"
+msgstr "Sind Sie sicher, dass Sie dieses Team löschen wollen?"
+
+#: froide/team/templates/team/team_detail.html:212
+msgid "Deleting a team cannot be undone."
+msgstr "Das Löschen eines Teams kann nicht rückgängig gemacht werden."
+
+#: froide/team/templates/team/team_detail.html:218
+#, python-format
+msgid "Delete team “%(name)s”"
+msgstr "Team „%(name)s“ löschen"
 
 #: froide/team/templates/team/team_join.html:9
 #, python-format
