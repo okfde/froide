@@ -8,7 +8,7 @@ from django.contrib import messages
 
 from froide.account.forms import NewUserForm, AddressForm
 from froide.team.views import AssignTeamView
-from froide.helper.utils import render_400, render_403
+from froide.helper.utils import render_400, render_403, get_redirect
 
 from ..models import FoiRequest, FoiEvent
 from ..forms import (
@@ -321,4 +321,4 @@ def delete_request(request, foirequest):
 
     foirequest.delete()
 
-    return redirect('/')
+    return get_redirect(request)
