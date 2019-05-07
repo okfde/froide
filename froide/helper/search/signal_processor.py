@@ -1,4 +1,7 @@
+from contextlib import contextmanager
 from django.db import models
+
+from elasticsearch_dsl.connections import connections
 
 from django_elasticsearch_dsl.registries import registry
 from django_elasticsearch_dsl.signals import RealTimeSignalProcessor
@@ -7,6 +10,14 @@ from ..tasks import (
     search_instance_save, search_instance_pre_delete,
     search_instance_delete
 )
+
+
+@contextmanager
+def realtime_search():
+    signal_processor = CelerySignalProcessor(connections)
+    signal_processor.setup()
+    yield
+    signal_processor.teardown()
 
 
 class CelerySignalProcessor(RealTimeSignalProcessor):

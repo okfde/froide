@@ -11,6 +11,7 @@ from froide.foirequest.models import FoiRequest, FoiAttachment
 from froide.foirequest.tests import factories
 from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
 from froide.helper.auth import clear_lru_caches
+from froide.helper.search.signal_processor import realtime_search
 
 
 class TestCaseHelpers():
@@ -100,11 +101,12 @@ class WebTest(TestCaseHelpers, TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_tagged_requests(self):
-        factories.rebuild_index()
         tag_slug = 'awesome'
         req = FoiRequest.published.all()[0]
         req.tags.add(tag_slug)
         req.save()
+        factories.rebuild_index()
+
         response = self.client.get(reverse('foirequest-list', kwargs={"tag": tag_slug}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, req.title)
@@ -130,9 +132,8 @@ class WebTest(TestCaseHelpers, TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_list_no_identical(self):
-        factories.rebuild_index()
-
         factories.FoiRequestFactory.create(site=self.site)
+        factories.rebuild_index()
         reqs = FoiRequest.published.all()
         req1 = reqs[0]
         req2 = reqs[1]
@@ -140,10 +141,12 @@ class WebTest(TestCaseHelpers, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, req1.title)
         self.assertContains(response, req2.title)
-        req1.same_as = req2
-        req1.save()
-        req2.same_as_count = 1
-        req2.save()
+        with realtime_search():
+            req1.same_as = req2
+            req1.save()
+            req2.same_as_count = 1
+            req2.save()
+
         response = self.client.get(reverse('foirequest-list'))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, req1.title)

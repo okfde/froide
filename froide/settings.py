@@ -556,6 +556,8 @@ class TestBase(Base):
         'django.contrib.auth.hashers.MD5PasswordHasher',
     ]
 
+    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = 'django_elasticsearch_dsl.signals.BaseSignalProcessor'
+
     @property
     def TEMPLATES(self):
         TEMP = super().TEMPLATES

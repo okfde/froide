@@ -12,15 +12,17 @@ from .registry import search_registry
 
 __all__ = [
     'CelerySignalProcessor', 'search_registry', 'SearchQuerySetWrapper',
-
 ]
 
 
 def get_index(name):
-    index = Index('%s_%s' % (
+    index_name = '%s_%s' % (
         settings.ELASTICSEARCH_INDEX_PREFIX,
         name
-    ))
+    )
+    # if settings.ELASTICSEARCH_INDEX_PREFIX == 'froide_test':
+    #     index_name += '_%s' % threading.get_ident()
+    index = Index(index_name)
 
     # See Elasticsearch Indices API reference for available settings
     index.settings(

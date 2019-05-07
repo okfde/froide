@@ -17,11 +17,15 @@ class PublicBodyTest(TestCase):
         self.site = factories.make_world()
 
     def test_web_page(self):
-        response = self.client.get(reverse('publicbody-list'))
-        self.assertEqual(response.status_code, 200)
         pb = PublicBody.objects.all()[0]
         category = factories.CategoryFactory.create(is_topic=True)
         pb.categories.add(category)
+
+        factories.rebuild_index()
+
+        response = self.client.get(reverse('publicbody-list'))
+        self.assertEqual(response.status_code, 200)
+
         response = self.client.get(reverse('publicbody-list', kwargs={
             'category': category.slug
         }))
