@@ -669,7 +669,7 @@ class AdminActionTest(TestCase):
         self.user.is_superuser = True
 
     def test_send_mail(self):
-        users = User.objects.all()
+        users = User.objects.all()[:1]
 
         req = self.factory.post('/', {})
         req.user = self.user
