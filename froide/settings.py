@@ -552,6 +552,10 @@ class Dev(Base):
 class TestBase(Base):
     DEBUG = False
 
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+
     @property
     def TEMPLATES(self):
         TEMP = super().TEMPLATES
