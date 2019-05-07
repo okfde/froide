@@ -467,13 +467,11 @@ class Base(Configuration):
         closings=[rec(r"Sincerely yours,?")],
         public_body_boosts={},
         autocomplete_body_boosts={},
-        dryrun=False,
         read_receipt=False,
         delivery_receipt=False,
         dsn=False,
         delivery_reporter=None,
         request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
-        dryrun_domain="testmail.example.com",
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
         doc_conversion_call_func=None,  # see settings_test for use
