@@ -152,13 +152,21 @@ def make_italic(x):
     return '*%s*' % x.text_content()
 
 
+def make_link(x):
+    return '[%s](%s)%s' % (
+        x.text_content(),
+        x.attrib.get('href', ''),
+        x.tail if x.tail else ''
+    )
+
+
 HTML_CONVERTERS = {
-    'a': lambda x: '[%s](%s)' % (x.text_content(), x.attrib.get('href', '')),
+    'a': make_link,
     'strong': make_strong,
     'b': make_strong,
     'i': make_italic,
     'em': make_italic,
-    'br': lambda x: '\n',
+    'br': lambda x: '\n%s' % (x.tail if x.tail else ''),
 }
 
 HTML_GARBAGE = ('style',)
