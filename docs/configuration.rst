@@ -83,33 +83,6 @@ its own config too::
     })
 
 
-Public Body E-Mail Dry-run
---------------------------
-
-You can set your site up and test it out in a production environment
-while sending public body emails not to the public bodies but to
-another mail server. Use the following settings::
-
-    FROIDE_CONFIG.update(
-        dict(
-            dryrun=False,
-            dryrun_domain="testmail.example.com"
-        )
-    )
-
-This converts public body email addresses from
-
-    public-body@example.com
-
-to
-
-    public-body+example.com@testmail.example.com
-
-right before the mail is
-sent out (the changed address is not stored). This allows for some
-testing of sending and receiving mails to and from public bodies without spamming them.
-
-
 Settings for Sending E-Mail
 ---------------------------
 

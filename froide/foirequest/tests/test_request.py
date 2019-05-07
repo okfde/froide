@@ -137,10 +137,7 @@ class RequestTest(TestCase):
         message = mail.outbox[1]
         self.assertIn('Legal Note: This mail was sent through a Freedom Of Information Portal.', message.body)
         self.assertIn(req.secret_address, message.extra_headers.get('Reply-To', ''))
-        if settings.FROIDE_CONFIG['dryrun']:
-            self.assertEqual(message.to[0], "%s@%s" % (req.public_body.email.replace("@", "+"), settings.FROIDE_CONFIG['dryrun_domain']))
-        else:
-            self.assertEqual(message.to[0], req.public_body.email)
+        self.assertEqual(message.to[0], req.public_body.email)
         self.assertEqual(message.subject, '%s [#%s]' % (req.title, req.pk))
         resp = self.client.post(reverse('foirequest-set_status',
             kwargs={"slug": req.slug}))
@@ -322,11 +319,7 @@ class RequestTest(TestCase):
                 mail.outbox))
         self.assertEqual(len(messages), 1)
         message = messages[0]
-        if settings.FROIDE_CONFIG['dryrun']:
-            self.assertEqual(message.to[0], "%s@%s" % (
-                pb.email.replace("@", "+"), settings.FROIDE_CONFIG['dryrun_domain']))
-        else:
-            self.assertEqual(message.to[0], pb.email)
+        self.assertEqual(message.to[0], pb.email)
         self.assertEqual(message.subject, '%s [#%s]' % (req.title, req.pk))
 
     def test_redirect_after_request(self):

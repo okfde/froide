@@ -25,14 +25,6 @@
     {% block index_banner %}{% endblock %}
     {% block foisite_advice %}{% endblock %}
 
-    {% block dryrun_notice %}
-      {% if froide.dryrun %}
-        <div class="alert alert-danger">
-          {% blocktrans %}This site is currently in dry run mode. All Public Body mail will go to this mail server:{% endblocktrans %} {{ froide.dryrun_domain }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
     {% block messages %}
       {% include "snippets/messages.html" %}
     {% endblock messages %}

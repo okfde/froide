@@ -95,12 +95,6 @@ class EmailMessageHandler(MessageHandler):
         attachments = kwargs.get('attachments', [])
 
         extra_kwargs = {}
-        if settings.FROIDE_CONFIG['dryrun']:
-            recp = message.recipient_email.replace("@", "+")
-            message.recipient_email = "%s@%s" % (
-                recp,
-                settings.FROIDE_CONFIG['dryrun_domain']
-            )
         # Use send_foi_mail here
         from_addr = make_address(
             request.secret_address,
