@@ -157,8 +157,11 @@ HTML_CONVERTERS = {
     'strong': make_strong,
     'b': make_strong,
     'i': make_italic,
-    'em': make_italic
+    'em': make_italic,
+    'br': lambda x: '\n',
 }
+
+HTML_GARBAGE = ('style',)
 
 
 def convert_html_to_text(html_str):
@@ -178,6 +181,11 @@ def convert_html_to_text(html_str):
     except IndexError:
         # No body element
         body = root
+
+    for tag in HTML_GARBAGE:
+        els = body.xpath('.//' + tag)
+        for el in els:
+            el.getparent().remove(el)
 
     for tag, func in HTML_CONVERTERS.items():
         els = body.xpath('.//' + tag)
