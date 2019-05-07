@@ -15,6 +15,7 @@ from reportlab.pdfbase import pdfmetrics
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
+from wand.exceptions import DelegateError
 
 from .document import (
     PDF_FILETYPES, decrypt_pdf_in_place, rewrite_pdf_in_place
@@ -30,46 +31,55 @@ def can_redact_file(filetype, name=None):
 def rewrite_pdf(pdf_file):
     pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
     if pdf_file_name is None:
-        return None, None
-    pdf_file = open(pdf_file_name, 'rb')
-    pdf_reader = PdfFileReader(pdf_file, strict=False)
-    return pdf_file, pdf_reader
+        return None
+    return open(pdf_file_name, 'rb')
 
 
 def decrypt_pdf(pdf_file):
     pdf_file_name = decrypt_pdf_in_place(pdf_file.name)
     if pdf_file_name is None:
-        return None, None
-    pdf_file = open(pdf_file_name, 'rb')
-    pdf_reader = PdfFileReader(pdf_file, strict=False)
-    return pdf_file, pdf_reader
+        return None
+    return open(pdf_file_name, 'rb')
+
+
+class PDFException(Exception):
+    def __init__(self, exc, reason):
+        self.exc = exc
+        self.reason = reason
 
 
 def redact_file(pdf_file, instructions):
+    tries = 0
+    while True:
+        try:
+            return _redact_file(pdf_file, instructions)
+        except PDFException as e:
+            tries += 1
+            if tries > 2:
+                raise Exception('PDF Redaction Error')
+            if e.reason == 'rewrite':
+                pdf_file = rewrite_pdf(pdf_file)
+            elif e.reason == 'decrypt':
+                pdf_file = decrypt_pdf(pdf_file)
+            if pdf_file is None:
+                raise Exception('PDF Rewrite Error')
+
+
+def _redact_file(pdf_file, instructions, tries=0):
     dpi = 300
     load_invisible_font()
     output = PdfFileWriter()
     try:
         pdf_reader = PdfFileReader(pdf_file, strict=False)
-    except (PdfReadError, ValueError):
-        pdf_file, pdf_reader = rewrite_pdf(pdf_file)
-        if pdf_file is None:
-            raise Exception('PDF Rewrite Error')
+    except (PdfReadError, ValueError) as e:
+        raise PDFException(e, 'rewrite')
 
-    num_pages = None
     try:
         num_pages = pdf_reader.getNumPages()
-    except KeyError:  # catch KeyError '/Pages'
-        pdf_file, pdf_reader = rewrite_pdf(pdf_file)
-        if pdf_file is None:
-            raise Exception('PDF Rewrite Error')
-    except PdfReadError:
-        pdf_file, pdf_reader = decrypt_pdf(pdf_file)
-        if pdf_file is None:
-            raise Exception('PDF Rewrite Error')
-
-    if num_pages is None:
-        num_pages = pdf_reader.getNumPages()
+    except KeyError as e:  # catch KeyError '/Pages'
+        raise PDFException(e, 'rewrite')
+    except PdfReadError as e:
+        raise PDFException(e, 'decrypt')
 
     assert num_pages == len(instructions)
     for pageNum, instr in enumerate(instructions):
@@ -77,7 +87,11 @@ def redact_file(pdf_file, instructions):
         if not instr['rects']:
             page = pdf_reader.getPage(pageNum)
         else:
-            page = get_redacted_page(pdf_file, pageNum, instr, dpi)
+            try:
+                page = get_redacted_page(pdf_file, pageNum, instr, dpi)
+            except DelegateError as e:
+                raise PDFException(e, 'rewrite')
+
         output.addPage(page)
 
     path = tempfile.mkdtemp()
