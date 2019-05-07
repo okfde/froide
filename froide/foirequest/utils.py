@@ -12,9 +12,9 @@ from django.utils.crypto import get_random_string
 import icalendar
 import pytz
 
+from froide.helper.text_utils import redact_subject, redact_plaintext
 from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
-from froide.account.utils import send_mail_user
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
@@ -207,7 +207,7 @@ def send_request_user_email(foiobject, subject, body, add_idmark=True, **kwargs)
         return
     if add_idmark:
         subject = '{} [#{}]'.format(subject, foiobject.pk)
-    send_mail_user(subject, body, foiobject.user, **kwargs)
+    foiobject.user.send_mail(subject, body, **kwargs)
 
 
 class MailAttachmentSizeChecker():
@@ -257,6 +257,26 @@ def cancel_user(sender, user=None, **kwargs):
     permanently_anonymize_requests(
         FoiRequest.objects.filter(user=user).select_related('user')
     )
+
+
+def make_account_private(sender, user=None, **kwargs):
+    foirequests = user.foirequest_set.all()
+    rerun_message_redaction(foirequests)
+
+
+def rerun_message_redaction(foirequests):
+    for foirequest in foirequests:
+        user = foirequest.user
+        for message in foirequest.messages:
+            message.subject_redacted = redact_subject(
+                message.subject, user=user
+            )
+            message.plaintext_redacted = redact_plaintext(
+                message.plaintext,
+                is_response=message.is_response,
+                user=user
+            )
+            message.save()
 
 
 def permanently_anonymize_requests(foirequests):

@@ -5,7 +5,7 @@ from django.contrib.sessions.models import Session
 
 from froide.helper.email_sending import send_mail
 
-from . import account_canceled, account_merged
+from . import account_canceled, account_merged, account_made_private
 from .models import User
 
 
@@ -46,6 +46,13 @@ def send_template_mail(user: User, subject: str, body: str, **kwargs):
         user_body,
         **kwargs
     )
+
+
+def make_account_private(user):
+    user.private = True
+    user.save()
+
+    account_made_private.send(sender=User, user=user)
 
 
 def merge_accounts(old_user, new_user):
