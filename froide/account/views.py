@@ -102,21 +102,25 @@ def go(request, user_id, secret, url):
         if request.user.id != int(user_id):
             messages.add_message(request, messages.INFO,
                 _('You are logged in with a different user account. Please logout first before using this link.'))
-    else:
-        user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
-        account_manager = AccountService(user)
-        if account_manager.check_autologin_secret(secret):
-            if user.is_deleted or user.is_blocked:
-                # This will fail, but that's OK here
-                return redirect(url)
-            if not user.is_active:
-                # Confirm user account (link came from email)
-                user.date_deactivated = None
-                user.is_active = True
-                user.save()
-                account_activated.send_robust(sender=user)
-            auth.login(request, user)
-    return redirect(url)
+        return redirect(url)
+
+    user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
+    account_manager = AccountService(user)
+    if account_manager.check_autologin_secret(secret):
+        if user.is_deleted or user.is_blocked:
+            # This will fail, but that's OK here
+            return redirect(url)
+        if not user.is_active:
+            # Confirm user account (link came from email)
+            user.date_deactivated = None
+            user.is_active = True
+            user.save()
+            account_activated.send_robust(sender=user)
+        auth.login(request, user)
+        return redirect(url)
+
+    # If login-link fails, prompt login with redirect
+    return get_redirect(request, default='account-login', params={'next': url})
 
 
 def profile(request, slug):
