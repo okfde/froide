@@ -12,3 +12,4 @@ python-dateutil==2.7.5
 selenium==3.141.0
 text-unidecode==1.2
 django-coverage-plugin==1.6.0
+tblib==1.4.0
