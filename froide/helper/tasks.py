@@ -13,7 +13,7 @@ def get_instance(model_name, pk):
     return model._default_manager.get(pk=pk)
 
 
-@celery_app.task(expires=60 * 60)
+@celery_app.task
 def search_instance_save(model_name, pk):
     try:
         instance = get_instance(model_name, pk)
@@ -23,7 +23,7 @@ def search_instance_save(model_name, pk):
         logger.exception(e)
 
 
-@celery_app.task(expires=60 * 60)
+@celery_app.task
 def search_instance_pre_delete(model_name, pk):
     try:
         instance = get_instance(model_name, pk)
@@ -32,7 +32,7 @@ def search_instance_pre_delete(model_name, pk):
         logger.exception(e)
 
 
-@celery_app.task(expires=60 * 60)
+@celery_app.task
 def search_instance_delete(model_name, pk):
     model = apps.get_model(model_name)
     instance = model()
