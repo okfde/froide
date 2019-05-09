@@ -222,7 +222,7 @@ class AccountService(object):
         # Translators: Mail subject
         subject = str(_("%(site_name)s: account reminder") % {
             "site_name": settings.SITE_NAME
-        }),
+        })
         self.user.send_mail(
             subject,
             message,
