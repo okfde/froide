@@ -18,6 +18,8 @@ from froide.helper.name_generator import get_name_from_number
 from .utils import get_publicbody_for_email
 from .pdf_generator import FoiRequestPDFGenerator
 
+
+unknown_foimail_subject = _('Unknown FoI-Mail Recipient')
 unknown_foimail_message = _('''We received an FoI mail to this address: %(address)s.
 No corresponding request could be identified, please investigate! %(url)s
 ''')
@@ -81,7 +83,7 @@ def _process_mail(mail_bytes, mail_type=None, manual=False):
 
 def create_deferred(secret_mail, mail_bytes, spam=False,
                     sender_email=None,
-                    subject=_('Unknown FoI-Mail Recipient'),
+                    subject=unknown_foimail_subject,
                     body=unknown_foimail_message, request=None):
     from .models import DeferredMessage
 
@@ -315,7 +317,7 @@ def package_foirequest(foirequest):
         correspondence_bytes = pdf_generator.get_pdf_bytes()
         zfile.writestr('%s/%s.pdf' % (path, foirequest.pk), correspondence_bytes)
         atts = get_attachments_for_package(foirequest)
-        for filename, filebytes, content_type in atts:
+        for filename, filebytes, _ct in atts:
             zfile.writestr('%s/%s' % (path, filename), filebytes)
         zfile.close()
     return zfile_obj.getvalue()

@@ -346,7 +346,9 @@ FORMAT_CHOICES = [
 def get_timeline_marks(foirequest, num_slices=6):
     first_date = foirequest.first_message
     duration, last_date = get_duration(foirequest)
-    for days, format_choice, round_func in FORMAT_CHOICES:
+    for days, fc, rf in FORMAT_CHOICES:
+        format_choice = fc
+        round_func = rf
         if duration.days < days:
             break
     duration_slice = duration / (num_slices - 1)

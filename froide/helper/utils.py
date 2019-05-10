@@ -10,9 +10,15 @@ def get_next(request):
     return request.GET.get("next", request.META.get("HTTP_REFERER", "/"))
 
 
-def render_code(code, request, context={}):
-    return render(request, "%d.html" % code, context,
-            status=code)
+def render_code(code, request, context=None):
+    if context is None:
+        context = {}
+    return render(
+        request,
+        "%d.html" % code,
+        context,
+        status=code
+    )
 
 
 def render_400(request):

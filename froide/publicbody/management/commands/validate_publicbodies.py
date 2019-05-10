@@ -42,7 +42,7 @@ class Command(BaseCommand):
             validator.write_csv(stream)
 
             if filename is None and not validator.is_valid:
-                for name, email in settings.MANAGERS:
+                for _n, email in settings.MANAGERS:
                     send_mail(
                         _('Public body validation results'),
                         _('Please find attached the results of the public body validation'),

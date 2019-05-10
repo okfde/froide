@@ -24,7 +24,7 @@ def get_differences_by_chunk(content_a, content_b):
         None, a_list, b_list, autojunk=False
     )
     last_same = False
-    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+    for tag, i1, i2, _j1, _j2 in matcher.get_opcodes():
         if i1 == i2:
             continue
         is_same = tag == 'equal'

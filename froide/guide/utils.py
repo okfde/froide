@@ -162,13 +162,13 @@ def run_guidance_on_queryset(queryset, notify=False):
     if notify:
         gen = notify_users_generator(gen)
 
-    for message, result in gen:
+    for _m, _r in gen:
         pass
 
 
 def notify_users(message_results):
     gen = notify_users_generator(message_results)
-    for message, result in gen:
+    for _m, _r in gen:
         pass
 
 

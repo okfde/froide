@@ -73,7 +73,7 @@ class BaseSearchView(ListView):
                 k: v for k, v in self.filter_data.items()
                 if k in self.form.cleaned_data
             }
-            for name, field in filtered.form.fields.items():
+            for _n, field in filtered.form.fields.items():
                 field.widget.data = data_clean_only
 
             sqs = filtered.qs

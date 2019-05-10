@@ -80,11 +80,15 @@ def escalation_message(request, foirequest):
         }, status=400)
 
 
+POSTAL_REPLY_SUCCESS = _('A postal reply was successfully added!')
+POSTAL_REPLY_ERROR = _('There were errors with your form submission!')
+
+
 @require_POST
 @allow_write_foirequest
 def add_postal_reply(request, foirequest, form_func=get_postal_reply_form,
-            success_message=_('A postal reply was successfully added!'),
-            error_message=_('There were errors with your form submission!'),
+            success_message=POSTAL_REPLY_SUCCESS,
+            error_message=POSTAL_REPLY_ERROR,
             form_key='postal_reply_form'):
 
     if not foirequest.public_body:

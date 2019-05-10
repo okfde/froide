@@ -273,7 +273,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertEqual(req.status, 'awaiting_response')
 
     def test_make_logged_in_request_too_many(self):
-        for i in range(5):
+        for _i in range(5):
             req = factories.FoiRequestFactory.create(
                 user=self.user,
                 first_message=timezone.now(),
