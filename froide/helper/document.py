@@ -169,63 +169,59 @@ def shell_call(arguments, outpath, output_file, timeout=50):
     raise Exception(err)
 
 
-def decrypt_pdf_in_place(filename, timeout=50):
+def run_command_overwrite(filename, argument_func, timeout=50):
     try:
         temp_dir = tempfile.mkdtemp()
+        temp_out = os.path.join(temp_dir, 'gs_pdf_out.pdf')
+        arguments, temp_out = argument_func(filename, temp_dir)
+        output_bytes = shell_call(
+            arguments, temp_dir, temp_out, timeout=timeout
+        )
 
-        # I'm not sure if a qpdf failure could leave the file in a halfway
-        # state, so have it write to a temporary file instead of reading from one
-        temp_out = os.path.join(temp_dir, 'qpdf_out.pdf')
-
-        arguments = ['qpdf', '--decrypt', filename, temp_out]
-        output_bytes = shell_call(arguments, temp_dir, temp_out, timeout=timeout)
-
-        # I'm not sure if a qpdf failure could leave the file in a halfway
-        # state, so write to a temporary file and then use os.rename to
-        # overwrite the original atomically.
-        # (We use shutil.move instead of os.rename so it'll fall back to a copy
-        #  operation if the dir= argument to mkdtemp() gets removed)
         with open(filename, 'wb') as f:
             f.write(output_bytes)
         return filename
     except Exception as err:
-        logging.error("Error during PDF decryption %s", err)
+        logging.error("Error during command overwrite %s", err)
         return None
     finally:
         # Delete all temporary files
         shutil.rmtree(temp_dir)
 
 
+def decrypt_pdf_in_place(filename, timeout=50):
+    def argument_func(filename, temp_dir):
+        temp_out = os.path.join(temp_dir, 'qpdf_out.pdf')
+        arguments = ['qpdf', '--decrypt', filename, temp_out]
+        return arguments, temp_out
+
+    return run_command_overwrite(filename, argument_func, timeout=timeout)
+
+
 def rewrite_pdf_in_place(filename, timeout=50):
-    try:
-        temp_dir = tempfile.mkdtemp()
-
-        # I'm not sure if a qpdf failure could leave the file in a halfway
-        # state, so have it write to a temporary file instead of reading from one
+    def argument_func(filename, temp_dir):
         temp_out = os.path.join(temp_dir, 'gs_pdf_out.pdf')
-
         arguments = [
             'gs', '-o', temp_out,
             '-sDEVICE=pdfwrite',
             '-dPDFSETTINGS=/prepress',
             filename
         ]
-        output_bytes = shell_call(arguments, temp_dir, temp_out, timeout=timeout)
+        return arguments, temp_out
 
-        # I'm not sure if a qpdf failure could leave the file in a halfway
-        # state, so write to a temporary file and then use os.rename to
-        # overwrite the original atomically.
-        # (We use shutil.move instead of os.rename so it'll fall back to a copy
-        #  operation if the dir= argument to mkdtemp() gets removed)
-        with open(filename, 'wb') as f:
-            f.write(output_bytes)
-        return filename
-    except Exception as err:
-        logging.error("Error during PDF decryption %s", err)
-        return None
-    finally:
-        # Delete all temporary files
-        shutil.rmtree(temp_dir)
+    return run_command_overwrite(filename, argument_func, timeout=timeout)
+
+
+def rewrite_hard_pdf_in_place(filename, timeout=50):
+    def argument_func(filename, temp_dir):
+        temp_out = os.path.join(temp_dir, 'pdfcairo_out.pdf')
+        arguments = [
+            'pdftocairo', '-pdf', filename,
+            temp_out
+        ]
+        return arguments, temp_out
+
+    return run_command_overwrite(filename, argument_func, timeout=timeout)
 
 
 MAX_HEIGHT_A4 = 3507  # in pixels at 300 dpi

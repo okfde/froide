@@ -18,7 +18,8 @@ from wand.color import Color
 from wand.exceptions import DelegateError, WandError
 
 from .document import (
-    PDF_FILETYPES, decrypt_pdf_in_place, rewrite_pdf_in_place
+    PDF_FILETYPES, decrypt_pdf_in_place, rewrite_pdf_in_place,
+    rewrite_hard_pdf_in_place
 )
 
 
@@ -30,6 +31,13 @@ def can_redact_file(filetype, name=None):
 
 def rewrite_pdf(pdf_file):
     pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
+    if pdf_file_name is None:
+        return None
+    return open(pdf_file_name, 'rb')
+
+
+def rewrite_hard_pdf(pdf_file):
+    pdf_file_name = rewrite_hard_pdf_in_place(pdf_file.name)
     if pdf_file_name is None:
         return None
     return open(pdf_file_name, 'rb')
@@ -58,11 +66,14 @@ def redact_file(pdf_file, instructions):
             if tries > 2:
                 raise Exception('PDF Redaction Error')
             if e.reason == 'rewrite':
-                pdf_file = rewrite_pdf(pdf_file)
+                next_pdf_file = rewrite_pdf(pdf_file)
+                if next_pdf_file is None:
+                    next_pdf_file = rewrite_hard_pdf(pdf_file)
             elif e.reason == 'decrypt':
-                pdf_file = decrypt_pdf(pdf_file)
-            if pdf_file is None:
+                next_pdf_file = decrypt_pdf(pdf_file)
+            if next_pdf_file is None:
                 raise Exception('PDF Rewrite Error')
+            pdf_file = next_pdf_file
 
 
 def _redact_file(pdf_file, instructions, tries=0):
@@ -82,13 +93,13 @@ def _redact_file(pdf_file, instructions, tries=0):
         raise PDFException(e, 'decrypt')
 
     assert num_pages == len(instructions)
-    for pageNum, instr in enumerate(instructions):
+    for page_idx, instr in enumerate(instructions):
         instr['width'] = float(instr['width'])
         if not instr['rects']:
-            page = pdf_reader.getPage(pageNum)
+            page = pdf_reader.getPage(page_idx)
         else:
             try:
-                page = get_redacted_page(pdf_file, pageNum, instr, dpi)
+                page = get_redacted_page(pdf_file, page_idx, instr, dpi)
             except (WandError, DelegateError) as e:
                 raise PDFException(e, 'rewrite')
 
@@ -101,42 +112,42 @@ def _redact_file(pdf_file, instructions, tries=0):
     return output_filename
 
 
-def get_redacted_page(pdf_file, pageNum, instr, dpi):
+def get_redacted_page(pdf_file, page_idx, instr, dpi):
     writer = io.BytesIO()
     pdf = canvas.Canvas(writer)
-    filename = "{}[{}]".format(pdf_file.name, pageNum)
-    with Image(filename=filename, resolution=dpi) as image:
-        image.background_color = Color('white')
-        image.format = 'jpg'
-        image.alpha_channel = 'remove'
+    with Image(filename=pdf_file.name, resolution=dpi) as wand_pdf:
+        with Image(wand_pdf.sequence[page_idx]) as image:
+            image.background_color = Color('white')
+            image.format = 'jpg'
+            image.alpha_channel = 'remove'
 
-        scale = image.width / instr['width']
+            scale = image.width / instr['width']
 
-        with Drawing() as draw:
+            with Drawing() as draw:
 
-            for rect in instr['rects']:
-                rect = [r * scale for r in rect]
-                draw.border_color = Color('black')
-                draw.fill_color = Color('black')
-                p = 2
-                draw.rectangle(
-                    left=rect[0] - p, top=rect[1] - p,
-                    width=rect[2] + p * 2, height=rect[3] + p * 2)
+                for rect in instr['rects']:
+                    rect = [r * scale for r in rect]
+                    draw.border_color = Color('black')
+                    draw.fill_color = Color('black')
+                    p = 2
+                    draw.rectangle(
+                        left=rect[0] - p, top=rect[1] - p,
+                        width=rect[2] + p * 2, height=rect[3] + p * 2)
 
-            draw(image)
+                draw(image)
 
-        width = image.width * 72 / dpi
-        height = image.height * 72 / dpi
+            width = image.width * 72 / dpi
+            height = image.height * 72 / dpi
 
-        pdf.setPageSize((width, height))
-        reportlab_io_img = ImageReader(io.BytesIO(image.make_blob()))
-        pdf.drawImage(reportlab_io_img, 0, 0, width=width, height=height)
+            pdf.setPageSize((width, height))
+            reportlab_io_img = ImageReader(io.BytesIO(image.make_blob()))
+            pdf.drawImage(reportlab_io_img, 0, 0, width=width, height=height)
 
-        for text_obj in instr['texts']:
-            add_text_on_pdf(pdf, text_obj, dpi, scale, height)
+            for text_obj in instr['texts']:
+                add_text_on_pdf(pdf, text_obj, dpi, scale, height)
 
-        pdf.showPage()
-        pdf.save()
+            pdf.showPage()
+            pdf.save()
 
     writer.seek(0)
     temp_reader = PdfFileReader(writer)

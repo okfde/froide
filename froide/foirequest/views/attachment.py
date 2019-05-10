@@ -257,9 +257,16 @@ def redact_attachment(request, slug, attachment_id):
     if request.method == 'POST':
         # Python 2.7/3.5 requires str for json.loads
         instructions = json.loads(request.body.decode('utf-8'))
-        path = redact_file(attachment.file.file, instructions)
+        try:
+            path = redact_file(attachment.file.file, instructions)
+        except Exception:
+            logging.error("PDF redaction error", exc_info=True)
+            path = None
         if path is None:
-            return render_400(request)
+            return JsonResponse({
+                'error': True,
+                'message': _('There was an error redacting this PDF.'),
+            })
         name = attachment.name.rsplit('.', 1)[0]
         name = re.sub(r'[^\w\.\-]', '', name)
         if already:

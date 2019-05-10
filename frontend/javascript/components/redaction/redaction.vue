@@ -379,7 +379,7 @@ export default {
               })
             } else {
               this.workingState = null
-              this.errors = res
+              this.errors = res.message || res
               this.$refs.top.scrollIntoView(true)
             }
           }).catch((err) => {
@@ -410,9 +410,16 @@ export default {
             this.progressCurrent = null
           }
         })
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = () => {
+          console.log(xhr)
           if (xhr.readyState === 4) {
-            return resolve(JSON.parse(xhr.responseText))
+            try {
+              return resolve(JSON.parse(xhr.responseText))
+            } catch {
+              this.errors = 'Error'
+              this.$refs.top.scrollIntoView(true)
+              return
+            }
           }
         }
         xhr.send(JSON.stringify(serialized))
@@ -885,6 +892,7 @@ export default {
     right: 0;
     bottom: 0;
     overflow: hidden;
+    cursor: crosshair;
   }
   .textLayer {
     opacity: 0.2;
