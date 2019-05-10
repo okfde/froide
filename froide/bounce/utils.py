@@ -236,7 +236,7 @@ def handle_smtp_error(exc):
         except ValidationError:
             continue
         code, message = info
-        status = find_status_from_diagnostic(message)
+        status = find_status_from_diagnostic(message.decode('utf-8'))
         bounce_type = classify_bounce_status(status)
         bounce_info = BounceResult(
             status=status,

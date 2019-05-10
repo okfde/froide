@@ -38,16 +38,13 @@ class EmailBackend(DjangoEmailBackend):
                                      message.as_bytes(linesep='\r\n'),
                                      rcpt_options=self.rcpt_options)
         except smtplib.SMTPRecipientsRefused as e:
+            handle_smtp_error(e)
             logger.exception(e)
-            if not handle_smtp_error(e):
-                raise
             return False
         except smtplib.SMTPException as e:
             logger.exception(e)
-            if not self.fail_silently:
-                raise
             return False
         except Exception as e:
             logger.exception(e)
-            raise
+            return False
         return True
