@@ -15,7 +15,7 @@ from reportlab.pdfbase import pdfmetrics
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
-from wand.exceptions import DelegateError
+from wand.exceptions import DelegateError, WandError
 
 from .document import (
     PDF_FILETYPES, decrypt_pdf_in_place, rewrite_pdf_in_place
@@ -89,7 +89,7 @@ def _redact_file(pdf_file, instructions, tries=0):
         else:
             try:
                 page = get_redacted_page(pdf_file, pageNum, instr, dpi)
-            except DelegateError as e:
+            except (WandError, DelegateError) as e:
                 raise PDFException(e, 'rewrite')
 
         output.addPage(page)
