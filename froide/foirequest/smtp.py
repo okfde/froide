@@ -32,8 +32,8 @@ class EmailBackend(DjangoEmailBackend):
         from_email = sanitize_address(email_message.from_email, encoding)
         from_email = self.return_path or from_email
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
-        message = email_message.message()
         try:
+            message = email_message.message()
             self.connection.sendmail(from_email, recipients,
                                      message.as_bytes(linesep='\r\n'),
                                      rcpt_options=self.rcpt_options)
