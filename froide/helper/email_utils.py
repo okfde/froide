@@ -73,7 +73,7 @@ def get_unread_mails(host, port, user, password, ssl=True):
 
 def make_address(email, name=None):
     if name:
-        return '"%s" <%s>' % (name, email)
+        return '"%s" <%s>' % (name.replace('"', ''), email)
     return email
 
 
