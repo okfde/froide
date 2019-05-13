@@ -6,7 +6,7 @@ Please visit the link below:
 {{ url }}
 {% endblocktrans %}
 
-{% blocktrans %}Cheers,
+{% blocktrans with site_name=SITE_NAME %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}

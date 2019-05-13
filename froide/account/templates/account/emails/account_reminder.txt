@@ -11,7 +11,7 @@ Click here to go there:
 If this is not you, you can ignore this email.{% endblocktrans %}
 
 
-{% blocktrans %}Cheers,
+{% blocktrans with site_name=SITE_NAME %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}

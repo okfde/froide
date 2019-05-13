@@ -9,7 +9,7 @@ If so, please click the following link to continue
 If you are not trying to send this request, please ignore this email. No further action is required on your part.{% endblocktrans %}
 
 
-{% blocktrans %}Cheers,
+{% blocktrans with site_name=SITE_NAME %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}

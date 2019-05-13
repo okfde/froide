@@ -9,7 +9,7 @@ you received a suggestion for a Public Body on your request '{{ title }}'.{% end
 {% blocktrans %}If you want to use this Public Body, go to your request and chose the Public Body from the list. Here is a link to your request:{% endblocktrans %}
 {{ go_url }}
 
-{% blocktrans %}Cheers,
+{% blocktrans with site_name=SITE_NAME %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}

@@ -8,7 +8,7 @@ Please visit the link below to join this team:
 If you don't have an account on {{ site_name }} yet, you have to create one first.
 {% endblocktrans %}
 
-{% blocktrans %}Cheers,
+{% blocktrans with site_name=SITE_NAME %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}
