@@ -1,6 +1,7 @@
 from django.core.mail import (
     EmailMessage, EmailMultiAlternatives, get_connection
 )
+from django.template.loader import render_to_string
 from django.conf import settings
 
 try:
@@ -16,6 +17,25 @@ def get_mail_connection(**kwargs):
         backend=settings.EMAIL_BACKEND,
         **kwargs
     )
+
+
+def send_template_email(
+        email=None, user=None,
+        subject=None, subject_template=None,
+        template=None, html_template=None,
+        context=None, **kwargs):
+    if subject_template is not None:
+        subject = render_to_string(subject_template, context)
+    body = render_to_string(template, context)
+
+    if html_template is not None:
+        kwargs['html'] = render_to_string(html_template, context)
+
+    if user is not None:
+        return user.send_mail(subject, body, **kwargs)
+    elif email is not None:
+        return send_mail(subject, body, email, **kwargs)
+    return True
 
 
 def send_mail(subject, body, user_email,
