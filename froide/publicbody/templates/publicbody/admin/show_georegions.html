@@ -31,10 +31,37 @@
   </ul>
 {% endif %}
 
+<button id="generate-geojson">Generate GeoJSON</button>
+<a href="" id="download-geojson">Download</a>
+
 <script type="text/javascript">
-  var initUrl = '/api/v1/georegion/?id={{ region_string }}'
+  var initUrl = '/api/v1/georegion/?id='
+  var regions = {{ regions|safe }};
+  var geoGetter = window.location.search.indexOf('centroid') !== -1 ? 'centroid' : 'geom'
+  var features = []
     function main_map_init (map, options) {
-      getData(initUrl, map)
+      var regionIds = []
+      for (var reg in regions) {
+        regionIds.push('' + reg)
+      }
+      getData(initUrl + regionIds.join(','), map)
+
+      var button = document.querySelector('#generate-geojson');
+      button.addEventListener('click', generateGeoJson);
+    }
+    function generateGeoJson () {
+      var fc = { "type": "FeatureCollection",
+          "features": features
+      }
+      var blob = new Blob([JSON.stringify(fc)], {
+        type: 'application/json',
+        name: 'data.geojson'
+      })
+      var link = document.querySelector('#download-geojson')
+      link.download = 'data.geojson'
+      link.target = '_blank'
+      link.rel = 'noopener'
+      link.href = window.URL.createObjectURL(blob)
     }
     function getData (url, map) {
       window.fetch(url).then(function(response) {
@@ -44,8 +71,20 @@
           getData(data.meta.next, map)
         }
         var geoData = data.objects.map(function(x) {
-          return x.geom
+          features.push({ "type": "Feature",
+            "geometry": x[geoGetter],
+            "properties": {
+              "pb_id": regions[x.id],
+              "name": x.name,
+              "population": x.population,
+              "kind": x.kind,
+              "kind_detail": x.kind_detail,
+              "region_id": x.id
+            }
+          })
+          return x[geoGetter]
         })
+
         console.log(geoData.length)
         var layer = L.geoJson(geoData, {
           style: function() {

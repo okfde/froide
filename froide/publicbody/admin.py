@@ -273,15 +273,14 @@ class PublicBodyBaseAdminMixin(
     def show_georegions(self, request, queryset):
         opts = self.model._meta
 
-        queryset = queryset
         context = {
             'opts': opts,
             'media': self.media,
             'applabel': opts.app_label,
             'no_regions': queryset.filter(regions=None),
-            'region_string': ','.join([
-                str(reg.id) for pb in queryset.exclude(regions=None) for reg in pb.regions.all()
-            ])
+            'regions': json.dumps({
+                reg.id: pb.id for pb in queryset.exclude(regions=None) for reg in pb.regions.all()
+            })
         }
 
         # Display the confirmation page

@@ -28,6 +28,7 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         many=False
     )
+    centroid = serializers.SerializerMethodField()
 
     class Meta:
         model = GeoRegion
@@ -37,14 +38,18 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
             'kind_detail', 'level',
             'region_identifier', 'global_identifier',
             'area', 'population', 'valid_on',
-            'part_of',
+            'part_of', 'centroid',
         )
+
+    def get_centroid(self, obj):
+        if obj.geom is not None:
+            return json.loads(obj.geom.centroid.json)
+        return None
 
 
 class GeoRegionDetailSerializer(GeoRegionSerializer):
     geom = serializers.SerializerMethodField()
     gov_seat = serializers.SerializerMethodField()
-    centroid = serializers.SerializerMethodField()
 
     class Meta(GeoRegionSerializer.Meta):
         fields = GeoRegionSerializer.Meta.fields + (
@@ -60,11 +65,6 @@ class GeoRegionDetailSerializer(GeoRegionSerializer):
     def get_gov_seat(self, obj):
         if obj.gov_seat is not None:
             return json.loads(obj.gov_seat.json)
-        return None
-
-    def get_centroid(self, obj):
-        if obj.geom is not None:
-            return json.loads(obj.geom.centroid.json)
         return None
 
 
@@ -158,6 +158,8 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
         }
 
     def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return GeoRegionDetailSerializer
         try:
             return self.serializer_action_classes[self.action]
         except (KeyError, AttributeError):
