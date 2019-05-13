@@ -35,12 +35,15 @@
         <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
         <dd>{{ object.classification }}</dd>
       {% endif %}
-      <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
-      <dd>
-        {% for category in object.categories.all %}
-          {{ category.name }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-      </dd>
+      {% with categories=object.categories.all %}
+      {% if categories %}
+        <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
+        <dd>
+          {% for category in categories %}
+            {{ category.name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </dd>
+      {% endif %}
       {% if object.url %}
         <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
         <dd><a href="{{ object.url }}" target="_blank" rel="noopener">{{ object.url|truncatechars:30 }}</a></dd>
