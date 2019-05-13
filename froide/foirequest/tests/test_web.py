@@ -141,7 +141,7 @@ class WebTest(TestCaseHelpers, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, req1.title)
         self.assertContains(response, req2.title)
-        with realtime_search():
+        with realtime_search(self):
             req1.same_as = req2
             req1.save()
             req2.same_as_count = 1
