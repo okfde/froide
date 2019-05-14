@@ -37,7 +37,7 @@
 <script type="text/javascript">
   var initUrl = '/api/v1/georegion/?id='
   var regions = {{ regions|safe }};
-  var geoGetter = window.location.search.indexOf('centroid') !== -1 ? 'centroid' : 'geom'
+  var geoGetter = window.location.hash.indexOf('centroid') !== -1 ? 'centroid' : 'geom'
   var features = []
     function main_map_init (map, options) {
       var regionIds = []
