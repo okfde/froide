@@ -82,7 +82,7 @@ def _redact_file(pdf_file, instructions, tries=0):
     output = PdfFileWriter()
     try:
         pdf_reader = PdfFileReader(pdf_file, strict=False)
-    except (PdfReadError, ValueError) as e:
+    except (PdfReadError, ValueError, OSError) as e:
         raise PDFException(e, 'rewrite')
 
     try:
