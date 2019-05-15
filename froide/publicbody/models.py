@@ -15,7 +15,6 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 from taggit.utils import edit_string_for_tags
 from treebeard.mp_tree import MP_Node, MP_NodeManager
-from django_wikidata.fields import WikidataItemField
 
 from froide.georegion.models import GeoRegion
 
