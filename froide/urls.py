@@ -7,6 +7,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext
 from django.contrib import admin
+from django.conf.urls.i18n import i18n_patterns
 
 from rest_framework.schemas import get_schema_view
 
@@ -97,10 +98,10 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
     ]
 
 
-froide_urlpatterns += [
+froide_urlpatterns += i18n_patterns(
     # Translators: URL part
     url(r'^', include('froide.foirequest.urls')),
-]
+)
 
 if len(settings.LANGUAGES) > 1:
     froide_urlpatterns += [

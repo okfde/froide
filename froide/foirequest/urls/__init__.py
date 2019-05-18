@@ -18,25 +18,28 @@ from . import (
 
 urlpatterns = [
     # Translators: request URL
-    url(r'^%s/' % pgettext('url part', 'make-request'), include(make_request_urls)),
+    url(pgettext('url part', r'^make-request/'), include(make_request_urls)),
     # Translators: URL part
-    url(r'^%s/' % pgettext('url part', 'requests'), include(list_requests_urls)),
+    url(pgettext('url part', r'^requests/'), include(list_requests_urls)),
     # Translators: request URL
-    url(r'^%s/' % pgettext('url part', 'request'), include(request_urls)),
+    url(pgettext('url part', r'^request/'), include(request_urls)),
     # Translators: project URL
-    url(r'^%s/' % pgettext('url part', 'project'), include(project_urls)),
+    url(pgettext('url part', r'^project/'), include(project_urls)),
 
     # Translators: project URL
-    url(r'^%s/' % pgettext('url part', 'account'), include(account_urls)),
+    url(pgettext('url part', r'^account/'), include(account_urls)),
 
     # Translators: request URL
-    url(r'^%s/' % pgettext('url part', 'search'), search, name="foirequest-search"),
+    url(pgettext('url part', r'^search/'), search, name="foirequest-search"),
     # Translators: Short request URL
-    url(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'r'), shortlink, name="foirequest-shortlink"),
+    url(pgettext('url part', r"^r/(?P<obj_id>\d+)/?$"), shortlink,
+        name="foirequest-shortlink"),
     # Translators: Short project URL
-    url(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'p'), project_shortlink, name="foirequest-project_shortlink"),
+    url(pgettext('url part', r"^p/(?P<obj_id>\d+)/?$"),
+        project_shortlink, name="foirequest-project_shortlink"),
     # Translators: Short-request auth URL
-    url(r"^%s/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$" % pgettext('url part', 'r'), auth, name="foirequest-auth"),
+    url(pgettext('url part', r"^r/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$"),
+        auth, name="foirequest-auth"),
 ]
 
 urlpatterns += [
