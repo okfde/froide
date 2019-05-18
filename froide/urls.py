@@ -101,6 +101,7 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
 froide_urlpatterns += i18n_patterns(
     # Translators: URL part
     url(r'^', include('froide.foirequest.urls')),
+    prefix_default_language=False
 )
 
 if len(settings.LANGUAGES) > 1:
