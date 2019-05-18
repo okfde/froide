@@ -2072,8 +2072,11 @@ msgstr ""
 "angeben sollen, geben Sie sie unten ein."
 
 #: froide/foirequest/forms.py:594 froide/foirequest/forms.py:753
-msgid "Uploaded scans can be PDF, JPG, PNG or GIF."
+msgid "Uploaded scans can be PDF, JPG, PNG or GIF. They are non-public "
+"by default and can be redacted with our tool."
 msgstr "Dateien können als PDF, JPG, PNG oder GIF hochgeladen werden."
+"Sie sind dann zunächst nicht-öffentlich und können mit unserem Tool "
+"geschwärzt werden."
 
 #: froide/foirequest/forms.py:596 froide/foirequest/models/attachment.py:75
 #: froide/foirequest/templates/foirequest/list_unchecked.html:30
