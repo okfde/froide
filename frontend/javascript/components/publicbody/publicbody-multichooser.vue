@@ -11,7 +11,7 @@
     <template v-else>
       <div class="row">
         <div class="form-search col-md-8 mt-3">
-          <label for="publicbody-multi-search-input">Suchen Sie nach Behörden</label>
+          <label for="publicbody-multi-search-input">{{ i18n.searchPublicBodyLabel }}</label>
           <div class="input-group">
             <input id="publicbody-multi-search-input" type="search" class="search-public_bodies form-control form-control-lg"
               v-model="search"

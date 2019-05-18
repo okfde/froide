@@ -170,6 +170,10 @@ class MakeRequestView(FormView):
                 'loadMore': _('load more...'),
                 'next': _('next'),
                 'previous': _('previous'),
+                'choosePublicBody': _('Choose public authority'),
+                'checkSelection': _('Check selection'),
+                'checkRequest': _('Check request'),
+                'goNextStep': _('Go to next step'),
                 'batchRequestDraftOnly': _(
                     'You have been allowed to make one project request to '
                     'these public bodies, but you do not have permission '

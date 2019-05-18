@@ -6,47 +6,47 @@
           <li :class="{ 'active': stepSelectPublicBody, 'done': stepSelectPublicBodyDone}">
             <a v-if="!hidePublicbodyChooser" href="#step-publicbody" @click.prevent="setStepSelectPublicBody">
               <i class="fa fa-check-circle" aria-hidden="true"></i>
-              Behörde wählen
+              {{ i18n.choosePublicBody }}
             </a>
             <span v-else>
               <i class="fa fa-check-circle" aria-hidden="true"></i>
-              Behörde wählen
+              {{ i18n.choosePublicBody }}
             </span>
           </li>
           <li v-if="multiRequest" :class="{'active': stepReviewPublicBodies, 'done': stepReviewPublicBodiesDone}">
             <a v-if="hasPublicBodies" href="#step-publicbody-review" @click.prevent="setStepReviewPublicBody">
               <i class="fa" :class="{ 'fa-check-circle': stepReviewPublicBodiesDone, 'fa-check-circle-o': !stepReviewPublicBodiesDone }" aria-hidden="true"></i>
-              Auswahl prüfen
+              {{ i18n.checkSelection }}
             </a>
             <span v-else>
               <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-              Auswahl prüfen
+              {{ i18n.checkSelection }}
             </span>
           </li>
           <li :class="{ 'active': stepWriteRequest}">
             <a v-if="hasPublicBodies" href="#step-request"  @click.prevent="setStepRequest">
               <i class="fa" :class="{ 'fa-check-circle': stepWriteRequestDone, 'fa-check-circle-o': !stepWriteRequestDone }" aria-hidden="true"></i>
-              Anfrage stellen
+              {{ i18n.makeRequest }}
             </a>
             <span v-else>
               <i class="fa" :class="{ 'fa-check-circle': stepWriteRequestDone, 'fa-check-circle-o': !stepWriteRequestDone }" aria-hidden="true"></i>
-              Anfrage stellen
+              {{ i18n.makeRequest }}
             </span>
           </li>
           <li>
             <a href="#step-review" data-toggle="modal" v-if="stepWriteRequest">
               <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-              Anfrage prüfen
+              {{ i18n.checkRequest }}
             </a>
             <span v-else>
               <i class="fa fa-check-circle-o" aria-hidden="true"></i>
-              Anfrage prüfen
+              {{ i18n.checkRequest }}
             </span>
           </li>
           </ol>
           <div class="pt-2 col-auto ml-auto" v-if="showNext">
             <button class="btn btn-secondary" @click.prevent="clickNext">
-                zum nächsten Schritt
+                {{ i18n.goNextStep }}
             </button>
           </div>
       </div>

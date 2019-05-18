@@ -21,6 +21,7 @@ def get_widget_context():
             'missingPublicBody': _('Are we missing a public body?'),
             'publicBodySearchPlaceholder': _('Ministry of...'),
             'search': _('Search'),
+            'searchPublicBodyLabel': _('Search for public authorities'),
             'examples': _('Examples:'),
             'environment': _('Environment'),
             'ministryOfLabour': _('Ministry of Labour'),
