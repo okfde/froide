@@ -7,7 +7,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext
 from django.contrib import admin
-from django.conf.urls.i18n import i18n_patterns
 
 from rest_framework.schemas import get_schema_view
 
