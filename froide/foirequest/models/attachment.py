@@ -95,7 +95,7 @@ class FoiAttachment(models.Model):
 
     @property
     def can_redact(self):
-        return self.redacted or (
+        return self.redacted is not None or (
             self.can_approve and can_redact_file(self.filetype, name=self.name)
         )
 
