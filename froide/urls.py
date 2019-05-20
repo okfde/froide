@@ -17,6 +17,7 @@ from froide.publicbody.api_views import (ClassificationViewSet,
     CategoryViewSet, PublicBodyViewSet, JurisdictionViewSet, FoiLawViewSet)
 from froide.georegion.api_views import GeoRegionViewSet
 from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
+from froide.campaign.api_views import CampaignViewSet
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody,
@@ -49,6 +50,7 @@ api_router.register(r'jurisdiction', JurisdictionViewSet,
 api_router.register(r'law', FoiLawViewSet, basename='law')
 api_router.register(r'georegion', GeoRegionViewSet, basename='georegion')
 api_router.register(r'following', FoiRequestFollowerViewSet, basename='following')
+api_router.register(r'campaign', CampaignViewSet, basename='campaign')
 
 
 class StaticViewSitemap(Sitemap):

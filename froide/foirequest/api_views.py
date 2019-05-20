@@ -20,6 +20,7 @@ from froide.publicbody.api_views import (
 from taggit.models import Tag
 
 from froide.publicbody.models import PublicBody
+from froide.campaign.models import Campaign
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
 from .services import CreateRequestService
@@ -283,6 +284,13 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.SerializerMethodField(
         source='get_user'
     )
+    project = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+    )
+    campaign = serializers.HyperlinkedRelatedField(
+        read_only=True, view_name='api:campaign-detail',
+        lookup_field='pk'
+    )
 
     class Meta:
         model = FoiRequest
@@ -307,7 +315,9 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             'resolution', 'slug',
             'title',
             'reference',
-            'user'
+            'user',
+            'project',
+            'campaign',
         )
 
     def get_user(self, obj):
@@ -367,6 +377,14 @@ class FoiRequestFilter(filters.FilterSet):
         queryset=filter_by_authenticated_user_queryset,
         method='follower_filter'
     )
+    costs = filters.RangeFilter()
+    campaign = filters.ModelChoiceFilter(
+        queryset=Campaign.objects.filter(public=True),
+        null_value='-',
+        null_label='No Campaign',
+        lookup_expr='isnull',
+        method='campaign_filter'
+    )
 
     # FIXME: default ordering should be undetermined?
     # ordering = filters.OrderingFilter(
@@ -386,7 +404,8 @@ class FoiRequestFilter(filters.FilterSet):
         model = FoiRequest
         fields = (
             'user', 'is_foi', 'checked', 'jurisdiction', 'tags',
-            'resolution', 'status', 'reference', 'public_body'
+            'resolution', 'status', 'reference', 'public_body',
+            'slug', 'costs', 'project', 'campaign'
         )
 
     def tag_filter(self, queryset, name, value):
@@ -406,6 +425,11 @@ class FoiRequestFilter(filters.FilterSet):
 
     def follower_filter(self, queryset, name, value):
         return queryset.filter(followers__user=value)
+
+    def campaign_filter(self, queryset, name, value):
+        if value == '-':
+            return queryset.filter(campaign__isnull=True)
+        return queryset.filter(campaign=value)
 
 
 class CreateOnlyWithScopePermission(TokenHasScope):
