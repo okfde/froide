@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-18 15:08+0200\n"
-"PO-Revision-Date: 2019-05-18 15:10+0200\n"
+"POT-Creation-Date: 2019-05-20 13:00+0200\n"
+"PO-Revision-Date: 2019-05-20 13:15+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -5047,47 +5047,36 @@ msgstr "Heute"
 
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:21
-#| msgctxt "url part"
-#| msgid "make-request"
 msgctxt "url part"
 msgid "^make-request/"
 msgstr "^anfrage-stellen/"
 
 #. Translators: URL part
 #: froide/foirequest/urls/__init__.py:23
-#| msgctxt "url part"
-#| msgid "requests"
 msgctxt "url part"
 msgid "^requests/"
 msgstr "^anfragen/"
 
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:25
-#| msgctxt "url part"
-#| msgid "request"
 msgctxt "url part"
 msgid "^request/"
 msgstr "^anfrage/"
 
 #. Translators: project URL
 #: froide/foirequest/urls/__init__.py:27
-#| msgid "project"
 msgctxt "url part"
 msgid "^project/"
 msgstr "^projekt/"
 
 #. Translators: project URL
 #: froide/foirequest/urls/__init__.py:30
-#| msgctxt "url part"
-#| msgid "account"
 msgctxt "url part"
 msgid "^account/"
 msgstr "^account/"
 
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py:33
-#| msgctxt "url part"
-#| msgid "search"
 msgctxt "url part"
 msgid "^search/"
 msgstr "^suche/"
@@ -5111,65 +5100,117 @@ msgid "^r/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
 msgstr "^r/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
 
 #: froide/foirequest/urls/list_requests_urls.py:18
+msgctxt "url part"
+msgid "^latest/feed/$"
+msgstr "^neueste/feed/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:21
-msgctxt "URL part"
-msgid "latest"
-msgstr "neueste"
+#| msgctxt "URL part"
+#| msgid "latest"
+msgctxt "url part"
+msgid "^latest/rss/$"
+msgstr "^neueste/rss/$"
 
 #. Translators: part in request filter URL
 #. Translators: part in Public Body URL
-#: froide/foirequest/urls/list_requests_urls.py:36
+#: froide/foirequest/urls/list_requests_urls.py:36 froide/publicbody/urls.py:15
+msgctxt "url part"
+msgid "^topic/(?P<category>[-\\w]+)/$"
+msgstr "^thema/(?P<category>[-\\w]+)/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:38
-#: froide/foirequest/urls/list_requests_urls.py:40 froide/publicbody/urls.py:15
-#: froide/publicbody/urls.py:20
-msgctxt "URL part"
-msgid "topic"
-msgstr "thema"
+msgctxt "url part"
+msgid "^topic/(?P<category>[-\\w]+)/feed/$"
+msgstr "^thema/(?P<category>[-\\w]+)/feed/$"
+
+#: froide/foirequest/urls/list_requests_urls.py:40
+msgctxt "url part"
+msgid "^topic/(?P<category>[-\\w]+)/rss/$"
+msgstr "^thema/(?P<category>[-\\w]+)/rss/$"
 
 #. Translators: part in request filter URL
 #: froide/foirequest/urls/list_requests_urls.py:44
+msgctxt "url part"
+msgid "^tag/(?P<tag>[-\\w]+)/$"
+msgstr "^tag/(?P<tag>[-\\w]+)/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:46
+msgctxt "url part"
+msgid "^tag/(?P<tag>[-\\w]+)/feed/$"
+msgstr "^tag/(?P<tag>[-\\w]+)/feed/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:48
-msgctxt "URL part"
-msgid "tag"
-msgstr "tag"
+msgctxt "url part"
+msgid "^tag/(?P<tag>[-\\w]+)/rss/$"
+msgstr "^tag/(?P<tag>[-\\w]+)/rss/$"
 
 #. Translators: part in request filter URL
 #: froide/foirequest/urls/list_requests_urls.py:52
+#| msgid "to %(publicbody)s"
+msgctxt "url part"
+msgid "^to/(?P<publicbody>[-\\w]+)/$"
+msgstr "^an/(?P<publicbody>[-\\w]+)/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:54
+msgctxt "url part"
+msgid "^to/(?P<publicbody>[-\\w]+)/feed/$"
+msgstr "^an/(?P<publicbody>[-\\w]+)/feed/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:56
-#: froide/foirequest/urls/make_request_urls.py:12
-#: froide/foirequest/urls/make_request_urls.py:14
-msgctxt "URL part"
-msgid "to"
-msgstr "an"
+#| msgid "to %(publicbody)s"
+msgctxt "url part"
+msgid "^to/(?P<publicbody>[-\\w]+)/rss/$"
+msgstr "^an/(?P<publicbody>[-\\w]+)/rss/$"
 
 #: froide/foirequest/urls/list_requests_urls.py:59
+msgctxt "url part"
+msgid "^token/(?P<token>[-\\w]+)/feed/$"
+msgstr "^token/(?P<token>[-\\w]+)/feed/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:61
+msgctxt "url part"
+msgid "^token/(?P<token>[-\\w]+)/rss/$"
+msgstr "^token/(?P<token>[-\\w]+)/rss/$"
+
 #: froide/foirequest/urls/list_requests_urls.py:63
-msgctxt "URL part"
-msgid "token"
-msgstr "token"
+msgctxt "url part"
+msgid "^token/(?P<token>[-\\w]+)/calendar/$"
+msgstr "^token/(?P<token>[-\\w]+)/calendar/$"
+
+#: froide/foirequest/urls/make_request_urls.py:12
+msgctxt "url part"
+msgid "^to/(?P<publicbody_ids>\\d+(?:\\+\\d+)*)/$"
+msgstr "^an/(?P<publicbody_ids>\\d+(?:\\+\\d+)*)/$"
+
+#: froide/foirequest/urls/make_request_urls.py:14
+msgctxt "url part"
+msgid "^to/(?P<publicbody_slug>[-\\w]+)/$"
+msgstr "^an/(?P<publicbody_slug>[-\\w]+)/$"
 
 #: froide/foirequest/urls/make_request_urls.py:16
-msgctxt "URL part"
-msgid "draft"
-msgstr "entwurf"
+#| msgctxt "url part"
+#| msgid "^r/(?P<obj_id>\\d+)/?$"
+msgctxt "url part"
+msgid "^draft/(?P<pk>\\d+)/"
+msgstr "^entwurf/(?P<pk>\\d+)/"
 
 #: froide/foirequest/urls/make_request_urls.py:18
-msgctxt "URL part"
-msgid "sent"
-msgstr "versendet"
+#| msgid "sent"
+msgctxt "url part"
+msgid "^sent/$"
+msgstr "^gesendet/$"
 
-#: froide/foirequest/urls/request_urls.py:52
-msgctxt "url component"
-msgid "attachment"
-msgstr "anhang"
+#: froide/foirequest/urls/request_urls.py:51
+msgctxt "url part"
+msgid ""
+"^(?P<slug>[-\\w]+)/(?P<message_id>\\d+)/attachment/(?P<attachment_name>.+)$"
+msgstr ""
+"^(?P<slug>[-\\w]+)/(?P<message_id>\\d+)/anhang/(?P<attachment_name>.+)$"
 
-#: froide/foirequest/urls/request_urls.py:55
-msgctxt "url component"
-msgid "upload"
-msgstr "upload"
+#: froide/foirequest/urls/request_urls.py:54
+msgctxt "url part"
+msgid "^(?P<slug>[-\\w]+)/(?P<message_id>\\d+)/upload/$"
+msgstr "^(?P<slug>[-\\w]+)/(?P<message_id>\\d+)/upload/$"
 
 #: froide/foirequest/utils.py:44
 msgid "User exceeded request limit"
@@ -6047,15 +6088,24 @@ msgstr[1] ""
 msgid "Updates to the request \"%(title)s\""
 msgstr "Neues bei Anfrage „%(title)s“"
 
-#: froide/foirequestfollower/urls.py:10
-msgctxt "URL part"
-msgid "confirm-follow"
-msgstr "benachrichtigungen-erhalten"
+#: froide/foirequestfollower/urls.py:9
+#, python-brace-format
+#| msgctxt "url part"
+#| msgid "^r/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
+msgctxt "url part"
+msgid "^confirm-follow/(?P<follow_id>\\d+)/(?P<check>[0-9a-f]{32})/$"
+msgstr ""
+"^benachrichtigungen-erhalten/(?P<follow_id>\\d+)/(?P<check>[0-9a-f]{32})/$"
 
-#: froide/foirequestfollower/urls.py:13
-msgctxt "URL part"
-msgid "unfollow"
-msgstr "keine-benachrichtigungen-erhalten"
+#: froide/foirequestfollower/urls.py:11
+#, python-brace-format
+#| msgctxt "url part"
+#| msgid "^r/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
+msgctxt "url part"
+msgid "^unfollow/(?P<follow_id>\\d+)/(?P<check>[0-9a-f]{32})/$"
+msgstr ""
+"^keine-benachrichtigungen-erhalten/(?P<follow_id>\\d+)/(?P<check>[0-9a-f]"
+"{32})/$"
 
 #: froide/foirequestfollower/views.py:28
 msgid "You are now following this request."
@@ -7368,9 +7418,15 @@ msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
 #: froide/publicbody/urls.py:10
-msgctxt "URL part"
-msgid "propose"
-msgstr "vorschlagen"
+msgctxt "url part"
+msgid "^propose/$"
+msgstr "^vorschlagen/$"
+
+#. Translators: part in Public Body URL
+#: froide/publicbody/urls.py:20
+msgctxt "url part"
+msgid "^(?P<jurisdiction>[-\\w]+)/topic/(?P<category>[-\\w]+)/$"
+msgstr "^(?P<jurisdiction>[-\\w]+)/thema/(?P<category>[-\\w]+)/$"
 
 #: froide/publicbody/views.py:167
 msgid ""
@@ -8042,6 +8098,46 @@ msgstr "profil"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~ msgctxt "URL part"
+#~ msgid "topic"
+#~ msgstr "thema"
+
+#~ msgctxt "URL part"
+#~ msgid "tag"
+#~ msgstr "tag"
+
+#~ msgctxt "URL part"
+#~ msgid "to"
+#~ msgstr "an"
+
+#~ msgctxt "URL part"
+#~ msgid "token"
+#~ msgstr "token"
+
+#~ msgctxt "URL part"
+#~ msgid "draft"
+#~ msgstr "entwurf"
+
+#~ msgctxt "URL part"
+#~ msgid "sent"
+#~ msgstr "versendet"
+
+#~ msgctxt "url component"
+#~ msgid "attachment"
+#~ msgstr "anhang"
+
+#~ msgctxt "url component"
+#~ msgid "upload"
+#~ msgstr "upload"
+
+#~ msgctxt "URL part"
+#~ msgid "confirm-follow"
+#~ msgstr "benachrichtigungen-erhalten"
+
+#~ msgctxt "URL part"
+#~ msgid "unfollow"
+#~ msgstr "keine-benachrichtigungen-erhalten"
 
 #, fuzzy
 #~| msgid "“%(subject)s” to %(name)s"
