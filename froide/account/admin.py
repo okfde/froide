@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
-from froide.helper.admin_utils import TaggitListFilter
+from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 
 from .models import User, TaggedUser, UserTag
 from .services import AccountService
@@ -41,8 +41,11 @@ class TaggedUserAdmin(admin.ModelAdmin):
     raw_id_fields = ('tag', 'content_object')
 
 
-class UserTagsFilter(TaggitListFilter):
+class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
     tag_class = TaggedUser
+    title = 'Tags'
+    parameter_name = 'tags__slug'
+    lookup_name = '__in'
 
 
 class UserAdmin(DjangoUserAdmin):
@@ -70,7 +73,7 @@ class UserAdmin(DjangoUserAdmin):
     list_filter = list(DjangoUserAdmin.list_filter) + [
         'private', 'terms', 'is_trusted',
         'newsletter', 'is_deleted',
-        UserTagsFilter
+        UserTagListFilter
     ]
     search_fields = ('email', 'username', 'first_name', 'last_name')
 

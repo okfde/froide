@@ -283,3 +283,69 @@ class SearchFilter(ForeignKeyFilter):
         val = self.used_parameters.pop(param, None)
         if val is not None:
             self.used_parameters['{}__startswith'.format(param)] = val
+
+
+class MultiFilterMixin:
+    template = 'helper/admin/multi_filter.html'
+    lookup_name = ''
+
+    def queryset(self, request, queryset):
+        if request.GET.get(self.parameter_name):
+            lookup = self.parameter_name + self.lookup_name
+            values = self.value_as_list()
+            includes = [v for v in values if not v.startswith('~')]
+            excludes = [v[1:] for v in values if v.startswith('~')]
+            if includes:
+                for inc in includes:
+                    queryset = queryset.filter(**{lookup: [inc]})
+            if excludes:
+                queryset = queryset.exclude(**{lookup: excludes})
+        return queryset
+
+    def value_as_list(self):
+        return self.value().split(',') if self.value() else []
+
+    def choices(self, changelist):
+
+        def amend_query_string(include=None, clear=None, exclude=None):
+            selections = self.value_as_list()
+            if include and include not in selections:
+                selections.append(include)
+                exclude_val = '~{}'.format(include)
+                if exclude_val in selections:
+                    selections.remove(exclude_val)
+            if exclude:
+                exclude_val = '~{}'.format(exclude)
+                if exclude in selections:
+                    selections.remove(exclude)
+                if exclude_val not in selections:
+                    selections.append(exclude_val)
+            if clear:
+                if clear in selections:
+                    selections.remove(clear)
+                exclude_val = '~{}'.format(clear)
+                if exclude_val in selections:
+                    selections.remove(exclude_val)
+            if selections:
+                csv = ','.join(selections)
+                return changelist.get_query_string({self.parameter_name: csv})
+            else:
+                return changelist.get_query_string(remove=[self.parameter_name])
+
+        yield {
+            'selected': self.value() is None,
+            'query_string': changelist.get_query_string(remove=[self.parameter_name]),
+            'display': _('All'),
+            'reset': True,
+        }
+        values = self.value_as_list()
+        for lookup, title in self.lookup_choices:
+            yield {
+                'included': str(lookup) in values,
+                'excluded': '~{}'.format(lookup) in values,
+                'query_string': changelist.get_query_string({self.parameter_name: lookup}),
+                'include_query_string': amend_query_string(include=str(lookup)),
+                'clear_query_string': amend_query_string(clear=str(lookup)),
+                'exclude_query_string': amend_query_string(exclude=str(lookup)),
+                'display': title,
+            }
