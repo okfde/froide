@@ -65,6 +65,13 @@ def send_mail(subject, body, user_email,
 
     connection = get_mail_connection(**backend_kwargs)
 
+    if headers is None:
+        headers = {}
+    headers.update({
+        'X-Auto-Response-Suppress': 'All',
+        'Auto-Submitted': 'auto-generated',
+    })
+
     if html is None:
         email_klass = EmailMessage
     else:
