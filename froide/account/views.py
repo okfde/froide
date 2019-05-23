@@ -127,11 +127,13 @@ def profile(request, slug):
     user = get_object_or_404(auth.get_user_model(), username=slug)
     if user.private:
         raise Http404
-    foirequests = FoiRequest.published.filter(user=user).order_by('-first_message')
+    foirequest_count = FoiRequest.published.all().count()
+    foirequests = FoiRequest.published.filter(user=user).order_by('-first_message')[:10]
     foievents = FoiEvent.objects.filter(public=True, user=user)[:20]
     return render(request, 'account/profile.html', {
         'profile_user': user,
         'requests': foirequests,
+        'request_count': foirequest_count,
         'events': foievents
     })
 
