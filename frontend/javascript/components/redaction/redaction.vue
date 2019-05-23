@@ -171,6 +171,7 @@ export default {
       actionsPerPage: {},
       actionIndexPerPage: {},
       rectanglesPerPage: {},
+      maxWidth: null,
       startDrag: null,
       endDrag: null,
       initialAutoRedact: {},
@@ -292,13 +293,15 @@ export default {
         console.log('# Page ' + pageNum)
         this.page = page
         var viewport = page.getViewport(this.scaleFactor)
-        var maxWidth = this.$refs.containerWrapper.offsetWidth
-        if (viewport.width > maxWidth) {
-          this.scaleFactor = maxWidth / viewport.width
+        if (this.maxWidth === null) {
+          this.maxWidth = this.$refs.containerWrapper.offsetWidth
+        }
+        if (viewport.width > this.maxWidth) {
+          this.scaleFactor = this.maxWidth / viewport.width
           viewport = page.getViewport(this.scaleFactor)
         }
         this.viewport = viewport
-        console.log(this.scaleFactor, 'Size: ' + viewport.width + 'x' + viewport.height, 'at maxwidth', maxWidth)
+        console.log(this.scaleFactor, 'Size: ' + viewport.width + 'x' + viewport.height, 'at maxwidth', this.maxWidth)
         var canvas = this.canvas
         canvas.width = viewport.width
         canvas.height = viewport.height
