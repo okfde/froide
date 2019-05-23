@@ -1,7 +1,9 @@
 import os
+import logging
 
 from django.conf import settings
 from django.utils import translation
+from django.core.files import File
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
 from django.core.files.base import ContentFile
@@ -12,6 +14,7 @@ from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.helper.document import convert_to_pdf, convert_images_to_ocred_pdf
 from froide.document.pdf_utils import PDFProcessor
+from froide.helper.redaction import redact_file
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
@@ -244,3 +247,68 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
     target.size = new_file.size
     target.file.save(target.name, new_file)
     target.save()
+
+
+@celery_app.task(name='froide.foirequest.tasks.redact_attachment_task',
+                 time_limit=60 * 6, soft_time_limit=60 * 5)
+def redact_attachment_task(att_id, target_id, instructions):
+    # import ipdb ; ipdb.set_trace()
+    try:
+        attachment = FoiAttachment.objects.get(pk=att_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    if att_id != target_id:
+        try:
+            target = FoiAttachment.objects.get(pk=target_id)
+        except FoiAttachment.DoesNotExist:
+            return
+    else:
+        target = attachment
+
+    logging.info('Trying redaction of %s with instructions %s',
+                 attachment.id, instructions
+    )
+
+    try:
+        path = redact_file(attachment.file.file, instructions)
+    except Exception:
+        logging.error("PDF redaction error", exc_info=True)
+        path = None
+
+    logging.info('Done redaction of %s (%s)', attachment.id, path)
+    if path is None:
+        # Redaction has failed, remove empty attachment
+        if attachment.redacted:
+            attachment.redacted = None
+        if attachment.is_redacted:
+            attachment.approved = True
+            attachment.can_approve = True
+        attachment.save()
+
+        if target.file.path == '':
+            target.delete()
+        return
+
+    logging.info('Trying OCR of %s', path)
+    processor = PDFProcessor(
+        path, language=settings.LANGUAGE_CODE
+    )
+    try:
+        pdf_bytes = processor.run_ocr(timeout=60 * 4)
+    except SoftTimeLimitExceeded:
+        pdf_bytes = None
+
+    if pdf_bytes is None:
+        logging.info('OCR failed %s', path)
+        # OCR has failed, save redaction anyway
+        pdf_file = File(open(path, 'rb'))
+    else:
+        logging.info('OCR successful %s', path)
+        pdf_file = ContentFile(pdf_bytes)
+
+    target.size = pdf_file.size
+    target.file.save(target.name, pdf_file, save=False)
+
+    target.can_approve = True
+    target.approve_and_save()

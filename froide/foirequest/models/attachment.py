@@ -152,8 +152,7 @@ class FoiAttachment(models.Model):
 
     def get_anchor_url(self):
         if self.belongs_to:
-            return '%s#%s' % (self.belongs_to.request.get_absolute_url(),
-                self.get_html_id())
+            return self.belongs_to.get_absolute_url()
         return '#' + self.get_html_id()
 
     def get_domain_anchor_url(self):

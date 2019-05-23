@@ -10,7 +10,7 @@
         <div class="alert alert-error" role="alert">{{ errors }}</div>
       </div>
     </div>
-    <div class="row" v-if="working">
+    <div class="row mt-5" v-if="working">
       <div class="col-lg-12">
         <div class="text-center">
           <h3 v-if="loading">
@@ -24,7 +24,11 @@
           </h3>
         </div>
         <div class="progress">
-          <div class="progress-bar" :class="{'progress-bar-striped': progressUnknown}" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :style="progressWidth"></div>
+          <div class="progress-bar" :class="{'progress-bar-striped progress-bar-animated': progressUnknown}" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :style="progressWidth"></div>
+        </div>
+        <div class="text-center mt-3">
+          <div class="spinner-border" role="status">
+          </div>
         </div>
       </div>
     </div>
@@ -138,7 +142,7 @@ import Vue from 'vue'
 
 import PDFJS from 'pdfjs-dist'
 
-import {bustCache} from '../../lib/api.js'
+import {bustCache, getData} from '../../lib/api.js'
 
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
@@ -352,9 +356,9 @@ export default {
       this.textOnly = !this.textDisabled
     },
     redact () {
-      this.$refs.top.scrollIntoView(true)
+      this.$refs.top.scrollIntoView({behavior: "smooth", block: "start"})
       this.ready = false
-      this.workingState = 'redacting'
+      this.workingState = 'sending'
       this.progressCurrent = 0
       this.progressTotal = this.numPages + 1
       let pages = range(1, this.numPages + 1)
@@ -370,23 +374,22 @@ export default {
         .then(() => {
           console.log(serialized)
           this.progressCurrent = null
-          return this.sendSerializedPages(serialized).then((res) => {
-            if (res.url) {
+          return this.sendSerializedPages(serialized).then((attachment) => {
+            if (attachment) {
               this.progressCurrent = 100
               this.progressTotal = 100
-              bustCache(res.attachment_url).then(() => {
-                document.location.href = res.url
+              bustCache(attachment.file_url).then(() => {
+                document.location.href = attachment.anchor_url
               })
             } else {
               this.workingState = null
-              this.errors = res.message || res
+              this.errors = res || i18n.redactionTimeout
               this.$refs.top.scrollIntoView(true)
             }
           }).catch((err) => {
             this.workingState = null
             console.error(err)
-            this.ready = true
-            this.redacting = false
+            this.ready = false
             this.errors = err
             this.$refs.top.scrollIntoView(true)
           })
@@ -411,18 +414,54 @@ export default {
           }
         })
         xhr.onreadystatechange = () => {
-          console.log(xhr)
           if (xhr.readyState === 4) {
-            try {
-              return resolve(JSON.parse(xhr.responseText))
-            } catch {
-              this.errors = 'Error'
-              this.$refs.top.scrollIntoView(true)
-              return
+            if (xhr.status === 200) {
+              try {
+                this.progressCurrent = null
+                this.workingState = 'redacting'
+                this.waitOnAttachment(
+                  JSON.parse(xhr.responseText)
+                ).then(resolve).catch(reject)
+                return
+              } catch (e) {
+                console.error('Failed to decode JSON', e, xhr.responseText)
+                reject(this.i18n.redactionError)
+                return
+              }
+            } else {
+              console.error('Non 200 response code', xhr.status)
+              reject(this.i18n.redactionError)
             }
           }
         }
         xhr.send(JSON.stringify(serialized))
+      })
+    },
+    waitOnAttachment (response) {
+      return new Promise((resolve, reject) => {
+        let attachmentUrl = response.resource_uri
+        let waitTime = 0
+        const checkAttachment = () => {
+          getData(attachmentUrl).then((attachment) => {
+            if (attachment.pending || !attachment.approved) {
+              waitTime += 5
+              if (waitTime > 60 * 3) {
+                console.error('Timeout while waiting for redaction')
+                return reject(this.i18n.redactionTimeout)
+              }
+              if (this.errors === null) {
+                window.setTimeout(checkAttachment, 5 * 1000)
+              }
+              return
+            }
+            console.error('Attachment redacted.')
+            resolve(attachment)
+          }).catch(() => {
+            console.err('Could not get attachment via API')
+            return reject(this.i18n.redactionError)
+          })
+        }
+        window.setTimeout(checkAttachment, 1000)
       })
     },
     serializePage (pageNumber) {

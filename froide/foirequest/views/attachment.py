@@ -3,7 +3,6 @@ import json
 import logging
 
 from django.conf import settings
-from django.core.files import File
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
@@ -14,11 +13,11 @@ from django.views.static import serve
 from django.templatetags.static import static
 
 from froide.helper.utils import render_400, render_403
-from froide.helper.redaction import redact_file
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..auth import (can_read_foirequest, can_read_foirequest_authenticated,
                     can_write_foirequest, is_attachment_public)
+from ..tasks import redact_attachment_task
 
 
 logger = logging.getLogger(__name__)
@@ -232,8 +231,10 @@ def get_redact_context(foirequest, attachment):
             'undo': _('Undo'),
             'redo': _('Redo'),
             'loadingPdf': _('Loading PDF...'),
-            'redacting': _('Redaction process started, please wait...'),
-            'sending': _('Saving redacted PDF, please wait...'),
+            'sending': _('Uploading redaction instructions, please wait...'),
+            'redacting': _('Redacting PDF, please wait...'),
+            'redactionError': _('There was a problem with your redaction. Please contact moderators.'),
+            'redactionTimeout': _('Your redaction took too long. It may become available soon, if not, contact moderators.'),
             'autoRedacted': _('We automatically redacted some text for you already. Please check if we got everything.'),
         }
     }
@@ -247,6 +248,8 @@ def redact_attachment(request, slug, attachment_id):
 
     attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
             belongs_to__request=foirequest)
+    if not attachment.can_redact:
+        return render_403(request)
 
     already = None
     if attachment.redacted:
@@ -257,37 +260,26 @@ def redact_attachment(request, slug, attachment_id):
     if request.method == 'POST':
         # Python 2.7/3.5 requires str for json.loads
         instructions = json.loads(request.body.decode('utf-8'))
-        try:
-            path = redact_file(attachment.file.file, instructions)
-        except Exception:
-            logging.error("PDF redaction error", exc_info=True)
-            path = None
-        if path is None:
-            return JsonResponse({
-                'error': True,
-                'message': _('There was an error redacting this PDF.'),
-            })
-        name = attachment.name.rsplit('.', 1)[0]
-        name = re.sub(r'[^\w\.\-]', '', name)
+
         if already:
             att = already
+            att.approved = False
+            att.can_approve = False
+            att.save()
         else:
-            att = FoiAttachment(
+            name = attachment.name.rsplit('.', 1)[0]
+            name = re.sub(r'[^\w\.\-]', '', name)
+            att = FoiAttachment.objects.create(
                 belongs_to=attachment.belongs_to,
                 name=_('%s_redacted.pdf') % name,
                 is_redacted=True,
                 filetype='application/pdf',
-                approved=True,
-                can_approve=True
+                approved=False,
+                can_approve=False,
+                path=''
             )
-        with open(path, 'rb') as f:
-            pdf_file = File(f)
-            att.file = pdf_file
-            att.size = pdf_file.size
-            if foirequest.not_publishable:
-                att.save()
-            else:
-                att.approve_and_save()
+
+        redact_attachment_task.delay(attachment.id, att.id, instructions)
 
         if not attachment.is_redacted:
             attachment.redacted = att
@@ -295,12 +287,9 @@ def redact_attachment(request, slug, attachment_id):
             attachment.approved = False
             attachment.save()
 
-        attachment_url = get_accessible_attachment_url(
-            foirequest, attachment
-        )
         return JsonResponse({
             'url': att.get_anchor_url(),
-            'attachment_url': attachment_url
+            'resource_uri': reverse('api:attachment-detail', kwargs={'pk': att.id}),
         })
 
     attachment_url = get_accessible_attachment_url(foirequest, attachment)
