@@ -276,7 +276,6 @@ def redact_attachment(request, slug, attachment_id):
                 filetype='application/pdf',
                 approved=False,
                 can_approve=False,
-                path=''
             )
 
         redact_attachment_task.delay(attachment.id, att.id, instructions)
