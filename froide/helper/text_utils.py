@@ -8,7 +8,7 @@ from django.conf import settings
 try:
     from lxml import html as html_parser
 except ImportError:
-    html_parser =  None
+    html_parser = None
 
 
 SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
