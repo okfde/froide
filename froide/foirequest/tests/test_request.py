@@ -1382,8 +1382,8 @@ class RequestTest(TestCase):
         self.assertIn('publicbody', response.context['publicbody_form'].errors)
         self.assertEqual(len(response.context['publicbody_form'].errors), 1)
 
-    @patch('froide.foirequest.views.attachment.redact_file',
-           lambda x, y: factories.TEST_PDF_PATH)
+    @patch('froide.foirequest.views.attachment.redact_attachment_task.delay',
+           lambda a, b, c: None)
     def test_redact_attachment(self):
         foirequest = FoiRequest.objects.all()[0]
         message = foirequest.messages[0]
@@ -1414,6 +1414,11 @@ class RequestTest(TestCase):
 
         old_att = FoiAttachment.objects.get(id=att.id)
         self.assertFalse(old_att.can_approve)
+        # Redaction happens in background task, mocked away
+        new_att = old_att.redacted
+        self.assertTrue(new_att.is_redacted)
+        self.assertFalse(new_att.approved)
+        self.assertEqual(new_att.file, '')
 
     def test_extend_deadline(self):
         foirequest = FoiRequest.objects.all()[0]
