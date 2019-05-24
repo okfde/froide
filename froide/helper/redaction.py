@@ -1,7 +1,8 @@
-import os
 import base64
-import tempfile
 import io
+import os
+import shutil
+import tempfile
 import zlib
 
 from PyPDF2 import PdfFileReader, PdfFileWriter
@@ -57,10 +58,25 @@ class PDFException(Exception):
 
 
 def redact_file(pdf_file, instructions):
+    try:
+        outpath = tempfile.mkdtemp()
+        copied_filename = os.path.join(outpath, 'original.pdf')
+        with open(copied_filename, 'wb') as f:
+            f.write(pdf_file.read())
+        with open(copied_filename, 'rb') as f:
+            output_file = try_redacting_file(f, outpath, instructions)
+        with open(output_file, 'rb') as f:
+            return f.read()
+    finally:
+        shutil.rmtree(outpath)
+
+
+def try_redacting_file(pdf_file, outpath, instructions):
     tries = 0
     while True:
         try:
-            return _redact_file(pdf_file, instructions)
+            pdf_file = rewrite_pdf(pdf_file)
+            return _redact_file(pdf_file, outpath, instructions)
         except PDFException as e:
             tries += 1
             if tries > 2:
@@ -76,7 +92,7 @@ def redact_file(pdf_file, instructions):
             pdf_file = next_pdf_file
 
 
-def _redact_file(pdf_file, instructions, tries=0):
+def _redact_file(pdf_file, outpath, instructions, tries=0):
     dpi = 300
     load_invisible_font()
     output = PdfFileWriter()
@@ -95,18 +111,18 @@ def _redact_file(pdf_file, instructions, tries=0):
     assert num_pages == len(instructions)
     for page_idx, instr in enumerate(instructions):
         instr['width'] = float(instr['width'])
-        if not instr['rects']:
-            page = pdf_reader.getPage(page_idx)
-        else:
-            try:
+
+        try:
+            if not instr['rects']:
+                page = pdf_reader.getPage(page_idx)
+            else:
                 page = get_redacted_page(pdf_file, page_idx, instr, dpi)
-            except (WandError, DelegateError) as e:
-                raise PDFException(e, 'rewrite')
+        except (WandError, DelegateError, ValueError) as e:
+            raise PDFException(e, 'rewrite')
 
         output.addPage(page)
 
-    path = tempfile.mkdtemp()
-    output_filename = os.path.join(path, 'final.pdf')
+    output_filename = os.path.join(outpath, 'final.pdf')
     with open(output_filename, 'wb') as f:
         output.write(f)
     return output_filename
