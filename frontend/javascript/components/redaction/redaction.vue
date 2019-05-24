@@ -934,7 +934,7 @@ export default {
   .redactContainer {
     position: relative;
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
   }
   .hide-redacting {
     visibility: hidden;
