@@ -1,6 +1,7 @@
 {% extends 'account/base.html' %}
 {% load i18n %}
 {% load markup %}
+{% load humanize %}
 
 {% block title %}{{ profile.get_full_name }} - {{ SITE_NAME }}{% endblock %}
 
@@ -31,7 +32,7 @@
       </p>
     {% endif %}
     {% if profile.profile_text %}
-      <p>{{ profile.profile_text }}</p>
+      {{ profile.profile_text|markdown }}
     {% endif %}
 
     {% block profile_details %}{% endblock %}
@@ -41,7 +42,7 @@
   <div class="col-md-9">
     <div class="card mb-3">
       <div class="card-header">
-        {% blocktrans with name=profile.get_full_name count counter=request_count %}{{ name }} has one public request.{% plural %}{{ name }} has {{ counter }} public requests.{% endblocktrans %}
+        {% blocktrans with name=profile.get_full_name counter=request_count|intcomma count count=request_count %}{{ name }} has one public request.{% plural %}{{ name }} has {{ counter }} public requests.{% endblocktrans %}
       </div>
       <div class="card-body">
         <ul class="list-unstyled">
