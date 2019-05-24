@@ -2,55 +2,87 @@
 {% load i18n %}
 {% load markup %}
 
-{% block title %}{{ profile_user.get_full_name }}{% endblock %}
+{% block title %}{{ profile.get_full_name }} - {{ SITE_NAME }}{% endblock %}
 
-{% block metadescription %}{% blocktrans with name=profile_user.get_full_name %}Requests and activities of {{ name }}{% endblocktrans %}{% endblock %}
+{% block metadescription %}{% blocktrans with name=profile.get_full_name %}Requests and activities of {{ name }}{% endblocktrans %}{% endblock %}
 
 {% block extra_head %}
 <meta name="robots" content="noindex"/>
 {% endblock %}
 
 {% block app_body %}
-<div class="row">
-  <div class="col-lg-12">
+<div class="row mt-3">
+  <div class="col-md-3">
+    {% if profile.profile_photo %}
+      <img class="img-fluid" src="{{ profile.profile_photo.url }}" alt="{{ profile.get_full_name }}">
+    {% endif %}
     <h2>
-      {% blocktrans with name=profile_user.get_full_name %}Profile of {{ name }}{% endblocktrans %}
+      {{ profile.get_full_name }}
     </h2>
-  </div>
-</div>
+    {% if profile.organization_url and profile.organization %}
+      <p>
+        <strong>
+          <a href="{{ profile.organization_url }}">{{ profile.organization }}</a>
+        </strong>
+      </p>
+    {% elif profile.organization %}
+      <p>
+        {{ profile.organization }}
+      </p>
+    {% endif %}
+    {% if profile.profile_text %}
+      <p>{{ profile.profile_text }}</p>
+    {% endif %}
 
-<div class="row">
-  <div class="col-lg-6 col-md-6">
-    <h3>{% blocktrans count counter=requests|length %}One Request{% plural %}{{ counter }} requests{% endblocktrans %}</h3>
-    <ul class="list-unstyled">
-      {% for object in requests %}
-        <li>
-          {% include "foirequest/snippets/request_item.html" %}
-        </li>
-      {% endfor %}
-    </ul>
+    {% block profile_details %}{% endblock %}
+
   </div>
-  <div class="col-lg-6 col-md-6">
-    <h3>{% blocktrans %}Recent events{% endblocktrans %}</h3>
-    <div class="list-group">
-      {% for event in events %}
-        <a href="{{ event.get_absolute_url }}" class="list-group-item">
-          <h4 class="list-group-item-heading">
-            {{ event.request.title }}
-            <small>
-              <span class="d-print-none" title="{{ event.timestamp }}">
-               {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
-              </span>
-              <span class="d-print-inline">
-                {{ event.timestamp|date:"DATETIME_FORMAT" }}
-              </span>
-            </small>
-          </h4>
-          <p class="list-group-item-text">
-            {{ event.as_text }}
-          </p>
+
+  <div class="col-md-9">
+    <div class="card mb-3">
+      <div class="card-header">
+        {% blocktrans with name=profile.get_full_name count counter=request_count %}{{ name }} has one public request.{% plural %}{{ name }} has {{ counter }} public requests.{% endblocktrans %}
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          {% for object in requests %}
+            <li>
+              {% include "foirequest/snippets/request_item.html" %}
+            </li>
+          {% endfor %}
+        </ul>
+        <a href="{% url 'foirequest-list' %}?user={{ profile.username }}">
+          {% blocktrans with name=profile.get_full_name %}See all requests of {{ name }}{% endblocktrans %}
         </a>
-      {% endfor %}
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        {% blocktrans %}Recent events{% endblocktrans %}
+      </div>
+      <div class="card-body">
+        <div class="list-group">
+          {% for event in events %}
+            <a href="{{ event.get_absolute_url }}" class="list-group-item">
+              <h4 class="list-group-item-heading">
+                {{ event.request.title }}
+                <small>
+                  <span class="d-print-none" title="{{ event.timestamp }}">
+                  {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
+                  </span>
+                  <span class="d-print-inline">
+                    {{ event.timestamp|date:"DATETIME_FORMAT" }}
+                  </span>
+                </small>
+              </h4>
+              <p class="list-group-item-text">
+                {{ event.as_text }}
+              </p>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
 </div>

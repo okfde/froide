@@ -6,6 +6,7 @@ from taggit.models import Tag
 import django_filters
 from elasticsearch_dsl.query import Q
 
+from froide.account.models import User
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
@@ -172,6 +173,12 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         method='filter_publicbody',
         widget=forms.HiddenInput()
     )
+    user = django_filters.ModelChoiceFilter(
+        queryset=User.objects.get_public_profiles(),
+        to_field_name='username',
+        method='filter_user',
+        widget=forms.HiddenInput()
+    )
 
     first = django_filters.DateFromToRangeFilter(
         method='filter_first',
@@ -248,6 +255,9 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_publicbody(self, qs, name, value):
         return qs.filter(publicbody=value.id)
+
+    def filter_user(self, qs, name, value):
+        return qs.filter(user=value.id)
 
     def filter_first(self, qs, name, value):
         range_kwargs = {}

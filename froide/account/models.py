@@ -41,6 +41,11 @@ class TaggedUser(TaggedItemBase):
 
 class UserManager(BaseUserManager):
 
+    def get_public_profiles(self):
+        return super().get_queryset().filter(
+            is_active=True, private=False
+        )
+
     def _create_user(self, email, username, password,
                      is_staff, is_superuser, **extra_fields):
         """

@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block search_title %}
-  {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.category %}
+  {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.category or filtered_objects.user %}
     {% trans "Requests" %}
     {% if filtered_objects.publicbody %}
       <small>
@@ -25,6 +25,11 @@
     {% if filtered_objects.category %}
       <small>
         {% blocktrans with name=filtered_objects.category.name %}in category “{{ name }}”{% endblocktrans %}
+      </small>
+    {% endif %}
+    {% if filtered_objects.user %}
+      <small>
+        {% blocktrans with name=filtered_objects.user.get_full_name %}by {{ name }}{% endblocktrans %}
       </small>
     {% endif %}
   {% else %}
