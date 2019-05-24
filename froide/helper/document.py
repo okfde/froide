@@ -123,6 +123,7 @@ def run_ocr(filename, language=None, binary_name='ocrmypdf', timeout=50):
         '-l',
         language,
         '--deskew',
+        '--skip-text',
         # '--title', title
         filename,
         output_file
