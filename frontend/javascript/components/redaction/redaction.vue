@@ -167,7 +167,7 @@ export default {
       ready: false,
       textOnly: false,
       textDisabled: true,
-      scaleFactor: PDF_TO_CSS_UNITS,
+      pageScaleFactor: {},
       actionsPerPage: {},
       actionIndexPerPage: {},
       rectanglesPerPage: {},
@@ -292,16 +292,25 @@ export default {
       return this.doc.getPage(pageNum).then((page) => {
         console.log('# Page ' + pageNum)
         this.page = page
-        var viewport = page.getViewport(this.scaleFactor)
         if (this.maxWidth === null) {
           this.maxWidth = this.$refs.containerWrapper.offsetWidth
         }
-        if (viewport.width > this.maxWidth) {
-          this.scaleFactor = this.maxWidth / viewport.width
-          viewport = page.getViewport(this.scaleFactor)
+
+        if (this.pageScaleFactor[pageNum] === undefined) {
+          // Make sure scaleFactor is fixed to page, doesn't change
+          let scaleFactor = PDF_TO_CSS_UNITS
+          let viewport = page.getViewport(PDF_TO_CSS_UNITS)
+          if (viewport.width > this.maxWidth) {
+            scaleFactor = this.maxWidth / viewport.width
+          }
+          this.pageScaleFactor[pageNum] = scaleFactor
         }
+
+        let scaleFactor = this.pageScaleFactor[pageNum]
+        let viewport = page.getViewport(scaleFactor)
+
         this.viewport = viewport
-        console.log(this.scaleFactor, 'Size: ' + viewport.width + 'x' + viewport.height, 'at maxwidth', this.maxWidth)
+        console.log(scaleFactor, 'Size: ' + viewport.width + 'x' + viewport.height, 'at maxwidth', this.maxWidth)
         var canvas = this.canvas
         canvas.width = viewport.width
         canvas.height = viewport.height
@@ -787,7 +796,9 @@ export default {
       if (action.texts !== undefined && action.texts.length > 0) {
         action.texts.forEach(a => {
           let div = this.textLayer.querySelector(`[data-index="${a.textIndex}"]`)
-          div.textContent = a.textAfter
+          if (div !== null) { 
+            div.textContent = a.textAfter
+          }
         })
       }
     },
@@ -806,7 +817,9 @@ export default {
       if (action.texts !== undefined && action.texts.length > 0) {
         action.texts.forEach(a => {
           let div = this.textLayer.querySelector(`[data-index="${a.textIndex}"]`)
-          div.textContent = a.textBefore
+          if (div !== null) {
+            div.textContent = a.textBefore
+          }
         })
       }
     },
