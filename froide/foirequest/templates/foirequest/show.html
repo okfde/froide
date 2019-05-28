@@ -93,7 +93,14 @@
   <div class="alert alert-warning">
     <h4>{% trans "This request is not public!" %}</h4>
     <p>
-      {% trans "You clicked a special URL that gave you access. Share this link responsibly." %}
+      {% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}
+    </p>
+  </div>
+{% elif object|can_read_foirequest_anonymous:request %}
+  <div class="alert alert-warning">
+    <h4>{% trans "Special access" %}</h4>
+    <p>
+      {% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}
     </p>
   </div>
 {% endif %}
