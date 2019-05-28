@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import pgettext_lazy
 
 from ..views import (
-    search, auth, shortlink, auth_message_attachment,
+    search, auth, shortlink, AttachmentFileDetailView,
     project_shortlink
 )
 
@@ -42,8 +42,16 @@ urlpatterns = [
         auth, name="foirequest-auth"),
 ]
 
+MEDIA_PATH = settings.MEDIA_URL
+# Split off domain and leading slash
+if MEDIA_PATH.startswith('http'):
+    MEDIA_PATH = MEDIA_PATH.split('/', 3)[-1]
+else:
+    MEDIA_PATH = MEDIA_PATH[1:]
+
+
 urlpatterns += [
     url(r'^%s%s/(?P<message_id>\d+)/(?P<attachment_name>.+)' % (
-        settings.FOI_MEDIA_URL[1:], settings.FOI_MEDIA_PATH
-    ), auth_message_attachment, name='foirequest-auth_message_attachment')
+        MEDIA_PATH, settings.FOI_MEDIA_PATH
+    ), AttachmentFileDetailView.as_view(), name='foirequest-auth_message_attachment')
 ]

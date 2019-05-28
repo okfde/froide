@@ -21,8 +21,6 @@ from ..foi_mail import package_foirequest
 from ..auth import can_read_foirequest_authenticated
 from ..pdf_generator import FoiRequestPDFGenerator
 
-
-X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
 User = get_user_model()
 
 

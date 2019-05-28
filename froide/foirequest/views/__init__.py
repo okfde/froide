@@ -5,7 +5,7 @@ from .account_requests import (
 )
 from .attachment import (
     show_attachment, delete_attachment,
-    approve_attachment, auth_message_attachment, redact_attachment
+    approve_attachment, AttachmentFileDetailView, redact_attachment
 )
 from .draft import delete_draft, claim_draft
 from .list_requests import (
@@ -40,7 +40,7 @@ __all__ = [
     MyRequestsView, DraftRequestsView, FollowingRequestsView,
     FoiProjectListView, RequestSubscriptionsView, user_calendar,
     show_attachment, delete_attachment,
-    approve_attachment, auth_message_attachment, redact_attachment,
+    approve_attachment, AttachmentFileDetailView, redact_attachment,
     delete_draft, claim_draft,
     ListRequestView, search, list_unchecked, UserRequestFeedView,
     MakeRequestView, DraftRequestView, RequestSentView,

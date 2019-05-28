@@ -1,6 +1,10 @@
 from functools import lru_cache
 
 from django.utils.crypto import salted_hmac, constant_time_compare
+from django.urls import reverse
+from django.conf import settings
+
+from crossdomainmedia import CrossDomainMediaAuth
 
 from froide.helper.auth import (
     can_read_object, can_write_object,
@@ -93,3 +97,68 @@ def clear_lru_caches():
     for f in (can_write_foirequest, can_read_foirequest,
               can_read_foirequest_authenticated):
         f.cache_clear()
+
+
+def has_attachment_access(request, foirequest, attachment):
+    if not can_read_foirequest(foirequest, request):
+        return False
+    if not attachment.approved:
+        # allow only approved attachments to be read
+        # do not allow anonymous authentication here
+        allowed = can_read_foirequest_authenticated(
+            foirequest, request, allow_code=False
+        )
+        if not allowed:
+            return False
+    return True
+
+
+def get_accessible_attachment_url(foirequest, attachment):
+    needs_authorization = not is_attachment_public(foirequest, attachment)
+    return attachment.get_absolute_domain_file_url(
+        authorized=needs_authorization
+    )
+
+
+class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
+    '''
+    Create your own custom CrossDomainMediaAuth class
+    and implement at least these methods
+    '''
+    TOKEN_MAX_AGE_SECONDS = settings.FOI_MEDIA_TOKEN_EXPIRY
+    SITE_URL = settings.SITE_URL
+    DEBUG = False
+
+    def is_media_public(self):
+        '''
+        Determine if the media described by self.context
+        needs authentication/authorization at all
+        '''
+        ctx = self.context
+        return is_attachment_public(ctx['foirequest'], ctx['object'])
+
+    def has_perm(self, request):
+        ctx = self.context
+        obj = ctx['object']
+        foirequest = ctx['foirequest']
+        return has_attachment_access(request, foirequest, obj)
+
+    def get_auth_url(self):
+        '''
+        Give URL path to authenticating view
+        for the media described in context
+        '''
+        obj = self.context['object']
+
+        return reverse('foirequest-auth_message_attachment',
+            kwargs={
+                'message_id': obj.belongs_to_id,
+                'attachment_name': obj.name
+            })
+
+    def get_media_file_path(self):
+        '''
+        Return the URL path relative to MEDIA_ROOT for debug mode
+        '''
+        obj = self.context['object']
+        return obj.file.name

@@ -5,9 +5,6 @@ from django.conf import settings
 from django.dispatch import Signal
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.core.signing import (
-    TimestampSigner, SignatureExpired, BadSignature
-)
 from django.utils import timezone
 
 from froide.helper.redaction import can_redact_file
@@ -29,6 +26,14 @@ def upload_to(instance, filename):
     # as hashed filename storage will drop it
     # and use only directory
     return "%s/%s" % (settings.FOI_MEDIA_PATH, instance.name)
+
+
+class FoiAttachmentManager(models.Manager):
+    def get_for_message(self, message, name):
+        return FoiAttachment.objects.filter(
+            belongs_to=message,
+            name=name
+        ).exclude(file='').get()
 
 
 class FoiAttachment(models.Model):
@@ -65,6 +70,8 @@ class FoiAttachment(models.Model):
         on_delete=models.SET_NULL
     )
 
+    objects = FoiAttachmentManager()
+
     attachment_published = Signal(providing_args=[])
 
     class Meta:
@@ -82,9 +89,6 @@ class FoiAttachment(models.Model):
 
     def get_html_id(self):
         return _("attachment-%(id)d") % {"id": self.id}
-
-    def get_internal_url(self):
-        return settings.FOI_MEDIA_URL + self.file.name
 
     def get_bytes(self):
         self.file.open(mode='rb')
@@ -169,53 +173,29 @@ class FoiAttachment(models.Model):
             }
         )
 
+    def get_crossdomain_auth(self):
+        from ..auth import AttachmentCrossDomainMediaAuth
+
+        return AttachmentCrossDomainMediaAuth({
+            'object': self,
+        })
+
+    def send_internal_file(self):
+        return self.get_crossdomain_auth().send_internal_file()
+
     def get_absolute_domain_url(self):
         return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
 
-    def get_absolute_file_url(self, authenticated=False):
-        if not self.name:
-            return ''
-        url = reverse('foirequest-auth_message_attachment',
-            kwargs={
-                'message_id': self.belongs_to_id,
-                'attachment_name': self.name
-            })
-        if settings.FOI_MEDIA_TOKENS and authenticated:
-            signer = TimestampSigner()
-            value = signer.sign(url).split(':', 1)[1]
-            return '%s?token=%s' % (url, value)
-        return url
+    def get_absolute_file_url(self):
+        return self.get_crossdomain_auth().get_auth_url()
 
-    def get_file_url(self):
-        return self.get_absolute_domain_file_url()
+    def get_authorized_absolute_domain_file_url(self):
+        return self.get_absolute_domain_file_url(authorized=True)
 
-    def get_file_path(self):
-        if self.file:
-            return self.file.path
-        return ''
-
-    def get_authenticated_absolute_domain_file_url(self):
-        return self.get_absolute_domain_file_url(authenticated=True)
-
-    def get_absolute_domain_file_url(self, authenticated=False):
-        return '%s%s' % (
-            settings.FOI_MEDIA_DOMAIN,
-            self.get_absolute_file_url(authenticated=authenticated)
+    def get_absolute_domain_file_url(self, authorized=False):
+        return self.get_crossdomain_auth().get_full_media_url(
+            authorized=authorized
         )
-
-    def check_token(self, request):
-        token = request.GET.get('token')
-        if token is None:
-            return None
-        original = '%s:%s' % (self.get_absolute_file_url(), token)
-        signer = TimestampSigner()
-        try:
-            signer.unsign(original, max_age=settings.FOI_MEDIA_TOKEN_EXPIRY)
-        except SignatureExpired:
-            return None
-        except BadSignature:
-            return False
-        return True
 
     def approve_and_save(self):
         self.approved = True

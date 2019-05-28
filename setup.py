@@ -48,6 +48,7 @@ setup(
         'djangorestframework-jsonp',
         'python-mimeparse',
         'django-configurations',
+        'django-crossdomainmedia',
         'django-storages',
         'django-wikidata',
         'dj-database-url',

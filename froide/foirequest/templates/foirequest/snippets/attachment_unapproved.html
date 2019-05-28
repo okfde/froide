@@ -32,7 +32,7 @@
     {% blocktrans %}Not public!{% endblocktrans %}
   </span>
   {% if attachment.is_mail_decoration and object|can_write_foirequest:request %}
-    <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authenticated_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
+    <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
       <i class="fa fa-picture-o" aria-hidden="true"></i>
     </span>
   {% endif %}

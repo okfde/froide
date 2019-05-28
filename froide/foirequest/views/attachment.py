@@ -2,56 +2,39 @@ import re
 import json
 import logging
 
-from django.conf import settings
 from django.urls import reverse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, Http404, redirect
 from django.views.decorators.http import require_POST
+from django.views.generic import DetailView
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from django.views.static import serve
 from django.templatetags.static import static
 
+from crossdomainmedia import CrossDomainMediaMixin
 from froide.helper.utils import render_400, render_403
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
-from ..auth import (can_read_foirequest, can_read_foirequest_authenticated,
-                    can_write_foirequest, is_attachment_public)
+from ..auth import (
+    can_write_foirequest, get_accessible_attachment_url,
+    AttachmentCrossDomainMediaAuth, has_attachment_access
+)
 from ..tasks import redact_attachment_task
 
 
 logger = logging.getLogger(__name__)
-
-X_ACCEL_REDIRECT_PREFIX = getattr(settings, 'X_ACCEL_REDIRECT_PREFIX', '')
-
-
-def has_attachment_access(request, foirequest, attachment):
-    if not can_read_foirequest(foirequest, request):
-        return False
-    if not attachment.approved:
-        # allow only approved attachments to be read
-        # do not allow anonymous authentication here
-        allowed = can_read_foirequest_authenticated(
-            foirequest, request, allow_code=False
-        )
-        if not allowed:
-            return False
-    return True
-
-
-def get_accessible_attachment_url(foirequest, attachment):
-    needs_authentication = not is_attachment_public(foirequest, attachment)
-    return attachment.get_absolute_domain_file_url(
-        authenticated=needs_authentication
-    )
 
 
 def show_attachment(request, slug, message_id, attachment_name):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     message = get_object_or_404(FoiMessage, id=int(message_id),
                                 request=foirequest)
-    attachment = get_object_or_404(FoiAttachment, belongs_to=message,
-                                   name=attachment_name)
+    try:
+        attachment = FoiAttachment.objects.get_for_message(
+            message, attachment_name
+        )
+    except FoiAttachment.DoesNotExist:
+        raise Http404
 
     if not has_attachment_access(request, foirequest, attachment):
         if attachment.redacted and has_attachment_access(
@@ -150,62 +133,34 @@ def create_document(request, slug, attachment):
     return redirect(att.get_anchor_url())
 
 
-def auth_message_attachment(request, message_id, attachment_name):
+class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
     '''
-    nginx auth view
+    Add the CrossDomainMediaMixin
+    and set your custom media_auth_class
     '''
-    message = get_object_or_404(FoiMessage, id=int(message_id))
-    attachment = get_object_or_404(FoiAttachment, belongs_to=message,
-        name=attachment_name)
-    foirequest = message.request
+    media_auth_class = AttachmentCrossDomainMediaAuth
 
-    if settings.FOI_MEDIA_TOKENS:
-        return auth_attachment_with_token(request, foirequest, attachment)
+    def get_object(self):
+        self.message = get_object_or_404(
+            FoiMessage, id=int(self.kwargs['message_id'])
+        )
+        try:
+            return FoiAttachment.objects.get_for_message(
+                self.message, self.kwargs['attachment_name']
+            )
+        except FoiAttachment.DoesNotExist:
+            raise Http404
 
-    if not has_attachment_access(request, foirequest, attachment):
-        return render_403(request)
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['foirequest'] = self.message.request
+        return ctx
 
-    if not settings.USE_X_ACCEL_REDIRECT:
-        if not settings.DEBUG:
-            logger.warn('Django should not serve files in production!')
-        return serve(request, attachment.file.name, settings.MEDIA_ROOT)
+    def invalid_token(self, mauth):
+        return render_403(self.request)
 
-    return send_attachment_file(attachment)
-
-
-def auth_attachment_with_token(request, foirequest, attachment):
-    if request.get_host() not in settings.SITE_URL:
-        if is_attachment_public(foirequest, attachment):
-            return send_attachment_file(attachment)
-        # media domain internal NGINX check
-        result = attachment.check_token(request)
-        if not result:
-            if result is None:
-                # Redirect back to get new signature
-                app_url = settings.SITE_URL + attachment.get_absolute_file_url()
-                return redirect(app_url)
-            return render_403(request)
-        return send_attachment_file(attachment)
-    else:
-        # main domain: always deny or redirect
-        # in order not to render content on main domain
-        if is_attachment_public(foirequest, attachment):
-            url = attachment.get_absolute_domain_file_url(authenticated=False)
-            return redirect(url)
-
-        if not has_attachment_access(request, foirequest, attachment):
-            # Deny access early
-            return render_403(request)
-
-        url = attachment.get_absolute_domain_file_url(authenticated=True)
-        return redirect(url)
-
-
-def send_attachment_file(attachment):
-    response = HttpResponse()
-    response['Content-Type'] = ""
-    response['X-Accel-Redirect'] = X_ACCEL_REDIRECT_PREFIX + attachment.get_internal_url()
-    return response
+    def unauthorized(self, mauth):
+        return render_403(self.request)
 
 
 def get_redact_context(foirequest, attachment):

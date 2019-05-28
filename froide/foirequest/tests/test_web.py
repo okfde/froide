@@ -1,5 +1,7 @@
 import unittest
 
+from mock import patch
+
 from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
@@ -299,34 +301,51 @@ class WebTest(TestCaseHelpers, TestCase):
         self.assertIn(reverse('foirequest-list'), response['Location'])
 
 
+MEDIA_DOMAIN = 'media.frag-den-staat.de'
+
+
 class MediaServingTest(TestCaseHelpers, TestCase):
     def setUp(self):
         clear_lru_caches()
         self.site = factories.make_world()
 
     @override_settings(
-        USE_X_ACCEL_REDIRECT=True
+        SITE_URL='https://fragdenstaat.de',
+        MEDIA_URL='https://' + MEDIA_DOMAIN + '/files/',
+        ALLOWED_HOSTS=('fragdenstaat.de', MEDIA_DOMAIN),
     )
+    @patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.SITE_URL',
+           'https://fragdenstaat.de')
     def test_request_not_public(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
         req = att.belongs_to.request
         req.visibility = 1
         req.save()
-        response = self.client.get(att.get_absolute_file_url())
+        response = self.client.get(
+            att.get_absolute_file_url(),
+            HTTP_HOST='fragdenstaat.de'
+        )
         self.assertForbidden(response)
         self.client.login(email='info@fragdenstaat.de', password='froide')
-        response = self.client.get(att.get_absolute_file_url())
+        response = self.client.get(
+            att.get_absolute_file_url(),
+            HTTP_HOST='fragdenstaat.de'
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(MEDIA_DOMAIN, response['Location'])
+        response = self.client.get(
+            response['Location'],
+            HTTP_HOST=MEDIA_DOMAIN
+        )
         self.assertEqual(response.status_code, 200)
         self.assertIn('X-Accel-Redirect', response)
         self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
-            settings.X_ACCEL_REDIRECT_PREFIX, att.file.url))
+            settings.INTERNAL_MEDIA_PREFIX, att.file.name))
 
     @override_settings(
-        USE_X_ACCEL_REDIRECT=True,
-        FOI_MEDIA_TOKENS=True,
         SITE_URL='https://fragdenstaat.de',
-        FOI_MEDIA_DOMAIN='https://media.frag-den-staat.de',
-        ALLOWED_HOSTS=('fragdenstaat.de', 'media.frag-den-staat.de')
+        MEDIA_URL='https://' + MEDIA_DOMAIN + '/files/',
+        ALLOWED_HOSTS=('fragdenstaat.de', MEDIA_DOMAIN)
     )
     def test_request_media_tokens(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
@@ -354,7 +373,6 @@ class MediaServingTest(TestCaseHelpers, TestCase):
             HTTP_HOST=domain,
         )
         self.assertEqual(response.status_code, 403)
-
         response = self.client.get(
             '/' + path,
             follow=False,
@@ -362,16 +380,18 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
-            settings.X_ACCEL_REDIRECT_PREFIX, att.file.url))
+            settings.INTERNAL_MEDIA_PREFIX, att.file.name))
 
     @override_settings(
-        USE_X_ACCEL_REDIRECT=True,
-        FOI_MEDIA_TOKENS=True,
         SITE_URL='https://fragdenstaat.de',
-        FOI_MEDIA_DOMAIN='https://media.frag-den-staat.de',
-        ALLOWED_HOSTS=('fragdenstaat.de', 'media.frag-den-staat.de'),
+        MEDIA_URL='https://' + MEDIA_DOMAIN + '/files/',
+        ALLOWED_HOSTS=('fragdenstaat.de', MEDIA_DOMAIN),
         FOI_MEDIA_TOKEN_EXPIRY=0
     )
+    @patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.TOKEN_MAX_AGE_SECONDS',
+           0)
+    @patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.SITE_URL',
+           'https://fragdenstaat.de')
     def test_request_media_tokens_expired(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
         req = att.belongs_to.request
@@ -414,6 +434,13 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         response = self.client.get(att.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         response = self.client.get(att.get_absolute_url() + 'a')
+        self.assertEqual(response.status_code, 404)
+
+    def test_attachment_pending(self):
+        att = FoiAttachment.objects.filter(approved=True)[0]
+        att.file = ''
+        att.save()
+        response = self.client.get(att.get_absolute_file_url())
         self.assertEqual(response.status_code, 404)
 
 

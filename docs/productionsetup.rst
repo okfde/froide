@@ -39,8 +39,7 @@ Acces to Documents
 Nginx is able to serve your uploads behind authentication/authorization. Activate the following settings::
 
   # Use nginx to serve uploads authenticated
-  USE_X_ACCEL_REDIRECT = True
-  X_ACCEL_REDIRECT_PREFIX = '/protected'
+  INTERNAL_MEDIA_PREFIX = '/protected/'
 
 Nginx will forward the request to Froide which will in turn check for authentication and authorization. If everything is good Froide replies to Nginx with an internal redirect and Nginx will then serve the file to the user.
 

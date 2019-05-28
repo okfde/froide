@@ -130,7 +130,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_file_url(self, obj):
-        return obj.get_absolute_domain_file_url(authenticated=True)
+        return obj.get_absolute_domain_file_url(authorized=True)
 
     def get_pending(self, obj):
         return obj.pending
