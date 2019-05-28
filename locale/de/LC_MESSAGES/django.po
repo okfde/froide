@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-05-24 17:29+0200\n"
-"PO-Revision-Date: 2019-05-24 17:30+0200\n"
+"PO-Revision-Date: 2019-05-28 17:52+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -5102,7 +5102,7 @@ msgstr "^p/(?P<obj_id>\\d+)/?$"
 #: froide/foirequest/urls/__init__.py:41
 msgctxt "url part"
 msgid "^r/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
-msgstr "^r/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
+msgstr "^a/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
 
 #: froide/foirequest/urls/list_requests_urls.py:18
 msgctxt "url part"
