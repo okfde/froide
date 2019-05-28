@@ -173,6 +173,12 @@ class FoiAttachment(models.Model):
             }
         )
 
+    def get_file_url(self):
+        '''
+        Hook method for django-filingcabinet
+        '''
+        return self.get_absolute_domain_file_url()
+
     def get_crossdomain_auth(self):
         from ..auth import AttachmentCrossDomainMediaAuth
 
