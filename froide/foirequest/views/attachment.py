@@ -156,9 +156,6 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
         ctx['foirequest'] = self.message.request
         return ctx
 
-    def invalid_token(self, mauth):
-        return render_403(self.request)
-
     def unauthorized(self, mauth):
         return render_403(self.request)
 
