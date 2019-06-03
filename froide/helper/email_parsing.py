@@ -13,6 +13,9 @@ import pytz
 
 
 DISPO_SPLIT = re.compile(r'''((?:[^;"']|"[^"]*"|'[^']*')+)''')
+# Reassemble regular-parameter section
+# https://tools.ietf.org/html/rfc2231#7
+DISPO_MULTI_VALUE = re.compile(r'(\w+)\*\d+$')
 
 BOUNCE_HEADERS = (
     'Action',
@@ -107,7 +110,19 @@ def parse_dispositions(dispo):
         value = value.strip()
         if value.startswith('"') and value.endswith('"'):
             value = value[1:-1]
+        multi_name = DISPO_MULTI_VALUE.match(name)
+        if multi_name:
+            name = multi_name.group(1)
+            if name in dispo_dict:
+                dispo_dict[name] += value
+            else:
+                dispo_dict[name] = value
+        else:
+            dispo_dict[name] = value
+
+    for name, value in dispo_dict.items():
         dispo_dict[name] = parse_header_field(value)
+
     return dispo_name, dispo_dict
 
 

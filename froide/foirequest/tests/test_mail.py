@@ -180,9 +180,10 @@ class MailTest(MailTestMixin, TestCase):
             content = f.read()
         mail = parser.parse(BytesIO(content))
         self.assertEqual(mail.subject, 'Anfrage nach dem Informationsfreiheitsgesetz; Gespräch damaliger BM Steinmeier Matthias Müller VW AG; Vg. 069-2018')
-        self.assertEqual(len(mail.attachments), 2)
+        self.assertEqual(len(mail.attachments), 3)
         self.assertEqual(mail.attachments[0].name, 'Bescheid Fäker.pdf')
         self.assertEqual(mail.attachments[1].name, '180328 Schreiben an Antragstellerin; Vg. 069-2018.pdf')
+        self.assertEqual(mail.attachments[2].name, 'Müller_Michael_Metrobus 6_7_8_26.xlsx')
 
     def test_attachment_name_parsing_2(self):
         with open(p("test_mail_11.txt"), 'rb') as f:
