@@ -72,7 +72,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         We need to do this before the real delete otherwise the relation
         doesn't exists anymore and we can't get the related models instance.
         """
-        transaction.on_commit(lambda: search_instance_pre_delete.delay(instance._meta.label_lower, instance.pk))
+        registry.delete_related(instance)
 
     def handle_delete(self, sender, instance, **kwargs):
         """Handle delete.
