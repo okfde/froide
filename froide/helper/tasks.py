@@ -24,6 +24,15 @@ def search_instance_save(model_name, pk):
 
 
 @celery_app.task
+def search_instance_pre_delete(model_name, pk):
+    try:
+        instance = get_instance(model_name, pk)
+        registry.delete_related(instance)
+    except Exception as e:
+        logger.exception(e)
+
+
+@celery_app.task
 def search_instance_delete(model_name, pk):
     model = apps.get_model(model_name)
     instance = model()
