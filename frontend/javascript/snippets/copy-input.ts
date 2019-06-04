@@ -18,9 +18,10 @@ document.querySelectorAll('.copy-text').forEach(function (el) {
       range.selectNodeContents(el)
 
       selection = window.getSelection()
-      selection.removeAllRanges()
-      selection.addRange(range)
-
+      if (selection !== null) {
+        selection.removeAllRanges()
+        selection.addRange(range)
+      }
       el.setSelectionRange(0, 999999)
       el.contentEditable = editable
       el.readOnly = readOnly
