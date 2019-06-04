@@ -131,39 +131,38 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
 def get_redacted_page(pdf_file, page_idx, instr, dpi):
     writer = io.BytesIO()
     pdf = canvas.Canvas(writer)
-    with Image(filename=pdf_file.name, resolution=dpi) as wand_pdf:
-        with Image(wand_pdf.sequence[page_idx]) as image:
-            image.background_color = Color('white')
-            image.format = 'jpg'
-            image.alpha_channel = 'remove'
+    with Image(filename='{}[{}]'.format(pdf_file.name, page_idx), resolution=dpi) as image:
+        image.background_color = Color('white')
+        image.format = 'jpg'
+        image.alpha_channel = 'remove'
 
-            scale = image.width / instr['width']
+        scale = image.width / instr['width']
 
-            with Drawing() as draw:
+        with Drawing() as draw:
 
-                for rect in instr['rects']:
-                    rect = [r * scale for r in rect]
-                    draw.border_color = Color('black')
-                    draw.fill_color = Color('black')
-                    p = 2
-                    draw.rectangle(
-                        left=rect[0] - p, top=rect[1] - p,
-                        width=rect[2] + p * 2, height=rect[3] + p * 2)
+            for rect in instr['rects']:
+                rect = [r * scale for r in rect]
+                draw.border_color = Color('black')
+                draw.fill_color = Color('black')
+                p = 2
+                draw.rectangle(
+                    left=rect[0] - p, top=rect[1] - p,
+                    width=rect[2] + p * 2, height=rect[3] + p * 2)
 
-                draw(image)
+            draw(image)
 
-            width = image.width * 72 / dpi
-            height = image.height * 72 / dpi
+        width = image.width * 72 / dpi
+        height = image.height * 72 / dpi
 
-            pdf.setPageSize((width, height))
-            reportlab_io_img = ImageReader(io.BytesIO(image.make_blob()))
-            pdf.drawImage(reportlab_io_img, 0, 0, width=width, height=height)
+        pdf.setPageSize((width, height))
+        reportlab_io_img = ImageReader(io.BytesIO(image.make_blob()))
+        pdf.drawImage(reportlab_io_img, 0, 0, width=width, height=height)
 
-            for text_obj in instr['texts']:
-                add_text_on_pdf(pdf, text_obj, dpi, scale, height)
+        for text_obj in instr['texts']:
+            add_text_on_pdf(pdf, text_obj, dpi, scale, height)
 
-            pdf.showPage()
-            pdf.save()
+        pdf.showPage()
+        pdf.save()
 
     writer.seek(0)
     temp_reader = PdfFileReader(writer)
