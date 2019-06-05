@@ -156,6 +156,9 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
                 'attachment_name': obj.name
             })
 
+    def get_full_auth_url(self):
+        return super().get_full_auth_url() + '?download'
+
     def get_media_file_path(self):
         '''
         Return the URL path relative to MEDIA_ROOT for debug mode

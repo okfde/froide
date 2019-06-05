@@ -167,16 +167,13 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
         # Check file authorization first
         url = mauth.get_authorized_media_url(self.request)
 
-        # Check if refresh is requested
-        refresh = self.request.GET.get('refresh')
-        if refresh is None:
+        # Check if download is requested
+        download = self.request.GET.get('download')
+        if download is None:
             # otherwise redirect to attachment page
             return redirect(self.object.get_absolute_url(), permanent=True)
 
         return redirect(url)
-
-    def refresh_token(self, mauth):
-        return redirect(mauth.get_full_auth_url() + '?refresh')
 
     def send_media_file(self, mauth):
         response = super().send_media_file(mauth)

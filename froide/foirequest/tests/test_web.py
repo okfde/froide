@@ -322,13 +322,13 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         req.visibility = 1
         req.save()
         response = self.client.get(
-            att.get_absolute_file_url(),
+            att.get_absolute_domain_auth_url(),
             HTTP_HOST='fragdenstaat.de'
         )
         self.assertForbidden(response)
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.get(
-            att.get_absolute_file_url(),
+            att.get_absolute_domain_auth_url(),
             HTTP_HOST='fragdenstaat.de'
         )
         self.assertEqual(response.status_code, 302)
@@ -353,7 +353,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         req.visibility = 1
         req.save()
         response = self.client.get(
-            att.get_absolute_file_url(),
+            att.get_absolute_domain_auth_url(),
             HTTP_HOST='fragdenstaat.de'
         )
         self.assertForbidden(response)
@@ -363,7 +363,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         self.assertTrue(loggedin)
 
         response = self.client.get(
-            att.get_absolute_file_url().replace('?refresh', ''),
+            att.get_absolute_domain_auth_url().replace('?download', ''),
             follow=False,
             HTTP_HOST='fragdenstaat.de',
         )
@@ -374,7 +374,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
 
         # Simulate media refresh redirect
         response = self.client.get(
-            att.get_absolute_file_url(),
+            att.get_absolute_domain_auth_url(),
             follow=False,
             HTTP_HOST='fragdenstaat.de',
         )
@@ -420,7 +420,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         self.client.login(email='info@fragdenstaat.de', password='froide')
 
         response = self.client.get(
-            att.get_absolute_file_url(),
+            att.get_absolute_domain_auth_url(),
             follow=False,
             HTTP_HOST='fragdenstaat.de',
         )
@@ -438,7 +438,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         redirect_url = response['Location']
         _, _, domain, path = redirect_url.split('/', 3)
         self.assertEqual(domain, 'fragdenstaat.de')
-        self.assertEqual('/' + path, att.get_absolute_file_url())
+        self.assertIn('/' + path, att.get_absolute_domain_auth_url())
 
     def test_attachment_not_approved(self):
         att = FoiAttachment.objects.filter(approved=False)[0]
@@ -459,7 +459,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         att = FoiAttachment.objects.filter(approved=True)[0]
         att.file = ''
         att.save()
-        response = self.client.get(att.get_absolute_file_url())
+        response = self.client.get(att.get_absolute_domain_auth_url())
         self.assertEqual(response.status_code, 404)
 
 
