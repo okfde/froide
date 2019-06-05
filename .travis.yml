@@ -7,8 +7,11 @@ dist: xenial
 addons:
   postgresql: '10'
   apt:
+    sources:
+      - google-chrome
     packages:
       - postgresql-10-postgis-2.4
+      - google-chrome-stable
       - chromium-chromedriver
 
 env:
