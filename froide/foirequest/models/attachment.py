@@ -193,7 +193,7 @@ class FoiAttachment(models.Model):
         return '%s%s' % (settings.SITE_URL, self.get_absolute_url())
 
     def get_absolute_file_url(self):
-        return self.get_crossdomain_auth().get_auth_url()
+        return self.get_crossdomain_auth().get_auth_url() + '?refresh'
 
     def get_authorized_absolute_domain_file_url(self):
         return self.get_absolute_domain_file_url(authorized=True)

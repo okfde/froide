@@ -164,13 +164,26 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
         Force direct links on main domain that are not
         refreshing a token to go to the objects page
         '''
+        # Check file authorization first
+        url = mauth.get_authorized_media_url(self.request)
+
+        # Check if refresh is requested
         refresh = self.request.GET.get('refresh')
         if refresh is None:
+            # otherwise redirect to attachment page
             return redirect(self.object.get_absolute_url(), permanent=True)
-        return redirect(mauth.get_authorized_media_url(self.request))
+
+        return redirect(url)
 
     def refresh_token(self, mauth):
         return redirect(mauth.get_full_auth_url() + '?refresh')
+
+    def send_media_file(self, mauth):
+        response = super().send_media_file(mauth)
+        response['Link'] = '<{}>; rel="canonical"'.format(
+            self.object.get_absolute_domain_url()
+        )
+        return response
 
 
 def get_redact_context(foirequest, attachment):

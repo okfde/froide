@@ -357,15 +357,31 @@ class MediaServingTest(TestCaseHelpers, TestCase):
             HTTP_HOST='fragdenstaat.de'
         )
         self.assertForbidden(response)
-        self.client.login(email='info@fragdenstaat.de', password='froide')
+        loggedin = self.client.login(
+            email='info@fragdenstaat.de', password='froide'
+        )
+        self.assertTrue(loggedin)
 
+        response = self.client.get(
+            att.get_absolute_file_url().replace('?refresh', ''),
+            follow=False,
+            HTTP_HOST='fragdenstaat.de',
+        )
+        # permanent redirect to attachment page if no refresh
+        self.assertEqual(response.status_code, 301)
+        redirect_url = response['Location']
+        self.assertEqual(redirect_url, att.get_absolute_url())
+
+        # Simulate media refresh redirect
         response = self.client.get(
             att.get_absolute_file_url(),
             follow=False,
             HTTP_HOST='fragdenstaat.de',
         )
+        # temporary redirect to media file
         self.assertEqual(response.status_code, 302)
         redirect_url = response['Location']
+
         _, _, domain, path = redirect_url.split('/', 3)
         response = self.client.get(
             '/' + path + 'a',  # break signature
@@ -381,6 +397,9 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['X-Accel-Redirect'], '%s%s' % (
             settings.INTERNAL_MEDIA_PREFIX, att.file.name))
+        self.assertEqual(response['Link'], '<{}>; rel="canonical"'.format(
+            att.get_absolute_domain_url()
+        ))
 
     @override_settings(
         SITE_URL='https://fragdenstaat.de',
