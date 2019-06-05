@@ -1,4 +1,4 @@
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, InvalidPage
 
 
 class ElasticsearchPaginator(Paginator):
@@ -19,7 +19,10 @@ class ElasticsearchPaginator(Paginator):
             bottom = (number - 1) * self.per_page
 
         top = bottom + self.per_page
-        self.object_list = self.object_list[bottom:top]
+        try:
+            self.object_list = self.object_list[bottom:top]
+        except ValueError:
+            raise InvalidPage()
 
         # ignore top boundary
         # if top + self.orphans >= self.count:
