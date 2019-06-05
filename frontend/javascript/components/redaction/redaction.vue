@@ -579,6 +579,9 @@ export default {
         return
       }
       let [x, y, w, h] = this.getRect(this.startDrag, endDrag)
+      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
+        return
+      }
 
       // find overlapping text and remove it completely
       let divs = this.textLayer.children
@@ -671,7 +674,9 @@ export default {
             node = node.parentNode
           }
           let action = this.redactRange(node, range.startOffset, range.endOffset)
-          actions.push(action)
+          if (action !== null) {
+            actions.push(action)
+          }
           continue
         }
         // FIXME: weird other logic
@@ -697,7 +702,9 @@ export default {
             return
           }
           let action = this.redactRange(node, start, end)
-          actions.push(action)
+          if (action !== null) {
+            actions.push(action)
+          }
         })
       }
       let action = this.combineActions(actions)
@@ -835,7 +842,9 @@ export default {
           let pos = result.index
           let match = result[0]
           let action = this.redactText(div, pos, match)
-          this.addAction(action)
+          if (action !== null) {
+            this.addAction(action)
+          }
         }
       })
       if (matches.length > 0) {
@@ -900,6 +909,9 @@ export default {
       div.textContent = text
 
       let [x, y] = this.getDivPos(div)
+      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
+        return null
+      }
       x += startWidth
       let width = endWidth - startWidth
 
