@@ -8,10 +8,7 @@ from elasticsearch_dsl.connections import connections
 from django_elasticsearch_dsl.registries import registry
 from django_elasticsearch_dsl.signals import RealTimeSignalProcessor
 
-from ..tasks import (
-    search_instance_save, search_instance_pre_delete,
-    search_instance_delete
-)
+from ..tasks import search_instance_save, search_instance_delete
 
 
 def run_commit_hooks(testcase):
