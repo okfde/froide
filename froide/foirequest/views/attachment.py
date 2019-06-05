@@ -159,6 +159,19 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
     def unauthorized(self, mauth):
         return render_403(self.request)
 
+    def redirect_to_media(self, mauth):
+        '''
+        Force direct links on main domain that are not
+        refreshing a token to go to the objects page
+        '''
+        refresh = self.request.GET.get('refresh')
+        if refresh is None:
+            return redirect(self.object.get_absolute_url(), permanent=True)
+        return redirect(mauth.get_authorized_media_url(self.request))
+
+    def refresh_token(self, mauth):
+        return redirect(mauth.get_full_auth_url() + '?refresh')
+
 
 def get_redact_context(foirequest, attachment):
     return {
