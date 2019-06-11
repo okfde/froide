@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Group
 
 
 class CampaignManager(models.Manager):
@@ -22,6 +23,11 @@ class Campaign(models.Model):
     start_date = models.DateTimeField(null=True)
     public = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
+
+    group = models.ForeignKey(
+        Group, null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
 
     objects = CampaignManager()
 
