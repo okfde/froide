@@ -149,6 +149,10 @@ class Base(Configuration):
     # ######## Backends, Finders, Processors, Classes ####
 
     AUTH_USER_MODEL = values.Value('account.User')
+    AUTHENTICATION_BACKENDS = [
+        'django.contrib.auth.backends.ModelBackend',
+        'froide.foirequest.auth_backend.FoiRequestAuthBackend'
+    ]
     PASSWORD_HASHERS = [
         'django.contrib.auth.hashers.PBKDF2PasswordHasher',
         'froide.account.hashers.PBKDF2WrappedSHA1PasswordHasher',
