@@ -757,24 +757,38 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         widget=PublicBodySelect
     )
     date = forms.DateField(
-            widget=forms.TextInput(attrs={
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": _('mm/dd/YYYY')
+        }),
+        label=_("Send Date"),
+        help_text=_("Please give the date the reply was sent."),
+        localize=True
+    )
+    subject = forms.CharField(
+        label=_("Subject"),
+        required=False,
+        max_length=230,
+        widget=forms.TextInput(
+            attrs={
                 "class": "form-control",
-                "placeholder": _('mm/dd/YYYY')
-            }),
-            label=_("Send Date"),
-            help_text=_("Please give the date the reply was sent."),
-            localize=True)
-    subject = forms.CharField(label=_("Subject"), required=False,
-            max_length=230,
-            widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Subject")}))
+                "placeholder": _("Subject")
+            }
+        )
+    )
     text = forms.CharField(label=_("Letter"),
-            widget=forms.Textarea(attrs={"placeholder":
-                _("Letter text"),
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": _("Letter text"),
                 "class": "form-control"
-            }),
-            required=False,
-            help_text=_("The text can be left empty, instead you can upload scanned documents."))
+            }
+        ),
+        required=False,
+        help_text=_(
+            "The text can be left empty, instead you can upload "
+            "scanned documents."
+        )
+    )
     files = forms.FileField(label=_("Scanned Letter"), required=False,
             validators=[validate_upload_document],
             help_text=scan_help_text,
@@ -853,9 +867,17 @@ class PostalReplyForm(PostalBaseForm):
                    'not_publishable']
     PUBLICBODY_LABEL = _('Sender public body')
 
-    sender = forms.CharField(label=_("Sender name"),
-            widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Sender Name")}), required=False)
+    sender = forms.CharField(
+        label=_("Sender name"),
+        required=False,
+        max_length=250,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": _("Sender Name")
+            }
+        )
+    )
 
     if publishing_denied:
         not_publishable = forms.BooleanField(label=_('You are not allowed to '
