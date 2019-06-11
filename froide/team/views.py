@@ -6,7 +6,9 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.utils import timezone
+from django.contrib import messages
 from django.urls import reverse_lazy
+from django.utils.translation import ugettext_lazy as _
 
 from froide.helper.auth import can_manage_object
 
@@ -153,11 +155,24 @@ class DeleteTeamMemberRoleView(AuthMixin, DetailView):
 class JoinMixin():
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        if self.already_member(self.object):
+            return redirect(self.object.team)
         self.object.user = request.user
         self.object.updated = timezone.now()
         self.object.status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
         self.object.save()
         return redirect(self.object.team)
+
+    def already_member(self, membership):
+        user_exists = TeamMembership.objects.filter(
+            team=membership.team,
+            user=self.request.user
+        ).exists()
+        if user_exists:
+            messages.add_message(self.request, messages.ERROR,
+                _('You are already a team member.'))
+            return True
+        return False
 
 
 class JoinTeamView(AuthMixin, JoinMixin, DetailView):
@@ -174,6 +189,11 @@ class JoinTeamView(AuthMixin, JoinMixin, DetailView):
         if not service.check_invite_secret(self.kwargs['secret']):
             raise Http404
         return member
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.already_member(context['object']):
+            return redirect(context['object'].team)
+        return super().render_to_response(context, **response_kwargs)
 
 
 class JoinTeamUserView(AuthMixin, JoinMixin, DetailView):

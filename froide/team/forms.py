@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db import transaction
+from django.db.models import Q
 from django import forms
 
 from .services import TeamService
@@ -58,11 +59,13 @@ class TeamInviteForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.team = kwargs.pop('instance')
-        super(TeamInviteForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        member = TeamMembership.objects.filter(team=self.team, email=email)
+        member = TeamMembership.objects.filter(team=self.team).filter(
+            Q(email=email) | Q(user__email=email)
+        )
         if member.exists():
             raise forms.ValidationError(_('Member already present in team.'))
 
