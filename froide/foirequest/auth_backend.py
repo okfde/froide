@@ -4,6 +4,12 @@ from .models import FoiRequest
 
 
 class FoiRequestAuthBackend:
+    def authenticate(self, request, username=None, password=None):
+        return None
+
+    def get_user(self, user_id):
+        return None
+
     def has_perm(self, user_obj, perm, obj=None):
         '''
         Checks if user has the group that is assigned

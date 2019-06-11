@@ -2,6 +2,7 @@ import json
 import os
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from django.utils import timezone
@@ -146,6 +147,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+    backend = settings.AUTHENTICATION_BACKENDS[0]
 
     def __str__(self):
         if self.email is None:
