@@ -375,6 +375,9 @@ class SetPasswordForm(DjangoSetPasswordForm):
 
     def __init__(self, *args, **kwargs):
         super(SetPasswordForm, self).__init__(*args, **kwargs)
+        if self.user is None:
+            # Password reset link broken
+            return
         help_text = password_validators_help_text_html()
         self.fields['new_password1'].help_text = help_text
         self.fields['pw_change_email'].initial = self.user.email
