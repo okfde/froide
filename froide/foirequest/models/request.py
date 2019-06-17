@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 import json
 
@@ -474,6 +475,7 @@ class FoiRequest(models.Model):
                 user.first_name
             ]
         all_regexes = email_regexes + user_regexes + user.address.splitlines()
+        all_regexes = [re.escape(a) for a in all_regexes]
         return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
