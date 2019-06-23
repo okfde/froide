@@ -102,14 +102,13 @@ def replace_word(needle, replacement, content):
                     '\\1%s\\2' % replacement, content, re.U)
 
 
-EMAIL_NAME_RE = re.compile(r'<[^\s]+@[^\s]+>')
+EMAIL = r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'
+EMAIL_RE = re.compile(EMAIL, flags=re.IGNORECASE)
+EMAIL_NAME_RE = re.compile('<%s>' % EMAIL, flags=re.IGNORECASE)
 
 
 def replace_email_name(text, replacement=""):
     return EMAIL_NAME_RE.sub(str(replacement), text)
-
-
-EMAIL_RE = re.compile(r'[^\s]+@[^\s]+')
 
 
 def replace_email(text, replacement=""):
