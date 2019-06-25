@@ -188,11 +188,11 @@ def get_redact_context(foirequest, attachment):
         'resources': {
             'pdfjsWorker': static('js/pdf.worker.min.js')
         },
-        'config': {
+        'urls': {
             'publishUrl': reverse('foirequest-approve_attachment', kwargs={
                 'slug': foirequest.slug,
                 'attachment': attachment.pk
-            })
+            }),
         },
         'i18n': {
             'previousPage': _('Previous Page'),

@@ -74,7 +74,7 @@
           </button>
         </div>
         <div class="btn-group ml-auto mt-1 mt-lg-0" >
-          <form v-if="canPublish" method="post" :action="config.config.publishUrl">
+          <form v-if="canPublish" method="post" :action="config.urls.publishUrl">
             <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken"/>
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check"></i>
