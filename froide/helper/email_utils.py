@@ -53,6 +53,9 @@ BounceResult = namedtuple('BounceResult', 'status is_bounce bounce_type diagnost
 GENERIC_ERROR = DsnStatus(5, 0, 0)
 MAILBOX_FULL = DsnStatus(5, 2, 2)
 
+# Restrict to max 3 consecutive newlines in email body
+MULTI_NL_RE = re.compile('((?:\r?\n){,3})(?:\r?\n)*')
+
 
 def get_unread_mails(host, port, user, password, ssl=True):
     klass = imaplib.IMAP4
@@ -184,6 +187,10 @@ class ParsedEmail(object):
         )
 
 
+def fix_email_body(body):
+    return MULTI_NL_RE.sub('\\1', body)
+
+
 class EmailParser(object):
 
     def parse(self, bytesfile):
@@ -196,6 +203,8 @@ class EmailParser(object):
 
         if not body and html:
             body = convert_html_to_text(html)
+
+        body = fix_email_body(body)
 
         email_info = parse_main_headers(msgobj)
         email_info.update({
