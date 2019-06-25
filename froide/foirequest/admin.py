@@ -459,7 +459,7 @@ class MessageTagAdmin(admin.ModelAdmin):
 class FoiAttachmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('belongs_to', 'redacted', 'converted', 'document')
     ordering = ('-id',)
-    date_hierarchy = 'belongs_to__timestamp'
+    date_hierarchy = 'timestamp'
     list_display = (
         'name', 'filetype', 'size', 'admin_link_message',
         'approved', 'can_approve',
@@ -478,6 +478,11 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     }
     actions = ['approve', 'disapprove', 'cannot_approve',
                'convert', 'ocr_attachment', 'make_document']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.select_related('belongs_to')
+        return qs
 
     def admin_link_message(self, obj):
         return format_html('<a href="{}">{}</a>',
