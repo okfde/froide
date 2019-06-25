@@ -66,6 +66,7 @@ class Base(Configuration):
         'froide.guide',
         'froide.comments',
         'froide.campaign',
+        'froide.upload',
 
         # API
         'oauth2_provider',
@@ -379,6 +380,10 @@ class Base(Configuration):
         'account-maintenance': {
             'task': 'froide.account.tasks.account_maintenance_task',
             'schedule': crontab(hour=4, minute=0)
+        },
+        'upload-maintenance': {
+            'task': 'froide.upload.tasks.remove_expired_uploads',
+            'schedule': crontab(hour=3, minute=30)
         }
     }
 
