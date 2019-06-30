@@ -73,9 +73,10 @@ def redact_plaintext(content, is_response=True, user=None):
                 content
             )
         else:
-            if settings.FROIDE_CONFIG.get('greetings'):
+            greetings = settings.FROIDE_CONFIG.get('greetings')
+            if greetings:
                 content = replace_custom(
-                    settings.FROIDE_CONFIG['greetings'],
+                    greetings,
                     greeting_replacement,
                     content
                 )
