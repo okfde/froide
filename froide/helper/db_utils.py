@@ -25,19 +25,27 @@ def save_obj_unique(obj, attr, count=0, postfix_format='-{count}'):
                     break
                 if first_round:
                     first_round = False
-                    count = klass.objects.filter(**{
-                        '%s__startswith' % attr: base_attr
-                    }).count()
+                    count = max(
+                        klass.objects.filter(**{
+                            '%s__startswith' % attr: base_attr
+                        }).count(),
+                        initial_count
+                    )
                 else:
                     count += 1
             setattr(obj, attr, base_attr + postfix)
             obj.save()
         except IntegrityError:
             if count - initial_count < MAX_COUNT:
-                first_round = False
-                count = klass.objects.filter(**{
-                    '%s__startswith' % attr: base_attr
-                }).count()
+                if first_round:
+                    first_round = False
+                    count = max(
+                        klass.objects.filter(**{
+                            '%s__startswith' % attr: base_attr
+                        }).count(),
+                        initial_count
+                    )
+                count += 1
             else:
                 raise
         else:
