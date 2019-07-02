@@ -8,13 +8,24 @@
     <h2>
       {% blocktrans with name=object.team.name %}
         Team “{{ name }}” has invited you
-        {% endblocktrans %}
+      {% endblocktrans %}
     </h2>
+    {% if request.user.email != object.email %}
+    <div class="alert alert-warning">
+      {% blocktrans with email=object.email account=request.user.email %}
+        This invite was sent to “{{ email }}” which is different from the current account “{{ account }}”!
+      {% endblocktrans %}
+    </div>
   </div>
 </div>
 
   <form method="post" action="">
     {% csrf_token %}
+    <p>
+      {% blocktrans with account=request.user.email %}
+        Do you want to join this team with the account “{{ account }}”?
+      {% endblocktrans %}
+    </p>
     <button type="submit" class="btn btn-lg btn-primary">
       {% trans "Join this team" %}
     </button>
