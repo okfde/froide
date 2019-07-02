@@ -58,7 +58,7 @@ class TeamDetailView(AuthMixin, DetailView):
         return Team.objects.filter(
             teammembership__user=self.request.user,
             teammembership__status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE
-        )
+        ).distinct()
 
     def get_context_data(self, **kwargs):
         context = super(TeamDetailView, self).get_context_data(**kwargs)
