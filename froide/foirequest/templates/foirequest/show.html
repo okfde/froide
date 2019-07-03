@@ -207,7 +207,7 @@
     {# Set status #}
     <div id="set-status" role="tabpanel" class="tab-pane d-print-none">
       {% if status_message %}
-        <h4>{% blocktrans with url=status_message.get_absolute_url %}Please <a href="{{ url }}">read the reply</a> and choose a new status {% endblocktrans %}</h4>
+        <h4>{% blocktrans with url=status_message.get_absolute_url %}Please <a href="{{ url }}">read the reply</a> and choose a new status{% endblocktrans %}</h4>
       {% else %}
         <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4>
       {% endif %}

@@ -1,5 +1,5 @@
 {% load i18n %}
-<h3>{% blocktrans with filter_title=title %} By {{ filter_title }} {% endblocktrans %}</h3>
+<h3>{% blocktrans with filter_title=title %}By {{ filter_title }}{% endblocktrans %}</h3>
 <ul>
   <li>
     <form action="{{ choices.0.query_string|iriencode }}" method="get">

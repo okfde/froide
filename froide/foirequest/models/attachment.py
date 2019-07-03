@@ -39,7 +39,7 @@ class FoiAttachmentManager(models.Manager):
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(
         FoiMessage, null=True,
-        verbose_name=_("Belongs to request"),
+        verbose_name=_("Belongs to message"),
         on_delete=models.CASCADE,
         related_name='foiattachment_set'
     )
