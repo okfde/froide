@@ -41,6 +41,7 @@ def is_authenticated_read(message, request):
     )
 
 
+@register.simple_tag
 def highlight_request(message, request):
     auth_read = is_authenticated_read(message, request)
 
@@ -97,6 +98,7 @@ def highlight_request(message, request):
     return mark_safe(''.join(html))
 
 
+@register.simple_tag
 def redact_message(message, request):
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
@@ -109,28 +111,49 @@ def redact_message(message, request):
     )
 
 
-def markup_redacted_content(real_content, redacted_content,
-                            authenticated_read=False, message_id=None):
-    c_1, c_2 = split_text_by_separator(real_content)
-    r_1, r_2 = split_text_by_separator(redacted_content)
+@register.simple_tag
+def redact_subject(message, request):
+    real_subject = unify(message.subject)
+    redacted_subject = unify(message.subject_redacted)
 
+    authenticated_read = is_authenticated_read(message, request)
+
+    return mark_redacted(
+        original=real_subject, redacted=redacted_subject,
+        authenticated_read=authenticated_read,
+    )
+
+
+def mark_redacted(original='', redacted='', authenticated_read=False):
     if authenticated_read:
-        content_1 = mark_differences(c_1, r_1,
-            attrs='class="redacted-dummy redacted-hover"'
-            ' data-toggle="tooltip" title="{title}"'.format(
-                title=_('Only visible to you')
-            ))
-        content_2 = mark_differences(c_2, r_2,
+        content = mark_differences(
+            original, redacted,
             attrs='class="redacted-dummy redacted-hover"'
             ' data-toggle="tooltip" title="{title}"'.format(
                 title=_('Only visible to you')
             ))
     else:
-        content_1 = mark_differences(r_1, c_1, attrs='class="redacted"')
-        content_2 = mark_differences(r_2, c_2, attrs='class="redacted"')
+        content = mark_differences(
+            redacted, original,
+            attrs='class="redacted"'
+        )
 
-    content_1 = urlizetrunc(content_1, 40, autoescape=False)
-    content_2 = urlizetrunc(content_2, 40, autoescape=False)
+    return urlizetrunc(content, 40, autoescape=False)
+
+
+def markup_redacted_content(real_content, redacted_content,
+                            authenticated_read=False, message_id=None):
+    c_1, c_2 = split_text_by_separator(real_content)
+    r_1, r_2 = split_text_by_separator(redacted_content)
+
+    content_1 = mark_redacted(
+        original=c_1, redacted=r_1,
+        authenticated_read=authenticated_read
+    )
+    content_2 = mark_redacted(
+        original=c_2, redacted=r_2,
+        authenticated_read=authenticated_read
+    )
 
     if content_2 and message_id:
         return mark_safe(''.join([
@@ -150,6 +173,7 @@ def markup_redacted_content(real_content, redacted_content,
     return mark_safe(content_1)
 
 
+@register.simple_tag(takes_context=True)
 def check_same_request(context, foirequest, user, var_name):
     if foirequest.same_as_id:
         foirequest_id = foirequest.same_as_id
@@ -201,6 +225,7 @@ def truncatefilename(filename, chars=20):
     return '%s…%s' % (filename[:half_chars], filename[back:])
 
 
+@register.simple_tag
 def alternative_address(foirequest):
     return get_alternative_mail(foirequest)
 
@@ -380,9 +405,3 @@ def get_timeline_marks(foirequest, num_slices=6):
             'percent': '{}%'.format(round(percent, 2)),
             'label': label,
         }
-
-
-register.simple_tag(highlight_request)
-register.simple_tag(redact_message)
-register.simple_tag(alternative_address)
-register.simple_tag(takes_context=True)(check_same_request)

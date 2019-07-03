@@ -84,7 +84,14 @@
           {% blocktrans %}Subject{% endblocktrans %}
         </dt>
         <dd>
-          <strong>{{ message.get_subject }}</strong>
+          {% if message.content_hidden %}
+            {% if object|can_write_foirequest:request %}
+              {{ message.subject }}
+            {% endif %}
+            <span class="badge badge-light">{% trans "Subject hidden" %}</span>
+          {% else %}
+            <strong>{% redact_subject message request %}</strong>
+          {% endif %}
         </dd>
         <dt>
           {% blocktrans %}Date{% endblocktrans %}
