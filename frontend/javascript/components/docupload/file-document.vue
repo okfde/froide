@@ -190,7 +190,7 @@ export default {
       return this.attachment && this.attachment.can_redact
     },
     canOpen () {
-      return !this.canApprove
+      return !this.canApprove || !this.canReview
     },
     canMakeResult () {
       return !this.hasDocument && this.attachment && this.attachment.is_pdf && !(

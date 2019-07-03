@@ -27,7 +27,7 @@
               <i class="fa fa-ban"></i>
               {{ i18n.delete }}
             </button>
-            <button v-if="attachment.is_irrelevant && attachment.is_image" class="dropdown-item btn-danger" @click="$emit('makerelevant')">
+            <button v-if="attachment.is_irrelevant && attachment.is_image" class="dropdown-item btn-danger" @click="makeRelevant">
               {{ i18n.makeRelevant }}
             </button>
           </div>
@@ -85,6 +85,9 @@ export default {
       this.$emit('docupdated', {
         approving: true
       })
+    },
+    makeRelevant() {
+      this.$emit('makerelevant')
     },
     deleteAttachment () {
       const confirm = window.confirm(this.i18n.confirmDelete)

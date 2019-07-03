@@ -7,7 +7,7 @@
         <div id="uppy"></div>
       </div>
     </div>
-    <div v-if="imageDocuments.length > 0" class="images">
+    <div v-if="imageDocuments.length > 0" class="images mt-3">
       <h2>{{ i18n.convertImagesToDocuments }}</h2>
       <image-document
         v-for="doc in imageDocuments"
@@ -256,7 +256,6 @@ export default {
           name: att.name,
           filetype: att.filetype,
           pending: att.pending,
-          url: att.file_url,
           pages: null,
           attachment: att,
           ...extra
@@ -275,7 +274,6 @@ export default {
             images.push({
               id: att.id,
               name: att.name,
-              url: att.file_url,
               attachment: att
             })
           }
@@ -389,6 +387,7 @@ export default {
             })
           ]
         }
+        this.documents = this.documents.filter((d) => d.id !== doc.id)
       } else {
         Vue.set(doc, 'irrelevant', false)
       }
