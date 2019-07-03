@@ -76,7 +76,6 @@
     "@uppy/core": "^1.1.0",
     "@uppy/dashboard": "^1.1.0",
     "@uppy/tus": "^1.2.0",
-    "@uppy/webcam": "^1.1.0",
     "bootstrap": "^4.2.1",
     "bootstrap.native": "^2.0.23",
     "choices.js": "^4.1.3",

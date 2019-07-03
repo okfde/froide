@@ -89,7 +89,6 @@ import Vue from 'vue'
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
-import Webcam from '@uppy/webcam'
 
 import I18nMixin from '../../lib/i18n-mixin'
 import {postData} from '../../lib/api.js'
@@ -149,16 +148,6 @@ export default {
       target: '#uppy',
       showLinkToFileUploadResult: false,
       proudlyDisplayPoweredByUppy: false
-    })
-    this.uppy.use(Webcam, {
-      target: Dashboard,
-      countdown: false,
-      modes: [
-        'picture'
-      ],
-      mirror: false,
-      facingMode: 'environment',
-      locale: {}
     })
     this.uppy.use(Tus, {
       endpoint: this.config.url.tusEndpoint,
@@ -466,7 +455,6 @@ export default {
 <style lang="scss" scoped>
 @import '~@uppy/core/dist/style.css';
 @import '~@uppy/dashboard/dist/style.css';
-@import '~@uppy/webcam/dist/style.css';
 
 .upload label.isMobile {
   display: block;
