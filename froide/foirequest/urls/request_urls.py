@@ -14,7 +14,7 @@ from ..views import (
     download_foirequest_zip, download_foirequest_pdf,
     show_attachment, redact_attachment,
     upload_attachments, delete_attachment, create_document,
-    SetTeamView
+    SetTeamView, edit_message
 )
 
 urlpatterns = [
@@ -33,18 +33,20 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/set/tags/$", set_tags, name="foirequest-set_tags"),
     url(r"^(?P<slug>[-\w]+)/set/resolution/$", set_summary, name="foirequest-set_summary"),
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/$", add_postal_reply, name="foirequest-add_postal_reply"),
-    url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", add_postal_reply_attachment, name="foirequest-add_postal_reply_attachment"),
     url(r"^(?P<slug>[-\w]+)/add/postal-message/$", add_postal_message, name="foirequest-add_postal_message"),
-    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set/public-body/$", set_message_sender, name="foirequest-set_message_sender"),
     url(r"^(?P<slug>[-\w]+)/mark/not-foi/$", mark_not_foi, name="foirequest-mark_not_foi"),
     url(r"^(?P<slug>[-\w]+)/mark/checked/$", mark_checked, name="foirequest-mark_checked"),
     url(r"^(?P<slug>[-\w]+)/extend-deadline/$", extend_deadline, name="foirequest-extend_deadline"),
-    url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message>\d+)/$", approve_message, name="foirequest-approve_message"),
     url(r"^(?P<slug>[-\w]+)/make-same/$", make_same_request, name="foirequest-make_same_request"),
     url(r"^(?P<slug>[-\w]+)/resend/$", resend_message, name="foirequest-resend_message"),
     url(r"^(?P<slug>[-\w]+)/download/$", download_foirequest_zip, name="foirequest-download"),
     url(r"^(?P<slug>[-\w]+)/pdf/$", download_foirequest_pdf, name="foirequest-pdf"),
     url(r"^(?P<slug>[-\w]+)/set-team/$", SetTeamView.as_view(), name="foirequest-set_team"),
+    # Messages
+    url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", add_postal_reply_attachment, name="foirequest-add_postal_reply_attachment"),
+    url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message_id>\d+)/$", approve_message, name="foirequest-approve_message"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set-public-body/$", set_message_sender, name="foirequest-set_message_sender"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/edit-message/$", edit_message, name="foirequest-edit_message"),
     # Attachments
     url(pgettext_lazy('url part', r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/attachment/(?P<attachment_name>.+)$'),
         show_attachment, name='foirequest-show_attachment'),

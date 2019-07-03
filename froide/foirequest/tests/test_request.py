@@ -1480,7 +1480,7 @@ class RequestTest(TestCase):
         message.save()
         url = reverse('foirequest-approve_message', kwargs={
             'slug': foirequest.slug,
-            'message': message.pk
+            'message_id': message.pk
         })
 
         response = self.client.post(url)
