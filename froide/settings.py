@@ -267,6 +267,8 @@ class Base(Configuration):
     TIME_FORMAT = values.Value("H:i")
     TIME_INPUT_FORMATS = values.TupleValue(("%H:%M",))
 
+    TAGGIT_CASE_INSENSITIVE = True
+
     HOLIDAYS = [
         (1, 1),  # New Year's Day
         (12, 25),  # Christmas
