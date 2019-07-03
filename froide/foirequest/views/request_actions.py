@@ -276,12 +276,7 @@ def make_same_request(request, slug):
 @require_POST
 @allow_write_foirequest
 def extend_deadline(request, foirequest):
-    try:
-        months = int(request.POST.get('months', 6))
-    except ValueError:
-        messages.add_message(request, messages.ERROR,
-                    _('Invalid input!'))
-        return render_400(request)
+    months = 1
     foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
     if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
         foirequest.status = 'awaiting_response'
