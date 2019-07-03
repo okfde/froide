@@ -21,6 +21,7 @@ from taggit.models import Tag
 
 from froide.publicbody.models import PublicBody
 from froide.campaign.models import Campaign
+from froide.document.api_views import DocumentSerializer
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
 from .services import CreateRequestService
@@ -99,6 +100,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         view_name='api:message-detail'
     )
+    document = DocumentSerializer()
     site_url = serializers.CharField(
         source='get_absolute_domain_url',
         read_only=True
@@ -127,6 +129,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
             'redacted', 'is_redacted', 'can_redact',
             'can_delete',
             'is_pdf', 'is_image', 'is_irrelevant',
+            'document'
         )
 
     def get_file_url(self, obj):
