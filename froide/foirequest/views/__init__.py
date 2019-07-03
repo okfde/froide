@@ -15,7 +15,7 @@ from .make_request import MakeRequestView, DraftRequestView, RequestSentView
 from .message import (
     send_message, escalation_message, add_postal_reply, add_postal_message,
     add_postal_reply_attachment, set_message_sender, approve_message,
-    resend_message, upload_attachments
+    resend_message, upload_attachments, edit_message
 )
 from .misc_views import (
     index, dashboard, postmark_inbound, postmark_bounce,
@@ -46,7 +46,7 @@ __all__ = [
     MakeRequestView, DraftRequestView, RequestSentView,
     send_message, escalation_message, add_postal_reply, add_postal_message,
     add_postal_reply_attachment, set_message_sender, approve_message,
-    resend_message, upload_attachments,
+    resend_message, upload_attachments, edit_message,
     index, dashboard, postmark_inbound, postmark_bounce,
     download_foirequest_zip, download_foirequest_pdf,
     SetTeamView,

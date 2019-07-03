@@ -22,7 +22,7 @@ from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
 from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
     get_escalation_message_form, get_postal_attachment_form,
-    get_message_sender_form, TransferUploadForm
+    get_message_sender_form, TransferUploadForm, EditMessageForm
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
@@ -492,11 +492,7 @@ def upload_attachments(request, foirequest, message_id):
 @require_POST
 @allow_write_foirequest
 def set_message_sender(request, foirequest, message_id):
-    try:
-        message = FoiMessage.objects.get(request=foirequest,
-                pk=int(message_id))
-    except (ValueError, FoiMessage.DoesNotExist):
-        raise Http404
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
     if not message.is_response:
         return render_400(request)
     form = get_message_sender_form(request.POST, foimessage=message)
@@ -510,8 +506,8 @@ def set_message_sender(request, foirequest, message_id):
 
 @require_POST
 @allow_write_foirequest
-def approve_message(request, foirequest, message):
-    mes = get_object_or_404(FoiMessage, id=int(message))
+def approve_message(request, foirequest, message_id):
+    mes = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
     mes.content_hidden = False
     mes.save()
     messages.add_message(request, messages.SUCCESS,
@@ -534,3 +530,15 @@ def resend_message(request, foirequest):
         return render_400(request)
     mes.resend()
     return redirect('admin:foirequest_foimessage_change', mes.id)
+
+
+@require_POST
+@allow_write_foirequest
+def edit_message(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    if not message.can_edit:
+        return render_400(request)
+    form = EditMessageForm(data=request.POST, message=message)
+    if form.is_valid():
+        form.save()
+    return redirect(message.get_absolute_url())

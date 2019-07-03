@@ -145,6 +145,10 @@ class FoiMessage(models.Model):
         return self.kind != 'email'
 
     @property
+    def can_edit(self):
+        return self.is_response and self.is_not_email
+
+    @property
     def content(self):
         return self.plaintext
 

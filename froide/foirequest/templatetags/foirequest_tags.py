@@ -15,6 +15,7 @@ from django_comments import get_model
 from froide.helper.text_utils import split_text_by_separator
 from froide.helper.text_diff import mark_differences
 
+from ..forms import EditMessageForm
 from ..models import FoiRequest, FoiMessage, DeliveryStatus
 from ..foi_mail import get_alternative_mail
 from ..auth import (
@@ -261,6 +262,17 @@ def get_delivery_status(message):
         for m in foirequest.messages:
             m._delivery_status = ds_mapping[m.id]
     return message._delivery_status
+
+
+@register.inclusion_tag('foirequest/snippets/message_edit.html',
+                        takes_context=True)
+def render_message_edit_button(context, message):
+    request = context['request']
+    return {
+        'form': EditMessageForm(message=message),
+        'foirequest': message.request,
+        'message': message
+    }
 
 
 @register.inclusion_tag('foirequest/snippets/message_timeline.html')
