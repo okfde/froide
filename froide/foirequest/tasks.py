@@ -11,6 +11,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
+from froide.upload.models import Upload
 from froide.helper.document import convert_to_pdf, convert_images_to_ocred_pdf
 from froide.document.pdf_utils import PDFProcessor
 from froide.helper.redaction import redact_file
@@ -312,3 +313,22 @@ def redact_attachment_task(att_id, target_id, instructions):
 
     target.can_approve = True
     target.approve_and_save()
+
+
+@celery_app.task(name='froide.foirequest.tasks.move_upload_to_attachment')
+def move_upload_to_attachment(att_id, upload_id):
+    try:
+        att = FoiAttachment.objects.get(pk=att_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    try:
+        upload = Upload.objects.get(pk=upload_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    file = upload.get_file()
+    if file:
+        att.file.save(att.name, file, save=True)
+    upload.finish()
+    upload.delete()

@@ -179,6 +179,9 @@ class FoiAttachment(models.Model):
         '''
         return self.get_absolute_domain_file_url()
 
+    def get_file_path(self):
+        return self.file.path
+
     def get_crossdomain_auth(self):
         from ..auth import AttachmentCrossDomainMediaAuth
 
@@ -206,6 +209,13 @@ class FoiAttachment(models.Model):
     def approve_and_save(self):
         self.approved = True
         self.save()
+        if self.document:
+            foirequest = self.belongs_to.request
+            should_be_public = foirequest.public
+            if self.document.public != should_be_public:
+                self.document.public = should_be_public
+                self.document.save()
+
         self.attachment_published.send(sender=self)
 
     def remove_file_and_delete(self):
@@ -230,6 +240,8 @@ class FoiAttachment(models.Model):
             return self.document
 
         if not self.is_pdf:
+            return
+        if self.converted_id or self.redacted_id:
             return
 
         foirequest = self.belongs_to.request

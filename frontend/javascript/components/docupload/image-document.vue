@@ -14,16 +14,16 @@
         </div>
         <div v-else>
           <div class="form-group">
-            <label for="page-label">{{ i18n.documentTitle }}</label>
+            <label for="page-label">{{ i18n.attachmentName }}</label>
             <input v-model="documentName" type="text" class="form-control" :placeholder="i18n.documentTitlePlaceholder">
           </div>
           <draggable v-model="pages" @start="drag=true" @end="drag=false" class="row pages bg-light">
-              <image-page v-for="page in pages" :key="page.pageNum"
-                :page="page"
-                :page-count="pages.length"
-                @pageupdated="$emit('pageupdated', {document, ...$event})"
-                @splitpages="splitPages"
-              ></image-page>
+            <image-page v-for="page in pages" :key="page.pageNum"
+              :page="page"
+              :page-count="pages.length"
+              @pageupdated="$emit('pageupdated', {document, ...$event})"
+              @splitpages="splitPages"
+            ></image-page>
           </draggable>
         </div>
         <div class="row mt-3">
@@ -35,6 +35,9 @@
               <button class="btn btn-primary mt-2" :disabled="anyUploads || converting" @click="convertImages">
                 {{ i18n.convertImages }}
               </button>
+              <file-review :config="config" :document="document"
+                @docupdated="updateDocument"
+              ></file-review>
             </p>
           </div>
         </div>
@@ -48,19 +51,23 @@
 import draggable from 'vuedraggable'
 
 import ImagePage from './image-page.vue'
+import FileReview from './file-review.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
+import {DocumentMixin} from './lib/document_utils'
+
 import {postData} from '../../lib/api.js'
 
 const range = (len) => [...Array(len).keys()]
 
 export default {
   name: 'image-document',
-  mixins: [I18nMixin],
+  mixins: [I18nMixin, DocumentMixin],
   props: ['config', 'document'],
   components: {
     draggable,
-    ImagePage
+    ImagePage,
+    FileReview,
   },
   data () {
     return {
@@ -121,9 +128,9 @@ export default {
         this.$root.url.convertAttachments,
         data,
         this.$root.csrfToken
-      ).then((response) => {
+      ).then((attachment) => {
         this.$emit('imagesconverted', {
-          document: response,
+          attachment: attachment,
           imageDoc: this.document
         })
       })

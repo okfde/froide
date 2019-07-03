@@ -1,8 +1,9 @@
 import datetime
+import os
 import re
 
 from django.conf import settings
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, resolve, Resolver404
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
@@ -10,6 +11,7 @@ from django.utils.html import escape
 from django.utils.http import is_safe_url
 from django.utils import timezone
 from django import forms
+from django.db import transaction
 from django.template.loader import render_to_string
 
 from froide.publicbody.models import PublicBody
@@ -22,12 +24,15 @@ from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import redact_subject, redact_plaintext
 from froide.helper.auth import get_read_queryset
+from froide.upload.models import Upload
 
 from .models import (
     FoiRequest, FoiMessage, FoiAttachment, RequestDraft, PublicBodySuggestion
 )
-from .tasks import convert_attachment_task
-from .validators import validate_upload_document, clean_reference
+from .tasks import convert_attachment_task, move_upload_to_attachment
+from .validators import (
+    validate_upload_document, validate_postal_content_type, clean_reference
+)
 from .foi_mail import generate_foirequest_files
 from .utils import (
     construct_initial_message_body, construct_message_body,
@@ -494,37 +499,47 @@ class AttachmentSaverMixin(object):
         return self.cleaned_data['files']
 
     def make_filename(self, name):
-        name = name.rsplit('.', 1)
+        name = os.path.basename(name).rsplit('.', 1)
         return '.'.join([slugify(n) for n in name])
 
-    def save_attachments(self, files, message, replace=False):
+    def get_or_create_attachment(self, message, filename):
+        try:
+            att = FoiAttachment.objects.get(
+                belongs_to=message,
+                name=filename
+            )
+            return att, False
+        except FoiAttachment.DoesNotExist:
+            pass
+        att = FoiAttachment(belongs_to=message, name=filename)
+        return att, True
+
+    def save_attachments(self, files, message, replace=False, save_file=True):
         added = []
         updated = []
 
         for file in files:
             filename = self.make_filename(file.name)
-            att = None
             if replace:
-                try:
-                    att = FoiAttachment.objects.get(
-                        belongs_to=message,
-                        name=filename
-                    )
-                    updated.append(att)
-                except FoiAttachment.DoesNotExist:
-                    pass
-            if att is None:
+                att, created = self.get_or_create_attachment(message, filename)
+            else:
+                created = True
                 att = FoiAttachment(belongs_to=message, name=filename)
+
+            if created:
                 added.append(att)
+            else:
+                updated.append(att)
             att.size = file.size
             att.filetype = file.content_type
-            att.file.save(filename, file)
+            if save_file:
+                att.file.save(filename, file)
             att.can_approve = not message.request.not_publishable
             att.approved = False
             att.save()
 
             if att.can_convert_to_pdf():
-                convert_attachment_task.delay(att.id)
+                transaction.on_commit(lambda: convert_attachment_task.delay(att.id))
 
         message._attachments = None
 
@@ -945,3 +960,46 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
 
 class TagFoiRequestForm(TagObjectForm):
     tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')
+
+
+class TransferUploadForm(AttachmentSaverMixin, forms.Form):
+    upload = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+    def clean_upload(self):
+        upload_url = self.cleaned_data['upload']
+        try:
+            match = resolve(upload_url)
+        except Resolver404:
+            raise forms.ValidationError(_('Bad URL'))
+        guid = match.kwargs.get('guid')
+        if guid is None:
+            raise forms.ValidationError(_('Bad URL'))
+        try:
+            upload = Upload.objects.get(user=self.user, guid=guid)
+        except Upload.DoesNotExist:
+            raise forms.ValidationError(_('Bad Upload'))
+        validate_postal_content_type(upload.content_type)
+        return upload
+
+    def save(self, foimessage):
+        upload = self.cleaned_data['upload']
+
+        result = self.save_attachments(
+            [upload], foimessage,
+            replace=True, save_file=False
+        )
+        upload.start_saving()
+        upload.save()
+
+        for x in result:
+            if x:
+                att = x[0]
+                break
+
+        transaction.on_commit(lambda: move_upload_to_attachment.delay(att.id, upload.id))
+
+        return result

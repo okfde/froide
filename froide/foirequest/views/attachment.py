@@ -16,10 +16,12 @@ from froide.helper.utils import render_400, render_403
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..auth import (
-    can_write_foirequest, get_accessible_attachment_url,
+    get_accessible_attachment_url,
     AttachmentCrossDomainMediaAuth, has_attachment_access
 )
 from ..tasks import redact_attachment_task
+
+from .request_actions import allow_write_foirequest
 
 
 logger = logging.getLogger(__name__)
@@ -56,12 +58,11 @@ def show_attachment(request, slug, message_id, attachment_name):
 
 
 @require_POST
-def approve_attachment(request, slug, attachment):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-
-    if not can_write_foirequest(foirequest, request):
-        return render_403(request)
-    att = get_object_or_404(FoiAttachment, id=int(attachment))
+@allow_write_foirequest
+def approve_attachment(request, foirequest, attachment):
+    att = get_object_or_404(
+        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+    )
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
 
@@ -82,12 +83,11 @@ def approve_attachment(request, slug, attachment):
 
 
 @require_POST
-def delete_attachment(request, slug, attachment):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-
-    if not can_write_foirequest(foirequest, request):
-        return render_403(request)
-    att = get_object_or_404(FoiAttachment, id=int(attachment))
+@allow_write_foirequest
+def delete_attachment(request, foirequest, attachment):
+    att = get_object_or_404(
+        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+    )
     message = att.belongs_to
     if not message.is_postal:
         return render_403(request)
@@ -109,27 +109,27 @@ def delete_attachment(request, slug, attachment):
 
 
 @require_POST
-def create_document(request, slug, attachment):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-
-    if not can_write_foirequest(foirequest, request):
-        return render_403(request)
-    att = get_object_or_404(FoiAttachment, id=int(attachment))
+@allow_write_foirequest
+def create_document(request, foirequest, attachment):
+    att = get_object_or_404(
+        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+    )
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
 
-    if att.document is not None:
+    if (att.redacted or att.converted or att.document is not None or
+            not att.is_pdf):
         return render_400(request)
 
-    att.create_document()
+    doc = att.create_document()
+
+    if request.is_ajax():
+        return JsonResponse({
+            'resource_uri': reverse('api:document-detail', kwargs={'pk': doc.id}),
+        })
     messages.add_message(request, messages.SUCCESS,
             _('Document created.'))
 
-    if request.is_ajax():
-        return render(
-            request, 'foirequest/snippets/attachment.html',
-            {'attachment': att, 'object': foirequest}
-        )
     return redirect(att.get_anchor_url())
 
 
@@ -215,14 +215,11 @@ def get_redact_context(foirequest, attachment):
     }
 
 
-def redact_attachment(request, slug, attachment_id):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-
-    if not can_write_foirequest(foirequest, request):
-        return render_403(request)
-
-    attachment = get_object_or_404(FoiAttachment, pk=int(attachment_id),
-            belongs_to__request=foirequest)
+@allow_write_foirequest
+def redact_attachment(request, foirequest, attachment_id):
+    attachment = get_object_or_404(
+        FoiAttachment, id=int(attachment_id), belongs_to__request=foirequest
+    )
     if not attachment.can_redact:
         return render_403(request)
 

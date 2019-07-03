@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
@@ -21,7 +22,7 @@ from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
 from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
     get_escalation_message_form, get_postal_attachment_form,
-    get_message_sender_form
+    get_message_sender_form, TransferUploadForm
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
@@ -120,6 +121,21 @@ def add_postal_message(request, slug):
     )
 
 
+def get_attachment_update_response(request, added, updated):
+    return JsonResponse({
+        'added': [
+            FoiAttachmentSerializer(a, context={
+                'request': request
+            }).data for a in added
+        ],
+        'updated': [
+            FoiAttachmentSerializer(u, context={
+                'request': request
+            }).data for u in updated
+        ],
+    })
+
+
 @require_POST
 @allow_write_foirequest
 def add_postal_reply_attachment(request, foirequest, message_id):
@@ -140,18 +156,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
         added, updated = result
 
         if request.is_ajax():
-            return JsonResponse({
-                'added': [
-                    FoiAttachmentSerializer(a, context={
-                        'request': request
-                    }).data for a in added
-                ],
-                'updated': [
-                    FoiAttachmentSerializer(u, context={
-                        'request': request
-                    }).data for u in updated
-                ],
-            })
+            return get_attachment_update_response(request, added, updated)
 
         added_count = len(added)
         updated_count = len(updated)
@@ -232,6 +237,18 @@ def convert_to_pdf(request, foirequest, message, data):
     return JsonResponse(attachment_data)
 
 
+def add_tus_attachment(request, foirequest, message, data):
+    form = TransferUploadForm(
+        data=data, user=request.user
+    )
+    if form.is_valid():
+        result = form.save(message)
+        added, updated = result
+        return get_attachment_update_response(request, added, updated)
+
+    return JsonResponse({'error': True, 'message': str(form.errors)})
+
+
 @allow_write_foirequest
 def upload_attachments(request, foirequest, message_id):
     try:
@@ -247,7 +264,8 @@ def upload_attachments(request, foirequest, message_id):
         except (ValueError, UnicodeDecodeError):
             raise Http404
         actions = {
-            'convert_to_pdf': convert_to_pdf
+            'convert_to_pdf': convert_to_pdf,
+            'add_tus_attachment': add_tus_attachment,
         }
         action = data.get('action')
         action_func = actions.get(action)
@@ -266,7 +284,8 @@ def upload_attachments(request, foirequest, message_id):
             'document_filetypes': POSTAL_CONTENT_TYPES,
             'image_filetypes': IMAGE_FILETYPES,
             'pdf_filetypes': PDF_FILETYPES,
-            'attachment_form_prefix': attachment_form.prefix
+            'attachment_form_prefix': attachment_form.prefix,
+            'tusChunkSize': settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024)
         },
         'resources': {
             'pdfjsWorker': static('js/pdf.worker.min.js')
@@ -288,6 +307,9 @@ def upload_attachments(request, foirequest, message_id):
                 kwargs={'slug': foirequest.slug, 'attachment': 0}),
             'deleteAttachment': reverse('foirequest-delete_attachment',
                 kwargs={'slug': foirequest.slug, 'attachment': 0}),
+            'tusEndpoint': reverse('api:upload-list'),
+            'createDocument': reverse('foirequest-create_document',
+                kwargs={'slug': foirequest.slug, 'attachment': 0}),
         },
         'i18n': {
             'newDocumentPageCount': [
@@ -297,25 +319,34 @@ def upload_attachments(request, foirequest, message_id):
             'takePicture': _('Take / Choose picture'),
             'convertImages': _('Convert images to document'),
             'openAttachmentPage': _('Open attachment page'),
-            'loadPreview': _('Load preview'),
-            'uploadPdfOrPicture': _('Upload PDF or picture'),
+            'loadPreview': _('Preview'),
+            'uploadPdfOrPicture': _('Upload PDFs or pictures of documents.'),
+            'upload': _('Upload'),
             'otherAttachments': _('Other attachments that are not documents'),
+            'convertImagesToDocuments': _('Convert images to documents'),
             'imageDocumentExplanation': _(
                 'Here you can combine your uploaded images to a PDF document. '
                 'You can rearrange the pages and '
                 'split it into multiple documents. '
                 'You can redact the PDF in the next step.'
             ),
+            'documents': _('Documents'),
+            'otherFiles': _('Other files'),
             'documentPending': _(
                 'This document is being generated. '
                 'This can take several minutes.'
             ),
             'documentDeleting': _('This document is being deleted...'),
             'documentTitle': _('Document title'),
+            'documentTitleHelp': _('Give this document a proper title'),
             'documentTitlePlaceholder': _('e.g. Letter from date'),
             'showIrrelevantAttachments': _('Show irrelevant attachments'),
             'makeRelevant': _('Make relevant'),
             'loading': _('Loading...'),
+            'description': _('Description'),
+            'descriptionHelp': _('Describe the contents of the document'),
+            'edit': _('Edit'),
+            'save': _('Save'),
             'review': _('Review'),
             'approve': _('Approve'),
             'notPublic': _('not public'),
@@ -330,6 +361,120 @@ def upload_attachments(request, foirequest, message_id):
                 'This attachment has been converted to PDF and '
                 'cannot be published.'
             ),
+            'isResult': _('Result?'),
+            'makeResultExplanation': _('Mark this document as a result of your request'),
+            'makeResultsExplanation': _('Mark the selected documents as a result of your request'),
+            'uppy': {
+                'addMore': _('Add more'),
+                'addMoreFiles': _('Add more files'),
+                'addingMoreFiles': _('Adding more files'),
+                'allowAccessDescription': _('In order to take pictures of your documents, please allow camera access.'),
+                'allowAccessTitle': _('Please allow access to your camera'),
+                # 'authenticateWith': _('Connect to %{pluginName}'),
+                # 'authenticateWithTitle': _('Please authenticate with %{pluginName} to select files'),
+                'back': _('Back'),
+                'browse': _('browse'),
+                'cancel': _('Cancel'),
+                'cancelUpload': _('Cancel upload'),
+                'chooseFiles': _('Choose files'),
+                'closeModal': _('Close Modal'),
+                # 'companionAuthError': _('Authorization required'),
+                # 'companionError': _('Connection with Companion failed'),
+                'complete': _('Complete'),
+                'connectedToInternet': _('Connected to the Internet'),
+                'copyLink': _('Copy link'),
+                'copyLinkToClipboardFallback': _('Copy the URL below'),
+                'copyLinkToClipboardSuccess': _('Link copied to clipboard'),
+                'dashboardTitle': _('File Uploader'),
+                'dashboardWindowTitle': _('File Uploader Window (Press escape to close)'),
+                'dataUploadedOfTotal': _('%{complete} of %{total}'),
+                'done': _('Done'),
+                'dropHereOr': _('Drop files here or %{browse}'),
+                'dropHint': _('Drop your files here'),
+                'dropPaste': _('Drop files here, paste or %{browse}'),
+                'dropPasteImport': _('Drop files here, paste, %{browse} or import from'),
+                'edit': _('Edit'),
+                'editFile': _('Edit file'),
+                'editing': _('Editing %{file}'),
+                'emptyFolderAdded': _('No files were added from empty folder'),
+                'exceedsSize': _('This file exceeds maximum allowed size of'),
+                'failedToUpload': _('Failed to upload %{file}'),
+                'fileSource': _('File source: %{name}'),
+                'filesUploadedOfTotal': {
+                    '0': _('%{complete} of %{smart_count} file uploaded'),
+                    '1': _('%{complete} of %{smart_count} files uploaded'),
+                    '2': _('%{complete} of %{smart_count} files uploaded'),
+                },
+                'filter': _('Filter'),
+                'finishEditingFile': _('Finish editing file'),
+                'folderAdded': {
+                    '0': _('Added %{smart_count} file from %{folder}'),
+                    '1': _('Added %{smart_count} files from %{folder}'),
+                    '2': _('Added %{smart_count} files from %{folder}'),
+                },
+                'import': _('Import'),
+                'importFrom': _('Import from %{name}'),
+                'link': _('Link'),
+                'loading': _('Loading...'),
+                'myDevice': _('My Device'),
+                'noFilesFound': _('You have no files or folders here'),
+                'noInternetConnection': _('No Internet connection'),
+                'pause': _('Pause'),
+                'pauseUpload': _('Pause upload'),
+                'paused': _('Paused'),
+                'preparingUpload': _('Preparing upload...'),
+                'processingXFiles': {
+                    '0': _('Processing %{smart_count} file'),
+                    '1': _('Processing %{smart_count} files'),
+                    '2': _('Processing %{smart_count} files'),
+                },
+                'removeFile': _('Remove file'),
+                'resetFilter': _('Reset filter'),
+                'resume': _('Resume'),
+                'resumeUpload': _('Resume upload'),
+                'retry': _('Retry'),
+                'retryUpload': _('Retry upload'),
+                'saveChanges': _('Save changes'),
+                'selectXFiles': {
+                    '0': _('Select %{smart_count} file'),
+                    '1': _('Select %{smart_count} files'),
+                    '2': _('Select %{smart_count} files'),
+                },
+                'takePicture': _('Take a picture'),
+                'timedOut': _('Upload stalled for %{seconds} seconds, aborting.'),
+                'upload': _('Upload'),
+                'uploadComplete': _('Upload complete'),
+                'uploadFailed': _('Upload failed'),
+                'uploadPaused': _('Upload paused'),
+                'uploadXFiles': {
+                    '0': _('Upload %{smart_count} file'),
+                    '1': _('Upload %{smart_count} files'),
+                    '2': _('Upload %{smart_count} files'),
+                },
+                'uploadXNewFiles': {
+                    '0': _('Upload +%{smart_count} file'),
+                    '1': _('Upload +%{smart_count} files'),
+                    '2': _('Upload +%{smart_count} files'),
+                },
+                'uploading': _('Uploading'),
+                'uploadingXFiles': {
+                    '0': _('Uploading %{smart_count} file'),
+                    '1': _('Uploading %{smart_count} files'),
+                    '2': _('Uploading %{smart_count} files'),
+                },
+                'xFilesSelected': {
+                    '0': _('%{smart_count} file selected'),
+                    '1': _('%{smart_count} files selected'),
+                    '2': _('%{smart_count} files selected'),
+                },
+                'xMoreFilesAdded': {
+                    '0': _('%{smart_count} more file added'),
+                    '1': _('%{smart_count} more files added'),
+                    '2': _('%{smart_count} more files added'),
+                },
+                'xTimeLeft': _('%{time} left'),
+                'youCanOnlyUploadFileTypes': _('You can only upload: %{types}'),
+            }
         }
     }
     request.auth = None

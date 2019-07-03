@@ -1,54 +1,83 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
     <div v-if="canUpload" class="upload">
-      <label :class="{'btn btn-primary isMobile': isMobile}">
-        <i class="fa fa-cloud-upload"></i>
-        <span v-if="isMobile">
-          {{ i18n.takePicture }}
-        </span>
-        <span v-else>
-          {{ i18n.uploadPdfOrPicture }}
-          <br/>
-        </span>
-        <input v-show="!isMobile" type="file" @change="filesSelected" accept="image/*,application/pdf" multiple/>
-      </label>
+      <h2>{{ i18n.upload }}</h2>
+      <p>{{ i18n.uploadPdfOrPicture }}</p>
+      <div>
+        <div id="uppy"></div>
+      </div>
     </div>
-    <div class="documents">
-      <component
-        v-for="doc in documents"
-        v-bind:is="doc.component"
+    <div v-if="imageDocuments.length > 0" class="images">
+      <h2>{{ i18n.convertImagesToDocuments }}</h2>
+      <image-document
+        v-for="doc in imageDocuments"
         :key="doc.id"
         :document="doc"
         :config="config"
         @pageschanged="pagesChanged(doc, $event)"
-        @loadpdf="loadPdf(doc)"
         @splitpages="splitPages(doc, $event)"
         @imagesconverted="imagesConverted"
         @namechanged="doc.name = $event"
         @docupdated="documentUpdated(doc, $event)"
         @pageupdated="pageUpdated"
         @notnew="doc.new = false"
-      ></component>
+      ></image-document>
     </div>
-
-    <div v-if="otherAttachments.length > 0">
-      <p>
-        <button class="btn btn-link" @click="showOther = !showOther">
-          {{ i18n.showIrrelevantAttachments}}
-        </button>
-      </p>
-      <div v-if="showOther">
-        <component
-          v-for="doc in otherAttachments"
-          v-bind:is="doc.component"
+    <div v-if="pdfDocuments.length > 0" class="documents mt-5">
+      <h2>{{ i18n.documents }}</h2>
+      <div class="mt-3 mb-3">
+        <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
+          <div class="col-auto mr-auto">
+            <input type="checkbox" v-model="selectAll" @click="clickSelectAll"/>
+          </div>
+          <div class="col-md-2 ml-auto text-center">
+            <button class="btn btn-sm"
+              :class="{'btn-success': canMakeResult}"
+              :disabled="!canMakeResult"
+              @click="makeResults"
+              data-toggle="tooltip" data-placement="top" :title="i18n.makeResultsExplanation"
+            >
+              <i class="fa fa-certificate"></i>
+              {{ i18n.isResult }}
+            </button>
+          </div>
+          <div class="col-md-4 mr-5 text-right">
+            <button class="btn btn-sm"
+              :class="{'btn-success': canApprove}"
+              :disabled="!canApprove" @click="approveSelected">
+              <i class="fa fa-check"></i>
+              {{ i18n.approve }}
+            </button>
+          </div>
+        </div>
+        <file-document
+          v-for="doc in pdfDocuments"
           :key="doc.id"
           :document="doc"
           :config="config"
+          @pageschanged="pagesChanged(doc, $event)"
+          @splitpages="splitPages(doc, $event)"
+          @imagesconverted="imagesConverted"
+          @namechanged="doc.name = $event"
           @docupdated="documentUpdated(doc, $event)"
-          @makerelevant="makeRelevant(doc)"
+          @pageupdated="pageUpdated"
           @notnew="doc.new = false"
-        ></component>
+        ></file-document>
       </div>
+    </div>
+
+    <div v-if="otherAttachments.length > 0" class="mt-5">
+      <hr/>
+      <h4>{{ i18n.otherFiles }}</h4>
+      <file-document
+        v-for="doc in otherAttachments"
+        :key="doc.id"
+        :document="doc"
+        :config="config"
+        @docupdated="documentUpdated(doc, $event)"
+        @makerelevant="makeRelevant(doc)"
+        @notnew="doc.new = false"
+      ></file-document>
     </div>
   </div>
 </template>
@@ -57,14 +86,17 @@
 
 import Vue from 'vue'
 
-import I18nMixin from '../../lib/i18n-mixin'
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
+import Dashboard from '@uppy/dashboard'
+import Webcam from '@uppy/webcam'
 
-import FullpdfDocument from './fullpdf-document.vue'
+import I18nMixin from '../../lib/i18n-mixin'
+import {postData} from '../../lib/api.js'
+
+import {approveAttachment, createDocument} from './lib/document_utils'
 import ImageDocument from './image-document.vue'
 import FileDocument from './file-document.vue'
-
-// If smaller, likely not document image
-const MIN_DOC_IMAGE_SIZE = 50 * 1024
 
 
 export default {
@@ -73,18 +105,16 @@ export default {
   props: ['config', 'message'],
   components: {
     ImageDocument,
-    FullpdfDocument,
     FileDocument
   },
   data () {
     return {
       documents: [],
-      otherAttachments: [],
-      showOther: false,
       imageDocId: 0,
       uploadCount: 0,
       exifSupport: null,
-      names: {}
+      names: {},
+      selectAll: false,
     }
   },
   mounted () {
@@ -92,9 +122,57 @@ export default {
     this.testExifSupport()
     this.$root.url = this.config.url
     this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
-    const [docs, other] = this.buildDocuments()
-    this.documents = docs
-    this.otherAttachments = other
+    this.documents = this.buildDocuments(this.message.attachments)
+
+    const uppyLocale = {
+      strings: this.config.i18n.uppy,
+      pluralize: (n) => {
+        if (n === 1) {
+          return 0
+        }
+        return 1
+      }
+    }
+
+    this.uppy = Uppy({
+      autoProceed: true,
+      locale: uppyLocale,
+      restrictions: {
+        allowedFileTypes: [
+          'application/pdf',
+          'image/*'
+        ]
+      }
+    })
+    this.uppy.use(Dashboard, {
+      inline: true,
+      target: '#uppy',
+      showLinkToFileUploadResult: false,
+      proudlyDisplayPoweredByUppy: false
+    })
+    this.uppy.use(Webcam, {
+      target: Dashboard,
+      countdown: false,
+      modes: [
+        'picture'
+      ],
+      mirror: false,
+      facingMode: 'environment',
+      locale: {}
+    })
+    this.uppy.use(Tus, {
+      endpoint: this.config.url.tusEndpoint,
+      chunkSize: this.config.settings.tusChunkSize,
+      headers: {
+        'X-CSRFToken': this.$root.csrfToken
+      }
+    })
+
+    this.uppy.on('upload-success', (file, response) => {
+      this.addAttachmentFromTus(response.uploadURL).then(() => {
+        this.uppy.removeFile(file.id)
+      })
+    })
   },
   computed: {
     isMobile () {
@@ -103,6 +181,44 @@ export default {
     },
     canUpload () {
       return this.message.kind === 'post'
+    },
+    imageDocuments () {
+      return this.documents.filter(d => !d.irrelevant && d.type === 'imagedoc')
+    },
+    pdfDocuments () {
+      return this.documents.filter(d => !d.irrelevant && d.type !== 'imagedoc')
+    },
+    otherAttachments () {
+      return this.documents.filter(d => d.irrelevant)
+    },
+    canMakeResultDocs () {
+      return this.pdfDocuments.filter(d => {
+        return (
+          d.selected &&
+          d.creatingDocument === undefined &&
+          d.attachment &&
+          d.attachment.is_pdf &&
+          !(d.document || d.attachment.document) &&
+          !(d.attachment.redacted || d.attachment.converted)
+        )
+      })
+    },
+    canMakeResult () {
+      return this.canMakeResultDocs.length > 0
+    },
+    canApproveDocs () {
+      return this.pdfDocuments.filter(d => {
+        return (
+          d.selected &&
+          d.approving === undefined &&
+          d.attachment &&
+          !d.attachment.approved &&
+          d.attachment.can_approve
+        )
+      })
+    },
+    canApprove () {
+      return this.canApproveDocs.length > 0
     }
   },
   methods: {
@@ -121,51 +237,62 @@ export default {
         document.body.removeChild(img)
       };
     },
-    buildDocuments () {
+    addAttachmentFromTus(uploadUrl) {
+      return postData(
+        this.config.url.convertAttachments,
+        {
+          action: 'add_tus_attachment',
+          upload: uploadUrl
+        },
+        this.$root.csrfToken
+      ).then((result) => {
+        if (result.error) {
+          throw new Error(result.message)
+        }
+        let att
+        if (result.added.length === 1) {
+          att = result.added[0]
+        } else {
+          att = result.updated[0]
+        }
+        this.addAttachment(att)
+      })
+    },
+    buildDocuments (attachments, extra = {}) {
       const documents = []
       let images = []
-      const other = []
-      this.message.attachments.forEach((att) => {
+      attachments.forEach((att) => {
+        let doc = {
+          id: att.id,
+          name: att.name,
+          filetype: att.filetype,
+          pending: att.pending,
+          url: att.file_url,
+          pages: null,
+          attachment: att,
+          ...extra
+        }
+        let imagePage = false
+
         if (att.is_irrelevant) {
-          other.push({
-            id: att.id,
-            name: att.name,
-            filetype: att.filetype,
-            pending: att.pending,
-            url: att.file_url,
-            attachment: att,
-            component: 'file-document'
-          })
+          doc.irrelevant = true
         } else if (att.is_pdf) {
-          documents.push({
-            id: att.id,
-            name: att.name,
-            url: att.file_url,
-            filetype: 'application/pdf',
-            site_url: att.site_url,
-            type: 'pdf',
-            pending: att.pending,
-            pages: null,
-            component: 'file-document',
-            attachment: att
-          })
+          doc.type = 'pdf'
         } else if (att.is_image) {
-          images.push({
-            id: att.id,
-            name: att.name,
-            url: att.file_url,
-            attachment: att
-          })
-        } else {
-          documents.push({
-            id: att.id,
-            name: att.name,
-            filetype: att.filetype,
-            pending: att.pending,
-            url: att.site_url,
-            attachment: att,
-            component: 'file-document'
-          })
+          if (att.converted) {
+            doc.irrelevant = true
+          } else {
+            imagePage = true
+            images.push({
+              id: att.id,
+              name: att.name,
+              url: att.file_url,
+              attachment: att
+            })
+          }
+        }
+        if (!imagePage) {
+          documents.push(doc)
         }
         this.names[att.name] = true
       })
@@ -178,7 +305,7 @@ export default {
           })
         )
       }
-      return [documents, other]
+      return documents
     },
     prepareImages (images) {
       images = images.sort((a, b) => {
@@ -196,9 +323,6 @@ export default {
         p.pageNum = i + 1
       })
       doc.pages = pages
-    },
-    loadPdf (doc) {
-      doc.component = 'fullpdf-document'
     },
     pageUpdated ({document, pageNum, data}) {
       let page = document.pages[pageNum - 1]
@@ -218,7 +342,7 @@ export default {
         this.getNewImageDoc({
           pages: newPages,
         }), 
-        ...this.documents.filter((d) => d.type === 'pdf'),
+        ...this.documents.filter((d) => d.type !== 'imagedoc'),
       ]
     },
     getNewImageDoc (data) {
@@ -229,28 +353,19 @@ export default {
         type: 'imagedoc',
         new: true,
         name: '',
-        component: 'image-document',
         ...data
       }
     },
-    imagesConverted ({document, imageDoc}) {
+    imagesConverted ({attachment, imageDoc}) {
+      // Remove image doc
       this.documents = this.documents.filter((d) => d.id !== imageDoc.id)
+      // add new attachment to top
       this.documents = [
         ...this.documents.filter((d) => d.type === 'imagedoc'),
-        {
-          id: document.id,
-          name: document.name,
-          url: document.file_url,
-          filetype: 'application/pdf',
-          site_url: document.site_url,
-          type: 'pdf',
-          new: true,
-          pages: null,
-          pending: true,
-          component: 'file-document',
-          attachment: document
-        },
-        ...this.documents.filter((d) => d.type === 'pdf')
+        ...this.buildDocuments([attachment], {
+            new: true,
+          }),
+        ...this.documents.filter((d) => d.type !== 'imagedoc')
       ]
     },
     documentUpdated (doc, update) {
@@ -259,174 +374,100 @@ export default {
         return
       }
       for (let key in update) {
-        Vue.set(doc, key, update[key])
+        if (key === 'document') {
+          Vue.set(doc.attachment, key, update[key])
+        } else {
+          Vue.set(doc, key, update[key])
+        }
       }
     },
     makeRelevant (doc) {
-      let imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
-      if (imageDoc.length > 0) {
-        doc.pageNum = imageDoc[0].pages.length + 1
-        Vue.set(imageDoc[0], 'pages', [
-          ...imageDoc[0].pages,
-          doc
-        ])
-      } else {
-        doc.pageNum = 1
-        this.documents = [
-          ...this.documents,
-          this.getNewImageDoc({
-            pages: [doc],
-            new: true
-          })
-        ]
-      }
-      this.otherAttachments = this.otherAttachments.filter((o) => o !== doc)
-    },
-    uploadPage (page) {
-      return new Promise((resolve, reject) => {
-        var data = new FormData()
-        let filename = page.file.name
-        let parts = filename.split('.')
-        const ext = parts[parts.length - 1]
-        parts = parts.slice(0, parts.length - 1)
-        const basename = parts.join('.')
-        while (this.names[filename] !== undefined) {
-          this.uploadCount += 1
-          filename = `${basename}_${this.uploadCount}.${ext}`
-        }
-        data.append(`${this.config.settings.attachment_form_prefix}-files`, page.file, filename)
-
-        var xhr = new window.XMLHttpRequest()
-        xhr.open('POST', this.config.url.addAttachment)
-        xhr.setRequestHeader('X-CSRFToken', this.$root.csrfToken)
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-        let xhrUpload = xhr.upload ? xhr.upload : xhr
-        xhrUpload.addEventListener("progress", (e) => {
-          if (e.lengthComputable) {
-            Vue.set(page, 'progress', e.loaded)
-            Vue.set(page, 'progressTotal', e.total)
-          } else {
-            Vue.set(page, 'progress', null)
-            Vue.set(page, 'progressTotal', null)
-          }
-        })
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4) {
-            page.uploading = false
-            let result;
-            try {
-              result = JSON.parse(xhr.responseText)
-            } catch {
-              page.failed = true
-              return resolve(null)
-            }
-            let att
-            if (result.added.length === 1) {
-              att = result.added[0]
-            } else {
-              att = result.updated[0]
-            }
-            if (page.url && page.url.indexOf('blob:') === 0) {
-              window.URL.revokeObjectURL(page.url);
-            }
-            page.url = att.file_url
-            page.site_url = att.site_url
-            page.filetype = att.filetype
-            page.id = att.id
-            page.attachment = att
-            return resolve(page)
-          }
-        }
-        xhr.send(data)
-      })
-    },
-    filesSelected (event) {
-      let files = event.target.files
-      let pages = []
-      let images = []
-      for (let i = 0; i < files.length; i += 1) {
-        let f = files[i]
-        if (this.config.settings.pdf_filetypes.includes(f.type)) {
-          pages.push({
-            id: `${f.name}-${f.lastModified}-${f.size}`,
-            filetype: f.type,
-            file: f,
-            size: f.size,
-            progress: 0,
-            type: 'pdf',
-            uploading: true,
-            progress: 0,
-            new: true,
-            name: f.name,
-            component: 'file-document',
-            url: window.URL.createObjectURL(f)
-          })
-        } else if (this.config.settings.image_filetypes.includes(f.type)) {
-          let img = {
-            id: `${f.name}-${f.lastModified}-${f.size}`,
-            name: f.name,
-            filetype: f.type,
-            file: f,
-            size: f.size,
-            uploading: true,
-            progress: 0,
-            type: 'image',
-            url: window.URL.createObjectURL(f)
-          }
-          images.push(img)
-          pages.push(img)
+      if (doc.attachment.is_image) {
+        let imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
+        if (imageDoc.length > 0) {
+          doc.pageNum = imageDoc[0].pages.length + 1
+          Vue.set(imageDoc[0], 'pages', [
+            ...imageDoc[0].pages,
+            doc
+          ])
         } else {
-          pages.push({
-            id: `${f.name}-${f.lastModified}-${f.size}`,
-            name: f.name,
-            file: f,
-            uploading: true,
-            progress: 0,
-            filetype: f.type,
-            type: 'other'
-          })
-        }
-      }
-      if (images.length > 0) {
-        images = this.prepareImages(images)
-        let imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
-        if (imageDocs.length === 0) {
-          let i = images[0]
+          doc.pageNum = 1
           this.documents = [
+            ...this.documents,
             this.getNewImageDoc({
-              pages: images,
-            }),
-            ...this.documents
-          ]
-        } else {
-          let imageDoc = imageDocs[0]
-          imageDoc.pages = [
-            ...imageDoc.pages,
-            ...images.map((i, c) => {
-              i.pageNum = imageDoc.pages.length + c + 1
-              return i
+              pages: [doc],
+              new: true
             })
           ]
         }
+      } else {
+        Vue.set(doc, 'irrelevant', false)
       }
-      this.otherAttachments = [
-        ...this.otherAttachments,
-        ...pages.filter((p) => p.type === 'other')
-      ]
-      this.documents = [
-        ...pages.filter((p) => p.type === 'pdf'),
-        ...this.documents,
-      ]
-      var p = Promise.resolve();
-      pages.forEach(page => {
-        p = p.then(() => this.uploadPage(page))
+    },
+    clickSelectAll () {
+      this.pdfDocuments.forEach((d) => {
+        Vue.set(d, 'selected', !this.selectAll)
       })
+    },
+    approveSelected () {
+      return Promise.all(this.canApproveDocs.map((d) => {
+        Vue.set(d, 'approving', true)
+        return approveAttachment(d, this.config, this.$root.csrfToken).then((att) => {
+          Vue.set(d, 'approving', false)
+          Vue.set(d, 'attachment', data)
+        })
+      }))
+    },
+    addImages (images) {
+      let imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
+      if (imageDocs.length === 0) {
+        let i = images[0]
+        this.documents = [
+          this.getNewImageDoc({
+            pages: images,
+          }),
+          ...this.documents
+        ]
+      } else {
+        let imageDoc = imageDocs[0]
+        imageDoc.pages = [
+          ...imageDoc.pages,
+          ...images.map((i, c) => {
+            i.pageNum = imageDoc.pages.length + c + 1
+            return i
+          })
+        ]
+      }
+    },
+    addAttachment (att) {
+      if (att.is_image) {
+        this.addImages([att])
+      } else {
+        
+        this.documents = [
+          this.buildDocuments([att], {new: true}),
+          ...this.documents,
+        ]
+      }
+    },
+    makeResults () {
+      return Promise.all(this.canMakeResultDocs.map((d) => {
+        Vue.set(d, 'creatingDocument', false)
+        return createDocument(d, this.config, this.$root.csrfToken).then((data) => {
+          Vue.set(d.attachment, 'document', data)
+          Vue.set(d, 'creatingDocument', null)
+        })
+      }))
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '~@uppy/core/dist/style.css';
+@import '~@uppy/dashboard/dist/style.css';
+@import '~@uppy/webcam/dist/style.css';
+
 .upload label.isMobile {
   display: block;
   text-align: center;

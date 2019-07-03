@@ -1,50 +1,49 @@
 <template>
-  <div class="row">
-    <div v-if="hasAttachment" class="col-auto mt-1">
-      <button v-if="attachment.is_irrelevant && attachment.is_image" class="btn btn-sm btn-light mt-1" @click="$emit('makerelevant')">
-        {{ i18n.makeRelevant }}
-      </button>
-
-      <a v-if="canOpen" :href="attachment.site_url" target="_blank" class="btn btn-sm btn-light mt-1">
-        {{ i18n.openAttachmentPage }}
-      </a>
-      <button v-if="attachment.is_pdf && canPreview" class="btn btn-sm btn-light mt-1" @click="$emit('loadpdf')">
-        {{ i18n.loadPreview }}
-      </button>
-    </div>
-    <div class="ml-auto mt-1 col-auto text-right">
-      <template v-if="canReview">
-        <a v-if="!approved" class="btn btn-sm btn-primary mr-1 mt-1" :href="reviewUrl">
-          <i class="fa fa-eye"></i>
-          {{ i18n.review }}
-        </a>
-        <a v-else class="btn btn-sm btn-dark mr-1 mt-1" :href="reviewUrl">
-          <i class="fa fa-paint-brush"></i>
-          {{ i18n.redact }}
-        </a>
-      </template>
-      <button v-if="canApprove" class="btn btn-sm btn-success mr-1 mt-1"
+  <div class="text-right">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
+      <button v-if="canApprove" class="btn btn-sm btn-outline-success"
           :disabled="working" @click="approve">
         <i class="fa fa-check"></i>
         {{ i18n.approve }}
       </button>
-      <button v-if="canDelete" class="btn btn-sm btn-outline-danger mt-1"
-          :disabled="working" @click="deleteAttachment">
-        <i class="fa fa-ban"></i>
-        {{ i18n.delete }}
-      </button>
+
+      <a v-if="canReview && !approved" class="btn btn-sm btn-outline-primary" :href="reviewUrl">
+        <i class="fa fa-eye"></i>
+        {{ i18n.review }}
+      </a>
+      <template v-if="hasSubMenu">
+        <div class="btn-group-sm" role="group">
+          <button :id="'docupload-dropdown-' + attachment.id" type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" :aria-labelledby="'docupload-dropdown-' + attachment.id">
+
+            <a v-if="canReview && approved" class="dropdown-item btn btn-sm btn-dark" :href="reviewUrl">
+              <i class="fa fa-paint-brush"></i>
+              {{ i18n.redact }}
+            </a>
+
+            <button v-if="canDelete" class="dropdown-item"
+                :disabled="working" @click="deleteAttachment">
+              <i class="fa fa-ban"></i>
+              {{ i18n.delete }}
+            </button>
+            <button v-if="attachment.is_irrelevant && attachment.is_image" class="dropdown-item btn-danger" @click="$emit('makerelevant')">
+              {{ i18n.makeRelevant }}
+            </button>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
-import {postData, getData} from '../../lib/api.js'
 
 export default {
   name: 'file-review',
   mixins: [I18nMixin],
-  props: ['config', 'document', 'canPreview'],
+  props: ['config', 'document'],
   computed: {
     attachment () {
       return this.document.attachment
@@ -72,6 +71,13 @@ export default {
     },
     approved () {
       return this.attachment && this.attachment.approved
+    },
+    hasSubMenu () {
+      return (
+        this.canDelete ||
+        (this.attachment && this.attachment.is_irrelevant && this.attachment.is_image) ||
+        (this.canReview && this.approved)
+      )
     }
   },
   methods: {

@@ -138,9 +138,9 @@ class FroideAPI {
   }
 }
 
-function postData (url = '', data = {}, csrfToken) {
+function postData (url = '', data = {}, csrfToken, method = 'POST') {
   return window.fetch(url, {
-    method: 'POST',
+    method: method,
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
@@ -151,6 +151,10 @@ function postData (url = '', data = {}, csrfToken) {
     },
     body: JSON.stringify(data)
   }).then(response => response.json())
+}
+
+function putData (url = '', data = {}, csrfToken) {
+  return postData(url, data, csrfToken, 'PUT')
 }
 
 function getData (url = '', headers = {}) {
@@ -202,6 +206,7 @@ function bustCache (url) {
 export {
   FroideAPI,
   postData,
+  putData,
   getData,
   getAllData,
   bustCache

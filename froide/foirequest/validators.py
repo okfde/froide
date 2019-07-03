@@ -22,6 +22,10 @@ def validate_upload_document(scan):
     if content_type:
         scan.content_type = content_type
 
+    validate_postal_content_type(content_type)
+
+
+def validate_postal_content_type(content_type):
     if content_type not in POSTAL_CONTENT_TYPES:
         raise ValidationError(
             _('The scanned letter must be either PDF, JPG or PNG,'

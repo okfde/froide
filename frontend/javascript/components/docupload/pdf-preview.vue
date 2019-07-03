@@ -1,58 +1,29 @@
 <template>
-  <div class="document mb-3">
-    <div class="card">
-      <div class="card-header">
-        <file-header :config="config" :document="document"></file-header>
-      </div>
-      <div class="card-body" :class="{'is-new': document.new}">
-        <div v-if="document.uploading" class="progress">
-          <div class="progress-bar"
-            :class="{'progress-bar-animated progress-bar-striped': document.progressPercent === null}"
-            :style="{'width': document.progress ? document.progressPercentLabel : '100%'}"
-            role="progressbar" :aria-valuenow="document.progressPercent ? document.progressPercent : 0"
-            aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <ol class="pages">
-          <li v-for="page in pages" :key="page.pageNum" class="page">
-            <a :href="document.site_url" target="_blank">
-              <img v-if="page.url" :src="page.url" alt="" class="page-image"/>
-            </a>
-            <div class="text-center">
-              <span>{{ page.pageNum }}</span>
-            </div>
-          </li>
-        </ol>
-        <div class="row">
-          <div class="ml-auto col-auto mt-1">
-            <file-review :config="config" :document="document"
-              @docupdated="updateDocument"
-            ></file-review>
+  <div class="card">
+    <div class="card-body">
+      <ol class="pages">
+        <li v-for="page in pages" :key="page.pageNum" class="page">
+          <a :href="document.site_url" target="_blank">
+            <img v-if="page.url" :src="page.url" alt="" class="page-image"/>
+          </a>
+          <div class="text-center">
+            <span>{{ page.pageNum }}</span>
           </div>
-        </div>
-      </div>
+        </li>
+      </ol>
     </div>
   </div>
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
-import DocumentMixin from './lib/document_mixin'
-
-import FileReview from './file-review.vue'
-import FileHeader from './file-header.vue'
-
 import PDFJS from 'pdfjs-dist'
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 const range = (len) => [...Array(len).keys()]
 
 export default {
-  name: 'fullpdf-document',
-  mixins: [I18nMixin, DocumentMixin],
+  name: 'pdf-preview',
   props: ['config', 'document'],
-  components: {
-    FileReview, FileHeader
-  },
   data () {
     return {
         progressTotal: null,
@@ -181,6 +152,7 @@ export default {
 <style lang="scss" scoped>
   .pages {
     padding-left: 0;
+    margin-bottom: 0;
     list-style-type: none;
     white-space: nowrap;
     overflow-x: scroll;
