@@ -21,6 +21,9 @@ class Document(AbstractDocument):
         on_delete=models.SET_NULL
     )
 
+    def is_public(self):
+        return self.public
+
 
 class DocumentCollection(AbstractDocumentCollection):
     pass
