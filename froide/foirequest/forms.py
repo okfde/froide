@@ -11,6 +11,7 @@ from django.utils.html import escape
 from django.utils.http import is_safe_url
 from django.utils import timezone
 from django import forms
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import transaction
 from django.template.loader import render_to_string
 
@@ -778,7 +779,7 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
         }),
         label=_("Send Date"),
         help_text=_("Please give the date the reply was sent."),
-        localize=True
+        localize=True,
     )
     subject = forms.CharField(
         label=_("Subject"),
@@ -813,9 +814,13 @@ class PostalBaseForm(AttachmentSaverMixin, forms.Form):
     def __init__(self, *args, **kwargs):
 
         self.foirequest = kwargs.pop('foirequest')
-        super(PostalBaseForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['publicbody'].label = self.PUBLICBODY_LABEL
         self.fields['publicbody'].initial = self.foirequest.public_body
+        self.fields['date'].validators.extend([
+            MinValueValidator(self.foirequest.first_message.date()),
+            MaxValueValidator(timezone.now().date())
+        ])
         self.order_fields(self.FIELD_ORDER)
 
     def clean_date(self):
