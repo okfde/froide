@@ -503,16 +503,6 @@ class MessageEditMixin(forms.Form):
             )
         return date
 
-
-class EditMessageForm(MessageEditMixin):
-    def __init__(self, *args, **kwargs):
-        self.message = kwargs.pop('message')
-        self.foirequest = self.message.request
-        super().__init__(*args, **kwargs)
-        self.fields['date'].initial = self.message.timestamp.date()
-        self.fields['subject'].initial = self.message.subject
-        self.fields['text'].initial = self.message.plaintext
-
     def set_data_on_message(self, message):
         # TODO: Check if timezone support is correct
         date = datetime.datetime.combine(self.cleaned_data['date'],
@@ -529,6 +519,16 @@ class EditMessageForm(MessageEditMixin):
         message.plaintext_redacted = None
         message.plaintext_redacted = message.get_content()
         return message
+
+
+class EditMessageForm(MessageEditMixin):
+    def __init__(self, *args, **kwargs):
+        self.message = kwargs.pop('message')
+        self.foirequest = self.message.request
+        super().__init__(*args, **kwargs)
+        self.fields['date'].initial = self.message.timestamp.date()
+        self.fields['subject'].initial = self.message.subject
+        self.fields['text'].initial = self.message.plaintext
 
     def save(self):
         message = self.set_data_on_message(self.message)
