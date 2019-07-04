@@ -264,10 +264,8 @@ def get_delivery_status(message):
     return message._delivery_status
 
 
-@register.inclusion_tag('foirequest/snippets/message_edit.html',
-                        takes_context=True)
-def render_message_edit_button(context, message):
-    request = context['request']
+@register.inclusion_tag('foirequest/snippets/message_edit.html')
+def render_message_edit_button(message):
     return {
         'form': EditMessageForm(message=message),
         'foirequest': message.request,
