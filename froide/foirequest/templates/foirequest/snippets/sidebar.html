@@ -120,6 +120,7 @@
     </li>
   {% endif %}
 
+  {% comment %}
   {% if object|can_write_foirequest:request %}
     <li class="nav-header">{% trans "Extend deadline" %}</li>
     <li class="nav-item">
@@ -131,6 +132,7 @@
       </form>
     </li>
   {% endif %}
+  {% endcomment %}
 
   {% if user.is_staff %}
     <li class="nav-header">{% trans "Staff Actions" %}</li>

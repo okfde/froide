@@ -276,14 +276,15 @@ def make_same_request(request, slug):
 @require_POST
 @allow_write_foirequest
 def extend_deadline(request, foirequest):
-    months = 1
-    foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
-    if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
-        foirequest.status = 'awaiting_response'
-    foirequest.save()
-    messages.add_message(request, messages.INFO,
-            _('Deadline has been extended.'))
-    FoiEvent.objects.create_event('deadline_extended', foirequest)
+    # FIXME: take EU into account, make more flexible
+    # months = 1
+    # foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
+    # if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
+    #     foirequest.status = 'awaiting_response'
+    # foirequest.save()
+    # messages.add_message(request, messages.INFO,
+    #         _('Deadline has been extended.'))
+    # FoiEvent.objects.create_event('deadline_extended', foirequest)
     return redirect(foirequest)
 
 
