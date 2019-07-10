@@ -84,6 +84,8 @@ class UserAdmin(DjangoUserAdmin):
     ]
 
     def export_csv(self, request, queryset):
+        if not request.user.is_superuser:
+            raise PermissionDenied
         return export_csv_response(User.export_csv(queryset))
     export_csv.short_description = _("Export to CSV")
 
