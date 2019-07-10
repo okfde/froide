@@ -11,11 +11,12 @@
       {% endblocktrans %}
     </h2>
     {% if request.user.email != object.email %}
-    <div class="alert alert-warning">
+      <div class="alert alert-warning">
       {% blocktrans with email=object.email account=request.user.email %}
-        This invite was sent to “{{ email }}” which is different from the current account “{{ account }}”!
+          This invite was sent to “{{ email }}” which is different from the current account “{{ account }}”!
       {% endblocktrans %}
-    </div>
+      </div>
+    {% endif %}
   </div>
 </div>
 
