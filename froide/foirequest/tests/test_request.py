@@ -1438,6 +1438,11 @@ class RequestTest(TestCase):
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 400)
 
+        response = self.client.post(url, {'time': 1000})
+        self.assertEqual(response.status_code, 400)
+        response = self.client.post(url, {'time': -10})
+        self.assertEqual(response.status_code, 400)
+
         post = {'time': '2'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)

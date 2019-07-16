@@ -282,7 +282,8 @@ def extend_deadline(request, foirequest):
         messages.add_message(request, messages.INFO,
                 _('Deadline has been extended.'))
         FoiEvent.objects.create_event('deadline_extended', foirequest)
-    return redirect(foirequest)
+        return redirect(foirequest)
+    return render_400(request)
 
 
 class SetTeamView(AssignTeamView):
