@@ -529,6 +529,8 @@ class RequestTest(TestCase):
         message.timestamp = timezone.utc.localize(
             datetime(2011, 1, 1, 0, 0, 0))
         message.save()
+        req.first_message = message.timestamp
+        req.save()
 
         file_size = os.path.getsize(factories.TEST_PDF_PATH)
         post = QueryDict(mutable=True)
@@ -569,7 +571,6 @@ class RequestTest(TestCase):
             post['postal_reply-files'] = f
             response = self.client.post(reverse("foirequest-add_postal_reply",
                     kwargs={"slug": req.slug}), post)
-
         self.assertEqual(response.status_code, 302)
 
         message = req.foimessage_set.all()[1]
