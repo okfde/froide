@@ -11,13 +11,20 @@
     {% endif %}
   {% endfor %}
 
-  {% render_field form.comment %}
-  
   {% if user.private %}
-    <div class="alert alert-warning">
-      {% trans "Despite your privacy settings, your real name will be published with comment. There are <strong>no anonymous comments</strong>." %}
-    </div>
+    {% if user == object.user %}
+      <div class="alert alert-info">
+        {% trans "You have a private account. Your comment will show “requester” as the author." %}
+      </div>
+    {% else %}
+      <div class="alert alert-warning">
+        {% trans "Your real name will be shown with your comment on requests that are not your own." %}
+      </div>
+    {% endif %}
   {% endif %}
+
+{% render_field form.comment %}
+
   <div class="text-right">
     <button type="submit" name="post" class="btn btn-secondary">
       <span class="fa fa-comment"></span> {% trans "Post Comment" %}

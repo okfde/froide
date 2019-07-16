@@ -4,12 +4,18 @@
   <dl class="comments-list">
   {% for comment in comment_list %}
     <dt id="c{{ comment.id }}">
-      {% if comment.user.is_staff %}
+      {% if comment.user == object.user and not object.user.private %}
+        <span class="requester">{% trans "Requester" %}</span>
+      {% elif comment.user.is_staff %}
         <span class="moderator">{% trans "Moderator" %}</span>
       {% endif %}
-      {% blocktrans with date=comment.submit_date name=comment.name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}
+      {% if comment.user == object.user and object.user.private %}
+        {% blocktrans with date=comment.submit_date %}On {{ date }}, the requester wrote:{% endblocktrans %}
+      {% else %}
+        {% blocktrans with date=comment.submit_date name=comment.user_name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}
+      {% endif %}
     </dt>
-    <dd {% if comment.user.is_staff %}class="moderator"{% endif %}>
+    <dd class="{% if comment.user == object.user %}requester{% elif comment.user.is_staff %}moderator{% endif %}">
       {% if comment.is_removed %}
         <p class="text-muted">{% trans "Comment was removed." %}</p>
       {% else %}

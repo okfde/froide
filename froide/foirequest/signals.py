@@ -288,3 +288,27 @@ def create_event_set_concrete_law(sender, **kwargs):
 def create_event_escalated(sender, **kwargs):
     FoiEvent.objects.create_event("escalated", sender,
             user=sender.user, public_body=sender.law.mediator)
+
+
+def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
+    from .models import FoiMessage
+
+    if comment.content_type.model_class() != FoiMessage:
+        return
+
+    user = request.user
+    if not user.is_authenticated:
+        return False
+
+    foimessage = comment.content_object
+    foirequest = foimessage.request
+
+    # Do not store email or URL
+    comment.user_email = ''
+    comment.user_url = ''
+
+    # Use full name, except when private on own request
+    comment.user_name = user.get_full_name()
+    if user.private and foirequest.user == user:
+        comment.user_name = str(_('requester'))
+    return True

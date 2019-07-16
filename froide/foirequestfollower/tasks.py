@@ -57,7 +57,7 @@ def _batch_update(update_requester=True, update_follower=True, since=None):
                     comment.submit_date,
                     _("%(time)s: New comment by %(name)s") % {
                         "time": tf.format(_(settings.TIME_FORMAT)),
-                        "name": comment.name
+                        "name": comment.user_name
                     },
                     comment.user_id
                 )

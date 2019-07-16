@@ -13,7 +13,8 @@ class FoiRequestConfig(AppConfig):
         )
         from froide.account.export import registry
         from froide.helper.search import search_registry
-        import froide.foirequest.signals  # noqa
+        from django_comments.signals import comment_will_be_posted
+        from froide.foirequest import signals  # noqa
         from .utils import (
             cancel_user, merge_user, export_user_data, make_account_private
         )
@@ -23,6 +24,7 @@ class FoiRequestConfig(AppConfig):
         account_made_private.connect(make_account_private)
         registry.register(export_user_data)
         search_registry.register(add_search)
+        comment_will_be_posted.connect(signals.pre_comment_foimessage)
 
 
 def add_search(request):
