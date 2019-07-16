@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils import timezone
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
@@ -13,7 +12,8 @@ from froide.helper.utils import render_400, render_403, get_redirect
 from ..models import FoiRequest, FoiEvent
 from ..forms import (
     ConcreteLawForm, TagFoiRequestForm, FoiRequestStatusForm,
-    MakePublicBodySuggestionForm, PublicBodySuggestionsForm
+    MakePublicBodySuggestionForm, PublicBodySuggestionsForm,
+    ExtendDeadlineForm
 )
 from ..utils import check_throttle
 from ..services import (
@@ -276,15 +276,12 @@ def make_same_request(request, slug):
 @require_POST
 @allow_write_foirequest
 def extend_deadline(request, foirequest):
-    # FIXME: take EU into account, make more flexible
-    # months = 1
-    # foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, months)
-    # if foirequest.due_date > timezone.now() and foirequest.status == 'overdue':
-    #     foirequest.status = 'awaiting_response'
-    # foirequest.save()
-    # messages.add_message(request, messages.INFO,
-    #         _('Deadline has been extended.'))
-    # FoiEvent.objects.create_event('deadline_extended', foirequest)
+    form = ExtendDeadlineForm(request.POST)
+    if form.is_valid():
+        form.save(foirequest)
+        messages.add_message(request, messages.INFO,
+                _('Deadline has been extended.'))
+        FoiEvent.objects.create_event('deadline_extended', foirequest)
     return redirect(foirequest)
 
 

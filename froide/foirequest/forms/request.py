@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils import timezone
 from django.utils.http import is_safe_url
 from django import forms
 
@@ -326,3 +327,17 @@ class ConcreteLawForm(forms.Form):
 
 class TagFoiRequestForm(TagObjectForm):
     tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')
+
+
+class ExtendDeadlineForm(forms.Form):
+    time = forms.IntegerField(
+        min_value=1, max_value=15
+    )
+
+    def save(self, foirequest):
+        time = self.cleaned_data['time']
+        now = timezone.now()
+        foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, time)
+        if foirequest.due_date > now and foirequest.status == 'overdue':
+            foirequest.status = 'awaiting_response'
+        foirequest.save()

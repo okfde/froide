@@ -2,7 +2,8 @@ from .request import (
     RequestForm,
     MakePublicBodySuggestionForm,
     PublicBodySuggestionsForm, FoiRequestStatusForm,
-    ConcreteLawForm, TagFoiRequestForm
+    ConcreteLawForm, TagFoiRequestForm,
+    ExtendDeadlineForm
 )
 from .message import (
     SendMessageForm, EditMessageForm,
@@ -17,7 +18,7 @@ from .message import (
 __all__ = [
     RequestForm, MakePublicBodySuggestionForm,
     PublicBodySuggestionsForm, FoiRequestStatusForm,
-    ConcreteLawForm, TagFoiRequestForm,
+    ConcreteLawForm, TagFoiRequestForm, ExtendDeadlineForm,
 
     SendMessageForm, EditMessageForm, MessagePublicBodySenderForm,
     get_postal_reply_form, get_postal_message_form,

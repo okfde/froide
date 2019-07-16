@@ -492,14 +492,36 @@
           <dd>{{ object.readable_status }}</dd>
           {% if object.awaits_response %}
             <dt>{% blocktrans %}Due date:{% endblocktrans %}</dt>
-            {% if object.is_overdue %}
-              <dd class="text-danger">
-                {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}
-            {% else %}
-              <dd>
+            <dd>
+              {% if object.is_overdue %}
+                <span class="text-danger">
+                  {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}
+                </span>
+              {% else %}
                 {{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}
-            {% endif %}
+              {% endif %}
+
               {% block foirequest_explain_deadline %}{% endblock %}
+
+              {% if object|can_write_foirequest:request %}
+                <a class="btn btn-light btn-sm" data-toggle="collapse" href="#extend-deadline-form" role="button" aria-expanded="false" aria-controls="extend-deadline-form">
+                  {% trans "Extend deadline" %}
+                </a>
+                <div class="collapse" id="extend-deadline-form">
+                  <form class="mt-3" method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+                    {% csrf_token %}
+                    <div class="input-group input-group-sm mb-3">
+                      <input class="form-control" type="number" min="0" max="15" name="time" value="1">
+                      <div class="input-group-append">
+                        <span class="input-group-text">{{ object.law.get_max_response_time_unit_display }}</span>
+                        <button class="btn btn-light btn-block" type="submit">
+                          {% trans "Extend deadline" %}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              {% endif %}
             </dd>
           {% endif %}
           {% if object.refusal_reason %}

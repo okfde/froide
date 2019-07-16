@@ -120,20 +120,6 @@
     </li>
   {% endif %}
 
-  {% comment %}
-  {% if object|can_write_foirequest:request %}
-    <li class="nav-header">{% trans "Extend deadline" %}</li>
-    <li class="nav-item">
-      <form method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
-        {% csrf_token %}
-        <button class="btn btn-light btn-block mb-1" type="submit">
-          {% trans "Extend deadline by one month" %}
-        </button>
-      </form>
-    </li>
-  {% endif %}
-  {% endcomment %}
-
   {% if user.is_staff %}
     <li class="nav-header">{% trans "Staff Actions" %}</li>
     <li class="nav-item">
