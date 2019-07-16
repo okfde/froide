@@ -1425,7 +1425,7 @@ class RequestTest(TestCase):
         foirequest = FoiRequest.objects.all()[0]
         old_due_date = foirequest.due_date
         url = reverse('foirequest-extend_deadline', kwargs={'slug': foirequest.slug})
-        post = {"months": ""}
+        post = {"time": ""}
 
         response = self.client.post(url, post)
         self.assertForbidden(response)
@@ -1438,7 +1438,7 @@ class RequestTest(TestCase):
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 400)
 
-        post = {'months': '2'}
+        post = {'time': '2'}
         response = self.client.post(url, post)
         self.assertEqual(response.status_code, 302)
         foirequest = FoiRequest.objects.get(id=foirequest.id)

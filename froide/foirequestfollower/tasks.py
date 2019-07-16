@@ -44,8 +44,11 @@ def _batch_update(update_requester=True, update_follower=True, since=None):
     updates = {}
 
     message_type = ContentType.objects.get_for_model(FoiMessage)
-    for comment in Comment.objects.filter(content_type=message_type,
-            submit_date__gte=since):
+    comments = Comment.objects.filter(
+        content_type=message_type,
+        submit_date__gte=since
+    )
+    for comment in comments:
         try:
             message = FoiMessage.objects.get(pk=comment.object_pk)
             if message.request_id not in requests:

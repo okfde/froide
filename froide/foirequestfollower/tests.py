@@ -104,12 +104,11 @@ class FoiRequestFollowerTest(TestCase):
                 kwargs={"slug": req.slug}))
         self.assertEqual(response.status_code, 302)
         self.client.logout()
-        self.client.login(username=comment_user.username, password='froide')
+        ok = self.client.login(username=comment_user.email, password='froide')
+        self.assertTrue(ok)
+
         mes = list(req.messages)[-1]
         d = {
-            'name': 'Jim Bob',
-            'email': 'jim.bob@example.com',
-            'url': '',
             'comment': 'This is my comment',
         }
 
@@ -129,11 +128,9 @@ class FoiRequestFollowerTest(TestCase):
             site=self.site, user=req.user)
         mes = list(req.messages)[-1]
         mes2 = factories.FoiMessageFactory.create(request=req2)
-        self.client.login(username=req.user.username, password='froide')
+        ok = self.client.login(username=req.user.email, password='froide')
+        self.assertTrue(ok)
         d = {
-            'name': 'Jim Bob',
-            'email': 'jim.bob@example.com',
-            'url': '',
             'comment': 'This is my comment',
         }
         f = CommentForm(mes)
@@ -148,14 +145,16 @@ class FoiRequestFollowerTest(TestCase):
         self.client.logout()
 
         def do_follow(req, email):
-            self.client.login(email=email, password='froide')
+            ok = self.client.login(email=email, password='froide')
+            self.assertTrue(ok)
             response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"slug": req.slug}))
             self.assertEqual(response.status_code, 302)
             self.client.logout()
 
         def do_comment(mes, email):
-            self.client.login(email=email, password='froide')
+            ok = self.client.login(email=email, password='froide')
+            self.assertTrue(ok)
             f = CommentForm(mes)
             d.update(f.initial)
             self.client.post(
