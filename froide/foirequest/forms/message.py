@@ -149,18 +149,14 @@ class MessagePublicBodySenderForm(forms.Form):
         message = kwargs.pop('message', None)
         if 'initial' not in kwargs:
             if message.sender_public_body:
-                kwargs['initial'] = {'sender': message.sender_public_body.id}
+                kwargs['initial'] = {'sender': message.sender_public_body}
         if 'prefix' not in kwargs:
             kwargs['prefix'] = "message-sender-%d" % message.id
         self.message = message
-        super(MessagePublicBodySenderForm, self).__init__(*args, **kwargs)
-
-    def clean_sender(self):
-        self._public_body = self.cleaned_data['sender']
-        return self._public_body.pk
+        super().__init__(*args, **kwargs)
 
     def save(self):
-        self.message.sender_public_body = self._public_body
+        self.message.sender_public_body = self.cleaned_data['sender']
         self.message.save()
 
 

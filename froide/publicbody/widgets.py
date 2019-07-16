@@ -6,8 +6,6 @@ from django.utils.translation import ugettext as _
 
 from froide.helper.content_urls import get_content_url
 
-from .models import PublicBody
-
 
 def get_widget_context():
     return {
@@ -45,23 +43,13 @@ class PublicBodySelect(forms.Widget):
         self.initial_search = search
 
     def get_context(self, name, value=None, attrs=None):
-        pb, pb_desc = None, None
-        if value is not None:
-            try:
-                pb = PublicBody.objects.get(pk=int(value))
-                pb_desc = pb.get_label()
-            except (ValueError, PublicBody.DoesNotExist):
-                pass
-        context = super(PublicBodySelect, self).get_context(name, value, attrs)
+        context = super().get_context(name, value, attrs)
         context['widget'].update({
-            'value_label': pb_desc,
-            'search': self.initial_search,
-            'publicbody': pb,
             'json': json.dumps({
                 'fields': {
                     name: {
                         'value': value,
-                        'objects': [pb.as_data()] if pb is not None else None
+                        'objects': None
                     }
                 }
             })
