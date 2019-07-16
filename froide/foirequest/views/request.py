@@ -27,8 +27,12 @@ def auth(request, obj_id, code):
 
 def show(request, slug, **kwargs):
     try:
-        obj = FoiRequest.objects.select_related("public_body",
-                "user", "law").prefetch_related('tags').get(slug=slug)
+        obj = FoiRequest.objects.select_related(
+            "public_body",
+            "jurisdiction",
+            "user",
+            "law"
+        ).prefetch_related('tags').get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
 
