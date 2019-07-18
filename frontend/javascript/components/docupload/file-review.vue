@@ -52,16 +52,16 @@ export default {
       return !!this.document.attachment
     },
     working () {
-      return this.document.approving || this.document.deleting
+      return !!this.document.approving || !!this.document.deleting
     },
     canApprove () {
-      return this.attachment && !this.attachment.approved && this.attachment.can_approve
+      return !!this.attachment && !this.attachment.approved && this.attachment.can_approve
     },
     canDelete () {
-      return this.attachment && this.attachment.can_delete && !this.document.approving
+      return !!this.attachment && this.attachment.can_delete && !this.document.approving
     },
     canReview () {
-      return this.attachment && this.attachment.can_redact
+      return !!this.attachment && this.attachment.can_redact
     },
     canOpen () {
       return !this.canApprove

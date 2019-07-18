@@ -194,7 +194,7 @@ export default {
     },
     canMakeResult () {
       return !this.hasDocument && this.attachment && this.attachment.is_pdf && !(
-        this.attachment.redacted || this.attachment.converted || this.creatingDocument
+        !!this.attachment.redacted || !!this.attachment.converted || this.creatingDocument
       )
     },
     isProtected () {
