@@ -469,6 +469,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         make_nullfilter('redacted', _('Has redacted version')),
         make_nullfilter('converted', _('Has converted version')),
         'filetype',
+        'pending',
         ('belongs_to__request', ForeignKeyFilter),
         ('belongs_to__request__user', ForeignKeyFilter),
     )

@@ -152,7 +152,7 @@ export default {
     if (this.document.new) {
       window.setTimeout(() => this.$emit('notnew'), 2000);
     }
-    if (this.document.pending) {
+    if (this.pending) {
       this.checkProgress()
     }
     this.title = this.hasDocument ? this.doc.title : null
@@ -210,7 +210,10 @@ export default {
       return this.document.pages
     },
     ready () {
-      return !this.document.pending && !this.document.deleting
+      return !this.pending && !this.document.deleting
+    },
+    pending () {
+      return this.document.pending || !this.attachment || this.attachment.pending
     },
     progressAlmostComplete () {
       return !this.progressUnknown && this.document.progress === this.document.progressTotal

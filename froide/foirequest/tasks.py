@@ -283,6 +283,7 @@ def redact_attachment_task(att_id, target_id, instructions):
         if attachment.is_redacted:
             attachment.approved = True
             attachment.can_approve = True
+        attachment.pending = False
         attachment.save()
 
         if not target.file:
@@ -312,6 +313,7 @@ def redact_attachment_task(att_id, target_id, instructions):
         logging.info('OCR failed %s', target.id)
 
     target.can_approve = True
+    target.pending = False
     target.approve_and_save()
 
 
@@ -329,6 +331,7 @@ def move_upload_to_attachment(att_id, upload_id):
 
     file = upload.get_file()
     if file:
+        att.pending = False
         att.file.save(att.name, file, save=True)
     upload.finish()
     upload.delete()

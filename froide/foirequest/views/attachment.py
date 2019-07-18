@@ -237,6 +237,7 @@ def redact_attachment(request, foirequest, attachment_id):
             att = already
             att.approved = False
             att.can_approve = False
+            att.pending = True
             att.save()
         else:
             name = attachment.name.rsplit('.', 1)[0]

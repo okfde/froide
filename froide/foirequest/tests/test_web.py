@@ -455,9 +455,16 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         response = self.client.get(att.get_absolute_url() + 'a')
         self.assertEqual(response.status_code, 404)
 
-    def test_attachment_pending(self):
+    def test_attachment_empty(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
         att.file = ''
+        att.save()
+        response = self.client.get(att.get_absolute_domain_auth_url())
+        self.assertEqual(response.status_code, 404)
+
+    def test_attachment_pending(self):
+        att = FoiAttachment.objects.filter(approved=True)[0]
+        att.pending = True
         att.save()
         response = self.client.get(att.get_absolute_domain_auth_url())
         self.assertEqual(response.status_code, 404)

@@ -32,7 +32,8 @@ class FoiAttachmentManager(models.Manager):
     def get_for_message(self, message, name):
         return FoiAttachment.objects.filter(
             belongs_to=message,
-            name=name
+            name=name,
+            pending=False
         ).exclude(file='').get()
 
 
@@ -63,6 +64,7 @@ class FoiAttachment(models.Model):
         related_name='original_set')
     is_converted = models.BooleanField(_("Is converted"), default=False)
     timestamp = models.DateTimeField(null=True, default=timezone.now)
+    pending = models.BooleanField(default=False)
 
     document = models.OneToOneField(
         Document, null=True, blank=True,
@@ -111,10 +113,6 @@ class FoiAttachment(models.Model):
             return False
         now = timezone.now()
         return self.timestamp > (now - DELETE_TIMEFRAME)
-
-    @property
-    def pending(self):
-        return not self.file
 
     @property
     def can_edit(self):

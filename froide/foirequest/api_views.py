@@ -113,10 +113,6 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         source='get_file_url',
         read_only=True
     )
-    pending = serializers.SerializerMethodField(
-        source='get_pending',
-        read_only=True
-    )
 
     class Meta:
         model = FoiAttachment
@@ -134,9 +130,6 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_file_url(self, obj):
         return obj.get_absolute_domain_file_url(authorized=True)
-
-    def get_pending(self, obj):
-        return obj.pending
 
 
 class FoiAttachmentFilter(filters.FilterSet):
