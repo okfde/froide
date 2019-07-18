@@ -165,6 +165,7 @@ export default {
       textLayerId: 'textlayer-' + String(Math.random()).substr(2),
       workingState: 'loading',
       ready: false,
+      pageLoading: false,
       textOnly: false,
       textDisabled: true,
       pageScaleFactor: {},
@@ -193,10 +194,10 @@ export default {
       return this.config.i18n
     },
     hasNext () {
-      return this.currentPage < this.numPages
+      return this.currentPage < this.numPages && !this.pageLoading
     },
     hasPrevious () {
-      return this.currentPage > 1
+      return this.currentPage > 1 && !this.pageLoading
     },
     canUndo () {
       return this.actionIndexPerPage[this.currentPage] > 0
@@ -289,6 +290,7 @@ export default {
       })
     },
     loadPage (pageNum) {
+      this.pageLoading = true
       return this.doc.getPage(pageNum).then((page) => {
         console.log('# Page ' + pageNum)
         this.page = page
@@ -342,7 +344,7 @@ export default {
           return task.promise
         })
         return Promise.all([renderTask.promise, textPromise])
-          .then(this.textAvailable)
+          .then(this.textAvailable).then(() => this.pageLoading = false)
       })
     },
     goNext () {
