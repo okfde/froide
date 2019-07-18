@@ -433,7 +433,7 @@ export default {
       } else {
         
         this.documents = [
-          this.buildDocuments([att], {new: true}),
+          ...this.buildDocuments([att], {new: true}),
           ...this.documents,
         ]
       }
