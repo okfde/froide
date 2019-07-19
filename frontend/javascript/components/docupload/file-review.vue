@@ -38,12 +38,19 @@
 </template>
 
 <script>
+import {Dropdown} from 'bootstrap.native'
+
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'file-review',
   mixins: [I18nMixin],
   props: ['config', 'document'],
+  mounted () {
+    if (this.hasSubMenu) {
+      new Dropdown(document.getElementById('docupload-dropdown-' + this.attachment.id))
+    }
+  },
   computed: {
     attachment () {
       return this.document.attachment
