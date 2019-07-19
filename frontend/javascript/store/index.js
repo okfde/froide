@@ -97,7 +97,7 @@ export default new Vuex.Store({
       var key = null
       // Get first key in scoped public bodies
       for (key in state.scopedPublicBodies) {}
-      let pbs = state.scopedPublicBodies[key]
+      let pbs = state.scopedPublicBodies[key] || []
       let lastLaw = null
       let sameLaw = true
       for (let i = 0; i < pbs.length; i += 1) {
