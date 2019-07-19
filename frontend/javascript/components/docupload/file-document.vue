@@ -127,6 +127,7 @@ import {DocumentMixin} from './lib/document_utils'
 import FileReview from './file-review.vue'
 import PdfPreview from './pdf-preview.vue'
 
+
 const range = (len) => [...Array(len).keys()]
 
 export default {
@@ -278,6 +279,7 @@ export default {
               new: true,
               site_url: data.site_url,
               file_url: data.file_url,
+              attachment: data
             })
           } else {
             document.location.reload()
