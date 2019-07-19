@@ -193,6 +193,10 @@ def get_redact_context(foirequest, attachment):
                 'slug': foirequest.slug,
                 'attachment': attachment.pk
             }),
+            'messageUpload': reverse('foirequest-upload_attachments', kwargs={
+                'slug': foirequest.slug,
+                'message_id': attachment.belongs_to_id
+            })
         },
         'i18n': {
             'previousPage': _('Previous Page'),

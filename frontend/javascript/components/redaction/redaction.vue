@@ -393,7 +393,7 @@ export default {
               this.progressCurrent = 100
               this.progressTotal = 100
               bustCache(attachment.file_url).then(() => {
-                document.location.href = attachment.anchor_url
+                document.location.href = this.config.urls.messageUpload
               })
             } else {
               this.workingState = null
