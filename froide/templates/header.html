@@ -8,8 +8,8 @@
     <div class="container">
       {% block nav_brand %}
         <a class="navbar-brand" href="/">
-           <img src="{% static "img/logo/logo.svg" %}" height="42" class="navbar-logo" alt="">
-           <span class="navbar-brand-name">{{ SITE_NAME }}</span>
+          {% block nav_brand_image %}<img src="{% static 'img/logo/logo.svg' %}" height="60" class="navbar-logo" alt="">{% endblock %}
+          <span class="navbar-brand-name">{% block nav_brand_name %}{{ SITE_NAME }}{% endblock %}</span>
         </a>
       {% endblock %}
       <button class="navbar-toggler d-print-none" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,27 +17,6 @@
         <span class="navbar-toggler-title">{% trans "Menu" %}</span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        {% block nav_search %}
-        <form class="form-inline d-block d-md-none d-lg-block" role="search" method="get" action="{% url 'foirequest-search' %}">
-          <div class="input-group mr-sm-2 mt-2 mb-2">
-            <input class="form-control" type="text" name="q" placeholder="{% trans "Search" %}" aria-label="{% trans "Search" %}">
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="submit">
-                <i class="fa fa-search" aria-hidden="true"></i>
-                <span class="sr-only">{% trans "Search" %}</span>
-              </button>
-            </div>
-          </div>
-        </form>
-        <ul class="navbar-nav d-none d-md-block d-lg-none">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'foirequest-search' %}">
-              <i class="fa fa-search" aria-hidden="true"></i>
-              <span class="sr-only">{% trans "Search" %}</span>
-            </a>
-          </li>
-        </ul>
-        {% endblock nav_search %}
         {% block nav %}
         <ul class="navbar-nav col-auto ml-auto">
           <li class="nav-item {% block nav_requests %}{% endblock %}">
@@ -52,14 +31,34 @@
           </li>
         </ul>
         {% endblock nav %}
+        {% block nav_search %}
+          <form class="form-inline" role="search" method="get" action="{% block nav_search_url %}{% url 'foirequest-search' %}{% endblock %}">
+            <div class="input-group d-flex d-md-none d-lg-flex">
+              <input class="form-control" type="text" name="q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                  <span class="sr-only">{% trans "Search" %}</span>
+                </button>
+              </div>
+            </div>
+            <button class="btn btn-outline-secondary d-none d-md-block d-lg-none" type="submit">
+              <i class="fa fa-search" aria-hidden="true"></i>
+              <span class="sr-only">{% trans "Search" %}</span>
+            </button>
+          </form>
+        {% endblock nav_search %}
         <ul class="navbar-nav col-auto ml-auto">
           {% block nav_account_login %}
           {% if user.is_authenticated %}
           <li class="nav-item dropdown account-dropdown {% block nav_account %}{% endblock %}">
             <a class="nav-link dropdown-toggle account-dropdown-link" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="navbaraccount-link">
+              <span class="d-none d-md-none d-lg-inline">
               {% blocktrans with name=user.first_name|truncatechars:12 %}
                 Hello {{ name}}
               {% endblocktrans %}
+              </span>
+              <span class="d-lg-none fa fa-user-circle-o"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbaraccount-link">
               {% include "account/menu.html" %}

@@ -17,14 +17,17 @@
 }
 
 @include media-breakpoint-up(md) {
-  .navbar-brand {
+  #header .navbar-brand {
     transform: translateY(11px);
+
+    .navbar-brand-name {
+      font-size: 1.8rem;
+    }
   }
 }
 
 .navbar-logo {
   display: inline-block;
-  margin-right: $spacer * 0.5;
 }
 
 @media (max-width: 400px) {
@@ -58,7 +61,6 @@
     width: 100%;
     order: -1;
     justify-content: flex-end;
-    font-size: $small-font-size;
 
     .nav-item {
       background-color: $gray-100;
@@ -67,6 +69,7 @@
       &.special-nav-secondary-item {
         border-radius: 0px;
         background: theme-color("danger");
+        font-weight: bold;
         .nav-link {
           color: $white !important;
         }
@@ -80,9 +83,10 @@
 }
 
 .account-dropdown-link {
-    padding: 0 !important;
-    margin: 10px 0;
-    background-color: transparent !important;
+  padding: 0 !important;
+  margin: 8px 0;
+  background-color: transparent !important;
+
   .account-name {
       float: left;
       font-size: 60%;
