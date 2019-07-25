@@ -245,6 +245,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.date_deactivated = timezone.now()
         self.save()
 
+    def deactivate_and_block(self):
+        self.is_blocked = True
+        self.deactivate()
+
 
 class Application(AbstractApplication):
     description = models.TextField(blank=True)

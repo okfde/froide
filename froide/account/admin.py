@@ -161,10 +161,10 @@ class UserAdmin(DjangoUserAdmin):
 
     def deactivate_users(self, request, queryset):
         for user in queryset:
-            user.deactivate()
-        self.message_user(request, _("Users deactivated."))
+            user.deactivate_and_block()
+        self.message_user(request, _("Users logged out, deactivated and blocked."))
         return None
-    deactivate_users.short_description = _('Deactivate users')
+    deactivate_users.short_description = _('Deactivate and block users')
 
     def make_private(self, request, queryset):
         user = queryset[0]
