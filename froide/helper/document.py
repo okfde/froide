@@ -190,36 +190,57 @@ def run_command_overwrite(filename, argument_func, timeout=50):
         shutil.rmtree(temp_dir)
 
 
-def decrypt_pdf_in_place(filename, timeout=50):
+def decrypt_pdf_in_place(filename, password=None, timeout=50):
     def argument_func(filename, temp_dir):
         temp_out = os.path.join(temp_dir, 'qpdf_out.pdf')
-        arguments = ['qpdf', '--decrypt', filename, temp_out]
+        arguments = ['qpdf', '--decrypt']
+
+        if password is not None:
+            arguments.extend([
+                '--password=%s' % password
+            ])
+
+        arguments.extend([filename, temp_out])
         return arguments, temp_out
 
     return run_command_overwrite(filename, argument_func, timeout=timeout)
 
 
-def rewrite_pdf_in_place(filename, timeout=50):
+def rewrite_pdf_in_place(filename, password=None, timeout=50):
     def argument_func(filename, temp_dir):
         temp_out = os.path.join(temp_dir, 'gs_pdf_out.pdf')
         arguments = [
             'gs', '-o', temp_out,
+        ]
+        if password is not None:
+            arguments.extend([
+                '-sPDFPassword=%s' % password
+            ])
+        arguments.extend([
             '-sDEVICE=pdfwrite',
             '-dPDFSETTINGS=/prepress',
             filename
-        ]
+        ])
         return arguments, temp_out
 
     return run_command_overwrite(filename, argument_func, timeout=timeout)
 
 
-def rewrite_hard_pdf_in_place(filename, timeout=50):
+def rewrite_hard_pdf_in_place(filename, password=None, timeout=50):
     def argument_func(filename, temp_dir):
         temp_out = os.path.join(temp_dir, 'pdfcairo_out.pdf')
         arguments = [
-            'pdftocairo', '-pdf', filename,
-            temp_out
+            'pdftocairo',
+            '-pdf',
         ]
+        if password is not None:
+            arguments.extend([
+                '-upw', password
+            ])
+        arguments.extend([
+            filename,
+            temp_out
+        ])
         return arguments, temp_out
 
     return run_command_overwrite(filename, argument_func, timeout=timeout)

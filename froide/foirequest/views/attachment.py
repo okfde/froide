@@ -215,6 +215,11 @@ def get_redact_context(foirequest, attachment):
             'redactionError': _('There was a problem with your redaction. Please contact moderators.'),
             'redactionTimeout': _('Your redaction took too long. It may become available soon, if not, contact moderators.'),
             'autoRedacted': _('We automatically redacted some text for you already. Please check if we got everything.'),
+            'passwordRequired': _('This PDF requires a password to open. Please provide the password here:'),
+            'passwordCancel': _('The password you provided was incorrect. Do you want to abort?'),
+            'passwordMissing': _('The PDF could not be opened because of a missing password. Please ask the authority to provide you with a password.'),
+            'removePasswordAndPublish': _('Remove password and publish'),
+            'hasPassword': _('The original document is protected with a password. The password is getting removed on publication.'),
         }
     }
 
@@ -255,13 +260,13 @@ def redact_attachment(request, foirequest, attachment_id):
                 can_approve=False,
             )
 
-        redact_attachment_task.delay(attachment.id, att.id, instructions)
-
         if not attachment.is_redacted:
             attachment.redacted = att
             attachment.can_approve = False
             attachment.approved = False
             attachment.save()
+
+        redact_attachment_task.delay(attachment.id, att.id, instructions)
 
         return JsonResponse({
             'url': att.get_anchor_url(),

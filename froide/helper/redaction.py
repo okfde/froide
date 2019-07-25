@@ -30,22 +30,25 @@ def can_redact_file(filetype, name=None):
     )
 
 
-def rewrite_pdf(pdf_file):
-    pdf_file_name = rewrite_pdf_in_place(pdf_file.name)
+def rewrite_pdf(pdf_file, instructions):
+    password = instructions.get('password')
+    pdf_file_name = rewrite_pdf_in_place(pdf_file.name, password=password)
     if pdf_file_name is None:
         return None
     return open(pdf_file_name, 'rb')
 
 
-def rewrite_hard_pdf(pdf_file):
-    pdf_file_name = rewrite_hard_pdf_in_place(pdf_file.name)
+def rewrite_hard_pdf(pdf_file, instructions):
+    password = instructions.get('password')
+    pdf_file_name = rewrite_hard_pdf_in_place(pdf_file.name, password=password)
     if pdf_file_name is None:
         return None
     return open(pdf_file_name, 'rb')
 
 
-def decrypt_pdf(pdf_file):
-    pdf_file_name = decrypt_pdf_in_place(pdf_file.name)
+def decrypt_pdf(pdf_file, instructions):
+    password = instructions.get('password')
+    pdf_file_name = decrypt_pdf_in_place(pdf_file.name, password=password)
     if pdf_file_name is None:
         return None
     return open(pdf_file_name, 'rb')
@@ -75,18 +78,21 @@ def try_redacting_file(pdf_file, outpath, instructions):
     tries = 0
     while True:
         try:
-            pdf_file = rewrite_pdf(pdf_file)
-            return _redact_file(pdf_file, outpath, instructions)
+            rewritten_pdf_file = rewrite_pdf(pdf_file, instructions)
+            if rewritten_pdf_file is None:
+                # Possibly encrypted with password, let's just try it anyway
+                rewritten_pdf_file = pdf_file
+            return _redact_file(rewritten_pdf_file, outpath, instructions)
         except PDFException as e:
             tries += 1
             if tries > 2:
                 raise Exception('PDF Redaction Error')
             if e.reason == 'rewrite':
-                next_pdf_file = rewrite_pdf(pdf_file)
+                next_pdf_file = rewrite_pdf(pdf_file, instructions)
                 if next_pdf_file is None:
-                    next_pdf_file = rewrite_hard_pdf(pdf_file)
+                    next_pdf_file = rewrite_hard_pdf(pdf_file, instructions)
             elif e.reason == 'decrypt':
-                next_pdf_file = decrypt_pdf(pdf_file)
+                next_pdf_file = decrypt_pdf(pdf_file, instructions)
             if next_pdf_file is None:
                 raise Exception('PDF Rewrite Error')
             pdf_file = next_pdf_file
@@ -101,6 +107,11 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     except (PdfReadError, ValueError, OSError) as e:
         raise PDFException(e, 'rewrite')
 
+    if pdf_reader.isEncrypted:
+        if not instructions.get('password'):
+            raise Exception('PDF Rewrite Error')
+        pdf_reader.decrypt(instructions['password'])
+
     try:
         num_pages = pdf_reader.getNumPages()
     except KeyError as e:  # catch KeyError '/Pages'
@@ -108,8 +119,9 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     except PdfReadError as e:
         raise PDFException(e, 'decrypt')
 
-    assert num_pages == len(instructions)
-    for page_idx, instr in enumerate(instructions):
+    page_instructions = instructions.get('pages', [])
+    assert num_pages == len(page_instructions)
+    for page_idx, instr in enumerate(page_instructions):
         instr['width'] = float(instr['width'])
 
         try:

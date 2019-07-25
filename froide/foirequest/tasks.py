@@ -252,6 +252,7 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
 @celery_app.task(name='froide.foirequest.tasks.redact_attachment_task',
                  time_limit=60 * 6, soft_time_limit=60 * 5)
 def redact_attachment_task(att_id, target_id, instructions):
+    import ipdb ; ipdb.set_trace()
     try:
         attachment = FoiAttachment.objects.get(pk=att_id)
     except FoiAttachment.DoesNotExist:

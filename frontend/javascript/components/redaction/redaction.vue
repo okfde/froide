@@ -1,5 +1,10 @@
 <template>
   <div id="pdf-viewer" class="pdf-redaction-tool" ref="top">
+    <div v-if="hasPassword && ready" class="row">
+      <div class="col-lg-12">
+        <div class="alert alert-info" role="alert">{{ i18n.hasPassword }}</div>
+      </div>
+    </div>
     <div v-if="message" class="row">
       <div class="col-lg-12">
         <div class="alert alert-info" role="alert">{{ message }}</div>
@@ -70,11 +75,16 @@
         <div class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush"></i>
-            {{ i18n.redactAndPublish }}
+            <template v-if="hasRedactions">
+              {{ i18n.redactAndPublish }}
+            </template>
+            <template v-else-if="hasPassword">
+              {{ i18n.removePasswordAndPublish }}
+            </template>
           </button>
         </div>
         <div class="btn-group ml-auto mt-1 mt-lg-0" >
-          <form v-if="canPublish" method="post" :action="config.urls.publishUrl">
+          <form v-if="canPublish && !hasPassword" method="post" :action="config.urls.publishUrl">
             <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken"/>
             <button class="btn btn-success" type="submit">
               <i class="fa fa-check"></i>
@@ -172,6 +182,7 @@ export default {
       actionsPerPage: {},
       actionIndexPerPage: {},
       rectanglesPerPage: {},
+      password: null,
       maxWidth: null,
       startDrag: null,
       endDrag: null,
@@ -208,6 +219,17 @@ export default {
         return false
       }
       return this.actionIndexPerPage[this.currentPage] < actions.length
+    },
+    hasRedactions () {
+      for (let p in this.actionsPerPage) {
+        if (this.actionIndexPerPage[p] > 0) {
+          return true
+        }
+      }
+      return false
+    },
+    hasPassword () {
+      return this.password !== null
     },
     pageOfTotal () {
       if (this.numPages !== null) {
@@ -272,6 +294,23 @@ export default {
           'cache-control': 'no-cache'
         }
       })
+      loadingTask.onPassword = (passwordFunc, reason) => {
+        let password
+        if (reason === 1) { // need a password
+          password = window.prompt(this.i18n.passwordRequired)
+        }
+        if (reason !== 1 || !password) {
+          if (window.confirm(this.i18n.passwordCancel)) {
+            this.errors = this.i18n.passwordMissing
+            this.workingState = null
+            this.ready = false
+            return
+          }
+          password = window.prompt(this.i18n.passwordRequired)
+        }
+        this.password = password
+        passwordFunc(password)
+      }
       loadingTask.onProgress = (progress) => {
         this.progressCurrent = progress.loaded
         this.progressTotal = progress.total
@@ -387,8 +426,9 @@ export default {
       }, Promise.resolve())
         .then(() => {
           console.log(serialized)
+          const data = {'pages': serialized, 'password': this.password}
           this.progressCurrent = null
-          return this.sendSerializedPages(serialized).then((attachment) => {
+          return this.sendSerializedPages(data).then((attachment) => {
             if (attachment) {
               this.progressCurrent = 100
               this.progressTotal = 100
