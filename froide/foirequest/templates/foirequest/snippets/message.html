@@ -226,7 +226,9 @@
         {% endif %}
         {% block message_toolbar_item %}{% endblock %}
         {% render_problem_button message %}
-        {% render_message_redact_button message %}
+        {% if request.user.is_staff %}
+          {% render_message_redact_button message %}
+        {% endif %}
         {% render_message_edit_button message %}
       </div>
       {% endif %}
