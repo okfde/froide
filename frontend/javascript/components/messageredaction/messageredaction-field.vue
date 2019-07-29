@@ -27,7 +27,6 @@ export default {
   },
   data () {
     return {
-      message: null,
       redactionMap: {},
       words: []
     }
@@ -38,7 +37,7 @@ export default {
       return part[1].split(SPLITTER).map((p) => {
         counter += 1
         if (part[0]) {
-          this.redactionMap[counter] = true
+          Vue.set(this.redactionMap, counter, true)
         }
         return {
           word: p,
