@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-29 17:22+0200\n"
-"PO-Revision-Date: 2019-07-29 17:25+0200\n"
+"PO-Revision-Date: 2019-07-29 17:51+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -5008,7 +5008,7 @@ msgstr "Nachricht schwärzen"
 
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html:25
 msgid "Click on the words you wish to redact or unredact."
-msgstr ""
+msgstr "Klicken Sie auf die Worte, die Sie schwärzen oder entschwärzen wollen."
 
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html:32
 msgid "Change message redaction"
