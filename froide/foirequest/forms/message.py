@@ -18,6 +18,7 @@ from froide.helper.widgets import (
     BootstrapCheckboxInput
 )
 from froide.helper.text_utils import redact_subject, redact_plaintext
+from froide.helper.text_diff import get_diff_chunks, is_diff_separator
 from froide.upload.models import Upload
 
 from ..models import (
@@ -722,3 +723,55 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         transaction.on_commit(lambda: move_upload_to_attachment.delay(att.id, upload.id))
 
         return result
+
+
+class RedactMessageForm(forms.Form):
+    subject = forms.CharField(required=False)
+    content = forms.CharField(required=False)
+
+    def clean_field(self, field):
+        val = self.cleaned_data[field]
+        if not val:
+            return []
+        try:
+            val = [int(x) for x in val.split(',')]
+        except ValueError:
+            raise forms.ValidationError('Bad value')
+        return val
+
+    def clean_subject(self):
+        return self.clean_field('subject')
+
+    def clean_content(self):
+        return self.clean_field('content')
+
+    def redact_part(self, original, instructions):
+        REDACTION_MARKER = str(_('[redacted]'))
+
+        if not instructions:
+            return original
+
+        chunks = get_diff_chunks(original)
+        chunk_map = {}
+        counter = 0
+        for i, chunk in enumerate(chunks):
+            if is_diff_separator(chunk):
+                continue
+            chunk_map[counter] = i
+            counter += 1
+        for index in instructions:
+            chunk_index = chunk_map[index]
+            chunks[chunk_index] = REDACTION_MARKER
+        return ''.join(chunks)
+
+    def save(self, message):
+        redacted_subject = self.redact_part(
+            message.subject, self.cleaned_data['subject']
+        )
+        redacted_content = self.redact_part(
+            message.plaintext, self.cleaned_data['content']
+        )
+
+        message.subject_redacted = redacted_subject
+        message.plaintext_redacted = redacted_content
+        message.save()

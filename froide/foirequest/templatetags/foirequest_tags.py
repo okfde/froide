@@ -1,10 +1,11 @@
-from datetime import timedelta
 from collections import defaultdict
+from datetime import timedelta
+import json
 
 from django import template
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import urlizetrunc
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils.html import format_html
 from django.utils import formats
 from django.utils import timezone
@@ -270,6 +271,21 @@ def render_message_edit_button(message):
         'form': EditMessageForm(message=message),
         'foirequest': message.request,
         'message': message
+    }
+
+
+@register.inclusion_tag('foirequest/snippets/message_redact.html')
+def render_message_redact_button(message):
+    return {
+        'foirequest': message.request,
+        'message': message,
+        'js_config': json.dumps({
+            'i18n': {
+                'subject': _('Subject'),
+                'message': _('Message'),
+                'messageLoading': _('Message is loading...'),
+            }
+        })
     }
 
 

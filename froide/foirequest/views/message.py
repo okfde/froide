@@ -22,7 +22,8 @@ from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
 from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
     get_escalation_message_form, get_postal_attachment_form,
-    get_message_sender_form, TransferUploadForm, EditMessageForm
+    get_message_sender_form, TransferUploadForm, EditMessageForm,
+    RedactMessageForm
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
@@ -541,4 +542,14 @@ def edit_message(request, foirequest, message_id):
     form = EditMessageForm(data=request.POST, message=message)
     if form.is_valid():
         form.save()
+    return redirect(message.get_absolute_url())
+
+
+@require_POST
+@allow_write_foirequest
+def redact_message(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    form = RedactMessageForm(request.POST)
+    if form.is_valid():
+        form.save(message)
     return redirect(message.get_absolute_url())

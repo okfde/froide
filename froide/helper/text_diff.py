@@ -6,15 +6,17 @@ from django.utils.html import escape
 
 
 SPLITTER = r'([^\w\-@/\.\:])'
+SPLIT_FORWARD = re.compile('(?=%s)' % SPLITTER)
 SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile('^%s$' % SPLITTER)
 
 
-def full_tag_check(content, last_start_tag):
-    for x in content[(last_start_tag + 1):]:
-        if x.strip():
-            return True
-    return False
+def get_diff_chunks(content):
+    return SPLITTER_RE.split(content)
+
+
+def is_diff_separator(s):
+    return SPLITTER_MATCH_RE.match(s)
 
 
 def get_differences_by_chunk(content_a, content_b):
@@ -37,35 +39,57 @@ def get_differences_by_chunk(content_a, content_b):
         yield is_same, part
 
 
-def mark_differences(content_a, content_b,
+def get_differences(content_a, content_b, min_part_len=3):
+    opened = False
+    last_chunk = []
+    for is_same, part in get_differences_by_chunk(content_a, content_b):
+        long_enough = len(part) > min_part_len
+        if is_same and opened and long_enough:
+            if last_chunk:
+                yield opened, ''.join(last_chunk)
+                last_chunk = []
+            opened = False
+        elif not opened and not is_same:
+            if last_chunk:
+                yield opened, ''.join(last_chunk)
+                last_chunk = []
+            opened = True
+        last_chunk.append(part)
+
+    if last_chunk:
+        yield opened, ''.join(last_chunk)
+
+
+def get_tagged_differences(content_a, content_b,
         start_tag='<span {attrs}>',
         end_tag='</span>',
         attrs=None,
         min_part_len=3):
+
     if attrs is None:
         attrs = ''
     start_tag = start_tag.format(attrs=attrs)
-    opened = False
-    new_content = []
-    last_start_tag = None
-    for is_same, part in get_differences_by_chunk(content_a, content_b):
-        long_enough = len(part) > min_part_len
-        if is_same and opened and long_enough:
-            if full_tag_check(new_content, last_start_tag):
-                new_content.append(end_tag)
-            else:
-                new_content = new_content[:last_start_tag]
-            opened = False
-        if not opened and not is_same:
-            opened = True
-            last_start_tag = len(new_content)
-            new_content.append(start_tag)
-        new_content.append(escape(part))
 
-    if opened:
-        if full_tag_check(new_content, last_start_tag):
-            new_content.append(end_tag)
-        else:
-            new_content = new_content[:last_start_tag]
+    diff_chunks = get_differences(
+        content_a, content_b,
+        min_part_len=min_part_len
+    )
 
-    return mark_safe(''.join(new_content))
+    for redacted, part in diff_chunks:
+        if redacted:
+            yield start_tag
+        yield escape(part)
+        if redacted:
+            yield end_tag
+
+
+def mark_differences(content_a, content_b,
+        start_tag='<span {attrs}>',
+        end_tag='</span>',
+        attrs=None):
+    difference_tagger = get_tagged_differences(
+        content_a, content_b,
+        start_tag=start_tag, end_tag=end_tag,
+        attrs=attrs
+    )
+    return mark_safe(''.join(difference_tagger))

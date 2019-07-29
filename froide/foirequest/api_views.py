@@ -12,6 +12,7 @@ from django_filters import rest_framework as filters
 from elasticsearch_dsl.query import Q as ESQ
 
 from froide.helper.search import SearchQuerySetWrapper
+from froide.helper.text_diff import get_differences
 from froide.helper.api_utils import ElasticLimitOffsetPagination
 from froide.publicbody.api_views import (
     FoiLawSerializer, SimplePublicBodySerializer, PublicBodySerializer
@@ -192,6 +193,8 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     subject = serializers.CharField(source='get_subject')
     content = serializers.CharField(source='get_content')
+    redacted_subject = serializers.SerializerMethodField(source='get_redacted_subject')
+    redacted_content = serializers.SerializerMethodField(source='get_redacted_content')
     sender = serializers.CharField()
     url = serializers.CharField(source='get_absolute_domain_url')
     status_name = serializers.CharField(source='get_status_display')
@@ -205,8 +208,31 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             'is_escalation', 'content_hidden', 'sender_public_body',
             'recipient_public_body', 'status', 'timestamp',
             'redacted', 'not_publishable', 'attachments',
-            'subject', 'content', 'sender', 'status_name'
+            'subject', 'content',
+            'redacted_subject',
+            'redacted_content',
+            'sender', 'status_name'
         )
+
+    def get_redacted_subject(self, obj):
+        request = self.context['request']
+        token = request.auth
+
+        if self.can_see_attachment(obj.request, request, token):
+            show, hide = obj.subject, obj.subject_redacted
+        else:
+            show, hide = obj.subject_redacted, obj.subject
+        return list(get_differences(show, hide))
+
+    def get_redacted_content(self, obj):
+        request = self.context['request']
+        token = request.auth
+
+        if self.can_see_attachment(obj.request, request, token):
+            show, hide = obj.plaintext, obj.plaintext_redacted
+        else:
+            show, hide = obj.plaintext_redacted, obj.plaintext
+        return list(get_differences(show, hide))
 
     def get_attachments(self, obj):
         request = self.context['request']

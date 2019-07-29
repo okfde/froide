@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load markup %}
+{% load form_helper %}
+
+<div class="btn-group btn-group-sm ml-1">
+  <button type="button" class="btn btn-light" data-toggle="modal" data-target="#message-redact-{{ message.pk }}">
+    <span class="sr-only">{% trans "Redact message text" %}</span>
+    <i class="fa fa-paint-brush"></i>
+  </button>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" data-redact="message" id="message-redact-{{ message.pk }}">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {% trans "Redact message" %}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body container">
+        <p>
+          {% trans "Click on the words you wish to redact or unredact." %}
+        </p>
+        <form method="post" action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
+          {% csrf_token %}
+          <message-redaction :config="{{ js_config }}" message-url="{% url 'api:message-detail' pk=message.pk %}"></message-redaction>
+          <p class="text-right">
+            <button type="submit" class="btn btn-dark">
+              {% trans "Change message redaction" %}
+            </button>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
