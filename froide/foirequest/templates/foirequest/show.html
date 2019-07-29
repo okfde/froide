@@ -660,5 +660,8 @@
     {% addtoblock "js" %}
       <script src="{% static 'js/messageredaction.js' %}" defer></script>
     {% endaddtoblock %}
+    {% addtoblock "css" %}
+      <link rel="stylesheet" href="{% static 'css/messageredaction.css' %}"/>
+    {% endaddtoblock %}
   {% endif %}
 {% endblock %}
