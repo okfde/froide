@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="message">
-      <div class="row mb-3">
+      <div v-if="message.subject" class="row mb-3">
         <div class="col-md-3">
           <h5>{{ i18n.subject }}</h5>
         </div>
@@ -12,7 +12,7 @@
           ></message-redaction-field>
         </div>
       </div>
-      <div class="mb-3">
+      <div v-if="message.content" class="mb-3">
         <h5>
           {{ i18n.message }}
         </h5>

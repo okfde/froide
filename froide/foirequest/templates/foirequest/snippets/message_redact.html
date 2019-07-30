@@ -2,6 +2,7 @@
 {% load markup %}
 {% load form_helper %}
 
+{% if show_button %}
 <div class="btn-group btn-group-sm ml-1">
   <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-light" data-toggle="modal" data-target="#message-redact-{{ message.pk }}">
     <span class="sr-only">{% trans "Redact message text" %}</span>
@@ -37,3 +38,4 @@
     </div>
   </div>
 </div>
+{% endif %}

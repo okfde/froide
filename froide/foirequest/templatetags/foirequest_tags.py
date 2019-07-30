@@ -279,6 +279,7 @@ def render_message_redact_button(message):
     return {
         'foirequest': message.request,
         'message': message,
+        'show_button': bool(message.plaintext or message.subject),
         'js_config': json.dumps({
             'i18n': {
                 'subject': _('Subject'),

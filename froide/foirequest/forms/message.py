@@ -729,8 +729,8 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
 class RedactMessageForm(forms.Form):
     subject = forms.CharField(required=False)
     content = forms.CharField(required=False)
-    subject_length = forms.IntegerField(required=True)
-    content_length = forms.IntegerField(required=True)
+    subject_length = forms.IntegerField(required=False)
+    content_length = forms.IntegerField(required=False)
 
     def clean_field(self, field):
         val = self.cleaned_data[field]
@@ -747,6 +747,14 @@ class RedactMessageForm(forms.Form):
 
     def clean_content(self):
         return self.clean_field('content')
+
+    def clean(self):
+        if self.cleaned_data.get('content'):
+            if not self.cleaned_data.get('content_length'):
+                raise forms.ValidationError
+        if self.cleaned_data.get('subject'):
+            if not self.cleaned_data.get('subject_length'):
+                raise forms.ValidationError
 
     def redact_part(self, original, instructions, length):
         REDACTION_MARKER = str(_('[redacted]'))
