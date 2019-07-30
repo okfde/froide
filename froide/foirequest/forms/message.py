@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 import re
 
@@ -728,6 +729,8 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
 class RedactMessageForm(forms.Form):
     subject = forms.CharField(required=False)
     content = forms.CharField(required=False)
+    subject_length = forms.IntegerField(required=True)
+    content_length = forms.IntegerField(required=True)
 
     def clean_field(self, field):
         val = self.cleaned_data[field]
@@ -745,33 +748,48 @@ class RedactMessageForm(forms.Form):
     def clean_content(self):
         return self.clean_field('content')
 
-    def redact_part(self, original, instructions):
+    def redact_part(self, original, instructions, length):
         REDACTION_MARKER = str(_('[redacted]'))
 
         if not instructions:
             return original
 
         chunks = get_diff_chunks(original)
-        chunk_map = {}
-        counter = 0
-        for i, chunk in enumerate(chunks):
-            if is_diff_separator(chunk):
-                continue
-            chunk_map[counter] = i
-            counter += 1
+
+        # Sanity check chunk length
+        if len(chunks) != length:
+            raise IndexError
+
         for index in instructions:
-            chunk_index = chunk_map[index]
-            chunks[chunk_index] = REDACTION_MARKER
-        return ''.join(chunks)
+            chunks[index] = REDACTION_MARKER
+
+        redacted = ''.join(chunks)
+        # Replace multiple connecting redactions with one
+        return re.sub(
+            '{marker}(?: {marker})+'.format(
+                marker=re.escape(REDACTION_MARKER)
+            ),
+            REDACTION_MARKER,
+            redacted
+        )
 
     def save(self, message):
-        redacted_subject = self.redact_part(
-            message.subject, self.cleaned_data['subject']
-        )
-        redacted_content = self.redact_part(
-            message.plaintext, self.cleaned_data['content']
-        )
+        try:
+            redacted_subject = self.redact_part(
+                message.subject, self.cleaned_data['subject'],
+                self.cleaned_data['subject_length'],
+            )
+            message.subject_redacted = redacted_subject
+        except IndexError as e:
+            logging.warning(e)
 
-        message.subject_redacted = redacted_subject
-        message.plaintext_redacted = redacted_content
+        try:
+            redacted_content = self.redact_part(
+                message.plaintext, self.cleaned_data['content'],
+                self.cleaned_data['content_length']
+            )
+            message.plaintext_redacted = redacted_content
+        except IndexError as e:
+            logging.warning(e)
+
         message.save()

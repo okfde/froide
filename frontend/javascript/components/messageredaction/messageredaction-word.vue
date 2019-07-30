@@ -1,42 +1,24 @@
-<template><span>{{ separator }}<span @click="redact" class="word" :class="{'-redacted': redacted}">{{ realWord }}</span></span></template>
+<template><span class="word"
+    :class="{'-redacted': redacted, '-changed': changed}"
+    @mouseout="mouseout" @click="redact"
+  >{{ word }}</span></template>
 
 <script>
-
-import {getData} from '../../lib/api.js'
-
-const SPACE = /\s/g
-
 export default {
   name: 'messageredaction-word',
-  props: ['word', 'redacted', 'index'],
+  props: ['word', 'redacted',  'index'],
   data () {
     return {
-      message: null
-    }
-  },
-  mounted () {
-    
-  },
-  computed: {
-    startsSpace () {
-      return SPACE.test(this.word[0])
-    },
-    separator () {
-      if (this.startsSpace) {
-        return this.word[0]
-      }
-      return ''
-    },
-    realWord () {
-      if (this.startsSpace) {
-        return this.word.substring(1)
-      }
-      return this.word
+      changed: false,
     }
   },
   methods: {
     redact () {
+      this.changed = true
       this.$emit('redact', this.index)
+    },
+    mouseout () {
+      this.changed = false
     }
   }
 }
@@ -46,17 +28,18 @@ export default {
 <style lang="scss" scoped>
   .word {
     cursor: pointer;
+    transition: all 300ms;
   }
-  .word:hover {
+  .word:not(.-changed):hover {
     background-color: #000;
     color: #fff;
   }
   .word.-redacted {
-    background-color: #bbb;
+    background-color: #ccc;
     color: #000;
   }
-  .word.-redacted:hover {
-    background-color: #fff;
+  .word.-redacted:not(.-changed):hover {
+    background-color: #fafafa;
     color: #000;
   }
 </style>

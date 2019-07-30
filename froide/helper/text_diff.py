@@ -6,13 +6,12 @@ from django.utils.html import escape
 
 
 SPLITTER = r'([^\w\-@/\.\:])'
-SPLIT_FORWARD = re.compile('(?=%s)' % SPLITTER)
 SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile('^%s$' % SPLITTER)
 
 
 def get_diff_chunks(content):
-    return SPLITTER_RE.split(content)
+    return [x for x in SPLITTER_RE.split(content) if x]
 
 
 def is_diff_separator(s):
@@ -20,8 +19,8 @@ def is_diff_separator(s):
 
 
 def get_differences_by_chunk(content_a, content_b):
-    a_list = SPLITTER_RE.split(content_a)
-    b_list = SPLITTER_RE.split(content_b)
+    a_list = get_diff_chunks(content_a)
+    b_list = get_diff_chunks(content_b)
     matcher = SequenceMatcher(
         None, a_list, b_list, autojunk=False
     )

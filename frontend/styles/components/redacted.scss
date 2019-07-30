@@ -1,29 +1,31 @@
+$redacted: #e3e3e3;
+
 @media screen {
   .redacted,
   .redacted:hover,
   .redacted:active,
   .redacted a {
-      background-color: #eee !important;
-      color: #eee !important;
+      background-color: $redacted !important;
+      color: $redacted !important;
   }
 
   .redacted::selection {
     /* Separate because otherwise it breaks in firefox */
-    background-color: #eee !important;
-    color: #eee !important;
+    background-color: $redacted !important;
+    color: $redacted !important;
   }
 
   .redacted::-moz-selection {
     /* See https://developer.mozilla.org/en-US/docs/Web/CSS/::selection */
-    background-color: #eee !important;
-    color: #eee !important;
+    background-color: $redacted !important;
+    color: $redacted !important;
   }
 
   .redacted-dummy,
   .redacted-dummy:hover,
   .redacted-dummy:active,
   .redacted-dummy a {
-    background-color: #eee !important;
+    background-color: $redacted !important;
   }
 
 }
