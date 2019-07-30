@@ -30,7 +30,7 @@ def get_differences_by_chunk(content_a, content_b):
             continue
         is_same = tag == 'equal'
         part = ''.join(a_list[i1:i2])
-        if SPLITTER_MATCH_RE.match(part):
+        if is_diff_separator(part):
             # Split chars should be ejected like the part before
             yield last_same, part
             continue

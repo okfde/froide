@@ -19,7 +19,7 @@ from froide.helper.widgets import (
     BootstrapCheckboxInput
 )
 from froide.helper.text_utils import redact_subject, redact_plaintext
-from froide.helper.text_diff import get_diff_chunks, is_diff_separator
+from froide.helper.text_diff import get_diff_chunks
 from froide.upload.models import Upload
 
 from ..models import (
