@@ -15,7 +15,7 @@ from froide.helper.email_utils import (EmailParser, get_unread_mails,
                                        make_address)
 from froide.helper.name_generator import get_name_from_number
 
-from .utils import get_publicbody_for_email
+from .utils import get_publicbody_for_email, get_foi_mail_domains
 from .pdf_generator import FoiRequestPDFGenerator
 
 
@@ -114,9 +114,7 @@ def create_deferred(secret_mail, mail_bytes, spam=False,
 
 def get_alternative_mail(req):
     name = get_name_from_number(req.pk)
-    domains = settings.FOI_EMAIL_DOMAIN
-    if isinstance(domains, str):
-        domains = [domains]
+    domains = get_foi_mail_domains()
     if len(domains) > 1:
         domains = domains[1:]
 
@@ -154,9 +152,7 @@ def _deliver_mail(email, mail_bytes=None, manual=False):
                      email.resent_to + email.resent_cc)
     received_list = [(r[0], r[1].lower()) for r in received_list]
 
-    domains = settings.FOI_EMAIL_DOMAIN
-    if isinstance(domains, str):
-        domains = [domains]
+    domains = get_foi_mail_domains()
 
     def mail_filter(x):
         return x[1].endswith(tuple(["@%s" % d for d in domains]))

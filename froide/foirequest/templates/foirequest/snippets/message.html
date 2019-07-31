@@ -210,7 +210,7 @@
       <div class="btn-toolbar mt-3 mb-3 d-print-none" role="toolbar" aria-label="{% trans 'Message toolbar' %}">
         {% if message.is_response %}
           <div class="btn-group btn-group-sm mr-2">
-            <a data-tabgo="tab" data-name="sendmessage-to" data-value="{{ message.get_first_sender_message_id }}" href="#write-message" class="btn btn-secondary">
+            <a data-tabgo="tab" data-name="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-secondary">
               <span class="fa fa-reply"></span>
               {% trans "Reply" %}
             </a>

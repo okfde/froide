@@ -24,7 +24,7 @@ from froide.team.models import Team
 from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
-from ..utils import send_request_user_email
+from ..utils import send_request_user_email, get_foi_mail_domains
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -460,10 +460,8 @@ class FoiRequest(models.Model):
 
     def get_redaction_regexes(self):
         user = self.user
-        foimail_domain = settings.FOI_EMAIL_DOMAIN
-        if not isinstance(foimail_domain, (list, tuple)):
-            foimail_domain = [foimail_domain]
-        email_regexes = [r'[\w\.\-]+@' + x for x in foimail_domain]
+        domains = get_foi_mail_domains()
+        email_regexes = [r'[\w\.\-]+@' + x for x in domains]
         FROIDE_CONFIG = settings.FROIDE_CONFIG
         user_regexes = []
         if user.private:
@@ -552,19 +550,6 @@ class FoiRequest(models.Model):
             return self.due_date + timedelta(days=settings.FROIDE_CONFIG.get(
                 'request_public_after_due_days', 14))
         return None
-
-    def possible_reply_addresses(self):
-        addresses = {}
-        for message in reversed(self.messages):
-            if message.is_response:
-                email = (
-                    message.sender_email or
-                    (message.sender_public_body and
-                     message.sender_public_body.email)
-                )
-                if email and email not in addresses:
-                    addresses[email] = message
-        return addresses
 
     def get_set_tags_form(self):
         from ..forms import TagFoiRequestForm

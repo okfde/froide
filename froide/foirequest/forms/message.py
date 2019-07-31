@@ -30,7 +30,10 @@ from ..tasks import convert_attachment_task, move_upload_to_attachment
 from ..validators import (
     validate_upload_document, validate_postal_content_type
 )
-from ..utils import construct_message_body, MailAttachmentSizeChecker
+from ..utils import (
+    construct_message_body, MailAttachmentSizeChecker,
+    possible_reply_addresses, get_info_for_email
+)
 
 publishing_denied = settings.FROIDE_CONFIG.get('publishing_denied', False)
 
@@ -165,10 +168,9 @@ class MessagePublicBodySenderForm(forms.Form):
 
 
 class SendMessageForm(AttachmentSaverMixin, forms.Form):
-    to = forms.TypedChoiceField(
+    to = forms.ChoiceField(
         label=_("To"),
         choices=[],
-        coerce=int,
         required=True,
         widget=BootstrapRadioSelect
     )
@@ -202,14 +204,7 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
-        choices = []
-        if foirequest.public_body and foirequest.public_body.email:
-            choices.append((0, _("Default address of %(publicbody)s") % {
-                    "publicbody": foirequest.public_body.name
-            }))
-        choices.extend([(m.id, m.reply_address_entry) for k, m in
-                foirequest.possible_reply_addresses().items()])
-        self.fields['to'].choices = choices
+        self.fields['to'].choices = possible_reply_addresses(foirequest)
 
         address_optional = foirequest.law and foirequest.law.email_only
 
@@ -285,19 +280,10 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             user.address = address
             user.save()
 
-        if self.cleaned_data["to"] == 0:
-            recipient_name = self.foirequest.public_body.name
-            recipient_email = self.foirequest.public_body.email
-            recipient_pb = self.foirequest.public_body
-        else:
-            message = list(filter(lambda x: x.id == self.cleaned_data["to"],
-                    list(self.foirequest.messages)))[0]
-            recipient_name = message.sender_name
-            recipient_email = message.sender_email or (
-                message.sender_public_body and
-                message.sender_public_body.email
-            )
-            recipient_pb = message.sender_public_body
+        recipient_email = self.cleaned_data["to"]
+        recipient_info = get_info_for_email(self.foirequest, recipient_email)
+        recipient_name = recipient_info.name
+        recipient_pb = recipient_info.publicbody
 
         subject = re.sub(
             r'\s*\[#%s\]\s*$' % self.foirequest.pk, '',

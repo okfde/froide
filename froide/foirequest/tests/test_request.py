@@ -26,6 +26,7 @@ from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.foirequest.forms import (
     get_send_message_form, get_escalation_message_form
 )
+from froide.foirequest.utils import possible_reply_addresses
 from froide.helper.email_utils import ParsedEmail
 
 User = get_user_model()
@@ -209,7 +210,7 @@ class RequestTest(TestCase):
         pb_email = req.public_body.email
         req.public_body.email = ''
         req.public_body.save()
-        post["sendmessage-to"] = '0'
+        post["sendmessage-to"] = pb_email
         post["sendmessage-subject"] = "Re: Custom subject"
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
@@ -218,7 +219,8 @@ class RequestTest(TestCase):
         req.public_body.save()
 
         post["sendmessage-subject"] = "Re: Custom subject"
-        post["sendmessage-to"] = str(list(req.possible_reply_addresses().values())[0].id)
+        self.assertIn(new_foi_email, {x[0] for x in possible_reply_addresses(req)})
+        post["sendmessage-to"] = new_foi_email
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
         self.assertEqual(response.status_code, 302)
@@ -1340,7 +1342,7 @@ class RequestTest(TestCase):
         last = req.messages[-1]
         self.assertNotIn(name, last.plaintext_redacted)
         form = get_send_message_form({
-            'sendmessage-to': '0',
+            'sendmessage-to': req.public_body.email,
             'sendmessage-subject': 'Testing',
             "sendmessage-address": 'Address',
             'sendmessage-message': (
@@ -1525,7 +1527,7 @@ class RequestTest(TestCase):
     def test_remove_double_numbering(self):
         req = FoiRequest.objects.all()[0]
         form = get_send_message_form({
-            'sendmessage-to': '0',
+            'sendmessage-to': req.public_body.email,
             'sendmessage-subject': req.title + ' [#%s]' % req.pk,
             'sendmessage-message': 'Test',
             "sendmessage-address": 'Address',

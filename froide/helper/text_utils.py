@@ -116,6 +116,10 @@ def replace_email(text, replacement=""):
     return EMAIL_RE.sub(str(replacement), text)
 
 
+def find_all_emails(text):
+    return EMAIL_RE.findall(text)
+
+
 def replace_custom(regex_list, replacement, content):
     for regex in regex_list:
         match = regex.search(content)

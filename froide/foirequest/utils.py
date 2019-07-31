@@ -1,5 +1,6 @@
 import json
 from datetime import timedelta
+from collections import namedtuple
 
 from django.utils import timezone
 from django.core.mail import mail_managers
@@ -12,7 +13,9 @@ from django.utils.crypto import get_random_string
 import icalendar
 import pytz
 
-from froide.helper.text_utils import redact_subject, redact_plaintext
+from froide.helper.text_utils import (
+    redact_subject, redact_plaintext, find_all_emails
+)
 from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
 
@@ -53,16 +56,20 @@ def check_throttle(user, klass):
             )
 
 
+def get_foi_mail_domains():
+    domains = settings.FOI_EMAIL_DOMAIN
+    if not isinstance(domains, (list, tuple)):
+        return [domains]
+    return domains
+
+
 def generate_secret_address(user, length=10):
     allowed_chars = 'abcdefghkmnprstuvwxyz2345689'
     username = user.username.replace('_', '.')
     secret = get_random_string(length=length, allowed_chars=allowed_chars)
     template = getattr(settings, 'FOI_EMAIL_TEMPLATE', None)
 
-    domains = settings.FOI_EMAIL_DOMAIN
-    if isinstance(domains, str):
-        domains = [domains]
-    FOI_EMAIL_DOMAIN = domains[0]
+    FOI_EMAIL_DOMAIN = get_foi_mail_domains()[0]
 
     if template is not None and callable(template):
         return settings.FOI_EMAIL_TEMPLATE(username=username, secret=secret)
@@ -208,6 +215,87 @@ def send_request_user_email(foiobject, subject, body, add_idmark=True, **kwargs)
     if add_idmark:
         subject = '{} [#{}]'.format(subject, foiobject.pk)
     foiobject.user.send_mail(subject, body, **kwargs)
+
+
+PublicBodyEmailInfo = namedtuple('PublicBodyEmailInfo', ('name', 'publicbody'))
+
+
+def get_info_for_email(foirequest, email):
+    for email, message, is_sender in get_emails_from_request(foirequest):
+        if email.lower() == email:
+            if message is None:
+                if foirequest.public_body:
+                    name = foirequest.public_body.name
+                else:
+                    name = ""
+                return PublicBodyEmailInfo(
+                    name=name,
+                    publicbody=foirequest.public_body
+                )
+            elif is_sender:
+                return PublicBodyEmailInfo(
+                    name=message.sender_name,
+                    publicbody=message.sender_public_body
+                )
+            else:
+                pb = get_publicbody_for_email(email, foirequest)
+                return PublicBodyEmailInfo(
+                    name=email,
+                    publicbody=pb,
+                )
+    return PublicBodyEmailInfo(
+        name='',
+        publicbody=None
+    )
+
+
+def get_emails_from_request(foirequest):
+    already = set()
+
+    if foirequest.public_body and foirequest.public_body.email:
+        yield foirequest.public_body.email, None, False
+
+    messages = foirequest.response_messages()
+    for message in reversed(messages):
+        email = (
+            message.sender_email or
+            (message.sender_public_body and
+                message.sender_public_body.email)
+        )
+        if email and email.lower() not in already:
+            yield email, message, True
+            already.add(email.lower())
+
+    domains = tuple(get_foi_mail_domains())
+
+    for message in reversed(messages):
+        for email in find_all_emails(message.plaintext):
+            if email.endswith(domains):
+                continue
+            email = email.lower()
+            if email not in already:
+                yield email, message, False
+                already.add(email.lower())
+
+
+def possible_reply_addresses(foirequest):
+    options = []
+    for email, message, is_sender in get_emails_from_request(foirequest):
+        if message is None:
+            options.append(
+                (email, _("Default address of %(publicbody)s") % {
+                    "publicbody": foirequest.public_body.name
+                })
+            )
+        elif is_sender:
+            options.append(
+                (email, message.reply_address_entry)
+            )
+        else:
+            options.append(
+                (email, email)
+            )
+    return options
 
 
 class MailAttachmentSizeChecker():

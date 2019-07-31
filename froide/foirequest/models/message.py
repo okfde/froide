@@ -316,13 +316,6 @@ class FoiMessage(models.Model):
         else:
             return self.real_sender
 
-    def get_first_sender_message_id(self):
-        candidates = [m.id for m in reversed(self.request.messages)
-                      if m.sender_email == self.sender_email]
-        if not candidates:
-            return 0
-        return candidates[0]
-
     @property
     def attachments(self):
         if not hasattr(self, '_attachments') or self._attachments is None:
