@@ -422,6 +422,7 @@ class MakeRequestView(FormView):
         if not user.is_authenticated:
             data.update(user_form.cleaned_data)
         elif user_form is not None:
+            data['address'] = user_form.cleaned_data.get('address')
             user_form.save(user=user)
 
         service = CreateRequestService(data)

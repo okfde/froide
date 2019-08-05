@@ -225,16 +225,14 @@ class CreateRequestService(BaseService):
             subject_redacted=redact_subject(subject, user=user)
         )
 
-        send_address = True
-        if request.law:
-            send_address = not request.law.email_only
-
+        send_address = bool(self.data.get('address'))
         message.plaintext = construct_initial_message_body(
-                request,
-                text=data['body'],
-                foilaw=foilaw,
-                full_text=data.get('full_text', False),
-                send_address=send_address)
+            request,
+            text=data['body'],
+            foilaw=foilaw,
+            full_text=data.get('full_text', False),
+            send_address=send_address
+        )
 
         message.plaintext_redacted = redact_plaintext(
             message.plaintext,
