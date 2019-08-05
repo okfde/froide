@@ -72,7 +72,7 @@
           </button>
         </div>
 
-        <div class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
+        <div v-if="hasRedactions || hasPassword" class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush"></i>
             <template v-if="hasRedactions">
