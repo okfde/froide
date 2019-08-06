@@ -99,7 +99,7 @@ def redact_content(content):
 
 
 def replace_word(needle, replacement, content):
-    return re.sub(r'(^|\W)%s($|\W)' % re.escape(needle),
+    return re.sub(r'(^|[\W_])%s($|[\W_])' % re.escape(needle),
                     '\\1%s\\2' % replacement, content, re.U)
 
 
