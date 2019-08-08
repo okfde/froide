@@ -7,18 +7,44 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from froide.helper.redaction import can_redact_file
+from filingcabinet.pdf_utils import can_convert_to_pdf
+
 from froide.helper.storage import HashedFilenameStorage
-from froide.helper.document import (
-    PDF_FILETYPES, EMBEDDABLE_FILETYPES, IMAGE_FILETYPES,
-    can_convert_to_pdf
-)
 from froide.document.models import Document
 
 from .message import FoiMessage
 
 
 DELETE_TIMEFRAME = timedelta(hours=36)
+
+PDF_FILETYPES = (
+    'application/pdf',
+    'application/x-pdf',
+    'pdf/application',
+    'application/acrobat',
+    'applications/vnd.pdf',
+    'text/pdf',
+    'text/x-pdf'
+)
+
+IMAGE_FILETYPES = (
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif'
+)
+
+TEXT_FILETYPES = (
+    'application/text-plain:formatted',
+    'text/plain'
+)
+
+EMBEDDABLE_FILETYPES = (
+    PDF_FILETYPES +
+    IMAGE_FILETYPES
+)
+
+POSTAL_CONTENT_TYPES = PDF_FILETYPES + IMAGE_FILETYPES
 
 
 def upload_to(instance, filename):
@@ -102,7 +128,7 @@ class FoiAttachment(models.Model):
     @property
     def can_redact(self):
         return self.redacted is not None or (
-            self.can_approve and can_redact_file(self.filetype, name=self.name)
+            self.can_approve and self.is_pdf
         )
 
     @property
@@ -125,7 +151,7 @@ class FoiAttachment(models.Model):
     @property
     def is_pdf(self):
         return self.filetype in PDF_FILETYPES or (
-            self.name.endswith('.pdf') and self.filetype == 'application/octet-stream'
+            self.name and self.name.endswith('.pdf') and self.filetype == 'application/octet-stream'
         )
 
     @property

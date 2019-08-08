@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import magic
 
-from froide.helper.document import POSTAL_CONTENT_TYPES
+from .models.attachment import POSTAL_CONTENT_TYPES
 
 
 def get_content_type(scan):

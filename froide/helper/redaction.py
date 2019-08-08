@@ -18,16 +18,10 @@ from wand.drawing import Drawing
 from wand.color import Color
 from wand.exceptions import DelegateError, WandError
 
-from .document import (
-    PDF_FILETYPES, decrypt_pdf_in_place, rewrite_pdf_in_place,
+from filingcabinet.pdf_utils import (
+    decrypt_pdf_in_place, rewrite_pdf_in_place,
     rewrite_hard_pdf_in_place
 )
-
-
-def can_redact_file(filetype, name=None):
-    return filetype.lower() in PDF_FILETYPES or (
-        name is not None and name.lower().endswith('.pdf')
-    )
 
 
 def rewrite_pdf(pdf_file, instructions):

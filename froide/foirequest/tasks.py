@@ -9,11 +9,13 @@ from django.core.files.base import ContentFile
 
 from celery.exceptions import SoftTimeLimitExceeded
 
+from filingcabinet.pdf_utils import (
+    convert_to_pdf, convert_images_to_ocred_pdf, run_ocr
+)
+
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
-from froide.helper.document import convert_to_pdf, convert_images_to_ocred_pdf
-from froide.document.pdf_utils import PDFProcessor
 from froide.helper.redaction import redact_file
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
@@ -229,11 +231,12 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
     except FoiAttachment.DoesNotExist:
         return
 
-    processor = PDFProcessor(
-        attachment.file.path, language=settings.LANGUAGE_CODE
-    )
     try:
-        pdf_bytes = processor.run_ocr(timeout=180)
+        pdf_bytes = run_ocr(
+            attachment.file.path,
+            language=settings.LANGUAGE_CODE,
+            timeout=180
+        )
     except SoftTimeLimitExceeded:
         pdf_bytes = None
 
@@ -296,11 +299,12 @@ def redact_attachment_task(att_id, target_id, instructions):
     target.file.save(target.name, pdf_file, save=False)
 
     logging.info('Trying OCR %s', target.id)
-    processor = PDFProcessor(
-        target.file.path, language=settings.LANGUAGE_CODE
-    )
+
     try:
-        pdf_bytes = processor.run_ocr(timeout=60 * 4)
+        pdf_bytes = run_ocr(
+            target.file.path, language=settings.LANGUAGE_CODE,
+            timeout=60 * 4
+        )
     except SoftTimeLimitExceeded:
         pdf_bytes = None
 

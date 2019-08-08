@@ -13,11 +13,11 @@ from django.template.defaultfilters import slugify
 
 from froide.helper.utils import render_400
 from froide.helper.storage import add_number_to_filename
-from froide.helper.document import (
-    POSTAL_CONTENT_TYPES, IMAGE_FILETYPES, PDF_FILETYPES
-)
 
 from ..models import FoiMessage, FoiAttachment
+from ..models.attachment import (
+    POSTAL_CONTENT_TYPES, IMAGE_FILETYPES, PDF_FILETYPES
+)
 from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
 from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
