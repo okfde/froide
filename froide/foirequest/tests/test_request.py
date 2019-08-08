@@ -192,7 +192,7 @@ class RequestTest(TestCase):
         post = {
             "sendmessage-message": "My custom reply",
             "sendmessage-address": user.address,
-            "sendmessage-sendaddress": '1'
+            "sendmessage-send_address": '1'
         }
         response = self.client.post(reverse('foirequest-send_message',
                 kwargs={"slug": req.slug}), post)
