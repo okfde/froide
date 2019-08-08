@@ -21,6 +21,8 @@ from froide.helper.redaction import redact_file
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
 
+logger = logging.getLogger(__name__)
+
 
 @celery_app.task(name='froide.foirequest.tasks.process_mail',
                  acks_late=True, time_limit=60)
@@ -268,18 +270,18 @@ def redact_attachment_task(att_id, target_id, instructions):
     else:
         target = attachment
 
-    logging.info('Trying redaction of %s with instructions %s',
+    logger.info('Trying redaction of %s with instructions %s',
                  attachment.id, instructions
     )
 
     try:
         pdf_bytes = redact_file(attachment.file, instructions)
     except Exception:
-        logging.error("PDF redaction error", exc_info=True)
+        logger.error("PDF redaction error", exc_info=True)
         pdf_bytes = None
 
     if pdf_bytes is None:
-        logging.info('Redaction failed %s', attachment.id)
+        logger.info('Redaction failed %s', attachment.id)
         # Redaction has failed, remove empty attachment
         if attachment.redacted:
             attachment.redacted = None
@@ -293,12 +295,12 @@ def redact_attachment_task(att_id, target_id, instructions):
             target.delete()
         return
 
-    logging.info('Redaction successful %s', attachment.id)
+    logger.info('Redaction successful %s', attachment.id)
     pdf_file = ContentFile(pdf_bytes)
     target.size = pdf_file.size
     target.file.save(target.name, pdf_file, save=False)
 
-    logging.info('Trying OCR %s', target.id)
+    logger.info('Trying OCR %s', target.id)
 
     try:
         pdf_bytes = run_ocr(
@@ -309,12 +311,12 @@ def redact_attachment_task(att_id, target_id, instructions):
         pdf_bytes = None
 
     if pdf_bytes is not None:
-        logging.info('OCR successful %s', target.id)
+        logger.info('OCR successful %s', target.id)
         pdf_file = ContentFile(pdf_bytes)
         target.size = pdf_file.size
         target.file.save(target.name, pdf_file, save=False)
     else:
-        logging.info('OCR failed %s', target.id)
+        logger.info('OCR failed %s', target.id)
 
     target.can_approve = True
     target.pending = False
