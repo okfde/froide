@@ -64,7 +64,7 @@ class ListRequestView(BaseListRequestView):
         if id_match is not None:
             try:
                 req = FoiRequest.objects.get(pk=id_match.group(1))
-                return redirect(req)
+                return redirect(req.get_absolute_short_url())
             except FoiRequest.DoesNotExist:
                 pass
         return super().get(request, *args, **kwargs)
