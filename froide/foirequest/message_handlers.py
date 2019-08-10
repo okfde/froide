@@ -103,8 +103,11 @@ class EmailMessageHandler(MessageHandler):
                 request.id
             )
         )
-        get_notified = (message.sender_user.is_superuser and
-                        not request.public)
+        get_notified = (
+            message.sender_user and
+            message.sender_user.is_superuser and
+            not request.public
+        )
         if settings.FROIDE_CONFIG['read_receipt'] and get_notified:
             extra_kwargs['read_receipt'] = True
         if settings.FROIDE_CONFIG['delivery_receipt'] and get_notified:
