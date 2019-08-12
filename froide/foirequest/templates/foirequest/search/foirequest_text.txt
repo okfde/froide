@@ -2,7 +2,7 @@
 
 {{ object.description }}
 
-{{ object.resolution }} {{ object.refusal_reason }}
+{{ object.get_resolution_display }} {{ object.refusal_reason }}
 
 {% for tag in object.tags.all %}
 	{{ tag.name }}
