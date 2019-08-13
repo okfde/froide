@@ -363,8 +363,8 @@ def upload_attachments(request, foirequest, message_id):
                 'cannot be published.'
             ),
             'isResult': _('Result?'),
-            'makeResultExplanation': _('Mark this document as a result of your request'),
-            'makeResultsExplanation': _('Mark the selected documents as a result of your request'),
+            'makeResultExplanation': _('Is this document a result of your request and not only correspondence?'),
+            'makeResultsExplanation': _('Are these documents a result of your request and not only correspondence?'),
             'uppy': {
                 'addMore': _('Add more'),
                 'addMoreFiles': _('Add more files'),
