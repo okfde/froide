@@ -258,10 +258,15 @@ def redact_attachment(request, foirequest, attachment_id):
                 filetype='application/pdf',
                 approved=False,
                 can_approve=False,
+                document=attachment.document
             )
+            if att.document:
+                att.document.original = att
+                att.document.save()
 
         if not attachment.is_redacted:
             attachment.redacted = att
+            attachment.document = None
             attachment.can_approve = False
             attachment.approved = False
             attachment.save()
