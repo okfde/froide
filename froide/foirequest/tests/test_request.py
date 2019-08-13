@@ -70,7 +70,6 @@ class RequestTest(TestCase):
         message = req.foimessage_set.all()[0]
         self.assertIn(post['body'], message.plaintext)
         self.assertIn('\n%s\n' % user.get_full_name(), message.plaintext)
-        self.assertIn('\n%s\n' % user.organization, message.plaintext)
         self.client.logout()
         response = self.client.post(reverse('foirequest-make_public',
                 kwargs={"slug": req.slug}), {})
