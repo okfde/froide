@@ -194,7 +194,7 @@ export default {
       return !this.canApprove || !this.canReview
     },
     canMakeResult () {
-      return !this.hasDocument && this.attachment && this.attachment.is_pdf && !(
+      return !this.hasDocument && this.attachment && this.attachment.approved && this.attachment.is_pdf && !(
         !!this.attachment.redacted || !!this.attachment.converted || this.creatingDocument
       )
     },
