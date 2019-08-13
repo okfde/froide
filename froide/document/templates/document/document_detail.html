@@ -1,10 +1,10 @@
-{% extends "document/base.html" %}
+{% extends "filingcabinet/document_detail.html" %}
 
 {% load i18n %}
 {% load static %}
 {% load markup %}
 
-{% block body %}
+{% block document_top %}
 <div class="container mt-3 mb-5">
     <h2>{{ object.title }}</h2>
     {% if object.description %}
@@ -20,19 +20,4 @@
     </p>
     {% endif %}
 </div>
-
-<div class="container-sm-full">
-  <iframe src="{% static 'filingcabinet/viewer/web/viewer.html' %}?file={{ object.get_file_url | urlencode }}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
-</div>
-
-<div class="container mb-5">
-  <div class="text-right">
-      <small>
-          {# expose direct links through redirects in case they get copied #}
-          <a href="{{ object.get_file_url }}">
-              {% trans "Download original" %}
-          </a>
-      </small>
-  </div>
-</div>
-{% endblock %}
+{% endblock document_top %}
