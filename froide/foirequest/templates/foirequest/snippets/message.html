@@ -274,20 +274,22 @@
 
   {% block before_events %}{% endblock %}
 
-  {% if message.events %}
-    <div class="row">
-      <div class="events-container">
-        <ol class="events">
-          {% for event in message.events %}
-            <li class="event" id="{{ event.get_html_id }}">
-              <span class="d-print-none" title="{{ event.timestamp }}">
-                {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-none d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
-            </li>
-          {% endfor %}
-        </ol>
+  {% comment %}
+    {% if message.events %}
+      <div class="row">
+        <div class="events-container">
+          <ol class="events">
+            {% for event in message.events %}
+              <li class="event" id="{{ event.get_html_id }}">
+                <span class="d-print-none" title="{{ event.timestamp }}">
+                  {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-none d-print-inline">{{ event.timestamp|date:"DATETIME_FORMAT" }}</span>: {{ event.as_html }}
+              </li>
+            {% endfor %}
+          </ol>
+        </div>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
+  {% endcomment %}
 
   {% block before_comments %}{% endblock %}
   <div class="comments-container d-print-none">
