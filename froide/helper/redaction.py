@@ -20,7 +20,8 @@ from wand.exceptions import DelegateError, WandError
 
 from filingcabinet.pdf_utils import (
     decrypt_pdf_in_place, rewrite_pdf_in_place,
-    rewrite_hard_pdf_in_place
+    rewrite_hard_pdf_in_place,
+    get_images_from_pdf
 )
 
 
@@ -115,18 +116,29 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
 
     page_instructions = instructions.get('pages', [])
     assert num_pages == len(page_instructions)
-    for page_idx, instr in enumerate(page_instructions):
-        instr['width'] = float(instr['width'])
 
-        try:
-            if not instr['rects']:
-                page = pdf_reader.getPage(page_idx)
-            else:
-                page = get_redacted_page(pdf_file, page_idx, instr, dpi)
-        except (WandError, DelegateError, ValueError) as e:
-            raise PDFException(e, 'rewrite')
+    page_image_numbers = [
+        page_idx + 1 for page_idx, instr in enumerate(page_instructions)
+        if instr['rects']
+    ]
+    image_context = get_images_from_pdf(pdf_file.name, pages=page_image_numbers)
+    with image_context as page_images:
+        image_index = 0
+        for page_idx, instr in enumerate(page_instructions):
+            instr['width'] = float(instr['width'])
 
-        output.addPage(page)
+            try:
+                if not instr['rects']:
+                    page = pdf_reader.getPage(page_idx)
+                else:
+                    page = get_redacted_page(
+                        page_images[image_index], page_idx, instr, dpi
+                    )
+                    image_index += 1
+            except (WandError, DelegateError, ValueError) as e:
+                raise PDFException(e, 'rewrite')
+
+            output.addPage(page)
 
     output_filename = os.path.join(outpath, 'final.pdf')
     with open(output_filename, 'wb') as f:
@@ -134,10 +146,10 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     return output_filename
 
 
-def get_redacted_page(pdf_file, page_idx, instr, dpi):
+def get_redacted_page(image_filename, page_idx, instr, dpi):
     writer = io.BytesIO()
     pdf = canvas.Canvas(writer)
-    with Image(filename='{}[{}]'.format(pdf_file.name, page_idx), resolution=dpi) as image:
+    with Image(filename=image_filename, resolution=dpi) as image:
         image.background_color = Color('white')
         image.format = 'jpg'
         image.alpha_channel = 'remove'
