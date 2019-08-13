@@ -20,7 +20,8 @@ const ENTRY = {
   tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
   docupload: ['./frontend/javascript/docupload.js'],
   geomatch: ['./frontend/javascript/geomatch.js'],
-  messageredaction: ['./frontend/javascript/messageredaction.js']
+  messageredaction: ['./frontend/javascript/messageredaction.js'],
+  filingcabinet: 'filingcabinet/frontend/javascript/filingcabinet.js'
 }
 
 const EXCLUDE_CHUNKS = [
