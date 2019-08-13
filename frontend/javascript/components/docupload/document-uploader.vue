@@ -146,6 +146,7 @@ export default {
     this.uppy.use(Dashboard, {
       inline: true,
       target: '#uppy',
+      height: 240,
       showLinkToFileUploadResult: false,
       proudlyDisplayPoweredByUppy: false
     })
