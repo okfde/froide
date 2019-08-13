@@ -33,6 +33,7 @@ from .models import (
 from .tasks import convert_attachment_task, ocr_pdf_attachment
 from .widgets import AttachmentFileWidget
 from .services import ActivatePendingRequestService
+from .utils import update_foirequest_index
 
 
 SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
@@ -88,7 +89,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     actions = [
         'mark_checked', 'mark_not_foi',
         'mark_successfully_resolved', 'mark_refused',
-        'tag_all', 'mark_same_as', 'remove_from_index',
+        'tag_all', 'mark_same_as', 'update_index',
         'confirm_request', 'set_visible_to_user', 'unpublish',
         'add_to_project', 'unblock_request', 'close_requests'
     ]
@@ -104,6 +105,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     def mark_checked(self, request, queryset):
         rows_updated = queryset.update(checked=True)
+        update_foirequest_index(queryset)
         self.message_user(request,
             _("%d request(s) successfully marked as checked." % rows_updated))
     mark_checked.short_description = _("Mark selected requests as checked")
@@ -114,6 +116,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
             public=False,
             visibility=FoiRequest.VISIBLE_TO_REQUESTER
         )
+        update_foirequest_index(queryset)
         self.message_user(request,
             _("%d request(s) successfully marked as not FoI." % rows_updated))
     mark_not_foi.short_description = _("Mark selected requests as not FoI")
@@ -122,6 +125,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         rows_updated = queryset.update(
             status='resolved', resolution='successful'
         )
+        update_foirequest_index(queryset)
         self.message_user(request,
             _("%d request(s) have been marked as successfully resolved." %
                 rows_updated))
@@ -131,10 +135,18 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         rows_updated = queryset.update(
             status='resolved', resolution='refused'
         )
+        update_foirequest_index(queryset)
         self.message_user(request,
             _("%d request(s) have been marked as refused." %
                 rows_updated))
     mark_refused.short_description = _("Mark as refused")
+
+    def update_index(self, request, queryset):
+        update_foirequest_index(queryset)
+        self.message_user(request,
+            _("%d request(s) will be updated in the search index." %
+                queryset.count()))
+    update_index.short_description = _("Update search index")
 
     def mark_same_as(self, request, queryset):
         """
@@ -157,7 +169,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
                 FoiRequest.objects.filter(id=req.id).update(
                     same_as_count=count
                 )
-
+                update_foirequest_index(queryset)
                 self.message_user(request,
                     _("Successfully marked requests as identical."))
                 # Return None to display the change list page again.
@@ -179,15 +191,6 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
             context)
     mark_same_as.short_description = _("Mark selected requests as identical to...")
 
-    def remove_from_index(self, request, queryset):
-        from django_elasticsearch_dsl.registries import registry
-
-        for obj in queryset:
-            registry.delete(obj, raise_on_error=False)
-
-        self.message_user(request, _("Removed from search index"))
-    remove_from_index.short_description = _("Remove from search index")
-
     def confirm_request(self, request, queryset):
         foirequest = queryset[0]
         if foirequest.status != 'awaiting_user_confirmation':
@@ -203,12 +206,14 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     def set_visible_to_user(self, request, queryset):
         queryset.update(visibility=FoiRequest.VISIBLE_TO_REQUESTER)
+        update_foirequest_index(queryset)
         self.message_user(request,
             _("Selected requests are now only visible to requester."))
     set_visible_to_user.short_description = _("Set only visible to requester")
 
     def unpublish(self, request, queryset):
         queryset.update(public=False)
+        update_foirequest_index(queryset)
         self.message_user(request, _("Selected requests are now unpublished."))
     unpublish.short_description = _("Unpublish")
 
@@ -227,6 +232,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
     def close_requests(self, request, queryset):
         queryset.update(closed=True)
+        update_foirequest_index(queryset)
     close_requests.short_description = _("Close requests")
 
     def add_to_project(self, request, queryset):

@@ -18,6 +18,7 @@ from froide.helper.text_utils import (
 )
 from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
+from froide.helper.tasks import search_instance_save
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
@@ -417,6 +418,7 @@ def permanently_anonymize_requests(foirequests):
             ).update(
                 approved=False
             )
+    update_foirequest_index(foirequests)
 
 
 def add_ical_events(foirequest, cal):
@@ -604,3 +606,8 @@ def export_user_data(user):
                 } for p in projects
             ]).encode('utf-8')
         )
+
+
+def update_foirequest_index(queryset):
+    for foirequest_id in queryset.values_list('id', flat=True):
+        search_instance_save.delay('foirequest.foirequest', foirequest_id)
