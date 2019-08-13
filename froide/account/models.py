@@ -260,11 +260,10 @@ class Application(AbstractApplication):
     updated = models.DateTimeField(auto_now=True, null=True)
 
     def allows_grant_type(self, *grant_types):
-        # only allow GRANT_AUTHORIZATION_CODE, GRANT_IMPLICIT
+        # only allow GRANT_AUTHORIZATION_CODE
         # regardless of application setting
         return bool(set([
-            AbstractApplication.GRANT_AUTHORIZATION_CODE,
-            AbstractApplication.GRANT_IMPLICIT
+            AbstractApplication.GRANT_AUTHORIZATION_CODE
         ]) & set(grant_types))
 
     def can_auto_approve(self, scopes):
