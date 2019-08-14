@@ -251,6 +251,15 @@ def redact_attachment(request, foirequest, attachment_id):
         else:
             name = attachment.name.rsplit('.', 1)[0]
             name = re.sub(r'[^\w\.\-]', '', name)
+
+            doc = None
+            if attachment.document:
+                # Attachment is original to be redacted
+                # Move document
+                doc = attachment.document
+                attachment.document = None
+                attachment.save()
+
             att = FoiAttachment.objects.create(
                 belongs_to=attachment.belongs_to,
                 name=_('%s_redacted.pdf') % name,
@@ -258,15 +267,14 @@ def redact_attachment(request, foirequest, attachment_id):
                 filetype='application/pdf',
                 approved=False,
                 can_approve=False,
-                document=attachment.document
+                document=doc
             )
-            if att.document:
-                att.document.original = att
-                att.document.save()
+            if doc:
+                doc.original = att
+                doc.save()
 
         if not attachment.is_redacted:
             attachment.redacted = att
-            attachment.document = None
             attachment.can_approve = False
             attachment.approved = False
             attachment.save()
