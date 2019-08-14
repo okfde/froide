@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import PDFJS from 'pdfjs-dist'
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 const range = (len) => [...Array(len).keys()]
@@ -36,9 +35,14 @@ export default {
   },
   created () {
     if (this.document.filetype === 'application/pdf') {
-      PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
-      console.log(this.config.resources.pdfjsWorker, PDFJS)
-      this.loadDocument()
+      import('pdfjs-dist').then((PDFJS) => {
+        this.PDFJS = PDFJS
+        this.PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
+        console.log(this.config.resources.pdfjsWorker, this.PDFJS)
+        this.loadDocument()
+      }).catch((err) =>{
+        console.log(err)
+      })
     }
   },
   mounted () {
@@ -56,8 +60,9 @@ export default {
   },
   methods: {
     loadDocument () {
-      let loadingTask = PDFJS.getDocument({
-        url: this.document.url,
+      console.log('Loading PDF', this.document.attachment.file_url)
+      let loadingTask = this.PDFJS.getDocument({
+        url: this.document.attachment.file_url,
         isEvalSupported: false
       })
       loadingTask.onProgress = (progress) => {

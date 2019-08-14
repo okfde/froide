@@ -150,8 +150,6 @@ import range from 'lodash.range'
 
 import Vue from 'vue'
 
-import PDFJS from 'pdfjs-dist'
-
 import {bustCache, getData} from '../../lib/api.js'
 
 const PDF_TO_CSS_UNITS = 96.0 / 72.0
@@ -196,9 +194,14 @@ export default {
     }
   },
   created () {
-    PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
-    console.log(this.config.resources.pdfjsWorker, PDFJS)
-    this.loadDocument().then(() => this.loadPage(1))
+    import('pdfjs-dist').then((PDFJS) => {
+      this.PDFJS = PDFJS
+      this.PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
+      console.log(this.config.resources.pdfjsWorker, this.PDFJS)
+      this.loadDocument().then(() => this.loadPage(1))
+    }).catch((err) =>{
+      console.log(err)
+    })
   },
   computed: {
     i18n () {
@@ -286,7 +289,7 @@ export default {
   },
   methods: {
     loadDocument () {
-      let loadingTask = PDFJS.getDocument({
+      let loadingTask = this.PDFJS.getDocument({
         url: this.pdfPath,
         isEvalSupported: false,
         httpHeaders: {
@@ -374,7 +377,7 @@ export default {
             this.textLayer.removeChild(this.textLayer.firstChild)
           }
           // Rendering text layer as HTML.
-          var task = PDFJS.renderTextLayer({
+          var task = this.PDFJS.renderTextLayer({
             textContent: content,
             container: this.textLayer,
             viewport,
