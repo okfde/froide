@@ -198,6 +198,11 @@ const config = {
     ] : []),
     splitChunks: {
       cacheGroups: {
+        pdfjs: {
+          test: /[\\/]node_modules[\\/](pdfjs-dist\/build\/pdf\.js)/,
+          name: 'pdfjs',
+          chunks: 'all'
+        },
         common: {
           test: /[\\/]node_modules[\\/]/,
           chunks (chunk) {

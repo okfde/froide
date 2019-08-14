@@ -30,6 +30,7 @@
     "@babel/cli": "^7.2.0",
     "@babel/core": "^7.2.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
     "autoprefixer": "^8.5.0",
     "awesome-typescript-loader": "^5.2.1",
