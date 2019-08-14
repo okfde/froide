@@ -1527,7 +1527,7 @@ bootstrap.native@^2.0.23:
   resolved "https://registry.yarnpkg.com/bootstrap.native/-/bootstrap.native-2.0.26.tgz#c29d848de454b66ed458261acb2daf0ce78b1a65"
   integrity sha512-m1W61Mt3Y3pu6SU24sg5mZ0nHpxpBCVHVGyJGvEuWPjC/9+gpVvv0EEmbKOoLgZ6XU50QLqvNsh4SiKsjVnJTg==
 
-bootstrap@^4.2.1:
+bootstrap@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.3.1.tgz#280ca8f610504d99d7b6b4bfc4b68cec601704ac"
   integrity sha512-rXqOmH1VilAt2DyPzluTi2blhk17bO7ef+zLLPlWvG494pDxcM234pJ8wTc/6R40UWizAIIMgxjvxZg5kmsbag==
