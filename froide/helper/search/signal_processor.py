@@ -76,4 +76,6 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
 
         Given an individual model instance, delete the object from index.
         """
+        if instance.pk is None:
+            return
         transaction.on_commit(lambda: search_instance_delete.delay(instance._meta.label_lower, instance.pk))
