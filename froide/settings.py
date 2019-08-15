@@ -398,6 +398,7 @@ class Base(Configuration):
         'froide.helper.tasks.*': {"queue": "searchindex"},
         'froide.foirequest.tasks.redact_attachment_task': {"queue": "redact"},
         'froide.foirequest.tasks.ocr_pdf_task': {"queue": "ocr"},
+        'filingcabinet.tasks.*': {"queue": "document"},
         'froide.foirequest.tasks.convert_images_to_pdf_task': {"queue": "convert"},
         'froide.foirequest.tasks.convert_attachment_task': {"queue": "convert_office"},
     }
