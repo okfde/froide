@@ -24,6 +24,13 @@ class Document(AbstractDocument):
     def is_public(self):
         return self.public
 
+    def get_serializer_class(self, detail=False):
+        from .api_views import DocumentSerializer, DocumentDetailSerializer
+
+        if detail:
+            return DocumentDetailSerializer
+        return DocumentSerializer
+
 
 class DocumentCollection(AbstractDocumentCollection):
     pass
