@@ -11,7 +11,7 @@ from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
 from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 
-from .models import User, TaggedUser, UserTag
+from .models import User, TaggedUser, UserTag, AccountBlacklist
 from .services import AccountService
 from .export import get_export_url
 from .tasks import start_export_task, send_bulk_mail
@@ -200,6 +200,11 @@ class UserAdmin(DjangoUserAdmin):
     export_user_data.short_description = _('Start export of / download user data')
 
 
+class AccountBlacklistAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(TaggedUser, TaggedUserAdmin)
 admin.site.register(UserTag, UserTagAdmin)
+admin.site.register(AccountBlacklist, AccountBlacklistAdmin)
