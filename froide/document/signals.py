@@ -12,5 +12,5 @@ def document_created(instance=None, created=False, **kwargs):
     if not created:
         return
 
-    from filingcabinet.tasks import process_document
-    process_document.delay(instance.pk)
+    from filingcabinet.tasks import process_document_task
+    process_document_task.delay(instance.pk)
