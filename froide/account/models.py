@@ -322,7 +322,7 @@ class AccountBlacklist(models.Model):
         if not content:
             return False
         for line in content.splitlines():
-            match = re.search(line, value, re.I)
+            match = re.search(line, value, re.I | re.S)
             if match:
                 return True
         return False
