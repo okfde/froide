@@ -270,9 +270,7 @@ def redact_attachment_task(att_id, target_id, instructions):
     else:
         target = attachment
 
-    logger.info('Trying redaction of %s with instructions %s',
-                 attachment.id, instructions
-    )
+    logger.info('Trying redaction of %s', attachment.id)
 
     try:
         pdf_bytes = redact_file(attachment.file, instructions)
