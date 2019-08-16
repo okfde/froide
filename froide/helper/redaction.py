@@ -123,18 +123,16 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     ]
     image_context = get_images_from_pdf(pdf_file.name, pages=page_image_numbers)
     with image_context as page_images:
-        image_index = 0
+        image_filenames = dict(page_images)
         for page_idx, instr in enumerate(page_instructions):
             instr['width'] = float(instr['width'])
-
             try:
                 if not instr['rects']:
                     page = pdf_reader.getPage(page_idx)
                 else:
                     page = get_redacted_page(
-                        page_images[image_index], page_idx, instr, dpi
+                        image_filenames[page_idx + 1], page_idx, instr, dpi
                     )
-                    image_index += 1
             except (WandError, DelegateError, ValueError) as e:
                 raise PDFException(e, 'rewrite')
 
