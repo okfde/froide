@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from django.db import models
 from django.conf import settings
@@ -279,3 +280,49 @@ class Application(AbstractApplication):
         resource_scopes = set(scopes)
 
         return resource_scopes.issubset(provided_scopes)
+
+
+class AccountBlacklistManager(models.Manager):
+    def is_blacklisted(self, user):
+        if user.is_blocked:
+            return True
+
+        for entry in AccountBlacklist.objects.all():
+            match = entry.match_user(user)
+            if match:
+                return True
+        return False
+
+
+class AccountBlacklist(models.Model):
+    name = models.CharField(max_length=255, blank=True)
+    created = models.DateTimeField(default=timezone.now)
+
+    address = models.TextField(blank=True)
+    email = models.TextField(blank=True)
+
+    objects = AccountBlacklistManager()
+
+    class Meta:
+        verbose_name = _('Blacklist entry')
+        verbose_name_plural = _('Blacklist')
+
+    def __str__(self):
+        return self.name
+
+    def match_user(self, user):
+        return (
+            self.match_field(user, 'address') or
+            self.match_field(user, 'email')
+        )
+
+    def match_field(self, user, key):
+        content = getattr(self, key)
+        value = getattr(user, key)
+        if not content:
+            return False
+        for line in content.splitlines():
+            match = re.search(line, value, re.I)
+            if match:
+                return True
+        return False

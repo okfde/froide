@@ -128,6 +128,7 @@ class AddressForm(JSONMixin, forms.Form):
         address = self.cleaned_data['address']
         if address:
             user.address = address
+            AccountService.check_against_blacklist(user, save=False)
             user.save()
 
 
@@ -276,6 +277,7 @@ class UserChangeForm(forms.Form):
         self.user.address = self.cleaned_data['address']
         if HAVE_ORGANIZATION:
             self.user.organization = self.cleaned_data['organization']
+        AccountService.check_against_blacklist(self.user, save=False)
         self.user.save()
 
 
@@ -309,6 +311,7 @@ class UserEmailConfirmationForm(forms.Form):
 
     def save(self):
         self.user.email = self.cleaned_data['email']
+        AccountService.check_against_blacklist(self.user, save=False)
         self.user.save()
 
 

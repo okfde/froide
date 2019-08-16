@@ -22,6 +22,7 @@ from froide.foirequest.tests import factories
 from .services import AccountService
 from .utils import merge_accounts
 from .admin import UserAdmin
+from .models import AccountBlacklist
 
 User = get_user_model()
 Application = get_application_model()
@@ -657,6 +658,29 @@ class AccountTest(TestCase):
         subject, content = 'Test', 'Testing-Content'
         list(command.send_mail(subject, content))
         self.assertEqual(len(mail.outbox), user_count)
+
+    def test_signup_blacklisted(self):
+        froide_config = settings.FROIDE_CONFIG
+        mail.outbox = []
+        post = {
+            "first_name": "Horst",
+            "last_name": "Porst",
+            "terms": "on",
+            "user_email": "horst.porst@example.com"
+        }
+
+        AccountBlacklist.objects.create(
+            name='Test',
+            email='horst\.porst.*@example.com$'
+        )
+
+        with self.settings(FROIDE_CONFIG=froide_config):
+            response = self.client.post(reverse('account-signup'), post)
+
+        self.assertEqual(response.status_code, 302)
+
+        user = User.objects.get(email=post['user_email'])
+        self.assertTrue(user.is_blocked)
 
 
 class AdminActionTest(TestCase):

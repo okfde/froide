@@ -14,7 +14,7 @@ from froide.helper.text_utils import replace_custom, replace_word
 from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import send_mail
 
-from .models import User
+from .models import User, AccountBlacklist
 from . import account_activated
 
 
@@ -66,6 +66,8 @@ class AccountService(object):
 
         for key in ('address', 'organization', 'organization_url'):
             setattr(user, key, data.get(key, ''))
+
+        cls.check_against_blacklist(user)
 
         # ensure username is unique
         user.username = username_base
@@ -257,6 +259,16 @@ class AccountService(object):
             email,
             priority=True
         )
+
+    @classmethod
+    def check_against_blacklist(cls, user, save=True):
+        blacklisted = AccountBlacklist.objects.is_blacklisted(user)
+        if blacklisted:
+            user.is_blocked = True
+
+            if save:
+                user.save()
+        return blacklisted
 
     def apply_name_redaction(self, content, replacement=''):
         if not self.user.private:
