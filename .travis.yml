@@ -10,7 +10,7 @@ addons:
     sources:
       - google-chrome
     packages:
-      - postgresql-10-postgis-2.4
+      - postgresql-10-postgis-2.5
       - google-chrome-stable
       - chromium-chromedriver
 
