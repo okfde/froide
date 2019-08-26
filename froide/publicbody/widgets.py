@@ -45,7 +45,7 @@ class PublicBodySelect(forms.Widget):
     def get_context(self, name, value=None, attrs=None):
         context = super().get_context(name, value, attrs)
         objects = None
-        if hasattr(self, 'object'):
+        if hasattr(self, 'object') and self.object:
             objects = [self.object.as_data()]
         context['widget'].update({
             'json': json.dumps({
