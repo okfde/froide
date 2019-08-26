@@ -2,7 +2,7 @@ import debounce from 'lodash.debounce'
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
-  SET_PUBLICBODY, SET_PUBLICBODIES,
+  SET_CONFIG, SET_PUBLICBODY, SET_PUBLICBODIES,
   ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
   SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS, CACHE_PUBLICBODIES,
   CLEAR_PUBLICBODIES, SET_STEP_SELECT_PUBLICBODY
@@ -10,6 +10,9 @@ import {
 
 var PBChooserMixin = {
   created () {
+    if (this.config) {
+      this.setConfig(this.config)
+    }
     if (this.hasForm && this.field.value) {
       let pbs = this.field.objects
       if (pbs) {
@@ -169,6 +172,7 @@ var PBChooserMixin = {
       this.clearSearchResults({scope: this.scope})
     },
     ...mapMutations({
+      setConfig: SET_CONFIG,
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       setSearchResults: SET_SEARCHRESULTS,

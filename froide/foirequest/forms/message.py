@@ -161,6 +161,7 @@ class MessagePublicBodySenderForm(forms.Form):
             kwargs['prefix'] = "message-sender-%d" % message.id
         self.message = message
         super().__init__(*args, **kwargs)
+        self.fields['sender'].widget.set_initial_object(message.sender_public_body)
 
     def save(self):
         self.message.sender_public_body = self.cleaned_data['sender']
@@ -539,6 +540,7 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['publicbody'].label = self.PUBLICBODY_LABEL
         self.fields['publicbody'].initial = self.foirequest.public_body
+        self.fields['publicbody'].widget.set_initial_object(self.foirequest.public_body)
         self.order_fields(self.FIELD_ORDER)
 
     def clean(self):

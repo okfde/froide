@@ -39,17 +39,20 @@ class PublicBodySelect(forms.Widget):
         extend = False
         js = ('js/publicbody.js',)
 
-    def set_initial_search(self, search):
-        self.initial_search = search
+    def set_initial_object(self, obj):
+        self.object = obj
 
     def get_context(self, name, value=None, attrs=None):
         context = super().get_context(name, value, attrs)
+        objects = None
+        if hasattr(self, 'object'):
+            objects = [self.object.as_data()]
         context['widget'].update({
             'json': json.dumps({
                 'fields': {
                     name: {
                         'value': value,
-                        'objects': None
+                        'objects': objects
                     }
                 }
             })

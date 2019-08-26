@@ -44,9 +44,6 @@ export default {
       searching: false
     }
   },
-  created () {
-    this.setConfig(this.config)
-  },
   mounted () {
     if (this.defaultsearch && this.searchMeta === null) {
       this.triggerAutocomplete()
@@ -72,11 +69,6 @@ export default {
     publicBody () {
       return this.getPublicBodyByScope(this.scope)
     }
-  },
-  methods: {
-    ...mapMutations({
-      setConfig: SET_CONFIG,
-    })
   }
 }
 </script>
