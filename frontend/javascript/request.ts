@@ -44,14 +44,6 @@ const setStatus = () => {
       }
     }
   }
-  const redirectedStatus = <HTMLElement> document.querySelector('.status-redirected')
-  if (redirectedStatus !== null) {
-    redirectedStatus.style.display = 'none'
-    const isRedirected = document.querySelector('input[name="status"][value="request_redirected"]')
-    if (isRedirected !== null && isRedirected.getAttribute('checked')) {
-      toggleSlide(redirectedStatus, 0.5)
-    }
-  }
 }
 
 const runOnPage = () => {

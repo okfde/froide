@@ -1251,40 +1251,6 @@ class RequestTest(TestCase):
         self.assertEqual(req.days_to_resolution(),
                          (mes.timestamp - req.first_message).days)
 
-    def test_redirect(self):
-        req = FoiRequest.objects.all()[0]
-        user = User.objects.get(username='sw')
-        req.status = 'awaits_classification'
-        req.user = user
-        req.save()
-        factories.FoiMessageFactory.create(
-            status=None,
-            request=req
-        )
-        pb = factories.PublicBodyFactory.create()
-        # old_due = req.due_date
-        self.assertNotEqual(req.public_body, pb)
-        self.client.login(email='info@fragdenstaat.de', password='froide')
-        status = 'request_redirected'
-        response = self.client.post(reverse('foirequest-set_status',
-                kwargs={"slug": req.slug}),
-                {"status": status, "costs": "", 'resolution': ''})
-        self.assertEqual(response.status_code, 400)
-        response = self.client.post(reverse('foirequest-set_status',
-                kwargs={"slug": req.slug}),
-                {"status": status, "costs": "", 'redirected': '9' * 7})
-        self.assertEqual(response.status_code, 400)
-        # response = self.client.post(reverse('foirequest-set_status',
-        #         kwargs={"slug": req.slug}),
-        #         {"status": status, "costs": "", 'redirected': str(pb.pk)})
-        # self.assertEqual(response.status_code, 302)
-        # req = FoiRequest.objects.get(pk=req.pk)
-        # self.assertEqual(req.costs, 0.0)
-        # self.assertEqual(req.status, 'awaiting_response')
-        # self.assertEqual(req.resolution, '')
-        # self.assertEqual(req.public_body, pb)
-        # self.assertNotEqual(old_due, req.due_date)
-
     def test_search(self):
         pb = PublicBody.objects.all()[0]
         factories.rebuild_index()

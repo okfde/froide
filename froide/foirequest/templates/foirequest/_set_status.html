@@ -3,9 +3,6 @@
 
 {{ status_form.non_field_errors }}
 {% render_field status_form.status %}
-<div class="status-redirected status-section">
-  {% render_field status_form.redirected %}
-</div>
 {% render_field status_form.resolution %}
 <div class="status-refusal status-section">
 	{% render_field status_form.refusal_reason %}

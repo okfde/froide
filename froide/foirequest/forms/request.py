@@ -191,7 +191,6 @@ class FoiRequestStatusForm(forms.Form):
             choices=[
                 ('awaiting_response', _('This request is still ongoing.')),
                 ('resolved', _('This request is finished.')),
-                # ('request_redirected', _('This request has been redirected to a different public body.'))
             ]
     )
 
@@ -200,12 +199,6 @@ class FoiRequestStatusForm(forms.Form):
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
         help_text=_('How would you describe the current outcome of this request?'))
-    redirected = forms.IntegerField(
-        label=_("Redirected to"),
-        required=False,
-        widget=PublicBodySelect,
-        help_text=_('If your message is redirected to a different Public Body, please specify the new Public Body')
-    )
     if payment_possible:
         costs = forms.FloatField(
             label=_("Costs"),
@@ -238,16 +231,7 @@ class FoiRequestStatusForm(forms.Form):
             return costs
 
     def clean(self):
-        pk = self.cleaned_data.get('redirected', None)
         status = self.cleaned_data.get('status', None)
-        if status == "request_redirected":
-            if pk is None:
-                self.add_error('redirected', _("Provide the redirected public body!"))
-                return self.cleaned_data
-            try:
-                self._redirected_publicbody = PublicBody.objects.get(id=pk)
-            except PublicBody.DoesNotExist:
-                raise forms.ValidationError(_("Invalid value"))
         if status == 'resolved':
             if not self.cleaned_data.get('resolution', ''):
                 self.add_error('resolution', _('Please give a resolution to this request'))
@@ -269,11 +253,6 @@ class FoiRequestStatusForm(forms.Form):
         if message:
             message.status = status
             message.save()
-
-        if status == "request_redirected":
-            foirequest.due_date = foirequest.law.calculate_due_date()
-            foirequest.public_body = self._redirected_publicbody
-            status = 'awaiting_response'
 
         foirequest.status = status
         foirequest.resolution = resolution
