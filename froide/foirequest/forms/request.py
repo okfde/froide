@@ -14,6 +14,7 @@ from froide.helper.forms import TagObjectForm
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import redact_plaintext
 from froide.helper.auth import get_read_queryset
+from froide.campaign.validators import validate_not_campaign
 
 from ..models import (
     FoiRequest, RequestDraft, PublicBodySuggestion
@@ -88,6 +89,12 @@ class RequestForm(JSONMixin, forms.Form):
 
     def get_draft(self):
         return self.cleaned_data.get('draft')
+
+    def clean(self):
+        ref = self.cleaned_data['reference']
+        if not ref:
+            validate_not_campaign(self.cleaned_data)
+        return self.cleaned_data
 
 
 class MakePublicBodySuggestionForm(forms.Form):

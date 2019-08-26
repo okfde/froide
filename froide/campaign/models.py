@@ -1,3 +1,5 @@
+import re
+
 from django.db import models
 from django.template.loader import select_template
 from django.utils.translation import ugettext_lazy as _
@@ -24,6 +26,9 @@ class Campaign(models.Model):
     public = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
 
+    request_match = models.TextField(blank=True)
+    request_hint = models.TextField(blank=True)
+
     group = models.ForeignKey(
         Group, null=True, blank=True,
         on_delete=models.SET_NULL
@@ -44,3 +49,12 @@ class Campaign(models.Model):
             'campaign/%s/request_banner.html' % self.ident,
             'campaign/request_banner.html'
         ])
+
+    def match_text(self, text):
+        regex_list = self.request_match
+        if not regex_list:
+            return False
+        return all(
+            re.search(line, text, re.I | re.S)
+            for line in regex_list.splitlines()
+        )
