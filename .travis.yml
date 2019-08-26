@@ -44,8 +44,7 @@ install:
   - pip install -e .
 
 before_script:
-  - sudo /etc/init.d/postgresql stop
-  - sudo /etc/init.d/postgresql start 11
+  - sudo systemctl start postgresql || journalctl -xe
   - psql -U postgres -c 'create database froide WITH OWNER travis;'
   - psql -U postgres -c 'CREATE EXTENSION postgis;' -d froide
   - psql -U postgres -c 'CREATE EXTENSION postgis_topology;' -d froide
