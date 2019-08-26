@@ -19,7 +19,7 @@ env:
     - ES_VERSION=6.3.2 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
 
 python:
-  - '3.6.6'
+  - '3.6.7'
   - '3.7.1'
 
 services:
@@ -45,7 +45,7 @@ install:
 
 before_script:
   - sudo /etc/init.d/postgresql stop
-  - sudo /etc/init.d/postgresql start 10
+  - sudo /etc/init.d/postgresql start 11
   - psql -U postgres -c 'create database froide WITH OWNER travis;'
   - psql -U postgres -c 'CREATE EXTENSION postgis;' -d froide
   - psql -U postgres -c 'CREATE EXTENSION postgis_topology;' -d froide
