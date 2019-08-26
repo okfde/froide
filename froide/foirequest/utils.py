@@ -22,6 +22,7 @@ from froide.helper.tasks import search_instance_save
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
+RECIPIENT_BLACKLIST = settings.FROIDE_CONFIG.get('recipient_blacklist_regex', None)
 
 
 def throttle(qs, throttle_config, date_param='first_message'):
@@ -272,6 +273,8 @@ def get_emails_from_request(foirequest):
     for message in reversed(messages):
         for email in find_all_emails(message.plaintext):
             if email.endswith(domains):
+                continue
+            if RECIPIENT_BLACKLIST is not None and RECIPIENT_BLACKLIST.match(email):
                 continue
             email = email.lower()
             if email not in already:
