@@ -223,8 +223,9 @@ PublicBodyEmailInfo = namedtuple('PublicBodyEmailInfo', ('name', 'publicbody'))
 
 
 def get_info_for_email(foirequest, email):
-    for email, message, is_sender in get_emails_from_request(foirequest):
-        if email.lower() == email:
+    email = email.lower()
+    for req_email, message, is_sender in get_emails_from_request(foirequest):
+        if email == req_email.lower():
             if message is None:
                 if foirequest.public_body:
                     name = foirequest.public_body.name
@@ -255,7 +256,9 @@ def get_emails_from_request(foirequest):
     already = set()
 
     if foirequest.public_body and foirequest.public_body.email:
-        yield foirequest.public_body.email, None, False
+        email = foirequest.public_body.email
+        yield email, None, False
+        already.add(email.lower())
 
     messages = foirequest.response_messages()
     for message in reversed(messages):
