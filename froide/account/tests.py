@@ -671,6 +671,7 @@ class AccountTest(TestCase):
 
         AccountBlacklist.objects.create(
             name='Test',
+
             email=r'horst\.porst.*@example.com$'
         )
 
