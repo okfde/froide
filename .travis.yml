@@ -5,12 +5,13 @@ sudo: required
 dist: bionic
 
 addons:
-  postgresql: '11'
+  postgresql: '10'
   apt:
     sources:
       - google-chrome
     packages:
-      - postgresql-11-postgis-2.5
+      - postgresql-10-postgis-2.5
+      - postgresql-10-postgis-2.5-scripts
       - google-chrome-stable
       - chromium-chromedriver
 
@@ -44,7 +45,6 @@ install:
   - pip install -e .
 
 before_script:
-  - sudo systemctl start postgresql || journalctl -xe
   - psql -U postgres -c 'create database froide WITH OWNER travis;'
   - psql -U postgres -c 'CREATE EXTENSION postgis;' -d froide
   - psql -U postgres -c 'CREATE EXTENSION postgis_topology;' -d froide
