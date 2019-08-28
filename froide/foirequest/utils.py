@@ -338,6 +338,9 @@ def merge_user(sender, old_user=None, new_user=None, **kwargs):
     ]
     for model, attr, dupe in mapping:
         move_ownership(model, attr, old_user, new_user, dupe=dupe)
+    update_foirequest_index(
+        FoiRequest.objects.filter(user=new_user)
+    )
 
 
 def cancel_user(sender, user=None, **kwargs):
