@@ -671,7 +671,7 @@ class AccountTest(TestCase):
 
         AccountBlacklist.objects.create(
             name='Test',
-            email='horst\.porst.*@example.com$'
+            email='horst\\.porst.*@example.com$'
         )
 
         with self.settings(FROIDE_CONFIG=froide_config):
