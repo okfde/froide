@@ -5,9 +5,12 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 try:
-    from froide.bounce.utils import make_bounce_address
+    from froide.bounce.utils import (
+        make_bounce_address, make_unsubscribe_header
+    )
 except ImportError:
     make_bounce_address = None
+    make_unsubscribe_header = None
 
 HANDLE_BOUNCES = settings.FROIDE_CONFIG['bounce_enabled']
 
@@ -45,6 +48,7 @@ def send_mail(subject, body, user_email,
               bounce_check=True, headers=None,
               priority=True,
               queue=None, auto_bounce=True,
+              unsubscribe_reference=None,
               **kwargs):
     if not user_email:
         return
@@ -69,8 +73,11 @@ def send_mail(subject, body, user_email,
         headers = {}
     headers.update({
         'X-Auto-Response-Suppress': 'All',
-        'Auto-Submitted': 'auto-generated',
     })
+    if make_unsubscribe_header and unsubscribe_reference is not None:
+        headers['List-Unsubscribe'] = make_unsubscribe_header(
+            user_email, unsubscribe_reference
+        )
 
     if html is None:
         email_klass = EmailMessage

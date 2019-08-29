@@ -504,6 +504,8 @@ class Base(Configuration):
         bounce_enabled=False,
         bounce_max_age=60 * 60 * 24 * 14,  # 14 days
         bounce_format='bounce+{token}@example.com',
+        unsubscribe_enabled=False,
+        unsubscribe_format='unsub+{token}@example.com',
         auto_reply_subject_regex=rec('^(Auto-?Reply|Out of office)'),
         auto_reply_email_regex=rec('^auto(reply|responder)@')
     )
@@ -555,10 +557,16 @@ class Base(Configuration):
     FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(True)
 
     BOUNCE_EMAIL_HOST_IMAP = values.Value('')
-    BOUNCE_EMAIL_PORT_IMAP = values.Value(993)
+    BOUNCE_EMAIL_PORT_IMAP = values.Value(143)
     BOUNCE_EMAIL_ACCOUNT_NAME = values.Value('')
     BOUNCE_EMAIL_ACCOUNT_PASSWORD = values.Value('')
     BOUNCE_EMAIL_USE_SSL = values.Value(False)
+
+    UNSUBSCRIBE_EMAIL_HOST_IMAP = values.Value('')
+    UNSUBSCRIBE_EMAIL_PORT_IMAP = values.Value(143)
+    UNSUBSCRIBE_EMAIL_ACCOUNT_NAME = values.Value('')
+    UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD = values.Value('')
+    UNSUBSCRIBE_EMAIL_USE_SSL = values.Value(False)
 
 
 class Dev(Base):

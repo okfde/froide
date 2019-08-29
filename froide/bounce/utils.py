@@ -4,10 +4,12 @@ https://en.wikipedia.org/wiki/Variable_envelope_return_path
 
 """
 import base64
-import time
 from contextlib import closing
 import datetime
+from email.utils import parseaddr
 from io import BytesIO
+import time
+from urllib.parse import quote
 
 from django.conf import settings
 from django.core.mail import mail_managers
@@ -25,11 +27,14 @@ from froide.helper.email_utils import (
 )
 from froide.helper.email_parsing import parse_header_field
 
-from .signals import user_email_bounced, email_bounced
+from .signals import user_email_bounced, email_bounced, email_unsubscribed
 from .models import Bounce
 
 
 BOUNCE_FORMAT = settings.FROIDE_CONFIG['bounce_format']
+UNSUBSCRIBE_FORMAT = settings.FROIDE_CONFIG['unsubscribe_format']
+UNSUBSCRIBE_PREFIX = 'unsubscribe-'
+
 SIGN_SEP = ':'
 SEP_REPL = '+'
 MAX_BOUNCE_AGE = settings.FROIDE_CONFIG['bounce_max_age']
@@ -59,6 +64,10 @@ def bytes_to_int(xbytes):
 
 
 class CustomTimestampSigner(TimestampSigner):
+    '''
+    Signs in base32 so that only lower case characters are used.
+    '''
+
     def signature(self, value):
         return base32_hmac(self.salt + 'signer', value, self.key)
 
@@ -85,6 +94,26 @@ class CustomTimestampSigner(TimestampSigner):
 
 
 def make_bounce_address(email):
+    _, email = parseaddr(email)
+    return make_signed_address(email)
+
+
+def make_unsubscribe_header(email, reference):
+    _, email = parseaddr(email)
+    unsub_email = make_unsubscribe_address(email)
+    return '<mailto:{email}?subject={subject}>'.format(
+        email=unsub_email,
+        subject=quote('{prefix}{reference}'.format(
+            prefix=UNSUBSCRIBE_PREFIX, reference=reference
+        ))
+    )
+
+
+def make_unsubscribe_address(email):
+    return make_signed_address(email, email_format=UNSUBSCRIBE_FORMAT)
+
+
+def make_signed_address(email, email_format=BOUNCE_FORMAT):
     signer = CustomTimestampSigner(sep=SIGN_SEP)
     email = email.lower()
     value = signer.sign(email).split(SIGN_SEP, 1)[1]
@@ -92,7 +121,7 @@ def make_bounce_address(email):
     # normalize email to lower case, some bounces may go to lower case
     escaped_mail = email.replace('@', '=')
     token = '{}+{}'.format(value, escaped_mail)
-    return BOUNCE_FORMAT.format(token=token)
+    return email_format.format(token=token)
 
 
 def get_signing_methods(email, signature):
@@ -109,9 +138,22 @@ def get_signing_methods(email, signature):
 
 
 def get_recipient_address_from_bounce(bounce_email):
-    head, tail = BOUNCE_FORMAT.split('{token}')
+    return get_original_email_from_signed(bounce_email)
+
+
+def get_recipient_address_from_unsubscribe(unsub_email):
+    return get_original_email_from_signed(
+        unsub_email,
+        email_format=UNSUBSCRIBE_FORMAT,
+        max_age=None
+    )
+
+
+def get_original_email_from_signed(
+            signed_email, email_format=BOUNCE_FORMAT, max_age=MAX_BOUNCE_AGE):
+    head, tail = email_format.split('{token}')
     # Cut off head and tail of bounce formatting
-    token = bounce_email[len(head):-len(tail)]
+    token = signed_email[len(head):-len(tail)]
     parts = token.split(SEP_REPL)
     signature = SIGN_SEP.join(parts[:2])
 
@@ -122,7 +164,7 @@ def get_recipient_address_from_bounce(bounce_email):
     for klass, original in get_signing_methods(email, signature):
         signer = klass(sep=SIGN_SEP)
         try:
-            signer.unsign(original, max_age=MAX_BOUNCE_AGE)
+            signer.unsign(original, max_age=max_age)
             return email, True
         except SignatureExpired:
             return email, None
@@ -139,6 +181,37 @@ def check_bounce_mails():
             settings.BOUNCE_EMAIL_ACCOUNT_PASSWORD,
             ssl=settings.BOUNCE_EMAIL_USE_SSL):
         process_bounce_mail(rfc_data)
+
+
+def check_unsubscribe_mails():
+    for rfc_data in get_unread_mails(
+            settings.UNSUBSCRIBE_EMAIL_HOST_IMAP,
+            settings.UNSUBSCRIBE_EMAIL_PORT_IMAP,
+            settings.UNSUBSCRIBE_EMAIL_ACCOUNT_NAME,
+            settings.UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD,
+            ssl=settings.UNSUBSCRIBE_EMAIL_USE_SSL):
+        process_unsubscribe_mail(rfc_data)
+
+
+def process_unsubscribe_mail(mail_bytes):
+    parser = EmailParser()
+    with closing(BytesIO(mail_bytes)) as stream:
+        email = parser.parse(stream)
+    recipient_list = list(set([
+        get_recipient_address_from_unsubscribe(addr) for name, addr in email.to
+    ]))
+    if len(recipient_list) != 1:
+        return
+    recipient, status = recipient_list[0]
+    if not status:
+        return
+    subject = email.subject
+    if not subject.startswith(UNSUBSCRIBE_PREFIX):
+        return
+    _, reference = subject.split(UNSUBSCRIBE_PREFIX, 1)
+    email_unsubscribed.send(
+        sender=None, email=recipient, reference=reference
+    )
 
 
 def process_bounce_mail(mail_bytes):
