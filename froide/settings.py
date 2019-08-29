@@ -46,6 +46,7 @@ class Base(Configuration):
         'treebeard',
         'django_filters',
         'leaflet',
+        'django_celery_beat',
 
         # Semi-external
         'filingcabinet',
