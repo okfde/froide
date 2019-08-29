@@ -20,7 +20,8 @@ import {getData} from '../../lib/api.js'
 
 import MessageRedactionWord from './messageredaction-word.vue'
 
-const SPLITTER = /[^\w\u00C0-\u00FF\-@/\.\:]/g
+// const SPLITTER = /[^\w\u00C0-\u00FF\-@/\.\:]/g
+const SPLITTER = /[\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E]/g
 
 function getChunks(redactedParts) {
   let counter = 0
