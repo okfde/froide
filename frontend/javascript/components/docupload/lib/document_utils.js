@@ -30,13 +30,14 @@ const updateDocument = (doc, config, csrf, payload) => {
 const DocumentMixin = {
   methods: {
     updateDocument (payload) {
+      this.$emit('docupdated', payload)
       if (payload.deleting) {
-        deleteAttachment(this.document, this.config, this.$root.csrfToken).then((data) => {
+        return deleteAttachment(this.document, this.config, this.$root.csrfToken).then((data) => {
           this.$emit('docupdated', null)
         })
       }
       if (payload.approving) {
-        approveAttachment(this.document, this.config, this.$root.csrfToken).then((data) => {
+        return approveAttachment(this.document, this.config, this.$root.csrfToken).then((data) => {
           this.$emit('docupdated', {
             approving: false,
             new: true,
@@ -45,7 +46,7 @@ const DocumentMixin = {
         })
       }
       if (payload.creatingDocument) {
-        createDocument(this.document, this.config, this.$root.csrfToken).then((data) => {
+        return createDocument(this.document, this.config, this.$root.csrfToken).then((data) => {
           this.$emit('docupdated', {
             document: data,
             new: true,
@@ -54,7 +55,7 @@ const DocumentMixin = {
         })
       }
       if (payload.updatingDocument) {
-        updateDocument(this.document, this.config, this.$root.csrfToken, payload.updatingDocument).then((data) => {
+        return updateDocument(this.document, this.config, this.$root.csrfToken, payload.updatingDocument).then((data) => {
           this.$emit('docupdated', {
             document: data,
             new: true,
@@ -62,7 +63,6 @@ const DocumentMixin = {
           })
         })
       }
-      this.$emit('docupdated', payload)
     }
   }
 }
