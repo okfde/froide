@@ -89,6 +89,8 @@
   </div>
 </div>
 
+{% block foirequest_below_header %}{% endblock %}
+
 {% if not object.public and object|can_read_foirequest_anonymous:request %}
   <div class="alert alert-warning">
     <h4>{% trans "This request is not public!" %}</h4>
@@ -121,6 +123,7 @@
   </div>
 {% endif %}
 
+{% block foirequest_above_menu %}{% endblock %}
 
 {% if object|can_write_foirequest:request %}
   <div class="row">
