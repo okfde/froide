@@ -152,7 +152,9 @@ def add_message_to_doc(doc, message):
 
     doc.append(NoEscape('\\noindent\\makebox[\\linewidth]{\\rule{\\textwidth}{1pt}}'))
     doc.append(LineBreak())
+    doc.append(NoEscape('\\shorthandoff{"}'))
     append_text(doc, message.plaintext)
+    doc.append(NoEscape('\\shorthandon{"}'))
 
 
 def append_text(doc, text):
@@ -200,16 +202,6 @@ class LetterPDFGenerator(PDFGenerator):
         doc.packages.append(Package('hyperref', 'hidelinks'))
 
         doc.append(NoEscape("\\lefthyphenmin=5"))
-        doc.append(NoEscape('''
-            \\newif\\ifquoteopen
-                \\catcode`\\"=\\active
-                \\DeclareRobustCommand*{"}{%
-                \\ifquoteopen
-                    \\quoteopenfalse \\grqq%
-                \\else
-                    \\quoteopentrue \\glqq%
-                \\fi
-        }'''))
 
         doc.append(NoEscape(
             '\\setkomavar{fromname}{%s}' % message.real_sender))
