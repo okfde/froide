@@ -93,6 +93,7 @@ class FoiRequestPDFGenerator(PDFGenerator):
         doc.packages.append(Package('sectsty'))
         doc.preamble.append(NoEscape("\\usepackage{helvet}"))
         doc.preamble.append(NoEscape("\\sectionfont{\\fontsize{12}{15}\\selectfont}"))
+        doc.packages.append(Package('babel', 'ngerman'))
 
         # Adjust description list
         doc.packages.append(Package('enumitem'))
