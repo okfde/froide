@@ -34,6 +34,8 @@ def search_instance_pre_delete(model_name, pk):
 
 @celery_app.task
 def search_instance_delete(model_name, pk):
+    if pk is None:
+        return
     model = apps.get_model(model_name)
     instance = model()
     instance.pk = pk
