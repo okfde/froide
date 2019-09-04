@@ -345,6 +345,9 @@ class Base(Configuration):
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = False
 
+    CSRF_COOKIE_SAMESITE = None
+    SESSION_COOKIE_SAMESITE = None
+
     # ######## FilingCabinet Document ####
 
     # FILINGCABINET_DOCUMENT_MODEL = 'document.Document'
