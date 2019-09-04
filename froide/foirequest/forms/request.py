@@ -31,12 +31,14 @@ class RequestForm(JSONMixin, forms.Form):
             widget=forms.TextInput(
                 attrs={'placeholder': _("Subject"),
                 "class": "form-control"}))
-    body = forms.CharField(label=_("Body"),
-            widget=forms.Textarea(
-                attrs={
-                    'placeholder': _("Specify your request here..."),
-                    "class": "form-control"
-                }))
+    body = forms.CharField(
+        label=_("Body"),
+        max_length=5000,
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': _("Specify your request here..."),
+                "class": "form-control"
+            }))
     full_text = forms.BooleanField(required=False, initial=False,
             label=_("Don't wrap in template"),
             widget=forms.CheckboxInput(attrs={'tabindex': '-1'}))
