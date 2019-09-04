@@ -78,7 +78,7 @@ class RequestDraft(models.Model):
             'full_text': self.full_text,
         }
         if self.reference:
-            context['ref'] = self.reference
+            context['reference'] = self.reference
         if self.flags:
             context.update(self.flags)
         return context

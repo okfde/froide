@@ -124,10 +124,15 @@ class RequestDraftTest(TestCase):
         ok = self.client.login(email='info@fragdenstaat.de', password='froide')
         self.assertTrue(ok)
         user = User.objects.get(email='info@fragdenstaat.de')
-        draft = factories.RequestDraftFactory(user=user)
+        draft = factories.RequestDraftFactory(
+            user=user,
+            reference='foo:bar'
+        )
         draft.publicbodies.add(self.pb)
         response = self.client.get(draft.get_absolute_url())
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'foo:bar')
+        self.assertContains(response, draft.subject)
 
     def test_draft_token(self):
         user = User.objects.get(email='info@fragdenstaat.de')
