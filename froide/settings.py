@@ -357,7 +357,7 @@ class Base(Configuration):
 
     CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-    # Attention: The following schedule should be set via admin in the database
+    # Attention: The following schedule will be synchronized to the database
     CELERY_BEAT_SCHEDULE = {
         'fetch-mail': {
             'task': 'froide.foirequest.tasks.fetch_mail',
