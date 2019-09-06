@@ -11,7 +11,7 @@ django-cache-url==3.0.0
 django-celery-beat==1.5.0
 django-configurations==2.1
 django-contrib-comments==1.9.1
-django-crossdomainmedia==0.0.1
+django-crossdomainmedia==0.0.3
 django-filter==2.1.0
 django-fsm==2.6.1
 django-elasticsearch-dsl==0.5.1
