@@ -21,6 +21,7 @@ from froide.campaign.api_views import CampaignViewSet
 from froide.upload.api_views import UploadViewSet
 from froide.document.api_views import DocumentViewSet
 from filingcabinet.api_views import PageViewSet
+from filingcabinet.urls import document_media_urlpatterns
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody,
@@ -144,6 +145,8 @@ froide_urlpatterns += [
     url(r'^problem/', include('froide.problem.urls')),
     url(r'^guide/', include('froide.guide.urls')),
 ]
+
+froide_urlpatterns += document_media_urlpatterns
 
 admin_urls = [
         url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
