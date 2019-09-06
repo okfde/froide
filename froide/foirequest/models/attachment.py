@@ -275,6 +275,7 @@ class FoiAttachment(models.Model):
             public=foirequest.public,
             title=title or self.name,
             foirequest=self.belongs_to.request,
+            pending=True,
             publicbody=self.belongs_to.sender_public_body
         )
         self.document = doc
