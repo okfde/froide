@@ -32,21 +32,23 @@
         </ul>
         {% endblock nav %}
         {% block nav_search %}
-          <form class="form-inline" role="search" method="get" action="{% block nav_search_url %}{% url 'foirequest-search' %}{% endblock %}">
-            <div class="input-group d-flex d-md-none d-lg-flex">
-              <input class="form-control" type="text" name="q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-                  <span class="sr-only">{% trans "Search" %}</span>
-                </button>
+          {% if not search_url %}
+            <form class="form-inline" role="search" method="get" action="{% block nav_search_url %}{% url 'foirequest-search' %}{% endblock %}">
+              <div class="input-group d-flex d-md-none d-lg-flex">
+                <input class="form-control" type="text" name="q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <span class="sr-only">{% trans "Search" %}</span>
+                  </button>
+                </div>
               </div>
-            </div>
-            <button class="btn btn-outline-secondary d-none d-md-block d-lg-none" type="submit">
-              <i class="fa fa-search" aria-hidden="true"></i>
-              <span class="sr-only">{% trans "Search" %}</span>
-            </button>
-          </form>
+              <button class="btn btn-outline-secondary d-none d-md-block d-lg-none" type="submit">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <span class="sr-only">{% trans "Search" %}</span>
+              </button>
+            </form>
+          {% endif %}
         {% endblock nav_search %}
         <ul class="navbar-nav col-auto ml-auto">
           {% block nav_account_login %}
