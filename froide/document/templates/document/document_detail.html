@@ -7,6 +7,9 @@
 {% block document_top %}
 <div class="container mt-3 mb-5">
     <h2>{{ object.title }}</h2>
+    {% if not object.public %}
+      <span class="badge badge-secondary">{% trans "private" %}</span>
+    {% endif %}
     {% if object.description %}
       <p>
          {{ object.description|markdown }} 
