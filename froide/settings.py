@@ -355,6 +355,8 @@ class Base(Configuration):
 
     FILINGCABINET_DOCUMENT_MODEL = 'document.Document'
     FILINGCABINET_DOCUMENTCOLLECTION_MODEL = 'document.DocumentCollection'
+    FILINGCABINET_MEDIA_PUBLIC_PREFIX = 'docs'
+    FILINGCABINET_MEDIA_PRIVATE_PREFIX = 'docs-private'
 
     # ######## Celery #############
 
