@@ -47,7 +47,7 @@
       </div>
       <div class="col-md-2 text-center">
         <button v-if="canMakeResult" class="btn btn-sm btn-outline-success"
-          :disabled="attachment.document"
+          :disabled="attachment.document || document.creatingDocument"
           @click="makeResult"
           data-toggle="tooltip" data-placement="top" :title="i18n.makeResultExplanation"
         >
