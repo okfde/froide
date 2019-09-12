@@ -259,8 +259,8 @@ export default {
       this.editDocumentMeta = false
       this.updateDocument({
         updatingDocument: {
-          title: this.title,
-          description: this.description
+          title: this.title || '',
+          description: this.description || ''
         }
       }).catch((err) => {
         this.editDocumentMeta = true
