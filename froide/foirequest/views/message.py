@@ -5,7 +5,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from django.utils.translation import ugettext as _
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -27,6 +27,7 @@ from ..forms import (
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
+from ..pdf_generator import LetterPDFGenerator
 
 from .request import show_foirequest
 from .request_actions import allow_write_foirequest
@@ -553,3 +554,20 @@ def redact_message(request, foirequest, message_id):
     if form.is_valid():
         form.save(message)
     return redirect(message.get_absolute_url())
+
+
+@allow_write_foirequest
+def download_message_pdf(request, foirequest, message_id):
+    message = get_object_or_404(
+        FoiMessage,
+        request=foirequest, pk=message_id,
+        is_response=False
+    )
+
+    pdf_generator = LetterPDFGenerator(message)
+    response = HttpResponse(
+        pdf_generator.get_pdf_bytes(),
+        content_type='application/pdf'
+    )
+    response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
+    return response

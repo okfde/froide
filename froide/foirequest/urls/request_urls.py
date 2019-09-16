@@ -14,7 +14,7 @@ from ..views import (
     download_foirequest_zip, download_foirequest_pdf,
     show_attachment, redact_attachment,
     upload_attachments, delete_attachment, create_document,
-    SetTeamView, edit_message, redact_message
+    SetTeamView, edit_message, redact_message, download_message_pdf
 )
 
 urlpatterns = [
@@ -48,6 +48,7 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set-public-body/$", set_message_sender, name="foirequest-set_message_sender"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/edit-message/$", edit_message, name="foirequest-edit_message"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/redact-message/$", redact_message, name="foirequest-redact_message"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/pdf/$", download_message_pdf, name="foirequest-download_message_pdf"),
     # Attachments
     url(pgettext_lazy('url part', r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/attachment/(?P<attachment_name>.+)$'),
         show_attachment, name='foirequest-show_attachment'),
