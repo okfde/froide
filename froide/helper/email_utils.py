@@ -101,6 +101,7 @@ def find_bounce_status(headers, body=None):
 def find_status_from_diagnostic(message):
     if not message:
         return
+    message = str(message)
     match = BOUNCE_DIAGNOSTIC_STATUS_RE.search(message)
     if match is None:
         match = BOUNCE_STATUS_RE.search(message)
