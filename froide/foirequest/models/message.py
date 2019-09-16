@@ -325,6 +325,9 @@ class FoiMessage(models.Model):
     def get_mime_attachments(self):
         return [(a.name, a.get_bytes(), a.filetype) for a in self.attachments]
 
+    def get_original_attachments(self):
+        return [a for a in self.attachments if not a.is_redacted and not a.is_converted]
+
     def get_subject(self, user=None):
         if self.subject_redacted is None:
             self.subject_redacted = redact_subject(

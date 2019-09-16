@@ -1,0 +1,102 @@
+{% load i18n %}<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+        @charset "UTF-8";
+        @page {
+          margin: 2cm;
+          @bottom-left {
+            content: '{{ SITE_NAME }} [#{{ object.id }}]';
+            font-size: 9pt;
+          }
+          @bottom-right {
+            content: "{% trans 'Page' %} " counter(page) " / " counter(pages);
+            font-size: 9pt;
+          }
+        }
+        h1 {
+          font-size: 16pt;
+        }
+        h1 a {
+          font-size: 9pt
+        }
+        section {
+          break-after: always;
+        }
+        a {
+         color: #000; 
+        }
+        dl {
+          line-height: 1.3em;
+        }
+        dl dt, dl dd {
+          display: inline;
+          margin: 0;
+        }
+        dl dt {
+          font-weight: bold;
+        }
+        dl dt::before {
+          content: '';
+          display: block;
+        }
+        dl dt::after {
+          content: ':';
+        }
+        h2 {
+          visibility: hidden;
+          position: absolute;
+        }
+    </style>
+    <title>{{ object.title }}</title>
+    <meta name="description" content="{{ object.description }}">
+    <meta name="author" content="{{ SITE_NAME }}">
+  </head>
+
+  <body>
+    <h1>
+        {{ object.title }}
+        <a href="{{ object.get_absolute_domain_short_url }}">[#{{ object.id}}]</a>
+    </h1>
+    {% for message in object.messages %}
+      <section>
+        <h2>{{ message.timestamp|date:"DATETIME_FORMAT" }} {{ message.real_sender }}</h2>
+        <dl>
+          <dt>{% trans "From" %}</dt>
+          <dd>{{ message.real_sender }}</dd>
+          <dt>{% trans "To" %}</dt>
+          <dd>{{ message.get_text_recipient }}</dd>
+          <dt>{% trans "Date" %}</dt>
+          <dd>{{ message.timestamp|date:"DATETIME_FORMAT" }}</dd>
+          <dt>{% trans "Via" %}</dt>
+          <dd>{{ message.get_kind_display }}</dd>
+          <dt>{% trans "URL" %}</dt>
+          <dd>
+            <a href="{{ message.get_accessible_link }}">
+              {{ message.get_accessible_link }}
+            </a>
+          </dd>
+          <dt>{% trans "Subject" %}</dt>
+          <dd>{{ message.subject }}</dd>
+          {% with attachments=message.get_original_attachments %}
+            {% if attachments %}
+              <dt>{% trans "Attachments" %}</dt>
+              <dd>
+                <ul>
+                  {% for att in attachments %}
+                    <li>
+                      {{ att.name }}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </dd>
+            {% endif %}
+          {% endwith %}
+        </dl>
+        <hr/>
+        {{ message.plaintext|urlize|linebreaks }}
+      </section>
+    {% endfor %}
+  </body>
+</html>
