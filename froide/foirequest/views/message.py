@@ -283,6 +283,7 @@ def upload_attachments(request, foirequest, message_id):
 
     ctx = {
         'settings': {
+            'can_make_document': request.user.is_staff,
             'document_filetypes': POSTAL_CONTENT_TYPES,
             'image_filetypes': IMAGE_FILETYPES,
             'pdf_filetypes': PDF_FILETYPES,

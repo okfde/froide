@@ -194,6 +194,9 @@ export default {
       return !this.canApprove || !this.canReview
     },
     canMakeResult () {
+      if (!this.config.settings.can_make_document) {
+        return false
+      }
       return !this.hasDocument && this.attachment && this.attachment.approved && this.attachment.is_pdf && !(
         !!this.attachment.redacted || !!this.attachment.converted || this.creatingDocument
       )
