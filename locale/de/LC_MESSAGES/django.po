@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-16 13:13+0200\n"
-"PO-Revision-Date: 2019-09-16 13:14+0200\n"
+"POT-Creation-Date: 2019-09-17 16:54+0200\n"
+"PO-Revision-Date: 2019-09-17 16:55+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1367,9 +1367,14 @@ msgstr "Kommentare"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: froide/document/apps.py:7
+#: froide/document/apps.py:8
 msgid "Document"
 msgstr "Dokument"
+
+#: froide/document/apps.py:21 froide/document/templates/document/search.html:6
+#: froide/foirequest/views/message.py:335
+msgid "Documents"
+msgstr "Dokumente"
 
 #: froide/document/templates/document/document_detail.html:11
 msgid "private"
@@ -1387,6 +1392,17 @@ msgstr ""
 "        Dieses Dokument ist Teil der Anfrage „<a href=\"%(request_url)s\">"
 "%(title)s</a>“\n"
 "        "
+
+#: froide/document/templates/document/result_item.html:2
+#: froide/document/templates/document/result_item.html:6
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html:14
+msgid "Page"
+msgstr "Seite"
+
+#: froide/document/urls.py:10
+msgctxt "url part"
+msgid "^search/$"
+msgstr "^suche/$"
 
 #: froide/foirequest/admin.py:78
 msgid "Has same request"
@@ -3935,10 +3951,6 @@ msgstr "Veröffentlichen Sie diesen Anhang"
 msgid "No request present!"
 msgstr "Mit keiner Anfrage verknüpft!"
 
-#: froide/foirequest/templates/foirequest/pdf/foirequest.html:14
-msgid "Page"
-msgstr "Seite"
-
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:66
 #: froide/foirequest/templates/foirequest/snippets/message.html:19
 #: froide/foirequest/views/make_request.py:191
@@ -3946,7 +3958,6 @@ msgid "From"
 msgstr "Von"
 
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:72
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:93
 msgid "Via"
 msgstr "Via"
 
@@ -3956,15 +3967,15 @@ msgstr "Via"
 msgid "URL"
 msgstr "URL"
 
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:95
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:93
 msgid "My reference"
 msgstr "Mein Zeichen"
 
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:101
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:100
 msgid "Subject:"
 msgstr "Betreff:"
 
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:107
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:106
 #: froide/foirequest/templatetags/foirequest_tags.py:96
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
@@ -5862,10 +5873,6 @@ msgstr ""
 "Sie können Ihre hochgeladenen Bilder hier in ein PDF-Dokument umwandeln. Sie "
 "können die Seiten hier richtig anordnen und ggf. in mehrere Dokumente "
 "auftrennen. Das PDF können Sie im Anschluss schwärzen."
-
-#: froide/foirequest/views/message.py:335
-msgid "Documents"
-msgstr "Dokumente"
 
 #: froide/foirequest/views/message.py:336
 msgid "Other files"
