@@ -309,7 +309,11 @@ def handle_smtp_error(exc):
         except ValidationError:
             continue
         code, message = info
-        status = find_status_from_diagnostic(message.decode('utf-8'))
+        message = message.decode('utf-8')
+        status = find_status_from_diagnostic(message)
+        if status == (5, 7, 1) or 'Sender address rejected' in message:
+            # Sender address rejected, raise Error
+            raise exc
         bounce_type = classify_bounce_status(status)
         bounce_info = BounceResult(
             status=status,
