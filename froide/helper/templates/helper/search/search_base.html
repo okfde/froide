@@ -58,7 +58,7 @@
 
     <ul class="list-unstyled">
       {% for object in object_list %}
-        <li>
+        <li class="media">
           {% if object_template %}
             {% include object_template with object=object %}
           {% else %}

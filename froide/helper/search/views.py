@@ -127,7 +127,6 @@ class BaseSearchView(ListView):
         qs = sqs.to_queryset()
         if self.select_related:
             qs = qs.select_related(*self.select_related)
-            qs = qs.select_related(*self.select_related)
 
         queryset = sqs.wrap_queryset(qs)
 
