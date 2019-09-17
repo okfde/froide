@@ -1,0 +1,17 @@
+{% load i18n %}
+<img src="{{ object.image_small.url }}" class="w-25 mr-3 border overflow-hidden border-secondary" alt="{% trans 'Page' %} {{ object.number }} – {{ object.document.title }}"/>
+<div class="media-body mb-3">
+  <h5 class="mt-0 mb-1">
+    <a href="{{ object.get_absolute_url }}">
+      {% trans "Page" %} {{ object.number }} – {{ object.document.title }}
+    </a>
+  </h5>
+  {% if object.document.description %}
+    <small>{{ object.document.description|truncatewords:20 }}</small>
+  {% endif %}
+  {% if object.es_highlight %}
+  <div class="search-highlight">
+    {{ object.es_highlight }}
+  </div>
+  {% endif %}
+</div>

@@ -1,11 +1,11 @@
-# from django.conf.urls import url
-
-# from .views import DocumentView
+from django.conf.urls import url
+from django.utils.translation import pgettext_lazy
 
 from filingcabinet.urls import urlpatterns as fc_urlpatterns
 
+from .views import DocumentSearch
+
+
 urlpatterns = [
-    # url(r'^$', MyRequestsView.as_view(), name='document-index'),
-    # url(r"^(?P<pk>\d+)\-(?P<slug>[-\w]+)/$", DocumentView.as_view(), name="document-detail"),
-    # url(r"^(?P<pk>\d+)/$", DocumentView.as_view(), name="document-detail_short"),
+    url(pgettext_lazy('url part', r"^search/$"), DocumentSearch.as_view(), name='document-search'),
 ] + fc_urlpatterns
