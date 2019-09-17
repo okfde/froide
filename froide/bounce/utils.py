@@ -314,13 +314,16 @@ def handle_smtp_error(exc):
         if status == (5, 7, 1) or 'Sender address rejected' in message:
             # Sender address rejected, raise Error
             raise exc
-        bounce_type = classify_bounce_status(status)
-        bounce_info = BounceResult(
-            status=status,
-            bounce_type=bounce_type,
-            is_bounce=True,
-            diagnostic_code=code,
-            timestamp=timezone.now()
-        )
-        Bounce.objects.update_bounce(recipient, bounce_info)
+        if status == (5, 1, 1) or 'Recipient address rejected' in message:
+            bounce_type = classify_bounce_status(status)
+            bounce_info = BounceResult(
+                status=status,
+                bounce_type=bounce_type,
+                is_bounce=True,
+                diagnostic_code=code,
+                timestamp=timezone.now()
+            )
+            Bounce.objects.update_bounce(recipient, bounce_info)
+            continue
+        raise exc
     return True
