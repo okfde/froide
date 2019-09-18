@@ -5,8 +5,8 @@
 {% if message.can_edit %}
   <div class="btn-group btn-group-sm ml-1">
     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#message-edit-{{ message.pk }}">
-      <span class="sr-only">{% trans "Edit message" %}</span>
       <i class="fa fa-edit"></i>
+      {% trans "Edit" %}
     </button>
   </div>
 
