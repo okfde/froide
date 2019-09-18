@@ -6,3 +6,26 @@
   {% trans "Documents" %}
 {% endblock %}
 
+
+{% block search_form_filters %}
+  <div class="row align-items-start">
+    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+      <div class="col-md-4">
+        {{ form.jurisdiction }}
+      </div>
+    {% else %}
+      {{ form.jurisdiction }}
+    {% endif %}
+
+    {% if "campaign" in show_filters %}
+      <div class="col-md-4">
+        {{ form.campaign }}
+      </div>
+    {% else %}
+      {{ form.campaign }}
+    {% endif %}
+
+    {{ form.publicbody }}
+    {{ form.tag }}
+  </div>
+{% endblock %}
