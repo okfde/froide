@@ -64,8 +64,9 @@ def resolve_facet(data, getter=None, label_getter=None,
                 str(o.pk): o for o in model._default_manager.filter(pk__in=pks)
             }
             for item in info['buckets']:
-                if item['key'] in objs:
-                    item['object'] = objs[item['key']]
+                item_key = str(item['key'])
+                if item_key in objs:
+                    item['object'] = objs[item_key]
                 else:
                     item['object'] = FakeObject()
         for item in info['buckets']:
