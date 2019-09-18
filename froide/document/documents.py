@@ -54,6 +54,8 @@ class PageDocument(DocType):
 
     def prepare_title(self, obj):
         if obj.number == 1:
+            if obj.document.title.endswith('.pdf'):
+                return ''
             return obj.document.title
         return ''
 
