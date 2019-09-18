@@ -107,6 +107,7 @@ class BaseSearchView(ListView):
                 self.filter_data,
                 getter=config.get('getter'),
                 model=config.get('model'),
+                query_param=config.get('query_param', key),
                 label_getter=config.get('label_getter'),
                 make_url=self.make_filter_url
             ) for key, config in self.facet_config.items()

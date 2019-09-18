@@ -49,7 +49,7 @@ class FakeObject():
 
 
 def resolve_facet(data, getter=None, label_getter=None,
-                  model=None, make_url=None):
+                query_param=None, model=None, make_url=None):
     if getter is None:
         getter = key_getter
 
@@ -57,10 +57,11 @@ def resolve_facet(data, getter=None, label_getter=None,
         label_getter = key_getter
 
     def resolve(key, info):
+        query_key = query_param or key
         if model is not None:
             pks = [item['key'] for item in info['buckets']]
             objs = {
-                o.pk: o for o in model._default_manager.filter(pk__in=pks)
+                str(o.pk): o for o in model._default_manager.filter(pk__in=pks)
             }
             for item in info['buckets']:
                 if item['key'] in objs:
@@ -68,12 +69,12 @@ def resolve_facet(data, getter=None, label_getter=None,
                 else:
                     item['object'] = FakeObject()
         for item in info['buckets']:
-            item['active'] = getter(item) == data.get(key)
+            item['active'] = getter(item) == data.get(query_key)
             item['label'] = label_getter(item)
             d = data.copy()
-            d[key] = getter(item)
+            d[query_key] = getter(item)
             item['url'] = make_url(d)
-            d.pop(key)
+            d.pop(query_key)
             item['clear_url'] = make_url(d)
         return info
     return resolve
