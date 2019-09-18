@@ -222,7 +222,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             return qs.set_query(Q(
                 "simple_query_string",
                 query=value,
-                # analyzer='standard',
                 fields=self.query_fields,
                 default_operator='and',
                 lenient=True
