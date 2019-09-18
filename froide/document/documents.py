@@ -1,20 +1,29 @@
 from django_elasticsearch_dsl import DocType, fields
 
-from froide.helper.search import get_index, get_text_analyzer
+from froide.helper.search import (
+    get_index, get_text_analyzer, get_search_analyzer
+)
 
 from filingcabinet.models import Page
 
 
 index = get_index('documentpage')
 analyzer = get_text_analyzer()
+search_analyzer = get_search_analyzer()
 
 
 @index.doc_type
 class PageDocument(DocType):
     document = fields.IntegerField(attr='document_id')
 
-    title = fields.TextField()
-    description = fields.TextField()
+    title = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+    )
+    description = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+    )
 
     tags = fields.ListField(fields.KeywordField())
     created_at = fields.DateField()
@@ -30,7 +39,11 @@ class PageDocument(DocType):
     public = fields.BooleanField()
 
     number = fields.IntegerField()
-    content = fields.TextField(analyzer=analyzer)
+    content = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+        index_options='offsets',
+    )
 
     class Meta:
         model = Page
