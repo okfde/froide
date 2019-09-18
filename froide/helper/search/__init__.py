@@ -76,5 +76,6 @@ def get_func(config_name, default_func):
     return get_it
 
 
-get_text_analyzer = get_func('search_text_analyzer', get_default_text_analyzer)
-get_ngram_analyzer = get_func('search_ngram_analyzer', get_default_ngram_analyzer)
+get_text_analyzer = get_func('text_analyzer', get_default_text_analyzer)
+get_search_analyzer = get_func('search_analyzer', get_default_text_analyzer)
+get_ngram_analyzer = get_func('ngram_analyzer', get_default_ngram_analyzer)
