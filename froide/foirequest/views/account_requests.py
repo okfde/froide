@@ -99,8 +99,9 @@ class MyBaseListRequestView(BaseListRequestView):
             'label': _('public bodies'),
             'label_getter': lambda x: x['object'].name
         },
-        'tag': {
+        'tags': {
             'label': _('tag'),
+            'query_param': 'tag',
             'getter': lambda x: x['object'].slug,
             'model': Tag,
             'label_getter': lambda x: x['object'].name
