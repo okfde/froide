@@ -9,7 +9,7 @@ from .documents import PageDocument
 
 
 class DocumentFilterset(BaseSearchFilterSet):
-    query_fields = ['title^5', 'description^3', 'content']
+    query_fields = ['title^3', 'description^2', 'content']
 
 
 class DocumentSearch(BaseSearchView):
