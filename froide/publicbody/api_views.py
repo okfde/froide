@@ -456,7 +456,8 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
         if self.action == 'search':
-            ctx['facets'] = self.sqs.get_aggregations()
+            sqs = self.get_searchqueryset(self.request)
+            ctx['facets'] = sqs.get_aggregations()
         return ctx
 
     def get_searchqueryset(self, request):
