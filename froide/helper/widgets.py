@@ -73,7 +73,7 @@ class TagAutocompleteWidget(TagWidget):
             if isinstance(value, str):
                 ctx['tags'] = parse_tags(value)
             else:
-                ctx['tags'] = [v.tag.name for v in value]
+                ctx['tags'] = [v.name for v in value]
         else:
             ctx['tags'] = []
         return ctx
