@@ -20,7 +20,7 @@ from . import (
 )
 from .exceptions import Conflict, TusParseError
 from .models import Upload, states
-from .serializers import UploadSerializer
+from .serializers import UploadSerializer, UploadCreateSerializer
 from .utils import encode_upload_metadata, checksum_matches, augment_request
 from . import constants, settings as tus_settings
 
@@ -324,3 +324,8 @@ class UploadViewSet(TusMixin,
 
     def get_queryset(self):
         return Upload.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UploadCreateSerializer
+        return UploadSerializer
