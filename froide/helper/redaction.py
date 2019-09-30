@@ -12,6 +12,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
+import PIL.Image as PILImage
 
 from wand.image import Image
 from wand.drawing import Drawing
@@ -57,6 +58,8 @@ class PDFException(Exception):
 
 def redact_file(pdf_file, instructions):
     try:
+        # Limit to around a gigabyte for a 24 bit (3 bpp) image
+        PILImage.MAX_IMAGE_PIXELS = int(1024 * 1024 * 1024 // 1 // 3)
         outpath = tempfile.mkdtemp()
         copied_filename = os.path.join(outpath, 'original.pdf')
         with open(copied_filename, 'wb') as f:
