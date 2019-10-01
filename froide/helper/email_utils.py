@@ -35,7 +35,7 @@ AUTO_REPLY_HEADERS = (
 BOUNCE_STATUS_RE = re.compile(r'(\d\.\d+\.\d+)', re.IGNORECASE)
 BOUNCE_DIAGNOSTIC_STATUS_RE = re.compile(r'smtp; (\d{3})')
 BOUNCE_TEXT = re.compile(r'''5\d{2}\ Requested\ action\ not\ taken |
-5\.\d\.\d |
+(?:^|\D)5\.\d\.\d\b |
 RESOLVER\.ADR\.RecipNotFound |
 mailbox\ unavailable |
 RCPT\ TO\ command |
