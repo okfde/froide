@@ -37,4 +37,10 @@ class Document(AbstractDocument):
 
 
 class DocumentCollection(AbstractDocumentCollection):
-    pass
+    team = models.ForeignKey(
+        'team.Team', null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    def is_public(self):
+        return self.public
