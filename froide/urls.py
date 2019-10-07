@@ -19,9 +19,11 @@ from froide.georegion.api_views import GeoRegionViewSet
 from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
 from froide.campaign.api_views import CampaignViewSet
 from froide.upload.api_views import UploadViewSet
-from froide.document.api_views import DocumentViewSet
-from filingcabinet.api_views import PageViewSet
-from filingcabinet.urls import document_media_urlpatterns
+from froide.document.api_views import (
+    PageViewSet, DocumentViewSet, DocumentCollectionViewSet
+)
+from froide.document.urls import document_media_urlpatterns
+from filingcabinet.api_views import PageAnnotationViewSet
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody,
@@ -57,7 +59,11 @@ api_router.register(r'following', FoiRequestFollowerViewSet, basename='following
 api_router.register(r'campaign', CampaignViewSet, basename='campaign')
 api_router.register(r'upload', UploadViewSet, basename='upload')
 api_router.register(r'document', DocumentViewSet, basename='document')
+api_router.register(r'documentcollection',
+    DocumentCollectionViewSet, basename='documentcollection')
 api_router.register(r'page', PageViewSet, basename='page')
+api_router.register(r'pageannotation', PageAnnotationViewSet,
+    basename='pageannotation')
 
 
 class StaticViewSitemap(Sitemap):

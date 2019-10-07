@@ -446,6 +446,7 @@ class Base(Configuration):
             'read:request': _('Read your (private) requests'),
             'make:request': _('Make requests on your behalf'),
             'follow:request': _('Follow/Unfollow requests'),
+            'read:document': _('Read your (private) documents'),
         }
     }
     OAUTH2_PROVIDER_APPLICATION_MODEL = 'account.Application'

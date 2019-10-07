@@ -9,9 +9,9 @@
   {% if object.document.description %}
     <small>{{ object.document.description|truncatewords:20 }}</small>
   {% endif %}
-  {% if object.es_highlight %}
+  {% if object.query_highlight %}
   <div class="search-highlight">
-    {{ object.es_highlight }}
+    {{ object.query_highlight }}
   </div>
   {% endif %}
 </div>

@@ -28,6 +28,7 @@ class PageDocument(DocType):
     jurisdiction = fields.IntegerField(attr='document.publicbody.jurisdiction_id')
     foirequest = fields.IntegerField(attr='document.foirequest_id')
     campaign = fields.IntegerField(attr='document.foirequest.campaign_id')
+    collections = fields.IntegerField()
 
     user = fields.IntegerField(attr='document.user_id')
     team = fields.IntegerField(attr='document.team_id')
@@ -77,3 +78,7 @@ class PageDocument(DocType):
         if obj.document.team_id:
             return obj.document.team_id
         return None
+
+    def prepare_collections(self, obj):
+        collections = obj.document.document_documentcollection.all()
+        return list(collections.values_list('id', flat=True))

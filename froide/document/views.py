@@ -1,90 +1,24 @@
-from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import redirect, get_object_or_404, Http404
+from django.views.generic import DetailView
 
 from elasticsearch_dsl.query import Q
-from taggit.models import Tag
-import django_filters
 
-from froide.helper.search.views import BaseSearchView
-from froide.helper.search.filters import BaseSearchFilterSet
+from crossdomainmedia import CrossDomainMediaMixin
+
+from taggit.models import Tag
 
 from filingcabinet.models import Page
 
-from froide.publicbody.models import PublicBody, Jurisdiction
-from froide.campaign.models import Campaign
+from froide.helper.search.views import BaseSearchView
 
 from .documents import PageDocument
+from .filters import PageDocumentFilterset
+from .models import Document
+from .auth import DocumentCrossDomainMediaAuth
 
 
-class DocumentFilterset(BaseSearchFilterSet):
-    query_fields = ['title^3', 'description^2', 'content']
-
-    campaign = django_filters.ModelChoiceFilter(
-        queryset=Campaign.objects.get_filter_list(),
-        to_field_name='slug',
-        null_value='-',
-        empty_label=_('all/no campaigns'),
-        null_label=_('no campaign'),
-        widget=forms.Select(
-            attrs={
-                'label': _('campaign'),
-                'class': 'form-control'
-            }
-        ),
-        method='filter_campaign'
-    )
-    jurisdiction = django_filters.ModelChoiceFilter(
-        queryset=Jurisdiction.objects.get_visible(),
-        to_field_name='slug',
-        empty_label=_('all jurisdictions'),
-        widget=forms.Select(
-            attrs={
-                'label': _('jurisdiction'),
-                'class': 'form-control'
-            }
-        ),
-        method='filter_jurisdiction'
-    )
-    tag = django_filters.ModelChoiceFilter(
-        queryset=Tag.objects.all(),
-        to_field_name='slug',
-        method='filter_tag',
-        widget=forms.HiddenInput()
-    )
-    publicbody = django_filters.ModelChoiceFilter(
-        queryset=PublicBody._default_manager.all(),
-        to_field_name='slug',
-        method='filter_publicbody',
-        widget=forms.HiddenInput()
-    )
-
-    class Meta:
-        model = Page
-        fields = [
-            'q', 'jurisdiction', 'campaign',
-            'tag', 'publicbody',
-        ]
-
-    def filter_jurisdiction(self, qs, name, value):
-        return qs.filter(jurisdiction=value.id)
-
-    def filter_campaign(self, qs, name, value):
-        if value == '-':
-            return qs.filter(
-                Q('bool', must_not={
-                    'exists': {'field': 'campaign'}
-                })
-            )
-        return qs.filter(campaign=value.id)
-
-    def filter_tag(self, qs, name, value):
-        return qs.filter(tags=value.id)
-
-    def filter_publicbody(self, qs, name, value):
-        return qs.filter(publicbody=value.id)
-
-
-class DocumentSearch(BaseSearchView):
+class DocumentSearchView(BaseSearchView):
     search_name = 'document'
     template_name = 'document/search.html'
     object_template = 'document/result_item.html'
@@ -106,7 +40,7 @@ class DocumentSearch(BaseSearchView):
     }
     model = Page
     document = PageDocument
-    filterset = DocumentFilterset
+    filterset = PageDocumentFilterset
     search_url_name = 'document-search'
     select_related = ('document',)
 
@@ -116,3 +50,50 @@ class DocumentSearch(BaseSearchView):
         if self.request.user.is_authenticated:
             q |= Q('term', user=self.request.user.pk)
         return super().get_base_search().filter(q)
+
+
+class DocumentFileDetailView(CrossDomainMediaMixin, DetailView):
+    '''
+    Add the CrossDomainMediaMixin
+    and set your custom media_auth_class
+    '''
+    media_auth_class = DocumentCrossDomainMediaAuth
+
+    def get_object(self):
+        uid = self.kwargs['uuid']
+        if (
+                uid[0:2] != self.kwargs['u1'] or
+                uid[2:4] != self.kwargs['u2'] or
+                uid[4:6] != self.kwargs['u3']):
+            raise Http404
+        return get_object_or_404(
+            Document, uid=uid
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['filename'] = self.kwargs['filename']
+        return ctx
+
+    def redirect_to_media(self, mauth):
+        '''
+        Force direct links on main domain that are not
+        refreshing a token to go to the objects page
+        '''
+        # Check file authorization first
+        url = mauth.get_authorized_media_url(self.request)
+
+        # Check if download is requested
+        download = self.request.GET.get('download')
+        if download is None:
+            # otherwise redirect to document page
+            return redirect(self.object.get_absolute_url(), permanent=True)
+
+        return redirect(url)
+
+    def send_media_file(self, mauth):
+        response = super().send_media_file(mauth)
+        response['Link'] = '<{}>; rel="canonical"'.format(
+            self.object.get_absolute_domain_url()
+        )
+        return response
