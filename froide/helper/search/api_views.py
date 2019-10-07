@@ -59,7 +59,7 @@ class ESQueryMixin:
                     # at least one should clause is required to match.
                     ESQ('term', public=True),
                     ESQ('term', user=user.pk),
-                    ESQ('term', team=Team.objects.get_list_for_user(user))
+                    ESQ('terms', team=Team.objects.get_list_for_user(user))
                 ])
             else:
                 s = s.filter('term', public=True)
