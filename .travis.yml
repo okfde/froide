@@ -13,7 +13,7 @@ addons:
       - postgresql-10-postgis-2.5
       - postgresql-10-postgis-2.5-scripts
       - google-chrome-stable
-      - chromium-chromedriver
+      - chromedriver
 
 env:
   global:
