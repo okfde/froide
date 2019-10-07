@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.contrib import auth
@@ -24,21 +26,21 @@ ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
 
 class UserExtrasRegistry():
     def __init__(self):
-        self.registry = []
+        self.registry = defaultdict(list)
 
-    def register(self, form_extender):
-        self.registry.append(form_extender)
+    def register(self, key, form_extender):
+        self.registry[key].append(form_extender)
 
-    def on_init(self, form):
-        for fe in self.registry:
+    def on_init(self, key, form):
+        for fe in self.registry[key]:
             fe.on_init(form)
 
-    def on_clean(self, form):
-        for fe in self.registry:
+    def on_clean(self, key, form):
+        for fe in self.registry[key]:
             fe.on_clean(form)
 
-    def on_save(self, form, user):
-        for fe in self.registry:
+    def on_save(self, key, form, user):
+        for fe in self.registry[key]:
             fe.on_save(form, user)
 
 
@@ -151,15 +153,15 @@ class TermsForm(forms.Form):
                     url_privacy=get_content_url("privacy")
                 )
         )
-        user_extra_registry.on_init(self)
+        user_extra_registry.on_init('registration', self)
 
     def clean(self):
-        user_extra_registry.on_clean(self)
+        user_extra_registry.on_clean('registration', self)
         return self.cleaned_data
 
     def save(self, user):
         user.terms = True
-        user_extra_registry.on_save(self, user)
+        user_extra_registry.on_save('registration', self, user)
         user.save()
 
 
