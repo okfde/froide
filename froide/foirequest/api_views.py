@@ -9,11 +9,8 @@ from oauth2_provider.contrib.rest_framework import TokenHasScope
 
 from django_filters import rest_framework as filters
 
-from elasticsearch_dsl.query import Q as ESQ
-
-from froide.helper.search import SearchQuerySetWrapper
+from froide.helper.search.api_views import ESQueryMixin
 from froide.helper.text_diff import get_differences
-from froide.helper.api_utils import ElasticLimitOffsetPagination
 from froide.publicbody.api_views import (
     FoiLawSerializer, SimplePublicBodySerializer, PublicBodySerializer
 )
@@ -30,6 +27,7 @@ from .validators import clean_reference
 from .utils import check_throttle
 from .auth import can_read_foirequest_authenticated
 from .documents import FoiRequestDocument
+from .filters import FoiRequestFilterSet
 
 
 User = get_user_model()
@@ -485,6 +483,7 @@ def throttle_action(throttle_classes):
 class FoiRequestViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
                         mixins.RetrieveModelMixin,
+                        ESQueryMixin,
                         viewsets.GenericViewSet):
     serializer_action_classes = {
         'create': MakeRequestSerializer,
@@ -495,6 +494,10 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
     filterset_class = FoiRequestFilter
     permission_classes = (CreateOnlyWithScopePermission,)
     required_scopes = ['make:request']
+    search_model = FoiRequest
+    search_document = FoiRequestDocument
+    read_token_scopes = ['read:request']
+    searchfilterset_class = FoiRequestFilterSet
 
     def get_serializer_class(self):
         try:
@@ -523,17 +526,7 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
 
     @action(detail=False, methods=['get'])
     def search(self, request):
-        self.sqs = self.get_searchqueryset(request)
-
-        paginator = ElasticLimitOffsetPagination()
-        paginator.paginate_queryset(self.sqs, self.request, view=self)
-
-        self.queryset = self.optimize_query(self.sqs.to_queryset())
-
-        serializer = self.get_serializer(self.queryset, many=True)
-        data = serializer.data
-
-        return paginator.get_paginated_response(data)
+        return self.search_view(request)
 
     @action(detail=False, methods=['get'], url_path='tags/autocomplete',
                 url_name='tags-autocomplete')
@@ -544,44 +537,6 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
             tags = Tag.objects.filter(name__istartswith=query)
             tags = [t for t in tags.values_list('name', flat=True)]
         return Response(tags)
-
-    def get_searchqueryset(self, request):
-        query = request.GET.get('q', '')
-
-        user = self.request.user
-        token = self.request.auth
-
-        s = FoiRequestDocument.search()
-        if user.is_authenticated:
-            # Either not OAuth or OAuth and valid token
-            if not token and user.is_superuser:
-                # No filters for super users
-                pass
-            elif not token or token.is_valid(['read:request']):
-                s = s.filter('bool', should=[
-                    # Bool query in filter context
-                    # at least one should clause is required to match.
-                    ESQ('term', public=True),
-                    ESQ('term', user=user.pk),
-                ])
-            else:
-                s = s.filter('term', public=True)
-        else:
-            s = s.filter('term', public=True)
-
-        sqs = SearchQuerySetWrapper(
-            s,
-            FoiRequest
-        )
-
-        if len(query) > 2:
-            sqs = sqs.set_query(ESQ(
-                "multi_match",
-                query=query,
-                fields=['content', 'title', 'description']
-            ))
-
-        return sqs
 
     @throttle_action((MakeRequestThrottle,))
     def create(self, request, *args, **kwargs):

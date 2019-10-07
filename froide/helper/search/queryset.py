@@ -133,7 +133,7 @@ class ESQuerySetWrapper(object):
             hit = self._es_map[obj.pk]
             # mark_safe should work because highlight_options
             # has been set with encoder="html"
-            obj.es_highlight = mark_safe(' '.join(self._get_highlight(hit)))
+            obj.query_highlight = mark_safe(' '.join(self._get_highlight(hit)))
             yield obj
 
     def _get_highlight(self, hit):

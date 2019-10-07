@@ -215,7 +215,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.filters['status'].field.widget.get_url = self.view.make_filter_url
+        if self.view is not None:
+            self.filters['status'].field.widget.get_url = self.view.make_filter_url
 
     def auto_query(self, qs, name, value):
         if value:

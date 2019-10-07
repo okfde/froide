@@ -57,6 +57,11 @@ class TeamManager(models.Manager):
             **kwargs
         )
 
+    def get_list_for_user(self, user, *args, **kwargs):
+        return list(
+            self.get_for_user(user).values_list('id', flat=True)
+        )
+
     def get_owner_teams(self, user):
         return self.get_for_user(
             user,

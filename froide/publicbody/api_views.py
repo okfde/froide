@@ -12,7 +12,6 @@ from django_filters import rest_framework as filters
 
 from froide.helper.api_utils import (
     SearchFacetListSerializer, OpenRefineReconciliationMixin,
-    ElasticLimitOffsetPagination
 )
 from froide.helper.search import SearchQuerySetWrapper
 
@@ -441,17 +440,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
 
     @action(detail=False, methods=['get'])
     def search(self, request):
-        self.sqs = self.get_searchqueryset(request)
-
-        paginator = ElasticLimitOffsetPagination()
-        paginator.paginate_queryset(self.sqs, self.request, view=self)
-
-        self.queryset = self.optimize_query(self.sqs.to_queryset())
-
-        serializer = self.get_serializer(self.queryset, many=True)
-        data = serializer.data
-
-        return paginator.get_paginated_response(data)
+        return self.search_view(request)
 
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()

@@ -19,7 +19,7 @@ class BaseSearchFilterSet(django_filters.FilterSet):
     )
 
     def __init__(self, *args, **kwargs):
-        self.view = kwargs.pop('view')
+        self.view = kwargs.pop('view', None)
         super().__init__(*args, **kwargs)
 
     def filter_queryset(self, queryset):
