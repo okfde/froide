@@ -14,7 +14,7 @@ from froide.helper.api_utils import (
     SearchFacetListSerializer, OpenRefineReconciliationMixin,
 )
 from froide.helper.search import SearchQuerySetWrapper
-
+from froide.helper.search.api_views import ESQueryMixin
 from froide.georegion.models import GeoRegion
 
 from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
@@ -370,6 +370,7 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
 
 
 class PublicBodyViewSet(OpenRefineReconciliationMixin,
+                        ESQueryMixin,
                         viewsets.ReadOnlyModelViewSet):
     serializer_action_classes = {
         'list': PublicBodyListSerializer,
@@ -445,12 +446,11 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
         if self.action == 'search':
-            sqs = self.get_searchqueryset(self.request)
-            ctx['facets'] = sqs.get_aggregations()
+            ctx['facets'] = self.sqs.get_aggregations()
         return ctx
 
-    def get_searchqueryset(self, request):
-        query = request.GET.get('q', '')
+    def get_searchqueryset(self):
+        query = self.request.GET.get('q', '')
 
         sqs = SearchQuerySetWrapper(
             PublicBodyDocument.search(),
@@ -471,7 +471,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
             'regions': GeoRegion,
         }
         for key, model in model_filters.items():
-            pks = request.GET.getlist(key)
+            pks = self.request.GET.getlist(key)
             if pks:
                 try:
                     obj = model.objects.filter(pk__in=pks)
@@ -484,7 +484,7 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
             'regions_kind': 'regions_kind'
         }
         for key, search_key in other_filters.items():
-            values = request.GET.getlist(key)
+            values = self.request.GET.getlist(key)
             if values:
                 sqs = sqs.filter(**{search_key: values})
 

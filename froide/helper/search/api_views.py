@@ -21,23 +21,23 @@ class ESQueryMixin:
     searchfilterset_class = None
 
     def search_view(self, request):
-        sqs = self.get_searchqueryset()
+        self.sqs = self.get_searchqueryset()
 
         if self.searchfilterset_class is not None:
-            sqs = self.searchfilter_backend.filter_queryset(
-                self.request, sqs, self
+            self.sqs = self.searchfilter_backend.filter_queryset(
+                self.request, self.sqs, self
             )
 
         has_query = request.GET.get('q')
         if has_query:
-            sqs.sqs = sqs.sqs.highlight('content')
-            sqs.sqs = sqs.sqs.sort('_score')
+            self.sqs.sqs = self.sqs.sqs.highlight('content')
+            self.sqs.sqs = self.sqs.sqs.sort('_score')
 
         paginator = ElasticLimitOffsetPagination()
-        paginator.paginate_queryset(sqs, self.request, view=self)
+        paginator.paginate_queryset(self.sqs, self.request, view=self)
 
-        qs = self.optimize_query(sqs.to_queryset())
-        self.queryset = sqs.wrap_queryset(qs)
+        qs = self.optimize_query(self.sqs.to_queryset())
+        self.queryset = self.sqs.wrap_queryset(qs)
 
         serializer = self.get_serializer(self.queryset, many=True)
         data = serializer.data
