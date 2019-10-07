@@ -28,10 +28,10 @@
               Your request “<a href="{{ url }}">{{ title }}</a>” has been sent.
             {% endblocktrans %}
           </p>
+          <p>
+            {% trans "We will send you an email when you receive a reply from the public body." %}
+          </p>  
         {% endif %}
-        <p>
-          {% trans "We will send you an email when you receive a reply from the public body." %}
-        </p>
       </div>
     </div>
     {% block password_form %}
