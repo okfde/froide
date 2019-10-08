@@ -125,11 +125,12 @@
 
 
 <div class="row mt-5">
-  <div class="col-md-8">
+  <div class="col-md-12">
     <h3>{% trans "Requests accessible to this team" %}</h3>
-    <table class="table table-responsive">
+    <table class="table table-responsive table-condensed">
       <thead>
         <th>{% blocktrans %}Title{% endblocktrans %}</th>
+        <th>{% blocktrans %}Status{% endblocktrans %}</th>
         <th>{% blocktrans %}Date{% endblocktrans %}</th>
       </thead>
       <tbody>
@@ -138,6 +139,11 @@
             <td>
               <a href="{{ foirequest.get_absolute_url }}">
                 {{ foirequest.title }}
+              </a>
+            </td>
+            <td>
+              <a href="{{ foirequest.get_absolute_url }}">
+                {{ foirequest.get_status_display }}
               </a>
             </td>
             <td>
@@ -151,7 +157,7 @@
 </div>
 
 <div class="row mt-5">
-  <div class="col-md-8">
+  <div class="col-md-12">
     <h3>{% trans "Team projects" %}</h3>
     <table class="table table-responsive">
       <thead>
