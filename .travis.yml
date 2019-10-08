@@ -6,13 +6,12 @@ dist: bionic
 
 addons:
   postgresql: '10'
-  addons:
-    chrome: stable
   apt:
     update: true
     packages:
       - postgresql-10-postgis-2.5
       - postgresql-10-postgis-2.5-scripts
+      - google-chrome-stable
       - chromium-chromedriver
 
 env:
