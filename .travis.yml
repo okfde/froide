@@ -12,7 +12,7 @@ addons:
     packages:
       - postgresql-10-postgis-2.5
       - postgresql-10-postgis-2.5-scripts
-      - chromium-chromedriver
+      - chromium-chromedriver 76.0.3809.126
 
 env:
   global:
