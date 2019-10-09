@@ -511,7 +511,7 @@
                   {% trans "Extend deadline" %}
                 </a>
                 <div class="collapse" id="extend-deadline-form">
-                  <form class="mt-3" method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+                  <form class="mt-3 disable-submit" method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
                     {% csrf_token %}
                     <div class="input-group input-group-sm mb-3">
                       <input class="form-control" type="number" min="0" max="15" name="time" value="1">
