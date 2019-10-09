@@ -475,7 +475,8 @@ class MessageEditMixin(forms.Form):
 
     def clean_date(self):
         date = self.cleaned_data['date']
-        today = timezone.now().astimezone(timezone.get_current_timezone()).date()
+        current_tz = timezone.get_current_timezone()
+        today = current_tz.normalize(timezone.now().astimezone(current_tz)).date()
         if date > today:
             raise forms.ValidationError(
                 _("Your reply date is in the future, that is not possible.")

@@ -20,8 +20,14 @@ def format_seconds(seconds):
 def calculate_month_range_de(date, months=1):
     """ Should calculate after German BGB Law § 130 and § 188"""
 
+    current_tz = timezone.get_current_timezone()
+
+    # make sure we are in our timezone
     if not isinstance(date, datetime):
         date = datetime(date.year, date.month, date.day, 23, 59, 59)
+        date = current_tz.localize(date, is_dst=None)
+
+    date = current_tz.normalize(date.astimezone(current_tz))
 
     tempdate = date
     if date.hour >= 22:  # After 22h next working day is receival

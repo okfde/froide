@@ -322,7 +322,9 @@ class ExtendDeadlineForm(forms.Form):
     def save(self, foirequest):
         time = self.cleaned_data['time']
         now = timezone.now()
-        foirequest.due_date = foirequest.law.calculate_due_date(foirequest.due_date, time)
+        foirequest.due_date = foirequest.law.calculate_due_date(
+            foirequest.due_date, time
+        )
         if foirequest.due_date > now and foirequest.status == 'overdue':
             foirequest.status = 'awaiting_response'
         foirequest.save()
