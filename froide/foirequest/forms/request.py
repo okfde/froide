@@ -203,7 +203,8 @@ class FoiRequestStatusForm(forms.Form):
             ]
     )
 
-    resolution = forms.ChoiceField(label=_('Resolution'),
+    resolution = forms.ChoiceField(
+        label=_('Resolution'),
         choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION_FIELD_CHOICES,
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
@@ -219,7 +220,7 @@ class FoiRequestStatusForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         foirequest = kwargs.pop('foirequest')
-        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.foirequest = foirequest
         refusal_choices = []
         if foirequest.law:
@@ -245,10 +246,6 @@ class FoiRequestStatusForm(forms.Form):
             if not self.cleaned_data.get('resolution', ''):
                 self.add_error('resolution', _('Please give a resolution to this request'))
                 return self.cleaned_data
-
-        # if resolution is successful or partially_successful, set status to resolved
-        if self.cleaned_data.get('resolution', '') in ('successful', 'partially_successful'):
-            self.cleaned_data['status'] = 'resolved'
 
         return self.cleaned_data
 
