@@ -1,4 +1,6 @@
 from datetime import timedelta
+import re
+
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.sessions.models import Session
@@ -8,6 +10,7 @@ from froide.helper.email_sending import send_mail
 from . import account_canceled, account_merged, account_made_private
 from .models import User
 
+POSTCODE_RE = re.compile('(\d{5})\s+(.*)')
 
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
 CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
@@ -159,3 +162,17 @@ def delete_deactivated_users():
     )
     for user in expired_users:
         start_cancel_account_process(user)
+
+
+def parse_address(address):
+    match = POSTCODE_RE.search(address)
+    if match is None:
+        return {}
+    postcode = match.group(1)
+    city = match.group(2)
+    refined = address.replace(match.group(0), '').strip().splitlines()
+    return {
+        'address': refined[0],
+        'postcode': postcode,
+        'city': city
+    }
