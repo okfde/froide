@@ -10,7 +10,7 @@ from froide.helper.email_sending import send_mail
 from . import account_canceled, account_merged, account_made_private
 from .models import User
 
-POSTCODE_RE = re.compile('(\d{5})\s+(.*)')
+POSTCODE_RE = re.compile(r'(\d{5})\s+(.*)')
 
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
 CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
