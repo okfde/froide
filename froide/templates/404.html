@@ -2,5 +2,8 @@
 {% load i18n %}
 
 {% block app_body %}
-<h2>{% blocktrans %}404 - Not Found{% endblocktrans %}</h2>
+<h2>
+  {% blocktrans %}404 - Not Found{% endblocktrans %}
+</h2>
+<span class="text-white">{{ exception }}</span>
 {% endblock %}
