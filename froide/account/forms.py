@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.contrib import auth
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -89,16 +89,17 @@ class NewUserBaseForm(forms.Form):
             required=False,
             widget=BootstrapCheckboxInput,
             label=_("Hide my name from public view"),
-            help_text=mark_safe(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
+            help_text=format_html(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
     def __init__(self, *args, **kwargs):
         address_required = kwargs.pop('address_required', False)
         super(NewUserBaseForm, self).__init__(*args, **kwargs)
         self.fields['address'].required = address_required
         if ALLOW_PSEUDONYM and not address_required:
-            self.fields["last_name"].help_text = mark_safe(
-                    _('<a target="_blank" href="{url}">You may use a pseudonym if you don\'t need to receive postal messages</a>.')
-                    .format(url=get_content_url("privacy") + '#pseudonym'))
+            self.fields["last_name"].help_text = format_html(
+                _('<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'),
+                get_content_url("privacy") + '#pseudonym'
+            )
         if address_required:
             self.fields['address'].help_text = ADDRESS_HELP_TEXT
 
@@ -145,13 +146,12 @@ class TermsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(TermsForm, self).__init__(*args, **kwargs)
 
-        self.fields['terms'].label = mark_safe(
+        self.fields['terms'].label = format_html(
             _('You agree to our <a href="{url_terms}" target="_blank">'
                 'Terms and Conditions</a> and <a href="{url_privacy}" target="_blank">'
-                'Privacy Statement</a>').format(
-                    url_terms=get_content_url("terms"),
-                    url_privacy=get_content_url("privacy")
-                )
+                'Privacy Statement</a>'),
+            url_terms=get_content_url("terms"),
+            url_privacy=get_content_url("privacy")
         )
         user_extra_registry.on_init('registration', self)
 
