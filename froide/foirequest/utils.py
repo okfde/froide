@@ -464,7 +464,7 @@ def add_ical_events(foirequest, cal):
     if foirequest.status == 'awaiting_response' and (
             foirequest.resolution in ('partially_successful', 'refused')):
 
-        responses = foirequest.response_messages
+        responses = foirequest.response_messages()
         if responses:
             appeal_deadline = foirequest.law.calculate_due_date(
                 date=responses[-1].timestamp
