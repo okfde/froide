@@ -129,3 +129,9 @@ class TestGermanDeadline(TestCase):
         deadline = calculate_month_range_de(start, months=1)
         deadline = deadline.replace(tzinfo=None)
         self.assertEqual(deadline, datetime(2014, 3, 1))
+
+    def test_end_of_year(self):
+        start = datetime(2014, 11, 10)
+        deadline = calculate_month_range_de(start, months=1)
+        deadline = deadline.replace(tzinfo=None)
+        self.assertEqual(deadline, datetime(2014, 12, 12))

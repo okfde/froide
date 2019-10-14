@@ -1,13 +1,10 @@
 from datetime import timedelta, datetime
 import calendar
 
-import pytz
-
 from django.conf import settings
 from django.utils import timezone
 from django.utils.timesince import timeuntil
 
-PYTZ_TIME_ZONE = pytz.timezone(settings.TIME_ZONE)
 MONTHS_IN_YEAR = 12
 
 
@@ -42,7 +39,7 @@ def calculate_month_range_de(date, months=1):
     # Benennung oder seine Zahl dem Tage entspricht, in den das Ereignis
     # oder der Zeitpunkt fällt,
     m = tempdate.month + (months % MONTHS_IN_YEAR)
-    y = tempdate.year + (months // MONTHS_IN_YEAR) + (m // MONTHS_IN_YEAR)
+    y = tempdate.year + (months // MONTHS_IN_YEAR) + ((m - 1) // MONTHS_IN_YEAR)
     m = m % MONTHS_IN_YEAR
     if m == 0:
         m = 12
@@ -56,7 +53,7 @@ def calculate_month_range_de(date, months=1):
     due = advance_after_holiday(due)
     # Return first day after Fristende
     due += timedelta(days=1)
-    return PYTZ_TIME_ZONE.localize(due)
+    return current_tz.localize(due)
 
 
 def calculate_workingday_range(date, days):
@@ -78,7 +75,10 @@ def is_holiday(date):
             settings.HOLIDAYS_FOR_EASTER:
         easter_sunday = calc_easter(date.year)
         easter_sunday = datetime(*easter_sunday)
-        easter_holidays = [(easter_sunday + timedelta(days=x)).date() for x in settings.HOLIDAYS_FOR_EASTER]
+        easter_holidays = [
+            (easter_sunday + timedelta(days=x)).date()
+            for x in settings.HOLIDAYS_FOR_EASTER
+        ]
         if date.date() in easter_holidays:
             return True
     return False
