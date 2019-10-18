@@ -1,0 +1,19 @@
+{% extends "header.html" %}
+
+{% load i18n %}
+
+{% block nav_search %}{% endblock %}
+
+{% block nav %}{% endblock nav %}
+{% block nav_secondary %}<ul class="navbar-nav navbar-nav-secondary col-auto"></ul>{% endblock %}
+
+{% block nav_account_login %}
+  {% if user.is_authenticated %}
+  <li class="nav-item dropdown account-dropdown {% block nav_account %}{% endblock %}">
+    <span class="d-none d-md-none d-lg-inline">
+    {% blocktrans with name=user.first_name|truncatechars:12 %}
+      Hello {{ name}}
+    {% endblocktrans %}
+  </li>
+  {% endif %}
+{% endblock nav_account_login %}
