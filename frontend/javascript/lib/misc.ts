@@ -41,7 +41,7 @@ const getHeight = function (el: HTMLElement) {
 * toggleSlide mimics the jQuery version of slideDown and slideUp
 * all in one function comparing the max-heigth to 0
   */
-const toggleSlide = function (el: HTMLElement, speed = 2) {
+const toggleSlide = function (el: HTMLElement, seconds = 2) {
   var elMaxHeight = '0px'
 
   if (el.getAttribute('data-max-height')) {
@@ -55,7 +55,7 @@ const toggleSlide = function (el: HTMLElement, speed = 2) {
     }
   } else {
     elMaxHeight = getHeight(el) + 'px'
-    el.style['transition'] = `max-height ${speed}s ease-in-out`
+    el.style['transition'] = `max-height ${seconds}s ease-in-out`
     el.style.overflow = 'hidden'
     el.style.maxHeight = '0'
     el.setAttribute('data-max-height', elMaxHeight)
