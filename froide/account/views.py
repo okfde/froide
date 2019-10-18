@@ -107,6 +107,9 @@ def go(request, user_id, secret, url):
     user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
     account_manager = AccountService(user)
     if account_manager.check_autologin_secret(secret):
+        if user.is_superuser:
+            # Don't allow autologin for superusers
+            return redirect(url)
         if user.is_deleted or user.is_blocked:
             # This will fail, but that's OK here
             return redirect(url)
