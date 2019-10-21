@@ -8,11 +8,12 @@ from ..auth import (can_read_foirequest, can_write_foirequest,
     check_foirequest_auth_code)
 
 
-def shortlink(request, obj_id):
+def shortlink(request, obj_id, url_part=''):
     foirequest = get_object_or_404(FoiRequest, pk=obj_id)
     if not can_read_foirequest(foirequest, request):
         return render_403(request)
-    return redirect(foirequest)
+    url = foirequest.get_absolute_url()
+    return redirect(url + url_part)
 
 
 def auth(request, obj_id, code):
