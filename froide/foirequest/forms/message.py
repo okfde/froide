@@ -17,7 +17,7 @@ from froide.helper.widgets import (
     BootstrapRadioSelect, BootstrapFileInput,
     BootstrapCheckboxInput
 )
-from froide.helper.text_utils import redact_subject, redact_plaintext
+from froide.helper.text_utils import redact_subject
 from froide.helper.text_diff import get_diff_chunks
 from froide.upload.models import Upload
 
@@ -266,10 +266,9 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
             attachment_names=attachment_names,
             attachment_missing=attachment_missing,
         )
-        message.plaintext_redacted = redact_plaintext(
+        message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
-            is_response=False,
-            user=self.foirequest.user
+            self.foirequest
         )
 
     def make_message(self):
@@ -395,14 +394,9 @@ class EscalationMessageForm(forms.Form):
             attachment_names=attachment_names,
             attachment_missing=attachment_missing,
         )
-        plaintext_redacted = redact_plaintext(
-            plaintext,
-            is_response=False,
-            user=self.foirequest.user
-        )
-        plaintext_redacted = plaintext_redacted.replace(
-            self.foirequest.get_auth_link(),
-            self.foirequest.get_absolute_domain_short_url(),
+
+        plaintext_redacted = redact_plaintext_with_request(
+            plaintext, self.foirequest
         )
 
         return FoiMessage(

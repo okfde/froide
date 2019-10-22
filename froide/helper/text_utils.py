@@ -62,7 +62,7 @@ def redact_subject(content, user=None):
     return content[:255]
 
 
-def redact_plaintext(content, is_response=True, user=None):
+def redact_plaintext(content, is_response=True, user=None, replacements=None):
     content = redact_content(content)
 
     greeting_replacement = str(_("<< Greeting >>"))
@@ -84,6 +84,10 @@ def redact_plaintext(content, is_response=True, user=None):
     if user:
         account_service = user.get_account_service()
         content = account_service.apply_message_redaction(content)
+
+    if replacements is not None:
+        for key, val in replacements.items():
+            content = content.replace(key, val)
 
     return content
 
