@@ -654,6 +654,9 @@
     {% addtoblock "js" %}
       <script src="{% static 'js/common.js' %}" defer></script>
     {% endaddtoblock %}
+    {% addtoblock "css" %}
+      <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
+    {% endaddtoblock %}
     {% addtoblock "js" %}
       <script src="{% static 'js/request.js' %}" defer></script>
     {% endaddtoblock %}
