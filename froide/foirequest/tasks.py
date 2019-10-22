@@ -339,3 +339,6 @@ def move_upload_to_attachment(att_id, upload_id):
         att.file.save(att.name, file, save=True)
     upload.finish()
     upload.delete()
+
+    if att.can_convert_to_pdf():
+        convert_attachment_task.delay(att.id)

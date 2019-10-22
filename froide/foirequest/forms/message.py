@@ -95,7 +95,7 @@ class AttachmentSaverMixin(object):
             att.approved = False
             att.save()
 
-            if att.can_convert_to_pdf():
+            if save_file and att.can_convert_to_pdf():
                 transaction.on_commit(lambda: convert_attachment_task.delay(att.id))
 
         message._attachments = None
