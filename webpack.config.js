@@ -21,7 +21,8 @@ const ENTRY = {
   docupload: ['./frontend/javascript/docupload.js'],
   geomatch: ['./frontend/javascript/geomatch.js'],
   messageredaction: ['./frontend/javascript/messageredaction.js'],
-  filingcabinet: 'filingcabinet/frontend/javascript/filingcabinet.js'
+  filingcabinet: 'filingcabinet/frontend/javascript/filingcabinet.js',
+  publicbodyupload: ['./frontend/javascript/publicbodyupload.js']
 }
 
 const EXCLUDE_CHUNKS = [

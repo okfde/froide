@@ -12,7 +12,8 @@ from .message import (
     get_postal_attachment_form, get_send_message_form,
     get_escalation_message_form,
     get_message_sender_form,
-    TransferUploadForm, RedactMessageForm
+    TransferUploadForm, RedactMessageForm,
+    PublicBodyUploader
 )
 
 __all__ = [
@@ -25,5 +26,6 @@ __all__ = [
     get_postal_attachment_form, get_send_message_form,
     get_message_sender_form,
     get_escalation_message_form,
-    TransferUploadForm, RedactMessageForm
+    TransferUploadForm, RedactMessageForm,
+    PublicBodyUploader
 ]

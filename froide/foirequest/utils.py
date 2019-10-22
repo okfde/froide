@@ -1,6 +1,7 @@
-import json
+from collections import namedtuple, Counter
 from datetime import timedelta
-from collections import namedtuple
+import json
+import os
 
 from django.utils import timezone
 from django.core.mail import mail_managers
@@ -97,6 +98,20 @@ def construct_message_body(foirequest, text, send_address=True,
     )
 
 
+def redact_plaintext_with_request(plaintext, foirequest, is_response=False):
+    short_url = foirequest.get_absolute_domain_short_url()
+    secret_urls = {
+        foirequest.get_auth_link(): short_url,
+        foirequest.get_upload_link(): short_url
+    }
+    return redact_plaintext(
+        plaintext,
+        is_response=is_response,
+        user=foirequest.user,
+        replacements=secret_urls
+    )
+
+
 def construct_initial_message_body(
         foirequest, text='', foilaw=None, full_text=False, send_address=True,
         template='foirequest/emails/foi_request_mail.txt'):
@@ -137,6 +152,16 @@ def get_domain(email):
     if host is None:
         return None
     return strip_subdomains(host)
+
+
+def make_name_unique(name, existing_names):
+    name_counter = Counter(existing_names)
+    index = 0
+    while name_counter[name] > 1:
+        index += 1
+        path, ext = os.path.splitext(name)
+        name = '%s_%d%s' % (path, index, ext)
+    return name
 
 
 def compare_publicbody_email(email, foi_request,

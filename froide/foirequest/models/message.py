@@ -45,6 +45,7 @@ class FoiMessage(models.Model):
         ('email', _('Email')),
         ('post', _('Postal mail')),
         ('fax', _('Fax')),
+        ('upload', _('Upload')),
         ('phone', _('Phone call')),
         ('visit', _('Personal visit')),
     )

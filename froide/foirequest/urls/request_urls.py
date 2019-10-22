@@ -14,12 +14,15 @@ from ..views import (
     download_foirequest_zip, download_foirequest_pdf,
     show_attachment, redact_attachment,
     upload_attachments, delete_attachment, create_document,
-    SetTeamView, edit_message, redact_message, download_message_pdf
+    SetTeamView, edit_message, redact_message, download_message_pdf,
+    publicbody_upload
 )
 
 urlpatterns = [
     url(r"^(?P<obj_id>\d+)$", shortlink, name="foirequest-notsolonglink"),
     url(r"^(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$", auth, name="foirequest-longerauth"),
+    url(r"^(?P<obj_id>\d+)/upload/(?P<code>[0-9a-f]+)/$", publicbody_upload,
+        name="foirequest-publicbody_upload"),
     url(r"^(?P<slug>[-\w]+)/$", show, name="foirequest-show"),
     url(r"^(?P<slug>[-\w]+)/suggest/public-body/$", suggest_public_body, name="foirequest-suggest_public_body"),
     url(r"^(?P<slug>[-\w]+)/set/public-body/$", set_public_body, name="foirequest-set_public_body"),

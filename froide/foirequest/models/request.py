@@ -437,6 +437,16 @@ class FoiRequest(models.Model):
                     "code": get_foirequest_auth_code(self)
                 }))
 
+    def get_upload_link(self):
+        from ..auth import get_foirequest_upload_code
+
+        return "%s%s" % (settings.SITE_URL,
+            reverse('foirequest-publicbody_upload',
+                kwargs={
+                    "obj_id": self.id,
+                    "code": get_foirequest_upload_code(self)
+                }))
+
     def get_accessible_link(self):
         if self.visibility == self.VISIBLE_TO_REQUESTER:
             return self.get_auth_link()

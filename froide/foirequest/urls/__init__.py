@@ -32,8 +32,10 @@ urlpatterns = [
     # Translators: request URL
     url(pgettext_lazy('url part', r'^search/'), search, name="foirequest-search"),
     # Translators: Short request URL
-    url(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/(?P<url_part>[\w/\-]*)$"), shortlink,
+    url(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/?"), shortlink,
         name="foirequest-shortlink"),
+    url(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/(?P<url_part>[\w/\-]*)$"), shortlink,
+        name="foirequest-shortlink_url"),
     # Translators: Short project URL
     url(pgettext_lazy('url part', r"^p/(?P<obj_id>\d+)/?$"),
         project_shortlink, name="foirequest-project_shortlink"),

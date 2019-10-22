@@ -30,7 +30,8 @@ from .request_actions import (
     set_public_body, suggest_public_body, set_status, make_public, set_law,
     set_tags, set_summary, mark_not_foi, mark_checked, make_same_request,
     extend_deadline, SetTeamView,
-    confirm_request, delete_request
+    confirm_request, delete_request,
+    publicbody_upload
 )
 from .request import (
     shortlink, auth, show
@@ -55,7 +56,7 @@ __all__ = [
     FoiRequestSitemap,
     ProjectView, project_shortlink, SetProjectTeamView,
     set_public_body, suggest_public_body, set_status, make_public, set_law,
-    confirm_request, delete_request,
+    confirm_request, delete_request, publicbody_upload,
     set_tags, set_summary, mark_not_foi, mark_checked, make_same_request,
     extend_deadline,
     shortlink, auth, show

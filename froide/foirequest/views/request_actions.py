@@ -1,9 +1,13 @@
+import uuid
+import json
+
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.contrib import messages
+from django.urls import reverse
 
 from froide.account.forms import NewUserForm, AddressForm
 from froide.team.views import AssignTeamView
@@ -13,13 +17,13 @@ from ..models import FoiRequest, FoiEvent
 from ..forms import (
     ConcreteLawForm, TagFoiRequestForm, FoiRequestStatusForm,
     MakePublicBodySuggestionForm, PublicBodySuggestionsForm,
-    ExtendDeadlineForm
+    ExtendDeadlineForm, PublicBodyUploader
 )
 from ..utils import check_throttle
 from ..services import (
     CreateSameAsRequestService, ActivatePendingRequestService
 )
-from ..auth import can_write_foirequest
+from ..auth import can_write_foirequest, check_foirequest_upload_code
 from ..hooks import registry
 
 from .request import show_foirequest
@@ -316,3 +320,58 @@ def delete_request(request, foirequest):
     foirequest.delete()
 
     return get_redirect(request)
+
+
+def publicbody_upload(request, obj_id, code):
+    from .message import get_uppy_i18n
+
+    foirequest = get_object_or_404(FoiRequest, id=obj_id)
+    if not check_foirequest_upload_code(foirequest, code):
+        return render_403(request)
+    # Not for authenticated users
+    if request.user.is_authenticated:
+        # Don't leak slug, so go to short url
+        return redirect(foirequest.get_absolute_short_url())
+
+    if request.method == 'POST':
+        token = request.session.get('upload_auth')
+        if not token:
+            messages.add_message(
+                request, messages.ERROR,
+                _('A session error occurred while authenticating your '
+                'uploads. Please contact administrators.')
+            )
+            return redirect(request.get_full_path())
+        uploader = PublicBodyUploader(foirequest, token)
+        upload_list = request.POST.getlist('upload')
+        att_count = uploader.create_upload_message(upload_list)
+
+        messages.add_message(
+            request, messages.SUCCESS,
+            _('%s files were uploaded successfully. Thank you!') % att_count
+        )
+        return redirect(request.get_full_path())
+
+    if 'upload_auth' not in request.session:
+        request.session['upload_auth'] = str(uuid.uuid4())
+
+    config = json.dumps({
+        'settings': {
+            'tusChunkSize': settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024)
+        },
+        'i18n': {
+            'uppy': get_uppy_i18n(),
+            'createResponse': _('Create response now')
+        },
+        'url': {
+            'tusEndpoint': reverse('api:upload-list'),
+        }
+    })
+    return render(
+        request,
+        'foirequest/publicbody_upload.html',
+        {
+            'foirequest': foirequest,
+            'config': config
+        }
+    )

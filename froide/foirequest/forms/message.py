@@ -4,7 +4,6 @@ import os
 import re
 
 from django.conf import settings
-from django.urls import resolve, Resolver404
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -32,7 +31,8 @@ from ..validators import (
 )
 from ..utils import (
     construct_message_body, MailAttachmentSizeChecker,
-    possible_reply_addresses, get_info_for_email
+    possible_reply_addresses, get_info_for_email, make_name_unique,
+    redact_plaintext_with_request
 )
 
 publishing_denied = settings.FROIDE_CONFIG.get('publishing_denied', False)
@@ -680,17 +680,11 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
 
     def clean_upload(self):
         upload_url = self.cleaned_data['upload']
-        try:
-            match = resolve(upload_url)
-        except Resolver404:
+        upload = Upload.objects.get_by_url(
+            upload_url, user=self.user
+        )
+        if upload is None:
             raise forms.ValidationError(_('Bad URL'))
-        guid = match.kwargs.get('guid')
-        if guid is None:
-            raise forms.ValidationError(_('Bad URL'))
-        try:
-            upload = Upload.objects.get(user=self.user, guid=guid)
-        except Upload.DoesNotExist:
-            raise forms.ValidationError(_('Bad Upload'))
         validate_postal_content_type(upload.content_type)
         return upload
 
@@ -789,3 +783,59 @@ class RedactMessageForm(forms.Form):
             logging.warning(e)
 
         message.save()
+
+
+class PublicBodyUploader:
+    def __init__(self, foirequest, token):
+        self.foirequest = foirequest
+        self.token = token
+
+    def create_upload_message(self, upload_list):
+        message = FoiMessage.objects.create(
+            request=self.foirequest,
+            timestamp=timezone.now(),
+            is_response=True,
+            plaintext='',
+            plaintext_redacted='',
+            html='',
+            kind='upload',
+            sender_public_body=self.foirequest.public_body
+        )
+        self.foirequest.message_received.send(
+            sender=self.foirequest, message=message
+        )
+        self.names = set()
+        att_count = 0
+        for upload_url in upload_list:
+            att = self.create_attachment(message, upload_url)
+            if att:
+                att_count += 1
+
+        return att_count
+
+    def create_attachment(self, message, upload_url):
+        upload = Upload.objects.get_by_url(
+            upload_url, token=self.token
+        )
+        if upload is None:
+            return
+        name = make_name_unique(upload.filename, self.names)
+        self.names.add(name)
+        att = FoiAttachment.objects.create(
+            belongs_to=message,
+            name=name,
+            size=upload.size,
+            filetype=upload.content_type,
+            can_approve=True,
+            approved=False,
+            pending=True,
+        )
+        upload.start_saving()
+        upload.save()
+
+        transaction.on_commit(
+            lambda: move_upload_to_attachment.delay(
+                att.id, upload.id
+            )
+        )
+        return att

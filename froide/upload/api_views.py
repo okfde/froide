@@ -133,7 +133,11 @@ class TusCreateMixin(mixins.CreateModelMixin):
             'upload_length': upload_length,
             'upload_metadata': json.dumps(upload_metadata),
             'filename': filename,
-            'user': request.user.pk,
+            'user': request.user.pk if request.user.is_authenticated else None,
+            'token': (
+                request.session.get('upload_auth')
+                if not request.user.is_authenticated else None
+            )
         })
 
         # Validate serializer
@@ -301,6 +305,10 @@ class TusTerminateMixin(mixins.DestroyModelMixin):
 
 class UploadWithScopePermission(TokenHasScope):
     def has_permission(self, request, view):
+        upload_auth = request.session.get('upload_auth')
+        if upload_auth:
+            return True
+
         if not request.user.is_authenticated:
             return False
         if not request.auth:
@@ -323,7 +331,12 @@ class UploadViewSet(TusMixin,
     required_scopes = ['write:request']
 
     def get_queryset(self):
-        return Upload.objects.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return Upload.objects.filter(user=self.request.user)
+        token = self.request.session.get('upload_auth')
+        if token:
+            return Upload.objects.filter(token=token)
+        return Upload.objects.none()
 
     def get_serializer_class(self):
         if self.action == 'create':

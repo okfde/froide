@@ -85,8 +85,17 @@ def get_foirequest_auth_code(foirequest):
             '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
 
 
+def get_foirequest_upload_code(foirequest):
+    return salted_hmac("FoiRequestPublicBodyUpload",
+            '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
+
+
 def check_foirequest_auth_code(foirequest, code):
     return constant_time_compare(code, get_foirequest_auth_code(foirequest))
+
+
+def check_foirequest_upload_code(foirequest, code):
+    return constant_time_compare(code, get_foirequest_upload_code(foirequest))
 
 
 def is_attachment_public(foirequest, attachment):

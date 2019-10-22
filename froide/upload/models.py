@@ -4,6 +4,7 @@ import tempfile
 import uuid
 
 from django.db import models
+from django.urls import resolve, Resolver404
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -145,8 +146,28 @@ class AbstractUpload(models.Model):
         # Trigger signal
 
 
+class UploadManager(models.Manager):
+    def get_by_url(self, upload_url, user=None, token=None):
+        try:
+            match = resolve(upload_url)
+        except Resolver404:
+            return None
+        guid = match.kwargs.get('guid')
+        if guid is None:
+            return None
+        try:
+            return Upload.objects.get(
+                user=user, token=token, guid=guid
+            )
+        except Upload.DoesNotExist:
+            return None
+
+
 class Upload(AbstractUpload):
     user = models.ForeignKey(
         get_user_model(), blank=True, null=True,
         on_delete=models.CASCADE
     )
+    token = models.UUIDField(null=True, blank=True)
+
+    objects = UploadManager()
