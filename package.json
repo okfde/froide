@@ -85,6 +85,7 @@
     "eslint": "^5.12.1",
     "exif-js": "^2.3.0",
     "font-awesome": "^4.7.0",
+    "js-base64": "2.4.8",
     "leaflet": "^1.5.1",
     "leaflet.icon.glyph": "^0.2.1",
     "lodash.debounce": "^4.0.8",
