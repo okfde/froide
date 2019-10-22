@@ -8,6 +8,8 @@
 {% endfor %}{% endif %}
 {% blocktrans with num=request.pk %}Request Number: {{ num }}{% endblocktrans %}
 {% blocktrans with email=request.secret_address %}Reply To: {{ email }}{% endblocktrans %}
+{% blocktrans %}Upload large files for this request here:{% endblocktrans %}
+{{ request.get_upload_link }}
 {% if send_address %}
 {% blocktrans %}Post Address:{% endblocktrans %}
 {{ request.user.get_full_name }}
