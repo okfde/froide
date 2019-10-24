@@ -69,7 +69,8 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
             request=validated_data['request'],
             user=validated_data['user'],
             defaults={
-                'timestamp': timezone.now()
+                'timestamp': timezone.now(),
+                'confirmed': True
             }
         )
         return follower
