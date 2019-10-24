@@ -78,7 +78,7 @@ class FoiRequestFollower(models.Model):
 
     class Meta:
         get_latest_by = 'timestamp'
-        ordering = ('timestamp',)
+        ordering = ('-timestamp',)
         verbose_name = _('Request Follower')
         verbose_name_plural = _('Request Followers')
 
