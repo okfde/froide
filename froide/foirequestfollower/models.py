@@ -81,6 +81,18 @@ class FoiRequestFollower(models.Model):
         ordering = ('-timestamp',)
         verbose_name = _('Request Follower')
         verbose_name_plural = _('Request Followers')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['request', 'user'],
+                condition=models.Q(user__isnull=False),
+                name='unique_user_follower'
+            ),
+            models.UniqueConstraint(
+                fields=['request', 'email'],
+                condition=models.Q(user__isnull=True),
+                name='unique_email_follower'
+            ),
+        ]
 
     def __str__(self):
         return _("%(user)s follows %(request)s") % {
