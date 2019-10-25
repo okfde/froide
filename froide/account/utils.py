@@ -66,16 +66,24 @@ def merge_accounts(old_user, new_user):
 
 
 def move_ownership(model, attr, old_user, new_user, dupe=None):
-    model.objects.filter(**{attr: old_user}).update(**{attr: new_user})
+    qs = model.objects.filter(**{attr: old_user})
+
+    if dupe:
+        collision_key = dupe[1]
+        collision_list = model.objects.filter(
+            **{attr: new_user}
+        ).values_list(collision_key, flat=True)
+        qs = qs.exclude(
+            **{'%s__in' % collision_key: collision_list}
+        )
+
+    qs.update(**{attr: new_user})
+
     if dupe is None:
         return
-    already = set()
-    for obj in model.objects.filter(**{attr: new_user}):
-        tup = tuple([getattr(obj, a) for a in dupe])
-        if tup in already:
-            obj.delete()
-        else:
-            already.add(tup)
+
+    # rest are collisions, delete
+    qs = model.objects.filter(**{attr: old_user}).delete()
 
 
 def all_unexpired_sessions_for_user(user):

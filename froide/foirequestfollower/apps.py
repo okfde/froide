@@ -31,9 +31,10 @@ def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from .models import FoiRequestFollower
 
     move_ownership(
-        FoiRequestFollower, 'user', old_user, new_user,
-        dupe=('user', 'request',)
+        FoiRequestFollower, 'user_id', old_user.id, new_user.id,
+        dupe=('user_id', 'request_id',)
     )
+    # Don't follow your own requests
     # FIXME: this will not work in case foirequest signal has
     # not run yet. Check if order is fix
     FoiRequestFollower.objects.filter(
