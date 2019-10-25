@@ -6,15 +6,12 @@ dist: bionic
 
 addons:
   postgresql: '10'
+  chrome: stable
   apt:
     update: true
-    sources:
-      - google-chrome
     packages:
       - postgresql-10-postgis-2.5
       - postgresql-10-postgis-2.5-scripts
-      - google-chrome-stable
-      - chromium-chromedriver
 
 env:
   global:
@@ -32,15 +29,12 @@ services:
 #   - sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
 install:
+  - wget https://chromedriver.storage.googleapis.com/$(wget https://chromedriver.storage.googleapis.com/LATEST_RELEASE -q -O -)/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - export PATH=$PATH:$PWD
   - wget ${ES_DOWNLOAD_URL}
   - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
   - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
-  # - wget -N http://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip -P ~/
-  # - unzip ~/chromedriver_linux64.zip -d ~/
-  # - rm ~/chromedriver_linux64.zip
-  # - sudo mv -f ~/chromedriver /usr/local/share/
-  # - sudo chmod +x /usr/local/share/chromedriver
-  # - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
   - pip install -r requirements-test.txt
   - pip install psycopg2-binary coveralls
   - pip install -e .
