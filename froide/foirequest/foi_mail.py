@@ -201,17 +201,26 @@ def check_delivery_conditions(recipient_mail, sender_email,
         # foi mailbox email, but custom email required, dropping
         return None, None
 
+    previous_spam_sender = DeferredMessage.objects.filter(
+        sender=sender_email, spam=True
+    ).exists()
+    if previous_spam_sender:
+        # Drop previous spammer
+        return None, None
+
     foirequest = get_foirequest_from_mail(recipient_mail)
     if not foirequest:
+        # Find previous non-spam matching
         deferred = DeferredMessage.objects.filter(
-            recipient=recipient_mail, request__isnull=False
+            recipient=recipient_mail, request__isnull=False,
+            spam=False
         )
-        if len(deferred) == 0 or len(deferred) > 1:
+        if len(deferred) == 0:
             # Can't do automatic matching!
             create_deferred(
                 recipient_mail, mail_bytes,
                 sender_email=sender_email,
-                spam=False
+                spam=None
             )
             return None, None
         else:
