@@ -8,6 +8,8 @@ addons:
   postgresql: '10'
   apt:
     update: true
+    sources:
+      - google-chrome
     packages:
       - postgresql-10-postgis-2.5
       - postgresql-10-postgis-2.5-scripts
