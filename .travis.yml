@@ -53,7 +53,7 @@ before_script:
 script:
   - set -e
   - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
-  - export CHROME_DRIVER_PATH=/usr/bin/chromedriver
+  - export CHROME_DRIVER_PATH=/usr/local/bin/chromedriver
   - export DATABASE_URL=postgis://travis:travis@127.0.0.1/froide
   - which google-chrome-stable
   - google-chrome-stable --version
