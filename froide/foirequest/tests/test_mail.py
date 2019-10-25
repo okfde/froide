@@ -354,10 +354,11 @@ class SpamMailTest(TestCase):
         with open(p("test_mail_01.txt"), 'rb') as f:
             email = f.read().decode('ascii').replace('hb@example.com', sender)
         process_mail.delay(email.encode('ascii'))
+        # New mail is dropped, not even stored in deferred
         self.assertEqual(count_messages,
             FoiMessage.objects.filter(request=self.req).count())
-        dms = DeferredMessage.objects.filter(recipient=recipient, spam=True)
-        self.assertEqual(len(dms), 2)
+        dms = DeferredMessage.objects.filter(sender=sender, spam=True)
+        self.assertEqual(len(dms), 1)
         self.assertEqual(len(mail.outbox), 0)
 
 

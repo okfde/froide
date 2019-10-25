@@ -194,7 +194,7 @@ def add_message_from_email(foirequest, email, publicbody=None):
 def check_delivery_conditions(recipient_mail, sender_email,
                               parsed_email=None,
                               mail_bytes=b'', manual=False):
-    from .models import DeferredMessage
+    from .models import DeferredMessage, FoiRequest
 
     if (not settings.FOI_EMAIL_FIXED_FROM_ADDRESS and
             recipient_mail == settings.FOI_EMAIL_HOST_USER):
@@ -211,11 +211,11 @@ def check_delivery_conditions(recipient_mail, sender_email,
     foirequest = get_foirequest_from_mail(recipient_mail)
     if not foirequest:
         # Find previous non-spam matching
-        deferred = DeferredMessage.objects.filter(
+        request_ids = DeferredMessage.objects.filter(
             recipient=recipient_mail, request__isnull=False,
             spam=False
-        )
-        if len(deferred) == 0:
+        ).values_list('request_id', flat=True)
+        if len(set(request_ids)) != 1:
             # Can't do automatic matching!
             create_deferred(
                 recipient_mail, mail_bytes,
@@ -224,8 +224,7 @@ def check_delivery_conditions(recipient_mail, sender_email,
             )
             return None, None
         else:
-            deferred = deferred[0]
-            foirequest = deferred.request
+            foirequest = FoiRequest.objects.get(id=list(request_ids)[0])
 
     pb = None
     if not manual:
