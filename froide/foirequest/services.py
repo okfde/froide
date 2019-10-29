@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.files import File
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from froide.account.services import AccountService
 from froide.helper.text_utils import redact_subject, redact_plaintext
@@ -334,9 +335,6 @@ class ReceiveEmailService(BaseService):
 
         recipient_name, recipient_email = self.get_recipient_name_email()
 
-        is_bounce = email.bounce_info.is_bounce
-        hide_content = email.is_auto_reply or is_bounce
-
         message = FoiMessage(
             request=foirequest,
             subject=subject,
@@ -348,9 +346,9 @@ class ReceiveEmailService(BaseService):
             recipient_email=recipient_email,
             plaintext=email.body,
             html=email.html,
-            content_hidden=hide_content
         )
 
+        is_bounce = email.bounce_info.is_bounce
         if not is_bounce:
             if publicbody is None:
                 publicbody = get_publicbody_for_email(
@@ -363,9 +361,9 @@ class ReceiveEmailService(BaseService):
 
         message.sender_public_body = publicbody
 
-        if (foirequest.law and foirequest.law.mediator and
-                publicbody == foirequest.law.mediator):
-            message.content_hidden = True
+        message.content_hidden = self.should_hide_content(
+            email, foirequest, publicbody
+        )
 
         if email.date is None:
             message.timestamp = timezone.now()
@@ -409,6 +407,22 @@ class ReceiveEmailService(BaseService):
             except IndexError:
                 pass
         return recipient_name, recipient_email
+
+    def should_hide_content(self, email, foirequest, publicbody):
+        # Hide auto replies and bounces as they may expose sensitive info
+        if email.is_auto_reply or email.bounce_info.is_bounce:
+            return True
+
+        # Hide mediatior replies so it stays confidential by default
+        if (foirequest.law and foirequest.law.mediator and
+                publicbody == foirequest.law.mediator):
+            return True
+
+        funcs = settings.FROIDE_CONFIG['hide_content_funcs']
+        for func in funcs:
+            if func(email):
+                return True
+        return False
 
     def process_bounce_message(self, message):
         email = self.data
