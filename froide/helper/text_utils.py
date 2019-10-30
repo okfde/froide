@@ -197,6 +197,8 @@ def convert_html_to_text(html_str):
     If lxml is available, convert to Markdown (but badly)
     otherwise just strip_tags
     """
+    if not html_str:
+        return ''
     if html_parser is None:
         return strip_tags(html_str)
 
