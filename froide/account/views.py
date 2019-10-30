@@ -320,7 +320,8 @@ def change_user(request):
         return render_403(request)
     form = UserChangeForm(request.user, request.POST)
     if form.is_valid():
-        if request.user.email != form.cleaned_data['email']:
+        new_email = form.cleaned_data['email']
+        if new_email and request.user.email != new_email:
             AccountService(request.user).send_email_change_mail(
                 form.cleaned_data['email']
             )
