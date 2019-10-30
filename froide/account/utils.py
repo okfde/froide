@@ -5,7 +5,9 @@ from django.utils import timezone
 from django.db import transaction
 from django.contrib.sessions.models import Session
 
-from froide.helper.email_sending import send_mail
+from froide.helper.email_sending import (
+    send_mail, mail_middleware_registry, mail_registry
+)
 
 from . import account_canceled, account_merged, account_made_private
 from .models import User
@@ -23,6 +25,22 @@ def send_mail_users(subject, body, users,
             subject, body, user,
             **kwargs
         )
+
+
+class OnlyActiveUsersMailMiddleware:
+    def should_mail(self, mail_intent, context, email_kwargs):
+        user = context.get('user')
+        if not user:
+            # No user, not our concern here
+            return
+
+        if not email_kwargs.get('ignore_active', False) and not user.is_active:
+            return False
+        if not user.email:
+            return False
+
+
+mail_middleware_registry.register(OnlyActiveUsersMailMiddleware())
 
 
 def send_mail_user(subject, body, user: User,
