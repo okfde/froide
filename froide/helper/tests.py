@@ -7,6 +7,7 @@ from django.test.utils import override_settings
 from .text_utils import replace_email_name, remove_closing
 from .text_diff import mark_differences
 from .date_utils import calc_easter, calculate_month_range_de
+from .email_sending import mail_registry
 
 
 def rec(x):
@@ -135,3 +136,10 @@ class TestGermanDeadline(TestCase):
         deadline = calculate_month_range_de(start, months=1)
         deadline = deadline.replace(tzinfo=None)
         self.assertEqual(deadline, datetime(2014, 12, 12))
+
+
+class TestMailIntent(TestCase):
+    def test_mail_intent_templates(self):
+        for intent_key in mail_registry.intents:
+            # check if all mail intent templates are present
+            mail_registry.intents[intent_key].get_templates(needs_subject=False)
