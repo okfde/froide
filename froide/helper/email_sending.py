@@ -195,7 +195,7 @@ class MailIntent:
             subject = email_content_templates.subject.render(context)
         text = email_content_templates.text.render(context)
         html = None
-        if email_content_templates.text is not None:
+        if email_content_templates.html is not None:
             html = email_content_templates.html.render(context)
 
         return EmailContent(
