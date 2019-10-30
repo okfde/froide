@@ -3,11 +3,11 @@
 This is an email from {{ site_name }} to confirm your new email address.
 Please visit the link below:
 
-{{ url }}
+{{ action_url }}
 
 {% endblocktrans %}
 
-{% blocktrans with site_name=SITE_NAME %}Cheers,
+{% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}

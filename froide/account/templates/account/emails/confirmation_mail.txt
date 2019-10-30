@@ -3,7 +3,7 @@
 This is an email from {{ site_name }} to confirm your email address.
 Please visit the link below:
 
-{{ url }}
+{{ action_url }}
 {% endblocktrans %}
 
 {% blocktrans with site_name=SITE_NAME %}Cheers,

@@ -53,6 +53,12 @@ def send_mail_user(subject, body, user: User,
     return send_mail(subject, body, user.email, bounce_check=False, **kwargs)
 
 
+user_email = mail_registry.register(
+    'account/emails/user_email',
+    ('subject', 'body')
+)
+
+
 def send_template_mail(user: User, subject: str, body: str, **kwargs):
     mail_context = {
         'first_name': user.first_name,
@@ -62,10 +68,12 @@ def send_template_mail(user: User, subject: str, body: str, **kwargs):
     }
     user_subject = subject.format(**mail_context)
     user_body = body.format(**mail_context)
-    return user.send_mail(
-        user_subject,
-        user_body,
-        **kwargs
+    return user_email.send(
+        user=user,
+        context={
+            'subject': user_subject,
+            'body': user_body
+        }, **kwargs
     )
 
 

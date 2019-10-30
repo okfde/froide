@@ -5,14 +5,13 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.template.defaultfilters import slugify
-from django.template.loader import render_to_string
 from django.utils.crypto import constant_time_compare
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from froide.helper.text_utils import replace_custom, replace_word
 from froide.helper.db_utils import save_obj_unique
-from froide.helper.email_sending import send_mail
+from froide.helper.email_sending import mail_registry
 
 from .models import User, AccountBlacklist
 from . import account_activated
@@ -23,6 +22,24 @@ def get_user_for_email(email):
         return User.objects.get(email=email)
     except User.DoesNotExist:
         return False
+
+
+confirmation_mail = mail_registry.register(
+    'account/emails/confirmation_mail',
+    ('action_url', 'name')
+)
+confirm_action_mail = mail_registry.register(
+    'account/emails/confirm_action',
+    ('title', 'action_url', 'name')
+)
+reminder_mail = mail_registry.register(
+    'account/emails/account_reminder',
+    ('name', 'action_url')
+)
+change_email_mail = mail_registry.register(
+    'account/emails/change_email',
+    ('action_url', 'name')
+)
 
 
 class AccountService(object):
@@ -139,45 +156,27 @@ class AccountService(object):
         if params:
             url = '%s?%s' % (url, urlencode(params))
 
-        templates = []
-        html_templates = []
-        subject_templates = []
+        template_base = None
         if reference is not None:
             ref = reference.split(':', 1)[0]
-            template_name = 'account/emails/{}/confirmation_mail'.format(
+            template_base = 'account/emails/{}/confirmation_mail'.format(
                 ref
             )
-            templates.append(template_name + '.txt')
-            html_templates.append(template_name + '.html')
-            subject_templates.append(
-                'account/emails/{}/confirmation_mail_subject.txt'.format(ref)
-            )
-
-        templates.append('account/emails/confirmation_mail.txt')
-        html_templates.append('account/emails/confirmation_mail.html')
-        subject_templates.append('account/emails/confirmation_mail_subject.txt')
 
         context = {
-            'url': settings.SITE_URL + url,
+            'action_url': settings.SITE_URL + url,
             'name': self.user.get_full_name(),
-            'site_name': settings.SITE_NAME,
-            'site_url': settings.SITE_URL
         }
 
-        message = render_to_string(templates, context)
-        html_message = render_to_string(html_templates, context)
-
-        subject = render_to_string(subject_templates, context)
-
-        self.user.send_mail(
-            subject, message,
-            ignore_active=True,
-            html=html_message,
-            priority=True
+        confirmation_mail.send(
+            user=self.user, context=context,
+            template_base=template_base,
+            reference=reference,
+            ignore_active=True, priority=True
         )
 
-    def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None,
-                                 template='account/emails/confirm_action.txt'):
+    def send_confirm_action_mail(self, url, title, reference=None,
+                                 redirect_url=None):
         secret_url = self.get_autologin_url(url)
 
         params = {}
@@ -188,47 +187,39 @@ class AccountService(object):
         if params:
             secret_url = '%s?%s' % (secret_url, urlencode(params))
 
-        message = render_to_string(
-            template, {
-                'url': secret_url,
-                'title': title,
-                'name': self.user.get_full_name(),
-                'site_name': settings.SITE_NAME,
-                'site_url': settings.SITE_URL
-            }
-        )
-
         # Translators: Mail subject
         subject = str(_("%(site_name)s: please confirm your action") % {
             "site_name": settings.SITE_NAME
         })
-        self.user.send_mail(
-            subject,
-            message,
-            priority=True
+
+        context = {
+            'action_url': secret_url,
+            'title': title,
+            'name': self.user.get_full_name(),
+        }
+
+        confirm_action_mail.send(
+            user=self.user, context=context,
+            subject=subject,
+            priority=True,
+            reference=reference
         )
 
-    def send_reminder_mail(self, reference=None, redirect_url=None,
-                           template='account/emails/account_reminder.txt'):
+    def send_reminder_mail(self, reference=None, redirect_url=None):
         secret_url = self.get_autologin_url(reverse('account-show'))
 
-        message = render_to_string(
-            template, {
-                'url': secret_url,
-                'name': self.user.get_full_name(),
-                'site_name': settings.SITE_NAME,
-                'site_url': settings.SITE_URL
-            }
-        )
+        context = {
+            'action_url': secret_url,
+            'name': self.user.get_full_name(),
+        }
 
         # Translators: Mail subject
         subject = str(_("%(site_name)s: account reminder") % {
             "site_name": settings.SITE_NAME
         })
-        self.user.send_mail(
-            subject,
-            message,
-            priority=True
+        reminder_mail.send(
+            user=self.user, context=context,
+            subject=subject, reference=reference
         )
 
     def send_email_change_mail(self, email):
@@ -243,20 +234,17 @@ class AccountService(object):
             reverse('account-change_email'),
             urlencode(url_kwargs)
         )
-        message = render_to_string('account/emails/change_email.txt', {
-            'url': url,
+        context = {
+            'action_url': url,
             'name': self.user.get_full_name(),
-            'site_name': settings.SITE_NAME,
-            'site_url': settings.SITE_URL
-        })
+        }
         # Translators: Mail subject
         subject = str(_("%(site_name)s: please confirm your new email address") % {
             "site_name": settings.SITE_NAME
         })
-        send_mail(
-            subject,
-            message,
-            email,
+        change_email_mail.send(
+            email=email, context=context,
+            subject=subject,
             priority=True
         )
 

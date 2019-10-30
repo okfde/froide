@@ -4,12 +4,12 @@ are you trying to send a request on {{ site_name }} with the subject “{{ title
 
 If so, please click the following link to continue
 
-{{ url }}
+{{ action_url }}
 
 If you are not trying to send this request, please ignore this email. No further action is required on your part.{% endblocktrans %}
 
 
-{% blocktrans with site_name=SITE_NAME %}Cheers,
+{% blocktrans %}Cheers,
 {{ site_name }}{% endblocktrans %}
 {% endautoescape %}
 {% include "emails/footer.txt" %}
