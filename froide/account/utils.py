@@ -129,7 +129,7 @@ def delete_all_unexpired_sessions_for_user(user, session_to_omit=None):
     session_list.delete()
 
 
-def start_cancel_account_process(user):
+def start_cancel_account_process(user, delete=False):
     from .tasks import cancel_account_task
 
     user.private = True
@@ -143,12 +143,18 @@ def start_cancel_account_process(user):
 
     # Asynchronously delete account
     # So more expensive anonymization can run in the background
-    cancel_account_task.delay(user.pk)
+    cancel_account_task.delay(user.pk, delete=delete)
 
 
-def cancel_user(user):
+def cancel_user(user, delete=False):
     with transaction.atomic():
         account_canceled.send(sender=User, user=user)
+
+    delete_all_unexpired_sessions_for_user(user)
+
+    if delete:
+        user.delete()
+        return
 
     user.organization = ''
     user.organization_url = ''
@@ -172,7 +178,6 @@ def cancel_user(user):
     user.set_unusable_password()
     user.username = 'u%s' % user.pk
     user.save()
-    delete_all_unexpired_sessions_for_user(user)
 
 
 def delete_unconfirmed_users():
@@ -184,7 +189,7 @@ def delete_unconfirmed_users():
         date_joined__lt=time_ago
     )
     for user in expired_users:
-        start_cancel_account_process(user)
+        start_cancel_account_process(user, delete=True)
 
 
 def delete_deactivated_users():

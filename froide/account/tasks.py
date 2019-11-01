@@ -8,7 +8,7 @@ from .utils import send_template_mail
 
 
 @celery_app.task
-def cancel_account_task(user_pk):
+def cancel_account_task(user_pk, delete=False):
     from .utils import cancel_user
 
     translation.activate(settings.LANGUAGE_CODE)
@@ -18,7 +18,7 @@ def cancel_account_task(user_pk):
     except User.DoesNotExist:
         return
 
-    cancel_user(user)
+    cancel_user(user, delete=delete)
 
 
 @celery_app.task
