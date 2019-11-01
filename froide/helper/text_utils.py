@@ -1,4 +1,5 @@
 import re
+import functools
 from html.entities import name2codepoint
 
 from django.utils.translation import ugettext_lazy as _
@@ -167,11 +168,23 @@ def make_italic(x):
 
 
 def make_link(x):
-    return '[%s](%s)%s' % (
+    return '%s (%s)%s' % (
         x.text_content(),
         x.attrib.get('href', ''),
         x.tail if x.tail else ''
     )
+
+
+def make_heading(x, num=1):
+    return '%s %s\n\n%s' % (
+        '#' * num,
+        x.text_content(),
+        x.tail if x.tail else ''
+    )
+
+
+def heading_maker(num):
+    return functools.partial(make_heading, num=num)
 
 
 def make_paragraph(el):
@@ -186,6 +199,12 @@ HTML_CONVERTERS = {
     'i': make_italic,
     'em': make_italic,
     'p': make_paragraph,
+    'h1': heading_maker(1),
+    'h2': heading_maker(2),
+    'h3': heading_maker(3),
+    'h4': heading_maker(4),
+    'h5': heading_maker(5),
+    'h6': heading_maker(6),
     'br': lambda x: '\n%s' % (x.tail if x.tail else ''),
 }
 
