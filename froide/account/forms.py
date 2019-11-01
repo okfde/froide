@@ -165,8 +165,23 @@ class TermsForm(forms.Form):
         user.save()
 
 
+class HoneypotField(forms.CharField):
+    is_honeypot = True
+
+
 class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
-    pass
+    phone = HoneypotField(
+        required=False,
+        label=_('If you enter anything in this field '
+                'your account creation will be blocked.'),
+    )
+
+    def clean_phone(self):
+        """Check that nothing's been entered into the honeypot."""
+        value = self.cleaned_data["phone"]
+        if value:
+            raise forms.ValidationError(self.fields["phone"].label)
+        return value
 
 
 class NewUserWithPasswordForm(NewUserForm):

@@ -29,7 +29,7 @@
   </div>
 </div>
 {% else %}
-<div class="form-group row{% if classes %} {{ classes }}{% endif %}">
+<div class="form-group row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none{% endif %}">
   {% if label %}{% if field.id_for_label %}<label class="col-lg-3 col-form-label{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
   <div class="col-lg-9">
     {{ field }}
