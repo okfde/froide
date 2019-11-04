@@ -160,11 +160,17 @@ def remove_greeting_inclusive(content):
 
 
 def make_strong(x):
-    return '**%s**' % x.text_content()
+    return '**%s**%s' % (
+        x.text_content(),
+        x.tail if x.tail else ''
+    )
 
 
 def make_italic(x):
-    return '*%s*' % x.text_content()
+    return '*%s*%s' % (
+        x.text_content(),
+        x.tail if x.tail else ''
+    )
 
 
 def make_link(x):
@@ -206,6 +212,7 @@ HTML_CONVERTERS = {
     'h5': heading_maker(5),
     'h6': heading_maker(6),
     'br': lambda x: '\n%s' % (x.tail if x.tail else ''),
+    'hr': lambda x: '\n\n%s\n\n%s' % ('-' * 25, x.tail if x.tail else ''),
 }
 
 HTML_GARBAGE = ('style',)
