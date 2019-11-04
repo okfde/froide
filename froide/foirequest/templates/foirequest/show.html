@@ -19,15 +19,15 @@
     <meta name="robots" content="noindex"/>
   {% endif %}
 
-  <link rel="self" type="text/html" href="{% url 'foirequest-show' slug=object.slug %}"/>
+  <link rel="self" type="text/html" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
   {% if DEFAULT_LANGUAGE_CODE != CURRENT_LANGUAGE_CODE %}
     {% language DEFAULT_LANGUAGE_CODE %}
-      <link rel="alternate" hreflang="{{ DEFAULT_LANGUAGE_CODE }}" href="{% url 'foirequest-show' slug=object.slug %}"/>
+      <link rel="alternate" hreflang="{{ DEFAULT_LANGUAGE_CODE }}" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
     {% endlanguage %}
   {% else %}
-    <link rel="canonical" href="{% url 'foirequest-show' slug=object.slug %}"/>
-    <link href="{% url 'foirequest-feed' slug=object.slug %}" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
-    <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" href="{% url 'foirequest-feed_atom' slug=object.slug %}" />
+    <link rel="canonical" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
+    <link rel="alternate nofollow" href="{{ SITE_URL }}{% url 'foirequest-feed' slug=object.slug %}" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
+    <link rel="alternate nofollow" href="{{ SITE_URL }}{% url 'foirequest-feed_atom' slug=object.slug %}" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" />
   {% endif %}
 
   {% if object|can_write_foirequest:request %}
