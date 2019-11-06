@@ -256,7 +256,7 @@ class MailTest(MailTestMixin, TestCase):
 
         self.assertTrue(len(mail.body) > 10)
         # Markdown like links are rendered
-        self.assertIn(' (https://', mail.body)
+        self.assertIn(' ( https://', mail.body)
         self.assertIn('*peter.mueller@kreis-steinfurt.de*', mail.body)
 
 
