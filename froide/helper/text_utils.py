@@ -174,7 +174,7 @@ def make_italic(x):
 
 
 def make_link(x):
-    return '%s (%s)%s' % (
+    return '%s ( %s )%s' % (
         x.text_content(),
         x.attrib.get('href', ''),
         x.tail if x.tail else ''
