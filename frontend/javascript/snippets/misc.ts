@@ -23,6 +23,11 @@ const runOnPage = () => {
     })
   });
 
+  const inputs = document.querySelectorAll('.honigtopf input')
+  Array.from(inputs).forEach(input => {
+    input.removeAttribute('required')
+  })
+
 }
 
 if (document.readyState === 'loading') {

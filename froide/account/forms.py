@@ -174,6 +174,9 @@ class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
         required=False,
         label=_('If you enter anything in this field '
                 'your account creation will be blocked.'),
+        widget=forms.TextInput(
+            attrs={'required': True}
+        )
     )
 
     def clean_phone(self):
