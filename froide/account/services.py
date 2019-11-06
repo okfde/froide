@@ -26,7 +26,7 @@ def get_user_for_email(email):
 
 confirmation_mail = mail_registry.register(
     'account/emails/confirmation_mail',
-    ('action_url', 'name')
+    ('action_url', 'name', 'request_id')
 )
 confirm_action_mail = mail_registry.register(
     'account/emails/confirm_action',
@@ -165,6 +165,7 @@ class AccountService(object):
 
         context = {
             'action_url': settings.SITE_URL + url,
+            'request_id': request_id,
             'name': self.user.get_full_name(),
         }
 
