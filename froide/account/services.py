@@ -95,10 +95,13 @@ class AccountService(object):
     def confirm_account(self, secret, request_id=None):
         if not self.check_confirmation_secret(secret, request_id):
             return False
+        self._confirm_account()
+        return True
+
+    def _confirm_account(self):
         self.user.is_active = True
         self.user.save()
         account_activated.send_robust(sender=self.user)
-        return True
 
     def get_autologin_url(self, url):
         return settings.SITE_URL + reverse('account-go', kwargs={
