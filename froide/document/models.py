@@ -6,6 +6,8 @@ from filingcabinet.models import (
     get_page_image_filename
 )
 
+from froide.helper.auth import can_read_object, can_write_object
+
 
 class Document(AbstractDocument):
     original = models.ForeignKey(
@@ -28,6 +30,12 @@ class Document(AbstractDocument):
 
     def is_public(self):
         return self.public
+
+    def can_read(self, request):
+        return can_read_object(self, request=request)
+
+    def can_write(self, request):
+        return can_write_object(self, request=request)
 
     def get_serializer_class(self, detail=False):
         from .api_views import DocumentSerializer, DocumentDetailSerializer
