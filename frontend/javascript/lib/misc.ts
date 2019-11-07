@@ -49,7 +49,7 @@ const toggleSlide = function (el: HTMLElement, seconds = 2) {
     let maxHeight = el.style.maxHeight
     maxHeight = maxHeight && maxHeight.replace('px', '').replace('%', '')
     if (maxHeight === '0') {
-      el.style.maxHeight = el.getAttribute('data-max-height')
+      el.style.maxHeight = el.getAttribute('data-max-height') || '0'
     } else {
       el.style.maxHeight = '0'
     }
