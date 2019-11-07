@@ -84,10 +84,12 @@ def filter_model(qs, user, token):
 
 class AllowedOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
+        if can_write_object(obj, request):
+            return True
         if request.method in permissions.SAFE_METHODS and hasattr(obj, 'public'):
             return obj.public
 
-        return can_write_object(obj, request)
+        return False
 
 
 class PageSerializer(FCPageSerializer):
