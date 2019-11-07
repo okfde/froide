@@ -94,18 +94,20 @@ def get_read_queryset(qs, request, has_team=False, public_field=None,
                       scope=None):
     user = request.user
     filters = None
-    if not user.is_authenticated:
-        if public_field is None:
-            return qs.none()
+    if public_field is not None:
         filters = Q(**{public_field: True})
+        result_qs = qs.filter(filters)
+    else:
+        result_qs = qs.none()
+
+    if not user.is_authenticated:
+        return result_qs
 
     # OAuth token
     token = getattr(request, 'auth', None)
     if token and (not scope or not token.is_valid([scope])):
         # API access, but no scope
-        if filters is None:
-            return qs.none()
-        return qs.filter(filters)
+        return result_qs
 
     if user.is_superuser:
         return qs
