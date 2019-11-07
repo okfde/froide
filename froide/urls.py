@@ -20,10 +20,10 @@ from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
 from froide.campaign.api_views import CampaignViewSet
 from froide.upload.api_views import UploadViewSet
 from froide.document.api_views import (
-    PageViewSet, DocumentViewSet, DocumentCollectionViewSet
+    PageViewSet, DocumentViewSet, DocumentCollectionViewSet,
+    PageAnnotationViewSet
 )
 from froide.document.urls import document_media_urlpatterns
-from filingcabinet.api_views import PageAnnotationViewSet
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
                                      JurisdictionSitemap, show_publicbody,

@@ -1,4 +1,6 @@
-from django.db.models import Q
+from django.db.models import (
+    Q, Value, BooleanField, Case, When
+)
 
 from rest_framework import serializers, permissions, viewsets
 
@@ -9,11 +11,14 @@ from filingcabinet.api_views import (
     UpdateDocumentSerializer,
     DocumentViewSet as FCDocumentViewSet,
     DocumentCollectionViewSet as FCDocumentCollectionViewSet,
-    PagesMixin
+    PagesMixin,
+    PageAnnotationViewSet as FCPageAnnotationViewSet,
 )
-from filingcabinet.models import Page
+from filingcabinet.models import Page, PageAnnotation
 
-from froide.helper.auth import can_write_object
+from froide.helper.auth import (
+    can_write_object, get_read_queryset, get_write_queryset
+)
 from froide.helper.search.api_views import ESQueryMixin
 
 from .models import Document, DocumentCollection
@@ -79,13 +84,10 @@ def filter_model(qs, user, token):
 
 class AllowedOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if can_write_object(obj, request):
-            return True
-
-        if request.method in permissions.SAFE_METHODS:
+        if request.method in permissions.SAFE_METHODS and hasattr(obj, 'public'):
             return obj.public
 
-        return False
+        return can_write_object(obj, request)
 
 
 class PageSerializer(FCPageSerializer):
@@ -101,11 +103,21 @@ class PageViewSet(ESQueryMixin, viewsets.GenericViewSet):
     serializer_class = PageSerializer
     search_model = Page
     search_document = PageDocument
-    read_token_scopes = ['read:request']
+    read_token_scopes = ['read:document']
     searchfilterset_class = PageDocumentFilterset
 
     def list(self, request, *args, **kwargs):
         return self.search_view(request)
+
+
+def get_document_read_qs(request):
+    return get_read_queryset(
+        Document.objects.all(),
+        request,
+        has_team=True,
+        public_field='public',
+        scope='read:document'
+    )
 
 
 class DocumentViewSet(FCDocumentViewSet):
@@ -117,9 +129,7 @@ class DocumentViewSet(FCDocumentViewSet):
     permission_classes = (AllowedOrReadOnly,)
 
     def get_queryset(self):
-        user = self.request.user
-        token = self.request.auth
-        return filter_model(Document.objects.all(), user, token)
+        return get_document_read_qs(self.request)
 
 
 class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
@@ -131,8 +141,38 @@ class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
     permission_classes = (AllowedOrReadOnly,)
 
     def get_queryset(self):
-        user = self.request.user
-        token = self.request.auth
-        return filter_model(
-            DocumentCollection.objects.all(), user, token
+        return get_read_queryset(
+            DocumentCollection.objects.all(),
+            self.request,
+            has_team=True,
+            public_field='public',
+            scope='read:document'
         )
+
+
+class PageAnnotationViewSet(FCPageAnnotationViewSet):
+    permission_classes = (AllowedOrReadOnly,)
+
+    def get_base_queryset(self, document_id):
+        docs = get_document_read_qs(self.request)
+        try:
+            doc = docs.get(pk=document_id)
+        except (ValueError, Document.DoesNotExist):
+            return PageAnnotation.objects.none()
+        return PageAnnotation.objects.filter(page__document=doc)
+
+    def annotate_permissions(self, qs):
+        write_qs = get_write_queryset(
+            qs,
+            self.request,
+            has_team=False,
+        )
+
+        qs = qs.annotate(
+            can_delete=Case(
+                When(id__in=write_qs, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
+        return qs
