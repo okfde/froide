@@ -5,12 +5,28 @@ from filingcabinet.admin import (
     DocumentCollectionBaseAdmin
 )
 from filingcabinet.models import Page, PageAnnotation
+
+from froide.helper.admin_utils import ForeignKeyFilter
+
 from .models import Document, DocumentCollection
 
 
 class DocumentAdmin(DocumentBaseAdmin):
     raw_id_fields = DocumentBaseAdmin.raw_id_fields + (
         'original', 'foirequest', 'publicbody', 'team'
+    )
+
+
+class CustomPageAdmin(PageAdmin):
+    list_filter = PageAdmin.list_filter + (
+        ('document', ForeignKeyFilter),
+    )
+
+
+class CustomPageAnnotationAdmin(PageAnnotationAdmin):
+    list_filter = (
+        'page__number',
+        ('page__document', ForeignKeyFilter),
     )
 
 
@@ -21,6 +37,6 @@ class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
 
 
 admin.site.register(Document, DocumentAdmin)
-admin.site.register(Page, PageAdmin)
-admin.site.register(PageAnnotation, PageAnnotationAdmin)
+admin.site.register(Page, CustomPageAdmin)
+admin.site.register(PageAnnotation, CustomPageAnnotationAdmin)
 admin.site.register(DocumentCollection, DocumentCollectionAdmin)

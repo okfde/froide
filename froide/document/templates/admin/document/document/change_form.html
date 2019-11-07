@@ -1,0 +1,17 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block object-tools-items %}
+{% if original.pk %}
+  <li>
+    <a href="{% url 'admin:filingcabinet_page_changelist' %}?document={{ original.pk }}">
+      {% trans "Pages" %}
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'admin:filingcabinet_pageannotation_changelist' %}?page__document={{ original.pk }}">
+      {% trans "Annotations" %}
+    </a>
+  </li>
+{% endif %}
+{{ block.super }}
+{% endblock %}
