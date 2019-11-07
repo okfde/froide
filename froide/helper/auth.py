@@ -25,10 +25,15 @@ def check_permission(obj, request, verb):
     return False
 
 
-def has_authenticated_access(obj, request, verb='write'):
+def has_authenticated_access(obj, request, verb='write', scope=None):
     user = request.user
     if not user.is_authenticated:
         # No authentication, no access
+        return False
+
+    # OAuth token
+    token = getattr(request, 'auth', None)
+    if token and (not scope or not token.is_valid([scope])):
         return False
 
     if hasattr(obj, 'user') and obj.user_id == user.id:
@@ -85,10 +90,22 @@ def can_access_object(verb, obj, request):
     return access_func(obj, request)
 
 
-def get_read_queryset(qs, request, has_team=False):
+def get_read_queryset(qs, request, has_team=False, public_field=None,
+                      scope=None):
     user = request.user
+    filters = None
     if not user.is_authenticated:
-        return qs.none()
+        if public_field is None:
+            return qs.none()
+        filters = Q(**{public_field: True})
+
+    # OAuth token
+    token = getattr(request, 'auth', None)
+    if token and (not scope or not token.is_valid([scope])):
+        # API access, but no scope
+        if filters is None:
+            return qs.none()
+        return qs.filter(filters)
 
     if user.is_superuser:
         return qs
@@ -99,16 +116,55 @@ def get_read_queryset(qs, request, has_team=False):
     if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
         return qs
 
-    return get_user_queryset(qs, request, has_team=has_team)
+    teams = None
+    if has_team:
+        teams = Team.objects.get_for_user(user)
+
+    user_filter = get_user_filter(request, teams=teams)
+    if filters is None:
+        filters = user_filter
+    else:
+        filters |= user_filter
+
+    return qs.filter(filters)
 
 
-def get_user_queryset(qs, request, has_team=False):
+def get_write_queryset(qs, request, has_team=False, scope=None):
+    user = request.user
+
+    if not user.is_authenticated:
+        return qs.none()
+
+    # OAuth token
+    token = getattr(request, 'auth', None)
+    if token and (not scope or not token.is_valid([scope])):
+        # API access, but no scope
+        return qs.none()
+
+    if user.is_superuser:
+        return qs
+
+    model = qs.model
+    opts = model._meta
+    codename = get_permission_codename('change', opts)
+    if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
+        return qs
+
+    teams = None
+    if has_team:
+        teams = Team.objects.get_editor_owner_teams(user)
+
+    user_filter = get_user_filter(qs, request, teams=teams)
+    return qs.filter(user_filter)
+
+
+def get_user_filter(request, teams=None):
     user = request.user
     filter_arg = Q(user=user)
-    if has_team:
+    if teams:
         # or their team
-        filter_arg |= Q(team__in=Team.objects.get_for_user(user))
-    return qs.filter(filter_arg)
+        filter_arg |= Q(team__in=teams)
+    return filter_arg
 
 
 def clear_lru_caches():

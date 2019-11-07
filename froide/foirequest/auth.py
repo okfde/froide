@@ -30,7 +30,8 @@ def can_read_foirequest(foirequest, request, allow_code=True):
 @lru_cache()
 def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
     user = request.user
-    if has_authenticated_access(foirequest, request, verb='read'):
+    if has_authenticated_access(foirequest, request, verb='read',
+                                scope='read:request'):
         return True
 
     if user.is_staff and user.has_perm('foirequest.see_private'):
@@ -38,7 +39,8 @@ def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
 
     if foirequest.project:
         return has_authenticated_access(
-            foirequest.project, request, verb='read'
+            foirequest.project, request, verb='read',
+            scope='read:request'
         )
 
     # if authenticated may still have code
