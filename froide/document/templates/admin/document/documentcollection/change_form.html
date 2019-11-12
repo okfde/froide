@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% block object-tools-items %}
+{% if original.pk %}
+  <li>
+    <a href="{% url 'admin:filingcabinet_collectiondocument_changelist' %}?collection={{ original.pk }}">
+      {% trans "Documents" %}
+    </a>
+  </li>
+{% endif %}
+{{ block.super }}
+{% endblock %}

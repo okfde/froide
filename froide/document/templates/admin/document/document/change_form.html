@@ -12,6 +12,11 @@
       {% trans "Annotations" %}
     </a>
   </li>
+  <li>
+    <a href="{% url 'admin:filingcabinet_collectiondocument_changelist' %}?document={{ original.pk }}">
+      {% trans "Collections" %}
+    </a>
+  </li>
 {% endif %}
 {{ block.super }}
 {% endblock %}

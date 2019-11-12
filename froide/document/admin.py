@@ -3,7 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from filingcabinet.admin import (
     DocumentBaseAdmin, PageAdmin, PageAnnotationAdmin,
-    DocumentCollectionBaseAdmin
+    DocumentCollectionBaseAdmin,
+    CollectionDocumentBaseAdmin
 )
 from filingcabinet.models import Page, PageAnnotation, CollectionDocument
 
@@ -67,7 +68,15 @@ class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
     )
 
 
+class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
+    list_filter = CollectionDocumentBaseAdmin.list_filter + (
+        ('document', ForeignKeyFilter),
+        ('collection', ForeignKeyFilter),
+    )
+
+
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(Page, CustomPageAdmin)
 admin.site.register(PageAnnotation, CustomPageAnnotationAdmin)
 admin.site.register(DocumentCollection, DocumentCollectionAdmin)
+admin.site.register(CollectionDocument, CollectionDocumentAdmin)
