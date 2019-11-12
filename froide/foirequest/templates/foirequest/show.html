@@ -62,7 +62,6 @@
     </ul>
   </div>
 {% endif %}
-{% if object.can_be_escalated %}
 {% if object|can_write_foirequest:request and object.has_been_refused and object.can_be_escalated %}
   <div class="alert alert-info d-print-none">
     {% blocktrans %}You request has been refused.{% endblocktrans %}
