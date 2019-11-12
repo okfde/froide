@@ -25,8 +25,7 @@ class AdminAssignActionBase():
             form = Form(request.POST)
             if form.is_valid():
                 assign_obj = form.cleaned_data['obj']
-                for obj in queryset:
-                    self._execute_assign_action(obj, fieldname, assign_obj)
+                self._execute_assign_action_qs(queryset, fieldname, assign_obj)
                 self.message_user(request, _("Successfully assigned."))
                 return None
         else:
@@ -49,6 +48,10 @@ class AdminAssignActionBase():
 
     def _get_assign_action_form_class(self, fieldname):
         return get_fk_form_class(self.model, fieldname, self.admin_site)
+
+    def _execute_assign_action_qs(self, queryset, fieldname, assign_obj):
+        for obj in queryset:
+            self._execute_assign_action(obj, fieldname, assign_obj)
 
     def _execute_assign_action(self, obj, fieldname, assign_obj):
         setattr(obj, fieldname, assign_obj)
