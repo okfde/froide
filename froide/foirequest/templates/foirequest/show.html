@@ -45,12 +45,12 @@
 {% endif %}
 
 {% if object|can_write_foirequest:request and object.awaits_classification %}
-  <div class="alert alert-info d-print-none">{% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status" data-tabgo="tab">set a new status for this request</a>!{% endblocktrans %}</div>
+  <div class="alert alert-info d-print-none">{% blocktrans with name=object.user.get_full_name %}<b>Hey {{ name }}</b>, please read the latest response and <a href="#set-status" data-tabgo="tab">set a new status for this request</a>!{% endblocktrans %}</div>
 {% endif %}
 
 {% if object|can_write_foirequest:request and object.is_overdue %}
   <div class="alert d-print-none">
-    {% blocktrans with name=user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!<br/>
+    {% blocktrans with name=object.user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!<br/>
     Please act now:{% endblocktrans %}
     <ul>
       <li>
