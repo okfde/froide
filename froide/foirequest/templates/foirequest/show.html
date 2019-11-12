@@ -62,8 +62,8 @@
     </ul>
   </div>
 {% endif %}
-
-{% if object|can_write_foirequest:request and object.has_been_refused and object.law.mediator %}
+{% if object.can_be_escalated %}
+{% if object|can_write_foirequest:request and object.has_been_refused and object.can_be_escalated %}
   <div class="alert alert-info d-print-none">
     {% blocktrans %}You request has been refused.{% endblocktrans %}
     <a href="#escalate" data-tabgo="tab">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
@@ -168,7 +168,7 @@
             </a>
           </li>
         {% endif %}
-        {% if object.law.mediator and object.can_be_escalated %}
+        {% if object.can_be_escalated %}
           <li class="nav-item">
             <a href="#escalate" data-toggle="tab" class="nav-link" role="tab" aria-controls="escalate" aria-expanded="false">
               {% trans "Mediation" %}
@@ -176,7 +176,7 @@
           </li>
         {% endif %}
 
-      {% if froide.can_make_meta_request and object.can_be_escalated %}
+      {% if froide.can_make_meta_request and object.is_actionable %}
         <li class="nav-item">
           <a href="#meta-request" data-toggle="tab" class="nav-link" role="tab" aria-controls="meta-request" aria-expanded="false">
             {% trans "Make Meta Request" %}
@@ -249,7 +249,7 @@
     {% endif %}
 
     {# Escalate #}
-    {% if object.law.mediator and object.can_be_escalated %}
+    {% if object.can_be_escalated %}
       <div role="tabpanel" class="tab-pane d-print-none" id="escalate">
         <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
           {% csrf_token %}

@@ -513,9 +513,13 @@ class FoiRequest(models.Model):
     def awaits_response(self):
         return self.status == 'awaiting_response' or self.status == 'asleep'
 
-    def can_be_escalated(self):
+    def is_actionable(self):
         return not self.needs_public_body() and (
-            self.is_overdue() or self.reply_received())
+            self.is_overdue() or self.reply_received()
+        )
+
+    def can_be_escalated(self):
+        return self.law.mediator and self.is_actionable()
 
     def is_overdue(self):
         return self.was_overdue() and self.awaits_response()
