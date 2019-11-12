@@ -17,7 +17,7 @@ from .models import Document, DocumentCollection
 
 
 AddDocumentsToCollectionBaseMixin = make_admin_assign_action(
-    'collection', _('Add documents to colletion')
+    'collection', _('Add documents to collection')
 )
 
 
