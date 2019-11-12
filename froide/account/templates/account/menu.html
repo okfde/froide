@@ -31,6 +31,9 @@
 </a>
 
 {% block after_settings %}
+  {% if menu_items.after_settings %}
+    <hr/>
+  {% endif %}
   {% for menu_item in menu_items.after_settings %}
     <a class="dropdown-item" href="{{ menu_item.url }}">
       {{ menu_item.label }}
