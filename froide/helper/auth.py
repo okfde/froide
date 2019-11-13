@@ -156,7 +156,7 @@ def get_write_queryset(qs, request, has_team=False, scope=None):
     if has_team:
         teams = Team.objects.get_editor_owner_teams(user)
 
-    user_filter = get_user_filter(qs, request, teams=teams)
+    user_filter = get_user_filter(request, teams=teams)
     return qs.filter(user_filter)
 
 
