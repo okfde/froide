@@ -71,17 +71,6 @@ class DocumentCollectionSerializer(FCDocumentCollectionSerializer):
         fields = FCDocumentCollectionSerializer.Meta.fields
 
 
-def filter_model(qs, user, token):
-    vis_filter = Q(public=True)
-    if user.is_authenticated:
-        # Either not OAuth or OAuth and valid token
-        if not token and user.is_superuser:
-            return qs
-        if not token or token.is_valid(['read:document']):
-            vis_filter |= Q(user=user)
-    return qs.filter(vis_filter)
-
-
 class AllowedOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if can_write_object(obj, request):
