@@ -131,7 +131,8 @@ def get_read_queryset(qs, request, has_team=False, public_field=None,
     return qs.filter(filters)
 
 
-def get_write_queryset(qs, request, has_team=False, scope=None):
+def get_write_queryset(qs, request, has_team=False,
+                       user_write_filter=None, scope=None):
     user = request.user
 
     if not user.is_authenticated:
@@ -152,11 +153,19 @@ def get_write_queryset(qs, request, has_team=False, scope=None):
     if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
         return qs
 
+    filters = None
+    if user_write_filter is not None:
+        filters = user_write_filter
+
     teams = None
     if has_team:
         teams = Team.objects.get_editor_owner_teams(user)
 
     user_filter = get_user_filter(request, teams=teams)
+    if filters is None:
+        filters = user_filter
+    else:
+        filters |= user_filter
     return qs.filter(user_filter)
 
 
