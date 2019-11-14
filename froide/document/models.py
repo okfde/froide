@@ -6,7 +6,9 @@ from filingcabinet.models import (
     get_page_image_filename
 )
 
-from froide.helper.auth import can_read_object, can_write_object
+from froide.helper.auth import (
+    can_read_object, can_write_object, get_write_queryset
+)
 
 
 class Document(AbstractDocument):
@@ -36,6 +38,16 @@ class Document(AbstractDocument):
 
     def can_write(self, request):
         return can_write_object(self, request=request)
+
+    @classmethod
+    def get_annotatable(cls, request):
+        cond = models.Q(public=True, allow_annotation=True)
+        return get_write_queryset(
+            cls.objects.all(),
+            request,
+            has_team=True,
+            user_write_filter=cond,
+        )
 
     def get_serializer_class(self, detail=False):
         from .api_views import DocumentSerializer, DocumentDetailSerializer
