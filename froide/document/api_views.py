@@ -1,5 +1,5 @@
 from django.db.models import (
-    Q, Value, BooleanField, Case, When
+    Value, BooleanField, Case, When
 )
 
 from rest_framework import serializers, permissions, viewsets
