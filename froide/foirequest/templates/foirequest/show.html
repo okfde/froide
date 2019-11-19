@@ -28,6 +28,13 @@
     <link rel="canonical" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
     <link rel="alternate nofollow" href="{{ SITE_URL }}{% url 'foirequest-feed' slug=object.slug %}" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
     <link rel="alternate nofollow" href="{{ SITE_URL }}{% url 'foirequest-feed_atom' slug=object.slug %}" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" />
+    {% for lang_code, language in LANGUAGES %}
+      {% if lang_code != CURRENT_LANGUAGE_CODE %}
+        {% language lang_code %}
+          <link rel="alternate" hreflang="{{ lang_code }}" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
+        {% endlanguage %}
+      {% endif %}
+    {% endfor %}
   {% endif %}
 
   {% if object|can_write_foirequest:request %}
