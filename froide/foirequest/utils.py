@@ -116,7 +116,10 @@ def construct_initial_message_body(
         foirequest, text='', foilaw=None, full_text=False, send_address=True,
         template='foirequest/emails/mail_with_userinfo.txt'):
     if full_text:
-        body = text
+        body = '{body}\n{name}'.format(
+            body=text,
+            name=foirequest.user.get_full_name()
+        )
     else:
         letter_start, letter_end = '', ''
         if foilaw:
