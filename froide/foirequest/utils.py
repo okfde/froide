@@ -114,7 +114,7 @@ def redact_plaintext_with_request(plaintext, foirequest, is_response=False):
 
 def construct_initial_message_body(
         foirequest, text='', foilaw=None, full_text=False, send_address=True,
-        template='foirequest/emails/foi_request_mail.txt'):
+        template='foirequest/emails/mail_with_userinfo.txt'):
     if full_text:
         body = text
     else:
@@ -123,17 +123,18 @@ def construct_initial_message_body(
             letter_start = foilaw.letter_start
             letter_end = foilaw.letter_end
         body = (
-            "{letter_start}\n\n{body}\n\n{letter_end}"
+            "{letter_start}\n\n{body}\n\n{letter_end}\n\n{name}"
         ).format(
             letter_start=letter_start,
             body=text,
-            letter_end=letter_end
+            letter_end=letter_end,
+            name=foirequest.user.get_full_name()
         )
 
     return render_to_string(template, {
         'request': foirequest,
         'body': body,
-        'send_address': send_address
+        'send_address': send_address,
     })
 
 
