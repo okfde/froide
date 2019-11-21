@@ -1,5 +1,8 @@
+from django.db import transaction
 from django.db.models import signals
 from django.dispatch import receiver
+
+from froide.foirequest.models import FoiAttachment
 
 from .models import Document
 from .utils import update_document_index
@@ -16,3 +19,29 @@ def document_created(instance=None, created=False, **kwargs):
 
     from filingcabinet.tasks import process_document_task
     process_document_task.delay(instance.pk)
+
+
+@receiver(signals.post_save, sender=FoiAttachment,
+        dispatch_uid='reprocess_attachment_redaction')
+def reprocess_attachment_redaction(instance, created=False, **kwargs):
+    if created and kwargs.get('raw', False):
+        return
+    if not instance.document_id:
+        return
+    if not instance.redacted_id:
+        return
+    # If attachment has document, but also redacted version
+    # move document reference to redacted version
+    with transaction.atomic():
+        doc_id = instance.document_id
+        Document.objects.filter(id=doc_id).update(
+            original_id=instance.redacted_id
+        )
+        instance.document = None
+        instance.save()
+        FoiAttachment.objects.filter(
+            id=instance.redacted_id
+        ).update(document_id=doc_id)
+
+    d = Document.objects.get(id=doc_id)
+    d.process_document()
