@@ -10,13 +10,18 @@ logger = logging.getLogger(__name__)
 
 def get_instance(model_name, pk):
     model = apps.get_model(model_name)
-    return model._default_manager.get(pk=pk)
+    try:
+        return model._default_manager.get(pk=pk)
+    except model.DoesNotExist:
+        return None
 
 
 @celery_app.task
 def search_instance_save(model_name, pk):
+    instance = get_instance(model_name, pk)
+    if instance is None:
+        return
     try:
-        instance = get_instance(model_name, pk)
         registry.update(instance)
         registry.update_related(instance)
     except Exception as e:
@@ -25,8 +30,10 @@ def search_instance_save(model_name, pk):
 
 @celery_app.task
 def search_instance_pre_delete(model_name, pk):
+    instance = get_instance(model_name, pk)
+    if instance is None:
+        return
     try:
-        instance = get_instance(model_name, pk)
         registry.delete_related(instance)
     except Exception as e:
         logger.exception(e)
