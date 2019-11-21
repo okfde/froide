@@ -194,7 +194,7 @@ export default {
       })
     },
     canMakeResult () {
-      return this.canMakeResultDocs.length > 0
+      return this.config.settings.can_make_document && this.canMakeResultDocs.length > 0
     },
     canApproveDocs () {
       return this.pdfDocuments.filter(d => {
