@@ -210,6 +210,7 @@ def parse_address(address):
     postcode = match.group(1)
     city = match.group(2)
     refined = address.replace(match.group(0), '').strip().splitlines()
+    refined = refined or ['']
     return {
         'address': refined[0],
         'postcode': postcode,
