@@ -44,6 +44,6 @@
 {% endblock body_tag %}
 
 {% block scripts %}
-  {% addtoblock "js" %}<script async src="{% static "js/main.js" %}"></script>{% endaddtoblock %}
+  {% addtoblock "js" %}<script async src="{% static 'js/main.js' %}"></script>{% endaddtoblock %}
   {{ block.super }}
 {% endblock %}
