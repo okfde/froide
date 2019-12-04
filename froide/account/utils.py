@@ -212,7 +212,7 @@ def parse_address(address):
     city = match.group(2)
     refined = address.replace(match.group(0), '').strip().splitlines()
     street = refined or ['']
-    street = TRAILING_COMMA.sub('', street)
+    street = TRAILING_COMMA.sub('', street[0])
     return {
         'address': street,
         'postcode': postcode,
