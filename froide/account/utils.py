@@ -13,6 +13,7 @@ from . import account_canceled, account_merged, account_made_private
 from .models import User
 
 POSTCODE_RE = re.compile(r'(\d{5})\s+(.*)')
+TRAILING_COMMA = re.compile(r'\s*,\s*$')
 
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
 CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
@@ -210,9 +211,10 @@ def parse_address(address):
     postcode = match.group(1)
     city = match.group(2)
     refined = address.replace(match.group(0), '').strip().splitlines()
-    refined = refined or ['']
+    street = refined or ['']
+    street = TRAILING_COMMA.sub('', street)
     return {
-        'address': refined[0],
+        'address': street,
         'postcode': postcode,
         'city': city
     }
