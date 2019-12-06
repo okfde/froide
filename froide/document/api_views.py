@@ -23,7 +23,7 @@ from froide.helper.search.api_views import ESQueryMixin
 
 from .models import Document, DocumentCollection
 from .documents import PageDocument
-from .filters import PageDocumentFilterset
+from .filters import PageDocumentFilterset, get_document_read_qs
 
 
 class DocumentSerializer(FCDocumentSerializer):
@@ -100,15 +100,8 @@ class PageViewSet(ESQueryMixin, viewsets.GenericViewSet):
     def list(self, request, *args, **kwargs):
         return self.search_view(request)
 
-
-def get_document_read_qs(request):
-    return get_read_queryset(
-        Document.objects.all(),
-        request,
-        has_team=True,
-        public_field='public',
-        scope='read:document'
-    )
+    def optimize_query(self, qs):
+        return qs.prefetch_related('document')
 
 
 class DocumentViewSet(FCDocumentViewSet):

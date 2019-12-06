@@ -9,10 +9,21 @@ from froide.helper.search.filters import BaseSearchFilterSet
 from froide.publicbody.models import PublicBody, Jurisdiction
 from froide.campaign.models import Campaign
 from froide.account.models import User
+from froide.helper.auth import get_read_queryset
 
 from filingcabinet.models import Page
 
 from .models import Document, DocumentCollection
+
+
+def get_document_read_qs(request):
+    return get_read_queryset(
+        Document.objects.all(),
+        request,
+        has_team=True,
+        public_field='public',
+        scope='read:document'
+    )
 
 
 class PageDocumentFilterset(BaseSearchFilterSet):
@@ -86,11 +97,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = kwargs.get('request')
-        cond = Q(public=True)
-        if request and request.user.is_authenticated:
-            cond |= Q(user=request.user)
-        collection_qs = DocumentCollection.objects.filter(cond)
-        document_qs = Document.objects.filter(cond)
+        document_qs = get_document_read_qs(request)
+        collection_qs = get_read_queryset(
+            DocumentCollection.objects.all(), request,
+            has_team=True, public_field='public',
+            scope='read:document'
+        )
         self.filters['collection'].field.queryset = collection_qs
         self.filters['document'].field.queryset = document_qs
 
