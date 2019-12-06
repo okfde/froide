@@ -74,8 +74,9 @@ class Document(AbstractDocument):
             authorized=True
         )
 
-    def get_page_template(self):
-        return self.get_authorized_file_url(filename=get_page_image_filename())
+    def get_page_template(self, page=1, size='small'):
+        filename = get_page_image_filename(page=page, size=size)
+        return self.get_authorized_file_url(filename=filename)
 
     def get_cover_image(self):
         return self.get_authorized_file_url(filename=get_page_image_filename(
