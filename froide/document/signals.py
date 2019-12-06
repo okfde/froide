@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 from froide.foirequest.models import FoiAttachment
 
-from .models import Document
+from .models import Document, DocumentCollection
 from .utils import update_document_index
 
 
@@ -19,6 +19,16 @@ def document_created(instance=None, created=False, **kwargs):
 
     from filingcabinet.tasks import process_document_task
     process_document_task.delay(instance.pk)
+
+
+@receiver(signals.post_save, sender=DocumentCollection,
+        dispatch_uid="documentcollection_updated")
+def collection_updated(instance=None, created=False, **kwargs):
+    if created or kwargs.get('raw', False):
+        return
+
+    for doc in instance.documents.all():
+        update_document_index(doc)
 
 
 @receiver(signals.post_save, sender=FoiAttachment,
