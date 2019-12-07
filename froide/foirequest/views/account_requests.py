@@ -156,6 +156,11 @@ class DraftRequestsView(BaseAccountMixin, ListView):
     template_name = 'foirequest/account/list_drafts.html'
     menu_item = 'drafts'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['getvars'] = ''
+        return context
+
     def get_queryset(self):
         self.query = self.request.GET.get('q', None)
         query_kwargs = {}
@@ -168,6 +173,11 @@ class DraftRequestsView(BaseAccountMixin, ListView):
 class FoiProjectListView(BaseAccountMixin, ListView):
     template_name = 'foirequest/account/list_projects.html'
     menu_item = 'projects'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['getvars'] = ''
+        return context
 
     def get_queryset(self):
         self.query = self.request.GET.get('q', None)
