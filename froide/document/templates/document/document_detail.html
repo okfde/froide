@@ -4,6 +4,8 @@
 {% load static %}
 {% load markup %}
 
+{% block title %}{{ object.title }} - {{ SITE_NAME }}{% endblock %}
+
 {% block document_top %}
 <div class="container mt-3 mb-5">
     <h2>{{ object.title }}</h2>
