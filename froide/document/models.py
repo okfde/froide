@@ -3,7 +3,8 @@ from django.db import models
 from filingcabinet.models import (
     AbstractDocument,
     AbstractDocumentCollection,
-    get_page_image_filename
+    get_page_image_filename,
+    Page
 )
 
 from froide.helper.auth import (
@@ -83,10 +84,19 @@ class Document(AbstractDocument):
             page=1, size='small'
         ))
 
-    def get_full_cover_image(self):
-        return self.get_authorized_file_url(filename=get_page_image_filename(
-            page=1, size='original'
-        ))
+    @property
+    def first_page(self):
+        if not hasattr(self, '_first_page'):
+            try:
+                self._first_page = Page.objects.get(number=1, document=self)
+            except Page.DoesNotExist:
+                return None
+        return self._first_page
+
+    def get_cover_image_file(self):
+        if self.first_page:
+            return self.first_page.image
+        return None
 
 
 class DocumentCollection(AbstractDocumentCollection):
