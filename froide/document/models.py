@@ -83,6 +83,11 @@ class Document(AbstractDocument):
             page=1, size='small'
         ))
 
+    def get_full_cover_image(self):
+        return self.get_authorized_file_url(filename=get_page_image_filename(
+            page=1, size='original'
+        ))
+
 
 class DocumentCollection(AbstractDocumentCollection):
     team = models.ForeignKey(
