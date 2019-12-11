@@ -96,7 +96,9 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request = self.view.request
+        request = kwargs.get('request')
+        if request is None:
+            request = self.view.request
         document_qs = get_document_read_qs(request)
         collection_qs = get_read_queryset(
             DocumentCollection.objects.all(), request,
