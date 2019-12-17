@@ -1,66 +1,66 @@
 const serializeForm = (form: HTMLFormElement) => {
-    const enabled = (<HTMLInputElement[]> Array.from(form.elements)).filter(node => !node.disabled)
-    const pairs = enabled.map(node => {
-      const encoded = [node.name, node.value].map(encodeURIComponent)
-      return encoded.join('=')
-    })
-    return pairs.join('&')
-  }
+    const enabled = (Array.from(form.elements) as HTMLInputElement[]).filter((node) => !node.disabled);
+    const pairs = enabled.map((node) => {
+      const encoded = [node.name, node.value].map(encodeURIComponent);
+      return encoded.join("=");
+    });
+    return pairs.join("&");
+  };
 
 const confirmForm = (form: HTMLElement) => {
-  const confirmMessage = form.dataset.confirm
+  const confirmMessage = form.dataset.confirm;
   if (!confirmMessage) {
-    return true
+    return true;
   }
-  const confirmed = window.confirm(confirmMessage)
+  const confirmed = window.confirm(confirmMessage);
   if (!confirmed) {
-    return false
+    return false;
   }
-  return true
-}
+  return true;
+};
 
 const submitFormsAjax = () => {
-  const ajaxForms = document.querySelectorAll('form.ajaxified')
-  Array.from(ajaxForms).forEach(form => {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault()
+  const ajaxForms = document.querySelectorAll("form.ajaxified");
+  Array.from(ajaxForms).forEach((form) => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-      if (!confirmForm(<HTMLElement>form)) {
+      if (!confirmForm(form as HTMLElement)) {
         return false;
       }
 
-      const method = form.getAttribute('method') || 'post'
-      const url = form.getAttribute('action') || ''
-      const data = serializeForm(<HTMLFormElement> form)
+      const method = form.getAttribute("method") || "post";
+      const url = form.getAttribute("action") || "";
+      const data = serializeForm(form as HTMLFormElement);
 
-      var request = new XMLHttpRequest();
+      const request = new XMLHttpRequest();
       request.open(method, url, true);
-      request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-      request.onload = function() {
-        const data = request.responseText
-        if (data[0] === '/') {
+      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+      request.onload = () => {
+        const responseData = request.responseText;
+        if (responseData[0] === "/") {
           // starts with URL, redirect
-          window.location.href = data
-          return
+          window.location.href = responseData;
+          return;
         }
-        const parent = form.closest('.ajax-parent')
+        const parent = form.closest(".ajax-parent");
         if (parent) {
-          parent.outerHTML = data;
+          parent.outerHTML = responseData;
         }
-      }
+      };
       request.send(data);
 
-      Array.from(form.querySelectorAll('button, input')).forEach(el => {
-        el.setAttribute('disabled', '')
-      })
-    })
-  })
-}
+      Array.from(form.querySelectorAll("button, input")).forEach((el) => {
+        el.setAttribute("disabled", "");
+      });
+    });
+  });
+};
 
-submitFormsAjax()
+submitFormsAjax();
 
 export default {
   serializeForm,
-  submitFormsAjax
-}
+  submitFormsAjax,
+};

@@ -1,55 +1,55 @@
-interface HTMLInputElement { Tooltip: any; }
+interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null; }
 
-document.querySelectorAll('.copy-text').forEach(function (el) {
-  el.addEventListener('click', function (this: HTMLInputElement) {
-    let el = this
-    var selection
+document.querySelectorAll(".copy-text").forEach((copyEl) => {
+  copyEl.addEventListener("click", function(this: IHTMLToolTipElement) {
+    const el = this;
+    let selection;
 
-    var isiOSDevice = navigator.userAgent.match(/ipad|iphone/i)
+    const isiOSDevice = navigator.userAgent.match(/ipad|iphone/i);
 
     if (isiOSDevice) {
-      const editable = el.contentEditable
-      const readOnly = el.readOnly
+      const editable = el.contentEditable;
+      const readOnly = el.readOnly;
 
-      el.contentEditable = ''
-      el.readOnly = false
+      el.contentEditable = "";
+      el.readOnly = false;
 
-      const range = document.createRange()
-      range.selectNodeContents(el)
+      const range = document.createRange();
+      range.selectNodeContents(el);
 
-      selection = window.getSelection()
+      selection = window.getSelection();
       if (selection !== null) {
-        selection.removeAllRanges()
-        selection.addRange(range)
+        selection.removeAllRanges();
+        selection.addRange(range);
       }
-      el.setSelectionRange(0, 999999)
-      el.contentEditable = editable
-      el.readOnly = readOnly
+      el.setSelectionRange(0, 999999);
+      el.contentEditable = editable;
+      el.readOnly = readOnly;
     } else {
-      el.select()
+      el.select();
     }
 
-    document.execCommand('copy')
+    document.execCommand("copy");
 
     if (isiOSDevice && selection) {
-      selection.removeAllRanges()
+      selection.removeAllRanges();
     }
 
     if (el.Tooltip) {
-      let originalTitle = el.title
-      el.title = el.dataset.copied || ''
-      el.Tooltip.hide()
-      var switchTooltip = function () {
-        el.Tooltip.show()
-        el.removeEventListener('hidden.bs.tooltip', switchTooltip)
+      const originalTitle = el.title;
+      el.title = el.dataset.copied || "";
+      el.Tooltip.hide();
+      const switchTooltip = () => {
+        el.Tooltip.show();
+        el.removeEventListener("hidden.bs.tooltip", switchTooltip);
 
-        window.setTimeout(function () {
-          el.Tooltip.hide()
-          el.title = originalTitle
-        }, 3000)
-      }
+        window.setTimeout(() => {
+          el.Tooltip.hide();
+          el.title = originalTitle;
+        }, 3000);
+      };
 
-      el.addEventListener('hidden.bs.tooltip', switchTooltip)
+      el.addEventListener("hidden.bs.tooltip", switchTooltip);
     }
-  })
-})
+  });
+});

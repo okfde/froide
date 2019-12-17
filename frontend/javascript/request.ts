@@ -1,187 +1,184 @@
-import {toggleSlide} from './lib/misc'
+import {toggleSlide} from "./lib/misc";
 
-import {Tab, Tooltip} from 'bootstrap.native'
+import {Tab, Tooltip} from "bootstrap.native";
 
-
-interface HTMLTabElement extends HTMLElement { Tab: Tab | null; }
-
+interface IHTMLTabElement extends HTMLElement { Tab: Tab | null; }
 
 const addText = (dataset: DOMStringMap) => {
   if (!dataset.addtextfield) {
-    return
+    return;
   }
-  const textField = <HTMLInputElement> document.querySelector(dataset.addtextfield)
+  const textField = document.querySelector(dataset.addtextfield) as HTMLInputElement;
   if (textField === null) {
-    return
+    return;
   }
-  let text = textField.value
-  let addedText = dataset.addtext
+  let text = textField.value;
+  const addedText = dataset.addtext;
   if (!addedText) {
-    return
+    return;
   }
   if (text.indexOf(addedText) !== -1) {
-    return
+    return;
   }
-  if (text.indexOf('\n...\n') !== -1) {
-    text = text.replace('...', addedText)
+  if (text.indexOf("\n...\n") !== -1) {
+    text = text.replace("...", addedText);
   } else {
-    let textParts = text.split('\n\n')
-    textParts = textParts.slice(0, textParts.length - 1).concat([addedText, textParts[textParts.length - 1]])
-    text = textParts.join('\n\n')
+    let textParts = text.split("\n\n");
+    textParts = textParts.slice(0, textParts.length - 1).concat([addedText, textParts[textParts.length - 1]]);
+    text = textParts.join("\n\n");
   }
-  textField.value = text
-}
+  textField.value = text;
+};
 
 const setStatus = () => {
-  const refusal = <HTMLElement> document.querySelector('.status-refusal')
+  const refusal = document.querySelector(".status-refusal") as HTMLElement;
   if (refusal !== null) {
-    refusal.style.display = 'none'
-    const resolutionElement = <HTMLInputElement> document.querySelector('#id_resolution')
+    refusal.style.display = "none";
+    const resolutionElement = document.querySelector("#id_resolution") as HTMLInputElement;
     if (resolutionElement) {
-      var resolution = resolutionElement.value
+      const resolution = resolutionElement.value;
       if (/refus/.exec(resolution) !== null || /partial/.exec(resolution) !== null) {
-        toggleSlide(refusal, 0.5)
+        toggleSlide(refusal, 0.5);
       }
     }
   }
-}
+};
 
 const runOnPage = () => {
-  (<HTMLElement[]> Array.from(document.querySelectorAll('.comment-form'))).forEach(el => {
-    el.style.display = 'none'
+  (Array.from(document.querySelectorAll(".comment-form")) as HTMLElement[]).forEach((el) => {
+    el.style.display = "none";
   });
 
-  const requestNav = <HTMLElement> document.querySelector('.request-nav')
+  const requestNav = document.querySelector(".request-nav") as HTMLElement;
   if (requestNav !== null) {
     // let's give the initialization a JavaScript reference for the "target" option
-    var myTabsCollection = requestNav.getElementsByTagName('A')
-    for (var i = 0; i < myTabsCollection.length; i++) {
-      /* eslint-disable no-new */
-      new Tab(<HTMLElement> myTabsCollection[i], {height: false})
-    }
+    const tabCollection = requestNav.getElementsByTagName("A");
+    Array.from(tabCollection).forEach((tab) => {
+      // tslint:disable-next-line: no-unused-expression
+      new Tab(tab as HTMLElement, {height: false});
+    });
   }
 
-  const idResolution = document.querySelector('#id_resolution')
+  const idResolution = document.querySelector("#id_resolution");
   if (idResolution !== null) {
-    idResolution.addEventListener('change', setStatus)
+    idResolution.addEventListener("change", setStatus);
   }
 
-  const inputStatus = document.querySelector('input[name="status"]')
+  const inputStatus = document.querySelector('input[name="status"]');
   if (inputStatus !== null) {
-    inputStatus.addEventListener('change', setStatus)
+    inputStatus.addEventListener("change", setStatus);
   }
 
-  setStatus()
+  setStatus();
 
-  const tabLinks = document.querySelectorAll('a[data-tabgo="tab"]')
-  Array.from(tabLinks).forEach((el) => {
-    el.addEventListener('click', function (this: HTMLElement, e) {
-      var hrefAttr = this.attributes.getNamedItem('href')
-      if (hrefAttr === null) { return }
-      var href = hrefAttr && hrefAttr.value
-      var el = document.querySelector(href)
-      if (el === null) { return }
-      var display = window.getComputedStyle(el, null).display
-      if (display === 'none') {
-        let navLink = <HTMLTabElement> document.querySelector('.nav-link[href="' + href + '"]')
+  const tabLinks = document.querySelectorAll('a[data-tabgo="tab"]');
+  Array.from(tabLinks).forEach((tabLink) => {
+    tabLink.addEventListener("click", function(this: HTMLElement, e) {
+      const hrefAttr = this.attributes.getNamedItem("href");
+      if (hrefAttr === null) { return; }
+      const href = hrefAttr && hrefAttr.value;
+      const el = document.querySelector(href);
+      if (el === null) { return; }
+      const display = window.getComputedStyle(el, null).display;
+      if (display === "none") {
+        const navLink = document.querySelector('.nav-link[href="' + href + '"]') as IHTMLTabElement;
         if (navLink && navLink.Tab) {
-          navLink.Tab.show()
+          navLink.Tab.show();
         }
       }
       if (el.scrollIntoView) {
-        e.preventDefault()
-        el.scrollIntoView({behavior: 'smooth'})
+        e.preventDefault();
+        el.scrollIntoView({behavior: "smooth"});
       }
-  
+
       if (this.dataset && this.dataset.value) {
-        var sel = '[name="' + this.dataset.name + '"][value="' + this.dataset.value + '"]'
-        let checkbox = el.querySelector(sel)
+        const sel = '[name="' + this.dataset.name + '"][value="' + this.dataset.value + '"]';
+        const checkbox = el.querySelector(sel);
         if (checkbox) {
-          checkbox.setAttribute('checked', '')
+          checkbox.setAttribute("checked", "");
         }
       }
       if (this.dataset && this.dataset.addtextfield) {
-        addText(this.dataset)
+        addText(this.dataset);
       }
-    })
-  })
+    });
+  });
 
   if (requestNav !== null) {
-    let activeTab = requestNav.dataset.activetab
-    if (activeTab && activeTab !== 'info') {
-      let activeTabElement = <HTMLTabElement> requestNav.querySelector('a[href="#' + activeTab + '"]')
+    const activeTab = requestNav.dataset.activetab;
+    if (activeTab && activeTab !== "info") {
+      const activeTabElement = requestNav.querySelector('a[href="#' + activeTab + '"]') as IHTMLTabElement;
       if (activeTabElement && activeTabElement.Tab) {
-        activeTabElement.Tab.show()
+        activeTabElement.Tab.show();
       }
     } else {
-      var hash = document.location && document.location.hash || ''
-      hash = hash.replace(/[^#\-\w]/g, '')
-      var hashNav = document.querySelector('.request-nav a[href="' + hash + '"]')
+      let hash = document.location && document.location.hash || "";
+      hash = hash.replace(/[^#\-\w]/g, "");
+      const hashNav = document.querySelector('.request-nav a[href="' + hash + '"]');
       if (hashNav !== null) {
-        let tabNav = <HTMLTabElement> requestNav.querySelector('a[href="' + hash + '"]')
+        const tabNav = requestNav.querySelector('a[href="' + hash + '"]') as IHTMLTabElement;
         if (tabNav && tabNav.Tab) {
-          tabNav.Tab.show()
+          tabNav.Tab.show();
         }
-      } else if (activeTab !== 'info') {
-        let tabNav = <HTMLTabElement> requestNav.querySelector('a[href="#info"]')
+      } else if (activeTab !== "info") {
+        const tabNav = requestNav.querySelector('a[href="#info"]') as IHTMLTabElement;
         if (tabNav && tabNav.Tab) {
-          tabNav.Tab.show()
+          tabNav.Tab.show();
         }
       }
     }
   }
 
+  interface IMessageOffsetCache { top: number; height: number; id: string; }
 
-  interface MessageOffsetCache { top: number, height: number, id: string }
-
-  var messages = <MessageOffsetCache[]>[]
-  document.querySelectorAll('.message-container').forEach(function (el) {
-    var rect = el.getBoundingClientRect()
-    var offset = rect.top + window.pageYOffset
+  const messages = [] as IMessageOffsetCache[];
+  document.querySelectorAll(".message-container").forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    const offset = rect.top + window.pageYOffset;
     messages.push({
-      top: offset,
       height: rect.height,
-      id: el.id
-    })
-  })
-  var activeMessage = <string | null> null
-  document.addEventListener('scroll', function () {
-    var py = window.pageYOffset
-    for (var i = 0; i < messages.length; i += 1) {
-      var message = messages[i]
+      id: el.id,
+      top: offset,
+    });
+  });
+  let activeMessage = null as string | null;
+  document.addEventListener("scroll", () => {
+    const py = window.pageYOffset;
+    for (const message of messages) {
       if (py >= message.top && py <= message.top + message.height) {
         if (activeMessage !== message.id) {
-          activeMessage = message.id
-          var navEls = document.querySelectorAll('.message-timeline-listitem a')
-          navEls.forEach(function (el) {
-            el.classList.remove('active')
-          })
-          var navEl = document.querySelector('.message-timeline-listitem [href="#' + message.id + '"]')
+          activeMessage = message.id;
+          const navEls = document.querySelectorAll(".message-timeline-listitem a");
+          navEls.forEach((el) => {
+            el.classList.remove("active");
+          });
+          const navEl = document.querySelector('.message-timeline-listitem [href="#' + message.id + '"]');
           if (navEl !== null) {
-            navEl.classList.add('active')
+            navEl.classList.add("active");
           }
         }
-        break
+        break;
       }
     }
-  })
+  });
 
-  if (!('ontouchstart' in window.document)) {
-    Array.from(document.querySelectorAll('.message-timeline-item')).forEach(function (el) {
-      new Tooltip(<HTMLElement> el)
-    })
+  if (!("ontouchstart" in window.document)) {
+    Array.from(document.querySelectorAll(".message-timeline-item")).forEach((el) => {
+      // tslint:disable-next-line: no-unused-expression
+      new Tooltip(el as HTMLElement);
+    });
   } else {
-    var click = function (this: HTMLElement) {
-      this.click()
-    }
-    Array.from(document.querySelectorAll('.message-timeline-item')).forEach(function (el) {
-      el.addEventListener('touchstart', click)
-    })
+    const click = function(this: HTMLElement) {
+      this.click();
+    };
+    Array.from(document.querySelectorAll(".message-timeline-item")).forEach((el) => {
+      el.addEventListener("touchstart", click);
+    });
   }
-}
+};
 
-if (document.readyState === 'loading') {
-  window.document.addEventListener('DOMContentLoaded', runOnPage)
+if (document.readyState === "loading") {
+  window.document.addEventListener("DOMContentLoaded", runOnPage);
 } else {
-  runOnPage()
+  runOnPage();
 }

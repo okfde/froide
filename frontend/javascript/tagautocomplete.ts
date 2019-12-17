@@ -1,138 +1,77 @@
 
-import '../styles/components/tagautocomplete.scss'
+import "../styles/components/tagautocomplete.scss";
 
-import Choices from 'choices.js'
+import Choices from "choices.js";
 
-interface ChoicesSearchEvent extends Event { detail: {value: string}; }
+interface IChoicesSearchEvent extends Event { detail: {value: string}; }
 
-
-function setupTagging () {
-  const allSelects = document.querySelectorAll('.tagautocomplete');
-  (<HTMLInputElement[]> Array.from(allSelects)).forEach(select => {
-    const selectId = select.id.replace('_select', '')
-    const realInput = <HTMLInputElement> document.querySelector('#' + selectId)
+function setupTagging() {
+  const allSelects = document.querySelectorAll(".tagautocomplete");
+  (Array.from(allSelects) as HTMLInputElement[]).forEach((select) => {
+    const selectId = select.id.replace("_select", "");
+    const realInput = document.querySelector("#" + selectId) as HTMLInputElement;
     if (realInput === null) {
-      return
+      return;
     }
-    const addItemText = select.dataset.additemtext || ''
-    const loadingText = select.dataset.loading || ''
-    const noResultsText = select.dataset.noresults || ''
-    const noChoicesText = select.dataset.nochoices || ''
-    const itemSelectText = select.dataset.itemselect || ''
-    const uniqueItemText = select.dataset.uniqueitemtext || ''
-    const fetchUrl = select.dataset.fetchurl || ''
-    
+    const addItemText = select.dataset.additemtext || "";
+    const loadingText = select.dataset.loading || "";
+    const noResultsText = select.dataset.noresults || "";
+    const noChoicesText = select.dataset.nochoices || "";
+    const itemSelectText = select.dataset.itemselect || "";
+    const uniqueItemText = select.dataset.uniqueitemtext || "";
+    const fetchUrl = select.dataset.fetchurl || "";
+
     const choices = new Choices(select, {
+      addItemText(value) {
+        return addItemText.replace("${value}", String(value));
+      },
+      addItems: true,
+      classNames: {
+        hiddenState: "d-none",
+      },
+      delimiter: ",",
       duplicateItemsAllowed: false,
       editItems: true,
-      addItems: true,
-      delimiter: ',',
-      removeItemButton: true,
-      addItemText: function(value) {
-        return addItemText.replace('${value}', String(value));
-      },
-      noResultsText,
+      itemSelectText,
       loadingText,
       noChoicesText,
-      itemSelectText,
+      noResultsText,
+      removeItemButton: true,
       uniqueItemText,
-      classNames: {
-        hiddenState: 'd-none'
-      }
-    })
+    });
 
-    select.addEventListener('change', function onchange() {
-      choices.hideDropdown()
-      const value = choices.getValue(true)
-      let valueString
+    select.addEventListener("change", function onchange() {
+      choices.hideDropdown();
+      const value = choices.getValue(true);
+      let valueString;
       if (Array.isArray(value)) {
-        valueString = value.join(', ')
+        valueString = value.join(", ");
       } else {
-        valueString = value
+        valueString = value;
       }
-      realInput.value = valueString
-    })
+      realInput.value = valueString;
+    });
 
-    select.addEventListener('search', function onSearch(event) {
-      const choicesEvent = <ChoicesSearchEvent> event
-      const value = choicesEvent.detail.value
-      fetch(fetchUrl + '?query=' + encodeURIComponent(value))
-      .then(function(response) {
-        response.json().then(function(data: string[]) {
-          const present = data.filter((f) => f === value).length > 0
-          const transformed = data.map(x => ({value: x, label: x}))
+    select.addEventListener("search", function onSearch(event) {
+      const choicesEvent = event as IChoicesSearchEvent;
+      const value = choicesEvent.detail.value;
+      fetch(fetchUrl + "?query=" + encodeURIComponent(value))
+      .then((response) => {
+        response.json().then((data: string[]) => {
+          const present = data.filter((f) => f === value).length > 0;
+          const transformed = data.map((x) => ({value: x, label: x}));
           if (!present) {
-            transformed.push({value, label: value})
+            transformed.push({value, label: value});
           }
-          choices.setChoices(transformed, 'value', 'label', true);
+          choices.setChoices(transformed, "value", "label", true);
         });
-      })
-    })
-  })
+      });
+    });
+  });
 }
 
-
-
-
-
-
-if (document.readyState === 'loading') {
-  window.document.addEventListener('DOMContentLoaded', setupTagging)
+if (document.readyState === "loading") {
+  window.document.addEventListener("DOMContentLoaded", setupTagging);
 } else {
-  setupTagging()
+  setupTagging();
 }
-
-// document.addEventListener('DOMContentLoaded', function () {
-//   window.Froide.components.tagautocomplete.setupTagging('%(objectid)s', '%(sourceurl)s', {
-//       noResults: '%(noResults)s',
-//       searching: '%(searching)s'
-//   })
-// });
-
-
-
-
-// function setupTagging (objectid, sourceurl, trans) {
-//   $(`#${objectid}_select2`).on('change.select2', function (e) {
-//     var tagString = $(this).select2('data').map(function (el) {
-//       return '"' + el.id + '"'
-//     }).join(', ')
-
-//     $(`#${objectid}`).val(tagString)
-//   }).select2({
-//     width: '75%%',
-//     tags: true,
-//     language: {
-//       noResults: function () {
-//         return trans.noResults
-//       },
-//       searching: function () {
-//         return trans.searching
-//       }
-//     },
-//     tokenSeparators: [',', ' '],
-//     ajax: {
-//       url: sourceurl,
-//       data: function (params) {
-//         if (params.term.length === 0) {
-//           return null
-//         }
-//         return { query: params.term }
-//       },
-//       processResults: function (data) {
-//         return {
-//           results: data.map(function (el) {
-//             return { id: el, text: el }
-//           })
-//         }
-//       }
-//     }
-//   })
-// }
-
-// const exp = {
-//   setupTagging
-// }
-
-// module.exports = exp
-// export default exp
