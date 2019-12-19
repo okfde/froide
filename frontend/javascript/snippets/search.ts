@@ -28,7 +28,7 @@ function applyToForm(searchForm: HTMLFormElement) {
   }
 }
 
-let form = document.querySelector(".search-form") as HTMLFormElement;
-if (form !== null) {
-  applyToForm(form);
+let domSearchForm = document.querySelector(".search-form") as HTMLFormElement;
+if (domSearchForm !== null) {
+  applyToForm(domSearchForm);
 }
