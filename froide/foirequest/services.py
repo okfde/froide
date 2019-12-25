@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from froide.account.services import AccountService
-from froide.helper.text_utils import redact_subject, redact_plaintext
+from froide.helper.text_utils import redact_subject
 from froide.helper.storage import add_number_to_filename
 from froide.helper.db_utils import save_obj_with_slug
 from froide.problem.models import ProblemReport
