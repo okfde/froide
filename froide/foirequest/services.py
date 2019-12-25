@@ -21,7 +21,7 @@ from .models import (
 )
 from .utils import (
     generate_secret_address, construct_initial_message_body,
-    get_publicbody_for_email
+    get_publicbody_for_email, redact_plaintext_with_request
 )
 from .hooks import registry
 from .tasks import create_project_requests, convert_attachment_task
@@ -234,11 +234,9 @@ class CreateRequestService(BaseService):
             full_text=data.get('full_text', False),
             send_address=send_address
         )
-
-        message.plaintext_redacted = redact_plaintext(
+        message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
-            is_response=False,
-            user=user
+            request
         )
 
         message.recipient_public_body = publicbody
@@ -373,9 +371,8 @@ class ReceiveEmailService(BaseService):
         message.subject_redacted = redact_subject(
             message.subject, user=foirequest.user
         )
-        message.plaintext_redacted = redact_plaintext(
-            message.plaintext, is_response=True,
-            user=foirequest.user
+        message.plaintext_redacted = redact_plaintext_with_request(
+            message.plaintext, foirequest, is_response=True,
         )
 
         if is_bounce:
