@@ -325,7 +325,7 @@ def delete_request(request, foirequest):
 def publicbody_upload(request, obj_id, code):
     from .message import get_uppy_i18n
 
-    foirequest = get_object_or_404(FoiRequest, id=obj_id)
+    foirequest = get_object_or_404(FoiRequest, id=obj_id, closed=False)
     if not check_foirequest_upload_code(foirequest, code):
         return render_403(request)
     # Not for authenticated users
