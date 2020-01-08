@@ -632,9 +632,15 @@ class PostalMessageForm(PostalBaseForm):
                    'files']
     PUBLICBODY_LABEL = _('Receiving public body')
 
-    recipient = forms.CharField(label=_("Recipient Name"),
-            widget=forms.TextInput(attrs={"class": "form-control",
-                "placeholder": _("Recipient Name")}), required=False)
+    recipient = forms.CharField(
+        label=_("Recipient Name"),
+        max_length=250,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "placeholder": _("Recipient Name")
+        }),
+        required=False
+    )
 
     def contribute_to_message(self, message):
         message.is_response = False
