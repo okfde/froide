@@ -11,7 +11,7 @@ from froide.campaign.models import Campaign
 from froide.account.models import User
 from froide.helper.auth import get_read_queryset
 
-from filingcabinet.models import Page
+from filingcabinet.models import DocumentPortal, Page
 
 from .models import Document, DocumentCollection
 
@@ -73,6 +73,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method='filter_collection',
         widget=forms.HiddenInput()
     )
+    portal = django_filters.ModelChoiceFilter(
+        queryset=DocumentPortal.objects.filter(public=True),
+        to_field_name='pk',
+        method='filter_portal',
+        widget=forms.HiddenInput()
+    )
     document = django_filters.ModelChoiceFilter(
         queryset=None,
         to_field_name='pk',
@@ -91,7 +97,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         fields = [
             'q', 'jurisdiction', 'campaign',
             'tag', 'publicbody', 'collection',
-            'number', 'user'
+            'number', 'user', 'portal'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -128,6 +134,9 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def filter_collection(self, qs, name, value):
         return qs.filter(collections=value.id)
+
+    def filter_portal(self, qs, name, value):
+        return qs.filter(portal=value.id)
 
     def filter_document(self, qs, name, value):
         return qs.filter(document=value.id)

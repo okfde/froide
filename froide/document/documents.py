@@ -31,6 +31,7 @@ class PageDocument(Document):
     foirequest = fields.IntegerField(attr='document.foirequest_id')
     campaign = fields.IntegerField(attr='document.foirequest.campaign_id')
     collections = fields.IntegerField()
+    portal = fields.IntegerField(attr='document_portal_id')
 
     user = fields.IntegerField(attr='document.user_id')
     team = fields.IntegerField(attr='document.team_id')
@@ -84,3 +85,8 @@ class PageDocument(Document):
     def prepare_collections(self, obj):
         collections = obj.document.document_documentcollection.all()
         return list(collections.values_list('id', flat=True))
+
+    def prepare_portal(self, obj):
+        if obj.document.portal_id:
+            return obj.document.portal_id
+        return None
