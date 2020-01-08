@@ -1,4 +1,5 @@
-from django_elasticsearch_dsl import DocType, fields
+from django_elasticsearch_dsl import Document, fields
+from django_elasticsearch_dsl.registries import registry
 
 from froide.helper.search import (
     get_index, get_text_analyzer, get_search_analyzer,
@@ -14,8 +15,9 @@ search_analyzer = get_search_analyzer()
 search_quote_analyzer = get_search_quote_analyzer()
 
 
-@index.doc_type
-class PageDocument(DocType):
+@registry.register_document
+@index.document
+class PageDocument(Document):
     document = fields.IntegerField(attr='document_id')
 
     title = fields.TextField()
@@ -43,7 +45,7 @@ class PageDocument(DocType):
         index_options='offsets',
     )
 
-    class Meta:
+    class Django:
         model = Page
         queryset_chunk_size = 50
 

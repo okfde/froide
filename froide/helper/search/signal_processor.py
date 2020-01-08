@@ -38,7 +38,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         for doc in registry.get_documents():
             if getattr(doc, 'special_signals', False):
                 continue
-            model = doc._doc_type.model
+            model = doc.django.model
             models.signals.post_save.connect(self.handle_save, sender=model)
             models.signals.post_delete.connect(self.handle_delete, sender=model)
 
@@ -50,7 +50,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         for doc in registry.get_documents():
             if getattr(doc, 'special_signals', False):
                 continue
-            model = doc._doc_type.model
+            model = doc.django.model
             models.signals.post_save.disconnect(self.handle_save, sender=model)
             models.signals.post_delete.disconnect(self.handle_delete, sender=model)
             models.signals.m2m_changed.disconnect(self.handle_m2m_changed, sender=model)

@@ -30,7 +30,10 @@ class SearchQuerySetWrapper(object):
         self.broken_query = False
 
     def count(self):
-        return self.response.hits.total
+        total = self.response.hits.total
+        if isinstance(total, int):
+            return total
+        return total.value
 
     def to_queryset(self):
         if self.broken_query:

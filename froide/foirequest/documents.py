@@ -1,5 +1,7 @@
-from django_elasticsearch_dsl import DocType, fields
 from django.template.loader import render_to_string
+
+from django_elasticsearch_dsl import Document, fields
+from django_elasticsearch_dsl.registries import registry
 
 from froide.helper.search import get_index, get_text_analyzer
 
@@ -10,8 +12,9 @@ index = get_index('foirequest')
 analyzer = get_text_analyzer()
 
 
-@index.doc_type
-class FoiRequestDocument(DocType):
+@registry.register_document
+@index.document
+class FoiRequestDocument(Document):
     content = fields.TextField(
         analyzer=analyzer,
         index_options='offsets'
@@ -40,7 +43,7 @@ class FoiRequestDocument(DocType):
 
     public = fields.BooleanField()
 
-    class Meta:
+    class Django:
         model = FoiRequest
         queryset_chunk_size = 50
 
