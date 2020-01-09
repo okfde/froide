@@ -10,7 +10,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
   elasticsearch:
-    image: blacktop/elasticsearch:6.3 
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
       - elasticsearch-log:/var/log
