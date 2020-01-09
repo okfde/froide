@@ -3,13 +3,18 @@ from django.template.loader import render_to_string
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 
-from froide.helper.search import get_index, get_text_analyzer
+from froide.helper.search import (
+    get_index, get_text_analyzer, get_search_analyzer,
+    get_search_quote_analyzer
+)
 
 from .models import FoiRequest
 
 
 index = get_index('foirequest')
 analyzer = get_text_analyzer()
+search_analyzer = get_search_analyzer()
+search_quote_analyzer = get_search_quote_analyzer()
 
 
 @registry.register_document
@@ -17,6 +22,8 @@ analyzer = get_text_analyzer()
 class FoiRequestDocument(Document):
     content = fields.TextField(
         analyzer=analyzer,
+        search_analyzer=search_analyzer,
+        search_quote_analyzer=search_quote_analyzer,
         index_options='offsets'
     )
     title = fields.TextField()
