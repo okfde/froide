@@ -75,6 +75,7 @@
     "write-file-webpack-plugin": "^4.2.0"
   },
   "dependencies": {
+    "@okfde/filingcabinet": "^0.0.1",
     "@uppy/core": "^1.5.1",
     "@uppy/dashboard": "^1.4.1",
     "@uppy/tus": "^1.4.2",
