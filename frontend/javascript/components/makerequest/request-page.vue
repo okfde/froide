@@ -76,6 +76,7 @@
               :initial-full-text.sync="fullText"
               :initial-first-name.sync="firstName"
               :initial-last-name.sync="lastName"
+              :initial-private.sync="userPrivate"
               @setStepSelectPublicBody="setStepSelectPublicBody"
             >
               <template slot="request-hints">
@@ -93,7 +94,7 @@
               :default-law="defaultLaw"
               :initial-email.sync="email"
               :initial-address.sync="address"
-              :initial-private.sync="userPrivate"
+              :address-help-text="userForm.fields.address.help_text"
             ></user-registration>
 
             <request-public

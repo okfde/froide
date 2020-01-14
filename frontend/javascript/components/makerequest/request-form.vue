@@ -141,10 +141,25 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4 mt-4" v-if="usePseudonym">
+          <div class="col-md-4 mt-md-4" v-if="usePseudonym">
             <small v-if="userformFields.last_name.help_text" v-html="userformFields.last_name.help_text"></small>
           </div>
         </div>
+
+        <div class="row mt-2" v-if="config.settings.user_can_hide_web && !hasUser">
+          <div class="col-md-8">
+            <div class="checkbox">
+              <label>
+                <input id="id_private" v-model="userPrivate" type="checkbox" name="private" />
+                {{ userformFields.private.label }}
+              </label>
+              <br/>
+              <p class="help-block" v-html="userformFields.private.help_text">
+              </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -245,6 +260,7 @@ export default {
       fullTextValue: this.initialFullText,
       firstNameValue: this.initialFirstName || (this.user && this.user.first_name) || '',
       lastNameValue: this.initialLastName || (this.user && this.user.last_name) || '',
+      privateValue: this.initialPrivate || (this.user && this.user.private) || false,
     }
   },
   computed: {
@@ -363,6 +379,15 @@ export default {
       set (value) {
         this.lastNameValue = value
         this.$emit('update:initialLastName', value)
+      }
+    },
+    userPrivate: {
+      get () {
+        return this.privateValue
+      },
+      set (value) {
+        this.privateValue = value
+        this.$emit('update:initialPrivate', value)
       }
     },
     hasPublicBodies () {

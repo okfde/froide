@@ -30,21 +30,6 @@
           </div>
         </div>
 
-        <div v-if="config.settings.user_can_hide_web && !user">
-          <div class="row">
-            <div class="col-md-8">
-              <div class="checkbox">
-                <label>
-                  <input id="id_private" v-model="userPrivate" type="checkbox" name="private" />
-                  {{ formFields.private.label }}
-                </label>
-                <br/>
-                <p class="help-block" v-html="formFields.private.help_text">
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -96,7 +81,6 @@ export default {
     return {
       emailValue: this.initialEmail,
       addressValue: this.initialAddress || (this.user && this.user.address) || '',
-      privateValue: this.initialPrivate || (this.user && this.user.private),
     }
   },
   computed: {
@@ -131,15 +115,6 @@ export default {
       set (value) {
         this.addressValue = value
         this.$emit('update:initialAddress', value)
-      }
-    },
-    userPrivate: {
-      get () {
-        return this.privateValue
-      },
-      set (value) {
-        this.privateValue = value
-        this.$emit('update:initialPrivate', value)
       }
     },
     requiresPostalAddress () {
