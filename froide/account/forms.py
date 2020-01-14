@@ -65,7 +65,7 @@ class NewUserBaseForm(forms.Form):
         required=False,
         label=_('Mailing Address'),
         help_text=_(
-            'Optional. Your address will not be displayed '
+            'Your address will not be displayed '
             'publicly and is only needed in case a public body '
             'needs to send you paper.'),
         widget=forms.Textarea(attrs={
