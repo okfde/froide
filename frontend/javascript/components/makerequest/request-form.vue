@@ -26,7 +26,7 @@
       <small>{{ i18n.batchRequestDraftOnly }}</small>
     </div>
 
-    <div v-else class="publicbody-summary-container">
+    <div v-if="!multiRequest" class="publicbody-summary-container">
       <div class="row">
         <div class="col-lg-12 publicbody-summary">
           <p>
