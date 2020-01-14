@@ -22,3 +22,6 @@ node_modules/
 favicon-result.json
 .mypy_cache
 __pycache__/
+froide/static/js
+froide/static/css
+froide/static/fonts
