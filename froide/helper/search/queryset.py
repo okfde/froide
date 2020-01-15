@@ -54,6 +54,8 @@ class SearchQuerySetWrapper(object):
     def get_response(self):
         if not hasattr(self.sqs, '_response'):
             self.sqs = self.sqs.source(excludes=['*'])
+        else:
+            return self.sqs._response
         try:
             return self.sqs.execute()
         except Exception:
