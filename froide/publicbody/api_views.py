@@ -432,11 +432,13 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
         return self.optimize_query(PublicBody.objects.all())
 
     def optimize_query(self, qs):
-        return qs.prefetch_related(
+        return qs.select_related(
             'classification',
-            'jurisdiction',
+            'jurisdiction'
+        ).prefetch_related(
             'categories',
-            'laws'
+            'laws',
+            'regions',
         )
 
     @action(detail=False, methods=['get'])
