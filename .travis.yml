@@ -13,10 +13,6 @@ addons:
       - postgresql-10-postgis-2.5
       - postgresql-10-postgis-2.5-scripts
 
-env:
-  global:
-    - ES_VERSION=7.5.1 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
-
 python:
   - '3.6.9'
   - '3.7.4'
@@ -35,9 +31,6 @@ install:
   - sudo mv -f ~/chromedriver /usr/local/share/
   - sudo chmod +x /usr/local/share/chromedriver
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
-  - wget ${ES_DOWNLOAD_URL}
-  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
-  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
   - pip install -r requirements-test.txt
   - pip install psycopg2-binary coveralls
   - pip install -e .
