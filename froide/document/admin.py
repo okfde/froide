@@ -4,9 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 from filingcabinet.admin import (
     DocumentBaseAdmin, PageAdmin, PageAnnotationAdmin,
     DocumentCollectionBaseAdmin,
-    CollectionDocumentBaseAdmin
+    CollectionDocumentBaseAdmin,
+    DocumentPortalAdmin
 )
-from filingcabinet.models import Page, PageAnnotation, CollectionDocument
+from filingcabinet.models import (
+    Page, PageAnnotation, CollectionDocument,
+    DocumentPortal
+)
 
 from froide.helper.admin_utils import (
     ForeignKeyFilter, make_admin_assign_action
@@ -80,3 +84,4 @@ admin.site.register(Page, CustomPageAdmin)
 admin.site.register(PageAnnotation, CustomPageAnnotationAdmin)
 admin.site.register(DocumentCollection, DocumentCollectionAdmin)
 admin.site.register(CollectionDocument, CollectionDocumentAdmin)
+admin.site.register(DocumentPortal, DocumentPortalAdmin)
