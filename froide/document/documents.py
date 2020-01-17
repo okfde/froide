@@ -1,4 +1,5 @@
-from django_elasticsearch_dsl import DocType, fields
+from django_elasticsearch_dsl import Document, fields
+from django_elasticsearch_dsl.registries import registry
 
 from froide.helper.search import (
     get_index, get_text_analyzer, get_search_analyzer,
@@ -14,8 +15,9 @@ search_analyzer = get_search_analyzer()
 search_quote_analyzer = get_search_quote_analyzer()
 
 
-@index.doc_type
-class PageDocument(DocType):
+@registry.register_document
+@index.document
+class PageDocument(Document):
     document = fields.IntegerField(attr='document_id')
 
     title = fields.TextField()
@@ -29,6 +31,7 @@ class PageDocument(DocType):
     foirequest = fields.IntegerField(attr='document.foirequest_id')
     campaign = fields.IntegerField(attr='document.foirequest.campaign_id')
     collections = fields.IntegerField()
+    portal = fields.IntegerField(attr='document_portal_id')
 
     user = fields.IntegerField(attr='document.user_id')
     team = fields.IntegerField(attr='document.team_id')
@@ -43,7 +46,7 @@ class PageDocument(DocType):
         index_options='offsets',
     )
 
-    class Meta:
+    class Django:
         model = Page
         queryset_chunk_size = 50
 
@@ -82,3 +85,8 @@ class PageDocument(DocType):
     def prepare_collections(self, obj):
         collections = obj.document.document_documentcollection.all()
         return list(collections.values_list('id', flat=True))
+
+    def prepare_portal(self, obj):
+        if obj.document.portal_id:
+            return obj.document.portal_id
+        return None

@@ -1,4 +1,6 @@
-from django_elasticsearch_dsl import DocType, fields
+from django_elasticsearch_dsl import Document, fields
+from django_elasticsearch_dsl.registries import registry
+
 from froide.helper.search import (
     get_index, get_text_analyzer, get_ngram_analyzer
 )
@@ -12,8 +14,9 @@ analyzer = get_text_analyzer()
 ngram_analyzer = get_ngram_analyzer()
 
 
-@index.doc_type
-class PublicBodyDocument(DocType):
+@registry.register_document
+@index.document
+class PublicBodyDocument(Document):
     name = fields.TextField(
         fields={'raw': fields.KeywordField()},
         analyzer=analyzer,
@@ -34,7 +37,7 @@ class PublicBodyDocument(DocType):
     regions_exact = fields.ListField(fields.IntegerField())
     regions_kind = fields.ListField(fields.KeywordField())
 
-    class Meta:
+    class Django:
         model = PublicBody
         queryset_chunk_size = 100
 

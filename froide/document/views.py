@@ -49,7 +49,7 @@ class DocumentSearchView(BaseSearchView):
         q = Q('term', public=True)
         if self.request.user.is_authenticated:
             q |= Q('term', user=self.request.user.pk)
-        return super().get_base_search().filter(q)
+        return super().get_base_search().filter(q).filter('term', portal=None)
 
 
 class DocumentFileDetailView(CrossDomainMediaMixin, DetailView):

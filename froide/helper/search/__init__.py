@@ -37,7 +37,6 @@ def get_default_text_analyzer():
         'froide_analyzer',
         tokenizer='standard',
         filter=[
-            'standard',
             'lowercase',
             'asciifolding',
         ]
@@ -55,7 +54,6 @@ def get_default_ngram_analyzer():
             token_chars=['letter', 'digit']
         ),
         filter=[
-            'standard',
             'lowercase',
             'asciifolding',
         ]

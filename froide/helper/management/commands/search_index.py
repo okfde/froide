@@ -28,7 +28,7 @@ class Command(DESCommand):
             self.stdout.write(
                 "Indexing {} '{}' objects "
                 "with custom chunk_size {}".format(
-                    count, doc._doc_type.model.__name__, CHUNK_SIZE
+                    count, doc.django.model.__name__, CHUNK_SIZE
                 )
             )
             working_chunk_divider = None
