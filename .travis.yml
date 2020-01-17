@@ -34,8 +34,8 @@ install:
   - sudo chmod +x /usr/local/share/chromedriver
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
   - wget ${ES_DOWNLOAD_URL}
-  - dpkg -i elasticsearch-${ES_VERSION}-amd64.deb
-  - service elasticsearch start
+  - sudo dpkg -i elasticsearch-${ES_VERSION}-amd64.deb
+  - sudo service elasticsearch start
   - pip install -r requirements-test.txt
   - pip install psycopg2-binary coveralls
   - pip install -e .
