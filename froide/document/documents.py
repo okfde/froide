@@ -89,4 +89,4 @@ class PageDocument(Document):
     def prepare_portal(self, obj):
         if obj.document.portal_id:
             return obj.document.portal_id
-        return None
+        return 0
