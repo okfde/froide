@@ -35,7 +35,11 @@ install:
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
   - wget ${ES_DOWNLOAD_URL}
   - sudo dpkg -i --force-confnew elasticsearch-${ES_VERSION}-amd64.deb
-  - sudo service elasticsearch start
+  - sudo sed -i.old 's/-Xms1g/-Xms128m/' /etc/elasticsearch/jvm.options
+  - sudo sed -i.old 's/-Xmx1g/-Xmx128m/' /etc/elasticsearch/jvm.options
+  - echo -e '-XX:+DisableExplicitGC\n-Djdk.io.permissionsUseCanonicalPath=true\n-Dlog4j.skipJansi=true\n-server\n' | sudo tee -a /etc/elasticsearch/jvm.options
+  - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
+  - sudo systemctl start elasticsearch
   - pip install -r requirements-test.txt
   - pip install psycopg2-binary coveralls
   - pip install -e .
