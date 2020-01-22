@@ -77,6 +77,9 @@
               </small>
             </button>
           </div>
+          <div v-if="errors.subject && errors.subject.length > 0" class="alert alert-danger">
+            <p v-for="error in errors.subject" :key="error.message">{{ error.message }}</p>
+          </div>
           <input v-else v-model="subject" type="text" name="subject" class="form-control" id="id_subject" :class="{ 'is-invalid': errors.subject }" :placeholder="formFields.subject.placeholder" @keydown.enter.prevent/>
         </div>
       </div>
@@ -105,6 +108,10 @@
             </button>
           </div>
           <div class="col-md-8 order-1">
+            <div v-if="errors.body && errors.body.length > 0" class="alert alert-danger">
+              <p v-for="error in errors.body" :key="error.message">{{ error.message }}</p>
+            </div>
+
             <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
             <div v-if="editingDisabled" class="body-text body-text-em">{{ body }}</div>
             <textarea v-show="!editingDisabled" v-model="body" name="body" id="id_body" class="form-control body-textarea" :class="{ 'is-invalid': errors.body, 'attention': !hasBody }" :rows="bodyRows" @keyup="bodyChanged" :placeholder="formFields.body.placeholder"></textarea>
