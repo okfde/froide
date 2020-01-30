@@ -14,9 +14,8 @@ class TagObjectForm(forms.Form):
         if tags:
             kwargs['initial'] = {'tags': edit_string_for_tags(tags)}
 
-        autocomplete_url = kwargs.pop('autocomplete_url', None)
-        if autocomplete_url is not None:
-            self.tags_autocomplete_url = autocomplete_url
+        autocomplete_url = kwargs.pop('autocomplete_url', '') or ''
+        self.tags_autocomplete_url = autocomplete_url
 
         super(TagObjectForm, self).__init__(*args, **kwargs)
 

@@ -55,17 +55,21 @@ function setupTagging() {
     select.addEventListener("search", function onSearch(event) {
       const choicesEvent = event as IChoicesSearchEvent;
       const value = choicesEvent.detail.value;
-      fetch(fetchUrl + "?query=" + encodeURIComponent(value))
-      .then((response) => {
-        response.json().then((data: string[]) => {
-          const present = data.filter((f) => f === value).length > 0;
-          const transformed = data.map((x) => ({value: x, label: x}));
-          if (!present) {
-            transformed.push({value, label: value});
-          }
-          choices.setChoices(transformed, "value", "label", true);
+      if (fetchUrl) {
+        fetch(fetchUrl + "?query=" + encodeURIComponent(value))
+        .then((response) => {
+          response.json().then((data: string[]) => {
+            const present = data.filter((f) => f === value).length > 0;
+            const transformed = data.map((x) => ({value: x, label: x}));
+            if (!present) {
+              transformed.push({value, label: value});
+            }
+            choices.setChoices(transformed, "value", "label", true);
+          });
         });
-      });
+      } else {
+        choices.setChoices([{value, label: value}], "value", "label", true);
+      }
     });
   });
 }
