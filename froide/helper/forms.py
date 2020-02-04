@@ -15,7 +15,10 @@ class TagObjectForm(forms.Form):
             kwargs['initial'] = {'tags': edit_string_for_tags(tags)}
 
         autocomplete_url = kwargs.pop('autocomplete_url', '') or ''
-        self.tags_autocomplete_url = autocomplete_url
+
+        if hasattr(self, 'tags_autocomplete_url'):
+            if self.tags_autocomplete_url:
+                autocomplete_url = self.tags_autocomplete_url
 
         super(TagObjectForm, self).__init__(*args, **kwargs)
 
@@ -23,7 +26,7 @@ class TagObjectForm(forms.Form):
             label=_("Tags"),
             widget=TagAutocompleteWidget(
                 attrs={'placeholder': _('Tags')},
-                autocomplete_url=self.tags_autocomplete_url
+                autocomplete_url=autocomplete_url
             ),
             required=False,
             help_text=_("Comma separated and quoted")
