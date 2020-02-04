@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-15 16:32+0100\n"
-"PO-Revision-Date: 2020-01-15 16:33+0100\n"
+"POT-Creation-Date: 2020-02-04 11:08+0100\n"
+"PO-Revision-Date: 2020-02-04 11:09+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1375,7 +1375,7 @@ msgstr "Kommentare"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: froide/document/admin.py:20
+#: froide/document/admin.py:24
 msgid "Add documents to collection"
 msgstr "Füge Dokumente zu Sammlung hinzu"
 
@@ -5009,11 +5009,19 @@ msgstr "Inhalt der Nachricht veröffentlichen"
 msgid "This message is not yet public."
 msgstr "Diese Nachricht ist noch nicht öffentlich."
 
-#: froide/foirequest/templates/foirequest/snippets/message.html:302
+#: froide/foirequest/templates/foirequest/snippets/message.html:304
+msgid "Reply to public body"
+msgstr "Schreiben Sie an die Behörde"
+
+#: froide/foirequest/templates/foirequest/snippets/message.html:312
+msgid "Write a public comment"
+msgstr "Schreiben Sie einen öffentlichen Kommentar"
+
+#: froide/foirequest/templates/foirequest/snippets/message.html:314
 msgid "Write a comment"
 msgstr "Schreiben Sie einen Kommentar"
 
-#: froide/foirequest/templates/foirequest/snippets/message.html:310
+#: froide/foirequest/templates/foirequest/snippets/message.html:323
 msgid "Please login to write a comment."
 msgstr "Um einen Kommentar zu schreiben, loggen Sie sich bitte ein."
 
@@ -5076,7 +5084,7 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:32
-#: froide/helper/forms.py:24 froide/helper/forms.py:26
+#: froide/helper/forms.py:23 froide/helper/forms.py:25
 msgid "Tags"
 msgstr "Schlagwörter"
 
@@ -6971,7 +6979,7 @@ msgstr "Ist nicht leer"
 msgid "All"
 msgstr "Alle"
 
-#: froide/helper/forms.py:30
+#: froide/helper/forms.py:29
 msgid "Comma separated and quoted"
 msgstr "Komma-separiert und ggf. in \"\""
 
