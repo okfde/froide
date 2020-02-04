@@ -88,7 +88,7 @@ const runOnPage = () => {
       }
       if (el.scrollIntoView) {
         e.preventDefault();
-        el.scrollIntoView({behavior: "smooth"});
+        el.scrollIntoView({behavior: "smooth", inline: "start"});
       }
 
       if (this.dataset && this.dataset.value) {

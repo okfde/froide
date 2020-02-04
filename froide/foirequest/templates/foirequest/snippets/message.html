@@ -296,9 +296,22 @@
     {% get_comment_list message as comment_list %}
     <div id="comments-{{ message.id }}" class="comments">
       {% include "comments/foirequest/list.html" %}
+
+      {% if not message.original and message.is_response and object|can_write_foirequest:request %}
+        <div class="float-left">
+          <a class="small text-muted" data-tabgo="tab" data-name="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message">
+            {% trans "Reply to public body" %}
+          </a>
+        </div>
+      {% endif %}
+
       <div class="text-right">
         <a class="small text-muted" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
-          {% trans "Write a comment" %}
+          {% if object.public %}
+            {% trans "Write a public comment" %}
+          {% else %}
+            {% trans "Write a comment" %}
+          {% endif %}
         </a>
       </div>
       <div class="collapse" id="comment-form-{{ message.id }}">
