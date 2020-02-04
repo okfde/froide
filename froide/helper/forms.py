@@ -46,3 +46,39 @@ def get_fk_form_class(model, field, admin_site, queryset=None):
                                      widget=widget)
 
     return ForeignKeyForm
+
+
+class FakeRelatedField:
+    def __init__(self, name):
+        self.name = name
+
+
+class FakeRemoteField:
+    limit_choices_to = None
+
+    def __init__(self, model):
+        self.model = model
+
+    def get_related_field(self):
+        return FakeRelatedField(self.model.__name__.lower())
+
+
+class NonFieldForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
+    def url_parameters(self):
+        params = self.base_url_parameters()
+        print(params)
+        return params
+
+
+def get_fake_fk_form_class(model, admin_site, queryset=None):
+    remote_field = FakeRemoteField(model)
+    if queryset is None:
+        queryset = remote_field.model.objects.all()
+
+    widget = NonFieldForeignKeyRawIdWidget(remote_field, admin_site)
+
+    class ForeignKeyForm(forms.Form):
+        obj = forms.ModelChoiceField(queryset=queryset,
+                                     widget=widget)
+
+    return ForeignKeyForm
