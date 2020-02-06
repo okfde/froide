@@ -50,7 +50,7 @@
 
 .navbar-nav-secondary {
   &.navbar-nav .nav-link {
-    color: $gray-500;
+    color: $gray-800;
   }
 }
 
@@ -63,7 +63,7 @@
     justify-content: flex-end;
 
     .nav-item {
-      background-color: $gray-100;
+      background-color: $gray-200;
       margin-left: $spacer * 0.25;
 
       &.special-nav-secondary-item {
