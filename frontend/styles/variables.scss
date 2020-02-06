@@ -40,25 +40,12 @@ $light: $gray-200;
 $dark: $gray-800;
 
 $body-color: $black;
-$highlight-yellow: #FFFC78;
-
 $navbar-light-color: $black;
 
-// form controls
+// Typography
 $btn-font-weight: 700;
 
 @import "~bootstrap/scss/variables";
 
-
-/*
-$blue: #3676ff;
-$purple: #7768ae;
-$pink: #D52E83;
-$red: #F4534E;
-$orange: #e1bc29;
-$yellow: #FCED00;
-$green: #3bb273;
-$teal: #45D2A2;
-$cyan: #57DDD5;
-$black: #112233;
-*/
+// Other colors
+$highlight-yellow: #FFFC78;
