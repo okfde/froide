@@ -99,7 +99,10 @@ class LatestFoiRequestsFeedAtom(LatestFoiRequestsFeed):
 
 class FoiRequestFeed(Feed):
     def get_object(self, request, slug):
-        return get_object_or_404(FoiRequest, slug=slug, public=True)
+        return get_object_or_404(
+            FoiRequest, slug=slug, public=True,
+            visibility=FoiRequest.VISIBLE_TO_PUBLIC
+        )
 
     def title(self, obj):
         return clean(obj.title)
@@ -108,7 +111,7 @@ class FoiRequestFeed(Feed):
         return reverse('foirequest-feed', kwargs={"slug": obj.slug})
 
     def description(self, obj):
-        return clean(obj.description)
+        return clean(obj.get_description())
 
     def items(self, obj):
         return obj.foievent_set.order_by("-timestamp")[:15]
