@@ -69,7 +69,6 @@ class FakeRemoteField:
 class NonFieldForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
     def url_parameters(self):
         params = self.base_url_parameters()
-        print(params)
         return params
 
 
