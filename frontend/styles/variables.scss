@@ -23,6 +23,17 @@ $blue-600: #0047E1;
 $blue-700: #0034A5;
 $blue-800: #001C5A;
 
+$theme-colors: (
+  "blue-100": $blue-100,
+  "blue-200": $blue-200,
+  "blue-300": $blue-300,
+  "blue-400": $blue-400,
+  "blue-500": $blue-500,
+  "blue-600": $blue-600,
+  "blue-700": $blue-700,
+  "blue-800": $blue-800
+);
+
 $white: #FDFDFF;
 $black: $blue-800;
 $red: #F4534E;

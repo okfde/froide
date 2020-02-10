@@ -4,6 +4,11 @@ body {
   flex-direction: column;
 }
 
+small,
+.small {
+  letter-spacing: .04rem;
+}
+
 .main {
   flex: 1 0 auto;
 }
