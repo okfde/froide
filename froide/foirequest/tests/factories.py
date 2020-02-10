@@ -1,8 +1,9 @@
+import base64
 from datetime import datetime, timedelta
+import os
 import random
 import string
-import base64
-import os
+import time
 
 import factory
 
@@ -14,6 +15,8 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
+
+from elasticsearch.exceptions import RequestError
 
 from froide.publicbody.models import (
     Jurisdiction, FoiLaw, PublicBody,
@@ -367,11 +370,29 @@ def make_world():
     return site
 
 
+def es_retries(func):
+    def call_func(*args, **kwargs):
+        max_count = 3
+        count = 0
+        while True:
+            try:
+                return func(*args, **kwargs)
+            except RequestError as e:
+                count += 1
+                if count <= max_count:
+                    time.sleep(2 ** count)
+                    continue
+                raise e
+    return call_func
+
+
+@es_retries
 def delete_index():
     with open(os.devnull, 'a') as f:
         call_command('search_index', action='delete', force=True, stdout=f)
 
 
+@es_retries
 def rebuild_index():
     with open(os.devnull, 'a') as f:
-        call_command('search_index', action='rebuild', force=True, stdout=f)
+        return call_command('search_index', action='rebuild', force=True, stdout=f)
