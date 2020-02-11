@@ -42,13 +42,13 @@
       <div class="mb-4 text-right">
         <p>
           {% if filtered_objects %}
-            {% blocktrans with request_count=page_obj.paginator.count|intcomma count counter=page_obj.paginator.count %}
+            {% blocktrans with request_count=page_obj.paginator.formatted_count count counter=page_obj.paginator.count %}
               Your search produced one search result.
             {% plural %}
               Your search produced {{ request_count }} search results.
             {% endblocktrans %}
           {% else %}
-            {% blocktrans with num=count|intcomma count counter=count %}One result{% plural %}{{ num }} results{% endblocktrans %}
+            {% blocktrans with num=page_obj.paginator.formatted_count count counter=count %}One result{% plural %}{{ num }} results{% endblocktrans %}
           {% endif %}
         </p>
       </div>
@@ -87,7 +87,7 @@
   </div>
 
   <div class="col-md-4 order-1">
-    {% render_search_list search_name query=form.q.value num_results=page_obj.paginator.count %}
+    {% render_search_list search_name query=form.q.value num_results=page_obj.paginator.formatted_count %}
 
     {% block sidebar_facets %}
       {% if has_query and facet_config and count %}

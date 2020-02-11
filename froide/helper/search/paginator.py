@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator, InvalidPage
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 
 class ElasticsearchPaginator(Paginator):
@@ -31,3 +32,14 @@ class ElasticsearchPaginator(Paginator):
         # Validate number after limit/offset has been set
         number = self.validate_number(number)
         return self._get_page(self.object_list, number, self)
+
+    @property
+    def has_more(self):
+        return self.object_list.has_more()
+
+    @property
+    def formatted_count(self):
+        return '{}{}'.format(
+            intcomma(self.count),
+            '+' if self.has_more else ''
+        )

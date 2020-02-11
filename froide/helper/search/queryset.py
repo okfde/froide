@@ -35,6 +35,12 @@ class SearchQuerySetWrapper(object):
             return total
         return total.value
 
+    def has_more(self):
+        total = self.response.hits.total
+        if isinstance(total, int):
+            return False
+        return total.relation == "gte"
+
     def to_queryset(self):
         if self.broken_query:
             return self.model.objects.none()
