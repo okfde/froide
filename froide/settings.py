@@ -71,16 +71,7 @@ class Base(Configuration):
         'rest_framework',
     ])
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',
-            'NAME': 'froide',
-            'USER': 'froide',
-            'PASSWORD': 'froide',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
+    DATABASES = values.DatabaseURLValue('postgis://froide:froide@localhost:5432/froide')
 
     CACHES = values.CacheURLValue('dummy://')
 
