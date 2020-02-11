@@ -46,10 +46,10 @@ install:
   - yarn install && yarn run build
 
 before_script:
-  - psql -U postgres -c 'create database froide WITH OWNER travis;'
+  - psql -U postgres -c 'create database froide WITH OWNER froide;'
   - psql -U postgres -c 'CREATE EXTENSION postgis;' -d froide
   - psql -U postgres -c 'CREATE EXTENSION postgis_topology;' -d froide
-  - psql -U postgres -c "ALTER USER travis WITH PASSWORD 'travis';"
+  - psql -U postgres -c "ALTER USER froide WITH PASSWORD 'froide';"
   - "export DISPLAY=:99.0"
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 
@@ -57,7 +57,7 @@ script:
   - set -e
   - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
   - export CHROME_DRIVER_PATH=/usr/local/bin/chromedriver
-  - export DATABASE_URL=postgis://travis:travis@127.0.0.1/froide
+  - export DATABASE_URL=postgis://froide:froide@127.0.0.1/froide
   - which google-chrome-stable
   - google-chrome-stable --version
   - which chromedriver
