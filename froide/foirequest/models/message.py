@@ -19,8 +19,13 @@ from .request import FoiRequest, get_absolute_short_url
 
 
 class FoiMessageManager(models.Manager):
-    def get_throttle_filter(self, user):
-        return self.get_queryset().filter(sender_user=user), 'timestamp'
+    def get_throttle_filter(self, user, queryset, extra_filters=None):
+        qs = queryset.filter(
+            sender_user=user, is_response=False
+        )
+        if extra_filters is not None:
+            qs = qs.filter(**extra_filters)
+        return qs, 'timestamp'
 
 
 class MessageTag(TagBase):
@@ -357,6 +362,10 @@ class FoiMessage(models.Model):
         if self.sender_user and self.sender_public_body:
             raise ValidationError(
                     'Message may not be from user and public body')
+
+    @classmethod
+    def get_throttle_config(cls):
+        return settings.FROIDE_CONFIG.get('message_throttle', None)
 
     def get_postal_attachment_form(self):
         from ..forms import get_postal_attachment_form

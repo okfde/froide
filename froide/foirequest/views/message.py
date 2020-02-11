@@ -43,9 +43,11 @@ def send_message(request, foirequest):
         request.POST, request.FILES, foirequest=foirequest
     )
 
-    throttle_message = check_throttle(foirequest.user, FoiMessage)
-    if throttle_message:
-        form.add_error(None, throttle_message)
+    if foirequest.should_apply_throttle():
+        # Only check throttle if last message is not a response
+        throttle_message = check_throttle(foirequest.user, FoiMessage)
+        if throttle_message:
+            form.add_error(None, throttle_message)
 
     if form.is_valid():
         mes = form.save()
@@ -68,9 +70,12 @@ def escalation_message(request, foirequest):
 
     form = get_escalation_message_form(request.POST, foirequest=foirequest)
 
-    throttle_message = check_throttle(foirequest.user, FoiMessage)
-    if throttle_message:
-        form.add_error(None, throttle_message)
+    if foirequest.should_apply_throttle():
+        throttle_message = check_throttle(foirequest.user, FoiMessage, {
+            'request': foirequest
+        })
+        if throttle_message:
+            form.add_error(None, throttle_message)
 
     if form.is_valid():
         message = form.save()

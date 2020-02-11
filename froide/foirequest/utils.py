@@ -40,23 +40,32 @@ def throttle(qs, throttle_config, date_param='first_message'):
     return False
 
 
-def check_throttle(user, klass):
-    if user.is_authenticated and not user.trusted():
-        throttle_settings = settings.FROIDE_CONFIG.get('request_throttle', None)
-        qs, date_param = klass.objects.get_throttle_filter(user)
-        throttle_kind = throttle(qs, throttle_settings, date_param=date_param)
-        if throttle_kind:
-            if settings.FROIDE_CONFIG.get('request_throttle_mail'):
-                mail_managers(_('User exceeded request limit'), str(user.pk))
-            message = _('You exceeded your request limit of %(count)s requests in %(time)s.')
-            return forms.ValidationError(
-                message,
-                params={
-                    'count': throttle_kind[0],
-                    'time': format_seconds(throttle_kind[1])
-                },
-                code='throttled'
-            )
+def check_throttle(user, klass, extra_filters=None):
+    if not user.is_authenticated or user.trusted():
+        return
+
+    queryset = klass._default_manager.all()
+    throttle_config = klass.get_throttle_config()
+    queryset, date_param = klass.objects.get_throttle_filter(
+        queryset, user, extra_filters=extra_filters
+    )
+    throttle_kind = throttle(
+        queryset, throttle_config, date_param=date_param
+    )
+    if not throttle_kind:
+        return
+
+    if settings.FROIDE_CONFIG.get('request_throttle_mail'):
+        mail_managers(_('User exceeded request limit'), str(user.pk))
+    message = _('You exceeded your request limit of %(count)s requests in %(time)s.')
+    return forms.ValidationError(
+        message,
+        params={
+            'count': throttle_kind[0],
+            'time': format_seconds(throttle_kind[1])
+        },
+        code='throttled'
+    )
 
 
 def get_foi_mail_domains():

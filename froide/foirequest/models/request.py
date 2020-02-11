@@ -78,8 +78,9 @@ class FoiRequestManager(CurrentSiteManager):
             )
         ).order_by('-is_important', '-last_message')
 
-    def get_throttle_filter(self, user):
-        return self.get_queryset().filter(user=user), 'first_message'
+    def get_throttle_filter(self, qs, user, extra_filters=None):
+        qs = qs.filter(user=user)
+        return qs, 'first_message'
 
     def delete_private_requests(self, user):
         if not user:
@@ -517,6 +518,14 @@ class FoiRequest(models.Model):
         return not self.needs_public_body() and (
             self.is_overdue() or self.reply_received()
         )
+
+    @classmethod
+    def get_throttle_config(cls):
+        return settings.FROIDE_CONFIG.get('request_throttle', None)
+
+    def should_apply_throttle(self):
+        last_message = self.messages[-1]
+        return not last_message.is_response or not self.is_actionable()
 
     def can_be_escalated(self):
         return self.law.mediator and self.is_actionable()
