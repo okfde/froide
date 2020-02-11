@@ -16,9 +16,6 @@ def rec(x):
 
 class Base(Configuration):
     DEBUG = values.BooleanValue(True)
-
-    DATABASES = values.DatabaseURLValue('spatialite:///dev.db')
-    SPATIALITE_LIBRARY_PATH = '/usr/local/lib/mod_spatialite.dylib'
     CONN_MAX_AGE = None
 
     INSTALLED_APPS = values.ListValue([
@@ -73,6 +70,17 @@ class Base(Configuration):
         'oauth2_provider',
         'rest_framework',
     ])
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
+            'NAME': 'froide',
+            'USER': 'froide',
+            'PASSWORD': 'froide',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
     CACHES = values.CacheURLValue('dummy://')
 
@@ -467,7 +475,7 @@ class Base(Configuration):
         'DEFAULT_RENDERER_CLASSES': (
             'rest_framework.renderers.JSONRenderer',
             'froide.helper.api_renderers.CustomPaginatedCSVRenderer',
-            # 'rest_framework.renderers.BrowsableAPIRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
         )
     }
 
@@ -493,6 +501,11 @@ class Base(Configuration):
         dsn=False,
         delivery_reporter=None,
         request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
+        message_throttle=[
+            (2, 5 * 60),  # X messages in X seconds
+            (6, 6 * 60 * 60),
+            (8, 24 * 60 * 60),
+        ],
         allow_pseudonym=False,
         doc_conversion_binary=None,  # replace with libreoffice instance
         doc_conversion_call_func=None,  # see settings_test for use
