@@ -19,7 +19,7 @@ from .request import FoiRequest, get_absolute_short_url
 
 
 class FoiMessageManager(models.Manager):
-    def get_throttle_filter(self, user, queryset, extra_filters=None):
+    def get_throttle_filter(self, queryset, user, extra_filters=None):
         qs = queryset.filter(
             sender_user=user, is_response=False
         )
