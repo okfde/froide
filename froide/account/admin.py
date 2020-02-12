@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.contrib import admin
@@ -55,7 +56,7 @@ class UserAdmin(DjangoUserAdmin):
 
     list_display = ('username', 'email', 'first_name', 'last_name',
         'date_joined', 'is_active', 'is_staff', 'private', 'is_trusted',
-        'is_deleted'
+        'is_deleted', 'request_count'
     )
     date_hierarchy = 'date_joined'
     ordering = ('-date_joined',)
@@ -82,6 +83,18 @@ class UserAdmin(DjangoUserAdmin):
         'send_mail', 'delete_sessions', 'make_private',
         'cancel_users', 'deactivate_users', 'export_user_data',
     ]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(
+            request_count=Count('foirequest')
+        )
+        return qs
+
+    def request_count(self, obj):
+        return obj.request_count
+    request_count.admin_order_field = 'request_count'
+    request_count.short_description = _('requests')
 
     def export_csv(self, request, queryset):
         if not request.user.is_superuser:
