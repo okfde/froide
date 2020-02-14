@@ -36,7 +36,7 @@ $theme-colors: (
 
 $white: #FDFDFF;
 $black: $blue-800;
-$red: #F4534E;
+$red: #FF5029;
 $green: #3bb273;
 $cyan: #17a2b8;
 $yellow: #ffc107;
@@ -53,10 +53,33 @@ $dark: $gray-800;
 $body-color: $black;
 $navbar-light-color: $black;
 
+// spacing 
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: ($spacer * .25),
+  2: ($spacer * .5),
+  3: $spacer,
+  4: ($spacer * 1.5),
+  5: ($spacer * 3),
+  6: ($spacer * 4),
+);
+
+// Grid containers
+// Define the maximum width of `.container` for different screen sizes.
+$container-max-widths: (
+  sm: 540px,
+  md: 780px,
+  lg: 960px,
+  xl: 1140px
+);
+
 // Typography
 $btn-font-weight: 700;
 
 @import "~bootstrap/scss/variables";
+
+/* Bootstrap theme end*/
 
 // Other colors
 $highlight-yellow: #FFFC78;
