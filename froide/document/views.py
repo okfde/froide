@@ -1,5 +1,4 @@
 import json
-import uuid
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.urls import reverse
