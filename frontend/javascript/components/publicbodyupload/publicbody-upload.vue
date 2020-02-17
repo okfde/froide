@@ -95,7 +95,7 @@ export default {
       endpoint: this.config.url.tusEndpoint,
       chunkSize: this.config.settings.tusChunkSize,
       headers: {
-        'X-CSRFToken': this.$root.csrfToken
+        'X-CSRFToken': this.csrf
       }
     })
     this.uppy.on('file-added', (file) => {
@@ -115,29 +115,6 @@ export default {
       console.log('failed files:', result.failed)
       this.uploading = false
     })
-  },
-
-  methods: {
-    addAttachmentFromTus(uploadUrl) {
-      return postData(
-        this.config.url.convertAttachments,
-        {
-          upload: uploadUrl
-        },
-        this.$root.csrfToken
-      ).then((result) => {
-        if (result.error) {
-          throw new Error(result.message)
-        }
-        let att
-        if (result.added.length === 1) {
-          att = result.added[0]
-        } else {
-          att = result.updated[0]
-        }
-        this.addAttachment(att)
-      })
-    },
   }
 }
 </script>
