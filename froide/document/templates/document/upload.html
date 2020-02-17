@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load block_helper %}
+
+{% block navbar %}
+  {% include "header_reduced.html" %}
+{% endblock %}
+
+
+{% block app_body %}
+<h3>
+{% blocktrans %}Upload documents{% endblocktrans %}
+</h3>
+
+<p class="lead">
+  {% trans "You can upload large PDF documents here." %}
+</p>
+{% csrf_token %}
+<document-upload class="document-upload" :config="{{ config }}"></document-upload>
+
+{% endblock %}
+
+
+{% block scripts %}
+  {{ block.super }}
+  {% addtoblock "js" %}
+    <script src="{% static 'js/common.js' %}" defer></script>
+  {% endaddtoblock %}
+  {% addtoblock "js" %}<script async src="{% static 'js/document.js' %}"></script>{% endaddtoblock %}
+  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/common.css' %}"/>{% endaddtoblock %}
+  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/document.css' %}"/>{% endaddtoblock %}
+{% endblock %}

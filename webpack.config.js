@@ -22,7 +22,8 @@ const ENTRY = {
   geomatch: ['./frontend/javascript/geomatch.js'],
   messageredaction: ['./frontend/javascript/messageredaction.js'],
   filingcabinet: '@okfde/filingcabinet/frontend/javascript/filingcabinet.js',
-  publicbodyupload: ['./frontend/javascript/publicbodyupload.js']
+  publicbodyupload: ['./frontend/javascript/publicbodyupload.js'],
+  document: ['./frontend/javascript/document.js']
 }
 
 const EXCLUDE_CHUNKS = [

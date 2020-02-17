@@ -6,12 +6,14 @@ from filingcabinet.urls import urlpatterns as fc_urlpatterns
 
 from .views import (
     DocumentSearchView,
-    DocumentFileDetailView
+    DocumentFileDetailView,
+    upload_documents
 )
 
 
 urlpatterns = [
     url(pgettext_lazy('url part', r"^search/$"), DocumentSearchView.as_view(), name='document-search'),
+    url(pgettext_lazy('url part', r"^upload/$"), upload_documents, name='document-upload'),
 ] + fc_urlpatterns
 
 
