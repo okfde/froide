@@ -830,7 +830,7 @@ class PublicBodyUploader:
             approved=False,
             pending=True,
         )
-        upload.start_saving()
+        upload.ensure_saving()
         upload.save()
 
         transaction.on_commit(
