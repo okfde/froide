@@ -129,6 +129,10 @@ class AbstractUpload(models.Model):
         # Trigger signal
         # signals.receiving.send(sender=self.__class__, instance=self)
 
+    def ensure_saving(self):
+        if self.state == states.RECEIVING:
+            self.start_saving()
+
     @transition(field=state, source=states.RECEIVING, target=states.SAVING, conditions=[is_complete])
     def start_saving(self):
         """

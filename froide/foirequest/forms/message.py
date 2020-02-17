@@ -695,7 +695,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
             [upload], foimessage,
             replace=True, save_file=False
         )
-        upload.start_saving()
+        upload.ensure_saving()
         upload.save()
 
         for x in result:
