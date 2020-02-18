@@ -20,7 +20,7 @@ import {postData} from '../../lib/api.js'
 
 
 export default {
-  name: 'uploader',
+  name: 'file-uploader',
   mixins: [I18nMixin],
   props: {
     config: {

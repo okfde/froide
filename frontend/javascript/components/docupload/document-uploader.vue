@@ -3,7 +3,7 @@
     <div v-if="canUpload" class="upload">
       <h2>{{ i18n.upload }}</h2>
       <p>{{ i18n.uploadPdfOrPicture }}</p>
-        <uploader
+        <file-uploader
           :config="config" class="mb-3 mt-3"
           :auto-proceed="true"
           :allowed-file-types="[
@@ -98,7 +98,7 @@ import {postData} from '../../lib/api.js'
 import {approveAttachment, createDocument} from './lib/document_utils'
 import ImageDocument from './image-document.vue'
 import FileDocument from './file-document.vue'
-import Uploader from '../upload/uploader.vue'
+import FileUploader from '../upload/file-uploader.vue'
 
 export default {
   name: 'document-uploader',
@@ -107,7 +107,7 @@ export default {
   components: {
     ImageDocument,
     FileDocument,
-    Uploader
+    FileUploader
   },
   data () {
     return {

@@ -1,6 +1,6 @@
 <template>
   <div class="publicbody-upload mb-3 mt-3">
-    <uploader
+    <file-uploader
       :config="config" class="mb-3 mt-3"
       @ready="canSubmit = $event"
       @uploading="uploading = $event"
@@ -18,7 +18,7 @@
 
 import Vue from 'vue'
 
-import Uploader from '../upload/uploader.vue'
+import FileUploader from '../upload/file-uploader.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
@@ -27,7 +27,7 @@ export default {
   mixins: [I18nMixin],
   props: ['config'],
   components: {
-    Uploader
+    FileUploader
   },
   data () {
     return {
