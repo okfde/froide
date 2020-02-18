@@ -67,16 +67,16 @@ export default {
       const image = new window.Image()
       image.crossOrigin = "Anonymous"
       image.addEventListener("load", this.imageLoaded, false);
-      image.src = this.page.attachment.file_url
+      image.src = this.page.file_url
       return image
     },
     pageUrl () {
-      if (!this.page.attachment.file_url) {
+      if (!this.page.file_url) {
         return false
       }
       if (this.image) {
         if (this.totalRotate === 0) {
-          return this.page.attachment.file_url
+          return this.page.file_url
         }
         return this.rotateImage(this.totalRotate) 
       }

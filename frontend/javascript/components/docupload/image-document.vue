@@ -103,7 +103,7 @@ export default {
     },
     anyUploads () {
       return !this.pages.every((p) => {
-        return p.attachment && p.attachment.id
+        return p && p.id
       })
     },
   },
@@ -119,7 +119,7 @@ export default {
         title: this.document.name,
         images: this.pages.map((p) => {
           return {
-            id: p.attachment.id,
+            id: p.id,
             rotate: (p.rotate || 0) + (p.implicitRotate || 0)
           }
         })
