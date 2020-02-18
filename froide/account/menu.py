@@ -15,6 +15,8 @@ class MenuRegistry(object):
         self.callbacks.append(func)
 
     def get_menu_items(self, request):
+        if request is None:
+            return
         sections = defaultdict(list)
         for callback in self.callbacks:
             menu_item = callback(request)

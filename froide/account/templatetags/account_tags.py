@@ -22,4 +22,4 @@ def get_user_form(context, address_required=False):
 
 @register.simple_tag(takes_context=True)
 def get_menu_items(context):
-    return menu_registry.get_menu_items(context['request'])
+    return menu_registry.get_menu_items(context.get('request'))
