@@ -19,7 +19,7 @@ class TeamConfig(AppConfig):
             return MenuItem(
                 section='before_settings', order=0,
                 url=reverse('team-list'),
-                label=_('Your teams')
+                label=_('My teams')
             )
 
         menu_registry.register(get_account_menu_item)
