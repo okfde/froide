@@ -1,26 +1,88 @@
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/mixins";
 
-/* Overwrite variables here */
+/* Bootstrap Theme */
 
-$blue:    #3676ff !default;
-$purple:  #7768ae !default;
-$pink:    #D52E83 !default;
-$red:     #F4534E !default;
-$orange:  #e1bc29 !default;
-$yellow:  #FCED00 !default;
-$green:   #3bb273 !default;
-$teal:    #45D2A2 !default;
-$cyan:    #57DDD5 !default;
-$black:   #112233 !default;
+// colors
+$gray-100: #F6F7F9;
+$gray-200: #E8EBF0;
+$gray-300: #C9D2DC;
+$gray-400: #ABBAC9;
+$gray-500: #7B91A9;
+$gray-600: #5C748D;
+$gray-700: #4A5D71;
+$gray-800: #3B4A5A;
+$gray-900: #1C232B;
 
-$highlight-yellow:  #FFFC78 !default;
-$somber-blue: #2A66B0 !default;
+$blue-100: #F0F4FF;
+$blue-200: #DEE8FF;
+$blue-300: #B8CEFF;
+$blue-400: #719DFF;
+$blue-500: #296DFF;
+$blue-600: #0047E1;
+$blue-700: #0034A5;
+$blue-800: #001C5A;
 
-$gray-100: #f1f1f1 !default;
-$gray-200: #d0d0d0 !default;
-$gray-500: #687683 !default;
+$theme-colors: (
+  "blue-100": $blue-100,
+  "blue-200": $blue-200,
+  "blue-300": $blue-300,
+  "blue-400": $blue-400,
+  "blue-500": $blue-500,
+  "blue-600": $blue-600,
+  "blue-700": $blue-700,
+  "blue-800": $blue-800
+);
 
-$navbar-light-color: $black !default;
+$white: #FDFDFF;
+$black: $blue-800;
+$red: #FF5029;
+$green: #3bb273;
+$cyan: #17a2b8;
+$yellow: #ffc107;
+
+$primary: $blue-600;
+$secondary: $gray-600;
+$success: $green;
+$info: $cyan;
+$warning: $yellow;
+$danger: $red;
+$light: $gray-200;
+$dark: $gray-800;
+
+$body-color: $black;
+$navbar-light-color: $black;
+$component-active-color: $white;
+$component-active-bg: $primary;
+
+
+// spacing 
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: ($spacer * .25),
+  2: ($spacer * .5),
+  3: $spacer,
+  4: ($spacer * 1.5),
+  5: ($spacer * 3),
+  6: ($spacer * 4),
+);
+
+// Grid containers
+// Define the maximum width of `.container` for different screen sizes.
+$container-max-widths: (
+  sm: 540px,
+  md: 780px,
+  lg: 960px,
+  xl: 1140px
+);
+
+// Typography
+$btn-font-weight: 700;
 
 @import "~bootstrap/scss/variables";
+
+/* Bootstrap theme end*/
+
+// Other colors
+$highlight-yellow: #FFFC78;
