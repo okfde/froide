@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load static %}
 {% load block_helper %}
+{% load form_helper %}
 
 {% block navbar %}
   {% include "header_reduced.html" %}
@@ -17,8 +18,17 @@
 <p class="lead">
   {% trans "You can upload large PDF documents here." %}
 </p>
-{% csrf_token %}
-<document-upload class="document-upload" :config="{{ config }}"></document-upload>
+
+<form action="" method="post">
+  {% csrf_token %}
+  {% render_form form %}
+  <file-uploader :config="{{ config }}" class="document-upload mb-3 mt-3"></file-uploader>
+  <div class="mt-3">
+    <button type="submit" class="btn btn-lg btn-primary">
+      {% trans "Create documents" %}
+    </button>
+  </div>
+</form>
 
 {% endblock %}
 

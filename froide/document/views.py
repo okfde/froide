@@ -6,7 +6,6 @@ from django.shortcuts import redirect, get_object_or_404, Http404, render
 from django.views.generic import DetailView
 from django.contrib import messages
 from django.conf import settings
-from django.db import transaction
 
 from elasticsearch_dsl.query import Q
 
@@ -16,14 +15,13 @@ from taggit.models import Tag
 
 from filingcabinet.models import Page
 
-from froide.upload.models import Upload
 from froide.helper.search.views import BaseSearchView
 
 from .documents import PageDocument
 from .filters import PageDocumentFilterset
+from .forms import DocumentUploadForm
 from .models import Document
 from .auth import DocumentCrossDomainMediaAuth
-from .tasks import move_upload_to_document
 
 
 class DocumentSearchView(BaseSearchView):
@@ -114,16 +112,16 @@ def upload_documents(request):
         return redirect('/')
 
     if request.method == 'POST':
-
-        upload_list = request.POST.getlist('upload')
-        doc_count = len(upload_list)
-        for upload_url in upload_list:
-            create_document_from_upload(request.user, upload_url)
-        messages.add_message(
-            request, messages.SUCCESS,
-            _('%s documents were uploaded successfully.') % doc_count
-        )
-        return redirect(request.get_full_path())
+        form = DocumentUploadForm(request.POST)
+        if form.is_valid():
+            doc_count = form.save(request.user)
+            messages.add_message(
+                request, messages.SUCCESS,
+                _('%s documents were uploaded successfully.') % doc_count
+            )
+            return redirect(request.get_full_path())
+    else:
+        form = DocumentUploadForm()
 
     config = json.dumps({
         'settings': {
@@ -141,28 +139,7 @@ def upload_documents(request):
         request,
         'document/upload.html',
         {
+            'form': form,
             'config': config
         }
     )
-
-
-def create_document_from_upload(user, upload_url):
-    upload = Upload.objects.get_by_url(
-        upload_url, user=user
-    )
-    if upload is None:
-        return
-
-    document = Document.objects.create(
-        title=upload.filename,
-        user=user
-    )
-    upload.ensure_saving()
-    upload.save()
-
-    transaction.on_commit(
-        lambda: move_upload_to_document.delay(
-            document.id, upload.id
-        )
-    )
-    return document

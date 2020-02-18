@@ -2,15 +2,15 @@ import Vue from 'vue'
 
 import {renderComponent} from './lib/vue-helper'
 
-import DocumentUploader from './components/document/document-uploader.vue'
+import FileUploader from './components/upload/file-uploader.vue'
 
 Vue.config.productionTip = false
 
 function createDocumentUploader (element) {
   /* eslint-disable no-new */
   new Vue({
-    components: { DocumentUploader },
-    render: renderComponent(element, DocumentUploader)
+    components: { FileUploader },
+    render: renderComponent(element, FileUploader)
   }).$mount(element)
 }
 
