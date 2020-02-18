@@ -19,8 +19,14 @@
 <p class="lead">
   {% trans "You can upload large files as a response to this request here." %}
 </p>
-{% csrf_token %}
-<publicbody-upload class="publicbody-upload" :config="{{ config }}"></publicbody-upload>
+<form action="" method="post">
+  {% csrf_token %}
+  <publicbody-upload class="publicbody-upload" :config="{{ config }}">
+    <div class="spinner-border text-center" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </publicbody-upload>
+</form>
 
 {% endblock %}
 

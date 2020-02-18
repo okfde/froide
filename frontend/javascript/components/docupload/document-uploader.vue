@@ -3,9 +3,15 @@
     <div v-if="canUpload" class="upload">
       <h2>{{ i18n.upload }}</h2>
       <p>{{ i18n.uploadPdfOrPicture }}</p>
-      <div>
-        <div id="uppy"></div>
-      </div>
+        <uploader
+          :config="config" class="mb-3 mt-3"
+          :auto-proceed="true"
+          :allowed-file-types="[
+            'application/pdf',
+            'image/*'
+          ]"
+          @upload-success="uploadSuccess"
+        />
     </div>
     <div v-if="imageDocuments.length > 0" class="images mt-3">
       <h2>{{ i18n.convertImagesToDocuments }}</h2>
@@ -86,17 +92,13 @@
 
 import Vue from 'vue'
 
-import Uppy from '@uppy/core'
-import Tus from '@uppy/tus'
-import Dashboard from '@uppy/dashboard'
-
 import I18nMixin from '../../lib/i18n-mixin'
 import {postData} from '../../lib/api.js'
 
 import {approveAttachment, createDocument} from './lib/document_utils'
 import ImageDocument from './image-document.vue'
 import FileDocument from './file-document.vue'
-
+import Uploader from '../upload/uploader.vue'
 
 export default {
   name: 'document-uploader',
@@ -104,7 +106,8 @@ export default {
   props: ['config', 'message'],
   components: {
     ImageDocument,
-    FileDocument
+    FileDocument,
+    Uploader
   },
   data () {
     return {
@@ -122,47 +125,6 @@ export default {
     this.$root.url = this.config.url
     this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
     this.documents = this.buildDocuments(this.message.attachments)
-
-    const uppyLocale = {
-      strings: this.config.i18n.uppy,
-      pluralize: (n) => {
-        if (n === 1) {
-          return 0
-        }
-        return 1
-      }
-    }
-
-    this.uppy = Uppy({
-      autoProceed: true,
-      locale: uppyLocale,
-      restrictions: {
-        allowedFileTypes: [
-          'application/pdf',
-          'image/*'
-        ]
-      }
-    })
-    this.uppy.use(Dashboard, {
-      inline: true,
-      target: '#uppy',
-      height: 240,
-      showLinkToFileUploadResult: false,
-      proudlyDisplayPoweredByUppy: false
-    })
-    this.uppy.use(Tus, {
-      endpoint: this.config.url.tusEndpoint,
-      chunkSize: this.config.settings.tusChunkSize,
-      headers: {
-        'X-CSRFToken': this.$root.csrfToken
-      }
-    })
-
-    this.uppy.on('upload-success', (file, response) => {
-      this.addAttachmentFromTus(response.uploadURL).then(() => {
-        this.uppy.removeFile(file.id)
-      })
-    })
   },
   computed: {
     isMobile () {
@@ -212,6 +174,11 @@ export default {
     }
   },
   methods: {
+    uploadSuccess ({ uppy, response, file }) {
+      this.addAttachmentFromTus(response.uploadURL).then(() => {
+        uppy.removeFile(file.id)
+      })
+    },
     testExifSupport () {
       /*
       From Modernizr feature detection:
@@ -410,10 +377,12 @@ export default {
     addImages (images) {
       let imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
       if (imageDocs.length === 0) {
-        let i = images[0]
         this.documents = [
           this.getNewImageDoc({
-            pages: images,
+            pages: images.map((i, c) => {
+              i.pageNum = c + 1
+              return i
+            })
           }),
           ...this.documents
         ]
