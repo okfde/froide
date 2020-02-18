@@ -7,7 +7,7 @@
       {{ selected_label|truncatewords:4 }}
     {% endif %}
   </a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-{{ widget.attrs.id }}">
+  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-{{ widget.attrs.id }}">
     {% for group_name, group_choices, group_index in widget.optgroups %}
       {% for option in group_choices %}
         <a class="dropdown-item{% if option.selected %} active{% endif %}" href="{{ option.url }}" data-value="{{ option.value }}">
