@@ -7,6 +7,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext
 from django.contrib import admin
+from django.template.response import TemplateResponse
 
 from rest_framework.schemas import get_schema_view
 
@@ -150,6 +151,7 @@ froide_urlpatterns += [
     url(r'^comments/', include('django_comments.urls')),
     url(r'^problem/', include('froide.problem.urls')),
     url(r'^guide/', include('froide.guide.urls')),
+    url(r'^500/', lambda request: TemplateResponse(request, '500.html'))
 ]
 
 froide_urlpatterns += document_media_urlpatterns
