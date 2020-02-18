@@ -2,6 +2,10 @@
 {% load static %}
 {% load content_helper %}
 
+{% load account_tags %}
+
+{% get_menu_items as menu_items %}
+
 
 <header id="header">
   <nav class="navbar navbar-secondary navbar-expand-md navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
@@ -63,7 +67,7 @@
               <span class="d-lg-none fa fa-user-circle-o"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbaraccount-link">
-              {% include "account/menu.html" %}
+              {% include "account/menu.html" with menu_items=menu_items %}
               <div class="dropdown-divider"></div>
               <div class="dropdown-item">
                 <form action="{% url 'account-logout' %}" method="post" class="form-inline text-center">
