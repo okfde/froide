@@ -205,7 +205,10 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         super(SendMessageForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
-        self.fields['to'].choices = possible_reply_addresses(foirequest)
+        to_choices = possible_reply_addresses(foirequest)
+        self.fields['to'].choices = to_choices
+        if len(to_choices) == 1:
+            self.fields['to'].initial = to_choices[0][0]
 
         address_optional = foirequest.law and foirequest.law.email_only
 
