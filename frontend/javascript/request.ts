@@ -86,11 +86,6 @@ const runOnPage = () => {
           navLink.Tab.show();
         }
       }
-      if (el.scrollIntoView) {
-        e.preventDefault();
-        el.scrollIntoView({behavior: "smooth", inline: "start"});
-      }
-
       if (this.dataset && this.dataset.value) {
         const sel = '[name="' + this.dataset.name + '"][value="' + this.dataset.value + '"]';
         const checkbox = el.querySelector(sel);
@@ -100,6 +95,13 @@ const runOnPage = () => {
       }
       if (this.dataset && this.dataset.addtextfield) {
         addText(this.dataset);
+      }
+
+      if (el.scrollIntoView) {
+        e.preventDefault();
+        window.setTimeout(() => {
+          el.scrollIntoView({behavior: "smooth", block: "start"});
+        }, 100);
       }
     });
   });
