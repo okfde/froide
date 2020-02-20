@@ -6,7 +6,7 @@
 
 .comments {
   @include media-breakpoint-up(sm) {
-    @include make-col(9);
+    @include make-col(12);
   }
   @include media-breakpoint-up(md) {
     @include make-col(8);
