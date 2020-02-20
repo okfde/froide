@@ -29,7 +29,6 @@ const addText = (dataset: DOMStringMap) => {
       addedText,
       textParts[textParts.length - 1],
     ].join("\n\n");
-    text = textParts.join("\n\n");
   }
   textField.value = text;
 };
