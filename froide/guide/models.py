@@ -28,6 +28,8 @@ class Action(models.Model):
     description = models.TextField(blank=True)
     snippet = models.TextField(blank=True)
 
+    mail_intent = models.CharField(max_length=255, blank=True)
+
     tag = models.ForeignKey(
         MessageTag, null=True, blank=True,
         on_delete=models.SET_NULL
