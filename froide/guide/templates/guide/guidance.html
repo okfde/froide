@@ -12,21 +12,29 @@
         <div class="card-text">
           {{ guidance.get_description | markdown }}
         </div>
-      {% if guidance.get_snippet and foirequest|can_write_foirequest:request %}
-        <h6>{% trans "Suggested reply" %}</h6>
-        <blockquote class="card-text small bg-light pl-2">
-          <p>
-          {{ guidance.get_snippet }}
-          </p>
-        </blockquote>
-        <a data-tabgo="tab" data-name="sendmessage-to"
-           data-value="{{ message.sender_email }}"
-           data-addtextfield="#id_sendmessage-message"
-           data-addtext="{{ guidance.get_snippet }}"
-           href="#write-message" class="btn btn-sm btn-secondary">
-          <span class="fa fa-reply"></span>
-          {% trans "Add to reply" %}
-        </a>
+      {% if guidance.has_snippet and foirequest|can_write_foirequest:request %}
+        {% with snippet=guidance.get_snippet %}
+          {% if snippet|length < 250 %}
+          <h6>{% trans "Suggested reply" %}</h6>
+          <blockquote class="card-text small bg-light pl-2">
+            <p>
+            {{ snippet|linebreaksbr }}
+            </p>
+          </blockquote>
+          {% endif %}
+          <a data-tabgo="tab" data-name="sendmessage-to"
+            data-addtextfield="#id_sendmessage-message"
+            data-value="{% if message.is_response %}{{ message.sender_email }}{% else %}{{ message.recipient_email }}{% endif %}"
+            data-addtext="{{ snippet }}"
+            href="#write-message" class="btn btn-sm btn-secondary">
+            <span class="fa fa-reply"></span>
+            {% if snippet|length < 250 %}
+              {% trans "Add to reply" %}
+            {% else %}
+              {% trans "Prepare message" %}
+            {% endif %}
+          </a>
+        {% endwith %}
       {% endif %}
       </div>
     </div>
