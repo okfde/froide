@@ -166,6 +166,10 @@ $escalation: #fff2f0;
   }
 }
 
+.message-guidance:target .card {
+  border-color: $warning !important;
+}
+
 .message-guidance-sticky {
   position: sticky;
   top: 50px;
