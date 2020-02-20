@@ -5,8 +5,10 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.template import Template, Context
 
 from froide.foirequest.models import FoiMessage, MessageTag
+from froide.helper.email_sending import MailIntent
 from froide.publicbody.models import (
     Jurisdiction, PublicBody, Category
 )
@@ -42,6 +44,10 @@ class Action(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def has_custom_notification(self):
+        return bool(self.mail_intent)
+
     def get_description(self):
         return self.description
 
@@ -50,6 +56,28 @@ class Action(models.Model):
 
     def get_snippet(self):
         return self.snippet
+
+    def send_custom_notification(self, guidance):
+        message = guidance.message
+        request = message.request
+
+        context = guidance.get_context()
+        mi = MailIntent(
+            self.mail_intent,
+            ['message']
+        )
+        mi.send(
+            user=request.user,
+            context=context,
+        )
+
+
+def render_with_context(method):
+    def wrapper(self):
+        template_string = method(self)
+        template = Template(template_string)
+        return template.render(Context(self.get_context()))
+    return wrapper
 
 
 class Guidance(models.Model):
@@ -87,16 +115,47 @@ class Guidance(models.Model):
             return '{} -> {}'.format(self.action.name, self.message_id)
         return '{} -> {}'.format(self.label, self.message_id)
 
+    def send_custom_notification(self):
+        if self.action:
+            if self.action.has_custom_notification:
+                self.action.send_custom_notification(self)
+                self.notified = True
+                self.save()
+                return True
+        return False
+
+    def get_context(self):
+        request = self.message.request
+        user = request.user
+        return {
+            'request': request,
+            'publicbody': request.public_body,
+            'user': user,
+            'name': user.get_full_name(),
+            'message': self.message,
+            'action_url': '{}-guidance'.format(
+                self.message.get_autologin_url()
+            )
+        }
+
+    @render_with_context
     def get_description(self):
         if self.action:
             return self.action.description
         return self.description
 
+    @render_with_context
     def get_label(self):
         if self.action:
             return self.action.label
         return self.label
 
+    def has_snippet(self):
+        if self.action:
+            return bool(self.action.snippet)
+        return bool(self.snippet)
+
+    @render_with_context
     def get_snippet(self):
         if self.action:
             return self.action.snippet

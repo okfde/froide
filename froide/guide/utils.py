@@ -3,14 +3,19 @@ import re
 
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
-from django.template.loader import render_to_string
 
 from froide.helper.text_utils import split_text_by_separator
 from froide.helper.forms import get_fk_form_class
 from froide.helper.admin_utils import AdminAssignActionBase
+from froide.helper.email_sending import mail_registry
 
 from .models import Rule, Guidance
+
+
+guidance_notification_mail = mail_registry.register(
+    'guide/emails/new_guidance',
+    ('name', 'single_request', 'request_title', 'guidances')
+)
 
 
 GuidanceResult = namedtuple(
@@ -200,6 +205,8 @@ def send_notifications(notifications):
         for guidance in result.guidances:
             if guidance.notified:
                 continue
+            if guidance.send_custom_notification():
+                continue
             guidances.append(guidance)
             guidance_mapping[guidance.action or guidance].append(
                 message
@@ -213,14 +220,16 @@ def send_notifications(notifications):
     else:
         subject = _('New guidance for your requests')
 
-    body = render_to_string('guide/emails/new_guidance.txt', {
+    context = {
         'name': user.get_full_name(),
         'single_request': single_request,
         'request_title': notifications[0][0].request.title,
         'guidances': list(guidance_mapping.items()),
-        'site_name': settings.SITE_NAME
-    })
-    user.send_mail(subject, body, priority=False)
+    }
+    guidance_notification_mail.send(
+        user=user, context=context,
+        subject=subject
+    )
     Guidance.objects.filter(
         id__in=[g.id for g in guidances]
     ).update(notified=True)
