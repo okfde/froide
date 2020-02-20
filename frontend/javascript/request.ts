@@ -23,8 +23,12 @@ const addText = (dataset: DOMStringMap) => {
   if (text.indexOf("\n...\n") !== -1) {
     text = text.replace("...", addedText);
   } else {
-    let textParts = text.split("\n\n");
-    textParts = textParts.slice(0, textParts.length - 1).concat([addedText, textParts[textParts.length - 1]]);
+    const textParts = text.split("\n\n");
+    text = [
+      textParts[0],
+      addedText,
+      textParts[textParts.length - 1],
+    ].join("\n\n");
     text = textParts.join("\n\n");
   }
   textField.value = text;
