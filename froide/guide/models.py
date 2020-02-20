@@ -128,7 +128,7 @@ class Guidance(models.Model):
         request = self.message.request
         user = request.user
         return {
-            'request': request,
+            'foirequest': request,
             'publicbody': request.public_body,
             'user': user,
             'name': user.get_full_name(),
