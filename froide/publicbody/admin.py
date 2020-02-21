@@ -25,7 +25,7 @@ from froide.helper.admin_utils import (
 )
 from froide.helper.forms import get_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
-from froide.helper.csv_utils import export_csv_response
+from froide.helper.csv_utils import export_csv_response, dict_to_csv_stream
 
 from .models import (
     PublicBody, PublicBodyTag, TaggedPublicBody, FoiLaw,
@@ -33,6 +33,7 @@ from .models import (
     ProposedPublicBody
 )
 from .csv_import import CSVImporter
+from .validators import validate_publicbodies
 
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy('api:category-autocomplete')
@@ -156,7 +157,8 @@ class PublicBodyBaseAdminMixin(
     actions = (
         ClassificationAssignMixin.actions +
         PublicBodyReplacementMixin.actions + [
-            'export_csv', 'remove_from_index', 'tag_all', 'show_georegions'
+            'export_csv', 'remove_from_index', 'tag_all', 'show_georegions',
+            'validate_publicbodies',
         ]
     )
 
@@ -289,6 +291,10 @@ class PublicBodyBaseAdminMixin(
             context
         )
     show_georegions.short_description = _("Show georegions of")
+
+    def validate_publicbodies(self, request, queryset):
+        csv_stream = dict_to_csv_stream(validate_publicbodies(queryset))
+        return export_csv_response(csv_stream, name='validation.csv')
 
 
 class PublicBodyAdminMixin(PublicBodyBaseAdminMixin):
