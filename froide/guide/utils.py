@@ -235,6 +235,12 @@ def send_notifications(notifications):
     ).update(notified=True)
 
 
+def notify_guidance(guidance):
+    if guidance.notified:
+        return
+    notify_users([(guidance.message, GuidanceResult([guidance], 0, 0))])
+
+
 class GuidanceSelectionMixin(AdminAssignActionBase):
     action_label = _('Choose guidance action to attach')
 

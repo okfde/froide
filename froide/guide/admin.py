@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from froide.helper.admin_utils import make_nullfilter, ForeignKeyFilter
 
 from .models import Rule, Action, Guidance
+from .utils import notify_guidance
 
 
 class RuleAdmin(admin.ModelAdmin):
@@ -31,11 +32,16 @@ class GuidanceAdmin(admin.ModelAdmin):
         ('message', ForeignKeyFilter),
         make_nullfilter('rule', _('Has rule'))
     )
+    actions = ['send_notification']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.prefetch_related('message', 'action')
         return qs
+
+    def send_notification(self, request, queryset):
+        for guidance in queryset:
+            notify_guidance(guidance)
 
 
 admin.site.register(Rule, RuleAdmin)
