@@ -360,7 +360,7 @@ class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
     def attach_guidance_action(self, request, queryset):
         ''' Magic from GuidanceSelectionMixin'''
         return self._assign_action_handler('', 'attach_guidance_action', request, queryset)
-    attach_guidance_action.short_description = _('Add guidance action to messages')
+    attach_guidance_action.short_description = _('Add guidance action to messages...')
 
     def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)

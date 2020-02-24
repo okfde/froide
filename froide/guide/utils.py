@@ -247,7 +247,11 @@ class GuidanceSelectionMixin(AdminAssignActionBase):
     def _get_assign_action_form_class(self, fieldname):
         return get_fk_form_class(Guidance, 'action', self.admin_site)
 
-    def _execute_assign_action(self, obj, fieldname, assign_obj):
-        applicator = GuidanceApplicator(obj)
-        guidance = applicator.apply_action(assign_obj)
-        notify_users([(obj, GuidanceResult([guidance], applicator.created_count, 0))])
+    def _execute_assign_action_qs(self, queryset, fieldname, assign_obj):
+        from .tasks import add_action_to_queryset_task
+
+        add_action_to_queryset_task.delay(
+            assign_obj.id, list(
+                queryset.values_list('id', flat=True)
+            )
+        )
