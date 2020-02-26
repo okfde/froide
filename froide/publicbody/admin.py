@@ -135,7 +135,10 @@ class PublicBodyBaseAdminMixin(
             'fields': ('_created_by', 'created_at', '_updated_by', 'updated_at'),
         }),
     )
-    list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'category_list')
+    list_display = (
+        'name', 'email', 'url', 'classification', 'jurisdiction',
+        'category_list', 'request_count'
+    )
     list_filter = (
         'jurisdiction', 'classification', 'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
@@ -164,8 +167,16 @@ class PublicBodyBaseAdminMixin(
 
     def get_queryset(self, request):
         qs = super(PublicBodyBaseAdminMixin, self).get_queryset(request)
+        qs = qs.annotate(
+            request_count=Count('foirequest')
+        )
         qs = qs.select_related('classification', 'jurisdiction')
         return qs
+
+    def request_count(self, obj):
+        return obj.request_count
+    request_count.admin_order_field = 'request_count'
+    request_count.short_description = _('requests')
 
     def get_urls(self):
         urls = super(PublicBodyBaseAdminMixin, self).get_urls()
