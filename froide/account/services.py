@@ -9,7 +9,6 @@ from django.utils.crypto import constant_time_compare
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from froide.helper.text_utils import replace_custom, replace_word
 from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import mail_registry
 
@@ -284,42 +283,33 @@ class AccountService(object):
 
         return content
 
-    def apply_message_redaction(self, content, replacements=None):
-        if replacements is None:
-            replacements = {}
-
+    def get_user_redactions(self, replacements=None):
         if self.user.is_deleted:
-            # No more info present about user to redact
-            return content
+            return
 
-        if self.user.address and replacements.get('address') is not False:
+        repl = {
+            'name': str(_("<< Name removed >>")),
+            'email': str(_("<< Email removed >>")),
+            'address': str(_("<< Address removed >>")),
+        }
+        if replacements is not None:
+            repl.update(replacements)
+
+        if self.user.address:
             for line in self.user.address.splitlines():
                 if line.strip():
-                    content = content.replace(line,
-                            replacements.get('address',
-                                str(_("<< Address removed >>")))
-                    )
+                    yield (line.strip(), repl['address'])
 
-        if self.user.email and replacements.get('email') is not False:
-            content = content.replace(self.user.email,
-                    replacements.get('email',
-                    str(_("<< Email removed >>")))
-            )
+        if self.user.email:
+            yield (self.user.email, repl['email'])
 
-        if not self.user.private or replacements.get('name') is False:
-            return content
+        if not self.user.private:
+            return
 
-        name_replacement = replacements.get('name',
-                str(_("<< Name removed >>")))
-
-        content = replace_custom(settings.FROIDE_CONFIG['greetings'],
-                name_replacement, content)
-
-        content = replace_word(self.user.last_name, name_replacement, content)
-        content = replace_word(self.user.first_name, name_replacement, content)
-        content = replace_word(self.user.get_full_name(), name_replacement, content)
+        yield (settings.FROIDE_CONFIG['greetings'], repl['name'])
+        yield (self.user.last_name, repl['name'])
+        yield (self.user.first_name, repl['name'])
+        yield (self.user.get_full_name(), repl['name'])
 
         if self.user.organization:
-            content = replace_word(self.user.organization, name_replacement, content)
-
-        return content
+            yield (self.user.organization, repl['name'])

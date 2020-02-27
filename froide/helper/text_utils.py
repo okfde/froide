@@ -55,10 +55,19 @@ def split_text_by_separator(text, separator=None):
     return split_text
 
 
+def redact_user_strings(content: str, user, replacements=None):
+    account_service = user.get_account_service()
+    for needle, repl in account_service.get_user_redactions(replacements):
+        if isinstance(needle, (list, tuple)):
+            content = replace_custom(needle, repl, content)
+        else:
+            content = replace_word(needle, repl, content)
+    return content
+
+
 def redact_subject(content, user=None):
     if user:
-        account_service = user.get_account_service()
-        content = account_service.apply_message_redaction(content)
+        content = redact_user_strings(content, user)
     content = redact_content(content)
     return content[:255]
 
@@ -83,8 +92,7 @@ def redact_plaintext(content, is_response=True, user=None, replacements=None):
                 )
 
     if user:
-        account_service = user.get_account_service()
-        content = account_service.apply_message_redaction(content)
+        content = redact_user_strings(content, user)
 
     if replacements is not None:
         for key, val in replacements.items():
@@ -105,7 +113,7 @@ def redact_content(content):
 
 def replace_word(needle, replacement, content):
     return re.sub(r'(^|[\W_])%s($|[\W_])' % re.escape(needle),
-                    '\\1%s\\2' % replacement, content, re.U)
+                    '\\1%s\\2' % replacement, content, re.U | re.I)
 
 
 EMAIL = r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'

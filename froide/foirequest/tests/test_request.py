@@ -1295,7 +1295,7 @@ class RequestTest(TestCase):
                 ),
                 'html': 'html',
                 'from_': (
-                    'Petra Radetzky', 'petra.radetsky@bund.example.org'
+                    name, 'petra.radetsky@bund.example.org'
                 ),
                 'to': [('', req.secret_address)],
                 'cc': [],
@@ -1312,7 +1312,7 @@ class RequestTest(TestCase):
             'sendmessage-subject': 'Testing',
             "sendmessage-address": 'Address',
             'sendmessage-message': (
-                'Sehr geehrte Frau Radetzky,'
+                'Sehr geehrte Frau radetzky,'
                 '\n\nblub\n\nMit freundlichen Grüßen'
                 '\nStefan Wehrmeyer'
             )
@@ -1322,7 +1322,7 @@ class RequestTest(TestCase):
 
         req = FoiRequest.objects.all()[0]
         last = req.messages[-1]
-        self.assertNotIn('Radetzky', last.plaintext_redacted)
+        self.assertNotIn('radetzky', last.plaintext_redacted)
 
     def test_empty_pb_email(self):
         self.client.login(email='info@fragdenstaat.de', password='froide')

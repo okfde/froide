@@ -15,7 +15,8 @@ import icalendar
 import pytz
 
 from froide.helper.text_utils import (
-    redact_subject, redact_plaintext, find_all_emails
+    redact_subject, redact_plaintext, find_all_emails,
+    redact_user_strings
 )
 from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
@@ -432,13 +433,12 @@ def permanently_anonymize_requests(foirequests):
     for foirequest in foirequests:
         user = foirequest.user
         user.private = True
-        account_service = user.get_account_service()
         for message in foirequest.messages:
-            message.plaintext_redacted = account_service.apply_message_redaction(
-                message.plaintext_redacted
+            message.plaintext_redacted = redact_user_strings(
+                message.plaintext_redacted, user, replacements=replacements
             )
-            message.plaintext = account_service.apply_message_redaction(
-                message.plaintext, replacements=replacements
+            message.plaintext = redact_user_strings(
+                message.plaintext, user, replacements=replacements
             )
             message.html = ''
             if message.is_response:
@@ -451,15 +451,18 @@ def permanently_anonymize_requests(foirequests):
             message.save()
 
         # Delete original attachments, if they have a redacted version
-        FoiAttachment.objects.filter(
+        atts = FoiAttachment.objects.filter(
             approved=False,
             can_approve=False,
             belongs_to__request=foirequest,
             redacted__isnull=False,
             is_redacted=False
-        ).delete()
+        )
+        for att in atts:
+            att.remove_file_and_delete()
+
         if not original_private:
-            # Set other requests to non-approved, if user was not private
+            # Set other attachments to non-approved, if user was not private
             FoiAttachment.objects.filter(
                 belongs_to__request=foirequest
             ).update(
