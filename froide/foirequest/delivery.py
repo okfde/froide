@@ -145,9 +145,8 @@ class PostfixDeliveryReporter(object):
         # since the default year is not a leap year
         date_struct = time.strptime(date_str, self.TIME_PARSE_STR)
         date_list = list(date_struct)
-        if date_list[0]==1900: # 1900 is the default year for time.strptime, hence no year was present in date_str
+        if date_list[0] == 1900:  # 1900 is the default year for time.strptime, hence no year was present in date_str
             date_list[0] = timestamp.year
         date = datetime.fromtimestamp(time.mktime(tuple(date_list)))
 
         return self.timezone.localize(date)
-
