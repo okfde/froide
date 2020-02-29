@@ -143,7 +143,7 @@ class PostfixDeliveryReporter(object):
         date_list = list(date_struct)
         if date_list[0]==1900:
             date_list[0] = timestamp.year
-        date = datetime.fromtimestamp(time.mktime(date_list))
+        date = datetime.fromtimestamp(time.mktime(tuple(date_list)))
 
         return self.timezone.localize(date)
 
