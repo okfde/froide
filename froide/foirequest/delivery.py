@@ -1,5 +1,6 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
+import time
 import importlib
 import gzip
 import io
@@ -138,7 +139,15 @@ class PostfixDeliveryReporter(object):
     def get_timestamp(self, text, timestamp):
         match = self.TIMESTAMP_RE.search(text)
         date_str = match.group(0)
-        date = datetime.strptime(date_str, self.TIME_PARSE_STR)
-        date = date.replace(year=timestamp.year)
+
+        # use time.strptime, not datetime.strptime
+        # datetime.strptime would validate the date, which breaks on Feb 29 if date_str does not have year info
+        # since the default year is not a leap year
+        date_struct = time.strptime(date_str, self.TIME_PARSE_STR)
+        date_list = list(date_struct)
+        if date_list[0]==1900: # 1900 is the default year for time.strptime, hence no year was present in date_str
+            date_list[0] = timestamp.year
+        date = datetime.fromtimestamp(time.mktime(tuple(date_list)))
 
         return self.timezone.localize(date)
+
