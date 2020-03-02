@@ -25,6 +25,7 @@ class CommentAdmin(DjangoCommentsAdmin):
     )
     list_display = [c for c in DjangoCommentsAdmin.list_display if c not in REMOVED]
     search_fields = [c for c in DjangoCommentsAdmin.search_fields if c not in REMOVED]
+    actions = []
 
 
 admin.site.register(FroideComment, CommentAdmin)
