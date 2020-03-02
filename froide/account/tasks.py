@@ -52,6 +52,22 @@ def account_maintenance_task():
 
 
 @celery_app.task
+def merge_accounts_task(old_user_id, new_user_id):
+    from .utils import merge_accounts
+
+    try:
+        old_user = User.objects.get(id=old_user_id)
+    except User.DoesNotExist:
+        return
+    try:
+        new_user = User.objects.get(id=new_user_id)
+    except User.DoesNotExist:
+        return
+
+    merge_accounts(old_user, new_user)
+
+
+@celery_app.task
 def start_export_task(user_id, notification_user_id=None):
     from .export import create_export
 

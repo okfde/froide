@@ -15,7 +15,7 @@ from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 from .models import User, TaggedUser, UserTag, AccountBlacklist
 from .services import AccountService
 from .export import get_export_url
-from .tasks import start_export_task, send_bulk_mail
+from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
 from .utils import (
     delete_all_unexpired_sessions_for_user, cancel_user,
     make_account_private
@@ -82,6 +82,7 @@ class UserAdmin(DjangoUserAdmin):
         'export_csv', 'resend_activation',
         'send_mail', 'delete_sessions', 'make_private',
         'cancel_users', 'deactivate_users', 'export_user_data',
+        'merge_accounts'
     ]
 
     def get_queryset(self, request):
@@ -187,6 +188,28 @@ class UserAdmin(DjangoUserAdmin):
         self.message_user(request, _("User made private."))
         return None
     make_private.short_description = _('Make user private')
+
+    def merge_accounts(self, request, queryset, keep_older=True):
+        if queryset.count() != 2:
+            self.message_user(request, _(
+                "Can only merge two accounts at a time."
+            ))
+            return None
+        if keep_older:
+            queryset = queryset.order_by('id')
+        else:
+            queryset = queryset.order_by('-id')
+        new_user = queryset[0]
+        old_user = queryset[1]
+        merge_accounts_task.delay(old_user.id, new_user.id)
+        self.message_user(request, _("Account merging started..."))
+    merge_accounts.short_description = _('Merge accounts (keep older)')
+
+    def merge_accounts_keep_newer(self, request, queryset):
+        return self.merge_accounts(request, queryset, keep_older=False)
+    merge_accounts_keep_newer.short_description = _(
+        'Merge accounts (keep newer)'
+    )
 
     def export_user_data(self, request, queryset):
         if not request.user.is_superuser:
