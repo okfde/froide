@@ -37,6 +37,8 @@ from ..utils import (
 
 publishing_denied = settings.FROIDE_CONFIG.get('publishing_denied', False)
 
+ACCEPT_FILETYPES = 'image/png,image/jpeg,image/gif,application/pdf'
+
 
 class AttachmentSaverMixin(object):
     def clean_files(self):
@@ -196,7 +198,10 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         required=False,
         validators=[validate_upload_document],
         help_text=files_help_text,
-        widget=BootstrapFileInput(attrs={'multiple': True})
+        widget=BootstrapFileInput(attrs={
+            'multiple': True,
+            'accept': ACCEPT_FILETYPES
+        })
     )
 
     def __init__(self, *args, **kwargs):
@@ -530,7 +535,13 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
     files = forms.FileField(label=_("Scanned Letter"), required=False,
             validators=[validate_upload_document],
             help_text=scan_help_text,
-            widget=BootstrapFileInput(attrs={'multiple': True}))
+            widget=BootstrapFileInput(
+                attrs={
+                    'multiple': True,
+                    'accept': ACCEPT_FILETYPES
+                }
+            )
+            )
     FIELD_ORDER = ['publicbody', 'date', 'subject', 'text', 'files']
 
     def __init__(self, *args, **kwargs):
