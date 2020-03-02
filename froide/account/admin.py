@@ -82,7 +82,7 @@ class UserAdmin(DjangoUserAdmin):
         'export_csv', 'resend_activation',
         'send_mail', 'delete_sessions', 'make_private',
         'cancel_users', 'deactivate_users', 'export_user_data',
-        'merge_accounts'
+        'merge_accounts', 'merge_accounts_keep_newer'
     ]
 
     def get_queryset(self, request):
