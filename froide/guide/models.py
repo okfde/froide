@@ -133,7 +133,7 @@ class Guidance(models.Model):
     def get_context(self):
         request = self.message.request
         user = request.user
-        return {
+        ctx = {
             'foirequest': request,
             'publicbody': request.public_body,
             'user': user,
@@ -143,6 +143,11 @@ class Guidance(models.Model):
                 self.message.get_autologin_url()
             )
         }
+        if self.action and self.action.letter_template_id:
+            ctx['action_url'] = user.get_autologin_url(
+                self.get_letter_url()
+            )
+        return ctx
 
     @render_with_context
     def get_description(self):
