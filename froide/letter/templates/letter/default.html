@@ -25,9 +25,11 @@
         {% endif %}
 
         {% render_form form %}
-          <button type="submit" class="btn btn-primary">
-            {% trans "Generate letter" %}
-          </button>
+          <div class="text-right">
+            <button type="submit" class="btn btn-primary">
+              {% trans "Generate letter" %}
+            </button>
+          </div>
         </div>
       </div>
   {% if ready %}</div>{% endif %}
