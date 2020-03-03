@@ -142,7 +142,7 @@ class PreviewLetterView(LetterMixin, DetailView):
         generator = get_letter_generator(
             self.object, self.message, context
         )
-        if self.request.GET('pdf'):
+        if self.request.GET.get('pdf'):
             response = HttpResponse(
                 generator.get_pdf_bytes(), content_type='application/pdf'
             )
