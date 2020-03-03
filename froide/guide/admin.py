@@ -19,8 +19,13 @@ class RuleAdmin(admin.ModelAdmin):
 
 
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'label',)
+    list_display = ('name', 'label', 'mail_intent', 'tag', 'letter_template')
     search_fields = ('name', 'label',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs.select_related('tag', 'letter_template')
+        return qs
 
 
 class GuidanceAdmin(admin.ModelAdmin):
