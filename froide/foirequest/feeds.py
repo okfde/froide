@@ -6,6 +6,7 @@ from django.utils.feedgenerator import Atom1Feed
 from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import linebreaksbr
 
 from .models import FoiRequest
 from .filters import FOIREQUEST_FILTER_DICT
@@ -85,7 +86,7 @@ class LatestFoiRequestsFeed(Feed):
         })
 
     def item_description(self, item):
-        return clean(item.description)
+        return clean(linebreaksbr(item.description))
 
     def item_pubdate(self, item):
         return item.first_message
@@ -120,7 +121,7 @@ class FoiRequestFeed(Feed):
         return clean(item.as_text())
 
     def item_description(self, item):
-        return clean(item.as_text())
+        return clean(linebreaksbr(item.as_text()))
 
     def item_pubdate(self, item):
         return item.timestamp
