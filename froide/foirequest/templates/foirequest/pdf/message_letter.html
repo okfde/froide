@@ -5,22 +5,27 @@
     <style>
         @charset "UTF-8";
         @page {
-          margin: 1cm 2cm;
+          margin: 1cm 2.5cm 2cm;
+          @bottom-right {
+            content: "{% trans 'Page' %} " counter(page) " / " counter(pages);
+            font-size: 8pt;
+          }
         }
         a {
          color: #000; 
         }
         html {
           font-family: sans-serif;
-          font-size: 11pt;
-          line-height: 1.6; 
+          font-size: 10pt;
+          line-height: 1.6;
         }
         address#from {
           float: right;
           font-style: normal;
           white-space: pre-line;  
-          font-size: 9pt;
+          font-size: 8pt;
           text-align: right;
+          width: 40%;
         }
         address#from a {
           text-decoration: none;
@@ -30,81 +35,87 @@
           margin-top: 4.5cm;
           font-style: normal;
           white-space: pre-line;  
-          font-size: 11pt;
-          width: 60%;
+          font-size: 10pt;
+          line-height: 1.4;
+          width: 40%;
         }
         dl#meta {
           float: right;
-          font-size: 9pt;
           margin-top: 2rem;
           line-height: 1.3em;
+          text-align: right;
+          width: 40%;
         }
         dl dt, dl dd {
           margin: 0;
         }
         dl dt {
-          display: inline;
+          font-size: 9pt;
           font-weight: bold;
         }
-        dl dt::before {
-          content: '';
-          display: block;
-        }
-        dl dt::after {
-          content: ':';
-        }
         dl dd {
-          float: right;
-          text-align: right;
+          margin-bottom: 0.5rem;
         }
         main {
           clear: both;
+          padding-top: 2cm;
+          hyphens: auto;
         }
+        main div {
+          padding-top: 1.5cm;
+        }
+
+        {% block ws_style %}
         main p {
-          margin-top: 1cm;
+          margin: 1cm 0 0;
         }
         main div {
           white-space: pre-line;
         }
-            
+        {% endblock %}
     </style>
-    <title>{{ object.title }}</title>
+    <title>{% block title %}{{ object.title }}{% endblock %}</title>
     <meta name="description" content="{{ object.description }}">
     <meta name="author" content="{{ SITE_NAME }}">
   </head>
   <body>
 
-    {% if pb_address %}
+    {% if recipient_address %}
       <address id="to">
-        {{ pb_address }}
+        {{ recipient_address }}
       </address>
     {% endif %}
 
-    <address id="from">
-      {{ object.real_sender }}
-      {% if object.sender_user.address %}{{ object.sender_user.address }}{% endif %}
-      <a href="mailto:{{ object.sender_email }}">{{ object.sender_email }}</a>
+    {% block from_address %}
+    <address id="from">{% block from_address_text %}{{ object.real_sender }}{% if object.sender_user.address %}{{ object.sender_user.address }}{% endif %}{% endblock %}
+      {% block from_address_links %}<a href="mailto:{{ object.sender_email }}">{{ object.sender_email }}</a>
       <a href="{{ object.request.get_absolute_domain_short_url }}">{{ object.request.get_absolute_domain_short_url }}</a>
+      {% endblock %}
     </address>
+    {% endblock %}
 
     <dl id="meta">
+      {% block meta %}
       <dt>{% trans "Date" %}</dt>
       <dd>{{ object.timestamp|date:"SHORT_DATE_FORMAT" }}</dd>
       <dt>{% trans "My reference" %}</dt>
       <dd>#{{ object.request.pk }}</dd>
+      {% endblock meta %}
       {% block extra_meta %}{% endblock %}
     </dl>
 
     <main>
+    {% block subject %}
     <p>
-      <strong>{% trans "Subject:" %}</strong> {{ object.subject }}
+      <strong>{% trans "Subject:" %} {% block subject_text %}{{ object.subject }}{% endblock subject_text %}</strong>
     </p>
+    {% endblock subject %}
 <div>{% block letter %}{% block letter_text %}
 {{ text|urlize }}{% endblock letter_text %}
 
 {% block letter_closing %}
 {% trans "Kind Regards," %}
-{{ object.real_sender }}
+{% block letter_closing_name %}{{ object.real_sender }}{% endblock letter_closing_name %}
 {% endblock letter_closing %}{% endblock letter%}
 </div>
 </main>

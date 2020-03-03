@@ -597,7 +597,9 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
 
 def get_postal_reply_form(*args, **kwargs):
     foirequest = kwargs.pop('foirequest')
-    return PostalReplyForm(*args, prefix='postal_reply', foirequest=foirequest)
+    return PostalReplyForm(
+        *args, prefix='postal_reply', foirequest=foirequest, **kwargs
+    )
 
 
 class PostalReplyForm(PostalBaseForm):
@@ -639,7 +641,7 @@ class PostalReplyForm(PostalBaseForm):
 def get_postal_message_form(*args, **kwargs):
     foirequest = kwargs.pop('foirequest')
     return PostalMessageForm(
-        *args, prefix='postal_message', foirequest=foirequest
+        *args, prefix='postal_message', foirequest=foirequest, **kwargs
     )
 
 

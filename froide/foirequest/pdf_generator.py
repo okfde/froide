@@ -23,11 +23,14 @@ class PDFGenerator(object):
     def get_pdf_bytes(self):
         if not PDF_EXPORT_AVAILABLE:
             return b''
-        return self.make_doc(self.obj)
+        return self.make_doc()
 
-    def make_doc(self, foirequest):
-        ctx = self.get_context_data(foirequest)
-        html = render_to_string(self.template_name, ctx)
+    def get_html_string(self):
+        ctx = self.get_context_data(self.obj)
+        return render_to_string(self.template_name, ctx)
+
+    def make_doc(self):
+        html = self.get_html_string()
         doc = wp.HTML(string=html)
         return doc.write_pdf()
 
@@ -45,18 +48,23 @@ class FoiRequestPDFGenerator(PDFGenerator):
 class LetterPDFGenerator(PDFGenerator):
     template_name = 'foirequest/pdf/message_letter.html'
 
-    def get_context_data(self, obj):
-        ctx = super().get_context_data(obj)
+    def get_publicbody(self):
+        return self.obj.request.public_body
 
-        pb = obj.recipient_public_body
+    def get_recipient_address(self):
+        pb = self.get_publicbody()
         pb_address = ''
         if pb is not None:
             address = pb.address.splitlines()
             pb_address = [pb.name] + address
             pb_address = '\n'.join(pb_address)
+        return pb_address
+
+    def get_context_data(self, obj):
+        ctx = super().get_context_data(obj)
 
         ctx.update({
-            'pb_address': pb_address,
+            'recipient_address': self.get_recipient_address(),
             'text': self.get_letter_text(obj),
         })
         return ctx
