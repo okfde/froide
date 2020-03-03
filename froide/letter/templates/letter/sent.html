@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load markup %}
+
+{% block navbar %}
+  {% include "header_minimal.html" %}
+{% endblock %}
+
+
+{% block app_body %}
+
+<h2 class="text-center">{{ object.name }}</h2>
+
+<div class="row justify-content-center mt-3 mb-5">
+  <div class="col-md-10 col-lg-8">
+
+    {% if post_instructions %}{{ post_instructions|markdown }}{% endif %}
+
+    <div class="text-center">
+      <p>
+        <a href="{{ download_link }}" class="btn btn-primary btn-lg">
+          {% trans "Download letter as PDF" %}
+        </a>
+      </p>
+
+      <p>
+        <a href="{{ message.get_absolute_url }}">
+          {% trans "Go to your request" %}
+        </a>
+      </p>
+  
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

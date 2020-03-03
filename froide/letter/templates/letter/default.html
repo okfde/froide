@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load markup %}
+{% load form_helper %}
+
+{% block navbar %}
+  {% include "header_minimal.html" %}
+{% endblock %}
+
+
+{% block app_body %}
+
+<h2 class="text-center">{{ object.name }}</h2>
+
+<form action="" method="POST">
+  {% csrf_token %}
+
+  {% if ready %}<div class="d-none">{% endif %}
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+        {% if description %}
+          {{ description|markdown }}
+        {% endif %}
+
+        {% render_form form %}
+          <button type="submit" class="btn btn-primary">
+            {% trans "Generate letter" %}
+          </button>
+        </div>
+      </div>
+  {% if ready %}</div>{% endif %}
+
+  <div class="row justify-content-center mt-3 mb-5">
+    <div class="col-md-10 col-lg-8">
+      {% if ready %}
+        <h3>{% trans "Your letter" %}</h3>
+        <p>{% trans "Please check your personal information and then continue." %}</p>
+      {% else %}
+        <h3>{% trans "Example letter" %}</h3>
+        <p>{% trans "This is an example of how the letter will look like." %}</p>
+      {% endif %}
+
+      <iframe src="{% url 'letter-preview' letter_id=object.pk message_id=message.pk %}{% if preview_qs %}?{{ preview_qs }}{% endif %}" frameBorder="0" style="border: 1px solid #999; width: 100%; height: 400px"></iframe>
+
+      {% if ready %}
+        <div class="float-left">
+          <input type="submit" name="edit" class="btn btn-secondary" value="{% trans 'Edit details' %}"/>
+        </div>
+        <div class="float-right">
+          <input type="submit" name="send" class="btn btn-primary" value="{% trans 'Continue' %}"/>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</form>
+
+{% endblock %}

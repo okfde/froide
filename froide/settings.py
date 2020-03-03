@@ -55,6 +55,7 @@ class Base(Configuration):
         'froide.georegion',
         'froide.publicbody',
         'froide.document',
+        'froide.letter',
         'froide.account',
         'froide.bounce',
         'froide.team',

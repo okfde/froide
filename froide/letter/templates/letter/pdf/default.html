@@ -1,0 +1,46 @@
+{% extends "foirequest/pdf/message_letter.html" %}
+{% load i18n %}
+
+{% load markup %}
+
+{% block ws_style %}
+main p {
+  margin: 0.5cm 0 0;
+}
+.signature-name {
+  margin-top: 2cm;
+}
+{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block from_address_text %}{% if not redacted %}{{ address }}{% endif %}{% endblock %}
+
+{% block from_address_links %}{% if not redacted %}
+{% if not preview %}<a href="mailto:{{ foirequest.secret_address }}">{% endif %}{{ foirequest.secret_address }}{% if not preview %}</a>{% endif %}
+{% if not preview %}<a href="{{ foirequest.get_absolute_domain_short_url }}">{% endif %}{{ foirequest.get_absolute_domain_short_url }}{% if not preview %}</a>{% endif %}{% endif %}{% endblock %}
+
+{% block meta %}
+<dt>{% trans "Date" %}</dt>
+<dd>{{ today|date:"SHORT_DATE_FORMAT" }}</dd>
+<dt>{% trans "My reference" %}</dt>
+<dd>#{{ foirequest.pk }}</dd>
+{% endblock meta %}
+
+{% block extra_meta %}
+  {% if reference %}
+  <dt>{% trans "Your reference" %}</dt>
+  <dd>{{ reference }}</dd>
+  {% endif %}
+{% endblock %}
+
+{% block subject_text %}{{ subject|linebreaksbr }}{% endblock %}
+
+{% block letter_text %}{{ text|markdown }}{% endblock letter_text %}
+
+{% block letter_closing %}
+{% if not redacted %}
+
+<p class="signature-name">{{ user.get_full_name }}</p>
+{% endif %}
+{% endblock letter_closing %}
