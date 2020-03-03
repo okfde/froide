@@ -36,6 +36,14 @@
           </a>
         {% endwith %}
       {% endif %}
+
+      {% if guidance.has_letter and foirequest|can_write_foirequest:request %}
+        <a href="{{ guidance.get_letter_url }}" class="btn btn-primary">
+          <span class="fa fa-envelope"></span>
+          {% trans "Generate letter" %}
+        </a>
+      {% endif %}
+
       </div>
     </div>
   {% endfor %}

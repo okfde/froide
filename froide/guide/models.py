@@ -2,6 +2,7 @@ import re
 
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -12,6 +13,7 @@ from froide.helper.email_sending import MailIntent
 from froide.publicbody.models import (
     Jurisdiction, PublicBody, Category
 )
+from froide.letter.models import LetterTemplate
 
 
 def compile_text(text):
@@ -34,6 +36,10 @@ class Action(models.Model):
 
     tag = models.ForeignKey(
         MessageTag, null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
+    letter_template = models.ForeignKey(
+        LetterTemplate, null=True, blank=True,
         on_delete=models.SET_NULL
     )
 
@@ -154,6 +160,21 @@ class Guidance(models.Model):
         if self.action:
             return bool(self.action.snippet)
         return bool(self.snippet)
+
+    def has_letter(self):
+        if self.action:
+            return bool(self.action.letter_template_id)
+        return False
+
+    def get_letter_url(self):
+        if self.action:
+            return reverse(
+                'letter-make',
+                kwargs={
+                    'letter_id': self.action.letter_template_id,
+                    'message_id': self.message_id
+                })
+        return ''
 
     @render_with_context
     def get_snippet(self):
