@@ -124,14 +124,15 @@ class LetterView(LetterMixin, UpdateView):
 
 class PreviewLetterView(LetterMixin, DetailView):
     def get_context_data(self, **kwargs):
+        foirequest = self.message.request
         ctx = get_example_context(
-            self.object, self.request.user, self.message
+            self.object, foirequest.user, self.message
         )
         if self.request.GET.get('address'):
             form = LetterForm(
                 self.request.GET.dict(),
                 instance=self.object,
-                user=self.request.user,
+                user=foirequest.user,
                 message=self.message
             )
             if form.is_valid():
