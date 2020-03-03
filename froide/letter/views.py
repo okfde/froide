@@ -121,16 +121,6 @@ class LetterView(LetterMixin, UpdateView):
             })
         )
 
-    def generate_pdf(self, form_data):
-        generator = self.get_letter_generator(form_data)
-
-        response = HttpResponse(
-            generator.get_pdf_bytes(), content_type='application/pdf'
-        )
-        dispo = 'attachment; filename=widerspruch.pdf'
-        response['Content-Disposition'] = dispo
-        return response
-
 
 class PreviewLetterView(LetterMixin, DetailView):
     def get_context_data(self, **kwargs):
@@ -152,6 +142,13 @@ class PreviewLetterView(LetterMixin, DetailView):
         generator = get_letter_generator(
             self.object, self.message, context
         )
+        if self.request.GET('pdf'):
+            response = HttpResponse(
+                generator.get_pdf_bytes(), content_type='application/pdf'
+            )
+            dispo = 'attachment; filename=preview.pdf'
+            response['Content-Disposition'] = dispo
+            return response
         return HttpResponse(generator.get_html_string())
 
 
