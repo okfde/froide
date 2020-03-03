@@ -173,6 +173,7 @@ class SentLetterView(LetterMixin, DetailView):
             ctx
         )
         context['message'] = self.message
-        att = [a for a in self.message.attachments if not a.is_redacted][0]
-        context['download_link'] = att.get_absolute_domain_auth_url()
+        atts = [a for a in self.message.attachments if not a.is_redacted]
+        if atts:
+            context['download_link'] = atts[0].get_absolute_domain_auth_url()
         return context
