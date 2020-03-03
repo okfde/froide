@@ -24,7 +24,7 @@ class ActionAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs.select_related('tag', 'letter_template')
+        qs = qs.select_related('tag', 'letter_template')
         return qs
 
 
