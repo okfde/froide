@@ -837,6 +837,7 @@ class PublicBodyUploader:
         )
         if upload is None:
             return
+        # TODO: redact name user out of attachment name
         name = make_name_unique(upload.filename, self.names)
         self.names.add(name)
         att = FoiAttachment.objects.create(
