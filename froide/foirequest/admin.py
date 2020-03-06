@@ -77,7 +77,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'campaign',
         make_nullfilter('same_as', _('Has same request')),
         ('user', ForeignKeyFilter), ('public_body', ForeignKeyFilter),
-        ('project', ForeignKeyFilter), FoiRequestTagsFilter,
+        ('project', ForeignKeyFilter),
         make_greaterzerofilter('costs', _('Costs given'))
     )
     search_fields = ['title', 'description', 'secret_address', 'reference']
