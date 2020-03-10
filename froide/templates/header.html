@@ -81,7 +81,7 @@
           </li>
           {% else %}
             <li class="nav-item {% block nav_login %}{% endblock %}">
-              <a class="nav-link" href="{% url 'account-login' %}">
+              <a class="nav-link" href="{% url 'account-login' %}?next={{ request.path|urlencode }}">
                 {% blocktrans %}Sign in{% endblocktrans %}
               </a>
             </li>
