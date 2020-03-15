@@ -86,7 +86,7 @@ class LatestFoiRequestsFeed(Feed):
         })
 
     def item_description(self, item):
-        return clean(linebreaksbr(item.description))
+        return clean(linebreaksbr(item.get_description()))
 
     def item_pubdate(self, item):
         return item.first_message
