@@ -1,7 +1,7 @@
 <template>
   <div class="publicbody-upload mb-3 mt-3">
     <div class="text-right mt-3">
-      <button type="submit" class="btn btn-lg btn-primary" :disabled="!canSubmit">
+      <button v-if="canSubmit" type="submit" class="btn btn-lg btn-primary">
         <span v-if="uploading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         {{ i18n.createResponse }}
       </button>

@@ -19,6 +19,11 @@
 <p class="lead">
   {% trans "You can upload large files as a response to this request here." %}
 </p>
+<ol>
+  <li>{% trans 'Drag files on the grey area or click "Search" to select files.' %}</li>
+  <li>{% trans 'Wait for all files to be uploaded.' %}</li>
+  <li>{% trans 'Click on "Create response now" to finish the process.' %}</li>
+</ol>
 <form action="" method="post">
   {% csrf_token %}
   <publicbody-upload class="publicbody-upload" :config="{{ config }}">
