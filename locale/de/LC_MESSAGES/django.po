@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-03 11:47+0100\n"
-"PO-Revision-Date: 2020-03-03 15:32+0100\n"
+"POT-Creation-Date: 2020-03-17 14:13+0100\n"
+"PO-Revision-Date: 2020-03-17 14:14+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -433,7 +433,7 @@ msgstr "Vorname"
 msgid "last name"
 msgstr "Nachname"
 
-#: froide/account/models.py:103 froide/foirequestfollower/forms.py:22
+#: froide/account/models.py:103 froide/foirequestfollower/forms.py:26
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
@@ -1823,47 +1823,47 @@ msgstr "Informationsfreiheitsanfrage"
 msgid "Requests"
 msgstr "Anfragen"
 
-#: froide/foirequest/feeds.py:32
+#: froide/foirequest/feeds.py:33
 #, python-format
 msgid "search for \"%s\""
 msgstr "Suchergebnisse für „%s“"
 
-#: froide/foirequest/feeds.py:34
+#: froide/foirequest/feeds.py:35
 #, python-format
 msgid "by category %(category)s"
 msgstr "nach Kategorie %(category)s"
 
-#: froide/foirequest/feeds.py:36
+#: froide/foirequest/feeds.py:37
 #, python-format
 msgid "by status %(status)s"
 msgstr "nach Status %(status)s"
 
-#: froide/foirequest/feeds.py:40
+#: froide/foirequest/feeds.py:41
 #, python-format
 msgid "by tag %(tag)s"
 msgstr "nach Tag %(tag)s"
 
-#: froide/foirequest/feeds.py:42
+#: froide/foirequest/feeds.py:43
 #, python-format
 msgid "for %(juris)s"
 msgstr "für %(juris)s"
 
-#: froide/foirequest/feeds.py:44
+#: froide/foirequest/feeds.py:45
 #, python-format
 msgid "to %(publicbody)s"
 msgstr "an %(publicbody)s"
 
-#: froide/foirequest/feeds.py:50
+#: froide/foirequest/feeds.py:51
 #, python-format
 msgid "Freedom of Information Requests %(by)s on %(sitename)s"
 msgstr "Informationsfreiheitsanfragen %(by)s auf %(sitename)s"
 
-#: froide/foirequest/feeds.py:54
+#: froide/foirequest/feeds.py:55
 #, python-format
 msgid "Freedom of Information Requests on %(sitename)s"
 msgstr "Informationsfreiheitsanfragen auf %(sitename)s"
 
-#: froide/foirequest/feeds.py:61
+#: froide/foirequest/feeds.py:62
 #, python-format
 msgid ""
 "This feed contains the Freedom of Information requests %(by)s that have been "
@@ -1872,7 +1872,7 @@ msgstr ""
 "Dieser Feed enthält die neuesten Informationsfreiheitsanfragen %(by)s, die "
 "mit Hilfe von %(sitename)s gestellt wurden."
 
-#: froide/foirequest/feeds.py:66
+#: froide/foirequest/feeds.py:67
 #, python-format
 msgid ""
 "This feed contains the latest Freedom of Information requests that have been "
@@ -1881,12 +1881,12 @@ msgstr ""
 "Dieser Feed enthält die neuesten Informationsfreiheitsanfragen, die mit "
 "Hilfe von %(sitename)s gestellt wurden."
 
-#: froide/foirequest/feeds.py:81
+#: froide/foirequest/feeds.py:82
 #: froide/foirequest/templates/foirequest/show.html:470
 msgid "Not yet known"
 msgstr "Noch nicht bekannt"
 
-#: froide/foirequest/feeds.py:82
+#: froide/foirequest/feeds.py:83
 #, python-format
 msgid "'%(title)s' to %(publicbody)s"
 msgstr "'%(title)s' an %(publicbody)s"
@@ -4113,6 +4113,21 @@ msgstr ""
 msgid "You can upload large files as a response to this request here."
 msgstr "Sie können hier große Dateien als Antwort zu dieser Anfrage hochladen."
 
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:23
+msgid "Drag files on the grey area or click \"Search\" to select files."
+msgstr ""
+"Ziehen Sie Dateien auf die graue Fläche oder klicken Sie auf „Suche“, um "
+"Dateien auszuwählen."
+
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:24
+msgid "Wait for all files to be uploaded."
+msgstr "Warten Sie bis alle Dateien hochgeladen wurden."
+
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:25
+msgid "Click on \"Create response now\" to finish the process."
+msgstr ""
+"Klicken Sie auf „Dateien als Antwort erstellen“ um den Vorgang abzuschließen."
+
 #: froide/foirequest/templates/foirequest/redact.html:7
 #, python-format
 msgid "Redacting attachment %(name)s"
@@ -4357,7 +4372,7 @@ msgstr ""
 "aller X“"
 
 #: froide/foirequest/templates/foirequest/request/purpose_check.html:43
-#: froide/letter/templates/letter/default.html:52
+#: froide/letter/templates/letter/default.html:54
 msgid "Continue"
 msgstr "Weiter"
 
@@ -6504,19 +6519,19 @@ msgstr "Dateien als Antwort erstellen"
 msgid "FOI Request Follower"
 msgstr "Anfrage-Abo"
 
-#: froide/foirequestfollower/forms.py:21
+#: froide/foirequestfollower/forms.py:23
 msgid "Your Email address"
 msgstr "Ihre E-Mail-Adresse"
 
-#: froide/foirequestfollower/forms.py:27
+#: froide/foirequestfollower/forms.py:36
 msgid "Missing email address!"
 msgstr "Fehlende E-Mail-Adresse!"
 
-#: froide/foirequestfollower/forms.py:29
+#: froide/foirequestfollower/forms.py:38
 msgid "You cannot access this request!"
 msgstr "Sie können auf diese Anfrage nicht zugreifen!"
 
-#: froide/foirequestfollower/forms.py:37
+#: froide/foirequestfollower/forms.py:47
 #, python-format
 msgid ""
 "This email address already has an account. <a href=\"%s?simple\" class="
@@ -6527,7 +6542,7 @@ msgstr ""
 "\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse ein um "
 "Benachrichtigungen zu erhalten.</a>"
 
-#: froide/foirequestfollower/forms.py:40
+#: froide/foirequestfollower/forms.py:50
 msgid "You cannot follow your own requests."
 msgstr "Sie erhalten schon Benachrichtigungen für Ihre Anfragen."
 
@@ -6585,28 +6600,28 @@ msgstr "%(time)s: %(text)s"
 msgid "TIME_FORMAT"
 msgstr "H:i"
 
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:10
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:12
 msgid "Unfollow request"
 msgstr "Nicht mehr folgen"
 
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:14
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:16
 msgid "You follow this request"
 msgstr "Sie folgen der Anfrage!"
 
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:21
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:25
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:23
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:27
 msgid "Follow request?"
 msgstr "Anfrage folgen?"
 
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:37
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:39
 msgid "You will not get notified anymore."
 msgstr "Sie erhalten keine Benachrichtigungen mehr."
 
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:40
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:42
 msgid "You will receive notifications!"
 msgstr "Sie erhalten Benachrichtigungen!"
 
-#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:47
+#: froide/foirequestfollower/templates/foirequestfollower/_follow_form.html:49
 msgid "Get notified by email of changes."
 msgstr "Erhalten Sie Neuigkeiten per Email."
 
@@ -6880,7 +6895,7 @@ msgstr "Kinder:"
 msgid "Children"
 msgstr "Kinder"
 
-#: froide/guide/admin.py:33
+#: froide/guide/admin.py:38
 msgid "Has rule"
 msgstr "Hat Regel"
 
@@ -6888,31 +6903,31 @@ msgstr "Hat Regel"
 msgid "Guide"
 msgstr "Berater"
 
-#: froide/guide/models.py:41
+#: froide/guide/models.py:47
 msgid "Action"
 msgstr "Beratungsvorlage"
 
-#: froide/guide/models.py:42
+#: froide/guide/models.py:48
 msgid "Actions"
 msgstr "Beratungsvorlagen"
 
-#: froide/guide/models.py:106
+#: froide/guide/models.py:112
 msgid "Guidance"
 msgstr "Beratung"
 
-#: froide/guide/models.py:107
+#: froide/guide/models.py:113
 msgid "Guidances"
 msgstr "Beratungen"
 
-#: froide/guide/models.py:110
+#: froide/guide/models.py:116
 msgid "Can run guidance"
 msgstr "Kann Beratung durchführen"
 
-#: froide/guide/models.py:200
+#: froide/guide/models.py:226
 msgid "Rule"
 msgstr "Regel"
 
-#: froide/guide/models.py:201
+#: froide/guide/models.py:227
 msgid "Rules"
 msgstr "Regeln"
 
@@ -6968,19 +6983,24 @@ msgstr "Zur Antwort hinzufügen"
 msgid "Prepare message"
 msgstr "Nachricht aufrufen"
 
-#: froide/guide/templates/guide/guidance.html:47
+#: froide/guide/templates/guide/guidance.html:43
+#: froide/letter/templates/letter/default.html:30
+msgid "Generate letter"
+msgstr "Brief erstellen"
+
+#: froide/guide/templates/guide/guidance.html:55
 msgid "In admin"
 msgstr "Im Admin"
 
-#: froide/guide/templates/guide/guidance.html:50
+#: froide/guide/templates/guide/guidance.html:58
 msgid "Add custom"
 msgstr "Eigene hinzufügen"
 
-#: froide/guide/templates/guide/guidance.html:52
+#: froide/guide/templates/guide/guidance.html:60
 msgid "Rerun guidance"
 msgstr "Beratung aktualisieren"
 
-#: froide/guide/templates/guide/guidance.html:53
+#: froide/guide/templates/guide/guidance.html:61
 msgid "Run + Notify"
 msgstr "Aktualisieren + Benachrichtigungen"
 
@@ -7174,27 +7194,23 @@ msgstr "Briefvorlage"
 msgid "letter templates"
 msgstr "Briefvorlagen"
 
-#: froide/letter/templates/letter/default.html:29
-msgid "Generate letter"
-msgstr "Brief erstellen"
-
-#: froide/letter/templates/letter/default.html:38
+#: froide/letter/templates/letter/default.html:40
 msgid "Your letter"
 msgstr "Ihr Brief"
 
-#: froide/letter/templates/letter/default.html:39
+#: froide/letter/templates/letter/default.html:41
 msgid "Please check your personal information and then continue."
 msgstr "Bitte überprüfen Sie Ihre Angaben und klicken Sie dann auf Weiter."
 
-#: froide/letter/templates/letter/default.html:41
+#: froide/letter/templates/letter/default.html:43
 msgid "Example letter"
 msgstr "Beispiel-Brief"
 
-#: froide/letter/templates/letter/default.html:42
+#: froide/letter/templates/letter/default.html:44
 msgid "This is an example of how the letter will look like."
 msgstr "Dies ist ein Beispiel, wie der Brief aussehen wird."
 
-#: froide/letter/templates/letter/default.html:49
+#: froide/letter/templates/letter/default.html:51
 msgid "Edit details"
 msgstr "Details bearbeiten"
 
@@ -7202,11 +7218,11 @@ msgstr "Details bearbeiten"
 msgid "Your reference"
 msgstr "Ihr Zeichen"
 
-#: froide/letter/templates/letter/sent.html:22
+#: froide/letter/templates/letter/sent.html:23
 msgid "Download letter as PDF"
 msgstr "Brief als PDF herunterladen"
 
-#: froide/letter/templates/letter/sent.html:28
+#: froide/letter/templates/letter/sent.html:29
 msgid "Go to your request"
 msgstr "Zu Ihrer Anfrage"
 
@@ -8859,7 +8875,6 @@ msgid "profile"
 msgstr "profil"
 
 #: froide/urls.py:153
-#| msgid "letter"
 msgctxt "url part"
 msgid "^letter/"
 msgstr "^brief/"
