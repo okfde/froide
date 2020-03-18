@@ -129,7 +129,10 @@ class PublicBodyBaseAdminMixin(
         }),
         (_('Advanced'), {
             'classes': ('collapse',),
-            'fields': ('site', 'number_of_requests', 'website_dump',),
+            'fields': (
+                'site', 'number_of_requests', 'website_dump',
+                'wikidata_item', 'source_reference', 'extra_data',
+            ),
         }),
         (_('Meta'), {
             'fields': ('_created_by', 'created_at', '_updated_by', 'updated_at'),
