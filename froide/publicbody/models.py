@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
@@ -326,6 +327,11 @@ class PublicBody(models.Model):
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
+    source_reference = models.CharField(
+        _('source reference'),
+        max_length=255, blank=True
+    )
+    extra_data = JSONField(default=dict, blank=True)
 
     file_index = models.CharField(_("file index"), max_length=1024, blank=True)
     org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
