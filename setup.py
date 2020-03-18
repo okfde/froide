@@ -50,7 +50,6 @@ setup(
         'django-configurations',
         'django-crossdomainmedia',
         'django-storages',
-        'django-wikidata',
         'dj-database-url',
         'django-cache-url',
         'django-filter',
