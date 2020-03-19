@@ -12,8 +12,11 @@ class BounceConfig(AppConfig):
         from froide.account import account_canceled
         from froide.account.export import registry
 
+        from froide.helper.email_sending import mail_middleware_registry
+
         account_canceled.connect(cancel_user)
         registry.register(export_user_data)
+        mail_middleware_registry.register(UnsubscribeReferenceMailMiddleware())
 
 
 def cancel_user(sender, user=None, **kwargs):
@@ -40,3 +43,17 @@ def export_user_data(user):
         }
         for b in bounces]).encode('utf-8')
     )
+
+
+class UnsubscribeReferenceMailMiddleware:
+    '''
+    Moves unsubscribe_reference from mail render context
+    to email sending kwargs
+    '''
+    def enhance_email_kwargs(self, mail_intent, context, email_kwargs):
+        unsubscribe_reference = context.get('unsubscribe_reference')
+        if unsubscribe_reference is None:
+            return
+        return {
+            'unsubscribe_reference': unsubscribe_reference
+        }
