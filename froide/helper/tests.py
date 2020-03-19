@@ -142,4 +142,8 @@ class TestMailIntent(TestCase):
     def test_mail_intent_templates(self):
         for intent_key in mail_registry.intents:
             # check if all mail intent templates are present
-            mail_registry.intents[intent_key].get_templates(needs_subject=False)
+            try:
+                mail_registry.intents[intent_key].get_templates(needs_subject=False)
+            except Exception:
+                print('intent_key', intent_key)
+                raise
