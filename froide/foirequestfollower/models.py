@@ -1,10 +1,12 @@
 import hmac
 
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy
 from django.urls import reverse
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.crypto import constant_time_compare
 
 from froide.foirequest.models import FoiRequest
@@ -71,8 +73,11 @@ class FoiRequestFollower(models.Model):
         verbose_name=_("User"), on_delete=models.CASCADE)
     email = models.CharField(max_length=255, blank=True)
     confirmed = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(_("Timestamp of Following"),
-            auto_now_add=True)
+    timestamp = models.DateTimeField(
+        _("Timestamp of Following"),
+        default=timezone.now
+    )
+    context = JSONField(blank=True, null=True)
 
     objects = FoiRequestFollowerManager()
 
