@@ -87,7 +87,7 @@ class FoiRequestFollowerManager(models.Manager):
 
     def email_follow(self, foirequest, email, extra_data):
         try:
-            # Confirmed email follow
+            # Existing email follow
             follower = FoiRequestFollower.objects.get(
                 request=foirequest,
                 email=email,
@@ -123,6 +123,7 @@ class FoiRequestFollowerManager(models.Manager):
         }
         if count == 1:
             follower = FoiRequestFollower.objects.get(
+                request=update_list[0]['request'],
                 email=email or '', user=user, confirmed=True
             )
             context.update(
