@@ -2,6 +2,7 @@
   "compilerOptions": {
     "lib": [
       "dom",
+      "dom.iterable",
       "es5",
       "es2015",
       "es6",
