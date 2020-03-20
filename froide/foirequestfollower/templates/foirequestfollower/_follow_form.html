@@ -5,7 +5,7 @@
 {% if can_follow %}
 
 {% if request.user.is_authenticated %}
-<form method="post" action="{% url 'foirequestfollower-follow' slug=object.slug %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
+<form method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
   {% csrf_token %}
   {% if following and not follow_only %}
     <button class="input-large btn hover-btn-danger btn-block" type="submit">

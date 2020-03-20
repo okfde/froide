@@ -40,7 +40,7 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username='sw')
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}))
+                kwargs={"pk": req.pk}))
         # Can't follow my own requests
         self.assertEqual(response.status_code, 400)
         followers = FoiRequestFollower.objects.filter(request=req, user=user)
@@ -49,7 +49,7 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username='dummy')
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}))
+                kwargs={"pk": req.pk}))
         self.assertEqual(response.status_code, 302)
         follower = FoiRequestFollower.objects.get(request=req, user=user)
         self.assertEqual(len(mail.outbox), 0)
@@ -84,12 +84,12 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username='dummy')
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}))
+                kwargs={"pk": req.pk}))
         self.assertEqual(response.status_code, 302)
         follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
         self.assertEqual(follower, 1)
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}))
+                kwargs={"pk": req.pk}))
         self.assertEqual(response.status_code, 302)
         follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
         self.assertEqual(follower, 0)
@@ -98,7 +98,7 @@ class FoiRequestFollowerTest(TestCase):
         req = FoiRequest.objects.all()[0]
         email = 'test@example.org'
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}), {
+                kwargs={"pk": req.pk}), {
                     'email': email
                 })
         self.assertEqual(response.status_code, 302)
@@ -138,7 +138,7 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username='dummy')
         email = user.email
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}), {
+                kwargs={"pk": req.pk}), {
                     'email': email
                 })
         self.assertEqual(response.status_code, 302)
@@ -169,7 +169,7 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username='dummy')
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}))
+                kwargs={"pk": req.pk}))
         self.assertEqual(response.status_code, 302)
         self.client.logout()
         ok = self.client.login(username=comment_user.email, password='froide')
@@ -216,7 +216,7 @@ class FoiRequestFollowerTest(TestCase):
             ok = self.client.login(email=email, password='froide')
             self.assertTrue(ok)
             response = self.client.post(reverse('foirequestfollower-follow',
-                kwargs={"slug": req.slug}))
+                kwargs={"pk": req.pk}))
             self.assertEqual(response.status_code, 302)
             self.client.logout()
 
