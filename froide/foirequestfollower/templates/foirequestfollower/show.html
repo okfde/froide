@@ -10,7 +10,13 @@
       {% endblocktrans %}
     </span>
   </h5>
-  {% if user.is_authenticated and user != object.user %}
-    {% include "foirequestfollower/follow_form.html" %}
+  {% if user != object.user %}
+    {% if email_followed %}
+      <div class="alert alert-info">
+        {% trans "Please check your email inbox for a confirmation email." %}
+      </div>
+    {% else %}
+      {% include "foirequestfollower/follow_form.html" %}
+    {% endif %}
   {% endif %}
 </div>

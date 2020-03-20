@@ -1,0 +1,1 @@
+{% load i18n %}{% autoescape off %}{% blocktrans count counter=count %}Update on one followed request{% plural %}Update on {{ counter }} followed requests{% endblocktrans %}{% endautoescape %}

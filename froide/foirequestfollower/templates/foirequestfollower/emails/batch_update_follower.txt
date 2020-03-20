@@ -1,0 +1,22 @@
+{% load i18n %}{% autoescape off %}{% if user %}{% blocktrans with name=user.get_full_name %}Hello {{ name }},{% endblocktrans %}{% else %}{% trans "Hello," %}{% endif %}
+
+{% blocktrans count count as count %}in the last 24 hours there was an update on one request that you follow.{% plural %}in the last 24 hours there were updates to {{ count }} requests that you follow.{% endblocktrans %}
+{% for update in update_list %}
+{% blocktrans with title=update.request.title %}Updates to the request “{{ title }}”:{% endblocktrans %}
+{% for event in update.events %} - {{ event }}
+{% endfor %}
+{% blocktrans with link=update.request.get_absolute_domain_short_url %}Go to request:
+{{ link }}{% endblocktrans %}
+
+{% endfor %}{% blocktrans with site_name=site_name %}
+Cheers,
+{{ site_name }}
+{% endblocktrans %}
+
+{% for update in update_list %}
+{% blocktrans with title=update.request.title %}Unfollow request “{{ title }}”:{% endblocktrans %}
+{{ update.unfollow_link }}
+
+{% endfor %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

@@ -14,7 +14,7 @@ from froide.foirequest.tests import factories
 from froide.foirequest.tests.test_api import OAuthAPIMixin
 
 from .models import FoiRequestFollower
-from .tasks import _batch_update
+from .utils import run_batch_update
 
 User = get_user_model()
 Comment = get_model()
@@ -94,6 +94,74 @@ class FoiRequestFollowerTest(TestCase):
         follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
         self.assertEqual(follower, 0)
 
+    def test_email_following(self):
+        req = FoiRequest.objects.all()[0]
+        email = 'test@example.org'
+        response = self.client.post(reverse('foirequestfollower-follow',
+                kwargs={"slug": req.slug}), {
+                    'email': email
+                })
+        self.assertEqual(response.status_code, 302)
+        follower = FoiRequestFollower.objects.get(
+            request=req, user=None, email=email)
+        self.assertFalse(follower.confirmed)
+        self.assertEqual(len(mail.outbox), 1)
+
+        # Bad secret in URL
+        response = self.client.get(
+            reverse('foirequestfollower-confirm_follow',
+                kwargs={'follow_id': follower.id,
+                        'check': "a" * 32}))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(
+            FoiRequestFollower.objects.filter(
+                request=req, user=None, email=email, confirmed=True
+            ).exists()
+        )
+        mes = mail.outbox[0]
+        match = re.search(r'/%d/(\w+)/' % follower.pk, mes.body)
+        check = match.group(1)
+
+        response = self.client.get(
+            reverse('foirequestfollower-confirm_follow',
+                kwargs={'follow_id': follower.id,
+                        'check': check}))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            FoiRequestFollower.objects.filter(
+                request=req, user=None, email=email, confirmed=True
+            ).exists()
+        )
+
+    def test_user_email_following(self):
+        req = FoiRequest.objects.all()[0]
+        user = User.objects.get(username='dummy')
+        email = user.email
+        response = self.client.post(reverse('foirequestfollower-follow',
+                kwargs={"slug": req.slug}), {
+                    'email': email
+                })
+        self.assertEqual(response.status_code, 302)
+        follower = FoiRequestFollower.objects.get(
+            request=req, user=None, email=email)
+        self.assertFalse(follower.confirmed)
+        self.assertEqual(len(mail.outbox), 1)
+
+        mes = mail.outbox[0]
+        match = re.search(r'/%d/(\w+)/' % follower.pk, mes.body)
+        check = match.group(1)
+
+        response = self.client.get(
+            reverse('foirequestfollower-confirm_follow',
+                kwargs={'follow_id': follower.id,
+                        'check': check}))
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            FoiRequestFollower.objects.filter(
+                request=req, user=user, email='', confirmed=True
+            ).exists()
+        )
+
     def test_updates(self):
         mail.outbox = []
         req = FoiRequest.objects.all()[0]
@@ -115,7 +183,7 @@ class FoiRequestFollowerTest(TestCase):
         f = CommentForm(mes)
         d.update(f.initial)
         self.client.post(reverse("comments-post-comment"), d)
-        _batch_update()
+        run_batch_update()
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to[0], req.user.email)
         self.assertEqual(mail.outbox[1].to[0], user.email)
@@ -137,7 +205,7 @@ class FoiRequestFollowerTest(TestCase):
         d.update(f.initial)
         self.client.post(reverse("comments-post-comment"), d)
 
-        _batch_update(update_requester=False)
+        run_batch_update(update_requester=False)
 
         self.assertEqual(len(mail.outbox), 0)
 
@@ -168,7 +236,7 @@ class FoiRequestFollowerTest(TestCase):
         do_follow(req2, 'dummy@example.org')
         do_comment(mes2, 'info@fragdenstaat.de')
 
-        _batch_update()
+        run_batch_update()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], dummy_user.email)
 
@@ -177,7 +245,7 @@ class FoiRequestFollowerTest(TestCase):
 
         do_comment(mes2, 'dummy@example.org')
 
-        _batch_update()
+        run_batch_update()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], req.user.email)
 

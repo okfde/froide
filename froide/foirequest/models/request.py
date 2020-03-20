@@ -5,7 +5,7 @@ import json
 from django.db import models
 from django.db.models import Q, When, Case, Value
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ungettext_lazy
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.urls import reverse
@@ -17,7 +17,6 @@ from django.utils import timezone
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
-from froide.account.utils import send_mail_user
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.campaign.models import Campaign
 from froide.team.models import Team
@@ -549,24 +548,9 @@ class FoiRequest(models.Model):
 
     def follow_count(self):
         from froide.foirequestfollower.models import FoiRequestFollower
-        return FoiRequestFollower.objects.filter(request=self).count()
-
-    def followed_by(self, user):
-        from froide.foirequestfollower.models import FoiRequestFollower
-        try:
-            if isinstance(user, str):
-                return FoiRequestFollower.objects.get(
-                    request=self,
-                    email=user,
-                    confirmed=True
-                )
-            else:
-                return FoiRequestFollower.objects.get(
-                    request=self,
-                    user=user
-                )
-        except FoiRequestFollower.DoesNotExist:
-            return False
+        return FoiRequestFollower.objects.filter(
+            request=self, confirmed=True
+        ).count()
 
     def public_date(self):
         if self.due_date:
@@ -725,46 +709,11 @@ class FoiRequest(models.Model):
             priority=False
         )
 
-    @classmethod
-    def send_update(cls, req_event_dict, user=None):
-        if user is None:
-            return
-        count = len(req_event_dict)
-        subject = ungettext_lazy(
-            "Update on one of your request",
-            "Update on %(count)s of your requests",
-            count) % {
-                'count': count
-            }
-
-        # Add additional info to template context
-        for request in req_event_dict:
-            req_event_dict[request].update({
-                'go_url': user.get_autologin_url(
-                    request.get_absolute_short_url()
-                )
-            })
-
-        send_mail_user(
-            subject,
-            render_to_string("foirequest/emails/request_update.txt",
-                {
-                    "user": user,
-                    "count": count,
-                    "req_event_dict": req_event_dict,
-                    "site_name": settings.SITE_NAME
-                }
-            ),
-            user,
-            priority=False
-        )
-
     def days_to_resolution(self):
         final = None
         resolutions = dict(self.RESOLUTION_FIELD_CHOICES)
         for mes in self.response_messages():
-            if (mes.status == 'resolved' or
-                        mes.status in resolutions):
+            if mes.status == 'resolved' or mes.status in resolutions:
                 final = mes.timestamp
                 break
         if final is None:

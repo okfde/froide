@@ -10,12 +10,18 @@ class FoiRequestFollowerConfig(AppConfig):
 
     def ready(self):
         from froide.account import account_canceled, account_merged
-        import froide.foirequestfollower.signals  # noqa
+        import froide.foirequestfollower.listeners  # noqa
         from froide.account.export import registry
+        from froide.bounce.signals import email_bounced, email_unsubscribed
+
+        from .utils import handle_bounce, handle_unsubscribe
 
         account_canceled.connect(cancel_user)
         account_merged.connect(merge_user)
         registry.register(export_user_data)
+
+        email_bounced.connect(handle_bounce)
+        email_unsubscribed.connect(handle_unsubscribe)
 
 
 def cancel_user(sender, user=None, **kwargs):
