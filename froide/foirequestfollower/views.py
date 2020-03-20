@@ -37,7 +37,7 @@ def follow(request, pk):
 
     if request.is_ajax():
         return JsonResponse({'errors': form.errors})
-    return show(request, slug, context={"followform": form}, status=400)
+    return show(request, foirequest.slug, context={"followform": form}, status=400)
 
 
 def confirm_follow(request, follow_id, check):
