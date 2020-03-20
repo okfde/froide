@@ -179,12 +179,14 @@ class MailIntent:
         if email_content is not None:
             return email_content
 
-        if email_kwargs is not None:
-            reference = email_kwargs.get('reference')
-            if reference and template_base is None:
-                ref = reference.split(':', 1)[0]
-                parts = self.mail_intent.rsplit('/', 1)
-                template_base = '/'.join((parts[0], ref, parts[1]))
+        if email_kwargs is None:
+            email_kwargs = {}
+
+        reference = email_kwargs.get('reference')
+        if reference and template_base is None:
+            ref = reference.split(':', 1)[0]
+            parts = self.mail_intent.rsplit('/', 1)
+            template_base = '/'.join((parts[0], ref, parts[1]))
 
         subject = email_kwargs.pop('subject', None)
         email_content_templates = self.get_templates(
@@ -234,6 +236,9 @@ class MailIntent:
         email_content = self.get_email_content(
             context, template_base=template_base, email_kwargs=kwargs
         )
+
+        # Make sure no extra subject kwarg is present
+        email_kwargs.pop('subject', None)
 
         return send_mail(
             email_content.subject,
