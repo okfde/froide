@@ -1,11 +1,4 @@
-const serializeForm = (form: HTMLFormElement) => {
-    const enabled = (Array.from(form.elements) as HTMLInputElement[]).filter((node) => !node.disabled);
-    const pairs = enabled.map((node) => {
-      const encoded = [node.name, node.value].map(encodeURIComponent);
-      return encoded.join("=");
-    });
-    return pairs.join("&");
-  };
+interface IHTMLModalTriggerElement extends HTMLElement { Modal: any | null; }
 
 const confirmForm = (form: HTMLElement) => {
   const confirmMessage = form.dataset.confirm;
@@ -21,23 +14,34 @@ const confirmForm = (form: HTMLElement) => {
 
 const submitFormsAjax = () => {
   const ajaxForms = document.querySelectorAll("form.ajaxified");
-  Array.from(ajaxForms).forEach((form) => {
+  (Array.from(ajaxForms) as HTMLFormElement[]).forEach((form) => {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      if (!confirmForm(form as HTMLElement)) {
+      if (!confirmForm(form)) {
         return false;
       }
 
       const method = form.getAttribute("method") || "post";
       const url = form.getAttribute("action") || "";
-      const data = serializeForm(form as HTMLFormElement);
+      const formData = new FormData(form);
+      const data = Array.from(formData)
+        .map((pair) => pair.map((x) => encodeURIComponent(x.toString())).join("="))
+        .join("&");
 
       const request = new XMLHttpRequest();
       request.open(method, url, true);
       request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
       request.onload = () => {
+
+        if (form.dataset.modal) {
+          const modalTrigger = document.getElementById(form.dataset.modal) as IHTMLModalTriggerElement;
+          if (modalTrigger) {
+            modalTrigger.Modal.hide();
+          }
+        }
+
         const responseData = request.responseText;
         if (responseData[0] === "/") {
           // starts with URL, redirect
@@ -61,6 +65,5 @@ const submitFormsAjax = () => {
 submitFormsAjax();
 
 export default {
-  serializeForm,
   submitFormsAjax,
 };

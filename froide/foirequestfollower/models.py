@@ -3,14 +3,35 @@ import hmac
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ungettext_lazy
+from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 from django.urls import reverse
-from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
+from django.dispatch import Signal
 
 from froide.foirequest.models import FoiRequest
-from froide.helper.email_sending import send_mail
+from froide.helper.email_sending import mail_registry
+
+REFERENCE_PREFIX = 'follow-'
+
+User = get_user_model()
+
+
+follow_request_email = mail_registry.register(
+    'foirequestfollower/emails/confirm_follow',
+    ('action_url', 'foirequest', 'user')
+)
+
+update_follower_email = mail_registry.register(
+    'foirequestfollower/emails/update_follower',
+    ('count', 'user', 'update_list')
+)
+
+batch_update_follower_email = mail_registry.register(
+    'foirequestfollower/emails/batch_update_follower',
+    ('count', 'user', 'update_list')
+)
 
 
 class FoiRequestFollowerManager(models.Manager):
@@ -19,46 +40,104 @@ class FoiRequestFollowerManager(models.Manager):
             user=user
         ).exclude(visibility=0)
 
-    def follow(self, request, user, email=None, **kwargs):
-        if user.is_authenticated:
-            following = request.followed_by(user)
-            if following:
-                following.delete()
-                return False
-            FoiRequestFollower.objects.create(
-                request=request, user=user, confirmed=True
-            )
-            return True
+    def request_followed_by(self, foirequest, user=None, email=None):
+        if email is not None:
+            return FoiRequestFollower.objects.filter(
+                request=foirequest,
+                email=email,
+                confirmed=True
+            ).exists()
         else:
-            following = request.followed_by(email)
-            if following:
-                return False
-            try:
-                following = FoiRequestFollower.objects.get(email=email)
-                return None
-            except FoiRequestFollower.DoesNotExist:
-                following = FoiRequestFollower.objects.create(
-                    request=request, email=email
-                )
-                following.send_follow_mail()
-            return True
+            return FoiRequestFollower.objects.filter(
+                request=foirequest,
+                user=user
+            ).exists()
 
-    def send_update(self, request, update_message, template=None):
-        followers = FoiRequestFollower.objects.filter(
-            request=request, confirmed=True
-        )
-        for follower in followers:
-            FoiRequestFollower.send_update(
-                {
-                    request: {
-                        'unfollow_link': follower.get_unfollow_link(),
-                        'events': [update_message]
-                    }
-                },
-                user=follower.user,
-                email=follower.email,
-                template=template
+    def follow(self, foirequest, user, email=None, **extra_data):
+        if user.is_authenticated:
+            return self.user_follow(foirequest, user, extra_data)
+        else:
+            return self.email_follow(foirequest, email, extra_data)
+
+    def user_follow(self, foirequest, user, extra_data):
+        try:
+            follower = FoiRequestFollower.objects.get(
+                request=foirequest,
+                user=user
             )
+            FoiRequestFollower.unfollowing.send(sender=follower)
+            follower.delete()
+            return False
+        except FoiRequestFollower.DoesNotExist:
+            pass
+        follower = FoiRequestFollower.objects.create(
+            request=foirequest, user=user, confirmed=True,
+            context=extra_data or None
+        )
+        FoiRequestFollower.followed.send(sender=follower)
+        return True
+
+    def get_user_for_email(self, email):
+        try:
+            return User.objects.get(
+                is_active=True, email=email
+            )
+        except User.DoesNotExist:
+            return None
+
+    def email_follow(self, foirequest, email, extra_data):
+        try:
+            # Confirmed email follow
+            follower = FoiRequestFollower.objects.get(
+                request=foirequest,
+                email=email,
+            )
+        except FoiRequestFollower.DoesNotExist:
+            follower = None
+
+        user = self.get_user_for_email(email)
+
+        if follower is None:
+            follower = FoiRequestFollower.objects.create(
+                request=foirequest, email=email,
+                context=extra_data or None
+            )
+        follower.send_confirm_follow_mail(extra_data, user=user)
+        return True
+
+    def send_update(self, user_or_email, update_list, batch=False):
+        if not user_or_email:
+            return
+        user, email = None, None
+        if isinstance(user_or_email, str):
+            email = user_or_email
+        else:
+            user = user_or_email
+
+        count = len(update_list)
+        context = {
+            'user': user,
+            'email': email,
+            'count': count,
+            'update_list': update_list
+        }
+        if count == 1:
+            follower = FoiRequestFollower.objects.get(
+                email=email or '', user=user, confirmed=True
+            )
+            context.update(
+                follower.get_context()
+            )
+        if batch:
+            mail_intent = batch_update_follower_email
+        else:
+            mail_intent = update_follower_email
+
+        mail_intent.send(
+            user=user,
+            email=email,
+            context=context
+        )
 
 
 class FoiRequestFollower(models.Model):
@@ -80,6 +159,9 @@ class FoiRequestFollower(models.Model):
     context = JSONField(blank=True, null=True)
 
     objects = FoiRequestFollowerManager()
+
+    followed = Signal(providing_args=[])
+    unfollowing = Signal(providing_args=[])
 
     class Meta:
         get_latest_by = 'timestamp'
@@ -104,20 +186,31 @@ class FoiRequestFollower(models.Model):
                 "user": self.email or str(self.user),
                 "request": self.request}
 
-    def get_unfollow_link(self):
-        return self.get_link(kind="unfollow")
+    def get_context(self):
+        return {
+            'unsubscribe_url': self.get_unfollow_link(),
+            'unsubscribe_reference': '{prefix}{pk}'.format(
+                prefix=REFERENCE_PREFIX, pk=self.id
+            )
+        }
 
-    def get_follow_link(self):
-        return self.get_link()
+    def get_unfollow_link(self, user=None):
+        return self.get_link(kind="unfollow", user=user)
 
-    def get_link(self, kind="follow"):
-        return settings.SITE_URL + reverse(
+    def get_follow_link(self, user=None):
+        return self.get_link(user=user)
+
+    def get_link(self, kind="follow", user=user):
+        url = reverse(
             'foirequestfollower-confirm_%s' % kind,
             kwargs={
                 'follow_id': self.id,
                 'check': self.get_follow_secret()
             }
         )
+        if user is not None:
+            return user.get_autologin_url(url)
+        return settings.SITE_URL + url
 
     def get_follow_secret(self):
         to_sign = [self.email, str(self.request.id), str(self.id)]
@@ -129,47 +222,45 @@ class FoiRequestFollower(models.Model):
     def check_and_unfollow(self, check):
         secret = self.get_follow_secret()
         if constant_time_compare(check, secret):
+            FoiRequestFollower.unfollowing.send(sender=self)
             self.delete()
             return True
         return False
 
-    def send_follow_mail(self):
-        send_mail(
-            _('Please confirm that you want to follow this request'),
-            render_to_string("foirequestfollowers/confirm_follow.txt",
-                {"request": self.request,
-                "follow_link": self.get_follow_link(),
-                "unfollow_link": self.get_unfollow_link(),
-                "site_name": settings.SITE_NAME}),
-            self.email,
-            priority=True
-        )
+    def check_and_follow(self, check):
+        secret = self.get_follow_secret()
+        if constant_time_compare(check, secret):
+            if self.confirmed:
+                return True
+            if self.email:
+                user = FoiRequestFollower.objects.get_user_for_email(
+                    self.email
+                )
+                if user is not None and user.id != self.request_id:
+                    self.user = user
+                    self.email = ''
+            self.confirmed = True
+            self.save()
+            FoiRequestFollower.followed.send(sender=self)
+            return True
+        return False
 
-    @classmethod
-    def send_update(cls, req_event_dict, user=None, email=None,
-                    template=None):
-        if user is None and email is None:
-            return
-        if template is None:
-            template = 'foirequestfollower/update_follower.txt'
-
-        count = len(req_event_dict)
-        subject = ungettext_lazy(
-            "Update on one followed request",
-            "Update on %(count)s followed requests",
-            count) % {
-                'count': count
-            }
-        send_mail(
-            subject,
-            render_to_string(template,
-                {
-                    "req_event_dict": req_event_dict,
-                    "count": count,
-                    "user": user,
-                    "site_name": settings.SITE_NAME
-                }
+    def send_confirm_follow_mail(self, extra_data, user=None):
+        '''
+        user is unconfirmed, but matches email address if given
+        '''
+        context = {
+            "foirequest": self.request,
+            "user": user,
+            "action_url": self.get_follow_link(user=user),
+        }
+        context.update(extra_data)
+        context.update(self.get_context())
+        follow_request_email.send(
+            email=self.email,
+            subject=_('Please confirm notifications for request “{title}”').format(
+                title=self.request.title
             ),
-            email or user.email,
-            priority=False
+            context=context,
+            priority=True
         )
