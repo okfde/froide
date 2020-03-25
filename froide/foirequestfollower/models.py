@@ -238,6 +238,13 @@ class FoiRequestFollower(models.Model):
                     self.email
                 )
                 if user is not None and user.id != self.request_id:
+                    already_following = FoiRequestFollower.objects.filter(
+                        request=self.request, user=user
+                    ).exists()
+                    if already_following:
+                        # Remove duplicate
+                        self.delete()
+                        return True
                     self.user = user
                     self.email = ''
             self.confirmed = True
