@@ -11,7 +11,7 @@ update_requester_email = mail_registry.register(
 )
 classification_reminder_email = mail_registry.register(
     'foirequest/emails/classification_reminder',
-    ('request', 'action_url')
+    ('foirequest', 'action_url')
 )
 
 
