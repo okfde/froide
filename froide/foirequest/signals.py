@@ -1,11 +1,41 @@
 from django.db.models import signals
 from django.dispatch import receiver
-from django.template.loader import render_to_string
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
+from froide.helper.email_sending import mail_registry
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent, FoiProject
 from .utils import send_request_user_email
+
+
+became_overdue_email = mail_registry.register(
+    'foirequest/emails/became_overdue',
+    ('action_url', 'request',)
+)
+became_asleep_email = mail_registry.register(
+    'foirequest/emails/became_asleep',
+    ('action_url', 'request',)
+)
+message_received_email = mail_registry.register(
+    'foirequest/emails/message_received_notification',
+    ('action_url', 'request', 'publicbody', 'message')
+)
+public_body_suggested_email = mail_registry.register(
+    'foirequest/emails/public_body_suggestion_received',
+    ('action_url', 'request', 'suggestion')
+)
+confirm_foi_project_created_email = mail_registry.register(
+    'foirequest/emails/confirm_foi_project_created',
+    ('request',)
+)
+confirm_foi_request_sent_email = mail_registry.register(
+    'foirequest/emails/confirm_foi_request_sent',
+    ('request', 'message', 'publicbody')
+)
+confirm_foi_message_sent_email = mail_registry.register(
+    'foirequest/emails/confirm_foi_message_sent',
+    ('request', 'message', 'publicbody')
+)
 
 
 def trigger_index_update(klass, instance_pk):
@@ -21,13 +51,13 @@ def trigger_index_update(klass, instance_pk):
         dispatch_uid="send_notification_became_overdue")
 def send_notification_became_overdue(sender, **kwargs):
     send_request_user_email(
+        became_overdue_email,
         sender,
-        _("Request became overdue"),
-        render_to_string("foirequest/emails/became_overdue.txt", {
+        subject=_("Request became overdue"),
+        context={
             "request": sender,
-            "go_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
-            "site_name": settings.SITE_NAME
-        }),
+            "action_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
+        },
         priority=False
     )
 
@@ -36,15 +66,15 @@ def send_notification_became_overdue(sender, **kwargs):
         dispatch_uid="send_notification_became_asleep")
 def send_notification_became_asleep(sender, **kwargs):
     send_request_user_email(
+        became_asleep_email,
         sender,
-        _("Request became asleep"),
-        render_to_string("foirequest/emails/became_asleep.txt", {
+        subject=_("Request became asleep"),
+        context={
             "request": sender,
-            "go_url": sender.user.get_autologin_url(
+            "action_url": sender.user.get_autologin_url(
                 sender.get_absolute_short_url()
             ),
-            "site_name": settings.SITE_NAME
-        }),
+        },
         priority=False
     )
 
@@ -58,17 +88,17 @@ def notify_user_message_received(sender, message=None, **kwargs):
         return
 
     send_request_user_email(
+        message_received_email,
         sender,
-        _("New reply to your request"),
-        render_to_string("foirequest/emails/message_received_notification.txt", {
+        subject=_("New reply to your request"),
+        context={
             "message": message,
             "request": sender,
             "publicbody": message.sender_public_body,
-            "go_url": sender.user.get_autologin_url(
+            "action_url": sender.user.get_autologin_url(
                 message.get_absolute_short_url()
-            ),
-            "site_name": settings.SITE_NAME
-        }),
+            )
+        },
         priority=False
     )
 
@@ -80,16 +110,16 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
         return
 
     send_request_user_email(
+        public_body_suggested_email,
         sender,
-        _("New suggestion for a Public Body"),
-        render_to_string("foirequest/emails/public_body_suggestion_received.txt", {
+        subject=_("New suggestion for a Public Body"),
+        context={
             "suggestion": suggestion,
             "request": sender,
-            "go_url": sender.user.get_autologin_url(
+            "action_url": sender.user.get_autologin_url(
                 sender.get_absolute_short_url()
-            ),
-            "site_name": settings.SITE_NAME
-        }),
+            )
+        },
         priority=False
     )
 
@@ -113,15 +143,14 @@ def set_last_message_date_on_message_received(sender, message=None, **kwargs):
 @receiver(FoiProject.project_created,
         dispatch_uid="send_foiproject_created_confirmation")
 def send_foiproject_created_confirmation(sender, **kwargs):
-    subject = _("Your Freedom of Information Project has been created")
-    template = "foirequest/emails/confirm_foi_project_created.txt"
-
-    body = render_to_string(template, {
-        "request": sender,
-        "site_name": settings.SITE_NAME
-    })
-
-    send_request_user_email(sender, subject, body, add_idmark=False)
+    confirm_foi_project_created_email.send(
+        user=sender.user,
+        subject=_("Your Freedom of Information Project has been created"),
+        context={
+            "request": sender
+        },
+        priority=False,
+    )
 
 
 @receiver(FoiRequest.message_sent,
@@ -137,19 +166,23 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         if sender.project_id is not None:
             return
         subject = _("Your Freedom of Information Request was sent")
-        template = "foirequest/emails/confirm_foi_request_sent.txt"
+        mail_intent = confirm_foi_request_sent_email
     else:
         subject = _("Your message was sent")
-        template = "foirequest/emails/confirm_foi_message_sent.txt"
+        mail_intent = confirm_foi_message_sent_email
 
-    body = render_to_string(template, {
+    context = {
         "request": sender,
         "publicbody": message.recipient_public_body,
         "message": message,
-        "site_name": settings.SITE_NAME
-    })
+    }
 
-    send_request_user_email(sender, subject, body)
+    send_request_user_email(
+        mail_intent,
+        sender,
+        subject=subject,
+        context=context
+    )
 
 
 # Updating public body request counts
@@ -201,8 +234,8 @@ def foiattachment_delayed_update(instance, created=False, **kwargs):
         dispatch_uid='foiattachment_delayed_remove')
 def foiattachment_delayed_remove(instance, **kwargs):
     try:
-        if (instance.belongs_to is not None and
-                    instance.belongs_to.request_id is not None):
+        has_request = instance.belongs_to.request_id is not None
+        if instance.belongs_to is not None and has_request:
             trigger_index_update(FoiRequest, instance.belongs_to.request_id)
     except FoiMessage.DoesNotExist:
         pass
@@ -212,25 +245,34 @@ def foiattachment_delayed_remove(instance, **kwargs):
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
 def create_event_message_sent(sender, message, **kwargs):
-    FoiEvent.objects.create_event("message_sent", sender, user=sender.user,
-            public_body=message.recipient_public_body)
+    FoiEvent.objects.create_event(
+        "message_sent",
+        sender,
+        user=sender.user,
+        public_body=message.recipient_public_body
+    )
 
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="create_event_message_received")
 def create_event_message_received(sender, message=None, **kwargs):
-    FoiEvent.objects.create_event("message_received", sender,
-            user=sender.user,
-            public_body=message.sender_public_body)
+    FoiEvent.objects.create_event(
+        "message_received",
+        sender,
+        user=sender.user,
+        public_body=message.sender_public_body
+    )
 
 
 @receiver(FoiAttachment.attachment_published,
     dispatch_uid="create_event_followers_attachments_approved")
 def create_event_followers_attachments_approved(sender, **kwargs):
-    FoiEvent.objects.create_event("attachment_published",
-            sender.belongs_to.request,
-            user=sender.belongs_to.request.user,
-            public_body=sender.belongs_to.request.public_body)
+    FoiEvent.objects.create_event(
+        "attachment_published",
+        sender.belongs_to.request,
+        user=sender.belongs_to.request.user,
+        public_body=sender.belongs_to.request.public_body
+    )
 
 
 @receiver(FoiRequest.status_changed,

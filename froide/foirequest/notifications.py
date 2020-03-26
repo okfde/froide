@@ -1,11 +1,17 @@
-from django.utils.translation import ungettext_lazy
+from django.utils.translation import ungettext_lazy, ugettext_lazy as _
 
 from froide.helper.email_sending import mail_registry
+
+from .utils import send_request_user_email
 
 
 update_requester_email = mail_registry.register(
     'foirequest/emails/request_update',
     ('count', 'user', 'request_list')
+)
+classification_reminder_email = mail_registry.register(
+    'foirequest/emails/classification_reminder',
+    ('request', 'action_url')
 )
 
 
@@ -37,4 +43,23 @@ def send_update(request_list, user=None):
             "count": count,
             "request_list": request_list,
         }
+    )
+
+
+def send_classification_reminder(foirequest):
+    if foirequest.user is None:
+        return
+    subject = _("Please classify the reply to your request")
+    context = {
+        "request": foirequest,
+        "action_url": foirequest.user.get_autologin_url(
+            foirequest.get_absolute_short_url()
+        ),
+    }
+    send_request_user_email(
+        classification_reminder_email,
+        foirequest,
+        subject=subject,
+        context=context,
+        priority=False
     )

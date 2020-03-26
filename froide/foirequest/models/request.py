@@ -11,7 +11,6 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.urls import reverse
 
 import django.dispatch
-from django.template.loader import render_to_string
 from django.utils import timezone
 
 from taggit.managers import TaggableManager
@@ -23,7 +22,7 @@ from froide.team.models import Team
 from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
-from ..utils import send_request_user_email, get_foi_mail_domains
+from ..utils import get_foi_mail_domains
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -462,8 +461,7 @@ class FoiRequest(models.Model):
 
     def in_public_search_index(self):
         return (
-            self.is_public() and
-            self.is_foi and
+            self.is_public() and self.is_foi and
             self.same_as_id is None and
             (self.project_id is None or self.project_order == 0)
         )
@@ -692,22 +690,6 @@ class FoiRequest(models.Model):
         self.status = "asleep"
         self.save()
         self.became_asleep.send(sender=self)
-
-    def send_classification_reminder(self):
-        if self.user is None:
-            return
-        subject = _("Please classify the reply to your request")
-        body = render_to_string("foirequest/emails/classification_reminder.txt", {
-            "request": self,
-            "go_url": self.user.get_autologin_url(self.get_absolute_short_url()),
-            "site_name": settings.SITE_NAME
-        })
-        send_request_user_email(
-            self,
-            subject,
-            body,
-            priority=False
-        )
 
     def days_to_resolution(self):
         final = None

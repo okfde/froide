@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=go_url pbname=publicbody.name %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=action_url pbname=publicbody.name %}Hello {{ name }},
 
 {{ pbname }} sent you a response to your request “{{ title }}”. Please read the response and change the status of the request if needed. You can also send another message.
 

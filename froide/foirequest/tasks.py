@@ -20,6 +20,7 @@ from froide.helper.redaction import redact_file
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
+from .notifications import send_classification_reminder
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ def detect_asleep():
 def classification_reminder():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_unclassified():
-        foirequest.send_classification_reminder()
+        send_classification_reminder(foirequest)
 
 
 @celery_app.task

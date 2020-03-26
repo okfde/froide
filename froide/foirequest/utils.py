@@ -250,12 +250,20 @@ def get_publicbody_for_email(email, foi_request, include_deferred=False):
     return None
 
 
-def send_request_user_email(foiobject, subject, body, add_idmark=True, **kwargs):
+def send_request_user_email(mail_intent, foiobject, subject=None, context=None,
+                            add_idmark=True, priority=True, **kwargs):
     if not foiobject.user:
         return
-    if add_idmark:
+    if subject and add_idmark:
         subject = '{} [#{}]'.format(subject, foiobject.pk)
-    foiobject.user.send_mail(subject, body, **kwargs)
+
+    mail_intent.send(
+        user=foiobject.user,
+        subject=subject,
+        context=context,
+        priority=priority,
+        **kwargs
+    )
 
 
 PublicBodyEmailInfo = namedtuple('PublicBodyEmailInfo', ('name', 'publicbody'))
@@ -301,11 +309,10 @@ def get_emails_from_request(foirequest):
 
     messages = foirequest.response_messages()
     for message in reversed(messages):
-        email = (
-            message.sender_email or
-            (message.sender_public_body and
-                message.sender_public_body.email)
-        )
+        email = message.sender_email
+        if not email and message.sender_public_body:
+            email = message.sender_public_body.email
+
         if email and email.lower() not in already:
             yield email, message, True
             already.add(email.lower())
