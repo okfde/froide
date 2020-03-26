@@ -10,31 +10,31 @@ from .utils import send_request_user_email
 
 became_overdue_email = mail_registry.register(
     'foirequest/emails/became_overdue',
-    ('action_url', 'request',)
+    ('action_url', 'foirequest',)
 )
 became_asleep_email = mail_registry.register(
     'foirequest/emails/became_asleep',
-    ('action_url', 'request',)
+    ('action_url', 'foirequest',)
 )
 message_received_email = mail_registry.register(
     'foirequest/emails/message_received_notification',
-    ('action_url', 'request', 'publicbody', 'message')
+    ('action_url', 'foirequest', 'publicbody', 'message')
 )
 public_body_suggested_email = mail_registry.register(
     'foirequest/emails/public_body_suggestion_received',
-    ('action_url', 'request', 'suggestion')
+    ('action_url', 'foirequest', 'suggestion')
 )
 confirm_foi_project_created_email = mail_registry.register(
     'foirequest/emails/confirm_foi_project_created',
-    ('request',)
+    ('foirequest',)
 )
 confirm_foi_request_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_request_sent',
-    ('request', 'message', 'publicbody')
+    ('foirequest', 'message', 'publicbody')
 )
 confirm_foi_message_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_message_sent',
-    ('request', 'message', 'publicbody')
+    ('foirequest', 'message', 'publicbody')
 )
 
 
@@ -55,7 +55,7 @@ def send_notification_became_overdue(sender, **kwargs):
         sender,
         subject=_("Request became overdue"),
         context={
-            "request": sender,
+            "foirequest": sender,
             "action_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
         },
         priority=False
@@ -70,7 +70,7 @@ def send_notification_became_asleep(sender, **kwargs):
         sender,
         subject=_("Request became asleep"),
         context={
-            "request": sender,
+            "foirequest": sender,
             "action_url": sender.user.get_autologin_url(
                 sender.get_absolute_short_url()
             ),
@@ -93,7 +93,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
         subject=_("New reply to your request"),
         context={
             "message": message,
-            "request": sender,
+            "foirequest": sender,
             "publicbody": message.sender_public_body,
             "action_url": sender.user.get_autologin_url(
                 message.get_absolute_short_url()
@@ -115,7 +115,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
         subject=_("New suggestion for a Public Body"),
         context={
             "suggestion": suggestion,
-            "request": sender,
+            "foirequest": sender,
             "action_url": sender.user.get_autologin_url(
                 sender.get_absolute_short_url()
             )
@@ -147,7 +147,7 @@ def send_foiproject_created_confirmation(sender, **kwargs):
         user=sender.user,
         subject=_("Your Freedom of Information Project has been created"),
         context={
-            "request": sender
+            "foirequest": sender
         },
         priority=False,
     )
@@ -172,7 +172,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         mail_intent = confirm_foi_message_sent_email
 
     context = {
-        "request": sender,
+        "foirequest": sender,
         "publicbody": message.recipient_public_body,
         "message": message,
     }

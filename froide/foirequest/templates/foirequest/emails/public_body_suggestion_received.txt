@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}{% blocktrans with name=request.user.get_full_name title=request.title url=action_url %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% blocktrans with name=foirequest.user.get_full_name title=foirequest.title url=action_url %}Hello {{ name }},
 
 you received a suggestion for a Public Body on your request “{{ title }}”.{% endblocktrans%}
 {% blocktrans %}The suggestion is:{% endblocktrans %}

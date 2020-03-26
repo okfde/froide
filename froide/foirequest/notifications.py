@@ -51,7 +51,7 @@ def send_classification_reminder(foirequest):
         return
     subject = _("Please classify the reply to your request")
     context = {
-        "request": foirequest,
+        "foirequest": foirequest,
         "action_url": foirequest.user.get_autologin_url(
             foirequest.get_absolute_short_url()
         ),
