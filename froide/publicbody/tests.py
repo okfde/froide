@@ -136,9 +136,11 @@ Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some 
         response = self.client.get(juris.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, juris.name)
-        new_juris = factories.JurisdictionFactory.create(name='peculiar')
+        new_juris = factories.JurisdictionFactory.create(
+            name='peculiar', hidden=True
+        )
         response = self.client.get(new_juris.get_absolute_url())
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
     def test_show_public_bodies_of_jurisdiction(self):
         juris = Jurisdiction.objects.all()[0]

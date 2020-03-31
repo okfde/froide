@@ -146,7 +146,10 @@ class FoiLaw(models.Model):
         verbose_name_plural = _("Freedom of Information Laws")
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.jurisdiction)
+        return "%s (%s)" % (
+            self.name,
+            self.jurisdiction if self.jurisdiction else ''
+        )
 
     def get_absolute_url(self):
         return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})

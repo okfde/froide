@@ -75,7 +75,7 @@ class PublicBodySearch(BaseSearchView):
 
 @cache_anonymous_page(15 * 60)
 def show_jurisdiction(request, slug):
-    jurisdiction = get_object_or_404(Jurisdiction, slug=slug, hidden=True)
+    jurisdiction = get_object_or_404(Jurisdiction, slug=slug, hidden=False)
     context = {
         "object": jurisdiction,
         "pb_count": PublicBody.objects.filter(jurisdiction=jurisdiction).count(),
