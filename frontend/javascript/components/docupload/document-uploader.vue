@@ -1,19 +1,26 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
-    <div v-if="canUpload" class="upload">
+    <div
+      v-if="canUpload"
+      class="upload"
+    >
       <h2>{{ i18n.upload }}</h2>
       <p>{{ i18n.uploadPdfOrPicture }}</p>
-        <file-uploader
-          :config="config" class="mb-3 mt-3"
-          :auto-proceed="true"
-          :allowed-file-types="[
-            'application/pdf',
-            'image/*'
-          ]"
-          @upload-success="uploadSuccess"
-        />
+      <file-uploader
+        class="mb-3 mt-3"
+        :config="config"
+        :auto-proceed="true"
+        :allowed-file-types="[
+          'application/pdf',
+          'image/*'
+        ]"
+        @upload-success="uploadSuccess"
+      />
     </div>
-    <div v-if="imageDocuments.length > 0" class="images mt-3">
+    <div
+      v-if="imageDocuments.length > 0"
+      class="images mt-3"
+    >
       <h2>{{ i18n.convertImagesToDocuments }}</h2>
       <image-document
         v-for="doc in imageDocuments"
@@ -27,31 +34,44 @@
         @docupdated="documentUpdated(doc, $event)"
         @pageupdated="pageUpdated"
         @notnew="doc.new = false"
-      ></image-document>
+      />
     </div>
-    <div v-if="pdfDocuments.length > 0" class="documents mt-5">
+    <div
+      v-if="pdfDocuments.length > 0"
+      class="documents mt-5"
+    >
       <h2>{{ i18n.documents }}</h2>
       <div class="mt-3 mb-3">
         <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
           <div class="col-auto mr-auto">
-            <input type="checkbox" v-model="selectAll" @click="clickSelectAll"/>
+            <input
+              v-model="selectAll"
+              type="checkbox"
+              @click="clickSelectAll"
+            >
           </div>
           <div class="col-md-2 ml-auto text-center">
-            <button class="btn btn-sm"
+            <button
+              class="btn btn-sm"
               :class="{'btn-success': canMakeResult}"
               :disabled="!canMakeResult"
+              data-toggle="tooltip"
+              data-placement="top"
+              :title="i18n.makeResultsExplanation"
               @click="makeResults"
-              data-toggle="tooltip" data-placement="top" :title="i18n.makeResultsExplanation"
             >
-              <i class="fa fa-certificate"></i>
+              <i class="fa fa-certificate" />
               {{ i18n.isResult }}
             </button>
           </div>
           <div class="col-md-4 mr-5 text-right">
-            <button class="btn btn-sm"
+            <button
+              class="btn btn-sm"
               :class="{'btn-success': canApprove}"
-              :disabled="!canApprove" @click="approveSelected">
-              <i class="fa fa-check"></i>
+              :disabled="!canApprove"
+              @click="approveSelected"
+            >
+              <i class="fa fa-check" />
               {{ i18n.approve }}
             </button>
           </div>
@@ -68,12 +88,15 @@
           @docupdated="documentUpdated(doc, $event)"
           @pageupdated="pageUpdated"
           @notnew="doc.new = false"
-        ></file-document>
+        />
       </div>
     </div>
 
-    <div v-if="otherAttachments.length > 0" class="mt-5">
-      <hr/>
+    <div
+      v-if="otherAttachments.length > 0"
+      class="mt-5"
+    >
+      <hr>
       <h4>{{ i18n.otherFiles }}</h4>
       <file-document
         v-for="doc in otherAttachments"
@@ -83,7 +106,7 @@
         @docupdated="documentUpdated(doc, $event)"
         @makerelevant="makeRelevant(doc)"
         @notnew="doc.new = false"
-      ></file-document>
+      />
     </div>
   </div>
 </template>
@@ -101,13 +124,22 @@ import FileDocument from './file-document.vue'
 import FileUploader from '../upload/file-uploader.vue'
 
 export default {
-  name: 'document-uploader',
-  mixins: [I18nMixin],
-  props: ['config', 'message'],
+  name: 'DocumentUploader',
   components: {
     ImageDocument,
     FileDocument,
     FileUploader
+  },
+  mixins: [I18nMixin],
+  props: {
+    config: {
+      type: Object,
+      required: true
+    },
+    message: {
+      type: Object,
+      required: true
+    }
   },
   data () {
     return {
@@ -118,13 +150,6 @@ export default {
       names: {},
       selectAll: false,
     }
-  },
-  mounted () {
-    this.$root.exifSupport = this.exifSupport = null
-    this.testExifSupport()
-    this.$root.url = this.config.url
-    this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
-    this.documents = this.buildDocuments(this.message.attachments)
   },
   computed: {
     isMobile () {
@@ -173,6 +198,13 @@ export default {
       return this.canApproveDocs.length > 0
     }
   },
+  mounted () {
+    this.$root.exifSupport = this.exifSupport = null
+    this.testExifSupport()
+    this.$root.url = this.config.url
+    this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    this.documents = this.buildDocuments(this.message.attachments)
+  },
   methods: {
     uploadSuccess ({ uppy, response, file }) {
       this.addAttachmentFromTus(response.uploadURL).then(() => {
@@ -190,7 +222,6 @@ export default {
         document.body.appendChild(img)
         const rect = img.getBoundingClientRect()
         this.$root.exifSupport = this.exifSupport = rect.height === 2
-        console.log('Exif Support:', this.exifSupport, rect, img.width, img.naturalWidth, img.height, img.naturalHeight)
         document.body.removeChild(img)
       };
     },
@@ -224,6 +255,7 @@ export default {
           name: att.name,
           filetype: att.filetype,
           pending: att.pending,
+          file_url: att.file_url,
           pages: null,
           attachment: att,
           ...extra
@@ -242,7 +274,8 @@ export default {
             images.push({
               id: att.id,
               name: att.name,
-              attachment: att
+              attachment: att,
+              file_url: att.file_url,
             })
           }
         }
@@ -370,7 +403,7 @@ export default {
         Vue.set(d, 'approving', true)
         return approveAttachment(d, this.config, this.$root.csrfToken).then((att) => {
           Vue.set(d, 'approving', false)
-          Vue.set(d, 'attachment', data)
+          Vue.set(d, 'attachment', att)
         })
       }))
     },

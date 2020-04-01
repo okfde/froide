@@ -2,14 +2,25 @@
   <div class="page col-2 mt-3">
     <div class="row justify-content-center">
       <div class="col-auto">
-        <img v-if="pageUrl" ref="pageImage" :src="pageUrl" alt="" class="page-image"/>
+        <img
+          v-if="pageUrl"
+          ref="pageImage"
+          :alt="page.name"
+          :title="page.name"
+          class="page-image"
+          :src="pageUrl"
+        >
       </div>
     </div>
     <div class="row justify-content-center">
       <div class="scol">
         <div class="text-left">
-          <button class="btn btn-sm text-muted small" :class="{'btn-info': page.needsRotation}" @click="rotatePage">
-            <span class="fa fa-rotate-right"></span>
+          <button
+            class="btn btn-sm text-muted small"
+            :class="{'btn-info': page.needsRotation}"
+            @click="rotatePage"
+          >
+            <span class="fa fa-rotate-right" />
           </button>
         </div>
       </div>
@@ -19,22 +30,35 @@
         </div>
       </div>
       <div class="scol">
-        <div class="text-right" v-if="!isLast">
-          <button class="btn btn-sm text-muted small" @click="splitPages">
-            <span class="fa fa-scissors"></span>
+        <div
+          v-if="!isLast"
+          class="text-right"
+        >
+          <button
+            class="btn btn-sm text-muted small" 
+            @click="splitPages"
+          >
+            <span class="fa fa-scissors" />
           </button>
         </div>
       </div>
     </div>
-    <div v-if="page.uploading" class="progress">
-      <div class="progress-bar"
+    <div
+      v-if="page.uploading"
+      class="progress"
+    >
+      <div
+        class="progress-bar"
         :class="{
           'progress-bar-animated progress-bar-striped': progressAlmostComplete,
           'bg-info progress-bar-striped': progressUnknown,
         }"
         :style="{'width': progressPercentLabel}"
-        role="progressbar" :aria-valuenow="document.progress"
-        aria-valuemin="0" aria-valuemax="100"></div>
+        role="progressbar"
+        :aria-valuenow="document.progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      />
     </div>
   </div>
 </template>
@@ -44,9 +68,17 @@
 import EXIF from 'exif-js'
 
 export default {
-  name: 'image-page',
-  // mixins: [I18nMixin],
-  props: ['page', 'pageCount'],
+  name: 'ImagePage',
+  props: {
+    page: {
+      type: Object,
+      required: true
+    },
+    pageCount: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
       loaded: false,
@@ -63,7 +95,6 @@ export default {
       return rotDegree + (this.page.implicitRotate || 0)
     },
     image () {
-      this.loaded = false
       const image = new window.Image()
       image.crossOrigin = "Anonymous"
       image.addEventListener("load", this.imageLoaded, false);
