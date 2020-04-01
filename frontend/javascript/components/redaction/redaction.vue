@@ -1,21 +1,52 @@
 <template>
-  <div id="pdf-viewer" class="pdf-redaction-tool" ref="top">
-    <div v-if="hasPassword && ready" class="row">
+  <div
+    id="pdf-viewer"
+    ref="top"
+    class="pdf-redaction-tool"
+  >
+    <div
+      v-if="hasPassword && ready"
+      class="row"
+    >
       <div class="col-lg-12">
-        <div class="alert alert-info" role="alert">{{ i18n.hasPassword }}</div>
+        <div
+          class="alert alert-info"
+          role="alert"
+        >
+          {{ i18n.hasPassword }}
+        </div>
       </div>
     </div>
-    <div v-if="message" class="row">
+    <div
+      v-if="message"
+      class="row"
+    >
       <div class="col-lg-12">
-        <div class="alert alert-info" role="alert">{{ message }}</div>
+        <div
+          class="alert alert-info"
+          role="alert"
+        >
+          {{ message }}
+        </div>
       </div>
     </div>
-    <div v-if="errors" class="row">
+    <div
+      v-if="errors"
+      class="row"
+    >
       <div class="col-lg-12">
-        <div class="alert alert-error" role="alert">{{ errors }}</div>
+        <div
+          class="alert alert-error"
+          role="alert"
+        >
+          {{ errors }}
+        </div>
       </div>
     </div>
-    <div class="row mt-5" v-if="working">
+    <div
+      v-if="working"
+      class="row mt-5"
+    >
       <div class="col-lg-12">
         <div class="text-center">
           <h3 v-if="loading">
@@ -29,52 +60,100 @@
           </h3>
         </div>
         <div class="progress">
-          <div class="progress-bar" :class="{'progress-bar-striped progress-bar-animated': progressUnknown}" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :style="progressWidth"></div>
+          <div
+            class="progress-bar"
+            :class="{'progress-bar-striped progress-bar-animated': progressUnknown}"
+            role="progressbar"
+            :aria-valuenow="progressPercent"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            :style="progressWidth"
+          />
         </div>
         <div class="text-center mt-3">
-          <div class="spinner-border" role="status">
-          </div>
+          <div
+            class="spinner-border"
+            role="status"
+          />
         </div>
       </div>
     </div>
     <div class="row toolbar">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
+      <div
+        v-if="ready"
+        class="btn-toolbar col-lg-12"
+      >
         <div class="btn-group mr-1">
-          <button class="btn btn-light" @click="undo" :disabled="!canUndo" :title="i18n.undo">
-            <i class="fa fa-step-backward"></i>
+          <button
+            class="btn btn-light"
+            :disabled="!canUndo"
+            :title="i18n.undo"
+            @click="undo"
+          >
+            <i class="fa fa-step-backward" />
           </button>
-          <button class="btn btn-light" @click="redo" :disabled="!canRedo"
-            data-toggle="tooltip" data-placement="top" :title="i18n.redo">
-            <i class="fa fa-step-forward"></i>
+          <button
+            class="btn btn-light"
+            :disabled="!canRedo"
+            data-toggle="tooltip"
+            data-placement="top"
+            :title="i18n.redo"
+            @click="redo"
+          >
+            <i class="fa fa-step-forward" />
           </button>
         </div>
 
         <div class="btn-group mr-1">
-          <button class="btn" :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}" @click.stop="toggleText" :title="i18n.toggleText">
-            <i class="fa fa-align-justify"></i>
+          <button
+            class="btn"
+            :class="{'btn-outline-info': !textOnly, 'btn-info': textOnly}"
+            :title="i18n.toggleText"
+            @click.stop="toggleText"
+          >
+            <i class="fa fa-align-justify" />
           </button>
-          <button class="btn" :class="{'btn-outline-info': !textDisabled, 'btn-info': textDisabled}" @click.stop="toggleDrawing" :title="i18n.disableText">
-            <i class="fa fa-image"></i>
+          <button
+            class="btn"
+            :class="{'btn-outline-info': !textDisabled, 'btn-info': textDisabled}"
+            :title="i18n.disableText"
+            @click.stop="toggleDrawing"
+          >
+            <i class="fa fa-image" />
           </button>
         </div>
 
         <div class="btn-group mr-1">
-          <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
+          <button
+            class="pdf-prev btn btn-light"
+            :disabled="!hasPrevious"
+            @click="goPrevious"
+          >
             &laquo;
-            <span class="sr-only">{{ i18n.previousPage}}</span>
+            <span class="sr-only">{{ i18n.previousPage }}</span>
           </button>
           <span class="input-group-text">
             {{ pageOfTotal }}
           </span>
-          <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
+          <button
+            class="pdf-next btn btn-light"
+            :disabled="!hasNext"
+            @click="goNext"
+          >
             <span class="sr-only">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
         </div>
 
-        <div v-if="hasRedactions || hasPassword" class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
-          <button class="btn btn-dark" @click="redact">
-            <i class="fa fa-paint-brush"></i>
+        <div
+          v-if="hasRedactions || hasPassword"
+          class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0"
+        >
+          <button
+            class="btn btn-dark"
+            @click="redact"
+          >
+            <i class="fa fa-paint-brush" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
             </template>
@@ -83,25 +162,56 @@
             </template>
           </button>
         </div>
-        <div class="btn-group ml-auto mt-1 mt-lg-0" >
-          <form v-if="canPublish && !hasPassword" method="post" :action="config.urls.publishUrl">
-            <input type="hidden" name="csrfmiddlewaretoken" :value="csrfToken"/>
-            <button class="btn" :class="{'btn-success': !hasRedactions, 'btn-light': hasRedactions}" type="submit">
-              <i class="fa fa-check"></i>
+        <div class="btn-group ml-auto mt-1 mt-lg-0">
+          <form
+            v-if="canPublish && !hasPassword"
+            method="post"
+            :action="config.urls.publishUrl"
+          >
+            <input
+              type="hidden"
+              name="csrfmiddlewaretoken"
+              :value="csrfToken"
+            >
+            <button
+              class="btn"
+              :class="{'btn-success': !hasRedactions, 'btn-light': hasRedactions}"
+              type="submit"
+            >
+              <i class="fa fa-check" />
               {{ i18n.publishWithoutRedaction }}
             </button>
           </form>
-          <a v-else  class="btn btn-secondary" :href="attachmentUrl">
+          <a
+            v-else
+            class="btn btn-secondary"
+            :href="attachmentUrl"
+          >
             {{ i18n.cancel }}
           </a>
         </div>
       </div>
     </div>
     <div class="row mt-3">
-      <div class="col-lg-12 overflow-auto" ref="containerWrapper">
-        <div :id="containerId" ref="container" class="redactContainer" :class="{'hide-redacting': working}">
-          <canvas v-show="!textOnly" :id="canvasId" class="redactLayer"></canvas>
-          <canvas v-show="!textOnly" :id="redactCanvasId" class="redactLayer"
+      <div
+        ref="containerWrapper"
+        class="col-lg-12 overflow-auto"
+      >
+        <div
+          :id="containerId"
+          ref="container"
+          class="redactContainer"
+          :class="{'hide-redacting': working}"
+        >
+          <canvas
+            v-show="!textOnly"
+            :id="canvasId"
+            class="redactLayer"
+          />
+          <canvas
+            v-show="!textOnly"
+            :id="redactCanvasId"
+            class="redactLayer"
             @mousedown="mouseDown"
             @mousemove="mouseMove"
             @mouseup="mouseUp"
@@ -109,8 +219,10 @@
             @touchend="touchEnd"
             @touchmove="touchMove"
             @touchcancel="touchCancel"
-          ></canvas>
-          <div :id="textLayerId" class="textLayer"
+          />
+          <div
+            :id="textLayerId"
+            class="textLayer"
             :class="{ textActive: textOnly, textDisabled: textDisabled }"
             @mousedown="mouseDown"
             @mousemove="mouseMove"
@@ -119,21 +231,32 @@
             @touchend="touchEnd"
             @touchmove="touchMove"
             @touchcancel="touchCancel"
-          ></div>
+          />
         </div>
       </div>
     </div>
     <div class="row">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
+      <div
+        v-if="ready"
+        class="btn-toolbar col-lg-12"
+      >
         <div class="btn-group mr-auto ml-auto">
-          <button class="pdf-prev btn btn-light" @click="goPrevious" :disabled="!hasPrevious">
+          <button
+            class="pdf-prev btn btn-light"
+            :disabled="!hasPrevious"
+            @click="goPrevious"
+          >
             &laquo;
-            {{ i18n.previousPage}}
+            {{ i18n.previousPage }}
           </button>
           <span class="input-group-text">
             {{ pageOfTotal }}
           </span>
-          <button class="pdf-next btn btn-light" @click="goNext" :disabled="!hasNext">
+          <button
+            class="pdf-next btn btn-light"
+            :disabled="!hasNext"
+            @click="goNext"
+          >
             {{ i18n.nextPage }}
             &raquo;
           </button>
@@ -159,7 +282,7 @@ function isTouchDevice() {
 }
 
 export default {
-  name: 'redaction',
+  name: 'Redaction',
   props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegex', 'canPublish'],
   data () {
     return {
@@ -192,16 +315,6 @@ export default {
       hasTouch: isTouchDevice(),
       doubleTap: false,
     }
-  },
-  created () {
-    import('pdfjs-dist').then((PDFJS) => {
-      this.PDFJS = PDFJS
-      this.PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
-      console.log(this.config.resources.pdfjsWorker, this.PDFJS)
-      this.loadDocument().then(() => this.loadPage(1))
-    }).catch((err) =>{
-      console.log(err)
-    })
   },
   computed: {
     i18n () {
@@ -286,6 +399,16 @@ export default {
     csrfToken () {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
     }
+  },
+  created () {
+    import('pdfjs-dist').then((PDFJS) => {
+      this.PDFJS = PDFJS
+      this.PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
+      console.log(this.config.resources.pdfjsWorker, this.PDFJS)
+      this.loadDocument().then(() => this.loadPage(1))
+    }).catch((err) =>{
+      console.log(err)
+    })
   },
   methods: {
     loadDocument () {
@@ -440,7 +563,7 @@ export default {
               })
             } else {
               this.workingState = null
-              this.errors = res || i18n.redactionTimeout
+              this.errors = this.i18n.redactionTimeout
               this.$refs.top.scrollIntoView(true)
             }
           }).catch((err) => {
