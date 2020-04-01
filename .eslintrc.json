@@ -1,10 +1,14 @@
 {
-    "parser": "babel-eslint",
     "parserOptions": {
-      "sourceType": "module"
+      "sourceType": "module",
+      "parser": "babel-eslint"
     },
-    "extends": "standard",
-    "plugins": [
-      "html"
-    ]
+    "extends": [
+      "eslint:recommended",
+      "plugin:vue/recommended"
+    ],
+    "plugins": ["vue"],
+    "rules": {
+      "vue/component-tags-order": "off"
+    }
 }

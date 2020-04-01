@@ -5,5 +5,10 @@
   ],
   "jsRules": {},
   "rules": {},
-  "rulesDirectory": []
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+        "*.vue"
+    ]
+}
 }
