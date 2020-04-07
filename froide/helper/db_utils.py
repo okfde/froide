@@ -16,7 +16,7 @@ def save_obj_unique(obj, attr, count=0, postfix_format='-{count}'):
     postfix = ''
     while True:
         try:
-            while initial_count - count < MAX_COUNT:
+            while count - initial_count < MAX_COUNT:
                 if not first_round:
                     postfix = postfix_format.format(count=count)
                 if not klass.objects.filter(**{
