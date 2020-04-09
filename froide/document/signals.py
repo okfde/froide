@@ -55,3 +55,10 @@ def reprocess_attachment_redaction(instance, created=False, **kwargs):
 
     d = Document.objects.get(id=doc_id)
     d.process_document()
+
+
+@receiver(FoiAttachment.attachment_redacted,
+          dispatch_uid='was_redacted_reprocess_document')
+def reprocess_document_after_redaction(sender, **kwargs):
+    if sender.document:
+        sender.document.process_document()

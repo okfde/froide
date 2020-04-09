@@ -101,6 +101,7 @@ class FoiAttachment(models.Model):
     objects = FoiAttachmentManager()
 
     attachment_published = Signal(providing_args=[])
+    attachment_redacted = Signal(providing_args=[])
 
     class Meta:
         ordering = ('name',)
