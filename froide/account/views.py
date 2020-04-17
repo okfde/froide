@@ -22,7 +22,7 @@ from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
 from . import account_activated
 from .forms import (
-    UserLoginForm, PasswordResetForm, NewUserForm, SetPasswordForm,
+    UserLoginForm, PasswordResetForm, SignUpForm, SetPasswordForm,
     UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm
 )
 from .services import AccountService
@@ -193,7 +193,7 @@ def login(request, context=None, template='account/login.html', status=200):
 
 class SignupView(FormView):
     template_name = 'account/signup.html'
-    form_class = NewUserForm
+    form_class = SignUpForm
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:

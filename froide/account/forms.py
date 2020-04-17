@@ -179,6 +179,16 @@ class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
             attrs={'required': True}
         )
     )
+
+    def clean_phone(self):
+        """Check that nothing's been entered into the honeypot."""
+        value = self.cleaned_data["phone"]
+        if value:
+            raise forms.ValidationError(self.fields["phone"].label)
+        return value
+
+
+class SignUpForm(NewUserForm):
     time = forms.FloatField(
         initial=datetime.utcnow().timestamp(),
         widget=forms.HiddenInput
@@ -191,13 +201,6 @@ class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
             raise forms.ValidationError(
                 _('You filled this form out too quickly.')
             )
-        return value
-
-    def clean_phone(self):
-        """Check that nothing's been entered into the honeypot."""
-        value = self.cleaned_data["phone"]
-        if value:
-            raise forms.ValidationError(self.fields["phone"].label)
         return value
 
 
