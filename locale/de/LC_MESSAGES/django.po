@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-17 15:35+0200\n"
-"PO-Revision-Date: 2020-04-17 15:39+0200\n"
+"PO-Revision-Date: 2020-04-17 16:22+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -447,7 +447,7 @@ msgstr "Mitarbeiter-Status"
 
 #: froide/account/models.py:108
 msgid "Designates whether the user can log into this admin site."
-msgstr "Zeigt an, ob Nutzer sich in den Adminbereich einloggen kann."
+msgstr "Zeigt an, ob Nutzer sich in den Adminbereich anmelden kann."
 
 #: froide/account/models.py:111 froide/team/models.py:24
 msgid "active"
@@ -839,7 +839,7 @@ msgstr "Passwort ändern"
 
 #: froide/account/templates/account/login.html:13
 msgid "Log in"
-msgstr "Einloggen"
+msgstr "Anmelden"
 
 #: froide/account/templates/account/login.html:18
 msgid "Don't have an account? Click here to sign up!"
@@ -847,7 +847,7 @@ msgstr "Noch kein Konto? Klicken Sie hier, um ein Konto zu erstellen!"
 
 #: froide/account/templates/account/login.html:27
 msgid "Log In"
-msgstr "Einloggen"
+msgstr "Anmelden"
 
 #: froide/account/templates/account/login.html:35
 msgid "In case you forgot your password..."
@@ -1196,7 +1196,7 @@ msgstr "Sie sind jetzt eingeloggt."
 
 #: froide/account/views.py:181
 msgid "Please activate your mail address before logging in."
-msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich einloggen."
+msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich anmelden."
 
 #: froide/account/views.py:184
 msgid "E-mail and password do not match."
