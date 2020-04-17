@@ -6,15 +6,15 @@
 {% load block_helper %}
 
 {% block app_body %}
-<div class="row">
-  <div class="col-lg-6 col-md-6">
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-md-8">
     <div class="card mb-3">
       <h5 class="card-header">
         {% blocktrans %}Log in{% endblocktrans %}
       </h5>
       <div class="card-body">
         <p class="visible-sm visible-xs">
-          <a href="#signup">
+          <a href="{% url 'account-signup' %}">
             {% blocktrans %}Don't have an account? Click here to sign up!{% endblocktrans %}
           </a>
         </p>
@@ -51,26 +51,6 @@
           </div>
         </form>
       </div>
-    </div>
-  </div>
-  <div class="col-lg-6 col-md-6">
-    <div class="card mb-3 target-primary" id="signup">
-      <h5 class="card-header">
-        {% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}
-      </h5>
-    <div class="card-body">
-      <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
-        {% csrf_token %}
-        {% if next %}
-          <input type="hidden" name="next" value="{{ next }}"/>
-        {% endif %}
-        {% render_form signup_form %}
-        <div class="clearfix">
-          <button type="submit" class="btn btn-success pull-right btn-lg">
-            {% blocktrans %}Sign Up{% endblocktrans %}
-          </button>
-        </div>
-      </form>
     </div>
   </div>
 </div>

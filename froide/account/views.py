@@ -1,15 +1,17 @@
+from datetime import timedelta
 from urllib.parse import urlencode
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import Http404
 from django.contrib import auth
+from django.views.generic import FormView
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.html import format_html
-from django.utils import formats
+from django.utils import formats, timezone
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, RedirectView
@@ -158,8 +160,6 @@ def login(request, context=None, template='account/login.html', status=200):
         context = {}
     if "reset_form" not in context:
         context['reset_form'] = PasswordResetForm(prefix='pwreset')
-    if "signup_form" not in context:
-        context['signup_form'] = NewUserForm()
 
     if request.method == "POST" and status == 200:
         status = 400  # if ok, we are going to redirect anyways
@@ -191,22 +191,39 @@ def login(request, context=None, template='account/login.html', status=200):
     return render(request, template, context, status=status)
 
 
-@require_POST
-def signup(request):
-    if request.user.is_authenticated:
-        messages.add_message(request, messages.ERROR,
-                _('You are currently logged in, you cannot signup.'))
-        return redirect('/')
-    form = UserLoginForm()
-    signup_form = NewUserForm(request.POST)
-    if signup_form.is_valid():
-        user, user_created = AccountService.create_user(**signup_form.cleaned_data)
-        if user_created:
-            signup_form.save(user)
+class SignupView(FormView):
+    template_name = 'account/signup.html'
+    form_class = NewUserForm
 
-        next_url = request.POST.get('next')
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('account-show')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self, email=''):
+        next_url = self.request.POST.get('next')
+        if next_url:
+            # Store next in session to redirect on confirm
+            self.request.session['next'] = next_url
+
+        url = reverse('account-new')
+        query = urlencode({'email': self.user.email.encode('utf-8')})
+        return '%s?%s' % (url, query)
+
+    def form_valid(self, form):
+        user, user_created = AccountService.create_user(**form.cleaned_data)
+        if user_created:
+            form.save(user)
+
+        self.user = user
+
+        next_url = self.request.POST.get('next')
         account_service = AccountService(user)
 
+        time_since_joined = timezone.now() - user.date_joined
+        joined_recently = time_since_joined > timedelta(hours=1)
+
+        mail_sent = True
         if user_created:
             account_service.send_confirmation_mail(
                 redirect_url=next_url
@@ -214,25 +231,22 @@ def signup(request):
         elif user.is_active:
             # Send login-link email
             account_service.send_reminder_mail()
-        elif not user.is_blocked:
+        elif not user.is_blocked and not joined_recently:
             # User exists, but not activated
             account_service.send_confirmation_mail()
+        else:
+            mail_sent = False
 
-        messages.add_message(request, messages.SUCCESS,
-                _('Please check your emails for a mail from us with a confirmation link.'))
+        if mail_sent:
+            messages.add_message(
+                self.request, messages.SUCCESS,
+                _(
+                    'Please check your emails for a mail from us with a '
+                    'confirmation link.'
+                )
+            )
 
-        if next_url:
-            # Store next in session to redirect on confirm
-            request.session['next'] = next_url
-
-        url = reverse('account-new')
-        query = urlencode({'email': user.email.encode('utf-8')})
-        return redirect('%s?%s' % (url, query))
-
-    return render(request, 'account/login.html', {
-        "form": form,
-        "signup_form": signup_form,
-    }, status=400)
+        return super().form_valid(form)
 
 
 @require_POST
@@ -274,7 +288,7 @@ def send_reset_password_link(request):
         messages.add_message(request, messages.SUCCESS,
                 _("Check your mail, we sent you a password reset link."
                 " If you don't receive an email, check if you entered your"
-                " email correctly or if you really have an account "))
+                " email correctly or if you really have an account."))
         return redirect(next_url)
     return login(request, context={"reset_form": form}, status=400)
 
