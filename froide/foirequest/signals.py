@@ -82,8 +82,8 @@ def send_notification_became_asleep(sender, **kwargs):
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    if message.kind != 'email':
-        # All non-email received messages the user actively contributed
+    if message.kind not in ('email', 'upload'):
+        # All non-email/upload received messages the user actively contributed
         # Don't inform them about it
         return
 
