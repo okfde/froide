@@ -1,5 +1,5 @@
 import re
-from datetime import timedelta
+from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
 from django.test import TestCase
@@ -10,9 +10,7 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 from django.conf import settings
 from django.contrib.messages.storage import default_storage
-from django.utils import timezone
 from django.utils.html import escape
-
 from oauth2_provider.models import get_access_token_model, get_application_model
 
 from froide.publicbody.models import PublicBody
@@ -115,10 +113,13 @@ class AccountTest(TestCase):
     def test_signup(self):
         froide_config = settings.FROIDE_CONFIG
         mail.outbox = []
-        post = {"first_name": "Horst",
-                "last_name": "Porst",
-                "terms": "on",
-                "user_email": "horst.porst"}
+        post = {
+            "first_name": "Horst",
+            "last_name": "Porst",
+            "terms": "on",
+            "user_email": "horst.porst",
+            "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        }
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('account-signup'), post)
         self.assertTrue(response.status_code, 302)
@@ -127,7 +128,7 @@ class AccountTest(TestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
         response = self.client.post(reverse('account-signup'), post)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         post['user_email'] = 'horst.porst@example.com'
         post['address'] = 'MyOwnPrivateStree 5\n31415 Pi-Ville'
 
@@ -146,7 +147,7 @@ class AccountTest(TestCase):
 
         # sign up with email that is not confirmed
         response = self.client.post(reverse('account-signup'), post)
-        self.assertTrue(response.status_code, 400)
+        self.assertTrue(response.status_code, 200)
 
         # sign up with email that is confirmed
         message = mail.outbox[0]
@@ -159,7 +160,7 @@ class AccountTest(TestCase):
         user = User.objects.get(id=user.pk)
         self.assertTrue(user.is_active)
         response = self.client.post(reverse('account-signup'), post)
-        self.assertTrue(response.status_code, 400)
+        self.assertTrue(response.status_code, 200)
 
     def test_overlong_name_signup(self):
         post = {
@@ -167,14 +168,29 @@ class AccountTest(TestCase):
             "last_name": "Porst" * 6,
             "terms": "on",
             "user_email": 'horst.porst@example.com',
-            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville'
+            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville',
+            'time': (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
         }
         self.client.logout()
         response = self.client.post(reverse('account-signup'), post)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         post['first_name'] = post['first_name'][:-1]
         response = self.client.post(reverse('account-signup'), post)
         self.assertEqual(response.status_code, 302)
+
+    def test_signup_too_fast(self):
+        post = {
+            "first_name": "Horst",
+            "last_name": "Porst",
+            "terms": "on",
+            "user_email": 'horst.porst@example.com',
+            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville',
+            # Signup in 10 seconds
+            'time': (datetime.utcnow() - timedelta(seconds=10)).timestamp(),
+        }
+        self.client.logout()
+        response = self.client.post(reverse('account-signup'), post)
+        self.assertEqual(response.status_code, 200)
 
     def test_signup_same_name(self):
         self.client.logout()
@@ -183,7 +199,8 @@ class AccountTest(TestCase):
             "last_name": "Porst",
             "terms": "on",
             "user_email": 'horst.porst@example.com',
-            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville'
+            "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville',
+            'time': (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
         }
         response = self.client.post(reverse('account-signup'), post)
         self.assertEqual(response.status_code, 302)
@@ -263,10 +280,11 @@ class AccountTest(TestCase):
             "terms": "on",
             'user_email': 'horst.porst@example.com',
             'address': 'MyOwnPrivateStree 5\n31415 Pi-Ville',
-            'next': url
+            'next': url,
+            'time': (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
         }
         response = self.client.post(reverse('account-signup'), post)
-        self.assertTrue(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         new_account_url = reverse('account-new')
         self.assertIn(new_account_url, response.url)
 
@@ -666,7 +684,8 @@ class AccountTest(TestCase):
             "first_name": "Horst",
             "last_name": "Porst",
             "terms": "on",
-            "user_email": "horst.porst@example.com"
+            "user_email": "horst.porst@example.com",
+            'time': (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
         }
 
         AccountBlacklist.objects.create(
@@ -735,7 +754,7 @@ class ApiTest(TestCase):
         self.access_token = AccessToken.objects.create(
             user=self.test_user,
             scope="read:user",
-            expires=timezone.now() + timedelta(seconds=300),
+            expires=datetime.now() + timedelta(seconds=300),
             token="secret-access-token-key",
             application=self.application
         )
