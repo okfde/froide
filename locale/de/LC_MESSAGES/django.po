@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-26 14:17+0100\n"
-"PO-Revision-Date: 2020-03-26 14:22+0100\n"
+"POT-Creation-Date: 2020-04-17 15:35+0200\n"
+"PO-Revision-Date: 2020-04-17 15:39+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.3\n"
 
 #: docs/_build/html/_sources/theming.txt:53
 msgid ""
@@ -223,7 +223,7 @@ msgstr "Einstellungen"
 msgid "Your data export is ready"
 msgstr "Ihr Datenexport ist fertig"
 
-#: froide/account/forms.py:49
+#: froide/account/forms.py:50
 msgid ""
 "Your address will not be displayed publicly and is only needed because a "
 "public body will likely want to send you paper."
@@ -231,28 +231,28 @@ msgstr ""
 "Ihre Adresse wird nicht öffentlich angezeigt und wird nur gebraucht, weil "
 "eine Behörde Ihnen wahrscheinlich etwas per Post zusenden will."
 
-#: froide/account/forms.py:57
+#: froide/account/forms.py:58
 msgid "First name"
 msgstr "Vorname"
 
-#: froide/account/forms.py:58
+#: froide/account/forms.py:59
 msgid "First Name"
 msgstr "Vorname"
 
-#: froide/account/forms.py:61
+#: froide/account/forms.py:62
 msgid "Last name"
 msgstr "Nachname"
 
-#: froide/account/forms.py:62
+#: froide/account/forms.py:63
 msgid "Last Name"
 msgstr "Nachname"
 
-#: froide/account/forms.py:66 froide/account/forms.py:116
+#: froide/account/forms.py:67 froide/account/forms.py:117
 #: froide/foirequest/forms/message.py:238
 msgid "Mailing Address"
 msgstr "Postadresse"
 
-#: froide/account/forms.py:68
+#: froide/account/forms.py:69
 msgid ""
 "Your address will not be displayed publicly and is only needed in case a "
 "public body needs to send you paper."
@@ -260,30 +260,30 @@ msgstr ""
 "Ihre Adresse wird nicht öffentlich angezeigt und wird nur für den Fall "
 "verwendet, dass eine Behörde Ihnen etwas per Post zusenden muss."
 
-#: froide/account/forms.py:74 froide/account/forms.py:121
-#: froide/account/forms.py:259 froide/foirequest/forms/message.py:245
+#: froide/account/forms.py:75 froide/account/forms.py:122
+#: froide/account/forms.py:273 froide/foirequest/forms/message.py:245
 msgid "Street, Post Code, City"
 msgstr "Straße, Hausnummer, PLZ, Ort"
 
-#: froide/account/forms.py:77 froide/account/forms.py:226
-#: froide/account/forms.py:242 froide/team/forms.py:55
+#: froide/account/forms.py:78 froide/account/forms.py:240
+#: froide/account/forms.py:256 froide/team/forms.py:55
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: froide/account/forms.py:79
+#: froide/account/forms.py:80
 msgid "Not public. The given address will need to be confirmed."
 msgstr "Nicht öffentlich. Sie müssen diese Adresse bestätigen."
 
-#: froide/account/forms.py:82 froide/account/forms.py:222
-#: froide/account/forms.py:238 froide/account/forms.py:248
+#: froide/account/forms.py:83 froide/account/forms.py:236
+#: froide/account/forms.py:252 froide/account/forms.py:262
 msgid "mail@ddress.net"
 msgstr "email@dresse.net"
 
-#: froide/account/forms.py:91
+#: froide/account/forms.py:92
 msgid "Hide my name from public view"
 msgstr "Zeige meinen Namen nicht öffentlich an"
 
-#: froide/account/forms.py:92
+#: froide/account/forms.py:93
 msgid ""
 "If you check this, your name will still appear in requests to public bodies, "
 "but we will do our best to not display it publicly. However, we cannot "
@@ -293,7 +293,7 @@ msgstr ""
 "nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen "
 "<b>keine</b> komplette Anonymität garantieren."
 
-#: froide/account/forms.py:100
+#: froide/account/forms.py:101
 msgid ""
 "<a target=\"_blank\" href=\"{}\">You may use a pseudonym if you don't need "
 "to receive postal messages</a>."
@@ -301,13 +301,13 @@ msgstr ""
 "<a target=\"_blank\" href=\"{}\">Sie können ein Pseudonym verwenden, wenn "
 "Sie keine Post erhalten müssen</a>."
 
-#: froide/account/forms.py:142
+#: froide/account/forms.py:143
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
 msgstr ""
 "Sie müssen die Nutzungs- und Datenschutzbedingungen von FragDenStaat.de "
 "akzeptieren."
 
-#: froide/account/forms.py:150
+#: froide/account/forms.py:151
 #, python-brace-format
 msgid ""
 "You agree to our <a href=\"{url_terms}\" target=\"_blank\">Terms and "
@@ -320,78 +320,82 @@ msgstr ""
 "\">Nutzungsbedingungen Archivplattform</a> und den <a href=\"{url_privacy}\" "
 "target=\"_blank\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
 
-#: froide/account/forms.py:175
+#: froide/account/forms.py:176
 msgid ""
 "If you enter anything in this field your account creation will be blocked."
 msgstr "Wenn Sie etwas hier eingeben, dann wird Ihr Konto nicht erstellt."
 
-#: froide/account/forms.py:198 froide/account/forms.py:232
-#: froide/account/forms.py:346
+#: froide/account/forms.py:192
+msgid "You filled this form out too quickly."
+msgstr "Sie haben das Formular zu schnell ausgefüllt."
+
+#: froide/account/forms.py:212 froide/account/forms.py:246
+#: froide/account/forms.py:360
 msgid "Password"
 msgstr "Passwort"
 
-#: froide/account/forms.py:209
+#: froide/account/forms.py:223
 msgid "Password (repeat)"
 msgstr "Passwort (wiederholen)"
 
-#: froide/account/forms.py:215
+#: froide/account/forms.py:229
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
 
-#: froide/account/forms.py:252 froide/foirequest/views/make_request.py:203
+#: froide/account/forms.py:266 froide/foirequest/views/make_request.py:203
 msgid "Your email address"
 msgstr "Ihre E-Mail-Adresse"
 
-#: froide/account/forms.py:256
+#: froide/account/forms.py:270
 msgid "Your mailing address"
 msgstr "Ihre Postadresse"
 
-#: froide/account/forms.py:257
+#: froide/account/forms.py:271
 msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
-#: froide/account/forms.py:268 froide/account/forms.py:271
+#: froide/account/forms.py:282 froide/account/forms.py:285
 #: froide/account/models.py:120
 msgid "Organization"
 msgstr "Organisation"
 
-#: froide/account/forms.py:269
+#: froide/account/forms.py:283
 msgid "Optional. Affiliation will be shown next to your name"
 msgstr "Optional. Ihre Organisation wird neben Ihrem Namen angezeigt."
 
-#: froide/account/forms.py:292
+#: froide/account/forms.py:306
 msgid "Another user with that email address already exists!"
 msgstr "Es existiert bereits eine Nutzerin mit dieser E-Mail-Adresse."
 
-#: froide/account/forms.py:317
+#: froide/account/forms.py:331
 msgid "Logged in user does not match this link!"
 msgstr "Der eingeloggte Nutzer passt nicht zu dem geklickten Link!"
 
-#: froide/account/forms.py:328
+#: froide/account/forms.py:342
 msgid "Link is invalid or has expired!"
 msgstr "Link ist ungültig oder abgelaufen!"
 
-#: froide/account/forms.py:339
+#: froide/account/forms.py:353
 msgid "Freedom of Information Act"
 msgstr "Informationsfreiheitsgesetz"
 
-#: froide/account/forms.py:347
+#: froide/account/forms.py:361
 msgid "Please type your password to confirm."
 msgstr "Bitte geben Sie Ihr Passwort zum Bestätigen ein."
 
-#: froide/account/forms.py:354
+#: froide/account/forms.py:368
 msgid "Confirmation Phrase"
 msgstr "Bestätigungs-Satz"
 
-#: froide/account/forms.py:355
+#: froide/account/forms.py:369
 msgid "Type the phrase above exactly as displayed."
 msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
 
-#: froide/account/forms.py:371
+#: froide/account/forms.py:385
 msgid "You provided the wrong password!"
 msgstr "Sie haben ein falsches Passwort angegeben!"
 
-#: froide/account/forms.py:379
+#: froide/account/forms.py:393
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "Sie haben das Bestätigungswort nicht korrekt eingegeben!"
 
@@ -469,7 +473,7 @@ msgstr "Organisations-URL"
 msgid "Private"
 msgstr "Privat"
 
-#: froide/account/models.py:123 froide/publicbody/models.py:327
+#: froide/account/models.py:123 froide/publicbody/models.py:330
 msgid "Address"
 msgstr "Adresse"
 
@@ -839,7 +843,7 @@ msgstr "Einloggen"
 
 #: froide/account/templates/account/login.html:18
 msgid "Don't have an account? Click here to sign up!"
-msgstr "Noch keinen Account? Klicken Sie hier, um sich anzumelden!"
+msgstr "Noch kein Konto? Klicken Sie hier, um ein Konto zu erstellen!"
 
 #: froide/account/templates/account/login.html:27
 msgid "Log In"
@@ -857,14 +861,6 @@ msgstr ""
 #: froide/account/templates/account/login.html:49
 msgid "Send reset link"
 msgstr "Sende Zurücksetzen-Link"
-
-#: froide/account/templates/account/login.html:59
-msgid "Don't have an account? Sign up!"
-msgstr "Noch keinen Account? Melden Sie sich an!"
-
-#: froide/account/templates/account/login.html:70
-msgid "Sign Up"
-msgstr "Anmelden"
 
 #: froide/account/templates/account/new.html:6
 msgid "New account"
@@ -1128,6 +1124,14 @@ msgstr "Frist: %(date)s"
 msgid "Publish"
 msgstr "Veröffentlichen"
 
+#: froide/account/templates/account/signup.html:13
+msgid "Don't have an account? Sign up!"
+msgstr "Noch kein Konto? Hier erstellen!"
+
+#: froide/account/templates/account/signup.html:24
+msgid "Sign Up"
+msgstr "Konto erstellen"
+
 #: froide/account/templates/account/widgets/confirmation.html:5
 #, python-format
 msgid "Please type this phrase to confirm: %(phrase)s"
@@ -1162,19 +1166,19 @@ msgstr "Abbrechen"
 msgid "Authorize"
 msgstr "Zugriff erlauben"
 
-#: froide/account/views.py:69
+#: froide/account/views.py:71
 msgid "You are logged in and cannot use a confirmation link."
 msgstr ""
 "Sie sind gerade eingeloggt und können daher Bestätigungslinks nicht nutzen."
 
-#: froide/account/views.py:78
+#: froide/account/views.py:80
 msgid ""
 "You can only use the confirmation link once, please login with your password."
 msgstr ""
 "Sie können den Bestätigungslink nur einmal benutzen, bitte loggen Sie sich "
 "mit Ihrem Passwort ein."
 
-#: froide/account/views.py:104
+#: froide/account/views.py:106
 msgid ""
 "You are logged in with a different user account. Please logout first before "
 "using this link."
@@ -1182,7 +1186,7 @@ msgstr ""
 "Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich "
 "erst aus, bevor Sie den E-Mail-Link benutzen."
 
-#: froide/account/views.py:149
+#: froide/account/views.py:151
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
@@ -1198,57 +1202,53 @@ msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich einloggen."
 msgid "E-mail and password do not match."
 msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
 
-#: froide/account/views.py:198
-msgid "You are currently logged in, you cannot signup."
-msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
-
-#: froide/account/views.py:222
+#: froide/account/views.py:244
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem "
 "Bestätigungslink von uns erhalten."
 
-#: froide/account/views.py:242
+#: froide/account/views.py:256
 msgid "You are not currently logged in, you cannot change your password."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihr Passwort nicht ändern."
 
-#: froide/account/views.py:249
+#: froide/account/views.py:263
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: froide/account/views.py:253
+#: froide/account/views.py:267
 msgid "Your password was NOT changed. Please fix the errors."
 msgstr "Ihr Passwort wurde NICHT geändert. Bitte beheben Sie die Fehler."
 
-#: froide/account/views.py:267
+#: froide/account/views.py:281
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Sie sind gerade eingeloggt. Sie können keinen Passwort-Zurücksetzen-Link "
 "erhalten."
 
-#: froide/account/views.py:275
+#: froide/account/views.py:289
 msgid ""
 "Check your mail, we sent you a password reset link. If you don't receive an "
 "email, check if you entered your email correctly or if you really have an "
-"account "
+"account."
 msgstr ""
 "Schauen Sie in Ihre E-Mails, wir haben Ihnen einen Passwort-Zurücksetzen-"
 "Link geschickt. Falls Sie keine E-Mail erhalten haben, prüfen Sie, ob Sie "
 "Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit einen "
 "Account haben."
 
-#: froide/account/views.py:290
+#: froide/account/views.py:304
 msgid "Your password has been set and you are now logged in."
 msgstr "Ihre Password wurde gesetzt und Sie sind jetzt eingeloggt."
 
-#: froide/account/views.py:319
+#: froide/account/views.py:333
 msgid "You are not currently logged in, you cannot change your address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre Adresse nicht "
 "ändern."
 
-#: froide/account/views.py:329
+#: froide/account/views.py:343
 msgid ""
 "We sent a confirmation email to your new address. Please click the link in "
 "there."
@@ -1256,57 +1256,57 @@ msgstr ""
 "Wir haben eine Bestätigungs-E-Mail an Ihre neue Adresse gesendet. Bitte "
 "klicken Sie den Link in der E-Mail."
 
-#: froide/account/views.py:332
+#: froide/account/views.py:346
 msgid "Your profile information has been changed."
 msgstr "Ihre Profilinformationen wurden geändert."
 
-#: froide/account/views.py:335
+#: froide/account/views.py:349
 msgid ""
 "Please correct the errors below. You profile information was not changed."
 msgstr ""
 "Bitte korrigieren Sie die Fehler unten. Ihre Profilinformationen wurden "
 "nicht geändert."
 
-#: froide/account/views.py:344
+#: froide/account/views.py:358
 msgid "You are not currently logged in, you cannot change your email address."
 msgstr ""
 "Sie sind momentan nicht eingeloggt, daher können Sie Ihre E-Mail-Adresse "
 "nicht ändern."
 
-#: froide/account/views.py:351
+#: froide/account/views.py:365
 msgid "Your email address has been changed."
 msgstr "Ihre E-Mail-Adresse wurde geändert."
 
-#: froide/account/views.py:354
+#: froide/account/views.py:368
 msgid "The email confirmation link was invalid or expired."
 msgstr "Der E-Mail-Bestätigungs-Link ist ungültig oder abgelaufen."
 
-#: froide/account/views.py:362
+#: froide/account/views.py:376
 msgid "You are not currently logged in, you cannot delete your account."
 msgstr ""
 "Sie sind gerade nicht eingeloggt, daher können Sie Ihren Account nicht "
 "löschen."
 
-#: froide/account/views.py:367
+#: froide/account/views.py:381
 msgid "Password or confirmation phrase were wrong. Account was not deleted."
 msgstr ""
 "Passwort oder Bestätigungssatz waren falsch. Ihr Account wurde nicht "
 "gelöscht."
 
-#: froide/account/views.py:379
+#: froide/account/views.py:393
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Ihr Account wurde gelöscht und Sie wurden ausgeloggt."
 
-#: froide/account/views.py:397
+#: froide/account/views.py:411
 msgid "Thank you for accepting our new terms!"
 msgstr "Danke, dass Sie unsere neuen Nutzungsbedingungen akzeptiert haben!"
 
-#: froide/account/views.py:401
+#: froide/account/views.py:415
 msgid "You need to accept our new terms to continue."
 msgstr ""
 "Sie müssen unsere neuen Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: froide/account/views.py:410
+#: froide/account/views.py:424
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -1318,14 +1318,14 @@ msgstr ""
 "sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: "
 "%(reason)s"
 
-#: froide/account/views.py:421
+#: froide/account/views.py:435
 msgid ""
 "Your export has been started. You will receive an email when it is finished."
 msgstr ""
 "Ihr Datenexport wurde gestartet. Sie erhalten eine E-Mail, sobald der Export "
 "fertiggestellt wurde."
 
-#: froide/account/views.py:426
+#: froide/account/views.py:440
 msgid ""
 "Your export is currently being created. You will receive an email once it is "
 "available."
@@ -1333,7 +1333,7 @@ msgstr ""
 "Ihr Export wird gerade erstellt. Sie erhalten eine E-Mail, sobald der Export "
 "verfügbar ist."
 
-#: froide/account/views.py:432
+#: froide/account/views.py:446
 #, python-brace-format
 msgid ""
 "Your next export will be possible at {date}. <a href=\"{url}\">You can "
@@ -1955,7 +1955,7 @@ msgid "all categories"
 msgstr "alle Kategorien"
 
 #: froide/foirequest/filters.py:144 froide/publicbody/filters.py:42
-#: froide/publicbody/models.py:249
+#: froide/publicbody/models.py:252
 msgid "category"
 msgstr "Kategorie"
 
@@ -2076,7 +2076,7 @@ msgid "Uploaded scans can be PDF, JPG, PNG or GIF."
 msgstr "Dateien können als PDF, JPG, PNG oder GIF hochgeladen werden."
 
 #: froide/foirequest/forms/message.py:199
-#: froide/foirequest/models/attachment.py:110
+#: froide/foirequest/models/attachment.py:111
 #: froide/foirequest/templates/foirequest/list_unchecked.html:30
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:84
 #: froide/foirequest/templates/foirequest/snippets/message.html:185
@@ -2241,7 +2241,7 @@ msgstr "Begründung"
 msgid "Suggestions"
 msgstr "Vorschläge"
 
-#: froide/foirequest/forms/request.py:136 froide/publicbody/models.py:452
+#: froide/foirequest/forms/request.py:136 froide/publicbody/models.py:455
 msgid "More Info"
 msgstr "Details"
 
@@ -2328,7 +2328,7 @@ msgstr "Gehört zu Nachricht"
 #: froide/foirequest/views/make_request.py:146 froide/foisite/models.py:14
 #: froide/georegion/models.py:12 froide/publicbody/forms.py:67
 #: froide/publicbody/models.py:69 froide/publicbody/models.py:103
-#: froide/publicbody/models.py:307 froide/team/templates/team/team_list.html:18
+#: froide/publicbody/models.py:310 froide/team/templates/team/team_list.html:18
 msgid "Name"
 msgstr "Name"
 
@@ -2372,11 +2372,11 @@ msgstr "Konvertierte Version"
 msgid "Is converted"
 msgstr "Konvertiert?"
 
-#: froide/foirequest/models/attachment.py:109
+#: froide/foirequest/models/attachment.py:110
 msgid "Attachment"
 msgstr "Anhang"
 
-#: froide/foirequest/models/attachment.py:119
+#: froide/foirequest/models/attachment.py:120
 #, python-format
 msgid "attachment-%(id)d"
 msgstr "anhang-%(id)d"
@@ -2432,7 +2432,7 @@ msgstr "Nutzer"
 #: froide/foirequest/models/event.py:38 froide/foirequest/models/request.py:262
 #: froide/foirequest/models/suggestion.py:15
 #: froide/foirequest/templates/foirequest/snippets/message.html:76
-#: froide/publicbody/apps.py:8 froide/publicbody/models.py:379
+#: froide/publicbody/apps.py:8 froide/publicbody/models.py:382
 msgid "Public Body"
 msgstr "Behörde"
 
@@ -2578,7 +2578,7 @@ msgstr "getaggte Nachricht"
 msgid "tagged messages"
 msgstr "getaggte Nachrichten"
 
-#: froide/foirequest/models/message.py:50 froide/publicbody/models.py:324
+#: froide/foirequest/models/message.py:50 froide/publicbody/models.py:327
 msgid "Email"
 msgstr "E-Mail"
 
@@ -2760,14 +2760,14 @@ msgstr "abgeschlossen"
 #: froide/foirequest/models/project.py:50
 #: froide/foirequest/models/request.py:257 froide/georegion/models.py:13
 #: froide/publicbody/models.py:70 froide/publicbody/models.py:104
-#: froide/publicbody/models.py:309
+#: froide/publicbody/models.py:312
 msgid "Slug"
 msgstr "URL-Kürzel"
 
 #: froide/foirequest/models/project.py:52
 #: froide/foirequest/models/request.py:258
 #: froide/foirequest/views/message.py:468 froide/publicbody/models.py:71
-#: froide/publicbody/models.py:105 froide/publicbody/models.py:310
+#: froide/publicbody/models.py:105 froide/publicbody/models.py:313
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -2788,7 +2788,7 @@ msgstr "Referenz"
 
 #: froide/foirequest/models/project.py:75
 #: froide/foirequest/models/request.py:327 froide/frontpage/models.py:36
-#: froide/publicbody/models.py:140 froide/publicbody/models.py:353
+#: froide/publicbody/models.py:140 froide/publicbody/models.py:356
 msgid "Site"
 msgstr "Seite"
 
@@ -3024,7 +3024,7 @@ msgstr "ist geschlossen"
 
 #: froide/foirequest/models/request.py:322
 #: froide/foirequest/views/make_request.py:148 froide/publicbody/models.py:81
-#: froide/publicbody/models.py:119 froide/publicbody/models.py:358
+#: froide/publicbody/models.py:119 froide/publicbody/models.py:361
 #: froide/publicbody/templates/publicbody/show.html:32
 msgid "Jurisdiction"
 msgstr "Zuständigkeitsbereich"
@@ -4082,7 +4082,7 @@ msgstr "Via"
 
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:74
 #: froide/foisite/models.py:15 froide/frontpage/models.py:27
-#: froide/publicbody/models.py:122 froide/publicbody/models.py:311
+#: froide/publicbody/models.py:122 froide/publicbody/models.py:314
 msgid "URL"
 msgstr "URL"
 
@@ -4226,6 +4226,14 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/redact.html:97
 msgid "Redaction tool is loading..."
 msgstr "Schwärzungs-Werkzeug wird geladen..."
+
+#: froide/foirequest/templates/foirequest/redact.html:112
+msgid ""
+"This file is probably still being processed and is not available yet. Please "
+"wait, this page will automatically refresh."
+msgstr ""
+"Diese Datei wird noch verarbeitet und ist noch nicht verfügbar. Bitte haben "
+"Sie Geduld, diese Seite wird sich automatisch aktualisieren."
 
 #: froide/foirequest/templates/foirequest/request.html:26
 msgid "Join our current FOI campaigns"
@@ -4886,11 +4894,11 @@ msgstr ""
 msgid "Messages in this request"
 msgstr "Korrespondenz"
 
-#: froide/foirequest/templates/foirequest/show.html:626
+#: froide/foirequest/templates/foirequest/show.html:627
 msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
-#: froide/foirequest/templates/foirequest/show.html:631
+#: froide/foirequest/templates/foirequest/show.html:634
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html:27
 #, python-format
 msgid "One identical request"
@@ -4898,11 +4906,11 @@ msgid_plural "%(counter)s identical requests"
 msgstr[0] "Eine identische Anfrage"
 msgstr[1] "%(counter)s identische Anfragen"
 
-#: froide/foirequest/templates/foirequest/show.html:637
+#: froide/foirequest/templates/foirequest/show.html:640
 msgid "This request is identical to:"
 msgstr "Diese Anfrage ist identisch zu:"
 
-#: froide/foirequest/templates/foirequest/show.html:649
+#: froide/foirequest/templates/foirequest/show.html:653
 msgid "This request has been detected as spam and its messages are not sent."
 msgstr ""
 "Diese Anfrage wurde als Spam erkannt und die Nachrichten wurden nicht "
@@ -5691,11 +5699,11 @@ msgstr "Thema"
 msgid "topics"
 msgstr "Themen"
 
-#: froide/foirequest/views/make_request.py:156 froide/publicbody/models.py:281
+#: froide/foirequest/views/make_request.py:156 froide/publicbody/models.py:284
 msgid "classification"
 msgstr "Behördentyp"
 
-#: froide/foirequest/views/make_request.py:157 froide/publicbody/models.py:282
+#: froide/foirequest/views/make_request.py:157 froide/publicbody/models.py:285
 msgid "classifications"
 msgstr "Behördentypen"
 
@@ -7479,7 +7487,7 @@ msgstr "Behörden mit dieser Klassifikation"
 msgid "Public bodies with this category"
 msgstr "Behörden mit dieser Kategorie"
 
-#: froide/publicbody/apps.py:24 froide/publicbody/models.py:380
+#: froide/publicbody/apps.py:24 froide/publicbody/models.py:383
 #: froide/publicbody/templates/publicbody/base.html:5
 #: froide/publicbody/templates/publicbody/list.html:8
 msgid "Public Bodies"
@@ -7497,7 +7505,7 @@ msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
 msgid "Official name of the public authority."
 msgstr "Offizieller Name der Behörde."
 
-#: froide/publicbody/forms.py:75 froide/publicbody/models.py:308
+#: froide/publicbody/forms.py:75 froide/publicbody/models.py:311
 msgid "Other names"
 msgstr "Andere Namen"
 
@@ -7612,7 +7620,7 @@ msgstr "Erstellungsdatum"
 msgid "Updated Date"
 msgstr "Änderungsdatum"
 
-#: froide/publicbody/models.py:109 froide/publicbody/models.py:329
+#: froide/publicbody/models.py:109 froide/publicbody/models.py:332
 msgid "request note"
 msgstr "Anfrage-Hinweis"
 
@@ -7677,111 +7685,111 @@ msgstr "Nur E-Mail"
 msgid "Requires signature"
 msgstr "Benötigt Unterschrift"
 
-#: froide/publicbody/models.py:146 froide/publicbody/models.py:365
+#: froide/publicbody/models.py:146 froide/publicbody/models.py:368
 msgid "Freedom of Information Laws"
 msgstr "Informationsfreiheitsgesetze"
 
-#: froide/publicbody/models.py:170
+#: froide/publicbody/models.py:173
 msgid "No law can be applied"
 msgstr "Kein Gesetz kann angewendet werden"
 
-#: froide/publicbody/models.py:213 froide/publicbody/models.py:243
+#: froide/publicbody/models.py:216 froide/publicbody/models.py:246
 msgid "as topic"
 msgstr "als Thema"
 
-#: froide/publicbody/models.py:214
+#: froide/publicbody/models.py:217
 msgid "rank"
 msgstr "Rang"
 
-#: froide/publicbody/models.py:219
+#: froide/publicbody/models.py:222
 msgid "Public Body Tag"
 msgstr "Behörden-Schlagwort"
 
-#: froide/publicbody/models.py:220
+#: froide/publicbody/models.py:223
 msgid "Public Body Tags"
 msgstr "Behörden-Schlagwörter"
 
-#: froide/publicbody/models.py:229
+#: froide/publicbody/models.py:232
 msgid "Tagged Public Body"
 msgstr "Verschlagwortete Behörde"
 
-#: froide/publicbody/models.py:230
+#: froide/publicbody/models.py:233
 msgid "Tagged Public Bodies"
 msgstr "Verschlagwortete Behörden"
 
-#: froide/publicbody/models.py:250 froide/publicbody/models.py:369
+#: froide/publicbody/models.py:253 froide/publicbody/models.py:372
 msgid "categories"
 msgstr "Kategorien"
 
-#: froide/publicbody/models.py:270
+#: froide/publicbody/models.py:273
 msgid "Categorized Public Body"
 msgstr "Kategorisierte Behörde"
 
-#: froide/publicbody/models.py:271
+#: froide/publicbody/models.py:274
 msgid "Categorized Public Bodies"
 msgstr "Kategorisierte Behörden"
 
-#: froide/publicbody/models.py:275
+#: froide/publicbody/models.py:278
 msgid "name"
 msgstr "Name"
 
-#: froide/publicbody/models.py:276
+#: froide/publicbody/models.py:279
 msgid "slug"
 msgstr "URL-Kürzel"
 
-#: froide/publicbody/models.py:326
+#: froide/publicbody/models.py:329
 msgid "Contact"
 msgstr "Kontakt"
 
-#: froide/publicbody/models.py:328
+#: froide/publicbody/models.py:331
 msgid "Website Dump"
 msgstr "Webseiten-Dump"
 
-#: froide/publicbody/models.py:331
+#: froide/publicbody/models.py:334
 msgid "source reference"
 msgstr "Quellreferenz"
 
-#: froide/publicbody/models.py:336
+#: froide/publicbody/models.py:339
 msgid "file index"
 msgstr "Aktenplan"
 
-#: froide/publicbody/models.py:337
+#: froide/publicbody/models.py:340
 msgid "organisational chart"
 msgstr "Organigramm"
 
-#: froide/publicbody/models.py:340
+#: froide/publicbody/models.py:343
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: froide/publicbody/models.py:344
+#: froide/publicbody/models.py:347
 msgid "Updated by"
 msgstr "Aktualisiert von"
 
-#: froide/publicbody/models.py:347
+#: froide/publicbody/models.py:350
 msgid "Created at"
 msgstr "Erstellt am"
 
-#: froide/publicbody/models.py:348
+#: froide/publicbody/models.py:351
 msgid "Updated at"
 msgstr "Aktualisiert am"
 
-#: froide/publicbody/models.py:349
+#: froide/publicbody/models.py:352
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: froide/publicbody/models.py:351
+#: froide/publicbody/models.py:354
 msgid "Number of requests"
 msgstr "Anzahl der Anfragen"
 
-#: froide/publicbody/models.py:356
+#: froide/publicbody/models.py:359
 msgid "Wikidata item"
 msgstr "Wikidata-Item"
 
-#: froide/publicbody/models.py:500
+#: froide/publicbody/models.py:503
 msgid "Proposed Public Body"
 msgstr "Vorgeschlagene Behörde"
 
-#: froide/publicbody/models.py:501
+#: froide/publicbody/models.py:504
 msgid "Proposed Public Bodies"
 msgstr "Vorgeschlagene Behörden"
 
@@ -8889,6 +8897,9 @@ msgstr "^brief/"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~ msgid "You are currently logged in, you cannot signup."
+#~ msgstr "Sie sind gerade eingeloggt, Sie können sich nicht registrieren."
 
 #~ msgid ""
 #~ "You have not yet confirmed that you want to follow this request. Click "
