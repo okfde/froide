@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import timedelta, datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
@@ -178,6 +179,19 @@ class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
             attrs={'required': True}
         )
     )
+    time = forms.FloatField(
+        initial=datetime.utcnow().timestamp(),
+        widget=forms.HiddenInput
+    )
+
+    def clean_time(self):
+        value = self.cleaned_data["time"]
+        since = datetime.utcnow() - datetime.fromtimestamp(value)
+        if since < timedelta(seconds=15):
+            raise forms.ValidationError(
+                _('You filled this form out too quickly.')
+            )
+        return value
 
     def clean_phone(self):
         """Check that nothing's been entered into the honeypot."""
