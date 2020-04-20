@@ -125,6 +125,7 @@ class AddressForm(JSONMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         address_required = kwargs.pop('address_required', False)
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.fields['address'].required = address_required
 
@@ -145,6 +146,7 @@ class TermsForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(TermsForm, self).__init__(*args, **kwargs)
 
         self.fields['terms'].label = format_html(

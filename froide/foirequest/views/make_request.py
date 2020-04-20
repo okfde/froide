@@ -264,12 +264,13 @@ class MakeRequestView(FormView):
         else:
             form_klass = NewUserForm
             kwargs = {
-                'initial': self.get_user_initial()
+                'initial': self.get_user_initial(),
             }
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
                 'files': self.request.FILES,
+                'request': self.request
             })
         return form_klass(**kwargs)
 

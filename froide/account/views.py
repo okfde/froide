@@ -200,6 +200,13 @@ class SignupView(FormView):
             return redirect('account-show')
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({
+            'request': self.request
+        })
+        return kwargs
+
     def get_success_url(self, email=''):
         next_url = self.request.POST.get('next')
         if next_url:
