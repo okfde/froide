@@ -11,6 +11,8 @@ from django.core import mail
 from django.conf import settings
 from django.contrib.messages.storage import default_storage
 from django.utils.html import escape
+from django.utils import timezone
+
 from oauth2_provider.models import get_access_token_model, get_application_model
 
 from froide.publicbody.models import PublicBody
@@ -754,7 +756,7 @@ class ApiTest(TestCase):
         self.access_token = AccessToken.objects.create(
             user=self.test_user,
             scope="read:user",
-            expires=datetime.now() + timedelta(seconds=300),
+            expires=timezone.now() + timedelta(seconds=300),
             token="secret-access-token-key",
             application=self.application
         )
