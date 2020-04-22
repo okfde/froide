@@ -37,20 +37,6 @@ class TagObjectForm(forms.Form):
         obj.save()
 
 
-def get_fk_form_class(model, field, admin_site, queryset=None):
-    remote_field = model._meta.get_field(field).remote_field
-    if queryset is None:
-        queryset = remote_field.model.objects.all()
-
-    widget = ForeignKeyRawIdWidget(remote_field, admin_site)
-
-    class ForeignKeyForm(forms.Form):
-        obj = forms.ModelChoiceField(queryset=queryset,
-                                     widget=widget)
-
-    return ForeignKeyForm
-
-
 class FakeRelatedField:
     def __init__(self, name):
         self.name = name

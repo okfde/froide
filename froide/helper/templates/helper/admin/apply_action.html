@@ -2,11 +2,9 @@
 
 {% load i18n l10n %}
 
-{% block action_title %}{% trans 'Assign all' %}{% endblock %}
+{% block action_title %}{{ headline }}{% endblock %}
 
-{% block breadcrumbs_action_label %}
-  {% trans 'Assign all' %}
-{% endblock %}
+{% block breadcrumbs_action_label %}{{ headline }}{% endblock %}
 
 {% block action_content %}
   <form action="" method="post">
@@ -28,7 +26,7 @@
       </ul>
 
       <input type="hidden" name="action" value="{{ actionname }}" />
-      <input type="submit" value="{% trans "Assign" %}" />
+      <input type="submit" value="{% trans 'Execute' %}" />
     </div>
   </form>
 {% endblock %}

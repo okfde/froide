@@ -5,8 +5,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from froide.helper.text_utils import split_text_by_separator
-from froide.helper.forms import get_fk_form_class
-from froide.helper.admin_utils import AdminAssignActionBase
+from froide.helper.admin_utils import make_choose_object_action
 from froide.helper.email_sending import mail_registry
 
 from .models import Rule, Guidance
@@ -241,17 +240,17 @@ def notify_guidance(guidance):
     notify_users([(guidance.message, GuidanceResult([guidance], 0, 0))])
 
 
-class GuidanceSelectionMixin(AdminAssignActionBase):
-    action_label = _('Choose guidance action to attach')
+def execute_assign_guidance(admin, request, queryset, action_obj):
+    from .tasks import add_action_to_queryset_task
 
-    def _get_assign_action_form_class(self, fieldname):
-        return get_fk_form_class(Guidance, 'action', self.admin_site)
-
-    def _execute_assign_action_qs(self, queryset, fieldname, assign_obj):
-        from .tasks import add_action_to_queryset_task
-
-        add_action_to_queryset_task.delay(
-            assign_obj.id, list(
-                queryset.values_list('id', flat=True)
-            )
+    add_action_to_queryset_task.delay(
+        action_obj.id, list(
+            queryset.values_list('id', flat=True)
         )
+    )
+
+
+assign_guidance = make_choose_object_action(
+    Guidance, execute_assign_guidance,
+    _('Choose guidance action to attach...')
+)

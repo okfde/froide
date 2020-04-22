@@ -20,10 +20,9 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from froide.helper.admin_utils import (
-    AdminTagAllMixIn, make_admin_assign_action, make_emptyfilter,
-    make_nullfilter
+    AdminTagAllMixIn, make_emptyfilter,
+    make_nullfilter, make_choose_object_action
 )
-from froide.helper.forms import get_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.csv_utils import export_csv_response, dict_to_csv_stream
 
@@ -49,53 +48,45 @@ class PublicBodyAdminForm(forms.ModelForm):
         }
 
 
-ClassificationAssignMixin = make_admin_assign_action('classification')
-
-PublicBodyReplacementBaseMixin = make_admin_assign_action(
-    'root', _('Choose replacement public body')
-)
-
-
-class PublicBodyReplacementMixin(PublicBodyReplacementBaseMixin):
-    def _get_assign_action_form_class(self, fieldname):
-        return get_fk_form_class(PublicBody, 'root', self.admin_site)
-
-    def _execute_assign_action(self, obj, fieldname, assign_obj):
-        '''
-        Replaces all non-blacklisted FK or M2M relationships
-        that point to obj with assign_obj.
-        Dark magic ahead.
-        '''
-        BLACK_LIST = [
-            CategorizedPublicBody,
-            TaggedPublicBody,
-            PublicBody
-        ]
-        relations = [
-            f for f in PublicBody._meta.get_fields()
-            if (f.one_to_many or f.one_to_one or f.many_to_many) and
-            f.auto_created and not f.concrete
-        ]
+def execute_replace_publicbody(admin, request, queryset, action_obj):
+    '''
+    Replaces all non-blocklisted FK or M2M relationships
+    that point to obj with assign_obj.
+    Dark magic ahead.
+    '''
+    BLOCK_LIST = [
+        CategorizedPublicBody,
+        TaggedPublicBody,
+        PublicBody
+    ]
+    relations = [
+        f for f in PublicBody._meta.get_fields()
+        if (f.one_to_many or f.one_to_one or f.many_to_many) and
+        f.auto_created and not f.concrete
+    ]
+    for obj in queryset:
         with transaction.atomic():
             for rel in relations:
                 model = rel.related_model
-                if model in BLACK_LIST:
+                if model in BLOCK_LIST:
                     continue
                 if rel.many_to_many:
                     m2m_objs = model.objects.filter(**{rel.field.name: obj})
                     for m2m_obj in m2m_objs:
                         m2m_rel = getattr(m2m_obj, rel.field.name)
                         m2m_rel.remove(obj)
-                        m2m_rel.add(assign_obj)
+                        m2m_rel.add(action_obj)
                 else:
                     model.objects.filter(**{rel.field.name: obj}).update(
-                        **{rel.field.name: assign_obj}
+                        **{rel.field.name: action_obj}
                     )
 
 
-class PublicBodyBaseAdminMixin(
-        ClassificationAssignMixin, PublicBodyReplacementMixin,
-        AdminTagAllMixIn):
+def execute_assign_classification(admin, request, queryset, action_obj):
+    queryset.update(classification=action_obj)
+
+
+class PublicBodyBaseAdminMixin(AdminTagAllMixIn):
     form = PublicBodyAdminForm
 
     date_hierarchy = 'updated_at'
@@ -161,11 +152,19 @@ class PublicBodyBaseAdminMixin(
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
 
     actions = (
-        ClassificationAssignMixin.actions +
-        PublicBodyReplacementMixin.actions + [
-            'export_csv', 'remove_from_index', 'tag_all', 'show_georegions',
-            'validate_publicbodies',
-        ]
+        'assign_classification',
+        'replace_publicbody',
+        'export_csv', 'remove_from_index', 'tag_all', 'show_georegions',
+        'validate_publicbodies',
+    )
+
+    assign_classification = make_choose_object_action(
+        Classification, execute_assign_classification,
+        _('Assign classification...')
+    )
+    replace_publicbody = make_choose_object_action(
+        PublicBody, execute_replace_publicbody,
+        _('Replace public bodies with...')
     )
 
     def get_queryset(self, request):
@@ -425,27 +424,31 @@ class TaggedPublicBodyAdmin(admin.ModelAdmin):
     raw_id_fields = ('content_object', 'tag')
 
 
-AssignParentBase = make_admin_assign_action('parent')
+def execute_assign_parent(admin, request, queryset, action_obj):
+    for obj in queryset:
+        obj.move(action_obj, 'sorted-child')
 
 
-class AssignParentMixin(AssignParentBase):
-    def _execute_assign_action(self, obj, fieldname, assign_obj):
-        obj.move(assign_obj, 'sorted-child')
+assign_classification_parent = make_choose_object_action(
+    Classification, execute_assign_parent,
+    _('Assign parent...')
+)
+
+assign_category_parent = make_choose_object_action(
+    Category, execute_assign_parent,
+    _('Assign parent...')
+)
 
 
-class AssignClassificationParentMixin(AssignParentMixin):
-    def _get_assign_action_form_class(self, fieldname):
-        return get_fk_form_class(PublicBody, 'classification',
-                                 self.admin_site)
-
-
-class ClassificationAdmin(AssignClassificationParentMixin, TreeAdmin):
+class ClassificationAdmin(TreeAdmin):
     fields = ('name', 'slug', '_position', '_ref_node_id',)
     form = movenodeform_factory(Classification)
     prepopulated_fields = {"slug": ["name"]}
     search_fields = ["name"]
     list_display = ('name', 'num_publicbodies', 'publicbody_link')
-    actions = AssignClassificationParentMixin.actions
+    actions = ['assign_parent']
+
+    assign_parent = assign_classification_parent
 
     def get_queryset(self, request):
         """Use this so we can annotate with additional info."""
@@ -470,13 +473,7 @@ class ClassificationAdmin(AssignClassificationParentMixin, TreeAdmin):
         )
 
 
-class AssignCategoryParentMixin(AssignParentMixin):
-    def _get_assign_action_form_class(self, fieldname):
-        return get_fk_form_class(PublicBody, 'categories',
-                                 self.admin_site)
-
-
-class CategoryAdmin(AssignCategoryParentMixin, TreeAdmin):
+class CategoryAdmin(TreeAdmin):
     fields = ('name', 'slug', 'is_topic', '_position', '_ref_node_id',)
 
     form = movenodeform_factory(Category)
@@ -484,7 +481,9 @@ class CategoryAdmin(AssignCategoryParentMixin, TreeAdmin):
     search_fields = ["name"]
     list_filter = ('is_topic', 'depth')
     list_display = ('name', 'is_topic', 'num_publicbodies', 'publicbody_link')
-    actions = AssignCategoryParentMixin.actions
+    actions = ['assign_parent']
+
+    assign_parent = assign_category_parent
 
     def get_queryset(self, request):
         """Use this so we can annotate with additional info."""

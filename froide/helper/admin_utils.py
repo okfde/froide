@@ -1,3 +1,4 @@
+from django.db import models
 from django.contrib.admin.filters import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
@@ -6,73 +7,56 @@ from django.contrib import admin
 
 from taggit.models import TaggedItem
 
-from .forms import TagObjectForm, get_fk_form_class
+from .forms import (
+    TagObjectForm, get_fake_fk_form_class
+)
 
 
-class AdminAssignActionBase():
-    action_label = _('Choose object to assign')
+def make_choose_object_action(model_or_queryset, callback, label):
+    if issubclass(model_or_queryset, models.Model):
+        model = model_or_queryset
+        filter_qs = None
+    else:
+        filter_qs = model_or_queryset
+        model = model_or_queryset.model
 
-    def _assign_action_handler(self, fieldname, actionname, request, queryset, label=None):
-
-        opts = self.model._meta
+    def action(self, request, queryset):
         # Check that the user has change permission for the actual model
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        Form = self._get_assign_action_form_class(fieldname)
+        Form = get_fake_fk_form_class(
+            model, self.admin_site, queryset=filter_qs
+        )
         # User has already chosen the other req
         if request.POST.get('obj'):
             form = Form(request.POST)
             if form.is_valid():
-                assign_obj = form.cleaned_data['obj']
-                self._execute_assign_action_qs(queryset, fieldname, assign_obj)
-                self.message_user(request, _("Successfully assigned."))
+                action_obj = form.cleaned_data['obj']
+                callback(self, request, queryset, action_obj)
+                self.message_user(request, _("Successfully executed."))
                 return None
         else:
             form = Form()
 
+        opts = self.model._meta
         context = {
             'opts': opts,
             'queryset': queryset,
             'media': self.media,
             'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
             'form': form,
-            'headline': label or self.action_label,
-            'actionname': actionname,
+            'headline': label,
+            'actionname': request.POST.get('action'),
             'applabel': opts.app_label
         }
 
         # Display the confirmation page
-        return TemplateResponse(request, 'helper/admin/assign_all.html',
+        return TemplateResponse(request, 'helper/admin/apply_action.html',
             context)
 
-    def _get_assign_action_form_class(self, fieldname):
-        return get_fk_form_class(self.model, fieldname, self.admin_site)
-
-    def _execute_assign_action_qs(self, queryset, fieldname, assign_obj):
-        for obj in queryset:
-            self._execute_assign_action(obj, fieldname, assign_obj)
-
-    def _execute_assign_action(self, obj, fieldname, assign_obj):
-        setattr(obj, fieldname, assign_obj)
-        obj.save()
-
-
-def make_admin_assign_action(fieldname, label=None):
-    action_name = 'assign_%s' % fieldname
-
-    def _assign(self, request, queryset):
-        return self._assign_action_handler(fieldname, action_name,
-                                          request, queryset, label=label)
-
-    _assign.short_description = label or _("Add %s to all selected") % fieldname
-
-    class AdminAssignAction(AdminAssignActionBase):
-        actions = [action_name]
-
-    setattr(AdminAssignAction, action_name, _assign)
-
-    return AdminAssignAction
+    action.short_description = label
+    return action
 
 
 class AdminTagAllMixIn(object):

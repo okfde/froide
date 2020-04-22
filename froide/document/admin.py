@@ -13,32 +13,21 @@ from filingcabinet.models import (
 )
 
 from froide.helper.admin_utils import (
-    ForeignKeyFilter, make_admin_assign_action
+    ForeignKeyFilter, make_choose_object_action
 )
-from froide.helper.forms import get_fk_form_class
 
 from .models import Document, DocumentCollection
 
 
-AddDocumentsToCollectionBaseMixin = make_admin_assign_action(
-    'collection', _('Add documents to collection')
-)
-
-
-class AddDocumentsToCollectionMixin(AddDocumentsToCollectionBaseMixin):
-    def _get_assign_action_form_class(self, fieldname):
-        return get_fk_form_class(
-            CollectionDocument, 'collection', self.admin_site
-        )
-
-    def _execute_assign_action(self, obj, fieldname, assign_obj):
+def execute_add_document_to_collection(admin, request, queryset, action_obj):
+    for obj in queryset:
         CollectionDocument.objects.get_or_create(
-            collection=assign_obj,
+            collection=action_obj,
             document=obj
         )
 
 
-class DocumentAdmin(AddDocumentsToCollectionMixin, DocumentBaseAdmin):
+class DocumentAdmin(DocumentBaseAdmin):
     raw_id_fields = DocumentBaseAdmin.raw_id_fields + (
         'original', 'foirequest', 'publicbody', 'team'
     )
@@ -49,7 +38,12 @@ class DocumentAdmin(AddDocumentsToCollectionMixin, DocumentBaseAdmin):
         ('team', ForeignKeyFilter),
     )
     actions = (
-        DocumentBaseAdmin.actions + AddDocumentsToCollectionMixin.actions
+        DocumentBaseAdmin.actions
+    )
+
+    add_document_to_collection = make_choose_object_action(
+        DocumentCollection, execute_add_document_to_collection,
+        _('Add documents to collection')
     )
 
 

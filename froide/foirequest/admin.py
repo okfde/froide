@@ -16,12 +16,13 @@ from django.utils import timezone
 
 from froide.helper.admin_utils import (
     make_nullfilter, make_greaterzerofilter, AdminTagAllMixIn,
-    ForeignKeyFilter, TaggitListFilter, SearchFilter
+    ForeignKeyFilter, TaggitListFilter, SearchFilter,
+    make_choose_object_action
 )
 from froide.helper.widgets import TagAutocompleteWidget
-from froide.helper.forms import get_fk_form_class
+from froide.helper.forms import get_fake_fk_form_class
 from froide.helper.email_utils import EmailParser
-from froide.guide.utils import GuidanceSelectionMixin
+from froide.guide.utils import assign_guidance
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 
 from .models import (
@@ -158,7 +159,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        Form = get_fk_form_class(self.model, 'same_as', self.admin_site)
+        Form = get_fake_fk_form_class(FoiRequest, self.admin_site)
         # User has already chosen the other req
         if request.POST.get('obj'):
             f = Form(request.POST)
@@ -247,7 +248,7 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
 
         queryset = queryset.filter(project__isnull=True)
 
-        Form = get_fk_form_class(self.model, 'project', self.admin_site)
+        Form = get_fake_fk_form_class(FoiProject, self.admin_site)
         # User has already chosen the other req
         if request.POST.get('obj'):
             f = Form(request.POST)
@@ -300,7 +301,7 @@ class MessageTagsFilter(TaggitListFilter):
     tag_class = TaggedMessage
 
 
-class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
+class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
         'subject', 'timestamp', 'message_page',
@@ -357,10 +358,7 @@ class FoiMessageAdmin(GuidanceSelectionMixin, admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>',
             obj.get_absolute_short_url(), _('on site'))
 
-    def attach_guidance_action(self, request, queryset):
-        ''' Magic from GuidanceSelectionMixin'''
-        return self._assign_action_handler('', 'attach_guidance_action', request, queryset)
-    attach_guidance_action.short_description = _('Add guidance action to messages...')
+    attach_guidance_action = assign_guidance
 
     def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)
@@ -554,6 +552,11 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
     raw_id_fields = ('request', 'public_body', 'user')
 
 
+def execute_redeliver(admin, request, queryset, action_obj):
+    for deferred in queryset:
+        deferred.redeliver(action_obj)
+
+
 class DeferredMessageAdmin(admin.ModelAdmin):
     model = DeferredMessage
 
@@ -641,43 +644,10 @@ class DeferredMessageAdmin(admin.ModelAdmin):
             ))
     mark_as_spam.short_description = _("Mark as spam (delete all except one per sender)")
 
-    def redeliver(self, request, queryset, auto=False):
-        """
-        Redeliver undelivered mails
-
-        """
-        opts = self.model._meta
-        # Check that the user has change permission for the actual model
-        if not self.has_change_permission(request):
-            raise PermissionDenied
-
-        Form = get_fk_form_class(self.model, 'request', self.admin_site)
-        # User has already chosen the other req
-        if request.POST.get('obj'):
-            f = Form(request.POST)
-            if f.is_valid():
-                req = f.cleaned_data['obj']
-                for deferred in queryset:
-                    deferred.redeliver(req)
-                self.message_user(request,
-                    _("Successfully triggered redelivery."))
-                return None
-        else:
-            f = Form()
-
-        context = {
-            'opts': opts,
-            'queryset': queryset,
-            'media': self.media,
-            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
-            'form': f,
-            'applabel': opts.app_label
-        }
-
-        # Display the confirmation page
-        return TemplateResponse(request, 'foirequest/admin_redeliver.html',
-            context)
-    redeliver.short_description = _("Redeliver to...")
+    redeliver = make_choose_object_action(
+        FoiRequest, execute_redeliver,
+        _("Redeliver to...")
+    )
 
 
 class FoiProjectAdminForm(forms.ModelForm):
