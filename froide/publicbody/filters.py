@@ -5,7 +5,7 @@ import django_filters
 
 from froide.helper.search.filters import BaseSearchFilterSet
 
-from .models import PublicBody, Jurisdiction, Category
+from .models import PublicBody, Jurisdiction, Category, Classification
 
 
 class PublicBodyFilterSet(BaseSearchFilterSet):
@@ -45,11 +45,17 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
         ),
         method='filter_category'
     )
+    classification = django_filters.ModelChoiceFilter(
+        queryset=Classification.objects.all(),
+        to_field_name='slug',
+        widget=forms.HiddenInput(),
+        method='filter_classification'
+    )
 
     class Meta:
         model = PublicBody
         fields = [
-            'q', 'jurisdiction', 'category'
+            'q', 'jurisdiction', 'category', 'classification'
         ]
 
     def filter_jurisdiction(self, qs, name, value):
@@ -57,3 +63,6 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
 
     def filter_category(self, qs, name, value):
         return qs.filter(categories=value.id)
+
+    def filter_classification(self, qs, name, value):
+        return qs.filter(classification=value.id)
