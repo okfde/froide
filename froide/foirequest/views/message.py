@@ -4,11 +4,11 @@ import logging
 from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.http import Http404, JsonResponse, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.template.defaultfilters import slugify
 
 from froide.helper.utils import render_400

@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, Http404, redirect
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.templatetags.static import static

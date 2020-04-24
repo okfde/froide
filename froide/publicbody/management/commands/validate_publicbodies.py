@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from froide.helper.email_sending import send_mail
 

@@ -7,7 +7,7 @@ from celery.schedules import crontab
 from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def rec(x):
@@ -220,6 +220,8 @@ class Base(Configuration):
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
+
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
 
     COMMENTS_APP = 'froide.comments'
 

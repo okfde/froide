@@ -1,7 +1,7 @@
 from datetime import timedelta
 from collections import defaultdict
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils import translation
 from django.utils import formats
 from django.conf import settings

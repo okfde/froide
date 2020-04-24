@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.urls import reverse_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django import forms
 
 from froide.publicbody.models import PublicBody
@@ -84,7 +84,7 @@ class RequestForm(JSONMixin, forms.Form):
 
     def clean_redirect_url(self):
         redirect_url = self.cleaned_data['redirect_url']
-        if is_safe_url(redirect_url,
+        if url_has_allowed_host_and_scheme(redirect_url,
                        allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
             return redirect_url
         return ''

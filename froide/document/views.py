@@ -1,6 +1,6 @@
 import json
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404, Http404, render
 from django.views.generic import DetailView
@@ -129,7 +129,7 @@ def upload_documents(request):
         },
         'i18n': {
             'uppy': get_uppy_i18n(),
-            'createDocuments': ugettext('Create documents now')
+            'createDocuments': gettext('Create documents now')
         },
         'url': {
             'tusEndpoint': reverse('api:upload-list'),

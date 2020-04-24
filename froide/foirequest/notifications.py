@@ -1,4 +1,4 @@
-from django.utils.translation import ungettext_lazy, ugettext_lazy as _
+from django.utils.translation import ngettext_lazy, gettext_lazy as _
 
 from froide.helper.email_sending import mail_registry
 
@@ -19,7 +19,7 @@ def send_update(request_list, user=None):
     if user is None:
         return
     count = len(request_list)
-    subject = ungettext_lazy(
+    subject = ngettext_lazy(
         "Update on one of your request",
         "Update on %(count)s of your requests",
         count) % {

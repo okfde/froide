@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 
 from froide.helper.utils import render_403
