@@ -4,7 +4,7 @@ import re
 from django.contrib import admin
 from django.db import models
 from django.shortcuts import redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
 from django.template.response import TemplateResponse

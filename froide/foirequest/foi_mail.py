@@ -9,7 +9,7 @@ import random
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
 from django.urls import reverse
-from django.utils.translation import override, ugettext_lazy as _
+from django.utils.translation import override, gettext_lazy as _
 
 from froide.helper.email_utils import (EmailParser, get_unread_mails,
                                        make_address)

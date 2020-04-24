@@ -7,7 +7,7 @@ from celery.schedules import crontab
 from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def rec(x):

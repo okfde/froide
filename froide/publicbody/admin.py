@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.db.models import Count
-from django.utils.translation import ugettext_lazy as _, ungettext
+from django.utils.translation import gettext_lazy as _, ngettext
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django import forms
@@ -352,7 +352,7 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 request, _('This public body is already confirmed.'))
         else:
             self.message_user(request,
-                ungettext(
+                ngettext(
                     'Public body confirmed. %(count)d message was sent.',
                     'Public body confirmed. %(count)d messages were sent',
                     result

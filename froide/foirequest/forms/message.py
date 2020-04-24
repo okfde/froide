@@ -4,7 +4,7 @@ import os
 import re
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ungettext_lazy
+from django.utils.translation import gettext_lazy as _, ngettext_lazy
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django import forms
@@ -120,7 +120,7 @@ def get_send_message_form(*args, **kwargs):
         message_ready = True
         days = (timezone.now() - foirequest.due_date).days + 1
         message = render_to_string('foirequest/emails/overdue_reply.txt', {
-            'due': ungettext_lazy(
+            'due': ngettext_lazy(
                 "%(count)s day",
                 "%(count)s days",
                 days) % {'count': days},

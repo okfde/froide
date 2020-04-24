@@ -1,6 +1,6 @@
 from django import forms
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 from taggit.models import Tag
 import django_filters
@@ -30,24 +30,24 @@ SUB_FILTERS = {
 
 
 FOIREQUEST_FILTERS = [
-    (ugettext("awaiting-classification"), (lambda x:
+    (gettext("awaiting-classification"), (lambda x:
         Q('term', status='awaiting_classification')),
         'awaiting_classification'),
-    (ugettext("successful"), resolution_filter, 'successful'),
-    (ugettext("partially-successful"), resolution_filter,
+    (gettext("successful"), resolution_filter, 'successful'),
+    (gettext("partially-successful"), resolution_filter,
         'partially_successful'),
-    (ugettext("refused"), resolution_filter, 'refused'),
-    (ugettext("withdrawn"), resolution_filter, 'user_withdrew'),
-    (ugettext("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
-    (ugettext("awaiting-response"), status_filter, 'awaiting_response'),
-    (ugettext("overdue"), (lambda x:
+    (gettext("refused"), resolution_filter, 'refused'),
+    (gettext("withdrawn"), resolution_filter, 'user_withdrew'),
+    (gettext("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
+    (gettext("awaiting-response"), status_filter, 'awaiting_response'),
+    (gettext("overdue"), (lambda x:
         Q('range', due_date={
             'lt': timezone.now()
         }) & Q('term', status='awaiting_response')),
         'overdue'),
-    (ugettext("asleep"), status_filter, 'asleep'),
-    (ugettext("not-held"), resolution_filter, 'not_held'),
-    (ugettext("has-fee"), lambda x: Q('range', costs={'gt': 0}), 'has_fee')
+    (gettext("asleep"), status_filter, 'asleep'),
+    (gettext("not-held"), resolution_filter, 'not_held'),
+    (gettext("has-fee"), lambda x: Q('range', costs={'gt': 0}), 'has_fee')
 ]
 
 FOIREQUEST_FILTERS = [
@@ -62,7 +62,7 @@ REVERSE_FILTER_DICT = dict([(x[2], x[:2] + x[3:]) for x in FOIREQUEST_FILTERS])
 FOIREQUEST_FILTER_RENDER = [(x[0], x[3], x[2]) for x in FOIREQUEST_FILTERS]
 
 FOIREQUEST_LIST_FILTER_CHOICES = [
-    x for x in FOIREQUEST_FILTER_CHOICES if x[0] not in {ugettext("awaiting-classification")}
+    x for x in FOIREQUEST_FILTER_CHOICES if x[0] not in {gettext("awaiting-classification")}
 ]
 
 

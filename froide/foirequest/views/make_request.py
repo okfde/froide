@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.http import Http404
 from django.conf import settings
 from django.contrib import messages

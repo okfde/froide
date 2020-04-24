@@ -3,7 +3,7 @@ import re
 from urllib.parse import urlencode
 
 from django.shortcuts import render, redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
 from froide.helper.utils import render_403

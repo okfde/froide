@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils import formats
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.forms import (
     get_send_message_form, get_postal_message_form

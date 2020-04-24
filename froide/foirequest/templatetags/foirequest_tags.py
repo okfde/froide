@@ -5,7 +5,7 @@ import json
 from django import template
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import urlizetrunc
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.html import format_html
 from django.utils import formats
 from django.utils import timezone

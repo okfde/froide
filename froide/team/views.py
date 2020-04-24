@@ -8,7 +8,7 @@ from django.http import Http404
 from django.utils import timezone
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from froide.helper.auth import can_manage_object
 

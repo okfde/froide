@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.urls import reverse
