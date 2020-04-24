@@ -1,4 +1,4 @@
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -10,7 +10,7 @@ from .models.attachment import POSTAL_CONTENT_TYPES
 def get_content_type(scan):
     scan.seek(0)
     content_type = magic.from_buffer(scan.read(1024), mime=True)
-    content_type = force_text(content_type)
+    content_type = force_str(content_type)
     scan.seek(0)
     return content_type
 
