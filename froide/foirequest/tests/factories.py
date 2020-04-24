@@ -216,7 +216,7 @@ class DeferredMessageFactory(factory.DjangoModelFactory):
     class Meta:
         model = DeferredMessage
 
-    recipient = factory.Sequence(lambda n: 'blub%s@fragdenstaat.de'.format(n))
+    recipient = factory.Sequence(lambda n: 'blub{}@fragdenstaat.de'.format(n))
     timestamp = timezone.now() - timedelta(hours=1)
     request = None
     mail = factory.LazyAttribute(lambda o:
