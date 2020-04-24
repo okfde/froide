@@ -221,6 +221,8 @@ class Base(Configuration):
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ]
 
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
+
     COMMENTS_APP = 'froide.comments'
 
     # ######### I18N and L10N ##################
