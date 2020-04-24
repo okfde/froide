@@ -52,4 +52,4 @@ uritemplate==3.0.1
 urllib3==1.25.9
 vine==1.3.0
 wand==0.5.9
-#-e git+git://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet
+-e git+git://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet
