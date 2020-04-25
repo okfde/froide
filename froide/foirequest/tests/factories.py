@@ -224,7 +224,7 @@ class DeferredMessageFactory(factory.DjangoModelFactory):
 Subject: Latest Improvements
 Date: Mon, 5 Jul 2010 07:54:40 +0200
 
-Test'''))
+Test''').decode('ascii'))
 
 
 class PublicBodySuggestionFactory(factory.DjangoModelFactory):
