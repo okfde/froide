@@ -353,6 +353,7 @@ class FoiRequest(models.Model):
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
     set_concrete_law = django.dispatch.Signal(providing_args=['name'])
     made_public = django.dispatch.Signal(providing_args=[])
+    made_private = django.dispatch.Signal(providing_args=[])
     escalated = django.dispatch.Signal(providing_args=[])
 
     def __str__(self):

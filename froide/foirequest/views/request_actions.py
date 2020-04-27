@@ -175,8 +175,11 @@ def mark_not_foi(request, slug):
     if not request.user.is_staff:
         return render_403(request)
     foirequest.is_foi = False
-    foirequest.public = False
+
     foirequest.visibility = FoiRequest.VISIBLE_TO_REQUESTER
+    if foirequest.public:
+        foirequest.public = False
+        FoiRequest.made_private.send(sender=foirequest)
     foirequest.save()
     if request.is_ajax():
         return HttpResponse()

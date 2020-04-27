@@ -13,6 +13,7 @@ class FoiRequestFollowerConfig(AppConfig):
         import froide.foirequestfollower.listeners  # noqa
         from froide.account.export import registry
         from froide.bounce.signals import email_bounced, email_unsubscribed
+        from froide.foirequest.models import FoiRequest
 
         from .utils import handle_bounce, handle_unsubscribe
 
@@ -22,6 +23,7 @@ class FoiRequestFollowerConfig(AppConfig):
 
         email_bounced.connect(handle_bounce)
         email_unsubscribed.connect(handle_unsubscribe)
+        FoiRequest.made_private.connect(remove_followers)
 
 
 def cancel_user(sender, user=None, **kwargs):
@@ -64,3 +66,11 @@ def export_user_data(user):
         }
         for frf in following]).encode('utf-8')
     )
+
+
+def remove_followers(sender=None, **kwargs):
+    from .models import FoiRequestFollower
+
+    FoiRequestFollower.objects.filter(
+        request=sender
+    ).delete()
