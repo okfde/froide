@@ -152,7 +152,7 @@ export default {
       if (regex.length === 0) {
         return null
       }
-      return new RegExp(regex.join('|'), 'gi')
+      return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
     },
     publicBody () {
       return this.publicbodies[0]
