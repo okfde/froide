@@ -26,15 +26,15 @@ public_body_suggested_email = mail_registry.register(
 )
 confirm_foi_project_created_email = mail_registry.register(
     'foirequest/emails/confirm_foi_project_created',
-    ('foirequest',)
+    ('foiproject', 'action_url')
 )
 confirm_foi_request_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_request_sent',
-    ('foirequest', 'message', 'publicbody')
+    ('foirequest', 'message', 'publicbody', 'action_url')
 )
 confirm_foi_message_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_message_sent',
-    ('foirequest', 'message', 'publicbody')
+    ('foirequest', 'message', 'publicbody', 'action_url')
 )
 
 
@@ -147,7 +147,8 @@ def send_foiproject_created_confirmation(sender, **kwargs):
         user=sender.user,
         subject=_("Your Freedom of Information Project has been created"),
         context={
-            "foirequest": sender
+            "foiproject": sender,
+            "action_url": sender.get_absolute_domain_short_url()
         },
         priority=False,
     )
@@ -167,14 +168,17 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
             return
         subject = _("Your Freedom of Information Request was sent")
         mail_intent = confirm_foi_request_sent_email
+        action_url = sender.get_absolute_domain_short_url()
     else:
         subject = _("Your message was sent")
         mail_intent = confirm_foi_message_sent_email
+        action_url = message.get_absolute_domain_short_url()
 
     context = {
         "foirequest": sender,
         "publicbody": message.recipient_public_body,
         "message": message,
+        "action_url": action_url
     }
 
     send_request_user_email(

@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}{% blocktrans with name=foirequest.user.get_full_name title=foirequest.title public_body=foirequest.public_body.name url=request.get_absolute_domain_short_url %}Hello {{ name }},
+{% load i18n %}{% autoescape off %}{% blocktrans with name=foirequest.user.get_full_name title=foirequest.title public_body=foirequest.public_body.name url=action_url %}Hello {{ name }},
 
 your request "{{ title }}" to "{{ public_body }}" has been sent. We will notify you when you get a response.
 
