@@ -465,11 +465,7 @@ export default {
 
         if (this.pageScaleFactor[pageNum] === undefined) {
           // Make sure scaleFactor is fixed to page, doesn't change
-          let scaleFactor = PDF_TO_CSS_UNITS
-          let viewport = page.getViewport(PDF_TO_CSS_UNITS)
-          if (viewport.width > this.maxWidth) {
-            scaleFactor = this.maxWidth / viewport.width
-          }
+          let scaleFactor = this.maxWidth / page.view[2]
           this.pageScaleFactor[pageNum] = scaleFactor
         }
 
