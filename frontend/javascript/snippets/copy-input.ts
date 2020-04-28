@@ -1,6 +1,6 @@
 interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null; }
 
-document.querySelectorAll(".copy-text").forEach((copyEl) => {
+Array.from(document.querySelectorAll(".copy-text")).forEach((copyEl) => {
   copyEl.addEventListener("click", function(this: IHTMLToolTipElement) {
     const el = this;
     let selection;
