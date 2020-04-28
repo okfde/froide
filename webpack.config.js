@@ -81,10 +81,7 @@ const config = {
           //   }
           // },
           {
-            loader: 'awesome-typescript-loader',
-            options: {
-              appendTsSuffixTo: [/\.vue$/]
-            }
+            loader: 'ts-loader',
           }
         ]
       },
