@@ -166,7 +166,7 @@ def get_write_queryset(qs, request, has_team=False,
         filters = user_filter
     else:
         filters |= user_filter
-    return qs.filter(user_filter)
+    return qs.filter(filters)
 
 
 def get_user_filter(request, teams=None):
