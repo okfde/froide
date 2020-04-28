@@ -80,7 +80,8 @@ class DocumentUploadForm(forms.Form):
 
         document = Document.objects.create(
             title=upload.filename,
-            user=user
+            user=user,
+            public=self.cleaned_data['public']
         )
         upload.ensure_saving()
         upload.save()
