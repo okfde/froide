@@ -18,8 +18,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitAny":  true,
-    "noEmit": true
+    "noImplicitAny":  true
   },
   "include": [
     "./frontend/javascript/**/*"

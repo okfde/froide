@@ -13,6 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .js,.vue frontend",
     "dev": "webpack --watch --mode development",
+    "serve": "NODE_ENV=development webpack-dev-server -d --progress --mode development --hot --host 0.0.0.0",
     "build": "NODE_ENV=production webpack --mode production",
     "favicon": "real-favicon generate froide/static/img/logo/favicon.json favicon-result.json froide/static/img/logo"
   },
@@ -91,7 +92,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.range": "^3.2.0",
     "lodash.sortby": "^4.7.0",
-    "pdfjs-dist": "^2.0.489",
+    "pdfjs-dist": "^2.3.200",
     "string.prototype.repeat": "^0.2.0",
     "ts-loader": "^7.0.1",
     "vue": "^2.6.10",
