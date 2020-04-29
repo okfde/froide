@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import {Dropdown} from 'bootstrap.native'
+import {Dropdown} from 'bootstrap.native/dist/bootstrap-native-v4.js'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
