@@ -1,8 +1,9 @@
 import {toggleSlide} from "./lib/misc";
 
-import {Tab, Tooltip} from "bootstrap.native";
+import {Tab, Tooltip} from "bootstrap.native/dist/bootstrap-native-v4";
 
-interface IHTMLTabElement extends HTMLElement { Tab: Tab | null; }
+
+interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
 const addText = (dataset: DOMStringMap) => {
   if (!dataset.addtextfield) {
