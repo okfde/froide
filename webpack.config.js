@@ -45,7 +45,9 @@ const config = {
     libraryTarget: 'umd'
   },
   devtool: 'source-map', // any "source-map"-like devtool is possible
-  node: false,
+  node: {
+    url: true
+  },
   resolve: {
     modules: ['node_modules', 'froide/static'],
     extensions: ['.js', '.ts', '.vue', '.json'],
