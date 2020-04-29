@@ -92,7 +92,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.range": "^3.2.0",
     "lodash.sortby": "^4.7.0",
-    "pdfjs-dist": "^2.3.200",
+    "pdfjs-dist": "==2.0.550",
     "string.prototype.repeat": "^0.2.0",
     "ts-loader": "^7.0.1",
     "vue": "^2.6.10",
