@@ -281,22 +281,20 @@ def change_password(request):
 
 @require_POST
 def send_reset_password_link(request):
-    next = request.POST.get('next')
-    next_url = next if next else '/'
     if request.user.is_authenticated:
         messages.add_message(request, messages.ERROR,
                 _('You are currently logged in, you cannot get a password reset link.'))
-        return redirect(next_url)
+        return get_redirect(request)
     form = auth.forms.PasswordResetForm(request.POST, prefix='pwreset')
     if form.is_valid():
-        if next:
-            request.session['next'] = next
+        if request.POST.get('next'):
+            request.session['next'] = request.POST.get('next')
         form.save(use_https=True, email_template_name="account/emails/password_reset_email.txt")
         messages.add_message(request, messages.SUCCESS,
                 _("Check your mail, we sent you a password reset link."
                 " If you don't receive an email, check if you entered your"
                 " email correctly or if you really have an account."))
-        return redirect(next_url)
+        return get_redirect(request)
     return login(request, context={"reset_form": form}, status=400)
 
 
