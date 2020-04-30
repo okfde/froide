@@ -93,7 +93,7 @@ class RequestForm(JSONMixin, forms.Form):
         return self.cleaned_data.get('draft')
 
     def clean(self):
-        ref = self.cleaned_data['reference']
+        ref = self.cleaned_data.get('reference', '')
         if not ref:
             validate_not_campaign(self.cleaned_data)
         return self.cleaned_data
