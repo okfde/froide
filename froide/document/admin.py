@@ -54,10 +54,10 @@ class CustomPageAdmin(PageAdmin):
 
 
 class CustomPageAnnotationAdmin(PageAnnotationAdmin):
-    list_filter = (
-        'page__number',
+    list_filter = [
         ('page__document', ForeignKeyFilter),
-    )
+        'page__number'
+    ]
 
 
 class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
