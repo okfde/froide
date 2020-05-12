@@ -50,7 +50,14 @@ const submitFormsAjax = () => {
         }
         const parent = form.closest(".ajax-parent");
         if (parent) {
-          parent.outerHTML = responseData;
+          if (responseData[0] === "{") {
+            const data = JSON.parse(responseData)
+            if (data.errors) {
+              parent.outerHTML = `<div class="alert alert-danger">${data.errors}</div>`;
+            }
+          } else {
+            parent.outerHTML = responseData;
+          }
         }
       };
       request.send(data);

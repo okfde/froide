@@ -36,7 +36,8 @@ def follow(request, pk):
         return redirect(foirequest)
 
     if request.is_ajax():
-        return JsonResponse({'errors': form.errors})
+        error_string = ' '.join(' '.join(v) for k, v in form.errors.items())
+        return JsonResponse({'errors': error_string})
     return show(request, foirequest.slug, context={"followform": form}, status=400)
 
 
