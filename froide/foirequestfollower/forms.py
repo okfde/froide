@@ -4,13 +4,22 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.account.forms import user_extra_registry
 from froide.foirequest.auth import can_read_foirequest
+from froide.helper.spam import SpamProtectionMixin
 
 from .models import FoiRequestFollower
 
 User = get_user_model()
 
 
-class FollowRequestForm(forms.Form):
+class FollowRequestForm(SpamProtectionMixin, forms.Form):
+    SPAM_PROTECTION = {
+        'timing': False,
+        'captcha': 'ip',
+        'action': 'follow_request',
+        'action_limit': 3,
+        'action_block': True
+    }
+
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop('foirequest')
         self.request = kwargs.pop('request')
@@ -37,6 +46,7 @@ class FollowRequestForm(forms.Form):
             raise forms.ValidationError(_("You cannot access this request!"))
         if self.user == self.foirequest.user:
             raise forms.ValidationError(_("You cannot follow your own requests."))
+        super().clean()
         return self.cleaned_data
 
     def save(self):

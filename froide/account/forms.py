@@ -1,5 +1,4 @@
 from collections import defaultdict
-from datetime import timedelta, datetime
 
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
@@ -12,6 +11,7 @@ from django.contrib.auth.password_validation import (
 )
 from django import forms
 
+from froide.helper.spam import SpamProtectionMixin
 from froide.helper.form_utils import JSONMixin
 from froide.helper.content_urls import get_content_url
 from froide.helper.widgets import BootstrapCheckboxInput
@@ -146,9 +146,7 @@ class TermsForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super(TermsForm, self).__init__(*args, **kwargs)
-
+        super().__init__(*args, **kwargs)
         self.fields['terms'].label = format_html(
             _('You agree to our <a href="{url_terms}" target="_blank">'
                 'Terms and Conditions</a> and <a href="{url_privacy}" target="_blank">'
@@ -168,42 +166,15 @@ class TermsForm(forms.Form):
         user.save()
 
 
-class HoneypotField(forms.CharField):
-    is_honeypot = True
-
-
 class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
-    phone = HoneypotField(
-        required=False,
-        label=_('If you enter anything in this field '
-                'your account creation will be blocked.'),
-        widget=forms.TextInput(
-            attrs={'required': True}
-        )
-    )
-
-    def clean_phone(self):
-        """Check that nothing's been entered into the honeypot."""
-        value = self.cleaned_data["phone"]
-        if value:
-            raise forms.ValidationError(self.fields["phone"].label)
-        return value
+    pass
 
 
-class SignUpForm(NewUserForm):
-    time = forms.FloatField(
-        initial=datetime.utcnow().timestamp(),
-        widget=forms.HiddenInput
-    )
-
-    def clean_time(self):
-        value = self.cleaned_data["time"]
-        since = datetime.utcnow() - datetime.fromtimestamp(value)
-        if since < timedelta(seconds=15):
-            raise forms.ValidationError(
-                _('You filled this form out too quickly.')
-            )
-        return value
+class SignUpForm(SpamProtectionMixin, NewUserForm):
+    SPAM_PROTECTION = {
+        'timing': True,
+        'captcha': 'ip',
+    }
 
 
 class NewUserWithPasswordForm(NewUserForm):
