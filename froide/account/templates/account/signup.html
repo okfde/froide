@@ -10,21 +10,22 @@
   <div class="col-lg-8 col-md-8">
     <div class="card mb-3 target-primary" id="signup">
       <h5 class="card-header">
-        {% blocktrans %}Don't have an account? Sign up!{% endblocktrans %}
+        {% blocktrans %}Create an account{% endblocktrans %}
       </h5>
-    <div class="card-body">
-      <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
-        {% csrf_token %}
-        {% if next %}
-          <input type="hidden" name="next" value="{{ next }}"/>
-        {% endif %}
-        {% render_form form %}
-        <div class="clearfix">
-          <button type="submit" class="btn btn-success pull-right btn-lg">
-            {% blocktrans %}Sign Up{% endblocktrans %}
-          </button>
-        </div>
-      </form>
+      <div class="card-body">
+        <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
+          {% csrf_token %}
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+          {% endif %}
+          {% render_form form %}
+          <div class="clearfix">
+            <button type="submit" class="btn btn-success pull-right btn-lg">
+              {% blocktrans %}Sign Up{% endblocktrans %}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
