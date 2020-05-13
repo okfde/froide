@@ -146,6 +146,7 @@ class TermsForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.fields['terms'].label = format_html(
             _('You agree to our <a href="{url_terms}" target="_blank">'
