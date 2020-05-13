@@ -217,6 +217,13 @@ class SignupView(FormView):
         query = urlencode({'email': self.user.email.encode('utf-8')})
         return '%s?%s' % (url, query)
 
+    def form_invalid(self, form):
+        messages.add_message(
+            self.request, messages.ERROR,
+            _('Please correct the errors below.')
+        )
+        return super().form_invalid(form)
+
     def form_valid(self, form):
         user, user_created = AccountService.create_user(**form.cleaned_data)
         if user_created:
