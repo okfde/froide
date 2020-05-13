@@ -301,7 +301,7 @@ def send_reset_password_link(request):
                 _("Check your mail, we sent you a password reset link."
                 " If you don't receive an email, check if you entered your"
                 " email correctly or if you really have an account."))
-        return get_redirect(request)
+        return get_redirect(request, keep_session=True)
     return login(request, context={"reset_form": form}, status=400)
 
 
