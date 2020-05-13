@@ -46,11 +46,11 @@ def get_client_ip(request):
 
 
 def get_redirect_url(request, default='/', next=None, allowed_hosts=None,
-                     params=None):
+                     params=None, keep_session=False):
     if next is None:
         next = request.POST.get('next',
             request.GET.get('next', request.session.get('next')))
-        if 'next' in request.session:
+        if not keep_session and 'next' in request.session:
             del request.session['next']
     if next is None:
         keyword = request.GET.get('pk_keyword')
