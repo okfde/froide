@@ -8,6 +8,11 @@
   {% endfor %}
 </div>
 {% endif %}
+
+{% for field in form.hidden_fields %}
+  {% include "helper/forms/errors.html" with errors=field.errors %}
+{% endfor %}
+
 {% for field in form.visible_fields %}
   {% render_field field %}
 {% endfor %}
