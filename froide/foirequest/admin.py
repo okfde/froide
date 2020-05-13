@@ -537,7 +537,12 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
 
 class FoiEventAdmin(admin.ModelAdmin):
     list_display = ('event_name', 'request', 'timestamp',)
-    list_filter = ('event_name', 'public')
+    list_filter = (
+        'event_name', 'public',
+        ('request', ForeignKeyFilter),
+        ('user', ForeignKeyFilter),
+        ('public_body', ForeignKeyFilter),
+    )
     search_fields = ['request__title', "public_body__name"]
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'

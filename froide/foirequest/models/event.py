@@ -16,9 +16,11 @@ from .request import FoiRequest
 class FoiEventManager(models.Manager):
     def create_event(self, event_name, request, **context):
         assert event_name in FoiEvent.event_texts
-        event = FoiEvent(request=request,
-                public=request.is_public(),
-                event_name=event_name)
+        event = FoiEvent(
+            request=request,
+            public=request.is_public(),
+            event_name=event_name
+        )
         event.user = context.pop("user", None)
         event.public_body = context.pop("public_body", None)
         event.context_json = json.dumps(context)
@@ -27,15 +29,21 @@ class FoiEventManager(models.Manager):
 
 
 class FoiEvent(models.Model):
-    request = models.ForeignKey(FoiRequest,
-            verbose_name=_("Freedom of Information Request"),
-            on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
-            on_delete=models.SET_NULL, blank=True,
-            verbose_name=_("User"))
-    public_body = models.ForeignKey(PublicBody, null=True,
-            on_delete=models.SET_NULL, blank=True,
-            verbose_name=_("Public Body"))
+    request = models.ForeignKey(
+        FoiRequest,
+        verbose_name=_("Freedom of Information Request"),
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True,
+        on_delete=models.SET_NULL, blank=True,
+        verbose_name=_("User")
+    )
+    public_body = models.ForeignKey(
+        PublicBody, null=True,
+        on_delete=models.SET_NULL, blank=True,
+        verbose_name=_("Public Body")
+    )
     public = models.BooleanField(_("Is Public?"), default=True)
     event_name = models.CharField(_("Event Name"), max_length=255)
     timestamp = models.DateTimeField(_("Timestamp"))
