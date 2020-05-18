@@ -15,6 +15,9 @@ $gray-800: #3B4A5A;
 $gray-900: #1C232B;
 
 // new blue
+$blue-10: #DFEFF9;
+$blue-20: #B6DDF5;
+$blue-30: #8DBAD4;
 $blue-100: #F0F4FF;
 $blue-200: #DEE8FF;
 $blue-300: #B8CEFF;
@@ -24,17 +27,15 @@ $blue-600: #0047E1;
 $blue-700: #0034A5;
 $blue-800: #001C5A;
 
-// new alternative blue
-$blue-alt-100: #DFEFF9;
-$blue-alt-200: #B6DDF5;
-$blue-alt-300: #8DBAD4;
-
 // new yellow
 $yellow-100: #FDE9AE;
 $yellow-200: #FACE44;
 $yellow-300: #E8B106;
 
 $theme-colors: (
+  "blue-10": $blue-10,
+  "blue-20": $blue-20,
+  "blue-30": $blue-30,
   "blue-100": $blue-100,
   "blue-200": $blue-200,
   "blue-300": $blue-300,
@@ -43,10 +44,6 @@ $theme-colors: (
   "blue-600": $blue-600,
   "blue-700": $blue-700,
   "blue-800": $blue-800,
-
-  "blue-alt-100": $blue-alt-100,
-  "blue-alt-200": $blue-alt-200,
-  "blue-alt-300": $blue-alt-300,
 
   "yellow-100": $yellow-100,
   "yellow-200": $yellow-200,
