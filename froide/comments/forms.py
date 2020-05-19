@@ -8,6 +8,16 @@ from django_comments.forms import (
 
 
 class CommentForm(DjangoCommentForm):
+    name = forms.CharField(
+        label=_('Name'),
+        required=True,
+        help_text=_('Your name will only be visible to logged in users.'),
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
     comment = forms.CharField(
         label=_('Comment'),
         widget=forms.Textarea(

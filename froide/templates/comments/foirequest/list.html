@@ -11,8 +11,10 @@
       {% endif %}
       {% if comment.user == object.user and object.user.private %}
         {% blocktrans with date=comment.submit_date %}On {{ date }}, the requester wrote:{% endblocktrans %}
-      {% else %}
+      {% elif request.user.is_authenticated %}
         {% blocktrans with date=comment.submit_date name=comment.user_name %}On {{ date }}, {{ name }} wrote:{% endblocktrans %}
+      {% else %}
+        {% blocktrans with date=comment.submit_date %}On {{ date }}:{% endblocktrans %}
       {% endif %}
     </dt>
     <dd class="{% if comment.user == object.user %}requester{% elif comment.user.is_staff %}moderator{% endif %}">
