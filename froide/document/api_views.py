@@ -4,14 +4,16 @@ from django.db.models import (
 
 from rest_framework import serializers, permissions, viewsets
 
-from filingcabinet.api_views import (
+from filingcabinet.api_serializers import (
     DocumentSerializer as FCDocumentSerializer,
     PageSerializer as FCPageSerializer,
     DocumentCollectionSerializer as FCDocumentCollectionSerializer,
     UpdateDocumentSerializer,
+    PagesMixin
+)
+from filingcabinet.api_views import (
     DocumentViewSet as FCDocumentViewSet,
     DocumentCollectionViewSet as FCDocumentCollectionViewSet,
-    PagesMixin,
     PageAnnotationViewSet as FCPageAnnotationViewSet,
 )
 from filingcabinet.models import Page, PageAnnotation
@@ -112,7 +114,7 @@ class DocumentViewSet(FCDocumentViewSet):
     }
     permission_classes = (AllowedOrReadOnly,)
 
-    def get_queryset(self):
+    def get_base_queryset(self):
         return get_document_read_qs(self.request)
 
 
