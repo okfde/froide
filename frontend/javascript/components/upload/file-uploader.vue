@@ -1,8 +1,14 @@
 <template>
   <div>
-    <div ref="uppy"></div>
+    <div ref="uppy" />
     <template v-if="formFields">
-      <input v-for="upload in uploads" type="hidden" name="upload" :value="upload" :key="upload"/>
+      <input
+        v-for="upload in uploads"
+        :key="upload"
+        type="hidden"
+        name="upload"
+        :value="upload"
+      >
     </template>
   </div>
 </template>
@@ -16,11 +22,10 @@ import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
 
 import I18nMixin from '../../lib/i18n-mixin'
-import {postData} from '../../lib/api.js'
 
 
 export default {
-  name: 'file-uploader',
+  name: 'FileUploader',
   mixins: [I18nMixin],
   props: {
     config: {
@@ -34,7 +39,8 @@ export default {
     },
     allowedFileTypes: {
       type: Array,
-      required: false
+      required: false,
+      default: null
     },
     autoProceed: {
       type: Boolean,
