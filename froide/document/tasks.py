@@ -1,26 +1,33 @@
+from django.contrib.auth import get_user_model
+
 from froide.celery import app as celery_app
-from froide.upload.models import Upload
 
-from filingcabinet.tasks import process_document_task
+from .models import DocumentCollection
+from .services import UploadDocumentStorer
 
-from .models import Document
+User = get_user_model()
 
 
-@celery_app.task(name='froide.document.tasks.move_upload_to_document')
-def move_upload_to_document(doc_id, upload_id):
+@celery_app.task(name='froide.document.tasks.store_document_uploads')
+def store_document_upload(upload_urls, user_id, form_data, collection_id):
     try:
-        doc = Document.objects.get(pk=doc_id)
-    except Document.DoesNotExist:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
         return
 
-    try:
-        upload = Upload.objects.get(pk=upload_id)
-    except Upload.DoesNotExist:
-        return
+    collection = None
+    if collection_id:
+        try:
+            collection = DocumentCollection.objects.get(id=collection_id)
+        except DocumentCollection.DoesNotExist:
+            pass
 
-    file = upload.get_file()
-    if file:
-        doc.pdf_file.save(upload.filename, file, save=True)
-        process_document_task.delay(doc.pk)
-    upload.finish()
-    upload.delete()
+    storer = UploadDocumentStorer(
+        user,
+        collection=collection,
+        public=form_data['public'],
+        tags=form_data['tags']
+    )
+
+    for upload_url in upload_urls:
+        storer.create_from_upload_url(upload_url)

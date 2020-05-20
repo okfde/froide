@@ -117,7 +117,7 @@ def upload_documents(request):
             doc_count = form.save(request.user)
             messages.add_message(
                 request, messages.SUCCESS,
-                _('%s documents were uploaded successfully.') % doc_count
+                _('%s file(s) uploaded successfully.') % doc_count
             )
             return redirect(request.get_full_path())
     else:
