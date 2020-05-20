@@ -5,11 +5,12 @@ from filingcabinet.admin import (
     DocumentBaseAdmin, PageAdmin, PageAnnotationAdmin,
     DocumentCollectionBaseAdmin,
     CollectionDocumentBaseAdmin,
-    DocumentPortalAdmin
+    CollectionDirectoryAdmin,
+    DocumentPortalAdmin,
 )
 from filingcabinet.models import (
     Page, PageAnnotation, CollectionDocument,
-    DocumentPortal
+    DocumentPortal, CollectionDirectory
 )
 
 from froide.helper.admin_utils import (
@@ -79,3 +80,4 @@ admin.site.register(PageAnnotation, CustomPageAnnotationAdmin)
 admin.site.register(DocumentCollection, DocumentCollectionAdmin)
 admin.site.register(CollectionDocument, CollectionDocumentAdmin)
 admin.site.register(DocumentPortal, DocumentPortalAdmin)
+admin.site.register(CollectionDirectory, CollectionDirectoryAdmin)
