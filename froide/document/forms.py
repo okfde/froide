@@ -1,11 +1,9 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django.db import transaction
 from django.conf import settings
 
 from taggit.forms import TagField, TagWidget
 
-from froide.upload.models import Upload
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from .tasks import store_document_upload
