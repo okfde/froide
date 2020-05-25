@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.contrib.auth import get_user_model
 
 from rest_framework import serializers, viewsets, mixins, status, throttling
@@ -25,23 +25,15 @@ from .models import FoiRequest, FoiMessage, FoiAttachment
 from .services import CreateRequestService
 from .validators import clean_reference
 from .utils import check_throttle
-from .auth import can_read_foirequest_authenticated
+from .auth import (
+    can_read_foirequest_authenticated, get_read_foirequest_queryset,
+    get_read_foimessage_queryset, get_read_foiattachment_queryset
+)
 from .documents import FoiRequestDocument
 from .filters import FoiRequestFilterSet
 
 
 User = get_user_model()
-
-
-def filter_foirequests(user, token):
-    vis_filter = Q(visibility=FoiRequest.VISIBLE_TO_PUBLIC)
-    if user.is_authenticated:
-        # Either not OAuth or OAuth and valid token
-        if not token and user.is_superuser:
-            return FoiRequest.objects.all()
-        if not token or token.is_valid(['read:request']):
-            vis_filter |= Q(user=user)
-    return FoiRequest.objects.filter(vis_filter)
 
 
 def filter_by_user_queryset(request):
@@ -145,20 +137,8 @@ class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = FoiAttachmentFilter
 
     def get_queryset(self):
-        user = self.request.user
-        token = self.request.auth
-
-        vis_filter = Q(
-            belongs_to__request__visibility=FoiRequest.VISIBLE_TO_PUBLIC,
-            approved=True
-        )
-
-        if user.is_authenticated:
-            if not token and user.is_superuser:
-                return self.optimize_query(FoiAttachment.objects.all())
-            if not token or token.is_valid(['read:request']):
-                vis_filter |= Q(belongs_to__request__user=user)
-        return self.optimize_query(FoiAttachment.objects.filter(vis_filter))
+        qs = get_read_foiattachment_queryset(self.request)
+        return self.optimize_query(qs)
 
     def optimize_query(self, qs):
         return qs.prefetch_related(
@@ -214,9 +194,10 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_redacted_subject(self, obj):
         request = self.context['request']
-        token = request.auth
 
-        if self.can_see_attachment(obj.request, request, token):
+        if can_read_foirequest_authenticated(
+            obj.request, request, allow_code=False
+        ):
             show, hide = obj.subject, obj.subject_redacted
         else:
             show, hide = obj.subject_redacted, obj.subject
@@ -224,62 +205,51 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_redacted_content(self, obj):
         request = self.context['request']
-        token = request.auth
 
-        if self.can_see_attachment(obj.request, request, token):
+        if can_read_foirequest_authenticated(
+            obj.request, request, allow_code=False
+        ):
             show, hide = obj.plaintext, obj.plaintext_redacted
         else:
             show, hide = obj.plaintext_redacted, obj.plaintext
         return list(get_differences(show, hide))
 
     def get_attachments(self, obj):
-        request = self.context['request']
-        token = request.auth
-
-        atts = obj.foiattachment_set.all()
-        if not self.can_see_attachment(obj.request, request, token):
-            atts = atts.filter(approved=True)
         serializer = FoiAttachmentSerializer(
-            atts,
+            obj.visible_attachments,  # already filtered by prefetch
             many=True,
             context={'request': self.context['request']}
         )
         return serializer.data
-
-    def can_see_attachment(self, foirequest, request, token):
-        allowed = can_read_foirequest_authenticated(
-            foirequest, request, allow_code=False
-        )
-        if allowed:
-            if token and not token.is_valid(['read:request']):
-                return False
-            return True
-        return False
 
 
 class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FoiMessageSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        token = self.request.auth
-
-        vis_filter = Q(request__visibility=FoiRequest.VISIBLE_TO_PUBLIC)
-
-        if user.is_authenticated:
-            if not token and user.is_superuser:
-                return self.optimize_query(FoiMessage.objects.all())
-            if not token or token.is_valid(['read:request']):
-                vis_filter |= Q(request__user=user)
-        return self.optimize_query(FoiMessage.objects.filter(vis_filter))
+        qs = get_read_foimessage_queryset(self.request).order_by()
+        return self.optimize_query(qs)
 
     def optimize_query(self, qs):
-        return qs.prefetch_related(
-            'request',
-            'request__user',
-            'sender_user',
-            'foiattachment_set'
+        return optimize_message_queryset(self.request, qs)
+
+
+def optimize_message_queryset(request, qs):
+    atts = get_read_foiattachment_queryset(
+        request,
+        queryset=FoiAttachment.objects.filter(belongs_to__in=qs)
+    )
+    return qs.prefetch_related(
+        'request',
+        'request__user',
+        'sender_user',
+        'sender_public_body',
+        Prefetch(
+            'foiattachment_set',
+            queryset=atts,
+            to_attr='visible_attachments'
         )
+    )
 
 
 class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
@@ -354,10 +324,19 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
     public_body = PublicBodySerializer(read_only=True)
     law = FoiLawSerializer(read_only=True)
-    messages = FoiMessageSerializer(read_only=True, many=True)
+    messages = serializers.SerializerMethodField()
 
     class Meta(FoiRequestListSerializer.Meta):
         fields = FoiRequestListSerializer.Meta.fields + ('messages',)
+
+    def get_messages(self, obj):
+        qs = optimize_message_queryset(
+            self.context['request'], FoiMessage.objects.filter(request=obj)
+        )
+        return FoiMessageSerializer(
+            qs, read_only=True, many=True,
+            context=self.context
+        ).data
 
 
 class MakeRequestSerializer(serializers.Serializer):
@@ -506,9 +485,8 @@ class FoiRequestViewSet(mixins.CreateModelMixin,
             return FoiRequestListSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        token = self.request.auth
-        return self.optimize_query(filter_foirequests(user, token))
+        qs = get_read_foirequest_queryset(self.request)
+        return self.optimize_query(qs)
 
     def optimize_query(self, qs):
         extras = ()

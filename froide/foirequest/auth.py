@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from django.db.models import Q
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.urls import reverse
 from django.conf import settings
@@ -9,9 +10,44 @@ from crossdomainmedia import CrossDomainMediaAuth
 from froide.helper.auth import (
     can_read_object, can_write_object,
     can_manage_object, has_authenticated_access,
+    get_read_queryset
 )
 
-from .models import FoiRequest
+from .models import FoiRequest, FoiMessage, FoiAttachment
+
+
+def get_read_foirequest_queryset(request):
+    return get_read_queryset(
+        FoiRequest.objects.all(), request,
+        has_team=True,
+        public_q=Q(visibility=FoiRequest.VISIBLE_TO_PUBLIC),
+        scope='read:request'
+    )
+
+
+def get_read_foimessage_queryset(request):
+    return get_read_queryset(
+        FoiMessage.objects.all(), request,
+        has_team=True,
+        public_q=Q(request__visibility=FoiRequest.VISIBLE_TO_PUBLIC),
+        scope='read:request',
+        fk_path='request'
+    )
+
+
+def get_read_foiattachment_queryset(request, queryset=None):
+    if queryset is None:
+        queryset = FoiAttachment.objects.all()
+    return get_read_queryset(
+        queryset, request,
+        has_team=True,
+        public_q=Q(
+            belongs_to__request__visibility=FoiRequest.VISIBLE_TO_PUBLIC,
+            approved=True
+        ),
+        scope='read:request',
+        fk_path='belongs_to__request'
+    )
 
 
 @lru_cache()

@@ -91,11 +91,14 @@ def can_access_object(verb, obj, request):
 
 
 def get_read_queryset(qs, request, has_team=False, public_field=None,
-                      scope=None):
+                      public_q=None, scope=None, fk_path=None):
     user = request.user
     filters = None
     if public_field is not None:
         filters = Q(**{public_field: True})
+        result_qs = qs.filter(filters)
+    elif public_q is not None:
+        filters = public_q
         result_qs = qs.filter(filters)
     else:
         result_qs = qs.none()
@@ -122,7 +125,7 @@ def get_read_queryset(qs, request, has_team=False, public_field=None,
     if has_team:
         teams = Team.objects.get_for_user(user)
 
-    user_filter = get_user_filter(request, teams=teams)
+    user_filter = get_user_filter(request, teams=teams, fk_path=fk_path)
     if filters is None:
         filters = user_filter
     else:
@@ -132,7 +135,7 @@ def get_read_queryset(qs, request, has_team=False, public_field=None,
 
 
 def get_write_queryset(qs, request, has_team=False,
-                       user_write_filter=None, scope=None):
+                       user_write_filter=None, scope=None, fk_path=None):
     user = request.user
 
     if not user.is_authenticated:
@@ -161,7 +164,7 @@ def get_write_queryset(qs, request, has_team=False,
     if has_team:
         teams = Team.objects.get_editor_owner_teams(user)
 
-    user_filter = get_user_filter(request, teams=teams)
+    user_filter = get_user_filter(request, teams=teams, fk_path=fk_path)
     if filters is None:
         filters = user_filter
     else:
@@ -169,12 +172,19 @@ def get_write_queryset(qs, request, has_team=False,
     return qs.filter(filters)
 
 
-def get_user_filter(request, teams=None):
+def make_q(lookup, value, fk_path=None):
+    path = lookup
+    if fk_path is not None:
+        path = '{}__{}'.format(fk_path, lookup)
+    return Q(**{path: value})
+
+
+def get_user_filter(request, teams=None, fk_path=None):
     user = request.user
-    filter_arg = Q(user=user)
+    filter_arg = make_q('user', user, fk_path=fk_path)
     if teams:
         # or their team
-        filter_arg |= Q(team__in=teams)
+        filter_arg |= make_q('team__in', teams, fk_path=fk_path)
     return filter_arg
 
 

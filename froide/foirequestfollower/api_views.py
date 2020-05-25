@@ -13,7 +13,7 @@ from oauth2_provider.contrib.rest_framework import TokenHasScope
 from froide.foirequest.models.request import (
     FoiRequest, get_absolute_domain_short_url
 )
-from froide.foirequest.api_views import filter_foirequests
+from froide.foirequest.auth import get_read_foirequest_queryset
 from froide.helper.api_utils import CustomLimitOffsetPagination
 
 from .models import FoiRequestFollower
@@ -54,8 +54,7 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
         """
 
         user = self.context['view'].request.user
-        token = self.context['view'].request.auth
-        qs = filter_foirequests(user, token)
+        qs = get_read_foirequest_queryset(self.context['view'].request)
         try:
             value = qs.get(id=value.id)
         except FoiRequest.DoesNotExist:
@@ -159,7 +158,7 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
             raise Exception('Bad call to foirequest queryset')
         user = self.request.user
         token = self.request.auth
-        qs = filter_foirequests(user, token)
+        qs = get_read_foirequest_queryset(self.request)
         if requests is not None:
             qs = qs.filter(id__in=requests)
         if user.is_authenticated and (
