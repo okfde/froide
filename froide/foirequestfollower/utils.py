@@ -37,7 +37,10 @@ def add_comment_updates(updates, since):
         except FoiMessage.DoesNotExist:
             continue
 
-        time = formats.date_format(comment.submit_date, "TIME_FORMAT")
+        time = formats.date_format(
+            timezone.localtime(comment.submit_date),
+            "TIME_FORMAT"
+        )
         updates[message.request].append((
             comment.submit_date,
             _("%(time)s: New comment by %(name)s") % {
@@ -55,7 +58,10 @@ def add_event_updates(updates, since):
             continue
         # if event.request_id not in requests:
         #     requests[event.request_id] = event.request
-        time = formats.date_format(event.timestamp, "TIME_FORMAT")
+        time = formats.date_format(
+            timezone.localtime(event.timestamp),
+            "TIME_FORMAT"
+        )
         updates[event.request].append((
             event.timestamp,
             _("%(time)s: %(text)s") % {
