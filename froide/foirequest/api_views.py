@@ -215,6 +215,12 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         return list(get_differences(show, hide))
 
     def get_attachments(self, obj):
+        if not hasattr(obj, 'visible_attachments'):
+            obj.visible_attachments = get_read_foiattachment_queryset(
+                self.context['request'],
+                queryset=FoiAttachment.objects.filter(belongs_to=obj)
+            )
+
         serializer = FoiAttachmentSerializer(
             obj.visible_attachments,  # already filtered by prefetch
             many=True,
