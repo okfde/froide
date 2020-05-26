@@ -1,6 +1,4 @@
 from django.conf.urls import url, include
-from django.conf import settings
-from django.urls import path
 
 from .views import (
     AccountView,
@@ -9,10 +7,9 @@ from .views import (
     new_terms, logout, login, SignupView, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
-    create_export, download_export, ExportFileDetailView,
+    create_export, download_export,
     CustomPasswordResetConfirmView
 )
-from .export import EXPORT_MEDIA_PREFIX
 from .import oauth_urls
 
 urlpatterns = [
@@ -42,18 +39,4 @@ urlpatterns = [
         name='account-create_export'),
     url(r'^export/download/$', download_export,
         name='account-download_export'),
-]
-
-MEDIA_PATH = settings.MEDIA_URL
-# Split off domain and leading slash
-if MEDIA_PATH.startswith('http'):
-    MEDIA_PATH = MEDIA_PATH.split('/', 3)[-1]
-else:
-    MEDIA_PATH = MEDIA_PATH[1:]
-
-
-urlpatterns += [
-    path('%s%s/<uuid:token>.zip' % (
-        MEDIA_PATH, EXPORT_MEDIA_PREFIX
-    ), ExportFileDetailView.as_view(), name='account-download_export_token')
 ]
