@@ -11,19 +11,21 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from crossdomainmedia import CrossDomainMediaAuth
+
 from froide.helper.api_utils import get_dict
 
 from .utils import send_mail_user
 from .tasks import start_export_task
 
 PURPOSE = 'dataexport'
-MEDIA_PREFIX = 'export'
+EXPORT_MEDIA_PREFIX = 'export'
 EXPORT_MAX_AGE = timedelta(days=7)
 EXPORT_LIMIT = timedelta(hours=6)
 
 
 def get_path(token):
-    return os.path.join(MEDIA_PREFIX, '{}.zip'.format(token))
+    return os.path.join(EXPORT_MEDIA_PREFIX, '{}.zip'.format(token))
 
 
 class ExportRegistry:
@@ -55,7 +57,13 @@ def request_export(user):
     return None
 
 
-def get_export_url(user, access_token=None):
+def get_export_access_token_by_token(token_uuid):
+    from froide.accesstoken.models import AccessToken
+
+    return AccessToken.objects.get_by_token(token_uuid, purpose=PURPOSE)
+
+
+def get_export_access_token(user, access_token=None):
     from froide.accesstoken.models import AccessToken
 
     if access_token is None:
@@ -72,7 +80,7 @@ def get_export_url(user, access_token=None):
     if not default_storage.exists(path):
         return False
 
-    return settings.MEDIA_URL + path
+    return access_token
 
 
 def delete_export(token):
@@ -261,3 +269,41 @@ def export_user_data(user):
             ],
         }).encode('utf-8')
     )
+
+
+class ExportCrossDomainMediaAuth(CrossDomainMediaAuth):
+    '''
+    Create your own custom CrossDomainMediaAuth class
+    and implement at least these methods
+    '''
+    TOKEN_MAX_AGE_SECONDS = 60
+    SITE_URL = settings.SITE_URL
+    DEBUG = False
+
+    def is_media_public(self):
+        '''
+        Always False
+        '''
+        return False
+
+    def has_perm(self, request):
+        ctx = self.context
+        obj = ctx['object']
+        return obj.user == request.user
+
+    def get_auth_url(self):
+        '''
+        Give URL path to authenticating view
+        for the media described in context
+        '''
+        obj = self.context['object']
+        return reverse('account-download_export_token', kwargs={
+            'token': obj.token
+        })
+
+    def get_media_file_path(self):
+        '''
+        Return the URL path relative to MEDIA_ROOT for debug mode
+        '''
+        obj = self.context['object']
+        return get_path(obj.token)

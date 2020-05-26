@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import Http404
 from django.contrib import auth
-from django.views.generic import FormView
+from django.views.generic import DetailView, FormView
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -15,6 +15,8 @@ from django.utils import formats, timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, RedirectView
+
+from crossdomainmedia import CrossDomainMediaMixin
 
 from froide.foirequest.models import FoiRequest, FoiEvent
 from froide.foirequest.services import ActivatePendingRequestService
@@ -27,7 +29,10 @@ from .forms import (
 )
 from .services import AccountService
 from .utils import start_cancel_account_process
-from .export import get_export_url, request_export
+from .export import (
+    request_export, ExportCrossDomainMediaAuth, get_export_access_token,
+    get_export_access_token_by_token
+)
 
 
 class AccountView(RedirectView):
@@ -468,7 +473,26 @@ def create_export(request):
 
 @login_required
 def download_export(request):
-    url = get_export_url(request.user)
-    if not url:
+    access_token = get_export_access_token(request.user)
+    if not access_token:
         return redirect(reverse('account-settings') + '#export')
-    return redirect(url)
+
+    mauth = ExportCrossDomainMediaAuth({'object': access_token})
+    return redirect(mauth.get_full_media_url(authorized=True))
+
+
+class ExportFileDetailView(LoginRequiredMixin, CrossDomainMediaMixin, DetailView):
+    '''
+    Add the CrossDomainMediaMixin
+    and set your custom media_auth_class
+    '''
+    media_auth_class = ExportCrossDomainMediaAuth
+
+    def get_object(self):
+        access_token = get_export_access_token_by_token(self.kwargs['token'])
+        if not access_token:
+            raise Http404
+        return access_token
+
+    def render_to_response(self, context):
+        return super().render_to_response(context)

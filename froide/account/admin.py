@@ -2,7 +2,6 @@ from django.db.models import Count
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.contrib import admin
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.admin import helpers
@@ -14,7 +13,7 @@ from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 
 from .models import User, TaggedUser, UserTag, AccountBlacklist
 from .services import AccountService
-from .export import get_export_url
+from .export import get_export_access_token
 from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
 from .utils import (
     delete_all_unexpired_sessions_for_user, cancel_user,
@@ -218,14 +217,11 @@ class UserAdmin(DjangoUserAdmin):
         if not queryset:
             return
         export_user = queryset[0]
-        url = get_export_url(export_user)
-        if url:
-            message = format_html(
-                '<a href="{}">{}</a>',
-                url,
-                _("Download export of user '{}'").format(export_user)
+        access_token = get_export_access_token(export_user)
+        if access_token:
+            self.message_user(
+                request, _("Download export of user '{}' is ready.").format(export_user)
             )
-            self.message_user(request, message)
             return
 
         start_export_task.delay(export_user.id, notification_user_id=request.user.id)
@@ -233,7 +229,7 @@ class UserAdmin(DjangoUserAdmin):
             export_user
         ))
         return None
-    export_user_data.short_description = _('Start export of / download user data')
+    export_user_data.short_description = _('Start export of user data')
 
 
 class AccountBlacklistAdmin(admin.ModelAdmin):

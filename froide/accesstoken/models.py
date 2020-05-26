@@ -37,14 +37,20 @@ class AccessTokenManager(models.Manager):
         except AccessToken.DoesNotExist:
             return None
 
-    def get_user_by_token(self, token, purpose=None):
+    def get_by_token(self, token, purpose=None):
         try:
             return AccessToken.objects.get(
                 token=token,
                 purpose=purpose
-            ).user
+            )
         except AccessToken.DoesNotExist:
             return None
+
+    def get_user_by_token(self, token, purpose=None):
+        access_token = self.get_by_token(token, purpose=purpose)
+        if access_token:
+            return access_token.user
+        return None
 
 
 class AccessToken(models.Model):
