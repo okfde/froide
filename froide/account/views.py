@@ -481,7 +481,7 @@ def download_export(request):
     return redirect(mauth.get_full_media_url(authorized=True))
 
 
-class ExportFileDetailView(LoginRequiredMixin, CrossDomainMediaMixin, DetailView):
+class ExportFileDetailView(CrossDomainMediaMixin, DetailView):
     '''
     Add the CrossDomainMediaMixin
     and set your custom media_auth_class
