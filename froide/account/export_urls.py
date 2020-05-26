@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import re_path
 
 from .export import EXPORT_MEDIA_PREFIX
 from .views import ExportFileDetailView
@@ -13,7 +13,7 @@ else:
 
 
 urlpatterns = [
-    path('%s%s/<uuid:token>.zip' % (
+    re_path(r'%s%s/(?P<token>[0-9a-f-]+)\.zip$' % (
         MEDIA_PATH, EXPORT_MEDIA_PREFIX
     ), ExportFileDetailView.as_view(), name='account-download_export_token')
 ]
