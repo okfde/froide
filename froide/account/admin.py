@@ -11,7 +11,7 @@ from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
 from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 
-from .models import User, TaggedUser, UserTag, AccountBlacklist
+from .models import User, TaggedUser, UserTag, AccountBlacklist, UserPreference
 from .services import AccountService
 from .export import get_export_access_token
 from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
@@ -236,7 +236,19 @@ class AccountBlacklistAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class UserPreferenceAdmin(admin.ModelAdmin):
+    raw_id_fields = ('user',)
+    list_display = ('key', 'user', 'timestamp')
+    search_fields = ('key',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.select_related('user')
+        return qs
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(TaggedUser, TaggedUserAdmin)
 admin.site.register(UserTag, UserTagAdmin)
 admin.site.register(AccountBlacklist, AccountBlacklistAdmin)
+admin.site.register(UserPreference, UserPreferenceAdmin)

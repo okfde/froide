@@ -3,6 +3,7 @@ import os
 import re
 
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -326,3 +327,49 @@ class AccountBlacklist(models.Model):
             if match:
                 return True
         return False
+
+
+class UserPreferenceManager(models.Manager):
+    def get_preference(self, user, key):
+        try:
+            return self.get_queryset().get(
+                user=user, key=key
+            ).value
+        except UserPreference.DoesNotExist:
+            return None
+
+    def get_preferences(self, user, key_prefix=None):
+        condition = {}
+        if key_prefix:
+            condition = {'key__startswith': key_prefix}
+        return {
+            x.key: x.value for x in
+            self.get_queryset().filter(
+                user=user,
+                **condition
+            )
+        }
+
+
+class UserPreference(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    key = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now=True)
+    value = JSONField()
+
+    objects = UserPreferenceManager()
+
+    class Meta:
+        verbose_name = _('User preference')
+        verbose_name_plural = _('User preferences')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'key'],
+                name='unique_user_preference_key'
+            )
+        ]
+
+    def __str__(self):
+        return '{} ({})'.format(
+            self.key, self.user
+        )
