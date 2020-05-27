@@ -22,7 +22,7 @@
 <form action="" method="post">
   {% csrf_token %}
   {% render_form form %}
-  <file-uploader :config="{{ config }}" :allowed-file-types='["application/pdf","application/zip"]' class="document-upload mb-3 mt-3"></file-uploader>
+  <file-uploader :config="{{ config }}" :allowed-file-types='["application/pdf","application/zip","application/x-zip","application/octet-stream","application/x-zip-compressed"]' class="document-upload mb-3 mt-3"></file-uploader>
   <div class="mt-3">
     <button type="submit" class="btn btn-lg btn-primary">
       {% trans "Create documents" %}
