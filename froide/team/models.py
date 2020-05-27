@@ -32,6 +32,15 @@ class TeamMembership(models.Model):
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'team'],
+                condition=models.Q(user__isnull=False),
+                name='unique_user_team'
+            )
+        ]
+
     def __str__(self):
         return '%s in %s' % (self.user, self.team)
 
