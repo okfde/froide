@@ -28,7 +28,7 @@ from .forms import (
     UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm
 )
 from .services import AccountService
-from .utils import start_cancel_account_process
+from .utils import start_cancel_account_process, make_account_private
 from .export import (
     request_export, ExportCrossDomainMediaAuth, get_export_access_token,
     get_export_access_token_by_token
@@ -367,6 +367,21 @@ def change_user(request):
 
     return account_settings(request,
                             context={"change_form": form}, status=400)
+
+
+@require_POST
+@login_required
+def make_user_private(request):
+    if request.user.private:
+        messages.add_message(request, messages.ERROR,
+                _('Your account is already private.'))
+        return redirect('account-settings')
+
+    make_account_private(request.user)
+
+    messages.add_message(request, messages.SUCCESS,
+            _('Your account has been made private. The changes are being applied now.'))
+    return redirect('account-settings')
 
 
 def change_email(request):

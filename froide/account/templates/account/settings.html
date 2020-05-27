@@ -8,10 +8,8 @@
 {% block app_body %}
 
 <div class="row">
-  <div class="col-lg-8">
+  <div class="col-lg-12">
     <h2>{% trans "Account Settings" %}</h2>
-  </div>
-  <div class="col-lg-4">
     <a href="{% url 'account-show' %}" class="btn btn-secondary pull-right">
       {% trans "back to your account" %}
     </a>
@@ -19,8 +17,29 @@
 </div>
 
 <div class="row">
-  <div class="col-lg-12">
-    <dl>
+  <div class="col-md-4">
+    <div class="list-group sticky-top">
+      <a href="#general" class="list-group-item list-group-item-action">
+        {% trans "General settings" %}
+      </a>
+      <a href="#change-password-now" class="list-group-item list-group-item-action">
+        {% trans "Change password" %}
+      </a>
+      {% block post_password_menu %}{% endblock %}
+      <a href="#export" class="list-group-item list-group-item-action">
+        {% trans "Data export" %}
+      </a>
+      <a href="#delete-account-section" class="list-group-item list-group-item-action">
+        {% trans "Account deletion" %}
+      </a>
+      <a href="#developer" class="list-group-item list-group-item-action">
+        {% trans "Developer" %}
+      </a>
+    </div>
+  </div>
+  <div class="col-md-8">
+
+    <dl id="general">
       <dt>
         {% blocktrans %}Your name:{% endblocktrans %}
       </dt>
@@ -39,14 +58,34 @@
       <dd>
       {% if user.private %}
         <i class="fa fa-lock"></i>
-        {% blocktrans %}Your name is hidden on the web (this page is only visible to you).{% endblocktrans %}
+        {% blocktrans %}Your name is hidden on the web.{% endblocktrans %}
       {% else %}
         {% blocktrans %}Your name is visible.{% endblocktrans %}
+        <a class="btn btn-sm btn-secondary pull-right" data-toggle="collapse" href="#make-private">{% trans "Make my account private" %}</a>
+        <div class="collapse mt-3" id="make-private">
+          <div class="card card-body">
+            <form method="post" action="{% url 'account-make_user_private' %}">
+              {% csrf_token %}
+              <p>{% blocktrans %}
+                If you changed your mind about the public visibility of your account name, we can change your account to <b>private</b>. This will automatically remove your name where it is currently publicly visible.
+              {% endblocktrans %}</p>
+              <div class="alert alert-danger mt-3 text-center">
+                {% blocktrans %}This account-wide setting <b>cannot be undone</b>.<br/> Your account will <b>stay private</b> once you set it to private.{% endblocktrans %}
+              </div>
+              <p class="text-muted">
+                {% trans "You are still responsible for redacting attachments when they contain your personal information." %}
+              </p>
+              <button type="submit" class="btn btn-danger pull-right">
+                {% trans "Make account private" %}
+              </button>
+            </form>
+          </div>
+        </div>
       {% endif %}
       </dd>
     </dl>
 
-    <div id="change-user-now" class="card mb-3">
+    <div id="change-user-now" class="card mb-3 mt-5">
       <h5 class="card-header">
         {% trans "Change details" %}
       </h5>
@@ -116,13 +155,19 @@
       </div>
     </div>
 
-    {% if froide.api_activated %}
-      <div class="text-muted text-right mt-3">
-        <a class="btn btn-sm btn-light" href="{% url 'oauth2_provider:list' %}">
+    <div id="developer" class="card mt-5">
+      <h5 class="card-header">
+        {% blocktrans %}Developer{% endblocktrans %}
+      </h5>
+      <div class="card-body">
+        {% if froide.api_activated %}
+        <a href="{% url 'oauth2_provider:list' %}">
           {% trans "Your OAuth Applications" %}
         </a>
+        {% endif %}
       </div>
-    {% endif %}
+    </div>
+
   </div>
 </div>
 {% endblock %}

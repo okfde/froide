@@ -4,7 +4,6 @@ from django.utils import translation
 from froide.celery import app as celery_app
 
 from .models import User
-from .utils import send_template_mail
 
 
 @celery_app.task
@@ -68,6 +67,18 @@ def merge_accounts_task(old_user_id, new_user_id):
 
 
 @celery_app.task
+def make_account_private_task(user_id):
+    from . import account_made_private
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return
+
+    account_made_private.send(sender=User, user=user)
+
+
+@celery_app.task
 def start_export_task(user_id, notification_user_id=None):
     from .export import create_export
 
@@ -94,6 +105,8 @@ def chunker(seq, size):
 
 @celery_app.task
 def send_bulk_mail(user_ids, subject, body):
+    from .utils import send_template_mail
+
     chunks = chunker(user_ids, 200)
     for chunk in chunks:
         users = User.objects.filter(id__in=chunk)

@@ -9,8 +9,9 @@ from froide.helper.email_sending import (
     send_mail, mail_middleware_registry, mail_registry
 )
 
-from . import account_canceled, account_merged, account_made_private
+from . import account_canceled, account_merged
 from .models import User
+from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r'(\d{5})\s+(.*)')
 TRAILING_COMMA = re.compile(r'\s*,\s*$')
@@ -82,7 +83,7 @@ def make_account_private(user):
     user.private = True
     user.save()
 
-    account_made_private.send(sender=User, user=user)
+    make_account_private_task.delay(user.id)
 
 
 def merge_accounts(old_user, new_user):
