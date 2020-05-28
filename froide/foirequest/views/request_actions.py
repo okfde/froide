@@ -364,7 +364,11 @@ def publicbody_upload(request, obj_id, code):
         },
         'i18n': {
             'uppy': get_uppy_i18n(),
-            'createResponse': _('Create response now')
+            'createResponse': _('Create response now'),
+            'sureCancel': _(
+                'You have not completed this process. '
+                'Are you sure you want to cancel?'
+            )
         },
         'url': {
             'tusEndpoint': reverse('api:upload-list'),
