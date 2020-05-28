@@ -87,7 +87,8 @@
     {% endif %}
 
     {% block from_address %}
-    <address id="from">{% block from_address_text %}{{ object.real_sender }}{% if object.sender_user.address %}{{ object.sender_user.address }}{% endif %}{% endblock %}
+    <address id="from">{% block from_address_text %}{{ object.real_sender }}
+{% if object.sender_user.address %}{{ object.sender_user.address }}{% endif %}{% endblock %}
       {% block from_address_links %}<a href="mailto:{{ object.sender_email }}">{{ object.sender_email }}</a>
       <a href="{{ object.request.get_absolute_domain_short_url }}">{{ object.request.get_absolute_domain_short_url }}</a>
       {% endblock %}
