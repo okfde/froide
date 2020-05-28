@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-27 13:15+0200\n"
-"PO-Revision-Date: 2020-05-27 13:28+0200\n"
+"POT-Creation-Date: 2020-05-28 17:42+0200\n"
+"PO-Revision-Date: 2020-05-28 17:42+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3127,6 +3127,7 @@ msgid "Unknown"
 msgstr "Unbekannt"
 
 #: froide/foirequest/models/step.py:9
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:20
 #: froide/foirequest/templates/foirequest/show.html:145
 msgid "Request"
 msgstr "Anfrage"
@@ -3313,7 +3314,7 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:29
 #: froide/foirequest/templates/foirequest/account/list_projects.html:31
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:70
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:99
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:100
 #: froide/foirequest/templates/foirequest/snippets/message.html:101
 #: froide/letter/templates/letter/pdf/default.html:24
 #: froide/problem/templates/problem/message_toolbar_item.html:49
@@ -4202,16 +4203,16 @@ msgstr "Via"
 msgid "URL"
 msgstr "URL"
 
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:101
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:102
 #: froide/letter/templates/letter/pdf/default.html:26
 msgid "My reference"
 msgstr "Mein Zeichen"
 
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:110
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:111
 msgid "Subject:"
 msgstr "Betreff:"
 
-#: froide/foirequest/templates/foirequest/pdf/message_letter.html:117
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html:118
 #: froide/foirequest/templatetags/foirequest_tags.py:96
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
@@ -4220,27 +4221,31 @@ msgstr "Mit freundlichen Grüßen"
 #, python-format
 msgid ""
 "\n"
-"  Upload files as <mark>%(name)s</mark> to request “%(title)s” [#%(reqid)s]\n"
+"  File transfer by <mark>%(name)s</mark> for request [#%(reqid)s]\n"
 msgstr ""
 "\n"
-"  Dateien hochladen als <mark>%(name)s</mark> zur Anfrage “%(title)s” [#"
-"%(reqid)s]\n"
+"  Dateiübermittlung als <mark>%(name)s</mark> zur Anfrage [#%(reqid)s]\n"
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:20
-msgid "You can upload large files as a response to this request here."
-msgstr "Sie können hier große Dateien als Antwort zu dieser Anfrage hochladen."
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:22
+#: froide/templates/comments/foirequest/list.html:8
+msgid "Requester"
+msgstr "Anfragesteller/in"
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:23
-msgid "Drag files on the grey area or click \"Search\" to select files."
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:27
+msgid "Please upload files as a response to this request below."
+msgstr "Bitte laden Sie hier Dateien als Antwort zu dieser Anfrage hoch."
+
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:30
+msgid "Drag files on the framed area or click \"Search\" to select files."
 msgstr ""
-"Ziehen Sie Dateien auf die graue Fläche oder klicken Sie auf „Suche“, um "
+"Ziehen Sie Dateien auf die umrandete Fläche oder klicken Sie auf „Suche“, um "
 "Dateien auszuwählen."
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:24
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:31
 msgid "Wait for all files to be uploaded."
 msgstr "Warten Sie bis alle Dateien hochgeladen wurden."
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:25
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:32
 msgid "Click on \"Create response now\" to finish the process."
 msgstr ""
 "Klicken Sie auf „Dateien als Antwort erstellen“ um den Vorgang abzuschließen."
@@ -6636,6 +6641,12 @@ msgstr "%s Dateien wurden erfolgreich hochgeladen. Vielen Dank!"
 msgid "Create response now"
 msgstr "Dateien als Antwort erstellen"
 
+#: froide/foirequest/views/request_actions.py:369
+msgid "You have not completed this process. Are you sure you want to cancel?"
+msgstr ""
+"Sie haben den Prozess noch nicht abgeschlossen. Sind Sie sicher, dass Sie "
+"den Vorgang abbrechen wollen?"
+
 #: froide/foirequestfollower/apps.py:9
 msgid "FOI Request Follower"
 msgstr "Anfrage-Abo"
@@ -8701,10 +8712,6 @@ msgstr ""
 msgid "Post Comment"
 msgstr "Kommentar absenden"
 
-#: froide/templates/comments/foirequest/list.html:8
-msgid "Requester"
-msgstr "Anfragesteller/in"
-
 #: froide/templates/comments/foirequest/list.html:10
 msgid "Moderator"
 msgstr "Moderator"
@@ -9025,6 +9032,11 @@ msgstr "^brief/"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#, fuzzy
+#~| msgid "Requester"
+#~ msgid "R equester"
+#~ msgstr "Anfragesteller/in"
 
 #, python-format
 #~ msgid "%s documents were uploaded successfully."
