@@ -21,16 +21,20 @@
   <dd>“{{ foirequest.title }}” [#{{ foirequest.id }}] ({{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }})</dd>
   <dt>{% trans "Requester" %}</dt>
   <dd>{{ foirequest.user.get_full_name }} &lt;{{ foirequest.secret_address }}&gt;</dd>
+  <dt>{% trans "File transfer" %}</dt>
+  <dd><i class="fa fa-lock" aria-hidden="true"></i> {% trans "The file transfer is transferred securely encrypted." %}</dd>
 </dl>
 
 <p class="lead">
   {% trans "Please upload files as a response to this request below." %}
 </p>
+
 <ol>
   <li>{% trans 'Drag files on the framed area or click "Search" to select files.' %}</li>
   <li>{% trans 'Wait for all files to be uploaded.' %}</li>
   <li>{% trans 'Click on "Create response now" to finish the process.' %}</li>
 </ol>
+
 <form action="" method="post" class="mb-5">
   {% csrf_token %}
   <publicbody-upload class="publicbody-upload" :config="{{ config }}">
