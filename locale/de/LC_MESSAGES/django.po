@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-28 17:42+0200\n"
-"PO-Revision-Date: 2020-05-28 17:42+0200\n"
+"POT-Creation-Date: 2020-05-28 18:10+0200\n"
+"PO-Revision-Date: 2020-05-28 18:11+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -4231,21 +4231,29 @@ msgstr ""
 msgid "Requester"
 msgstr "Anfragesteller/in"
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:27
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:24
+msgid "File transfer"
+msgstr "Datenübertragung"
+
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:25
+msgid "The file transfer is transferred securely encrypted."
+msgstr "Die Datenübertragung findet sicher verschlüsselt statt."
+
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:29
 msgid "Please upload files as a response to this request below."
 msgstr "Bitte laden Sie hier Dateien als Antwort zu dieser Anfrage hoch."
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:30
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:33
 msgid "Drag files on the framed area or click \"Search\" to select files."
 msgstr ""
 "Ziehen Sie Dateien auf die umrandete Fläche oder klicken Sie auf „Suche“, um "
 "Dateien auszuwählen."
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:31
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:34
 msgid "Wait for all files to be uploaded."
 msgstr "Warten Sie bis alle Dateien hochgeladen wurden."
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:32
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:35
 msgid "Click on \"Create response now\" to finish the process."
 msgstr ""
 "Klicken Sie auf „Dateien als Antwort erstellen“ um den Vorgang abzuschließen."
