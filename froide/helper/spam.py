@@ -19,7 +19,11 @@ def suspicious_ip(request):
         return False
     try:
         g = GeoIP2()
-        info = g.country(get_client_ip(request))
+        ip = get_client_ip(request)
+        if ip == '127.0.0.1':
+            # Consider suspicious
+            return True
+        info = g.country(ip)
         if info['country_code'] not in target_countries:
             return True
     except Exception as e:

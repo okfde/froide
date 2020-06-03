@@ -57,6 +57,8 @@ class SiteAdivsor(object):
     def get_site(self, ip):
         if self.sites is None:
             self.update()
+        if ip == '127.0.0.1':
+            return None
         try:
             if self.geoip is None:
                 self.geoip = self.get_geoip()
