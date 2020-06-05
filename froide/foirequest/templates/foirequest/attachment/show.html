@@ -4,6 +4,8 @@
 {% load static %}
 {% load foirequest_tags %}
 
+{% block title %}{% blocktrans with name=attachment.name title=foirequest.title %}{{ name }} in request „{{ title }}“{% endblocktrans %}{% endblock %}
+
 {% block body %}
 <div class="container mt-3 mb-3">
     <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>
