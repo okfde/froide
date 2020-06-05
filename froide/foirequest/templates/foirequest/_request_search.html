@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="row align-items-start">
-    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+    {% if "jurisdiction" in show_filters or form.jurisdiction.field.choices|length > 1 %}
       <div class="col-md-4">
         {{ form.jurisdiction }}
       </div>
