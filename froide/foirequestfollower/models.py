@@ -1,4 +1,5 @@
 import hmac
+import hashlib
 
 from django.db import models
 from django.contrib.postgres.fields import JSONField
@@ -217,7 +218,8 @@ class FoiRequestFollower(models.Model):
         to_sign = [self.email, str(self.request.id), str(self.id)]
         return hmac.new(
             settings.SECRET_KEY.encode('utf-8'),
-            (".".join(to_sign)).encode('utf-8')
+            (".".join(to_sign)).encode('utf-8'),
+            digestmod=hashlib.md5
         ).hexdigest()
 
     def check_and_unfollow(self, check):
