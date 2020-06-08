@@ -36,7 +36,7 @@ def get_selenium(**kwargs):
     options = get_driver_options(driver_name, **kwargs)
     if driver_setting.startswith('http'):
         return webdriver.Remote(
-            browser_name=driver_name, command_executor=driver_url,
+            command_executor=driver_url,
             options=options
         )
     if driver_name.startswith('chrome'):
