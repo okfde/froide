@@ -296,7 +296,7 @@ class ConcreteLawForm(forms.Form):
     def clean(self):
         if self.foirequest.law is None or not self.foirequest.law.meta:
             raise forms.ValidationError(_("Invalid FoI Request for this operation"))
-        indexed_laws = dict([(l.pk, l) for l in self.possible_laws])
+        indexed_laws = dict([(law.pk, law) for law in self.possible_laws])
         if "law" not in self.cleaned_data:
             return
         if self.cleaned_data["law"]:

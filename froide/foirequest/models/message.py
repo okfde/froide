@@ -228,7 +228,7 @@ class FoiMessage(models.Model):
         })
 
     def get_quoted(self):
-        return "\n".join([">%s" % l for l in self.plaintext.splitlines()])
+        return "\n".join([">%s" % x for x in self.plaintext.splitlines()])
 
     def needs_status_input(self):
         return self.request.message_needs_status() == self
