@@ -173,9 +173,9 @@ class FoiLaw(models.Model):
         not_applicable = [('n/a', _("No law can be applied"))]
         if self.meta:
             return (not_applicable + [
-                    (l[0], "%s: %s" % (law.name, l[1]))
+                    (c[0], "%s: %s" % (law.name, c[1]))
                     for law in self.combined.all()
-                    for l in law.get_refusal_reason_choices()[1:]])
+                    for c in law.get_refusal_reason_choices()[1:]])
         else:
             return (not_applicable + [
                     (x, Truncator(x).words(12))
