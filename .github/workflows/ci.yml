@@ -31,7 +31,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
     services:
       postgres:
-        image: postgis/postgis:12
+        image: postgis/postgis:12-3.0
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
