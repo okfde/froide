@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-28 18:10+0200\n"
-"PO-Revision-Date: 2020-05-28 18:11+0200\n"
+"POT-Creation-Date: 2020-06-08 17:07+0200\n"
+"PO-Revision-Date: 2020-06-08 17:10+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -47,7 +47,7 @@ msgstr ""
 "de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
 "</a>"
 
-#: froide/_local_settings.py:10 froide/settings.py:247 froide/settings.py:669
+#: froide/_local_settings.py:10 froide/settings.py:247 froide/settings.py:670
 msgid "German"
 msgstr "Deutsch"
 
@@ -3542,12 +3542,17 @@ msgstr "…an diese IFG-Anfrage:"
 msgid "Redeliver messages"
 msgstr "Nachrichten erneut zustellen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:9
+#: froide/foirequest/templates/foirequest/attachment/show.html:7
+#, python-format
+msgid "%(name)s in request „%(title)s“"
+msgstr "%(name)s in Anfrage „%(title)s“"
+
+#: froide/foirequest/templates/foirequest/attachment/show.html:11
 #, python-format
 msgid "Attachment “%(name)s”"
 msgstr "Anhang „%(name)s“"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:11
+#: froide/foirequest/templates/foirequest/attachment/show.html:13
 #, python-format
 msgid ""
 "\n"
@@ -3560,21 +3565,21 @@ msgstr ""
 "%(title)s</a>“\n"
 "        "
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:18
+#: froide/foirequest/templates/foirequest/attachment/show.html:20
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html:9
 #: froide/foirequest/views/message.py:476
 msgid "Redact"
 msgstr "Schwärzen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:42
+#: froide/foirequest/templates/foirequest/attachment/show.html:44
 msgid "Download original"
 msgstr "Original-Datei herunterladen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:48
+#: froide/foirequest/templates/foirequest/attachment/show.html:50
 msgid "This file cannot be previewed."
 msgstr "Eine Vorschau für diese Datei ist nicht möglich."
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:50
+#: froide/foirequest/templates/foirequest/attachment/show.html:52
 msgid "Download the file here."
 msgstr "Datei hier herunterladen."
 
@@ -5824,7 +5829,8 @@ msgstr "Thema"
 msgid "topics"
 msgstr "Themen"
 
-#: froide/foirequest/views/make_request.py:156 froide/publicbody/models.py:284
+#: froide/foirequest/views/make_request.py:156 froide/publicbody/filters.py:54
+#: froide/publicbody/models.py:284
 msgid "classification"
 msgstr "Behördentyp"
 
@@ -7213,27 +7219,27 @@ msgstr "Komma-separiert und ggf. in \"\""
 msgid "Enter search term"
 msgstr "Suchbegriff eingeben"
 
-#: froide/helper/spam.py:61
+#: froide/helper/spam.py:65
 msgid "If you enter anything in this field your action will be blocked."
 msgstr "Wenn Sie etwas hier eingeben, dann wird die Aktion nicht durchgeführt."
 
-#: froide/helper/spam.py:69
+#: froide/helper/spam.py:73
 msgid "What is three plus four?"
 msgstr "Was ist drei plus vier?"
 
-#: froide/helper/spam.py:106
+#: froide/helper/spam.py:110
 msgid "seven"
 msgstr "sieben"
 
-#: froide/helper/spam.py:107
+#: froide/helper/spam.py:111
 msgid "Failed."
 msgstr "Fehlgeschlagen."
 
-#: froide/helper/spam.py:115
+#: froide/helper/spam.py:119
 msgid "You filled this form out too quickly."
 msgstr "Sie haben das Formular zu schnell ausgefüllt."
 
-#: froide/helper/spam.py:138
+#: froide/helper/spam.py:142
 msgid "Too many actions."
 msgstr "Zu viele Aktionen."
 
@@ -7645,6 +7651,10 @@ msgstr "Behörden"
 #: froide/publicbody/filters.py:18
 msgid "Search public bodies"
 msgstr "Suchen Sie nach Behörden"
+
+#: froide/publicbody/filters.py:51
+msgid "all classifications"
+msgstr "Alle Behördentypen"
 
 #: froide/publicbody/forms.py:20 froide/publicbody/forms.py:45
 msgid "Search for a topic or a public body:"
@@ -8094,6 +8104,10 @@ msgstr "lernen Sie das Gesetz kennen..."
 msgid "Requests in %(name)s"
 msgstr "Anfragen an %(name)s"
 
+#: froide/publicbody/templates/publicbody/list.html:43
+msgid "Public body missing? Propose a new public body!"
+msgstr "Fehlt eine Behörde? Schlagen Sie eine neue Behörde vor!"
+
 #: froide/publicbody/templates/publicbody/propose.html:12
 msgid "Propose a new public body"
 msgstr "Schlagen Sie eine neue Behörde vor"
@@ -8351,31 +8365,31 @@ msgstr "Chinesisch (Kurzzeichen)"
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "Chinesisch (Traditionell, Honk Kong)"
 
-#: froide/settings.py:445
+#: froide/settings.py:446
 msgid "Access to user status"
 msgstr "Kann Sie als Nutzer auf FragDenStaat.de identifizieren"
 
-#: froide/settings.py:446
+#: froide/settings.py:447
 msgid "Read user profile information"
 msgstr "Kann meine Profil-Informationen sehen"
 
-#: froide/settings.py:447
+#: froide/settings.py:448
 msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
-#: froide/settings.py:448
+#: froide/settings.py:449
 msgid "Read your (private) requests"
 msgstr "Kann Ihre (privaten) Anfragen sehen"
 
-#: froide/settings.py:449
+#: froide/settings.py:450
 msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
-#: froide/settings.py:450
+#: froide/settings.py:451
 msgid "Follow/Unfollow requests"
 msgstr "Folge/Entfolge Anfragen"
 
-#: froide/settings.py:451
+#: froide/settings.py:452
 msgid "Read your (private) documents"
 msgstr "Kann Ihre (privaten) Dokumente sehen"
 
