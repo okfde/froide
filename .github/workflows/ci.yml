@@ -46,38 +46,39 @@ jobs:
         ports:
           - "9200:9200"
 
-  runs-on: ubuntu-latest
-  strategy:
-    matrix:
-      python-version: [3.7]
-  steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install system-level dependencies
-      run: sudo apt-get install libxml2-dev libxslt1-dev python-dev gdal-bin libmagic-dev libmagickwand-dev
-    - name: Install dependencies
-      run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements-test.txt
-          pip install -e .
-          yarn install && yarn run build
-    - name: Run in-browser tests
-      run: make uitest
-      env:
-        DATABASE_URL: postgis://postgres:postgres@localhost/froide
-        DJANGO_TEST_SELENIUM_DRIVER: http://localhost:4444#chrome_headless
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-  services:
-    <<: *baseservices
-    selenium:
-      image: selenium/standalone-chrome
-      env:
-        START_XVFB: false
-      ports:
-        - 4444:4444
-      
+  buildui:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install system-level dependencies
+        run: sudo apt-get install libxml2-dev libxslt1-dev python-dev gdal-bin libmagic-dev libmagickwand-dev
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements-test.txt
+            pip install -e .
+            yarn install && yarn run build
+      - name: Run in-browser tests
+        run: make uitest
+        env:
+          DATABASE_URL: postgis://postgres:postgres@localhost/froide
+          DJANGO_TEST_SELENIUM_DRIVER: http://localhost:4444#chrome_headless
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+    services:
+      <<: *baseservices
+      selenium:
+        image: selenium/standalone-chrome
+        env:
+          START_XVFB: false
+        ports:
+          - 4444:4444
+        
