@@ -24,9 +24,8 @@ jobs:
       - name: Run flake8 and tests
         run: make test
         env:
-          DATABASE_URL: postgis://postgres:postgres@postgres/froide
-          DJANGO_TEST_SELENIUM_DRIVER: http://selenium:4444#chrome_headless
-          ELASTICSEARCH_HOST: elasticsearch
+          DATABASE_URL: postgis://postgres:localhost@postgres/froide
+          DJANGO_TEST_SELENIUM_DRIVER: http://localhost:4444#chrome_headless
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
