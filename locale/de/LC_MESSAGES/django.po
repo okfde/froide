@@ -505,12 +505,12 @@ msgid "<< Name Not Public >>"
 msgstr "<< Anfragesteller/in >>"
 
 #: froide/account/models.py:308
-msgid "Blacklist entry"
-msgstr "Blacklist-Eintrag"
+msgid "Blocklist entry"
+msgstr "Blocklist-Eintrag"
 
 #: froide/account/models.py:309
-msgid "Blacklist"
-msgstr "Blacklist"
+msgid "Blocklist"
+msgstr "Blocklist"
 
 #: froide/account/models.py:363
 msgid "User preference"

@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import mail_registry
 
-from .models import User, AccountBlacklist
+from .models import User, AccountBlocklist
 from . import account_activated
 
 
@@ -83,7 +83,7 @@ class AccountService(object):
         for key in ('address', 'organization', 'organization_url'):
             setattr(user, key, data.get(key, ''))
 
-        cls.check_against_blacklist(user)
+        cls.check_against_blocklist(user)
 
         # ensure username is unique
         user.username = username_base
@@ -252,14 +252,14 @@ class AccountService(object):
         )
 
     @classmethod
-    def check_against_blacklist(cls, user, save=True):
-        blacklisted = AccountBlacklist.objects.is_blacklisted(user)
-        if blacklisted:
+    def check_against_blocklist(cls, user, save=True):
+        blocklisted = AccountBlocklist.objects.is_blocklisted(user)
+        if blocklisted:
             user.is_blocked = True
 
             if save:
                 user.save()
-        return blacklisted
+        return blocklisted
 
     def apply_name_redaction(self, content, replacement=''):
         if not self.user.private:

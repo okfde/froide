@@ -513,7 +513,7 @@ class Base(Configuration):
         message_handlers={
             'email': 'froide.foirequest.message_handlers.EmailMessageHandler'
         },
-        recipient_blacklist_regex=None,
+        recipient_blocklist_regex=None,
         max_attachment_size=1024 * 1024 * 10,  # 10 MB
         bounce_enabled=False,
         bounce_max_age=60 * 60 * 24 * 14,  # 14 days

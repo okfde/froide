@@ -24,7 +24,7 @@ from froide.helper.tasks import search_instance_save
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
-RECIPIENT_BLACKLIST = settings.FROIDE_CONFIG.get('recipient_blacklist_regex', None)
+RECIPIENT_BLACKLIST = settings.FROIDE_CONFIG.get('recipient_blocklist_regex', None)
 
 
 def throttle(qs, throttle_config, date_param='first_message'):

@@ -283,30 +283,30 @@ class Application(AbstractApplication):
         return resource_scopes.issubset(provided_scopes)
 
 
-class AccountBlacklistManager(models.Manager):
-    def is_blacklisted(self, user):
+class AccountBlocklistManager(models.Manager):
+    def is_blocklisted(self, user):
         if user.is_blocked:
             return True
 
-        for entry in AccountBlacklist.objects.all():
+        for entry in AccountBlocklist.objects.all():
             match = entry.match_user(user)
             if match:
                 return True
         return False
 
 
-class AccountBlacklist(models.Model):
+class AccountBlocklist(models.Model):
     name = models.CharField(max_length=255, blank=True)
     created = models.DateTimeField(default=timezone.now)
 
     address = models.TextField(blank=True)
     email = models.TextField(blank=True)
 
-    objects = AccountBlacklistManager()
+    objects = AccountBlocklistManager()
 
     class Meta:
-        verbose_name = _('Blacklist entry')
-        verbose_name_plural = _('Blacklist')
+        verbose_name = _('Blocklist entry')
+        verbose_name_plural = _('Blocklist')
 
     def __str__(self):
         return self.name

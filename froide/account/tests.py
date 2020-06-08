@@ -22,7 +22,7 @@ from froide.foirequest.tests import factories
 from .services import AccountService
 from .utils import merge_accounts
 from .admin import UserAdmin
-from .models import AccountBlacklist
+from .models import AccountBlocklist
 
 User = get_user_model()
 Application = get_application_model()
@@ -679,7 +679,7 @@ class AccountTest(TestCase):
         list(command.send_mail(subject, content))
         self.assertEqual(len(mail.outbox), user_count)
 
-    def test_signup_blacklisted(self):
+    def test_signup_blocklisted(self):
         froide_config = settings.FROIDE_CONFIG
         mail.outbox = []
         post = {
@@ -690,7 +690,7 @@ class AccountTest(TestCase):
             'time': (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
         }
 
-        AccountBlacklist.objects.create(
+        AccountBlocklist.objects.create(
             name='Test',
             email='horst\\.porst.*@example.com$'
         )
