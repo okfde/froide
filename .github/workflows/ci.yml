@@ -67,7 +67,7 @@ jobs:
         run: make uitest
         env:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide
-          DJANGO_TEST_SELENIUM_DRIVER: http://localhost:4444#chrome_headless
+          DJANGO_TEST_SELENIUM_DRIVER: http://localhost:4444/wd/hub#chrome_headless
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
