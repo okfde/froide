@@ -309,6 +309,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertIn(self.pb, req.publicbodies.all())
 
 
+@tag('ui', 'slow')
 class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
     SCREEN_SIZE = (400, 800)
     ADDITIONAL_KWARGS = {'window-size': '%s,%s' % SCREEN_SIZE}
