@@ -48,7 +48,13 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
     classification = django_filters.ModelChoiceFilter(
         queryset=Classification.objects.all(),
         to_field_name='slug',
-        widget=forms.HiddenInput(),
+        empty_label=_('all classifications'),
+        widget=forms.Select(
+            attrs={
+                'label': _('classification'),
+                'class': 'form-control'
+            }
+        ),
         method='filter_classification'
     )
 

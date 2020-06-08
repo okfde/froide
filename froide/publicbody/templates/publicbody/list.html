@@ -12,7 +12,7 @@
 {% block search_form_filters %}
   <div class="row">
     {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
-      <div class="col-md-6">
+      <div class="col-md-4">
         {{ form.jurisdiction }}
       </div>
     {% else %}
@@ -20,12 +20,18 @@
     {% endif %}
 
     {% if "category" in show_filters %}
-      <div class="col-md-6">
+      <div class="col-md-4">
         {{ form.category }}
       </div>
     {% else %}
       {{ form.category }}
     {% endif %}
+    {% if "classification" in show_filters %}
+      <div class="col-md-4">
+        {{ form.classification }}
+      </div>
+    {% else %}
+      {{ form.classification }}
+    {% endif %}
   </div>
 {% endblock %}
-

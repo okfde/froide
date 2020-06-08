@@ -53,10 +53,10 @@ class PublicBodySearch(BaseSearchView):
     search_url_name = 'publicbody-list'
 
     show_filters = {
-        'jurisdiction', 'category'
+        'jurisdiction', 'category', 'classification'
     }
     advanced_filters = {
-        'jurisdiction', 'category'
+        'jurisdiction', 'category', 'classification'
     }
     object_template = 'publicbody/snippets/publicbody_item.html'
     has_facets = True
