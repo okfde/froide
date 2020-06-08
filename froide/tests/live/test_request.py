@@ -8,6 +8,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.utils import timezone
+from django.test import tag
 
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -20,6 +21,7 @@ from . import LiveTestMixin, CheckJSErrors
 User = get_user_model()
 
 
+@tag('ui', 'slow')
 class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
     def setUp(self):
         factories.make_world()
