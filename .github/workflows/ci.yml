@@ -24,6 +24,7 @@ jobs:
         env:
           DATABASE_URL: postgis://postgres:postgres@postgres/froide
           DJANGO_TEST_SELENIUM_DRIVER: http://selenium:4444#chrome_headless
+          ELASTICSEARCH_HOST: elasticsearch
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
@@ -41,12 +42,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
-        env:
-          - "discovery.type=single-node"
-          - "cluster.routing.allocation.disk.threshold_enabled=false"
-          - "cluster.routing.allocation.disk.watermark.low=3gb"
-          - "cluster.routing.allocation.disk.watermark.high=2gb"
-          - "cluster.routing.allocation.disk.watermark.flood_stage=1gb"
+        options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
           - "9200:9200"
       selenium:
