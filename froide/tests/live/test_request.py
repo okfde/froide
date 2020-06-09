@@ -8,6 +8,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.utils import timezone
+from django.test import tag
 
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -20,6 +21,7 @@ from . import LiveTestMixin, CheckJSErrors
 User = get_user_model()
 
 
+@tag('ui', 'slow')
 class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
     def setUp(self):
         factories.make_world()
@@ -307,6 +309,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertIn(self.pb, req.publicbodies.all())
 
 
+@tag('ui', 'slow')
 class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
     SCREEN_SIZE = (400, 800)
     ADDITIONAL_KWARGS = {'window-size': '%s,%s' % SCREEN_SIZE}

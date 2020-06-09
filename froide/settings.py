@@ -2,12 +2,12 @@ import os
 import sys
 import re
 
+from django.utils.translation import gettext_lazy as _
+
 from celery.schedules import crontab
 
 from configurations import Configuration, importer, values
 importer.install(check_options=True)
-
-from django.utils.translation import gettext_lazy as _
 
 
 def rec(x):
@@ -428,9 +428,10 @@ class Base(Configuration):
     # ######## Search ###########
 
     ELASTICSEARCH_INDEX_PREFIX = 'froide'
+    ELASTICSEARCH_HOST = values.Value('localhost')
     ELASTICSEARCH_DSL = {
         'default': {
-            'hosts': 'localhost:9200'
+            'hosts': '%s:9200' % ELASTICSEARCH_HOST
         },
     }
     ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = 'django_elasticsearch_dsl.signals.RealTimeSignalProcessor'
