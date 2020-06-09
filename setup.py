@@ -22,6 +22,10 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
+extras = {
+    "lint": ["flake8"],
+}
+
 setup(
     name="froide",
     version=find_version("froide", "__init__.py"),
@@ -57,6 +61,7 @@ setup(
         'django-filingcabinet',
         'icalendar',
     ],
+    extras_require=extras,
     include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
