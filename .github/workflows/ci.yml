@@ -125,8 +125,10 @@ jobs:
     needs: [test, testui]
     runs-on: ubuntu-latest
     steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
+      - name: Trigger coveralls webhook
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          TRAVIS_JOB_ID: ${{ github.run_id }}
+        run: |
+          echo TRAVIS_JOB_ID=$TRAVIS_JOB_ID
+          curl -k "https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN" -d "payload[job_id]=$TRAVIS_JOB_ID&payload[status]=done"
