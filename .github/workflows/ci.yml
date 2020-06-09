@@ -50,7 +50,6 @@ jobs:
         env:
           COVERALLS_PARALLEL: "true"
           COVERALLS_SERVICE_NAME: GitHub
-          TRAVIS_JOB_ID: ${{ github.run_id }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
     services:
       postgres:
@@ -96,7 +95,6 @@ jobs:
         env:
           COVERALLS_PARALLEL: true
           COVERALLS_SERVICE_NAME: GitHub
-          TRAVIS_JOB_ID: ${{ github.run_id }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
     services:
       postgres:
@@ -128,7 +126,6 @@ jobs:
       - name: Trigger coveralls webhook
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          TRAVIS_JOB_ID: ${{ github.run_id }}
         run: |
-          echo TRAVIS_JOB_ID=$TRAVIS_JOB_ID
-          curl -k "https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN" -d "payload[job_id]=$TRAVIS_JOB_ID&payload[status]=done"
+          echo "$GITHUB_RUN_ID"
+          curl -k "https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN" -d "payload[job_id]=${GITHUB_RUN_ID}&payload[status]=done"
