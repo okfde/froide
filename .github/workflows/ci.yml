@@ -48,7 +48,9 @@ jobs:
       - name: Submit to coveralls
         run: coveralls
         env:
-          COVERALLS_PARALLEL: true
+          COVERALLS_PARALLEL: "true"
+          COVERALLS_SERVICE_NAME: GitHub
+          TRAVIS_JOB_ID: ${{ github.run_id }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
     services:
       postgres:
@@ -93,6 +95,8 @@ jobs:
         run: coveralls
         env:
           COVERALLS_PARALLEL: true
+          COVERALLS_SERVICE_NAME: GitHub
+          TRAVIS_JOB_ID: ${{ github.run_id }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
     services:
       postgres:
