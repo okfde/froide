@@ -386,6 +386,9 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 request.POST.get('message'),
                 priority=False
             )
+            self.message_user(request,
+                _('E-Mail was sent to public body creator.')
+            )
         return redirect('admin:publicbody_proposedpublicbody_change', pb.id)
 
 
