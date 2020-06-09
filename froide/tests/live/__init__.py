@@ -1,4 +1,5 @@
 import os
+import socket
 
 from django.conf import settings
 from django.db import connections
@@ -75,6 +76,7 @@ class LiveTestMixin(object):
 
     @classmethod
     def setUpClass(cls):
+        cls.host = socket.gethostbyname(socket.gethostname())
         cls.selenium = get_selenium(**cls.ADDITIONAL_KWARGS)
         cls.selenium.implicitly_wait(3)
         super(LiveTestMixin, cls).setUpClass()
