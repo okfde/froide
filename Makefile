@@ -12,7 +12,7 @@ testci:
 	coverage report
 
 testui:
-	coverage run python manage.py test froide.tests.live --keepdb
+	coverage run --branch manage.py test froide.tests.live --keepdb
 
 .PHONY: htmlcov
 htmlcov:
