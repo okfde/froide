@@ -1476,7 +1476,7 @@ msgstr "Name"
 
 #: froide/comments/forms.py:14
 msgid "Your name will only be visible to logged in users."
-msgstr "Ihr Name wird nur für angemeldet Personen sichtbar sein."
+msgstr "Ihr Name wird nur für angemeldete Personen sichtbar sein."
 
 #: froide/comments/forms.py:22
 msgid "Comment"
