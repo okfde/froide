@@ -294,6 +294,13 @@ class AccountBlocklistManager(models.Manager):
                 return True
         return False
 
+    def should_block_address(self, address):
+        for entry in AccountBlocklist.objects.all():
+            match = entry.match_content(entry.address, address)
+            if match:
+                return True
+        return False
+
 
 class AccountBlocklist(models.Model):
     name = models.CharField(max_length=255, blank=True)
@@ -320,6 +327,9 @@ class AccountBlocklist(models.Model):
     def match_field(self, user, key):
         content = getattr(self, key)
         value = getattr(user, key)
+        return self.match_content(content, value)
+
+    def match_content(self, content, value):
         if not content:
             return False
         for line in content.splitlines():

@@ -1566,6 +1566,32 @@ class RequestTest(TestCase):
                 "exceeded your request limit of 2 requests in 1\xa0minute.",
                 status_code=400)
 
+    def test_blocked_address(self):
+        from froide.account.models import AccountBlocklist
+
+        AccountBlocklist.objects.create(
+            name='Address block test',
+            address='Test(-| )Str 5.+Testtown'
+        )
+        req = FoiRequest.objects.all()[0]
+
+        def make_form():
+            return get_send_message_form({
+                'sendmessage-to': req.public_body.email,
+                'sendmessage-subject': req.title,
+                'sendmessage-message': 'Test',
+                "sendmessage-address": 'Test-Str 5\nTesttown',
+            }, foirequest=req)
+
+        form = make_form()
+        self.assertTrue(form.is_valid())
+
+        # Set request user to normal user
+        req.user = User.objects.get(email='dummy@example.org')
+        form = make_form()
+        self.assertFalse(form.is_valid())
+        self.assertTrue('address' in form.errors)
+
 
 class MediatorTest(TestCase):
     def setUp(self):

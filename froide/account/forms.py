@@ -17,6 +17,7 @@ from froide.helper.content_urls import get_content_url
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from .widgets import ConfirmationWidget
+from .models import AccountBlocklist
 from .services import AccountService
 
 
@@ -46,72 +47,20 @@ class UserExtrasRegistry():
 
 
 user_extra_registry = UserExtrasRegistry()
-ADDRESS_HELP_TEXT = _(
+ADDRESS_REQUIRED_HELP_TEXT = _(
     'Your address will not be displayed '
     'publicly and is only needed because a public body '
     'will likely want to send you paper.'
 )
 
-
-class NewUserBaseForm(forms.Form):
-    first_name = forms.CharField(max_length=30,
-            label=_('First name'),
-            widget=forms.TextInput(attrs={'placeholder': _('First Name'),
-                'class': 'form-control'}))
-    last_name = forms.CharField(max_length=30,
-            label=_('Last name'),
-            widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
-                'class': 'form-control'}))
-    address = forms.CharField(max_length=300,
-        required=False,
-        label=_('Mailing Address'),
-        help_text=_(
-            'Your address will not be displayed '
-            'publicly and is only needed in case a public body '
-            'needs to send you paper.'),
-        widget=forms.Textarea(attrs={
-            'rows': '3',
-            'class': 'form-control',
-            'placeholder': _('Street, Post Code, City'),
-        })
-    )
-    user_email = forms.EmailField(label=_('Email address'),
-            max_length=75,
-            help_text=_('Not public. The given address will '
-                        'need to be confirmed.'),
-            widget=forms.EmailInput(attrs={
-                    'placeholder': _('mail@ddress.net'),
-                    'class': 'form-control',
-                    'autocomplete': 'username'
-            }))
-
-    if USER_CAN_HIDE_WEB:
-        private = forms.BooleanField(
-            required=False,
-            widget=BootstrapCheckboxInput,
-            label=_("Hide my name from public view"),
-            help_text=format_html(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
-
-    def __init__(self, *args, **kwargs):
-        address_required = kwargs.pop('address_required', False)
-        super(NewUserBaseForm, self).__init__(*args, **kwargs)
-        self.fields['address'].required = address_required
-        if ALLOW_PSEUDONYM and not address_required:
-            self.fields["last_name"].help_text = format_html(
-                _('<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'),
-                get_content_url("privacy") + '#pseudonym'
-            )
-        if address_required:
-            self.fields['address'].help_text = ADDRESS_HELP_TEXT
-
-    def clean_first_name(self):
-        return self.cleaned_data['first_name'].strip()
-
-    def clean_last_name(self):
-        return self.cleaned_data['last_name'].strip()
+ADDRESS_HELP_TEXT = _(
+    'Your address will not be displayed '
+    'publicly and is only needed in case a public body '
+    'needs to send you paper.'
+)
 
 
-class AddressForm(JSONMixin, forms.Form):
+class AddressBaseForm(forms.Form):
     address = forms.CharField(max_length=300,
         required=False,
         label=_('Mailing Address'),
@@ -123,18 +72,77 @@ class AddressForm(JSONMixin, forms.Form):
         })
     )
 
+    ALLOW_BLOCKED_ADDRESS = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.fields['address'].required:
+            self.fields['address'].help_text = ADDRESS_REQUIRED_HELP_TEXT
+
+    def get_user(self):
+        raise NotImplementedError
+
+    def clean_address(self):
+        address = self.cleaned_data['address']
+        if not address:
+            return address
+        if self.ALLOW_BLOCKED_ADDRESS:
+            return address
+        user = self.get_user()
+        if user is not None:
+            if user.is_staff or user.is_trusted:
+                return address
+            if AccountBlocklist.objects.should_block_address(address):
+                raise forms.ValidationError(_(
+                    'This address cannot be used by you.'
+                ))
+        return address
+
+
+class NewUserBaseForm(AddressBaseForm):
+    first_name = forms.CharField(max_length=30,
+            label=_('First name'),
+            widget=forms.TextInput(attrs={'placeholder': _('First Name'),
+                'class': 'form-control'}))
+    last_name = forms.CharField(max_length=30,
+            label=_('Last name'),
+            widget=forms.TextInput(attrs={'placeholder': _('Last Name'),
+                'class': 'form-control'}))
+
+    user_email = forms.EmailField(label=_('Email address'),
+            max_length=75,
+            help_text=_('Not public. The given address will '
+                        'need to be confirmed.'),
+            widget=forms.EmailInput(attrs={
+                    'placeholder': _('mail@ddress.net'),
+                    'class': 'form-control',
+                    'autocomplete': 'username'
+            }))
+
+    ALLOW_BLOCKED_ADDRESS = True
+
+    if USER_CAN_HIDE_WEB:
+        private = forms.BooleanField(
+            required=False,
+            widget=BootstrapCheckboxInput,
+            label=_("Hide my name from public view"),
+            help_text=format_html(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
+
     def __init__(self, *args, **kwargs):
         address_required = kwargs.pop('address_required', False)
-        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.fields['address'].required = address_required
+        if ALLOW_PSEUDONYM and not address_required:
+            self.fields["last_name"].help_text = format_html(
+                _('<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'),
+                get_content_url("privacy") + '#pseudonym'
+            )
 
-    def save(self, user):
-        address = self.cleaned_data['address']
-        if address:
-            user.address = address
-            AccountService.check_against_blocklist(user, save=False)
-            user.save()
+    def clean_first_name(self):
+        return self.cleaned_data['first_name'].strip()
+
+    def clean_last_name(self):
+        return self.cleaned_data['last_name'].strip()
 
 
 class TermsForm(forms.Form):
@@ -205,6 +213,26 @@ class NewUserWithPasswordForm(NewUserForm):
         if cleaned['password'] != cleaned['password2']:
             raise forms.ValidationError(_("Passwords do not match!"))
         return cleaned
+
+
+class AddressForm(JSONMixin, AddressBaseForm):
+    ALLOW_BLOCKED_ADDRESS = False
+
+    def __init__(self, *args, **kwargs):
+        address_required = kwargs.pop('address_required', False)
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        self.fields['address'].required = address_required
+
+    def get_user(self):
+        return self.request.user
+
+    def save(self, user):
+        address = self.cleaned_data['address']
+        if address:
+            user.address = address
+            AccountService.check_against_blocklist(user, save=False)
+            user.save()
 
 
 class UserLoginForm(forms.Form):

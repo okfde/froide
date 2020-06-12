@@ -11,6 +11,7 @@ from django import forms
 from django.db import transaction
 from django.template.loader import render_to_string
 
+from froide.account.forms import AddressBaseForm
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import (
@@ -172,7 +173,7 @@ class MessagePublicBodySenderForm(forms.Form):
         self.message.save()
 
 
-class SendMessageForm(AttachmentSaverMixin, forms.Form):
+class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
     to = forms.ChoiceField(
         label=_("To"),
         choices=[],
@@ -206,10 +207,26 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
         })
     )
 
+    send_address = forms.BooleanField(
+        label=_("Send physical address"),
+        widget=BootstrapCheckboxInput,
+        help_text=_(
+            'If the public body is asking for your post '
+            'address, check this and we will append the '
+            'address below.'
+        ),
+        required=False,
+        initial=False
+    )
+
+    field_order = [
+        'to', 'subject', 'message', 'files', 'send_address'
+    ]
+
     def __init__(self, *args, **kwargs):
         foirequest = kwargs.pop('foirequest')
         self.message_ready = kwargs.pop('message_ready')
-        super(SendMessageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.foirequest = foirequest
 
         to_choices = possible_reply_addresses(foirequest)
@@ -219,32 +236,11 @@ class SendMessageForm(AttachmentSaverMixin, forms.Form):
 
         address_optional = foirequest.law and foirequest.law.email_only
 
-        self.fields['send_address'] = forms.BooleanField(
-            label=_("Send physical address"),
-            widget=BootstrapCheckboxInput,
-            help_text=_(
-                'If the public body is asking for your post '
-                'address, check this and we will append the '
-                'address below.'
-            ),
-            required=False,
-            initial=not address_optional
-        )
+        self.fields['send_address'].initial = not address_optional
+        self.fields['address'].initial = foirequest.user.address
 
-        self.fields['address'] = forms.CharField(
-            max_length=300,
-            required=False,
-            initial=foirequest.user.address,
-            label=_('Mailing Address'),
-            help_text=_(
-                'Optional. Your address will not be displayed publicly.'
-            ),
-            widget=forms.Textarea(attrs={
-                'rows': '3',
-                'class': 'form-control',
-                'placeholder': _('Street, Post Code, City'),
-            })
-        )
+    def get_user(self):
+        return self.foirequest.user
 
     def clean_message(self):
         message = self.cleaned_data['message']
@@ -375,7 +371,7 @@ class EscalationMessageForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         foirequest = kwargs.pop('foirequest')
-        super(EscalationMessageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.foirequest = foirequest
 
     def clean_message(self):
