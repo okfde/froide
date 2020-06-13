@@ -353,8 +353,7 @@ def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
     comment.user_email = ''
     comment.user_url = ''
 
-    # Use full name, except when private on own request
-    comment.user_name = user.get_full_name()
+    # Use requester when private on own request
     if user.private and foirequest.user == user:
         comment.user_name = str(_('requester'))
     return True
