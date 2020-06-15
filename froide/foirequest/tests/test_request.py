@@ -1324,6 +1324,28 @@ class RequestTest(TestCase):
         last = req.messages[-1]
         self.assertNotIn('radetzky', last.plaintext_redacted)
 
+    def test_redaction_urls(self):
+        from froide.foirequest.utils import redact_plaintext_with_request
+        req = FoiRequest.objects.all()[0]
+        url1 = 'https://example.org/request/1231/upload/abcdef0123456789'
+        url2 = 'https://example.org/r/1231/auth/abcdef0123456789'
+        url3 = 'https://example.org/request/1231/auth/abcdef0123456789'
+        plaintext = '''Testing
+            Really{url1}
+            !!{url2}
+            {url3}#also
+        '''.format(url1=url1, url2=url2, url3=url3)
+        self.assertIn(url1, plaintext)
+        self.assertIn(url2, plaintext)
+        self.assertIn(url3, plaintext)
+
+        redacted = redact_plaintext_with_request(
+            plaintext, req, is_response=False
+        )
+        self.assertNotIn(url1, redacted)
+        self.assertNotIn(url2, redacted)
+        self.assertNotIn(url3, redacted)
+
     def test_empty_pb_email(self):
         self.client.login(email='info@fragdenstaat.de', password='froide')
         pb = PublicBody.objects.all()[0]

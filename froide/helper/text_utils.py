@@ -1,6 +1,7 @@
-import re
 import functools
 from html.entities import name2codepoint
+import re
+from typing import Pattern
 
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import strip_tags
@@ -96,7 +97,10 @@ def redact_plaintext(content, is_response=True, user=None, replacements=None):
 
     if replacements is not None:
         for key, val in replacements.items():
-            content = content.replace(key, val)
+            if isinstance(key, Pattern):
+                content = key.sub(val, content)
+            else:
+                content = content.replace(key, val)
 
     return content
 

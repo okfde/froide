@@ -2,10 +2,12 @@ from collections import namedtuple, Counter
 from datetime import timedelta
 import json
 import os
+import re
 
 from django.utils import timezone
 from django.core.mail import mail_managers
 from django.conf import settings
+from django.urls import reverse, NoReverseMatch
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
@@ -108,17 +110,51 @@ def construct_message_body(foirequest, text, send_address=True,
     )
 
 
+def build_secret_url_regexes(url_name):
+    obj_id = '0'
+    code = 'deadbeef'
+    url = reverse(url_name, kwargs={
+        'obj_id': obj_id,
+        'code': code
+    })
+    url = url.replace(obj_id, r'(\d+)')
+    url = url.replace(code, r'[0-9a-f]+')
+    # cut of trailing slash to extend match
+    url = url[:-1]
+    return re.compile(url)
+
+
+SECRET_URL_NAMES = [
+    'foirequest-auth',
+    'foirequest-longerauth',
+    'foirequest-publicbody_upload',
+]
+SECRET_URL_REPLACEMENTS = {}
+
+
+def get_secret_url_replacements():
+    if SECRET_URL_REPLACEMENTS:
+        return SECRET_URL_REPLACEMENTS
+
+    url_regexes = [
+        build_secret_url_regexes(url_name)
+        for url_name in SECRET_URL_NAMES
+    ]
+    replacement_url = reverse('foirequest-shortlink', kwargs={'obj_id': '0'})
+    replacement_url = replacement_url.replace('0', r'\1')
+
+    replacements = {key: replacement_url for key in url_regexes}
+    SECRET_URL_REPLACEMENTS.update(replacements)
+    return SECRET_URL_REPLACEMENTS
+
+
 def redact_plaintext_with_request(plaintext, foirequest, is_response=False):
-    short_url = foirequest.get_absolute_domain_short_url()
-    secret_urls = {
-        foirequest.get_auth_link(): short_url,
-        foirequest.get_upload_link(): short_url
-    }
+    replacements = get_secret_url_replacements()
     return redact_plaintext(
         plaintext,
         is_response=is_response,
         user=foirequest.user,
-        replacements=secret_urls
+        replacements=replacements
     )
 
 
