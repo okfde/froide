@@ -7,7 +7,7 @@ import re
 from django.utils import timezone
 from django.core.mail import mail_managers
 from django.conf import settings
-from django.urls import reverse, NoReverseMatch
+from django.urls import reverse
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
