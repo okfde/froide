@@ -213,7 +213,7 @@ def make_same_request(request, slug):
         foirequest = foirequest.same_as
 
     if not request.user.is_authenticated:
-        new_user_form = NewUserForm(request.POST)
+        new_user_form = NewUserForm(request.POST, request=request)
         if not new_user_form.is_valid():
             return show_foirequest(request, foirequest,
                 context={"new_user_form": new_user_form}, status=400)
@@ -226,7 +226,7 @@ def make_same_request(request, slug):
             messages.add_message(request, messages.ERROR,
                 _("You already made an identical request"))
             return render_400(request)
-        address_form = AddressForm(request.POST)
+        address_form = AddressForm(request.POST, request=request)
         if address_form.is_valid():
             address_form.save(user)
 

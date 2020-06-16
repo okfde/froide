@@ -259,18 +259,19 @@ class MakeRequestView(FormView):
             kwargs = {
                 'initial': {
                     'address': self.request.user.address
-                }
+                },
+                'request': self.request
             }
         else:
             form_klass = NewUserForm
             kwargs = {
                 'initial': self.get_user_initial(),
+                'request': self.request
             }
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
                 'files': self.request.FILES,
-                'request': self.request
             })
         return form_klass(**kwargs)
 

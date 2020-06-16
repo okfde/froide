@@ -17,7 +17,9 @@ def get_user_form(context, address_required=False):
             address_required=address_required
         )
     else:
-        return NewUserForm(address_required=address_required)
+        return NewUserForm(
+            address_required=address_required, request=request
+        )
 
 
 @register.simple_tag(takes_context=True)
