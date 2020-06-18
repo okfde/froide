@@ -1,9 +1,9 @@
-from collections import namedtuple, Counter
+from collections import Counter
 from datetime import timedelta
 import json
 import os
 import re
-from typing import Optional, Generator, Tuple
+from typing import Optional, Generator, NamedTuple
 
 from django.utils import timezone
 from django.core.mail import mail_managers
@@ -25,6 +25,7 @@ from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
 from froide.helper.tasks import search_instance_save
 
+from froide.publicbody.models import PublicBody
 from .models import FoiMessage
 
 
@@ -305,41 +306,27 @@ def send_request_user_email(mail_intent, foiobject, subject=None, context=None,
     )
 
 
-PublicBodyEmailInfo = namedtuple('PublicBodyEmailInfo', ('name', 'publicbody'))
+PublicBodyEmailInfo = NamedTuple('PublicBodyEmailInfo', [
+    ('email', str),
+    ('name', str),
+    ('publicbody', Optional[PublicBody])
+])
 
 
 def get_info_for_email(foirequest, email):
     email = email.lower()
-    for req_email, message, is_sender in get_emails_from_request(foirequest):
-        if email == req_email.lower():
-            if message is None:
-                if foirequest.public_body:
-                    name = foirequest.public_body.name
-                else:
-                    name = ""
-                return PublicBodyEmailInfo(
-                    name=name,
-                    publicbody=foirequest.public_body
-                )
-            elif is_sender:
-                return PublicBodyEmailInfo(
-                    name=message.sender_name,
-                    publicbody=message.sender_public_body
-                )
-            else:
-                pb = get_publicbody_for_email(email, foirequest)
-                return PublicBodyEmailInfo(
-                    name=email,
-                    publicbody=pb,
-                )
+    for email_info in get_emails_from_request(foirequest):
+        if email == email_info.email.lower():
+            return email_info
     return PublicBodyEmailInfo(
+        email='',
         name='',
         publicbody=None
     )
 
 
 def get_emails_from_request(foirequest) -> Generator[
-        Tuple[str, Optional[FoiMessage], bool], None, None]:
+        PublicBodyEmailInfo, None, None]:
     '''
     Yields tuples of the form
     email, message or None, Boolean
@@ -348,7 +335,13 @@ def get_emails_from_request(foirequest) -> Generator[
 
     if foirequest.public_body and foirequest.public_body.email:
         email = foirequest.public_body.email
-        yield email, None, False
+        yield PublicBodyEmailInfo(
+            email=email,
+            name=_("Default address of {publicbody}").format(
+                publicbody=foirequest.public_body.name
+            ),
+            publicbody=foirequest.public_body
+        )
         already.add(email.lower())
 
     messages = foirequest.response_messages()
@@ -358,7 +351,11 @@ def get_emails_from_request(foirequest) -> Generator[
             email = message.sender_public_body.email
 
         if email and email.lower() not in already:
-            yield email, message, True
+            yield PublicBodyEmailInfo(
+                email=email,
+                name=message.sender_name,
+                publicbody=message.sender_public_body,
+            )
             already.add(email.lower())
 
     domains = tuple(get_foi_mail_domains())
@@ -367,37 +364,39 @@ def get_emails_from_request(foirequest) -> Generator[
         for email in find_all_emails(message.plaintext):
             if email.endswith(domains):
                 continue
-            if RECIPIENT_BLOCKLIST is not None and RECIPIENT_BLOCKLIST.match(email):
+            if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email):
                 continue
             email = email.lower()
             if email not in already:
-                yield email, message, False
+                pb = get_publicbody_for_email(email, foirequest)
+                yield PublicBodyEmailInfo(
+                    email=email, name=email,
+                    publicbody=pb
+                )
                 already.add(email.lower())
 
     if foirequest.public_body.parent and foirequest.public_body.parent.email:
         email = foirequest.public_body.parent.email.lower()
         if email not in already:
-            yield email, None, False
+            yield PublicBodyEmailInfo(
+                email=email,
+                name=foirequest.public_body.parent.name,
+                publicbody=foirequest.public_body.parent
+            )
         already.add(email)
 
 
 def possible_reply_addresses(foirequest):
     options = []
-    for email, message, is_sender in get_emails_from_request(foirequest):
-        if message is None:
-            options.append(
-                (email, _("Default address of %(publicbody)s") % {
-                    "publicbody": foirequest.public_body.name
-                })
+    for email_info in get_emails_from_request(foirequest):
+        name = email_info.name
+        if email_info.email not in name:
+            name = '{} ({})'.format(
+                name, email_info.email
             )
-        elif is_sender:
-            options.append(
-                (email, message.reply_address_entry)
-            )
-        else:
-            options.append(
-                (email, email)
-            )
+        options.append((
+            email_info.email, name
+        ))
     return options
 
 
