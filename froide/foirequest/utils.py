@@ -3,6 +3,7 @@ from datetime import timedelta
 import json
 import os
 import re
+from typing import Optional, Generator, Tuple
 
 from django.utils import timezone
 from django.core.mail import mail_managers
@@ -24,9 +25,11 @@ from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
 from froide.helper.tasks import search_instance_save
 
+from .models import FoiMessage
+
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
-RECIPIENT_BLACKLIST = settings.FROIDE_CONFIG.get('recipient_blocklist_regex', None)
+RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get('recipient_blocklist_regex', None)
 
 
 def throttle(qs, throttle_config, date_param='first_message'):
@@ -335,7 +338,12 @@ def get_info_for_email(foirequest, email):
     )
 
 
-def get_emails_from_request(foirequest):
+def get_emails_from_request(foirequest) -> Generator[
+        Tuple(str, Optional[FoiMessage], bool), None, None]:
+    '''
+    Yields tuples of the form
+    email, message or None, Boolean
+    '''
     already = set()
 
     if foirequest.public_body and foirequest.public_body.email:
@@ -359,12 +367,18 @@ def get_emails_from_request(foirequest):
         for email in find_all_emails(message.plaintext):
             if email.endswith(domains):
                 continue
-            if RECIPIENT_BLACKLIST is not None and RECIPIENT_BLACKLIST.match(email):
+            if RECIPIENT_BLOCKLIST is not None and RECIPIENT_BLOCKLIST.match(email):
                 continue
             email = email.lower()
             if email not in already:
                 yield email, message, False
                 already.add(email.lower())
+
+    if foirequest.public_body.parent and foirequest.public_body.parent.email:
+        email = foirequest.public_body.parent.email.lower()
+        if email not in already:
+            yield email, None, False
+        already.add(email)
 
 
 def possible_reply_addresses(foirequest):
