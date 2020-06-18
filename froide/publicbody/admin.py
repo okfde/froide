@@ -142,7 +142,7 @@ class PublicBodyBaseAdminMixin(AdminTagAllMixIn):
     )
     filter_horizontal = ('laws',)
     list_max_show_all = 5000
-    search_fields = ['name', 'other_names', 'description']
+    search_fields = ['name', 'other_names', 'description', 'email']
     exclude = ('confirmed',)
     raw_id_fields = (
         'parent', 'root', '_created_by', '_updated_by',
