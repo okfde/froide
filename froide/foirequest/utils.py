@@ -339,7 +339,7 @@ def get_info_for_email(foirequest, email):
 
 
 def get_emails_from_request(foirequest) -> Generator[
-        Tuple(str, Optional[FoiMessage], bool), None, None]:
+        Tuple[str, Optional[FoiMessage], bool], None, None]:
     '''
     Yields tuples of the form
     email, message or None, Boolean
