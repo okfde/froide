@@ -26,7 +26,6 @@ from froide.helper.api_utils import get_fake_api_context
 from froide.helper.tasks import search_instance_save
 
 from froide.publicbody.models import PublicBody
-from .models import FoiMessage
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG['max_attachment_size']
