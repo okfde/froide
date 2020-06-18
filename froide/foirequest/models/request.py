@@ -22,7 +22,6 @@ from froide.team.models import Team
 from froide.helper.text_utils import redact_plaintext
 
 from .project import FoiProject
-from ..utils import get_foi_mail_domains
 
 
 class FoiRequestManager(CurrentSiteManager):
@@ -468,6 +467,8 @@ class FoiRequest(models.Model):
         )
 
     def get_redaction_regexes(self):
+        from ..utils import get_foi_mail_domains
+
         user = self.user
         domains = get_foi_mail_domains()
         email_regexes = [r'[\w\.\-]+@' + x for x in domains]
