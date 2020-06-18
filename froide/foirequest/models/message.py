@@ -14,7 +14,6 @@ from froide.helper.text_utils import (
     redact_subject, redact_plaintext
 )
 
-from ..utils import MailAttachmentSizeChecker
 from .request import FoiRequest, get_absolute_short_url
 
 
@@ -451,6 +450,7 @@ class FoiMessage(models.Model):
 
     def resend(self, **kwargs):
         from ..message_handlers import resend_message
+        from ..utils import MailAttachmentSizeChecker
 
         if 'attachments' not in kwargs:
             files = self.get_mime_attachments()
