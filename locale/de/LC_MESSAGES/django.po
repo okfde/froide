@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-19 10:21+0200\n"
-"PO-Revision-Date: 2020-06-19 10:21+0200\n"
+"POT-Creation-Date: 2020-06-19 17:53+0200\n"
+"PO-Revision-Date: 2020-06-19 17:54+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -113,17 +113,17 @@ msgstr "Konnte URL nicht zurücksetzen."
 msgid "Profile info"
 msgstr "Profil-Info"
 
-#: froide/account/admin.py:68 froide/publicbody/admin.py:121
+#: froide/account/admin.py:68 froide/publicbody/admin.py:123
 msgid "Advanced"
 msgstr "Fortgeschritten"
 
 #. Translators: not url
 #: froide/account/admin.py:97 froide/foirequest/views/make_request.py:135
-#: froide/publicbody/admin.py:181
+#: froide/publicbody/admin.py:183
 msgid "requests"
 msgstr "anfragen"
 
-#: froide/account/admin.py:103 froide/publicbody/admin.py:277
+#: froide/account/admin.py:103 froide/publicbody/admin.py:279
 msgid "Export to CSV"
 msgstr "Exportiere als CSV"
 
@@ -6591,8 +6591,8 @@ msgid "A concrete law has been set for this request."
 msgstr "Ein konkretes Gesetz wurde für diese Anfrage festgelegt."
 
 #: froide/foirequest/views/request_actions.py:151
-msgid "Tags have been set for this request"
-msgstr "Die Schlagworte dieser Anfrage wurden gespeichert"
+msgid "Tags have been set for this request."
+msgstr "Die Schlagworte dieser Anfrage wurden gespeichert."
 
 #: froide/foirequest/views/request_actions.py:166
 msgid "The outcome summary has been saved."
@@ -7526,75 +7526,75 @@ msgstr "Das Problem bei Ihrer Anfrage wurde behoben"
 msgid "Your report could not be created."
 msgstr "Ihr Problembericht konnte nicht erstellt werden."
 
-#: froide/publicbody/admin.py:104
+#: froide/publicbody/admin.py:106
 msgid "Context"
 msgstr "Kontext"
 
-#: froide/publicbody/admin.py:113
+#: froide/publicbody/admin.py:115
 msgid "Hierachy"
 msgstr "Hierarchie"
 
-#: froide/publicbody/admin.py:117
+#: froide/publicbody/admin.py:119
 msgid "Geo"
 msgstr "Geo"
 
-#: froide/publicbody/admin.py:128
+#: froide/publicbody/admin.py:130
 msgid "Meta"
 msgstr "Meta"
 
-#: froide/publicbody/admin.py:138
+#: froide/publicbody/admin.py:140
 msgid "Has geo coordinates"
 msgstr "Hat Geo-Koordinaten"
 
-#: froide/publicbody/admin.py:139
+#: froide/publicbody/admin.py:141
 msgid "Has regions"
 msgstr "Hat Regionen"
 
-#: froide/publicbody/admin.py:163
+#: froide/publicbody/admin.py:165
 msgid "Assign classification..."
 msgstr "Behördentyp zuweisen"
 
-#: froide/publicbody/admin.py:167
+#: froide/publicbody/admin.py:169
 msgid "Replace public bodies with..."
 msgstr "Ersetze Behörden durch..."
 
-#: froide/publicbody/admin.py:206
+#: froide/publicbody/admin.py:208
 msgid "You need to provide a url or a file."
 msgstr "Sie müssen eine URL angeben oder eine Datei hochladen."
 
-#: froide/publicbody/admin.py:216
+#: froide/publicbody/admin.py:218
 msgid "Public Bodies were imported."
 msgstr "Behörden wurden importiert."
 
-#: froide/publicbody/admin.py:285
+#: froide/publicbody/admin.py:287
 msgid "Removed from search index"
 msgstr "Aus Such-Index entfernt"
 
-#: froide/publicbody/admin.py:286
+#: froide/publicbody/admin.py:288
 msgid "Remove from search index"
 msgstr "Entferne aus Such-Index"
 
-#: froide/publicbody/admin.py:306
+#: froide/publicbody/admin.py:308
 msgid "Show georegions of"
 msgstr "Zeige Geographische Regionen von"
 
-#: froide/publicbody/admin.py:352
+#: froide/publicbody/admin.py:354
 msgid "This public body is already confirmed."
 msgstr "Diese Behörde ist schon bestätigt."
 
-#: froide/publicbody/admin.py:356
+#: froide/publicbody/admin.py:358
 #, python-format
 msgid "Public body confirmed. %(count)d message was sent."
 msgid_plural "Public body confirmed. %(count)d messages were sent"
 msgstr[0] "Behörde wurde bestätigt. %(count)d Nachricht wurde gesendet."
 msgstr[1] "Behörde wurde bestätigt. %(count)d Nachrichten wurden gesendet"
 
-#: froide/publicbody/admin.py:363
+#: froide/publicbody/admin.py:365
 #, python-format
 msgid "Public body “%s” has been approved"
 msgstr "Behörde „%s“ wurde freigeschaltet"
 
-#: froide/publicbody/admin.py:364
+#: froide/publicbody/admin.py:366
 #, python-brace-format
 msgid ""
 "Hello,\n"
@@ -7615,32 +7615,32 @@ msgstr ""
 "Beste Grüße\n"
 "{site_name}"
 
-#: froide/publicbody/admin.py:385
+#: froide/publicbody/admin.py:387
 #, python-format
 msgid "Concerning your public body proposal “%s”"
 msgstr "Ihr Vorschlag für Behörde „%s“"
 
-#: froide/publicbody/admin.py:390
+#: froide/publicbody/admin.py:392
 msgid "E-Mail was sent to public body creator."
 msgstr "E-Mail an Behörden-Ersteller wurde versendet."
 
-#: froide/publicbody/admin.py:412
+#: froide/publicbody/admin.py:414
 msgid "Has region"
 msgstr "Hat Region"
 
-#: froide/publicbody/admin.py:437 froide/publicbody/admin.py:442
+#: froide/publicbody/admin.py:439 froide/publicbody/admin.py:444
 msgid "Assign parent..."
 msgstr "Oberbehörde zuweisen..."
 
-#: froide/publicbody/admin.py:468 froide/publicbody/admin.py:503
+#: froide/publicbody/admin.py:470 froide/publicbody/admin.py:505
 msgid "# public bodies"
 msgstr "Anzahl Behörden"
 
-#: froide/publicbody/admin.py:475
+#: froide/publicbody/admin.py:477
 msgid "Public bodies with this classification"
 msgstr "Behörden mit dieser Klassifikation"
 
-#: froide/publicbody/admin.py:510
+#: froide/publicbody/admin.py:512
 msgid "Public bodies with this category"
 msgstr "Behörden mit dieser Kategorie"
 
