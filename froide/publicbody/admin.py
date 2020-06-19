@@ -24,6 +24,7 @@ from froide.helper.admin_utils import (
     make_nullfilter, make_choose_object_action
 )
 from froide.helper.widgets import TagAutocompleteWidget
+from froide.helper.search.utils import trigger_search_index_update_qs
 from froide.helper.csv_utils import export_csv_response, dict_to_csv_stream
 
 from .models import (
@@ -84,6 +85,7 @@ def execute_replace_publicbody(admin, request, queryset, action_obj):
 
 def execute_assign_classification(admin, request, queryset, action_obj):
     queryset.update(classification=action_obj)
+    trigger_search_index_update_qs(queryset)
 
 
 class PublicBodyBaseAdminMixin(AdminTagAllMixIn):

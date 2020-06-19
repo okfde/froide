@@ -148,7 +148,7 @@ def set_tags(request, foirequest):
     if form.is_valid():
         form.save(foirequest)
         messages.add_message(request, messages.SUCCESS,
-                _('Tags have been set for this request'))
+                _('Tags have been set for this request.'))
     return redirect(foirequest)
 
 
