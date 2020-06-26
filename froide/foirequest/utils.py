@@ -296,6 +296,10 @@ def send_request_user_email(mail_intent, foiobject, subject=None, context=None,
     if subject and add_idmark:
         subject = '{} [#{}]'.format(subject, foiobject.pk)
 
+    context.update({
+        'user': foiobject.user
+    })
+
     mail_intent.send(
         user=foiobject.user,
         subject=subject,
