@@ -7,6 +7,10 @@ $redacted: #e3e3e3;
   .redacted a {
       background-color: $redacted !important;
       color: $redacted !important;
+      line-break: anywhere;
+      overflow-wrap: break-word;
+      word-break: break-all;
+      word-wrap: break-word;
   }
 
   .redacted::selection {
