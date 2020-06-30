@@ -171,6 +171,13 @@ def remove_greeting_inclusive(content):
     return remove_part(regexes, content, func=lambda c, m: c[m.end():].strip())
 
 
+def ignore_tag(x):
+    return '%s%s' % (
+        x.text_content(),
+        x.tail if x.tail else ''
+    )
+
+
 def make_strong(x):
     return '**%s**%s' % (
         x.text_content(),
@@ -230,7 +237,7 @@ HTML_CONVERTERS = {
 HTML_GARBAGE = ('style',)
 
 
-def convert_html_to_text(html_str):
+def convert_html_to_text(html_str, ignore_tags=None):
     """
     If lxml is available, convert to Markdown (but badly)
     otherwise just strip_tags
@@ -252,7 +259,7 @@ def convert_html_to_text(html_str):
         for el in els:
             el.getparent().remove(el)
 
-    convert_element(body)
+    convert_element(body, ignore_tags=ignore_tags)
 
     text = html_parser.tostring(
         body,
@@ -264,8 +271,12 @@ def convert_html_to_text(html_str):
     return '\n'.join(x.strip() for x in text.splitlines()).strip()
 
 
-def convert_element(root_element):
+def convert_element(root_element, ignore_tags=None):
+    if ignore_tags is None:
+        ignore_tags = ()
     for tag, func in HTML_CONVERTERS.items():
+        if tag in ignore_tags:
+            func = ignore_tag
         els = root_element.xpath('.//' + tag)
         for el in els:
             replacement = func(el)
