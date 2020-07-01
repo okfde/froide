@@ -11,6 +11,7 @@ from django import forms
 from django.db import transaction
 from django.template.loader import render_to_string
 
+from froide.account.services import AccountService
 from froide.account.forms import AddressBaseForm
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
