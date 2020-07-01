@@ -60,9 +60,8 @@ def make_choose_object_action(model_or_queryset, callback, label):
 
 
 def make_batch_tag_action(
-        action_name='tag_all', field='tags', autocomplete_url=None, 
-        short_description=None, template='admin_utils/admin_tag_all.html'
-    ):
+        action_name='tag_all', field='tags', autocomplete_url=None,
+        short_description=None, template='admin_utils/admin_tag_all.html'):
 
     def tag_func(self, request, queryset):
         """
