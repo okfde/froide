@@ -15,7 +15,7 @@ from django.utils.html import format_html
 from django.utils import timezone
 
 from froide.helper.admin_utils import (
-    make_nullfilter, make_greaterzerofilter, AdminTagAllMixIn,
+    make_nullfilter, make_greaterzerofilter, make_batch_tag_action,
     ForeignKeyFilter, TaggitListFilter, SearchFilter,
     make_choose_object_action
 )
@@ -63,7 +63,7 @@ class FoiRequestTagsFilter(TaggitListFilter):
     tag_class = TaggedFoiRequest
 
 
-class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
+class FoiRequestAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
     prepopulated_fields = {"slug": ("title",)}
@@ -85,8 +85,6 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
     ordering = ('-last_message',)
     date_hierarchy = 'first_message'
 
-    tag_all_config = ('tags', reverse_lazy('api:request-tags-autocomplete'))
-
     actions = [
         'mark_checked', 'mark_not_foi',
         'mark_successfully_resolved', 'mark_refused',
@@ -99,6 +97,10 @@ class FoiRequestAdmin(admin.ModelAdmin, AdminTagAllMixIn):
         'jurisdiction', 'law'
     )
     save_on_top = True
+
+    tag_all = make_batch_tag_action(
+        autocomplete_url=reverse_lazy('api:request-tags-autocomplete')
+    )
 
     def request_page(self, obj):
         return format_html('<a href="{}">{}</a>',

@@ -59,8 +59,12 @@ def make_choose_object_action(model_or_queryset, callback, label):
     return action
 
 
-class AdminTagAllMixIn(object):
-    def tag_all(self, request, queryset):
+def make_batch_tag_action(
+        action_name='tag_all', field='tags', autocomplete_url=None, 
+        short_description=None, template='admin_utils/admin_tag_all.html'
+    ):
+
+    def tag_func(self, request, queryset):
         """
         Add tag to all selected objects
 
@@ -70,8 +74,6 @@ class AdminTagAllMixIn(object):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        field, autocomplete_url = self.tag_all_config
-
         # User has already chosen the other req
         if request.POST.get('tags'):
             form = TagObjectForm(request.POST, tags=[],
@@ -79,7 +81,10 @@ class AdminTagAllMixIn(object):
             if form.is_valid():
                 tags = form.cleaned_data['tags']
                 for obj in queryset:
-                    getattr(obj, field).add(*tags)
+                    if callable(field):
+                        field(obj, tags)
+                    else:
+                        getattr(obj, field).add(*tags)
                     obj.save()
                 self.message_user(request, _("Successfully added %s") % field)
                 # Return None to display the change list page again.
@@ -97,13 +102,18 @@ class AdminTagAllMixIn(object):
             'form': form,
             'headline': _('Set these tags for all selected items:'),
             'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
+            'action_name': action_name,
             'applabel': opts.app_label
         }
 
         # Display the confirmation page
-        return TemplateResponse(request, 'admin_utils/admin_tag_all.html',
-            context)
-    tag_all.short_description = _("Add tag to all selected")
+        return TemplateResponse(request, template, context)
+
+    if short_description is None:
+        short_description = _("Add tag to all selected")
+    tag_func.short_description = short_description
+
+    return tag_func
 
 
 class NullFilter(SimpleListFilter):

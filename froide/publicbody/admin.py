@@ -20,7 +20,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from froide.helper.admin_utils import (
-    AdminTagAllMixIn, make_emptyfilter,
+    make_batch_tag_action, make_emptyfilter,
     make_nullfilter, make_choose_object_action
 )
 from froide.helper.widgets import TagAutocompleteWidget
@@ -88,7 +88,7 @@ def execute_assign_classification(admin, request, queryset, action_obj):
     trigger_search_index_update_qs(queryset)
 
 
-class PublicBodyBaseAdminMixin(AdminTagAllMixIn):
+class PublicBodyBaseAdminMixin:
     form = PublicBodyAdminForm
 
     date_hierarchy = 'updated_at'
@@ -150,7 +150,6 @@ class PublicBodyBaseAdminMixin(AdminTagAllMixIn):
         'parent', 'root', '_created_by', '_updated_by',
         'regions', 'classification'
     )
-    tag_all_config = ('categories', CATEGORY_AUTOCOMPLETE_URL)
     readonly_fields = ('_created_by', 'created_at', '_updated_by', 'updated_at')
 
     actions = (
@@ -158,6 +157,11 @@ class PublicBodyBaseAdminMixin(AdminTagAllMixIn):
         'replace_publicbody',
         'export_csv', 'remove_from_index', 'tag_all', 'show_georegions',
         'validate_publicbodies',
+    )
+
+    tag_all = make_batch_tag_action(
+        field='categories',
+        autocomplete_url=CATEGORY_AUTOCOMPLETE_URL
     )
 
     assign_classification = make_choose_object_action(
