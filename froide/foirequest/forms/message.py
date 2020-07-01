@@ -803,6 +803,7 @@ class PublicBodyUploader:
     def __init__(self, foirequest, token):
         self.foirequest = foirequest
         self.token = token
+        self.account_service = AccountService(foirequest.user)
 
     def create_upload_message(self, upload_list):
         message = FoiMessage.objects.create(
@@ -833,8 +834,12 @@ class PublicBodyUploader:
         )
         if upload is None:
             return
-        # TODO: redact name user out of attachment name
-        name = make_name_unique(upload.filename, self.names)
+
+        name = self.account_service.apply_name_redaction(
+            upload.filename, str(_('NAME'))
+        )
+
+        name = make_name_unique(name, self.names)
         self.names.add(name)
         att = FoiAttachment.objects.create(
             belongs_to=message,
