@@ -85,7 +85,7 @@ def make_batch_tag_action(
                     else:
                         getattr(obj, field).add(*tags)
                     obj.save()
-                self.message_user(request, _("Successfully added %s") % field)
+                self.message_user(request, _("Successfully added tags"))
                 # Return None to display the change list page again.
                 return None
             self.message_user(request, _("Form invalid"))
