@@ -13,6 +13,14 @@ USER_PROBLEM_CHOICES = [
     ('foi_help_needed', _('You need help to understand or reply to this message.')),
     ('other', _('Something else...')),
 ]
+EXTERNAL_PROBLEM_CHOICES = [
+    ('not_foi', _('This is not a proper FOI request.')),
+    ('redaction_needed', _('More redactions are needed.')),
+    ('not_nice', _('Content is against netiquette.')),
+    ('info_outdated', _('Published information is outdated.')),
+    ('info_wrong', _('Published information is wrong.')),
+    ('other', _('Something else...')),
+]
 
 AUTO_PROBLEM_CHOICES = [
     ('bounce_publicbody', _('You received a bounce mail from the public body.')),
@@ -31,7 +39,9 @@ class ProblemReport(models.Model):
         blank=True
     )
     kind = models.CharField(
-        max_length=50, choices=PROBLEM_CHOICES
+        max_length=50, choices=(
+            PROBLEM_CHOICES + EXTERNAL_PROBLEM_CHOICES
+        )
     )
     timestamp = models.DateTimeField(default=timezone.now)
     auto_submitted = models.BooleanField(default=False)
@@ -53,3 +63,7 @@ class ProblemReport(models.Model):
 
     def get_absolute_domain_url(self):
         return self.message.get_absolute_domain_short_url()
+
+    @property
+    def is_requester(self):
+        return self.user_id == self.message.request.user_id

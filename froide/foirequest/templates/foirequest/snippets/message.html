@@ -206,9 +206,9 @@
     {% block after_attachments %}{% endblock %}
 
     {% block message_toolbar %}
-      {% if not message.original and object|can_write_foirequest:request %}
+      {% if not message.original %}
       <div class="btn-toolbar mt-3 mb-3 d-print-none" role="toolbar" aria-label="{% trans 'Message toolbar' %}">
-        {% if message.is_response %}
+        {% if object|can_write_foirequest:request and message.is_response %}
           <div class="btn-group btn-group-sm mr-2">
             <a data-tabgo="tab" data-name="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-secondary">
               <span class="fa fa-reply"></span>
@@ -216,7 +216,7 @@
             </a>
           </div>
         {% endif %}
-        {% if object.message_needs_status == message %}
+        {% if object|can_write_foirequest:request and object.message_needs_status == message %}
           <div class="btn-group btn-group-sm mr-2">
             <a data-tabgo="tab" href="#set-status" class="btn btn-warning-blink">
               <span class="fa fa-question-circle"></span>
@@ -226,8 +226,10 @@
         {% endif %}
         {% block message_toolbar_item %}{% endblock %}
         {% render_problem_button message %}
-        {% render_message_redact_button message %}
-        {% render_message_edit_button message %}
+        {% if object|can_write_foirequest:request %}
+          {% render_message_redact_button message %}
+          {% render_message_edit_button message %}
+        {% endif %}
       </div>
       {% endif %}
     {% endblock message_toolbar %}

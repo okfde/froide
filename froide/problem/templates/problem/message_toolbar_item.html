@@ -4,16 +4,24 @@
 
 <div class="btn-group btn-group-sm ml-auto">
   <button type="button" class="btn btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
-    {% if not message.problemreports_count %}
-      {% trans "Problem?" %}
+    {% if not request.user.is_authenticated %}
+      {% trans "Report" %}
     {% else %}
-      {% if message.problemreports_unresolved_count %}
-        <span class="fa fa-exclamation-circle"></span>
+      {% if not message.problemreports_count %}
+        {% if is_requester %}
+          {% trans "Problem?" %}
+        {% else %}
+          {% trans "Report" %}
+        {% endif %}
+      {% else %}
+        {% if message.problemreports_unresolved_count %}
+          <span class="fa fa-exclamation-circle"></span>
+        {% endif %}
+        {% blocktrans count counter=message.problemreports_count %}Problem{% plural %}Problems{% endblocktrans %}
+        <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
+          {{ message.problemreports_count }}
+        </span>
       {% endif %}
-      {% blocktrans count counter=message.problemreports_count %}Problem{% plural %}Problems{% endblocktrans %}
-      <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
-        {{ message.problemreports_count }}
-      </span>
     {% endif %}
   </button>
 </div>
@@ -34,90 +42,115 @@
         </button>
       </div>
       <div class="modal-body">
-        {% if message.problemreports %}
-          <h6>
-            {% trans "Previously reported problems" %}
-          </h6>
+        {% if not request.user.is_authenticated %}
+          <h6>{% trans "Please login or register" %}</h6>
           <p>
-            {% trans "Moderators are already informed about the following problems:" %}
+            {% trans "In order to report a problem with this message, you need to be logged in." %}
           </p>
-          <div class="table-responsive">
-            <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th>{% trans "Problem" %}</th>
-                  <th>{% trans "Date" %}</th>
-                  <th>{% trans "State" %}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for report in message.problemreports %}
+          <p>
+            <a class="btn btn-primary" href="{% url 'account-login' %}">{% trans "Please login" %}</a>
+          </p>
+        {% else %}
+          {% if message.problemreports %}
+            <h6>
+              {% trans "Previously reported problems" %}
+            </h6>
+            <p>
+              {% trans "Moderators are already informed about the following problems:" %}
+            </p>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
                   <tr>
-                    <td>
-                      <span class="badge badge-white">
-                        {{ report.get_kind_display }}
-                      </span>
-                    </td>
-                    <td>
-                      {% if report.auto_submitted %}
-                        <span class="badge badge-dark">
-                          {% trans "auto detected" %}
-                        </span>
-                      {% else %}
-                        {{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% if request.user.is_staff %}
-                        <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
-                      {% endif %}
-                      {% if report.resolved %}
-                        <span class="badge badge-success">
-                          {% trans "Resolved" %}
-                        </span>
-                      {% else %}
-                        <span class="badge badge-secondary">
-                          {% trans "Pending" %}
-                        </span>
-                      {% endif %}
-                      {% if request.user.is_staff %}
-                        </a>
-                      {% endif %}
-                    </td>
+                    <th>{% trans "Problem" %}</th>
+                    <th>{% trans "Date" %}</th>
+                    {% if request.user.is_staff %}
+                    <th>{% trans "User" %}</th>
+                    {% endif %}
+                    <th>{% trans "State" %}</th>
                   </tr>
-                  {% if report.description or report.resolution %}
+                </thead>
+                <tbody>
+                  {% for report in message.problemreports %}
                     <tr>
-                      <td colspan="3" class="border-top-0">
-                        {% if report.description %}
-                          <blockquote><p>{{ report.description | linebreaksbr }}</p></blockquote>
+                      <td>
+                        <span class="badge badge-white">
+                          {{ report.get_kind_display }}
+                        </span>
+                      </td>
+                      <td>
+                        {% if report.auto_submitted %}
+                          <span class="badge badge-dark">
+                            {% trans "auto detected" %}
+                          </span>
+                        {% else %}
+                          {{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                         {% endif %}
-                        {% if report.resolution %}
-                          <h6>{% trans "Resolution" %}</h6>
-                          {{ report.resolution | markdown}}
+                      </td>
+
+                      {% if request.user.is_staff %}
+                        <td>
+                          {{ report.user.get_full_name }}
+                          {% if report.is_requester %}
+                            <span class="badge badge-success">{% trans "requester" %}</span>
+                          {% else %}
+                            <span class="badge badge-secondary">{% trans "not requester" %}</span>
+                          {% endif %}
+                        </td>
+                      {% endif %}
+
+                      <td>
+                        {% if request.user.is_staff %}
+                          <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
+                        {% endif %}
+                        {% if report.resolved %}
+                          <span class="badge badge-success">
+                            {% trans "Resolved" %}
+                          </span>
+                        {% else %}
+                          <span class="badge badge-secondary">
+                            {% trans "Pending" %}
+                          </span>
+                        {% endif %}
+                        {% if request.user.is_staff %}
+                          </a>
                         {% endif %}
                       </td>
                     </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+                    {% if report.description or report.resolution %}
+                      <tr>
+                        <td colspan="3" class="border-top-0">
+                          {% if report.description %}
+                            <blockquote><p>{{ report.description | linebreaksbr }}</p></blockquote>
+                          {% endif %}
+                          {% if report.resolution %}
+                            <h6>{% trans "Resolution" %}</h6>
+                            {{ report.resolution | markdown}}
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+          <h6>
+            {% trans "Report a new problem" %}
+          </h6>
+          <form action="{% url 'problem-report' message_pk=message.pk %}" method="post">
+            {% csrf_token %}
+            {% render_form message.problemreports_form %}
+            <div class="d-flex">
+              <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal" aria-label="Close">
+                {% trans "Cancel" %}
+              </button>
+              <button type="submit" class="btn btn-primary">
+                {% trans "Report problem" %}
+              </button>
+            </div>
+          </form>
         {% endif %}
-        <h6>
-          {% trans "Report a new problem" %}
-        </h6>
-        <form action="{% url 'problem-report' message_pk=message.pk %}" method="post">
-          {% csrf_token %}
-          {% render_form message.problemreports_form %}
-          <div class="d-flex">
-            <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal" aria-label="Close">
-              {% trans "Cancel" %}
-            </button>
-            <button type="submit" class="btn btn-primary">
-              {% trans "Report problem" %}
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   </div>
