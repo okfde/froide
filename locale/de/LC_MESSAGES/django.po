@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-02 16:27+0200\n"
-"PO-Revision-Date: 2020-07-02 16:32+0200\n"
+"PO-Revision-Date: 2020-07-02 16:36+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -7424,7 +7424,7 @@ msgstr "Etwas anderes..."
 
 #: froide/problem/models.py:17
 msgid "This is not a proper FOI request."
-msgstr "Dies ist keine Informationsfreiheits-Anfrage."
+msgstr "Dies ist keine Informationsfreiheitsanfrage."
 
 #: froide/problem/models.py:18
 msgid "More redactions are needed."
