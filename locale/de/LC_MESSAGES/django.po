@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 15:15+0200\n"
-"PO-Revision-Date: 2020-07-02 15:19+0200\n"
+"POT-Creation-Date: 2020-07-02 16:27+0200\n"
+"PO-Revision-Date: 2020-07-02 16:32+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1216,7 +1216,7 @@ msgstr "Die Anwendung erfordert die folgenden Berechtigungen"
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html:30
 #: froide/foirequest/views/attachment.py:209
 #: froide/foirequest/views/message.py:270
-#: froide/problem/templates/problem/message_toolbar_item.html:127
+#: froide/problem/templates/problem/message_toolbar_item.html:146
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -2347,7 +2347,7 @@ msgstr "Diese Anfrage ist abgeschlossen."
 
 #: froide/foirequest/forms/request.py:207
 #: froide/foirequest/models/request.py:265
-#: froide/problem/templates/problem/message_toolbar_item.html:108
+#: froide/problem/templates/problem/message_toolbar_item.html:127
 msgid "Resolution"
 msgstr "Ergebnis"
 
@@ -2504,6 +2504,7 @@ msgstr "Informationsfreiheitsanfrage"
 #: froide/foirequest/models/request.py:274
 #: froide/foirequest/models/suggestion.py:18
 #: froide/foirequestfollower/models.py:154 froide/frontpage/models.py:32
+#: froide/problem/templates/problem/message_toolbar_item.html:68
 msgid "User"
 msgstr "Nutzer"
 
@@ -3232,6 +3233,7 @@ msgid "Your message was sent"
 msgstr "✔️ Nachricht gesendet"
 
 #: froide/foirequest/signals.py:358
+#: froide/problem/templates/problem/message_toolbar_item.html:95
 msgid "requester"
 msgstr "Anfragesteller/in"
 
@@ -3315,7 +3317,7 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/pdf/message_letter.html:100
 #: froide/foirequest/templates/foirequest/snippets/message.html:101
 #: froide/letter/templates/letter/pdf/default.html:24
-#: froide/problem/templates/problem/message_toolbar_item.html:62
+#: froide/problem/templates/problem/message_toolbar_item.html:66
 #: froide/team/templates/team/team_detail.html:134
 #: froide/team/templates/team/team_detail.html:166
 msgid "Date"
@@ -7444,31 +7446,33 @@ msgstr "Die veröffentlichte Information ist falsch."
 msgid "You received a bounce mail from the public body."
 msgstr "Sie haben eine Bounce-Nachricht von der Behörde erhalten."
 
-#: froide/problem/models.py:53
+#: froide/problem/models.py:55
 msgid "problem report"
 msgstr "Problembericht"
 
-#: froide/problem/models.py:54
+#: froide/problem/models.py:56
 msgid "problem reports"
 msgstr "Problemberichte"
 
 #: froide/problem/templates/problem/email_problem_resolved.txt:3
 #, python-format
 msgid ""
-"We have resolved a problem that had been automatically detected on your "
+"We have resolved a problem that had been automatically detected on the "
 "request “%(title)s”."
 msgstr ""
-"Wir haben ein automatisch erkanntes Problem bei Ihrer Anfrage „%(title)s“ "
+"Wir haben ein automatisch erkanntes Problem bei der Anfrage „%(title)s“ "
 "behoben."
 
 #: froide/problem/templates/problem/email_problem_resolved.txt:5
 #, python-format
-msgid "We have resolved the problem you reported on you request “%(title)s”."
-msgstr "Wir haben das Problem bei Ihrer Anfrage „%(title)s“ behoben."
+msgid "We have resolved the problem you reported on the request “%(title)s”."
+msgstr ""
+"Wir haben das von Ihnen gemeldete Problem bei der Anfrage „%(title)s“ "
+"behoben."
 
 #: froide/problem/templates/problem/email_problem_resolved.txt:9
-msgid "You can go to your request here:"
-msgstr "Hier kommen Sie zu Ihrer Anfrage:"
+msgid "You can go to the request here:"
+msgstr "Hier kommen Sie zur Anfrage:"
 
 #: froide/problem/templates/problem/email_problem_resolved.txt:12
 #, python-format
@@ -7482,72 +7486,77 @@ msgstr ""
 "%(site_name)s"
 
 #: froide/problem/templates/problem/message_toolbar_item.html:8
+#: froide/problem/templates/problem/message_toolbar_item.html:14
 msgid "Report"
 msgstr "Melden"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:11
+#: froide/problem/templates/problem/message_toolbar_item.html:12
 msgid "Problem?"
 msgstr "Problem?"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:16
-#: froide/problem/templates/problem/message_toolbar_item.html:61
+#: froide/problem/templates/problem/message_toolbar_item.html:20
+#: froide/problem/templates/problem/message_toolbar_item.html:65
 msgid "Problem"
 msgid_plural "Problems"
 msgstr[0] "Problem"
 msgstr[1] "Probleme"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:31
+#: froide/problem/templates/problem/message_toolbar_item.html:35
 msgid "Report a problem"
 msgstr "Melden Sie ein Problem"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:33
+#: froide/problem/templates/problem/message_toolbar_item.html:37
 msgid "Problem reports"
 msgstr "Problemberichte"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:42
+#: froide/problem/templates/problem/message_toolbar_item.html:46
 msgid "Please login or register"
 msgstr "Bitte melden Sie sich an"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:44
+#: froide/problem/templates/problem/message_toolbar_item.html:48
 msgid ""
 "In order to report a problem with this message, you need to be logged in."
 msgstr ""
 "Um ein Problem bei dieser Nachricht melden zu können, müssen Sie eingeloggt "
 "sein."
 
-#: froide/problem/templates/problem/message_toolbar_item.html:47
+#: froide/problem/templates/problem/message_toolbar_item.html:51
 msgid "Please login"
 msgstr "Bitte loggen Sie sich ein"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:52
+#: froide/problem/templates/problem/message_toolbar_item.html:56
 msgid "Previously reported problems"
 msgstr "Bisher gemeldete Probleme"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:55
+#: froide/problem/templates/problem/message_toolbar_item.html:59
 msgid "Moderators are already informed about the following problems:"
 msgstr "Moderatoren sind schon über die folgenden Probleme informiert:"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:63
+#: froide/problem/templates/problem/message_toolbar_item.html:70
 msgid "State"
 msgstr "Zustand"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:77
+#: froide/problem/templates/problem/message_toolbar_item.html:84
 msgid "auto detected"
 msgstr "automatisch erkannt"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:89
+#: froide/problem/templates/problem/message_toolbar_item.html:97
+msgid "not requester"
+msgstr "nicht Anfragesteller/in"
+
+#: froide/problem/templates/problem/message_toolbar_item.html:108
 msgid "Resolved"
 msgstr "Gelöst"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:93
+#: froide/problem/templates/problem/message_toolbar_item.html:112
 msgid "Pending"
 msgstr "Läuft"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:120
+#: froide/problem/templates/problem/message_toolbar_item.html:139
 msgid "Report a new problem"
 msgstr "Melden Sie ein neues Problem"
 
-#: froide/problem/templates/problem/message_toolbar_item.html:130
+#: froide/problem/templates/problem/message_toolbar_item.html:149
 msgid "Report problem"
 msgstr "Problem melden"
 
@@ -7556,11 +7565,19 @@ msgstr "Problem melden"
 msgid "New problem: {label} [#{reqid}]"
 msgstr "Neues Problem: {label} [#{reqid}]"
 
-#: froide/problem/utils.py:29
+#: froide/problem/utils.py:18
+msgid "by requester"
+msgstr "von Anfragesteller/in"
+
+#: froide/problem/utils.py:18
+msgid "not by requester"
+msgstr "nicht von Anfragesteller/in"
+
+#: froide/problem/utils.py:30
 msgid "Problem resolved on your request"
 msgstr "Das Problem bei Ihrer Anfrage wurde behoben"
 
-#: froide/problem/views.py:30
+#: froide/problem/views.py:28
 msgid "Your report could not be created."
 msgstr "Ihr Problembericht konnte nicht erstellt werden."
 
