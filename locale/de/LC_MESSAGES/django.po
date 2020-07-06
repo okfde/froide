@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-06 15:11+0200\n"
-"PO-Revision-Date: 2020-07-06 15:11+0200\n"
+"POT-Creation-Date: 2020-07-06 17:22+0200\n"
+"PO-Revision-Date: 2020-07-06 17:22+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -123,7 +123,7 @@ msgstr "Fortgeschritten"
 msgid "requests"
 msgstr "anfragen"
 
-#: froide/account/admin.py:103 froide/publicbody/admin.py:328
+#: froide/account/admin.py:103 froide/publicbody/admin.py:330
 msgid "Export to CSV"
 msgstr "Exportiere als CSV"
 
@@ -3366,6 +3366,7 @@ msgstr "Bearbeiten"
 
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:75
 #: froide/foirequest/views/message.py:477
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:88
 msgid "Delete"
 msgstr "Löschen"
 
@@ -7621,35 +7622,35 @@ msgstr "Sie müssen eine URL angeben oder eine Datei hochladen."
 msgid "Public Bodies were imported."
 msgstr "Behörden wurden importiert."
 
-#: froide/publicbody/admin.py:336
+#: froide/publicbody/admin.py:338
 msgid "Removed from search index"
 msgstr "Aus Such-Index entfernt"
 
-#: froide/publicbody/admin.py:337
+#: froide/publicbody/admin.py:339
 msgid "Remove from search index"
 msgstr "Entferne aus Such-Index"
 
-#: froide/publicbody/admin.py:357
+#: froide/publicbody/admin.py:359
 msgid "Show georegions of"
 msgstr "Zeige Geographische Regionen von"
 
-#: froide/publicbody/admin.py:403
+#: froide/publicbody/admin.py:405
 msgid "This public body is already confirmed."
 msgstr "Diese Behörde ist schon bestätigt."
 
-#: froide/publicbody/admin.py:407
+#: froide/publicbody/admin.py:409
 #, python-format
 msgid "Public body confirmed. %(count)d message was sent."
 msgid_plural "Public body confirmed. %(count)d messages were sent"
 msgstr[0] "Behörde wurde bestätigt. %(count)d Nachricht wurde gesendet."
 msgstr[1] "Behörde wurde bestätigt. %(count)d Nachrichten wurden gesendet"
 
-#: froide/publicbody/admin.py:414
+#: froide/publicbody/admin.py:416
 #, python-format
 msgid "Public body “%s” has been approved"
 msgstr "Behörde „%s“ wurde freigeschaltet"
 
-#: froide/publicbody/admin.py:415
+#: froide/publicbody/admin.py:417
 #, python-brace-format
 msgid ""
 "Hello,\n"
@@ -7670,32 +7671,32 @@ msgstr ""
 "Beste Grüße\n"
 "{site_name}"
 
-#: froide/publicbody/admin.py:436
+#: froide/publicbody/admin.py:437
 #, python-format
 msgid "Concerning your public body proposal “%s”"
 msgstr "Ihr Vorschlag für Behörde „%s“"
 
-#: froide/publicbody/admin.py:441
+#: froide/publicbody/admin.py:442
 msgid "E-Mail was sent to public body creator."
 msgstr "E-Mail an Behörden-Ersteller wurde versendet."
 
-#: froide/publicbody/admin.py:463
+#: froide/publicbody/admin.py:464
 msgid "Has region"
 msgstr "Hat Region"
 
-#: froide/publicbody/admin.py:488 froide/publicbody/admin.py:493
+#: froide/publicbody/admin.py:489 froide/publicbody/admin.py:494
 msgid "Assign parent..."
 msgstr "Oberbehörde zuweisen..."
 
-#: froide/publicbody/admin.py:519 froide/publicbody/admin.py:554
+#: froide/publicbody/admin.py:520 froide/publicbody/admin.py:555
 msgid "# public bodies"
 msgstr "Anzahl Behörden"
 
-#: froide/publicbody/admin.py:526
+#: froide/publicbody/admin.py:527
 msgid "Public bodies with this classification"
 msgstr "Behörden mit dieser Klassifikation"
 
-#: froide/publicbody/admin.py:561
+#: froide/publicbody/admin.py:562
 msgid "Public bodies with this category"
 msgstr "Behörden mit dieser Kategorie"
 
@@ -7806,12 +7807,12 @@ msgstr "Neuer Behördenvorschlag"
 msgid "Public body change proposal"
 msgstr "Behördenänderungsvorschlag"
 
-#: froide/publicbody/forms.py:242
+#: froide/publicbody/forms.py:244
 #, python-format
 msgid "Changes to public body “%s” have been applied"
 msgstr "Änderungen an Behörde „%s“ wurden vorgenommen"
 
-#: froide/publicbody/forms.py:243
+#: froide/publicbody/forms.py:245
 #, python-brace-format
 msgid ""
 "Hello,\n"
@@ -8101,23 +8102,41 @@ msgstr "oder"
 msgid "Import %(name)s"
 msgstr "Importiere %(name)s"
 
-#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:6
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:7
 msgid "Accept proposal"
 msgstr "Vorschlag akzeptieren"
 
-#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:9
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:10
 msgid "Accept proposals"
 msgstr "Vorschläge akzeptieren"
 
-#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:19
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:25
 msgid "Field"
 msgstr "Feld"
 
-#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:20
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:26
 msgid "Value"
 msgstr "Wert"
 
-#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:54
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:39
+#: froide/publicbody/templates/publicbody/show.html:109
+msgid "Proposal"
+msgstr "Vorschlag"
+
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:44
+msgid "Change, without accepting"
+msgstr "Ändern ohne Übernehmen"
+
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:51
+#, python-format
+msgid "Accept proposal of %(name)s"
+msgstr "Vorschlag von %(name)s akzeptieren"
+
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:81
+msgid "Delete proposal"
+msgstr "Vorschlag löschen"
+
+#: froide/publicbody/templates/publicbody/admin/accept_change_proposal.html:99
 msgid "Accept change proposal"
 msgstr "Änderungsvorschlag akzeptieren"
 
@@ -8313,10 +8332,6 @@ msgstr "Aktenplan:"
 #: froide/publicbody/templates/publicbody/show.html:80
 msgid "Organisation Chart:"
 msgstr "Organigramm:"
-
-#: froide/publicbody/templates/publicbody/show.html:109
-msgid "Proposal"
-msgstr "Vorschlag"
 
 #: froide/publicbody/templates/publicbody/show.html:113
 msgid "You have proposed this public body, but it has not been confirmed yet."
