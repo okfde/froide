@@ -243,10 +243,9 @@ class PublicBodyAcceptForm(PublicBodyChangeForm):
             user.send_mail(
                 _('Changes to public body “%s” have been applied') % pb.name,
                 _('Hello,\n\nYou can find the changed public body here:\n\n'
-                  '{url}\n\nAll the Best,\n{site_name}'.format(
+                  '{url}\n\nAll the Best,\n{site_name}').format(
                       url=pb.get_absolute_domain_url(),
                       site_name=settings.SITE_NAME
-                  )
                 ),
                 priority=False
             )

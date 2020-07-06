@@ -415,10 +415,9 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
             creator.send_mail(
                 _('Public body “%s” has been approved') % pb.name,
                 _('Hello,\n\nYou can find the approved public body here:\n\n'
-                  '{url}\n\nAll the Best,\n{site_name}'.format(
+                  '{url}\n\nAll the Best,\n{site_name}').format(
                       url=pb.get_absolute_domain_url(),
                       site_name=settings.SITE_NAME
-                  )
                 ),
                 priority=False
             )
