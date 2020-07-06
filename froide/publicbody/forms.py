@@ -231,10 +231,12 @@ class PublicBodyAcceptForm(PublicBodyChangeForm):
                     data[user_id]['data'][key + '_label'] = model.objects.get(id=data[user_id]['data'][key])
         return data
 
-    def save(self, user, proposal_id=None):
+    def save(self, user, proposal_id=None, delete_proposals=None):
         pb = super(forms.ModelForm, self).save(commit=False)
         pb._updated_by = user
 
+        if delete_proposals is None:
+            delete_proposals = []
         if proposal_id:
             proposals = self.get_proposals()
             user = proposals[proposal_id]['user']
@@ -248,9 +250,11 @@ class PublicBodyAcceptForm(PublicBodyChangeForm):
                 ),
                 priority=False
             )
+            delete_proposals.append(proposal_id)
+        for pid in delete_proposals:
+            if pid in pb.change_proposals:
+                del pb.change_proposals[pid]
 
-        if proposal_id in pb.change_proposals:
-            del pb.change_proposals[proposal_id]
         pb.save()
         pb.laws.add(*pb.jurisdiction.get_all_laws())
 

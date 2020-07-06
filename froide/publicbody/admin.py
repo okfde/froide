@@ -298,7 +298,9 @@ class PublicBodyBaseAdminMixin:
             proposal_form = PublicBodyAcceptForm(data=request.POST, instance=instance)
             if proposal_form.is_valid():
                 proposal_form.save(
-                    request.user, proposal_id=request.POST.get('proposal_id')
+                    request.user,
+                    proposal_id=request.POST.get('proposal_id'),
+                    delete_proposals=request.POST.getlist('proposal_delete')
                 )
 
                 return redirect('admin:publicbody_publicbody_change', instance.id)

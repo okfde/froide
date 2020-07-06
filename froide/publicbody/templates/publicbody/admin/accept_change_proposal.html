@@ -38,11 +38,16 @@
           <td>
             {% trans "Proposal" %}
           </td>
-          <td></td>
+          <td>
+            <label>
+              <input type="radio" name="proposal_id" class="proposal" value="" required>
+              {% trans "Change, without accepting" %}
+            </label>
+          </td>
           {% for key, proposal in proposals.items %}
             <td>
               <label>
-                <input type="radio" name="proposal_id" class="proposal" value="{{ key }}">
+                <input type="radio" name="proposal_id" class="proposal" value="{{ key }}" required>
                 {% blocktrans with name=proposal.user.first_name %}Accept proposal of {{ name }}{% endblocktrans %}
               </label>
             </td>
@@ -51,7 +56,7 @@
         {% for field in form %}
           <tr>
             <td>{{ field.label }}</td>
-            <td>
+            <td data-proposal="" data-value="{{ field.value }}" data-field="{{ field.name }}">
               {{ field }}
             </td>
             {% for key, proposal in proposals.items %}
@@ -70,6 +75,21 @@
           </tr>
           {{ form.field }}
         {% endfor %}
+
+        <tr>
+          <td>
+            {% trans "Delete proposal" %}
+          </td>
+          <td></td>
+          {% for key, proposal in proposals.items %}
+            <td>
+              <label>
+                <input type="checkbox" name="proposal_delete" value="{{ proposal.user.id }}">
+                {% trans "Delete" %}
+              </label>
+            </td>
+          {% endfor %}
+        </tr>
       </tbody>
 
     </table>
@@ -84,3 +104,4 @@
   {% endfor %}
 </form>
 {% endblock %}
+
