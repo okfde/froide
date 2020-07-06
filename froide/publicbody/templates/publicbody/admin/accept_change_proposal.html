@@ -2,11 +2,17 @@
 
 {% load i18n l10n %}
 {% load form_helper %}
+{% load static %}
 
 {% block action_title %}{% trans 'Accept proposal' %}{% endblock %}
 
 {% block breadcrumbs_action_label %}
   {% trans 'Accept proposals' %}
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+  {{ block.super }}
+  <script src="{% static 'js/publicbody_changes.js' %}" charset="utf-8"></script>
 {% endblock %}
 
 {% block action_content %}
@@ -20,15 +26,28 @@
           <th>{% trans "Value" %}</th>
           {% for key, proposal in proposals.items %}
             <th>
-              <label title="{{ proposal.timestamp }}">
-                <input type="radio" name="proposal_id" value="{{ key }}">
+              <span title="{{ proposal.timestamp }}">
                 {{ proposal.user.get_full_name }} ({{ proposal.user.email }})
-              </label>
+              </span>
             </th>
           {% endfor %}
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td>
+            {% trans "Proposal" %}
+          </td>
+          <td></td>
+          {% for key, proposal in proposals.items %}
+            <td>
+              <label>
+                <input type="radio" name="proposal_id" class="proposal" value="{{ key }}">
+                {% blocktrans with name=proposal.user.first_name %}Accept proposal of {{ name }}{% endblocktrans %}
+              </label>
+            </td>
+          {% endfor %}
+        </tr>
         {% for field in form %}
           <tr>
             <td>{{ field.label }}</td>
@@ -37,8 +56,14 @@
             </td>
             {% for key, proposal in proposals.items %}
               {% with val=proposal.data|get_item_by_key:field.name %}
-              <td {% if val != field.value %} style="color:red"{% endif %}>
-                {{ val|linebreaksbr }}
+              <td data-proposal="{{ key }}" data-value="{{ val }}" data-field="{{ field.name }}" {% if val != field.value %} style="color:red"{% endif %}>
+                {% with label_name=field.name|add:"_label" %}
+                  {% if proposal.data|get_item_by_key:label_name %}
+                    {{ proposal.data|get_item_by_key:label_name }}
+                  {% else %}
+                    {{ val|linebreaksbr }}
+                  {% endif %}
+                {% endwith %}
               </td>
               {% endwith %}
             {% endfor %}

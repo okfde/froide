@@ -21,4 +21,4 @@ def render_field(field, horizontal=True):
 def get_item_by_key(obj, key=None):
     if key is None:
         return
-    return obj[key]
+    return obj.get(key)

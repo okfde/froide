@@ -228,7 +228,7 @@ class PublicBodyAcceptForm(PublicBodyChangeForm):
             v['user'] = user_map[user_id]
             for key, model in self.FK_FIELDS.items():
                 if data[user_id]['data'][key]:
-                    data[user_id]['data'][key] = model.objects.get(id=data[user_id]['data'][key])
+                    data[user_id]['data'][key + '_label'] = model.objects.get(id=data[user_id]['data'][key])
         return data
 
     def save(self, user, proposal_id=None):
