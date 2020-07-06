@@ -84,13 +84,19 @@
       {% endif %}
     </dl>
 
+    {% if user.is_authenticated %}
+      <a class="btn btn-secondary" href="{% url 'publicbody-change' pk=object.pk %}">
+        {% trans "Propose change" %}
+      </a>
+    {% endif %}
+
     {% if user.is_staff %}
       {% if object.confirmed %}
         {% url 'admin:publicbody_publicbody_change' object.id as admin_url %}
       {% else %}
         {% url 'admin:publicbody_proposedpublicbody_change' object.id as admin_url %}
       {% endif %}
-      <a class="btn btn-secondary" href="{{ admin_url }}">
+      <a class="btn btn-secondary mt-2" href="{{ admin_url }}">
         <i class="fa fa-cog"></i>
         {% trans "View on Admin site" %}
       </a>

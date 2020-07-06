@@ -1,0 +1,61 @@
+{% extends "helper/admin_base_action.html" %}
+
+{% load i18n l10n %}
+{% load form_helper %}
+
+{% block action_title %}{% trans 'Accept proposal' %}{% endblock %}
+
+{% block breadcrumbs_action_label %}
+  {% trans 'Accept proposals' %}
+{% endblock %}
+
+{% block action_content %}
+<form action="" method="post">{% csrf_token %}
+  <div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>{% trans "Field" %}</th>
+          <th>{% trans "Value" %}</th>
+          {% for key, proposal in proposals.items %}
+            <th>
+              <label title="{{ proposal.timestamp }}">
+                <input type="radio" name="proposal_id" value="{{ key }}">
+                {{ proposal.user.get_full_name }} ({{ proposal.user.email }})
+              </label>
+            </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for field in form %}
+          <tr>
+            <td>{{ field.label }}</td>
+            <td>
+              {{ field }}
+            </td>
+            {% for key, proposal in proposals.items %}
+              {% with val=proposal.data|get_item_by_key:field.name %}
+              <td {% if val != field.value %} style="color:red"{% endif %}>
+                {{ val|linebreaksbr }}
+              </td>
+              {% endwith %}
+            {% endfor %}
+          </tr>
+          {{ form.field }}
+        {% endfor %}
+      </tbody>
+
+    </table>
+
+    <input type="hidden" name="action" value="accept_change_proposal" />
+    <p>
+      <input type="submit" value="{% blocktrans %}Accept change proposal{% endblocktrans %}" />
+    </p>
+  </div>
+  {% for obj in queryset %}
+    <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}" />
+  {% endfor %}
+</form>
+{% endblock %}

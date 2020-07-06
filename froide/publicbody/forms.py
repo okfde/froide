@@ -4,12 +4,14 @@ from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import mail_managers
+from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 import phonenumbers
 
 from froide.helper.form_utils import JSONMixin
 
-from .models import PublicBody, Classification
+from .models import PublicBody, Classification, Jurisdiction
 from .widgets import PublicBodySelect
 
 
@@ -144,7 +146,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         )
 
     def __init__(self, *args, **kwargs):
-        super(PublicBodyProposalForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['jurisdiction'].required = True
 
     def clean_name(self):
@@ -173,7 +175,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         return fax_number
 
     def save(self, user):
-        pb = super(PublicBodyProposalForm, self).save(commit=False)
+        pb = super().save(commit=False)
         pb.slug = slugify(pb.name)
         pb.confirmed = False
         pb._created_by = user
@@ -183,4 +185,73 @@ class PublicBodyProposalForm(forms.ModelForm):
             _('New public body proposal'),
             pb.get_absolute_domain_url()
         )
+        return pb
+
+
+class PublicBodyChangeForm(PublicBodyProposalForm):
+    FK_FIELDS = {
+        'classification': Classification,
+        'jurisdiction': Jurisdiction
+    }
+
+    def clean_name(self):
+        return self.cleaned_data['name']
+
+    def save(self, user):
+        '''
+        This doesn't save instance, but saves
+        the change proposal.
+        '''
+        data = dict(self.cleaned_data)
+        for field in self.FK_FIELDS:
+            if data[field]:
+                data[field] = data[field].id
+        pb = PublicBody.objects.get(id=self.instance.id)
+        pb.change_proposals[user.id] = {
+            'data': data,
+            'timestamp': timezone.now().isoformat()
+        }
+        pb.save()
+        mail_managers(
+            _('Public body change proposal'),
+            pb.get_absolute_domain_url()
+        )
+        return pb
+
+
+class PublicBodyAcceptForm(PublicBodyChangeForm):
+    def get_proposals(self):
+        user_ids = self.instance.change_proposals.keys()
+        user_map = {str(u.id): u for u in get_user_model().objects.filter(id__in=user_ids)}
+        data = dict(self.instance.change_proposals)
+        for user_id, v in data.items():
+            v['user'] = user_map[user_id]
+            for key, model in self.FK_FIELDS.items():
+                if data[user_id]['data'][key]:
+                    data[user_id]['data'][key] = model.objects.get(id=data[user_id]['data'][key])
+        return data
+
+    def save(self, user, proposal_id=None):
+        pb = super(forms.ModelForm, self).save(commit=False)
+        pb._updated_by = user
+
+        if proposal_id:
+            proposals = self.get_proposals()
+            user = proposals[proposal_id]['user']
+            user.send_mail(
+                _('Changes to public body “%s” have been applied') % pb.name,
+                _('Hello,\n\nYou can find the changed public body here:\n\n'
+                  '{url}\n\nAll the Best,\n{site_name}'.format(
+                      url=pb.get_absolute_domain_url(),
+                      site_name=settings.SITE_NAME
+                  )
+                ),
+                priority=False
+            )
+
+        if proposal_id in pb.change_proposals:
+            del pb.change_proposals[proposal_id]
+        pb.save()
+        pb.laws.add(*pb.jurisdiction.get_all_laws())
+
         return pb

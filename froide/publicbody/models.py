@@ -336,6 +336,8 @@ class PublicBody(models.Model):
     )
     extra_data = JSONField(default=dict, blank=True)
 
+    change_proposals = JSONField(default=dict, blank=True)
+
     file_index = models.CharField(_("file index"), max_length=1024, blank=True)
     org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
 

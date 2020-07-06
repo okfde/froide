@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template import TemplateDoesNotExist
-from django.views.generic import FormView
+from django.views.generic import FormView, UpdateView
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
@@ -13,7 +13,7 @@ from froide.helper.search.views import BaseSearchView
 
 from .models import PublicBody, FoiLaw, Jurisdiction
 from .documents import PublicBodyDocument
-from .forms import PublicBodyProposalForm
+from .forms import PublicBodyProposalForm, PublicBodyChangeForm
 from .filters import PublicBodyFilterSet
 
 
@@ -174,3 +174,20 @@ class PublicBodyProposalView(LoginRequiredMixin, FormView):
             _('You need to register an account and login in order to propose a new public body.')
         )
         return super(PublicBodyProposalView, self).handle_no_permission()
+
+
+class PublicBodyChangeView(LoginRequiredMixin, UpdateView):
+    template_name = 'publicbody/change.html'
+    form_class = PublicBodyChangeForm
+    queryset = PublicBody.objects.all()
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def form_valid(self, form):
+        self.object = form.save(self.request.user)
+        messages.add_message(
+            self.request, messages.INFO,
+            _('Thank you for your proposal. We will send you an email when it has been approved.')
+        )
+        return redirect(self.object)
