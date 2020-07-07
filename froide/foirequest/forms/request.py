@@ -249,7 +249,7 @@ class FoiRequestStatusForm(forms.Form):
 
         return self.cleaned_data
 
-    def set_status(self):
+    def save(self):
         data = self.cleaned_data
         status = data['status']
         resolution = data['resolution']
