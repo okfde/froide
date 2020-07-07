@@ -220,13 +220,10 @@
                 {{ error.message }}
               </p>
             </div>
-
+            <!-- The following is whitespace sensitive -->
             <div
               v-if="!fullText"
-              class="body-text"
-            >
-              {{ letterStart }}
-            </div>
+              class="body-text">{{ letterStart }}</div>
             <div
               v-if="editingDisabled"
               class="body-text body-text-em"
@@ -267,33 +264,27 @@
               type="hidden"
               name="full_text"
             >
+            <!-- The following is whitespace sensitive -->
             <div
               v-if="!fullText"
               class="body-text"
-            >
-              <template v-if="!fullLetter">
+            ><template v-if="!fullLetter">
                 <a
                   class="show-full-letter"
                   href="#"
                   @click.prevent="showFullLetter"
                 >[&hellip;]</a>
                 {{ letterEndShort }}
-              </template><template v-else>
-                {{ letterEnd }}
-              </template>
+              </template><template v-else>{{ letterEnd }}</template>
             </div>
             <div
               v-if="letterSignature"
               class="body-text"
-            >
-              <em>{{ letterSignature }}</em>
-            </div>
+            ><em>{{ letterSignature }}</em></div>
             <div
               v-if="!letterSignature && fullText"
               class="body-text"
-            >
-              {{ letterSignatureName }}
-            </div>
+            >{{ letterSignatureName }}</div>
           </div>
         </div>
         <div
