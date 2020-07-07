@@ -2,34 +2,38 @@
   <div class="make-request-container">
     <request-form-breadcrumbs
       :i18n="i18n"
-      :multiRequest="multiRequest"
-      :hasPublicBodies="hasPublicBodies"
-      :hidePublicbodyChooser="hidePublicbodyChooser"></request-form-breadcrumbs>
+      :multi-request="multiRequest"
+      :has-public-bodies="hasPublicBodies"
+      :hide-publicbody-chooser="hidePublicbodyChooser"
+    />
 
     <div :class="{container: !multiRequest, 'container-multi': multiRequest}">
-
-      <slot name="messages"></slot>
+      <slot name="messages" />
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
-
-          <fieldset v-if="stepSelectPublicBody" id="step-publicbody" class="mt-5">
+          <fieldset
+            v-if="stepSelectPublicBody"
+            id="step-publicbody"
+            class="mt-5"
+          >
             <div v-if="multiRequest">
               <publicbody-multi-chooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
-                :config="config">
+                :config="config"
+              >
                 <template slot="publicbody-missing">
-                  <slot name="publicbody-missing"></slot>
+                  <slot name="publicbody-missing" />
                 </template>
               </publicbody-multi-chooser>
             </div>
             <div v-else>
               <div class="row">
                 <div class="col-lg-7">
-                  <slot name="publicbody-legend-title"></slot>
-                  <slot name="publicbody-help-text"></slot>
+                  <slot name="publicbody-legend-title" />
+                  <slot name="publicbody-help-text" />
                 </div>
               </div>
               <div class="row">
@@ -39,26 +43,33 @@
                     :defaultsearch="publicBodySearch"
                     :scope="pbScope"
                     :config="config"
-                    :list-view="publicBodyListView"></publicbody-chooser>
+                    :list-view="publicBodyListView"
+                  />
                 </div>
                 <div class="col-lg-4 small">
-                  <slot name="publicbody-missing"></slot>
+                  <slot name="publicbody-missing" />
                 </div>
               </div>
             </div>
           </fieldset>
 
-          <fieldset v-if="stepReviewPublicBodies && !stepWriteRequest" id="step-review-publicbody" class="mt-5">
+          <fieldset
+            v-if="stepReviewPublicBodies && !stepWriteRequest"
+            id="step-review-publicbody"
+            class="mt-5"
+          >
             <pb-multi-review
               name="publicbody"
               :i18n="i18n"
               :scope="pbScope"
-            >
-            </pb-multi-review>
+            />
           </fieldset>
 
-          <fieldset v-if="stepWriteRequest" id="step-request" class="mt-3">
-
+          <fieldset
+            v-if="stepWriteRequest"
+            id="step-request"
+            class="mt-3"
+          >
             <request-form
               :config="config"
               :publicbodies="publicBodies"
@@ -80,10 +91,10 @@
               @setStepSelectPublicBody="setStepSelectPublicBody"
             >
               <template slot="request-hints">
-                <slot name="request-hints"></slot>
+                <slot name="request-hints" />
               </template>
               <template slot="request-legend-title">
-                <slot name="request-legend-title"></slot>
+                <slot name="request-legend-title" />
               </template>
             </request-form>
 
@@ -95,47 +106,74 @@
               :initial-email.sync="email"
               :initial-address.sync="address"
               :address-help-text="userForm.fields.address.help_text"
-            ></user-registration>
+            />
 
             <request-public
               :form="requestForm"
               :hide-public="hidePublic"
-            ></request-public>
+            />
 
-            <user-terms v-if="!user.id"
+            <user-terms
+              v-if="!user.id"
               :form="userForm"
-            ></user-terms>
-
+            />
           </fieldset>
 
-          <similar-requests v-if="showSimilar && stepWriteRequest"
+          <similar-requests
+            v-if="showSimilar && stepWriteRequest"
             :publicbodies="publicBodies"
             :subject="subject"
             :config="config"
-          ></similar-requests>
+          />
 
           <review-request
             v-if="stepWriteRequest && showReview"
             :i18n="i18n"
             :publicbodies="publicBodies"
             :user="user"
-            :defaultLaw="defaultLaw"
+            :default-law="defaultLaw"
             :subject="subject"
             :body="body"
-            :fullText="fullText"
+            :full-text="fullText"
             @close="showReview = false"
-          ></review-request>
+          />
 
-          <button v-if="stepWriteRequest && shouldCheckRequest" type="button" id="review-button" class="btn btn-primary btn-lg mt-3" @click="showReview = true">
-            <i class="fa fa-check" aria-hidden="true"></i>
+          <button
+            v-if="stepWriteRequest && shouldCheckRequest"
+            id="review-button"
+            type="button"
+            class="btn btn-primary btn-lg mt-3"
+            @click="showReview = true"
+          >
+            <i
+              class="fa fa-check"
+              aria-hidden="true"
+            />
             {{ i18n.reviewRequest }}
           </button>
-          <button v-else-if="stepWriteRequest" type="submit" id="send-request-button" class="btn btn-primary btn-lg mt-3">
-            <i class="fa fa-send" aria-hidden="true"></i>
+          <button
+            v-else-if="stepWriteRequest"
+            id="send-request-button"
+            type="submit"
+            class="btn btn-primary btn-lg mt-3"
+          >
+            <i
+              class="fa fa-send"
+              aria-hidden="true"
+            />
             {{ i18n.submitRequest }}
           </button>
-          <button v-if="stepWriteRequest && user.id && showDraft" type="submit" class="btn btn-secondary mt-3" name="save_draft" value="true">
-            <i class="fa fa-save" aria-hidden="true"></i>
+          <button
+            v-if="stepWriteRequest && user.id && showDraft"
+            type="submit"
+            class="btn btn-secondary mt-3"
+            name="save_draft"
+            value="true"
+          >
+            <i
+              class="fa fa-save"
+              aria-hidden="true"
+            />
             {{ i18n.saveAsDraft }}
           </button>
         </div>
@@ -160,8 +198,7 @@ import UserTerms from './user-terms'
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 
 import {
-  STEPS, STEP_TO_URLS, SET_STEP_BY_URL,
-  SET_STEP_SELECT_PUBLICBODY, SET_STEP_REVIEW_PUBLICBODY, SET_STEP_REQUEST,
+  SET_STEP_SELECT_PUBLICBODY, SET_STEP_REQUEST,
   SET_PUBLICBODY, SET_PUBLICBODIES, CACHE_PUBLICBODIES,
   UPDATE_FIRST_NAME, UPDATE_LAST_NAME,
   SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
@@ -173,7 +210,20 @@ import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
-  name: 'request-page',
+  name: 'RequestPage',
+  components: {
+    PublicbodyChooser,
+    PublicbodyMultiChooser,
+    UserRegistration,
+    SimilarRequests,
+    ReviewRequest,
+    PbMultiReview,
+    RequestForm,
+    RequestFormBreadcrumbs,
+    RequestPublic,
+    UserTerms
+  },
+  mixins: [I18nMixin, LetterMixin],
   props: {
     config: {
       type: Object
@@ -228,72 +278,12 @@ export default {
       default: false
     }
   },
-  components: {
-    PublicbodyChooser,
-    PublicbodyMultiChooser,
-    UserRegistration,
-    SimilarRequests,
-    ReviewRequest,
-    PbMultiReview,
-    RequestForm,
-    RequestFormBreadcrumbs,
-    RequestPublic,
-    UserTerms
-  },
-  mixins: [I18nMixin, LetterMixin],
   data () {
     return {
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
       fullLetter: false,
       showReview: false
-    }
-  },
-  created () {
-    this.pbScope = 'make-request'
-    this.setConfig(this.config)
-
-    this.initStoreValues(this.formFields, {
-      subject: this.updateSubject,
-      body: this.updateBody,
-      full_text: this.updateFullText,
-      law_type: this.updateLawType,
-    })
-
-
-    this.updateLawType(this.formFields.law_type.value || this.formFields.law_type.initial)
-    if (this.publicbodies !== null) {
-      let pbs = this.publicbodies
-      this.setPublicBodies({
-        publicBodies: pbs,
-        scope: this.pbScope
-      })
-      this.cachePublicBodies(pbs)
-      this.getLawsForPublicBodies(pbs)
-    }
-    if (this.userInfo !== null) {
-      this.setUser(this.userInfo)
-      this.initStoreValues(this.userformFields, {
-        address: this.updateAddress,
-      })
-    } else {
-      this.initStoreValues(this.userformFields, {
-        user_email: this.updateEmail,
-        first_name: this.updateFirstName,
-        last_name: this.updateLastName,
-        address: this.updateAddress,
-        private: this.updatePrivate,
-      })
-    }
-    this.originalBody = this.body,
-    this.originalSubject = this.subject
-
-  },
-  mounted () {
-    let step = STEPS.SELECT_PUBLICBODY
-    if (this.hasPublicBodies) {
-      this.setStepRequest()
-      step = STEPS.WRITE_REQUEST
     }
   },
   computed: {
@@ -418,6 +408,56 @@ export default {
       'defaultLaw'
     ])
   },
+  watch: {
+    step () {
+      window.scrollTo(0, 0)
+    }
+  },
+  created () {
+    this.pbScope = 'make-request'
+    this.setConfig(this.config)
+
+    this.initStoreValues(this.formFields, {
+      subject: this.updateSubject,
+      body: this.updateBody,
+      full_text: this.updateFullText,
+      law_type: this.updateLawType,
+    })
+
+
+    this.updateLawType(this.formFields.law_type.value || this.formFields.law_type.initial)
+    if (this.publicbodies !== null) {
+      let pbs = this.publicbodies
+      this.setPublicBodies({
+        publicBodies: pbs,
+        scope: this.pbScope
+      })
+      this.cachePublicBodies(pbs)
+      this.getLawsForPublicBodies(pbs)
+    }
+    if (this.userInfo !== null) {
+      this.setUser(this.userInfo)
+      this.initStoreValues(this.userformFields, {
+        address: this.updateAddress,
+      })
+    } else {
+      this.initStoreValues(this.userformFields, {
+        user_email: this.updateEmail,
+        first_name: this.updateFirstName,
+        last_name: this.updateLastName,
+        address: this.updateAddress,
+        private: this.updatePrivate,
+      })
+    }
+    this.originalBody = this.body,
+    this.originalSubject = this.subject
+
+  },
+  mounted () {
+    if (this.hasPublicBodies) {
+      this.setStepRequest()
+    }
+  },
   methods: {
     initStoreValues (fields, mapping) {
       for (let key in mapping) {
@@ -442,8 +482,6 @@ export default {
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES,
-      updateFirstName: UPDATE_FIRST_NAME,
-      updateLastName: UPDATE_LAST_NAME,
       updateAddress: UPDATE_ADDRESS,
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE,
@@ -451,11 +489,6 @@ export default {
     ...mapActions([
       'getLawsForPublicBodies'
     ])
-  },
-  watch: {
-    step (newStep, oldStep) {
-      window.scrollTo(0, 0)
-    }
   }
 }
 </script>
