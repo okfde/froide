@@ -9,7 +9,7 @@ from .attachment import (
 )
 from .draft import delete_draft, claim_draft
 from .list_requests import (
-    ListRequestView, search, list_unchecked
+    ListRequestView, search
 )
 from .make_request import MakeRequestView, DraftRequestView, RequestSentView
 from .message import (
@@ -28,7 +28,7 @@ from .project import (
 )
 from .request_actions import (
     set_public_body, suggest_public_body, set_status, make_public, set_law,
-    set_tags, set_summary, mark_not_foi, mark_checked, make_same_request,
+    set_tags, set_summary, mark_not_foi, make_same_request,
     extend_deadline, SetTeamView,
     confirm_request, delete_request,
     publicbody_upload
@@ -44,7 +44,7 @@ __all__ = [
     show_attachment, delete_attachment, create_document,
     approve_attachment, AttachmentFileDetailView, redact_attachment,
     delete_draft, claim_draft,
-    ListRequestView, search, list_unchecked, UserRequestFeedView,
+    ListRequestView, search, UserRequestFeedView,
     MakeRequestView, DraftRequestView, RequestSentView,
     send_message, escalation_message, add_postal_reply, add_postal_message,
     add_postal_reply_attachment, set_message_sender, approve_message,
@@ -57,7 +57,7 @@ __all__ = [
     ProjectView, project_shortlink, SetProjectTeamView,
     set_public_body, suggest_public_body, set_status, make_public, set_law,
     confirm_request, delete_request, publicbody_upload,
-    set_tags, set_summary, mark_not_foi, mark_checked, make_same_request,
+    set_tags, set_summary, mark_not_foi, make_same_request,
     extend_deadline,
     shortlink, auth, show
 ]

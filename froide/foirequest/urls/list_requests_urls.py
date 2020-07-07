@@ -4,7 +4,7 @@ from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
 
 from ..views import (
-    list_unchecked, delete_draft, claim_draft,
+    delete_draft, claim_draft,
     ListRequestView, UserRequestFeedView,
     user_calendar
 )
@@ -22,7 +22,6 @@ urlpatterns = [
         RedirectView.as_view(pattern_name='foirequest-list_feed', permanent=True),
         name='foirequest-feed_latest'),
 
-    url(r'^unchecked/$', list_unchecked, name='foirequest-list_unchecked'),
     url(r'^delete-draft$', delete_draft, name='foirequest-delete_draft'),
     path('claim/<uuid:token>/', claim_draft, name='foirequest-claim_draft'),
 ]

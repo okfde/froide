@@ -104,15 +104,3 @@ class ListRequestView(BaseListRequestView):
 def search(request):
     params = urlencode({'q': request.GET.get('q', '')})
     return redirect(reverse('foirequest-list') + '?' + params)
-
-
-def list_unchecked(request):
-    if not request.user.is_staff:
-        return render_403(request)
-    foirequests = FoiRequest.published.filter(checked=False).order_by('-id')[:30]
-    attachments = FoiAttachment.objects.filter(is_redacted=False, redacted__isnull=True,
-        approved=False, can_approve=True).order_by('-id')[:30]
-    return render(request, 'foirequest/list_unchecked.html', {
-        'foirequests': foirequests,
-        'attachments': attachments
-    })

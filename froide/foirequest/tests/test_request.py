@@ -774,34 +774,6 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertFalse(req.is_foi)
 
-    def test_mark_checked(self):
-        req = FoiRequest.objects.all()[0]
-        req.checked = False
-        req.save()
-        self.assertFalse(req.checked)
-        response = self.client.post(reverse('foirequest-mark_checked',
-                kwargs={"slug": req.slug + "-blub"}))
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client.post(reverse('foirequest-mark_checked',
-                kwargs={"slug": req.slug}))
-        self.assertForbidden(response)
-
-        self.client.login(email="dummy@example.org", password="froide")
-        response = self.client.post(reverse('foirequest-mark_checked',
-                kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 403)
-
-        req = FoiRequest.objects.get(pk=req.pk)
-        self.assertFalse(req.checked)
-        self.client.logout()
-        self.client.login(email="info@fragdenstaat.de", password="froide")
-        response = self.client.post(reverse('foirequest-mark_checked',
-                kwargs={"slug": req.slug}))
-        self.assertEqual(response.status_code, 302)
-        req = FoiRequest.objects.get(pk=req.pk)
-        self.assertTrue(req.checked)
-
     def test_escalation_message(self):
         req = FoiRequest.objects.all()[0]
         attachments = list(generate_foirequest_files(req))

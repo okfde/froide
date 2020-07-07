@@ -189,22 +189,6 @@ def mark_not_foi(request, slug):
 
 
 @require_POST
-def mark_checked(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff:
-        return render_403(request)
-    foirequest.checked = True
-    foirequest.save()
-    if request.is_ajax():
-        return HttpResponse()
-    messages.add_message(request, messages.SUCCESS,
-            _('Request marked as checked.'))
-    return redirect(foirequest)
-
-
-@require_POST
 def make_same_request(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not foirequest.not_publishable:
