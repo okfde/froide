@@ -2,16 +2,15 @@ import functools
 import re
 from urllib.parse import urlencode
 
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
-from froide.helper.utils import render_403
 from froide.helper.search.views import BaseSearchView
 from froide.helper.search.facets import make_filter_url
 from froide.publicbody.models import Jurisdiction
 
-from ..models import FoiRequest, FoiAttachment
+from ..models import FoiRequest
 from ..feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
 from ..filters import (
     get_filter_data, get_active_filters, FoiRequestFilterSet
