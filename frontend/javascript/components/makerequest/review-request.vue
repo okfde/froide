@@ -31,17 +31,19 @@
               {{ subject }}
             </dd>
           </dl>
-          <div v-if="fullText">
-            <div class="body-text review-body-text">{{ body }}
+          <div @click="close">
+            <div v-if="fullText">
+              <div class="body-text review-body-text">{{ body }}
 {{ letterSignatureName }}</div>
-          </div>
-          <div v-else>
-            <div class="body-text review-body-text"><span>{{ letterStart }}</span>
-  <span class="highlight">
+            </div>
+            <div v-else>
+              <div class="body-text review-body-text"><span>{{ letterStart }}</span>
+<span class="highlight">
 {{ body }}
 </span>
-  <span>
+<span>
 {{ letterEnd }}</span></div>
+            </div>
           </div>
           <ul class="review-hints">
             <li>{{ i18n.reviewSpelling }}</li>
@@ -56,7 +58,7 @@
             <i class="fa fa-edit" aria-hidden="true"></i>
             {{ i18n.reviewEdit }}
           </button>
-          <button v-if="canSend" type="submit" id="send-request-button" class="btn btn-primary">
+          <button v-if="canSend" type="submit" id="send-request-button" class="btn btn-primary" @click="$emit('submit')">
             <i class="fa fa-send" aria-hidden="true"></i>
             {{ i18n.submitRequest }}
           </button>
@@ -174,7 +176,8 @@ export default {
 
   .review-body-text {
     color: #333;
-    border: 1px solid #333;
+    background-color: #eaeaea;
+    border: 1px dashed #777;
     padding: 0.25em;
     height: 14em;
     max-height: 14em;

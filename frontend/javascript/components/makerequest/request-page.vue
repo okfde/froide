@@ -136,6 +136,7 @@
             :body="body"
             :full-text="fullText"
             @close="showReview = false"
+            @submit="submitting = true"
           />
 
           <button
@@ -156,6 +157,7 @@
             id="send-request-button"
             type="submit"
             class="btn btn-primary btn-lg mt-3"
+            @click="submitting = true"
           >
             <i
               class="fa fa-send"
@@ -169,6 +171,7 @@
             class="btn btn-secondary mt-3"
             name="save_draft"
             value="true"
+            @click="submitting = true"
           >
             <i
               class="fa fa-save"
@@ -283,7 +286,8 @@ export default {
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
       fullLetter: false,
-      showReview: false
+      showReview: false,
+      submitting: false
     }
   },
   computed: {
@@ -457,6 +461,19 @@ export default {
     if (this.hasPublicBodies) {
       this.setStepRequest()
     }
+    window.addEventListener('beforeunload', (e) => {
+      if (this.submitting) {
+        return
+      }
+      if (!this.stepWriteRequest) {
+        return
+      }
+      // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+      e.preventDefault();
+      // Chrome requires returnValue to be set
+      e.returnValue = this.i18n.sureCancel;
+      return e.returnValue
+    });
   },
   methods: {
     initStoreValues (fields, mapping) {
