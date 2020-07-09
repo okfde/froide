@@ -1,9 +1,21 @@
 <template>
-  <div class="document mb-1" :id="attachmentId" :class="{'is-new': document.new}">
+  <div
+    :id="attachmentId"
+    class="document mb-1"
+    :class="{'is-new': document.new}"
+  >
     <div class="row">
       <div class="col-auto">
-        <input v-if="ready" v-model="selected" type="checkbox"/>
-        <div v-else class="spinner-border spinner-border-sm" role="status">
+        <input
+          v-if="ready"
+          v-model="selected"
+          type="checkbox"
+        >
+        <div
+          v-else
+          class="spinner-border spinner-border-sm"
+          role="status"
+        >
           <span class="sr-only">{{ i18n.loading }}</span>
         </div>
       </div>
@@ -17,104 +29,179 @@
 
         <small :title="attachment.name">{{ documentTitle }}</small>
 
-        <a v-if="canOpen" :href="attachment.site_url" :title="i18n.openAttachmentPage">
-          <i class="fa fa-external-link"></i>
+        <a
+          v-if="canOpen"
+          :href="attachment.site_url"
+          :title="i18n.openAttachmentPage"
+        >
+          <i class="fa fa-external-link" />
         </a>
 
-        <div v-if="document.uploading" class="progress">
-          <div class="progress-bar"
+        <div
+          v-if="document.uploading"
+          class="progress"
+        >
+          <div
+            class="progress-bar"
             :class="{
               'progress-bar-animated progress-bar-striped': progressAlmostComplete,
               'bg-info progress-bar-striped': progressUnknown,
             }"
             :style="{'width': progressPercentLabel}"
-            role="progressbar" :aria-valuenow="document.progress"
-            aria-valuemin="0" aria-valuemax="100"></div>
+            role="progressbar"
+            :aria-valuenow="document.progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          />
         </div>
       </div>
       <div class="col-auto doc-status">
         <template v-if="hasAttachment">
-          <span v-if="!approved" class="badge badge-pill badge-secondary" data-toggle="tooltip" data-placement="top" :title="i18n.notPublic">
+          <span
+            v-if="!approved"
+            class="badge badge-pill badge-secondary"
+            data-toggle="tooltip"
+            data-placement="top"
+            :title="i18n.notPublic"
+          >
             &nbsp;
           </span>
-          <span v-if="isRedacted" class="badge badge-pill badge-dark" data-toggle="tooltip" data-placement="top" :title="i18n.redacted">
+          <span
+            v-if="isRedacted"
+            class="badge badge-pill badge-dark"
+            data-toggle="tooltip"
+            data-placement="top"
+            :title="i18n.redacted"
+          >
             &nbsp;
           </span>
-          <span v-if="isProtected" class="badge badge-pill badge-info" data-toggle="tooltip" data-placement="top" :title="i18n.protectedOriginalExplanation">
+          <span
+            v-if="isProtected"
+            class="badge badge-pill badge-info"
+            data-toggle="tooltip"
+            data-placement="top"
+            :title="i18n.protectedOriginalExplanation"
+          >
             &nbsp;
           </span>
         </template>
       </div>
       <div class="col-md-2 text-center">
-        <button v-if="canMakeResult" class="btn btn-sm btn-outline-success"
+        <button
+          v-if="canMakeResult"
+          class="btn btn-sm btn-outline-success"
           :disabled="attachment.document || document.creatingDocument"
+          data-toggle="tooltip"
+          data-placement="top"
+          :title="i18n.makeResultExplanation"
           @click="makeResult"
-          data-toggle="tooltip" data-placement="top" :title="i18n.makeResultExplanation"
         >
-          <i class="fa fa-certificate"></i>
+          <i class="fa fa-certificate" />
           {{ i18n.isResult }}
         </button>
         <template v-else-if="hasDocument">
-          <a :href="attachment.site_url" target="_blank">
-            <i class="fa fa-certificate"></i>
+          <a
+            :href="attachment.site_url"
+            target="_blank"
+          >
+            <i class="fa fa-certificate" />
           </a>
-          <button class="btn btn-sm ml-1"
+          <button
+            class="btn btn-sm ml-1"
             :class="{'btn-light': !editDocumentMeta, 'btn-secondary': editDocumentMeta}"
             @click.prevent="editDocumentMeta = !editDocumentMeta"
           >
             <span class="sr-only">{{ i18n.edit }}</span>
-            <i class="fa fa-edit"></i>
+            <i class="fa fa-edit" />
           </button>
         </template>
       </div>
       <div class="col-md-4">
         <template v-if="ready">
-          <file-review :config="config" :document="document"
+          <file-review
+            :config="config"
+            :document="document"
             @docupdated="updateDocument"
             @makerelevant="$emit('makerelevant')"
-          ></file-review>
+          />
         </template>
       </div>
       <div class="col-auto">
-        <button v-if="ready && attachment.is_pdf" class="btn btn-sm"
+        <button
+          v-if="ready && attachment.is_pdf"
+          class="btn btn-sm"
           :class="{'btn-light': !document.previewPdf, 'btn-secondary': document.previewPdf}"
           @click.prevent="$emit('docupdated', {previewPdf: !document.previewPdf})"
         >
-          <i class="fa" :class="{'fa-caret-square-o-right': !document.previewPdf, 'fa-caret-square-o-down': document.previewPdf}"></i>
+          <i
+            class="fa"
+            :class="{'fa-caret-square-o-right': !document.previewPdf, 'fa-caret-square-o-down': document.previewPdf}"
+          />
           <!-- {{ i18n.loadPreview }} -->
         </button>
       </div>
     </div>
-    <div v-if="editDocumentMeta" class="row">
+    <div
+      v-if="editDocumentMeta"
+      class="row"
+    >
       <div class="col mt-1">
         <div class="card">
           <div class="card-body">
             <form @submit.prevent="saveDocumentMeta">
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label" :for="'doc-title' + doc.id">{{ i18n.documentTitle }}</label>
+                <label
+                  class="col-sm-2 col-form-label"
+                  :for="'doc-title' + doc.id"
+                >{{ i18n.documentTitle }}</label>
                 <div class="col-sm-10">
-                  <input v-model="title" type="text" class="form-control" :id="'doc-title' + doc.id" :placeholder="i18n.title">
+                  <input
+                    :id="'doc-title' + doc.id"
+                    v-model="title"
+                    type="text"
+                    class="form-control"
+                    :placeholder="i18n.title"
+                  >
                   <small class="form-text text-muted">{{ i18n.documentTitleHelp }}</small>
                 </div>
               </div>
               <div class="form-group row mb-0">
-                <label class="col-sm-2 col-form-label" :for="'doc-title' + doc.id">{{ i18n.description }}</label>
+                <label
+                  class="col-sm-2 col-form-label"
+                  :for="'doc-title' + doc.id"
+                >{{ i18n.description }}</label>
                 <div class="col-sm-10">
-                  <textarea v-model="description" :id="'doc-description' + doc.id" class="form-control" rows="3"></textarea>
+                  <textarea
+                    :id="'doc-description' + doc.id"
+                    v-model="description"
+                    class="form-control"
+                    rows="3"
+                  />
                   <small class="form-text text-muted">{{ i18n.descriptionHelp }}</small>
                 </div>
               </div>
               <p class="text-right mb-0">
-                <button type="submit" class="btn btn-primary">{{ i18n.save }}</button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                >
+                  {{ i18n.save }}
+                </button>
               </p>
             </form>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="document.previewPdf" class="row">
+    <div
+      v-if="document.previewPdf"
+      class="row"
+    >
       <div class="col mt-1">
-        <pdf-preview :config="config" :document="document"></pdf-preview>
+        <pdf-preview
+          :config="config"
+          :document="document"
+        />
       </div>
     </div>
   </div>
@@ -127,16 +214,13 @@ import {DocumentMixin} from './lib/document_utils'
 import FileReview from './file-review.vue'
 import PdfPreview from './pdf-preview.vue'
 
-
-const range = (len) => [...Array(len).keys()]
-
 export default {
-  name: 'file-document',
-  mixins: [I18nMixin, DocumentMixin],
-  props: ['config', 'document'],
+  name: 'FileDocument',
   components: {
     FileReview, PdfPreview
   },
+  mixins: [I18nMixin, DocumentMixin],
+  props: ['config', 'document'],
   data () {
     return {
       progressTotal: null,
@@ -147,19 +231,6 @@ export default {
       editDocumentMeta: false,
       title: null,
       description: null
-    }
-  },
-  mounted () {
-    if (this.document.new) {
-      window.setTimeout(() => this.$emit('notnew'), 2000);
-    }
-    if (this.pending) {
-      this.checkProgress()
-    }
-    this.title = this.hasDocument ? this.doc.title : null
-    this.description = this.hasDocument ? this.doc.description : null
-    if (this.hasDocument && this.documentTitle.indexOf('.pdf') !== -1) {
-      this.editDocumentMeta = true
     }
   },
   computed: {
@@ -237,9 +308,6 @@ export default {
       }
       return '100%'
     },
-    attachment () {
-      return this.document.attachment
-    },
     attachmentId () {
       return `attachment-${this.document.id}`
     },
@@ -250,6 +318,19 @@ export default {
       set () {
         this.$emit('docupdated', {selected: !this.document.selected})
       }
+    }
+  },
+  mounted () {
+    if (this.document.new) {
+      window.setTimeout(() => this.$emit('notnew'), 2000);
+    }
+    if (this.pending) {
+      this.checkProgress()
+    }
+    this.title = this.hasDocument ? this.doc.title : null
+    this.description = this.hasDocument ? this.doc.description : null
+    if (this.hasDocument && this.documentTitle.indexOf('.pdf') !== -1) {
+      this.editDocumentMeta = true
     }
   },
   methods: {

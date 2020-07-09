@@ -52,6 +52,7 @@
           </div>
           <div class="col-md-2 ml-auto text-center">
             <button
+              v-if="canMakeDocument"
               class="btn btn-sm"
               :class="{'btn-success': canMakeResult}"
               :disabled="!canMakeResult"
@@ -180,8 +181,11 @@ export default {
         )
       })
     },
+    canMakeDocument () {
+      return this.config.settings.can_make_document
+    },
     canMakeResult () {
-      return this.config.settings.can_make_document && this.canMakeResultDocs.length > 0
+      return this.canMakeDocument && this.canMakeResultDocs.length > 0
     },
     canApproveDocs () {
       return this.pdfDocuments.filter(d => {
