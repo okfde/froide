@@ -35,6 +35,10 @@ def render_problem_button(context, message):
                 message=mes, user=request.user
             )
 
+            # Assign message to problem to avoid query
+            for problem in mes.problemreports:
+                problem.message = mes
+
     return {
         'is_requester': is_requester,
         'request': request,

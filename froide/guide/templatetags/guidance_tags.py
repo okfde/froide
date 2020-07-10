@@ -19,6 +19,10 @@ def render_guidance(context, message):
         for mes in request.messages:
             mes.guidances = message_guidances[mes.id]
 
+            # Avoid query by assigning
+            for guidance in mes.guidances:
+                guidance.message = mes
+
     return {
         'request': context['request'],
         'message': message,

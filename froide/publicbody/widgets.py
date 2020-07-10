@@ -33,7 +33,6 @@ def get_widget_context():
 class PublicBodySelect(forms.Widget):
     input_type = "text"
     template_name = 'publicbody/_chooser.html'
-    initial_search = None
 
     class Media:
         extend = False
@@ -46,7 +45,7 @@ class PublicBodySelect(forms.Widget):
         context = super().get_context(name, value, attrs)
         objects = None
         if hasattr(self, 'object') and self.object:
-            objects = [self.object.as_data()]
+            objects = [self.object.as_simple_data()]
         context['widget'].update({
             'json': json.dumps({
                 'fields': {

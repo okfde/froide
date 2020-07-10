@@ -527,7 +527,7 @@ class FoiRequest(models.Model):
         return not last_message.is_response or not self.is_actionable()
 
     def can_be_escalated(self):
-        return self.law.mediator and self.is_actionable()
+        return self.law.mediator_id and self.is_actionable()
 
     def is_overdue(self):
         return self.was_overdue() and self.awaits_response()

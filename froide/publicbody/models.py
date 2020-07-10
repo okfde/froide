@@ -458,15 +458,24 @@ class PublicBody(models.Model):
             }
         )
 
-    def as_data(self, request=None):
-        from .api_views import PublicBodyListSerializer
+    def _as_data(self, serializer_klass, request=None):
         if request is None:
             ctx = get_fake_api_context()
         else:
             ctx = {
                 'request': request
             }
-        return PublicBodyListSerializer(self, context=ctx).data
+        return serializer_klass(self, context=ctx).data
+
+    def as_data(self, request=None):
+        from .api_views import PublicBodyListSerializer
+
+        return self._as_data(PublicBodyListSerializer)
+
+    def as_simple_data(self, request=None):
+        from .api_views import SimplePublicBodySerializer
+
+        return self._as_data(SimplePublicBodySerializer)
 
     @property
     def children_count(self):

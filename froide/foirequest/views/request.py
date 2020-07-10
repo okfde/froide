@@ -32,8 +32,10 @@ def show(request, slug, **kwargs):
             "public_body",
             "jurisdiction",
             "user",
-            "law"
-        ).prefetch_related('tags').get(slug=slug)
+            "law",
+        ).prefetch_related(
+            "tags",
+        ).get(slug=slug)
     except FoiRequest.DoesNotExist:
         raise Http404
 
