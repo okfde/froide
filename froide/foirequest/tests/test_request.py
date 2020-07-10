@@ -22,7 +22,9 @@ from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import (
     package_foirequest, generate_foirequest_files, add_message_from_email
 )
-from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.foirequest.models import (
+    FoiRequest, FoiMessage, FoiAttachment, DeliveryStatus
+)
 from froide.foirequest.forms import (
     get_send_message_form, get_escalation_message_form
 )
@@ -1414,32 +1416,34 @@ class RequestTest(TestCase):
     def test_resend_message(self):
         foirequest = FoiRequest.objects.all()[0]
         message = foirequest.messages[0]
-        message.sent = False
         message.save()
-        url = reverse('foirequest-resend_message', kwargs={'slug': foirequest.slug})
-        post = {'message': ''}
+        url = reverse('foirequest-resend_message', kwargs={
+                'slug': foirequest.slug,
+                'message_id': message.id
+        })
 
-        response = self.client.post(url, post)
+        response = self.client.post(url)
         self.assertForbidden(response)
 
         self.client.login(email='dummy@example.org', password='froide')
-        response = self.client.post(url, post)
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
 
-        self.client.login(email='info@fragdenstaat.de', password='froide')
-        response = self.client.post(url, post)
-        self.assertEqual(response.status_code, 400)
+        self.client.login(email='moderator@example.org', password='froide')
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 404)
 
-        post = {'message': '8' * 6}
-        response = self.client.post(url, post)
-        self.assertEqual(response.status_code, 400)
+        DeliveryStatus.objects.create(
+            message=message,
+            status=DeliveryStatus.STATUS_BOUNCED
+        )
+        self.assertTrue(message.can_resend_bounce)
 
-        post = {'message': str(message.pk)}
-        response = self.client.post(url, post)
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
         message = FoiMessage.objects.get(id=message.pk)
-        self.assertTrue(message.sent)
-        self.assertEqual(message.email_message_id, '')
+        ds = message.get_delivery_status()
+        self.assertEqual(ds.status, DeliveryStatus.STATUS_SENDING)
 
     def test_approve_message(self):
         foirequest = FoiRequest.objects.all()[0]
