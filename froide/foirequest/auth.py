@@ -66,6 +66,11 @@ def can_read_foirequest(foirequest, request, allow_code=True):
 
 @lru_cache()
 def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
+    '''
+    The read is authenticated: if the request was not public, the actor
+    could still read.
+    An authenticated read allows seeing redactions and unapproved attachments.
+    '''
     user = request.user
     if has_authenticated_access(foirequest, request, verb='read',
                                 scope='read:request'):
