@@ -304,6 +304,10 @@ def make_world():
     UserFactory.create(
         username='dummy', email='dummy@example.org',
         first_name='Dummy', last_name='D.')
+    moderator = UserFactory.create(
+        username='moderator', email='moderator@example.org',
+        first_name='Mod', last_name='Erator')
+
     dummy_staff = UserFactory.create(
         is_staff=True,
         username='dummy_staff',
@@ -314,7 +318,14 @@ def make_world():
         codename='change_foirequest',
         content_type=content_type,
     )
+
     dummy_staff.user_permissions.add(permission)
+
+    moderate_permission = Permission.objects.get(
+        codename='moderate',
+        content_type=content_type,
+    )
+    moderator.user_permissions.add(moderate_permission)
 
     bund = JurisdictionFactory.create(name='Bund')
     nrw = JurisdictionFactory.create(name='NRW')
