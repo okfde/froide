@@ -23,7 +23,10 @@ from ..utils import check_throttle
 from ..services import (
     CreateSameAsRequestService, ActivatePendingRequestService
 )
-from ..auth import can_write_foirequest, check_foirequest_upload_code
+from ..auth import (
+    can_write_foirequest, check_foirequest_upload_code,
+    can_moderate_foirequest
+)
 from ..hooks import registry
 
 from .request import show_foirequest
@@ -34,6 +37,15 @@ def allow_write_foirequest(func):
     def inner(request, slug, *args, **kwargs):
         foirequest = get_object_or_404(FoiRequest, slug=slug)
         if not can_write_foirequest(foirequest, request):
+            return render_403(request)
+        return func(request, foirequest, *args, **kwargs)
+    return inner
+
+
+def allow_moderate_foirequest(func):
+    def inner(request, slug, *args, **kwargs):
+        foirequest = get_object_or_404(FoiRequest, slug=slug)
+        if not can_moderate_foirequest(foirequest, request):
             return render_403(request)
         return func(request, foirequest, *args, **kwargs)
     return inner

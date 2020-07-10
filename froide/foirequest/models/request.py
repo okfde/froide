@@ -339,6 +339,7 @@ class FoiRequest(models.Model):
         permissions = (
             ("see_private", _("Can see private requests")),
             ("create_batch", _("Create batch requests")),
+            ("moderate", _("Can moderate requests")),
         )
 
     # Custom Signals

@@ -9,7 +9,8 @@ from crossdomainmedia import CrossDomainMediaAuth
 
 from froide.helper.auth import (
     can_read_object, can_write_object,
-    can_manage_object, has_authenticated_access,
+    can_manage_object, can_moderate_object,
+    has_authenticated_access,
     get_read_queryset
 )
 
@@ -97,6 +98,13 @@ def can_write_foirequest(foirequest, request):
     if foirequest.project:
         return can_write_foiproject(foirequest.project, request)
     return False
+
+
+@lru_cache()
+def can_moderate_foirequest(foirequest, request):
+    if not can_read_foirequest_authenticated(foirequest, request):
+        return False
+    return can_moderate_object(foirequest, request)
 
 
 def can_manage_foirequest(foirequest, request):

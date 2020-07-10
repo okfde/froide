@@ -75,10 +75,18 @@ def can_manage_object(obj, request):
     return has_authenticated_access(obj, request, 'manage')
 
 
+@lru_cache()
+def can_moderate_object(obj, request):
+    if request.user.is_staff:
+        return True
+    return check_permission(obj, request, 'moderate')
+
+
 ACCESS_MAPPING = {
     'read': can_read_object,
     'write': can_write_object,
     'manage': can_manage_object,
+    'moderate': can_moderate_object,
 }
 
 

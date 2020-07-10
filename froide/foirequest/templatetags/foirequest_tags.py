@@ -21,7 +21,8 @@ from ..models import FoiRequest, FoiMessage, DeliveryStatus
 from ..foi_mail import get_alternative_mail
 from ..auth import (
     can_read_foirequest, can_write_foirequest, can_manage_foirequest,
-    can_read_foirequest_anonymous, can_read_foirequest_authenticated
+    can_read_foirequest_anonymous, can_read_foirequest_authenticated,
+    can_moderate_foirequest
 )
 
 Comment = get_model()
@@ -209,6 +210,11 @@ def can_write_foirequest_filter(foirequest, request):
 @register.filter(name='can_manage_foirequest')
 def can_manage_foirequest_filter(foirequest, request):
     return can_manage_foirequest(foirequest, request)
+
+
+@register.filter(name='can_moderate_foirequest')
+def can_moderate_foirequest_filter(foirequest, request):
+    return can_moderate_foirequest(foirequest, request)
 
 
 @register.filter(name='can_read_foirequest_anonymous')
