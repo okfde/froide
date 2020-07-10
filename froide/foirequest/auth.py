@@ -102,7 +102,7 @@ def can_write_foirequest(foirequest, request):
 
 @lru_cache()
 def can_moderate_foirequest(foirequest, request):
-    if not can_read_foirequest_authenticated(foirequest, request):
+    if not can_read_foirequest(foirequest, request):
         return False
     return can_moderate_object(foirequest, request)
 
@@ -150,7 +150,7 @@ def is_attachment_public(foirequest, attachment):
 
 def clear_lru_caches():
     for f in (can_write_foirequest, can_read_foirequest,
-              can_read_foirequest_authenticated):
+              can_read_foirequest_authenticated, can_moderate_foirequest):
         f.cache_clear()
 
 
