@@ -17,6 +17,7 @@ from froide.foirequest.tasks import process_mail
 from froide.foirequest.models import (FoiRequest, FoiMessage, DeferredMessage)
 from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import add_message_from_email
+from froide.foirequest.services import BOUNCE_TAG
 
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), 'testdata'))
 
@@ -380,7 +381,10 @@ class BounceMailTest(TestCase):
             process_mail.delay(f.read())
 
         req = FoiRequest.objects.get(pk=self.req.pk)
-        self.assertEqual(req.messages[-1].original, req.messages[0])
+        bounce_message = req.messages[-1]
+        self.assertEqual(bounce_message.original, req.messages[0])
+        tags = bounce_message.tags.all().values_list('name', flat=True)
+        self.assertIn(BOUNCE_TAG, tags)
         # No notification mails, only to managers
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], 'manager@example.com')

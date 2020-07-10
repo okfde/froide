@@ -28,6 +28,9 @@ from .tasks import create_project_requests, convert_attachment_task
 
 User = get_user_model()
 
+BOUNCE_TAG = 'bounce'
+AUTO_REPLY_TAG = 'auto-reply'
+
 
 class BaseService(object):
     def __init__(self, data, **kwargs):
@@ -381,6 +384,9 @@ class ReceiveEmailService(BaseService):
 
         message.save()
 
+        if email.is_auto_reply:
+            message.tags.add(AUTO_REPLY_TAG)
+
         foirequest._messages = None
         foirequest.status = 'awaiting_classification'
         foirequest.save()
@@ -433,6 +439,7 @@ class ReceiveEmailService(BaseService):
             mes = None
 
         message.original = mes
+        message.tags.add(BOUNCE_TAG)
         message.save()
 
         ProblemReport.objects.create(
