@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.functional import cached_property
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
@@ -156,6 +157,14 @@ class FoiMessage(models.Model):
     @property
     def content(self):
         return self.plaintext
+
+    @property
+    def is_bounce(self):
+        return self.kind == 'email' and 'bounce' in self.tag_set
+
+    @cached_property
+    def tag_set(self):
+        return set([t.name for t in self.tags.all()])
 
     @property
     def readable_status(self):

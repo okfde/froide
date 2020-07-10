@@ -161,8 +161,8 @@
         </dt>
         <dd class="d-print-none">
           <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
-          {% for tag in message.tags.all %}
-            <span class="badge badge-light">{{ tag.name }}</span>
+          {% for tag_name in message.tag_set %}
+            <span class="badge badge-light">{{ tag_name }}</span>
           {% endfor %}
         </dd>
       {% endif %}
@@ -229,6 +229,11 @@
         {% if object|can_write_foirequest:request %}
           {% render_message_redact_button message %}
           {% render_message_edit_button message %}
+          {% if message.is_bounce %}
+            <button class="btn btn-warning">
+              Resend
+            </button>
+          {% endif %}
         {% endif %}
       </div>
       {% endif %}
