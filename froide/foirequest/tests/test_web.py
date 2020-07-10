@@ -490,6 +490,7 @@ class PerformanceTest(TestCase):
         - Django session + Django user (+3)
         - FoiRequest (+1)
         - FoiRequest Tags (+1)
+        - User and group permissions (+2)
         - FoiMessages of that request (+1)
         - FoiAttachments of that request (+1)
         - FoiEvents of that request (+1)
@@ -499,7 +500,7 @@ class PerformanceTest(TestCase):
         - Problem reports - even for non-requester (+1)
         - ContentType + Comments for each FoiMessage (+2)
         """
-        TOTAL_EXPECTED_REQUESTS = 14
+        TOTAL_EXPECTED_REQUESTS = 16
         req = factories.FoiRequestFactory.create(site=self.site)
         factories.FoiMessageFactory.create(request=req, is_response=False)
         mes2 = factories.FoiMessageFactory.create(request=req)
