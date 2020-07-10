@@ -517,7 +517,7 @@ class DeliveryStatus(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=32)
     retry_count = models.PositiveIntegerField(default=0)
     log = models.TextField(blank=True)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(default=timezone.now)
 
     class Meta:
         get_latest_by = 'last_update'
