@@ -206,45 +206,50 @@
     {% block after_attachments %}{% endblock %}
 
     {% block message_toolbar %}
-      {% if not message.original %}
       <div class="btn-toolbar mt-3 mb-3 d-print-none" role="toolbar" aria-label="{% trans 'Message toolbar' %}">
-        {% if object|can_write_foirequest:request and message.is_response %}
-          <div class="btn-group btn-group-sm mr-2">
-            <a data-tabgo="tab" data-name="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-secondary">
-              <span class="fa fa-reply"></span>
-              {% trans "Reply" %}
-            </a>
-          </div>
+        {% if not message.original and object|can_write_foirequest:request %}
+          {% if message.is_response %}
+            <div class="btn-group btn-group-sm mr-2">
+              <a data-tabgo="tab" data-name="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-secondary">
+                <span class="fa fa-reply"></span>
+                {% trans "Reply" %}
+              </a>
+            </div>
+          {% endif %}
+          {% if object.message_needs_status == message %}
+            <div class="btn-group btn-group-sm mr-2">
+              <a data-tabgo="tab" href="#set-status" class="btn btn-warning-blink">
+                <span class="fa fa-question-circle"></span>
+                {% trans "Set status" %}
+              </a>
+            </div>
+          {% endif %}
         {% endif %}
-        {% if object|can_write_foirequest:request and object.message_needs_status == message %}
-          <div class="btn-group btn-group-sm mr-2">
-            <a data-tabgo="tab" href="#set-status" class="btn btn-warning-blink">
-              <span class="fa fa-question-circle"></span>
-              {% trans "Set status" %}
-            </a>
-          </div>
-        {% endif %}
+
         {% block message_toolbar_item %}{% endblock %}
+
         {% render_problem_button message %}
-        {% if object|can_write_foirequest:request %}
+
+        {% if object|can_write_foirequest:request and not message.original%}
+
           {% render_message_redact_button message %}
           {% render_message_edit_button message %}
 
-          {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
-            <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
-            method="post" class="ajaxified"
-            data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
-              {% csrf_token %}
-              <button class="btn btn-sm btn-warning ml-1" type="submit"
-                data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
-                {% trans "Resend" %}
-              </button>
-            </form>
-          {% endif %}
-
         {% endif %}
+
+        {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
+          <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
+          method="post" class="ajaxified"
+          data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-warning ml-1" type="submit"
+              data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
+              {% trans "Resend" %}
+            </button>
+          </form>
+        {% endif %}
+
       </div>
-      {% endif %}
     {% endblock message_toolbar %}
 
     {% block before_message_body %}
