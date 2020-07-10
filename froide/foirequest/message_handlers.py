@@ -1,11 +1,12 @@
 import importlib
 
 from django.conf import settings
+from django.utils import timezone
 
 from froide.helper.email_utils import make_address
 
 from .foi_mail import send_foi_mail
-from .models import FoiRequest
+from .models import FoiRequest, DeliveryStatus
 
 
 def get_message_handler_class(dotted):
@@ -115,6 +116,7 @@ class EmailMessageHandler(MessageHandler):
         if settings.FROIDE_CONFIG['dsn'] and get_notified:
             extra_kwargs['dsn'] = True
 
+        message.timestamp = timezone.now()
         message.save()
         message_id = message.get_absolute_domain_short_url()
         extra_kwargs['froide_message_id'] = message_id
@@ -128,6 +130,14 @@ class EmailMessageHandler(MessageHandler):
         message.email_message_id = ''
         message.sent = True
         message.save()
+
+        DeliveryStatus.objects.update_or_create(
+            message=message,
+            defaults=dict(
+                status=DeliveryStatus.STATUS_SENDING,
+                last_update=timezone.now(),
+            )
+        )
 
         # Check delivery status in 2 minutes
         from .tasks import check_delivery_status
