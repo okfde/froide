@@ -17,6 +17,10 @@ from froide.helper.text_utils import (
 
 from .request import FoiRequest, get_absolute_short_url
 
+BOUNCE_TAG = 'bounce'
+AUTO_REPLY_TAG = 'auto-reply'
+BOUNCE_RESENT_TAG = 'bounce-resent'
+
 
 class FoiMessageManager(models.Manager):
     def get_throttle_filter(self, queryset, user, extra_filters=None):
@@ -159,8 +163,21 @@ class FoiMessage(models.Model):
         return self.plaintext
 
     @property
+    def can_resend_bounce(self):
+        if self.original_id:
+            return self.is_bounce and not self.is_bounce_resent
+        ds = self.get_delivery_status()
+        if ds is not None:
+            return ds.is_failed()
+        return False
+
+    @property
     def is_bounce(self):
-        return self.kind == 'email' and 'bounce' in self.tag_set
+        return self.kind == 'email' and BOUNCE_TAG in self.tag_set
+
+    @property
+    def is_bounce_resent(self):
+        return BOUNCE_RESENT_TAG in self.tag_set
 
     @cached_property
     def tag_set(self):
@@ -454,8 +471,7 @@ class FoiMessage(models.Model):
         send_message(self, notify=notify, **kwargs)
 
     def force_resend(self):
-        self.delete_delivery_status()
-        self.resend()
+        self.resend(force=True)
 
     def resend(self, **kwargs):
         from ..message_handlers import resend_message

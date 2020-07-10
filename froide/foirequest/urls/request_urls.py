@@ -40,7 +40,6 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/mark/not-foi/$", mark_not_foi, name="foirequest-mark_not_foi"),
     url(r"^(?P<slug>[-\w]+)/extend-deadline/$", extend_deadline, name="foirequest-extend_deadline"),
     url(r"^(?P<slug>[-\w]+)/make-same/$", make_same_request, name="foirequest-make_same_request"),
-    url(r"^(?P<slug>[-\w]+)/resend/$", resend_message, name="foirequest-resend_message"),
     url(r"^(?P<slug>[-\w]+)/download/$", download_foirequest_zip, name="foirequest-download"),
     url(r"^(?P<slug>[-\w]+)/pdf/$", download_foirequest_pdf, name="foirequest-pdf"),
     url(r"^(?P<slug>[-\w]+)/set-team/$", SetTeamView.as_view(), name="foirequest-set_team"),
@@ -50,6 +49,7 @@ urlpatterns = [
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set-public-body/$", set_message_sender, name="foirequest-set_message_sender"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/edit-message/$", edit_message, name="foirequest-edit_message"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/redact-message/$", redact_message, name="foirequest-redact_message"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/resend/$", resend_message, name="foirequest-resend_message"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/pdf/$", download_message_pdf, name="foirequest-download_message_pdf"),
     # Attachments
     url(pgettext_lazy('url part', r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/attachment/(?P<attachment_name>.+)$'),

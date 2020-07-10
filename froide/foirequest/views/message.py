@@ -28,9 +28,10 @@ from ..forms import (
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
 from ..pdf_generator import LetterPDFGenerator
+from ..services import ResendBouncedMessageService
 
 from .request import show_foirequest
-from .request_actions import allow_write_foirequest
+from .request_actions import allow_write_foirequest, allow_moderate_foirequest
 
 
 logger = logging.getLogger(__name__)
@@ -529,23 +530,6 @@ def approve_message(request, foirequest, message_id):
 
 @require_POST
 @allow_write_foirequest
-def resend_message(request, foirequest):
-    try:
-        mes = FoiMessage.objects.get(
-            sent=False,
-            request=foirequest,
-            pk=int(request.POST.get('message', 0))
-        )
-    except (FoiMessage.DoesNotExist, ValueError):
-        messages.add_message(request, messages.ERROR,
-                    _('Invalid input!'))
-        return render_400(request)
-    mes.resend()
-    return redirect('admin:foirequest_foimessage_change', mes.id)
-
-
-@require_POST
-@allow_write_foirequest
 def edit_message(request, foirequest, message_id):
     message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
     if not message.can_edit:
@@ -581,3 +565,21 @@ def download_message_pdf(request, foirequest, message_id):
     )
     response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
     return response
+
+
+@require_POST
+@allow_moderate_foirequest
+def resend_message(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    if not message.can_resend_bounce:
+        raise Http404
+
+    service = ResendBouncedMessageService(message)
+    sent_message = service.process()
+
+    if request.is_ajax():
+        return HttpResponse(sent_message.get_absolute_url())
+
+    messages.add_message(request, messages.SUCCESS,
+                _('The message has been re-sent.'))
+    return redirect(sent_message)

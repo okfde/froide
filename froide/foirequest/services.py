@@ -19,6 +19,7 @@ from froide.problem.models import ProblemReport
 from .models import (
     FoiRequest, FoiMessage, RequestDraft, FoiProject, FoiAttachment
 )
+from .models.message import BOUNCE_TAG, AUTO_REPLY_TAG, BOUNCE_RESENT_TAG
 from .utils import (
     generate_secret_address, construct_initial_message_body,
     get_publicbody_for_email, redact_plaintext_with_request
@@ -27,9 +28,6 @@ from .hooks import registry
 from .tasks import create_project_requests, convert_attachment_task
 
 User = get_user_model()
-
-BOUNCE_TAG = 'bounce'
-AUTO_REPLY_TAG = 'auto-reply'
 
 
 class BaseService(object):
@@ -514,3 +512,22 @@ class ActivatePendingRequestService(BaseService):
         if send_now:
             foirequest.safe_send_first_message()
         return foirequest
+
+
+class ResendBouncedMessageService(BaseService):
+    def process(self, request=None):
+        message = self.data
+
+        if message.original:
+            message.tags.add(BOUNCE_RESENT_TAG)
+            return self.resend_message(message.original)
+
+        return self.resend_message(message)
+
+    def resend_message(self, sent_message,):
+        foirequest = sent_message.request
+        sent_message.recipient_email = foirequest.public_body.email
+        sent_message.sent = False
+        sent_message.save()
+        sent_message.force_resend()
+        return sent_message

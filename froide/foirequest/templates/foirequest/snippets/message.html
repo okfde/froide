@@ -229,11 +229,19 @@
         {% if object|can_write_foirequest:request %}
           {% render_message_redact_button message %}
           {% render_message_edit_button message %}
-          {% if message.is_bounce %}
-            <button class="btn btn-warning">
-              Resend
-            </button>
+
+          {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
+            <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
+            method="post" class="ajaxified"
+            data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-warning ml-1" type="submit"
+                data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
+                {% trans "Resend" %}
+              </button>
+            </form>
           {% endif %}
+
         {% endif %}
       </div>
       {% endif %}

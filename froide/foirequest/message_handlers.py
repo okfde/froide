@@ -45,7 +45,7 @@ class MessageHandler(object):
         request = message.request
 
         ds = message.get_delivery_status()
-        if ds is not None and ds.is_sent():
+        if ds is not None and ds.is_sent() and not kwargs.get('force'):
             raise ValueError('Delivery Status with sent exists!')
 
         if not request.is_blocked:
@@ -61,7 +61,7 @@ class MessageHandler(object):
         message = self.message
 
         ds = message.get_delivery_status()
-        if ds is not None and ds.is_sent():
+        if ds is not None and ds.is_sent() and not kwargs.get('force'):
             # If status is received, do not send
             return
 
