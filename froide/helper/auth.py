@@ -13,11 +13,14 @@ AUTH_MAPPING = {
 
 def check_permission(obj, request, verb):
     user = request.user
-    if not user.is_staff:
-        return False
-    capability = AUTH_MAPPING.get(verb, verb)
     opts = obj._meta
-    codename = get_permission_codename(capability, opts)
+
+    if verb in AUTH_MAPPING:
+        capability = AUTH_MAPPING[verb]
+        codename = get_permission_codename(capability, opts)
+    else:
+        codename = verb
+
     if user.has_perm("%s.%s" % (opts.app_label, codename)):
         return True
     if user.has_perm("%s.%s" % (opts.app_label, codename), obj=obj):
