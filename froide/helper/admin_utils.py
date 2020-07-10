@@ -181,6 +181,7 @@ def make_greaterzerofilter(field, title):
 class EmptyFilter(SimpleListFilter):
     title = ''
     parameter_name = ''
+    empty_value = ''
 
     def lookups(self, request, model_admin):
         return (
@@ -190,8 +191,11 @@ class EmptyFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
+        val = self.empty_value
+        if callable(val):
+            val = val()
         kwargs = {
-            '%s' % self.parameter_name: '',
+            '%s' % self.parameter_name: val,
         }
         if self.value() == '0':
             return queryset.filter(**kwargs)
@@ -200,10 +204,11 @@ class EmptyFilter(SimpleListFilter):
         return queryset
 
 
-def make_emptyfilter(field, title):
+def make_emptyfilter(field, title, empty_value=''):
     return type(str('%sEmptyFilter' % field.title()), (EmptyFilter,), {
         'title': title,
-        'parameter_name': field
+        'parameter_name': field,
+        'empty_value': empty_value,
     })
 
 

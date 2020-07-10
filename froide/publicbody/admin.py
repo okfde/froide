@@ -141,6 +141,10 @@ class PublicBodyBaseAdminMixin:
         'category_list', 'request_count'
     )
     list_filter = (
+        make_emptyfilter(
+            'change_proposals', _('Has change proposals'),
+            empty_value=dict
+        ),
         'jurisdiction', 'classification', 'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
         make_nullfilter('regions', _('Has regions')),
