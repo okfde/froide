@@ -439,8 +439,9 @@ class ReceiveEmailService(BaseService):
             mes = None
 
         message.original = mes
-        message.tags.add(BOUNCE_TAG)
         message.save()
+
+        message.tags.add(BOUNCE_TAG)
 
         ProblemReport.objects.create(
             message=mes or message,
