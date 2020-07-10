@@ -36,7 +36,7 @@ class ProblemReport(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True, on_delete=models.SET_NULL,
-        blank=True
+        blank=True, related_name='problems_reported'
     )
     kind = models.CharField(
         max_length=50, choices=(
@@ -49,6 +49,12 @@ class ProblemReport(models.Model):
     description = models.TextField(blank=True)
     resolution = models.TextField(blank=True)
     resolution_timestamp = models.DateTimeField(null=True, blank=True)
+    claimed = models.DateTimeField(null=True, blank=True)
+    moderator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, on_delete=models.SET_NULL,
+        blank=True, related_name='problems_moderated'
+    )
 
     class Meta:
         ordering = ('-timestamp',)

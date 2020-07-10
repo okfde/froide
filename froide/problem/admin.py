@@ -31,6 +31,8 @@ class ProblemReportAdmin(admin.ModelAdmin):
         if 'resolved' in form.changed_data and obj.resolved:
             if not obj.resolution_timestamp:
                 obj.resolution_timestamp = timezone.now()
+            if not obj.moderator:
+                obj.moderator = request.user
             sent = inform_user_problem_resolved(obj)
             if sent:
                 self.message_user(
