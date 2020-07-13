@@ -27,7 +27,11 @@ function connectSocket() {
       document.getElementById('moderators').innerText = data.userlist.join(', ')
     }
   };
-  socket.onclose = () => {
+  socket.onerror = (e) => {
+    console.error(e)
+  };
+  socket.onclose = (e) => {
+    console.error(e)
     console.error('Chat socket closed unexpectedly');
     window.clearInterval(heartBeatInterval);
     heartBeatInterval = undefined;
