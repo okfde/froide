@@ -379,11 +379,17 @@ class PublicBodyAdmin(PublicBodyAdminMixin, admin.ModelAdmin):
 
 
 class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
-    list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'created_at')
+    list_display = ('name', 'email', 'url', 'classification', 'jurisdiction', 'created_by', 'created_at')
     date_hierarchy = 'created_at'
+    actions = ['confirm_selected']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.select_related('created_by')
+        return qs
 
     def get_urls(self):
-        urls = super(ProposedPublicBodyAdminMixin, self).get_urls()
+        urls = super().get_urls()
         my_urls = [
             url(r'^(?P<pk>\d+)/confirm/$',
                 self.admin_site.admin_view(self.confirm),
@@ -401,8 +407,8 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
             raise PermissionDenied
 
         pb = ProposedPublicBody.objects.get(pk=pk)
-        pb._updated_by = request.user
-        result = pb.confirm()
+
+        result = self._confirm_pb(request, pb)
 
         if result is None:
             self.message_user(
@@ -414,8 +420,15 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                     'Public body confirmed. %(count)d messages were sent',
                     result
                 ) % {"count": result})
+
+        return redirect('admin:publicbody_publicbody_change', pb.id)
+
+    def _confirm_pb(self, pb, user):
+        pb._updated_by = user
+        result = pb.confirm()
+
         creator = pb.created_by
-        if result is not None and creator and creator != request.user:
+        if result is not None and creator and creator != user:
             creator.send_mail(
                 _('Public body “%s” has been approved') % pb.name,
                 _('Hello,\n\nYou can find the approved public body here:\n\n'
@@ -425,7 +438,19 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 ),
                 priority=False
             )
-        return redirect('admin:publicbody_publicbody_change', pb.id)
+        return result
+
+    def confirm_selected(self, request, queryset):
+        queryset = queryset.filter(confirmed=False)
+        for pb in queryset:
+            self._confirm_pb(pb, request.user)
+
+        self.message_user(
+            request, _('{} public bodies were confirmed.').format(
+                queryset.count()
+            )
+        )
+    confirm_selected.short_description = _('Confirm all selected')
 
     def send_message(self, request, pk):
         if not request.method == 'POST':
