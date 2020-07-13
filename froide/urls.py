@@ -151,6 +151,7 @@ froide_urlpatterns += [
     url(r'^%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
     url(r'^comments/', include('django_comments.urls')),
     url(r'^problem/', include('froide.problem.urls')),
+    url(r'^moderation/', include('froide.problem.moderation_urls')),
     url(pgettext('url part', r'^letter/'), include('froide.letter.urls')),
     url(r'^guide/', include('froide.guide.urls')),
     url(r'^500/', lambda request: TemplateResponse(request, '500.html'))

@@ -1,9 +1,10 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 
 from froide.foirequest.models import FoiMessage
+from froide.foirequest.auth import is_foirequest_moderator
 
 from froide.helper.utils import render_403
 
@@ -28,3 +29,9 @@ def report_problem(request, message_pk):
             _('Your report could not be created.')
         )
     return redirect(message)
+
+
+def moderation_view(request):
+    if not is_foirequest_moderator(request):
+        return render_403(request)
+    return render(request, 'problem/moderation.html', {})

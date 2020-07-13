@@ -4,8 +4,11 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
+from froide.problem.consumer import ModerationConsumer
+
 
 websocket_urls = [
+    path('moderation/', ModerationConsumer)
 ]
 
 application = ProtocolTypeRouter({

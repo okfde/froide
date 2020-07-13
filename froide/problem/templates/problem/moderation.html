@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block body %}
+<div class="container-fluid">
+<h2>{% trans "Moderation" %}</h2>
+<p id="moderators"></p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script async src="{% static 'js/moderation.js' %}"></script>
+
+{% endblock %}
