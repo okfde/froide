@@ -11,7 +11,7 @@ from froide.helper.auth import (
     can_read_object, can_write_object,
     can_manage_object, can_moderate_object,
     has_authenticated_access,
-    get_read_queryset
+    get_read_queryset, check_permission
 )
 
 from .models import FoiRequest, FoiMessage, FoiAttachment
@@ -110,6 +110,14 @@ def can_moderate_foirequest(foirequest, request):
     if not can_read_foirequest(foirequest, request):
         return False
     return can_moderate_object(foirequest, request)
+
+
+def is_foirequest_moderator(request):
+    if not request.user.is_authenticated:
+        return False
+    if request.user.is_staff:
+        return True
+    return check_permission(FoiRequest, request, 'moderate')
 
 
 def can_manage_foirequest(foirequest, request):
