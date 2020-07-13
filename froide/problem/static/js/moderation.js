@@ -46,6 +46,16 @@ function createSocket() {
     `${prot}://${window.location.host}/ws/moderation/`);
 }
 
-document.addEventListener('DOMContentLoaded', connectSocket)
+
+
+function ready(fn) {
+  if (document.readyState != 'loading'){
+    fn();
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+}
+
+ready(connectSocket)
 
 }())
