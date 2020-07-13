@@ -32,6 +32,8 @@ class Base(Configuration):
         'django.contrib.humanize',
         'django.contrib.gis',
 
+        'channels',
+
         # overwrite management command in
         # django_elasticsearch_dsl
         'froide.helper',
@@ -75,6 +77,12 @@ class Base(Configuration):
     DATABASES = values.DatabaseURLValue('postgis://froide:froide@localhost:5432/froide')
 
     CACHES = values.CacheURLValue('dummy://')
+
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
 
     # ############# Site Configuration #########
 
@@ -134,6 +142,7 @@ class Base(Configuration):
     # ########## URLs #################
 
     ROOT_URLCONF = values.Value('froide.urls')
+    ASGI_APPLICATION = "froide.routing.application"
 
     # URL prefix for static files.
     # Example: "http://media.lawrence.com/static/"
