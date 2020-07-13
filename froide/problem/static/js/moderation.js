@@ -32,7 +32,7 @@ function connectSocket() {
     window.clearInterval(heartBeatInterval);
     heartBeatInterval = undefined;
     if (retryInterval === undefined) {
-      retryInterval = window.setInterval(this.connectSocket, 3000);
+      retryInterval = window.setInterval(connectSocket, 3000);
     }
   };
 }
