@@ -14,11 +14,11 @@ class ScopeRequest():
         return self.scope['user']
 
 
-def is_moderator(scope):
+async def is_moderator(scope):
     if scope['user'].is_staff:
         return True
 
-    return database_sync_to_async(is_foirequest_moderator)(
+    return await database_sync_to_async(is_foirequest_moderator)(
         ScopeRequest(scope)
     )
 
@@ -35,7 +35,7 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
         user = self.scope['user']
-        if not is_moderator(self.scope):
+        if not await is_moderator(self.scope):
             await self.close()
             return
 
