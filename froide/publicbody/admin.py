@@ -385,7 +385,7 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.select_related('created_by')
+        qs = qs.select_related('_created_by')
         return qs
 
     def get_urls(self):
