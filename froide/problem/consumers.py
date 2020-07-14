@@ -72,6 +72,7 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
 
     async def userlist(self, event):
         await self.send_json({
+            'type': 'userlist',
             'userlist': event['userlist'],
             'user': event['user']
         })

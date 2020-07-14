@@ -4,7 +4,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
-from froide.problem.consumer import ModerationConsumer
+from froide.problem.consumers import ModerationConsumer
 
 
 websocket_urls = [
