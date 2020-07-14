@@ -102,6 +102,11 @@ class FoiRequestAdmin(admin.ModelAdmin):
         autocomplete_url=reverse_lazy('api:request-tags-autocomplete')
     )
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related('public_body')
+        return qs
+
     def request_page(self, obj):
         return format_html('<a href="{}">{}</a>',
             obj.get_absolute_url(), _('request page'))
