@@ -10,7 +10,7 @@ from .utils import inform_user_problem_resolved
 
 class ProblemReportAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
-    raw_id_fields = ('message', 'user',)
+    raw_id_fields = ('message', 'user', 'moderator')
     list_filter = ('auto_submitted', 'resolved', 'kind')
     list_display = (
         'kind', 'timestamp', 'admin_link_message',
