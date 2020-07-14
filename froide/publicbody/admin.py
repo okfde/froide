@@ -408,7 +408,7 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
 
         pb = ProposedPublicBody.objects.get(pk=pk)
 
-        result = self._confirm_pb(request, pb)
+        result = self._confirm_pb(pb, request.user)
 
         if result is None:
             self.message_user(
