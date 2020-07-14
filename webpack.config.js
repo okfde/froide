@@ -12,17 +12,18 @@ const devMode = process.env.NODE_ENV !== 'production'
 
 const ENTRY = {
   main: ['./frontend/javascript/main.ts'],
-  publicbody: ['./frontend/javascript/publicbody.js'],
-  makerequest: ['./frontend/javascript/makerequest.js'],
-  request: ['./frontend/javascript/request.ts'],
-  redact: ['./frontend/javascript/redact.js'],
-  tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
+  document: ['./frontend/javascript/document.js'],
   docupload: ['./frontend/javascript/docupload.js'],
-  geomatch: ['./frontend/javascript/geomatch.js'],
-  messageredaction: ['./frontend/javascript/messageredaction.js'],
   filingcabinet: '@okfde/filingcabinet/frontend/javascript/filingcabinet.js',
+  geomatch: ['./frontend/javascript/geomatch.js'],
+  makerequest: ['./frontend/javascript/makerequest.js'],
+  messageredaction: ['./frontend/javascript/messageredaction.js'],
+  moderation: ['./frontend/javascript/moderation.js'],
+  publicbody: ['./frontend/javascript/publicbody.js'],
   publicbodyupload: ['./frontend/javascript/publicbodyupload.js'],
-  document: ['./frontend/javascript/document.js']
+  redact: ['./frontend/javascript/redact.js'],
+  request: ['./frontend/javascript/request.ts'],
+  tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
 }
 
 const EXCLUDE_CHUNKS = [
