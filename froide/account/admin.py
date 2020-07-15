@@ -150,13 +150,14 @@ class UserAdmin(DjangoUserAdmin):
             'opts': self.model._meta,
             'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
             'queryset': queryset,
+            'action_name': 'send_mail',
             'select_across': select_across
         }
 
         # Display the confirmation page
         return TemplateResponse(request, 'account/admin_send_mail.html',
             context)
-    send_mail.short_description = _("Send mail to users")
+    send_mail.short_description = _("Send mail to users...")
 
     def delete_sessions(self, request, queryset):
         for user in queryset:

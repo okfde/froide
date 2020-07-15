@@ -21,6 +21,7 @@
       <input type="submit" value="{% blocktrans count count=queryset.count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />
     </p>
   </div>
+  <input type="hidden" name="action" value="{{ action_name }}" />
   {% if select_across %}
     <input type="hidden" name="select_across" value="1"/>
     {# set invalid selected, so confirmation action path is chosen in admin #}
