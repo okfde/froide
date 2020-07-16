@@ -80,7 +80,7 @@ class ProblemReport(models.Model):
 
     class Meta:
         ordering = ('-timestamp',)
-        verbose_name = _('problem report')  
+        verbose_name = _('problem report')
         verbose_name_plural = _('problem reports')
 
     def __str__(self):

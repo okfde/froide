@@ -1,10 +1,8 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 
 from .models import (
-    ProblemReport, USER_PROBLEM_CHOICES, EXTERNAL_PROBLEM_CHOICES,
-    reported
+    ProblemReport, USER_PROBLEM_CHOICES, EXTERNAL_PROBLEM_CHOICES
 )
 
 
