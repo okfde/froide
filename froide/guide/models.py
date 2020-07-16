@@ -3,7 +3,7 @@ import re
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.template import Template, Context
@@ -44,8 +44,8 @@ class Action(models.Model):
     )
 
     class Meta:
-        verbose_name = _('Action')
-        verbose_name_plural = _('Actions')
+        verbose_name = pgettext_lazy('Guide action', 'Guide action')
+        verbose_name_plural = pgettext_lazy('Guide actions', 'Guide actions')
 
     def __str__(self):
         return self.name
