@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-16 12:11+0200\n"
-"PO-Revision-Date: 2020-07-16 12:15+0200\n"
+"POT-Creation-Date: 2020-07-16 17:26+0200\n"
+"PO-Revision-Date: 2020-07-16 17:29+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1220,6 +1220,7 @@ msgstr "Die Anwendung erfordert die folgenden Berechtigungen"
 #: froide/foirequest/views/attachment.py:209
 #: froide/foirequest/views/message.py:271
 #: froide/problem/templates/problem/message_toolbar_item.html:146
+#: froide/problem/views.py:76
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -2850,7 +2851,7 @@ msgstr "URL-Kürzel"
 
 #: froide/foirequest/models/project.py:52
 #: froide/foirequest/models/request.py:257
-#: froide/foirequest/views/message.py:469 froide/problem/views.py:63
+#: froide/foirequest/views/message.py:469 froide/problem/views.py:73
 #: froide/publicbody/models.py:71 froide/publicbody/models.py:105
 #: froide/publicbody/models.py:313
 msgid "Description"
@@ -3328,7 +3329,7 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/snippets/message.html:101
 #: froide/letter/templates/letter/pdf/default.html:24
 #: froide/problem/templates/problem/message_toolbar_item.html:66
-#: froide/problem/views.py:61 froide/team/templates/team/team_detail.html:134
+#: froide/problem/views.py:71 froide/team/templates/team/team_detail.html:134
 #: froide/team/templates/team/team_detail.html:166
 msgid "Date"
 msgstr "Datum"
@@ -5364,7 +5365,7 @@ msgid "Show the quoted message"
 msgstr "Zeige die zitierte Nachricht an"
 
 #: froide/foirequest/templatetags/foirequest_tags.py:292
-#: froide/problem/views.py:62
+#: froide/problem/views.py:72
 msgid "Message"
 msgstr "Nachricht"
 
@@ -6428,16 +6429,16 @@ msgstr "%{time} übrig"
 msgid "You can only upload: %{types}"
 msgstr "Sie können nur folgende Dateitypen hochladen: %{types}"
 
-#: froide/foirequest/views/message.py:439 froide/problem/views.py:56
+#: froide/foirequest/views/message.py:439 froide/problem/views.py:66
 msgid "New document with one page"
 msgstr "Neues Dokument mit einer Seite"
 
-#: froide/foirequest/views/message.py:440 froide/problem/views.py:57
+#: froide/foirequest/views/message.py:440 froide/problem/views.py:67
 #, python-brace-format
 msgid "New document with {count} pages"
 msgstr "Neues Dokument mit {count} Seiten"
 
-#: froide/foirequest/views/message.py:442 froide/problem/views.py:59
+#: froide/foirequest/views/message.py:442 froide/problem/views.py:69
 msgid "Take / Choose picture"
 msgstr "Foto machen oder auswählen"
 
@@ -7371,7 +7372,15 @@ msgstr "brief-erstellen/<int:letter_id>/<int:message_id>/vorschau/"
 msgid "letter-sent/<int:letter_id>/<int:message_id>/"
 msgstr "brief-versendet/<int:letter_id>/<int:message_id>/"
 
-#: froide/problem/admin.py:33
+#: froide/problem/admin.py:16
+msgid "Claimed"
+msgstr "Bearbeiten"
+
+#: froide/problem/admin.py:17
+msgid "Escalated"
+msgstr "Für Admins"
+
+#: froide/problem/admin.py:41
 msgid "User will be notified of resolution"
 msgstr "Nutzer wird über Lösung benachrichtigt"
 
@@ -7428,11 +7437,11 @@ msgstr "Die veröffentlichte Information ist falsch."
 msgid "You received a bounce mail from the public body."
 msgstr "Sie haben eine Bounce-Nachricht von der Behörde erhalten."
 
-#: froide/problem/models.py:82
+#: froide/problem/models.py:83
 msgid "problem report"
 msgstr "Problembericht"
 
-#: froide/problem/models.py:83
+#: froide/problem/models.py:84
 msgid "problem reports"
 msgstr "Problemberichte"
 
@@ -7571,31 +7580,52 @@ msgstr "Das Problem bei Ihrer Anfrage wurde behoben"
 msgid "Your report could not be created."
 msgstr "Ihr Problembericht konnte nicht erstellt werden."
 
-#: froide/problem/views.py:60
+#: froide/problem/views.py:70
 msgid "Kind"
 msgstr "Art"
 
-#: froide/problem/views.py:64
-msgid "Claiming"
-msgstr "Annehmen"
+#: froide/problem/views.py:74
+msgid "Action"
+msgstr "Beratungsvorlage"
 
-#: froide/problem/views.py:65
+#: froide/problem/views.py:75
 msgid "Claim"
 msgstr "Bearbeiten"
 
-#: froide/problem/views.py:66
-msgid "Unclaim"
-msgstr "Freigeben"
+#: froide/problem/views.py:77
+msgid "Resolve"
+msgstr "Lösen"
 
-#: froide/problem/views.py:67
+#: froide/problem/views.py:78
+#, python-brace-format
+msgid "Claimed for<br/>{min} min."
+msgstr "Wird bearbeitet<br/>seit {min} min."
+
+#: froide/problem/views.py:79
+msgid "You cannot work on more than 5 issues at the same time."
+msgstr "Sie können nicht an mehr als 5 Problemen gleichzeitig arbeiten."
+
+#: froide/problem/views.py:80
+msgid "Please write a nice message to the user."
+msgstr "Bitte schreiben Sie eine nette Nachricht an die meldende Person."
+
+#: froide/problem/views.py:81
+msgid "Escalate"
+msgstr "An Admins"
+
+#: froide/problem/views.py:82
+msgid "Please describe to admins what should be done."
+msgstr "Bitte beschreiben Sie den Admins, was hier getan werden muss."
+
+#: froide/problem/views.py:83
 msgid "Active moderators"
 msgstr "Aktive Moderatoren"
 
-#: froide/problem/views.py:68
+#: froide/problem/views.py:84
 msgid "to public body"
 msgstr "zur Behörde"
 
-#: froide/problem/views.py:69
+#: froide/problem/views.py:85
 msgid "to message"
 msgstr "zur Nachricht"
 
@@ -9231,6 +9261,12 @@ msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
 
+#~ msgid "Claiming"
+#~ msgstr "Annehmen"
+
+#~ msgid "Unclaim"
+#~ msgstr "Freigeben"
+
 #, fuzzy
 #~| msgid "Message"
 #~ msgid "Messages"
@@ -9747,9 +9783,6 @@ msgstr "zustaendigkeit"
 #~| msgid "There are no suggestions yet"
 #~ msgid "There are no authorized tokens yet."
 #~ msgstr "Es gibt noch keine Vorschläge"
-
-#~ msgid "Action"
-#~ msgstr "Beratungsvorlage"
 
 #~ msgid "Actions"
 #~ msgstr "Beratungsvorlagen"
