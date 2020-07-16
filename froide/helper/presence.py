@@ -83,7 +83,9 @@ class DummyUserPresenceManager(BaseUserPresenceManager):
         return user.id in self.presence[self.room]
 
     async def remove(self, user):
-        del self.presence[self.room][user.id]
+        if self.room in self.presence:
+            if user.id in self.presence[self.room]:
+                del self.presence[self.room][user.id]
 
     def _expire(self):
         now = timezone.now()
