@@ -15,7 +15,9 @@ from froide.helper.text_utils import (
     redact_subject, redact_plaintext
 )
 
-from .request import FoiRequest, get_absolute_short_url
+from .request import (
+    FoiRequest, get_absolute_short_url, get_absolute_domain_short_url
+)
 
 BOUNCE_TAG = 'bounce'
 AUTO_REPLY_TAG = 'auto-reply'
@@ -200,7 +202,9 @@ class FoiMessage(models.Model):
         return self.get_request_link(get_absolute_short_url(self.request_id))
 
     def get_absolute_domain_short_url(self):
-        return self.get_request_link(self.request.get_absolute_domain_short_url())
+        return self.get_request_link(
+            get_absolute_domain_short_url(self.request_id)
+        )
 
     def get_absolute_domain_url(self):
         return self.get_request_link(self.request.get_absolute_domain_url())
