@@ -62,11 +62,6 @@ def moderation_view(request):
             'publicBody': reverse('publicbody-publicbody_shortlink', kwargs={'obj_id': 0}),
         },
         'i18n': {
-            'newDocumentPageCount': [
-                _('New document with one page'),
-                _('New document with {count} pages').format(count='${count}'),
-            ],
-            'takePicture': _('Take / Choose picture'),
             'kind': _('Kind'),
             'date': _('Date'),
             'message': _('Message'),
