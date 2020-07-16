@@ -50,15 +50,19 @@ class ProblemReport(models.Model):
     resolution = models.TextField(blank=True)
     resolution_timestamp = models.DateTimeField(null=True, blank=True)
     claimed = models.DateTimeField(null=True, blank=True)
+    escalation = models.TextField(blank=True)
+    escalated = models.DateTimeField(null=True, blank=True)
     moderator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True, on_delete=models.SET_NULL,
         blank=True, related_name='problems_moderated'
     )
 
+    objects = ProblemReportManager()
+
     class Meta:
         ordering = ('-timestamp',)
-        verbose_name = _('problem report')
+        verbose_name = _('problem report')  
         verbose_name_plural = _('problem reports')
 
     def __str__(self):
