@@ -88,6 +88,10 @@
       <a class="btn btn-secondary" href="{% url 'publicbody-change' pk=object.pk %}">
         {% trans "Propose change" %}
       </a>
+    {% else %}
+      <button class="btn btn-secondary" disabled data-toggle="tooltip" data-placement="top" title="{% trans 'You must be logged in.' %}">
+        {% trans "Propose change" %}
+      </button>
     {% endif %}
 
     {% if user.is_staff %}
