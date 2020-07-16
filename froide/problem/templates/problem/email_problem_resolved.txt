@@ -4,8 +4,8 @@
 {% else %}
 {% blocktrans with title=title %}We have resolved the problem you reported on the request “{{ title }}”.{% endblocktrans %}
 {% endif %}
-{% if report.resolution %}
-{{ report.resolution }}{% endif %}
+{% if report.resolution %}{{ report.resolution }}{% endif %}
+
 {% trans "You can go to the request here:" %}
 
 {{ url }}
