@@ -18,6 +18,7 @@ from froide.foirequest.models import (FoiRequest, FoiMessage, DeferredMessage)
 from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import add_message_from_email
 from froide.foirequest.services import BOUNCE_TAG
+from froide.problem.models import ProblemReport
 
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), 'testdata'))
 
@@ -385,9 +386,11 @@ class BounceMailTest(TestCase):
         self.assertEqual(bounce_message.original, req.messages[0])
         tags = bounce_message.tags.all().values_list('name', flat=True)
         self.assertIn(BOUNCE_TAG, tags)
-        # No notification mails, only to managers
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], 'manager@example.com')
+        self.assertTrue(
+            ProblemReport.objects.filter(
+                message=bounce_message.original
+            ).exists()
+        )
 
 
 class ClosedRequestTest(TestCase):
