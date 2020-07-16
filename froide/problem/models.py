@@ -114,11 +114,10 @@ class ProblemReport(models.Model):
         unclaimed.send(sender=self)
 
     def resolve(self, user, resolution=''):
+        self.resolved = True
         self.resolution = resolution
-        if not self.resolution_timestamp:
-            self.resolution_timestamp = timezone.now()
-        if not self.moderator:
-            self.moderator = user
+        self.resolution_timestamp = timezone.now()
+        self.moderator = user
         self.save()
         resolved.send(sender=self)
         return inform_user_problem_resolved(self)
