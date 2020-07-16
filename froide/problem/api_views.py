@@ -17,7 +17,7 @@ def get_problem_reports(request):
         })
 
     return ProblemReport.objects.filter(
-        resolved=False,
+        resolved=False, escalated__isnull=True,
         **extra_filter
     ).select_related('message')
 
@@ -46,7 +46,7 @@ class ProblemReportSerializer(serializers.HyperlinkedModelSerializer):
             'description', 'resolution',
             'resolution_timestamp', 'claimed',
             'related_publicbody_id', 'escalated',
-            'moderator_id'
+            'moderator_id', 'is_requester'
         )
 
     def get_kind_label(self, obj):
@@ -57,6 +57,14 @@ class ProblemReportSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_message_url(self, obj):
         return obj.message.get_absolute_domain_short_url()
+
+
+class ResolutionSerializer(serializers.Serializer):
+    resolution = serializers.CharField(allow_blank=True)
+
+
+class EscalationSerializer(serializers.Serializer):
+    escalation = serializers.CharField(allow_blank=True)
 
 
 class ModeratorPermission(BasePermission):
@@ -101,16 +109,23 @@ class ProblemReportViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=True, methods=['post'])
     def resolve(self, request, pk=None):
         problem = self.get_object()
-        problem.resolve(
-            request.user, resolution=request.POST.get('resolution', '')
-        )
-        return Response({'status': 'resolved'})
+        serializer = ResolutionSerializer(data=request.data)
+        if serializer.is_valid():
+            problem.resolve(
+                request.user, resolution=serializer.data['resolution']
+            )
+            return Response({'status': 'resolved'})
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'])
     def escalate(self, request, pk=None):
         problem = self.get_object()
-        if not problem.escalated:
+        serializer = EscalationSerializer(data=request.data)
+        if serializer.is_valid() and not problem.escalated:
             problem.escalate(
-                request.user, escalation=request.POST.get('escalation', '')
+                request.user, escalation=serializer.data['escalation']
             )
-        return Response({'status': 'escalated'})
+            return Response({'status': 'escalated'})
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
