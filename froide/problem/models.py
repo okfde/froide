@@ -2,8 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.dispatch import Signal
 
 from froide.foirequest.models import FoiMessage
+
+from .utils import inform_user_problem_resolved
 
 
 USER_PROBLEM_CHOICES = [
@@ -27,6 +30,21 @@ AUTO_PROBLEM_CHOICES = [
 ]
 
 PROBLEM_CHOICES = AUTO_PROBLEM_CHOICES + USER_PROBLEM_CHOICES
+
+reported = Signal()
+claimed = Signal()
+resolved = Signal()
+unclaimed = Signal()
+escalated = Signal()
+
+
+class ProblemReportManager(models.Manager):
+    def report(self, **kwargs):
+        report = ProblemReport.objects.create(
+            **kwargs
+        )
+        reported.send(sender=report)
+        return report
 
 
 class ProblemReport(models.Model):
@@ -77,3 +95,37 @@ class ProblemReport(models.Model):
     @property
     def is_requester(self):
         return self.user_id == self.message.request.user_id
+
+    def related_publicbody_id(self):
+        if self.message.is_response:
+            return self.message.sender_public_body_id
+        return self.message.recipient_public_body_id
+
+    def claim(self, user):
+        self.claimed = timezone.now()
+        self.moderator = user
+        self.save()
+        claimed.send(sender=self)
+
+    def unclaim(self, user):
+        self.moderator = None
+        self.claimed = None
+        self.save()
+        unclaimed.send(sender=self)
+
+    def resolve(self, user, resolution=''):
+        self.resolution = resolution
+        if not self.resolution_timestamp:
+            self.resolution_timestamp = timezone.now()
+        if not self.moderator:
+            self.moderator = user
+        self.save()
+        resolved.send(sender=self)
+        return inform_user_problem_resolved(self)
+
+    def escalate(self, user, escalation=''):
+        self.moderator = user
+        self.escalation = escalation
+        self.escalated = timezone.now()
+        self.save()
+        escalated.send(sender=self)

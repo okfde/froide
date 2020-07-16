@@ -3,7 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
 from .models import (
-    ProblemReport, USER_PROBLEM_CHOICES, EXTERNAL_PROBLEM_CHOICES
+    ProblemReport, USER_PROBLEM_CHOICES, EXTERNAL_PROBLEM_CHOICES,
+    reported
 )
 
 
@@ -45,16 +46,10 @@ class ProblemReportForm(forms.Form):
 
     def save(self):
         description = self.cleaned_data['description']
-        report, created = ProblemReport.objects.get_or_create(
+        report = ProblemReport.objects.report(
             message=self.message,
             kind=self.cleaned_data['kind'],
-            defaults={
-                'user': self.user,
-                'description': description
-            }
+            user=self.user,
+            description=description,
         )
-        if not created and description:
-            report.description += '\n\n' + description
-            report.timestamp = timezone.now()
-            report.save()
         return report

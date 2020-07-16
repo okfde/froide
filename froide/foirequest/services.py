@@ -441,7 +441,7 @@ class ReceiveEmailService(BaseService):
 
         message.tags.add(BOUNCE_TAG)
 
-        ProblemReport.objects.create(
+        ProblemReport.objects.report(
             message=mes or message,
             kind='bounce_publicbody',
             description=email.bounce_info.diagnostic_code or '',

@@ -50,13 +50,16 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
     async def send_userlist(self, action='joined'):
         users = await self.pm.list_present()
 
-        userlist = [u.get_full_name() for u in users]
+        moderators = [{
+            "id": u.id,
+            "name": None if u.private else u.get_full_name()
+        } for u in users]
 
         await self.channel_layer.group_send(
             PRESENCE_ROOM,
             {
                 'type': 'userlist',
-                'userlist': userlist,
+                'userlist': moderators,
                 'user': {
                     'action': action,
                 }
@@ -75,6 +78,24 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
             'type': 'userlist',
             'userlist': event['userlist'],
             'user': event['user']
+        })
+
+    async def report_updated(self, event):
+        await self.send_json({
+            'type': 'report_updated',
+            'report': event['report'],
+        })
+
+    async def report_added(self, event):
+        await self.send_json({
+            'type': 'report_added',
+            'report': event['report'],
+        })
+
+    async def report_removed(self, event):
+        await self.send_json({
+            'type': 'report_removed',
+            'report': event['report'],
         })
 
     async def disconnect(self, close_code):

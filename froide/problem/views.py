@@ -1,13 +1,17 @@
+import json
+
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.urls import reverse
 
 from froide.foirequest.models import FoiMessage
 from froide.foirequest.auth import is_foirequest_moderator
 
 from froide.helper.utils import render_403
 
+from .api_views import get_problem_reports
 from .forms import ProblemReportForm
 
 
@@ -34,4 +38,55 @@ def report_problem(request, message_pk):
 def moderation_view(request):
     if not is_foirequest_moderator(request):
         return render_403(request)
-    return render(request, 'problem/moderation.html', {})
+    problems = get_problem_reports(request)
+
+    config = {
+        'settings': {
+            'user_id': request.user.id
+        },
+        'url': {
+            'moderationWebsocket': '/ws/moderation/',  # WS URLs not reversible
+            'listReports': reverse('api:problemreport-list'),
+            'claimReport': reverse('api:problemreport-claim', kwargs={
+                'pk': 0
+            }),
+            'unclaimReport': reverse('api:problemreport-unclaim', kwargs={
+                'pk': 0
+            }),
+            'resolveReport': reverse('api:problemreport-resolve', kwargs={
+                'pk': 0
+            }),
+            'escalateReport': reverse('api:problemreport-escalate', kwargs={
+                'pk': 0
+            }),
+            'publicBody': reverse('publicbody-publicbody_shortlink', kwargs={'obj_id': 0}),
+        },
+        'i18n': {
+            'newDocumentPageCount': [
+                _('New document with one page'),
+                _('New document with {count} pages').format(count='${count}'),
+            ],
+            'takePicture': _('Take / Choose picture'),
+            'kind': _('Kind'),
+            'date': _('Date'),
+            'message': _('Message'),
+            'description': _('Description'),
+            'action': _('Action'),
+            'claim': _('Claim'),
+            'unclaim': _('Cancel'),
+            'resolve': _('Resolve'),
+            'claimedMinutesAgo': _('Claimed for<br/>{min} min.'),
+            'maxClaimCount': _('You cannot work on more than 5 issues at the same time.'),
+            'resolutionDescription': _('Please write a nice message to the user.'),
+            'escalate': _('Escalate'),
+            'escalationDescription': _('Please describe to admins what should be done.'),
+            'activeModerators': _('Active moderators'),
+            'toPublicBody': _('to public body'),
+            'toMessage': _('to message'),
+        }
+    }
+
+    return render(request, 'problem/moderation.html', {
+        'problems': problems,
+        'config_json': json.dumps(config)
+    })
