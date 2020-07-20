@@ -1,3 +1,5 @@
+from websockets.exceptions import ConnectionClosedOK
+
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 
@@ -74,11 +76,14 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
             return
 
     async def userlist(self, event):
-        await self.send_json({
-            'type': 'userlist',
-            'userlist': event['userlist'],
-            'user': event['user']
-        })
+        try:
+            await self.send_json({
+                'type': 'userlist',
+                'userlist': event['userlist'],
+                'user': event['user']
+            })
+        except ConnectionClosedOK:
+            pass
 
     async def report_updated(self, event):
         await self.send_json({
