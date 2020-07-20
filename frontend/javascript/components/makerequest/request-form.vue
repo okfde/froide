@@ -227,9 +227,7 @@
             <div
               v-if="editingDisabled"
               class="body-text body-text-em"
-            >
-              {{ body }}
-            </div>
+            >{{ body }}</div>
             <textarea
               v-show="!editingDisabled"
               id="id_body"
