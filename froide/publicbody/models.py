@@ -383,6 +383,9 @@ class PublicBody(models.Model):
         ordering = ('name',)
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
+        permissions = (
+            ("moderate", _("Can moderate public bodies")),
+        )
 
     serializable_fields = ('id', 'name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
