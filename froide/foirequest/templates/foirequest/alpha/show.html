@@ -1,6 +1,15 @@
 {% extends "foirequest/show.html" %}
+{% load i18n %}
 
-{% block foirequest_below_header %}
+{% block body %}
+  {% block app_body %}
+
+    {% include "foirequest/alpha/request_head.html" %}
+  
+  {% endblock app_body %}
+{% endblock body %}
+
+{% comment %} {% block foirequest_below_header %}
 {{ block.super }}
-ALPHA
-{% endblock %}
+ALPHA1
+{% endblock %} {% endcomment %}
