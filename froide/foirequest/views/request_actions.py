@@ -180,12 +180,8 @@ def set_summary(request, foirequest):
 
 
 @require_POST
-def mark_not_foi(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff:
-        return render_403(request)
+@allow_moderate_foirequest
+def mark_not_foi(request, foirequest):
     foirequest.is_foi = False
 
     foirequest.visibility = FoiRequest.VISIBLE_TO_REQUESTER
