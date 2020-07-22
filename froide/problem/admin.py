@@ -35,7 +35,7 @@ class ProblemReportAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
         if 'resolved' in form.changed_data and obj.resolved:
-            sent = obj.resolve(request.user)
+            sent = obj.resolve(request.user, resolution=obj.resolution)
             if sent:
                 self.message_user(
                     request, _('User will be notified of resolution')
