@@ -3,7 +3,6 @@
   align-items: center;
   flex-wrap: nowrap;
   padding: $spacer * .5 0;
-  border-bottom: 2px solid $white;
   list-style-type: none;
   overflow: hidden;
   margin: 0;
@@ -13,7 +12,7 @@
       color: $gray-500;
       font-size: small;
       white-space: nowrap;
-      @include media-breakpoint-up(md) {
+      @include media-breakpoint-up(lg) {
         font-size: $font-size-sm;
       }
     }
@@ -24,11 +23,15 @@
   }
 }
 
+.border-bottom-white {
+  border-bottom: 2px solid $white;
+}
+
 .request-title {
   margin-bottom: 0;
   margin-top: $spacer;
-  word-break: break-all;
-  @include media-breakpoint-up(md) {
+  // word-break: break-all;
+  @include media-breakpoint-up(lg) {
     margin-top: $spacer * 2;
   }
 }
@@ -37,6 +40,50 @@
   margin-bottom: 0;
 }
 
-.request-info-box {
-  
+.info-box {
+  &__header {
+    position: relative;
+    padding: $spacer * 1.5 $spacer;
+  }
+    &__title {
+      margin: 0;
+    }
+    // &__subtitle {}
+    // &__icon {}
+  &__body {
+    background-color: $white;
+  }
+    &__list {
+      list-style-type: none;
+      margin: 0 $spacer * 1.5;
+      padding: $spacer 0;
+    }
+      &__list-item {
+        padding-bottom: $spacer;
+        &:last-child { padding-bottom: 0; }
+      }
+        &__list-label { font-weight: 600; }
+        &__list-value {}
+      &__list-divider {
+        margin-bottom: $spacer;
+        border-bottom: 2px solid $gray-200;
+      }
+
+  @include media-breakpoint-up(lg) {
+    margin-top: $spacer * 2;
+    &__header { padding: $spacer * 1.5; }
+  }
+
+  /*
+    Info-box theme regular
+  */
+  &--regular {
+    background-color: gray-100;
+    border: 2px solid $gray-300;
+    box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
+  }
+  &--regular &__header { background-color: $gray-300 }
+  &--regular &__title { color: $blue-800}
+  &--regular &__subtitle { color: $gray-700}
+  &--regular &__icon {}
 }

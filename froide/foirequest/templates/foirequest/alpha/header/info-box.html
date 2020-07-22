@@ -1,0 +1,87 @@
+{% load i18n %}
+
+<div class="info-box info-box--regular">
+
+  <!-- header (status, status icon) -->
+  <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
+    <div>
+      <h3 class="h5 info-box__title">Platzhaltertext</h3>
+      <div class="info-box__subtitle">{{ object.readable_status }}</div>
+    </div>
+    <div>
+      <a class="info-box__icon" href="{{ object.url }}" title="{{ object.readable_status }}">
+        <span class="icon status-{{ object.status_representation }}"></span>
+      </a>
+    </div>
+  </div>
+
+  <!-- body  -->
+  <div class="info-box__body">
+
+    <!-- request infos -->
+    <ul class="info-box__list">
+
+      <!-- date -->
+      <li class="info-box__list-item">
+        <div class="info-box__list-label">{% blocktrans %}Datum{% endblocktrans %}</div>
+        <div class="info-box__list-value">{{ object.first_message|date:"j. F Y" }}</div>
+      </li>
+
+      <!-- due date -->
+      <li class="info-box__list-item">
+        <div class="info-box__list-label">
+          {% blocktrans %}Due date{% endblocktrans %}
+          <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+        </div>
+        <div class="info-box__list-value" title="{% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}">
+          {{ object.due_date|date:"DATE_FORMAT" }}
+        </div>
+      </li>
+
+      <!-- follow request -->
+      {% with count=object.follow_count %}
+        {% block followers %}
+        <li class="info-box__list-item">
+          {% include "foirequestfollower/show.html" %}
+        </li>
+        {% endblock followers %}
+      {% endwith %}
+
+      <li class="info-box__list-divider"></li>
+
+      <!-- copy url -->
+      <li class="info-box__list-item">
+        <a href="#">
+          <i class="fa fa-copy" aria-hidden="true"></i>
+          {% blocktrans %}Copy Short-URL{% endblocktrans %}
+        </a>
+      </li>
+
+      <!-- share links -->
+      <li class="info-box__list-item">
+        <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+          <i class="fa fa-twitter" aria-hidden="true"></i>
+          {% trans "Tweet request" %}
+        </a>
+        &nbsp;
+        <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+          <i class="fa fa-facebook-official" aria-hidden="true"></i>
+          {% blocktrans %}Share request{% endblocktrans %}
+        </a>
+      </li>
+
+      <li class="info-box__list-divider"></li>
+
+      <!-- rss link -->
+      <li class="info-box__list-item">
+        <a href="{% url 'foirequest-feed' slug=object.slug %}">
+          <i class="fa fa-rss" aria-hidden="true"></i>
+          {% trans "RSS Feed" %}
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+  
+</div>
