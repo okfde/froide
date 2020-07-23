@@ -8,7 +8,7 @@
 <form method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
   {% csrf_token %}
   {% if following and not follow_only %}
-    <button class="btn hover-btn-danger" type="submit">
+    <button class="btn btn-sm hover-btn-danger" type="submit">
       <span class="on-hover">
         <i class="fa fa-remove" aria-hidden="true"></i>
         {% trans "Unfollow request" %}
@@ -19,7 +19,7 @@
       </span>
     </button>
   {% elif not following %}
-    <button class="btn btn-outline-primary" type="submit">
+    <button class="btn btn-sm btn-outline-primary" type="submit">
       <span class="on-hover">
         <i class="fa fa-bell" aria-hidden="true"></i>
         {% trans "Follow request?" %}
@@ -32,7 +32,7 @@
   {% endif %}
 </form>
 {% else %}
-<button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="btn btn-outline-primary">
+<button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">
   <span class="on-hover">
     <i class="fa fa-bell" aria-hidden="true"></i>
     {% trans "Follow request?" %}
@@ -58,11 +58,9 @@
       </small>
     </p>
   </div>
-  <p class="form-text text-muted mb-0">
-    <small>
-      {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
-    </small>
-  </p>
+  <small class="text-muted">
+    {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+  </small>
 {% endif %}
 
 {% if not request.user.is_authenticated %}
@@ -74,7 +72,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
       </div>
       <div class="modal-body">
-        <p class="mb-0">
+        <p>
           {% trans "You will get notifications via email when something new happens with this request. You can unsubscribe anytime." %}
         </p>
         {% csrf_token %}
@@ -82,7 +80,7 @@
     
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">{% trans "Follow request" %}</button>
+        <button type="submit" class="btn btn-sm btn-primary">{% trans "Follow request" %}</button>
       </div>
     </form>
   </div>
