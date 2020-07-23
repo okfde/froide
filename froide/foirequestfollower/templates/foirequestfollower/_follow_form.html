@@ -8,37 +8,37 @@
 <form method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
   {% csrf_token %}
   {% if following and not follow_only %}
-    <button class="input-large btn hover-btn-danger btn-block" type="submit">
+    <button class="btn hover-btn-danger" type="submit">
       <span class="on-hover">
         <i class="fa fa-remove" aria-hidden="true"></i>
         {% trans "Unfollow request" %}
       </span>
       <span class="on-display">
-        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+        <i class="fa fa-bell" aria-hidden="true"></i>
         {% trans "You follow this request" %}
       </span>
     </button>
   {% elif not following %}
-    <button class="input-large btn hover-btn-success btn-block" type="submit">
+    <button class="btn btn-outline-primary" type="submit">
       <span class="on-hover">
-        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+        <i class="fa fa-bell" aria-hidden="true"></i>
         {% trans "Follow request?" %}
       </span>
       <span class="on-display">
-        <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+        <i class="fa fa-bell-o" aria-hidden="true"></i>
         {% trans "Follow request?" %}
       </span>
     </button>
   {% endif %}
 </form>
 {% else %}
-<button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="input-large btn hover-btn-success btn-block">
+<button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="btn btn-outline-primary">
   <span class="on-hover">
-    <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+    <i class="fa fa-bell" aria-hidden="true"></i>
     {% trans "Follow request?" %}
   </span>
   <span class="on-display">
-    <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+    <i class="fa fa-bell-o" aria-hidden="true"></i>
     {% trans "Follow request?" %}
   </span>
 </button>
