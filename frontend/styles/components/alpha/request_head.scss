@@ -56,7 +56,7 @@
       height: 44px;
       background-repeat: no-repeat;
       background-position: center center;
-      background-size: 32px;
+      background-size: 30px;
     }
   &__body {
     background-color: $gray-100;
@@ -64,19 +64,19 @@
     &__list {
       list-style-type: none;
       margin: 0;
-      padding: 0;
+      padding: $spacer 0 0;
     }
       &__list-item {
-        padding-top: $spacer;
         padding-bottom: $spacer;
         margin-left: $spacer * 1.5;
         margin-right: $spacer * 1.5;
         &--has-divider {
+          margin-bottom: $spacer;
           border-bottom: 2px solid $gray-200;
         }
         &--is-danger {
           color: darken($red, 7%);
-          margin: 0;
+          margin: 0 0 $spacer;
           padding: $spacer $spacer * 1.5;
           background-color: #FFDCD4;
         }
@@ -110,4 +110,16 @@
   &--danger &__header { background-color: $red }
   &--danger &__title { color: $white}
   &--danger &__subtitle { color: $white}
+
+  /*
+    Info-box theme success
+  */
+  &--success {
+    border: 2px solid $green;
+    box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
+  }
+  &--success &__header { background-color: $green }
+  &--success &__title { color: $white}
+  &--success &__subtitle { color: $white}
+
 }

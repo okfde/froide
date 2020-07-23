@@ -1,5 +1,5 @@
 {% load i18n %}
-
+{% load follower_tags %}
 {% load form_helper %}
 
 {% if can_follow %}
@@ -30,6 +30,11 @@
       </span>
     </button>
   {% endif %}
+  
+  {% comment %}
+    {% include "foirequestfollower/follow_count_badge.html" with count=count %}
+  {% endcomment %}
+
 </form>
 {% else %}
 <button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">

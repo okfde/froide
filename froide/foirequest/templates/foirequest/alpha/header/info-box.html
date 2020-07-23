@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div class="info-box info-box--danger">
+<div class="info-box info-box--{% if object.is_overdue %}danger{% elif object.status_is_final %}success{% else %}regular{% endif %}">
 
   <!-- header (status, status icon) -->
   <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
@@ -24,7 +24,7 @@
       </li>
 
       <!-- due date -->
-      <li class="info-box__list-item info-box__list-item--is-danger">
+      <li class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger{% endif %}">
         <div class="info-box__list-label">
           {% blocktrans %}Due date{% endblocktrans %}
           <i class="fa fa-question-circle-o" aria-hidden="true"></i>
