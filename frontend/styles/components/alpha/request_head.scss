@@ -49,28 +49,43 @@
       margin: 0;
     }
     // &__subtitle {}
-    // &__icon {}
+    &__icon {
+      background-color: $white;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 32px;
+    }
   &__body {
-    background-color: $white;
+    background-color: $gray-100;
   }
     &__list {
       list-style-type: none;
-      margin: 0 $spacer * 1.5;
-      padding: $spacer 0;
+      margin: 0;
+      padding: 0;
     }
       &__list-item {
+        padding-top: $spacer;
         padding-bottom: $spacer;
-        &:last-child { padding-bottom: 0; }
+        margin-left: $spacer * 1.5;
+        margin-right: $spacer * 1.5;
+        &--has-divider {
+          border-bottom: 2px solid $gray-200;
+        }
+        &--is-danger {
+          color: darken($red, 7%);
+          margin: 0;
+          padding: $spacer $spacer * 1.5;
+          background-color: #FFDCD4;
+        }
       }
         &__list-label { font-weight: 600; }
         &__list-value {}
-      &__list-divider {
-        margin-bottom: $spacer;
-        border-bottom: 2px solid $gray-200;
-      }
 
   @include media-breakpoint-up(lg) {
-    margin-top: $spacer * 2;
+    margin-top: $spacer * 1.5;
     &__header { padding: $spacer * 1.5; }
   }
 
@@ -78,12 +93,21 @@
     Info-box theme regular
   */
   &--regular {
-    background-color: gray-100;
     border: 2px solid $gray-300;
     box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
   }
   &--regular &__header { background-color: $gray-300 }
   &--regular &__title { color: $blue-800}
   &--regular &__subtitle { color: $gray-700}
-  &--regular &__icon {}
+
+  /*
+    Info-box theme danger
+  */
+  &--danger {
+    border: 2px solid $red;
+    box-shadow: 6px 6px 0px rgba(255, 220, 212, 0.7);
+  }
+  &--danger &__header { background-color: $red }
+  &--danger &__title { color: $white}
+  &--danger &__subtitle { color: $white}
 }
