@@ -1,0 +1,24 @@
+.alpha-message {
+  display: flex;
+  padding: $spacer;
+  margin-bottom: 2px;
+  background-color: $white;
+  box-shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
+  &__avatar {
+    flex: 0 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: $gray-200;
+    border-radius: 50%;
+    color: $gray-500;
+    margin-right: $spacer * .5;
+  }
+  &__sender {
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}

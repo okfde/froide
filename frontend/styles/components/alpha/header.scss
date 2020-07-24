@@ -130,7 +130,7 @@
   &__tab-link {
     display: flex;
     align-items: center;
-    padding: $spacer * .625 $spacer * 1.5;
+    padding: $spacer * .625 $spacer;
     color: $blue-800;
     font-weight: 600;
     font-size: $font-size-base * 1.125;
@@ -144,6 +144,9 @@
     }
     &.active {
       border-bottom-color: $blue-600;      
+    }
+    @include media-breakpoint-up(sm) {
+      padding: $spacer * .625 $spacer * 1.5;
     }
   }
     &__counter {

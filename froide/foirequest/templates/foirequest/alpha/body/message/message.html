@@ -1,0 +1,20 @@
+{% load i18n %}
+{% load foirequest_tags %}
+{% load form_helper %}
+{% load problemreport_tags %}
+{% load guidance_tags %}
+
+<div class="alpha-message">
+
+  <!-- avatar -->
+  <div class="alpha-message__avatar">
+    <i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i>
+  </div>
+
+  <div class="flex-grow-0 flex-shrink-1 overflow-hidden">
+    {% include "foirequest/alpha/body/message/sender.html" %}  
+    <!-- <div class="text-gray-600 smaller">
+      {{ message.plaintext|truncatechars:150 }}
+    </div> -->
+  </div>
+</div>
