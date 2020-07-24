@@ -1,18 +1,36 @@
-{% extends "foirequest/show.html" %}
+{% extends 'foirequest/base.html' %}
+
 {% load i18n %}
+{% load static %}
+{% load markup %}
+{% load foirequest_tags %}
+{% load team_tags %}
+{% load form_helper %}
+{% load block_helper %}
+{% load humanize %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block metadescription %}{{ object.description }}{% endblock %}
+
 
 {% block body %}
   {% block app_body %}
 
     <!-- breadcrumb -->
-    <div class="bg-gray-100 border-bottom-white">
-      <div class="container">
-        {% include "foirequest/alpha/header/breadcrumb.html" %}
-      </div>
+    <div class="bg-gray-100" style="margin-bottom: 2px;">
+      {% include "foirequest/alpha/header/breadcrumb.html" %}
     </div>
 
     <!-- header -->
-    {% include "foirequest/alpha/header/header.html" %}
+    <div class="bg-gray-100" style="margin-bottom: 2px;">
+      {% include "foirequest/alpha/header/header.html" %}
+    </div>
+
+    <!-- body -->
+    <div class="bg-gray-200">
+      {% include "foirequest/alpha/body/body.html" %}
+    </div>
   
   {% endblock app_body %}
 {% endblock body %}
@@ -21,3 +39,15 @@
 {{ block.super }}
 ALPHA1
 {% endblock %} {% endcomment %}
+
+
+{% block scripts %}
+  {{ block.super }}
+  {% if object|can_write_foirequest:request %}
+    {% addtoblock "js" %}
+      {% with object.get_set_tags_form as set_tags_form %}
+        {{ set_tags_form.media.js }}
+      {% endwith %}
+    {% endaddtoblock %}
+  {% endif %}
+{% endblock %}

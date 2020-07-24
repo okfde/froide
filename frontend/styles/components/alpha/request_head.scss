@@ -23,10 +23,6 @@
   }
 }
 
-.border-bottom-white {
-  border-bottom: 2px solid $white;
-}
-
 .request-title {
   margin-bottom: 0;
   margin-top: $spacer;
@@ -36,8 +32,11 @@
   }
 }
 
-.request-descr p:last-child {
-  margin-bottom: 0;
+.request-descr {
+  overflow: hidden;
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .info-box {
@@ -112,7 +111,7 @@
   &--danger &__subtitle { color: $white}
 
   /*
-    Info-box theme success
+    Info-box thesme success
   */
   &--success {
     border: 2px solid $green;
@@ -121,5 +120,47 @@
   &--success &__header { background-color: $green }
   &--success &__title { color: $white}
   &--success &__subtitle { color: $white}
+}
 
+.alpha-tabs {
+  flex-wrap: nowrap;
+  overflow-y: hidden;
+  overflow-x: auto;
+  // &__tab {}
+  &__tab-link {
+    display: flex;
+    align-items: center;
+    padding: $spacer * .625 $spacer * 1.5;
+    color: $blue-800;
+    font-weight: 600;
+    font-size: $font-size-base * 1.125;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    @include hover-focus() {
+      text-decoration: none;
+    }
+    &:hover {
+      border-bottom-color: $gray-300;
+    }
+    &.active {
+      border-bottom-color: $blue-600;      
+    }
+  }
+    &__counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: $spacer * .25;
+      font-size: 10px;
+      line-height: 1;
+      color: $gray-700;
+      background-color: #D7DEE5;
+      border-radius: 50%;
+      min-width: 20px;
+      height: 20px;
+      &--highlight {
+        color: $gray-800;
+        background-color: $yellow-200;
+      }
+    }
 }
