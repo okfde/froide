@@ -1,4 +1,4 @@
-import json
+from collections import namedtuple
 
 from django.db import models
 from django.conf import settings
@@ -7,28 +7,117 @@ from django.utils import timezone
 from django.utils.timesince import timesince
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.contrib.postgres.fields import JSONField
 
 from froide.publicbody.models import PublicBody
 
 from .request import FoiRequest
 
+EventDetail = namedtuple('EventDetail', 'description')
+
+UNKNOWN_EVENT = EventDetail(description=_('unknown'))
+
+
+class EventName(models.TextChoices):
+    PUBLIC_BODY_SUGGESTED = "public_body_suggested", _('a public body was suggested')
+    REPORTED_COSTS = "reported_costs", _('costs were reported for this request')
+    MESSAGE_RECEIVED = "message_received", _('a message was received')
+    MESSAGE_SENT = "message_sent", _('a message was sent')
+    ATTACHMENT_PUBLISHED = "attachment_published", _('an attachment was published')
+    ATTACHMENT_REDACTED = "attachment_redacted", _('an attachment was redacted')
+    ATTACHMENT_DELETED = "attachment_deleted", _('an attachment was deleted')
+    DOCUMENT_CREATED = "document_created", _('a document was created')
+    REQUEST_REDIRECTED = "request_redirected", _('the request was redirected')
+    STATUS_CHANGED = "status_changed", _('the status was changed')
+    MADE_PUBLIC = "made_public", _('the request was made public')
+    REQUEST_REFUSED = "request_refused", _('the request was marked as refused')
+    PARTIALLY_SUCCESSFUL = "partially_successful", _(
+        'the request was marked '
+        'as partially successful')
+    BECAME_OVERDUE = "became_overdue", _('request became overdue')
+    SET_CONCRETE_LAW = "set_concrete_law", _('a concrete law was set')
+    ADD_POSTAL_REPLY = "add_postal_reply", _('a postal reply was added')
+    ADD_POSTAL_MESSAGE = "add_postal_message", _('a postal message was sent')
+    ESCALATED = "escalated", _('the request was escalated to mediator')
+    DEADLINE_EXTENDED = "deadline_extended", _(
+        'the deadline for the request '
+        'was extended')
+    MARK_NOT_FOI = "mark_not_foi", _('the request was marked as not')
+
+
+EVENT_KEYS = dict(EventName.choices).keys()
+
+EVENT_DETAILS = {
+    EventName.PUBLIC_BODY_SUGGESTED: EventDetail(
+        _("%(user)s suggested %(public_body)s for the request '%(request)s'")
+    ),
+    EventName.REPORTED_COSTS: EventDetail(_(
+        "%(user)s reported costs of %(amount)s for this request.")
+    ),
+    EventName.MESSAGE_RECEIVED: EventDetail(_(
+        "Received a message from %(public_body)s.")
+    ),
+    EventName.MESSAGE_SENT: EventDetail(_(
+        "%(user)s sent a message to %(public_body)s.")
+    ),
+    EventName.ATTACHMENT_PUBLISHED: EventDetail(_(
+        "%(user)s published an attachment on request %(request)s.")
+    ),
+    EventName.REQUEST_REDIRECTED: EventDetail(_(
+        "Request was redirected to %(public_body)s and due date has been reset.")
+    ),
+    EventName.STATUS_CHANGED: EventDetail(_(
+        "%(user)s set status to '%(status)s'.")
+    ),
+    EventName.MADE_PUBLIC: EventDetail(_(
+        "%(user)s made the request '%(request)s' public.")
+    ),
+    EventName.REQUEST_REFUSED: EventDetail(_(
+        "%(public_body)s refused to provide information on the grounds of %(reason)s.")
+    ),
+    EventName.PARTIALLY_SUCCESSFUL: EventDetail(_(
+        "%(public_body)s answered partially, but denied access to all "
+        "information on the grounds of %(reason)s.")
+    ),
+    EventName.BECAME_OVERDUE: EventDetail(_(
+        "This request became overdue")
+    ),
+    EventName.SET_CONCRETE_LAW: EventDetail(_(
+        "%(user)s set '%(name)s' as the information law for the request.")
+    ),
+    EventName.ADD_POSTAL_REPLY: EventDetail(_(
+        "%(user)s added a reply that was received via postal mail.")
+    ),
+    EventName.ADD_POSTAL_MESSAGE: EventDetail(_(
+        "%(user)s has sent a postal mail.")
+    ),
+    EventName.ESCALATED: EventDetail(_(
+        "%(user)s filed a complaint to the %(public_body)s about the handling "
+        "of this request %(request)s.")
+    ),
+    EventName.DEADLINE_EXTENDED: EventDetail(_(
+        "The deadline of request %(request)s has been extended."))
+}
+
 
 class FoiEventManager(models.Manager):
-    def create_event(self, event_name, request, **context):
-        assert event_name in FoiEvent.event_texts
+    def create_event(self, event_name, foirequest, **context):
+        assert event_name in EVENT_KEYS
         event = FoiEvent(
-            request=request,
-            public=request.is_public(),
+            request=foirequest,
+            public=foirequest.is_public(),
             event_name=event_name
         )
         event.user = context.pop("user", None)
         event.public_body = context.pop("public_body", None)
-        event.context_json = json.dumps(context)
+        event.context = context
         event.save()
         return event
 
 
 class FoiEvent(models.Model):
+    EVENTS = EventName
+
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
@@ -46,45 +135,10 @@ class FoiEvent(models.Model):
     )
     public = models.BooleanField(_("Is Public?"), default=True)
     event_name = models.CharField(_("Event Name"), max_length=255)
-    timestamp = models.DateTimeField(_("Timestamp"))
-    context_json = models.TextField(_("Context JSON"))
+    timestamp = models.DateTimeField(_("Timestamp"), default=timezone.now)
+    context = JSONField(_("Context JSON"))
 
     objects = FoiEventManager()
-
-    event_texts = {
-        "public_body_suggested":
-            _("%(user)s suggested %(public_body)s for the request '%(request)s'"),
-        "reported_costs": _(
-            "%(user)s reported costs of %(amount)s for this request."),
-        "message_received": _(
-            "Received a message from %(public_body)s."),
-        "message_sent": _(
-            "%(user)s sent a message to %(public_body)s."),
-        "attachment_published": _(
-            "%(user)s published an attachment on request %(request)s."),
-        "request_redirected": _(
-            "Request was redirected to %(public_body)s and due date has been reset."),
-        "status_changed": _(
-            "%(user)s set status to '%(status)s'."),
-        "made_public": _(
-            "%(user)s made the request '%(request)s' public."),
-        "request_refused": _(
-            "%(public_body)s refused to provide information on the grounds of %(reason)s."),
-        "partially_successful": _(
-            "%(public_body)s answered partially, but denied access to all information on the grounds of %(reason)s."),
-        "became_overdue": _(
-            "This request became overdue"),
-        "set_concrete_law": _(
-            "%(user)s set '%(name)s' as the information law for the request %(request)s."),
-        "add_postal_reply": _(
-            "%(user)s added a reply that was received via postal mail."),
-        "add_postal_message": _(
-            "%(user)s has sent a postal mail."),
-        "escalated": _(
-            "%(user)s filed a complaint to the %(public_body)s about the handling of this request %(request)s."),
-        "deadline_extended": _(
-            "The deadline of request %(request)s has been extended.")
-    }
 
     class Meta:
         ordering = ('-timestamp',)
@@ -93,12 +147,6 @@ class FoiEvent(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.event_name, self.request)
-
-    def save(self, *args, **kwargs):
-        ''' On save, update timestamps '''
-        if not self.id:
-            self.timestamp = timezone.now()
-        super(FoiEvent, self).save(*args, **kwargs)
 
     def get_html_id(self):
         # Translators: Hash part of Event URL
@@ -112,7 +160,7 @@ class FoiEvent(models.Model):
         context = getattr(self, "_context", None)
         if context is not None:
             return context
-        context = json.loads(self.context_json)
+        context = dict(self.context)
         user = ""
         if self.user:
             user = self.user.display_name()
@@ -120,7 +168,8 @@ class FoiEvent(models.Model):
         if self.public_body:
             pb = self.public_body.name
         context.update({
-            "user": user, "public_body": pb,
+            "user": user,
+            "public_body": pb,
             "since": timesince(self.timestamp),
             "date": self.timestamp,
             "request": self.request.title
@@ -148,8 +197,15 @@ class FoiEvent(models.Model):
         self._html_context = context
         return context
 
+    @property
+    def detail(self):
+        try:
+            return EVENT_DETAILS[self.event_name]
+        except KeyError:
+            return UNKNOWN_EVENT
+
     def as_text(self):
-        return self.event_texts[self.event_name] % self.get_context()
+        return self.detail.description % self.get_context()
 
     def as_html(self):
-        return mark_safe(self.event_texts[self.event_name] % self.get_html_context())
+        return mark_safe(self.detail.description % self.get_html_context())
