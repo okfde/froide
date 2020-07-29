@@ -174,6 +174,34 @@ class MessagePublicBodySenderForm(forms.Form):
         self.message.save()
 
 
+def get_message_recipient_form(*args, **kwargs):
+    foimessage = kwargs.pop('foimessage')
+    return MessagePublicBodyRecipientForm(*args, message=foimessage)
+
+
+class MessagePublicBodyRecipientForm(forms.Form):
+    recipient = forms.ModelChoiceField(
+        label=_("Recipient Public Body"),
+        queryset=PublicBody.objects.all(),
+        widget=PublicBodySelect
+    )
+
+    def __init__(self, *args, **kwargs):
+        message = kwargs.pop('message', None)
+        if 'initial' not in kwargs:
+            if message.recipient_public_body:
+                kwargs['initial'] = {'recipient': message.recipient_public_body}
+        if 'prefix' not in kwargs:
+            kwargs['prefix'] = "message-recipient-%d" % message.id
+        self.message = message
+        super().__init__(*args, **kwargs)
+        self.fields['recipient'].widget.set_initial_object(message.recipient_public_body)
+
+    def save(self):
+        self.message.recipient_public_body = self.cleaned_data['recipient']
+        self.message.save()
+
+
 class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
     to = forms.ChoiceField(
         label=_("To"),

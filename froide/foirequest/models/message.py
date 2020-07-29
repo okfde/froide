@@ -404,6 +404,10 @@ class FoiMessage(models.Model):
         from ..forms import get_message_sender_form
         return get_message_sender_form(foimessage=self)
 
+    def get_public_body_recipient_form(self):
+        from ..forms import get_message_recipient_form
+        return get_message_recipient_form(foimessage=self)
+
     def has_delivery_status(self):
         if not self.sent or self.is_response:
             return False

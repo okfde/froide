@@ -22,8 +22,8 @@ from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
 from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
     get_escalation_message_form, get_postal_attachment_form,
-    get_message_sender_form, TransferUploadForm, EditMessageForm,
-    RedactMessageForm
+    get_message_sender_form, get_message_recipient_form,
+    TransferUploadForm, EditMessageForm, RedactMessageForm
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
@@ -509,6 +509,21 @@ def set_message_sender(request, foirequest, message_id):
     if not message.is_response:
         return render_400(request)
     form = get_message_sender_form(request.POST, foimessage=message)
+    if form.is_valid():
+        form.save(user=request.user)
+        return redirect(message)
+    messages.add_message(request, messages.ERROR,
+            form._errors['sender'][0])
+    return render_400(request)
+
+
+@require_POST
+@allow_write_foirequest
+def set_message_recipient(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    if message.is_response:
+        return render_400(request)
+    form = get_message_recipient_form(request.POST, foimessage=message)
     if form.is_valid():
         form.save()
         return redirect(message)
