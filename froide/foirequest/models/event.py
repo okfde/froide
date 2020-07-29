@@ -11,7 +11,7 @@ from django.contrib.postgres.fields import JSONField
 
 from froide.publicbody.models import PublicBody
 
-from .request import FoiRequest
+from . import FoiRequest, FoiMessage
 
 EventDetail = namedtuple('EventDetail', 'description')
 
@@ -101,16 +101,18 @@ EVENT_DETAILS = {
 
 
 class FoiEventManager(models.Manager):
-    def create_event(self, event_name, foirequest, **context):
+    def create_event(self, event_name, foirequest, message=None, user=None,
+                     public_body=None, **context):
         assert event_name in EVENT_KEYS
         event = FoiEvent(
             request=foirequest,
             public=foirequest.is_public(),
-            event_name=event_name
+            event_name=event_name,
+            user=user,
+            message=message,
+            public_body=public_body,
+            context=context
         )
-        event.user = context.pop("user", None)
-        event.public_body = context.pop("public_body", None)
-        event.context = context
         event.save()
         return event
 
@@ -121,6 +123,11 @@ class FoiEvent(models.Model):
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
+        on_delete=models.CASCADE
+    )
+    message = models.ForeignKey(
+        FoiMessage,
+        null=True, blank=True,
         on_delete=models.CASCADE
     )
     user = models.ForeignKey(
