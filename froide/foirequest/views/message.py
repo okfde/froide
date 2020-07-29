@@ -165,6 +165,8 @@ def add_postal_reply_attachment(request, foirequest, message_id):
     )
     if form.is_valid():
         result = form.save(message)
+        added, updated = result
+
         FoiEvent.objects.create_event(
             FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
             foirequest,
@@ -172,8 +174,6 @@ def add_postal_reply_attachment(request, foirequest, message_id):
             user=request.user,
             **{'added': str(added), 'updated': str(updated)}
         )
-
-        added, updated = result
 
         if request.is_ajax():
             return get_attachment_update_response(request, added, updated)

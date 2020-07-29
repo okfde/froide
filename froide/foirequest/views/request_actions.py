@@ -147,7 +147,7 @@ def set_law(request, foirequest):
     form = ConcreteLawForm(request.POST, foirequest=foirequest)
     if not form.is_valid():
         return render_400(request)
-    form.save()
+    form.save(user=request.user)
     messages.add_message(request, messages.SUCCESS,
             _('A concrete law has been set for this request.'))
     return redirect(foirequest)
@@ -159,6 +159,12 @@ def set_tags(request, foirequest):
     form = TagFoiRequestForm(request.POST)
     if form.is_valid():
         form.save(foirequest)
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.SET_TAGS,
+            foirequest,
+            user=request.user,
+            tags=str(form.cleaned_data['tags'])
+        )
         messages.add_message(request, messages.SUCCESS,
                 _('Tags have been set for this request.'))
     return redirect(foirequest)
@@ -174,6 +180,11 @@ def set_summary(request, foirequest):
         return render_400(request)
     foirequest.summary = summary
     foirequest.save()
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.SET_SUMMARY,
+        foirequest,
+        user=request.user
+    )
     messages.add_message(request, messages.SUCCESS,
                 _('The outcome summary has been saved.'))
     return redirect(foirequest)
@@ -189,7 +200,7 @@ def mark_not_foi(request, foirequest):
         foirequest.public = False
         FoiRequest.made_private.send(sender=foirequest)
     FoiEvent.objects.create_event(
-        'mark_not_foi', foirequest,
+        FoiEvent.EVENTS.MARK_NOT_FOI, foirequest,
         user=request.user
     )
     foirequest.save()

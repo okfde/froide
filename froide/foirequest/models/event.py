@@ -43,6 +43,8 @@ class EventName(models.TextChoices):
         'as partially successful')
     BECAME_OVERDUE = "became_overdue", _('request became overdue')
     SET_CONCRETE_LAW = "set_concrete_law", _('a concrete law was set')
+    SET_SUMMARY = "set_summary", _('set summary of result')
+    SET_TAGS = "set_tags", _('set tags on request')
     ADD_POSTAL_REPLY = "add_postal_reply", _('a postal reply was added')
     ADD_POSTAL_MESSAGE = "add_postal_message", _('a postal message was sent')
     ESCALATED = "escalated", _('the request was escalated to mediator')

@@ -285,9 +285,11 @@ class FoiRequestStatusForm(forms.Form):
 
 
 class ConcreteLawForm(forms.Form):
+    foi_law = None
+
     def __init__(self, *args, **kwargs):
         foirequest = kwargs.pop('foirequest')
-        super(ConcreteLawForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.foirequest = foirequest
         self.possible_laws = foirequest.law.combined.all()
         self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
@@ -306,12 +308,15 @@ class ConcreteLawForm(forms.Form):
         if self.cleaned_data["law"]:
             self.foi_law = indexed_laws[self.cleaned_data["law"]]
 
-    def save(self):
+    def save(self, user=None):
         if self.foi_law:
             self.foirequest.law = self.foi_law
             self.foirequest.save()
-            self.foirequest.set_concrete_law.send(sender=self.foirequest,
-                    name=self.foi_law.name)
+            self.foirequest.set_concrete_law.send(
+                sender=self.foirequest,
+                name=self.foi_law.name,
+                user=user
+            )
 
 
 class TagFoiRequestForm(TagObjectForm):

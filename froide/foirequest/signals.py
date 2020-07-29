@@ -357,9 +357,13 @@ def create_event_became_overdue(sender, **kwargs):
 
 @receiver(FoiRequest.set_concrete_law,
         dispatch_uid="create_event_set_concrete_law")
-def create_event_set_concrete_law(sender, **kwargs):
-    FoiEvent.objects.create_event(FoiEvent.EVENTS.SET_CONCRETE_LAW, sender,
-            user=sender.user, name=kwargs['name'])
+def create_event_set_concrete_law(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.SET_CONCRETE_LAW,
+        sender,
+        user=user,
+        name=kwargs['name']
+    )
 
 
 @receiver(FoiRequest.escalated,
