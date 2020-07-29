@@ -188,7 +188,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         return pb
 
 
-class PublicBodyChangeForm(PublicBodyProposalForm):
+class PublicBodyChangeProposalForm(PublicBodyProposalForm):
     FK_FIELDS = {
         'classification': Classification,
         'jurisdiction': Jurisdiction
@@ -197,18 +197,23 @@ class PublicBodyChangeForm(PublicBodyProposalForm):
     def clean_name(self):
         return self.cleaned_data['name']
 
+    def serializable_cleaned_data(self):
+        data = dict(self.cleaned_data)
+        for field in self.FK_FIELDS:
+            if data[field]:
+                data[field] = data[field].id
+        return data
+
     def save(self, user):
         '''
         This doesn't save instance, but saves
         the change proposal.
         '''
-        data = dict(self.cleaned_data)
-        for field in self.FK_FIELDS:
-            if data[field]:
-                data[field] = data[field].id
+        data = self.serializable_cleaned_data()
         pb = PublicBody.objects.get(id=self.instance.id)
         pb.change_proposals[user.id] = {
             'data': data,
+            'applied': False,
             'timestamp': timezone.now().isoformat()
         }
         pb.save()
@@ -219,11 +224,11 @@ class PublicBodyChangeForm(PublicBodyProposalForm):
         return pb
 
 
-class PublicBodyAcceptForm(PublicBodyChangeForm):
+class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
     def get_proposals(self):
+        data = dict(self.instance.new_change_proposals)
         user_ids = self.instance.change_proposals.keys()
         user_map = {str(u.id): u for u in get_user_model().objects.filter(id__in=user_ids)}
-        data = dict(self.instance.change_proposals)
         for user_id, v in data.items():
             v['user'] = user_map[user_id]
             for key, model in self.FK_FIELDS.items():
@@ -234,25 +239,35 @@ class PublicBodyAcceptForm(PublicBodyChangeForm):
     def save(self, user, proposal_id=None, delete_proposals=None):
         pb = super(forms.ModelForm, self).save(commit=False)
         pb._updated_by = user
+        pb.updated_at = timezone.now()
 
         if delete_proposals is None:
             delete_proposals = []
         if proposal_id:
             proposals = self.get_proposals()
-            user = proposals[proposal_id]['user']
-            user.send_mail(
-                _('Changes to public body “%s” have been applied') % pb.name,
-                _('Hello,\n\nYou can find the changed public body here:\n\n'
-                  '{url}\n\nAll the Best,\n{site_name}').format(
-                      url=pb.get_absolute_domain_url(),
-                      site_name=settings.SITE_NAME
-                ),
-                priority=False
-            )
+            proposal_user = proposals[proposal_id]['user']
+            if proposal_user != user:
+                proposal_user.send_mail(
+                    _('Changes to public body “%s” have been applied').format(
+                        pb.name
+                    ),
+                    _('Hello,\n\nYou can find the changed public body here:'
+                      '\n\n{url}\n\nAll the Best,\n{site_name}').format(
+                        url=pb.get_absolute_domain_url(),
+                        site_name=settings.SITE_NAME
+                    ),
+                    priority=False
+                )
             delete_proposals.append(proposal_id)
         for pid in delete_proposals:
             if pid in pb.change_proposals:
                 del pb.change_proposals[pid]
+
+        pb.change_proposals[user.id] = {
+            'applied': True,
+            'timestamp': timezone.now().isoformat(),
+            'data': self.serializable_cleaned_data(),
+        }
 
         pb.save()
         pb.laws.add(*pb.jurisdiction.get_all_laws())

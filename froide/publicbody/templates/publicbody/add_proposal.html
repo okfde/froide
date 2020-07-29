@@ -16,7 +16,7 @@
     <form action="" method="post">
       {% csrf_token %}
       {% render_form form %}
-      <button class="btn btn-primary">
+      <button class="btn btn-primary" type="submit">
         {% trans "Propose change" %}
       </button>
     </form>

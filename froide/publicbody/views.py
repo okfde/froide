@@ -10,10 +10,14 @@ from django.views.generic import FormView, UpdateView
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
 from froide.helper.search.views import BaseSearchView
+from froide.helper.auth import can_moderate_object
 
 from .models import PublicBody, FoiLaw, Jurisdiction
 from .documents import PublicBodyDocument
-from .forms import PublicBodyProposalForm, PublicBodyChangeForm
+from .forms import (
+    PublicBodyProposalForm, PublicBodyChangeProposalForm,
+    PublicBodyAcceptProposalForm
+)
 from .filters import PublicBodyFilterSet
 
 
@@ -166,19 +170,19 @@ class PublicBodyProposalView(LoginRequiredMixin, FormView):
             self.request, messages.INFO,
             _('Thank you for your proposal. We will send you an email when it has been approved.')
         )
-        return super(PublicBodyProposalView, self).form_valid(form)
+        return super().form_valid(form)
 
     def handle_no_permission(self):
         messages.add_message(
             self.request, messages.WARNING,
             _('You need to register an account and login in order to propose a new public body.')
         )
-        return super(PublicBodyProposalView, self).handle_no_permission()
+        return super().handle_no_permission()
 
 
-class PublicBodyChangeView(LoginRequiredMixin, UpdateView):
-    template_name = 'publicbody/change.html'
-    form_class = PublicBodyChangeForm
+class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
+    template_name = 'publicbody/add_proposal.html'
+    form_class = PublicBodyChangeProposalForm
     queryset = PublicBody.objects.all()
 
     def get_success_url(self):
@@ -191,3 +195,35 @@ class PublicBodyChangeView(LoginRequiredMixin, UpdateView):
             _('Thank you for your proposal. We will send you an email when it has been approved.')
         )
         return redirect(self.object)
+
+
+class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
+    template_name = 'publicbody/accept_proposals.html'
+    form_class = PublicBodyAcceptProposalForm
+    queryset = PublicBody.objects.all()
+
+    def get_object(self):
+        obj = super().get_object()
+        if not can_moderate_object(obj, self.request):
+            raise Http404
+        return obj
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def form_valid(self, form):
+        self.object = form.save(
+            self.request.user,
+            proposal_id=self.request.POST.get('proposal_id'),
+            delete_proposals=self.request.POST.getlist('proposal_delete')
+        )
+        messages.add_message(
+            self.request, messages.INFO,
+            _('Your change has been applied.')
+        )
+        return redirect(self.object)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['proposals'] = context['form'].get_proposals()
+        return context

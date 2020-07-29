@@ -17,11 +17,13 @@
       {% trans "This public body's sent messages" %}
     </a>
   </li>
-  <li>
-    <a href="{% url 'admin:publicbody-publicbody-accept_change_proposal' pk=original.pk %}">
-      {% trans "See change proposals" %}
-    </a>
-  </li>
+  {% if original.new_change_proposal_count %}
+    <li>
+      <a href="{% url 'publicbody-accept' pk=original.pk %}" target="_blank">
+        {% trans "See change proposals" %}
+      </a>
+    </li>
+  {% endif %}
 {% endif %}
 {{ block.super }}
 {% endblock %}

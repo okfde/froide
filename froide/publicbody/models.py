@@ -428,6 +428,17 @@ class PublicBody(models.Model):
         # FIXME: Materialize this?
         return self.get_applicable_law()
 
+    @property
+    def new_change_proposals(self):
+        return {
+            k: v for k, v in self.change_proposals.items()
+            if not v.get('applied')
+        }
+
+    @property
+    def new_change_proposal_count(self):
+        return len(self.new_change_proposals)
+
     def get_applicable_law(self, law_type=None):
         return get_applicable_law(pb=self, law_type=law_type)
 
