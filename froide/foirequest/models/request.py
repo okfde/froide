@@ -347,13 +347,15 @@ class FoiRequest(models.Model):
     message_received = django.dispatch.Signal(providing_args=["message"])
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
-    status_changed = django.dispatch.Signal(providing_args=["status", "data"])
+    status_changed = django.dispatch.Signal(providing_args=[
+        "status", "resolution", "data", "user"
+    ])
     became_overdue = django.dispatch.Signal(providing_args=[])
     became_asleep = django.dispatch.Signal(providing_args=[])
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
-    set_concrete_law = django.dispatch.Signal(providing_args=['name'])
-    made_public = django.dispatch.Signal(providing_args=[])
-    made_private = django.dispatch.Signal(providing_args=[])
+    set_concrete_law = django.dispatch.Signal(providing_args=['name', 'user'])
+    made_public = django.dispatch.Signal(providing_args=['user'])
+    made_private = django.dispatch.Signal(providing_args=['user'])
     escalated = django.dispatch.Signal(providing_args=[])
 
     def __str__(self):
@@ -650,6 +652,10 @@ class FoiRequest(models.Model):
         if message.sent:
             return None
         message.send()
+        self.message_sent.send(
+            sender=self, message=message,
+            user=self.user
+        )
 
     def confirmed_public_body(self):
         send_now = self.set_status_after_change()
@@ -680,11 +686,11 @@ class FoiRequest(models.Model):
         else:
             return False
 
-    def make_public(self):
+    def make_public(self, user=None):
         self.public = True
         self.visibility = 2
         self.save()
-        self.made_public.send(sender=self)
+        self.made_public.send(sender=self, user=user)
 
     def set_overdue(self):
         self.became_overdue.send(sender=self)

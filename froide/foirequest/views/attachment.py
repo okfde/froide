@@ -69,6 +69,9 @@ def approve_attachment(request, foirequest, attachment):
     # hard guard against publishing of non publishable requests
     if not foirequest.not_publishable:
         att.approve_and_save()
+        att.attachment_published.send(
+            sender=att, user=request.user,
+        )
 
     if request.is_ajax():
         if request.content_type == 'application/json':
@@ -97,6 +100,9 @@ def delete_attachment(request, foirequest, attachment):
         FoiAttachment.objects.filter(redacted=att).update(
             can_approve=True
         )
+    att.attachment_deleted.send(
+        sender=att, user=request.user,
+    )
     att.remove_file_and_delete()
 
     if request.is_ajax():
@@ -122,6 +128,9 @@ def create_document(request, foirequest, attachment):
         return render_400(request)
 
     doc = att.create_document()
+    att.document_created.send(
+        sender=att, user=request.user,
+    )
 
     if request.is_ajax():
         return JsonResponse({
@@ -280,6 +289,10 @@ def redact_attachment(request, foirequest, attachment_id):
             attachment.save()
 
         redact_attachment_task.delay(attachment.id, att.id, instructions)
+
+        att.attachment_redacted.send(
+            sender=att, user=request.user,
+        )
 
         return JsonResponse({
             'url': att.get_anchor_url(),

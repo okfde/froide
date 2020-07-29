@@ -63,7 +63,7 @@ def set_public_body(request, foirequest):
         messages.add_message(request, messages.ERROR, '\n'.join(throttle_message))
         return render_400(request)
 
-    form.save()
+    form.save(user=request.user)
 
     messages.add_message(
         request,
@@ -108,7 +108,7 @@ def suggest_public_body(request, slug):
 def set_status(request, foirequest):
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
-        form.save()
+        form.save(user=request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Status of request has been updated.'))
         response = registry.run_hook(
@@ -133,7 +133,7 @@ def set_status(request, foirequest):
 def make_public(request, foirequest):
     if not foirequest.is_foi:
         return render_400(request)
-    foirequest.make_public()
+    foirequest.make_public(user=request.user)
     return redirect(foirequest)
 
 
@@ -188,6 +188,10 @@ def mark_not_foi(request, foirequest):
     if foirequest.public:
         foirequest.public = False
         FoiRequest.made_private.send(sender=foirequest)
+    FoiEvent.objects.create_event(
+        'mark_not_foi', foirequest,
+        user=request.user
+    )
     foirequest.save()
     if request.is_ajax():
         return HttpResponse()
@@ -280,7 +284,10 @@ def extend_deadline(request, foirequest):
         form.save(foirequest)
         messages.add_message(request, messages.INFO,
                 _('Deadline has been extended.'))
-        FoiEvent.objects.create_event('deadline_extended', foirequest)
+        FoiEvent.objects.create_event(
+            'deadline_extended',
+            foirequest, user=request.user
+        )
         return redirect(foirequest)
     return render_400(request)
 
