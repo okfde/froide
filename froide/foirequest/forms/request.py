@@ -156,7 +156,7 @@ class PublicBodySuggestionsForm(forms.Form):
             raise forms.ValidationError(_("This request doesn't need a Public Body!"))
         return self.cleaned_data
 
-    def save(self):
+    def save(self, user=None):
         foilaw = self.publicbody.default_law
 
         req = self.foirequest
@@ -192,6 +192,10 @@ class PublicBodySuggestionsForm(forms.Form):
             )
             message.save()
             message.send()
+            req.message_sent.send(
+                sender=req, message=message,
+                user=user
+            )
 
 
 class FoiRequestStatusForm(forms.Form):
@@ -249,7 +253,7 @@ class FoiRequestStatusForm(forms.Form):
 
         return self.cleaned_data
 
-    def save(self):
+    def save(self, user=None):
         data = self.cleaned_data
         status = data['status']
         resolution = data['resolution']
@@ -271,13 +275,13 @@ class FoiRequestStatusForm(forms.Form):
 
         foirequest.save()
 
-        if status == 'resolved':
-            foirequest.status_changed.send(
-                sender=foirequest,
-                status=status,
-                resolution=resolution,
-                data=data
-            )
+        foirequest.status_changed.send(
+            sender=foirequest,
+            status=status,
+            user=user,
+            resolution=resolution,
+            data=data
+        )
 
 
 class ConcreteLawForm(forms.Form):

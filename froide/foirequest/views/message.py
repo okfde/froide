@@ -51,7 +51,7 @@ def send_message(request, foirequest):
             form.add_error(None, throttle_message)
 
     if form.is_valid():
-        mes = form.save()
+        mes = form.save(user=request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your message has been sent.'))
         return redirect(mes)
@@ -79,7 +79,7 @@ def escalation_message(request, foirequest):
             form.add_error(None, throttle_message)
 
     if form.is_valid():
-        message = form.save()
+        message = form.save(user=request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Escalation Message has been sent.'))
         return redirect(message)

@@ -469,10 +469,10 @@ class FoiMessage(models.Model):
                 countdown=5**count * 60
             )
 
-    def send(self, notify=True, **kwargs):
+    def send(self, **kwargs):
         from ..message_handlers import send_message
 
-        send_message(self, notify=notify, **kwargs)
+        send_message(self, **kwargs)
 
     def force_resend(self):
         self.resend(force=True)

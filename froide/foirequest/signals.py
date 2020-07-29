@@ -248,11 +248,11 @@ def foiattachment_delayed_remove(instance, **kwargs):
 # Event creation
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, message, **kwargs):
+def create_event_message_sent(sender, message, user=None, **kwargs):
     FoiEvent.objects.create_event(
-        "message_sent",
+        FoiEvent.EVENTS.MESSAGE_SENT,
         sender,
-        user=sender.user,
+        user=user,
         public_body=message.recipient_public_body
     )
 

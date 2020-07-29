@@ -314,7 +314,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         return message
 
-    def save(self):
+    def save(self, user=None):
         message = self.make_message()
         message.save()
 
@@ -334,6 +334,11 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         message.save()
 
         message.send(attachments=attachments)
+        self.foirequest.message_sent.send(
+            sender=self.foirequest, message=message,
+            user=user
+        )
+
         return message
 
 
@@ -423,7 +428,7 @@ class EscalationMessageForm(forms.Form):
             plaintext_redacted=plaintext_redacted
         )
 
-    def save(self):
+    def save(self, user=None):
         file_generator = generate_foirequest_files(
             self.foirequest
         )
@@ -435,6 +440,11 @@ class EscalationMessageForm(forms.Form):
         )
         message.save()
         message.send(attachments=attachments)
+
+        self.foirequest.message_sent.send(
+            sender=self.foirequest, message=message,
+            user=user
+        )
         self.foirequest.escalated.send(sender=self.foirequest)
         return message
 

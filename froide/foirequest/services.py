@@ -253,6 +253,10 @@ class CreateRequestService(BaseService):
         )
         if send_now:
             message.send()
+            FoiRequest.message_sent.send(
+                sender=request, message=message,
+            )
+
             message.save()
         return request
 
