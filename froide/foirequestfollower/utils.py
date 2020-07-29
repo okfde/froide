@@ -11,15 +11,24 @@ from django.utils import timezone
 from django_comments import get_model
 
 from froide.foirequest.models import FoiEvent, FoiMessage
+from froide.foirequest.models.event import EVENT_DETAILS
 from froide.foirequest.notifications import send_update
 
 from .models import FoiRequestFollower, REFERENCE_PREFIX
 
 Comment = get_model()
 
-EVENT_BLOCK_LIST = (
-    "message_received", "message_sent", 'set_concrete_law',
-)
+# Interesting events
+# message sent/received are already in instant updates
+INTERESTING_EVENTS = set(EVENT_DETAILS.keys()) - set([
+    FoiEvent.EVENTS.MESSAGE_RECEIVED,
+    FoiEvent.EVENTS.MESSAGE_SENT,
+])
+COMBINE_EVENTS = set([
+    FoiEvent.EVENTS.SET_SUMMARY,
+    FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
+    FoiEvent.EVENTS.STATUS_CHANGED
+])
 
 
 def add_comment_updates(updates, since):
@@ -52,12 +61,18 @@ def add_comment_updates(updates, since):
 
 
 def add_event_updates(updates, since):
-    events = FoiEvent.objects.filter(timestamp__gte=since).select_related("request")
+    events = FoiEvent.objects.filter(
+        timestamp__gte=since,
+        event_name__in=INTERESTING_EVENTS
+    ).select_related("request").order_by('-timestamp')
+    already_seen = defaultdict(set)
     for event in events:
-        if event.event_name in EVENT_BLOCK_LIST:
-            continue
-        # if event.request_id not in requests:
-        #     requests[event.request_id] = event.request
+        if event.event_name in COMBINE_EVENTS:
+            # Only report one of possibly multiple
+            if event.event_name in already_seen[event.request_id]:
+                continue
+            already_seen[event.request_id].add(event.event_name)
+
         time = formats.date_format(
             timezone.localtime(event.timestamp),
             "TIME_FORMAT"

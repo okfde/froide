@@ -296,6 +296,20 @@ def render_message_redact_button(message):
     }
 
 
+@register.filter
+def readable_status(status, resolution=''):
+    if status == 'resolved' and resolution:
+        status = resolution
+    return FoiRequest.get_readable_status(status)
+
+
+@register.filter
+def status_description(status, resolution=''):
+    if status == 'resolved' and resolution:
+        status = resolution
+    return FoiRequest.get_status_description(status)
+
+
 @register.inclusion_tag('foirequest/snippets/message_timeline.html')
 def show_timeline(foirequest):
 
