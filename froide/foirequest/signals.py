@@ -252,6 +252,7 @@ def create_event_message_sent(sender, message, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_SENT,
         sender,
+        message=message,
         user=user,
         public_body=message.recipient_public_body
     )
@@ -259,11 +260,12 @@ def create_event_message_sent(sender, message, user=None, **kwargs):
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, message=None, **kwargs):
+def create_event_message_received(sender, message=None, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_RECEIVED,
         sender,
-        user=sender.user,
+        message=message,
+        user=user,
         public_body=message.sender_public_body
     )
 
@@ -362,9 +364,14 @@ def create_event_set_concrete_law(sender, **kwargs):
 
 @receiver(FoiRequest.escalated,
     dispatch_uid="create_event_escalated")
-def create_event_escalated(sender, **kwargs):
-    FoiEvent.objects.create_event(FoiEvent.EVENTS.ESCALATED, sender,
-            user=sender.user, public_body=sender.law.mediator)
+def create_event_escalated(sender, message=None, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ESCALATED,
+        sender,
+        message=message,
+        user=user,
+        public_body=message.recipient_public_body
+    )
 
 
 def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):

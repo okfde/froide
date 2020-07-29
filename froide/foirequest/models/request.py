@@ -356,7 +356,7 @@ class FoiRequest(models.Model):
     set_concrete_law = django.dispatch.Signal(providing_args=['name', 'user'])
     made_public = django.dispatch.Signal(providing_args=['user'])
     made_private = django.dispatch.Signal(providing_args=['user'])
-    escalated = django.dispatch.Signal(providing_args=[])
+    escalated = django.dispatch.Signal(providing_args=['message', 'user'])
 
     def __str__(self):
         return _("Request '%s'") % self.title

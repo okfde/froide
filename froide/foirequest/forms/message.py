@@ -473,7 +473,10 @@ class EscalationMessageForm(forms.Form):
             sender=self.foirequest, message=message,
             user=user
         )
-        self.foirequest.escalated.send(sender=self.foirequest)
+        self.foirequest.escalated.send(
+            sender=self.foirequest, message=message,
+            user=user
+        )
         return message
 
 
@@ -621,11 +624,6 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
 
         if self.cleaned_data.get('files'):
             self.save_attachments(self.files.getlist('%s-files' % self.prefix), message)
-
-        if message.is_response:
-            foirequest.message_received.send(sender=foirequest, message=message)
-        else:
-            foirequest.message_sent.send(sender=foirequest, message=message)
 
         return message
 

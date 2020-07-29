@@ -21,8 +21,15 @@ UNKNOWN_EVENT = EventDetail(description=_('unknown'))
 class EventName(models.TextChoices):
     PUBLIC_BODY_SUGGESTED = "public_body_suggested", _('a public body was suggested')
     REPORTED_COSTS = "reported_costs", _('costs were reported for this request')
+
     MESSAGE_RECEIVED = "message_received", _('a message was received')
     MESSAGE_SENT = "message_sent", _('a message was sent')
+    MESSAGE_APPROVED = "message_approved", _('hidden message was approved')
+    MESSAGE_EDITED = "message_edited", _('message was edited')
+    MESSAGE_REDACTED = "message_redacted", _('message was redacted')
+    MESSAGE_RESENT = "message_resent", _('message was resent')
+
+    ATTACHMENT_UPLOADED = "attachment_uploaded", _('attachments were uploaded')
     ATTACHMENT_PUBLISHED = "attachment_published", _('an attachment was published')
     ATTACHMENT_REDACTED = "attachment_redacted", _('an attachment was redacted')
     ATTACHMENT_DELETED = "attachment_deleted", _('an attachment was deleted')
@@ -43,6 +50,8 @@ class EventName(models.TextChoices):
         'the deadline for the request '
         'was extended')
     MARK_NOT_FOI = "mark_not_foi", _('the request was marked as not')
+    SENDER_CHANGED = "sender_changed", _('sender of message was changed')
+    RECIPIENT_CHANGED = "recipient_changed", _('recipient of message was changed')
 
 
 EVENT_KEYS = dict(EventName.choices).keys()
