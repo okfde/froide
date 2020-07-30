@@ -543,17 +543,28 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
 
 
 class FoiEventAdmin(admin.ModelAdmin):
-    list_display = ('event_name', 'request', 'timestamp',)
+    list_display = (
+        'event_name', 'user', 'timestamp', 'request'
+    )
     list_filter = (
         'event_name', 'public',
         ('request', ForeignKeyFilter),
         ('user', ForeignKeyFilter),
         ('public_body', ForeignKeyFilter),
+        ('message', ForeignKeyFilter),
     )
     search_fields = ['request__title', "public_body__name"]
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
-    raw_id_fields = ('request', 'user', 'public_body')
+    raw_id_fields = ('request', 'message', 'user', 'public_body')
+
+    # Disable select_related from list_display
+    list_select_related = (None,)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related('request', 'user')
+        return qs
 
 
 class PublicBodySuggestionAdmin(admin.ModelAdmin):
