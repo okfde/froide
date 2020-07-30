@@ -617,12 +617,20 @@ class FoiRequest(models.Model):
         return FoiRequest.get_status_description(self.status_representation)
 
     @classmethod
-    def get_readable_status(cls, status):
-        return str(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
+    def get_readable_status(cls, status, fallback=None):
+        if fallback is None:
+            fallback = (_("Unknown"), None)
+        else:
+            fallback = (fallback, None)
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback)[0])
 
     @classmethod
-    def get_status_description(cls, status):
-        return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
+    def get_status_description(cls, status, fallback=None):
+        if fallback is None:
+            fallback = (None, _("Unknown"))
+        else:
+            fallback = (None, fallback)
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback)[1])
 
     def determine_visibility(self):
         if self.public:

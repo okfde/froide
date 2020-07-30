@@ -300,14 +300,14 @@ def render_message_redact_button(message):
 def readable_status(status, resolution=''):
     if status == 'resolved' and resolution:
         status = resolution
-    return FoiRequest.get_readable_status(status)
+    return FoiRequest.get_readable_status(status, status)
 
 
 @register.filter
 def status_description(status, resolution=''):
     if status == 'resolved' and resolution:
         status = resolution
-    return FoiRequest.get_status_description(status)
+    return FoiRequest.get_status_description(status, status)
 
 
 @register.inclusion_tag('foirequest/snippets/message_timeline.html')
