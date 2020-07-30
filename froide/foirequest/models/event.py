@@ -1,4 +1,5 @@
 from collections import namedtuple
+import logging
 
 from django.db import models
 from django.conf import settings
@@ -239,7 +240,9 @@ class FoiEvent(models.Model):
             return template.render(self.get_context())
         except TemplateDoesNotExist:
             pass
-        return self.detail.description.format(self.get_context())
+        except Exception as e:
+            logging.exception(e)
+        return self.detail.description.format(**self.get_context())
 
     def as_html(self):
-        return mark_safe(self.detail.description.format(self.get_html_context()))
+        return mark_safe(self.detail.description.format(**self.get_html_context()))
