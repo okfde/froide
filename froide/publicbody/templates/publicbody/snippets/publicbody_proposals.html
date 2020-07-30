@@ -21,17 +21,16 @@
     </tr>
   </thead>
   <tbody>
+    {% if proposals %}
     <tr>
       <td>
         {% trans "Proposal" %}
       </td>
       <td>
-        {% if proposals %}
-          <label>
-            <input type="radio" name="proposal_id" class="proposal" value="" required>
-            {% trans "Change, without accepting" %}
-          </label>
-        {% endif %}
+        <label>
+          <input type="radio" name="proposal_id" class="proposal" value="" required>
+          {% trans "Change, without accepting" %}
+        </label>
       </td>
       {% for key, proposal in proposals.items %}
         <td>
@@ -46,6 +45,7 @@
         </td>
       {% endfor %}
     </tr>
+    {% endif %}
     {% for field in form %}
       <tr>
         <td>{{ field.label }}</td>

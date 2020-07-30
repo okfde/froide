@@ -87,7 +87,7 @@
 
     {% if user.is_authenticated %}
       {% if object|can_moderate:request %}
-        <a class="btn btn-secondary" href="{% url 'publicbody-accept' pk=object.pk %}">
+        <a class="btn btn-secondary mt-2" href="{% url 'publicbody-accept' pk=object.pk %}">
           {% if object.new_change_proposal_count %}
             {% blocktrans with count=object.new_change_proposal_count %}Change / accept proposals ({{ count}}){% endblocktrans %}
           {% else %}
@@ -112,6 +112,7 @@
       {% else %}
         {% url 'admin:publicbody_proposedpublicbody_change' object.id as admin_url %}
       {% endif %}
+      <br/>
       <a class="btn btn-secondary mt-2" href="{{ admin_url }}">
         <i class="fa fa-cog"></i>
         {% trans "View on Admin site" %}
