@@ -17,7 +17,7 @@
       {% trans "This public body's sent messages" %}
     </a>
   </li>
-  {% if original.new_change_proposal_count %}
+  {% if original.change_proposal_count %}
     <li>
       <a href="{% url 'publicbody-accept' pk=original.pk %}" target="_blank">
         {% trans "See change proposals" %}

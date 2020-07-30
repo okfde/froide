@@ -337,6 +337,7 @@ class PublicBody(models.Model):
     extra_data = JSONField(default=dict, blank=True)
 
     change_proposals = JSONField(default=dict, blank=True)
+    change_history = JSONField(default=list, blank=True)
 
     file_index = models.CharField(_("file index"), max_length=1024, blank=True)
     org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
@@ -429,15 +430,8 @@ class PublicBody(models.Model):
         return self.get_applicable_law()
 
     @property
-    def new_change_proposals(self):
-        return {
-            k: v for k, v in self.change_proposals.items()
-            if not v.get('applied')
-        }
-
-    @property
-    def new_change_proposal_count(self):
-        return len(self.new_change_proposals)
+    def change_proposal_count(self):
+        return len(self.change_proposals)
 
     def get_applicable_law(self, law_type=None):
         return get_applicable_law(pb=self, law_type=law_type)

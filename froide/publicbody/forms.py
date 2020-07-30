@@ -213,7 +213,6 @@ class PublicBodyChangeProposalForm(PublicBodyProposalForm):
         pb = PublicBody.objects.get(id=self.instance.id)
         pb.change_proposals[user.id] = {
             'data': data,
-            'applied': False,
             'timestamp': timezone.now().isoformat()
         }
         pb.save()
@@ -226,7 +225,7 @@ class PublicBodyChangeProposalForm(PublicBodyProposalForm):
 
 class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
     def get_proposals(self):
-        data = dict(self.instance.new_change_proposals)
+        data = dict(self.instance.change_proposals)
         user_ids = self.instance.change_proposals.keys()
         user_map = {str(u.id): u for u in get_user_model().objects.filter(id__in=user_ids)}
         for user_id, v in data.items():
@@ -263,11 +262,11 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
             if pid in pb.change_proposals:
                 del pb.change_proposals[pid]
 
-        pb.change_proposals[user.id] = {
-            'applied': True,
+        pb.change_history.append({
+            'user_id': user.id,
             'timestamp': timezone.now().isoformat(),
             'data': self.serializable_cleaned_data(),
-        }
+        })
 
         pb.save()
         pb.laws.add(*pb.jurisdiction.get_all_laws())
