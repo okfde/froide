@@ -125,6 +125,7 @@ class FoiEventManager(models.Manager):
     def create_event(self, event_name, foirequest, message=None, user=None,
                      public_body=None, **context):
         assert event_name in EVENT_KEYS
+        context = {k: str(v) for k, v in context.items()}
         event = FoiEvent(
             request=foirequest,
             public=foirequest.is_public(),
