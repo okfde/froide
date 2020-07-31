@@ -1,5 +1,6 @@
 import json
 
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
@@ -8,8 +9,9 @@ from django.urls import reverse
 
 from froide.foirequest.models import FoiMessage
 from froide.foirequest.auth import is_foirequest_moderator
-
+from froide.publicbody.models import PublicBody
 from froide.helper.utils import render_403
+from froide.helper.auth import can_moderate_object
 
 from .api_views import get_problem_reports
 from .forms import ProblemReportForm
@@ -38,7 +40,14 @@ def report_problem(request, message_pk):
 def moderation_view(request):
     if not is_foirequest_moderator(request):
         return render_403(request)
+
     problems = get_problem_reports(request)
+
+    publicbodies = None
+    if can_moderate_object(PublicBody, request):
+        publicbodies = PublicBody._default_manager.filter(
+            ~Q(change_proposals={}) | Q(confirmed=False)
+        ).order_by('-updated_at').values('name', 'id', 'confirmed')
 
     config = {
         'settings': {
@@ -59,14 +68,23 @@ def moderation_view(request):
             'escalateReport': reverse('api:problemreport-escalate', kwargs={
                 'pk': 0
             }),
-            'publicBody': reverse('publicbody-publicbody_shortlink', kwargs={'obj_id': 0}),
+            'publicBody': reverse('publicbody-publicbody_shortlink', kwargs={
+                'obj_id': 0
+            }),
+            'publicBodyAcceptChanges': reverse('publicbody-accept', kwargs={
+                'pk': 0
+            }),
         },
         'i18n': {
+            'name': _('Name'),
             'kind': _('Kind'),
             'date': _('Date'),
+            'problemReports': _('problem reports'),
+            'publicBodyChangeProposals': _('public bodies'),
             'message': _('Message'),
             'description': _('Description'),
             'action': _('Action'),
+            'isNotRequester': _('not requester'),
             'claim': _('Claim'),
             'unclaim': _('Cancel'),
             'resolve': _('Resolve'),
@@ -78,10 +96,13 @@ def moderation_view(request):
             'activeModerators': _('Active moderators'),
             'toPublicBody': _('to public body'),
             'toMessage': _('to message'),
+            'reviewNewPublicBody': _('review new'),
+            'reviewChangedPublicBody': _('review changes'),
         }
     }
 
     return render(request, 'problem/moderation.html', {
         'problems': problems,
+        'publicbodies_json': json.dumps(list(publicbodies)),
         'config_json': json.dumps(config)
     })
