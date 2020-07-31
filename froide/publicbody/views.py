@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.template import TemplateDoesNotExist
 from django.views.generic import FormView, UpdateView
 
 from froide.foirequest.models import FoiRequest
