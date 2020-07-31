@@ -88,10 +88,14 @@
     {% if user.is_authenticated %}
       {% if object|can_moderate:request %}
         <a class="btn btn-secondary mt-2" href="{% url 'publicbody-accept' pk=object.pk %}">
-          {% if object.change_proposal_count %}
-            {% blocktrans with count=object.change_proposal_count %}Change / accept proposals ({{ count}}){% endblocktrans %}
+          {% if not object.confirmed %}
+            {% trans "Review proposal" %}
           {% else %}
-            {% trans "Change" %} 
+            {% if object.change_proposal_count %}
+              {% blocktrans with count=object.change_proposal_count %}Change / accept proposals ({{ count}}){% endblocktrans %}
+            {% else %}
+              {% trans "Change" %} 
+            {% endif %}
           {% endif %}
         </a>
       {% else %}

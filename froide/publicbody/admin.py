@@ -383,7 +383,7 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
     def _confirm_pb(self, pb, user):
         pb._updated_by = user
         pb.updated_at = timezone.now()
-        result = pb.confirm()
+        result = pb.confirm(user=user)
 
         creator = pb.created_by
         if result is not None and creator and creator != user:

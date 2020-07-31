@@ -11,6 +11,7 @@ from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
+from django.dispatch import Signal
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
@@ -380,6 +381,12 @@ class PublicBody(models.Model):
     objects = PublicBodyManager()
     published = objects
 
+    proposal_added = Signal(providing_args=['user'])
+    proposal_rejected = Signal(providing_args=['user'])
+    proposal_accepted = Signal(providing_args=['user'])
+    change_proposal_added = Signal(providing_args=['user'])
+    change_proposal_accepted = Signal(providing_args=['user'])
+
     class Meta:
         ordering = ('name',)
         verbose_name = _("Public Body")
@@ -505,12 +512,22 @@ class PublicBody(models.Model):
 
         return export_csv(queryset, fields)
 
+    def confirm(self, user=None):
+        if self.confirmed:
+            return None
+        self.confirmed = True
+        self.save()
+        self.proposal_accepted.send(sender=self, user=user)
+        counter = 0
+        for request in self.foirequest_set.all():
+            if request.confirmed_public_body():
+                counter += 1
+        return counter
+
 
 class ProposedPublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
-        return (super(ProposedPublicBodyManager, self).get_queryset()
-            .filter(confirmed=False)
-        )
+        return super().get_queryset().filter(confirmed=False)
 
 
 class ProposedPublicBody(PublicBody):
@@ -521,14 +538,3 @@ class ProposedPublicBody(PublicBody):
         ordering = ('-created_at',)
         verbose_name = _('Proposed Public Body')
         verbose_name_plural = _('Proposed Public Bodies')
-
-    def confirm(self):
-        if self.confirmed:
-            return None
-        self.confirmed = True
-        self.save()
-        counter = 0
-        for request in self.foirequest_set.all():
-            if request.confirmed_public_body():
-                counter += 1
-        return counter

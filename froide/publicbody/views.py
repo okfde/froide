@@ -87,12 +87,11 @@ def show_jurisdiction(request, slug):
             jurisdiction=jurisdiction).order_by('priority'),
         "foirequests": FoiRequest.published.filter(jurisdiction=jurisdiction)[:5]
     }
-    try:
-        return render(request,
-            'publicbody/jurisdiction/%s.html' % jurisdiction.slug, context)
-    except TemplateDoesNotExist:
-        return render(request,
-            'publicbody/jurisdiction.html', context)
+    template_names = (
+        'publicbody/jurisdiction/%s.html' % jurisdiction.slug,
+        'publicbody/jurisdiction.html',
+    )
+    return render(request, template_names, context)
 
 
 def show_foilaw(request, slug):
@@ -109,7 +108,8 @@ def publicbody_shortlink(request, obj_id):
 def show_publicbody(request, slug):
     obj = get_object_or_404(PublicBody._default_manager, slug=slug)
     if not obj.confirmed:
-        if request.user != obj._created_by and not request.user.is_staff:
+        not_creator = request.user != obj._created_by
+        if not_creator and not can_moderate_object(obj, request):
             raise Http404
     context = {
         'object': obj,
@@ -200,7 +200,8 @@ class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
 class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
     template_name = 'publicbody/accept_proposals.html'
     form_class = PublicBodyAcceptProposalForm
-    queryset = PublicBody.objects.all()
+    # Default manager gives access to proposed as well
+    queryset = PublicBody._default_manager.all()
 
     def get_object(self):
         obj = super().get_object()
@@ -214,9 +215,17 @@ class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(
             self.request.user,
+            delete_unconfirmed=self.request.POST.get('delete', '0') == '1',
+            delete_reason=self.request.POST.get('delete_reason', ''),
             proposal_id=self.request.POST.get('proposal_id'),
             delete_proposals=self.request.POST.getlist('proposal_delete')
         )
+        if self.object is None:
+            messages.add_message(
+                self.request, messages.INFO,
+                _('The proposal has been deleted.')
+            )
+            return redirect('publicbody-list')
         messages.add_message(
             self.request, messages.INFO,
             _('Your change has been applied.')
