@@ -7,8 +7,9 @@ class Message {
     this.id = 'msg-' + element.dataset.id || ''
     this.element = element
 
-    // add event listener
-    element.addEventListener('click', this.onClick.bind(this))
+    // add event listener to head element
+    element.querySelector('.alpha-message__head')
+      ?.addEventListener('click', this.onHeadClick.bind(this))
 
     // create localStorage item
     if (!this.storageItem) {
@@ -42,7 +43,7 @@ class Message {
     )
   }
 
-  onClick (e: Event) {
+  onHeadClick (e: Event) {
     const el = e.target as HTMLElement
     if (el.closest('.alpha-message__sender-link')) {
       // user clicked sender link

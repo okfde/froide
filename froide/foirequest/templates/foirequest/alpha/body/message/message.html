@@ -6,25 +6,57 @@
 
 <div class="alpha-message" data-id="{{ message.id }}">
 
-  <!-- avatar -->
-  <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}">
-    <i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i>
+  <div class="alpha-message__head overflow-hidden">
+    
+    <!-- avatar -->
+    <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}">
+      <i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i>
+    </div>
+  
+    <!-- recipient, message preview, meta infos -->
+    <div class="flex-grow-0 flex-shrink-1 overflow-hidden">
+      {% include "foirequest/alpha/body/message/sender.html" %}  
+      <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
+        {{ message.plaintext|truncatechars:120 }}
+      </div>
+      <div class="alpha-message__recipient smaller">
+        <span class="text-gray-600">
+          {% blocktrans %}To{% endblocktrans %}
+          {{ message.get_recipient }}
+        </span>
+        <a class="alpha_message__details-link">
+          Details
+          <i class="fa fa-angle-down" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
   </div>
 
-  <div class="flex-grow-0 flex-shrink-1 overflow-hidden">
-    {% include "foirequest/alpha/body/message/sender.html" %}  
-    <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
-      {{ message.plaintext|truncatechars:120 }}
-    </div>
-    <div class="alpha-message__recipient smaller">
-      <span class="text-gray-600">
-        {% blocktrans %}To{% endblocktrans %}
-        {{ message.get_recipient }}
-      </span>
-      <a class="">
-        Details
-        <i class="fa fa-angle-down" aria-hidden="true"></i>
-      </a>
-    </div>
+  <div class="alpha-message__body">
+    {% if forloop.counter0 == 0 %}
+      <div class="alpha-message__content-text">{% highlight_request message request %}</div>
+    {% else %}
+      {% if message.content_hidden %}
+        {% if object|can_write_foirequest:request %}
+          <div class="d-print-none alert alert-warning">
+            <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
+            <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message_id=message.pk %}">
+              {% csrf_token %}
+              <button class="btn btn-secondary" type="submit">
+                {% trans "Publish message content" %}
+              </button>
+            </form>
+          </div>
+          <div class="alpha-message__content-text">{% redact_message message request %}</div>
+        {% else %}
+          <div class="alert alert-warning">
+            <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="alpha-message__content-text">{% redact_message message request %}</div>
+      {% endif %}
+    {% endif %}
   </div>
+
 </div>

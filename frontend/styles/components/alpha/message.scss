@@ -1,42 +1,57 @@
 .alpha-message {
-  cursor: pointer;
   display: flex;
-  padding: $spacer;
+  flex-direction: column;
   margin-bottom: 2px;
   background-color: $white;
   box-shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
   &--expanded {
     // border: 1px solid red;
   }
-  &__avatar {
-    flex: 0 0 36px;
+  &__head {
+    cursor: pointer;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background-color: $gray-200;
-    border-radius: 50%;
-    color: $gray-500;
-    margin-right: $spacer * .5;
-    &--house { font-size: 14px; }
-    @include media-breakpoint-up(lg) {
-      flex-basis: 44px;
-      width: 44px;
-      height: 44px;
-      &--user { font-size: 18px; }
-      &--house { font-size: 16px; }
-    }
+    padding: $spacer;
   }
-  &__sender {
-    font-weight: 600;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-    &__sender-link {
-      color: $body-color;
+    &__avatar {
+      flex: 0 0 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: $gray-200;
+      border-radius: 50%;
+      color: $gray-500;
+      margin-right: $spacer * .5;
+      &--house { font-size: 14px; }
+      @include media-breakpoint-up(lg) {
+        flex-basis: 44px;
+        width: 44px;
+        height: 44px;
+        margin-right: $spacer;
+        &--user { font-size: 18px; }
+        &--house { font-size: 16px; }
+      }
     }
-  &__recipient { display: none; }
-  &--expanded &__text-preview { display: none; }
-  &--expanded &__recipient { display: block; }
+    &__sender {
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+      &__sender-link {
+        color: $body-color;
+      }
+    &__recipient { display: none; }
+    &--expanded &__text-preview { display: none; }
+    &--expanded &__recipient { display: block; }
+  &__body {
+    display: none;
+    margin-left: 76px;
+    margin-right: 76px;
+    padding-bottom: $spacer;
+  }
+  &--expanded &__body { display: block; }
+    &__content-text {
+      white-space: pre-wrap;
+    }
 }
