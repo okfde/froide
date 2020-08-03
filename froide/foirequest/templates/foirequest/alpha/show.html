@@ -22,12 +22,12 @@
       {% include "foirequest/alpha/header/breadcrumb.html" %}
     </div>
 
-    <!-- header -->
+    <!-- header, including tabs -->
     <div class="bg-gray-100" style="margin-bottom: 2px;">
       {% include "foirequest/alpha/header/header.html" %}
     </div>
 
-    <!-- body -->
+    <!-- body, tabs content -->
     <div class="bg-gray-200">
       {% include "foirequest/alpha/body/body.html" %}
     </div>
@@ -50,4 +50,7 @@ ALPHA1
       {% endwith %}
     {% endaddtoblock %}
   {% endif %}
+  {% addtoblock "js" %}
+    <script src="{% static 'js/request-alpha.js' %}" defer></script>
+  {% endaddtoblock %}
 {% endblock %}

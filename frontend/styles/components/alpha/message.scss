@@ -1,9 +1,13 @@
 .alpha-message {
+  cursor: pointer;
   display: flex;
   padding: $spacer;
   margin-bottom: 2px;
   background-color: $white;
   box-shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
+  &--expanded {
+    // border: 1px solid red;
+  }
   &__avatar {
     flex: 0 0 36px;
     display: flex;
@@ -15,10 +19,24 @@
     border-radius: 50%;
     color: $gray-500;
     margin-right: $spacer * .5;
+    &--house { font-size: 14px; }
+    @include media-breakpoint-up(lg) {
+      flex-basis: 44px;
+      width: 44px;
+      height: 44px;
+      &--user { font-size: 18px; }
+      &--house { font-size: 16px; }
+    }
   }
   &__sender {
     font-weight: 600;
     overflow: hidden;
     white-space: nowrap;
   }
+    &__sender-link {
+      color: $body-color;
+    }
+  &__recipient { display: none; }
+  &--expanded &__text-preview { display: none; }
+  &--expanded &__recipient { display: block; }
 }

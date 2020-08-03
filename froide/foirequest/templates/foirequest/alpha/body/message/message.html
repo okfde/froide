@@ -4,17 +4,27 @@
 {% load problemreport_tags %}
 {% load guidance_tags %}
 
-<div class="alpha-message">
+<div class="alpha-message" data-id="{{ message.id }}">
 
   <!-- avatar -->
-  <div class="alpha-message__avatar">
+  <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}">
     <i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i>
   </div>
 
   <div class="flex-grow-0 flex-shrink-1 overflow-hidden">
     {% include "foirequest/alpha/body/message/sender.html" %}  
-    <!-- <div class="text-gray-600 smaller">
-      {{ message.plaintext|truncatechars:150 }}
-    </div> -->
+    <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
+      {{ message.plaintext|truncatechars:120 }}
+    </div>
+    <div class="alpha-message__recipient smaller">
+      <span class="text-gray-600">
+        {% blocktrans %}To{% endblocktrans %}
+        {{ message.get_recipient }}
+      </span>
+      <a class="">
+        Details
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+      </a>
+    </div>
   </div>
 </div>

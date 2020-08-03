@@ -54,11 +54,11 @@
           {{ message.sender }}
         {% endif %}
         {% if message.sender_public_body %}
-        – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+        – <a class="alpha-message__sender-link" href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
         {% endif %}
       {% else %}
         {% if message.sender_public_body %}
-          <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+          <a class="alpha-message__sender-link" href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
         {% else %}
           {% trans "Public Body" %}
         {% endif %}
