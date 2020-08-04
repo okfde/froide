@@ -89,7 +89,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         'mark_checked', 'mark_not_foi',
         'mark_successfully_resolved', 'mark_refused',
         'tag_all', 'mark_same_as', 'update_index',
-        'confirm_request', 'set_visible_to_user', 'unpublish',
+        'confirm_request', 'unpublish',
         'add_to_project', 'unblock_request', 'close_requests'
     ]
     raw_id_fields = (
@@ -212,15 +212,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
         return None
     confirm_request.short_description = _("Confirm request if unconfirmed")
 
-    def set_visible_to_user(self, request, queryset):
-        queryset.update(visibility=FoiRequest.VISIBLE_TO_REQUESTER)
-        update_foirequest_index(queryset)
-        self.message_user(request,
-            _("Selected requests are now only visible to requester."))
-    set_visible_to_user.short_description = _("Set only visible to requester")
-
     def unpublish(self, request, queryset):
-        queryset.update(public=False)
+        queryset.update(public=False, visibility=FoiRequest.VISIBLE_TO_REQUESTER)
         update_foirequest_index(queryset)
         self.message_user(request, _("Selected requests are now unpublished."))
     unpublish.short_description = _("Unpublish")
