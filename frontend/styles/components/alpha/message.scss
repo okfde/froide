@@ -1,11 +1,14 @@
 .alpha-message {
+  $message_box_shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
   display: flex;
   flex-direction: column;
   margin-bottom: 2px;
   background-color: $white;
-  box-shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
+  box-shadow: $message_box_shadow;
   &--expanded {
-    // border: 1px solid red;
+    box-shadow:
+      $message_box_shadow,
+      -2px 0 0 $blue-300; // blue border left
   }
   &__head {
     cursor: pointer;
@@ -41,9 +44,14 @@
       &__sender-link {
         color: $body-color;
       }
-    &__recipient { display: none; }
+    &__details { display: none; }
+      &__details-link { cursor: pointer; }
+      &__details-container {
+        display: none;
+        border: 1px solid $gray-500;
+      }
     &--expanded &__text-preview { display: none; }
-    &--expanded &__recipient { display: block; }
+    &--expanded &__details { display: block; }
   &__body {
     display: none;
     margin-left: 76px;

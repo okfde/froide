@@ -7,9 +7,14 @@ class Message {
     this.id = 'msg-' + element.dataset.id || ''
     this.element = element
 
-    // add event listener to head element
+    // event listeners
+
+    // header row
     element.querySelector('.alpha-message__head')
       ?.addEventListener('click', this.onHeadClick.bind(this))
+    // details link
+    element.querySelector('.alpha-message__details-link')
+      ?.addEventListener('click', this.toggleDetailsContainer.bind(this))
 
     // create localStorage item
     if (!this.storageItem) {
@@ -17,7 +22,7 @@ class Message {
         isExpanded: false
       }))
     } else {
-      // set appropriate class on init
+      // expand message according to localStorage state 
       if (this.isExpanded) {
         this.expand()
       }
@@ -70,6 +75,17 @@ class Message {
   collapse () {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
+  }
+
+  toggleDetailsContainer (e: Event) {
+    e.preventDefault()
+    e.stopPropagation()
+    const containerEl = this.element.querySelector('.alpha-message__details-container') as HTMLElement
+    if (!containerEl.style.display) {
+      containerEl.style.display = 'block'
+    } else {
+      containerEl.style.display = ''
+    }
   }
 
 }

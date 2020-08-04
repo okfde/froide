@@ -13,27 +13,77 @@
       <i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i>
     </div>
   
-    <!-- recipient, message preview, meta infos -->
+    <!-- sender, recipient, message preview, meta infos -->
     <div class="flex-grow-0 flex-shrink-1 overflow-hidden">
+      <!-- sender -->
       {% include "foirequest/alpha/body/message/sender.html" %}  
+
+      <!-- message preview -->
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
         {{ message.plaintext|truncatechars:120 }}
       </div>
-      <div class="alpha-message__recipient smaller">
+
+      <!-- recipient and delivery details -->
+      <div class="alpha-message__details smaller">
+        <!-- recipient -->
         <span class="text-gray-600">
           {% blocktrans %}To{% endblocktrans %}
           {{ message.get_recipient }}
         </span>
-        <a class="alpha_message__details-link">
+
+        <!-- delivery details link-->
+        <a href="#" class="alpha-message__details-link ml-1 text-body">
           Details
           <i class="fa fa-angle-down" aria-hidden="true"></i>
         </a>
+
       </div>
     </div>
   </div>
 
-  
   <div class="alpha-message__body">
+  
+    <!-- message details container -->
+    <div class="alpha-message__details-container">
+      {% get_delivery_status message as delivery_status %}
+      {% if message.status or delivery_status %}
+        <dt>
+          {% blocktrans %}Status{% endblocktrans %}
+        </dt>
+        <dd>
+          {% if message.status %}
+            {{ message.readable_status }}
+          {% endif %}
+          {% if not message.sent %}
+            <small class="text-light">{% trans "Message was not sent" %}</small>
+          {% endif %}
+          {% if delivery_status %}
+            {% if message.status %}
+              &mdash;
+            {% endif %}
+            {% if object|can_write_foirequest:request %}
+              <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" class="text-unlink">
+            {% endif %}
+            {% if delivery_status.is_sent %}
+              <i class="fa fa-check-circle-o"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
+            {% elif delivery_status.is_pending %}
+              <i class="fa fa-clock-o"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
+            {% elif delivery_status.is_failed %}
+              <i class="fa fa-ban"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
+            {% else %}
+              <i class="fa fa-circle-o"></i>
+              {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
+            {% endif %}
+            {% if object|can_write_foirequest:request %}
+              </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
+            {% endif %}
+          {% endif %}
+        </dd>
+      {% endif %}
+    </div>
     
     <!-- TODO: guidance (this is a placeholder now) -->
     {% if "01"|make_list|random == "1" %}
