@@ -32,7 +32,15 @@
     </div>
   </div>
 
+  
   <div class="alpha-message__body">
+    
+    <!-- TODO: guidance (this is a placeholder now) -->
+    {% if "01"|make_list|random == "1" %}
+      {% include "foirequest/alpha/body/message/guidance.html" %}  
+    {% endif %}
+
+    <!-- message text -->
     {% if forloop.counter0 == 0 %}
       <div class="alpha-message__content-text">{% highlight_request message request %}</div>
     {% else %}
