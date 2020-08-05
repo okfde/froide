@@ -4,7 +4,7 @@ class Message {
   expandedClassName = 'alpha-message--expanded'
   
   constructor (element: HTMLElement) {
-    this.id = 'msg-' + element.dataset.id || ''
+    this.id = 'msg-' + element.id || ''
     this.element = element
 
     // event listeners
@@ -12,9 +12,9 @@ class Message {
     // header row
     element.querySelector('.alpha-message__head')
       ?.addEventListener('click', this.onHeadClick.bind(this))
-    // details link
-    element.querySelector('.alpha-message__details-link')
-      ?.addEventListener('click', this.toggleDetailsContainer.bind(this))
+    // meta toggle link
+    element.querySelector('.alpha-message__meta-toggle')
+      ?.addEventListener('click', this.toggleMetaContainer.bind(this))
 
     // create localStorage item
     if (!this.storageItem) {
@@ -24,7 +24,7 @@ class Message {
     } else {
       // expand message according to localStorage state 
       if (this.isExpanded) {
-        this.expand()
+        this.expandMessage()
       }
     }
   }
@@ -49,42 +49,37 @@ class Message {
   }
 
   onHeadClick (e: Event) {
-    const el = e.target as HTMLElement
-    if (el.closest('.alpha-message__sender-link')) {
-      // user clicked sender link
-      return
-    }
-  
-    this.toggleExpand()
+    this.toggleMessage()
     e.preventDefault()
   }
 
-  toggleExpand () {
+  toggleMessage () {
     if (this.isExpanded) {
-      this.collapse()
+      this.collapseMessage()
     } else {
-      this.expand()
+      this.expandMessage()
     }    
   }
 
-  expand () {
+  expandMessage () {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
   }
 
-  collapse () {
+  collapseMessage () {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
   }
 
-  toggleDetailsContainer (e: Event) {
+  toggleMetaContainer (e: Event) {
     e.preventDefault()
     e.stopPropagation()
-    const containerEl = this.element.querySelector('.alpha-message__details-container') as HTMLElement
-    if (!containerEl.style.display) {
-      containerEl.style.display = 'block'
+    const containerEl = this.element.querySelector('.alpha-message__meta-container') as HTMLElement
+    const visibleClassName = 'alpha-message__meta-container--visible'
+    if (containerEl.classList.contains(visibleClassName)) {
+      containerEl.classList.remove(visibleClassName)
     } else {
-      containerEl.style.display = ''
+      containerEl.classList.add(visibleClassName)
     }
   }
 

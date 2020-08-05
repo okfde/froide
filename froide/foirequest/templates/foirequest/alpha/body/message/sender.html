@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load foirequest_tags %}
 
-<div class="alpha-message__sender">
+<div class="alpha-message__sender text-truncate">
   {% if object|can_write_foirequest:request %}
     {% if message.is_response %}
       <span title="{{ message.sender_email }}">
@@ -54,11 +54,11 @@
           {{ message.sender }}
         {% endif %}
         {% if message.sender_public_body %}
-        – <a class="alpha-message__sender-link" href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+        – {{ message.sender_public_body.name }}
         {% endif %}
       {% else %}
         {% if message.sender_public_body %}
-          <a class="alpha-message__sender-link" href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+          {{ message.sender_public_body.name }}
         {% else %}
           {% trans "Public Body" %}
         {% endif %}
