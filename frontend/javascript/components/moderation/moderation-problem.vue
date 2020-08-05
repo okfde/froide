@@ -14,7 +14,7 @@
     <td :title="report.timestamp">
       {{ report.timestamp|date }}
       <span
-        v-if="report.is_requester"
+        v-if="!report.is_requester"
         class="badge badge-secondary"
       >
         {{ i18n.isNotRequester }}
