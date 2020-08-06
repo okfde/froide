@@ -103,6 +103,18 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
             'report': event['report'],
         })
 
+    async def publicbody_added(self, event):
+        await self.send_json({
+            'type': 'publicbody_added',
+            'publicbody': event['publicbody'],
+        })
+
+    async def publicbody_removed(self, event):
+        await self.send_json({
+            'type': 'publicbody_removed',
+            'publicbody': event['publicbody'],
+        })
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             PRESENCE_ROOM,

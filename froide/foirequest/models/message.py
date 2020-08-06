@@ -404,6 +404,10 @@ class FoiMessage(models.Model):
         from ..forms import get_message_sender_form
         return get_message_sender_form(foimessage=self)
 
+    def get_public_body_recipient_form(self):
+        from ..forms import get_message_recipient_form
+        return get_message_recipient_form(foimessage=self)
+
     def has_delivery_status(self):
         if not self.sent or self.is_response:
             return False
@@ -469,10 +473,10 @@ class FoiMessage(models.Model):
                 countdown=5**count * 60
             )
 
-    def send(self, notify=True, **kwargs):
+    def send(self, **kwargs):
         from ..message_handlers import send_message
 
-        send_message(self, notify=notify, **kwargs)
+        send_message(self, **kwargs)
 
     def force_resend(self):
         self.resend(force=True)

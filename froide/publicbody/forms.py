@@ -3,9 +3,10 @@ from django.db.models import Q
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
-from django.core.mail import mail_managers
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.contrib.admin.models import LogEntry, DELETION
+from django.contrib.contenttypes.models import ContentType
 
 import phonenumbers
 
@@ -138,6 +139,18 @@ class PublicBodyProposalForm(forms.ModelForm):
         queryset=Classification.objects.all().order_by('name')
     )
 
+    jurisdiction = forms.ModelChoiceField(
+        required=False,
+        label=_('Jurisdiction'),
+        help_text=_(
+            "Give the jurisdiction under which this authority falls. "
+            "This determines what laws apply to it. Often "
+            "it can determined by where the public body is based or who"
+            "the supervising authority is."
+        ),
+        queryset=Jurisdiction.objects.all()
+    )
+
     class Meta:
         model = PublicBody
         fields = (
@@ -179,16 +192,14 @@ class PublicBodyProposalForm(forms.ModelForm):
         pb.slug = slugify(pb.name)
         pb.confirmed = False
         pb._created_by = user
+        pb.updated_at = timezone.now()
         pb.save()
         pb.laws.add(*pb.jurisdiction.get_all_laws())
-        mail_managers(
-            _('New public body proposal'),
-            pb.get_absolute_domain_url()
-        )
+        PublicBody.proposal_added.send(sender=pb, user=user)
         return pb
 
 
-class PublicBodyChangeForm(PublicBodyProposalForm):
+class PublicBodyChangeProposalForm(PublicBodyProposalForm):
     FK_FIELDS = {
         'classification': Classification,
         'jurisdiction': Jurisdiction
@@ -197,33 +208,35 @@ class PublicBodyChangeForm(PublicBodyProposalForm):
     def clean_name(self):
         return self.cleaned_data['name']
 
+    def serializable_cleaned_data(self):
+        data = dict(self.cleaned_data)
+        for field in self.FK_FIELDS:
+            if data[field]:
+                data[field] = data[field].id
+        return data
+
     def save(self, user):
         '''
         This doesn't save instance, but saves
         the change proposal.
         '''
-        data = dict(self.cleaned_data)
-        for field in self.FK_FIELDS:
-            if data[field]:
-                data[field] = data[field].id
+        data = self.serializable_cleaned_data()
         pb = PublicBody.objects.get(id=self.instance.id)
         pb.change_proposals[user.id] = {
             'data': data,
             'timestamp': timezone.now().isoformat()
         }
+        pb.updated_at = timezone.now()
         pb.save()
-        mail_managers(
-            _('Public body change proposal'),
-            pb.get_absolute_domain_url()
-        )
+        PublicBody.change_proposal_added.send(sender=pb, user=user)
         return pb
 
 
-class PublicBodyAcceptForm(PublicBodyChangeForm):
+class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
     def get_proposals(self):
+        data = dict(self.instance.change_proposals)
         user_ids = self.instance.change_proposals.keys()
         user_map = {str(u.id): u for u in get_user_model().objects.filter(id__in=user_ids)}
-        data = dict(self.instance.change_proposals)
         for user_id, v in data.items():
             v['user'] = user_map[user_id]
             for key, model in self.FK_FIELDS.items():
@@ -231,30 +244,69 @@ class PublicBodyAcceptForm(PublicBodyChangeForm):
                     data[user_id]['data'][key + '_label'] = model.objects.get(id=data[user_id]['data'][key])
         return data
 
-    def save(self, user, proposal_id=None, delete_proposals=None):
+    def save(self, user, proposal_id=None, delete_proposals=None,
+             delete_unconfirmed=False, delete_reason=''):
         pb = super(forms.ModelForm, self).save(commit=False)
         pb._updated_by = user
+        pb.updated_at = timezone.now()
 
         if delete_proposals is None:
             delete_proposals = []
         if proposal_id:
             proposals = self.get_proposals()
-            user = proposals[proposal_id]['user']
-            user.send_mail(
-                _('Changes to public body “%s” have been applied') % pb.name,
-                _('Hello,\n\nYou can find the changed public body here:\n\n'
-                  '{url}\n\nAll the Best,\n{site_name}').format(
-                      url=pb.get_absolute_domain_url(),
-                      site_name=settings.SITE_NAME
-                ),
-                priority=False
-            )
+            proposal_user = proposals[proposal_id]['user']
+            if proposal_user != user:
+                proposal_user.send_mail(
+                    _('Changes to public body “%s” have been applied').format(
+                        pb.name
+                    ),
+                    _('Hello,\n\nYou can find the changed public body here:'
+                      '\n\n{url}\n\nAll the Best,\n{site_name}').format(
+                        url=pb.get_absolute_domain_url(),
+                        site_name=settings.SITE_NAME
+                    ),
+                    priority=False
+                )
             delete_proposals.append(proposal_id)
         for pid in delete_proposals:
             if pid in pb.change_proposals:
                 del pb.change_proposals[pid]
 
-        pb.save()
+        if not pb.confirmed and delete_unconfirmed:
+            self.delete_proposal(pb, user, delete_reason)
+            return None
+        pb.change_history.append({
+            'user_id': user.id,
+            'timestamp': timezone.now().isoformat(),
+            'data': self.serializable_cleaned_data(),
+        })
         pb.laws.add(*pb.jurisdiction.get_all_laws())
-
+        if pb.confirmed:
+            pb.save()
+            PublicBody.change_proposal_accepted.send(sender=pb, user=user)
+        else:
+            pb.confirm(user=user)
         return pb
+
+    def delete_proposal(self, pb, user, delete_reason=''):
+        LogEntry.objects.log_action(
+            user_id=user.id,
+            content_type_id=ContentType.objects.get_for_model(pb).pk,
+            object_id=pb.pk,
+            object_repr=str(pb),
+            action_flag=DELETION
+        )
+
+        creator = pb.created_by
+        if creator:
+            creator.send_mail(
+                _('Your public body proposal “%s” was rejected') % pb.name,
+                _('Hello,\n\nA moderator has rejected your proposal for a new '
+                  'public body.\n\n{delete_reason}\n\nAll the Best,\n{site_name}').format(
+                    delete_reason=delete_reason,
+                    site_name=settings.SITE_NAME
+                ),
+                priority=False
+            )
+        PublicBody.proposal_rejected.send(sender=pb, user=user)
+        pb.delete()

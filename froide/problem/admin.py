@@ -20,6 +20,7 @@ class ProblemReportAdmin(admin.ModelAdmin):
         'kind', 'timestamp', 'admin_link_message',
         'auto_submitted', 'resolved',
     )
+    actions = ['resolve_all']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -35,11 +36,23 @@ class ProblemReportAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
         if 'resolved' in form.changed_data and obj.resolved:
-            sent = obj.resolve(request.user)
+            sent = obj.resolve(request.user, resolution=obj.resolution)
             if sent:
                 self.message_user(
                     request, _('User will be notified of resolution')
                 )
+
+    def resolve_all(self, request, queryset):
+        count = 0
+        for problem in queryset.filter(resolved=False):
+            sent = problem.resolve(request.user, resolution='')
+            if sent:
+                count += 1
+
+        self.message_user(request, _(
+            'Problems marked as resolved, {count} users will be notified.'
+        ).format(count=count))
+    resolve_all.short_description = _('Resolve selected')
 
 
 admin.site.register(ProblemReport, ProblemReportAdmin)

@@ -6,7 +6,7 @@ from django.utils import timezone
 from froide.helper.email_utils import make_address
 
 from .foi_mail import send_foi_mail
-from .models import FoiRequest, DeliveryStatus
+from .models import DeliveryStatus
 
 
 def get_message_handler_class(dotted):
@@ -53,10 +53,6 @@ class MessageHandler(object):
             self.run_send(**kwargs)
 
         request._messages = None
-        if kwargs.get('notify', True):
-            FoiRequest.message_sent.send(
-                sender=request, message=message
-            )
 
     def resend(self, **kwargs):
         message = self.message
@@ -73,7 +69,6 @@ class MessageHandler(object):
         message.sent = False
         message.save()
 
-        kwargs['notify'] = False
         self.send(**kwargs)
 
     def run_send(self, **kwargs):
@@ -89,7 +84,7 @@ class DefaultMessageHandler(MessageHandler):
 
 
 class EmailMessageHandler(MessageHandler):
-    def run_send(self, notify=True, **kwargs):
+    def run_send(self, **kwargs):
         message = self.message
         request = message.request
 

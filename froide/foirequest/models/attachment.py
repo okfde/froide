@@ -100,8 +100,10 @@ class FoiAttachment(models.Model):
 
     objects = FoiAttachmentManager()
 
-    attachment_published = Signal(providing_args=[])
-    attachment_redacted = Signal(providing_args=[])
+    attachment_published = Signal(providing_args=['user'])
+    attachment_deleted = Signal(providing_args=['user'])
+    attachment_redacted = Signal(providing_args=['user'])
+    document_created = Signal(providing_args=['user'])
 
     class Meta:
         ordering = ('name',)
@@ -241,8 +243,6 @@ class FoiAttachment(models.Model):
             if self.document.public != should_be_public:
                 self.document.public = should_be_public
                 self.document.save()
-
-        self.attachment_published.send(sender=self)
 
     def remove_file_and_delete(self):
         if self.file:

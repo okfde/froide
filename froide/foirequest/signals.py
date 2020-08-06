@@ -248,92 +248,134 @@ def foiattachment_delayed_remove(instance, **kwargs):
 # Event creation
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, message, **kwargs):
+def create_event_message_sent(sender, message, user=None, **kwargs):
     FoiEvent.objects.create_event(
-        "message_sent",
+        FoiEvent.EVENTS.MESSAGE_SENT,
         sender,
-        user=sender.user,
+        message=message,
+        user=user,
         public_body=message.recipient_public_body
     )
 
 
 @receiver(FoiRequest.message_received,
         dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, message=None, **kwargs):
+def create_event_message_received(sender, message=None, user=None, **kwargs):
     FoiEvent.objects.create_event(
-        "message_received",
+        FoiEvent.EVENTS.MESSAGE_RECEIVED,
         sender,
-        user=sender.user,
+        message=message,
+        user=user,
         public_body=message.sender_public_body
     )
 
 
 @receiver(FoiAttachment.attachment_published,
     dispatch_uid="create_event_followers_attachments_approved")
-def create_event_followers_attachments_approved(sender, **kwargs):
+def create_event_followers_attachments_approved(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
-        "attachment_published",
+        FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
         sender.belongs_to.request,
-        user=sender.belongs_to.request.user,
-        public_body=sender.belongs_to.request.public_body
+        user=user,
+        attachment_id=sender.id
+    )
+
+
+@receiver(FoiAttachment.attachment_redacted,
+    dispatch_uid="create_event_followers_attachment_redacted")
+def create_event_followers_attachments_redacted(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ATTACHMENT_REDACTED,
+        sender.belongs_to.request,
+        user=user,
+        attachment_id=sender.id
+    )
+
+
+@receiver(FoiAttachment.attachment_deleted,
+    dispatch_uid="create_event_followers_attachment_deleted")
+def create_event_followers_attachments_attachment_deleted(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ATTACHMENT_DELETED,
+        sender.belongs_to.request,
+        user=user,
+        attachment_id=sender.id
+    )
+
+
+@receiver(FoiAttachment.document_created,
+    dispatch_uid="create_event_followers_attachment_document_created")
+def create_event_followers_attachments_document_created(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.DOCUMENT_CREATED,
+        sender.belongs_to.request,
+        user=user,
+        attachment_id=sender.id
     )
 
 
 @receiver(FoiRequest.status_changed,
         dispatch_uid="create_event_status_changed")
-def create_event_status_changed(sender, **kwargs):
-    resolution = kwargs['resolution']
-    data = kwargs['data']
-    if data.get('costs', 0) > 0:
-        FoiEvent.objects.create_event("reported_costs", sender,
-                user=sender.user,
-                public_body=sender.public_body, amount=data['costs'])
-    elif resolution == "refused" and data['refusal_reason']:
-        FoiEvent.objects.create_event("request_refused", sender,
-                user=sender.user,
-                public_body=sender.public_body, reason=data['refusal_reason'])
-    elif resolution == "partially_successful" and data['refusal_reason']:
-        FoiEvent.objects.create_event("partially_successful", sender,
-                user=sender.user,
-                public_body=sender.public_body, reason=data['refusal_reason'])
-    else:
-        FoiEvent.objects.create_event("status_changed", sender, user=sender.user,
-            public_body=sender.public_body,
-            status=FoiRequest.get_readable_status(resolution))
+def create_event_status_changed(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.STATUS_CHANGED,
+        sender,
+        user=user,
+        status=kwargs.get('status', ''),
+        resolution=kwargs.get('resolution', ''),
+        costs=kwargs['data'].get('costs'),
+        refusal_reason=kwargs['data'].get('refusal_reason', ''),
+    )
 
 
 @receiver(FoiRequest.made_public,
         dispatch_uid="create_event_made_public")
-def create_event_made_public(sender, **kwargs):
-    FoiEvent.objects.create_event("made_public", sender, user=sender.user,
-            public_body=sender.public_body)
+def create_event_made_public(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.MADE_PUBLIC,
+        sender,
+        user=user,
+    )
 
 
 @receiver(FoiRequest.public_body_suggested,
         dispatch_uid="create_event_public_body_suggested")
 def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
-    FoiEvent.objects.create_event("public_body_suggested", sender, user=suggestion.user,
-            public_body=suggestion.public_body)
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.PUBLIC_BODY_SUGGESTED,
+        sender,
+        user=suggestion.user,
+        public_body=suggestion.public_body
+    )
 
 
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="create_event_became_overdue")
 def create_event_became_overdue(sender, **kwargs):
-    FoiEvent.objects.create_event("became_overdue", sender)
+    FoiEvent.objects.create_event(FoiEvent.EVENTS.BECAME_OVERDUE, sender)
 
 
 @receiver(FoiRequest.set_concrete_law,
         dispatch_uid="create_event_set_concrete_law")
-def create_event_set_concrete_law(sender, **kwargs):
-    FoiEvent.objects.create_event("set_concrete_law", sender,
-            user=sender.user, name=kwargs['name'])
+def create_event_set_concrete_law(sender, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.SET_CONCRETE_LAW,
+        sender,
+        user=user,
+        name=kwargs['name']
+    )
 
 
 @receiver(FoiRequest.escalated,
     dispatch_uid="create_event_escalated")
-def create_event_escalated(sender, **kwargs):
-    FoiEvent.objects.create_event("escalated", sender,
-            user=sender.user, public_body=sender.law.mediator)
+def create_event_escalated(sender, message=None, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ESCALATED,
+        sender,
+        message=message,
+        user=user,
+        public_body=message.recipient_public_body
+    )
 
 
 def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):

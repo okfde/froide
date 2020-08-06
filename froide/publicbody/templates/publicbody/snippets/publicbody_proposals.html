@@ -1,0 +1,91 @@
+{% load i18n %}
+{% load form_helper %}
+
+<div class="table-responsive">
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans "Field" %}</th>
+      <th>{% trans "Value" %}</th>
+      {% for key, proposal in proposals.items %}
+        <th>
+          <span title="{{ proposal.timestamp }}">
+            {% if request.user.is_staff %}
+              {{ proposal.user.get_full_name }} ({{ proposal.user.email }})
+            {% else %}
+              {{ proposal.timestamp | date:"SHORT_DATETIME" }}
+            {% endif %}
+          </span>
+        </th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% if proposals %}
+    <tr>
+      <td>
+        {% trans "Proposal" %}
+      </td>
+      <td>
+        <label>
+          <input type="radio" name="proposal_id" class="proposal" value="" required>
+          {% trans "Change, without accepting" %}
+        </label>
+      </td>
+      {% for key, proposal in proposals.items %}
+        <td>
+          <label>
+            <input type="radio" name="proposal_id" class="proposal" value="{{ key }}" required>
+            {% if request.user.is_staff %}
+              {% blocktrans with name=proposal.user.first_name %}Accept proposal of {{ name }}{% endblocktrans %}
+            {% else %}
+            {% trans "Accept this proposal" %}
+            {% endif %}
+          </label>
+        </td>
+      {% endfor %}
+    </tr>
+    {% endif %}
+    {% for field in form %}
+      <tr>
+        <td>{{ field.label }}</td>
+        <td data-proposal="" data-value="{{ field.value }}" data-field="{{ field.name }}">
+          {{ field }}
+        </td>
+        {% for key, proposal in proposals.items %}
+          {% with val=proposal.data|get_item_by_key:field.name %}
+          <td data-proposal="{{ key }}" data-value="{{ val }}" data-field="{{ field.name }}" {% if val != field.value %} style="color:red"{% endif %}>
+            {% with label_name=field.name|add:"_label" %}
+              {% if proposal.data|get_item_by_key:label_name %}
+                {{ proposal.data|get_item_by_key:label_name }}
+              {% else %}
+                {{ val|linebreaksbr }}
+              {% endif %}
+            {% endwith %}
+          </td>
+          {% endwith %}
+        {% endfor %}
+      </tr>
+      {{ form.field }}
+    {% endfor %}
+
+    {% if proposals %}
+    <tr>
+      <td>
+        {% trans "Delete proposal" %}
+      </td>
+      <td></td>
+      {% for key, proposal in proposals.items %}
+        <td>
+          <label>
+            <input type="checkbox" name="proposal_delete" value="{{ proposal.user.id }}">
+            {% trans "Delete" %}
+          </label>
+        </td>
+      {% endfor %}
+    </tr>
+    {% endif %}
+  </tbody>
+
+</table>
+</div>

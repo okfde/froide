@@ -343,18 +343,20 @@ class FoiRequest(models.Model):
         )
 
     # Custom Signals
-    message_sent = django.dispatch.Signal(providing_args=["message"])
+    message_sent = django.dispatch.Signal(providing_args=["message", "user"])
     message_received = django.dispatch.Signal(providing_args=["message"])
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
-    status_changed = django.dispatch.Signal(providing_args=["status", "data"])
+    status_changed = django.dispatch.Signal(providing_args=[
+        "status", "resolution", "data", "user"
+    ])
     became_overdue = django.dispatch.Signal(providing_args=[])
     became_asleep = django.dispatch.Signal(providing_args=[])
     public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
-    set_concrete_law = django.dispatch.Signal(providing_args=['name'])
-    made_public = django.dispatch.Signal(providing_args=[])
-    made_private = django.dispatch.Signal(providing_args=[])
-    escalated = django.dispatch.Signal(providing_args=[])
+    set_concrete_law = django.dispatch.Signal(providing_args=['name', 'user'])
+    made_public = django.dispatch.Signal(providing_args=['user'])
+    made_private = django.dispatch.Signal(providing_args=['user'])
+    escalated = django.dispatch.Signal(providing_args=['message', 'user'])
 
     def __str__(self):
         return _("Request '%s'") % self.title
@@ -615,12 +617,20 @@ class FoiRequest(models.Model):
         return FoiRequest.get_status_description(self.status_representation)
 
     @classmethod
-    def get_readable_status(cls, status):
-        return str(cls.STATUS_RESOLUTION_DICT.get(status, (_("Unknown"), None))[0])
+    def get_readable_status(cls, status, fallback=None):
+        if fallback is None:
+            fallback = (_("Unknown"), None)
+        else:
+            fallback = (fallback, None)
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback)[0])
 
     @classmethod
-    def get_status_description(cls, status):
-        return str(cls.STATUS_RESOLUTION_DICT.get(status, (None, _("Unknown")))[1])
+    def get_status_description(cls, status, fallback=None):
+        if fallback is None:
+            fallback = (None, _("Unknown"))
+        else:
+            fallback = (None, fallback)
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback)[1])
 
     def determine_visibility(self):
         if self.public:
@@ -650,6 +660,10 @@ class FoiRequest(models.Model):
         if message.sent:
             return None
         message.send()
+        self.message_sent.send(
+            sender=self, message=message,
+            user=self.user
+        )
 
     def confirmed_public_body(self):
         send_now = self.set_status_after_change()
@@ -680,11 +694,11 @@ class FoiRequest(models.Model):
         else:
             return False
 
-    def make_public(self):
+    def make_public(self, user=None):
         self.public = True
         self.visibility = 2
         self.save()
-        self.made_public.send(sender=self)
+        self.made_public.send(sender=self, user=user)
 
     def set_overdue(self):
         self.became_overdue.send(sender=self)
