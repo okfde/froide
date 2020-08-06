@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.template.defaultfilters import slugify
 
 from taggit.forms import TagField, TagWidget
 
@@ -47,8 +48,10 @@ class DocumentUploadForm(forms.Form):
         upload_list = self.data.getlist('upload')
         collection_id = None
         if self.cleaned_data['collection_title']:
+            title = self.cleaned_data['collection_title']
             collection = DocumentCollection.objects.create(
-                title=self.cleaned_data['collection_title'],
+                title=title,
+                slug=slugify(title),
                 user=user,
                 public=self.cleaned_data['public']
             )
