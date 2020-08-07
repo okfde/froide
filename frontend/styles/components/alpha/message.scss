@@ -1,6 +1,6 @@
 .alpha-message {
   $message_box_shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
-  $avatar_size_desktop: 2.750rem; // 44px
+  $avatar_size_desktop: 2.75rem; // 44px
   $avatar_size_mobile: 2.25rem; // 36px
   $avatar_right_margin_mobile: $spacer * .5;
   $avatar_right_margin_desktop: $spacer;
@@ -29,7 +29,7 @@
       margin-right: $avatar_right_margin_mobile;
       &--house { font-size: 14px; }
       @include media-breakpoint-up(md) {
-        flex-basis: $avatar_size_desktop;
+        flex: 0 0 $avatar_size_desktop;
         width: $avatar_size_desktop;
         height: $avatar_size_desktop;
         margin-right: $avatar_right_margin_desktop;
@@ -41,6 +41,22 @@
       font-weight: 600;
       overflow: hidden;
       white-space: nowrap;
+    }
+    &__badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $gray-600;
+      background-color: $gray-200;
+      border-radius: 50%;
+      min-width: 24px;
+      min-height: 24px;
+      font-size: 14px;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+    &__relative-time {
+      margin-left: 3px;
     }
     &__details { display: none; }
       &__meta-toggle { cursor: pointer; }

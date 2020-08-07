@@ -4,34 +4,50 @@
 {% load problemreport_tags %}
 {% load guidance_tags %}
 {% load content_helper %}
+{% get_comment_list message as comment_list %}
+
 
 <div class="alpha-message" id="{{ message.get_html_id }}">
 
   <div class="d-flex p-3 alpha-message__head">
     
     <!-- avatar -->
-    <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}">
-      <i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i>
-    </div>
+    <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}"><i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i></div>
   
     <!-- sender, recipient, message preview, meta infos -->
     <div class="d-flex flex-fill flex-column overflow-hidden">
+      <!-- first row -->
       <div class="d-flex justify-content-between align-items-center">
         <!-- sender -->
-        {% include "foirequest/alpha/body/message/sender.html" %}  
-        <!-- time -->
-        <span class="d-print-none smaller text-gray-600" title="{{ message.timestamp }}">
-          {{ message.timestamp|relativetime }}
-          <!-- {% blocktrans with time=message.timestamp|timesince %}{{ time }} ago{% endblocktrans %} -->
-        </span>
-      </div>
+        {% include "foirequest/alpha/body/message/sender.html" %}
 
-      <!-- message preview -->
+        <!-- icons & timestamp -->
+        <div class="d-flex flex-nowrap">
+          {% if message.all_attachments %}
+            <span class="alpha-message__badge">
+              <span class="fa fa-paperclip"></span>
+            </span>
+          {% endif %}
+          {% if comment_list %}
+            <span class="alpha-message__badge">
+              <span class="fa fa-comment-o"></span>
+            </span>
+          {% endif %}
+          
+          <!-- relative time -->
+          <span class="alpha-message__relative-time d-flex align-items-center d-print-none smaller text-gray-600" title="{{ message.timestamp }}">
+            {{ message.timestamp|relativetime }}
+          </span>
+        </div>
+      </div>
+      
+      <!-- second row -->
+      <!-- message preview (collapsed state) -->
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
         {{ message.plaintext|truncatechars:120 }}
       </div>
 
-      <!-- recipient and delivery details -->
+      <!-- recipient and delivery details link (expanded state) -->
       <div class="alpha-message__details smaller">
         <!-- recipient -->
         <span class="text-gray-600">
