@@ -88,6 +88,7 @@ def try_redacting_file(pdf_file, outpath, instructions):
             tries += 1
             if tries > 2:
                 raise Exception('PDF Redaction Error')
+            next_pdf_file = None
             if e.reason == 'rewrite':
                 next_pdf_file = rewrite_pdf(pdf_file, instructions)
                 if next_pdf_file is None:
