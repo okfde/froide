@@ -22,7 +22,7 @@ from wand.exceptions import DelegateError, WandError
 from filingcabinet.pdf_utils import (
     decrypt_pdf_in_place, rewrite_pdf_in_place,
     rewrite_hard_pdf_in_place,
-    get_images_from_pdf
+    get_images_from_pdf_chunked
 )
 
 
@@ -124,22 +124,33 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
         page_idx + 1 for page_idx, instr in enumerate(page_instructions)
         if instr['rects']
     ]
-    image_context = get_images_from_pdf(pdf_file.name, pages=page_image_numbers)
-    with image_context as page_images:
-        image_filenames = dict(page_images)
-        for page_idx, instr in enumerate(page_instructions):
-            instr['width'] = float(instr['width'])
-            try:
-                if not instr['rects']:
-                    page = pdf_reader.getPage(page_idx)
-                else:
-                    page = get_redacted_page(
-                        image_filenames[page_idx + 1], page_idx, instr, dpi
-                    )
-            except (WandError, DelegateError, ValueError) as e:
-                raise PDFException(e, 'rewrite')
+    CHUNK_SIZE = 5
+    image_generator = get_images_from_pdf_chunked(
+        pdf_file.name, page_image_numbers, CHUNK_SIZE
+    )
 
-            output.addPage(page)
+    def get_page_iterator(page_instructions, image_generator):
+        for page_idx, instr in enumerate(page_instructions):
+            if instr['rects']:
+                image_filename = next(image_generator)[1]
+                yield page_idx, instr, image_filename
+            else:
+                yield page_idx, instr, None
+
+    page_iterator = get_page_iterator(page_instructions, image_generator)
+    for page_idx, instr, image_filename in page_iterator:
+        instr['width'] = float(instr['width'])
+        try:
+            if not image_filename:
+                page = pdf_reader.getPage(page_idx)
+            else:
+                page = get_redacted_page(
+                    image_filename, instr, dpi
+                )
+        except (WandError, DelegateError, ValueError) as e:
+            raise PDFException(e, 'rewrite')
+
+        output.addPage(page)
 
     output_filename = os.path.join(outpath, 'final.pdf')
     with open(output_filename, 'wb') as f:
@@ -147,7 +158,8 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     return output_filename
 
 
-def get_redacted_page(image_filename, page_idx, instr, dpi):
+def get_redacted_page(image_filename, instr, dpi):
+    logger.debug('Redacting page %s', image_filename)
     writer = io.BytesIO()
     pdf = canvas.Canvas(writer)
     with Image(filename=image_filename, resolution=dpi) as image:
