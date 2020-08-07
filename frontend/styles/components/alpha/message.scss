@@ -1,4 +1,5 @@
 .alpha-message {
+  $blue-box-shadow: inset 2px 0 0 $blue-400;
   $message_box_shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
   $avatar_size_desktop: 2.75rem; // 44px
   $avatar_size_mobile: 2.25rem; // 36px
@@ -61,7 +62,7 @@
     }
     &__details { display: none; }
       &__meta-toggle { cursor: pointer; }
-  &__meta-container, &__body {
+  &__wrap {
     margin-left: $spacer;
     margin-right: $spacer;
     @include media-breakpoint-up(md) {
@@ -86,18 +87,26 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+  &__footer {
+    display: none;
+    background-color: $gray-100;
+    box-shadow:
+      $blue-box-shadow,
+      inset 0px 1px 2px $gray-200;
+  }
 
   // expanded state
   &--expanded {
-    box-shadow: inset 2px 0 0 $blue-300; // blue border left
+    box-shadow: $blue-box-shadow; // blue border left
     @include media-breakpoint-up(md) {
       box-shadow:
         $message_box_shadow,
-        inset 2px 0 0 $blue-300; // blue border left
+        $blue-box-shadow; // blue border left
     }
   }
   &--expanded &__text-preview { display: none; }
-  &--expanded &__details { display: block; }
-  &--expanded &__meta-container--visible { display: block; }
-  &--expanded &__body { display: block; }
+  &--expanded &__details,
+  &--expanded &__meta-container--visible,
+  &--expanded &__body,
+  &--expanded &__footer { display: block; }
 }
