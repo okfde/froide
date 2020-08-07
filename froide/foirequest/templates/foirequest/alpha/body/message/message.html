@@ -3,6 +3,7 @@
 {% load form_helper %}
 {% load problemreport_tags %}
 {% load guidance_tags %}
+{% load content_helper %}
 
 <div class="alpha-message" id="{{ message.get_html_id }}">
 
@@ -15,12 +16,14 @@
   
     <!-- sender, recipient, message preview, meta infos -->
     <div class="d-flex flex-fill flex-column overflow-hidden">
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between align-items-center">
         <!-- sender -->
         {% include "foirequest/alpha/body/message/sender.html" %}  
         <!-- time -->
-        <span class="d-print-none" title="{{ message.timestamp }}">
-          {% blocktrans with time=message.timestamp|timesince %}{{ time }} ago{% endblocktrans %}</span><span class="d-none d-print-inline">{{ message.timestamp|date:"DATETIME_FORMAT" }}</span>
+        <span class="d-print-none smaller text-gray-600" title="{{ message.timestamp }}">
+          {{ message.timestamp|relativetime }}
+          <!-- {% blocktrans with time=message.timestamp|timesince %}{{ time }} ago{% endblocktrans %} -->
+        </span>
       </div>
 
       <!-- message preview -->
