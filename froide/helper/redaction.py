@@ -1,5 +1,6 @@
 import base64
 import io
+import logging
 import os
 import shutil
 import tempfile
@@ -24,6 +25,8 @@ from filingcabinet.pdf_utils import (
     rewrite_hard_pdf_in_place,
     get_images_from_pdf_chunked
 )
+
+logger = logging.getLogger(__name__)
 
 
 def rewrite_pdf(pdf_file, instructions):
