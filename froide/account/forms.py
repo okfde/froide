@@ -154,7 +154,9 @@ class TermsForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
+        if not hasattr(self, 'request'):
+            self.request = kwargs.pop('request', None)
+        kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.fields['terms'].label = format_html(
             _('You agree to our <a href="{url_terms}" target="_blank">'
@@ -175,15 +177,20 @@ class TermsForm(forms.Form):
         user.save()
 
 
-class NewUserForm(JSONMixin, TermsForm, NewUserBaseForm):
-    pass
-
-
-class SignUpForm(SpamProtectionMixin, NewUserForm):
+class NewUserForm(JSONMixin, SpamProtectionMixin, TermsForm, NewUserBaseForm):
+    '''
+    Used in implicit sign up flow
+    '''
     SPAM_PROTECTION = {
         'timing': True,
         'captcha': 'ip',
     }
+
+
+class SignUpForm(NewUserForm):
+    '''
+    Used in explicit sign up flow (signup page)
+    '''
 
 
 class NewUserWithPasswordForm(NewUserForm):

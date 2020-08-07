@@ -3,33 +3,119 @@
     <div class="card mb-3">
       <div class="card-body">
         <div class="form-group row">
-          <label for="id_user_email" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.user_email, 'field-required': !user }">
+          <label
+            for="id_user_email"
+            class="col-sm-3 col-form-label"
+            :class="{ 'text-danger': errors.user_email, 'field-required': !user }"
+          >
             {{ i18n.yourEmail }}
           </label>
           <div class="col-sm-9">
-            <p v-if="user" id="email_address" class="form-control-plaintext">
+            <p
+              v-if="user"
+              id="email_address"
+              class="form-control-plaintext"
+            >
               {{ user.email }}
             </p>
             <div v-else>
-              <input v-model="email" type="email" name="user_email" class="form-control" :class="{ 'is-invalid': errors.user_email }" :placeholder="formFields.user_email.placeholder" required/>
-              <p v-for="e in errors.user_email" :key="e.message" class="text-danger">{{ e.message }}</p>
+              <input
+                v-model="email"
+                type="email"
+                name="user_email"
+                class="form-control"
+                :class="{ 'is-invalid': errors.user_email }"
+                :placeholder="formFields.user_email.placeholder"
+                required
+              >
+              <p
+                v-for="e in errors.user_email"
+                :key="e.message"
+                class="text-danger"
+              >
+                {{ e.message }}
+              </p>
             </div>
           </div>
         </div>
 
         <div class="form-group row">
-          <label for="id_address" class="col-sm-3 col-form-label" :class="{ 'text-danger': errors.address, 'field-required': requiresPostalAddress}">
+          <label
+            for="id_address"
+            class="col-sm-3 col-form-label"
+            :class="{ 'text-danger': errors.address, 'field-required': requiresPostalAddress}"
+          >
             {{ i18n.yourAddress }}
           </label>
           <div class="col-sm-9">
             <div>
-              <textarea v-model="address" name="address" class="form-control" :class="{ 'is-invalid': errors.address }" :placeholder="formFields.address.placeholder" :required="requiresPostalAddress"></textarea>
-              <p v-for="e in errors.address" :key="e.message">{{ e.message }}</p>
-              <p class="help-block"><span v-html="addressHelpText"></span></p>
+              <textarea
+                v-model="address"
+                name="address"
+                class="form-control"
+                :class="{ 'is-invalid': errors.address }"
+                :placeholder="formFields.address.placeholder"
+                :required="requiresPostalAddress"
+              />
+              <p
+                v-for="e in errors.address"
+                :key="e.message"
+              >
+                {{ e.message }}
+              </p>
+              <p class="help-block">
+                <span v-html="addressHelpText" />
+              </p>
             </div>
           </div>
         </div>
-
+        <template v-if="formFields.time">
+          <input
+            type="hidden"
+            name="time"
+            :value="formFields.time.initial"
+          >
+        </template>
+        <template v-if="formFields.phone">
+          <div class="form-group row d-none honigtopf">
+            <label
+              class="col-lg-3 col-form-label"
+              for="id_phone"
+            >
+              {{ formFields.phone.label }}
+            </label>
+            <div class="col-lg-9">
+              <input
+                id="id_phone"
+                class="form-control"
+                type="text"
+                name="phone"
+              >
+            </div>
+          </div>
+        </template>
+        <template v-if="formFields.test">
+          <div class="form-group row">
+            <label
+              class="col-lg-3 col-form-label"
+              :class="{ 'text-danger': errors.test, 'field-required': formFields.test.required}"
+              for="id_test"
+            >
+              {{ formFields.test.label }}
+            </label>
+            <div class="col-lg-9">
+              <input
+                class="form-control"
+                type="text"
+                required
+                name="test"
+              >
+              <p class="help-block">
+                <span>{{ formFields.test.help_text }}</span>
+              </p>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -40,7 +126,8 @@
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
-  name: 'user-registration',
+  name: 'UserRegistration',
+  mixins: [I18nMixin],
   props: {
     config: {
       type: Object
@@ -76,7 +163,6 @@ export default {
       default: false
     },
   },
-  mixins: [I18nMixin],
   data () {
     return {
       emailValue: this.initialEmail,
@@ -97,7 +183,7 @@ export default {
       if (this.addressHelpText !== null) {
         return this.addressHelpText
       }
-      return formFields.address.help_text
+      return this.formFields.address.help_text
     },
     email: {
       get () {
