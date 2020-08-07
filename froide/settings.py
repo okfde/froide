@@ -486,6 +486,7 @@ class Base(Configuration):
     # ######### Froide settings ########
 
     FROIDE_CONFIG = dict(
+        spam_protection=True,
         user_can_hide_web=True,
         public_body_officials_public=True,
         public_body_officials_email_public=False,
@@ -624,6 +625,7 @@ class TestBase(Base):
     def FROIDE_CONFIG(self):
         config = dict(super().FROIDE_CONFIG)
         config.update(dict(
+            spam_protection=False,
             doc_conversion_call_func=self._fake_convert_pdf,
             default_law=10000,
             greetings=[rec(r"Dear ((?:Mr\.?|Ms\.?) .*),?"), rec(r'Sehr geehrter? ((Herr|Frau) .*),?')],

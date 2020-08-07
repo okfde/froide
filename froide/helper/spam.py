@@ -85,9 +85,13 @@ class SpamProtectionMixin:
             )
 
     def _should_include_timing(self):
+        if not settings.FROIDE_CONFIG.get('spam_protection', True):
+            return False
         return self.SPAM_PROTECTION.get('timing', False)
 
     def _should_skip_spam_check(self):
+        if not settings.FROIDE_CONFIG.get('spam_protection', True):
+            return True
         return not self.request or self.request.user.is_authenticated
 
     def _should_include_captcha(self):
