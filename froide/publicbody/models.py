@@ -41,13 +41,12 @@ def get_applicable_law(pb=None, law_type=None):
             if law_type is not None:
                 qs = qs.filter(law_type__contains=law_type)
             # Prefer meta laws
-            qs = qs.order_by('-meta')
+            qs = qs.order_by('-meta', '-priority')
             if qs:
-                break
-        try:
-            return qs[0]
-        except IndexError:
-            pass
+                try:
+                    return qs[0]
+                except IndexError:
+                    pass
 
     try:
         return FoiLaw.objects.get(id=DEFAULT_LAW)

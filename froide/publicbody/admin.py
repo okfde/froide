@@ -437,7 +437,7 @@ class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ('name', 'meta', 'law_type', 'jurisdiction',)
+    list_display = ('name', 'meta', 'priority', 'law_type', 'jurisdiction',)
     list_filter = ('meta', 'law_type', 'jurisdiction')
     raw_id_fields = ('mediator',)
     filter_horizontal = ('combined',)
