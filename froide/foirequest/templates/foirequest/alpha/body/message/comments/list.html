@@ -1,11 +1,11 @@
 {% load i18n %}
 
 {% if comment_list %}
-  <div class="alpha-message__wrap pt-3 mb-3 smaller border-bottom border-light">
+  <div class="alpha-message__wrap pt-3 mb-3 smaller border-top border-bottom border-light">
   {% for comment in comment_list %}
 
     <!-- head -->
-    <div>
+    <div class="d-flex justify-content-start align-items-center">
       <!-- name -->
       <strong>
         {% if request.user.is_authenticated %}
@@ -24,13 +24,14 @@
       </strong>
       
       {% if comment.user == object.user and not object.user.private %}
-        <strong><small class="requester">{% trans "Requester" %}</small></strong>
+        <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
       {% elif comment.user.is_staff %}
-        <strong><small class="moderator">{% trans "Moderator" %}</small></strong>
+        <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
       {% endif %}
       
       <!-- timestamp -->
-      <small class="text-gray-600">• {{ comment.submit_date }}</small>
+      <small class="text-gray-600 mx-1">•</small>
+      <small class="text-gray-600">{{ comment.submit_date }}</small>
       
     </div>
 

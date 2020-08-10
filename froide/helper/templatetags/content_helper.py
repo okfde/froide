@@ -4,7 +4,7 @@ import datetime
 from django.utils.html import avoid_wrapping
 from django.utils.timezone import is_aware, utc
 from django.utils.formats import date_format
-from django.utils.translation import gettext, ngettext_lazy, get_language
+from django.utils.translation import ngettext_lazy, get_language
 
 from ..content_urls import get_content_url
 
@@ -30,6 +30,7 @@ TIME_VALUES = {
     'hour': 60 * 60,
     'minute': 60,
 }
+
 
 @register.filter
 def relativetime(d):
@@ -94,13 +95,13 @@ def relativetime(d):
         result = add_ago(time_str, lang_code)
     elif d.year == now.year:
         if lang_code == 'de':
-            result = date_format(d, 'j. N') # 18. Feb.
+            result = date_format(d, 'j. N')  # 18. Feb.
         else:
-            result = date_format(d, 'M j.') # Feb 18.
+            result = date_format(d, 'M j.')  # Feb 18.
     else:
         if lang_code == 'de':
-            result = date_format(d, 'j. N Y') # 18. Feb. 2018
+            result = date_format(d, 'j. N Y')  # 18. Feb. 2018
         else:
-            result = date_format(d, 'M j. Y') # Feb 18. 2018
+            result = date_format(d, 'M j. Y')  # Feb 18. 2018
 
     return avoid_wrapping(result)

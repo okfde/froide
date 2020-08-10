@@ -81,7 +81,7 @@
         }
       }
         &__list-label { font-weight: 600; }
-        &__list-value {}
+        // &__list-value {}
 
   @include media-breakpoint-up(lg) {
     margin-top: $spacer * 1.5;
