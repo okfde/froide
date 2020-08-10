@@ -1,0 +1,57 @@
+{% load i18n %}
+
+{% if comment_list %}
+  <div class="alpha-message__wrap pt-3 mb-3 smaller border-bottom border-light">
+  {% for comment in comment_list %}
+
+    <!-- head -->
+    <div>
+      <!-- name -->
+      <strong>
+        {% if request.user.is_authenticated %}
+          {% if comment.user == object.user and object.user.private %}
+            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" data-original-title="Name nicht öffentlich">
+              <span class="requester">{% trans "Requester" %}</span>
+            </span>
+          {% else %}
+              {{ comment.user_name }}
+          {% endif %}
+        {% else %}
+          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" data-original-title="Nur für angemeldete Nutzer/innen sichtbar">
+            Kommentaror/in
+          </span>
+          {% endif %}
+      </strong>
+      
+      {% if comment.user == object.user and not object.user.private %}
+        <strong><small class="requester">{% trans "Requester" %}</small></strong>
+      {% elif comment.user.is_staff %}
+        <strong><small class="moderator">{% trans "Moderator" %}</small></strong>
+      {% endif %}
+      
+      <!-- timestamp -->
+      <small class="text-gray-600">• {{ comment.submit_date }}</small>
+      
+    </div>
+
+    <!-- body -->
+    <div>
+      {% if comment.is_removed %}
+        <p class="text-muted">{% trans "Comment was removed." %}</p>
+      {% else %}
+        {% if comment.user.is_staff %}
+          <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
+        {% else %}
+          {% if comment.comment != comment.comment|truncatewords:20 %}
+            <p id="comment-{{ comment.id }}">{{ comment.comment|truncatewords:20 }}
+              <a href="#comment-{{ comment.id }}-full" class="hideparent" data-toggle="collapse" aria-expanded="false" aria-controls="comment-{{ comment.id }}-full">{% trans "Read all" %}</a></p>
+            <p class="collapse" id="comment-{{ comment.id }}-full">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
+          {% else %}
+            <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    </div>
+  {% endfor %}
+  </div>
+{% endif %}

@@ -103,15 +103,45 @@
   </div>
 
   <div class="alpha-message__footer">
-    <div class="alpha-message__wrap my-3">
-      <button type="button" class="btn btn-light btn-sm">
+
+    <!-- footer buttons -->
+    <div class="alpha-message__wrap py-3 border-bottom border-light">
+      <button type="button" class="btn btn-light btn-sm text-primary">
         <span class="fa fa-comments"></span>
         {% with count=comment_list|length %}
           {{ count }} {% if count == 1 %}{% trans "Comment" %}{% else %}{% trans "Comments" %}{% endif %}
         {% endwith %}
       </button>
 
+      {% render_problem_button message %}
+
     </div>
+
+    <!-- comments list -->
+    {% block before_comments %}{% endblock %}
+    {% include "foirequest/alpha/body/message/comments/list.html" %}
+    {% block after_comments %}{% endblock %}
+
+    <!-- comment reply button and form -->
+    <div class="alpha-message__wrap pb-3">
+      <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+        {% if object.public %}
+          {% trans "Write a public comment" %}
+        {% else %}
+          {% trans "Write a comment" %}
+        {% endif %}
+      </a>
+      <div class="collapse pt-3" id="comment-form-{{ message.id }}">
+        {% if user.is_authenticated %}
+          {% include "comments/foirequest/form.html" %}
+        {% else %}
+          <a href="{% url 'account-login' %}" class="d-print-none">
+            {% blocktrans %}Please login to write a comment.{% endblocktrans %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
   </div>
 
 </div>
