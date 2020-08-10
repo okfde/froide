@@ -688,7 +688,7 @@ def export_user_data(user):
                     'request': e.request_id,
                     'event_name': e.event_name,
                     'public': e.public,
-                    'context_json': e.context_json,
+                    'context': e.context,
                 } for e in events
             ]).encode('utf-8')
         )

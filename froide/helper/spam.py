@@ -59,6 +59,7 @@ class SpamProtectionMixin:
     def __init__(self, *args, **kwargs):
         if not hasattr(self, 'request'):
             self.request = kwargs.pop('request', None)
+        kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         self.fields['phone'] = HoneypotField(
             required=False,
@@ -73,7 +74,9 @@ class SpamProtectionMixin:
                 label=_('What is three plus four?'),
                 widget=forms.TextInput(
                     attrs={'class': 'form-control'}
-                )
+                ),
+                required=True,
+                help_text=_('Please answer this question to give evidence you are human.'),
             )
         if self._should_include_timing():
             self.fields['time'] = forms.FloatField(
@@ -82,9 +85,13 @@ class SpamProtectionMixin:
             )
 
     def _should_include_timing(self):
+        if not settings.FROIDE_CONFIG.get('spam_protection', True):
+            return False
         return self.SPAM_PROTECTION.get('timing', False)
 
     def _should_skip_spam_check(self):
+        if not settings.FROIDE_CONFIG.get('spam_protection', True):
+            return True
         return not self.request or self.request.user.is_authenticated
 
     def _should_include_captcha(self):
