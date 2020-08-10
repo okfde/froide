@@ -1,3 +1,5 @@
+import '../../styles/components/alpha/index.scss'
+
 class Message {
   id: string
   element: HTMLElement

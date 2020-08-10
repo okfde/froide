@@ -50,6 +50,11 @@ ALPHA1
       {% endwith %}
     {% endaddtoblock %}
   {% endif %}
+
+  {% addtoblock "css" %}
+    <link rel="stylesheet" href="{% static 'css/request-alpha.css' %}"/>
+  {% endaddtoblock %}
+
   {% addtoblock "js" %}
     <script src="{% static 'js/request-alpha.js' %}" defer></script>
   {% endaddtoblock %}
