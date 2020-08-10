@@ -32,6 +32,12 @@
       {% include "foirequest/alpha/body/body.html" %}
     </div>
   
+    {% if user.is_staff %}
+    <div class="text-center">
+      <a href="./?alpha=0">Normal Request Page</a>
+    </div>
+  {% endif %}
+
   {% endblock app_body %}
 {% endblock body %}
 
