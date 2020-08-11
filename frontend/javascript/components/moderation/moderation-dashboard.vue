@@ -23,6 +23,19 @@
             {{ i18n.publicBodyChangeProposals }}
           </a>
         </li>
+        <li
+          v-if="unclassified"
+          class="nav-item"
+        >
+          <a
+            class="nav-link"
+            :class="{'active': tab === 'unclassified'}"
+            href="#unclassified"
+            @click="tab = 'unclassified'"
+          >
+            {{ i18n.unclassifiedRequests }}
+          </a>
+        </li>
       </ul>
       <div class="tab-content pt-3">
         <moderation-problems
@@ -34,6 +47,11 @@
           v-if="tab === 'publicbodies'"
           :config="config"
           :publicbodies="publicbodies"
+        />
+        <moderation-unclassified
+          v-if="tab === 'unclassified'"
+          :config="config"
+          :unclassified="unclassified"
         />
       </div>
     </div>
@@ -63,12 +81,14 @@ import {getData} from '../../lib/api.js'
 
 import ModerationProblems from './moderation-problems.vue'
 import ModerationPublicbodies from './moderation-publicbodies.vue'
+import ModerationUnclassified from './moderation-unclassified.vue'
 
 export default {
   name: 'ModerationDashboard',
   components: {
     ModerationProblems,
-    ModerationPublicbodies
+    ModerationPublicbodies,
+    ModerationUnclassified
   },
   props: {
     config: {
@@ -76,6 +96,11 @@ export default {
       required: true
     },
     initialPublicbodies: {
+      type: Array,
+      required: false,
+      default: null
+    },
+    initialUnclassified: {
       type: Array,
       required: false,
       default: null
@@ -87,6 +112,7 @@ export default {
       moderators: [],
       reports: [],
       publicbodies: this.initialPublicbodies,
+      unclassified: this.initialUnclassified,
       filter: {
         mine: false
       },
@@ -139,6 +165,11 @@ export default {
       })
       .on('publicbody_removed', (data) => {
         this.publicbodies = this.publicbodies.filter((pb) => pb.id !== data.publicbody.id)
+      })
+    }
+    if (this.unclassified !== null) {
+      this.room.on('unclassified_removed', (data) => {
+        this.unclassified = this.unclassified.filter((fr) => fr.id !== data.unclassified.id)
       })
     }
   },

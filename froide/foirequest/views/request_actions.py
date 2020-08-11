@@ -104,8 +104,15 @@ def suggest_public_body(request, slug):
 
 
 @require_POST
-@allow_write_foirequest
-def set_status(request, foirequest):
+def set_status(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not can_write_foirequest(foirequest, request):
+        if not can_moderate_foirequest(foirequest, request):
+            return render_403(request)
+        else:
+            if not foirequest.moderate_classification():
+                return render_403(request)
+
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
         form.save(user=request.user)

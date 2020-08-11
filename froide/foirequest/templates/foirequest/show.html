@@ -602,6 +602,26 @@
 {% endblock %}
 
 {% block before_correspondence %}
+
+{% if object.moderate_classification and object|can_moderate_foirequest:request and not object|can_write_foirequest:request %}
+<div class="card border-primary mt-3 mb-3" id="set-status">
+  <div class="card-header">{% trans "Set status as moderator" %}</div>
+  <div class="card-body">
+    <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+      {% csrf_token %}
+      {% if status_form %}
+        {% include "foirequest/_set_status.html" %}
+      {% else %}
+        {% with status_form=object.get_status_form %}
+          {% include "foirequest/_set_status.html" %}
+        {% endwith %}
+      {% endif %}
+      <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 <hr class="page-break"/>
@@ -660,7 +680,7 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% if object|can_write_foirequest:request %}
+  {% if object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
     {% addtoblock "js" %}
       {% with object.get_set_tags_form as set_tags_form %}
         {{ set_tags_form.media.js }}

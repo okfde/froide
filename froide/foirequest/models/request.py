@@ -25,6 +25,9 @@ from froide.helper.text_utils import redact_plaintext
 from .project import FoiProject
 
 
+MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=14)
+
+
 class FoiRequestManager(CurrentSiteManager):
 
     def get_send_foi_requests(self):
@@ -56,12 +59,17 @@ class FoiRequestManager(CurrentSiteManager):
             )
 
     def get_to_be_asleep(self):
-
-    def get_unclassified(self):
-        some_days_ago = timezone.now() - timedelta(days=4)
         return self.get_asleep().exclude(status=Status.ASLEEP)
-        return self.get_queryset().filter(status="awaiting_classification",
-                last_message__lt=some_days_ago)
+
+    def get_unclassified(self, offset=None):
+        if offset is None:
+            offset = timedelta(days=4)
+        ago = timezone.now() - offset
+        return self.get_queryset().filter(status=Status.AWAITING_CLASSIFICATION,
+                last_message__lt=ago)
+
+    def get_unclassified_for_moderation(self):
+        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET)
 
     def get_dashboard_requests(self, user, query=None):
         query_kwargs = {}
@@ -544,6 +552,13 @@ class FoiRequest(models.Model):
 
     def awaits_classification(self):
         return self.status == Status.AWAITING_CLASSIFICATION
+
+    def moderate_classification(self):
+        return self.awaits_classification() and self.available_for_moderator_action()
+
+    def available_for_moderator_action(self):
+        ago = timezone.now() - MODERATOR_CLASSIFICATION_OFFSET
+        return self.last_message < ago
 
     def set_awaits_classification(self):
         self.status = Status.AWAITING_CLASSIFICATION
