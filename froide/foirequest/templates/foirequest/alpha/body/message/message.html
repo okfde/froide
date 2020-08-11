@@ -127,28 +127,31 @@
     <!-- comments list -->
     <div id="comments-container-{{ message.id }}" class="collapse">
       {% block before_comments %}{% endblock %}
-      {% include "foirequest/alpha/body/message/comments/list.html" %}
-      {% block after_comments %}{% endblock %}
-  
-      <!-- comment reply button and form -->
-      <div class="alpha-message__wrap pb-3">
-        <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
-          {% if object.public %}
-            {% trans "Write a public comment" %}
-          {% else %}
-            {% trans "Write a comment" %}
-          {% endif %}
-        </a>
-        <div class="collapse pt-3" id="comment-form-{{ message.id }}">
-          {% if user.is_authenticated %}
+      {% if request.user.is_authenticated %}
+        {% include "foirequest/alpha/body/message/comments/list.html" %}
+    
+        <!-- comment reply button and form -->
+        <div class="alpha-message__wrap pb-3">
+          <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+            {% if object.public %}
+              {% trans "Write a public comment" %}
+            {% else %}
+              {% trans "Write a comment" %}
+            {% endif %}
+          </a>
+          <div class="collapse pt-3" id="comment-form-{{ message.id }}">
             {% include "comments/foirequest/form.html" %}
-          {% else %}
-            <a href="{% url 'account-login' %}" class="d-print-none">
-              {% blocktrans %}Please login to write a comment.{% endblocktrans %}
-            </a>
-          {% endif %}
+          </div>
         </div>
-      </div>
+      {% else %}
+        <div class="alpha-message__wrap pb-3">
+          <a href="{% url 'account-login' %}?next={{ message.get_absolute_url|urlencode }}" class="d-print-none">
+            {% blocktrans %}Please login to read or write comments.{% endblocktrans %}
+          </a>
+        </div>
+      {% endif %}
+
+      {% block after_comments %}{% endblock %}
     </div>
 
   </div>

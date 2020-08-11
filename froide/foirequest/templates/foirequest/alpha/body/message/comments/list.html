@@ -8,21 +8,16 @@
     <div class="d-flex justify-content-start align-items-center">
       <!-- name -->
       <strong>
-        {% if request.user.is_authenticated %}
-          {% if comment.user == object.user and object.user.private %}
-            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" data-original-title="Name nicht öffentlich">
-              <span class="requester">{% trans "Requester" %}</span>
-            </span>
-          {% else %}
-              {{ comment.user_name }}
-          {% endif %}
-        {% else %}
-          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" data-original-title="Nur für angemeldete Nutzer/innen sichtbar">
-            Kommentaror/in
+        {% if comment.user == object.user and object.user.private %}
+          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" data-original-title="Name nicht öffentlich">
+            <span class="requester">{% trans "Requester" %}</span>
           </span>
-          {% endif %}
+        {% else %}
+          {{ comment.user_name }}
+        {% endif %}
       </strong>
       
+      <!-- requester-/moderator-badges -->
       {% if comment.user == object.user and not object.user.private %}
         <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
       {% elif comment.user.is_staff %}
@@ -39,7 +34,7 @@
     {% if comment.is_removed %}
       <p class="text-muted">{% trans "Comment was removed." %}</p>
     {% else %}
-      <p>
+      <p class="{% if not forloop.last %}border-bottom border-light pb-2 mb-2{% endif %}">
         {% if comment.user.is_staff %}
           {{ comment.comment|urlizetrunc:40|linebreaksbr }}
         {% else %}
