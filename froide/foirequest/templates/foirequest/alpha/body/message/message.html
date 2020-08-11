@@ -144,10 +144,10 @@
           </div>
         </div>
       {% else %}
-        <div class="alpha-message__wrap pb-3">
-          <a href="{% url 'account-login' %}?next={{ message.get_absolute_url|urlencode }}" class="d-print-none">
-            {% blocktrans %}Please login to read or write comments.{% endblocktrans %}
-          </a>
+        <div class="alpha-message__wrap pb-3 text-gray-600">
+          {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}
+            Please <a href="{{ link }}" >login</a> to read or write comments.
+          {% endblocktrans %}
         </div>
       {% endif %}
 
