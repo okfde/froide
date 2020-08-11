@@ -88,6 +88,7 @@ def moderation_view(request):
             'claim': _('Claim'),
             'unclaim': _('Cancel'),
             'resolve': _('Resolve'),
+            'markResolved': _('Mark resolved'),
             'claimedMinutesAgo': _('Claimed for {min} min.'),
             'maxClaimCount': _('You cannot work on more than 5 issues at the same time.'),
             'resolutionDescription': _('Please write a nice message to the user.'),

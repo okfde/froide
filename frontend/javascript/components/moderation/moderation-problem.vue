@@ -14,7 +14,7 @@
     <td :title="report.timestamp">
       {{ report.timestamp|date }}
       <span
-        v-if="!report.is_requester"
+        v-if="!report.is_requester && !report.auto_submitted"
         class="badge badge-secondary"
       >
         {{ i18n.isNotRequester }}
@@ -22,7 +22,7 @@
     </td>
     <td>{{ report.message_subject | truncatechars }}</td>
     <td>
-      <template v-if="resolving">
+      <template v-if="claimedByMe">
         {{ report.description }}<br>
       </template>
       <template v-else>
@@ -51,7 +51,10 @@
         class="card mt-2"
       >
         <div class="card-body">
-          <label class="d-block">
+          <label
+            v-if="!report.auto_submitted"
+            class="d-block"
+          >
             <p>{{ i18n.resolutionDescription }}</p>
             <textarea
               v-model="resolution"
@@ -62,7 +65,7 @@
             class="btn btn-success mt-1"
             @click="resolve"
           >
-            {{ i18n.resolve }}
+            {{ i18n.markResolved }}
           </button>
         </div>
       </div>
@@ -110,7 +113,7 @@
             class="btn btn-success"
             @click="startResolving"
           >
-            {{ resolveLabel }}
+            {{ i18n.resolve }}…
           </button>
           <button
             class="btn btn-warning"
@@ -207,9 +210,6 @@ export default {
     claimedByMe () {
       return this.report.moderator_id === this.$root.config.settings.user_id
     },
-    resolveLabel () {
-      return `${this.i18n.resolve}${this.report.auto_submitted ? '' : '…'}`;
-    },
     longClaim () {
       return this.claimedMinutes > MAX_CLAIMED_MINUTES
     },
@@ -237,11 +237,7 @@ export default {
     },
     startResolving () {
       this.escalating = false
-      if (this.report.auto_submitted) {
-        this.resolve()
-      } else {
-        this.resolving = !this.resolving
-      }
+      this.resolving = !this.resolving
     },
     resolve () {
       this.$emit('resolve', {
