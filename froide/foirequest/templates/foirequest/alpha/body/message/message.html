@@ -71,7 +71,7 @@
   <div class="alpha-message__body alpha-message__wrap">
     
     <!-- TODO: guidance (this is a placeholder now) -->
-    {% if "01"|make_list|random == "1" %}
+    {% if forloop.counter0|divisibleby:"3" %}
       {% include "foirequest/alpha/body/message/guidance.html" %}  
     {% endif %}
 
