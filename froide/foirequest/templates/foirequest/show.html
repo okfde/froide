@@ -426,7 +426,7 @@
 
         {# Public Body Needed #}
         {% if object.status == "publicbody_needed" %}
-          <div class="well d-print-none">
+          <div class="d-print-none">
             <p>{% blocktrans %}You can suggest a public body for this request.{% endblocktrans %}
             {% with suggestions=object.public_body_suggestions %}
               {% if suggestions %}
