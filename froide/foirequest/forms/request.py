@@ -258,7 +258,8 @@ class FoiRequestStatusForm(forms.Form):
         status = data['status']
         resolution = data['resolution']
         foirequest = self.foirequest
-
+        previous_status = foirequest.status
+        previous_resolution = foirequest.resolution
         message = foirequest.message_needs_status()
         if message:
             message.status = status
@@ -280,6 +281,8 @@ class FoiRequestStatusForm(forms.Form):
             status=status,
             user=user,
             resolution=resolution,
+            previous_status=previous_status,
+            previous_resolution=previous_resolution,
             data=data
         )
 

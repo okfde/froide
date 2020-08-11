@@ -324,6 +324,8 @@ def create_event_status_changed(sender, user=None, **kwargs):
         status=kwargs.get('status', ''),
         resolution=kwargs.get('resolution', ''),
         costs=kwargs['data'].get('costs'),
+        previous_status=kwargs.get('previous_status', ''),
+        previous_resolution=kwargs.get('previous_resolution', ''),
         refusal_reason=kwargs['data'].get('refusal_reason', ''),
     )
 
