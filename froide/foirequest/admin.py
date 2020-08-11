@@ -122,7 +122,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         rows_updated = queryset.update(
             is_foi=False,
             public=False,
-            visibility=FoiRequest.VISIBLE_TO_REQUESTER
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
         )
         update_foirequest_index(queryset)
         self.message_user(request,
@@ -213,7 +213,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     confirm_request.short_description = _("Confirm request if unconfirmed")
 
     def unpublish(self, request, queryset):
-        queryset.update(public=False, visibility=FoiRequest.VISIBLE_TO_REQUESTER)
+        queryset.update(public=False, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER)
         update_foirequest_index(queryset)
         self.message_user(request, _("Selected requests are now unpublished."))
     unpublish.short_description = _("Unpublish")

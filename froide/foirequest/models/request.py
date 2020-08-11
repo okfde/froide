@@ -1,6 +1,7 @@
-import re
+from collections import namedtuple
 from datetime import timedelta
 import json
+import re
 
 from django.db import models
 from django.db.models import Q, When, Case, Value
@@ -29,7 +30,7 @@ class FoiRequestManager(CurrentSiteManager):
     def get_send_foi_requests(self):
         return self.get_queryset().filter(
             is_foi=True,
-            visibility__gt=FoiRequest.INVISIBLE
+            visibility__gt=FoiRequest.VISIBILITY.INVISIBLE
         )
 
     def get_by_secret_mail(self, mail):
@@ -85,8 +86,8 @@ class FoiRequestManager(CurrentSiteManager):
         self.get_queryset().filter(
             user=user
         ).filter(
-            Q(visibility=FoiRequest.VISIBLE_TO_REQUESTER) |
-            Q(visibility=FoiRequest.INVISIBLE)
+            Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER) |
+            Q(visibility=FoiRequest.VISIBILITY.INVISIBLE)
         ).delete()
 
 
@@ -94,7 +95,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def get_queryset(self):
         qs = super(PublishedFoiRequestManager, self).get_queryset()
         return qs.filter(
-            visibility=FoiRequest.VISIBLE_TO_PUBLIC, is_foi=True
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC, is_foi=True
         ).select_related("public_body", "jurisdiction")
 
     def by_last_update(self):
@@ -111,7 +112,7 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         from ..filters import REVERSE_FILTER_DICT
 
         res = self.get_queryset().filter(
-                status='resolved', public_body=obj
+                status=Status.RESOLVED, public_body=obj
         ).values('resolution'
         ).annotate(
             models.Count('resolution')
@@ -119,9 +120,9 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
         return [{
             'resolution': x['resolution'],
-            'url_slug': REVERSE_FILTER_DICT[x['resolution']][0],
-            'name': REVERSE_FILTER_DICT[x['resolution']][2],
-            'description': REVERSE_FILTER_DICT[x['resolution']][3],
+            'url_slug': REVERSE_FILTER_DICT[x['resolution']].slug,
+            'name': REVERSE_FILTER_DICT[x['resolution']].label,
+            'description': REVERSE_FILTER_DICT[x['resolution']].description,
             'count': x['resolution__count']
             } for x in res if x['resolution']]
 
@@ -151,105 +152,96 @@ class TaggedFoiRequest(TaggedItemBase):
         verbose_name_plural = _('FoI Request Tags')
 
 
+class Status(models.TextChoices):
+    AWAITING_USER_CONFIRMATION = "awaiting_user_confirmation", _(
+        'Awaiting user confirmation')
+    PUBLICBODY_NEEDED = 'publicbody_needed', _('Public Body needed')
+    AWAITING_PUBLICBODY_CONFIRMATION = 'awaiting_publicbody_confirmation', _(
+        'Awaiting Public Body confirmation')
+    AWAITING_RESPONSE = 'awaiting_response', _('Awaiting response')
+    AWAITING_CLASSIFICATION = 'awaiting_classification', _(
+        'Request awaits classification')
+    ASLEEP = 'asleep', _('Request asleep')
+    RESOLVED = 'resolved', _('Request resolved')
+
+
+class Resolution(models.TextChoices):
+    SUCCESSFUL = 'successful', _('Request Successful')
+    PARTIALLY_SUCCESSFUL = 'partially_successful', _(
+        'Request partially successful')
+    NOT_HELD = 'not_held', _('Information not held')
+    REFUSED = 'refused', _('Request refused')
+    USER_WITHDREW_COSTS = 'user_withdrew_costs', _(
+        'Request was withdrawn due to costs')
+    USER_WITHDREW = 'user_withdrew', _('Request was withdrawn')
+
+
+class FilterStatus(models.TextChoices):
+    OVERDUE = 'overdue', _('Response overdue')
+
+
+StatusResolutionDetail = namedtuple('StatusResolutionDetail',
+    'label description'
+)
+
+UNKNOWN_STATUS = StatusResolutionDetail(_('Unknown'), _('Unknown'))
+
+STATUS_RESOLUTION_DESCRIPTIONS = [
+    (Status.AWAITING_USER_CONFIRMATION,
+        _("The requester's email address is yet to be confirmed.")),
+    (Status.PUBLICBODY_NEEDED,
+        _('This request still needs a Public Body.')),
+    (Status.AWAITING_PUBLICBODY_CONFIRMATION,
+        _('The Public Body of this request has been created by the user and '
+          'still needs to be confirmed.')),
+    (Status.AWAITING_RESPONSE,
+        _('This request is still waiting for a response from the Public Body.'
+        )),
+    (Status.AWAITING_CLASSIFICATION,
+        _('A message was received and the user needs to set a new status.')),
+    (Status.ASLEEP,
+        _('The request is not resolved and has not been active for a while.')),
+    (Status.RESOLVED,
+        _('The request is resolved.')),
+    (Resolution.SUCCESSFUL,
+        _('The request has been successful.')),
+    (Resolution.PARTIALLY_SUCCESSFUL,
+        _('The request has been partially successful (some information was '
+          'provided, but not all)')),
+    (Resolution.REFUSED,
+        _('The Public Body refuses to provide the information.')),
+    (Resolution.USER_WITHDREW_COSTS,
+        _('User withdrew the request due to the associated costs.')),
+    (Resolution.USER_WITHDREW,
+        _('User withdrew the request for other reasons.')),
+    (Resolution.NOT_HELD,
+        _('The information does not exist at the public body.')),
+    (FilterStatus.OVERDUE,
+        _('The request has not been answered in time.'))
+]
+
+STATUS_RESOLUTION_DICT = {
+    str(x[0]): StatusResolutionDetail(
+        label=x[0].label,
+        description=x[1]
+    )
+    for x in STATUS_RESOLUTION_DESCRIPTIONS
+}
+
+
+class Visibility(models.IntegerChoices):
+    INVISIBLE = 0, _("Invisible")
+    VISIBLE_TO_REQUESTER = 1, _("Visible to requester")
+    VISIBLE_TO_PUBLIC = 2, _("Visible to public")
+
+
 class FoiRequest(models.Model):
-    STATUS_CHOICES = (
-        ('awaiting_user_confirmation',
-            _('Awaiting user confirmation'),
-            _("The requester's email address is yet to be confirmed."),
-            False
-        ),
-        ('publicbody_needed',
-            _('Public Body needed'),
-            _('This request still needs a Public Body.'),
-            False
-        ),
-        ('awaiting_publicbody_confirmation',
-            _('Awaiting Public Body confirmation'),
-            _('The Public Body of this request has been created by the user and still needs to be confirmed.'),
-            False
-        ),
-        ('awaiting_response',
-            _('Awaiting response'),
-            _('This request is still waiting for a response from the Public Body.'),
-            True
-        ),
-        ('awaiting_classification',
-            _('Request awaits classification'),
-            _('A message was received and the user needs to set a new status.'),
-            False
-        ),
-        ('asleep',
-            _('Request asleep'),
-            _('The request is not resolved and has not been active for a while.'),
-            False
-        ),
-        ('resolved',
-            _('Request resolved'),
-            _('The request is resolved.'),
-            False
-        ),
-    )
+    STATUS = Status
+    RESOLUTION = Resolution
+    FILTER_STATUS = FilterStatus
+    VISIBILITY = Visibility
 
-    RESOLUTION_CHOICES = (
-        ('successful',
-            _('Request Successful'),
-            _('The request has been successful.'),
-            True
-        ),
-        ('partially_successful',
-            _('Request partially successful'),
-            _('The request has been partially successful (some information was provided, but not all)'),
-            True),
-        ('not_held',
-            _('Information not held'),
-            _('The Public Body stated that it does not possess the information.'),
-            True,
-        ),
-        ('refused',
-            _('Request refused'),
-            _('The Public Body refuses to provide the information.'),
-            True
-        ),
-        ('user_withdrew_costs',
-            _('Request was withdrawn due to costs'),
-            _('User withdrew the request due to the associated costs.'),
-            True
-        ),
-        ('user_withdrew',
-            _('Request was withdrawn'),
-            _('User withdrew the request for other reasons.'),
-            True
-        ),
-    )
-
-    STATUS_FIELD_CHOICES = [(x[0], x[1]) for x in STATUS_CHOICES]
-    RESOLUTION_FIELD_CHOICES = [(x[0], x[1]) for x in RESOLUTION_CHOICES]
-
-    STATUS_RESOLUTION = STATUS_CHOICES + RESOLUTION_CHOICES
-
-    STATUS_RESOLUTION_DICT = dict([(x[0], x[1:]) for x in STATUS_RESOLUTION])
-    STATUS_RESOLUTION_DICT.update({
-        'overdue': (
-            _('Response overdue'),
-            _('The request has not been answered in time.'),
-            False
-        ),
-        'has_fee': (
-            _('Fee charged'),
-            _('This request is connected with a fee.'),
-            False
-        )
-    })
-
-    INVISIBLE = 0
-    VISIBLE_TO_REQUESTER = 1
-    VISIBLE_TO_PUBLIC = 2
-
-    VISIBILITY_CHOICES = (
-        (INVISIBLE, _("Invisible")),
-        (VISIBLE_TO_REQUESTER, _("Visible to Requester")),
-        (VISIBLE_TO_PUBLIC, _("Public")),
-    )
+    STATUS_RESOLUTION_DICT = STATUS_RESOLUTION_DICT
 
     # model fields
     title = models.CharField(_("Title"), max_length=255)
@@ -260,14 +252,19 @@ class FoiRequest(models.Model):
     public_body = models.ForeignKey(PublicBody, null=True, blank=True,
             on_delete=models.SET_NULL, verbose_name=_("Public Body"))
 
-    status = models.CharField(_("Status"), max_length=50,
-            choices=STATUS_FIELD_CHOICES)
-    resolution = models.CharField(_("Resolution"),
-        max_length=50, choices=RESOLUTION_FIELD_CHOICES, blank=True)
+    status = models.CharField(
+        _("Status"), max_length=50, choices=Status.choices
+    )
+    resolution = models.CharField(
+        _("Resolution"), max_length=50, choices=Resolution.choices,
+        blank=True
+    )
 
     public = models.BooleanField(_("published?"), default=True)
-    visibility = models.SmallIntegerField(_("Visibility"), default=0,
-            choices=VISIBILITY_CHOICES)
+    visibility = models.SmallIntegerField(
+        _("Visibility"), default=Visibility.INVISIBLE,
+        choices=Visibility.choices
+    )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
             on_delete=models.SET_NULL,
@@ -348,7 +345,8 @@ class FoiRequest(models.Model):
     request_created = django.dispatch.Signal(providing_args=[])
     request_to_public_body = django.dispatch.Signal(providing_args=[])
     status_changed = django.dispatch.Signal(providing_args=[
-        "status", "resolution", "data", "user"
+        "status", "resolution", "data", "user",
+        "previous_status", "previous_resolution"
     ])
     became_overdue = django.dispatch.Signal(providing_args=[])
     became_asleep = django.dispatch.Signal(providing_args=[])
@@ -386,10 +384,9 @@ class FoiRequest(models.Model):
     @property
     def status_representation(self):
         if self.due_date is not None:
-            now = timezone.now()
-            if self.status == 'awaiting_response' and now > self.due_date:
-                return 'overdue'
-        return self.status if self.status != 'resolved' else self.resolution
+            if self.is_overdue():
+                return FilterStatus.OVERDUE
+        return self.status if self.status != Status.RESOLVED else self.resolution
 
     @property
     def status_settable(self):
@@ -450,7 +447,7 @@ class FoiRequest(models.Model):
                 }))
 
     def get_accessible_link(self):
-        if self.visibility == self.VISIBLE_TO_REQUESTER:
+        if self.visibility == self.VISIBILITY.VISIBLE_TO_REQUESTER:
             return self.get_auth_link()
         return self.get_absolute_domain_short_url()
 
@@ -460,7 +457,7 @@ class FoiRequest(models.Model):
         )
 
     def is_public(self):
-        return self.visibility == self.VISIBLE_TO_PUBLIC
+        return self.visibility == self.VISIBILITY.VISIBLE_TO_PUBLIC
 
     def in_public_search_index(self):
         return (
@@ -508,13 +505,13 @@ class FoiRequest(models.Model):
         return mes[0]
 
     def status_is_final(self):
-        return self.status == 'resolved'
+        return self.status == Status.RESOLVED
 
     def needs_public_body(self):
-        return self.status == 'publicbody_needed'
+        return self.status == Status.PUBLICBODY_NEEDED
 
     def awaits_response(self):
-        return self.status == 'awaiting_response' or self.status == 'asleep'
+        return self.status in (Status.AWAITING_RESPONSE, Status.ASLEEP)
 
     def is_actionable(self):
         return not self.needs_public_body() and (
@@ -541,13 +538,13 @@ class FoiRequest(models.Model):
         return False
 
     def has_been_refused(self):
-        return self.resolution == 'refused' or self.resolution == 'partially_successful'
+        return self.resolution in (Resolution.REFUSED, Resolution.PARTIALLY_SUCCESSFUL)
 
     def awaits_classification(self):
-        return self.status == 'awaiting_classification'
+        return self.status == Status.AWAITING_CLASSIFICATION
 
     def set_awaits_classification(self):
-        self.status = 'awaiting_classification'
+        self.status = Status.AWAITING_CLASSIFICATION
 
     def follow_count(self):
         from froide.foirequestfollower.models import FoiRequestFollower
@@ -567,15 +564,18 @@ class FoiRequest(models.Model):
 
     def get_status_form(self):
         from ..forms import FoiRequestStatusForm
-        if self.status not in ('awaiting_response', 'resolved'):
+        if self.status not in (Status.AWAITING_RESPONSE, Status.RESOLVED):
             status = ''
         else:
             status = self.status
-        return FoiRequestStatusForm(foirequest=self,
-                    initial={"status": status,
-                        'resolution': self.resolution,
-                        "costs": self.costs,
-                        "refusal_reason": self.refusal_reason})
+        return FoiRequestStatusForm(
+            foirequest=self,
+            initial={
+                "status": status,
+                'resolution': self.resolution,
+                "costs": self.costs,
+                "refusal_reason": self.refusal_reason
+            })
 
     def public_body_suggestions_form(self):
         from ..forms import PublicBodySuggestionsForm
@@ -617,38 +617,30 @@ class FoiRequest(models.Model):
         return FoiRequest.get_status_description(self.status_representation)
 
     @classmethod
-    def get_readable_status(cls, status, fallback=None):
-        if fallback is None:
-            fallback = (_("Unknown"), None)
-        else:
-            fallback = (fallback, None)
-        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback)[0])
+    def get_readable_status(cls, status, fallback=UNKNOWN_STATUS):
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback).label)
 
     @classmethod
-    def get_status_description(cls, status, fallback=None):
-        if fallback is None:
-            fallback = (None, _("Unknown"))
-        else:
-            fallback = (None, fallback)
-        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback)[1])
+    def get_status_description(cls, status, fallback=UNKNOWN_STATUS):
+        return str(cls.STATUS_RESOLUTION_DICT.get(status, fallback).description)
 
     def determine_visibility(self):
         if self.public:
-            self.visibility = self.VISIBLE_TO_PUBLIC
+            self.visibility = self.VISIBILITY.VISIBLE_TO_PUBLIC
         else:
-            self.visibility = self.VISIBLE_TO_REQUESTER
+            self.visibility = self.VISIBILITY.VISIBLE_TO_REQUESTER
 
     def set_status_after_change(self):
         if not self.user.is_active:
-            self.status = "awaiting_user_confirmation"
+            self.status = Status.AWAITING_USER_CONFIRMATION
         else:
             self.determine_visibility()
             if self.public_body is None:
-                self.status = 'publicbody_needed'
+                self.status = Status.PUBLICBODY_NEEDED
             elif not self.public_body.confirmed:
-                self.status = 'awaiting_publicbody_confirmation'
+                self.status = Status.AWAITING_PUBLICBODY_CONFIRMATION
             else:
-                self.status = 'awaiting_response'
+                self.status = Status.AWAITING_RESPONSE
                 return True
         return False
 
@@ -704,18 +696,19 @@ class FoiRequest(models.Model):
         self.became_overdue.send(sender=self)
 
     def set_asleep(self):
-        self.status = "asleep"
+        self.status = Status.ASLEEP
         self.save()
         self.became_asleep.send(sender=self)
 
     def days_to_resolution(self):
         final = None
-        resolutions = dict(self.RESOLUTION_FIELD_CHOICES)
+        mes = None
+        resolutions = dict(Resolution.choices)
         for mes in self.response_messages():
-            if mes.status == 'resolved' or mes.status in resolutions:
+            if mes.status == Status.RESOLVED or mes.status in resolutions:
                 final = mes.timestamp
                 break
-        if final is None:
+        if final is None or mes is None:
             return None
         return (mes.timestamp - self.first_message).days
 

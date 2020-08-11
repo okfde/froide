@@ -181,7 +181,7 @@ class CreateRequestService(BaseService):
 
         if not user.is_active:
             request.status = 'awaiting_user_confirmation'
-            request.visibility = FoiRequest.INVISIBLE
+            request.visibility = FoiRequest.VISIBILITY.INVISIBLE
         else:
             # TODO add draft
             request.status = 'awaiting_response'

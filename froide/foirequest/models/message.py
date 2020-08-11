@@ -109,7 +109,7 @@ class FoiMessage(models.Model):
         related_name='received_messages')
     status = models.CharField(
         _("Status"), max_length=50, null=True, blank=True,
-        choices=FoiRequest.STATUS_FIELD_CHOICES, default=None)
+        choices=FoiRequest.STATUS.choices, default=None)
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     email_message_id = models.CharField(max_length=512, blank=True, default='')

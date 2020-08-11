@@ -65,7 +65,7 @@ class ApiTest(TestCase):
 
     def test_permissions(self):
         req = factories.FoiRequestFactory.create(
-            visibility=FoiRequest.VISIBLE_TO_REQUESTER, site=self.site)
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER, site=self.site)
 
         response = self.client.get('/api/v1/request/%d/' % req.pk)
         self.assertEqual(response.status_code, 404)
@@ -149,7 +149,7 @@ class OAuthAPIMixin():
         )
 
         self.req = factories.FoiRequestFactory.create(
-            visibility=FoiRequest.VISIBLE_TO_REQUESTER,
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER,
             user=self.test_user,
             title='permissions required'
         )
@@ -165,7 +165,7 @@ class OAuthAPIMixin():
             approved=True
         )
         factories.FoiRequestFactory.create(
-            visibility=FoiRequest.VISIBLE_TO_REQUESTER,
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER,
             user=self.dev_user,
             title='never shown'
         )
@@ -251,7 +251,7 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(result['meta']['total_count'], 1)
 
     def test_see_only_approved_attachments(self):
-        self.req.visibility = FoiRequest.VISIBLE_TO_PUBLIC
+        self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         self.req.save()
 
         self.assertEqual(FoiAttachment.objects.all().count(), 4)
@@ -261,7 +261,7 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(len(result['attachments']), 1)
 
     def test_see_only_approved_attachments_loggedin(self):
-        self.req.visibility = FoiRequest.VISIBLE_TO_PUBLIC
+        self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         self.req.save()
 
         self.client.login(email=self.test_user.email, password='froide')
@@ -271,14 +271,14 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(len(result['attachments']), 2)
 
     def test_see_only_approved_attachments_without_scope(self):
-        self.req.visibility = FoiRequest.VISIBLE_TO_PUBLIC
+        self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         self.req.save()
 
         response, result = self.api_get(self.message_detail_url)
         self.assertEqual(len(result['attachments']), 1)
 
     def test_see_only_approved_attachments_with_scope(self):
-        self.req.visibility = FoiRequest.VISIBLE_TO_PUBLIC
+        self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         self.req.save()
 
         self.access_token.scope = "read:user read:request"

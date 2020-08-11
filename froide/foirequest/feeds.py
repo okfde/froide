@@ -102,7 +102,7 @@ class FoiRequestFeed(Feed):
     def get_object(self, request, slug):
         return get_object_or_404(
             FoiRequest, slug=slug, public=True,
-            visibility=FoiRequest.VISIBLE_TO_PUBLIC
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         )
 
     def title(self, obj):

@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _, gettext
@@ -28,38 +30,78 @@ SUB_FILTERS = {
     'jurisdiction': ('status', 'category', 'tag', 'publicbody')
 }
 
+FoiRequestFilter = namedtuple('FoiRequestFilter',
+    'slug filter key label description'
+)
+
+
+def make_filter(slug, filter_func, key):
+    return FoiRequestFilter(
+        slug=slug,
+        filter=filter_func,
+        key=key,
+        label=key.label,
+        description=FoiRequest.STATUS_RESOLUTION_DICT[key].description
+    )
+
 
 FOIREQUEST_FILTERS = [
-    (gettext("awaiting-classification"), (lambda x:
-        Q('term', status='awaiting_classification')),
-        'awaiting_classification'),
-    (gettext("successful"), resolution_filter, 'successful'),
-    (gettext("partially-successful"), resolution_filter,
-        'partially_successful'),
-    (gettext("refused"), resolution_filter, 'refused'),
-    (gettext("withdrawn"), resolution_filter, 'user_withdrew'),
-    (gettext("withdrawn-costs"), resolution_filter, 'user_withdrew_costs'),
-    (gettext("awaiting-response"), status_filter, 'awaiting_response'),
-    (gettext("overdue"), (lambda x:
-        Q('range', due_date={
-            'lt': timezone.now()
-        }) & Q('term', status='awaiting_response')),
-        'overdue'),
-    (gettext("asleep"), status_filter, 'asleep'),
-    (gettext("not-held"), resolution_filter, 'not_held'),
-    (gettext("has-fee"), lambda x: Q('range', costs={'gt': 0}), 'has_fee')
+    make_filter(
+        gettext("awaiting-classification"),
+        status_filter,
+        FoiRequest.STATUS.AWAITING_CLASSIFICATION
+    ),
+    make_filter(
+        gettext("successful"),
+        resolution_filter,
+        FoiRequest.RESOLUTION.SUCCESSFUL),
+    make_filter(
+        gettext("partially-successful"),
+        resolution_filter,
+        FoiRequest.RESOLUTION.PARTIALLY_SUCCESSFUL),
+    make_filter(
+        gettext("refused"),
+        resolution_filter,
+        FoiRequest.RESOLUTION.REFUSED),
+    make_filter(
+        gettext("withdrawn"),
+        resolution_filter,
+        FoiRequest.RESOLUTION.USER_WITHDREW),
+    make_filter(
+        gettext("withdrawn-costs"),
+        resolution_filter,
+        FoiRequest.RESOLUTION.USER_WITHDREW_COSTS),
+    make_filter(
+        gettext("awaiting-response"),
+        status_filter,
+        FoiRequest.STATUS.AWAITING_RESPONSE),
+    make_filter(
+        gettext("overdue"),
+        (lambda x:
+            Q('range', due_date={
+                'lt': timezone.now()
+            }) & Q('term', status='awaiting_response')),
+        FoiRequest.FILTER_STATUS.OVERDUE),
+    make_filter(
+        gettext("asleep"),
+        status_filter,
+        FoiRequest.STATUS.ASLEEP),
+    make_filter(
+        gettext("not-held"),
+        resolution_filter,
+        FoiRequest.RESOLUTION.NOT_HELD),
+    FoiRequestFilter(
+        slug=gettext("has-fee"),
+        filter=lambda x: Q('range', costs={'gt': 0}),
+        key=None,
+        label=_('Fee charged'),
+        description=_('This request is connected with a fee.')
+    )
 ]
 
-FOIREQUEST_FILTERS = [
-    (x[0], x[1], x[2],
-        FoiRequest.STATUS_RESOLUTION_DICT[x[2]][0],
-        FoiRequest.STATUS_RESOLUTION_DICT[x[2]][1])
-    for x in FOIREQUEST_FILTERS
-]
-FOIREQUEST_FILTER_CHOICES = [(x[0], x[3]) for x in FOIREQUEST_FILTERS]
-FOIREQUEST_FILTER_DICT = dict([(x[0], x[1:]) for x in FOIREQUEST_FILTERS])
-REVERSE_FILTER_DICT = dict([(x[2], x[:2] + x[3:]) for x in FOIREQUEST_FILTERS])
-FOIREQUEST_FILTER_RENDER = [(x[0], x[3], x[2]) for x in FOIREQUEST_FILTERS]
+FOIREQUEST_FILTER_CHOICES = [(x.slug, x.label) for x in FOIREQUEST_FILTERS]
+FOIREQUEST_FILTER_DICT = dict([(x.slug, x) for x in FOIREQUEST_FILTERS])
+REVERSE_FILTER_DICT = dict([(str(x.key), x) for x in FOIREQUEST_FILTERS])
 
 FOIREQUEST_LIST_FILTER_CHOICES = [
     x for x in FOIREQUEST_FILTER_CHOICES if x[0] not in {gettext("awaiting-classification")}
@@ -93,7 +135,7 @@ class DropDownStatusFilterWidget(DropDownFilterWidget):
         option = super(DropDownStatusFilterWidget, self).create_option(
             name, value, label, selected, index, subindex=subindex, attrs=attrs)
         if value:
-            status = FOIREQUEST_FILTER_DICT[value][1]
+            status = FOIREQUEST_FILTER_DICT[value].key
             option['icon'] = 'status-%s' % status
         return option
 
@@ -230,10 +272,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         return qs
 
     def filter_status(self, qs, name, value):
-        parts = self.FOIREQUEST_FILTER_DICT[value]
-        func = parts[0]
-        status_name = parts[1]
-        return qs.filter(func(status_name))
+        entry = self.FOIREQUEST_FILTER_DICT[value]
+        return qs.filter(entry.filter(entry.key))
 
     def filter_jurisdiction(self, qs, name, value):
         return qs.filter(jurisdiction=value.id)

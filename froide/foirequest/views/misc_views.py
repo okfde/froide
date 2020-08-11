@@ -65,7 +65,7 @@ def dashboard(request):
     if request.GET.get('notsameas'):
         foi_query = foi_query.filter(same_as__isnull=True)
     if request.GET.get('public'):
-        foi_query = foi_query.filter(visibility=FoiRequest.VISIBLE_TO_PUBLIC)
+        foi_query = foi_query.filter(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC)
     for u in foi_query:
         d = u.first_message.date().isoformat()
         d = '-'.join(d.split('-')[:2]) + '-01'

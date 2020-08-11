@@ -13,7 +13,7 @@ def get_problem_reports(request):
     extra_filter = {}
     if not request.user.has_perm('foirequest.see_private'):
         extra_filter.update({
-            'message__request__visibility': FoiRequest.VISIBLE_TO_PUBLIC
+            'message__request__visibility': FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         })
 
     return ProblemReport.objects.filter(

@@ -195,7 +195,7 @@ def set_summary(request, foirequest):
 def mark_not_foi(request, foirequest):
     foirequest.is_foi = False
 
-    foirequest.visibility = FoiRequest.VISIBLE_TO_REQUESTER
+    foirequest.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
     if foirequest.public:
         foirequest.public = False
         FoiRequest.made_private.send(sender=foirequest)

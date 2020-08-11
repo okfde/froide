@@ -209,7 +209,7 @@ class FoiRequestStatusForm(forms.Form):
 
     resolution = forms.ChoiceField(
         label=_('Resolution'),
-        choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION_FIELD_CHOICES,
+        choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION.choices,
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
         help_text=_('How would you describe the current outcome of this request?'))

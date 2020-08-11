@@ -257,7 +257,7 @@ class ApiTest(OAuthAPIMixin, TestCase):
         self.inaccessible = FoiRequest.objects.get(user=self.dev_user)
 
         self.other = factories.FoiRequestFactory.create(
-            visibility=FoiRequest.VISIBLE_TO_PUBLIC,
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
             user=self.dev_user,
             title='always shown'
         )
