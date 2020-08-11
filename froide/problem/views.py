@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.urls import reverse
 
-from froide.foirequest.models import FoiMessage
+from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.foirequest.auth import is_foirequest_moderator
 from froide.publicbody.models import PublicBody
 from froide.helper.utils import render_403
@@ -43,6 +43,9 @@ def moderation_view(request):
 
     problems = get_problem_reports(request)
 
+    unclassified = FoiRequest.objects.get_unclassified_for_moderation()
+    unclassified = unclassified.values('title', 'id')[:100]
+
     publicbodies = None
     if can_moderate_object(PublicBody, request):
         publicbodies = PublicBody._default_manager.filter(
@@ -74,6 +77,9 @@ def moderation_view(request):
             'publicBodyAcceptChanges': reverse('publicbody-accept', kwargs={
                 'pk': 0
             }),
+            'foirequest': reverse('foirequest-shortlink', kwargs={
+                'obj_id': 0
+            }),
         },
         'i18n': {
             'name': _('Name'),
@@ -99,11 +105,14 @@ def moderation_view(request):
             'toMessage': _('to message'),
             'reviewNewPublicBody': _('review new'),
             'reviewChangedPublicBody': _('review changes'),
+            'unclassifiedRequests': _('unclassified requests'),
+            'setStatus': _('set status'),
         }
     }
 
     return render(request, 'problem/moderation.html', {
         'problems': problems,
         'publicbodies_json': json.dumps(list(publicbodies)),
+        'unclassified_json': json.dumps(list(unclassified)),
         'config_json': json.dumps(config)
     })

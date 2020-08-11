@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+from froide.foirequest.models import FoiRequest
 from froide.publicbody.models import PublicBody
 
 from .models import (
@@ -96,6 +97,27 @@ def broadcast_pb_change_proposal(sender, **kwargs):
 def broadcast_pb_change_proposal_accepted(sender, **kwargs):
     broadcast_moderation(
         "publicbody_removed", _get_pb_data(sender), key='publicbody'
+    )
+
+
+def _get_unclassified_data(fr):
+    return {
+        "id": fr.id,
+        "title": fr.title,
+    }
+
+
+@receiver(FoiRequest.status_changed,
+        dispatch_uid="unclassified_status_changed")
+def broadcast_unclassified_changed(sender, **kwargs):
+    prev = kwargs.get('previous_status')
+    if prev != FoiRequest.STATUS.AWAITING_CLASSIFICATION:
+        return
+    if not sender.available_for_moderator_action():
+        return
+    broadcast_moderation(
+        "unclassified_removed", _get_unclassified_data(sender),
+        key='unclassified'
     )
 
 

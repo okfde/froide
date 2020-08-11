@@ -25,6 +25,9 @@ from froide.helper.text_utils import redact_plaintext
 from .project import FoiProject
 
 
+MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=14)
+
+
 class FoiRequestManager(CurrentSiteManager):
 
     def get_send_foi_requests(self):
@@ -38,7 +41,9 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_overdue(self):
         now = timezone.now()
-        return self.get_queryset().filter(status="awaiting_response", due_date__lt=now)
+        return self.get_queryset().filter(
+            status=Status.AWAITING_RESPONSE, due_date__lt=now
+        )
 
     def get_to_be_overdue(self):
         yesterday = timezone.now() - timedelta(days=1)
@@ -50,16 +55,21 @@ class FoiRequestManager(CurrentSiteManager):
             .filter(
                 last_message__lt=six_months_ago
             ).filter(
-                status='awaiting_response'
+                status=Status.AWAITING_RESPONSE
             )
 
     def get_to_be_asleep(self):
-        return self.get_asleep().exclude(status='asleep')
+        return self.get_asleep().exclude(status=Status.ASLEEP)
 
-    def get_unclassified(self):
-        some_days_ago = timezone.now() - timedelta(days=4)
-        return self.get_queryset().filter(status="awaiting_classification",
-                last_message__lt=some_days_ago)
+    def get_unclassified(self, offset=None):
+        if offset is None:
+            offset = timedelta(days=4)
+        ago = timezone.now() - offset
+        return self.get_queryset().filter(status=Status.AWAITING_CLASSIFICATION,
+                last_message__lt=ago)
+
+    def get_unclassified_for_moderation(self):
+        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET)
 
     def get_dashboard_requests(self, user, query=None):
         query_kwargs = {}
@@ -68,8 +78,8 @@ class FoiRequestManager(CurrentSiteManager):
         now = timezone.now()
         return self.get_queryset().filter(user=user, **query_kwargs).annotate(
             is_important=Case(
-                When(Q(status="awaiting_classification") | (
-                    Q(due_date__lt=now) & Q(status='awaiting_response')
+                When(Q(status=Status.AWAITING_CLASSIFICATION) | (
+                    Q(due_date__lt=now) & Q(status=Status.AWAITING_RESPONSE)
                 ), then=Value(True)),
                 default=Value(False),
                 output_field=models.BooleanField()
@@ -128,13 +138,13 @@ class PublishedFoiRequestManager(CurrentSiteManager):
 
     def successful(self):
         return self.by_last_update().filter(
-                    models.Q(resolution="successful") |
-                    models.Q(resolution="partially_successful")).order_by("-last_message")
+                    models.Q(resolution=Resolution.SUCCESSFUL) |
+                    models.Q(resolution=Resolution.PARTIALLY_SUCCESSFUL)).order_by("-last_message")
 
     def unsuccessful(self):
         return self.by_last_update().filter(
-                    models.Q(resolution="refused") |
-                    models.Q(resolution="not_held")).order_by("-last_message")
+                    models.Q(resolution=Resolution.REFUSED) |
+                    models.Q(resolution=Resolution.NOT_HELD)).order_by("-last_message")
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
@@ -542,6 +552,13 @@ class FoiRequest(models.Model):
 
     def awaits_classification(self):
         return self.status == Status.AWAITING_CLASSIFICATION
+
+    def moderate_classification(self):
+        return self.awaits_classification() and self.available_for_moderator_action()
+
+    def available_for_moderator_action(self):
+        ago = timezone.now() - MODERATOR_CLASSIFICATION_OFFSET
+        return self.last_message < ago
 
     def set_awaits_classification(self):
         self.status = Status.AWAITING_CLASSIFICATION

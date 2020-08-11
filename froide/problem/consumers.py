@@ -115,6 +115,12 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
             'publicbody': event['publicbody'],
         })
 
+    async def unclassified_removed(self, event):
+        await self.send_json({
+            'type': 'unclassified_removed',
+            'unclassified': event['unclassified'],
+        })
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             PRESENCE_ROOM,
