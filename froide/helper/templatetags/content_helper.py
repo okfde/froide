@@ -5,6 +5,8 @@ from django.utils.html import avoid_wrapping
 from django.utils.timezone import is_aware, utc
 from django.utils.formats import date_format
 from django.utils.translation import ngettext_lazy, get_language
+from django.utils.http import urlencode
+from django.urls import reverse
 
 from ..content_urls import get_content_url
 
@@ -105,3 +107,8 @@ def relativetime(d):
             result = date_format(d, 'M j. Y')  # Feb 18. 2018
 
     return avoid_wrapping(result)
+
+
+@register.filter
+def make_login_redirect_url(url):
+    return reverse('account-login') + '?' + urlencode({'next': url})

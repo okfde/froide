@@ -71,7 +71,7 @@
   <div class="alpha-message__body alpha-message__wrap">
     
     <!-- TODO: guidance (this is a placeholder now) -->
-    {% if "01"|make_list|random == "1" %}
+    {% if forloop.counter0|divisibleby:"3" %}
       {% include "foirequest/alpha/body/message/guidance.html" %}  
     {% endif %}
 
@@ -125,30 +125,40 @@
     </div>
 
     <!-- comments list -->
-    <div id="comments-container-{{ message.id }}" class="collapse">
+    <div id="comments-container-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
       {% block before_comments %}{% endblock %}
-      {% include "foirequest/alpha/body/message/comments/list.html" %}
-      {% block after_comments %}{% endblock %}
-  
-      <!-- comment reply button and form -->
-      <div class="alpha-message__wrap pb-3">
-        <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
-          {% if object.public %}
-            {% trans "Write a public comment" %}
+      <div class="alpha-message__wrap pb-4">
+        {% if request.user.is_authenticated %}
+
+          {% if not comment_list|length %}
+            <span class="text-gray-600">{% trans "No comments yet." %}</span>
           {% else %}
-            {% trans "Write a comment" %}
+            {% include "foirequest/alpha/body/message/comments/list.html" %}
           {% endif %}
-        </a>
-        <div class="collapse pt-3" id="comment-form-{{ message.id }}">
-          {% if user.is_authenticated %}
-            {% include "comments/foirequest/form.html" %}
-          {% else %}
-            <a href="{% url 'account-login' %}" class="d-print-none">
-              {% blocktrans %}Please login to write a comment.{% endblocktrans %}
+      
+          <!-- comment reply button and form -->
+          <div class="mt-3">
+            <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+              {% if object.public %}
+                {% trans "Write a public comment" %}
+              {% else %}
+                {% trans "Write a comment" %}
+              {% endif %}
             </a>
-          {% endif %}
-        </div>
+            <div class="collapse pt-3" id="comment-form-{{ message.id }}">
+              {% include "comments/foirequest/form.html" %}
+            </div>
+          </div>
+        {% else %}
+          <span class="text-gray-600">
+            {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}
+              Please <a href="{{ link }}" >login</a> to read or write comments.
+            {% endblocktrans %}
+          </span>
+        {% endif %}
       </div>
+
+      {% block after_comments %}{% endblock %}
     </div>
 
   </div>

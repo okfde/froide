@@ -7,7 +7,7 @@
         {% trans "Please check your email inbox for a confirmation email." %}
       </div>
     {% else %}
-      {% include "foirequestfollower/follow_form.html" %}
+      {% include "foirequestfollower/follow_form.html" with count=count %}
     {% endif %}
   {% endif %}
 </div>

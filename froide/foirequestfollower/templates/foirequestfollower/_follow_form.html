@@ -4,22 +4,40 @@
 
 {% if can_follow %}
 
-{% if request.user.is_authenticated %}
-<form method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
-  {% csrf_token %}
-  {% if following and not follow_only %}
-    <button class="btn btn-sm hover-btn-danger" type="submit">
-      <span class="on-hover">
-        <i class="fa fa-remove" aria-hidden="true"></i>
-        {% trans "Unfollow request" %}
-      </span>
-      <span class="on-display">
-        <i class="fa fa-bell" aria-hidden="true"></i>
-        {% trans "You follow this request" %}
-      </span>
-    </button>
-  {% elif not following %}
-    <button class="btn btn-sm btn-outline-primary" type="submit">
+  {% if request.user.is_authenticated %}
+    <form method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
+      {% csrf_token %}
+      {% if following and not follow_only %}
+        <button class="btn btn-sm hover-btn-danger" type="submit">
+          <span class="on-hover">
+            <i class="fa fa-remove" aria-hidden="true"></i>
+            {% trans "Unfollow request" %}
+          </span>
+          <span class="on-display">
+            <i class="fa fa-bell" aria-hidden="true"></i>
+            {% trans "You follow this request" %}
+          </span>
+        </button>
+      {% elif not following %}
+        <button class="btn btn-sm btn-outline-primary" type="submit">
+          <span class="on-hover">
+            <i class="fa fa-bell" aria-hidden="true"></i>
+            {% trans "Follow request?" %}
+          </span>
+          <span class="on-display">
+            <i class="fa fa-bell-o" aria-hidden="true"></i>
+            {% trans "Follow request?" %}
+          </span>
+        </button>
+      {% endif %}
+      
+      {% comment %}
+      {% include "foirequestfollower/follow_count_badge.html" with count=count %}
+      {% endcomment %}
+
+    </form>
+  {% else %}
+    <button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">
       <span class="on-hover">
         <i class="fa fa-bell" aria-hidden="true"></i>
         {% trans "Follow request?" %}
@@ -30,66 +48,49 @@
       </span>
     </button>
   {% endif %}
-  
-  {% comment %}
-    {% include "foirequestfollower/follow_count_badge.html" with count=count %}
-  {% endcomment %}
 
-</form>
-{% else %}
-<button id="followrequest-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#followrequest-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">
-  <span class="on-hover">
-    <i class="fa fa-bell" aria-hidden="true"></i>
-    {% trans "Follow request?" %}
-  </span>
-  <span class="on-display">
-    <i class="fa fa-bell-o" aria-hidden="true"></i>
-    {% trans "Follow request?" %}
-  </span>
-</button>
-{% endif %}
+  {% if verbose %}
+    <div id="followrequest-form-{{ object.pk }}-success" style="display:none">
+      <p class="muted mb-0">
+        <small>
+          {% if following %}
+            <i class="fa fa-remove"></i>
+            {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
+          {% else %}
+            <i class="fa fa-check"></i>
+            {% trans "You will receive notifications!" %}
+          {% endif %}
+        </small>
+      </p>
+    </div>
+    <small class="text-muted">
+      {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+    </small>
+  {% endif %}
 
-{% if verbose %}
-  <div id="followrequest-form-{{ object.pk }}-success" style="display:none">
-    <p class="muted mb-0">
-      <small>
-        {% if following %}
-          <i class="fa fa-remove"></i>
-          {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
-        {% else %}
-          <i class="fa fa-check"></i>
-          {% trans "You will receive notifications!" %}
-        {% endif %}
-      </small>
-    </p>
-  </div>
-  <small class="text-muted">
-    {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
-  </small>
-{% endif %}
-
-{% if not request.user.is_authenticated %}
-<div id="followrequest-form-{{ object.pk }}-modal" class="modal fade" role="dialog" aria-labelledby="followrequest-form-{{ object.pk }}-modal-label" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <form class="ajaxified modal-content" method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" id="followrequest-form-{{ object.pk }}" data-modal="followrequest-form-{{ object.pk }}-modal-trigger">
-      <div class="modal-header">
-        <h5 class="modal-title" id="followrequest-form-{{ object.pk }}-modal-label">{% trans "Get updates for this request via email" %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+  {% if not request.user.is_authenticated %}
+    <!-- modal form -->
+    <div id="followrequest-form-{{ object.pk }}-modal" class="modal fade" role="dialog" aria-labelledby="followrequest-form-{{ object.pk }}-modal-label" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <form class="ajaxified modal-content" method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" id="followrequest-form-{{ object.pk }}" data-modal="followrequest-form-{{ object.pk }}-modal-trigger">
+          <div class="modal-header">
+            <h5 class="modal-title" id="followrequest-form-{{ object.pk }}-modal-label">{% trans "Get updates for this request via email" %}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              {% trans "You will get notifications via email when something new happens with this request. You can unsubscribe anytime." %}
+            </p>
+            {% csrf_token %}
+            {% render_form form %}
+        
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-sm btn-primary">{% trans "Follow request" %}</button>
+          </div>
+        </form>
       </div>
-      <div class="modal-body">
-        <p>
-          {% trans "You will get notifications via email when something new happens with this request. You can unsubscribe anytime." %}
-        </p>
-        {% csrf_token %}
-        {% render_form form %}
-    
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-sm btn-primary">{% trans "Follow request" %}</button>
-      </div>
-    </form>
-  </div>
-</div>
-{% endif %}
+    </div>
+  {% endif %}
 
 {% endif %}
