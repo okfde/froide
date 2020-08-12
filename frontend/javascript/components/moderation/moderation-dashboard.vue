@@ -1,6 +1,22 @@
 <template>
   <div class="row">
-    <div class="col">
+    <div class="col-auto col-lg-2 order-lg-2">
+      <div class="sidebar">
+        <h5>{{ i18n.activeModerators }}</h5>
+        <ul>
+          <li
+            v-for="moderator in namedModerators"
+            :key="moderator.id"
+          >
+            {{ moderator.name }}
+          </li>
+          <li v-if="remainingModerators > 0">
+            + {{ remainingModerators }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col col-lg-10 order-lg-1">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a
@@ -8,7 +24,10 @@
             :class="{'active': tab === 'problemreports'}"
             href="#problemreports"
             @click="tab = 'problemreports'"
-          >{{ i18n.problemReports }}</a>
+          >
+            {{ i18n.problemReports }}
+            <span class="badge badge-secondary">{{ problemreportsCount }}</span>
+          </a>
         </li>
         <li
           v-if="publicbodies"
@@ -21,6 +40,7 @@
             @click="tab = 'publicbodies'"
           >
             {{ i18n.publicBodyChangeProposals }}
+            <span class="badge badge-secondary">{{ publicbodiesCount }}</span>
           </a>
         </li>
         <li
@@ -34,6 +54,7 @@
             @click="tab = 'unclassified'"
           >
             {{ i18n.unclassifiedRequests }}
+            <span class="badge badge-secondary">{{ unclassifiedCount }}</span>
           </a>
         </li>
       </ul>
@@ -55,22 +76,6 @@
         />
       </div>
     </div>
-    <div class="col-auto">
-      <div class="sidebar">
-        <h5>{{ i18n.activeModerators }}</h5>
-        <ul>
-          <li
-            v-for="moderator in namedModerators"
-            :key="moderator.id"
-          >
-            {{ moderator.name }}
-          </li>
-          <li v-if="remainingModerators > 0">
-            + {{ remainingModerators }}
-          </li>
-        </ul>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -82,6 +87,10 @@ import {getData} from '../../lib/api.js'
 import ModerationProblems from './moderation-problems.vue'
 import ModerationPublicbodies from './moderation-publicbodies.vue'
 import ModerationUnclassified from './moderation-unclassified.vue'
+
+const MAX_OBJECTS = 100
+
+const showMaxCount = (l) => `${l}${l >= MAX_OBJECTS ? '+' : ''}`
 
 export default {
   name: 'ModerationDashboard',
@@ -129,6 +138,15 @@ export default {
     remainingModerators () {
       return this.moderators.filter((m) => m.name === null).length
     },
+    problemreportsCount () {
+      return this.reports.length
+    },
+    publicbodiesCount () {
+      return showMaxCount(this.publicbodies.length)
+    },
+    unclassifiedCount () {
+      return showMaxCount(this.unclassified.length)
+    }
   },
   created () {
     this.$root.config = this.config

@@ -1,8 +1,6 @@
-import json
-
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, pgettext
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.urls import reverse
@@ -10,7 +8,7 @@ from django.urls import reverse
 from froide.foirequest.models import FoiRequest, FoiMessage
 from froide.foirequest.auth import is_foirequest_moderator
 from froide.publicbody.models import PublicBody
-from froide.helper.utils import render_403
+from froide.helper.utils import render_403, to_json
 from froide.helper.auth import can_moderate_object
 
 from .api_views import get_problem_reports
@@ -44,13 +42,15 @@ def moderation_view(request):
     problems = get_problem_reports(request)
 
     unclassified = FoiRequest.objects.get_unclassified_for_moderation()
-    unclassified = unclassified.values('title', 'id')[:100]
+    unclassified = unclassified.values('title', 'id', 'last_message')[:100]
 
     publicbodies = None
     if can_moderate_object(PublicBody, request):
         publicbodies = PublicBody._default_manager.filter(
             ~Q(change_proposals={}) | Q(confirmed=False)
-        ).order_by('-updated_at').values('name', 'id', 'confirmed')
+        ).order_by('-updated_at').values(
+            'name', 'id', 'confirmed', 'created_at',
+        )
 
     config = {
         'settings': {
@@ -89,7 +89,7 @@ def moderation_view(request):
             'publicBodyChangeProposals': _('public bodies'),
             'message': _('Message'),
             'description': _('Description'),
-            'action': _('Action'),
+            'action': pgettext('action to take in moderation table', 'Action'),
             'isNotRequester': _('not requester'),
             'claim': _('Claim'),
             'unclaim': _('Cancel'),
@@ -107,12 +107,13 @@ def moderation_view(request):
             'reviewChangedPublicBody': _('review changes'),
             'unclassifiedRequests': _('unclassified requests'),
             'setStatus': _('set status'),
+            'lastMessage': _('last message'),
         }
     }
 
     return render(request, 'problem/moderation.html', {
         'problems': problems,
-        'publicbodies_json': json.dumps(list(publicbodies)),
-        'unclassified_json': json.dumps(list(unclassified)),
-        'config_json': json.dumps(config)
+        'publicbodies_json': to_json(list(publicbodies)),
+        'unclassified_json': to_json(list(unclassified)),
+        'config_json': to_json(config)
     })

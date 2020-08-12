@@ -4,6 +4,7 @@
       <thead>
         <tr>
           <th>{{ i18n.name }}</th>
+          <th>{{ i18n.lastMessage }}</th>
           <th class="action-column">
             {{ i18n.action }}
           </th>
@@ -21,6 +22,9 @@
             >
               {{ req.title }}
             </a>
+          </td>
+          <td>
+            {{ new Date(req.last_message).toLocaleString() }}
           </td>
           <td>
             <a
@@ -73,12 +77,5 @@ export default {
 <style lang="scss" scoped>
   .action-column {
     min-width: 120px;
-  }
-  .moderation-row-enter-active, .moderation-row-leave-active {
-    transition: all 0.5s;
-  }
-  .moderation-row-enter, .moderation-row-leave-to /* .list-leave-active below version 2.1.8 */ {
-    opacity: 0;
-    transform: translateX(-100%);
   }
 </style>
