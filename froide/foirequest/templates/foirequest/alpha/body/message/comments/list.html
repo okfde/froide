@@ -1,54 +1,26 @@
 {% load i18n %}
 
 {% if comment_list %}
-  <div class="alpha-message__wrap pt-3 mb-3 smaller border-top border-bottom border-light">
-  {% for comment in comment_list %}
-
-    <!-- head -->
-    <div class="d-flex justify-content-start align-items-center">
-      <!-- name -->
-      <strong>
-        {% if comment.user == object.user and object.user.private %}
-          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" data-original-title="Name nicht öffentlich">
-            <span class="requester">{% trans "Requester" %}</span>
-          </span>
-        {% else %}
-          {{ comment.user_name }}
-        {% endif %}
-      </strong>
-      
-      <!-- requester-/moderator-badges -->
-      {% if comment.user == object.user and not object.user.private %}
-        <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
-      {% elif comment.user.is_staff %}
-        <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
-      {% endif %}
-      
-      <!-- timestamp -->
-      <small class="text-gray-600 mx-1">•</small>
-      <small class="text-gray-600">{{ comment.submit_date }}</small>
-      
-    </div>
-
-    <!-- body -->
-    {% if comment.is_removed %}
-      <p class="text-muted">{% trans "Comment was removed." %}</p>
-    {% else %}
-      <p class="{% if not forloop.last %}border-bottom border-light pb-2 mb-2{% endif %}">
-        {% if comment.user.is_staff %}
-          {{ comment.comment|urlizetrunc:40|linebreaksbr }}
-        {% else %}
-          {% if comment.comment != comment.comment|truncatewords:20 %}
-            {{ comment.comment|truncatewords:20|urlizetrunc:40|linebreaksbr }}
-            <a class="alpha-message__expand-comment-trigger" href="#">{% trans "Read all" %}</a>
-            <span style="display: none;">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
-          {% else %}
-            {{ comment.comment|urlizetrunc:40|linebreaksbr }}
-          {% endif %}
-        {% endif %}
-      </p>
-    {% endif %}
+  <div class="pt-3 mb-3 smaller border-top border-bottom border-light">
     
-  {% endfor %}
+    {% for comment in comment_list|slice:":3" %}
+      {% include "foirequest/alpha/body/message/comments/comment.html" %}
+    {% endfor %}
+
+    {% if comment_list|length > 3 %}
+      <div style="display: none;">
+        {% for comment in comment_list|slice:"3:" %}
+          {% include "foirequest/alpha/body/message/comments/comment.html" %}
+        {% endfor %}
+      </div>
+      <div class="mb-3">
+        <a href="#" class="font-weight-bold alpha-comment__more-comments-trigger">
+          {% blocktrans with count=comment_list|length %}
+            Show {{ count }} other comments
+          {% endblocktrans %}
+        </a>
+      </div>
+    {% endif %}
+
   </div>
 {% endif %}
