@@ -60,7 +60,8 @@ def set_public_body(request, foirequest):
 
     throttle_message = check_throttle(request.user, FoiRequest)
     if throttle_message:
-        messages.add_message(request, messages.ERROR, '\n'.join(throttle_message))
+        message = '\n'.join(throttle_message.messages)
+        messages.add_message(request, messages.ERROR, message)
         return render_400(request)
 
     form.save(user=request.user)
