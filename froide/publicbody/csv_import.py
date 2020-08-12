@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.contrib.gis.geos import Point
 
 from taggit.utils import parse_tags
 
@@ -106,7 +107,12 @@ class CSVImporter(object):
             if n in row:
                 row[n] = row.get(n, '').strip()
 
+        if 'lat' in row and 'lng' in row:
+            row['geo'] = Point(float(row.pop('lng')), float(row.pop('lat')))
+
         try:
+            if 'source_reference' in row:
+                pb = PublicBody.objects.get(source_reference=row['source_reference'])
             if 'id' in row and row['id']:
                 pb = PublicBody.objects.get(id=row['id'])
             else:
