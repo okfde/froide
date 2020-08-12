@@ -1,7 +1,7 @@
 {% load i18n %}
 
 {% if comment_list %}
-  <div class="pt-3 mb-3 smaller border-top border-bottom border-light">
+  <div class="pt-3 mb-3 smaller border-top border-light">
     
     {% for comment in comment_list|slice:":3" %}
       {% include "foirequest/alpha/body/message/comments/comment.html" %}
@@ -13,7 +13,7 @@
           {% include "foirequest/alpha/body/message/comments/comment.html" %}
         {% endfor %}
       </div>
-      <div class="mb-3">
+      <div class="mt-3 mb-3 pb-3 border-bottom border-light">
         <a href="#" class="font-weight-bold alpha-comment__more-comments-trigger">
           {% blocktrans with count=comment_list|length %}
             Show {{ count }} other comments

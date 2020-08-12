@@ -32,9 +32,9 @@
 
   <!-- body -->
   {% if comment.is_removed %}
-    <p class="text-muted">{% trans "Comment was removed." %}</p>
+    <div class="text-muted">{% trans "Comment was removed." %}</p>
   {% else %}
-    <p class="{% if not forloop.last %}border-bottom border-light pb-2 mb-2{% endif %}">
+    <div>
       {% if comment.user.is_staff %}
         {{ comment.comment|urlizetrunc:40|linebreaksbr }}
       {% else %}
@@ -46,6 +46,6 @@
           {{ comment.comment|urlizetrunc:40|linebreaksbr }}
         {% endif %}
       {% endif %}
-    </p>
+    </div>
   {% endif %}
 </div>
