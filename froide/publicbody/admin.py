@@ -21,7 +21,8 @@ from treebeard.forms import movenodeform_factory
 
 from froide.helper.admin_utils import (
     make_batch_tag_action, make_emptyfilter,
-    make_nullfilter, make_choose_object_action
+    make_nullfilter, make_choose_object_action,
+    TreeRelatedFieldListFilter
 )
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.search.utils import trigger_search_index_update_qs
@@ -144,7 +145,9 @@ class PublicBodyBaseAdminMixin:
             'change_proposals', _('Has change proposals'),
             empty_value=dict
         ),
-        'jurisdiction', 'classification', 'categories',
+        'jurisdiction',
+        ('classification', TreeRelatedFieldListFilter),
+        'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
         make_nullfilter('regions', _('Has regions')),
         make_emptyfilter('email', 'E-Mail'),
