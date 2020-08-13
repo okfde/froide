@@ -31,9 +31,7 @@
         </button>
       {% endif %}
       
-      {% comment %}
-      {% include "foirequestfollower/follow_count_badge.html" with count=count %}
-      {% endcomment %}
+      {% include "foirequestfollower/follow_count_badge.html" with count=object.follow_count %}
 
     </form>
   {% else %}
