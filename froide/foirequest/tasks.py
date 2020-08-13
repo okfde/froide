@@ -36,8 +36,8 @@ def process_mail(*args, **kwargs):
 
 @celery_app.task(name='froide.foirequest.tasks.fetch_mail', expires=60)
 def fetch_mail():
-    for rfc_data in _fetch_mail():
-        process_mail.delay(rfc_data)
+    for mail_uid, rfc_data in _fetch_mail():
+        process_mail.delay(rfc_data, mail_uid=mail_uid)
 
 
 @celery_app.task

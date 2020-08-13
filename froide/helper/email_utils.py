@@ -7,11 +7,13 @@ Licensed under MIT
 """
 
 from collections import namedtuple
+import contextlib
 from io import BytesIO
 import base64
 import re
 from email.parser import BytesParser as Parser
 import imaplib
+from typing import Iterator, Tuple, Optional, Union
 
 from django.conf import settings
 from django.utils import timezone
@@ -54,23 +56,46 @@ MAILBOX_FULL = DsnStatus(5, 2, 2)
 
 # Restrict to max 3 consecutive newlines in email body
 MULTI_NL_RE = re.compile('((?:\r?\n){,3})(?:\r?\n)*')
+UID_RE = re.compile(r'UID\s+(?P<uid>\d+)')
 
 
-def get_unread_mails(host, port, user, password, ssl=True):
+def get_imap_message_uid(flag_bytes):
+    match = UID_RE.search(flag_bytes.decode())
+    if match is None:
+        return None
+    return match.group('uid')
+
+
+@contextlib.contextmanager
+def get_mail_client(host, port, user, password, ssl=True):
     klass = imaplib.IMAP4
     if ssl:
         klass = imaplib.IMAP4_SSL
-    mail = klass(host, port)
-    mail.login(user, password)
-    try:
-        status, count = mail.select('Inbox')
-        typ, data = mail.search(None, 'UNSEEN')
-        for num in data[0].split():
-            status, data = mail.fetch(num, '(RFC822)')
-            yield data[0][1]
-    finally:
-        mail.close()
-        mail.logout()
+    con = klass(host, port)
+    con.login(user, password)
+
+    yield con
+
+    con.close()
+    con.logout()
+
+
+def get_unread_mails(
+        mailbox: Union[imaplib.IMAP4_SSL, imaplib.IMAP4],
+        flag=False) -> Iterator[Tuple[Optional[str], bytes]]:
+    status, count = mailbox.select('Inbox')
+    typ, data = mailbox.search(None, 'UNSEEN')
+    for num in data[0].split():
+        status, data = mailbox.fetch(num, '(BODY[] UID)')
+        uid = get_imap_message_uid(data[0][0])
+        if flag:
+            mailbox.store(num, '+FLAGS', '\\Flagged')
+        yield uid, data[0][1]
+
+
+def unflag_mail(mailbox, uid):
+    status, count = mailbox.select('Inbox')
+    mailbox.store('STORE', uid, '-FLAGS', '\\Flagged')
 
 
 def make_address(email, name=None):

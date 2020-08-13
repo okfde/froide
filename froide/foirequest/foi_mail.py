@@ -1,18 +1,21 @@
-from contextlib import closing
+from contextlib import closing, contextmanager
 import base64
 import json
 from io import BytesIO
 import zipfile
 from email.utils import parseaddr
 import random
+from typing import Iterator, Tuple, Optional
 
 from django.conf import settings
 from django.core.mail import get_connection, EmailMessage, mail_managers
 from django.urls import reverse
 from django.utils.translation import override, gettext_lazy as _
 
-from froide.helper.email_utils import (EmailParser, get_unread_mails,
-                                       make_address)
+from froide.helper.email_utils import (
+    EmailParser, get_mail_client, get_unread_mails, 
+    make_address, unflag_mail
+)
 from froide.helper.name_generator import get_name_from_number
 
 from .utils import get_publicbody_for_email, get_foi_mail_domains
@@ -71,14 +74,22 @@ def send_foi_mail(subject, message, from_email, recipient_list,
     return email.send()
 
 
-def _process_mail(mail_bytes, mail_type=None, manual=False):
+def _process_mail(mail_bytes, mail_uid=None, mail_type=None, manual=False):
     parser = EmailParser()
+    email = None
     if mail_type is None:
         with closing(BytesIO(mail_bytes)) as stream:
             email = parser.parse(stream)
     elif mail_type == 'postmark':
         email = parser.parse_postmark(json.loads(mail_bytes.decode('utf-8')))
-    return _deliver_mail(email, mail_bytes=mail_bytes, manual=manual)
+    assert email is not None
+
+    _deliver_mail(email, mail_bytes=mail_bytes, manual=manual)
+
+    # Unflag mail after delivery is complete
+    if mail_uid is not None:
+        with get_foi_mail_client() as mailbox:
+            unflag_mail(mailbox, mail_uid)
 
 
 def create_deferred(secret_mail, mail_bytes, spam=False,
@@ -260,20 +271,26 @@ def check_delivery_conditions(recipient_mail, sender_email,
     return foirequest, pb
 
 
-def _fetch_mail():
-    for rfc_data in get_unread_mails(
+@contextmanager
+def get_foi_mail_client():
+    with get_mail_client(
             settings.FOI_EMAIL_HOST_IMAP,
             settings.FOI_EMAIL_PORT_IMAP,
             settings.FOI_EMAIL_ACCOUNT_NAME,
             settings.FOI_EMAIL_ACCOUNT_PASSWORD,
-            ssl=settings.FOI_EMAIL_USE_SSL):
-        yield rfc_data
+            ssl=settings.FOI_EMAIL_USE_SSL) as mailbox:
+        yield mailbox
+
+
+def _fetch_mail(flag_in_process=True) -> Iterator[Tuple[Optional[str], bytes]]:
+    with get_foi_mail_client() as mailbox:
+        yield from get_unread_mails(mailbox, flag=flag_in_process)
 
 
 def fetch_and_process():
     count = 0
-    for rfc_data in _fetch_mail():
-        _process_mail(rfc_data)
+    for mail_uid, rfc_data in _fetch_mail(flag_in_process=False):
+        _process_mail(rfc_data, mail_uid=None)
         count += 1
     return count
 
