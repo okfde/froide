@@ -25,3 +25,4 @@ __pycache__/
 froide/static/js
 froide/static/css
 froide/static/fonts
+.vscode/settings.json
