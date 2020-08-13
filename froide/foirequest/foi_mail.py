@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.translation import override, gettext_lazy as _
 
 from froide.helper.email_utils import (
-    EmailParser, get_mail_client, get_unread_mails, 
+    EmailParser, get_mail_client, get_unread_mails,
     make_address, unflag_mail
 )
 from froide.helper.name_generator import get_name_from_number

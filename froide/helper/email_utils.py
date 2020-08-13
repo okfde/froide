@@ -95,7 +95,7 @@ def get_unread_mails(
 
 def unflag_mail(mailbox, uid):
     status, count = mailbox.select('Inbox')
-    mailbox.store('STORE', uid, '-FLAGS', '\\Flagged')
+    mailbox.uid('STORE', uid, '-FLAGS', '\\Flagged')
 
 
 def make_address(email, name=None):
