@@ -14,7 +14,7 @@ from django.template.defaultfilters import slugify
 from froide.helper.utils import render_400
 from froide.helper.storage import add_number_to_filename
 
-from ..models import FoiMessage, FoiAttachment
+from ..models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 from ..models.attachment import (
     POSTAL_CONTENT_TYPES, IMAGE_FILETYPES, PDF_FILETYPES
 )
@@ -22,8 +22,8 @@ from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
 from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
     get_escalation_message_form, get_postal_attachment_form,
-    get_message_sender_form, TransferUploadForm, EditMessageForm,
-    RedactMessageForm
+    get_message_sender_form, get_message_recipient_form,
+    TransferUploadForm, EditMessageForm, RedactMessageForm
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
@@ -51,7 +51,7 @@ def send_message(request, foirequest):
             form.add_error(None, throttle_message)
 
     if form.is_valid():
-        mes = form.save()
+        mes = form.save(user=request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your message has been sent.'))
         return redirect(mes)
@@ -79,7 +79,7 @@ def escalation_message(request, foirequest):
             form.add_error(None, throttle_message)
 
     if form.is_valid():
-        message = form.save()
+        message = form.save(user=request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Your Escalation Message has been sent.'))
         return redirect(message)
@@ -98,6 +98,7 @@ POSTAL_REPLY_ERROR = _('There were errors with your form submission!')
 def add_postal_reply(request, foirequest, form_func=get_postal_reply_form,
             success_message=POSTAL_REPLY_SUCCESS,
             error_message=POSTAL_REPLY_ERROR,
+            signal=FoiRequest.message_received,
             form_key='postal_reply_form'):
 
     if not foirequest.public_body:
@@ -107,6 +108,8 @@ def add_postal_reply(request, foirequest, form_func=get_postal_reply_form,
 
     if form.is_valid():
         message = form.save()
+
+        signal.send(sender=foirequest, message=message, user=request.user)
         messages.add_message(request, messages.SUCCESS, success_message)
         url = reverse('foirequest-upload_attachments',
                 kwargs={'slug': foirequest.slug, 'message_id': message.id})
@@ -125,6 +128,7 @@ def add_postal_message(request, slug):
         form_func=get_postal_message_form,
         success_message=_('A sent letter was successfully added!'),
         error_message=_('There were errors with your form submission!'),
+        signal=FoiRequest.message_sent,
         form_key='postal_message_form'
     )
 
@@ -162,6 +166,14 @@ def add_postal_reply_attachment(request, foirequest, message_id):
     if form.is_valid():
         result = form.save(message)
         added, updated = result
+
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
+            foirequest,
+            message=message,
+            user=request.user,
+            **{'added': str(added), 'updated': str(updated)}
+        )
 
         if request.is_ajax():
             return get_attachment_update_response(request, added, updated)
@@ -252,6 +264,13 @@ def add_tus_attachment(request, foirequest, message, data):
     if form.is_valid():
         result = form.save(message)
         added, updated = result
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
+            foirequest,
+            message=message,
+            user=request.user,
+            **{'added': str(added), 'updated': str(updated)}
+        )
         return get_attachment_update_response(request, added, updated)
 
     return JsonResponse({'error': True, 'message': str(form.errors)})
@@ -511,6 +530,35 @@ def set_message_sender(request, foirequest, message_id):
     form = get_message_sender_form(request.POST, foimessage=message)
     if form.is_valid():
         form.save()
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.SENDER_CHANGED,
+            foirequest,
+            message=message,
+            user=request.user,
+            public_body=message.sender_public_body
+        )
+        return redirect(message)
+    messages.add_message(request, messages.ERROR,
+            form._errors['sender'][0])
+    return render_400(request)
+
+
+@require_POST
+@allow_write_foirequest
+def set_message_recipient(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    if message.is_response:
+        return render_400(request)
+    form = get_message_recipient_form(request.POST, foimessage=message)
+    if form.is_valid():
+        form.save()
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.RECIPIENT_CHANGED,
+            foirequest,
+            message=message,
+            user=request.user,
+            public_body=message.recipient_public_body
+        )
         return redirect(message)
     messages.add_message(request, messages.ERROR,
             form._errors['sender'][0])
@@ -523,6 +571,12 @@ def approve_message(request, foirequest, message_id):
     mes = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
     mes.content_hidden = False
     mes.save()
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.MESSAGE_APPROVED,
+        foirequest,
+        message=mes,
+        user=request.user,
+    )
     messages.add_message(request, messages.SUCCESS,
             _('Content published.'))
     return redirect(mes.get_absolute_url())
@@ -537,6 +591,13 @@ def edit_message(request, foirequest, message_id):
     form = EditMessageForm(data=request.POST, message=message)
     if form.is_valid():
         form.save()
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.MESSAGE_EDITED,
+            foirequest,
+            message=message,
+            user=request.user,
+            **form.cleaned_data
+        )
     return redirect(message.get_absolute_url())
 
 
@@ -547,6 +608,13 @@ def redact_message(request, foirequest, message_id):
     form = RedactMessageForm(request.POST)
     if form.is_valid():
         form.save(message)
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.MESSAGE_REDACTED,
+            foirequest,
+            message=message,
+            user=request.user,
+            **form.cleaned_data
+        )
     return redirect(message.get_absolute_url())
 
 
@@ -576,6 +644,13 @@ def resend_message(request, foirequest, message_id):
 
     service = ResendBouncedMessageService(message)
     sent_message = service.process()
+
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.MESSAGE_RESENT,
+        foirequest,
+        message=sent_message,
+        user=request.user,
+    )
 
     if request.is_ajax():
         return HttpResponse(sent_message.get_absolute_url())

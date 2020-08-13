@@ -1,0 +1,162 @@
+{% load i18n %}
+{% load foirequest_tags %}
+
+<div class="alpha-message__meta-container alpha-message__wrap">
+
+  {% block before_meta %}{% endblock %}  
+  <dl class="message-meta mb-0">
+    <dt>
+      {% blocktrans %}From{% endblocktrans %}
+    </dt>
+    <dd>
+      {% if object|can_write_foirequest:request %}
+        {% if message.is_response %}
+          <span title="{{ message.sender_email }}">
+            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+              {{ message.user_real_sender }}
+            </span>
+            – {{ message.sender_public_body.name }}
+          </span>
+          {% if message.kind != 'email' %}
+            <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
+          {% endif %}
+          <span class="d-print-none">
+            (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+              {% trans "change" %}
+            </a>)
+          </span>
+          <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
+            {% with message_pb_form=message.get_public_body_sender_form %}
+              <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                {% csrf_token %}
+                <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
+                {{ message_pb_form.sender }}
+                <p class="text-right">
+                  <button type="submit" class="btn btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                </p>
+              </form>
+            {% endwith %}
+          </div>
+        {% else %}
+          {% if object.user.private %}
+            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+          {% else %}
+            <span>
+          {% endif %}
+            {{ message.user_real_sender }}
+          </span>
+          {% if message.kind != 'email' %}
+            <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
+          {% endif %}
+        {% endif %}
+        </span>
+      {% else %}
+        {% if message.is_response %}
+          {% if froide.public_body_officials_public %}
+            {% if message.sender != message.sender_public_body.name %}
+              {{ message.sender }}
+            {% endif %}
+            {% if message.sender_public_body %}
+            – <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+            {% endif %}
+          {% else %}
+            {% if message.sender_public_body %}
+              <a href="{{ message.sender_public_body.get_absolute_url }}">{{ message.sender_public_body.name }}</a>
+            {% else %}
+              {% trans "Public Body" %}
+            {% endif %}
+          {% endif %}
+        {% else %}
+          {{ message.sender }}
+        {% endif %}
+        {% if message.kind != 'email' %}
+          <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
+        {% endif %}
+      {% endif %}
+    </dd>
+    <dt>
+      {% blocktrans %}Subject{% endblocktrans %}
+    </dt>
+    <dd>
+      {% if message.content_hidden %}
+        {% if object|can_write_foirequest:request %}
+          {{ message.subject }}
+        {% endif %}
+        <span class="badge badge-light">{% trans "Subject hidden" %}</span>
+      {% else %}
+        {% redact_subject message request %}
+      {% endif %}
+    </dd>
+    <dt>
+      {% blocktrans %}Date{% endblocktrans %}
+    </dt>
+    <dd>
+      <a href="#{{ message.get_html_id }}">
+        {% if message.is_postal %}
+          {{ message.timestamp|date:"DATE_FORMAT" }}
+        {% else %}
+          {{ message.timestamp|date:"DATETIME_FORMAT" }}
+        {% endif %}
+      </a>
+    </dd>
+  {% if not message.is_response %}
+    <dt>
+      {% blocktrans %}To{% endblocktrans %}
+    </dt>
+    <dd>
+      {{ message.get_recipient }}
+    </dd>
+  {% endif %}
+  {% get_delivery_status message as delivery_status %}
+  {% if message.status or delivery_status %}
+    <dt>
+      {% blocktrans %}Status{% endblocktrans %}
+    </dt>
+    <dd>
+      {% if message.status %}
+        {{ message.readable_status }}
+      {% endif %}
+      {% if not message.sent %}
+        <small class="text-light">{% trans "Message was not sent" %}</small>
+      {% endif %}
+      {% if delivery_status %}
+        {% if message.status %}
+          &mdash;
+        {% endif %}
+        {% if object|can_write_foirequest:request %}
+          <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" class="text-unlink">
+        {% endif %}
+        {% if delivery_status.is_sent %}
+          <i class="fa fa-check-circle-o"></i>
+          {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
+        {% elif delivery_status.is_pending %}
+          <i class="fa fa-clock-o"></i>
+          {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
+        {% elif delivery_status.is_failed %}
+          <i class="fa fa-ban"></i>
+          {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
+        {% else %}
+          <i class="fa fa-circle-o"></i>
+          {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
+        {% endif %}
+        {% if object|can_write_foirequest:request %}
+          </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
+        {% endif %}
+      {% endif %}
+    </dd>
+  {% endif %}
+  {% if user.is_staff %}
+    <dt class="d-print-none">
+      {% blocktrans %}Admin{% endblocktrans %}
+    </dt>
+    <dd class="d-print-none">
+      <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
+      {% for tag_name in message.tag_set %}
+        <span class="badge badge-light">{{ tag_name }}</span>
+      {% endfor %}
+    </dd>
+  {% endif %}
+  </dl>
+  
+  {% block after_meta %}{% endblock %}
+</div>

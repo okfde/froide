@@ -11,7 +11,7 @@ from .message import (
     get_postal_reply_form, get_postal_message_form,
     get_postal_attachment_form, get_send_message_form,
     get_escalation_message_form,
-    get_message_sender_form,
+    get_message_sender_form, get_message_recipient_form,
     TransferUploadForm, RedactMessageForm,
     PublicBodyUploader
 )
@@ -24,7 +24,7 @@ __all__ = [
     SendMessageForm, EditMessageForm, MessagePublicBodySenderForm,
     get_postal_reply_form, get_postal_message_form,
     get_postal_attachment_form, get_send_message_form,
-    get_message_sender_form,
+    get_message_sender_form, get_message_recipient_form,
     get_escalation_message_form,
     TransferUploadForm, RedactMessageForm,
     PublicBodyUploader

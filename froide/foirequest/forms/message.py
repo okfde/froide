@@ -174,6 +174,34 @@ class MessagePublicBodySenderForm(forms.Form):
         self.message.save()
 
 
+def get_message_recipient_form(*args, **kwargs):
+    foimessage = kwargs.pop('foimessage')
+    return MessagePublicBodyRecipientForm(*args, message=foimessage)
+
+
+class MessagePublicBodyRecipientForm(forms.Form):
+    recipient = forms.ModelChoiceField(
+        label=_("Recipient Public Body"),
+        queryset=PublicBody.objects.all(),
+        widget=PublicBodySelect
+    )
+
+    def __init__(self, *args, **kwargs):
+        message = kwargs.pop('message', None)
+        if 'initial' not in kwargs:
+            if message.recipient_public_body:
+                kwargs['initial'] = {'recipient': message.recipient_public_body}
+        if 'prefix' not in kwargs:
+            kwargs['prefix'] = "message-recipient-%d" % message.id
+        self.message = message
+        super().__init__(*args, **kwargs)
+        self.fields['recipient'].widget.set_initial_object(message.recipient_public_body)
+
+    def save(self):
+        self.message.recipient_public_body = self.cleaned_data['recipient']
+        self.message.save()
+
+
 class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
     to = forms.ChoiceField(
         label=_("To"),
@@ -314,7 +342,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         return message
 
-    def save(self):
+    def save(self, user=None):
         message = self.make_message()
         message.save()
 
@@ -334,6 +362,11 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         message.save()
 
         message.send(attachments=attachments)
+        self.foirequest.message_sent.send(
+            sender=self.foirequest, message=message,
+            user=user
+        )
+
         return message
 
 
@@ -423,7 +456,7 @@ class EscalationMessageForm(forms.Form):
             plaintext_redacted=plaintext_redacted
         )
 
-    def save(self):
+    def save(self, user=None):
         file_generator = generate_foirequest_files(
             self.foirequest
         )
@@ -435,7 +468,15 @@ class EscalationMessageForm(forms.Form):
         )
         message.save()
         message.send(attachments=attachments)
-        self.foirequest.escalated.send(sender=self.foirequest)
+
+        self.foirequest.message_sent.send(
+            sender=self.foirequest, message=message,
+            user=user
+        )
+        self.foirequest.escalated.send(
+            sender=self.foirequest, message=message,
+            user=user
+        )
         return message
 
 
@@ -583,11 +624,6 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
 
         if self.cleaned_data.get('files'):
             self.save_attachments(self.files.getlist('%s-files' % self.prefix), message)
-
-        if message.is_response:
-            foirequest.message_received.send(sender=foirequest, message=message)
-        else:
-            foirequest.message_sent.send(sender=foirequest, message=message)
 
         return message
 

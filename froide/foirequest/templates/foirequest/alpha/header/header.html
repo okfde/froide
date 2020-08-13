@@ -1,0 +1,124 @@
+{% load i18n %}
+{% load foirequest_tags %}
+{% block extra_head %}
+  {% if object|can_write_foirequest:request %}
+  {% with object.get_set_tags_form as set_tags_form %}
+    {{ set_tags_form.media.css }}
+  {% endwith %}
+  {% endif %}
+{% endblock extra_head %}
+
+<div class="container">
+  <div class="row">
+    <!-- left column (title, description, tags etc.) -->
+    <div class="col-lg-8">
+  
+      <div class="d-flex flex-column mb-4">
+  
+        <!-- title -->
+        <h2 class="request-title order-1 order-lg-0">{{ object.title }}</h2>
+    
+        <!-- recipient -->
+        <div class="mt-4 mt-lg-3 text-gray-500 order-0 order-lg-1">
+          {% blocktrans %}Request to:{% endblocktrans %}
+    
+          {% if object.public_body %}
+            <a class="text-gray-500 font-weight-bold" href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+          {% else %}
+            {% blocktrans %}Not yet known{% endblocktrans %}
+          {% endif %}
+        </div>
+    
+        <!-- summary / description -->
+        <div class="request-descr mt-3 order-3 order-lg-2">
+          <div class="mb-1">
+            {{ object.get_description|urlizetrunc:40|linebreaks }}
+          </div>      
+          <!-- edit button -->
+          <a href="#">
+            <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}
+          </a>
+        </div>
+    
+        <!-- tags list -->
+        <div class="mt-3 smaller order-2 order-lg-3">
+          <ul class="mb-0 list-unstyled d-flex flex-wrap">
+            {% with object.tags.all as tags %}
+              {% if tags %}
+                {% for tag in tags %}
+                <li class="mr-2">
+                  <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
+                    <i class="fa fa-tags" aria-hidden="true"></i>
+                    <medium>{{ tag.name }}</medium>
+                  </a>
+                </li>
+                {% endfor %}
+              {% endif %}
+              
+              <!-- tags edit link -->
+              {% if object|can_write_foirequest:request %}
+              <li>
+                <a href="#">
+                  <i class="fa fa-pencil" aria-hidden="true"></i>
+                  {% if tags %}
+                    {% trans "Edit" %}
+                  {% else %}
+                    {% trans "Add Tags" %}
+                  {% endif %}
+                </a>
+              </li>
+              {% endif %}
+            {% endwith %}
+          </ul>
+        </div>
+      </div>
+  
+    </div>
+  
+    <!-- right column (info box) -->
+    <div class="col-lg-4">
+      {% include "foirequest/alpha/header/info-box.html" %}
+    </div>
+  </div>
+</div>
+
+<!-- tabs -->
+<div class="container px-0 px-sm-3">
+  <div class="mt-4" style="position: relative; bottom: -2px;">
+    <ul class="nav alpha-tabs" role="tablist">
+      <li class="alpha-tabs__tab">
+        <a
+          href="#correspondence"
+          id="correspondence-tab"
+          data-toggle="tab"
+          class="alpha-tabs__tab-link active"
+          data-toggle="tab"
+          aria-controls="correspondence"
+          aria-selected="true"
+          role="tab"
+        >
+          <span>{% trans "Correspondence" %}</span>
+          <span class="alpha-tabs__counter">{{ object.messages|length }}</span>
+        </a>
+      </li>
+      <li class="alpha-tabs__tab">
+        <a
+          href="#actions"
+          id="actions-tab"
+          data-toggle="tab"
+          class="alpha-tabs__tab-link"
+          data-toggle="tab"
+          aria-controls="actions"
+          aria-selected="false"
+          role="tab"
+        >
+          <span>Testtab</span>
+          <span class="alpha-tabs__counter alpha-tabs__counter--highlight">{{ object.messages|length }}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% block scripts %}
+{% endblock scripts %}

@@ -12,6 +12,7 @@ from django.conf import settings
 from django.contrib.messages.storage import default_storage
 from django.utils.html import escape
 from django.utils import timezone
+from django.test.utils import override_settings
 
 from oauth2_provider.models import get_access_token_model, get_application_model
 
@@ -27,6 +28,9 @@ from .models import AccountBlocklist
 User = get_user_model()
 Application = get_application_model()
 AccessToken = get_access_token_model()
+
+SPAM_ENABLED_CONFIG = dict(settings.FROIDE_CONFIG)
+SPAM_ENABLED_CONFIG['spam_protection'] = True
 
 
 class AccountTest(TestCase):
@@ -180,6 +184,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse('account-signup'), post)
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(FROIDE_CONFIG=SPAM_ENABLED_CONFIG)
     def test_signup_too_fast(self):
         post = {
             "first_name": "Horst",

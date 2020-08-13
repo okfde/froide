@@ -11,6 +11,7 @@ from django.utils.text import Truncator
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
+from django.dispatch import Signal
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
@@ -40,13 +41,12 @@ def get_applicable_law(pb=None, law_type=None):
             if law_type is not None:
                 qs = qs.filter(law_type__contains=law_type)
             # Prefer meta laws
-            qs = qs.order_by('-meta')
+            qs = qs.order_by('-meta', '-priority')
             if qs:
-                break
-        try:
-            return qs[0]
-        except IndexError:
-            pass
+                try:
+                    return qs[0]
+                except IndexError:
+                    pass
 
     try:
         return FoiLaw.objects.get(id=DEFAULT_LAW)
@@ -337,6 +337,7 @@ class PublicBody(models.Model):
     extra_data = JSONField(default=dict, blank=True)
 
     change_proposals = JSONField(default=dict, blank=True)
+    change_history = JSONField(default=list, blank=True)
 
     file_index = models.CharField(_("file index"), max_length=1024, blank=True)
     org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
@@ -379,10 +380,19 @@ class PublicBody(models.Model):
     objects = PublicBodyManager()
     published = objects
 
+    proposal_added = Signal(providing_args=['user'])
+    proposal_rejected = Signal(providing_args=['user'])
+    proposal_accepted = Signal(providing_args=['user'])
+    change_proposal_added = Signal(providing_args=['user'])
+    change_proposal_accepted = Signal(providing_args=['user'])
+
     class Meta:
         ordering = ('name',)
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
+        permissions = (
+            ("moderate", _("Can moderate public bodies")),
+        )
 
     serializable_fields = ('id', 'name', 'slug', 'request_note_html',
             'description', 'url', 'email', 'contact',
@@ -424,6 +434,10 @@ class PublicBody(models.Model):
     def default_law(self):
         # FIXME: Materialize this?
         return self.get_applicable_law()
+
+    @property
+    def change_proposal_count(self):
+        return len(self.change_proposals)
 
     def get_applicable_law(self, law_type=None):
         return get_applicable_law(pb=self, law_type=law_type)
@@ -497,12 +511,22 @@ class PublicBody(models.Model):
 
         return export_csv(queryset, fields)
 
+    def confirm(self, user=None):
+        if self.confirmed:
+            return None
+        self.confirmed = True
+        self.save()
+        self.proposal_accepted.send(sender=self, user=user)
+        counter = 0
+        for request in self.foirequest_set.all():
+            if request.confirmed_public_body():
+                counter += 1
+        return counter
+
 
 class ProposedPublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
-        return (super(ProposedPublicBodyManager, self).get_queryset()
-            .filter(confirmed=False)
-        )
+        return super().get_queryset().filter(confirmed=False)
 
 
 class ProposedPublicBody(PublicBody):
@@ -513,14 +537,3 @@ class ProposedPublicBody(PublicBody):
         ordering = ('-created_at',)
         verbose_name = _('Proposed Public Body')
         verbose_name_plural = _('Proposed Public Bodies')
-
-    def confirm(self):
-        if self.confirmed:
-            return None
-        self.confirmed = True
-        self.save()
-        counter = 0
-        for request in self.foirequest_set.all():
-            if request.confirmed_public_body():
-                counter += 1
-        return counter

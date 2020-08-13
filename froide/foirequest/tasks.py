@@ -36,8 +36,8 @@ def process_mail(*args, **kwargs):
 
 @celery_app.task(name='froide.foirequest.tasks.fetch_mail', expires=60)
 def fetch_mail():
-    for rfc_data in _fetch_mail():
-        process_mail.delay(rfc_data)
+    for mail_uid, rfc_data in _fetch_mail():
+        process_mail.delay(rfc_data, mail_uid=mail_uid)
 
 
 @celery_app.task
@@ -320,7 +320,7 @@ def redact_attachment_task(att_id, target_id, instructions):
     target.can_approve = True
     target.pending = False
     target.approve_and_save()
-    FoiAttachment.attachment_redacted.send(sender=target)
+    FoiAttachment.attachment_published.send(sender=target, user=None)
 
 
 @celery_app.task(name='froide.foirequest.tasks.move_upload_to_attachment')

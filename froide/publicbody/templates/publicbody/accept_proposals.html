@@ -1,0 +1,59 @@
+{% extends 'publicbody/base.html' %}
+
+{% load i18n %}
+{% load static %}
+{% load form_helper %}
+
+{% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
+
+{% block metadescription %}{% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a {{ classification }} in {{ juris }} on {{ site_name }}{% endblocktrans %}{% endblock %}
+
+{% block app_body %}
+  <h3>
+    {% if object.confirmed %}
+      {% blocktrans with name=object.name %}Apply a change to “{{ name }}”{% endblocktrans %}
+    {% else %}
+      {% blocktrans with name=object.name %}Confirm “{{ name }}”{% endblocktrans %}
+    {% endif %}
+  </h3>
+  {% if not object.confirmed %}
+    <p>
+      {% trans "This proposed public body has not been confirmed yet and is therefore not available for requests. You can adjust the properties and confirm or delete the public body below." %}
+    </p>
+  {% endif %}
+  <form action="" method="post">
+    {% csrf_token %}
+    
+    {% include "publicbody/snippets/publicbody_proposals.html" %}
+
+    <button class="btn btn-primary" type="submit">
+      {% if object.confirmed %}
+        {% trans "Apply change" %}
+      {% else %}
+        {% trans "Confirm public body" %}
+      {% endif %}
+    </button>
+    {% if not object.confirmed %}
+      <div class="card border-danger mt-3">
+        <div class="card-body">
+          <h3>{% trans "Delete proposal" %}</h3>
+          <p>
+            {% trans "Reasons to reject the proposal could be that the public body already exists in our database or that the proposal is not a public body that can be requested." %}
+          </p>
+          <label for="delete_reason">
+            {% trans "Please give a reason for not accepting this proposal. It will be send to the user who made the proposal." %}
+          </label>
+          <textarea id="delete_reason" class="form-control" name="delete_reason" placeholder="{% trans 'This is not a public body because...' %}"></textarea>
+          <button class="mt-2 btn btn-danger float-right" type="submit" name="delete" value="1">
+            {% trans "Delete proposed public body" %}
+          </button>
+        </div>
+      </div>
+    {% endif %}
+  </form>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'js/publicbody_changes.js' %}" charset="utf-8"></script>
+{% endblock %}

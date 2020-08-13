@@ -4,16 +4,19 @@ from django.contrib import messages
 from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.template import TemplateDoesNotExist
 from django.views.generic import FormView, UpdateView
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
 from froide.helper.search.views import BaseSearchView
+from froide.helper.auth import can_moderate_object
 
 from .models import PublicBody, FoiLaw, Jurisdiction
 from .documents import PublicBodyDocument
-from .forms import PublicBodyProposalForm, PublicBodyChangeForm
+from .forms import (
+    PublicBodyProposalForm, PublicBodyChangeProposalForm,
+    PublicBodyAcceptProposalForm
+)
 from .filters import PublicBodyFilterSet
 
 
@@ -83,12 +86,11 @@ def show_jurisdiction(request, slug):
             jurisdiction=jurisdiction).order_by('priority'),
         "foirequests": FoiRequest.published.filter(jurisdiction=jurisdiction)[:5]
     }
-    try:
-        return render(request,
-            'publicbody/jurisdiction/%s.html' % jurisdiction.slug, context)
-    except TemplateDoesNotExist:
-        return render(request,
-            'publicbody/jurisdiction.html', context)
+    template_names = (
+        'publicbody/jurisdiction/%s.html' % jurisdiction.slug,
+        'publicbody/jurisdiction.html',
+    )
+    return render(request, template_names, context)
 
 
 def show_foilaw(request, slug):
@@ -105,7 +107,8 @@ def publicbody_shortlink(request, obj_id):
 def show_publicbody(request, slug):
     obj = get_object_or_404(PublicBody._default_manager, slug=slug)
     if not obj.confirmed:
-        if request.user != obj._created_by and not request.user.is_staff:
+        not_creator = request.user != obj._created_by
+        if not_creator and not can_moderate_object(obj, request):
             raise Http404
     context = {
         'object': obj,
@@ -166,19 +169,19 @@ class PublicBodyProposalView(LoginRequiredMixin, FormView):
             self.request, messages.INFO,
             _('Thank you for your proposal. We will send you an email when it has been approved.')
         )
-        return super(PublicBodyProposalView, self).form_valid(form)
+        return super().form_valid(form)
 
     def handle_no_permission(self):
         messages.add_message(
             self.request, messages.WARNING,
             _('You need to register an account and login in order to propose a new public body.')
         )
-        return super(PublicBodyProposalView, self).handle_no_permission()
+        return super().handle_no_permission()
 
 
-class PublicBodyChangeView(LoginRequiredMixin, UpdateView):
-    template_name = 'publicbody/change.html'
-    form_class = PublicBodyChangeForm
+class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
+    template_name = 'publicbody/add_proposal.html'
+    form_class = PublicBodyChangeProposalForm
     queryset = PublicBody.objects.all()
 
     def get_success_url(self):
@@ -191,3 +194,44 @@ class PublicBodyChangeView(LoginRequiredMixin, UpdateView):
             _('Thank you for your proposal. We will send you an email when it has been approved.')
         )
         return redirect(self.object)
+
+
+class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
+    template_name = 'publicbody/accept_proposals.html'
+    form_class = PublicBodyAcceptProposalForm
+    # Default manager gives access to proposed as well
+    queryset = PublicBody._default_manager.all()
+
+    def get_object(self):
+        obj = super().get_object()
+        if not can_moderate_object(obj, self.request):
+            raise Http404
+        return obj
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def form_valid(self, form):
+        self.object = form.save(
+            self.request.user,
+            delete_unconfirmed=self.request.POST.get('delete', '0') == '1',
+            delete_reason=self.request.POST.get('delete_reason', ''),
+            proposal_id=self.request.POST.get('proposal_id'),
+            delete_proposals=self.request.POST.getlist('proposal_delete')
+        )
+        if self.object is None:
+            messages.add_message(
+                self.request, messages.INFO,
+                _('The proposal has been deleted.')
+            )
+            return redirect('publicbody-list')
+        messages.add_message(
+            self.request, messages.INFO,
+            _('Your change has been applied.')
+        )
+        return redirect(self.object)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['proposals'] = context['form'].get_proposals()
+        return context

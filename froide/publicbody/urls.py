@@ -2,7 +2,8 @@ from django.conf.urls import url
 from django.utils.translation import pgettext_lazy
 
 from .views import (
-    PublicBodySearch, PublicBodyProposalView, PublicBodyChangeView
+    PublicBodySearch, PublicBodyProposalView, PublicBodyChangeProposalView,
+    PublicBodyAcceptProposalView
 )
 
 
@@ -11,7 +12,10 @@ urlpatterns = [
         PublicBodyProposalView.as_view(), name="publicbody-propose"),
 
     url(pgettext_lazy('url part', r"^change/(?P<pk>\d+)/$"),
-        PublicBodyChangeView.as_view(), name="publicbody-change"),
+        PublicBodyChangeProposalView.as_view(), name="publicbody-change"),
+
+    url(pgettext_lazy('url part', r"^accept/(?P<pk>\d+)/$"),
+        PublicBodyAcceptProposalView.as_view(), name="publicbody-accept"),
 
     url(r"^$", PublicBodySearch.as_view(), name="publicbody-list"),
     # Translators: part in Public Body URL

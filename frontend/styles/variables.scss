@@ -3,7 +3,7 @@
 
 /* Bootstrap Theme */
 
-// bootstrap gray
+// gray
 $gray-100: #F6F7F9;
 $gray-200: #E8EBF0;
 $gray-300: #C9D2DC;
@@ -33,6 +33,16 @@ $yellow-200: #FACE44;
 $yellow-300: #E8B106;
 
 $theme-colors: (
+  "gray-100": $gray-100,
+  "gray-200": $gray-200,
+  "gray-300": $gray-300,
+  "gray-400": $gray-400,
+  "gray-500": $gray-500,
+  "gray-600": $gray-600,
+  "gray-700": $gray-700,
+  "gray-800": $gray-800,
+  "gray-900": $gray-900,
+
   "blue-10": $blue-10,
   "blue-20": $blue-20,
   "blue-30": $blue-30,
@@ -50,7 +60,8 @@ $theme-colors: (
   "yellow-300": $yellow-300,
 );
 
-$white: #FDFDFF;
+$white: #fff;
+// $white: #FDFDFF;
 $black: $blue-800;
 $red: #FF5029;
 $green: #3bb273;
@@ -97,7 +108,7 @@ $container-max-widths: (
 );
 
 // Typography
-$btn-font-weight: 700;
+$btn-font-weight: 600;
 
 @import "~bootstrap/scss/variables";
 

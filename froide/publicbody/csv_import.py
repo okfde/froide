@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.contrib.gis.geos import Point
 
 from taggit.utils import parse_tags
 
@@ -95,28 +96,33 @@ class CSVImporter(object):
 
         parent = row.pop('parent__name', None)
         if parent:
-            row['parent'] = PublicBody.objects.get(slug=slugify(parent))
+            row['parent'] = PublicBody._default_manager.get(slug=slugify(parent))
 
         parent = row.pop('parent__id', None)
         if parent:
-            row['parent'] = PublicBody.objects.get(pk=parent)
+            row['parent'] = PublicBody._default_manager.get(pk=parent)
 
         # get optional values
         for n in ('description', 'other_names', 'request_note', 'website_dump'):
             if n in row:
                 row[n] = row.get(n, '').strip()
 
+        if 'lat' in row and 'lng' in row:
+            row['geo'] = Point(float(row.pop('lng')), float(row.pop('lat')))
+
         try:
             if 'id' in row and row['id']:
-                pb = PublicBody.objects.get(id=row['id'])
+                pb = PublicBody._default_manager.get(id=row['id'])
+            elif row.get('source_reference'):
+                pb = PublicBody._default_manager.get(source_reference=row['source_reference'])
             else:
-                pb = PublicBody.objects.get(slug=row['slug'])
+                pb = PublicBody._default_manager.get(slug=row['slug'])
             # If it exists, update it
             row.pop('id', None)  # Do not update id though
             row.pop('slug', None)  # Do not update slug either
             row['_updated_by'] = self.user
             row['updated_at'] = timezone.now()
-            PublicBody.objects.filter(id=pb.id).update(**row)
+            PublicBody._default_manager.filter(id=pb.id).update(**row)
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
             pb.tags.set(*tags)

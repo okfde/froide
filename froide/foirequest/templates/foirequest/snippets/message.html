@@ -115,6 +115,26 @@
         </dt>
         <dd>
           {{ message.get_recipient }}
+
+          {% if object|can_write_foirequest:request and message.is_postal %}
+            <span class="d-print-none">
+              (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+                {% trans "change" %}
+              </a>)
+            </span>
+            <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
+              {% with message_pb_form=message.get_public_body_recipient_form %}
+                <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_recipient' slug=object.slug message_id=message.id %}">
+                  {% csrf_token %}
+                  <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the public body that received this message:{% endblocktrans %}</label>
+                  {{ message_pb_form.recipient }}
+                  <p class="text-right">
+                    <button type="submit" class="btn btn-primary">{% blocktrans %}Set receiving public body{% endblocktrans %}</button>
+                  </p>
+                </form>
+              {% endwith %}
+            </div>
+          {% endif %}
         </dd>
     {% endif %}
       {% get_delivery_status message as delivery_status %}

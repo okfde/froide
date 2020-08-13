@@ -156,7 +156,7 @@ class PublicBodySuggestionsForm(forms.Form):
             raise forms.ValidationError(_("This request doesn't need a Public Body!"))
         return self.cleaned_data
 
-    def save(self):
+    def save(self, user=None):
         foilaw = self.publicbody.default_law
 
         req = self.foirequest
@@ -192,6 +192,10 @@ class PublicBodySuggestionsForm(forms.Form):
             )
             message.save()
             message.send()
+            req.message_sent.send(
+                sender=req, message=message,
+                user=user
+            )
 
 
 class FoiRequestStatusForm(forms.Form):
@@ -205,7 +209,7 @@ class FoiRequestStatusForm(forms.Form):
 
     resolution = forms.ChoiceField(
         label=_('Resolution'),
-        choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION_FIELD_CHOICES,
+        choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION.choices,
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
         help_text=_('How would you describe the current outcome of this request?'))
@@ -249,12 +253,13 @@ class FoiRequestStatusForm(forms.Form):
 
         return self.cleaned_data
 
-    def save(self):
+    def save(self, user=None):
         data = self.cleaned_data
         status = data['status']
         resolution = data['resolution']
         foirequest = self.foirequest
-
+        previous_status = foirequest.status
+        previous_resolution = foirequest.resolution
         message = foirequest.message_needs_status()
         if message:
             message.status = status
@@ -271,19 +276,23 @@ class FoiRequestStatusForm(forms.Form):
 
         foirequest.save()
 
-        if status == 'resolved':
-            foirequest.status_changed.send(
-                sender=foirequest,
-                status=status,
-                resolution=resolution,
-                data=data
-            )
+        foirequest.status_changed.send(
+            sender=foirequest,
+            status=status,
+            user=user,
+            resolution=resolution,
+            previous_status=previous_status,
+            previous_resolution=previous_resolution,
+            data=data
+        )
 
 
 class ConcreteLawForm(forms.Form):
+    foi_law = None
+
     def __init__(self, *args, **kwargs):
         foirequest = kwargs.pop('foirequest')
-        super(ConcreteLawForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.foirequest = foirequest
         self.possible_laws = foirequest.law.combined.all()
         self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
@@ -302,12 +311,15 @@ class ConcreteLawForm(forms.Form):
         if self.cleaned_data["law"]:
             self.foi_law = indexed_laws[self.cleaned_data["law"]]
 
-    def save(self):
+    def save(self, user=None):
         if self.foi_law:
             self.foirequest.law = self.foi_law
             self.foirequest.save()
-            self.foirequest.set_concrete_law.send(sender=self.foirequest,
-                    name=self.foi_law.name)
+            self.foirequest.set_concrete_law.send(
+                sender=self.foirequest,
+                name=self.foi_law.name,
+                user=user
+            )
 
 
 class TagFoiRequestForm(TagObjectForm):

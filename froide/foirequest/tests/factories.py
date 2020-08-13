@@ -287,7 +287,7 @@ class FoiEventFactory(factory.DjangoModelFactory):
     public = True
     event_name = 'became_overdue'
     timestamp = factory.Sequence(lambda n: timezone.now() - timedelta(days=n))
-    context_json = '{}'
+    context = '{}'
 
 
 def make_world():

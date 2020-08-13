@@ -1,22 +1,13 @@
 {% load i18n %}
 
 <div class="ajax-parent">
-  <h5>
-    <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
-      {% blocktrans count counter=count %}
-        One follower
-      {% plural %}
-        {{ counter }} followers
-      {% endblocktrans %}
-    </span>
-  </h5>
   {% if user != object.user %}
     {% if email_followed %}
       <div class="alert alert-info">
         {% trans "Please check your email inbox for a confirmation email." %}
       </div>
     {% else %}
-      {% include "foirequestfollower/follow_form.html" %}
+      {% include "foirequestfollower/follow_form.html" with count=count %}
     {% endif %}
   {% endif %}
 </div>

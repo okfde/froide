@@ -1,6 +1,67 @@
-{% extends "foirequest/show.html" %}
+{% extends 'foirequest/base.html' %}
 
-{% block foirequest_below_header %}
+{% load i18n %}
+{% load static %}
+{% load markup %}
+{% load foirequest_tags %}
+{% load team_tags %}
+{% load form_helper %}
+{% load block_helper %}
+{% load humanize %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block metadescription %}{{ object.description }}{% endblock %}
+
+
+{% block body %}
+  {% block app_body %}
+
+    <!-- breadcrumb -->
+    <div class="bg-gray-100" style="margin-bottom: 2px;">
+      {% include "foirequest/alpha/header/breadcrumb.html" %}
+    </div>
+
+    <!-- header, including tabs -->
+    <div class="bg-gray-100" style="margin-bottom: 2px;">
+      {% include "foirequest/alpha/header/header.html" %}
+    </div>
+
+    <!-- body, tabs content -->
+    <div class="bg-gray-200">
+      {% include "foirequest/alpha/body/body.html" %}
+    </div>
+  
+    {% if user.is_staff %}
+    <div class="text-center">
+      <a href="./?alpha=0">Normal Request Page</a>
+    </div>
+  {% endif %}
+
+  {% endblock app_body %}
+{% endblock body %}
+
+{% comment %} {% block foirequest_below_header %}
 {{ block.super }}
-ALPHA
+ALPHA1
+{% endblock %} {% endcomment %}
+
+
+{% block scripts %}
+  {{ block.super }}
+  {% if object|can_write_foirequest:request %}
+    {% addtoblock "js" %}
+      {% with object.get_set_tags_form as set_tags_form %}
+        {{ set_tags_form.media.js }}
+      {% endwith %}
+    {% endaddtoblock %}
+  {% endif %}
+
+  {% addtoblock "css" %}
+    <link rel="stylesheet" href="{% static 'css/request-alpha.css' %}"/>
+  {% endaddtoblock %}
+
+  {% addtoblock "js" %}
+    <script src="{% static 'js/request-alpha.js' %}" defer></script>
+  {% endaddtoblock %}
 {% endblock %}

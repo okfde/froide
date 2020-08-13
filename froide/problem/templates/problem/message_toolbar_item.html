@@ -17,7 +17,7 @@
         {% if message.problemreports_unresolved_count %}
           <span class="fa fa-exclamation-circle"></span>
         {% endif %}
-        {% blocktrans count counter=message.problemreports_count %}Problem{% plural %}Problems{% endblocktrans %}
+        {% if message.problemreports_count > 1 %}{% trans "Problem" %}{% else %}{% trans "Problems" %}{% endif %}
         <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
           {{ message.problemreports_count }}
         </span>

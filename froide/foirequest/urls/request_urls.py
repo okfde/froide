@@ -8,7 +8,7 @@ from ..views import (
     confirm_request, delete_request,
     set_law, set_tags, set_summary, add_postal_reply,
     add_postal_message, add_postal_reply_attachment,
-    set_message_sender, mark_not_foi,
+    set_message_sender, set_message_recipient, mark_not_foi,
     extend_deadline, approve_attachment, approve_message,
     make_same_request, resend_message,
     download_foirequest_zip, download_foirequest_pdf,
@@ -46,7 +46,8 @@ urlpatterns = [
     # Messages
     url(r"^(?P<slug>[-\w]+)/add/postal-reply/(?P<message_id>\d+)/$", add_postal_reply_attachment, name="foirequest-add_postal_reply_attachment"),
     url(r"^(?P<slug>[-\w]+)/approve/message/(?P<message_id>\d+)/$", approve_message, name="foirequest-approve_message"),
-    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set-public-body/$", set_message_sender, name="foirequest-set_message_sender"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set-sender-public-body/$", set_message_sender, name="foirequest-set_message_sender"),
+    url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/set-recipient-public-body/$", set_message_recipient, name="foirequest-set_message_recipient"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/edit-message/$", edit_message, name="foirequest-edit_message"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/redact-message/$", redact_message, name="foirequest-redact_message"),
     url(r"^(?P<slug>[-\w]+)/(?P<message_id>\d+)/resend/$", resend_message, name="foirequest-resend_message"),

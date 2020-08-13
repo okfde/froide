@@ -23,6 +23,7 @@ const ENTRY = {
   publicbodyupload: ['./frontend/javascript/publicbodyupload.js'],
   redact: ['./frontend/javascript/redact.js'],
   request: ['./frontend/javascript/request.ts'],
+  'request-alpha': ['./frontend/javascript/alpha/request-alpha.ts'],
   tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
 }
 

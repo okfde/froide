@@ -21,7 +21,7 @@ def get_read_foirequest_queryset(request):
     return get_read_queryset(
         FoiRequest.objects.all(), request,
         has_team=True,
-        public_q=Q(visibility=FoiRequest.VISIBLE_TO_PUBLIC),
+        public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope='read:request'
     )
 
@@ -30,7 +30,7 @@ def get_read_foimessage_queryset(request):
     return get_read_queryset(
         FoiMessage.objects.all(), request,
         has_team=True,
-        public_q=Q(request__visibility=FoiRequest.VISIBLE_TO_PUBLIC),
+        public_q=Q(request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope='read:request',
         fk_path='request'
     )
@@ -43,7 +43,7 @@ def get_read_foiattachment_queryset(request, queryset=None):
         queryset, request,
         has_team=True,
         public_q=Q(
-            belongs_to__request__visibility=FoiRequest.VISIBLE_TO_PUBLIC,
+            belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
             approved=True
         ),
         scope='read:request',
@@ -53,7 +53,7 @@ def get_read_foiattachment_queryset(request, queryset=None):
 
 @lru_cache()
 def can_read_foirequest(foirequest, request, allow_code=True):
-    if foirequest.visibility == FoiRequest.INVISIBLE:
+    if foirequest.visibility == FoiRequest.VISIBILITY.INVISIBLE:
         return False
 
     if can_read_object(foirequest, request):

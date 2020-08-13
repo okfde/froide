@@ -1,3 +1,5 @@
+import datetime
+import json
 from urllib.parse import parse_qs, urlsplit, urlunsplit
 
 from django.shortcuts import render, redirect
@@ -103,3 +105,13 @@ def update_query_params(url, params):
     new_query_string = urlencode(query_params, doseq=True)
     return urlunsplit((str(scheme), str(netloc), str(path),
                        str(new_query_string), str(fragment)))
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()
+
+
+def to_json(obj):
+    return json.dumps(obj, cls=DateTimeEncoder)

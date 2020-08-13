@@ -60,10 +60,11 @@ def set_public_body(request, foirequest):
 
     throttle_message = check_throttle(request.user, FoiRequest)
     if throttle_message:
-        messages.add_message(request, messages.ERROR, '\n'.join(throttle_message))
+        message = '\n'.join(throttle_message.messages)
+        messages.add_message(request, messages.ERROR, message)
         return render_400(request)
 
-    form.save()
+    form.save(user=request.user)
 
     messages.add_message(
         request,
@@ -104,11 +105,18 @@ def suggest_public_body(request, slug):
 
 
 @require_POST
-@allow_write_foirequest
-def set_status(request, foirequest):
+def set_status(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not can_write_foirequest(foirequest, request):
+        if not can_moderate_foirequest(foirequest, request):
+            return render_403(request)
+        else:
+            if not foirequest.moderate_classification():
+                return render_403(request)
+
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
-        form.save()
+        form.save(user=request.user)
         messages.add_message(request, messages.SUCCESS,
                 _('Status of request has been updated.'))
         response = registry.run_hook(
@@ -133,7 +141,7 @@ def set_status(request, foirequest):
 def make_public(request, foirequest):
     if not foirequest.is_foi:
         return render_400(request)
-    foirequest.make_public()
+    foirequest.make_public(user=request.user)
     return redirect(foirequest)
 
 
@@ -147,7 +155,7 @@ def set_law(request, foirequest):
     form = ConcreteLawForm(request.POST, foirequest=foirequest)
     if not form.is_valid():
         return render_400(request)
-    form.save()
+    form.save(user=request.user)
     messages.add_message(request, messages.SUCCESS,
             _('A concrete law has been set for this request.'))
     return redirect(foirequest)
@@ -159,6 +167,12 @@ def set_tags(request, foirequest):
     form = TagFoiRequestForm(request.POST)
     if form.is_valid():
         form.save(foirequest)
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.SET_TAGS,
+            foirequest,
+            user=request.user,
+            tags=str(form.cleaned_data['tags'])
+        )
         messages.add_message(request, messages.SUCCESS,
                 _('Tags have been set for this request.'))
     return redirect(foirequest)
@@ -174,24 +188,29 @@ def set_summary(request, foirequest):
         return render_400(request)
     foirequest.summary = summary
     foirequest.save()
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.SET_SUMMARY,
+        foirequest,
+        user=request.user
+    )
     messages.add_message(request, messages.SUCCESS,
                 _('The outcome summary has been saved.'))
     return redirect(foirequest)
 
 
 @require_POST
-def mark_not_foi(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not request.user.is_authenticated:
-        return render_403(request)
-    if not request.user.is_staff:
-        return render_403(request)
+@allow_moderate_foirequest
+def mark_not_foi(request, foirequest):
     foirequest.is_foi = False
 
-    foirequest.visibility = FoiRequest.VISIBLE_TO_REQUESTER
+    foirequest.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
     if foirequest.public:
         foirequest.public = False
         FoiRequest.made_private.send(sender=foirequest)
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.MARK_NOT_FOI, foirequest,
+        user=request.user
+    )
     foirequest.save()
     if request.is_ajax():
         return HttpResponse()
@@ -284,7 +303,10 @@ def extend_deadline(request, foirequest):
         form.save(foirequest)
         messages.add_message(request, messages.INFO,
                 _('Deadline has been extended.'))
-        FoiEvent.objects.create_event('deadline_extended', foirequest)
+        FoiEvent.objects.create_event(
+            'deadline_extended',
+            foirequest, user=request.user
+        )
         return redirect(foirequest)
     return render_400(request)
 

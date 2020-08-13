@@ -121,9 +121,9 @@
     </li>
   {% endif %}
 
-  {% if user.is_staff %}
-    <li class="nav-header">{% trans "Moderators" %}</li>
-    {% if request.user|has_perm:"foirequest.view_foirequest" %}
+  {% if object|can_moderate_foirequest:request %}
+    <li class="nav-header">{% trans "Moderation" %}</li>
+    {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
       <li class="nav-item">
         <a class="btn btn-light btn-block mb-1" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
           <i class="fa fa-cog"></i>
@@ -147,9 +147,11 @@
       </li>
     {% endif %}
   {% endif %}
+
   {% if user.is_staff %}
     <li class="nav-item">
       <a href="./?alpha=1">Alpha Request Page</a>
     </li>
   {% endif %}
+
 </ul>

@@ -123,7 +123,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     private = models.BooleanField(_('Private'), default=False)
     address = models.TextField(_('Address'), blank=True)
     terms = models.BooleanField(_('Accepted Terms'), default=True)
-    newsletter = models.BooleanField(_('Wants Newsletter'), default=False)
 
     profile_text = models.TextField(blank=True)
     profile_photo = models.ImageField(

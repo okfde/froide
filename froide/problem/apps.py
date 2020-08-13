@@ -1,6 +1,7 @@
 import json
 
 from django.apps import AppConfig
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -10,10 +11,39 @@ class ProblemConfig(AppConfig):
 
     def ready(self):
         from froide.account.export import registry
+        from froide.account import account_merged
+        from froide.account.menu import menu_registry, MenuItem
 
         from . import signals  # noqa
 
         registry.register(export_user_data)
+        account_merged.connect(merge_user)
+
+        def get_moderation_menu_item(request):
+            from froide.foirequest.auth import is_foirequest_moderator
+
+            if not (request.user.is_staff or is_foirequest_moderator(request)):
+                return None
+
+            return MenuItem(
+                section='after_settings', order=0,
+                url=reverse('problem-moderation'),
+                label=_('Moderation')
+            )
+
+        menu_registry.register(get_moderation_menu_item)
+        registry.register(export_user_data)
+
+
+def merge_user(sender, old_user=None, new_user=None, **kwargs):
+    from .models import ProblemReport
+
+    ProblemReport.objects.filter(user=old_user).update(
+        user=new_user
+    )
+    ProblemReport.objects.filter(moderator=old_user).update(
+        moderator=new_user
+    )
 
 
 def export_user_data(user):

@@ -4,6 +4,12 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.contrib import admin
+from django.contrib.admin.utils import get_model_from_relation
+from django.core.exceptions import ValidationError
+from django.contrib.admin.options import IncorrectLookupParameters
+from django.utils.translation import get_language_bidi
+from django.utils.encoding import smart_str
+from django.db.models.fields.related import ForeignObjectRel, ManyToManyField
 
 from taggit.models import TaggedItem
 
@@ -349,4 +355,99 @@ class MultiFilterMixin:
                 'clear_query_string': amend_query_string(clear=str(lookup)),
                 'exclude_query_string': amend_query_string(exclude=str(lookup)),
                 'display': title,
+            }
+
+
+class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
+    """
+    From Django MPTT under MIT
+    https://github.com/django-mptt/django-mptt/blob/master/mptt/admin.py
+
+    Admin filter class which filters models related to parent model with all it's descendants.
+    """
+    template = 'helper/admin/tree_filter.html'
+    tree_level_indent = 10
+
+    def __init__(self, field, request, params, model, model_admin, field_path):
+        self.other_model = get_model_from_relation(field)
+        if field.remote_field is not None and hasattr(field.remote_field, 'get_related_field'):
+            self.rel_name = field.remote_field.get_related_field().name
+        else:
+            self.rel_name = self.other_model._meta.pk.name
+        self.changed_lookup_kwarg = '%s__%s__inhierarchy' % (field_path, self.rel_name)
+        super().__init__(field, request, params, model, model_admin,
+                         field_path)
+        self.lookup_val = request.GET.get(self.changed_lookup_kwarg)
+
+    def expected_parameters(self):
+        return [self.changed_lookup_kwarg, self.lookup_kwarg_isnull]
+
+    # Ripped from contrib.admin.filters,FieldListFilter Django 1.8 to deal with
+    # lookup name 'inhierarchy'
+    def queryset(self, request, queryset):
+        try:
+            # #### MPTT ADDITION START
+            if self.lookup_val:
+                other_model = self.other_model.objects.get(pk=self.lookup_val)
+                other_models = other_model.get_descendants()
+                del self.used_parameters[self.changed_lookup_kwarg]
+                self.used_parameters.update(
+                    {'%s__%s__in' % (self.field_path, self.rel_name): other_models}
+                )
+            # #### MPTT ADDITION END
+            return queryset.filter(**self.used_parameters)
+        except ValidationError as e:
+            raise IncorrectLookupParameters(e)
+
+    # Adding padding_style to each choice tuple
+    def field_choices(self, field, request, model_admin):
+        tree_level_indent = getattr(model_admin, 'tree_level_indent', self.tree_level_indent)
+        language_bidi = get_language_bidi()
+        initial_choices = field.get_choices(include_blank=False)
+        pks = [pk for pk, val in initial_choices]
+        models = field.related_model._default_manager.filter(pk__in=pks)
+        levels_dict = {model.pk: model.get_depth() for model in models}
+        choices = []
+        for pk, val in initial_choices:
+            choices.append((
+                pk, val,
+                'right' if language_bidi else 'left',
+                tree_level_indent * levels_dict[pk]
+            ))
+
+        return choices
+
+    # Ripped from contrib.admin.filters,RelatedFieldListFilter Django 1.8 to
+    # yield padding_dir, padding_size
+    def choices(self, cl):
+        # #### TREE ADDITION START
+        EMPTY_CHANGELIST_VALUE = self.empty_value_display
+        # #### TREE ADDITION END
+        yield {
+            'selected': self.lookup_val is None and not self.lookup_val_isnull,
+            'query_string': cl.get_query_string({}, [self.changed_lookup_kwarg, self.lookup_kwarg_isnull]),
+            'display': _('All'),
+        }
+        for pk_val, val, padding_dir, padding_size in self.lookup_choices:
+            yield {
+                'selected': self.lookup_val == smart_str(pk_val),
+                'query_string': cl.get_query_string({
+                    self.changed_lookup_kwarg: pk_val,
+                }, [self.lookup_kwarg_isnull]),
+                'display': val,
+                # #### TREE ADDITION START
+                'padding_dir': padding_dir,
+                'padding_size': padding_size,
+                # #### TREE ADDITION END
+            }
+        if (isinstance(self.field, ForeignObjectRel) and
+                (self.field.field.null or isinstance(self.field.field, ManyToManyField)) or
+                self.field.remote_field is not None and
+                (self.field.null or isinstance(self.field, ManyToManyField))):
+            yield {
+                'selected': bool(self.lookup_val_isnull),
+                'query_string': cl.get_query_string({
+                    self.lookup_kwarg_isnull: 'True',
+                }, [self.changed_lookup_kwarg]),
+                'display': EMPTY_CHANGELIST_VALUE,
             }

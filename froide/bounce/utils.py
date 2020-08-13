@@ -22,7 +22,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from froide.helper.email_utils import (
-    EmailParser, get_unread_mails, BounceResult,
+    EmailParser, get_mail_client, get_unread_mails, BounceResult,
     find_status_from_diagnostic, classify_bounce_status
 )
 from froide.helper.email_parsing import parse_header_field
@@ -174,23 +174,24 @@ def get_original_email_from_signed(
 
 
 def check_bounce_mails():
-    for rfc_data in get_unread_mails(
-            settings.BOUNCE_EMAIL_HOST_IMAP,
+    with get_mail_client(settings.BOUNCE_EMAIL_HOST_IMAP,
             settings.BOUNCE_EMAIL_PORT_IMAP,
             settings.BOUNCE_EMAIL_ACCOUNT_NAME,
             settings.BOUNCE_EMAIL_ACCOUNT_PASSWORD,
-            ssl=settings.BOUNCE_EMAIL_USE_SSL):
-        process_bounce_mail(rfc_data)
+            ssl=settings.BOUNCE_EMAIL_USE_SSL) as client:
+        for mail_uid, rfc_data in get_unread_mails(client, flag=False):
+            process_bounce_mail(rfc_data)
 
 
 def check_unsubscribe_mails():
-    for rfc_data in get_unread_mails(
+    with get_mail_client(
             settings.UNSUBSCRIBE_EMAIL_HOST_IMAP,
             settings.UNSUBSCRIBE_EMAIL_PORT_IMAP,
             settings.UNSUBSCRIBE_EMAIL_ACCOUNT_NAME,
             settings.UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD,
-            ssl=settings.UNSUBSCRIBE_EMAIL_USE_SSL):
-        process_unsubscribe_mail(rfc_data)
+            ssl=settings.UNSUBSCRIBE_EMAIL_USE_SSL) as client:
+        for mail_uid, rfc_data in get_unread_mails(client, flag=False):
+            process_unsubscribe_mail(rfc_data)
 
 
 def process_unsubscribe_mail(mail_bytes):

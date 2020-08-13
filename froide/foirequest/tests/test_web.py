@@ -184,7 +184,7 @@ class WebTest(TestCaseHelpers, TestCase):
         response = self.client.get(reverse('foirequest-shortlink',
                 kwargs={"obj_id": req.id}) + '/')
         self.assertRedirects(response, req.get_absolute_url())
-        req.visibility = FoiRequest.VISIBLE_TO_REQUESTER
+        req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
         req.save()
         response = self.client.get(reverse('foirequest-shortlink',
                 kwargs={"obj_id": req.id}))

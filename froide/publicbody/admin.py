@@ -14,7 +14,6 @@ from django import forms
 from django.urls import reverse
 from django.conf.urls import url
 from django.utils.html import format_html
-from django.contrib.admin import helpers
 from django.template.response import TemplateResponse
 
 from treebeard.admin import TreeAdmin
@@ -22,7 +21,8 @@ from treebeard.forms import movenodeform_factory
 
 from froide.helper.admin_utils import (
     make_batch_tag_action, make_emptyfilter,
-    make_nullfilter, make_choose_object_action
+    make_nullfilter, make_choose_object_action,
+    TreeRelatedFieldListFilter
 )
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.search.utils import trigger_search_index_update_qs
@@ -145,7 +145,9 @@ class PublicBodyBaseAdminMixin:
             'change_proposals', _('Has change proposals'),
             empty_value=dict
         ),
-        'jurisdiction', 'classification', 'categories',
+        'jurisdiction',
+        ('classification', TreeRelatedFieldListFilter),
+        'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
         make_nullfilter('regions', _('Has regions')),
         make_emptyfilter('email', 'E-Mail'),
@@ -165,7 +167,6 @@ class PublicBodyBaseAdminMixin:
         'assign_classification',
         'replace_publicbody',
         'export_csv', 'remove_from_index', 'tag_all', 'show_georegions',
-        'accept_change_proposal',
         'validate_publicbodies',
     )
 
@@ -205,10 +206,6 @@ class PublicBodyBaseAdminMixin:
             url(r'^geo-match/$',
                 self.admin_site.admin_view(self.geo_match),
                 name='publicbody-publicbody-geo_match'),
-
-            url(r'^(?P<pk>\d+)/accept-proposal/$',
-                self.admin_site.admin_view(self.accept_change_proposal),
-                name='publicbody-publicbody-accept_change_proposal'),
         ]
         return my_urls + urls
 
@@ -288,43 +285,6 @@ class PublicBodyBaseAdminMixin:
             obj.created_at = obj.updated_at
 
         super(PublicBodyBaseAdminMixin, self).save_model(request, obj, form, change)
-
-    def accept_change_proposal(self, request, pk):
-        from .forms import PublicBodyAcceptForm
-
-        if not self.has_change_permission(request):
-            raise PermissionDenied
-
-        instance = PublicBody.objects.get(pk=pk)
-
-        proposal_form = None
-        if request.method == "POST":
-            proposal_form = PublicBodyAcceptForm(data=request.POST, instance=instance)
-            if proposal_form.is_valid():
-                proposal_form.save(
-                    request.user,
-                    proposal_id=request.POST.get('proposal_id'),
-                    delete_proposals=request.POST.getlist('proposal_delete')
-                )
-
-                return redirect('admin:publicbody_publicbody_change', instance.id)
-
-        if proposal_form is None:
-            proposal_form = PublicBodyAcceptForm(instance=instance)
-
-        context = {
-            'opts': self.model._meta,
-            'action_checkbox_name': helpers.ACTION_CHECKBOX_NAME,
-            'proposals': proposal_form.get_proposals(),
-            'form': proposal_form,
-        }
-
-        # Display the confirmation page
-        return TemplateResponse(
-            request,
-            'publicbody/admin/accept_change_proposal.html',
-            context
-        )
 
     def category_list(self, obj):
         return ", ".join(o.name for o in obj.categories.all())
@@ -425,7 +385,8 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
 
     def _confirm_pb(self, pb, user):
         pb._updated_by = user
-        result = pb.confirm()
+        pb.updated_at = timezone.now()
+        result = pb.confirm(user=user)
 
         creator = pb.created_by
         if result is not None and creator and creator != user:
@@ -479,7 +440,7 @@ class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
 
 class FoiLawAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ('name', 'meta', 'law_type', 'jurisdiction',)
+    list_display = ('name', 'meta', 'priority', 'law_type', 'jurisdiction',)
     list_filter = ('meta', 'law_type', 'jurisdiction')
     raw_id_fields = ('mediator',)
     filter_horizontal = ('combined',)

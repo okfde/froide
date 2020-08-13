@@ -161,7 +161,6 @@ def cancel_user(user, delete=False):
     user.organization = ''
     user.organization_url = ''
     user.private = True
-    user.newsletter = False
     user.terms = False
     user.address = ''
     user.profile_text = ''

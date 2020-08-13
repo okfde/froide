@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load content_helper %}
+
+{% if comment_list %}
+  <div class="pt-3 mb-3 smaller border-top border-light">
+
+    {% for comment in comment_list|slice:":3" %}
+      {% include "foirequest/alpha/body/message/comments/comment.html" %}
+    {% endfor %}
+
+    {% if comment_list|length > 3 %}
+      <div style="display: none;">
+        {% for comment in comment_list|slice:"3:" %}
+          {% include "foirequest/alpha/body/message/comments/comment.html" %}
+        {% endfor %}
+      </div>
+      <div class="my-3 pb-3 border-bottom border-light">
+        <a href="#" class="font-weight-bold alpha-comment__more-comments-trigger">
+          {% blocktrans with count=comment_list|length|add:"-3" %}
+            Show {{ count }} other comments
+          {% endblocktrans %}
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+{% endif %}
