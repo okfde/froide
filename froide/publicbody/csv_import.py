@@ -111,10 +111,10 @@ class CSVImporter(object):
             row['geo'] = Point(float(row.pop('lng')), float(row.pop('lat')))
 
         try:
-            if 'source_reference' in row:
-                pb = PublicBody.objects.get(source_reference=row['source_reference'])
             if 'id' in row and row['id']:
                 pb = PublicBody.objects.get(id=row['id'])
+            elif row.get('source_reference'):
+                pb = PublicBody.objects.get(source_reference=row['source_reference'])
             else:
                 pb = PublicBody.objects.get(slug=row['slug'])
             # If it exists, update it
