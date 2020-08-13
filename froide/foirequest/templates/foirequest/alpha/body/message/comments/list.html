@@ -1,8 +1,9 @@
 {% load i18n %}
+{% load content_helper %}
 
 {% if comment_list %}
   <div class="pt-3 mb-3 smaller border-top border-light">
-    
+
     {% for comment in comment_list|slice:":3" %}
       {% include "foirequest/alpha/body/message/comments/comment.html" %}
     {% endfor %}

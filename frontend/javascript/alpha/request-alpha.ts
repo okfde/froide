@@ -7,7 +7,7 @@ class Message {
   expandedClassName = 'alpha-message--expanded'
   
   constructor (element: HTMLElement) {
-    this.id = 'msg-' + element.id || ''
+    this.id = element.id || ''
     this.root = element
     this.metaContainer = this.root.querySelector('.alpha-message__meta-container') as HTMLElement
 
@@ -20,8 +20,8 @@ class Message {
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
     element.querySelectorAll('.alpha-comment__more-text-trigger')
       .forEach(el => el.addEventListener('click', this.expandCommentText.bind(this)))
-    element.querySelectorAll('.alpha-comment__more-comments-trigger')
-      .forEach(el => el.addEventListener('click', this.showAllComments.bind(this)))
+    element.querySelector('.alpha-comment__more-comments-trigger')
+      ?.addEventListener('click', this.showAllComments.bind(this))
 
     // create localStorage item
     if (!this.storageItem) {
@@ -30,7 +30,7 @@ class Message {
       }))
     } else {
       // expand message according to localStorage state 
-      if (this.isExpanded) {
+      if (this.isExpandedInStorage) {
         this.expandMessage()
       }
     }
@@ -41,7 +41,7 @@ class Message {
     return item ? JSON.parse(item) : null
   }
 
-  get isExpanded () {
+  get isExpandedInStorage () {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
@@ -61,7 +61,7 @@ class Message {
   }
 
   toggleMessage () {
-    if (this.isExpanded) {
+    if (this.isExpandedInStorage) {
       this.collapseMessage()
     } else {
       this.expandMessage()
@@ -94,11 +94,17 @@ class Message {
     }
   }
 
-  showAllComments (e: Event) {
-    e.preventDefault()
+  showAllComments (e?: Event | undefined) {
     // unwrap left sibling content of parent node
-    const el = e.target as HTMLElement
-    const parentEl = el.parentElement
+    let el
+    if (e) {
+      e.preventDefault()
+      el = e.target as HTMLElement
+    } else {
+      el = this.root.querySelector('.alpha-comment__more-comments-trigger')
+    }
+    
+    const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
     const previousParent = parentEl?.previousElementSibling
     if (el && parentEl && outerParent && previousParent) {
@@ -114,16 +120,54 @@ class Message {
     }
   }
 
+  scrollToComment (commentElementId: string) {
+    const element = document.getElementById(commentElementId)
+    if (element) {
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' })
+
+      // add and remove highlight class
+      element.classList.add('alpha-comment--highlighted')
+      setTimeout(() => {
+        element.classList.remove('alpha-comment--highlighted')        
+      }, 650);
+    }
+  }
+
 }
 
 
 const init = () => {
-  const messages = []
+  const messages: Message[] = []
+  const urlParams = new URLSearchParams(window.location.search);
+  const msgParam = urlParams.get('msg')
+  const commentParam = urlParams.get('c')
+  const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
+  const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
+  
   document.querySelectorAll('.alpha-message').forEach(el => {
     messages.push(new Message(el as HTMLElement))
   })
+
+  // when all messages initialized:
+  // scroll to comment if query parameters given
+  // find message with id that equals query param
+  if (messages.length && scrollToMsgId && scrollToCommentId) {
+    const msg = messages.find(m => m.id === scrollToMsgId)
+    if (msg) {
+      if (!msg.isExpandedInStorage) {
+        msg.expandMessage()
+      }
+      setTimeout(() => {
+        msg.showAllComments()
+        setTimeout(() => {
+          msg.scrollToComment(scrollToCommentId)
+        }, 0)
+      }, 0)
+    }
+  }
   
 }
 
 
 init()
+// document.addEventListener("DOMContentLoaded", init)
