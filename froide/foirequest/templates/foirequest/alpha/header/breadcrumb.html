@@ -1,13 +1,19 @@
+{% load i18n %}
+
 <div class="container">
   <ul class="breadcrumb">
     <li class="breadcrumb__element">
-      <a href="#">Start</a>
+      <a href="/">Start</a>
     </li>
     <li class="breadcrumb__separator">
       <i class="fa fa-angle-right" aria-hidden="true"></i>
     </li>
     <li class="breadcrumb__element">
-      <a href="#">Anfragen</a>
+      {% if object.user == request.user %}
+        <a href="{% url 'account-show' %}">{% trans "My requests" %}</a>
+        {% else %}
+        <a href="{% url 'foirequest-list' %}">{% trans "Requests" %}</a>
+      {% endif %}
     </li>
     <li class="breadcrumb__separator">
       <i class="fa fa-angle-right" aria-hidden="true"></i>
