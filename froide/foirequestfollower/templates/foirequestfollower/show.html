@@ -9,5 +9,7 @@
     {% else %}
       {% include "foirequestfollower/follow_form.html" with count=count %}
     {% endif %}
+  {% else %}
+    {% include "foirequestfollower/follow_count_badge.html" with count=object.follow_count %}
   {% endif %}
 </div>
