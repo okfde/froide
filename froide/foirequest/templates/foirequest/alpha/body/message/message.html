@@ -111,8 +111,8 @@
         class="btn btn-light btn-sm text-primary"
         data-toggle="collapse"
         aria-expanded="false"
-        aria-controls="comments-container-{{ message.id }}"
-        data-target="#comments-container-{{ message.id }}"
+        aria-controls="comments-{{ message.id }}"
+        data-target="#comments-{{ message.id }}"
       >
         <span class="fa fa-comments"></span>
         {% with count=comment_list|length %}
@@ -125,7 +125,7 @@
     </div>
 
     <!-- comments list -->
-    <div id="comments-container-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
+    <div id="comments-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
       {% block before_comments %}{% endblock %}
       <div class="alpha-message__wrap pb-4">
         {% if request.user.is_authenticated %}
@@ -146,7 +146,7 @@
               {% endif %}
             </a>
             <div class="collapse pt-3" id="comment-form-{{ message.id }}">
-              {% include "comments/foirequest/form.html" %}
+              {% include "foirequest/alpha/body/message/comments/form.html" %}
             </div>
           </div>
         {% else %}

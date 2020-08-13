@@ -1,11 +1,11 @@
 {% load i18n %}
 
-<div class="alpha-comment">
+<div id="comment-{{ comment.id }}" class="alpha-comment">
 
   <!-- head -->
-  <div class="d-flex justify-content-start align-items-center">
+  <div class="d-flex justify-content-start align-items-center flex-nowrap">
     <!-- name -->
-    <strong>
+    <strong class="text-truncate">
       {% if comment.user == object.user and object.user.private %}
         <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Name not public' %}">
           {% trans "Commentator" %}
@@ -26,7 +26,7 @@
     
     <!-- timestamp -->
     <small class="text-gray-600 mx-1">•</small>
-    <small class="text-gray-600">{{ comment.submit_date }}</small>
+    <small class="text-nowrap text-gray-600">{{ comment.submit_date }}</small>
     
   </div>
 
