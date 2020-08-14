@@ -8,14 +8,14 @@
     <form method="post" action="{% url 'foirequestfollower-follow' pk=object.pk %}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
       {% csrf_token %}
       {% if following and not follow_only %}
-        <button class="btn btn-sm hover-btn-danger" type="submit">
+        <button class="btn btn-sm btn-outline-success hover-btn-danger" type="submit">
           <span class="on-hover">
             <i class="fa fa-remove" aria-hidden="true"></i>
             {% trans "Unfollow request" %}
           </span>
           <span class="on-display">
             <i class="fa fa-bell" aria-hidden="true"></i>
-            {% trans "You follow this request" %}
+            {% trans "Following request" %}
           </span>
         </button>
       {% elif not following %}
@@ -45,25 +45,17 @@
         {% trans "Follow request?" %}
       </span>
     </button>
+
+    {% include "foirequestfollower/follow_count_badge.html" with count=object.follow_count %}
+
   {% endif %}
 
   {% if verbose %}
-    <div id="followrequest-form-{{ object.pk }}-success" style="display:none">
-      <p class="muted mb-0">
-        <small>
-          {% if following %}
-            <i class="fa fa-remove"></i>
-            {% blocktrans %}You will not get notified anymore.{% endblocktrans %}
-          {% else %}
-            <i class="fa fa-check"></i>
-            {% trans "You will receive notifications!" %}
-          {% endif %}
-        </small>
-      </p>
-    </div>
-    <small class="text-muted">
-      {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
-    </small>
+    <p>
+      <small class="text-muted">
+        {% blocktrans %}Get notified by email of changes.{% endblocktrans %}
+      </small>
+    </p>
   {% endif %}
 
   {% if not request.user.is_authenticated %}
