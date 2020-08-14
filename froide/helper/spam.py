@@ -27,7 +27,7 @@ def suspicious_ip(request):
         if info['country_code'] not in target_countries:
             return True
     except Exception as e:
-        logger.exception(e)
+        logger.warning(e)
     return False
 
 
