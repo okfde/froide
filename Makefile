@@ -17,3 +17,6 @@ testui:
 .PHONY: htmlcov
 htmlcov:
 	coverage html
+
+makemessagesde:
+	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov
