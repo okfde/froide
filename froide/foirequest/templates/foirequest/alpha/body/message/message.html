@@ -9,6 +9,7 @@
 
 <div class="alpha-message" id="{{ message.get_html_id }}">
 
+  <!-- head -->
   <div class="d-flex p-3 alpha-message__head">
     
     <!-- avatar -->
@@ -65,17 +66,22 @@
     </div>
   </div>
 
-  <!-- message meta details container -->
-  {% include "foirequest/alpha/body/message/message_meta_container.html" %} 
+  <!-- meta details container -->
+  {% include "foirequest/alpha/body/message/meta_container.html" %} 
 
+
+  <!-- body -->
   <div class="alpha-message__body alpha-message__wrap">
+
+    <!-- attachments -->
+    {% include "foirequest/alpha/body/message/attachments/list.html" %} 
     
     <!-- TODO: guidance (this is a placeholder now) -->
     {% if forloop.counter0|divisibleby:"3" %}
       {% include "foirequest/alpha/body/message/guidance.html" %}  
     {% endif %}
 
-    <!-- message text -->
+    <!-- text -->
     {% if forloop.counter0 == 0 %}
       <div class="alpha-message__content-text">{% highlight_request message request %}</div>
     {% else %}
