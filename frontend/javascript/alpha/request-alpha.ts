@@ -127,11 +127,12 @@ class Message {
       element.classList.add('alpha-comment--highlighted')
       setTimeout(() => {
         element.classList.remove('alpha-comment--highlighted')        
-      }, 650);
+      }, 750);
     }
   }
 
 }
+
 
 
 const init = () => {
@@ -155,17 +156,25 @@ const init = () => {
       if (!msg.isExpandedInStorage) {
         msg.expandMessage()
       }
-      setTimeout(() => {
-        msg.showAllComments()
-        setTimeout(() => {
-          msg.scrollToComment(scrollToCommentId)
-        }, 0)
-      }, 0)
+      msg.showAllComments();
+
+      // wait until DOM has finished rendering
+      // and scroll to comment
+      (function checkIfReady () {
+        if (document.readyState === 'complete') {
+          if (document.getElementById(scrollToCommentId)) {
+            msg.scrollToComment(scrollToCommentId)
+          }
+        } else (
+          window.requestAnimationFrame(checkIfReady)
+        )
+      })()
+      
     }
   }
   
 }
 
 
-init()
-// document.addEventListener("DOMContentLoaded", init)
+// init()
+document.addEventListener("DOMContentLoaded", init)
