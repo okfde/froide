@@ -1,0 +1,45 @@
+{% load i18n %}
+{% load foirequest_tags %}
+
+<div class="col-sm-10 mb-2 ">
+  {% include "foirequest/alpha/body/message/attachments/attachment_item.html" %}
+  {% if attachment.redacted %}
+    <span class="badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
+      {% blocktrans %}protected original{% endblocktrans %}
+    </span>
+  {% endif %}
+  {% if attachment.converted and not attachment.approved %}
+    <span class="badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+      {% blocktrans %}protected original{% endblocktrans %}
+    </span>
+  {% endif %}
+  {% if attachment.approved %}
+    {% if object.public %}
+      <span class="badge badge-success">
+        {% blocktrans %}public{% endblocktrans %}
+      </span>
+    {% else %}
+      <span class="badge badge-info">
+        {% blocktrans %}visible to you{% endblocktrans %}
+      </span>
+    {% endif %}
+    {% if attachment.is_mail_decoration %}
+      <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
+        <i class="fa fa-picture-o" aria-hidden="true"></i>
+      </span>
+    {% endif %}
+  {% endif %}
+  {% if attachment.is_redacted %}
+    <span class="badge badge-dark">
+      {% blocktrans %}redacted{% endblocktrans %}
+    </span>
+  {% endif %}
+</div>
+<div class="col-sm-2 text-right d-print-none">
+  {% if attachment.can_redact and object|can_write_foirequest:request %}
+    <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
+      <span class="fa fa-edit"></span>
+      <span class="sr-only">{% trans "Edit" %}</span>
+    </a>
+  {% endif %}
+</div>
