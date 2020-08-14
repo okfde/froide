@@ -3,12 +3,12 @@
 {% load permission_helper %}
 
 <ul class="nav nav-compact flex-column d-print-none">
-  {% with count=object.follow_count %}
     {% block followers %}
       <li class="nav-item">
         {% include "foirequestfollower/show.html" %}
-    </li>{% endblock followers %}
-  {% endwith %}
+      </li>
+    {% endblock followers %}
+
 
   {% if object.visibility == 2 %}
   {% block social_sharing %}

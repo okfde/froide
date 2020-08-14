@@ -35,13 +35,11 @@
       </li>
 
       <!-- follow request -->
-      {% with count=object.follow_count %}
-        {% block followers %}
+      {% block followers %}
         <li class="info-box__list-item info-box__list-item--has-divider">
           {% include "foirequestfollower/show.html" %}
         </li>
-        {% endblock followers %}
-      {% endwith %}
+      {% endblock followers %}
 
       <li class="info-box__list-item info-box__list-item--has-divider">
         
