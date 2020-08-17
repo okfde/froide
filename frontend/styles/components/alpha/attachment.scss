@@ -4,7 +4,13 @@
     font-size: 2.250rem;
     width: 3.125rem;
     height: 3.125rem;
-    color: $blue-400;
-    background-color: $blue-200;
+    &--gray {
+      color: $gray-400;
+      background-color: $gray-200;
+    }
+    &--blue {
+      color: $blue-400;
+      background-color: $blue-200;
+    }
   }
 }

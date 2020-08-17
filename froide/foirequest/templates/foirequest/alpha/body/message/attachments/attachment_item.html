@@ -1,8 +1,0 @@
-{% load i18n %}
-{% load foirequest_tags %}
-
-<i class="fa fa-paperclip" aria-hidden="true"></i>
-<span class="d-print-none">{{ attachment.name|truncatefilename }}</span>
-<span class="d-none d-print-inline">{{ attachment.name }}</span>
-&nbsp;
-<span class="badge badge-light">{{ attachment.size|filesizeformat }}</span>

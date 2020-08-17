@@ -2,49 +2,26 @@
 {% load foirequest_tags %}
 {% load content_helper %}
 
-
-{% comment %}
-  TODO:
-    - display style for items that cannot be approved (geschütztes Original)
-    - display style for items that need approval
-
-  {% if not attachment.approved %}
-
-    {% if not attachment.can_approve %}
-      list-group-item-dark
-    {% else %}
-      list-group-item-secondary
-    {% endif %}
-  {% endif %}
-
-{% endcomment %}
-
-
-
-{% comment %}
-  {% if object|can_write_foirequest:request and attachment.allow_link %}
-    <a id="{{ attachment.get_html_id }}" class="card-title" href="{{ attachment.get_absolute_url }}" title="{{ attachment.name }}">
-      {% include "foirequest/alpha/body/message/attachments/attachment_item.html" %}
-    </a>
-  {% else %}
-    {% include "foirequest/alpha/body/message/attachments/attachment_item.html" %}  
-  {% endif %}
-
-
-{% endcomment %}
-
-
-
 <div class="alpha-attachment d-flex flex-grow-0 rounded bg-gray-100 p-2 mr-2 mb-2">
   <!-- maybe wrap attachment with <a>-tag -->  
   
-  <div class="alpha-attachment__file-icon flex-shrink-0 rounded mr-2 d-flex align-items-center justify-content-center">
+  <div class="alpha-attachment__file-icon {% if not attachment.approved %}alpha-attachment__file-icon--gray{% else %}alpha-attachment__file-icon--blue{% endif %} flex-shrink-0 rounded mr-2 d-flex align-items-center justify-content-center">
     <i class="fa {{ attachment|fontawesome_filetype_icon }}" aria-hidden="true"></i>
   </div>
 
   <div class="">
     <!-- filename -->
-    <div class="text-nowrap smaller"><strong>{{ attachment.name|truncatefilename }}</strong></div>
+    <div class="text-nowrap smaller" title="{{ attachment.name }}">
+      <strong>
+        {% if object|can_write_foirequest:request and attachment.allow_link %}
+          <a id="{{ attachment.get_html_id }}" class="text-body" href="{{ attachment.get_absolute_url }}">
+            {{ attachment.name|truncatefilename }}
+          </a>
+        {% else %}
+          {{ attachment.name|truncatefilename }}
+        {% endif %}
+      </strong>
+    </div>
 
     <!-- attachments badges -->
     <div class="d-flex">
@@ -53,22 +30,22 @@
         <!-- approved or redacted badges-->
 
         {% if attachment.redacted %}
-          <span class="badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
+          <span class="mr-1 badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
         {% endif %}
         {% if attachment.converted and not attachment.approved %}
-          <span class="badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+          <span class="mr-1 badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
         {% endif %}
         {% if attachment.approved %}
           {% if object.public %}
-            <span class="badge badge-success">
+            <span class="mr-1 badge badge-success">
               {% blocktrans %}public{% endblocktrans %}
             </span>
           {% else %}
-            <span class="badge badge-info">
+            <span class="mr-1 badge badge-info">
               {% blocktrans %}visible to you{% endblocktrans %}
             </span>
           {% endif %}
@@ -79,7 +56,7 @@
           {% endif %}
         {% endif %}
         {% if attachment.is_redacted %}
-          <span class="badge badge-dark">
+          <span class="mr-1 badge badge-dark">
             {% blocktrans %}redacted{% endblocktrans %}
           </span>
         {% endif %}
@@ -89,11 +66,11 @@
         <!-- unapproved badges-->
 
         {% if attachment.pending %}
-          <span class="badge badge-info">
+          <span class="mr-1 badge badge-info">
             {% blocktrans %}PDF Pending{% endblocktrans %}
           </span>
         {% endif %}
-        <span class="badge badge-warning">
+        <span class="mr-1 badge badge-warning">
           {% blocktrans %}Not public!{% endblocktrans %}
         </span>
         {% if attachment.is_mail_decoration and object|can_write_foirequest:request %}
@@ -112,37 +89,3 @@
   </div>
 
 </div>
-
-
-
-
-
-
-{% comment %}
-  TODO: edit links
-
-  approved:
-  <div class="col-sm-2 text-right d-print-none">
-    {% if attachment.can_redact and object|can_write_foirequest:request %}
-      <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
-        <span class="fa fa-edit"></span>
-        <span class="sr-only">{% trans "Edit" %}</span>
-      </a>
-    {% endif %}
-  </div>
-
-  unapproved: 
-  <div class="col-sm-2 text-right d-print-none">
-    <div class="btn-group-forms" role="group">
-      {% if object|can_write_foirequest:request %}
-        {% if attachment.can_edit %}
-          <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
-            <span class="fa fa-edit"></span>
-            <span class="sr-only">{% trans "Edit" %}</span>
-          </a>
-        {% endif %}
-      {% endif %}
-    </div>
-  </div>
-
-{% endcomment %}

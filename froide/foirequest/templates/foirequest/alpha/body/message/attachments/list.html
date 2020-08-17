@@ -16,10 +16,12 @@
 
     {% if message.hidden_attachments %}
       <!-- irrelevant attachments -->
-      <div id="{{ message.get_html_id }}-decoattachments" class="collapse d-flex flex-wrap">
-      {% for attachment in message.hidden_attachments %}
-        {% include "foirequest/alpha/body/message/attachments/attachment.html" %}
-      {% endfor %}
+      <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
+        <div class="d-flex flex-wrap">
+          {% for attachment in message.hidden_attachments %}
+            {% include "foirequest/alpha/body/message/attachments/attachment.html" %}
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
 
