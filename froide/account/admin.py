@@ -62,7 +62,7 @@ class UserAdmin(DjangoUserAdmin):
 
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (_('Profile info'), {'fields': ('address', 'organization',
-            'organization_url', 'private', 'newsletter',
+            'organization_url', 'private',
             'profile_text', 'profile_photo'
         )}),
         (_('Advanced'), {'fields': (
