@@ -5,7 +5,24 @@
 <div class="alpha-attachment d-flex flex-grow-0 rounded bg-gray-100 p-2 mr-2 mb-2">
   <!-- maybe wrap attachment with <a>-tag -->  
   
-  <div class="alpha-attachment__file-icon {% if not attachment.approved %}alpha-attachment__file-icon--gray{% else %}alpha-attachment__file-icon--blue{% endif %} flex-shrink-0 rounded mr-2 d-flex align-items-center justify-content-center">
+  {% if attachment.redacted %}
+    {% trans 'This attachment contains personally identifying information and cannot be published.' as tooltip %}
+  {% elif attachment.converted and not attachment.approved %}
+    {% trans 'This attachment has been converted to PDF and cannot be published.' as tooltip %}
+  {% elif attachment.approved %}
+    {% if object.public %}
+      {% trans 'This attachment is public.' as tooltip %}
+    {% else %}
+      {% trans 'This attachment is only visible to you.' as tooltip %}
+    {% endif %}
+  {% else %}
+    {% trans 'This attachment is not public yet.' as tooltip %}
+  {% endif %}
+
+  <div
+    class="alpha-attachment__file-icon {% if not attachment.approved %}alpha-attachment__file-icon--gray{% else %}alpha-attachment__file-icon--blue{% endif %} flex-shrink-0 rounded mr-2 d-flex align-items-center justify-content-center"
+    data-toggle="tooltip" data-placement="top" title="{{ tooltip }}" 
+  >
     <i class="fa {{ attachment|fontawesome_filetype_icon }}" aria-hidden="true"></i>
   </div>
 
@@ -30,25 +47,16 @@
         <!-- approved or redacted badges-->
 
         {% if attachment.redacted %}
-          <span class="mr-1 badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment contains personally identifying information and cannot be published.{% endblocktrans %}">
+          <span class="mr-1 badge badge-secondary">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
         {% endif %}
         {% if attachment.converted and not attachment.approved %}
-          <span class="mr-1 badge badge-secondary" data-toggle="tooltip" data-placement="top" title="{% blocktrans %}This attachment has been converted to PDF and cannot be published.{% endblocktrans %}">
+          <span class="mr-1 badge badge-secondary">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
         {% endif %}
         {% if attachment.approved %}
-          {% if object.public %}
-            <span class="mr-1 badge badge-success">
-              {% blocktrans %}public{% endblocktrans %}
-            </span>
-          {% else %}
-            <span class="mr-1 badge badge-info">
-              {% blocktrans %}visible to you{% endblocktrans %}
-            </span>
-          {% endif %}
           {% if attachment.is_mail_decoration %}
             <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
               <i class="fa fa-picture-o" aria-hidden="true"></i>
@@ -70,9 +78,6 @@
             {% blocktrans %}PDF Pending{% endblocktrans %}
           </span>
         {% endif %}
-        <span class="mr-1 badge badge-warning">
-          {% blocktrans %}Not public!{% endblocktrans %}
-        </span>
         {% if attachment.is_mail_decoration and object|can_write_foirequest:request %}
           <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
             <i class="fa fa-picture-o" aria-hidden="true"></i>
