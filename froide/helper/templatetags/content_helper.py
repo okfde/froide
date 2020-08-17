@@ -118,7 +118,9 @@ def make_login_redirect_url(url):
 def fontawesome_filetype_icon(attachment):
     if attachment.is_pdf:
         return 'fa-file-pdf-o'
-    if attachment.is_word:
+    elif attachment.is_word:
         return 'fa-file-word-o'
+    elif attachment.is_image:
+        return 'fa-file-image-o'
 
     return 'fa-file-o'

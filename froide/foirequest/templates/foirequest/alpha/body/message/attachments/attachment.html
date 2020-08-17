@@ -2,7 +2,7 @@
 {% load foirequest_tags %}
 {% load content_helper %}
 
-<div class="alpha-attachment d-flex flex-grow-0 rounded bg-gray-100 p-2 mr-2 mb-2">
+<div class="alpha-attachment d-flex align-items-center flex-grow-0 rounded bg-gray-100 p-2 mr-2 mb-2">
   <!-- maybe wrap attachment with <a>-tag -->  
   
   {% if attachment.redacted %}
@@ -45,13 +45,7 @@
       {% if attachment.approved or attachment.redacted %}
 
         <!-- approved or redacted badges-->
-
-        {% if attachment.redacted %}
-          <span class="mr-1 badge badge-secondary">
-            {% blocktrans %}protected original{% endblocktrans %}
-          </span>
-        {% endif %}
-        {% if attachment.converted and not attachment.approved %}
+        {% if attachment.redacted or attachment.converted and not attachment.approved %}
           <span class="mr-1 badge badge-secondary">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
@@ -72,7 +66,6 @@
       {% else %}
 
         <!-- unapproved badges-->
-
         {% if attachment.pending %}
           <span class="mr-1 badge badge-info">
             {% blocktrans %}PDF Pending{% endblocktrans %}
