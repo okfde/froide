@@ -72,14 +72,14 @@
 
   <!-- body -->
   <div class="alpha-message__body alpha-message__wrap">
-
-    <!-- attachments -->
-    {% include "foirequest/alpha/body/message/attachments/list.html" %} 
     
     <!-- TODO: guidance (this is a placeholder now) -->
     {% if forloop.counter0|divisibleby:"3" %}
       {% include "foirequest/alpha/body/message/guidance.html" %}  
     {% endif %}
+
+    <!-- attachments -->
+    {% include "foirequest/alpha/body/message/attachments/list.html" %} 
 
     <!-- text -->
     {% if forloop.counter0 == 0 %}

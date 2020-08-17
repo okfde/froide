@@ -1,26 +1,44 @@
 {% load i18n %}
+{% load foirequest_tags %}
 
 {% block before_attachments %}{% endblock %}
 
 {% if message.all_attachments %}
   <div class="mb-3">
 
-    {% for attachment in message.listed_attachments %}
-      {% if attachment not in message.hidden_attachments %}
-        {% include "foirequest/alpha/body/message/attachments/attachment.html" %}
-      {% endif %}
-    {% endfor %}
+    <div class="d-flex flex-wrap">
+      {% for attachment in message.listed_attachments %}
+        {% if attachment not in message.hidden_attachments %}
+          {% include "foirequest/alpha/body/message/attachments/attachment.html" %}
+        {% endif %}
+      {% endfor %}
+    </div>
 
     {% if message.hidden_attachments %}
+      <!-- irrelevant attachments -->
+      <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
+        <div class="d-flex flex-wrap">
+          {% for attachment in message.hidden_attachments %}
+            {% include "foirequest/alpha/body/message/attachments/attachment.html" %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if object|can_write_foirequest:request %}
+      <!-- manage attachments link -->
+      <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="smaller">
+        {% trans "Manage attachments" %}
+      </a>
+    {% endif %}
+
+    {% if message.hidden_attachments %}
+      <!-- irrelevant attachments -->
       <a data-toggle="collapse" href="#{{ message.get_html_id }}-decoattachments" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-decoattachments" class="smaller">
         {% trans "Show irrelevant attachments" %}
       </a>
-      <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
-      {% for attachment in message.hidden_attachments %}
-        {% include "foirequest/alpha/body/message/attachments/attachment.html" %}
-      {% endfor %}
-      </div>
     {% endif %}
+      
     
   </div>
 {% endif %}

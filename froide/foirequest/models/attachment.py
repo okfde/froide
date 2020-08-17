@@ -27,6 +27,16 @@ PDF_FILETYPES = (
     'text/x-pdf'
 )
 
+WORD_FILETYPES = (
+    'application/msword',
+    'application/vnd.msword',
+    'application/vnd.ms-word.document.macroenabled.12'
+)
+
+WORD_FILEEXTENSIONS = (
+    '.doc', '.dot', '.wbk', '.docx', '.docm', 'dotx', '.dotm', '.docb'
+)
+
 IMAGE_FILETYPES = (
     'image/png',
     'image/jpeg',
@@ -156,6 +166,12 @@ class FoiAttachment(models.Model):
         return self.filetype in PDF_FILETYPES or (
             self.name and self.name.endswith(('.pdf', '.PDF')) and
             self.filetype == 'application/octet-stream'
+        )
+
+    @property
+    def is_word(self):
+        return self.filetype in WORD_FILETYPES or (
+            self.name and self.name.endswith(WORD_FILEEXTENSIONS)
         )
 
     @property
