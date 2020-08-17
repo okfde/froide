@@ -116,6 +116,8 @@ def redact_content(content):
 
 
 def replace_word(needle, replacement, content):
+    if not needle:
+        return content
     return re.sub(r'(^|[\W_])%s($|[\W_])' % re.escape(needle),
                     '\\1%s\\2' % replacement, content, re.U | re.I)
 
