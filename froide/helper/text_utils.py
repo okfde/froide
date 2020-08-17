@@ -73,24 +73,22 @@ def redact_subject(content, user=None):
     return content[:255]
 
 
-def redact_plaintext(content, is_response=True, user=None, replacements=None):
+def redact_plaintext(content, redact_greeting=False, redact_closing=False, user=None, replacements=None):
     content = redact_content(content)
 
-    greeting_replacement = str(_("<< Greeting >>"))
-
-    if not settings.FROIDE_CONFIG.get('public_body_officials_public'):
-        if is_response:
-            content = remove_closing(
+    if redact_closing:
+        content = remove_closing(
+            content
+        )
+    if redact_greeting:
+        greetings = settings.FROIDE_CONFIG.get('greetings')
+        if greetings:
+            greeting_replacement = str(_("<< Greeting >>"))
+            content = replace_custom(
+                greetings,
+                greeting_replacement,
                 content
             )
-        else:
-            greetings = settings.FROIDE_CONFIG.get('greetings')
-            if greetings:
-                content = replace_custom(
-                    greetings,
-                    greeting_replacement,
-                    content
-                )
 
     if user:
         content = redact_user_strings(content, user)

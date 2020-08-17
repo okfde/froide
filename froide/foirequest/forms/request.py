@@ -168,6 +168,7 @@ class PublicBodySuggestionsForm(forms.Form):
             req.due_date = foilaw.calculate_due_date()
         req.save()
         req.request_to_public_body.send(sender=req)
+        send_address = False
         if req.law:
             send_address = not req.law.email_only
 
@@ -187,7 +188,6 @@ class PublicBodySuggestionsForm(forms.Form):
             )
             message.plaintext_redacted = redact_plaintext(
                 message.plaintext,
-                is_response=False,
                 user=req.user
             )
             message.save()

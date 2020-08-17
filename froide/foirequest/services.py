@@ -237,7 +237,7 @@ class CreateRequestService(BaseService):
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
-            request
+            request,
         )
 
         message.recipient_public_body = publicbody
@@ -377,7 +377,7 @@ class ReceiveEmailService(BaseService):
             message.subject, user=foirequest.user
         )
         message.plaintext_redacted = redact_plaintext_with_request(
-            message.plaintext, foirequest, is_response=True,
+            message.plaintext, foirequest, redact_closing=True,
         )
 
         if is_bounce:

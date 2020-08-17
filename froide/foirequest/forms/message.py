@@ -303,7 +303,8 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
-            self.foirequest
+            self.foirequest,
+            redact_greeting=True
         )
 
     def make_message(self):
@@ -436,7 +437,8 @@ class EscalationMessageForm(forms.Form):
         )
 
         plaintext_redacted = redact_plaintext_with_request(
-            plaintext, self.foirequest
+            plaintext, self.foirequest,
+            redact_greeting=True
         )
 
         return FoiMessage(

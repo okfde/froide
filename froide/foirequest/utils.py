@@ -151,11 +151,13 @@ def get_secret_url_replacements():
     return SECRET_URL_REPLACEMENTS
 
 
-def redact_plaintext_with_request(plaintext, foirequest, is_response=False):
+def redact_plaintext_with_request(plaintext, foirequest,
+                                  redact_greeting=False, redact_closing=False):
     replacements = get_secret_url_replacements()
     return redact_plaintext(
         plaintext,
-        is_response=is_response,
+        redact_greeting=redact_greeting,
+        redact_closing=redact_closing,
         user=foirequest.user,
         replacements=replacements
     )
@@ -469,7 +471,8 @@ def rerun_message_redaction(foirequests):
             )
             message.plaintext_redacted = redact_plaintext(
                 message.plaintext,
-                is_response=message.is_response,
+                redact_closing=message.is_response,
+                redact_greeting=not message.is_response,
                 user=user
             )
             message.save()

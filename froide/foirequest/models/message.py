@@ -376,7 +376,7 @@ class FoiMessage(models.Model):
         if self.plaintext_redacted is None:
             self.plaintext_redacted = redact_plaintext(
                 self.plaintext,
-                self.is_response,
+                redact_closing=self.is_response,
                 user=self.request.user
             )
             self.save()

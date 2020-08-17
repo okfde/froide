@@ -1314,7 +1314,7 @@ class RequestTest(TestCase):
         self.assertIn(url3, plaintext)
 
         redacted = redact_plaintext_with_request(
-            plaintext, req, is_response=False
+            plaintext, req
         )
         self.assertNotIn(url1, redacted)
         self.assertNotIn(url2, redacted)
