@@ -112,3 +112,13 @@ def relativetime(d):
 @register.filter
 def make_login_redirect_url(url):
     return reverse('account-login') + '?' + urlencode({'next': url})
+
+
+@register.filter
+def fontawesome_filetype_icon(attachment):
+    if attachment.is_pdf:
+        return 'fa-file-pdf-o'
+    if attachment.is_word:
+        return 'fa-file-word-o'
+
+    return 'fa-file-o'
