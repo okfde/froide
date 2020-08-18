@@ -6,7 +6,7 @@ class Message {
   metaContainer: HTMLElement
   expandedClassName = 'alpha-message--expanded'
   
-  constructor (element: HTMLElement) {
+  constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
     this.root = element
     this.metaContainer = this.root.querySelector('.alpha-message__meta-container') as HTMLElement
@@ -20,19 +20,23 @@ class Message {
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
     element.querySelectorAll('.alpha-comment__more-text-trigger')
       .forEach(el => el.addEventListener('click', this.expandCommentText.bind(this)))
-    element.querySelector('.alpha-comment__more-comments-trigger')
-      ?.addEventListener('click', this.showAllComments.bind(this))
+    element.querySelectorAll('.alpha-comment__more-comments-trigger')
+      .forEach(el => el.addEventListener('click', this.showAllComments.bind(this)))
+    element.querySelectorAll('.alpha-attachment__more-trigger')
+      .forEach(el => el.addEventListener('click', this.showAllAttachments.bind(this)))
 
-    // create localStorage item
+    // create storage item and/or expand message
     if (!this.storageItem) {
-      localStorage.setItem(this.id, JSON.stringify({
-        isExpanded: false
-      }))
+      // create localStorage item
+      localStorage.setItem(
+        this.id,
+        JSON.stringify({ isExpanded: isLastItem || forceExpand })
+      )
+      // maybe expand
+      if (isLastItem || forceExpand) this.expandMessage()
     } else {
-      // expand message according to localStorage state 
-      if (this.isExpandedInStorage) {
-        this.expandMessage()
-      }
+      // expand message according to storage state
+      if (this.isExpandedInStorage || forceExpand) this.expandMessage()
     }
   }
 
@@ -95,15 +99,25 @@ class Message {
   }
 
   showAllComments (e?: Event | undefined) {
-    // unwrap left sibling content of parent node
     let el
     if (e) {
       e.preventDefault()
       el = e.target as HTMLElement
     } else {
-      el = this.root.querySelector('.alpha-comment__more-comments-trigger')
+      el = this.root.querySelector('.alpha-comment__more-comments-trigger') as HTMLElement
     }
     
+    this.unwrapLeftSibling(el)
+  }
+
+  showAllAttachments (e: Event) {
+    e.preventDefault()
+    this.unwrapLeftSibling(e.target as HTMLElement)
+  }
+
+  unwrapLeftSibling (el: HTMLElement) {
+    // unwrap left sibling content of parent node
+    console.warn(el)
     const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
     const previousParent = parentEl?.previousElementSibling
@@ -138,20 +152,27 @@ class Message {
 
 
 const init = () => {
+  // init message containers
   const messages: Message[] = []
-  const urlParams = new URLSearchParams(window.location.search);
-  const msgParam = urlParams.get('msg')
-  const commentParam = urlParams.get('c')
-  const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
-  const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
-  
-  document.querySelectorAll('.alpha-message').forEach(el => {
-    messages.push(new Message(el as HTMLElement))
+  const urlHash = window.location.hash
+  const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash) ? urlHash.substr(1) : null
+  const messageContainers = document.querySelectorAll('.alpha-message')
+
+  messageContainers.forEach((el, idx) => {
+    const isLastItem = idx === messageContainers.length  - 1
+    const forceExpand = collapsedMsgId && collapsedMsgId === el.id
+    messages.push(new Message(el as HTMLElement, forceExpand as Boolean, isLastItem as Boolean))
   })
 
   // when all messages initialized:
   // scroll to comment if query parameters given
   // find message with id that equals query param
+  const urlParams = new URLSearchParams(window.location.search);
+  const msgParam = urlParams.get('msg')
+  const commentParam = urlParams.get('c')
+  const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
+  const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
+
   if (messages.length && scrollToMsgId && scrollToCommentId) {
     const msg = messages.find(m => m.id === scrollToMsgId)
     if (msg) {

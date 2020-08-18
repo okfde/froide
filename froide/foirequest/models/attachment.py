@@ -37,6 +37,39 @@ WORD_FILEEXTENSIONS = (
     '.doc', '.dot', '.wbk', '.docx', '.docm', 'dotx', '.dotm', '.docb'
 )
 
+EXCEL_FILETYPES = (
+    'application/msexcel',
+    'application/vnd.ms-excel',
+    'application/vnd.ms-excel.sheet.binary.macroenabled.12',
+    'application/vnd.ms-excel.sheet.macroenabled.12',
+)
+
+EXCEL_FILEEXTENSIONS = (
+    '.xlsx', '.xlsm', '.xlsb', '.xltx', '.xltm', '.xls', '.xlt',
+    '.xls', '.xml', '.xml', '.xlam', '.xla', '.xlw', '.xlr',
+)
+
+ARCHIVE_FILETYPES = (
+    'application/x-rar-compressed',
+    'application/x-zip-compressed',
+    'application/zip',
+    'application/x-7z-compressed',
+)
+
+ARCHIVE_FILEEXTENSIONS = (
+    '.rar', '.zip', '.7z',
+)
+
+POWERPOINT_FILETYPES = (
+    'application/vnd.ms-powerpoint',
+    'application/vnd.ms-powerpoint.presentation.macroenabled.12',
+    'application/vnd.ms-powerpoint.slideshow.macroenabled.12',
+)
+
+POWERPOINT_FILETEXTENSIONS = (
+    '.pptx', '.pptm', '.ppt', '.potx', '.potm', '.pot', '.ppsx', '.ppsm', '.pps',
+)
+
 IMAGE_FILETYPES = (
     'image/png',
     'image/jpeg',
@@ -172,6 +205,28 @@ class FoiAttachment(models.Model):
     def is_word(self):
         return self.filetype in WORD_FILETYPES or (
             self.name and self.name.endswith(WORD_FILEEXTENSIONS)
+        )
+
+    @property
+    def is_excel(self):
+        return self.filetype in EXCEL_FILETYPES or (
+            self.name and self.name.endswith(EXCEL_FILEEXTENSIONS)
+        )
+
+    @property
+    def is_text(self):
+        return self.filetype.startswith('text/')
+
+    @property
+    def is_archive(self):
+        return self.filetype in ARCHIVE_FILETYPES or (
+            self.name and self.name.endswith(ARCHIVE_FILEEXTENSIONS)
+        )
+
+    @property
+    def is_powerpoint(self):
+        return self.filetype in POWERPOINT_FILETYPES or (
+            self.name and self.name.endswith(POWERPOINT_FILETEXTENSIONS)
         )
 
     @property

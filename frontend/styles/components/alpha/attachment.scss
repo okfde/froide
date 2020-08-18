@@ -1,8 +1,20 @@
 .alpha-attachment {
+  display: flex;
+  flex: 0 0 100%;
+  padding: $spacer * .5;
+  margin-right: $spacer * .5;
+  margin-bottom: $spacer * .5;
+  background-color: $gray-100;
+  border-radius: $border-radius;
+  @include media-breakpoint-up(md) {
+    $width: calc(50% - #{$spacer * .5});
+    flex: 0 0 $width;
+    max-width: $width;
+  }
   &__file-icon {
     font-size: 2.250rem;
     width: 3.375rem;
-    height: 3.625rem;
+    height: 3.688rem;
     &--gray {
       color: $gray-400;
       background-color: $gray-200;
