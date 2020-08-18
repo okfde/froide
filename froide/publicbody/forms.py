@@ -257,7 +257,7 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
             proposal_user = proposals[proposal_id]['user']
             if proposal_user != user:
                 proposal_user.send_mail(
-                    _('Changes to public body “%s” have been applied').format(
+                    _('Changes to public body “{}” have been applied').format(
                         pb.name
                     ),
                     _('Hello,\n\nYou can find the changed public body here:'
