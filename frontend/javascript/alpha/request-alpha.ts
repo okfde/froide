@@ -18,8 +18,10 @@ class Message {
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
     element.querySelectorAll('.alpha-comment__more-text-trigger')
       .forEach(el => el.addEventListener('click', this.expandCommentText.bind(this)))
-    element.querySelector('.alpha-comment__more-comments-trigger')
-      ?.addEventListener('click', this.showAllComments.bind(this))
+    element.querySelectorAll('.alpha-comment__more-comments-trigger')
+      .forEach(el => el.addEventListener('click', this.showAllComments.bind(this)))
+    element.querySelectorAll('.alpha-attachment__more-trigger')
+      .forEach(el => el.addEventListener('click', this.showAllAttachments.bind(this)))
 
     // create storage item and/or expand message
     if (!this.storageItem) {
@@ -95,15 +97,25 @@ class Message {
   }
 
   showAllComments (e?: Event | undefined) {
-    // unwrap left sibling content of parent node
     let el
     if (e) {
       e.preventDefault()
       el = e.target as HTMLElement
     } else {
-      el = this.root.querySelector('.alpha-comment__more-comments-trigger')
+      el = this.root.querySelector('.alpha-comment__more-comments-trigger') as HTMLElement
     }
     
+    this.unwrapLeftSibling(el)
+  }
+
+  showAllAttachments (e: Event) {
+    e.preventDefault()
+    this.unwrapLeftSibling(e.target as HTMLElement)
+  }
+
+  unwrapLeftSibling (el: HTMLElement) {
+    // unwrap left sibling content of parent node
+    console.warn(el)
     const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
     const previousParent = parentEl?.previousElementSibling

@@ -26,16 +26,16 @@
     <i class="fa {{ attachment|fontawesome_filetype_icon }}" aria-hidden="true"></i>
   </div>
 
-  <div class="">
+  <div class="overflow-hidden">
     <!-- filename -->
-    <div class="text-nowrap smaller" title="{{ attachment.name }}">
+    <div class="text-nowrap text-truncate smaller" title="{{ attachment.name }}">
       <strong>
         {% if object|can_write_foirequest:request and attachment.allow_link %}
           <a id="{{ attachment.get_html_id }}" class="text-body" href="{{ attachment.get_absolute_url }}">
-            {{ attachment.name|truncatefilename }}
+            {{ attachment.name|truncatefilename:22 }}
           </a>
         {% else %}
-          {{ attachment.name|truncatefilename }}
+          {{ attachment.name|truncatefilename:22 }}
         {% endif %}
       </strong>
     </div>
