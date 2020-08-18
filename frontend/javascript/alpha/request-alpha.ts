@@ -4,7 +4,7 @@ class Message {
   metaContainer: HTMLElement
   expandedClassName = 'alpha-message--expanded'
   
-  constructor (element: HTMLElement) {
+  constructor (element: HTMLElement, forceExpand: Boolean) {
     this.id = element.id || ''
     this.root = element
     this.metaContainer = this.root.querySelector('.alpha-message__meta-container') as HTMLElement
@@ -24,11 +24,11 @@ class Message {
     // create localStorage item
     if (!this.storageItem) {
       localStorage.setItem(this.id, JSON.stringify({
-        isExpanded: false
+        isExpanded: forceExpand
       }))
     } else {
       // expand message according to localStorage state 
-      if (this.isExpandedInStorage) {
+      if (this.isExpandedInStorage || forceExpand) {
         this.expandMessage()
       }
     }
@@ -136,20 +136,24 @@ class Message {
 
 
 const init = () => {
+  // init message containers
   const messages: Message[] = []
-  const urlParams = new URLSearchParams(window.location.search);
-  const msgParam = urlParams.get('msg')
-  const commentParam = urlParams.get('c')
-  const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
-  const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
-  
+  const urlHash = window.location.hash
+  const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash) ? urlHash.substr(1) : null
   document.querySelectorAll('.alpha-message').forEach(el => {
-    messages.push(new Message(el as HTMLElement))
+    const forceExpand = collapsedMsgId && collapsedMsgId === el.id
+    messages.push(new Message(el as HTMLElement, forceExpand as Boolean))
   })
 
   // when all messages initialized:
   // scroll to comment if query parameters given
   // find message with id that equals query param
+  const urlParams = new URLSearchParams(window.location.search);
+  const msgParam = urlParams.get('msg')
+  const commentParam = urlParams.get('c')
+  const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
+  const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
+
   if (messages.length && scrollToMsgId && scrollToCommentId) {
     const msg = messages.find(m => m.id === scrollToMsgId)
     if (msg) {
