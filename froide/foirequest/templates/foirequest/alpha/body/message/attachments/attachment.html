@@ -2,7 +2,7 @@
 {% load foirequest_tags %}
 {% load content_helper %}
 
-<div class="alpha-attachment d-flex flex-grow-0 rounded bg-gray-100 p-2 mr-2 mb-2">
+<div class="alpha-attachment">
   <!-- maybe wrap attachment with <a>-tag -->  
   
   {% if attachment.redacted %}
@@ -13,7 +13,7 @@
     {% if object.public %}
       {% trans 'This attachment is public.' as tooltip %}
     {% else %}
-      {% trans 'This attachment is only visible to you.' as tooltip %}
+      {% trans 'This attachment is only visible for logged in users.' as tooltip %}
     {% endif %}
   {% else %}
     {% trans 'This attachment is not public yet.' as tooltip %}
@@ -46,7 +46,7 @@
 
         <!-- approved or redacted badges-->
         {% if attachment.redacted or attachment.converted and not attachment.approved %}
-          <span class="mr-1 badge badge-secondary">
+          <span class="mr-1 px-1 small text-nowrap bg-gray-600 text-white">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
         {% endif %}
@@ -58,7 +58,7 @@
           {% endif %}
         {% endif %}
         {% if attachment.is_redacted %}
-          <span class="mr-1 badge badge-dark">
+          <span class="mr-1 px-1 small text-nowrap bg-dark text-white">
             {% blocktrans %}redacted{% endblocktrans %}
           </span>
         {% endif %}

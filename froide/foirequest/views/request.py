@@ -78,6 +78,14 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
             a for a in message.listed_attachments
             if a.is_irrelevant
         ]
+        message.approved_attachments = [
+            a for a in message.listed_attachments
+            if a.approved and a not in message.hidden_attachments
+        ]
+        message.unapproved_attachments = [
+            a for a in message.listed_attachments
+            if not a.approved and a not in message.hidden_attachments
+        ]
 
         for att in message.all_attachments:
             att.belongs_to = message
