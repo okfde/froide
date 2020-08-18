@@ -191,7 +191,7 @@ class FoiAttachment(models.Model):
         return self.can_redact or self.can_delete or self.can_approve
 
     @property
-    def allow_link(self):
+    def can_link(self):
         return self.approved or not (self.can_redact and self.can_approve)
 
     @property
