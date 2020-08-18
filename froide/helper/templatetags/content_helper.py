@@ -122,5 +122,13 @@ def fontawesome_filetype_icon(attachment):
         return 'fa-file-word-o'
     elif attachment.is_image:
         return 'fa-file-image-o'
+    elif attachment.is_excel:
+        return 'fa-file-excel-o'
+    elif attachment.is_text:
+        return 'fa-file-text-o'
+    elif attachment.is_archive:
+        return 'fa-file-archive-o'
+    elif attachment.is_powerpoint:
+        return 'fa-file-powerpoint-o'
 
     return 'fa-file-o'
