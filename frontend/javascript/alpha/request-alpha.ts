@@ -4,7 +4,7 @@ class Message {
   metaContainer: HTMLElement
   expandedClassName = 'alpha-message--expanded'
   
-  constructor (element: HTMLElement, forceExpand: Boolean) {
+  constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
     this.root = element
     this.metaContainer = this.root.querySelector('.alpha-message__meta-container') as HTMLElement
@@ -21,16 +21,18 @@ class Message {
     element.querySelector('.alpha-comment__more-comments-trigger')
       ?.addEventListener('click', this.showAllComments.bind(this))
 
-    // create localStorage item
+    // create storage item and/or expand message
     if (!this.storageItem) {
-      localStorage.setItem(this.id, JSON.stringify({
-        isExpanded: forceExpand
-      }))
+      // create localStorage item
+      localStorage.setItem(
+        this.id,
+        JSON.stringify({ isExpanded: isLastItem || forceExpand })
+      )
+      // maybe expand
+      if (isLastItem || forceExpand) this.expandMessage()
     } else {
-      // expand message according to localStorage state 
-      if (this.isExpandedInStorage || forceExpand) {
-        this.expandMessage()
-      }
+      // expand message according to storage state
+      if (this.isExpandedInStorage || forceExpand) this.expandMessage()
     }
   }
 
@@ -140,9 +142,12 @@ const init = () => {
   const messages: Message[] = []
   const urlHash = window.location.hash
   const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash) ? urlHash.substr(1) : null
-  document.querySelectorAll('.alpha-message').forEach(el => {
+  const messageContainers = document.querySelectorAll('.alpha-message')
+
+  messageContainers.forEach((el, idx) => {
+    const isLastItem = idx === messageContainers.length  - 1
     const forceExpand = collapsedMsgId && collapsedMsgId === el.id
-    messages.push(new Message(el as HTMLElement, forceExpand as Boolean))
+    messages.push(new Message(el as HTMLElement, forceExpand as Boolean, isLastItem as Boolean))
   })
 
   // when all messages initialized:
