@@ -11,6 +11,7 @@ class CommentForm(DjangoCommentForm):
     name = forms.CharField(
         label=_('Name'),
         required=True,
+        max_length=50,
         help_text=_('Your name will only be visible to logged in users.'),
         widget=forms.TextInput(
             attrs={
