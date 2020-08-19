@@ -1,4 +1,5 @@
 import Message from './Message'
+import Timeline from './Timeline'
 
 
 const initMessageContainers = () => {
@@ -21,8 +22,8 @@ const init = () => {
   const messages: Message[] = initMessageContainers()
 
   // when all messages initialized:
-  // scroll to comment if query parameters given
-  // find message with id that equals query param
+  // scroll to comment if query parameters given (e.g. ?msg=76058&c=10856)
+  // find message and comment containers with id that equal query params
   if (messages.length) {
     const urlParams = new URLSearchParams(window.location.search);
     const msgParam = urlParams.get('msg')
@@ -37,9 +38,13 @@ const init = () => {
     }
   }
 
-  
+  // init timeline
+  const correspRoot = document.getElementById('correspondence')
+  const timelineRoot = document.getElementById('timeline')
+  if (correspRoot && timelineRoot) {
+
+  }
 }
 
 
-// init()
-document.addEventListener("DOMContentLoaded", init)
+init()

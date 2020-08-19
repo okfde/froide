@@ -1,28 +1,12 @@
 {% load i18n %}
 {% load humanize %}
 
-<div>
+<div id="correspondence">
   {% block foirequest_messages %}
-  {% for message in object.messages %}
-    {% include "foirequest/alpha/body/message/message.html" %}  
-    {% empty %}
-      <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
-  {% endfor %}
-{% endblock foirequest_messages %}
-
-{% block after_foirequest_messages %}
-  {% if object.same_as_count %}
-    <div class="d-print-none" id="identical">
-      <h5>{% blocktrans with counter=object.same_as_count|intcomma count count=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
-    </div>
-  {% endif %}
-  {% if object.same_as %}
-    <div class="d-print-none" id="identical">
-      <p>
-        {% blocktrans %}This request is identical to:{% endblocktrans %}
-        <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a>
-      </p>
-    </div>
-  {% endif %}
-{% endblock after_foirequest_messages %}
+    {% for message in object.messages %}
+      {% include "foirequest/alpha/body/message/message.html" %}  
+      {% empty %}
+        <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
+    {% endfor %}
+  {% endblock foirequest_messages %}
 </div>
