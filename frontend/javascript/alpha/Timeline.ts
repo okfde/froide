@@ -31,7 +31,7 @@ export default class Timeline {
   }
 
   update () {
-    console.log('debounced', this);
+    // console.log('debounced', this);
   }
 
 }
