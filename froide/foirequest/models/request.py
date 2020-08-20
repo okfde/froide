@@ -69,7 +69,9 @@ class FoiRequestManager(CurrentSiteManager):
                 last_message__lt=ago)
 
     def get_unclassified_for_moderation(self):
-        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET)
+        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET).filter(
+            visibility=Visibility.VISIBLE_TO_PUBLIC
+        )
 
     def get_dashboard_requests(self, user, query=None):
         query_kwargs = {}
