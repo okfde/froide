@@ -13,8 +13,7 @@ from django.contrib.gis.geos import Point
 from taggit.utils import parse_tags
 
 from froide.publicbody.models import (
-    PublicBody, PublicBodyTag,
-    Jurisdiction, Classification, Category
+    PublicBody, Jurisdiction, Classification, Category
 )
 from froide.georegion.models import GeoRegion
 
@@ -120,7 +119,6 @@ class CSVImporter(object):
             PublicBody._default_manager.filter(id=pb.id).update(**row)
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
-            pb.tags.set(*tags)
             if regions:
                 pb.regions.set(*regions)
             pb.categories.set(*categories)
@@ -137,7 +135,6 @@ class CSVImporter(object):
         pb.site = self.site
         pb.save()
         pb.laws.add(*row['jurisdiction'].laws)
-        pb.tags.set(*list(tags))
         if regions:
             pb.regions.set(*regions)
         pb.categories.set(*categories)
