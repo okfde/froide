@@ -181,7 +181,7 @@ class CSVImporter(object):
         if name not in self.classification_cache:
             try:
                 self.classification_cache[name] = Classification.objects.get(name=name)
-            except GeoRegion.DoesNotExist:
+            except Classification.DoesNotExist:
                 raise ValueError(
                     _('Classification "%s" does not exist.') % name)
         return self.classification_cache[name]
