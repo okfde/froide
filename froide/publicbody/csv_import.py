@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.contrib.gis.geos import Point
 
 from taggit.utils import parse_tags
@@ -69,12 +70,6 @@ class CSVImporter(object):
 
         categories = parse_tags(row.pop('categories', ''))
         categories = list(self.get_categories(categories))
-
-        tags = parse_tags(row.pop('tags', ''))
-        # Backwards compatible handling of topic__slug
-        topic_slug = row.pop('topic__slug', None)
-        if topic_slug:
-            tags.append(self.get_topic(topic_slug))
 
         # resolve foreign keys
         if 'jurisdiction__slug' in row:
@@ -150,7 +145,11 @@ class CSVImporter(object):
 
     def get_jurisdiction(self, slug):
         if slug not in self.jur_cache:
-            jur = Jurisdiction.objects.get(slug=slug)
+            try:
+                jur = Jurisdiction.objects.get(slug=slug)
+            except Jurisdiction.DoesNotExist:
+                raise ValueError(
+                    _('Jurisdiction slug "%s" does not exist.') % slug)
             jur.laws = jur.get_all_laws()
             self.jur_cache[slug] = jur
         return self.jur_cache[slug]
@@ -160,25 +159,32 @@ class CSVImporter(object):
             if cat in self.category_cache:
                 yield self.category_cache[cat]
             else:
-                category = Category.objects.get(name=cat)
+                try:
+                    category = Category.objects.get(name=cat)
+                except Category.DoesNotExist:
+                    raise ValueError(
+                        _('Category name "%s" does not exist.') % cat)
                 self.category_cache[cat] = category
                 yield category
 
     def get_georegion(self, id=None, identifier=None, name=None):
-        if id is not None:
-            return GeoRegion.objects.get(id=id)
-        if identifier is not None:
-            return GeoRegion.objects.get(region_identifier=identifier)
+        try:
+            if id is not None:
+                return GeoRegion.objects.get(id=id)
+            if identifier is not None:
+                return GeoRegion.objects.get(region_identifier=identifier)
+        except GeoRegion.DoesNotExist:
+            raise ValueError(
+                _('GeoRegion %s/%s does not exist.') % (id, identifier))
         return None
-
-    def get_topic(self, slug):
-        if slug not in self.topic_cache:
-            self.topic_cache[slug] = PublicBodyTag.objects.get(slug=slug, is_topic=True)
-        return self.topic_cache[slug]
 
     def get_classification(self, name):
         if name is None:
             return None
         if name not in self.classification_cache:
-            self.classification_cache[name] = Classification.objects.get(name=name)
+            try:
+                self.classification_cache[name] = Classification.objects.get(name=name)
+            except GeoRegion.DoesNotExist:
+                raise ValueError(
+                    _('Classification "%s" does not exist.') % name)
         return self.classification_cache[name]
