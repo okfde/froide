@@ -176,7 +176,7 @@ class CSVImporter(object):
         return None
 
     def get_classification(self, name):
-        if name is None:
+        if not name:
             return None
         if name not in self.classification_cache:
             try:
