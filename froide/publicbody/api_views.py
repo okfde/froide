@@ -363,7 +363,7 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
                 region = GeoRegion.objects.get(
                     id=value
                 )
-                ids = region.get_descendants()
+                ids = GeoRegion.get_tree(parent=region)
             except GeoRegion.DoesNotExist:
                 return queryset
         return queryset.filter(regions__in=ids)
