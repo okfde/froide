@@ -572,6 +572,7 @@ class PublicBodySuggestionAdmin(admin.ModelAdmin):
         qs = qs.prefetch_related('request', 'public_body', 'user')
         return qs
 
+
 def execute_redeliver(admin, request, queryset, action_obj):
     for deferred in queryset:
         deferred.redeliver(action_obj)
