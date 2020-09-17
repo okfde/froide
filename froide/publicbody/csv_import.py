@@ -157,7 +157,7 @@ class CSVImporter(object):
                 yield self.category_cache[cat]
             else:
                 try:
-                    category = Category.objects.get(name=cat)
+                    category = Category.objects.get(id=cat)
                 except Category.DoesNotExist:
                     raise ValueError(
                         _('Category name "%s" does not exist.') % cat)
