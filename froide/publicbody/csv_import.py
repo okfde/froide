@@ -136,7 +136,7 @@ class CSVImporter(object):
         pb.save()
         pb.laws.add(*row['jurisdiction'].laws)
         if regions:
-            pb.regions.set(*regions)
+            pb.regions.set(regions)
         pb.categories.set(*categories)
         return pb
 
