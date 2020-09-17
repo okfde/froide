@@ -20,6 +20,7 @@ from django.utils.crypto import salted_hmac
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.core.mail.message import sanitize_address
 
 from froide.helper.email_utils import (
     EmailParser, get_mail_client, get_unread_mails, BounceResult,
@@ -116,6 +117,8 @@ def make_unsubscribe_address(email):
 def make_signed_address(email, email_format=BOUNCE_FORMAT):
     signer = CustomTimestampSigner(sep=SIGN_SEP)
     email = email.lower()
+    # Sanitize address to convert unicode domains to punycode
+    email = sanitize_address(email, 'utf-8')
     value = signer.sign(email).split(SIGN_SEP, 1)[1]
     value = value.replace(SIGN_SEP, SEP_REPL).lower()
     # normalize email to lower case, some bounces may go to lower case
