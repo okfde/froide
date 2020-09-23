@@ -97,7 +97,7 @@ class CSVImporter(object):
             row['parent'] = PublicBody._default_manager.get(pk=parent)
 
         # get optional values
-        for n in ('description', 'other_names', 'request_note', 'website_dump'):
+        for n in ('description', 'other_names', 'request_note', 'website_dump', 'wikidata_item'):
             if n in row:
                 row[n] = row.get(n, '').strip()
 
