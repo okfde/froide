@@ -1,3 +1,4 @@
+import '../../styles/components/alpha/index.scss'
 import Message from './Message'
 import Timeline from './Timeline'
 

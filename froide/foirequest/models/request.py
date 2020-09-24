@@ -1,5 +1,5 @@
 from collections import namedtuple
-from datetime import timedelta
+from datetime import timedelta, datetime
 import json
 import re
 
@@ -390,6 +390,22 @@ class FoiRequest(models.Model):
 
         self._messages = list(qs)
         return self._messages
+
+    @property
+    def get_messages_by_month(self):
+        groups = {}
+        today = datetime.today()
+        for msg in self.messages:
+            key = str(msg.timestamp)[:7]
+            if key not in groups:
+                groups[key] = {
+                    'first_of_month_date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
+                    'is_same_year': msg.timestamp.year == today.year,
+                    'messages': []
+                }
+            groups[key]['messages'].append(msg)
+
+        return groups
 
     @property
     def status_representation(self):

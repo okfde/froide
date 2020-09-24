@@ -7,7 +7,7 @@
 {% get_comment_list message as comment_list %}
 
 
-<div class="alpha-message" id="{{ message.get_html_id }}">
+<div class="alpha-message" id="{{ message.get_html_id }}" data-ts="{{ message.timestamp|date:"c" }}">
 
   <!-- head -->
   <div class="d-flex p-3 alpha-message__head">
