@@ -1,5 +1,5 @@
 from collections import namedtuple
-from datetime import timedelta
+from datetime import timedelta, datetime
 import json
 import re
 
@@ -392,6 +392,37 @@ class FoiRequest(models.Model):
         return self._messages
 
     @property
+    def get_messages_by_month(self):
+        """
+        Group messages by "month-year"-key, e.g. "2020-09".
+        Add extra due date key.
+        """
+        groups = {}
+        today = datetime.today()
+        due_date = self.due_date
+        month_highlighted = False
+        for msg in self.messages:
+            key = str(msg.timestamp)[:7]
+            if key not in groups:
+                groups[key] = {
+                    'date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
+                    'is_same_year': msg.timestamp.year == today.year,
+                    'messages': [],
+                    'has_overdue_message': False,
+                    'highlight_overdue': False,
+                    'first_message_id': msg.get_html_id
+                }
+            groups[key]['messages'].append(msg)
+
+            if msg.timestamp > due_date:
+                groups[key]['has_overdue_message'] = True
+                if month_highlighted is False:
+                    groups[key]['highlight_overdue'] = True
+                    month_highlighted = True
+
+        return list(groups.values())
+
+    @property
     def status_representation(self):
         if self.due_date is not None:
             if self.is_overdue():
@@ -541,6 +572,9 @@ class FoiRequest(models.Model):
 
     def is_overdue(self):
         return self.was_overdue() and self.awaits_response()
+
+    def is_successful(self):
+        return self.resolution == Resolution.SUCCESSFUL
 
     def was_overdue(self):
         if self.due_date:

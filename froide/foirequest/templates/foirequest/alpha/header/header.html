@@ -11,70 +11,113 @@
 <div class="container">
   <div class="row">
     <!-- left column (title, description, tags etc.) -->
-    <div class="col-lg-8">
-  
-      <div class="d-flex flex-column mb-4">
-  
+    <div class="col-lg-8 mb-4 mb-lg-0">
+
+      <div class="d-flex flex-column">
+
         <!-- title -->
-        <h2 class="request-title order-1 order-lg-0">{{ object.title }}</h2>
-    
+        <h2 class="request-title">{{ object.title }}</h2>
+
         <!-- recipient -->
-        <div class="mt-4 mt-lg-3 text-gray-500 order-0 order-lg-1">
+        <div class="mt-3 text-gray-500">
           {% blocktrans %}Request to:{% endblocktrans %}
-    
+
           {% if object.public_body %}
             <a class="text-gray-500 font-weight-bold" href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
           {% else %}
             {% blocktrans %}Not yet known{% endblocktrans %}
           {% endif %}
         </div>
-    
+
         <!-- summary / description -->
-        <div class="request-descr mt-3 order-3 order-lg-2">
-          <div class="mb-1">
-            {{ object.get_description|urlizetrunc:40|linebreaks }}
-          </div>      
-          <!-- edit button -->
-          <a href="#">
-            <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}
-          </a>
+        <div class="mt-3">
+
+          <div class="request-descr request-descr--collapsed">
+            {% if object.summary %}
+              <h5>{% trans "Summary of Resolution" %}</h5>
+              {{ object.summary|urlizetrunc:40|linebreaks }}
+            {% elif object.description %}
+              {{ object.get_description|urlizetrunc:40|linebreaks }}
+            {% endif %}
+            <div class="request-descr-read-more">
+              <button type="button" class="btn btn-light btn-sm btn-block expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+            </div>
+          </div>
+
+          <!-- write summary form -->
+          {% if object|can_write_foirequest:request and object.status_is_final %}
+            <div class="mb-3 request-summary-form d-none">
+              <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
+              <form method="post" class="disable-submit" action="{% url 'foirequest-set_summary' slug=object.slug %}">
+                {% csrf_token %}
+                <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+                <textarea rows="8" class="form-control mb-3" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea>
+                <button type="submit" class="btn btn-primary mr-2">{% blocktrans %}Save Summary{% endblocktrans %}</button>
+                <button type="button" class="btn btn-secondary toggle-summary-form-btn">{% blocktrans %}Cancel{% endblocktrans %}</button>
+              </form>
+            </div>
+          {% endif %}
         </div>
-    
-        <!-- tags list -->
-        <div class="mt-3 smaller order-2 order-lg-3">
-          <ul class="mb-0 list-unstyled d-flex flex-wrap">
-            {% with object.tags.all as tags %}
-              {% if tags %}
-                {% for tag in tags %}
-                <li class="mr-2">
-                  <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
-                    <i class="fa fa-tags" aria-hidden="true"></i>
-                    <medium>{{ tag.name }}</medium>
-                  </a>
-                </li>
-                {% endfor %}
-              {% endif %}
-              
-              <!-- tags edit link -->
-              {% if object|can_write_foirequest:request %}
-              <li>
-                <a href="#">
-                  <i class="fa fa-pencil" aria-hidden="true"></i>
-                  {% if tags %}
-                    {% trans "Edit" %}
-                  {% else %}
-                    {% trans "Add Tags" %}
-                  {% endif %}
-                </a>
+
+        <!-- tags -->
+        <div class="request-tags">
+
+          <!-- tags list -->
+          {% with object.tags.all as tags %}
+            {% if tags %}
+              <div class="request-tags-list">
+                <ul class="mb-3 list-unstyled d-flex flex-wrap">
+                      {% for tag in tags %}
+                      <li class="mr-2 smaller">
+                        <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
+                          <i class="fa fa-tags" aria-hidden="true"></i>
+                          <medium>{{ tag.name }}</medium>
+                        </a>
+                      </li>
+                      {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          <!-- tags form-->
+          {% if object|can_write_foirequest:request %}
+            <div class="request-tags-form mb-3 d-none">
+              <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                  {% with object.get_set_tags_form as set_tags_form %}
+                    {{ set_tags_form.tags }}
+                  {% endwith %}
+                </div>
+                <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+                <button class="btn btn-secondary toggle-tags-form-btn" type="button">{% trans "Cancel" %}</button>
+              </form>
+            </div>
+          {% endif %}
+
+        </div>
+
+        <!-- Edit buttons -->
+        {% if object|can_write_foirequest:request %}
+        <div class="request-edit-buttons mb-2">
+          <ul class="list-unstyled mb-0 d-md-flex">
+            {% if object.status_is_final %}
+              <li class="mb-2 mb-md-0 mr-md-3">
+                <a href="#" class="toggle-summary-form-btn"><i class="fa fa-pencil" aria-hidden="true"></i> {% if object.summary %}{% trans "Edit summary" %}{% else %}{% trans "Write summary" %}{% endif %}</a>
               </li>
-              {% endif %}
-            {% endwith %}
+            {% endif %}
+            <li>
+              <a href="#" class="toggle-tags-form-btn"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Add Tags" %}</a>
+            </li>
           </ul>
         </div>
+        {% endif %}
+
       </div>
-  
+
     </div>
-  
+
     <!-- right column (info box) -->
     <div class="col-lg-4">
       {% include "foirequest/alpha/header/info-box.html" %}
@@ -83,17 +126,17 @@
 </div>
 
 <!-- tabs -->
-<div class="container px-0 px-sm-3">
+<div class="container px-0">
   <div class="mt-4" style="position: relative; bottom: -2px;">
-    <ul class="nav alpha-tabs" role="tablist">
+    <ul class="nav alpha-tabs" role="tablist" data-active-tab="{{ active_tab }}">
       <li class="alpha-tabs__tab">
         <a
-          href="#correspondence"
+          href="#correspondence-panel"
           id="correspondence-tab"
           data-toggle="tab"
           class="alpha-tabs__tab-link active"
           data-toggle="tab"
-          aria-controls="correspondence"
+          aria-controls="correspondence-panel"
           aria-selected="true"
           role="tab"
         >
@@ -101,21 +144,25 @@
           <span class="alpha-tabs__counter">{{ object.messages|length }}</span>
         </a>
       </li>
-      <!-- <li class="alpha-tabs__tab">
-        <a
-          href="#actions"
-          id="actions-tab"
-          data-toggle="tab"
-          class="alpha-tabs__tab-link"
-          data-toggle="tab"
-          aria-controls="actions"
-          aria-selected="false"
-          role="tab"
-        >
-          <span>Testtab</span>
-          <span class="alpha-tabs__counter alpha-tabs__counter--highlight">{{ object.messages|length }}</span>
-        </a>
-      </li> -->
+
+      {# TODO: set status tab: show when people come from email? #}
+      {% comment %} {% if active_tab == 'set-status' %}
+        <li class="alpha-tabs__tab">
+          <a
+            href="#set-status"
+            id="set-status-tab"
+            data-toggle="tab"
+            class="alpha-tabs__tab-link"
+            data-toggle="tab"
+            aria-controls="set-status"
+            aria-selected="false"
+            role="tab"
+          >
+            <span>{% trans "Set status" %}</span>
+          </a>
+        </li>
+      {% endif %} {% endcomment %}
+
     </ul>
   </div>
 </div>

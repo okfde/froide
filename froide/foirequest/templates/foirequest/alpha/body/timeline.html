@@ -1,3 +1,29 @@
-<div id="timeline" class="alpha-timeline">
-  timeline
-</div>
+{% load i18n %}
+{% load content_helper %}
+
+{% block foirequest_timeline %}
+  <div id="timeline" class="alpha-timeline d-none d-lg-block">
+    <div class="alpha-timeline__wrap">
+        {% for value in object.get_messages_by_month %}
+          <div class="alpha-timeline__item {% if value.highlight_overdue %}alpha-timeline__item--overdue{% endif %} {% if forloop.last %}alpha-timeline__item--last{% endif %}" data-key="{{ value.date|date:'Y-m' }}">
+            <a href="#{{ value.first_message_id }}" class="alpha-timeline__link text-decoration-none">
+              <div class="alpha-timeline__month">{% if value.is_same_year %}{{ value.date|date:'F' }}{% else %}{{ value.date|date:'F Y' }}{% endif %}</div>
+              <div>{{ value.messages|length }} {% trans 'Messages' %}{% if not value.highlight_overdue and value.has_overdue_message %} ({% trans 'overdue' %}){% endif %}</div>
+              {% if value.highlight_overdue %}
+                <div class="alpha-timeline__overdue-time">{% trans 'Deadline expired on' %} {{ object.due_date|relativetime }}</div>
+              {% endif %}
+            </a>
+          </div>
+        {% endfor %}
+    </div>
+
+    {% with object.get_messages_by_month|last as last_month %}
+      {% with last_month.messages|last as last_message %}
+        <a href="#" class="text-decoration-none alpha-timeline__scroll-end-link js-trigger-scroll-to-end">
+          <i class="fa fa-long-arrow-down" aria-hidden="true"></i>
+          {% trans 'Scroll to end' %}
+        </a>
+      {% endwith %}
+    {% endwith %}
+  </div>
+{% endblock foirequest_timeline %}
