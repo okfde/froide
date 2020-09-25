@@ -80,12 +80,19 @@ class GeoRegionFilter(filters.FilterSet):
         queryset=GeoRegion.objects.all()
     )
     latlng = filters.CharFilter(method='latlng_filter')
+    name = filters.CharFilter(method='name_filter')
 
     class Meta:
         model = GeoRegion
         fields = (
             'name', 'level', 'kind', 'slug'
         )
+
+    def name_filter(self, queryset, name, value):
+        qs = queryset.filter(name__icontains=value)
+        if not qs:
+            return queryset.filter(name__icontains=value.capitalize())
+        return qs
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(name__icontains=value)
