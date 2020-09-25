@@ -89,9 +89,9 @@ class GeoRegionFilter(filters.FilterSet):
         )
 
     def name_filter(self, queryset, name, value):
-        qs = queryset.filter(name__icontains=value)
+        qs = queryset.filter(name=value)
         if not qs:
-            return queryset.filter(name__icontains=value.capitalize())
+            return queryset.filter(name=value.capitalize())
         return qs
 
     def search_filter(self, queryset, name, value):
