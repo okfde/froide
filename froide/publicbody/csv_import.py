@@ -50,6 +50,7 @@ class CSVImporter(object):
             self.import_row(row)
 
     def import_row(self, row):
+
         # generate slugs
         if 'name' in row:
             row['name'] = row['name'].strip()
@@ -120,7 +121,7 @@ class CSVImporter(object):
             pb.laws.clear()
             pb.laws.add(*row['jurisdiction'].laws)
             if regions:
-                pb.regions.set(*regions)
+                pb.regions.set(regions)
             pb.categories.set(*categories)
             return pb
         except PublicBody.DoesNotExist:
