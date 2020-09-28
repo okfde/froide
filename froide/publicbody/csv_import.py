@@ -10,8 +10,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.contrib.gis.geos import Point
 
-from taggit.utils import parse_tags
-
 from froide.publicbody.models import (
     PublicBody, Jurisdiction, Classification, Category
 )
@@ -68,7 +66,8 @@ class CSVImporter(object):
         if 'classification' in row:
             row['classification'] = self.get_classification(row.pop('classification', None))
 
-        categories = parse_tags(row.pop('categories', ''))
+        categories = row.pop('categories', '').split(',')
+
         categories = list(self.get_categories(categories))
 
         # resolve foreign keys
@@ -158,7 +157,11 @@ class CSVImporter(object):
                 yield self.category_cache[cat]
             else:
                 try:
-                    category = Category.objects.get(id=cat)
+                    try:
+                        id = int(cat)
+                        category = Category.objects.get(id=id)
+                    except ValueError:
+                        category = Category.objects.get(name=cat)
                 except Category.DoesNotExist:
                     raise ValueError(
                         _('Category name "%s" does not exist.') % cat)
