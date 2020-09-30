@@ -2,8 +2,7 @@
   position: sticky;
   top: 0;
   max-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: hidden;
   border-left: 2px solid $gray-300;
   padding-left: $spacer;
   font-size: $font-size-sm;
