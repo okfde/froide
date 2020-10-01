@@ -50,9 +50,9 @@ export default class Timeline {
     if (currentScrollPos > 0) {
       const percentageScrolled = (currentScrollPos / messagesRootHeight) * 100
       const innerWrapHeight = this.element.children[0].clientHeight
-      const innerWrapScrollPos = (percentageScrolled * innerWrapHeight) / 100
-      this.element.scrollTop = innerWrapScrollPos - (this.element.clientHeight / 2.5)
-      console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapScrollPos})
+      const innerWrapScrollPos = ((percentageScrolled * innerWrapHeight) / 100) - (this.element.clientHeight / 2.5)
+      this.element.scrollTop = innerWrapScrollPos
+      // console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapScrollPos})
     } else {
       this.element.scrollTop = 0
     }
