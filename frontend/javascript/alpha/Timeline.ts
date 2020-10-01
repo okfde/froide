@@ -4,7 +4,7 @@ interface MessageMapInterface { [id: string]: Message; }
 
 export default class Timeline {
   element: HTMLElement
-  corrRoot: HTMLElement
+  messagesRootElement: HTMLElement
   messageMap: MessageMapInterface
 
   constructor (
@@ -13,7 +13,7 @@ export default class Timeline {
     messagesArr: Message[]
   ) {
     this.element = timelineContainer
-    this.corrRoot = correspondContainer
+    this.messagesRootElement = correspondContainer
     this.messageMap = messagesArr.reduce(function(map, obj: Message) {
       map[obj.id] = obj;
       return map;
@@ -21,27 +21,41 @@ export default class Timeline {
     // console.warn('hier', this.messageMap)
 
 
-    // this.setupScrollListener()
+    this.setupScrollListener()
     this.setupObserver()
     // setTimeout(() => {
     // }, 1000)
   }
 
-  // setupScrollListener () {
-  //   let timeout: number
-  //   window.addEventListener('scroll', () => {
-  //     // If there's a timer, cancel it
-  //     if (timeout) {
-  //       window.cancelAnimationFrame(timeout)
-  //     }
+  setupScrollListener () {
+    let timeout: number
+    window.addEventListener('scroll', () => {
+      // If there's a timer, cancel it
+      if (timeout) {
+        window.cancelAnimationFrame(timeout)
+      }
 
-  //     // Setup the new requestAnimationFrame()
-  //     timeout = window.requestAnimationFrame(this.update.bind(this));
-  //   }, false)
-  // }
+      // Setup the new requestAnimationFrame()
+      timeout = window.requestAnimationFrame(this.animationFrameCallback.bind(this));
+    }, false)
+  }
 
-  update () {
-    // console.log('debounced', this);
+  animationFrameCallback () {
+    const documentScrollTop = document.documentElement.scrollTop
+    const messagesRootHeight = this.messagesRootElement.clientHeight
+    const messagesRootOffsetTop = this.messagesRootElement.offsetTop
+    const currentScrollPos = documentScrollTop < messagesRootOffsetTop
+      ? 0
+      : documentScrollTop - messagesRootOffsetTop + document.documentElement.clientHeight
+    if (currentScrollPos > 0) {
+      const percentageScrolled = (currentScrollPos / messagesRootHeight) * 100
+      const innerWrapHeight = this.element.children[0].clientHeight
+      const innerWrapScrollPos = (percentageScrolled * innerWrapHeight) / 100
+      this.element.scrollTop = innerWrapScrollPos - (this.element.clientHeight / 2.5)
+      console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapScrollPos})
+    } else {
+      this.element.scrollTop = 0
+    }
   }
 
   setupObserver () {
@@ -63,7 +77,9 @@ export default class Timeline {
       const msgId = entry.target.id
       this.messageMap[msgId].isVisible = isVisible
 
-      // // get month
+
+
+      // get month
       // const msgContainer = entry.target as HTMLElement
       // const timestampStr = msgContainer.dataset.ts
       // if (!timestampStr) {
@@ -72,11 +88,31 @@ export default class Timeline {
 
       // const timestampDate = new Date(timestampStr)
       // const isoDateStr = timestampDate.toISOString().slice(0, 7) // "2019-12"
-      // document.querySelector('.' + activeClassName)?.classList.remove(activeClassName)
-      // document.querySelector(`[data-timeline-item^="${isoDateStr}"]`)?.classList.add(activeClassName)
+      // const timelineElement = document.querySelector(`[data-timeline-item^="${isoDateStr}"]`)
+      // if (timelineElement) {
+      //   if (isVisible) {
+      //     timelineElement.classList.add(activeClassName)
+      //   } else {
+      //     timelineElement.classList.remove(activeClassName)
+
+
+      //   }
+
+      // }
+
+      // approach with scroll into view
+      // if (timelineElement && isVisible) {
+      //   console.warn('common', timelineElement)
+      //   setTimeout(() => {
+      //     timelineElement.scrollIntoView({
+      //         behavior: 'smooth',
+      //         block: 'start',
+      //     })
+      //   }, 10);
+      // }
     }
 
-    console.warn('hier', this.messageMap)
+    // console.warn('hier', this.messageMap)
   }
 
 }

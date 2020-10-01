@@ -3,11 +3,12 @@
   top: 0;
   max-height: 100vh;
   overflow: hidden;
+  overflow-y: scroll;
   border-left: 2px solid $gray-300;
   padding-left: $spacer;
   font-size: $font-size-sm;
   &__item {
-    margin-bottom: $spacer * 3;
+    margin-bottom: $spacer * 10;
     &--active {
       color: red;
     }
