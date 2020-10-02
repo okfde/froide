@@ -101,8 +101,11 @@ class CSVImporter(object):
             if n in row:
                 row[n] = row.get(n, '').strip()
 
-        if row.get('lat') and row.get('lng'):
-            row['geo'] = Point(float(row.pop('lng')), float(row.pop('lat')))
+        if 'lat' in row and 'lng' in row:
+            lat = row.pop('lat')
+            lng = row.pop('lng')
+            if lat and lng:
+                row['geo'] = Point(float(lng), float(lat))
 
         try:
             if 'id' in row and row['id']:
