@@ -4,13 +4,23 @@
   max-height: 100vh;
   overflow: hidden;
   // overflow-y: scroll;
-  border-left: 2px solid $gray-300;
-  padding-left: $spacer;
   font-size: $font-size-sm;
   &__item {
-    margin-bottom: $spacer * 3;
+    border-left: 2px solid $gray-300;
+    padding-top: $spacer * .25;
+    padding-left: $spacer;
+    padding-bottom: $spacer * 3;
+    transition: all .2s ease;
     &--active {
-      color: red;
+      border-left-color: $gray-500;
     }
   }
+    &__month {
+      display: block;
+      font-weight: 600;
+      color: $gray-500;
+    }
+    &__item--active &__month {
+      color: $gray-700;
+    }
 }

@@ -401,7 +401,8 @@ class FoiRequest(models.Model):
                 groups[key] = {
                     'first_of_month_date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
                     'is_same_year': msg.timestamp.year == today.year,
-                    'messages': []
+                    'messages': [],
+                    'first_message_id': msg.get_html_id
                 }
             groups[key]['messages'].append(msg)
 

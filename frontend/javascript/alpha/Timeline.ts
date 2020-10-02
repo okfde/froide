@@ -23,7 +23,6 @@ export default class Timeline {
     this.element = timelineContainer
     this.messagesContainer = messagesContainer
     this.items = this.parseTimelineItems()
-    console.warn(this.items)
 
     this.setupScrollListener()
     this.setupObserver(messagesArr)
@@ -65,6 +64,20 @@ export default class Timeline {
 
         },
       }
+
+      // element month click event
+      const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
+      anchorLink.addEventListener('click', (e: Event) => {
+        e.preventDefault()
+        const element = e.target as HTMLElement
+        const anchor = element.getAttribute('href')
+        if (anchor) {
+          document.querySelector(anchor)?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      })
     }
 
     return result
@@ -102,10 +115,7 @@ export default class Timeline {
   }
 
   setupObserver (messagesArr: Message[]) {
-    let observer = new IntersectionObserver(this.observerCallback.bind(this), {
-      threshold: 0.55,
-      // rootMargin: '400px 0px -400px 0px'
-    })
+    let observer = new IntersectionObserver(this.observerCallback.bind(this))
     messagesArr.forEach(msg => {
       observer.observe(msg.element)
     })
@@ -116,7 +126,7 @@ export default class Timeline {
     // console.warn(entries)
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]
-      const isVisible = entry.isIntersecting || entry.intersectionRatio > 0.55
+      const isVisible = entry.isIntersecting
       // const msgId = entry.target.id
 
 
