@@ -66,18 +66,18 @@ export default class Timeline {
       }
 
       // element month click event
-      const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
-      anchorLink.addEventListener('click', (e: Event) => {
-        e.preventDefault()
-        const element = e.target as HTMLElement
-        const anchor = element.getAttribute('href')
-        if (anchor) {
-          document.querySelector(anchor)?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          })
-        }
-      })
+      // const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
+      // anchorLink.addEventListener('click', (e: Event) => {
+      //   e.preventDefault()
+      //   const element = e.target as HTMLElement
+      //   const anchor = element.getAttribute('href')
+      //   if (anchor) {
+      //     document.querySelector(anchor)?.scrollIntoView({
+      //       behavior: 'smooth',
+      //       block: 'start'
+      //     })
+      //   }
+      // })
     }
 
     return result
@@ -103,15 +103,22 @@ export default class Timeline {
     const currentScrollPos = documentScrollTop < messagesRootOffsetTop
       ? 0
       : documentScrollTop - messagesRootOffsetTop + document.documentElement.clientHeight
+    let scrollTopValue: number
+
     if (currentScrollPos > 0) {
       const percentageScrolled = (currentScrollPos / messagesRootHeight) * 100
       const innerWrapHeight = this.element.children[0].clientHeight
       const innerWrapScrollPos = ((percentageScrolled * innerWrapHeight) / 100) - (this.element.clientHeight / 2.5)
-      this.element.scrollTop = innerWrapScrollPos
+      scrollTopValue = innerWrapScrollPos
       // console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapScrollPos})
     } else {
-      this.element.scrollTop = 0
+      scrollTopValue = 0
     }
+
+    this.element.scrollTop = scrollTopValue
+    // setTimeout(() => {
+
+    // }, 500);
   }
 
   setupObserver (messagesArr: Message[]) {
