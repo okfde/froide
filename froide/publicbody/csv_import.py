@@ -101,7 +101,7 @@ class CSVImporter(object):
             if n in row:
                 row[n] = row.get(n, '').strip()
 
-        if 'lat' in row and 'lng' in row:
+        if row.get('lat') and row.get('lng'):
             row['geo'] = Point(float(row.pop('lng')), float(row.pop('lat')))
 
         try:
