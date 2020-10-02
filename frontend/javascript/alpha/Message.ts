@@ -1,23 +1,21 @@
 export default class Message {
   id: string
   element: HTMLElement
-  isVisible: Boolean
-  timestamp: Date | null
+  // timestamp: Date | null
   metaContainer: HTMLElement
   expandedClassName = 'alpha-message--expanded'
 
   constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
     this.element = element
-    this.isVisible = false
     this.metaContainer = this.element.querySelector('.alpha-message__meta-container') as HTMLElement
 
-    if (element.dataset.ts) {
-      this.timestamp = new Date(element.dataset.ts)
-    } else {
-      throw new Error(`Timestamp not provided for message ${this.id}`)
-      return
-    }
+    // if (element.dataset.ts) {
+    //   this.timestamp = new Date(element.dataset.ts)
+    // } else {
+    //   throw new Error(`Timestamp not provided for message ${this.id}`)
+    //   return
+    // }
 
     // event listeners
 

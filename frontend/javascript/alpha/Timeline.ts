@@ -1,30 +1,73 @@
 import Message from './Message'
 
-interface MessageMapInterface { [id: string]: Message; }
+interface TimelineItemsInterface {
+  [key: string]: {
+    isActive: boolean,
+    element: HTMLElement,
+    msgCount: number,
+    msgVisibleCount: number,
+    updateMsgVisibleCount: Function,
+  };
+}
 
 export default class Timeline {
   element: HTMLElement
-  messagesRootElement: HTMLElement
-  messageMap: MessageMapInterface
+  messagesContainer: HTMLElement
+  items: TimelineItemsInterface
 
   constructor (
-    correspondContainer: HTMLElement,
+    messagesContainer: HTMLElement,
     timelineContainer: HTMLElement,
     messagesArr: Message[]
   ) {
     this.element = timelineContainer
-    this.messagesRootElement = correspondContainer
-    this.messageMap = messagesArr.reduce(function(map, obj: Message) {
-      map[obj.id] = obj;
-      return map;
-    }, <MessageMapInterface>{});
-    // console.warn('hier', this.messageMap)
-
+    this.messagesContainer = messagesContainer
+    this.items = this.parseTimelineItems()
+    console.warn(this.items)
 
     this.setupScrollListener()
-    this.setupObserver()
+    this.setupObserver(messagesArr)
     // setTimeout(() => {
     // }, 1000)
+  }
+
+  parseTimelineItems () {
+    const result: TimelineItemsInterface = {}
+    const nodes: any = this.element.getElementsByClassName('alpha-timeline__item')
+
+    for (let item of nodes) {
+      const key = item.dataset.key
+      result[key] = {
+        isActive: false,
+        element: item,
+        msgCount: this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key}"]`)?.length,
+        msgVisibleCount: 0,
+        updateMsgVisibleCount (increase: boolean) {
+          const activeClassName = 'alpha-timeline__item--active'
+
+          if (increase) {
+            if (!this.isActive) {
+              this.element.classList.add(activeClassName)
+              this.isActive = true
+            }
+            this.msgVisibleCount = this.msgVisibleCount + 1 > this.msgCount
+              ? this.msgCount
+              : this.msgVisibleCount + 1
+          } else {
+            this.msgVisibleCount = this.msgVisibleCount - 1 < 0
+              ? 0
+              : this.msgVisibleCount - 1
+            if (this.msgVisibleCount === 0) {
+              this.element.classList.remove(activeClassName)
+              this.isActive = false
+            }
+          }
+
+        },
+      }
+    }
+
+    return result
   }
 
   setupScrollListener () {
@@ -42,8 +85,8 @@ export default class Timeline {
 
   animationFrameCallback () {
     const documentScrollTop = document.documentElement.scrollTop
-    const messagesRootHeight = this.messagesRootElement.clientHeight
-    const messagesRootOffsetTop = this.messagesRootElement.offsetTop
+    const messagesRootHeight = this.messagesContainer.clientHeight
+    const messagesRootOffsetTop = this.messagesContainer.offsetTop
     const currentScrollPos = documentScrollTop < messagesRootOffsetTop
       ? 0
       : documentScrollTop - messagesRootOffsetTop + document.documentElement.clientHeight
@@ -58,12 +101,12 @@ export default class Timeline {
     }
   }
 
-  setupObserver () {
+  setupObserver (messagesArr: Message[]) {
     let observer = new IntersectionObserver(this.observerCallback.bind(this), {
       threshold: 0.55,
       // rootMargin: '400px 0px -400px 0px'
     })
-    Object.values(this.messageMap).forEach(msg => {
+    messagesArr.forEach(msg => {
       observer.observe(msg.element)
     })
   }
@@ -74,20 +117,18 @@ export default class Timeline {
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]
       const isVisible = entry.isIntersecting || entry.intersectionRatio > 0.55
-      const msgId = entry.target.id
-      this.messageMap[msgId].isVisible = isVisible
+      // const msgId = entry.target.id
 
 
 
       // get month
-      // const msgContainer = entry.target as HTMLElement
-      // const timestampStr = msgContainer.dataset.ts
-      // if (!timestampStr) {
-      //   continue
-      // }
+      const msgContainer = entry.target as HTMLElement
+      const timelineKey = msgContainer.dataset.timelineKey
+      if (!timelineKey) {
+        continue
+      }
 
-      // const timestampDate = new Date(timestampStr)
-      // const isoDateStr = timestampDate.toISOString().slice(0, 7) // "2019-12"
+      this.items[timelineKey].updateMsgVisibleCount(isVisible)
       // const timelineElement = document.querySelector(`[data-timeline-item^="${isoDateStr}"]`)
       // if (timelineElement) {
       //   if (isVisible) {
@@ -112,7 +153,7 @@ export default class Timeline {
       // }
     }
 
-    // console.warn('hier', this.messageMap)
+    // console.warn('hier', this.items)
   }
 
 }

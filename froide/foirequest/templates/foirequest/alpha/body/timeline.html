@@ -4,7 +4,7 @@
   <div class="alpha-timeline__wrap">
     {% block foirequest_timeline %}
       {% for key, value in object.get_messages_by_month.items %}
-        <div class="alpha-timeline__item" data-timeline-item="{{ value.first_of_month_date|date:'Y-m' }}">
+        <div class="alpha-timeline__item" data-key="{{ value.first_of_month_date|date:'Y-m' }}">
           {% if value.is_same_year %}
             <strong>{{ value.first_of_month_date|date:'F' }}</strong>
           {% else %}

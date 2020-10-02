@@ -24,11 +24,11 @@ const init = () => {
   }
 
   // init timeline
-  const correspondContainer = document.getElementById('correspondence')
+  const messagesContainer = document.getElementById('correspondence')
   const timelineContainer = document.getElementById('timeline')
-  if (correspondContainer && timelineContainer) {
+  if (messagesContainer && timelineContainer) {
     new Timeline(
-      correspondContainer, timelineContainer, messages
+      messagesContainer, timelineContainer, messages
     )
   }
 }
