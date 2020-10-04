@@ -425,7 +425,6 @@ class EscalationMessageForm(forms.Form):
         subject = re.sub(r'\s*\[#%s\]\s*$' % self.foirequest.pk, '', subject)
         subject = '%s [#%s]' % (subject, self.foirequest.pk)
 
-        subject = '%s [#%s]' % (subject, self.foirequest.pk)
         subject_redacted = redact_subject(subject, user=user)
 
         plaintext = construct_message_body(
