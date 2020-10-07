@@ -26,6 +26,8 @@ export default class Timeline {
 
     this.setupScrollListener()
     this.setupObserver(messagesArr)
+
+    this.element.style.height = document.documentElement.clientHeight + 'px'
     // setTimeout(() => {
     // }, 1000)
   }
@@ -65,19 +67,19 @@ export default class Timeline {
         },
       }
 
-      // element month click event
-      // const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
-      // anchorLink.addEventListener('click', (e: Event) => {
-      //   e.preventDefault()
-      //   const element = e.target as HTMLElement
-      //   const anchor = element.getAttribute('href')
-      //   if (anchor) {
-      //     document.querySelector(anchor)?.scrollIntoView({
-      //       behavior: 'smooth',
-      //       block: 'start'
-      //     })
-      //   }
-      // })
+      // smooth scroll on month click (anchor link)
+      const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
+      anchorLink.addEventListener('click', (e: Event) => {
+        e.preventDefault()
+        const element = e.target as HTMLElement
+        const anchor = element.getAttribute('href')
+        if (anchor) {
+          document.querySelector(anchor)?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      })
     }
 
     return result
@@ -101,24 +103,22 @@ export default class Timeline {
     const messagesRootHeight = this.messagesContainer.clientHeight
     const messagesRootOffsetTop = this.messagesContainer.offsetTop
     const currentScrollPos = documentScrollTop < messagesRootOffsetTop
-      ? 0
-      : documentScrollTop - messagesRootOffsetTop + document.documentElement.clientHeight
-    let scrollTopValue: number
+    ? 0
+    : document.documentElement.scrollTop - messagesRootOffsetTop
+    const innerWrapElement = this.element.children[0] as HTMLElement
+    const innerWrapHeight = innerWrapElement.clientHeight
+    const percentValue = currentScrollPos > 0
+      ? (currentScrollPos / (messagesRootHeight - this.element.clientHeight)) * 100
+      : 0
+    const percentageScrolled = percentValue <= 100 ? percentValue : 100
 
-    if (currentScrollPos > 0) {
-      const percentageScrolled = (currentScrollPos / messagesRootHeight) * 100
-      const innerWrapHeight = this.element.children[0].clientHeight
-      const innerWrapScrollPos = ((percentageScrolled * innerWrapHeight) / 100) - (this.element.clientHeight / 2.5)
-      scrollTopValue = innerWrapScrollPos
-      // console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapScrollPos})
-    } else {
-      scrollTopValue = 0
-    }
 
-    this.element.scrollTop = scrollTopValue
-    // setTimeout(() => {
 
-    // }, 500);
+    const innerWrapValue = ((percentageScrolled / 100) * innerWrapHeight) - (this.element.clientHeight / 2.25)
+    const scrollValue = innerWrapValue >= 0 ? innerWrapValue : 0
+
+    console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapHeight, innerWrapValue, scrollValue})
+    innerWrapElement.style.transform = `translateY(-${scrollValue}px)`
   }
 
   setupObserver (messagesArr: Message[]) {
@@ -129,14 +129,9 @@ export default class Timeline {
   }
 
   observerCallback (entries: IntersectionObserverEntry[]) {
-    // const activeClassName = 'alpha-timeline__item--active'
-    // console.warn(entries)
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]
       const isVisible = entry.isIntersecting
-      // const msgId = entry.target.id
-
-
 
       // get month
       const msgContainer = entry.target as HTMLElement
@@ -146,31 +141,8 @@ export default class Timeline {
       }
 
       this.items[timelineKey].updateMsgVisibleCount(isVisible)
-      // const timelineElement = document.querySelector(`[data-timeline-item^="${isoDateStr}"]`)
-      // if (timelineElement) {
-      //   if (isVisible) {
-      //     timelineElement.classList.add(activeClassName)
-      //   } else {
-      //     timelineElement.classList.remove(activeClassName)
-
-
-      //   }
-
-      // }
-
-      // approach with scroll into view
-      // if (timelineElement && isVisible) {
-      //   console.warn('common', timelineElement)
-      //   setTimeout(() => {
-      //     timelineElement.scrollIntoView({
-      //         behavior: 'smooth',
-      //         block: 'start',
-      //     })
-      //   }, 10);
-      // }
     }
 
-    // console.warn('hier', this.items)
   }
 
 }

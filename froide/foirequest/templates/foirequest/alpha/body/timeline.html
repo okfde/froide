@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load content_helper %}
 
 <div id="timeline" class="alpha-timeline">
@@ -8,6 +9,7 @@
           <a href="#{{ value.first_message_id }}" class="alpha-timeline__month">
             {% if value.is_same_year %}{{ value.first_of_month_date|date:'F' }}{% else %}{{ value.first_of_month_date|date:'F Y' }}{% endif %}
           </a>
+          <span class="alpha-timeline__message-count">{{ value.messages|length }} {% trans 'Messages ' %}</span>
         </div>
       {% endfor %}
     {% endblock foirequest_timeline %}
