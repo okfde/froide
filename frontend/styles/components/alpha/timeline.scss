@@ -2,12 +2,14 @@
   position: sticky;
   top: 0;
   left: 0;
-  // max-height: 100vh;
+  max-height: 100vh;
   // height: 100%;
   overflow: hidden;
   // overflow-y: scroll;
   font-size: $font-size-sm;
-  &__wrap {}
+  &__wrap {
+    transition: transform .25s linear;
+  }
     &__item {
       border-left: 2px solid $gray-300;
       padding-top: $spacer * .25;

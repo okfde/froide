@@ -27,7 +27,6 @@ export default class Timeline {
     this.setupScrollListener()
     this.setupObserver(messagesArr)
 
-    this.element.style.height = document.documentElement.clientHeight + 'px'
     // setTimeout(() => {
     // }, 1000)
   }
@@ -99,26 +98,26 @@ export default class Timeline {
   }
 
   animationFrameCallback () {
-    const documentScrollTop = document.documentElement.scrollTop
-    const messagesRootHeight = this.messagesContainer.clientHeight
-    const messagesRootOffsetTop = this.messagesContainer.offsetTop
-    const currentScrollPos = documentScrollTop < messagesRootOffsetTop
-    ? 0
-    : document.documentElement.scrollTop - messagesRootOffsetTop
-    const innerWrapElement = this.element.children[0] as HTMLElement
-    const innerWrapHeight = innerWrapElement.clientHeight
-    const percentValue = currentScrollPos > 0
-      ? (currentScrollPos / (messagesRootHeight - this.element.clientHeight)) * 100
-      : 0
-    const percentageScrolled = percentValue <= 100 ? percentValue : 100
+    // const documentScrollTop = document.documentElement.scrollTop
+    // const messagesRootHeight = this.messagesContainer.clientHeight
+    // const messagesRootOffsetTop = this.messagesContainer.offsetTop
+    // const currentScrollPos = documentScrollTop < messagesRootOffsetTop
+    // ? 0
+    // : document.documentElement.scrollTop - messagesRootOffsetTop
+    // const innerWrapElement = this.element.children[0] as HTMLElement
+    // const innerWrapHeight = innerWrapElement.clientHeight
+    // const percentValue = currentScrollPos > 0
+    //   ? (currentScrollPos / (messagesRootHeight - this.element.clientHeight)) * 100
+    //   : 0
+    // const percentageScrolled = percentValue <= 100 ? percentValue : 100
 
 
+    // const innerWrapValue = ((percentageScrolled / 100) * innerWrapHeight) - (this.element.clientHeight / 2.25)
+    // // const test = Math.sin(1) * percentageScrolled
+    // const scrollValue = innerWrapValue >= 0 ? innerWrapValue : 0
 
-    const innerWrapValue = ((percentageScrolled / 100) * innerWrapHeight) - (this.element.clientHeight / 2.25)
-    const scrollValue = innerWrapValue >= 0 ? innerWrapValue : 0
-
-    console.log({currentScrollPos, messagesRootHeight, percentageScrolled, innerWrapHeight, innerWrapValue, scrollValue})
-    innerWrapElement.style.transform = `translateY(-${scrollValue}px)`
+    // console.log({currentScrollPos, innerWrapValue})
+    // innerWrapElement.style.transform = `translateY(-${scrollValue}px)`
   }
 
   setupObserver (messagesArr: Message[]) {
@@ -141,6 +140,18 @@ export default class Timeline {
       }
 
       this.items[timelineKey].updateMsgVisibleCount(isVisible)
+
+      // scroll timeline so that the first active month is always near the middle of the viewport
+      const activeElement = document.querySelector('.alpha-timeline__item--active') as HTMLElement
+      const activeElementOffset = activeElement.offsetTop
+      const innerWrapElement = this.element.children[0] as HTMLElement
+      const timelineHeight = this.element.clientHeight
+      const scrollValue = activeElementOffset > (timelineHeight / 2)
+        ? (this.element.clientHeight / 3) - activeElementOffset
+        : 0
+      innerWrapElement.style.transform = `translateY(${scrollValue}px)`
+
+      console.log({activeElement, activeElementOffset, scrollValue})
     }
 
   }
