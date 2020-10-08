@@ -4,9 +4,9 @@ interface TimelineItemsInterface {
   [key: string]: {
     isActive: boolean,
     element: HTMLElement,
-    msgCount: number,
-    msgVisibleCount: number,
-    updateMsgVisibleCount: Function,
+    itemsCount: number,
+    itemsVisibleCount: number,
+    updateItemsVisibleCount: Function,
   };
 }
 
@@ -40,9 +40,9 @@ export default class Timeline {
       result[key] = {
         isActive: false,
         element: item,
-        msgCount: this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key}"]`)?.length,
-        msgVisibleCount: 0,
-        updateMsgVisibleCount (increase: boolean) {
+        itemsCount: this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key}"]`)?.length,
+        itemsVisibleCount: 0,
+        updateItemsVisibleCount (increase: boolean) {
           const activeClassName = 'alpha-timeline__item--active'
 
           if (increase) {
@@ -50,14 +50,14 @@ export default class Timeline {
               this.element.classList.add(activeClassName)
               this.isActive = true
             }
-            this.msgVisibleCount = this.msgVisibleCount + 1 > this.msgCount
-              ? this.msgCount
-              : this.msgVisibleCount + 1
+            this.itemsVisibleCount = this.itemsVisibleCount + 1 > this.itemsCount
+              ? this.itemsCount
+              : this.itemsVisibleCount + 1
           } else {
-            this.msgVisibleCount = this.msgVisibleCount - 1 < 0
+            this.itemsVisibleCount = this.itemsVisibleCount - 1 < 0
               ? 0
-              : this.msgVisibleCount - 1
-            if (this.msgVisibleCount === 0) {
+              : this.itemsVisibleCount - 1
+            if (this.itemsVisibleCount === 0) {
               this.element.classList.remove(activeClassName)
               this.isActive = false
             }
@@ -68,17 +68,19 @@ export default class Timeline {
 
       // smooth scroll on month click (anchor link)
       const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
-      anchorLink.addEventListener('click', (e: Event) => {
-        e.preventDefault()
-        const element = e.target as HTMLElement
-        const anchor = element.getAttribute('href')
-        if (anchor) {
-          document.querySelector(anchor)?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          })
-        }
-      })
+      if (anchorLink) {
+        anchorLink.addEventListener('click', (e: Event) => {
+          e.preventDefault()
+          const element = e.target as HTMLElement
+          const anchor = element.getAttribute('href')
+          if (anchor) {
+            document.querySelector(anchor)?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            })
+          }
+        })
+      }
     }
 
     return result
@@ -121,7 +123,10 @@ export default class Timeline {
   }
 
   setupObserver (messagesArr: Message[]) {
-    let observer = new IntersectionObserver(this.observerCallback.bind(this))
+    let observer = new IntersectionObserver(
+      this.observerCallback.bind(this),
+      { rootMargin: '-50px 0px -50px 0px' }
+    )
     messagesArr.forEach(msg => {
       observer.observe(msg.element)
     })
@@ -130,7 +135,6 @@ export default class Timeline {
   observerCallback (entries: IntersectionObserverEntry[]) {
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]
-      const isVisible = entry.isIntersecting
 
       // get month
       const msgContainer = entry.target as HTMLElement
@@ -139,19 +143,36 @@ export default class Timeline {
         continue
       }
 
-      this.items[timelineKey].updateMsgVisibleCount(isVisible)
+      const isVisible = entry.isIntersecting
+      this.items[timelineKey].updateItemsVisibleCount(isVisible)
 
-      // scroll timeline so that the first active month is always near the middle of the viewport
-      const activeElement = document.querySelector('.alpha-timeline__item--active') as HTMLElement
+
+    }
+
+    // scroll timeline so that the middle active month is always near the middle of the viewport
+    const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
+    const activeElement = activeElements[Math.round(activeElements.length / 2)] as HTMLElement
+    if (activeElement) {
+      // const documentScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight
+      // const messagesRootOffsetBottom = this.messagesContainer.offsetTop + this.messagesContainer.clientHeight
+      // const percentageScrolled = (documentScrollBottom / messagesRootOffsetBottom) * 100
+
+      // const documentScrollTop = document.documentElement.scrollTop
+      // const messagesRootOffsetTop = this.messagesContainer.offsetTop
+      // if (documentScrollTop < messagesRootOffsetTop) {
+      //   return
+      // }
+
       const activeElementOffset = activeElement.offsetTop
       const innerWrapElement = this.element.children[0] as HTMLElement
       const timelineHeight = this.element.clientHeight
       const scrollValue = activeElementOffset > (timelineHeight / 2)
-        ? (this.element.clientHeight / 3) - activeElementOffset
+        ? (this.element.clientHeight / 2) - activeElementOffset
         : 0
       innerWrapElement.style.transform = `translateY(${scrollValue}px)`
 
-      console.log({activeElement, activeElementOffset, scrollValue})
+      // console.log({activeElement, percentageScrolled, documentScrollTop, messagesRootOffsetTop})
+      // console.log(this.items)
     }
 
   }
