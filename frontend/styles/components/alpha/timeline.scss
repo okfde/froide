@@ -8,13 +8,13 @@
   // overflow-y: scroll;
   font-size: $font-size-sm;
   &__wrap {
-    transition: transform .175s ease;
+    transition: transform .2s ease;
   }
     &__item {
       border-left: 2px solid $gray-300;
       padding-top: $spacer * .25;
       padding-left: $spacer;
-      padding-bottom: $spacer * 2;
+      padding-bottom: $spacer * 1.5;
       transition: all .2s ease;
       color: $gray-500;
       a { color: $gray-500; }
