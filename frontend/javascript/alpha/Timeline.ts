@@ -14,6 +14,8 @@ export default class Timeline {
   element: HTMLElement
   messagesContainer: HTMLElement
   items: TimelineItemsInterface
+  firstMessageIsVisible: boolean
+  lastMessageIsVisible: boolean
 
   constructor (
     messagesContainer: HTMLElement,
@@ -23,6 +25,8 @@ export default class Timeline {
     this.element = timelineContainer
     this.messagesContainer = messagesContainer
     this.items = this.parseTimelineItems()
+    this.firstMessageIsVisible = false
+    this.lastMessageIsVisible = false
 
     this.setupScrollListener()
     this.setupObserver(messagesArr)
@@ -66,13 +70,14 @@ export default class Timeline {
         },
       }
 
-      // smooth scroll on month click (anchor link)
-      const anchorLink: HTMLElement = item.querySelector('.alpha-timeline__month')
-      if (anchorLink) {
-        anchorLink.addEventListener('click', (e: Event) => {
+      // smooth scroll on link click (anchor link)
+      const linkSelector = '.alpha-timeline__link'
+      item.querySelector(linkSelector)
+        .addEventListener('click', function (e: Event) {
           e.preventDefault()
-          const element = e.target as HTMLElement
-          const anchor = element.getAttribute('href')
+          const target = e.target as HTMLElement
+          const element = target.closest(linkSelector)
+          const anchor = element?.getAttribute('href')
           if (anchor) {
             document.querySelector(anchor)?.scrollIntoView({
               behavior: 'smooth',
@@ -80,7 +85,7 @@ export default class Timeline {
             })
           }
         })
-      }
+
     }
 
     return result
@@ -146,33 +151,38 @@ export default class Timeline {
       const isVisible = entry.isIntersecting
       this.items[timelineKey].updateItemsVisibleCount(isVisible)
 
+      // gets's executed once, even though it's inside a loop
+      // scroll timeline so that the middle active month is always near the middle of the viewport
+      if (this.messagesContainer.firstElementChild === msgContainer) {
+        this.firstMessageIsVisible = isVisible
+      }
+      if (this.messagesContainer.lastElementChild === msgContainer) {
+        this.lastMessageIsVisible = isVisible
+      }
 
-    }
+      const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
+      const activeElement = activeElements.length === 1
+        ? activeElements[0] as HTMLElement
+        : activeElements[Math.round(activeElements.length / 2)] as HTMLElement
 
-    // scroll timeline so that the middle active month is always near the middle of the viewport
-    const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
-    const activeElement = activeElements[Math.round(activeElements.length / 2)] as HTMLElement
-    if (activeElement) {
-      // const documentScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight
-      // const messagesRootOffsetBottom = this.messagesContainer.offsetTop + this.messagesContainer.clientHeight
-      // const percentageScrolled = (documentScrollBottom / messagesRootOffsetBottom) * 100
+      if (activeElement) {
+        // const documentScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight
+        // const messagesRootOffsetBottom = this.messagesContainer.offsetTop + this.messagesContainer.clientHeight
+        // const percentageScrolled = (documentScrollBottom / messagesRootOffsetBottom) * 100
 
-      // const documentScrollTop = document.documentElement.scrollTop
-      // const messagesRootOffsetTop = this.messagesContainer.offsetTop
-      // if (documentScrollTop < messagesRootOffsetTop) {
-      //   return
-      // }
+        // const documentScrollTop = document.documentElement.scrollTop
+        // const messagesRootOffsetTop = this.messagesContainer.offsetTop
+        // const isBehindFirstMessage = documentScrollTop > messagesRootOffsetTop
+        const activeElementOffset = activeElement.offsetTop
+        const innerWrapElement = this.element.children[0] as HTMLElement
+        const timelineHeight = this.element.clientHeight
+        const scrollValue = activeElementOffset > (timelineHeight / 2) && !this.firstMessageIsVisible
+          ? (this.element.clientHeight / 2) - activeElementOffset
+          : 0
+        innerWrapElement.style.transform = `translateY(${scrollValue}px)`
 
-      const activeElementOffset = activeElement.offsetTop
-      const innerWrapElement = this.element.children[0] as HTMLElement
-      const timelineHeight = this.element.clientHeight
-      const scrollValue = activeElementOffset > (timelineHeight / 2)
-        ? (this.element.clientHeight / 2) - activeElementOffset
-        : 0
-      innerWrapElement.style.transform = `translateY(${scrollValue}px)`
-
-      // console.log({activeElement, percentageScrolled, documentScrollTop, messagesRootOffsetTop})
-      // console.log(this.items)
+        console.log(this.messagesContainer.offsetTop)
+      }
     }
 
   }

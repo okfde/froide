@@ -2,8 +2,8 @@
   position: sticky;
   top: 0;
   left: 0;
-  // max-height: 100vh;
-  height: 100vh;
+  max-height: 100vh;
+  // height: 100vh;
   overflow: hidden;
   // overflow-y: scroll;
   font-size: $font-size-sm;
@@ -32,11 +32,21 @@
       //   border-color: $overdue-color-1;
       // }
     }
+      &__link:hover {
+        color: $gray-700;
+      }
       &__month {
         font-weight: 600;
       }
       &__item--overdue &__overdue-time {
-        color: darken($red, 7%);
+        display: inline-block;
+        $color1: darken($red, 7%);
+        $color2: #FFDCD4;
+        color: $color1;
+        // background-color: $color2;
+        border: 1px solid $color1;
+        padding: $spacer * .25 $spacer * .5;
+        margin-top: $spacer * .25;
       }
       // &__item--active#{&}__item--overdue &__overdue-time { color: darken($red, 7%); }
 }
