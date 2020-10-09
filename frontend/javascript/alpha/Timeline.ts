@@ -15,7 +15,7 @@ export default class Timeline {
   messagesContainer: HTMLElement
   items: TimelineItemsInterface
   firstMessageIsVisible: boolean
-  lastMessageIsVisible: boolean
+  scrollToEndLink: HTMLElement
 
   constructor (
     messagesContainer: HTMLElement,
@@ -26,7 +26,9 @@ export default class Timeline {
     this.messagesContainer = messagesContainer
     this.items = this.parseTimelineItems()
     this.firstMessageIsVisible = false
-    this.lastMessageIsVisible = false
+    this.scrollToEndLink = this.element.querySelector('.alpha-timeline__scroll-end-link') as HTMLElement
+
+    this.scrollToEndLink?.addEventListener('click', this.itemClickCallback)
 
     this.setupScrollListener()
     this.setupObserver(messagesArr)
@@ -71,24 +73,25 @@ export default class Timeline {
       }
 
       // smooth scroll on link click (anchor link)
-      const linkSelector = '.alpha-timeline__link'
-      item.querySelector(linkSelector)
-        .addEventListener('click', function (e: Event) {
-          e.preventDefault()
-          const target = e.target as HTMLElement
-          const element = target.closest(linkSelector)
-          const anchor = element?.getAttribute('href')
-          if (anchor) {
-            document.querySelector(anchor)?.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            })
-          }
-        })
+      item.querySelector('.alpha-timeline__link')
+        .addEventListener('click', this.itemClickCallback)
 
     }
 
     return result
+  }
+
+  itemClickCallback (e: Event) {
+    e.preventDefault()
+    const target = e.target as HTMLElement
+    const element = target.closest('a')
+    const anchor = element?.getAttribute('href')
+    if (anchor) {
+      document.querySelector(anchor)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
   }
 
   setupScrollListener () {
@@ -148,18 +151,25 @@ export default class Timeline {
         continue
       }
 
+      const innerWrapElement = this.element.children[0] as HTMLElement
+      const timelineHeight = this.element.clientHeight
       const isVisible = entry.isIntersecting
       this.items[timelineKey].updateItemsVisibleCount(isVisible)
 
-      // gets's executed once, even though it's inside a loop
-      // scroll timeline so that the middle active month is always near the middle of the viewport
       if (this.messagesContainer.firstElementChild === msgContainer) {
         this.firstMessageIsVisible = isVisible
       }
-      if (this.messagesContainer.lastElementChild === msgContainer) {
-        this.lastMessageIsVisible = isVisible
+
+      if (
+        innerWrapElement.clientHeight > timelineHeight &&
+        this.messagesContainer.lastElementChild === msgContainer
+      ) {
+        this.scrollToEndLink.style.opacity = isVisible ? '0' : '1'
+        this.scrollToEndLink.style.visibility = isVisible ? 'hidden' : 'visible'
       }
 
+      // gets's executed once, even though it's inside a loop
+      // scroll timeline so that the middle active month is always near the middle of the viewport
       const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
       const activeElement = activeElements.length === 1
         ? activeElements[0] as HTMLElement
@@ -174,14 +184,12 @@ export default class Timeline {
         // const messagesRootOffsetTop = this.messagesContainer.offsetTop
         // const isBehindFirstMessage = documentScrollTop > messagesRootOffsetTop
         const activeElementOffset = activeElement.offsetTop
-        const innerWrapElement = this.element.children[0] as HTMLElement
-        const timelineHeight = this.element.clientHeight
         const scrollValue = activeElementOffset > (timelineHeight / 2) && !this.firstMessageIsVisible
           ? (this.element.clientHeight / 2) - activeElementOffset
           : 0
         innerWrapElement.style.transform = `translateY(${scrollValue}px)`
 
-        console.log(this.messagesContainer.offsetTop)
+        // console.log(activeElementOffset, (this.element.clientHeight / 2))
       }
     }
 

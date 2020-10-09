@@ -420,7 +420,7 @@ class FoiRequest(models.Model):
                     groups[key]['highlight_overdue'] = True
                     month_highlighted = True
 
-        return groups
+        return list(groups.values())
 
     @property
     def status_representation(self):
