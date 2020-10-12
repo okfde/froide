@@ -2,10 +2,10 @@
 {% load content_helper %}
 
 {% block foirequest_timeline %}
-  <div id="timeline" class="alpha-timeline">
+  <div id="timeline" class="alpha-timeline d-none d-lg-block">
     <div class="alpha-timeline__wrap">
         {% for value in object.get_messages_by_month %}
-          <div class="alpha-timeline__item {% if value.highlight_overdue %}alpha-timeline__item--overdue{% endif %}" data-key="{{ value.date|date:'Y-m' }}">
+          <div class="alpha-timeline__item {% if value.highlight_overdue %}alpha-timeline__item--overdue{% endif %} {% if forloop.last %}alpha-timeline__item--last{% endif %}" data-key="{{ value.date|date:'Y-m' }}">
             <a href="#{{ value.first_message_id }}" class="alpha-timeline__link text-decoration-none">
               <div class="alpha-timeline__month">{% if value.is_same_year %}{{ value.date|date:'F' }}{% else %}{{ value.date|date:'F Y' }}{% endif %}</div>
               <div>{{ value.messages|length }} {% trans 'Messages' %}{% if not value.highlight_overdue and value.has_overdue_message %} ({% trans 'overdue' %}){% endif %}</div>

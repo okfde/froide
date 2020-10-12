@@ -14,8 +14,11 @@ export default class Timeline {
   element: HTMLElement
   messagesContainer: HTMLElement
   items: TimelineItemsInterface
+  lastItemElement: HTMLElement
   firstMessageIsVisible: boolean
+  messagesArr: Message[]
   scrollToEndLink: HTMLElement
+  observer: IntersectionObserver | null
 
   constructor (
     messagesContainer: HTMLElement,
@@ -25,16 +28,15 @@ export default class Timeline {
     this.element = timelineContainer
     this.messagesContainer = messagesContainer
     this.items = this.parseTimelineItems()
+    this.lastItemElement = document.querySelector('.alpha-timeline__item--last') as HTMLElement
     this.firstMessageIsVisible = false
-    this.scrollToEndLink = this.element.querySelector('.alpha-timeline__scroll-end-link') as HTMLElement
+    this.messagesArr = messagesArr
+    this.observer = null
 
+    this.scrollToEndLink = this.element.querySelector('.alpha-timeline__scroll-end-link') as HTMLElement
     this.scrollToEndLink?.addEventListener('click', this.itemClickCallback)
 
-    this.setupScrollListener()
-    this.setupObserver(messagesArr)
-
-    // setTimeout(() => {
-    // }, 1000)
+    this.setupResizeListener()
   }
 
   parseTimelineItems () {
@@ -94,53 +96,62 @@ export default class Timeline {
     }
   }
 
-  setupScrollListener () {
-    let timeout: number
-    window.addEventListener('scroll', () => {
-      // If there's a timer, cancel it
-      if (timeout) {
-        window.cancelAnimationFrame(timeout)
-      }
+  setupResizeListener () {
+    window.onresize = this.resizeListenerCallback.bind(this)
 
-      // Setup the new requestAnimationFrame()
-      timeout = window.requestAnimationFrame(this.animationFrameCallback.bind(this));
-    }, false)
+    // execute on first run
+    this.resizeListenerCallback()
   }
 
-  animationFrameCallback () {
-    // const documentScrollTop = document.documentElement.scrollTop
-    // const messagesRootHeight = this.messagesContainer.clientHeight
-    // const messagesRootOffsetTop = this.messagesContainer.offsetTop
-    // const currentScrollPos = documentScrollTop < messagesRootOffsetTop
-    // ? 0
-    // : document.documentElement.scrollTop - messagesRootOffsetTop
-    // const innerWrapElement = this.element.children[0] as HTMLElement
-    // const innerWrapHeight = innerWrapElement.clientHeight
-    // const percentValue = currentScrollPos > 0
-    //   ? (currentScrollPos / (messagesRootHeight - this.element.clientHeight)) * 100
-    //   : 0
-    // const percentageScrolled = percentValue <= 100 ? percentValue : 100
+  resizeListenerCallback () {
+    const windowWidth = window.innerWidth
+    const observerExists = this.observer !== null
+    const minWidth = 992
 
+    // init / destroy observer
+    if (windowWidth >= minWidth && !observerExists) {
+      this.setupIntersectionObserver()
+    } else if (windowWidth < minWidth && observerExists) {
+      this.destroyIntersectionObserver()
+    }
 
-    // const innerWrapValue = ((percentageScrolled / 100) * innerWrapHeight) - (this.element.clientHeight / 2.25)
-    // // const test = Math.sin(1) * percentageScrolled
-    // const scrollValue = innerWrapValue >= 0 ? innerWrapValue : 0
-
-    // console.log({currentScrollPos, innerWrapValue})
-    // innerWrapElement.style.transform = `translateY(-${scrollValue}px)`
+    // set timeline height
+    this.setTimelineHeight()
   }
 
-  setupObserver (messagesArr: Message[]) {
-    let observer = new IntersectionObserver(
-      this.observerCallback.bind(this),
+  setTimelineHeight () {
+    // set timeline height to browser window height
+    this.element.style.height = window.innerHeight + 'px'
+  }
+
+  setupIntersectionObserver () {
+    this.observer = new IntersectionObserver(
+      this.intersectionObserverCallback.bind(this),
       { rootMargin: '-50px 0px -50px 0px' }
     )
-    messagesArr.forEach(msg => {
-      observer.observe(msg.element)
+    this.messagesArr.forEach(msg => {
+      this.observer?.observe(msg.element)
     })
   }
 
-  observerCallback (entries: IntersectionObserverEntry[]) {
+  destroyIntersectionObserver () {
+    this.observer?.disconnect()
+    this.observer = null
+  }
+
+  get lastTimelineItemIsVisible () {
+    // src: https://stackoverflow.com/a/7557433
+    const rect = this.lastItemElement.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= window.innerHeight &&
+        rect.right <= window.innerWidth
+    )
+  }
+
+  intersectionObserverCallback (entries: IntersectionObserverEntry[]) {
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]
 
@@ -160,15 +171,11 @@ export default class Timeline {
         this.firstMessageIsVisible = isVisible
       }
 
-      if (
-        innerWrapElement.clientHeight > timelineHeight &&
-        this.messagesContainer.lastElementChild === msgContainer
-      ) {
-        this.scrollToEndLink.style.opacity = isVisible ? '0' : '1'
-        this.scrollToEndLink.style.visibility = isVisible ? 'hidden' : 'visible'
-      }
+      // toggle scrollToEndLink visibility
+      const lastTimelineItemIsVisible = this.lastTimelineItemIsVisible
+      this.scrollToEndLink.style.opacity = lastTimelineItemIsVisible ? '0' : '1'
+      this.scrollToEndLink.style.visibility = lastTimelineItemIsVisible ? 'hidden' : 'visible'
 
-      // gets's executed once, even though it's inside a loop
       // scroll timeline so that the middle active month is always near the middle of the viewport
       const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
       const activeElement = activeElements.length === 1
@@ -188,8 +195,6 @@ export default class Timeline {
           ? (this.element.clientHeight / 2) - activeElementOffset
           : 0
         innerWrapElement.style.transform = `translateY(${scrollValue}px)`
-
-        // console.log(activeElementOffset, (this.element.clientHeight / 2))
       }
     }
 

@@ -156,7 +156,7 @@
             </div>
           </div>
         {% else %}
-          <span class="text-gray-600">
+          <span class="text-gray-600 smaller">
             {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}
               Please <a href="{{ link }}" >login</a> to read or write comments.
             {% endblocktrans %}
