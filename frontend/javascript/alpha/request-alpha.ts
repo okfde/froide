@@ -1,6 +1,7 @@
 import '../../styles/components/alpha/index.scss'
 import Message from './Message'
 import Timeline from './Timeline'
+import ScrollIndicator from './ScrollIndicator'
 
 
 const init = () => {
@@ -23,14 +24,22 @@ const init = () => {
     }
   }
 
-  // init timeline
   const messagesContainer = document.getElementById('correspondence')
-  const timelineContainer = document.getElementById('timeline')
-  if (messagesContainer && timelineContainer) {
-    new Timeline(
-      messagesContainer, timelineContainer, messages
-    )
+  if (messagesContainer) {
+
+    // init timeline
+    const timelineContainer = document.getElementById('timeline')
+    if (timelineContainer) {
+      new Timeline(
+        messagesContainer, timelineContainer, messages
+      )
+    }
+
+    // init ScrollIndicator
+    new ScrollIndicator(messagesContainer)
+
   }
+
 }
 
 

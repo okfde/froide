@@ -19,6 +19,7 @@ export default class Timeline {
   messagesArr: Message[]
   scrollToEndLink: HTMLElement
   observer: IntersectionObserver | null
+  minWidthBreakpoint: number = 992
 
   constructor (
     messagesContainer: HTMLElement,
@@ -106,17 +107,19 @@ export default class Timeline {
   resizeListenerCallback () {
     const windowWidth = window.innerWidth
     const observerExists = this.observer !== null
-    const minWidth = 992
+    const minWidth = this.minWidthBreakpoint
 
     // init / destroy observer
-    if (windowWidth >= minWidth && !observerExists) {
-      this.setupIntersectionObserver()
+    if (windowWidth >= minWidth) {
+      if (!observerExists) {
+        this.setupIntersectionObserver()
+      }
+
+      // set timeline height
+      this.setTimelineHeight()
     } else if (windowWidth < minWidth && observerExists) {
       this.destroyIntersectionObserver()
     }
-
-    // set timeline height
-    this.setTimelineHeight()
   }
 
   setTimelineHeight () {
