@@ -3313,8 +3313,8 @@ msgstr "Vorschläge für Behörden"
 #, python-format
 msgid "Update on one of your request"
 msgid_plural "Update on %(count)s of your requests"
-msgstr[0] "Neues bei einer Anfrage, der Sie folgen"
-msgstr[1] "Neues bei %(count)s Anfragen, denen Sie folgen"
+msgstr[0] "Neues bei einer Ihrer Anfrage"
+msgstr[1] "Neues bei %(count)s Ihrer Anfragen"
 
 #: froide/foirequest/notifications.py:52
 msgid "Please classify the reply to your request"
