@@ -5483,7 +5483,7 @@ msgstr "Geben Sie die Behörde an, die diese Nachricht erhalten hat:"
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:132
 msgid "Set receiving public body"
-msgstr "Empfänger-Behörde wurde gesetzt"
+msgstr "Lege Empfänger-Behörde fest"
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:215
 #: froide/foirequest/views/message.py:485
