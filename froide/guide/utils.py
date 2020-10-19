@@ -140,9 +140,6 @@ class GuidanceApplicator:
 
 
 def run_guidance(message, active_only=True, notify=False):
-    if not message.is_response:
-        return
-
     applicator = GuidanceApplicator(message, active_only=active_only)
     result = applicator.run()
 
