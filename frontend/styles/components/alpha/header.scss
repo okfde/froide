@@ -61,6 +61,9 @@
   &__body {
     background-color: $gray-100;
   }
+    // &__edit-button {
+
+    // }
     &__list {
       list-style-type: none;
       margin: 0;
@@ -144,7 +147,7 @@
       border-bottom-color: $gray-300;
     }
     &.active {
-      border-bottom-color: $blue-600;      
+      border-bottom-color: $blue-600;
     }
     @include media-breakpoint-up(sm) {
       padding: $spacer * .625 $spacer * 1.5;

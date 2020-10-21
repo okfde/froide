@@ -35,9 +35,11 @@
             {{ object.get_description|urlizetrunc:40|linebreaks }}
           </div>
           <!-- edit button -->
-          <a href="#">
-            <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}
-          </a>
+          {% if object|can_write_foirequest:request %}
+            <a href="#">
+              <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}
+            </a>
+          {% endif %}
         </div>
 
         <!-- tags list -->

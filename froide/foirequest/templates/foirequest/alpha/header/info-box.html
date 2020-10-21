@@ -1,6 +1,7 @@
 {% load i18n %}
+{% load foirequest_tags %}
 
-<div class="info-box info-box--{% if object.is_overdue %}danger{% elif object.status_is_final %}success{% else %}regular{% endif %}">
+<div id="infobox" class="info-box info-box--{% if object.is_overdue %}danger{% elif object.status_is_final %}success{% else %}regular{% endif %}">
 
   <!-- header (status, status icon) -->
   <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
@@ -13,6 +14,16 @@
 
   <!-- body  -->
   <div class="info-box__body">
+
+    <!-- edit button -->
+    {% if object|can_write_foirequest:request %}
+      <div class="bg-blue-10 px-4 py-2">
+        <a href="#" class="info-box__edit-button">
+          <span><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
+          <span class="d-none"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
+        </a>
+      </div>
+    {% endif %}
 
     <!-- request infos -->
     <ul class="info-box__list">
@@ -42,7 +53,7 @@
       {% endblock followers %}
 
       <li class="info-box__list-item info-box__list-item--has-divider">
-        
+
         <!-- copy url -->
         <div class="mb-3">
           <a href="#">
@@ -50,7 +61,7 @@
             {% blocktrans %}Copy Short-URL{% endblocktrans %}
           </a>
         </div>
-        
+
         <!-- share links -->
         <div>
           <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
@@ -64,7 +75,7 @@
           </a>
         </div>
       </li>
-      
+
       <!-- rss link -->
       <li class="info-box__list-item">
         <a href="{% url 'foirequest-feed' slug=object.slug %}">
@@ -75,6 +86,24 @@
 
     </ul>
 
+
+    <!-- edit interface -->
+    {% if object|can_write_foirequest:request %}
+    <div class="info-box__edit-panel d-none px-4 mt-2 mb-4">
+      {% comment %} <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4> {% endcomment %}
+      <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+        {% csrf_token %}
+        {% if status_form %}
+          {% include "foirequest/alpha/header/_set_status.html" %}
+        {% else %}
+          {% with status_form=object.get_status_form %}
+            {% include "foirequest/alpha/header/_set_status.html" %}
+          {% endwith %}
+        {% endif %}
+        <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+      </form>
+    </div>
+    {% endif %}
   </div>
-  
+
 </div>
