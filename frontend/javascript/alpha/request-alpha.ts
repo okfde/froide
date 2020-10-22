@@ -3,6 +3,9 @@ import Message from './Message'
 import Timeline from './Timeline'
 import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
+import { Tab } from "bootstrap.native/dist/bootstrap-native-v4";
+
+interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
 
 const init = () => {
@@ -23,8 +26,10 @@ const init = () => {
   // init timeline
   new Timeline(messagesContainer, timelineContainer, messages)
 
-  // init ScrollIndicator
+  // init ScrollIndicator on mobile view
   new ScrollIndicator(messagesContainer)
+
+  initTabs()
 
   // if url query parameter found, scroll to comment next
   scrollToComment(messages)
@@ -60,6 +65,25 @@ const scrollToComment = (messages: Message[]) => {
     if (msg) {
       msg.scrollToComment(scrollToCommentId)
     }
+  }
+}
+
+const initTabs = () => {
+  const container = document.querySelector('.alpha-tabs') as HTMLElement
+  const tabCollection = container.getElementsByTagName("A");
+  Array.from(tabCollection).forEach((tab) => {
+    // tslint:disable-next-line: no-unused-expression
+    new Tab(tab as HTMLElement, { height: false });
+  })
+
+  // show tab if query paramter exists
+  let hash = document.location && document.location.hash || "";
+  hash = hash.replace(/[^#\-\w]/g, "");
+  const hashNav = container.querySelector('a[href="' + hash + '"]') as IHTMLTabElement;
+  if (hashNav !== null && hashNav.Tab) {
+    hashNav.Tab.show();
+    // scroll tab into view
+    hashNav.scrollIntoView()
   }
 }
 

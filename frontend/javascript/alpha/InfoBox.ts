@@ -1,5 +1,3 @@
-import { Event } from "@uppy/core"
-
 export default class InfoBox {
   element: HTMLElement
   editButton: HTMLElement

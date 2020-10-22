@@ -1,6 +1,8 @@
 {% load i18n %}
 {% load foirequest_tags %}
 
+{% if status_message %} HALLOOO {% endif %}
+
 <div id="infobox" class="info-box info-box--{% if object.is_overdue %}danger{% elif object.status_is_final %}success{% else %}regular{% endif %}">
 
   <!-- header (status, status icon) -->
@@ -90,7 +92,6 @@
     <!-- edit interface -->
     {% if object|can_write_foirequest:request %}
     <div class="info-box__edit-panel d-none px-4 mt-2 mb-4">
-      {% comment %} <h4>{% blocktrans %}Set a new status{% endblocktrans %}</h4> {% endcomment %}
       <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
         {% csrf_token %}
         {% if status_form %}

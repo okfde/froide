@@ -85,9 +85,9 @@
 </div>
 
 <!-- tabs -->
-<div class="container px-0 px-sm-3">
+<div class="container px-0">
   <div class="mt-4" style="position: relative; bottom: -2px;">
-    <ul class="nav alpha-tabs" role="tablist">
+    <ul class="nav alpha-tabs" role="tablist" data-active-tab="{{ active_tab }}">
       <li class="alpha-tabs__tab">
         <a
           href="#correspondence-panel"
@@ -103,21 +103,25 @@
           <span class="alpha-tabs__counter">{{ object.messages|length }}</span>
         </a>
       </li>
-      {% comment %} <li class="alpha-tabs__tab">
-        <a
-          href="#actions-panel"
-          id="actions-tab"
-          data-toggle="tab"
-          class="alpha-tabs__tab-link"
-          data-toggle="tab"
-          aria-controls="actions-panel"
-          aria-selected="false"
-          role="tab"
-        >
-          <span>Testtab</span>
-          <span class="alpha-tabs__counter alpha-tabs__counter--highlight">{{ object.messages|length }}</span>
-        </a>
-      </li> {% endcomment %}
+
+      {# set status tab #}
+      {% if active_tab == 'set-status' %}
+        <li class="alpha-tabs__tab">
+          <a
+            href="#set-status"
+            id="set-status-tab"
+            data-toggle="tab"
+            class="alpha-tabs__tab-link"
+            data-toggle="tab"
+            aria-controls="set-status"
+            aria-selected="false"
+            role="tab"
+          >
+            <span>{% trans "Set status" %}</span>
+          </a>
+        </li>
+      {% endif %}
+
     </ul>
   </div>
 </div>

@@ -137,7 +137,7 @@
     padding: $spacer * .625 $spacer;
     color: $blue-800;
     font-weight: 600;
-    font-size: $font-size-base * 1.125;
+    font-size: $font-size-base;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
     @include hover-focus() {
@@ -150,6 +150,10 @@
       border-bottom-color: $blue-600;
     }
     @include media-breakpoint-up(sm) {
+      padding: $spacer * .625 $spacer;
+      font-size: $font-size-base * 1.125;
+    }
+    @include media-breakpoint-up(lg) {
       padding: $spacer * .625 $spacer * 1.5;
     }
   }
