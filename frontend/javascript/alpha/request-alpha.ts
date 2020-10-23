@@ -29,6 +29,8 @@ const init = () => {
   // init ScrollIndicator on mobile view
   new ScrollIndicator(messagesContainer)
 
+  initSummaryForm()
+
   initTabs()
 
   // if url query parameter found, scroll to comment next
@@ -85,6 +87,26 @@ const initTabs = () => {
     // scroll tab into view
     hashNav.scrollIntoView()
   }
+}
+
+const initSummaryForm = () => {
+  const buttonsArr = Array.from(document.querySelectorAll('.toggle-summary-form-btn'))
+  const form = document.querySelector('.request-summary-form')
+  const descr = document.querySelector('.request-descr')
+  const summary = document.querySelector('.request-summary')
+  const tags = document.querySelector('.request-tags')
+  buttonsArr.forEach(el => {
+    el.addEventListener('click', () => {
+      form?.classList.toggle('d-none')
+      descr?.classList.toggle('d-none')
+      summary?.classList.toggle('d-none')
+      tags?.classList.toggle('d-none')
+      buttonsArr.forEach(btn => {
+        btn.classList.toggle('d-none')
+      })
+    })
+
+  })
 }
 
 

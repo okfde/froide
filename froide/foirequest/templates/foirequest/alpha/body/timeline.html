@@ -18,7 +18,9 @@
     </div>
 
     {% with object.get_messages_by_month|last as last_month %}
-      <a href="#{{ last_month.first_message_id }}" class="text-decoration-none alpha-timeline__scroll-end-link">{% trans 'Scroll to end' %} ↓</a>
+      {% with last_month.messages|last as last_message %}
+        <a href="#{{ last_message.get_html_id }}" class="text-decoration-none alpha-timeline__scroll-end-link">{% trans 'Scroll to end' %} ↓</a>
+      {% endwith %}
     {% endwith %}
   </div>
 {% endblock foirequest_timeline %}

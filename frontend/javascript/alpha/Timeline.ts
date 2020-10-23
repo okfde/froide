@@ -16,6 +16,7 @@ export default class Timeline {
   items: TimelineItemsInterface
   lastItemElement: HTMLElement
   firstMessageIsVisible: boolean
+  lastMessageIsVisible: boolean
   messagesArr: Message[]
   scrollToEndLink: HTMLElement
   observer: IntersectionObserver | null
@@ -31,6 +32,7 @@ export default class Timeline {
     this.items = this.parseTimelineItems()
     this.lastItemElement = document.querySelector('.alpha-timeline__item--last') as HTMLElement
     this.firstMessageIsVisible = false
+    this.lastMessageIsVisible = false
     this.messagesArr = messagesArr
     this.observer = null
 
@@ -142,17 +144,17 @@ export default class Timeline {
     this.observer = null
   }
 
-  get lastTimelineItemIsVisible () {
-    // src: https://stackoverflow.com/a/7557433
-    const rect = this.lastItemElement.getBoundingClientRect();
+  // get lastTimelineItemIsVisible () {
+  //   // src: https://stackoverflow.com/a/7557433
+  //   const rect = this.lastItemElement.getBoundingClientRect();
 
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= window.innerHeight &&
-        rect.right <= window.innerWidth
-    )
-  }
+  //   return (
+  //       rect.top >= 0 &&
+  //       rect.left >= 0 &&
+  //       rect.bottom <= window.innerHeight &&
+  //       rect.right <= window.innerWidth
+  //   )
+  // }
 
   intersectionObserverCallback (entries: IntersectionObserverEntry[]) {
     for (let i = 0, l = entries.length; i < l; i++) {
@@ -174,10 +176,13 @@ export default class Timeline {
         this.firstMessageIsVisible = isVisible
       }
 
+      if (this.messagesContainer.lastElementChild === msgContainer) {
+        this.lastMessageIsVisible = isVisible
+      }
+
       // toggle scrollToEndLink visibility
-      const lastTimelineItemIsVisible = this.lastTimelineItemIsVisible
-      this.scrollToEndLink.style.opacity = lastTimelineItemIsVisible ? '0' : '1'
-      this.scrollToEndLink.style.visibility = lastTimelineItemIsVisible ? 'hidden' : 'visible'
+      this.scrollToEndLink.style.opacity = this.lastMessageIsVisible ? '0' : '1'
+      this.scrollToEndLink.style.visibility = this.lastMessageIsVisible ? 'hidden' : 'visible'
 
       // scroll timeline so that the middle active month is always near the middle of the viewport
       const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
