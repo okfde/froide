@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation
 from django.conf import settings
 
-from froide.foirequest.email import fetch_and_process
+from froide.foirequest.foi_mail import fetch_and_process
 
 
 class Command(BaseCommand):
