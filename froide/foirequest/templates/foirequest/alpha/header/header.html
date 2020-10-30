@@ -32,13 +32,16 @@
         <!-- summary / description -->
         <div class="mt-3">
 
-          <div class="request-descr">
+          <div class="request-descr request-descr--collapsed">
             {% if object.summary %}
               <h5>{% trans "Summary of Resolution" %}</h5>
               {{ object.summary|urlizetrunc:40|linebreaks }}
             {% elif object.description %}
               {{ object.get_description|urlizetrunc:40|linebreaks }}
             {% endif %}
+            <div class="request-descr-read-more">
+              <button type="button" class="btn btn-light btn-sm btn-block expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+            </div>
           </div>
 
           <!-- write summary form -->

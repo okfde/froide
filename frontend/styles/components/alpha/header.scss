@@ -33,10 +33,14 @@
 }
 
 .request-descr {
+  position: relative;
   overflow: hidden;
   padding-bottom: $spacer;
   margin-bottom: $spacer;
   border-bottom: 1px solid $gray-300;
+  &--collapsed {
+    max-height: 400px;
+  }
   p:last-child {
     margin-bottom: 0;
   }
@@ -47,6 +51,15 @@
   @include media-breakpoint-up(lg) {
     max-width: 40rem;
   }
+}
+
+.request-descr-read-more {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 80px;
+  background-image: linear-gradient(to bottom, transparent, $gray-100);
 }
 
 .info-box {

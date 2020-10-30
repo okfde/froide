@@ -16,6 +16,10 @@ const init = () => {
   const messages: Message[] = parseMessageContainers()
   if (!messages.length) return
 
+  initSummaryForm()
+  initTagsForm()
+  initExpandableDescription()
+
   // init Info Box
   new InfoBox()
 
@@ -27,16 +31,12 @@ const init = () => {
   // init ScrollIndicator on mobile view
   new ScrollIndicator(messagesContainer)
 
-  initSummaryForm()
-  initTagsForm()
-
   initTabs()
 
   // if url query parameter found, scroll to comment next
   scrollToComment(messages)
 
 }
-
 
 const parseMessageContainers = () => {
   const messages: Message[] = []
@@ -50,6 +50,60 @@ const parseMessageContainers = () => {
     messages.push(new Message(el as HTMLElement, forceExpand as Boolean, isLastItem as Boolean))
   })
   return messages
+}
+
+const initSummaryForm = () => {
+  const buttonsArr = Array.from(document.querySelectorAll('.toggle-summary-form-btn')) as HTMLElement[]
+  const editButtonsContainer = document.querySelector('.request-edit-buttons')
+  const form = document.querySelector('.request-summary-form')
+  const descr = document.querySelector('.request-descr')
+  const tags = document.querySelector('.request-tags')
+  buttonsArr.forEach(el => {
+    el.addEventListener('click', (e: MouseEvent) => {
+      e.preventDefault()
+      form?.classList.toggle('d-none')
+      descr?.classList.toggle('d-none')
+      tags?.classList.toggle('d-none')
+      editButtonsContainer?.classList.toggle('d-none')
+    })
+
+  })
+}
+
+const initTagsForm = () => {
+  const buttonsArr = Array.from(document.querySelectorAll('.toggle-tags-form-btn')) as HTMLElement[]
+  const form = document.querySelector('.request-tags-form')
+  const list = document.querySelector('.request-tags-list')
+  const editButtonsContainer = document.querySelector('.request-edit-buttons')
+
+  buttonsArr.forEach(el => {
+    el.addEventListener('click', (e: MouseEvent) => {
+      e.preventDefault()
+      form?.classList.toggle('d-none')
+      list?.classList.toggle('d-none')
+      editButtonsContainer?.classList.toggle('d-none')
+    })
+
+  })
+}
+
+const initExpandableDescription = () => {
+  const textContainer = document.querySelector('.request-descr')
+  const readmoreContainer = document.querySelector('.request-descr-read-more')
+  const expandButton = document.querySelector('.expand-descr-btn')
+  const clientHeight = textContainer?.clientHeight || 0
+  const scrollHeight = textContainer?.scrollHeight || 0
+
+  const expand = () => {
+    readmoreContainer?.classList.add('d-none')
+    textContainer?.classList.remove('request-descr--collapsed')
+  }
+
+  if (scrollHeight <= clientHeight) {
+    expand()
+  } else {
+    expandButton?.addEventListener('click', () => expand())
+  }
 }
 
 const scrollToComment = (messages: Message[]) => {
@@ -86,41 +140,6 @@ const initTabs = () => {
     // scroll tab into view
     hashNav.scrollIntoView()
   }
-}
-
-const initSummaryForm = () => {
-  const buttonsArr = Array.from(document.querySelectorAll('.toggle-summary-form-btn')) as HTMLElement[]
-  const editButtonsContainer = document.querySelector('.request-edit-buttons')
-  const form = document.querySelector('.request-summary-form')
-  const descr = document.querySelector('.request-descr')
-  const tags = document.querySelector('.request-tags')
-  buttonsArr.forEach(el => {
-    el.addEventListener('click', (e: MouseEvent) => {
-      e.preventDefault()
-      form?.classList.toggle('d-none')
-      descr?.classList.toggle('d-none')
-      tags?.classList.toggle('d-none')
-      editButtonsContainer?.classList.toggle('d-none')
-    })
-
-  })
-}
-
-const initTagsForm = () => {
-  const buttonsArr = Array.from(document.querySelectorAll('.toggle-tags-form-btn')) as HTMLElement[]
-  const form = document.querySelector('.request-tags-form')
-  const list = document.querySelector('.request-tags-list')
-  const editButtonsContainer = document.querySelector('.request-edit-buttons')
-
-  buttonsArr.forEach(el => {
-    el.addEventListener('click', (e: MouseEvent) => {
-      e.preventDefault()
-      form?.classList.toggle('d-none')
-      list?.classList.toggle('d-none')
-      editButtonsContainer?.classList.toggle('d-none')
-    })
-
-  })
 }
 
 const initSetStatusForm = () => {
