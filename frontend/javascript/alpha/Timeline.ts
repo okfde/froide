@@ -24,10 +24,9 @@ export default class Timeline {
 
   constructor (
     messagesContainer: HTMLElement,
-    timelineContainer: HTMLElement,
     messagesArr: Message[]
   ) {
-    this.element = timelineContainer
+    this.element = document.getElementById('timeline') as HTMLElement
     this.messagesContainer = messagesContainer
     this.items = this.parseTimelineItems()
     this.lastItemElement = document.querySelector('.alpha-timeline__item--last') as HTMLElement

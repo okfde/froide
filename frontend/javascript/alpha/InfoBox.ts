@@ -5,13 +5,13 @@ export default class InfoBox {
   infoList: HTMLElement | undefined
   editPanelIsVisible: boolean | undefined
 
-  constructor (infoboxContainer: HTMLElement) {
-    this.element = infoboxContainer
-    this.editButton = infoboxContainer.querySelector('.info-box__edit-button') as HTMLElement
+  constructor () {
+    this.element = document.getElementById('infobox') as HTMLElement
+    this.editButton = this.element.querySelector('.info-box__edit-button') as HTMLElement
     if (this.editButton) {
-      this.editPanel = infoboxContainer.querySelector('.info-box__edit-panel') as HTMLElement
+      this.editPanel = this.element.querySelector('.info-box__edit-panel') as HTMLElement
       this.editPanelIsVisible = false
-      this.infoList = infoboxContainer.querySelector('.info-box__list') as HTMLElement
+      this.infoList = this.element.querySelector('.info-box__list') as HTMLElement
 
       // event listeners
       this.editButton.addEventListener('click', this.editButtonClickCallback.bind(this))

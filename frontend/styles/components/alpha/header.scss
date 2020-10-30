@@ -25,7 +25,7 @@
 
 .request-title {
   margin-bottom: 0;
-  margin-top: $spacer;
+  margin-top: $spacer * 1.5;
   // word-break: break-all;
   @include media-breakpoint-up(lg) {
     margin-top: $spacer * 2;
@@ -34,9 +34,18 @@
 
 .request-descr {
   overflow: hidden;
-  max-width: 40rem;
+  padding-bottom: $spacer;
+  margin-bottom: $spacer;
+  border-bottom: 1px solid $gray-300;
   p:last-child {
     margin-bottom: 0;
+  }
+  @include media-breakpoint-up(md) {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  @include media-breakpoint-up(lg) {
+    max-width: 40rem;
   }
 }
 
@@ -61,27 +70,23 @@
   &__body {
     background-color: $gray-100;
   }
-    // &__edit-button {
-
-    // }
     &__list {
       list-style-type: none;
       margin: 0;
-      padding: $spacer 0 0;
+      padding: 0;
     }
       &__list-item {
-        padding-bottom: $spacer;
-        margin-left: $spacer * 1.5;
-        margin-right: $spacer * 1.5;
+        margin: $spacer $spacer * 1.5;
+        a .fa-question-circle-o { color: $blue-800; }
+        p { margin: 0; }
         &--has-divider {
-          margin-bottom: $spacer;
+          padding-bottom: $spacer;
           border-bottom: 2px solid $gray-200;
         }
         &--is-danger {
           color: darken($red, 7%);
-          margin: 0 0 $spacer;
-          padding: $spacer $spacer * 1.5;
           background-color: #FFDCD4;
+          a .fa-question-circle-o { color: darken($red, 7%); }
         }
       }
         &__list-label { font-weight: 600; }

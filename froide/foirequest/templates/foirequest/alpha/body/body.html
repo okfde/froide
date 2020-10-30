@@ -28,6 +28,8 @@
     </div>
   </div>
 
+  {% comment %}
+    {# TODO: set status tab: show when people come from email? #}
   {% if active_tab == 'set-status' %}
     <div
       role="tabpanel"
@@ -54,7 +56,7 @@
         </div>
       </div>
     </div>
-  {% endif %}
+  {% endif %} {% endcomment %}
 </div>
 
 {% block after_foirequest_messages %}

@@ -3,33 +3,32 @@ import Message from './Message'
 import Timeline from './Timeline'
 import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
-import { Tab } from "bootstrap.native/dist/bootstrap-native-v4";
+import { toggleSlide } from '../lib/misc';
+import { Tab } from 'bootstrap.native/dist/bootstrap-native-v4';
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
 
 const init = () => {
-  const messagesContainer = document.getElementById('correspondence')
-  const timelineContainer = document.getElementById('timeline')
-  const infoboxContainer = document.getElementById('infobox')
-  if (!messagesContainer || !timelineContainer || !infoboxContainer) {
-    return
-  }
 
   // init message containers
+  const messagesContainer = document.getElementById('correspondence') as HTMLElement
   const messages: Message[] = parseMessageContainers()
   if (!messages.length) return
 
   // init Info Box
-  new InfoBox(infoboxContainer)
+  new InfoBox()
+
+  initSetStatusForm()
 
   // init timeline
-  new Timeline(messagesContainer, timelineContainer, messages)
+  new Timeline(messagesContainer, messages)
 
   // init ScrollIndicator on mobile view
   new ScrollIndicator(messagesContainer)
 
   initSummaryForm()
+  initTagsForm()
 
   initTabs()
 
@@ -90,24 +89,74 @@ const initTabs = () => {
 }
 
 const initSummaryForm = () => {
-  const buttonsArr = Array.from(document.querySelectorAll('.toggle-summary-form-btn'))
+  const buttonsArr = Array.from(document.querySelectorAll('.toggle-summary-form-btn')) as HTMLElement[]
+  const editButtonsContainer = document.querySelector('.request-edit-buttons')
   const form = document.querySelector('.request-summary-form')
   const descr = document.querySelector('.request-descr')
-  const summary = document.querySelector('.request-summary')
   const tags = document.querySelector('.request-tags')
   buttonsArr.forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e: MouseEvent) => {
+      e.preventDefault()
       form?.classList.toggle('d-none')
       descr?.classList.toggle('d-none')
-      summary?.classList.toggle('d-none')
       tags?.classList.toggle('d-none')
-      buttonsArr.forEach(btn => {
-        btn.classList.toggle('d-none')
-      })
+      editButtonsContainer?.classList.toggle('d-none')
     })
 
   })
 }
+
+const initTagsForm = () => {
+  const buttonsArr = Array.from(document.querySelectorAll('.toggle-tags-form-btn')) as HTMLElement[]
+  const form = document.querySelector('.request-tags-form')
+  const list = document.querySelector('.request-tags-list')
+  const editButtonsContainer = document.querySelector('.request-edit-buttons')
+
+  buttonsArr.forEach(el => {
+    el.addEventListener('click', (e: MouseEvent) => {
+      e.preventDefault()
+      form?.classList.toggle('d-none')
+      list?.classList.toggle('d-none')
+      editButtonsContainer?.classList.toggle('d-none')
+    })
+
+  })
+}
+
+const initSetStatusForm = () => {
+  const idResolution = document.querySelector('#id_resolution');
+  if (idResolution !== null) {
+    idResolution.addEventListener('change', setStatus);
+  }
+
+  const inputStatus = document.querySelector('input[name="status"]');
+  if (inputStatus !== null) {
+    inputStatus.addEventListener('change', setStatus);
+  }
+
+  setStatus();
+
+}
+
+let refusalInputIsVisible = false
+const setStatus = () => {
+  const container = document.querySelector('.status-refusal') as HTMLElement;
+  if (container !== null) {
+    const resolutionElement = document.querySelector('#id_resolution') as HTMLInputElement;
+    if (resolutionElement) {
+      const resolutionValue = resolutionElement.value;
+      const resolutionValueTriggersInput = /refus/.exec(resolutionValue) !== null || /partial/.exec(resolutionValue) !== null
+      if (
+        (refusalInputIsVisible && !resolutionValueTriggersInput) ||
+        (!refusalInputIsVisible && resolutionValueTriggersInput)
+      ) {
+        refusalInputIsVisible = resolutionValueTriggersInput
+        toggleSlide(container, 0.5);
+      }
+    }
+  }
+};
+
 
 
 init()
