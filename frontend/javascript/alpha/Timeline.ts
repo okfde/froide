@@ -19,6 +19,7 @@ export default class Timeline {
   lastMessageIsVisible: boolean
   messagesArr: Message[]
   scrollToEndLink: HTMLElement
+  scrollToEndLinkIsVisible: boolean = true
   observer: IntersectionObserver | null
   minWidthBreakpoint: number = 992
 
@@ -143,17 +144,23 @@ export default class Timeline {
     this.observer = null
   }
 
-  // get lastTimelineItemIsVisible () {
-  //   // src: https://stackoverflow.com/a/7557433
-  //   const rect = this.lastItemElement.getBoundingClientRect();
+  get lastTimelineItemIsVisible () {
+    // src: https://stackoverflow.com/a/7557433
+    const rect = this.lastItemElement.getBoundingClientRect();
 
-  //   return (
-  //       rect.top >= 0 &&
-  //       rect.left >= 0 &&
-  //       rect.bottom <= window.innerHeight &&
-  //       rect.right <= window.innerWidth
-  //   )
-  // }
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= window.innerHeight &&
+        rect.right <= window.innerWidth
+    )
+  }
+
+  toggleScrollToEndLink (value: boolean) {
+    this.scrollToEndLink.style.opacity = value ? '0' : '1'
+    this.scrollToEndLink.style.visibility = value ? 'hidden' : 'visible'
+    this.scrollToEndLinkIsVisible = value
+  }
 
   intersectionObserverCallback (entries: IntersectionObserverEntry[]) {
     for (let i = 0, l = entries.length; i < l; i++) {
@@ -180,8 +187,13 @@ export default class Timeline {
       }
 
       // toggle scrollToEndLink visibility
-      this.scrollToEndLink.style.opacity = this.lastMessageIsVisible ? '0' : '1'
-      this.scrollToEndLink.style.visibility = this.lastMessageIsVisible ? 'hidden' : 'visible'
+      if (
+        (
+          this.lastMessageIsVisible || this.lastTimelineItemIsVisible
+        ) !== this.scrollToEndLinkIsVisible
+      ) {
+        this.toggleScrollToEndLink(!this.scrollToEndLinkIsVisible)
+      }
 
       // scroll timeline so that the middle active month is always near the middle of the viewport
       const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
@@ -198,6 +210,8 @@ export default class Timeline {
         // const messagesRootOffsetTop = this.messagesContainer.offsetTop
         // const isBehindFirstMessage = documentScrollTop > messagesRootOffsetTop
         const activeElementOffset = activeElement.offsetTop
+        // const activeElementOffsetPersent = (activeElementOffset / innerWrapElement.clientHeight) * 100
+        // console.warn(activeElementOffset, innerWrapElement.clientHeight, maxOffsetPersent)
         const scrollValue = activeElementOffset > (timelineHeight / 2) && !this.firstMessageIsVisible
           ? (this.element.clientHeight / 2) - activeElementOffset
           : 0

@@ -40,7 +40,7 @@
         margin-top: $spacer * .25;
       }
     &__scroll-end-link {
-      position: absolute;
+      position: sticky;
       bottom: 0;
       left: 0;
       display: block;

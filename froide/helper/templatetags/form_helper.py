@@ -4,8 +4,11 @@ register = template.Library()
 
 
 @register.inclusion_tag('helper/forms/bootstrap_form.html')
-def render_form(form):
-    return {'form': form}
+def render_form(form, horizontal=True):
+    return {
+        'form': form,
+        'horizontal': horizontal
+    }
 
 
 @register.inclusion_tag('helper/forms/bootstrap_field.html')

@@ -409,7 +409,8 @@ class FoiRequest(models.Model):
                     'is_same_year': msg.timestamp.year == today.year,
                     'messages': [],
                     'has_overdue_message': False,
-                    'highlight_overdue': False
+                    'highlight_overdue': False,
+                    'first_message_id': msg.get_html_id
                 }
             groups[key]['messages'].append(msg)
 
