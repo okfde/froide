@@ -187,10 +187,11 @@ export default class Timeline {
       }
 
       // toggle scrollToEndLink visibility
+      const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
+      const lastMessageOrTimelineItemIsVisible = this.lastMessageIsVisible || this.lastTimelineItemIsVisible
       if (
-        (
-          this.lastMessageIsVisible || this.lastTimelineItemIsVisible
-        ) !== this.scrollToEndLinkIsVisible
+        !allTimelineItemsAreInactive &&
+        lastMessageOrTimelineItemIsVisible !== this.scrollToEndLinkIsVisible
       ) {
         this.toggleScrollToEndLink(!this.scrollToEndLinkIsVisible)
       }
@@ -201,10 +202,8 @@ export default class Timeline {
         ? activeElements[0] as HTMLElement
         : activeElements[Math.round(activeElements.length / 2)] as HTMLElement
 
+
       if (activeElement) {
-        // const documentScrollBottom = document.documentElement.scrollTop + document.documentElement.clientHeight
-        // const messagesRootOffsetBottom = this.messagesContainer.offsetTop + this.messagesContainer.clientHeight
-        // const percentageScrolled = (documentScrollBottom / messagesRootOffsetBottom) * 100
 
         // const documentScrollTop = document.documentElement.scrollTop
         // const messagesRootOffsetTop = this.messagesContainer.offsetTop
