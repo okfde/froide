@@ -66,9 +66,10 @@ class CSVImporter(object):
         if 'classification' in row:
             row['classification'] = self.get_classification(row.pop('classification', None))
 
-        categories = row.pop('categories', '').split(',')
-
-        categories = list(self.get_categories(categories))
+        categories = row.pop('categories', [])
+        if categories:
+            categories_list = categories.split(',')
+            categories = list(self.get_categories(categories_list))
 
         # resolve foreign keys
         if 'jurisdiction__slug' in row:
@@ -164,7 +165,8 @@ class CSVImporter(object):
                         id = int(cat)
                         category = Category.objects.get(id=id)
                     except ValueError:
-                        category = Category.objects.get(name=cat)
+                        cat_string = str(cat).replace('"', '')
+                        category = Category.objects.get(name=cat_string)
                 except Category.DoesNotExist:
                     raise ValueError(
                         _('Category name "%s" does not exist.') % cat)
