@@ -199,25 +199,29 @@ const initReplyForm = () => {
       stickyButton.children[0].classList.add('fa-lock')
       stickyButton.classList.remove('btn-link')
       stickyButton.classList.add('btn-primary')
+      if (!userScrolledPastEnd) {
+        toggleStickyClass()
+      }
     }
-    toggleStickyClass()
     stickyModeEnabled = !stickyModeEnabled
   })
 
 
   const toggleStickyClass = () => {
-    if(userScrolledPastEnd) {
-      replyContainer.classList.remove('reply-form--sticky')
-    } else {
-      replyContainer.classList.add('reply-form--sticky')
-    }
+    replyContainer.classList.toggle('reply-form--sticky')
   }
 
   window.addEventListener('scroll', () => {
     const documentScrollTop = document.documentElement.scrollTop
     userScrolledPastEnd = (documentScrollTop + window.innerHeight / 2) >= replyContainerOffsetTop
+    const hastStickyClass = replyContainer.classList.contains('reply-form--sticky')
     if (stickyModeEnabled) {
-      toggleStickyClass()
+      if (
+        (userScrolledPastEnd && hastStickyClass) ||
+        (!userScrolledPastEnd && !hastStickyClass)
+      ) {
+        toggleStickyClass()
+      }
     }
   })
 
