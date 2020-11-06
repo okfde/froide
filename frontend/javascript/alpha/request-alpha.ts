@@ -194,13 +194,14 @@ const initReplyForm = () => {
       stickyButton.children[0].classList.add('fa-unlock')
       stickyButton.classList.add('btn-link')
       stickyButton.classList.remove('btn-primary')
+      replyContainer.classList.remove('reply-form--sticky')
     } else {
       stickyButton.children[0].classList.remove('fa-unlock')
       stickyButton.children[0].classList.add('fa-lock')
       stickyButton.classList.remove('btn-link')
       stickyButton.classList.add('btn-primary')
       if (!userScrolledPastEnd) {
-        toggleStickyClass()
+        replyContainer.classList.add('reply-form--sticky')
       }
     }
     stickyModeEnabled = !stickyModeEnabled
