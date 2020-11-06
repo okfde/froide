@@ -180,7 +180,8 @@ const setStatus = () => {
 
 const initReplyForm = () => {
   const replyContainer = document.querySelector('.reply-form') as HTMLElement
-  const replyContainerOffsetTop = replyContainer.offsetTop
+  const replyContainerHelper = document.getElementById('reply-form-helper') as HTMLElement
+  const replyContainerOffsetTop = replyContainerHelper.offsetTop
   const stickyButton = replyContainer.querySelector('.reply-form__toggle-sticky-btn') as HTMLElement
   let stickyModeEnabled = false
   let userScrolledPastEnd = false
@@ -199,28 +200,25 @@ const initReplyForm = () => {
       stickyButton.classList.remove('btn-link')
       stickyButton.classList.add('btn-primary')
     }
-    stickyModeEnabled = !stickyModeEnabled
     toggleStickyClass()
+    stickyModeEnabled = !stickyModeEnabled
   })
 
 
   const toggleStickyClass = () => {
-    if (stickyModeEnabled) {
-      if(userScrolledPastEnd) {
-        replyContainer.classList.remove('reply-form--sticky')
-      } else if(!userScrolledPastEnd) {
-        replyContainer.classList.add('reply-form--sticky')
-      }
-    } else if (replyContainer.classList.contains('reply-form--sticky')) {
+    if(userScrolledPastEnd) {
       replyContainer.classList.remove('reply-form--sticky')
+    } else {
+      replyContainer.classList.add('reply-form--sticky')
     }
   }
 
   window.addEventListener('scroll', () => {
     const documentScrollTop = document.documentElement.scrollTop
     userScrolledPastEnd = (documentScrollTop + window.innerHeight / 2) >= replyContainerOffsetTop
-    toggleStickyClass()
-
+    if (stickyModeEnabled) {
+      toggleStickyClass()
+    }
   })
 
 }
