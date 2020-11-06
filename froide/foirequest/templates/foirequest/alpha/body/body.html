@@ -4,7 +4,7 @@
 {% load foirequest_tags %}
 
 
-<div class="tab-content py-sm-3">
+<div class="tab-content pt-sm-3">
   <div class="scroll-indicator"><div class="scroll-indicator__line"></div></div>
 
 
@@ -65,35 +65,41 @@
 
     <!-- Reply form -->
     <div id="write-message" class="collapse {% if active_tab == 'write-message' %}show{% endif %} reply-form bg-white py-4">
-      <div class="container px-0">
-        <div class="row">
-          <div class="col-lg-8">
-            <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
-              {% csrf_token %}
-              <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
-              {% if object.is_overdue %}
-                <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
-              {% else %}
-                <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
-              {% endif %}
-              {% block send_message_form_pre %}{% endblock %}
-              {% if send_message_form %}
-                {% render_form send_message_form False %}
-              {% else %}
-                {% with send_message_form=object.get_send_message_form %}
+      <a href="#" class="btn btn-link reply-form__toggle-sticky-btn">
+        <i class="fa fa-unlock" aria-hidden="true"></i>
+        {% trans "Sticky" %}
+      </a>
+      <div class="reply-form__wrap">
+        <div class="container px-0">
+          <div class="row">
+            <div class="col-lg-8">
+              <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
+                {% if object.is_overdue %}
+                  <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
+                {% else %}
+                  <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
+                {% endif %}
+                {% block send_message_form_pre %}{% endblock %}
+                {% if send_message_form %}
                   {% render_form send_message_form False %}
-                {% endwith %}
-              {% endif %}
-              <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-              <p class="form-text text-muted">
-                <small>
-                  {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
-                  <strong>{% alternative_address object %}</strong>
-                  <br/>
-                  {% trans "It will still go to your request here." %}
-                </small>
-              </p>
-            </form>
+                {% else %}
+                  {% with send_message_form=object.get_send_message_form %}
+                    {% render_form send_message_form False %}
+                  {% endwith %}
+                {% endif %}
+                <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+                <p class="form-text text-muted">
+                  <small>
+                    {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
+                    <strong>{% alternative_address object %}</strong>
+                    <br/>
+                    {% trans "It will still go to your request here." %}
+                  </small>
+                </p>
+              </form>
+            </div>
           </div>
         </div>
       </div>

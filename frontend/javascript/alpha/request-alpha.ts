@@ -33,6 +33,8 @@ const init = () => {
 
   initTabs()
 
+  initReplyForm()
+
   // if url query parameter found, scroll to comment next
   scrollToComment(messages)
 
@@ -176,6 +178,53 @@ const setStatus = () => {
   }
 };
 
+const initReplyForm = () => {
+  const replyContainer = document.querySelector('.reply-form') as HTMLElement
+  const replyContainerOffsetTop = replyContainer.offsetTop
+  const stickyButton = replyContainer.querySelector('.reply-form__toggle-sticky-btn') as HTMLElement
+  let stickyModeEnabled = false
+  let userScrolledPastEnd = false
 
 
-init()
+  stickyButton.addEventListener('click', (e: MouseEvent) => {
+    e.preventDefault()
+    if (stickyModeEnabled) {
+      stickyButton.children[0].classList.remove('fa-lock')
+      stickyButton.children[0].classList.add('fa-unlock')
+      stickyButton.classList.add('btn-link')
+      stickyButton.classList.remove('btn-primary')
+    } else {
+      stickyButton.children[0].classList.remove('fa-unlock')
+      stickyButton.children[0].classList.add('fa-lock')
+      stickyButton.classList.remove('btn-link')
+      stickyButton.classList.add('btn-primary')
+    }
+    stickyModeEnabled = !stickyModeEnabled
+    toggleStickyClass()
+  })
+
+
+  const toggleStickyClass = () => {
+    if (stickyModeEnabled) {
+      if(userScrolledPastEnd) {
+        replyContainer.classList.remove('reply-form--sticky')
+      } else if(!userScrolledPastEnd) {
+        replyContainer.classList.add('reply-form--sticky')
+      }
+    } else if (replyContainer.classList.contains('reply-form--sticky')) {
+      replyContainer.classList.remove('reply-form--sticky')
+    }
+  }
+
+  window.addEventListener('scroll', () => {
+    const documentScrollTop = document.documentElement.scrollTop
+    userScrolledPastEnd = (documentScrollTop + window.innerHeight / 2) >= replyContainerOffsetTop
+    toggleStickyClass()
+
+  })
+
+}
+
+
+
+window.addEventListener('load', init)

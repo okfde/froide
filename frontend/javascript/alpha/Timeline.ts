@@ -100,7 +100,7 @@ export default class Timeline {
   }
 
   setupResizeListener () {
-    window.onresize = this.resizeListenerCallback.bind(this)
+    window.addEventListener('resize', this.resizeListenerCallback.bind(this))
 
     // execute on first run
     this.resizeListenerCallback()
@@ -108,19 +108,18 @@ export default class Timeline {
 
   resizeListenerCallback () {
     const windowWidth = window.innerWidth
-    const observerExists = this.observer !== null
     const minWidth = this.minWidthBreakpoint
 
     // init / destroy observer
-    if (windowWidth >= minWidth) {
-      if (!observerExists) {
-        this.setupIntersectionObserver()
-      }
-
-      // set timeline height
-      this.setTimelineHeight()
-    } else if (windowWidth < minWidth && observerExists) {
+    if (windowWidth >= minWidth && this.observer == null) {
+      this.setupIntersectionObserver()
+    } else if (windowWidth < minWidth && this.observer !== null) {
       this.destroyIntersectionObserver()
+    }
+
+    // set timeline height
+    if (this.observer !== null) {
+      this.setTimelineHeight()
     }
   }
 
