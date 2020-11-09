@@ -3,7 +3,7 @@
 <div id="correspondence">
   {% block foirequest_messages %}
     {% for message in object.messages %}
-      {% include "foirequest/alpha/body/message/message.html" %}  
+      {% include "foirequest/alpha/body/message/message.html" %}
       {% empty %}
         <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
     {% endfor %}

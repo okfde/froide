@@ -1,0 +1,15 @@
+.scroll-indicator {
+  opacity: 0;
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transition: opacity .2s ease;
+  &__line {
+    height: 100%;
+    background-color: $blue-500;
+    transition: width .2s ease;
+  }
+}

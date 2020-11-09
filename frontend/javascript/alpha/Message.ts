@@ -1,13 +1,13 @@
 export default class Message {
   id: string
-  root: HTMLElement
+  element: HTMLElement
   metaContainer: HTMLElement
   expandedClassName = 'alpha-message--expanded'
-  
+
   constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
-    this.root = element
-    this.metaContainer = this.root.querySelector('.alpha-message__meta-container') as HTMLElement
+    this.element = element
+    this.metaContainer = this.element.querySelector('.alpha-message__meta-container') as HTMLElement
 
     // event listeners
 
@@ -47,7 +47,7 @@ export default class Message {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
-  
+
   updateStorageItem (data: Object) {
     localStorage.setItem(
       this.id,
@@ -67,17 +67,17 @@ export default class Message {
       this.collapseMessage()
     } else {
       this.expandMessage()
-    }    
+    }
   }
 
   expandMessage () {
     this.updateStorageItem({ isExpanded: true })
-    this.root.classList.add(this.expandedClassName)
+    this.element.classList.add(this.expandedClassName)
   }
 
   collapseMessage () {
     this.updateStorageItem({ isExpanded: false })
-    this.root.classList.remove(this.expandedClassName)
+    this.element.classList.remove(this.expandedClassName)
   }
 
   toggleMetaContainer (e: Event) {
@@ -85,7 +85,7 @@ export default class Message {
     e.stopPropagation()
     this.metaContainer.classList.toggle('alpha-message__meta-container--visible')
   }
-  
+
   expandCommentText (e: Event) {
     e.preventDefault()
     // replace parent node content with right sibling content
@@ -102,9 +102,9 @@ export default class Message {
       e.preventDefault()
       el = e.target as HTMLElement
     } else {
-      el = this.root.querySelector('.alpha-comment__more-comments-trigger') as HTMLElement
+      el = this.element.querySelector('.alpha-comment__more-comments-trigger') as HTMLElement
     }
-    
+
     this.unwrapLeftSibling(el)
   }
 
@@ -149,7 +149,7 @@ export default class Message {
         // add and remove highlight class
         element.classList.add('alpha-comment--highlighted')
         setTimeout(() => {
-          element.classList.remove('alpha-comment--highlighted')        
+          element.classList.remove('alpha-comment--highlighted')
         }, 750);
       } else (
         // if dom not ready, check again on next tick

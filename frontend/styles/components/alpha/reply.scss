@@ -1,0 +1,21 @@
+.reply-form {
+  position: relative;
+  &--sticky {
+    z-index: $zindex-popover;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 -5px 33px rgba(123, 145, 169, 0.48);
+  }
+  &--sticky &__wrap {
+    max-height: 50vh;
+    overflow-y: scroll;
+  }
+  &__toggle-sticky-btn {
+    position: absolute;
+    z-index: $zindex-modal;
+    right: $spacer * 3;
+    top: $spacer * 3;
+  }
+}

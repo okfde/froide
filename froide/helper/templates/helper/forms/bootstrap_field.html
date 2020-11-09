@@ -3,10 +3,10 @@
 {% include "helper/forms/errors.html" with errors=field.errors %}
 
 {% if field_type == "radio" %}
-<fieldset class="form-group">
-  <div class="row">
-    <legend class="col-form-label col-lg-3{% if required %} field-required{% endif %}">{{ label }}</legend>
-    <div class="col-lg-9">
+<div class="form-group">
+  <div class="{% if horizontal %}row{% endif %}">
+    <div class="font-weight-bold col-form-label {% if horizontal %} col-lg-3{% endif %}{% if required %} field-required{% endif %}">{{ label }}</div>
+    <div class="{% if horizontal %}col-lg-9{% endif %}">
       {% for widget in field %}
         <div class="form-check">
           {{ widget }}
@@ -15,12 +15,12 @@
       {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
     </div>
   </div>
-</fieldset>
+</div>
 {% elif field_type == "checkbox" %}
-<div class="form-group row{% if classes %} {{ classes }}{% endif %}">
-  <div class="col-lg-9{% if horizontal %} ml-auto{% endif %}">
+<div class="form-group {% if horizontal %}row{% endif %}{% if classes %} {{ classes }}{% endif %}">
+  <div class="{% if horizontal %}col-lg-9 ml-auto{% endif %}">
     <div class="form-check">
-      <label class="form-check-label {% if required %} field-required{% endif %}">
+      <label class="form-check-label font-weight-bold {% if required %} field-required{% endif %}">
         {{ field }}
         {{ label }}
       </label>
@@ -29,9 +29,9 @@
   </div>
 </div>
 {% else %}
-<div class="form-group row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
-  {% if label %}{% if field.id_for_label %}<label class="col-lg-3 col-form-label{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
-  <div class="col-lg-9">
+<div class="form-group {% if horizontal %}row{% endif %}{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
+  {% if label %}{% if field.id_for_label %}<label class="font-weight-bold {% if horizontal %}col-lg-3 col-form-label{% endif %}{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
+  <div class="{% if horizontal %}col-lg-9{% endif %}">
     {{ field }}
     {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
   </div>
