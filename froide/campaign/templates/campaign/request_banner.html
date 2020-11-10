@@ -13,11 +13,18 @@
         {% endblocktrans %}
       </p>
       {% if campaign.active %}
-        {% if not request.user.is_authenticated or campaign.ident not in request.user.tags %}
-          <p class="text-right">
-            <a href="{{ campaign.url }}" class="btn btn-primary">{% trans "Make a request yourself" %}</a>
-          </p>
-        {% endif %}
+      <div class="row justify-content-center mt-6">
+          {% if not request.user.is_authenticated or campaign.ident not in request.user.tags %}
+          <a href="{{ campaign.url }}" class="btn btn-primary">{% trans "Make a request yourself" %}</a>
+          {% endif %}
+
+          {% if object.resolution == 'successful' and campaign.report_url and request.user == object.user %}
+          <div class="col-md-6 text-center">
+            <p>{% trans 'Your request has been successful! Please help us now to classify the answer.' %}</p>
+            <a href="{{ campaign.report_url }}?request_id={{ object.id }}" class="btn btn-primary">{% trans "Answer some questions!" %}</a>
+          </div>
+          {% endif %}
+      </div>
       {% endif %}
     </div>
   </div>
