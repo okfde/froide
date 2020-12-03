@@ -195,7 +195,7 @@ export default class Timeline {
         this.toggleScrollToEndLink(!this.scrollToEndLinkIsVisible)
       }
 
-      // scroll timeline so that the middle active month is always near the middle of the viewport
+      // scroll timeline so that the center of active months is always in the middle of the viewport
       const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
       const activeElement = activeElements.length === 1
         ? activeElements[0] as HTMLElement
