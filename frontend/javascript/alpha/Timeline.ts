@@ -41,6 +41,7 @@ export default class Timeline {
     otherScrollToEndLink?.addEventListener('click', this.scrollToLastMessageLinkCallback.bind(this))
 
     this.setupResizeListener()
+    this.setupScrollListener()
   }
 
   scrollToLastMessageLinkCallback (e: MouseEvent) {
@@ -139,6 +140,39 @@ export default class Timeline {
     }
   }
 
+
+  setupScrollListener () {
+    window.addEventListener('scroll', this.scrollListenerCallback.bind(this))
+
+    // execute on first run
+    this.scrollListenerCallback()
+
+  }
+
+  get lastTimelineItemIsVisible () {
+    // src: https://stackoverflow.com/a/7557433
+    const rect = this.lastItemElement.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= window.innerHeight &&
+        rect.right <= window.innerWidth
+    )
+  }
+
+  scrollListenerCallback () {
+    // toggle scrollToEndLink visibility
+    const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
+    if (!allTimelineItemsAreInactive) {
+      if (this.lastMessageIsVisible || this.lastTimelineItemIsVisible) {
+        this.hideScrollToEndLink()
+      } else {
+        this.showScrollToEndLink()
+      }
+    }
+  }
+
   setTimelineHeight () {
     // set timeline height to browser window height
     this.element.style.height = window.innerHeight + 'px'
@@ -157,18 +191,6 @@ export default class Timeline {
   destroyIntersectionObserver () {
     this.observer?.disconnect()
     this.observer = null
-  }
-
-  get lastTimelineItemIsVisible () {
-    // src: https://stackoverflow.com/a/7557433
-    const rect = this.lastItemElement.getBoundingClientRect();
-
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= window.innerHeight &&
-        rect.right <= window.innerWidth
-    )
   }
 
   hideScrollToEndLink () {
@@ -203,17 +225,6 @@ export default class Timeline {
 
       if (this.messagesContainer.lastElementChild === msgContainer) {
         this.lastMessageIsVisible = isVisible
-      }
-
-      // toggle scrollToEndLink visibility
-      const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
-      if (!allTimelineItemsAreInactive) {
-        const lastMessageOrTimelineItemIsVisible = this.lastMessageIsVisible || this.lastTimelineItemIsVisible
-        if (lastMessageOrTimelineItemIsVisible) {
-          this.hideScrollToEndLink()
-        } else {
-          this.showScrollToEndLink()
-        }
       }
 
       // scroll timeline so that the center of active months is always in the middle of the viewport
