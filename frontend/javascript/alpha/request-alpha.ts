@@ -9,7 +9,8 @@ import { Tab } from 'bootstrap.native/dist/bootstrap-native-v4';
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
 
-const init = () => {
+const initRequestPage = () => {
+  console.debug('Init request page...')
 
   // init message containers
   const messagesContainer = document.getElementById('correspondence') as HTMLElement
@@ -230,4 +231,4 @@ const initReplyForm = () => {
 
 
 
-window.addEventListener('load', init)
+window.addEventListener('load', initRequestPage)
