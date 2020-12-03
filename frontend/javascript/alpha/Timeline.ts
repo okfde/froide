@@ -19,7 +19,6 @@ export default class Timeline {
   lastMessageIsVisible: boolean
   messagesArr: Message[]
   scrollToEndLink: HTMLElement
-  scrollToEndLinkIsVisible: boolean = true
   observer: IntersectionObserver | null
   minWidthBreakpoint: number = 992
 
@@ -37,9 +36,16 @@ export default class Timeline {
     this.observer = null
 
     this.scrollToEndLink = this.element.querySelector('.alpha-timeline__scroll-end-link') as HTMLElement
-    this.scrollToEndLink?.addEventListener('click', this.itemClickCallback)
+    this.scrollToEndLink?.addEventListener('click', this.scrollToLastMessageLinkCallback.bind(this))
+    const otherScrollToEndLink = document.querySelector('.js-trigger-scroll-to-end') as HTMLElement
+    otherScrollToEndLink?.addEventListener('click', this.scrollToLastMessageLinkCallback.bind(this))
 
     this.setupResizeListener()
+  }
+
+  scrollToLastMessageLinkCallback (e: MouseEvent) {
+    e.preventDefault()
+    this.scrollToLastMessage()
   }
 
   parseTimelineItems () {
@@ -79,7 +85,7 @@ export default class Timeline {
 
       // smooth scroll on link click (anchor link)
       item.querySelector('.alpha-timeline__link')
-        .addEventListener('click', this.itemClickCallback)
+        .addEventListener('click', this.itemClickCallback.bind(this))
 
     }
 
@@ -92,11 +98,21 @@ export default class Timeline {
     const element = target.closest('a')
     const anchor = element?.getAttribute('href')
     if (anchor) {
-      document.querySelector(anchor)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      })
+      this.scrollToMessage(anchor)
     }
+  }
+
+  scrollToMessage (anchor: string) {
+    document.querySelector(anchor)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
+  }
+
+  scrollToLastMessage () {
+    let messagesArr = this.messagesArr
+    let lastMessageId = messagesArr[messagesArr.length - 1].id
+    this.scrollToMessage('#' + lastMessageId)
   }
 
   setupResizeListener () {
@@ -155,10 +171,14 @@ export default class Timeline {
     )
   }
 
-  toggleScrollToEndLink (value: boolean) {
-    this.scrollToEndLink.style.opacity = value ? '0' : '1'
-    this.scrollToEndLink.style.visibility = value ? 'hidden' : 'visible'
-    this.scrollToEndLinkIsVisible = value
+  hideScrollToEndLink () {
+    this.scrollToEndLink.style.opacity = '0'
+    this.scrollToEndLink.style.visibility = 'hidden'
+  }
+
+  showScrollToEndLink () {
+    this.scrollToEndLink.style.opacity = '1'
+    this.scrollToEndLink.style.visibility = 'visible'
   }
 
   intersectionObserverCallback (entries: IntersectionObserverEntry[]) {
@@ -187,12 +207,13 @@ export default class Timeline {
 
       // toggle scrollToEndLink visibility
       const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
-      const lastMessageOrTimelineItemIsVisible = this.lastMessageIsVisible || this.lastTimelineItemIsVisible
-      if (
-        !allTimelineItemsAreInactive &&
-        lastMessageOrTimelineItemIsVisible !== this.scrollToEndLinkIsVisible
-      ) {
-        this.toggleScrollToEndLink(!this.scrollToEndLinkIsVisible)
+      if (!allTimelineItemsAreInactive) {
+        const lastMessageOrTimelineItemIsVisible = this.lastMessageIsVisible || this.lastTimelineItemIsVisible
+        if (lastMessageOrTimelineItemIsVisible) {
+          this.hideScrollToEndLink()
+        } else {
+          this.showScrollToEndLink()
+        }
       }
 
       // scroll timeline so that the center of active months is always in the middle of the viewport

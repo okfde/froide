@@ -34,6 +34,8 @@ const initRequestPage = () => {
 
   initTabs()
 
+  initCorrespondenceTopMenu(messagesContainer, messages)
+
   initReplyForm()
 
   // if url query parameter found, scroll to comment next
@@ -143,6 +145,49 @@ const initTabs = () => {
     // scroll tab into view
     hashNav.scrollIntoView()
   }
+}
+
+const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]) => {
+  const expandAllLink = document.querySelector('.js-trigger-expand-all-messages') as HTMLElement
+  const isAllExpandedClass = 'is-all-expanded'
+
+  expandAllLink.addEventListener('click', (e: MouseEvent) => {
+    e.preventDefault()
+
+    const isAllExpanded = messagesContainer.classList.contains(isAllExpandedClass)
+
+    // expand or collapse all messages
+    for (let i = 0, l = messages.length; i < l; i++) {
+      const msg = messages[i]
+      if (isAllExpanded) {
+        msg.collapseMessage()
+      } else {
+        msg.expandMessage()
+      }
+    }
+
+    // add/remove class to message container
+    if (isAllExpanded) {
+      messagesContainer.classList.remove(isAllExpandedClass)
+    } else {
+      messagesContainer.classList.add(isAllExpandedClass)
+    }
+
+    // toggle link label
+    const clickTarget = e.target as HTMLElement
+    const linkLabels = clickTarget?.closest('a')?.getElementsByTagName('SPAN')
+
+    if (linkLabels) {
+      if (isAllExpanded) {
+        linkLabels[0].classList.remove('d-none')
+        linkLabels[1].classList.add('d-none')
+      } else {
+        linkLabels[0].classList.add('d-none')
+        linkLabels[1].classList.remove('d-none')
+      }
+    }
+  })
+
 }
 
 const initSetStatusForm = () => {
