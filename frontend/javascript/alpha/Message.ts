@@ -34,7 +34,7 @@ export default class Message {
       if (isLastItem || forceExpand) this.expandMessage()
     } else {
       // expand message according to storage state
-      if (this.isExpandedInStorage || forceExpand) this.expandMessage()
+      if (this.isExpanded || forceExpand) this.expandMessage()
     }
   }
 
@@ -43,9 +43,14 @@ export default class Message {
     return item ? JSON.parse(item) : null
   }
 
-  get isExpandedInStorage () {
+  get isExpanded () {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
+  }
+
+  get isCollapsed () {
+    const storageItem = this.storageItem
+    return storageItem ? storageItem.isExpanded === false : false
   }
 
   updateStorageItem (data: Object) {
@@ -63,7 +68,7 @@ export default class Message {
   }
 
   toggleMessage () {
-    if (this.isExpandedInStorage) {
+    if (this.isExpanded) {
       this.collapseMessage()
     } else {
       this.expandMessage()
@@ -133,7 +138,7 @@ export default class Message {
 
   scrollToComment (commentElementId: string) {
     // expand message and comments container first if necessary
-    if (!this.isExpandedInStorage) this.expandMessage()
+    if (!this.isExpanded) this.expandMessage()
     this.showAllComments()
 
     // wait until DOM has finished rendering

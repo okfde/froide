@@ -172,20 +172,6 @@ const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Mes
     } else {
       messagesContainer.classList.add(isAllExpandedClass)
     }
-
-    // toggle link label
-    const clickTarget = e.target as HTMLElement
-    const linkLabels = clickTarget?.closest('a')?.getElementsByTagName('SPAN')
-
-    if (linkLabels) {
-      if (isAllExpanded) {
-        linkLabels[0].classList.remove('d-none')
-        linkLabels[1].classList.add('d-none')
-      } else {
-        linkLabels[0].classList.add('d-none')
-        linkLabels[1].classList.remove('d-none')
-      }
-    }
   })
 
 }

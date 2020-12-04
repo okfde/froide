@@ -103,11 +103,29 @@ export default class Timeline {
     }
   }
 
+  getMessageById (id: string) {
+    let i = this.messagesArr.length
+    const messagesArr = this.messagesArr
+    while (i--) {
+      if (messagesArr[i].id === id) {
+        return messagesArr[i]
+      }
+    }
+  }
+
   scrollToMessage (anchor: string) {
+    // smooth scroll to element
     document.querySelector(anchor)?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     })
+
+    // expand message if collapsed
+    const messageId = anchor.substring(1)
+    const messageObj = this.getMessageById(messageId)
+    if (messageObj && messageObj.isCollapsed) {
+      messageObj.expandMessage()
+    }
   }
 
   scrollToLastMessage () {
