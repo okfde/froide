@@ -3,7 +3,18 @@
 
 {% if status_message %} HALLOOO {% endif %}
 
-<div id="infobox" class="info-box info-box--{% if object.is_overdue %}danger{% elif object.status_is_final %}success{% else %}regular{% endif %}">
+{% comment %}
+  Info box colors:
+    green:
+      - status_is_final and is_successful
+    red:
+      - is_overdue or has_been_refused
+{% endcomment %}
+
+<div
+  id="infobox"
+  class="info-box info-box--{% if object.is_overdue or object.has_been_refused %}danger{% elif object.status_is_final and object.is_successful %}success{% else %}regular{% endif %}"
+>
 
   <!-- header (status, status icon) -->
   <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">

@@ -573,6 +573,9 @@ class FoiRequest(models.Model):
     def is_overdue(self):
         return self.was_overdue() and self.awaits_response()
 
+    def is_successful(self):
+        return self.resolution == Resolution.SUCCESSFUL
+
     def was_overdue(self):
         if self.due_date:
             return self.due_date < timezone.now()
