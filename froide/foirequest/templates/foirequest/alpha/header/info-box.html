@@ -1,8 +1,6 @@
 {% load i18n %}
 {% load foirequest_tags %}
 
-{% if status_message %} HALLOOO {% endif %}
-
 {% comment %}
   Info box colors:
     green:
@@ -104,29 +102,33 @@
         </li>
       {% endblock followers %}
 
-      <li class="info-box__list-item info-box__list-item--has-divider">
+      {% if object.visibility == 2 %}
+        <li class="info-box__list-item info-box__list-item--has-divider">
 
-        <!-- copy url -->
-        <div class="mb-3">
-          <a href="#">
-            <i class="fa fa-copy" aria-hidden="true"></i>
-            {% blocktrans %}Copy Short-URL{% endblocktrans %}
-          </a>
-        </div>
+          <!-- copy url -->
+          <div class="mb-3">
+            <a href="{{ object.get_absolute_domain_short_url }}" data-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" class="copy-short-url-trigger">
+              <i class="fa fa-copy" aria-hidden="true"></i>
+              {% blocktrans %}Copy Short-URL{% endblocktrans %}
+            </a>
+          </div>
 
-        <!-- share links -->
-        <div>
-          <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
-            <i class="fa fa-twitter" aria-hidden="true"></i>
-            {% trans "Tweet request" %}
-          </a>
-          &nbsp;
-          <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
-            <i class="fa fa-facebook-official" aria-hidden="true"></i>
-            {% blocktrans %}Share request{% endblocktrans %}
-          </a>
-        </div>
-      </li>
+          <!-- share links -->
+          {% block social_sharing %}
+            <div>
+              <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+                <i class="fa fa-twitter" aria-hidden="true"></i>
+                {% trans "Tweet request" %}
+              </a>
+              &nbsp;
+              <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+                <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                {% blocktrans %}Share request{% endblocktrans %}
+              </a>
+            </div>
+          {% endblock %}
+        </li>
+      {% endif %}
 
       <!-- rss link -->
       <li class="info-box__list-item">
