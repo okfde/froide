@@ -5,7 +5,6 @@ import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
 import { toggleSlide } from '../lib/misc';
 import { Tab } from 'bootstrap.native/dist/bootstrap-native-v4';
-import BSN from 'bootstrap.native'
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
@@ -43,38 +42,25 @@ const initRequestPage = () => {
   scrollToComment(messages)
 
   // init reply buttons
-  // const replyButtons = document.getElementsByClassName('alpha-reply-button')
-  new BSN.Collapse('.alpha-reply-button')
-  // attach a handler to the `show.bs.collapse` original event
+  const replyButtonTop = document.getElementById('alpha-reply-button-top')
+  const replyButtonBottom = document.getElementById('alpha-reply-button-bottom')
   const writeForm = document.getElementById('write-message')
-  writeForm?.addEventListener('shown.bs.collapse', () => {
-    writeForm.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    })
-  }, false);
-
-  // Array.from(replyButtons).forEach(el => {
-  //   const target = el.getAttribute('href')
-
-  //   if (target) {
-  //     el.addEventListener('click', (e) => {
-  //       e.preventDefault()
-  //       console.warn(target)
-  //       collapseLink.show()
-  //       // const targetElement = document.getElementById(target)
-  //       // if (targetElement) {
-  //       //   // if (!targetElement.classList.contains('show')) {
-  //       //   //   targetElement.classList.add('show')
-  //       //   // }
-  //       //   // document.getElementById(target)?.scrollIntoView({
-  //       //   //   behavior: 'smooth',
-  //       //   //   block: 'start'
-  //       //   // })
-  //       // }
-  //     })
-  //   }
-  // })
+  const scrollToWriteForm = () => {
+    setTimeout(() => {
+      writeForm?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }, 0);
+  }
+  writeForm?.addEventListener('show.bs.collapse', scrollToWriteForm, false);
+  replyButtonTop?.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (!writeForm?.classList.contains('show')) {
+      replyButtonBottom?.click()
+    }
+    scrollToWriteForm()
+  })
 
 }
 
