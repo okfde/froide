@@ -3612,12 +3612,12 @@ msgstr "Nachricht schreiben"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:32
 msgid "Expand/collapse all"
-msgstr "Alle ein-/ausklappen"
+msgstr "Alle ausklappen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:36
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:24
 msgid "Scroll to end"
-msgstr "Zum Ende"
+msgstr "Ans Ende"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:56
 #: froide/foirequest/templates/foirequest/snippets/message.html:235
