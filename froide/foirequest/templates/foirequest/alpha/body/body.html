@@ -23,6 +23,10 @@
             href="#write-message"
             class="btn btn-primary btn-sm alpha-reply-button"
             role="button"
+            aria-expanded="false"
+            aria-controls="write-message"
+            data-toggle="collapse"
+            data-target="#write-message"
           >
             <i class="fa fa-mail-reply" aria-hidden="true"></i>
             {% trans 'Send a message' %}
@@ -46,9 +50,9 @@
           <div class="text-center my-6">
             <a
               href="#write-message"
-              role="button"
               class="btn btn-primary mr-1 alpha-reply-button"
-              aria-expanded="true"
+              role="button"
+              aria-expanded="false"
               aria-controls="write-message"
               data-toggle="collapse"
               data-target="#write-message"
