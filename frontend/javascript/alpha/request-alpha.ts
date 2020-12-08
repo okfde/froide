@@ -41,6 +41,28 @@ const initRequestPage = () => {
   // if url query parameter found, scroll to comment next
   scrollToComment(messages)
 
+  // init reply buttons
+  const replyButtons = document.getElementsByClassName('alpha-reply-button')
+  Array.from(replyButtons).forEach(el => {
+    const target = el.getAttribute('href')?.replace('#', '')
+    if (target) {
+      el.addEventListener('click', (e) => {
+        e.preventDefault()
+
+        const targetElement = document.getElementById(target)
+        if (targetElement) {
+          // if (!targetElement.classList.contains('show')) {
+          //   targetElement.classList.add('show')
+          // }
+          // document.getElementById(target)?.scrollIntoView({
+          //   behavior: 'smooth',
+          //   block: 'start'
+          // })
+        }
+      })
+    }
+  })
+
 }
 
 const parseMessageContainers = () => {

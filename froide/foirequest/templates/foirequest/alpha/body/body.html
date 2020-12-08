@@ -19,7 +19,11 @@
     <div class="container px-0">
       <div class="row mx-0 py-4">
         <div class="col-lg-8 px-0">
-          <a href="#" class="btn btn-primary btn-sm">
+          <a
+            href="#write-message"
+            class="btn btn-primary btn-sm alpha-reply-button"
+            role="button"
+          >
             <i class="fa fa-mail-reply" aria-hidden="true"></i>
             {% trans 'Send a message' %}
           </a>
@@ -40,16 +44,17 @@
 
           <!-- Reply action buttons -->
           <div class="text-center my-6">
-            <button
-              class="btn btn-primary mr-1"
-              type="button"
-              id="mainReplyBtn"
-              aria-expanded="{% if active_tab == 'write-message' %}true{% else %}false{% endif %}"
+            <a
+              href="#write-message"
+              role="button"
+              class="btn btn-primary mr-1 alpha-reply-button"
+              aria-expanded="true"
               aria-controls="write-message"
-              data-toggle="collapse" data-target="#write-message"
+              data-toggle="collapse"
+              data-target="#write-message"
             >
               <i class="fa fa-mail-reply" aria-hidden="true"></i> {% trans 'Reply' %}
-            </button>
+            </a>
             <button class="btn btn-primary" type="button">
               <i class="fa fa-envelope" aria-hidden="true"></i>
               {% trans 'Upload Mail' %}
