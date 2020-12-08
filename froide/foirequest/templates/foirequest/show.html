@@ -666,6 +666,27 @@
   </div>
 </div>
 
+{% if user.is_authenticated %}
+  <div class="row mt-6 mb-n5">
+    <div class="col-lg-8 smaller bg-gray-200 py-2">
+      <a
+        href="#try-new-request-page"
+        role="button"
+        data-toggle="collapse"
+        aria-expanded="false"
+        aria-controls="try-new-request-page"
+        data-target="#try-new-request-page"
+      >Möchten Sie die neue Anfrageseite ausprobieren?</a>
+      <div id="try-new-request-page" class="collapse py-2">
+        Das Design der Anfrageseite befindet sich im Umbau. Eine Vorschau kann über
+        <a href="./?alpha=1">diesen Link</a> aktiviert werden.
+        Bedenken Sie, dass in der Vorschau noch nicht alle Funktionen vorhanden sind und/oder fehlerhaft sind.
+        Sie können jederzeit wieder zur alten Version zurückkehren. Klicken Sie hierfür auf den Link am Ende der neuen Anfrageseite.
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 {% if object.is_blocked %}
   <div class="row mt-5">
     <div class="col-lg-12 text-right">

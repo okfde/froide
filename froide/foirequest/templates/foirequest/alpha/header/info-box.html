@@ -11,16 +11,22 @@
 
 <div
   id="infobox"
-  class="info-box info-box--{% if object.is_overdue or object.has_been_refused %}danger{% elif object.status_is_final and object.is_successful %}success{% else %}regular{% endif %}"
+  class="info-box info-box--{% if object.is_overdue or object.resolution == 'refused' %}danger{% elif object.status_is_final and object.is_successful or object.resolution == 'partially_successful' %}success{% else %}regular{% endif %}"
 >
 
   <!-- header (status, status icon) -->
   <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
     <div>
-      <h3 class="h5 info-box__title">Platzhaltertext</h3>
-      <div class="info-box__subtitle">{{ object.readable_status }}</div>
+      <h3 class="h5 info-box__title">{{ object.readable_status }}</h3>
+      <div class="info-box__subtitle">
+        {% if object.awaits_response and object.status_representation != 'awaiting_response' %}
+          {% trans 'Awaiting response' %}
+        {% endif %}
+      </div>
     </div>
-    <div class="info-box__icon status-{{ object.status_representation }}"></div>
+    {% if object.status_representation %}
+      <div class="info-box__icon flex-shrink-0 status-{{ object.status_representation }}"></div>
+    {% endif %}
   </div>
 
   <!-- body  -->
