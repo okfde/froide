@@ -9,14 +9,14 @@
     <!-- approved attachments -->
     {% if message.approved_attachments %}
       {% if object|can_write_foirequest:request %}
-        <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments:' %}</div>
+        <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments' %}:</div>
       {% endif %}
       {% include "foirequest/alpha/body/message/attachments/list.html" with attachment_list=message.approved_attachments %}
     {% endif %}
-    
+
     <!-- unapproved attachments -->
     {% if message.unapproved_attachments %}
-      <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments:' %}</div>
+      <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments' %}:</div>
       {% include "foirequest/alpha/body/message/attachments/list.html" with attachment_list=message.unapproved_attachments %}
     {% endif %}
 
@@ -29,9 +29,9 @@
 
     <!-- attachments footer -->
     {% if object|can_write_foirequest:request or message.hidden_attachments %}
-    
+
       <hr class="mt-2">
-        
+
       {% if object|can_write_foirequest:request %}
         {% comment %}
           TODO: check if at least one attachment can be edited
@@ -41,18 +41,18 @@
           <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Manage attachments" %}
         </a>
       {% endif %}
-        
+
       {% if message.hidden_attachments %}
         <!-- irrelevant attachments -->
         <a data-toggle="collapse" href="#{{ message.get_html_id }}-decoattachments" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-decoattachments" class="smaller ml-2">
           <i class="fa fa-eye-slash" aria-hidden="true"></i> {% trans "Show irrelevant attachments" %}
         </a>
       {% endif %}
-      
+
       <hr>
 
     {% endif %}
-    
+
   </div>
 {% endif %}
 
