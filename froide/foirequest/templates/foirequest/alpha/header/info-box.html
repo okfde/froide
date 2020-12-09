@@ -25,7 +25,7 @@
       </div>
     </div>
     {% if object.status_representation %}
-      <div class="info-box__icon flex-shrink-0 status-{{ object.status_representation }}"></div>
+      <div class="info-box__icon ml-1 flex-shrink-0 status-{{ object.status_representation }}"></div>
     {% endif %}
   </div>
 
@@ -36,8 +36,8 @@
     {% if object|can_write_foirequest:request %}
       <div class="bg-blue-10 px-4 py-2">
         <a href="#" class="info-box__edit-button">
-          <span><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
-          <span class="d-none"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
+          <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
+          <span class="{% if active_tab != 'set-status' %}d-none{% endif %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
         </a>
       </div>
     {% endif %}
