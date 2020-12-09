@@ -127,23 +127,24 @@
       {% if object|can_moderate_foirequest:request %}
 
         <!-- Moderation links -->
-        <ul class="list-unstyled d-flex pt-2">
+        <ul class="list-unstyled d-flex justify-content-between mt-1">
 
           {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
             <li>
-              <a class="btn btn-link btn-sm mr-1" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+              <a class="btn btn-link btn-sm " href="{% url 'admin:foirequest_foirequest_change' object.id %}">
                 <i class="fa fa-cog"></i>
                 {% trans "Admin" %}
               </a>
             </li>
           {% endif %}
           {% if not object.is_foi %}
-            <li><strong>{% trans "Marked as NOT FoI" %}</strong></li>
+            <li class="smaller mt-1 text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></li>
           {% else %}
             <li>
               <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
                 {% csrf_token %}
                 <button class="btn btn-link btn-sm" type="submit">
+                <i class="fa fa-ban"></i>
                   {% trans "Not an FOI request" %}
                 </button>
               </form>
