@@ -69,9 +69,7 @@ class FoiRequestManager(CurrentSiteManager):
                 last_message__lt=ago)
 
     def get_unclassified_for_moderation(self):
-        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET).filter(
-            visibility=Visibility.VISIBLE_TO_PUBLIC
-        )
+        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET)
 
     def get_dashboard_requests(self, user, query=None):
         query_kwargs = {}
@@ -570,10 +568,13 @@ class FoiRequest(models.Model):
         return not last_message.is_response or not self.is_actionable()
 
     def can_be_escalated(self):
-        return self.law and self.law.mediator_id and self.is_actionable()
+        return self.law.mediator_id and self.is_actionable()
 
     def is_overdue(self):
         return self.was_overdue() and self.awaits_response()
+
+    def is_successful(self):
+        return self.resolution == Resolution.SUCCESSFUL
 
     def was_overdue(self):
         if self.due_date:

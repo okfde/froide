@@ -29,10 +29,8 @@ class EmailBackend(DjangoEmailBackend):
             return False
         encoding = email_message.encoding or settings.DEFAULT_CHARSET
         email_message.from_email = fix_address(email_message.from_email)
-        if self.return_path:
-            from_email = sanitize_address(self.return_path, encoding)
-        else:
-            from_email = sanitize_address(email_message.from_email, encoding)
+        from_email = sanitize_address(email_message.from_email, encoding)
+        from_email = self.return_path or from_email
         recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
         try:
             message = email_message.message()

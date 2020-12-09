@@ -194,7 +194,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         pb._created_by = user
         pb.updated_at = timezone.now()
         pb.save()
-        pb.laws.set(pb.jurisdiction.get_all_laws())
+        pb.laws.add(*pb.jurisdiction.get_all_laws())
         PublicBody.proposal_added.send(sender=pb, user=user)
         return pb
 
@@ -280,7 +280,7 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
             'timestamp': timezone.now().isoformat(),
             'data': self.serializable_cleaned_data(),
         })
-        pb.laws.set(pb.jurisdiction.get_all_laws())
+        pb.laws.add(*pb.jurisdiction.get_all_laws())
         if pb.confirmed:
             pb.save()
             PublicBody.change_proposal_accepted.send(sender=pb, user=user)

@@ -9,7 +9,8 @@ import { Tab } from 'bootstrap.native/dist/bootstrap-native-v4';
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
 
-const init = () => {
+const initRequestPage = () => {
+  console.debug('Init request page...')
 
   // init message containers
   const messagesContainer = document.getElementById('correspondence') as HTMLElement
@@ -33,10 +34,33 @@ const init = () => {
 
   initTabs()
 
+  initCorrespondenceTopMenu(messagesContainer, messages)
+
   initReplyForm()
 
   // if url query parameter found, scroll to comment next
   scrollToComment(messages)
+
+  // init reply buttons
+  const replyButtonTop = document.getElementById('alpha-reply-button-top')
+  const replyButtonBottom = document.getElementById('alpha-reply-button-bottom')
+  const writeForm = document.getElementById('write-message')
+  const scrollToWriteForm = () => {
+    setTimeout(() => {
+      writeForm?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }, 0);
+  }
+  writeForm?.addEventListener('show.bs.collapse', scrollToWriteForm, false);
+  replyButtonTop?.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (!writeForm?.classList.contains('show')) {
+      replyButtonBottom?.click()
+    }
+    scrollToWriteForm()
+  })
 
 }
 
@@ -144,6 +168,35 @@ const initTabs = () => {
   }
 }
 
+const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]) => {
+  const expandAllLink = document.querySelector('.js-trigger-expand-all-messages') as HTMLElement
+  const isAllExpandedClass = 'is-all-expanded'
+
+  expandAllLink.addEventListener('click', (e: MouseEvent) => {
+    e.preventDefault()
+
+    const isAllExpanded = messagesContainer.classList.contains(isAllExpandedClass)
+
+    // expand or collapse all messages
+    for (let i = 0, l = messages.length; i < l; i++) {
+      const msg = messages[i]
+      if (isAllExpanded) {
+        msg.collapseMessage()
+      } else {
+        msg.expandMessage()
+      }
+    }
+
+    // add/remove class to message container
+    if (isAllExpanded) {
+      messagesContainer.classList.remove(isAllExpandedClass)
+    } else {
+      messagesContainer.classList.add(isAllExpandedClass)
+    }
+  })
+
+}
+
 const initSetStatusForm = () => {
   const idResolution = document.querySelector('#id_resolution');
   if (idResolution !== null) {
@@ -230,4 +283,4 @@ const initReplyForm = () => {
 
 
 
-window.addEventListener('load', init)
+window.addEventListener('load', initRequestPage)

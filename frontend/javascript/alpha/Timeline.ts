@@ -19,7 +19,6 @@ export default class Timeline {
   lastMessageIsVisible: boolean
   messagesArr: Message[]
   scrollToEndLink: HTMLElement
-  scrollToEndLinkIsVisible: boolean = true
   observer: IntersectionObserver | null
   minWidthBreakpoint: number = 992
 
@@ -37,9 +36,17 @@ export default class Timeline {
     this.observer = null
 
     this.scrollToEndLink = this.element.querySelector('.alpha-timeline__scroll-end-link') as HTMLElement
-    this.scrollToEndLink?.addEventListener('click', this.itemClickCallback)
+    this.scrollToEndLink?.addEventListener('click', this.scrollToLastMessageLinkCallback.bind(this))
+    const otherScrollToEndLink = document.querySelector('.js-trigger-scroll-to-end') as HTMLElement
+    otherScrollToEndLink?.addEventListener('click', this.scrollToLastMessageLinkCallback.bind(this))
 
     this.setupResizeListener()
+    this.setupScrollListener()
+  }
+
+  scrollToLastMessageLinkCallback (e: MouseEvent) {
+    e.preventDefault()
+    this.scrollToLastMessage()
   }
 
   parseTimelineItems () {
@@ -79,7 +86,7 @@ export default class Timeline {
 
       // smooth scroll on link click (anchor link)
       item.querySelector('.alpha-timeline__link')
-        .addEventListener('click', this.itemClickCallback)
+        .addEventListener('click', this.itemClickCallback.bind(this))
 
     }
 
@@ -92,11 +99,39 @@ export default class Timeline {
     const element = target.closest('a')
     const anchor = element?.getAttribute('href')
     if (anchor) {
-      document.querySelector(anchor)?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      })
+      this.scrollToMessage(anchor)
     }
+  }
+
+  getMessageById (id: string) {
+    let i = this.messagesArr.length
+    const messagesArr = this.messagesArr
+    while (i--) {
+      if (messagesArr[i].id === id) {
+        return messagesArr[i]
+      }
+    }
+  }
+
+  scrollToMessage (anchor: string) {
+    // smooth scroll to element
+    document.querySelector(anchor)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
+
+    // expand message if collapsed
+    const messageId = anchor.substring(1)
+    const messageObj = this.getMessageById(messageId)
+    if (messageObj && messageObj.isCollapsed) {
+      messageObj.expandMessage()
+    }
+  }
+
+  scrollToLastMessage () {
+    let messagesArr = this.messagesArr
+    let lastMessageId = messagesArr[messagesArr.length - 1].id
+    this.scrollToMessage('#' + lastMessageId)
   }
 
   setupResizeListener () {
@@ -123,6 +158,39 @@ export default class Timeline {
     }
   }
 
+
+  setupScrollListener () {
+    window.addEventListener('scroll', this.scrollListenerCallback.bind(this))
+
+    // execute on first run
+    this.scrollListenerCallback()
+
+  }
+
+  get lastTimelineItemIsVisible () {
+    // src: https://stackoverflow.com/a/7557433
+    const rect = this.lastItemElement.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= window.innerHeight &&
+        rect.right <= window.innerWidth
+    )
+  }
+
+  scrollListenerCallback () {
+    // toggle scrollToEndLink visibility
+    const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
+    if (!allTimelineItemsAreInactive) {
+      if (this.lastMessageIsVisible || this.lastTimelineItemIsVisible) {
+        this.hideScrollToEndLink()
+      } else {
+        this.showScrollToEndLink()
+      }
+    }
+  }
+
   setTimelineHeight () {
     // set timeline height to browser window height
     this.element.style.height = window.innerHeight + 'px'
@@ -143,22 +211,14 @@ export default class Timeline {
     this.observer = null
   }
 
-  get lastTimelineItemIsVisible () {
-    // src: https://stackoverflow.com/a/7557433
-    const rect = this.lastItemElement.getBoundingClientRect();
-
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= window.innerHeight &&
-        rect.right <= window.innerWidth
-    )
+  hideScrollToEndLink () {
+    this.scrollToEndLink.style.opacity = '0'
+    this.scrollToEndLink.style.visibility = 'hidden'
   }
 
-  toggleScrollToEndLink (value: boolean) {
-    this.scrollToEndLink.style.opacity = value ? '0' : '1'
-    this.scrollToEndLink.style.visibility = value ? 'hidden' : 'visible'
-    this.scrollToEndLinkIsVisible = value
+  showScrollToEndLink () {
+    this.scrollToEndLink.style.opacity = '1'
+    this.scrollToEndLink.style.visibility = 'visible'
   }
 
   intersectionObserverCallback (entries: IntersectionObserverEntry[]) {
@@ -185,17 +245,7 @@ export default class Timeline {
         this.lastMessageIsVisible = isVisible
       }
 
-      // toggle scrollToEndLink visibility
-      const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
-      const lastMessageOrTimelineItemIsVisible = this.lastMessageIsVisible || this.lastTimelineItemIsVisible
-      if (
-        !allTimelineItemsAreInactive &&
-        lastMessageOrTimelineItemIsVisible !== this.scrollToEndLinkIsVisible
-      ) {
-        this.toggleScrollToEndLink(!this.scrollToEndLinkIsVisible)
-      }
-
-      // scroll timeline so that the middle active month is always near the middle of the viewport
+      // scroll timeline so that the center of active months is always in the middle of the viewport
       const activeElements = document.querySelectorAll('.alpha-timeline__item--active')
       const activeElement = activeElements.length === 1
         ? activeElements[0] as HTMLElement

@@ -138,7 +138,6 @@
           <h6>
             {% trans "Report a new problem" %}
           </h6>
-          {% block reportinfo %}{% endblock %}
           <form action="{% url 'problem-report' message_pk=message.pk %}" method="post">
             {% csrf_token %}
             {% render_form message.problemreports_form %}

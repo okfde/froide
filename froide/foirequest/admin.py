@@ -562,15 +562,10 @@ class FoiEventAdmin(admin.ModelAdmin):
 
 class PublicBodySuggestionAdmin(admin.ModelAdmin):
     list_display = ('request', 'public_body', 'user', 'reason',)
-    search_fields = ['request__title', 'reason']
+    search_fields = ['request', 'reason']
     ordering = ('-timestamp',)
     date_hierarchy = 'timestamp'
     raw_id_fields = ('request', 'public_body', 'user')
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        qs = qs.prefetch_related('request', 'public_body', 'user')
-        return qs
 
 
 def execute_redeliver(admin, request, queryset, action_obj):

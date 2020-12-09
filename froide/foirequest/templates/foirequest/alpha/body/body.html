@@ -4,7 +4,7 @@
 {% load foirequest_tags %}
 
 
-<div class="tab-content pt-sm-3">
+<div class="tab-content">
   <div class="scroll-indicator"><div class="scroll-indicator__line"></div></div>
 
 
@@ -14,49 +14,69 @@
     id="correspondence-panel"
     aria-labelledby="correspondence-tab"
   >
-    <!-- Correspondence and Timeline -->
+
+    <!-- Correspondence, Action buttons and Timeline -->
     <div class="container px-0">
-      <div class="row mx-0">
-        {% comment %}
-          JavaScript calculates the heights of these containers.
-          Don't add any other containers in here.
-        {% endcomment %}
-        <div class="px-0 col-lg-8">
-          {% include "foirequest/alpha/body/correspondence.html" %}
-        </div>
-        <div class="px-0 px-lg-3 col-lg-4">
-          {% include "foirequest/alpha/body/timeline.html" %}
+      <div class="row mx-0 py-4">
+        <div class="col-lg-8 px-0">
+          <a
+            id="alpha-reply-button-top"
+            href="#write-message"
+            class="btn btn-primary btn-sm"
+            role="button"
+          >
+            <i class="fa fa-mail-reply" aria-hidden="true"></i>
+            {% trans 'Send a message' %}
+          </a>
+          <a href="#" class="btn btn-light btn-sm js-trigger-expand-all-messages">
+            <i class="fa fa-expand" aria-hidden="true"></i>
+            {% trans "Expand/collapse all" %}
+          </a>
+          <a href="#" class="btn btn-light btn-sm js-trigger-scroll-to-end">
+            <i class="fa fa-long-arrow-down" aria-hidden="true"></i>
+            {% trans 'Scroll to end' %}
+          </a>
         </div>
       </div>
 
-      <!-- Reply action buttons -->
-      <div class="row">
-        <div class="col-lg-8 text-center my-6">
-          <button
-            class="btn btn-primary mr-1"
-            type="button"
-            id="mainReplyBtn"
-            aria-expanded="{% if active_tab == 'write-message' %}true{% else %}false{% endif %}"
-            aria-controls="write-message"
-            data-toggle="collapse" data-target="#write-message"
-          >
-            <i class="fa fa-mail-reply" aria-hidden="true"></i> {% trans 'Reply' %}
-          </button>
-          <button class="btn btn-primary" type="button">
-            <i class="fa fa-envelope" aria-hidden="true"></i>
-            {% trans 'Upload Mail' %}
-          </button>
-          <div class="mt-1 d-flex justify-content-center">
-            <div class="dropdown flex-shrink-1">
-              <button id="otherReplyActions" type="button" class="btn btn-link text-decoration-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <strong>{% trans 'Other Options' %}</strong>
-              </button>
-              <div class="dropdown-menu" aria-labelledby="otherReplyActions">
-                <a class="dropdown-item" href="#">Action 1</a>
-                <a class="dropdown-item" href="#">Action 2</a>
+      <div class="row mx-0">
+        <div class="px-0 col-lg-8">
+          {% include "foirequest/alpha/body/correspondence.html" %}
+
+          <!-- Reply action buttons -->
+          <div class="text-center my-6">
+            <a
+              id="alpha-reply-button-bottom"
+              href="#write-message"
+              class="btn btn-primary mr-1 alpha-reply-button"
+              role="button"
+              aria-expanded="false"
+              aria-controls="write-message"
+              data-toggle="collapse"
+              data-target="#write-message"
+            >
+              <i class="fa fa-mail-reply" aria-hidden="true"></i> {% trans 'Reply' %}
+            </a>
+            <button class="btn btn-primary" type="button">
+              <i class="fa fa-envelope" aria-hidden="true"></i>
+              {% trans 'Upload Mail' %}
+            </button>
+            <div class="mt-1 d-flex justify-content-center">
+              <div class="dropdown flex-shrink-1">
+                <button id="otherReplyActions" type="button" class="btn btn-link text-decoration-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <strong>{% trans 'Other Options' %}</strong>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="otherReplyActions">
+                  <a class="dropdown-item" href="#">Action 1</a>
+                  <a class="dropdown-item" href="#">Action 2</a>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="px-0 px-lg-3 col-lg-4">
+          {% include "foirequest/alpha/body/timeline.html" %}
         </div>
       </div>
 
@@ -65,13 +85,13 @@
 
     <!-- Reply form -->
     <div id="reply-form-helper"></div>
-    <div id="write-message" class="collapse {% if active_tab == 'write-message' %}show{% endif %} reply-form bg-white py-4">
-      <a href="#" class="btn btn-link reply-form__toggle-sticky-btn">
+    <div id="write-message" class="collapse {% if active_tab == 'write-message' %}show{% endif %} reply-form bg-white">
+      <a href="#" class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
         <i class="fa fa-unlock" aria-hidden="true"></i>
         {% trans "Sticky" %}
       </a>
-      <div class="reply-form__wrap">
-        <div class="container px-0">
+      <div class="reply-form__wrap py-4">
+        <div class="container px-lg-0">
           <div class="row">
             <div class="col-lg-8">
               <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">

@@ -1,8 +1,6 @@
 import json
 import re
 
-from django.contrib.gis.geos import Point
-
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.settings import api_settings
@@ -79,20 +77,12 @@ class GeoRegionFilter(filters.FilterSet):
         method='ancestor_filter',
         queryset=GeoRegion.objects.all()
     )
-    latlng = filters.CharFilter(method='latlng_filter')
-    name = filters.CharFilter(method='name_filter')
 
     class Meta:
         model = GeoRegion
         fields = (
             'name', 'level', 'kind', 'slug'
         )
-
-    def name_filter(self, queryset, name, value):
-        qs = queryset.filter(name=value)
-        if not qs:
-            return queryset.filter(name=value.capitalize())
-        return qs
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(name__icontains=value)
@@ -112,17 +102,6 @@ class GeoRegionFilter(filters.FilterSet):
         return queryset.filter(
             id__in=descendants
         )
-
-    def latlng_filter(self, queryset, name, value):
-        try:
-            parts = value.split(',', 1)
-            lat, lng = float(parts[0]), float(parts[1])
-            return queryset.filter(
-                geom__covers=Point(lng, lat)
-            )
-        except (ValueError, IndexError):
-            pass
-        return queryset
 
 
 class GeoRegionViewSet(OpenRefineReconciliationMixin,

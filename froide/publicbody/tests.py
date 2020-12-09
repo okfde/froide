@@ -72,8 +72,8 @@ class PublicBodyTest(TestCase):
 
         prev_count = PublicBody.objects.all().count()
         # Existing entity via slug, no id reference
-        csv = '''name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,website_dump,request_note
-Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
+        csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
+Public Body 76 X,pb-76@76.example.com,bund,,,public-body-topic-76-x,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
         imp.import_from_file(BytesIO(csv.encode('utf-8')))
         now_count = PublicBody.objects.all().count()
@@ -83,8 +83,8 @@ Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some c
         # Make sure classification exist
         factories.ClassificationFactory.create(name='Ministry')
         prev_count = PublicBody.objects.all().count()
-        csv = '''name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,website_dump,request_note
-Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
+        csv = '''name,email,jurisdiction__slug,other_names,description,tags,url,parent__name,classification,contact,address,website_dump,request_note
+Public Body X 76,pb-76@76.example.com,bund,,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
         imp = CSVImporter()
         imp.import_from_file(BytesIO(csv.encode('utf-8')))
         now_count = PublicBody.objects.all().count()

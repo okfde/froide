@@ -62,11 +62,17 @@
       {% include "foirequest/alpha/body/body.html" %}
     </div>
 
-    {% if user.is_staff %}
-    <div class="text-center">
-      <a href="./?alpha=0">Normal Request Page</a>
-    </div>
-  {% endif %}
+    {% if user.is_authenticated %}
+      <div class="bg-gray-200">
+        <div class="container pt-4">
+          <div class="row">
+            <div class="col-lg-8 bg-gray-300 smaller py-2 text-center">
+              Klicken Sie <a href="./?alpha=0">hier</a>, um wieder zur alten Version der Anfrageseite zu gelangen.
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
 
   {% endblock app_body %}
 {% endblock body %}

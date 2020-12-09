@@ -18,19 +18,19 @@ class ProblemReportAdmin(admin.ModelAdmin):
     )
     list_display = (
         'kind', 'timestamp', 'admin_link_message',
-        'auto_submitted', 'moderator', 'resolved',
+        'auto_submitted', 'resolved',
     )
     actions = ['resolve_all']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.select_related('message', 'moderator')
+        qs = qs.select_related('message')
         return qs
 
     def admin_link_message(self, obj):
         return format_html('<a href="{}">{}</a>',
             reverse('admin:foirequest_foimessage_change',
-                args=(obj.message_id,)), str(obj.message.subject))
+                args=(obj.message_id,)), str(obj.message))
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

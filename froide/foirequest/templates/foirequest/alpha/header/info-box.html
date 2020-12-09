@@ -1,17 +1,32 @@
 {% load i18n %}
 {% load foirequest_tags %}
 
-{% if status_message %} HALLOOO {% endif %}
+{% comment %}
+  Info box colors:
+    green:
+      - status_is_final and is_successful
+    red:
+      - is_overdue or has_been_refused
+{% endcomment %}
 
-<div id="infobox" class="info-box info-box--{% if object.is_overdue %}danger{% elif object.status_is_final %}success{% else %}regular{% endif %}">
+<div
+  id="infobox"
+  class="info-box info-box--{% if object.is_overdue or object.resolution == 'refused' %}danger{% elif object.status_is_final and object.is_successful or object.resolution == 'partially_successful' %}success{% else %}regular{% endif %}"
+>
 
   <!-- header (status, status icon) -->
   <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
     <div>
-      <h3 class="h5 info-box__title">Platzhaltertext</h3>
-      <div class="info-box__subtitle">{{ object.readable_status }}</div>
+      <h3 class="h5 info-box__title">{{ object.readable_status }}</h3>
+      <div class="info-box__subtitle">
+        {% if object.awaits_response and object.status_representation != 'awaiting_response' %}
+          {% trans 'Awaiting response' %}
+        {% endif %}
+      </div>
     </div>
-    <div class="info-box__icon status-{{ object.status_representation }}"></div>
+    {% if object.status_representation %}
+      <div class="info-box__icon flex-shrink-0 status-{{ object.status_representation }}"></div>
+    {% endif %}
   </div>
 
   <!-- body  -->
@@ -93,29 +108,33 @@
         </li>
       {% endblock followers %}
 
-      <li class="info-box__list-item info-box__list-item--has-divider">
+      {% if object.visibility == 2 %}
+        <li class="info-box__list-item info-box__list-item--has-divider">
 
-        <!-- copy url -->
-        <div class="mb-3">
-          <a href="#">
-            <i class="fa fa-copy" aria-hidden="true"></i>
-            {% blocktrans %}Copy Short-URL{% endblocktrans %}
-          </a>
-        </div>
+          <!-- copy url -->
+          <div class="mb-3">
+            <a href="{{ object.get_absolute_domain_short_url }}" data-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" class="copy-short-url-trigger">
+              <i class="fa fa-copy" aria-hidden="true"></i>
+              {% blocktrans %}Copy Short-URL{% endblocktrans %}
+            </a>
+          </div>
 
-        <!-- share links -->
-        <div>
-          <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
-            <i class="fa fa-twitter" aria-hidden="true"></i>
-            {% trans "Tweet request" %}
-          </a>
-          &nbsp;
-          <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
-            <i class="fa fa-facebook-official" aria-hidden="true"></i>
-            {% blocktrans %}Share request{% endblocktrans %}
-          </a>
-        </div>
-      </li>
+          <!-- share links -->
+          {% block social_sharing %}
+            <div>
+              <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+                <i class="fa fa-twitter" aria-hidden="true"></i>
+                {% trans "Tweet request" %}
+              </a>
+              &nbsp;
+              <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+                <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                {% blocktrans %}Share request{% endblocktrans %}
+              </a>
+            </div>
+          {% endblock %}
+        </li>
+      {% endif %}
 
       <!-- rss link -->
       <li class="info-box__list-item">

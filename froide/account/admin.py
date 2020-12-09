@@ -132,6 +132,10 @@ class UserAdmin(DjangoUserAdmin):
 
         """
 
+        # Check that the user has change permission for the actual model
+        if not request.user.is_superuser:
+            raise PermissionDenied
+
         if request.POST.get('subject'):
             subject = request.POST.get('subject', '')
             body = request.POST.get('body', '')
@@ -154,7 +158,6 @@ class UserAdmin(DjangoUserAdmin):
         return TemplateResponse(request, 'account/admin_send_mail.html',
             context)
     send_mail.short_description = _("Send mail to users...")
-    send_mail.allowed_permissions = ('change',)
 
     def delete_sessions(self, request, queryset):
         for user in queryset:

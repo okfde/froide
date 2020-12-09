@@ -45,14 +45,11 @@ class FakeRelatedField:
 class FakeRemoteField:
     limit_choices_to = None
 
-    def __init__(self, model, name=None):
+    def __init__(self, model):
         self.model = model
-        self.name = name
 
     def get_related_field(self):
-        if self.name is None:
-            return FakeRelatedField(self.model.__name__.lower())
-        return FakeRelatedField(self.name)
+        return FakeRelatedField(self.model.__name__.lower())
 
 
 class NonFieldForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
@@ -61,16 +58,12 @@ class NonFieldForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         return params
 
 
-def get_fk_raw_id_widget(model, admin_site, field_name=None):
-    remote_field = FakeRemoteField(model, name=field_name)
-    return NonFieldForeignKeyRawIdWidget(remote_field, admin_site)
-
-
 def get_fake_fk_form_class(model, admin_site, queryset=None):
-    widget = get_fk_raw_id_widget(model, admin_site)
-
+    remote_field = FakeRemoteField(model)
     if queryset is None:
-        queryset = model.objects.all()
+        queryset = remote_field.model.objects.all()
+
+    widget = NonFieldForeignKeyRawIdWidget(remote_field, admin_site)
 
     class ForeignKeyForm(forms.Form):
         obj = forms.ModelChoiceField(queryset=queryset,

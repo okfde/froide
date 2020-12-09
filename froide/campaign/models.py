@@ -21,7 +21,6 @@ class Campaign(models.Model):
     ident = models.CharField(max_length=50, blank=True)
 
     url = models.URLField(blank=True)
-    report_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
     start_date = models.DateTimeField(null=True)
     public = models.BooleanField(default=False)
