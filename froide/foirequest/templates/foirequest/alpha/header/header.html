@@ -1,5 +1,7 @@
 {% load i18n %}
 {% load foirequest_tags %}
+{% load permission_helper %}
+
 {% block extra_head %}
   {% if object|can_write_foirequest:request %}
   {% with object.get_set_tags_form as set_tags_form %}
@@ -11,7 +13,7 @@
 <div class="container">
   <div class="row">
     <!-- left column (title, description, tags etc.) -->
-    <div class="col-lg-8 mb-4 mb-lg-0">
+    <div class="col-lg-8 mb-4">
 
       <div class="d-flex flex-column">
 
@@ -100,7 +102,7 @@
 
         <!-- Edit buttons -->
         {% if object|can_write_foirequest:request %}
-        <div class="request-edit-buttons mb-2">
+        <div class="request-edit-buttons">
           <ul class="list-unstyled mb-0 d-md-flex">
             {% if object.status_is_final %}
               <li class="mb-2 mb-md-0 mr-md-3">
@@ -121,13 +123,47 @@
     <!-- right column (info box) -->
     <div class="col-lg-4">
       {% include "foirequest/alpha/header/info-box.html" %}
+
+      {% if object|can_moderate_foirequest:request %}
+
+        <!-- Moderation links -->
+        <ul class="list-unstyled d-flex justify-content-between mt-1">
+
+          {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
+            <li>
+              <a class="btn btn-link btn-sm " href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+                <i class="fa fa-cog"></i>
+                {% trans "Admin" %}
+              </a>
+            </li>
+          {% endif %}
+          {% if not object.is_foi %}
+            <li class="smaller mt-1 text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></li>
+          {% else %}
+            <li>
+              <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+                {% csrf_token %}
+                <button class="btn btn-link btn-sm" type="submit">
+                <i class="fa fa-ban"></i>
+                  {% trans "Not an FOI request" %}
+                </button>
+              </form>
+              <div style="display:none" id="mark-not-foi-form-success">
+                {% trans "Marked as NOT FoI" %}
+              </div>
+            </li>
+          {% endif %}
+
+        </ul>
+      {% endif %}
+
     </div>
   </div>
 </div>
 
 <!-- tabs -->
 <div class="container px-0">
-  <div class="mt-4" style="position: relative; bottom: -2px;">
+  <div style="position: relative; bottom: -2px;">
     <ul class="nav alpha-tabs" role="tablist" data-active-tab="{{ active_tab }}">
       <li class="alpha-tabs__tab">
         <a

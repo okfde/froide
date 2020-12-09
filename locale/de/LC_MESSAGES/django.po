@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-09 15:38+0100\n"
+"POT-Creation-Date: 2020-12-09 16:34+0100\n"
 "PO-Revision-Date: 2020-08-14 11:55+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
@@ -1979,7 +1979,7 @@ msgid "awaiting-response"
 msgstr "warte-auf-antwort"
 
 #: froide/foirequest/filters.py:79
-#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:11
+#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:18
 msgid "overdue"
 msgstr "verspaetet"
 
@@ -3615,7 +3615,7 @@ msgid "Expand/collapse all"
 msgstr "Alle ausklappen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:37
-#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:24
+#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:33
 msgid "Scroll to end"
 msgstr "Zum Ende"
 
@@ -3694,12 +3694,10 @@ msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:12
-#| msgid "Attachments:"
 msgid "Approved attachments"
 msgstr "Öffentliche Anhänge"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:19
-#| msgid "Manage attachments"
 msgid "Unapproved attachments"
 msgstr "Nicht-öffentliche Anhänge"
 
@@ -3733,17 +3731,14 @@ msgstr ""
 "werden."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:14
-#| msgid "This request is public."
 msgid "This attachment is public."
 msgstr "Dieser Anhang ist öffentlich."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:16
-#| msgid "Your name will only be visible to logged in users."
 msgid "This attachment is only visible for logged in users."
 msgstr "Dieser Anhang ist nur für angemeldete Nutzer sichtbar."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:19
-#| msgid "This request is not public!"
 msgid "This attachment is not public yet."
 msgstr "Dieser Anhang ist noch nicht öffentlich."
 
@@ -3767,10 +3762,6 @@ msgstr "PDF wird erstellt"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/list.html:17
 #, python-format
-#| msgid ""
-#| "\n"
-#| "            Show %(count)s other comments\n"
-#| "          "
 msgid ""
 "\n"
 "          Show %(count)s more attachments\n"
@@ -3977,12 +3968,29 @@ msgstr "Admin"
 msgid "View message in admin"
 msgstr "Nachricht im Admin"
 
-#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:11
-#| msgid "Message"
-msgid "Messages"
-msgstr "Nachrichten"
-
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:13
+#| msgid ""
+#| "\n"
+#| "                Hello %(name)s\n"
+#| "              "
+msgid ""
+"\n"
+"                    One Message\n"
+"                  "
+msgid_plural ""
+"\n"
+"                    %(counter)s Messages\n"
+"                  "
+msgstr[0] ""
+"\n"
+"                    Eine Nachricht\n"
+"                  "
+msgstr[1] ""
+"\n"
+"                    %(counter)s Nachrichten\n"
+"                  "
+
+#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:22
 msgid "Deadline expired on"
 msgstr "Frist abgelaufen am"
 
@@ -4022,7 +4030,6 @@ msgid "Save"
 msgstr "Speichern"
 
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:107
-#| msgid "Write summary"
 msgid "Edit summary"
 msgstr "Zusammenfassung bearbeiten"
 
@@ -9708,6 +9715,10 @@ msgstr "^brief/"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~| msgid "Message"
+#~ msgid "Messages"
+#~ msgstr "Nachrichten"
 
 #~ msgid ""
 #~ "Your request has been successful! Please help us now to classify the "
