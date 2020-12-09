@@ -78,7 +78,7 @@
       <span class="small help">
         {% trans "This URL gives read access to others." %}
       </span>
-      <input type="text" 
+      <input type="text"
         value="{{ object.get_accessible_link }}"
         data-toggle="tooltip"
         title="{% trans 'Click to copy' %}"
@@ -146,12 +146,6 @@
         </div>
       </li>
     {% endif %}
-  {% endif %}
-
-  {% if user.is_staff %}
-    <li class="nav-item">
-      <a href="./?alpha=1">Alpha Request Page</a>
-    </li>
   {% endif %}
 
 </ul>
