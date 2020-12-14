@@ -37,7 +37,7 @@
 
       <!-- edit button -->
       {% if object|can_write_foirequest:request %}
-        <li class="info-box__list-item bg-blue-10 py-2">
+        <li class="info-box__list-item info-box__list-item--inset bg-blue-10 py-2 mt-0">
           <a href="#" class="info-box__edit-button">
             <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
             <span class="{% if active_tab != 'set-status' %}d-none{% endif %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
@@ -53,7 +53,7 @@
 
       <!-- due date -->
       <li
-        class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger{% endif %}"
+        class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger info-box__list-item--inset{% endif %}"
         {% if object.is_overdue %}
           title="{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}"
         {% else %}
@@ -147,7 +147,7 @@
 
       {# Admin/moderation links #}
       {% if object|can_moderate_foirequest:request %}
-        <li class="info-box__list-item bg-blue-10 d-flex py-1">
+        <li class="info-box__list-item info-box__list-item--inset bg-blue-10 d-flex py-1 mb-0">
 
           {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
             <div class="align-self-center mr-2">
