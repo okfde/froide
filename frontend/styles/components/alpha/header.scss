@@ -89,11 +89,14 @@
       padding: 0;
     }
       &__list-item {
-        margin: $spacer $spacer * 1.5;
+        padding: $spacer * .75 $spacer;
+        @include media-breakpoint-up(md) {
+          padding: $spacer $spacer * 1.5;
+        }
         a .fa-question-circle-o { color: $blue-800; }
         p { margin: 0; }
         &--has-divider {
-          padding-bottom: $spacer;
+          // padding-bottom: $spacer;
           border-bottom: 2px solid $gray-200;
         }
         &--is-danger {
