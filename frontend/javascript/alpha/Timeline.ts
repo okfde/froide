@@ -4,10 +4,13 @@ interface TimelineItemsInterface {
   [key: string]: {
     isActive: boolean,
     element: HTMLElement,
-    itemsCount: number,
-    itemsVisibleCount: number,
-    updateItemsVisibleCount: Function,
+    msgIdsVisibleMap: MessagesVisbileMap,
+    updateItemVisibility: Function,
   };
+}
+
+interface MessagesVisbileMap {
+  [key: string]: boolean
 }
 
 export default class Timeline {
@@ -55,32 +58,33 @@ export default class Timeline {
 
     for (let item of nodes) {
       const key = item.dataset.key
+
       result[key] = {
         isActive: false,
         element: item,
-        itemsCount: this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key}"]`)?.length,
-        itemsVisibleCount: 0,
-        updateItemsVisibleCount (increase: boolean) {
+        msgIdsVisibleMap: (() => {
+          const result: MessagesVisbileMap = {}
+          const msgContainersByKey = this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key}"]`)
+          const ids = Array.from(msgContainersByKey).map(n => n.id)
+          for (let i = 0; i < ids.length; i++) {
+            const id: string = ids[i]
+            result[id] = false
+          }
+          return result
+        })(),
+        updateItemVisibility (msgId: string, isVisible: boolean) {
           const activeClassName = 'alpha-timeline__item--active'
 
-          if (increase) {
-            if (!this.isActive) {
-              this.element.classList.add(activeClassName)
-              this.isActive = true
-            }
-            this.itemsVisibleCount = this.itemsVisibleCount + 1 > this.itemsCount
-              ? this.itemsCount
-              : this.itemsVisibleCount + 1
-          } else {
-            this.itemsVisibleCount = this.itemsVisibleCount - 1 < 0
-              ? 0
-              : this.itemsVisibleCount - 1
-            if (this.itemsVisibleCount === 0) {
-              this.element.classList.remove(activeClassName)
-              this.isActive = false
-            }
-          }
+          this.msgIdsVisibleMap[msgId] = isVisible
 
+          // set active if at least one message container is visible
+          if (Object.values(this.msgIdsVisibleMap).some(v => v === true)) {
+            this.element.classList.add(activeClassName)
+            this.isActive = true
+          } else {
+            this.element.classList.remove(activeClassName)
+            this.isActive = false
+          }
         },
       }
 
@@ -228,14 +232,15 @@ export default class Timeline {
       // get month
       const msgContainer = entry.target as HTMLElement
       const timelineKey = msgContainer.dataset.timelineKey
-      if (!timelineKey) {
+      const msgId = msgContainer.id
+      if (!timelineKey || !msgId) {
         continue
       }
 
       const innerWrapElement = this.element.children[0] as HTMLElement
       const timelineHeight = this.element.clientHeight
       const isVisible = entry.isIntersecting
-      this.items[timelineKey].updateItemsVisibleCount(isVisible)
+      this.items[timelineKey].updateItemVisibility(msgId, isVisible)
 
       if (this.messagesContainer.firstElementChild === msgContainer) {
         this.firstMessageIsVisible = isVisible
