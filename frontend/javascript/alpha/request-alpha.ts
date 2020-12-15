@@ -58,8 +58,9 @@ const initRequestPage = () => {
     e.preventDefault()
     if (!writeForm?.classList.contains('show')) {
       replyButtonBottom?.click()
+    } else {
+      scrollToWriteForm()
     }
-    scrollToWriteForm()
   })
 
 }

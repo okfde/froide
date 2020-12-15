@@ -82,6 +82,7 @@
     display: none;
     padding-bottom: $spacer;
   }
+    &__guidance p:last-child { margin-bottom: 0; }
     &__content-text {
       white-space: nowrap;
       white-space: pre-wrap;
