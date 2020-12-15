@@ -7,3 +7,17 @@
 @import 'timeline';
 @import 'scrollIndicator';
 @import 'reply';
+
+
+.alpha-dropdown-menu {
+  .dropdown-item {
+    font-weight: 700;
+    &:hover {
+      color: $blue-600;
+    }
+    &:active {
+      background-color: $blue-200;
+    }
+  }
+
+}
