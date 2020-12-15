@@ -29,6 +29,7 @@ def render_guidance(context, message):
         'foirequest': message.request
     }
 
+
 @register.inclusion_tag('foirequest/alpha/body/message/guidance.html', takes_context=True)
 def render_guidance_alpha(context, message):
     if not hasattr(message, 'guidances'):
