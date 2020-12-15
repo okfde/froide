@@ -129,31 +129,31 @@ msgstr "Sessions gelöscht."
 
 #: froide/account/admin.py:167
 msgid "Delete sessions of users"
-msgstr "Sessions des Nutzers löschen"
+msgstr "Sessions des:der Nutzer:in löschen"
 
 #: froide/account/admin.py:172
 msgid "Users canceled."
-msgstr "Nutzer gekündigt."
+msgstr "Nutzer:in gekündigt."
 
 #: froide/account/admin.py:174
 msgid "Cancel account of users"
-msgstr "Nutzerkonto kündigen"
+msgstr "Nutzer:innenkonto kündigen"
 
 #: froide/account/admin.py:179
 msgid "Users logged out, deactivated and blocked."
-msgstr "Nutzer wurden ausgeloggt, deaktiviert und blockiert."
+msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
 
 #: froide/account/admin.py:181
 msgid "Deactivate and block users"
-msgstr "Nutzer deaktivieren und blocken"
+msgstr "Nutzer:in deaktivieren und blocken"
 
 #: froide/account/admin.py:188
 msgid "User made private."
-msgstr "Nutzer wurde auf privat geschaltet."
+msgstr "Nutzer:in wurde auf privat geschaltet."
 
 #: froide/account/admin.py:190
 msgid "Make user private"
-msgstr "Nutzer auf privat schalten"
+msgstr "Nutzer:in auf privat schalten"
 
 #: froide/account/admin.py:195
 msgid "Can only merge two accounts at a time."
@@ -161,7 +161,7 @@ msgstr "Kann nur zwei Konten zusammenführen."
 
 #: froide/account/admin.py:205
 msgid "Account merging started..."
-msgstr "Nutzerkonto-Zusammenführung angestoßen..."
+msgstr "Nutzer:innenkonto-Zusammenführung angestoßen..."
 
 #: froide/account/admin.py:206
 msgid "Merge accounts (keep older)"
@@ -173,15 +173,15 @@ msgstr "Konten zusammenführen (neueres behalten)"
 
 #: froide/account/admin.py:224
 msgid "Download export of user '{}' is ready."
-msgstr "Export von Nutzer '{}' ist bereit."
+msgstr "Export von Nutzer:in '{}' ist bereit."
 
 #: froide/account/admin.py:229
 msgid "Export of user '{}' started."
-msgstr "Export von Nutzer '{}' gestartet."
+msgstr "Export von Nutzer:in '{}' gestartet."
 
 #: froide/account/admin.py:233
 msgid "Start export of user data"
-msgstr "Export von Nutzerdaten starten"
+msgstr "Export von Nutzer:innendaten starten"
 
 #: froide/account/apps.py:10
 msgid "Account"
@@ -335,11 +335,11 @@ msgstr "Optional. Ihre Organisation wird neben Ihrem Namen angezeigt."
 
 #: froide/account/forms.py:318
 msgid "Another user with that email address already exists!"
-msgstr "Es existiert bereits eine Nutzerin mit dieser E-Mail-Adresse."
+msgstr "Es existiert bereits ein:e Nutzer:in mit dieser E-Mail-Adresse."
 
 #: froide/account/forms.py:343
 msgid "Logged in user does not match this link!"
-msgstr "Der eingeloggte Nutzer passt nicht zu dem geklickten Link!"
+msgstr "Der:die eingeloggte Nutzer:in passt nicht zu dem geklickten Link!"
 
 #: froide/account/forms.py:354
 msgid "Link is invalid or has expired!"
@@ -371,23 +371,23 @@ msgstr "Sie haben das Bestätigungswort nicht korrekt eingegeben!"
 
 #: froide/account/models.py:28
 msgid "user tag"
-msgstr "Nutzer-Badge"
+msgstr "Nutzer:innen-Badge"
 
 #: froide/account/models.py:29
 msgid "user tags"
-msgstr "Nutzer-Badges"
+msgstr "Nutzer:innen-Badges"
 
 #: froide/account/models.py:41
 msgid "tagged user"
-msgstr "getaggte Nutzer"
+msgstr "getaggte Nutzer:innen"
 
 #: froide/account/models.py:42
 msgid "tagged users"
-msgstr "getaggte Nutzer"
+msgstr "getaggte Nutzer:innen"
 
 #: froide/account/models.py:93
 msgid "username"
-msgstr "Nutzername"
+msgstr "Nutzer:innenname"
 
 #: froide/account/models.py:96
 msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
@@ -397,7 +397,7 @@ msgstr ""
 
 #: froide/account/models.py:99
 msgid "A user with that username already exists."
-msgstr "Es existiert bereits eine Nutzerin mit diesem Nutzernamen."
+msgstr "Es existiert bereits eine Nutzer:in mit diesem Nutzer:innennamen."
 
 #: froide/account/models.py:102
 msgid "first name"
@@ -413,11 +413,11 @@ msgstr "E-Mail-Adresse"
 
 #: froide/account/models.py:107
 msgid "staff status"
-msgstr "Mitarbeiter-Status"
+msgstr "Mitarbeiter:innen-Status"
 
 #: froide/account/models.py:109
 msgid "Designates whether the user can log into this admin site."
-msgstr "Zeigt an, ob Nutzer sich in den Adminbereich anmelden kann."
+msgstr "Zeigt an, ob Nutzer:in sich in den Adminbereich anmelden kann."
 
 #: froide/account/models.py:112 froide/team/models.py:24
 msgid "active"
@@ -477,7 +477,7 @@ msgstr "Austrittsdatum"
 
 #: froide/account/models.py:210
 msgid "<< Name Not Public >>"
-msgstr "<< Anfragesteller/in >>"
+msgstr "<< Anfragesteller:in >>"
 
 #: froide/account/models.py:314
 msgid "Blocklist entry"
@@ -489,11 +489,11 @@ msgstr "Blocklist"
 
 #: froide/account/models.py:372
 msgid "User preference"
-msgstr "Nutzerpräferenz"
+msgstr "Nutzer:innenpräferenz"
 
 #: froide/account/models.py:373
 msgid "User preferences"
-msgstr "Nutzerpräferenzen"
+msgstr "Nutzer:innenpräferenzen"
 
 #. Translators: Mail subject
 #: froide/account/services.py:194
@@ -515,7 +515,7 @@ msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
 
 #: froide/account/services.py:291
 msgid "<< Name removed >>"
-msgstr "Antragsteller/in"
+msgstr "Antragsteller:in"
 
 #: froide/account/services.py:292
 msgid "<< Email removed >>"
@@ -528,7 +528,7 @@ msgstr "<< Adresse entfernt >>"
 #: froide/account/templates/account/admin_send_mail.html:5
 #: froide/account/templates/account/admin_send_mail.html:8
 msgid "Send mail to users"
-msgstr "Sende E-Mail an Nutzer"
+msgstr "Sende E-Mail an Nutzer:in"
 
 #: froide/account/templates/account/admin_send_mail.html:15
 #: froide/foirequest/forms/message.py:213
@@ -553,8 +553,8 @@ msgstr "Sie können die folgenden Platzhalter verwenden:"
 #, python-format
 msgid "Send mail to one user"
 msgid_plural "Send mail to %(count)s users"
-msgstr[0] "Sende E-Mail an eine/n Nutzer/in"
-msgstr[1] "Sende E-Mail an %(count)s Nutzer/innen"
+msgstr[0] "Sende E-Mail an eine/n Nutzer:in"
+msgstr[1] "Sende E-Mail an %(count)s Nutzer:innen"
 
 #: froide/account/templates/account/confirmed.html:6
 msgid "Your account is now confirmed"
@@ -594,7 +594,7 @@ msgstr ""
 #: froide/account/templates/account/confirmed.html:40
 #: froide/account/templates/account/includes/set_password_now.html:3
 msgid "Please set a password for your account now"
-msgstr "Bitte setzen Sie jetzt ein Passwort für Ihr Nutzerkonto."
+msgstr "Bitte setzen Sie jetzt ein Passwort für Ihr Nutzer:innenkonto."
 
 #: froide/account/templates/account/confirmed.html:41
 #: froide/account/templates/account/includes/set_password_now.html:4
@@ -986,7 +986,7 @@ msgstr "Konto löschen"
 #: froide/account/templates/account/settings.html:36
 #: froide/account/templates/account/settings.html:160
 msgid "Developer"
-msgstr "Entwickler"
+msgstr "Entwickler:in"
 
 #: froide/account/templates/account/settings.html:44
 msgid "Your name:"
@@ -2107,7 +2107,7 @@ msgid ""
 "Sincerely yours\n"
 "%(name)s\n"
 msgstr ""
-"Sehr geehrte Damen und Herren,\n"
+"Sehr geehrte Damen bis Herren,\n"
 "\n"
 "...\n"
 "\n"
@@ -2255,12 +2255,12 @@ msgstr ""
 
 #: froide/foirequest/forms/message.py:686
 msgid "Receiving public body"
-msgstr "Empfänger (Behörde)"
+msgstr "Empfänger:in (Behörde)"
 
 #: froide/foirequest/forms/message.py:689
 #: froide/foirequest/forms/message.py:693
 msgid "Recipient Name"
-msgstr "Empfängername"
+msgstr "Empfänger:innenname"
 
 #: froide/foirequest/forms/message.py:715
 msgid "Scanned Document"
@@ -2587,11 +2587,11 @@ msgstr "die Anfrage wurde markiert als keine IFG-Anfrage."
 
 #: froide/foirequest/models/event.py:59
 msgid "sender of message was changed"
-msgstr "Nachrichtenabsender wurde geändert"
+msgstr "Nachrichtenabsender:in wurde geändert"
 
 #: froide/foirequest/models/event.py:60
 msgid "recipient of message was changed"
-msgstr "Empfänger der Nachricht wurde geändert"
+msgstr "Empfänger:in der Nachricht wurde geändert"
 
 #: froide/foirequest/models/event.py:62
 msgid "a public body was suggested"
@@ -2702,7 +2702,7 @@ msgstr "Informationsfreiheitsanfrage"
 #: froide/foirequestfollower/models.py:154 froide/frontpage/models.py:32
 #: froide/problem/templates/problem/message_toolbar_item.html:68
 msgid "User"
-msgstr "Nutzer"
+msgstr "Nutzer:in"
 
 #: froide/foirequest/models/event.py:163
 #: froide/foirequest/models/request.py:263
@@ -3071,7 +3071,7 @@ msgstr "Diese Anfrage wartet noch auf eine Antwort von der Behörde."
 #: froide/foirequest/models/request.py:211
 msgid "A message was received and the user needs to set a new status."
 msgstr ""
-"Eine Antwort wurde erhalten und der/die Nutzer/in muss einen neuen Status "
+"Eine Antwort wurde erhalten und der/die Nutzer:in muss einen neuen Status "
 "angeben."
 
 #: froide/foirequest/models/request.py:213
@@ -3106,7 +3106,7 @@ msgstr "Die Anfrage wurde auf Grund der entstehenden Kosten zurückgezogen."
 
 #: froide/foirequest/models/request.py:226
 msgid "User withdrew the request for other reasons."
-msgstr "Nutzer hat die Anfrage aus anderen Gründen zurückgezogen."
+msgstr "Nutzer:in hat die Anfrage aus anderen Gründen zurückgezogen."
 
 #: froide/foirequest/models/request.py:228
 msgid "The information does not exist at the public body."
@@ -3122,7 +3122,7 @@ msgstr "Unsichtbar"
 
 #: froide/foirequest/models/request.py:244
 msgid "Visible to requester"
-msgstr "Sichtbar für Anfragesteller/in"
+msgstr "Sichtbar für Anfragesteller:in"
 
 #: froide/foirequest/models/request.py:245
 msgid "Visible to public"
@@ -3290,7 +3290,7 @@ msgstr "✔️ Nachricht gesendet"
 #: froide/foirequest/signals.py:402
 #: froide/problem/templates/problem/message_toolbar_item.html:95
 msgid "requester"
-msgstr "Anfragesteller/in"
+msgstr "Anfragesteller:in"
 
 #: froide/foirequest/tasks.py:134
 #, python-brace-format
@@ -3778,18 +3778,18 @@ msgstr "Name nicht öffentlich"
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:11
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:14
 msgid "Commentator"
-msgstr "Autor/in"
+msgstr "Autor:in"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:22
 #: froide/foirequest/templates/foirequest/publicbody_upload.html:22
 #: froide/templates/comments/foirequest/list.html:8
 msgid "Requester"
-msgstr "Anfragesteller/in"
+msgstr "Anfragesteller:in"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:24
 #: froide/templates/comments/foirequest/list.html:10
 msgid "Moderator"
-msgstr "Moderator"
+msgstr "Moderator:in"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:35
 #: froide/templates/comments/foirequest/list.html:22
@@ -3807,7 +3807,7 @@ msgstr "Alles lesen"
 msgid ""
 "You have a private account. Your comment will show “requester” as the author."
 msgstr ""
-"Sie haben ein privates Konto. Ihr Kommentar wird als „Anfragesteller/in“ "
+"Sie haben ein privates Konto. Ihr Kommentar wird als „Anfragesteller:in“ "
 "veröffentlicht."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/form.html:26
@@ -3922,7 +3922,7 @@ msgstr "Geben Sie die Behörde an, die dieses Antwort gesendet hat:"
 #: froide/foirequest/templates/foirequest/alpha/body/message/sender.html:32
 #: froide/foirequest/templates/foirequest/snippets/message.html:45
 msgid "Set Sending Public Body"
-msgstr "Absender angeben"
+msgstr "Absender:in angeben"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/meta_container.html:85
 #: froide/foirequest/templates/foirequest/snippets/message.html:95
@@ -4369,7 +4369,7 @@ msgid ""
 "I'd like to make a request under a (yet to be determined) freedom of "
 "information law."
 msgstr ""
-"Sehr geehrte Damen und Herren,\n"
+"Sehr geehrte Damen bis Herren,\n"
 "\n"
 "ich würde gerne eine Anfrage nach einem (noch festzulegenden) "
 "Informationsfreiheitsgesetz stellen."
@@ -4461,7 +4461,7 @@ msgid ""
 "Sincerely yours\n"
 "%(name)s"
 msgstr ""
-"Sehr geehrte Damen und Herren,\n"
+"Sehr geehrte Damen bis Herren,\n"
 "\n"
 "ich bitte um Vermittlung bei einer Anfrage nach dem %(law)s. Die bisherige "
 "Korrespondenz finden Sie hier:\n"
@@ -4520,7 +4520,7 @@ msgid ""
 "Sincerely yours,\n"
 "%(name)s"
 msgstr ""
-"Sehr geehrte Damen und Herren,\n"
+"Sehr geehrte Damen bis Herren,\n"
 "\n"
 "meine Informationsfreiheitsanfrage „%(title)s“ vom %(date)s (#%(num)s) wurde "
 "von Ihnen nicht in der gesetzlich vorgeschriebenen Zeit beantwortet. Sie "
@@ -5378,7 +5378,7 @@ msgstr "Details"
 
 #: froide/foirequest/templates/foirequest/show.html:442
 msgid "Reason given by the user:"
-msgstr "Begründung des Nutzers:"
+msgstr "Begründung des:der Nutzer:in:"
 
 #: froide/foirequest/templates/foirequest/show.html:446
 msgid "There are no suggestions yet"
@@ -5429,7 +5429,7 @@ msgid ""
 "recipient."
 msgstr ""
 "Diese Anfrage wurde noch nicht gesendet, weil sie noch eine Behörde als "
-"Empfänger benötigt."
+"Empfänger:in benötigt."
 
 #: froide/foirequest/templates/foirequest/show.html:568
 msgid ""
@@ -5449,7 +5449,7 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/show.html:608
 msgid "Set status as moderator"
-msgstr "Status als Moderator/in festlegen"
+msgstr "Status als Moderator:in festlegen"
 
 #: froide/foirequest/templates/foirequest/show.html:632
 msgid "Messages in this request"
@@ -5870,7 +5870,7 @@ msgstr "^(?P<slug>[-\\w]+)/(?P<message_id>\\d+)/upload/$"
 
 #: froide/foirequest/utils.py:65
 msgid "User exceeded request limit"
-msgstr "Nutzer hat Anfragenbeschränkung überschritten"
+msgstr "Nutzer:in hat Anfragenbeschränkung überschritten"
 
 #: froide/foirequest/utils.py:66
 #, python-format
@@ -6269,7 +6269,7 @@ msgstr "Anfrage absenden"
 #: froide/foirequest/views/make_request.py:198
 #: froide/foirequest/views/make_request.py:219
 msgid "Dear Sir or Madam"
-msgstr "Sehr geehrte Damen und Herren"
+msgstr "Sehr geehrte Damen bis Herren"
 
 #: froide/foirequest/views/make_request.py:199
 msgid "Kind regards"
@@ -7146,11 +7146,11 @@ msgid_plural ""
 "  "
 msgstr[0] ""
 "\n"
-"    Ein Follower\n"
+"    Ein:e Follower:in\n"
 "  "
 msgstr[1] ""
 "\n"
-"    %(counter)s Follower\n"
+"    %(counter)s Follower:innen\n"
 "  "
 
 #: froide/foirequestfollower/templates/foirequestfollower/show.html:7
@@ -7338,7 +7338,7 @@ msgstr "Hat Regel"
 
 #: froide/guide/apps.py:9
 msgid "Guide"
-msgstr "Berater"
+msgstr "Berater:in"
 
 #: froide/guide/models.py:47
 msgctxt "Guide action"
@@ -7724,7 +7724,7 @@ msgstr "Für Admins"
 
 #: froide/problem/admin.py:42
 msgid "User will be notified of resolution"
-msgstr "Nutzer wird über Lösung benachrichtigt"
+msgstr "Nutzer:in wird über Lösung benachrichtigt"
 
 #: froide/problem/admin.py:53
 #, python-brace-format
@@ -7873,7 +7873,7 @@ msgstr "Bisher gemeldete Probleme"
 
 #: froide/problem/templates/problem/message_toolbar_item.html:59
 msgid "Moderators are already informed about the following problems:"
-msgstr "Moderatoren sind schon über die folgenden Probleme informiert:"
+msgstr "Moderator:innen sind schon über die folgenden Probleme informiert:"
 
 #: froide/problem/templates/problem/message_toolbar_item.html:70
 msgid "State"
@@ -7886,7 +7886,7 @@ msgstr "automatisch erkannt"
 #: froide/problem/templates/problem/message_toolbar_item.html:97
 #: froide/problem/views.py:93
 msgid "not requester"
-msgstr "nicht Anfragesteller/in"
+msgstr "nicht Anfragesteller:in"
 
 #: froide/problem/templates/problem/message_toolbar_item.html:108
 msgid "Resolved"
@@ -7915,11 +7915,11 @@ msgstr "Neues Problem: {label} [#{reqid}]"
 
 #: froide/problem/utils.py:19
 msgid "by requester"
-msgstr "von Anfragesteller/in"
+msgstr "von Anfragesteller:in"
 
 #: froide/problem/utils.py:19
 msgid "not by requester"
-msgstr "nicht von Anfragesteller/in"
+msgstr "nicht von Anfragesteller:in"
 
 #: froide/problem/utils.py:31
 msgid "Problem resolved on your request"
@@ -7973,7 +7973,7 @@ msgstr "Bitte beschreiben Sie den Admins, was hier getan werden muss."
 
 #: froide/problem/views.py:103
 msgid "Active moderators"
-msgstr "Aktive Moderatoren"
+msgstr "Aktive Moderator:innen"
 
 #: froide/problem/views.py:104
 msgid "to public body"
@@ -8285,7 +8285,7 @@ msgid ""
 msgstr ""
 "Hallo,\n"
 "\n"
-"ein/e Moderator/in hat Ihren Vorschlag für eine neue Behörde abgelehnt.\n"
+"ein/e Moderator:in hat Ihren Vorschlag für eine neue Behörde abgelehnt.\n"
 "\n"
 "{delete_reason}\n"
 "\n"
@@ -8510,7 +8510,7 @@ msgstr "Bestätigen Sie diese Behörde"
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:12
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:34
 msgid "Send message to creator"
-msgstr "Nachricht an Ersteller/in senden"
+msgstr "Nachricht an Ersteller:in senden"
 
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html:25
 #, python-format
@@ -9107,15 +9107,15 @@ msgstr "Das Mitglied gehört schon zum Team."
 
 #: froide/team/models.py:13
 msgid "owner"
-msgstr "Eigentümer"
+msgstr "Eigentümer:in"
 
 #: froide/team/models.py:14
 msgid "editor"
-msgstr "Bearbeiter"
+msgstr "Bearbeiter:in"
 
 #: froide/team/models.py:15
 msgid "viewer"
-msgstr "Betrachter"
+msgstr "Betrachter:in"
 
 #: froide/team/models.py:22
 msgid "inactive"
@@ -9211,7 +9211,7 @@ msgstr "Funktionen"
 
 #: froide/team/templates/team/team_detail.html:88
 msgid "Viewer"
-msgstr "Betrachter"
+msgstr "Betrachter:in"
 
 #: froide/team/templates/team/team_detail.html:90
 msgid ""
@@ -9221,13 +9221,13 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Ein Betrachter hat nur Lesezugriff auf alle Team-Projekte und "
+"            Ein:e Betrachter:in hat nur Lesezugriff auf alle Team-Projekte und "
 "Anfragen.\n"
 "          "
 
 #: froide/team/templates/team/team_detail.html:94
 msgid "Editor"
-msgstr "Bearbeiter"
+msgstr "Bearbeiter:in"
 
 #: froide/team/templates/team/team_detail.html:96
 msgid ""
@@ -9237,13 +9237,13 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Ein Bearbeiter kann Anfragen in den Team-Projekten stellen, "
+"            Ein:e Bearbeiter:in kann Anfragen in den Team-Projekten stellen, "
 "Nachrichten senden, den Status von Anfragen ändern etc.\n"
 "          "
 
 #: froide/team/templates/team/team_detail.html:100
 msgid "Owner"
-msgstr "Eigentümer"
+msgstr "Eigentümer:in"
 
 #: froide/team/templates/team/team_detail.html:102
 msgid ""
@@ -9254,8 +9254,8 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Ein Eigentümer kann alles, was ein Bearbeiter auch kann. "
-"Zusätzlich können Eigentümer auch Team-Mitglieder anlegen, entfernen oder "
+"            Ein:e Eigentümer:in kann alles, was ein:e Bearbeiter:in auch kann. "
+"Zusätzlich können Eigentümer:innen auch Team-Mitglieder anlegen, entfernen oder "
 "ihre Funktionen ändern und das Team löschen.\n"
 "          "
 
@@ -9410,7 +9410,7 @@ msgstr "Tags auf den gewählten Objekten setzen"
 #: froide/templates/comments/foirequest/list.html:13
 #, python-format
 msgid "On %(date)s, the requester wrote:"
-msgstr "Anfragesteller/in schrieb am %(date)s:"
+msgstr "Anfragesteller:in schrieb am %(date)s:"
 
 #: froide/templates/comments/foirequest/list.html:15
 #, python-format
@@ -9519,7 +9519,7 @@ msgid ""
 "and receive access to information from Public Bodies concerning public "
 "affairs."
 msgstr ""
-"Jeder Bürger hat nach den Informations&shy;gesetzen das Recht, Zugang zu "
+"Jede:r Bürger:in hat nach den Informations&shy;gesetzen das Recht, Zugang zu "
 "Informationen der öffentlichen Hand zu erhalten."
 
 #: froide/templates/index.html:23
@@ -9610,7 +9610,7 @@ msgstr ""
 "\n"
 "An: Bundesministerium des Innern\n"
 "\n"
-"Sehr geehrte Damen und Herren,\n"
+"Sehr geehrte Damen bis Herren,\n"
 "ich beantrage Auskunft zu folgender Sachlage:\n"
 "…"
 
@@ -9802,10 +9802,10 @@ msgstr "zustaendigkeit"
 
 #~ msgid "Selected requests are now only visible to requester."
 #~ msgstr ""
-#~ "Ausgewählte Anfragen sind nun nur noch für den Anfragesteller sichtbar."
+#~ "Ausgewählte Anfragen sind nun nur noch für den:die Anfragesteller:in sichtbar."
 
 #~ msgid "Set only visible to requester"
-#~ msgstr "Setze auf nur sichtbar für Anfragesteller"
+#~ msgstr "Setze auf nur sichtbar für Anfragesteller:in"
 
 #~ msgid "The Public Body stated that it does not possess the information."
 #~ msgstr "Die Behörde gibt an, nicht im Besitz der Information zu sein."
@@ -10239,7 +10239,7 @@ msgstr "zustaendigkeit"
 #, fuzzy
 #~| msgid "Number of Users"
 #~ msgid "Number of Periods"
-#~ msgstr "Anzahl der Nutzer"
+#~ msgstr "Anzahl der Nutzer:innen"
 
 #, fuzzy
 #~| msgid "Delivery"
@@ -10418,7 +10418,7 @@ msgstr "zustaendigkeit"
 #, fuzzy
 #~| msgid "Requester"
 #~ msgid "R equester"
-#~ msgstr "Anfragesteller/in"
+#~ msgstr "Anfragesteller:in"
 
 #~ msgid "%s documents were uploaded successfully."
 #~ msgstr "%s Dokumente wurden erfolgreich hochgeladen."
@@ -10524,7 +10524,7 @@ msgstr "zustaendigkeit"
 #~ msgstr "Per Fax und E-Mail"
 
 #~ msgid "Dear Ladies and Gentlemen,"
-#~ msgstr "Sehr geehrte Damen und Herren,"
+#~ msgstr "Sehr geehrte Damen bis Herren,"
 
 #~ msgid "Your address will not be displayed publicly."
 #~ msgstr "Ihre Adresse wird nicht öffentlich angezeigt werden."
@@ -10879,8 +10879,8 @@ msgstr "zustaendigkeit"
 #~ "<p id=\"t104\" class=\"stm mis\"><span class=\"txt\">          "
 #~ msgstr ""
 #~ "\n"
-#~ "            Ein Eigentümer kann alles, was ein Bearbeiter auch kann. "
-#~ "Zusätzlich können Eigentümer auch Team-Mitglieder anlegen, entfernen oder "
+#~ "            Ein:e Eigentümer:in kann alles, was ein Bearbeiter auch kann. "
+#~ "Zusätzlich können Eigentümer:innen auch Team-Mitglieder anlegen, entfernen oder "
 #~ "ihre Funktionen ändern und das Team löschen.\n"
 #~ "          "
 
@@ -11524,8 +11524,8 @@ msgstr "zustaendigkeit"
 #~ "Your request will be sent as soon as the newly created Public Body was "
 #~ "confirmed by an administrator."
 #~ msgstr ""
-#~ "Ihre Anfrage wird gesendet, sobald die neu erstellte Behörde von einem "
-#~ "Administrator bestätigt wurde."
+#~ "Ihre Anfrage wird gesendet, sobald die neu erstellte Behörde von einer:m "
+#~ "Administrator:in bestätigt wurde."
 
 #~ msgid "You get notified of changes."
 #~ msgstr "Sie erhalten Benachrichtigungen."
