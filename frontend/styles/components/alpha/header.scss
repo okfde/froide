@@ -63,9 +63,19 @@
 }
 
 .info-box {
+  $x-spacing-mobile: $spacer;
+  $x-spacing-desktop: $spacer * 1.5;
+  $y-spacing-mobile: $spacer * .75;
+  $y-spacing-desktop: $spacer;
+  @include media-breakpoint-up(md) {
+    margin-top: $spacer * 1.5;
+  }
   &__header {
     position: relative;
-    padding: $spacer * 1.5 $spacer;
+    padding: $spacer * 1.5 $x-spacing-mobile;
+    @include media-breakpoint-up(lg) {
+      padding: $spacer * 1.5;
+    }
   }
     &__title {
       margin: 0;
@@ -89,26 +99,43 @@
       padding: 0;
     }
       &__list-item {
-        margin: $spacer $spacer * 1.5;
+        margin: $y-spacing-mobile $x-spacing-mobile;
+        @include media-breakpoint-up(lg) {
+          margin: $y-spacing-desktop $x-spacing-desktop;
+        }
         a .fa-question-circle-o { color: $blue-800; }
         p { margin: 0; }
+        &--inset {
+          margin-left: 0;
+          margin-right: 0;
+          padding-left: $x-spacing-mobile;
+          padding-right: $x-spacing-mobile;
+          @include media-breakpoint-up(lg) {
+            padding-left: $x-spacing-desktop;
+            padding-right: $x-spacing-desktop;
+          }
+        }
         &--has-divider {
-          padding-bottom: $spacer;
+          padding-bottom: $y-spacing-mobile;
           border-bottom: 2px solid $gray-200;
+          @include media-breakpoint-up(lg) {
+            padding-bottom: $y-spacing-desktop;
+          }
         }
         &--is-danger {
           color: darken($red, 7%);
           background-color: #FFDCD4;
+          padding-top: $y-spacing-mobile;
+          padding-bottom: $y-spacing-mobile;
+          @include media-breakpoint-up(lg) {
+            padding-top: $y-spacing-desktop;
+            padding-bottom: $y-spacing-desktop;
+          }
           a .fa-question-circle-o { color: darken($red, 7%); }
         }
       }
         &__list-label { font-weight: 600; }
         // &__list-value {}
-
-  @include media-breakpoint-up(lg) {
-    margin-top: $spacer * 1.5;
-    &__header { padding: $spacer * 1.5; }
-  }
 
   /*
     Info-box theme regular
