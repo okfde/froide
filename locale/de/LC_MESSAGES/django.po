@@ -141,7 +141,7 @@ msgstr "Nutzer:innenkonto kündigen"
 
 #: froide/account/admin.py:179
 msgid "Users logged out, deactivated and blocked."
-msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
+msgstr "Nutzer:innen wurden ausgeloggt, deaktiviert und blockiert."
 
 #: froide/account/admin.py:181
 msgid "Deactivate and block users"
