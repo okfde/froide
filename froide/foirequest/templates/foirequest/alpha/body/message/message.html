@@ -43,9 +43,14 @@
       </div>
 
       <!-- second row -->
+
       <!-- message preview (collapsed state) -->
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
-        {{ message.plaintext|truncatechars:120 }}…
+        {% if message.content_hidden and not object|can_write_foirequest:request %}
+          {% blocktrans %}This message is not yet public.{% endblocktrans %}
+        {% else %}
+          {% redact_message_short message request %}
+        {% endif %}
       </div>
 
       <!-- recipient and delivery details link (expanded state) -->
@@ -68,7 +73,6 @@
 
   <!-- meta details container -->
   {% include "foirequest/alpha/body/message/meta_container.html" %}
-
 
   <!-- body -->
   <div class="alpha-message__body alpha-message__wrap">
