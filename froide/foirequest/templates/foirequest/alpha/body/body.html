@@ -19,15 +19,19 @@
     <div class="container px-0">
       <div class="row mx-3 mx-lg-0 py-4 d-none d-sm-block">
         <div class="col-lg-8 px-0">
-          <a
-            id="alpha-reply-button-top"
-            href="#write-message"
-            class="btn btn-primary btn-sm"
-            role="button"
-          >
-            <i class="fa fa-mail-reply" aria-hidden="true"></i>
-            {% trans 'Send a message' %}
-          </a>
+
+          {% if object|can_write_foirequest:request and object.public_body %}
+            <a
+              id="alpha-reply-button-top"
+              href="#write-message"
+              class="btn btn-primary btn-sm"
+              role="button"
+            >
+              <i class="fa fa-mail-reply" aria-hidden="true"></i>
+              {% trans 'Send a message' %}
+            </a>
+          {% endif %}
+
           <a href="#" class="btn btn-light btn-sm js-trigger-expand-all-messages">
             <i class="fa fa-expand" aria-hidden="true"></i>
             {% trans "Expand/collapse all" %}
@@ -43,8 +47,10 @@
         <div class="px-0 col-lg-8">
           {% include "foirequest/alpha/body/correspondence.html" %}
 
+
+          {% if object|can_write_foirequest:request and object.public_body %}
           <!-- Reply action buttons -->
-          <div class="text-center my-6">
+          <div class="text-center mb-6">
             <a
               id="alpha-reply-button-bottom"
               href="#write-message"
@@ -73,6 +79,8 @@
               </div>
             </div>
           </div>
+          {% endif %}
+
         </div>
 
         <div class="px-0 px-lg-3 col-lg-4">
@@ -84,48 +92,49 @@
 
 
     <!-- Reply form -->
-    <div id="reply-form-helper"></div>
-    <div id="write-message" class="collapse {% if active_tab == 'write-message' %}show{% endif %} reply-form bg-white">
-      <a href="#" class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
-        <i class="fa fa-unlock" aria-hidden="true"></i>
-        {% trans "Sticky" %}
-      </a>
-      <div class="reply-form__wrap py-4">
-        <div class="container px-lg-0">
-          <div class="row">
-            <div class="col-lg-8">
-              <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
-                {% csrf_token %}
-                <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
-                {% if object.is_overdue %}
-                  <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
-                {% else %}
-                  <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
-                {% endif %}
-                {% block send_message_form_pre %}{% endblock %}
-                {% if send_message_form %}
-                  {% render_form send_message_form False %}
-                {% else %}
-                  {% with send_message_form=object.get_send_message_form %}
+    {% if object|can_write_foirequest:request and object.public_body %}
+      <div id="reply-form-helper"></div>
+      <div id="write-message" class="collapse {% if active_tab == 'write-message' %}show{% endif %} reply-form bg-white">
+        <a href="#" class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
+          <i class="fa fa-unlock" aria-hidden="true"></i>
+          {% trans "Sticky" %}
+        </a>
+        <div class="reply-form__wrap py-4">
+          <div class="container px-lg-0">
+            <div class="row">
+              <div class="col-lg-8">
+                <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
+                  {% if object.is_overdue %}
+                    <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
+                  {% else %}
+                    <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
+                  {% endif %}
+                  {% block send_message_form_pre %}{% endblock %}
+                  {% if send_message_form %}
                     {% render_form send_message_form False %}
-                  {% endwith %}
-                {% endif %}
-                <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-                <p class="form-text text-muted">
-                  <small>
-                    {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
-                    <strong>{% alternative_address object %}</strong>
-                    <br/>
-                    {% trans "It will still go to your request here." %}
-                  </small>
-                </p>
-              </form>
+                  {% else %}
+                    {% with send_message_form=object.get_send_message_form %}
+                      {% render_form send_message_form False %}
+                    {% endwith %}
+                  {% endif %}
+                  <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+                  <p class="form-text text-muted">
+                    <small>
+                      {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
+                      <strong>{% alternative_address object %}</strong>
+                      <br/>
+                      {% trans "It will still go to your request here." %}
+                    </small>
+                  </p>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
+    {% endif %}
 
   </div>
 

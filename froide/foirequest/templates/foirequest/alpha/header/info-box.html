@@ -45,6 +45,36 @@
 
     <ul class="info-box__list {% if active_tab == 'set-status' %}d-none{% endif %}">
 
+      {# Admin/moderation links #}
+      {% if object|can_moderate_foirequest:request %}
+        <li class="info-box__list-item info-box__list-item--inset bg-blue-10 d-flex my-0 border-top border-blue-20">
+
+          {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
+            <div class="align-self-center mr-1">
+              <a class="d-block" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+                <i class="fa fa-cog"></i>
+                {% trans "Admin" %}
+              </a>
+            </div>
+          {% endif %}
+          {% if not object.is_foi %}
+            <span class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></span>
+          {% else %}
+            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+              {% csrf_token %}
+              <button class="btn btn-link" type="submit">
+              <i class="fa fa-ban"></i>
+                {% trans "Not an FOI request" %}
+              </button>
+            </form>
+            <div style="display:none" id="mark-not-foi-form-success">
+              {% trans "Marked as NOT FoI" %}
+            </div>
+          {% endif %}
+
+        </li>
+      {% endif %}
+
       <!-- date -->
       <li class="info-box__list-item">
         <div class="info-box__list-label">{% blocktrans %}Date{% endblocktrans %}</div>
@@ -143,37 +173,6 @@
           {% trans "RSS Feed" %}
         </a>
       </li>
-
-
-      {# Admin/moderation links #}
-      {% if object|can_moderate_foirequest:request %}
-        <li class="info-box__list-item info-box__list-item--inset bg-blue-10 d-flex py-1 mb-0">
-
-          {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
-            <div class="align-self-center mr-2">
-              <a class="d-block" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
-                <i class="fa fa-cog"></i>
-                {% trans "Admin" %}
-              </a>
-            </div>
-          {% endif %}
-          {% if not object.is_foi %}
-            <span class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></span>
-          {% else %}
-            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
-              {% csrf_token %}
-              <button class="btn btn-link" type="submit">
-              <i class="fa fa-ban"></i>
-                {% trans "Not an FOI request" %}
-              </button>
-            </form>
-            <div style="display:none" id="mark-not-foi-form-success">
-              {% trans "Marked as NOT FoI" %}
-            </div>
-          {% endif %}
-
-        </li>
-      {% endif %}
 
     </ul>
 

@@ -14,6 +14,15 @@
   @include media-breakpoint-up(md) {
     box-shadow: $message_box_shadow;
   }
+
+  .redacted, .redacted a {
+    background-color: $gray-200!important;
+    color: $gray-200!important;
+  }
+  .redacted-dummy {
+    background-color: $gray-200!important;
+  }
+
   &__head {
     cursor: pointer;
   }
