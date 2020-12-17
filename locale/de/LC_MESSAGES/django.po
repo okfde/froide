@@ -3630,7 +3630,7 @@ msgstr "Post hochladen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:67
 msgid "Other Options"
-msgstr "Andere Otionen"
+msgstr "Andere Optionen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:91
 msgid "Sticky"
