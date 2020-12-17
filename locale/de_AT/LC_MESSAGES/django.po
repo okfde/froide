@@ -1583,7 +1583,7 @@ msgstr "warte-auf-antwort"
 
 #: froide/foirequest/models.py:228
 msgid "overdue"
-msgstr "verspaetet"
+msgstr "verspätet"
 
 #: froide/foirequest/models.py:231
 msgid "asleep"
