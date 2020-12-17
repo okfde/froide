@@ -1981,7 +1981,7 @@ msgstr "warte-auf-antwort"
 #: froide/foirequest/filters.py:79
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:18
 msgid "overdue"
-msgstr "verspaetet"
+msgstr "verspätet"
 
 #: froide/foirequest/filters.py:86 froide/foirequest/models/project.py:46
 msgid "asleep"
