@@ -398,7 +398,6 @@ class FoiRequest(models.Model):
         Add extra due date key.
         """
         groups = {}
-        today = datetime.today()
         due_date = self.due_date
         has_overdue_messages = False
         for msg in self.messages:
@@ -407,8 +406,8 @@ class FoiRequest(models.Model):
                 groups[key] = {
                     'date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
                     'messages': [],
-                    'show_overdue_message': False, # shows "Deadline expired on ..." message
-                    'indicate_overdue': False, # shows "(overdue)" in message count label in timeline
+                    'show_overdue_message': False,  # shows "Deadline expired on ..." message
+                    'indicate_overdue': False,  # shows "(overdue)" in message count label in timeline
                     'first_message_id': msg.get_html_id
                 }
             groups[key]['messages'].append(msg)
