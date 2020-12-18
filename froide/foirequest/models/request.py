@@ -408,7 +408,6 @@ class FoiRequest(models.Model):
             if key not in groups:
                 groups[key] = {
                     'date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
-                    'is_same_year': msg.timestamp.year == today.year,
                     'messages': [],
                     'show_overdue_message': False, # shows "Deadline expired on ..." message
                     'indicate_overdue': False, # shows "(overdue)" in message count label in timeline
