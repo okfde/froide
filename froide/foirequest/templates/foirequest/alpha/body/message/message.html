@@ -49,7 +49,11 @@
         {% if message.content_hidden and not object|can_write_foirequest:request %}
           {% blocktrans %}This message is not yet public.{% endblocktrans %}
         {% else %}
-          {% redact_message_short message request %}
+          {% if not message.plaintext %}
+            <i>{% trans 'No message text' %}</i>
+          {% else %}
+            {% redact_message_short message request %}
+          {% endif %}
         {% endif %}
       </div>
 
