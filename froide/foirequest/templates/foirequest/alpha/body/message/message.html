@@ -7,14 +7,14 @@
 {% get_comment_list message as comment_list %}
 
 
-<div class="alpha-message" id="{{ message.get_html_id }}">
+<div class="alpha-message" id="{{ message.get_html_id }}" data-timeline-key="{{ message.timestamp|date:'Y-m' }}">
 
   <!-- head -->
   <div class="d-flex p-3 alpha-message__head">
-    
+
     <!-- avatar -->
     <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}"><i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i></div>
-  
+
     <!-- sender, recipient, message preview, meta infos -->
     <div class="d-flex flex-fill flex-column overflow-hidden">
       <!-- first row -->
@@ -34,14 +34,14 @@
               <span class="fa fa-comment-o"></span>
             </span>
           {% endif %}
-          
+
           <!-- relative time -->
           <span class="alpha-message__relative-time d-flex align-items-center d-print-none text-nowrap smaller text-gray-600" title="{{ message.timestamp }}">
             {{ message.timestamp|relativetime }}
           </span>
         </div>
       </div>
-      
+
       <!-- second row -->
       <!-- message preview (collapsed state) -->
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
@@ -67,19 +67,19 @@
   </div>
 
   <!-- meta details container -->
-  {% include "foirequest/alpha/body/message/meta_container.html" %} 
+  {% include "foirequest/alpha/body/message/meta_container.html" %}
 
 
   <!-- body -->
   <div class="alpha-message__body alpha-message__wrap">
-    
+
     <!-- TODO: guidance (this is a placeholder now) -->
     {% if forloop.counter0|divisibleby:"3" %}
-      {% include "foirequest/alpha/body/message/guidance.html" %}  
+      {% include "foirequest/alpha/body/message/guidance.html" %}
     {% endif %}
 
     <!-- attachments -->
-    {% include "foirequest/alpha/body/message/attachments/attachments.html" %} 
+    {% include "foirequest/alpha/body/message/attachments/attachments.html" %}
 
     <!-- text -->
     {% if forloop.counter0 == 0 %}
@@ -141,7 +141,7 @@
           {% else %}
             {% include "foirequest/alpha/body/message/comments/list.html" %}
           {% endif %}
-      
+
           <!-- comment reply button and form -->
           <div class="mt-3">
             <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
@@ -156,7 +156,7 @@
             </div>
           </div>
         {% else %}
-          <span class="text-gray-600">
+          <span class="text-gray-600 smaller">
             {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}
               Please <a href="{{ link }}" >login</a> to read or write comments.
             {% endblocktrans %}

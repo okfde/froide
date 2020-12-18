@@ -25,7 +25,7 @@
 
 .request-title {
   margin-bottom: 0;
-  margin-top: $spacer;
+  margin-top: $spacer * 1.5;
   // word-break: break-all;
   @include media-breakpoint-up(lg) {
     margin-top: $spacer * 2;
@@ -33,11 +33,33 @@
 }
 
 .request-descr {
+  position: relative;
   overflow: hidden;
-  max-width: 40rem;
+  padding-bottom: $spacer;
+  margin-bottom: $spacer;
+  border-bottom: 1px solid $gray-300;
+  &--collapsed {
+    max-height: 400px;
+  }
   p:last-child {
     margin-bottom: 0;
   }
+  @include media-breakpoint-up(md) {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  @include media-breakpoint-up(lg) {
+    max-width: 40rem;
+  }
+}
+
+.request-descr-read-more {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 80px;
+  background-image: linear-gradient(to bottom, transparent, $gray-100);
 }
 
 .info-box {
@@ -64,21 +86,20 @@
     &__list {
       list-style-type: none;
       margin: 0;
-      padding: $spacer 0 0;
+      padding: 0;
     }
       &__list-item {
-        padding-bottom: $spacer;
-        margin-left: $spacer * 1.5;
-        margin-right: $spacer * 1.5;
+        margin: $spacer $spacer * 1.5;
+        a .fa-question-circle-o { color: $blue-800; }
+        p { margin: 0; }
         &--has-divider {
-          margin-bottom: $spacer;
+          padding-bottom: $spacer;
           border-bottom: 2px solid $gray-200;
         }
         &--is-danger {
           color: darken($red, 7%);
-          margin: 0 0 $spacer;
-          padding: $spacer $spacer * 1.5;
           background-color: #FFDCD4;
+          a .fa-question-circle-o { color: darken($red, 7%); }
         }
       }
         &__list-label { font-weight: 600; }
@@ -134,7 +155,7 @@
     padding: $spacer * .625 $spacer;
     color: $blue-800;
     font-weight: 600;
-    font-size: $font-size-base * 1.125;
+    font-size: $font-size-base;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
     @include hover-focus() {
@@ -144,9 +165,13 @@
       border-bottom-color: $gray-300;
     }
     &.active {
-      border-bottom-color: $blue-600;      
+      border-bottom-color: $blue-600;
     }
     @include media-breakpoint-up(sm) {
+      padding: $spacer * .625 $spacer;
+      font-size: $font-size-base * 1.125;
+    }
+    @include media-breakpoint-up(lg) {
       padding: $spacer * .625 $spacer * 1.5;
     }
   }

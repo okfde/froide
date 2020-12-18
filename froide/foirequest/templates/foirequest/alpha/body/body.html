@@ -1,38 +1,163 @@
 {% load i18n %}
 {% load humanize %}
+{% load form_helper %}
+{% load foirequest_tags %}
 
 
-<div class="tab-content py-sm-3">
+<div class="tab-content">
+  <div class="scroll-indicator"><div class="scroll-indicator__line"></div></div>
+
+
   <div
     role="tabpanel"
     class="tab-pane fade active show"
-    id="correspondence"
+    id="correspondence-panel"
     aria-labelledby="correspondence-tab"
   >
-    <div class="container px-0 px-lg-3">
-      <div class="row mx-0 mx-lg-n3">
-        {% comment %}
-          JavaScript calculates the heights of these containers.
-          Don't add any other containers here.
-        {% endcomment %}
-        <div class="px-0 px-lg-3 col-lg-8">
-          {% include "foirequest/alpha/body/correspondence.html" %}
+
+    <!-- Correspondence, Action buttons and Timeline -->
+    <div class="container px-0">
+      <div class="row mx-0 py-4">
+        <div class="col-lg-8 px-0">
+          <a
+            id="alpha-reply-button-top"
+            href="#write-message"
+            class="btn btn-primary btn-sm"
+            role="button"
+          >
+            <i class="fa fa-mail-reply" aria-hidden="true"></i>
+            {% trans 'Send a message' %}
+          </a>
+          <a href="#" class="btn btn-light btn-sm js-trigger-expand-all-messages">
+            <i class="fa fa-expand" aria-hidden="true"></i>
+            {% trans "Expand/collapse all" %}
+          </a>
+          <a href="#" class="btn btn-light btn-sm js-trigger-scroll-to-end">
+            <i class="fa fa-long-arrow-down" aria-hidden="true"></i>
+            {% trans 'Scroll to end' %}
+          </a>
         </div>
+      </div>
+
+      <div class="row mx-0">
+        <div class="px-0 col-lg-8">
+          {% include "foirequest/alpha/body/correspondence.html" %}
+
+          <!-- Reply action buttons -->
+          <div class="text-center my-6">
+            <a
+              id="alpha-reply-button-bottom"
+              href="#write-message"
+              class="btn btn-primary mr-1 alpha-reply-button"
+              role="button"
+              aria-expanded="false"
+              aria-controls="write-message"
+              data-toggle="collapse"
+              data-target="#write-message"
+            >
+              <i class="fa fa-mail-reply" aria-hidden="true"></i> {% trans 'Reply' %}
+            </a>
+            <button class="btn btn-primary" type="button">
+              <i class="fa fa-envelope" aria-hidden="true"></i>
+              {% trans 'Upload Mail' %}
+            </button>
+            <div class="mt-1 d-flex justify-content-center">
+              <div class="dropdown flex-shrink-1">
+                <button id="otherReplyActions" type="button" class="btn btn-link text-decoration-none dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <strong>{% trans 'Other Options' %}</strong>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="otherReplyActions">
+                  <a class="dropdown-item" href="#">Action 1</a>
+                  <a class="dropdown-item" href="#">Action 2</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="px-0 px-lg-3 col-lg-4">
           {% include "foirequest/alpha/body/timeline.html" %}
         </div>
       </div>
+
     </div>
+
+
+    <!-- Reply form -->
+    <div id="reply-form-helper"></div>
+    <div id="write-message" class="collapse {% if active_tab == 'write-message' %}show{% endif %} reply-form bg-white">
+      <a href="#" class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
+        <i class="fa fa-unlock" aria-hidden="true"></i>
+        {% trans "Sticky" %}
+      </a>
+      <div class="reply-form__wrap py-4">
+        <div class="container px-lg-0">
+          <div class="row">
+            <div class="col-lg-8">
+              <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
+                {% if object.is_overdue %}
+                  <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
+                {% else %}
+                  <p>{% blocktrans %}You can send another message to this Public Body if you want to.{% endblocktrans %}</p>
+                {% endif %}
+                {% block send_message_form_pre %}{% endblock %}
+                {% if send_message_form %}
+                  {% render_form send_message_form False %}
+                {% else %}
+                  {% with send_message_form=object.get_send_message_form %}
+                    {% render_form send_message_form False %}
+                  {% endwith %}
+                {% endif %}
+                <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+                <p class="form-text text-muted">
+                  <small>
+                    {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
+                    <strong>{% alternative_address object %}</strong>
+                    <br/>
+                    {% trans "It will still go to your request here." %}
+                  </small>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
-  
-  <div
-    role="tabpanel"
-    class="tab-pane fade"
-    id="actions"
-    aria-labelledby="actions-tab"
-  >
-    Actions tab
-  </div>
+
+  {% comment %}
+    {# TODO: set status tab: show when people come from email? #}
+  {% if active_tab == 'set-status' %}
+    <div
+      role="tabpanel"
+      class="tab-pane fade"
+      id="set-status"
+      aria-labelledby="set-status-tab"
+    >
+      <div class="container px-0">
+        <div class="row bg-white mx-0">
+          <div class="col-md-8 col-lg-6 p-3 pb-4 px-lg-4">
+            <h4 class="mt-3 mb-3">{% blocktrans %}Set a new status{% endblocktrans %}</h4>
+            <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+              {% csrf_token %}
+              {% if status_form %}
+                {% include "foirequest/alpha/header/_set_status.html" %}
+              {% else %}
+                {% with status_form=object.get_status_form %}
+                  {% include "foirequest/alpha/header/_set_status.html" %}
+                {% endwith %}
+              {% endif %}
+              <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %} {% endcomment %}
 </div>
 
 {% block after_foirequest_messages %}
