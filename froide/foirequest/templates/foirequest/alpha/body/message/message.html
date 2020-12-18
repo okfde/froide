@@ -56,13 +56,15 @@
       <!-- recipient and delivery details link (expanded state) -->
       <div class="alpha-message__details smaller">
         <!-- recipient -->
-        <span class="text-gray-600">
-          {% blocktrans %}To{% endblocktrans %}
-          {{ message.recipient_public_body.name }}
-        </span>
+        {% if message.recipient_public_body.name %}
+          <span class="text-gray-600 mr-1">
+            {% blocktrans %}To{% endblocktrans %}
+            {{ message.recipient_public_body.name }}
+          </span>
+        {% endif %}
 
         <!-- delivery details link-->
-        <a href="#" class="alpha-message__meta-toggle ml-1 text-body">
+        <a href="#" class="alpha-message__meta-toggle text-body">
           Details
           <i class="fa fa-angle-down" aria-hidden="true"></i>
         </a>
