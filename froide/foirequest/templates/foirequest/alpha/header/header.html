@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load foirequest_tags %}
+
 {% block extra_head %}
   {% if object|can_write_foirequest:request %}
   {% with object.get_set_tags_form as set_tags_form %}
@@ -11,7 +12,7 @@
 <div class="container">
   <div class="row">
     <!-- left column (title, description, tags etc.) -->
-    <div class="col-lg-8 mb-4 mb-lg-0">
+    <div class="col-md-6 col-lg-7 col-xl-8 mb-4">
 
       <div class="d-flex flex-column">
 
@@ -100,7 +101,7 @@
 
         <!-- Edit buttons -->
         {% if object|can_write_foirequest:request %}
-        <div class="request-edit-buttons mb-2">
+        <div class="request-edit-buttons">
           <ul class="list-unstyled mb-0 d-md-flex">
             {% if object.status_is_final %}
               <li class="mb-2 mb-md-0 mr-md-3">
@@ -119,15 +120,15 @@
     </div>
 
     <!-- right column (info box) -->
-    <div class="col-lg-4">
+    <div class="col-md-6 col-lg-5 col-xl-4">
       {% include "foirequest/alpha/header/info-box.html" %}
     </div>
   </div>
 </div>
 
 <!-- tabs -->
-<div class="container px-0">
-  <div class="mt-4" style="position: relative; bottom: -2px;">
+<div class="container px-0 mt-4 mt-lg-0">
+  <div style="position: relative; bottom: -2px;">
     <ul class="nav alpha-tabs" role="tablist" data-active-tab="{{ active_tab }}">
       <li class="alpha-tabs__tab">
         <a

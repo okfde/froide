@@ -58,8 +58,9 @@ const initRequestPage = () => {
     e.preventDefault()
     if (!writeForm?.classList.contains('show')) {
       replyButtonBottom?.click()
+    } else {
+      scrollToWriteForm()
     }
-    scrollToWriteForm()
   })
 
 }
@@ -233,6 +234,11 @@ const setStatus = () => {
 
 const initReplyForm = () => {
   const replyContainer = document.querySelector('.reply-form') as HTMLElement
+
+  if (!replyContainer) {
+    return
+  }
+
   const replyContainerHelper = document.getElementById('reply-form-helper') as HTMLElement
   const replyContainerOffsetTop = replyContainerHelper.offsetTop
   const stickyButton = replyContainer.querySelector('.reply-form__toggle-sticky-btn') as HTMLElement

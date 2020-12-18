@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load foirequest_tags %}
+{% load permission_helper %}
 
 {% comment %}
   Info box colors:
@@ -25,7 +26,7 @@
       </div>
     </div>
     {% if object.status_representation %}
-      <div class="info-box__icon flex-shrink-0 status-{{ object.status_representation }}"></div>
+      <div class="info-box__icon ml-1 flex-shrink-0 status-{{ object.status_representation }}"></div>
     {% endif %}
   </div>
 
@@ -36,14 +37,43 @@
     {% if object|can_write_foirequest:request %}
       <div class="bg-blue-10 px-4 py-2">
         <a href="#" class="info-box__edit-button">
-          <span><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
-          <span class="d-none"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
+          <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
+          <span class="{% if active_tab != 'set-status' %}d-none{% endif %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
         </a>
       </div>
     {% endif %}
 
-    <!-- request infos -->
     <ul class="info-box__list {% if active_tab == 'set-status' %}d-none{% endif %}">
+
+      {# Admin/moderation links #}
+      {% if object|can_moderate_foirequest:request %}
+        <li class="info-box__list-item info-box__list-item--inset bg-blue-10 d-flex my-0 border-top border-blue-20">
+
+          {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
+            <div class="align-self-center mr-1">
+              <a class="d-block" href="{% url 'admin:foirequest_foirequest_change' object.id %}">
+                <i class="fa fa-cog"></i>
+                {% trans "Admin" %}
+              </a>
+            </div>
+          {% endif %}
+          {% if not object.is_foi %}
+            <span class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></span>
+          {% else %}
+            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+              {% csrf_token %}
+              <button class="btn btn-link" type="submit">
+              <i class="fa fa-ban"></i>
+                {% trans "Not an FOI request" %}
+              </button>
+            </form>
+            <div style="display:none" id="mark-not-foi-form-success">
+              {% trans "Marked as NOT FoI" %}
+            </div>
+          {% endif %}
+
+        </li>
+      {% endif %}
 
       <!-- date -->
       <li class="info-box__list-item">
@@ -53,7 +83,7 @@
 
       <!-- due date -->
       <li
-        class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger mx-0 px-4 py-3{% endif %}"
+        class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger info-box__list-item--inset{% endif %}"
         {% if object.is_overdue %}
           title="{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}"
         {% else %}
@@ -112,7 +142,7 @@
         <li class="info-box__list-item info-box__list-item--has-divider">
 
           <!-- copy url -->
-          <div class="mb-3">
+          <div class="mb-2 mb-lg-3">
             <a href="{{ object.get_absolute_domain_short_url }}" data-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" class="copy-short-url-trigger">
               <i class="fa fa-copy" aria-hidden="true"></i>
               {% blocktrans %}Copy Short-URL{% endblocktrans %}
@@ -147,7 +177,7 @@
     </ul>
 
 
-    <!-- edit interface -->
+    {# edit interface #}
     {% if object|can_write_foirequest:request %}
     <div class="info-box__edit-panel px-4 mt-2 mb-4 {% if active_tab != 'set-status' %}d-none{% endif %}">
       <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
@@ -164,5 +194,7 @@
     </div>
     {% endif %}
   </div>
+
+
 
 </div>

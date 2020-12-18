@@ -14,6 +14,15 @@
   @include media-breakpoint-up(md) {
     box-shadow: $message_box_shadow;
   }
+
+  .redacted, .redacted a {
+    background-color: $gray-200!important;
+    color: $gray-200!important;
+  }
+  .redacted-dummy {
+    background-color: $gray-200!important;
+  }
+
   &__head {
     cursor: pointer;
   }
@@ -82,6 +91,7 @@
     display: none;
     padding-bottom: $spacer;
   }
+    &__guidance p:last-child { margin-bottom: 0; }
     &__content-text {
       white-space: nowrap;
       white-space: pre-wrap;

@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-08 16:26+0100\n"
-"PO-Revision-Date: 2020-08-14 11:55+0200\n"
+"POT-Creation-Date: 2020-12-09 16:34+0100\n"
+"PO-Revision-Date: 2020-12-18 16:55+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1979,7 +1979,7 @@ msgid "awaiting-response"
 msgstr "warte-auf-antwort"
 
 #: froide/foirequest/filters.py:79
-#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:11
+#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:18
 msgid "overdue"
 msgstr "verspaetet"
 
@@ -3605,43 +3605,43 @@ msgstr "…an diese IFG-Anfrage:"
 msgid "Redeliver messages"
 msgstr "Nachrichten erneut zustellen"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:28
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:29
 #: froide/foirequest/templates/foirequest/show.html:163
 msgid "Send a message"
 msgstr "Nachricht schreiben"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:32
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:33
 msgid "Expand/collapse all"
 msgstr "Alle ausklappen"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:36
-#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:24
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:37
+#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:33
 msgid "Scroll to end"
-msgstr "Ans Ende"
+msgstr "Zum Ende"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:56
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:58
 #: froide/foirequest/templates/foirequest/snippets/message.html:235
 msgid "Reply"
 msgstr "Antworten"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:60
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:62
 msgid "Upload Mail"
 msgstr "Post hochladen"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:65
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:67
 msgid "Other Options"
-msgstr "Andere Optionen"
+msgstr "Andere Otionen"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:89
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:91
 msgid "Sticky"
 msgstr "Anheften"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:97
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:99
 #: froide/foirequest/templates/foirequest/show.html:350
 msgid "Send message to public body"
 msgstr "Nachricht an Behörde senden"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:99
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:101
 #: froide/foirequest/templates/foirequest/show.html:352
 msgid ""
 "Your request is <b>overdue</b>. You should send a reminder to the Public "
@@ -3650,31 +3650,31 @@ msgstr ""
 "Ihre Anfrage ist <b>verspätet</b>. Sie sollten der Behörde eine Nachricht "
 "schicken."
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:101
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:103
 #: froide/foirequest/templates/foirequest/show.html:354
 msgid "You can send another message to this Public Body if you want to."
 msgstr ""
 "Wenn Sie wollen, können Sie eine weitere Nachricht an diese Behörde senden."
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:111
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:113
 #: froide/foirequest/templates/foirequest/show.html:278
 #: froide/foirequest/templates/foirequest/show.html:366
 msgid "Send Message"
 msgstr "Nachricht absenden"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:114
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:116
 #: froide/foirequest/templates/foirequest/show.html:369
 msgid "If you need to provide an alternative email address, use this one:"
 msgstr ""
 "Wenn Sie nach einer privaten E-Mail-Adresse gefragt werden, geben Sie bitte "
 "diese an:"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:117
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:119
 #: froide/foirequest/templates/foirequest/show.html:372
 msgid "It will still go to your request here."
 msgstr "Es wird trotzdem an Ihre Anfrage zugestellt."
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:165
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:167
 #: froide/foirequest/templates/foirequest/show.html:654
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html:27
 #, python-format
@@ -3683,7 +3683,7 @@ msgid_plural "%(counter)s identical requests"
 msgstr[0] "Eine identische Anfrage"
 msgstr[1] "%(counter)s identische Anfragen"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:171
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:173
 #: froide/foirequest/templates/foirequest/show.html:660
 msgid "This request is identical to:"
 msgstr "Diese Anfrage ist identisch zu:"
@@ -3694,16 +3694,12 @@ msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:12
-#, fuzzy
-#| msgid "Attachments:"
-msgid "Approved attachments:"
-msgstr "Anhänge:"
+msgid "Approved attachments"
+msgstr "Öffentliche Anhänge"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:19
-#, fuzzy
-#| msgid "Manage attachments"
-msgid "Unapproved attachments:"
-msgstr "Anhänge verwalten"
+msgid "Unapproved attachments"
+msgstr "Nicht-öffentliche Anhänge"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:42
 #: froide/foirequest/templates/foirequest/attachment/upload.html:15
@@ -3715,7 +3711,7 @@ msgstr "Anhänge verwalten"
 #: froide/foirequest/templates/foirequest/snippets/message.html:215
 #: froide/foirequest/views/message.py:485
 msgid "Show irrelevant attachments"
-msgstr "Zeige belanglose Anhänge"
+msgstr "Zeige unwichtige Anhänge"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:9
 #: froide/foirequest/templates/foirequest/snippets/attachment_approved.html:7
@@ -3735,22 +3731,16 @@ msgstr ""
 "werden."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:14
-#, fuzzy
-#| msgid "This request is public."
 msgid "This attachment is public."
-msgstr "Diese Anfrage ist öffentlich."
+msgstr "Dieser Anhang ist öffentlich."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:16
-#, fuzzy
-#| msgid "Your name will only be visible to logged in users."
 msgid "This attachment is only visible for logged in users."
-msgstr "Ihr Name wird nur für angemeldete Personen sichtbar sein."
+msgstr "Dieser Anhang ist nur für angemeldete Nutzer sichtbar."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:19
-#, fuzzy
-#| msgid "This request is not public!"
 msgid "This attachment is not public yet."
-msgstr "Diese Anfrage ist nicht öffentlich!"
+msgstr "Dieser Anhang ist noch nicht öffentlich."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:50
 #: froide/foirequest/templates/foirequest/snippets/attachment_approved.html:8
@@ -3771,18 +3761,14 @@ msgid "PDF Pending"
 msgstr "PDF wird erstellt"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/list.html:17
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "            Show %(count)s other comments\n"
-#| "          "
+#, python-format
 msgid ""
 "\n"
 "          Show %(count)s more attachments\n"
 "        "
 msgstr ""
 "\n"
-"              Zeige %(count)s weitere Kommentare\n"
+"              Zeige %(count)s weitere Anhänge\n"
 "            "
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:10
@@ -3982,15 +3968,31 @@ msgstr "Admin"
 msgid "View message in admin"
 msgstr "Nachricht im Admin"
 
-#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:11
-#, fuzzy
-#| msgid "Message"
-msgid "Messages"
-msgstr "Nachricht"
-
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:13
+#| msgid ""
+#| "\n"
+#| "                Hello %(name)s\n"
+#| "              "
+msgid ""
+"\n"
+"                    One Message\n"
+"                  "
+msgid_plural ""
+"\n"
+"                    %(counter)s Messages\n"
+"                  "
+msgstr[0] ""
+"\n"
+"                    Eine Nachricht\n"
+"                  "
+msgstr[1] ""
+"\n"
+"                    %(counter)s Nachrichten\n"
+"                  "
+
+#: froide/foirequest/templates/foirequest/alpha/body/timeline.html:22
 msgid "Deadline expired on"
-msgstr ""
+msgstr "Frist abgelaufen am"
 
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:23
 #: froide/foirequest/templates/foirequest/show.html:465
@@ -4028,10 +4030,8 @@ msgid "Save"
 msgstr "Speichern"
 
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:107
-#, fuzzy
-#| msgid "Write summary"
 msgid "Edit summary"
-msgstr "Zusammenfassung schreiben"
+msgstr "Zusammenfassung bearbeiten"
 
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:107
 #: froide/foirequest/templates/foirequest/show.html:204
@@ -6825,7 +6825,7 @@ msgstr "z.B. Brief mit Datum"
 
 #: froide/foirequest/views/message.py:486
 msgid "Make relevant"
-msgstr "Nicht belanglos"
+msgstr "Nicht unwichtig"
 
 #: froide/foirequest/views/message.py:489
 msgid "Describe the contents of the document"
@@ -9715,6 +9715,20 @@ msgstr "^brief/"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#~| msgid "Message"
+#~ msgid "Messages"
+#~ msgstr "Nachrichten"
+
+#~ msgid ""
+#~ "Your request has been successful! Please help us now to classify the "
+#~ "answer."
+#~ msgstr ""
+#~ "Ihre Informationsfreiheitsanfrage war erfolgreich! Bitte helfen Sie uns "
+#~ "nun das Ergebnis zu klassifizieren."
+
+#~ msgid "Answer some questions!"
+#~ msgstr "Fragen beantworten!"
 
 #~ msgid ""
 #~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"

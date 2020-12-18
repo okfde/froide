@@ -666,6 +666,7 @@
   </div>
 </div>
 
+{% comment %}
 {% if user.is_authenticated %}
   <div class="row mt-6 mb-n5">
     <div class="col-lg-8 smaller bg-gray-200 py-2">
@@ -685,7 +686,7 @@
       </div>
     </div>
   </div>
-{% endif %}
+{% endif %} {% endcomment %}
 
 {% if object.is_blocked %}
   <div class="row mt-5">

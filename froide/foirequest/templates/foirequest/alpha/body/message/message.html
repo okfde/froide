@@ -43,9 +43,14 @@
       </div>
 
       <!-- second row -->
+
       <!-- message preview (collapsed state) -->
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
-        {{ message.plaintext|truncatechars:120 }}…
+        {% if message.content_hidden and not object|can_write_foirequest:request %}
+          {% blocktrans %}This message is not yet public.{% endblocktrans %}
+        {% else %}
+          {% redact_message_short message request %}
+        {% endif %}
       </div>
 
       <!-- recipient and delivery details link (expanded state) -->
@@ -69,14 +74,11 @@
   <!-- meta details container -->
   {% include "foirequest/alpha/body/message/meta_container.html" %}
 
-
   <!-- body -->
   <div class="alpha-message__body alpha-message__wrap">
 
-    <!-- TODO: guidance (this is a placeholder now) -->
-    {% if forloop.counter0|divisibleby:"3" %}
-      {% include "foirequest/alpha/body/message/guidance.html" %}
-    {% endif %}
+    <!-- guidance -->
+    {% render_guidance_alpha message %}
 
     <!-- attachments -->
     {% include "foirequest/alpha/body/message/attachments/attachments.html" %}
@@ -111,7 +113,9 @@
   <div class="alpha-message__footer">
 
     <!-- footer buttons -->
-    <div class="alpha-message__wrap py-3">
+    <div class="alpha-message__wrap d-flex py-3">
+
+      <!-- Comments button -->
       <button
         type="button"
         class="btn btn-light btn-sm text-primary"
@@ -126,7 +130,39 @@
         {% endwith %}
       </button>
 
+      <!-- Problem button-->
       {% render_problem_button message %}
+
+      <!-- Guidance menu -->
+      {% if request.user.is_staff %}
+        <div class="dropdown">
+          <button
+            id="myDropdown"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            class="btn btn-light btn-sm ml-2"
+          >
+            {% trans "Guidance" %}
+          </button>
+          <div class="dropdown-menu smaller alpha-dropdown-menu" aria-labelledby="myDropdown">
+
+            <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
+              {% csrf_token %}
+              <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" class="dropdown-item" target="_blank">
+                {% trans "In admin" %}
+              </a>
+              <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" class="dropdown-item" target="_blank">
+                {% trans "Add custom" %}
+              </a>
+              <button type="submit" class="dropdown-item">{% trans "Rerun guidance" %}</button>
+              <input name="notify" value="🚨 {% trans "Run + Notify" %}" type="submit" class="dropdown-item"/>
+            </form>
+
+          </div>
+        </div>
+      {% endif %}
 
     </div>
 

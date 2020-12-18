@@ -4,7 +4,7 @@ import json
 
 from django import template
 from django.utils.safestring import mark_safe
-from django.template.defaultfilters import urlizetrunc
+from django.template.defaultfilters import urlizetrunc, truncatechars_html
 from django.utils.translation import gettext as _
 from django.utils.html import format_html
 from django.utils import formats
@@ -112,6 +112,22 @@ def redact_message(message, request):
         authenticated_read=authenticated_read,
         message_id=message.id
     )
+
+
+@register.simple_tag
+def redact_message_short(message, request):
+    real_content = unify(message.get_real_content())
+    redacted_content = unify(message.get_content())
+
+    content_normal = split_text_by_separator(real_content)
+    content_redacted = split_text_by_separator(redacted_content)
+
+    result = mark_redacted(
+        original=content_normal[0], redacted=content_redacted[0],
+        authenticated_read=is_authenticated_read(message, request)
+    )
+
+    return truncatechars_html(result, 115)
 
 
 @register.simple_tag
