@@ -394,7 +394,7 @@ class FoiRequest(models.Model):
         return self._messages
 
     @property
-    def get_messages_by_month(self):
+    def messages_by_month(self):
         """
         Group messages by "month-year"-key, e.g. "2020-09".
         Add extra due date key.
@@ -402,7 +402,7 @@ class FoiRequest(models.Model):
         groups = {}
         today = datetime.today()
         due_date = self.due_date
-        month_highlighted = False
+        has_overdue_messages = False
         for msg in self.messages:
             key = str(msg.timestamp)[:7]
             if key not in groups:
@@ -410,17 +410,23 @@ class FoiRequest(models.Model):
                     'date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
                     'is_same_year': msg.timestamp.year == today.year,
                     'messages': [],
-                    'has_overdue_message': False,
-                    'highlight_overdue': False,
+                    'show_overdue_message': False, # shows "Deadline expired on ..." message
+                    'indicate_overdue': False, # shows "(overdue)" in message count label in timeline
                     'first_message_id': msg.get_html_id
                 }
             groups[key]['messages'].append(msg)
 
             if msg.timestamp > due_date:
-                groups[key]['has_overdue_message'] = True
-                if month_highlighted is False:
-                    groups[key]['highlight_overdue'] = True
-                    month_highlighted = True
+                has_overdue_messages = True
+
+        # loop groups and set "has_overdue_message"
+        if has_overdue_messages is True:
+            for group_key, group in reversed(groups.items()):
+                if group['date'] < due_date:
+                    group['show_overdue_message'] = True
+                    break
+                if group['date'] > due_date:
+                    group['indicate_overdue'] = True
 
         return list(groups.values())
 
