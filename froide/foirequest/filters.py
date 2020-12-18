@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from django import forms
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _, gettext
+from django.utils.translation import gettext_lazy as _, pgettext
 
 from taggit.models import Tag
 import django_filters
@@ -47,51 +47,51 @@ def make_filter(slug, filter_func, key):
 
 FOIREQUEST_FILTERS = [
     make_filter(
-        gettext("awaiting-classification"),
+        pgettext("URL part", "awaiting-classification"),
         status_filter,
         FoiRequest.STATUS.AWAITING_CLASSIFICATION
     ),
     make_filter(
-        gettext("successful"),
+        pgettext("URL part", "successful"),
         resolution_filter,
         FoiRequest.RESOLUTION.SUCCESSFUL),
     make_filter(
-        gettext("partially-successful"),
+        pgettext("URL part", "partially-successful"),
         resolution_filter,
         FoiRequest.RESOLUTION.PARTIALLY_SUCCESSFUL),
     make_filter(
-        gettext("refused"),
+        pgettext("URL part", "refused"),
         resolution_filter,
         FoiRequest.RESOLUTION.REFUSED),
     make_filter(
-        gettext("withdrawn"),
+        pgettext("URL part", "withdrawn"),
         resolution_filter,
         FoiRequest.RESOLUTION.USER_WITHDREW),
     make_filter(
-        gettext("withdrawn-costs"),
+        pgettext("URL part", "withdrawn-costs"),
         resolution_filter,
         FoiRequest.RESOLUTION.USER_WITHDREW_COSTS),
     make_filter(
-        gettext("awaiting-response"),
+        pgettext("URL part", "awaiting-response"),
         status_filter,
         FoiRequest.STATUS.AWAITING_RESPONSE),
     make_filter(
-        gettext("overdue"),
+        pgettext("URL part", "overdue"),
         (lambda x:
             Q('range', due_date={
                 'lt': timezone.now()
             }) & Q('term', status='awaiting_response')),
         FoiRequest.FILTER_STATUS.OVERDUE),
     make_filter(
-        gettext("asleep"),
+        pgettext("URL part", "asleep"),
         status_filter,
         FoiRequest.STATUS.ASLEEP),
     make_filter(
-        gettext("not-held"),
+        pgettext("URL part", "not-held"),
         resolution_filter,
         FoiRequest.RESOLUTION.NOT_HELD),
     FoiRequestFilter(
-        slug=gettext("has-fee"),
+        slug=pgettext("URL part", "has-fee"),
         filter=lambda x: Q('range', costs={'gt': 0}),
         key=None,
         label=_('Fee charged'),
@@ -104,7 +104,9 @@ FOIREQUEST_FILTER_DICT = dict([(x.slug, x) for x in FOIREQUEST_FILTERS])
 REVERSE_FILTER_DICT = dict([(str(x.key), x) for x in FOIREQUEST_FILTERS])
 
 FOIREQUEST_LIST_FILTER_CHOICES = [
-    x for x in FOIREQUEST_FILTER_CHOICES if x[0] not in {gettext("awaiting-classification")}
+    x for x in FOIREQUEST_FILTER_CHOICES if x[0] not in {
+        pgettext("URL part", "awaiting-classification")
+    }
 ]
 
 
