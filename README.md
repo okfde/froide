@@ -1,10 +1,10 @@
 Froide
 ======
 
-[![Froide CI](https://github.com/okfde/froide/workflows/Froide%20CI/badge.svg)](https://github.com/okfde/froide/actions?query=workflow%3A%22Froide+CI%22) [![Coverage Status](https://coveralls.io/repos/github/okfde/froide/badge.svg?branch=master)](https://coveralls.io/r/okfde/froide?branch=master)
+[![Froide CI](https://github.com/okfde/froide/workflows/Froide%20CI/badge.svg)](https://github.com/okfde/froide/actions?query=workflow%3A%22Froide+CI%22) [![Coverage Status](https://coveralls.io/repos/github/okfde/froide/badge.svg?branch=main)](https://coveralls.io/r/okfde/froide?branch=main)
 
 
-Froide is a Freedom Of Information Portal using Django 1.11. It supports Python 2.7, 3.5, 3.6.
+Froide is a Freedom Of Information Portal using Django 3.0. It supports Python 3.8.
 
 It is used by the German and the Austrian FOI site, but it is fully
 internationalized and written in English.
