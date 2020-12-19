@@ -21,7 +21,7 @@ Comment = get_model()
 CommentForm = get_form()
 
 
-class FoiRequestFollowerFactory(factory.DjangoModelFactory):
+class FoiRequestFollowerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FoiRequestFollower
 
