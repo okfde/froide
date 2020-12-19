@@ -446,12 +446,12 @@ def upload_attachments(request, foirequest, message_id):
             'redactAttachment': reverse('foirequest-redact_attachment',
                 kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'approveAttachment': reverse('foirequest-approve_attachment',
-                kwargs={'slug': foirequest.slug, 'attachment': 0}),
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'deleteAttachment': reverse('foirequest-delete_attachment',
-                kwargs={'slug': foirequest.slug, 'attachment': 0}),
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'tusEndpoint': reverse('api:upload-list'),
             'createDocument': reverse('foirequest-create_document',
-                kwargs={'slug': foirequest.slug, 'attachment': 0}),
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
         },
         'i18n': {
             'newDocumentPageCount': [

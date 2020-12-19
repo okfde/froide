@@ -59,9 +59,9 @@ def show_attachment(request, slug, message_id, attachment_name):
 
 @require_POST
 @allow_write_foirequest
-def approve_attachment(request, foirequest, attachment):
+def approve_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
-        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
@@ -87,9 +87,9 @@ def approve_attachment(request, foirequest, attachment):
 
 @require_POST
 @allow_write_foirequest
-def delete_attachment(request, foirequest, attachment):
+def delete_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
-        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
     message = att.belongs_to
     if not message.is_postal:
@@ -116,9 +116,9 @@ def delete_attachment(request, foirequest, attachment):
 
 @require_POST
 @allow_write_foirequest
-def create_document(request, foirequest, attachment):
+def create_document(request, foirequest, attachment_id):
     att = get_object_or_404(
-        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
@@ -200,7 +200,7 @@ def get_redact_context(foirequest, attachment):
         'urls': {
             'publishUrl': reverse('foirequest-approve_attachment', kwargs={
                 'slug': foirequest.slug,
-                'attachment': attachment.pk
+                'attachment_id': attachment.pk
             }),
             'messageUpload': reverse('foirequest-upload_attachments', kwargs={
                 'slug': foirequest.slug,
