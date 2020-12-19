@@ -115,3 +115,7 @@ class DateTimeEncoder(json.JSONEncoder):
 
 def to_json(obj):
     return json.dumps(obj, cls=DateTimeEncoder)
+
+
+def is_ajax(request):
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'

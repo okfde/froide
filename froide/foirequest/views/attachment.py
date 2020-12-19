@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.templatetags.static import static
 
 from crossdomainmedia import CrossDomainMediaMixin
-from froide.helper.utils import render_400, render_403
+from froide.helper.utils import render_400, render_403, is_ajax
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..auth import (
@@ -73,7 +73,7 @@ def approve_attachment(request, foirequest, attachment):
             sender=att, user=request.user,
         )
 
-    if request.is_ajax():
+    if is_ajax(request):
         if request.content_type == 'application/json':
             return JsonResponse({})
         return render(
@@ -105,7 +105,7 @@ def delete_attachment(request, foirequest, attachment):
     )
     att.remove_file_and_delete()
 
-    if request.is_ajax():
+    if is_ajax(request):
         if request.content_type == 'application/json':
             return JsonResponse({})
         return HttpResponse()
@@ -132,7 +132,7 @@ def create_document(request, foirequest, attachment):
         sender=att, user=request.user,
     )
 
-    if request.is_ajax():
+    if is_ajax(request):
         return JsonResponse({
             'resource_uri': reverse('api:document-detail', kwargs={'pk': doc.id}),
         })
