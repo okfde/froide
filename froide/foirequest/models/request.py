@@ -352,21 +352,22 @@ class FoiRequest(models.Model):
         )
 
     # Custom Signals
-    message_sent = django.dispatch.Signal(providing_args=["message", "user"])
-    message_received = django.dispatch.Signal(providing_args=["message"])
-    request_created = django.dispatch.Signal(providing_args=[])
-    request_to_public_body = django.dispatch.Signal(providing_args=[])
-    status_changed = django.dispatch.Signal(providing_args=[
-        "status", "resolution", "data", "user",
-        "previous_status", "previous_resolution"
-    ])
-    became_overdue = django.dispatch.Signal(providing_args=[])
-    became_asleep = django.dispatch.Signal(providing_args=[])
-    public_body_suggested = django.dispatch.Signal(providing_args=["suggestion"])
-    set_concrete_law = django.dispatch.Signal(providing_args=['name', 'user'])
-    made_public = django.dispatch.Signal(providing_args=['user'])
-    made_private = django.dispatch.Signal(providing_args=['user'])
-    escalated = django.dispatch.Signal(providing_args=['message', 'user'])
+    message_sent = django.dispatch.Signal()  # args: ["message", "user"]
+    message_received = django.dispatch.Signal()  # args: ["message"]
+    request_created = django.dispatch.Signal()  # args: []
+    request_to_public_body = django.dispatch.Signal()  # args: []
+    # status_changed providing args: [
+    #    "status", "resolution", "data", "user",
+    #    "previous_status", "previous_resolution"
+    # ]
+    status_changed = django.dispatch.Signal()
+    became_overdue = django.dispatch.Signal()  # args: []
+    became_asleep = django.dispatch.Signal()  # args: []
+    public_body_suggested = django.dispatch.Signal()  # args: ["suggestion"]
+    set_concrete_law = django.dispatch.Signal()  # args: ['name', 'user']
+    made_public = django.dispatch.Signal()  # args: ['user']
+    made_private = django.dispatch.Signal()  # args: ['user']
+    escalated = django.dispatch.Signal()  # args: ['message', 'user']
 
     def __str__(self):
         return _("Request '%s'") % self.title

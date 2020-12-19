@@ -380,11 +380,11 @@ class PublicBody(models.Model):
     objects = PublicBodyManager()
     published = objects
 
-    proposal_added = Signal(providing_args=['user'])
-    proposal_rejected = Signal(providing_args=['user'])
-    proposal_accepted = Signal(providing_args=['user'])
-    change_proposal_added = Signal(providing_args=['user'])
-    change_proposal_accepted = Signal(providing_args=['user'])
+    proposal_added = Signal()  # args: ['user']
+    proposal_rejected = Signal()  # args: ['user']
+    proposal_accepted = Signal()  # args: ['user']
+    change_proposal_added = Signal()  # args: ['user']
+    change_proposal_accepted = Signal()  # args: ['user']
 
     class Meta:
         ordering = ('name',)

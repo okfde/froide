@@ -162,8 +162,8 @@ class FoiRequestFollower(models.Model):
 
     objects = FoiRequestFollowerManager()
 
-    followed = Signal(providing_args=[])
-    unfollowing = Signal(providing_args=[])
+    followed = Signal()  # args: []
+    unfollowing = Signal()  # args: []
 
     class Meta:
         get_latest_by = 'timestamp'

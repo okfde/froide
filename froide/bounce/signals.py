@@ -1,6 +1,6 @@
 from django.dispatch import Signal
 
-user_email_bounced = Signal(providing_args=['bounce', 'should_deactivate'])
-email_bounced = Signal(providing_args=['bounce', 'should_deactivate'])
+user_email_bounced = Signal()  # args: ['bounce', 'should_deactivate']
+email_bounced = Signal()  # args: ['bounce', 'should_deactivate']
 
-email_unsubscribed = Signal(providing_args=['email', 'reference'])
+email_unsubscribed = Signal()  # args: ['email', 'reference']
