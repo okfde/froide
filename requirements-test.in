@@ -1,0 +1,12 @@
+coverage
+factory-boy
+faker
+flake8
+mock
+pbr
+pycodestyle
+pyflakes
+selenium
+text-unidecode
+django-coverage-plugin
+tblib
