@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from .views import profile
 
 urlpatterns = [
-    url(r'^(?P<slug>[-\w\.]+)/$', profile, name='account-profile')
+    re_path(r'^(?P<slug>[-\w\.]+)/$', profile, name='account-profile')
 ]

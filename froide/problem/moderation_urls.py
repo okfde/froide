@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import moderation_view
 
 
 urlpatterns = [
-    url(r'^$', moderation_view, name='problem-moderation'),
+    path('', moderation_view, name='problem-moderation'),
 ]

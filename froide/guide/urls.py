@@ -1,8 +1,9 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import rerun_rules
 
 
 urlpatterns = [
-    url(r'^guide/rerun/(?P<message_id>\d+)/$', rerun_rules, name='guide-rerun_rules'),
+    path('guide/rerun/<int:message_id>/', rerun_rules,
+         name='guide-rerun_rules'),
 ]

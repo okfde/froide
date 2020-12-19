@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 
 from ..views import (
     MyRequestsView, DraftRequestsView, FoiProjectListView,
@@ -6,11 +6,11 @@ from ..views import (
 )
 
 urlpatterns = [
-    url(r'^requests/$', MyRequestsView.as_view(), name='account-requests'),
-    url(r'^drafts/$', DraftRequestsView.as_view(), name='account-drafts'),
-    url(r'^projects/$', FoiProjectListView.as_view(), name='account-projects'),
-    url(r'^following/$', FollowingRequestsView.as_view(),
+    path('requests/', MyRequestsView.as_view(), name='account-requests'),
+    path('drafts/', DraftRequestsView.as_view(), name='account-drafts'),
+    path('projects/', FoiProjectListView.as_view(), name='account-projects'),
+    path('following/', FollowingRequestsView.as_view(),
         name='account-following'),
-    url(r'^subscriptions/$', RequestSubscriptionsView.as_view(),
+    path('subscriptions/', RequestSubscriptionsView.as_view(),
         name='account-subscriptions'),
 ]

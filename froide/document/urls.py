@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path, re_path
 from django.conf import settings
 from django.utils.translation import pgettext_lazy
 
@@ -12,8 +12,8 @@ from .views import (
 
 
 urlpatterns = [
-    url(pgettext_lazy('url part', r"^search/$"), DocumentSearchView.as_view(), name='document-search'),
-    url(pgettext_lazy('url part', r"^upload/$"), upload_documents, name='document-upload'),
+    path(pgettext_lazy('url part', 'search/'), DocumentSearchView.as_view(), name='document-search'),
+    path(pgettext_lazy('url part', 'upload/'), upload_documents, name='document-upload'),
 ] + fc_urlpatterns
 
 
@@ -26,7 +26,7 @@ else:
 
 
 document_media_urlpatterns = [
-    url(r'^%s%s/(?P<u1>[a-z0-9]{2})/(?P<u2>[a-z0-9]{2})/(?P<u3>[a-z0-9]{2})/(?P<uuid>[a-z0-9]{32})/(?P<filename>.+)' % (
+    re_path(r'^%s%s/(?P<u1>[a-z0-9]{2})/(?P<u2>[a-z0-9]{2})/(?P<u3>[a-z0-9]{2})/(?P<uuid>[a-z0-9]{32})/(?P<filename>.+)' % (
         MEDIA_PATH, settings.FILINGCABINET_MEDIA_PRIVATE_PREFIX
     ), DocumentFileDetailView.as_view(), name='filingcabinet-auth_document')
 ]
