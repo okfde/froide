@@ -11,10 +11,10 @@ urlpatterns = [
     path('', MakeRequestView.as_view(), name='foirequest-make_request'),
     re_path(pgettext_lazy('url part', r'^to/(?P<publicbody_ids>\d+(?:\+\d+)*)/$'),
             MakeRequestView.as_view(), name='foirequest-make_request'),
-    re_path(pgettext_lazy('url part', r'^to/(?P<publicbody_slug>[-\w]+)/$'),
+    path(pgettext_lazy('url part', 'to/<slug:publicbody_slug>/'),
             MakeRequestView.as_view(), name='foirequest-make_request'),
-    re_path(pgettext_lazy('url part', r'^draft/(?P<pk>\d+)/'),
+    path(pgettext_lazy('url part', 'draft/<int:pk>/'),
         DraftRequestView.as_view(), name='foirequest-make_draftrequest'),
-    re_path(pgettext_lazy('url part', r'^sent/$'), RequestSentView.as_view(),
+    path(pgettext_lazy('url part', 'sent/'), RequestSentView.as_view(),
         name='foirequest-request_sent'),
 ]

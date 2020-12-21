@@ -19,7 +19,7 @@ from ..views import (
 )
 
 urlpatterns = [
-    re_path(r"^(?P<obj_id>\d+)$", shortlink, name="foirequest-notsolonglink"),
+    path("<int:obj_id>", shortlink, name="foirequest-notsolonglink"),
     path("<int:obj_id>/auth/<slug:code>/", auth, name="foirequest-longerauth"),
     path("<int:obj_id>/upload/<slug:code>/", publicbody_upload,
         name="foirequest-publicbody_upload"),
@@ -53,10 +53,10 @@ urlpatterns = [
     path("<slug:slug>/<int:message_id>/resend/", resend_message, name="foirequest-resend_message"),
     path("<slug:slug>/<int:message_id>/pdf/", download_message_pdf, name="foirequest-download_message_pdf"),
     # Attachments
-    re_path(pgettext_lazy('url part', r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/attachment/(?P<attachment_name>.+)$'),
+    path(pgettext_lazy('url part', '<slug:slug>/<int:message_id>/attachment/<str:attachment_name>'),
         show_attachment, name='foirequest-show_attachment'),
     # Attachment Upload
-    re_path(pgettext_lazy('url part', r'^(?P<slug>[-\w]+)/(?P<message_id>\d+)/upload/$'),
+    path(pgettext_lazy('url part', '<slug:slug>/<int:message_id>/upload/'),
         upload_attachments, name='foirequest-upload_attachments'),
 
     # Attachment actions
