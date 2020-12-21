@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='deferredmessage',
             name='spam',
-            field=models.NullBooleanField(default=False),
+            field=models.BooleanField(default=False, null=True),
         ),
     ]

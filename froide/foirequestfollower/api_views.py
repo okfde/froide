@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.db.models import (
-    Count, Subquery, Exists, OuterRef, Value, NullBooleanField,
+    Count, Subquery, Exists, OuterRef, Value, BooleanField,
     Case, When
 )
 
@@ -173,13 +173,13 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
                 can_follow=Case(
                     When(user_id=user.id, then=Value(False)),
                     default=Value(True),
-                    output_field=NullBooleanField()
+                    output_field=BooleanField(null=True)
                 )
             )
         else:
             qs = qs.annotate(
-                follows=Value(None, output_field=NullBooleanField()),
-                can_follow=Value(None, output_field=NullBooleanField())
+                follows=Value(None, output_field=BooleanField(null=True)),
+                can_follow=Value(None, output_field=BooleanField(null=True))
             )
         qs = qs.annotate(
             follow_count=Count('followers'),
@@ -224,9 +224,9 @@ class FoiRequestFollowerViewSet(mixins.CreateModelMixin,
             qs = qs.annotate(
                 follow_count=Subquery(follower_count.values('count')),
                 # follows by query definition
-                follows=Value(True, output_field=NullBooleanField()),
+                follows=Value(True, output_field=BooleanField(null=True)),
                 # can_follow by query definition
-                can_follow=Value(True, output_field=NullBooleanField())
+                can_follow=Value(True, output_field=BooleanField(null=True))
             )
         return qs
 
