@@ -3754,8 +3754,8 @@ msgstr "Nachricht absenden"
 #: froide/foirequest/templates/foirequest/show.html:369
 msgid "If you need to provide an alternative email address, use this one:"
 msgstr ""
-"Wenn Sie nach einer privaten E-Mail-Adresse gefragt werden, geben Sie bitte "
-"diese an:"
+"Sollte eine Behörde nicht an FragDenStaat antworten wollen, sondern nur"
+"an eine private E-Mail-Adresse, geben Sie bitte diese an:"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:128
 #: froide/foirequest/templates/foirequest/show.html:372
