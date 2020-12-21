@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.template import Template, Context
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
@@ -23,8 +22,8 @@ class LetterTemplate(models.Model):
     email_subject = models.CharField(max_length=255, blank=True)
     email_body = models.TextField(blank=True)
 
-    form = JSONField(default=dict, blank=True)
-    constraints = JSONField(default=dict, blank=True)
+    form = models.JSONField(default=dict, blank=True)
+    constraints = models.JSONField(default=dict, blank=True)
 
     subject = models.TextField(blank=True)
     body = models.TextField(blank=True)

@@ -4,7 +4,6 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import JSONField
 from django.utils.functional import cached_property
 
 from froide.publicbody.models import PublicBody
@@ -36,7 +35,7 @@ class RequestDraft(models.Model):
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
     law_type = models.CharField(max_length=255, blank=True)
-    flags = JSONField(blank=True, default=dict)
+    flags = models.JSONField(blank=True, default=dict)
 
     request = models.ForeignKey(FoiRequest, null=True, blank=True,
                                 on_delete=models.SET_NULL)

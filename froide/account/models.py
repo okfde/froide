@@ -3,7 +3,6 @@ import os
 import re
 
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -364,7 +363,7 @@ class UserPreference(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     key = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now=True)
-    value = JSONField()
+    value = models.JSONField()
 
     objects = UserPreferenceManager()
 
