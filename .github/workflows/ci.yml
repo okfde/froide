@@ -84,7 +84,9 @@ jobs:
             python -m pip install --upgrade pip pip-tools coveralls
             pip-sync requirements.txt requirements-test.txt
             pip install -e .
-            yarn install && yarn run build
+            yarn install
+      - name: Build frontend
+        run: yarn run build --bail
       - name: Run in-browser tests
         run: make testui
         env:
