@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 from django.utils.translation import pgettext_lazy
 
 from ..feeds import FoiRequestFeed, FoiRequestFeedAtom
